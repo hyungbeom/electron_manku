@@ -18,19 +18,30 @@
       "**/*"
     ],
     "win": {
-      "target": ["nsis", "zip"]
+      "target": "nsis"
+    },
+    "mac": {
+      "target": "dmg"
     }
   },
   "dependencies": {
+    "@ant-design/icons": "^5.5.1",
+    "antd": "^5.21.1",
+    "axios": "^1.7.7",
     "electron-serve": "^2.1.1",
     "next": "14.2.15",
+    "nookies": "^2.5.2",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-redux": "^9.1.2",
+    "styled-components": "^6.1.13"
   },
   "devDependencies": {
+    "@reduxjs/toolkit": "^2.2.7",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "next-redux-wrapper": "^8.1.0",
     "concurrently": "^9.0.1",
     "electron": "^33.0.1",
     "electron-builder": "^25.1.8",
