@@ -12,11 +12,12 @@ import {useAppSelector} from "@/utils/common/function/reduxHooks";
 
 export default function Manage({memberList}) {
     const userInfo = useAppSelector((state) => state.user);
+    console.log(memberList,'memberList:')
     const items = [
         {
             key: '1',
             label: '전체 사용자',
-            children: <TotalUser memberList={memberList}/>   ,
+            children: <TotalUser memberList={memberList}/>  ,
         },
         {
             key: '2',
@@ -52,11 +53,18 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     let param = {}
 
     const {userInfo} = await initialServerRouter(ctx, store);
+    const result = await getData.post('admin/getAdminList',{
+        "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
+        "searchAuthority": null,    // 1: 일반, 0: 관리자
+        "page": 1,
+        "limit": 20
+    });
 
+    console.log(result,'result::')
     if (userInfo) {
         store.dispatch(setUserInfo(userInfo));
     }
 
 
-    return param
+    return {props : {memberList : result?.data?.entity?.adminList}}
 })

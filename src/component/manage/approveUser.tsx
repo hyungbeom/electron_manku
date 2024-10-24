@@ -52,6 +52,7 @@ export default function ApproveUser({memberList}){
         }
     ];
 
+
     function filterList(list){
         return list?.filter(v=>v.isApproval === 0)
     }

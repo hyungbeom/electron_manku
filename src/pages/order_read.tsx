@@ -9,7 +9,7 @@ import TextArea from "antd/lib/input/TextArea";
 import {FileSearchOutlined, FormOutlined, SaveOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
 
-export default function OrderWrite() {
+export default function OrderRead() {
     const sub = {
         validityPeriod : 1
     }
@@ -32,7 +32,7 @@ export default function OrderWrite() {
         <LayoutComponent>
 
             <div style={{display: 'grid', gridTemplateColumns: '350px 1fr', height: '100%', gridColumnGap : 5}}>
-                <Card title={'발주 조회'} style={{fontSize: 12, border : '1px solid lightGray'}}>
+                <Card title={'발주서 작성'} style={{fontSize: 12, border : '1px solid lightGray'}}>
                     {Object.keys(info).map(v => {
                         switch (estimateInfo[v]?.type) {
                             case 'input' :
