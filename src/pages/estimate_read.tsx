@@ -12,7 +12,7 @@ import {subRfqWriteInfo} from "@/utils/modalDataList";
 import {estimateTotalWriteInfo} from "@/utils/common";
 import Select from "antd/lib/select";
 
-const {RangePicker} =
+const {RangePicker} = DatePicker
 
 const TwinInputBox = ({children}) => {
     return <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: 5, paddingTop: 8}}>
@@ -51,28 +51,24 @@ export default function estimateRead() {
 
 
                         <div style={{paddingTop: 8}}>
-                            <div style={{paddingBottom: 3}}>MAKER</div>
-                            <div>
-                                <div>
-                                    <div style={{paddingBottom: 3}}>작성일</div>
-                                    <DatePicker id={'writtenDate'} size={'small'}/>
-                                </div>
-                            </div>
+                            <div style={{paddingBottom: 3}}>작성일자</div>
+                            <RangePicker id={'maker'} size={'small'} />
                         </div>
+
                         <div style={{paddingTop: 8}}>
-                            <div style={{paddingBottom: 3}}>MAKER</div>
+                            <div style={{paddingBottom: 3}}>검색조건</div>
                             <Input id={'maker'} size={'small'} onChange={onChange}/>
                         </div>
                         <div style={{paddingTop: 8}}>
-                            <div style={{paddingBottom: 3}}>ITEM</div>
+                            <div style={{paddingBottom: 3}}>문서번호</div>
                             <Input id={'item'} size={'small'} onChange={onChange}/>
                         </div>
                         <div style={{paddingTop: 8}}>
-                            <div style={{paddingBottom: 3}}>Delivery</div>
+                            <div style={{paddingBottom: 3}}>거래처명</div>
                             <Input id={'delivery'} size={'small'} onChange={onChange}/>
                         </div>
                         <div style={{paddingTop: 8}}>
-                            <div style={{paddingBottom: 3}}>비고란</div>
+                            <div style={{paddingBottom: 3}}>MAKER</div>
                             <TextArea id={'remarks'} size={'small'} onChange={onChange}/>
                         </div>
                     </Card>
