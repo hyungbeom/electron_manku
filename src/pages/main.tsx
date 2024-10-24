@@ -1,9 +1,12 @@
 import LayoutComponent from "@/component/LayoutComponent";
-import CustomTable from "@/component/CustomTable";
+import initialServerRouter from "@/manage/function/initialServerRouter";
 import Card from "antd/lib/card/Card";
 import Badge from "antd/lib/badge";
 import Calendar from "antd/lib/calendar";
-
+import {setUserInfo} from "@/store/user/userSlice";
+import {wrapper} from "@/store/store";
+import {getData} from "@/manage/function/api";
+import {useAppSelector} from "@/utils/common/function/reduxHooks";
 
 const getListData = (value) => {
     let listData = []; // Specify the type of listData
@@ -75,7 +78,8 @@ const getMonthData = (value) => {
     }
 };
 
-export default function Main(){
+export default function Main(props){
+    const userInfo = useAppSelector((state) => state.user);
 
     const monthCellRender = (value) => {
         const num = getMonthData(value);
@@ -105,8 +109,8 @@ export default function Main(){
     };
 
     return <>
-        <LayoutComponent>
-            <div style={{padding : 25}}>
+        <LayoutComponent userInfo={userInfo}>
+            <div style={{padding : 5}}>
             <Card style={{borderRadius : 8}} title={'업무일정'}>
                 <Calendar cellRender={cellRender}  />
             </Card>
@@ -114,3 +118,23 @@ export default function Main(){
         </LayoutComponent>
     </>
 }
+
+
+// @ts-ignore
+export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
+
+
+    const userAgent = ctx.req.headers['user-agent'];
+    const isMobile = /mobile/i.test(userAgent);
+
+    let param = {}
+
+    const {userInfo} = await initialServerRouter(ctx, store);
+
+    if (userInfo) {
+        store.dispatch(setUserInfo(userInfo));
+    }
+
+
+    return param
+})

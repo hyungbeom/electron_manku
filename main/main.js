@@ -11,7 +11,7 @@ function createWindow() {
     mainWindow = new BrowserWindow({
         width: 1366,
         height: 868,
-        frame: false,
+        // frame: false,
         webPreferences: {
             nodeIntegration: false, // 보안상 false로 설정
             contextIsolation: true,  // true로 설정하여 보안 강화

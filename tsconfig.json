@@ -1,10 +1,11 @@
 {
   "compilerOptions": {
     "lib": ["dom", "dom.iterable", "esnext"],
+    "noEmitOnError": false,
     "allowJs": true,
     "skipLibCheck": true,
     "strict": false,
-    "noEmit": true,
+    "noEmit": false,
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "bundler",
@@ -12,6 +13,11 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "checkJs": false,
+    "noImplicitAny": false,   // any 타입을 허용
+    "strictNullChecks": false, // null과 undefined 체크를 엄격하게 하지 않음
+    "noImplicitThis": false,  // this 타입의 체크를 비활성화
+    "alwaysStrict": false,     // 엄격한 모드를 해제
     "paths": {
       "@/*": ["./src/*"]
     }

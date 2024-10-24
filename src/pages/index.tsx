@@ -1,9 +1,5 @@
 import React, {useState} from "react";
 import {useRouter} from "next/router";
-import Input from 'antd/lib/input'
-import Password from "antd/lib/input/Password";
-import Checkbox from "antd/lib/checkbox/Checkbox";
-import Button from "antd/lib/button";
 import Tabs from "antd/lib/tabs";
 import Login from "@/component/account/Login";
 import SignUp from "@/component/account/SignUp";
@@ -40,7 +36,7 @@ export default function Home(props) {
 
                 <div style={{
                     display: 'grid',
-                    gridTemplateRows: `repeat(${page === 'login'?5:8}, 40px)`,
+                    gridTemplateRows: `repeat(${page === 'login'?5:10}, 40px)`,
                     rowGap: 20,
                     textAlign: 'center',
                     paddingTop: 60
