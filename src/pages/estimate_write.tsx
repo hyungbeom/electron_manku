@@ -25,6 +25,7 @@ export default function estimateWrite() {
 
     const [info, setInfo] = useState(estimateWriteInitial)
 
+
     function onChange(e) {
 
         let bowl = {}
@@ -66,7 +67,7 @@ export default function estimateWrite() {
                             <div>
                                 <div style={{paddingBottom: 3}}>연결 INQUIRY No</div>
                                 <Input id={'documentNumberFull'} onChange={onChange} size={'small'}
-                                       suffix={<FileSearchOutlined/>}/>
+                                       suffix={<FileSearchOutlined/>} />
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>대리점코드</div>
@@ -84,32 +85,32 @@ export default function estimateWrite() {
                         <TwinInputBox>
                             <div>
                                 <div style={{paddingBottom: 3}}>CUSTOMER 코드</div>
-                                <Input id={'customerCode'} size={'small'}/>
+                                <Input id={'customerCode'} size={'small'} onChange={onChange}/>
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>상호명</div>
-                                <Input id={'customerName'} size={'small'}/>
+                                <Input id={'customerName'} size={'small'} onChange={onChange}/>
                             </div>
                         </TwinInputBox>
                         <TwinInputBox>
                             <div>
                                 <div style={{paddingBottom: 3}}>담당자</div>
-                                <Input id={'managerName'} size={'small'}/>
+                                <Input id={'managerName'} size={'small'} onChange={onChange}/>
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>전화번호</div>
-                                <Input id={'phoneNumber'} size={'small'}/>
+                                <Input id={'phoneNumber'} size={'small'} onChange={onChange}/>
                             </div>
                         </TwinInputBox>
                         <TwinInputBox>
                             <div>
                                 <div style={{paddingBottom: 3}}>팩스번호</div>
-                                <Input id={'faxNumber'} size={'small'}/>
+                                <Input id={'faxNumber'} size={'small'} onChange={onChange}/>
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>유효기간</div>
                                 <Select id={'validityPeriod'} size={'small'} defaultValue={0} options={[
-                                    {value: 0, label: '견적 발행 후 10일간'},
+                           {value: 0, label: '견적 발행 후 10일간'},
                                     {value: 1, label: '견적 발행 후 30일간'}
                                 ]} style={{width : '100%'}}>
                                 </Select>
@@ -152,39 +153,39 @@ export default function estimateWrite() {
                         <TwinInputBox>
                             <div>
                                 <div style={{paddingBottom: 3}}>담당자</div>
-                                <Input id={'estimateManager'} size={'small'}/>
+                                <Input id={'estimateManager'} size={'small'} onChange={onChange}/>
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>E-Mail</div>
-                                <Input id={'email'} size={'small'}/>
+                                <Input id={'email'} size={'small'} onChange={onChange}/>
                             </div>
                         </TwinInputBox>
                         <TwinInputBox>
                             <div>
                                 <div style={{paddingBottom: 3}}>전화번호</div>
-                                <Input id={'managerPhoneNumber'} size={'small'}/>
+                                <Input id={'managerPhoneNumber'} size={'small'} onChange={onChange}/>
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>팩스번호</div>
-                                <Input id={'managerFaxNumber'} size={'small'}/>
+                                <Input id={'managerFaxNumber'} size={'small'} onChange={onChange}/>
                             </div>
                         </TwinInputBox>
 
                         <div style={{paddingTop: 8}}>
                             <div style={{paddingBottom: 3}}>MAKER</div>
-                            <Input id={'maker'} size={'small'}/>
+                            <Input id={'maker'} size={'small'} onChange={onChange}/>
                         </div>
                         <div style={{paddingTop: 8}}>
                             <div style={{paddingBottom: 3}}>ITEM</div>
-                            <Input id={'item'} size={'small'}/>
+                            <Input id={'item'} size={'small'} onChange={onChange}/>
                         </div>
                         <div style={{paddingTop: 8}}>
                             <div style={{paddingBottom: 3}}>Delivery</div>
-                            <Input id={'delivery'} size={'small'}/>
+                            <Input id={'delivery'} size={'small'} onChange={onChange}/>
                         </div>
                         <div style={{paddingTop: 8}}>
                             <div style={{paddingBottom: 3}}>비고란</div>
-                            <TextArea id={'remarks'} size={'small'}/>
+                            <TextArea id={'remarks'} size={'small'} onChange={onChange}/>
                         </div>
                     </Card>
 
