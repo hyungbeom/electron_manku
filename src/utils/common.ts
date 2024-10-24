@@ -13,7 +13,25 @@ export const TagTypeList = {
     "content": {type : 'selectInput'},
     "replyDate": {type : 'date'},
     "remarks": {type : 'textArea'},
+    "searchType": {type : 'select'},
+    "searchStartDate": {type : 'date'},  // 작성일자 시작일
+    "searchEndDate": {type : 'date'},  // 작성일자 종료일
+    "searchDocumentNumber": {type : 'input'},  // 문서번호
+    "searchCustomerName": {type : 'input'},  // 거래처명
+    "searchMaker": {type : 'input'},                // MAKER
+    "searchModel": {type : 'input'},                  // MODEL
+    "searchItem": {type : 'input'},              // ITEM
+    "searchCreatedBy": {type : 'input'},        // 등록직원명
+
+    //... 앞으로 인풋태그 관련된 전체 태그 정보들을 넣는다.
 }
+
+
+
+
+
+
+
 export const refWriteInitial = {
     "documentNumber": 1,
     "writtenDate": "2024-09-11",
