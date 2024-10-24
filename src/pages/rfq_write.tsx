@@ -84,7 +84,7 @@ export default function rqfWrite() {
                     }}>
                         <div>
                             <div style={{paddingBottom: 3}}>담당자</div>
-                            <Input id={'customerName'} size={'small'}/>
+                            <Input id={'inCharge'} size={'small'}/>
                         </div>
                     </Card>
 
@@ -96,21 +96,21 @@ export default function rqfWrite() {
                         <TwinInputBox>
                             <div>
                                 <div style={{paddingBottom: 3}}>상호명</div>
-                                <Input size={'small'}/>
+                                <Input id={'customerName'} size={'small'}/>
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>담당자</div>
-                                <Input size={'small'}/>
+                                <Input id={'managerName'} size={'small'}/>
                             </div>
                         </TwinInputBox>
                         <TwinInputBox>
                             <div>
                                 <div style={{paddingBottom: 3}}>전화번호</div>
-                                <Input size={'small'}/>
+                                <Input id={'phoneNumber'} size={'small'}/>
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>팩스/이메일</div>
-                                <Input size={'small'}/>
+                                <Input id={'faxNumber'} size={'small'}/>
                             </div>
                         </TwinInputBox>
                     </Card>
@@ -122,19 +122,19 @@ export default function rqfWrite() {
                     }}>
                         <div style={{paddingTop: 8}}>
                             <div style={{paddingBottom: 3}}>MAKER</div>
-                            <Input size={'small'}/>
+                            <Input id={'maker'} size={'small'}/>
                         </div>
                         <div style={{paddingTop: 8}}>
                             <div style={{paddingBottom: 3}}>ITEM</div>
-                            <Input size={'small'}/>
+                            <Input id={'item'} size={'small'}/>
                         </div>
                         <div style={{paddingTop: 8}}>
                             <div style={{paddingBottom: 3}}>비고란</div>
-                            <Input size={'small'}/>
+                            <Input id={'remarks'} size={'small'}/>
                         </div>
                         <div style={{paddingTop: 8}}>
                             <div style={{paddingBottom: 3}}>지시사항</div>
-                            <TextArea size={'small'}/>
+                            <TextArea id={'instructions'} size={'small'}/>
                         </div>
                     </Card>
                 </Card>

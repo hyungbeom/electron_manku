@@ -39,9 +39,10 @@ export const rfqWriteInitial = {
 export const subRfqWriteInitial = {
     "model": "",
     "quantity": 0,
+    "unit":'',
     "currency": "krw",
     "net": 0,
-    "currencyUnit": "ea",
+    "unitPrice": 0,
     "deliveryDate": "",
     "content": "",
     "replyDate": "",

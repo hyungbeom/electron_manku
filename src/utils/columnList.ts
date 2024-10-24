@@ -44,23 +44,31 @@ export const estimateWriteColumns = [
 
 export const rfqWriteColumns = [
     {
-        title: '작성일자',
-        dataIndex: 'searchDate',
-        key: 'searchDate',
-        fixed: 'left',
-
-    },
-    {
-        title: '거래처명',
-        dataIndex: 'searchCustomerName',
-        key: 'searchCustomerName',
+        title: 'Model',
+        dataIndex: 'model',
+        key: 'model',
         fixed: 'left',
     },
     {
-        title: '금액',
-        dataIndex: 'amount',
-        key: 'amount',
+        title: '수량',
+        dataIndex: 'quantity',
+        key: 'quantity',
         fixed: 'left',
+    },  {
+        title: '단위',
+        dataIndex: 'unit',
+        key: 'unit',
+        fixed: 'left',
+    },
+    {
+        title: 'CURR',
+        dataIndex: 'currency',
+        key: 'currency',
+    },
+    {
+        title: 'NET/P',
+        dataIndex: 'net',
+        key: 'net',
     },
     {
         title: '단가',
@@ -69,63 +77,24 @@ export const rfqWriteColumns = [
         fixed: 'left',
     },
     {
-        title: 'MAKER',
-        dataIndex: 'maker',
-        key: 'maker',
+        title: '납기',
+        dataIndex: 'deliveryDate',
+        key: 'deliveryDate',
     },
     {
-        title: 'ITEM',
-        dataIndex: 'item',
-        key: 'item',
+        title: '내용',
+        dataIndex: 'content',
+        key: 'content',
     },
     {
-        title: 'MODEL',
-        dataIndex: 'model',
-        key: 'model',
+        title: '회신일',
+        dataIndex: 'replyDate',
+        key: 'replyDate',
     },
     {
-        title: '수량',
-        dataIndex: 'quantity',
-        key: 'quantity',
-
-    },
-    {
-        title: '단위',
-        dataIndex: 'unit',
-        key: 'unit',
-
-    },
-    {
-        title: '문서번호',
-        dataIndex: 'searchDocumentNumber',
-        key: 'searchDocumentNumber',
-    },
-    {
-        title: 'CURR',
-        dataIndex: 'currency',
-        key: 'currency',
-    },    {
-        title: 'NET',
-        dataIndex: 'net',
-        key: 'net',
-    },  {
-        title: '화폐단위',
-        dataIndex: 'payUnit',
-        key: 'payUnit',
-    }, {
-        title: '코드',
-        dataIndex: 'agencyCode',
-        key: 'agencyCode',
-    }, {
-        title: '등록자',
-        dataIndex: 'writer',
-        key: 'writer',
-        fixed: 'right',
-    },  {
-        title: '등록일자',
-        dataIndex: 'registDate',
-        key: 'registDate',
-        fixed: 'right',
+        title: '비고',
+        dataIndex: 'remarks',
+        key: 'remarks',
     },
 ];
 
