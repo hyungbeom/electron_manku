@@ -6,7 +6,7 @@ export const TagTypeList = {
     "quantity": {type : 'inputNumber'},
 
     "currency": {type : 'select', boxList : ['USD', 'EUR', 'JPY', 'KRW', 'GBP']},
-    "net": {type : 'input'},
+    "net": {type : 'inputNumber'},
 
     "currencyUnit": {type : 'select', boxList : ['EA', 'SET', 'M', 'FEAT', 'ROLL', 'BOX','G','KG','PACK', 'INCH', 'MOQ']},
     "deliveryDate": {type : 'input'},
@@ -22,6 +22,7 @@ export const TagTypeList = {
     "searchModel": {type : 'input'},                  // MODEL
     "searchItem": {type : 'input'},              // ITEM
     "searchCreatedBy": {type : 'input'},        // 등록직원명
+    "unit": {type : 'select', boxList : ['EA', 'SET', 'M', 'FEAT', 'ROLL', 'BOX','G','KG','PACK', 'INCH', 'MOQ']},               // 단위
 
     //... 앞으로 인풋태그 관련된 전체 태그 정보들을 넣는다.
 }

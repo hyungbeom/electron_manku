@@ -1,94 +1,117 @@
 import React, {useState} from "react";
 import Input from "antd/lib/input/Input";
-import Select from "antd/lib/Select";
-import {
-    estimateInfo,
-    estimateReadInfo,
-    estimateReadInitial,
-    estimateTotalWriteInfo, estimateTotalWriteInitial,
-    estimateWriteInitial
-} from "@/utils/common";
 import LayoutComponent from "@/component/LayoutComponent";
 import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
-import DatePicker from 'antd/lib/date-picker'
-import Button from "antd/lib/button";
-import {AuditOutlined, FormOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
-import moment from "moment";
+import TextArea from "antd/lib/input/TextArea";
+import {FileSearchOutlined} from "@ant-design/icons";
+import {
+    estimateReadColumns,
+    estimateTotalWriteColumns,
+    estimateWriteColumns,
+    rfqWriteColumns
+} from "@/utils/columnList";
+import DatePicker from "antd/lib/date-picker";
+import {estimateWriteInitial, subRfqWriteInitial} from "@/utils/initialList";
+import {subRfqWriteInfo} from "@/utils/modalDataList";
+import {estimateTotalWriteInfo} from "@/utils/common";
+import Select from "antd/lib/select";
 
-const {RangePicker} = DatePicker;
+const {RangePicker} = DatePicker
 
-export default function EstimateTotalWrite() {
+const TwinInputBox = ({children}) => {
+    return <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: 5, paddingTop: 8}}>
+        {children}
+    </div>
+}
+
+export default function EstimateRead() {
     const sub = {
-        validityPeriod : 1
+        validityPeriod: 1
     }
 
-    const [info, setInfo] = useState(estimateTotalWriteInitial)
+    const [info, setInfo] = useState(estimateWriteInitial)
 
-    const [date, setDate] = useState(null);
 
-    function onChangeFunc(e){
+    function onChange(e) {
+
         let bowl = {}
         bowl[e.target.id] = e.target.value;
-        setInfo(v=>{
+
+        setInfo(v => {
             return {...v, ...bowl}
-        } )
+        })
     }
 
-    function selectFunc(e){
-        let bowl = {}
-        bowl['searchType'] = e;
-        setInfo(v=>{
-            return {...v, ...bowl}
-        } )
 
-    }
-
-    function searchFunc(e){
-        console.log(info,'::')
-    }
-
-    function datePickerFunc(e){
-        console.log(moment(e[0]),'::')
-    }
     return <>
         <LayoutComponent>
+            <div style={{display: 'grid', gridTemplateColumns: '350px 1fr', height: '100%', gridColumnGap: 5}}>
+                <Card title={'통합견적서 작성'} style={{fontSize: 12, border: '1px solid lightGray'}}>
+                    <Card  size={'small'} style={{
+                        fontSize: 13,
+                        marginTop: 20,
+                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                    }}>
 
-            <div style={{display: 'grid', gridTemplateColumns: '400px 1fr', height: '100vh',gridColumnGap : 5}}>
-                <Card title={'통합견적서 작성'} style={{fontSize: 12, border : '1px solid lightGray'}}>
-                    {Object.keys(info).map(v => {
 
-                        switch (estimateTotalWriteInfo[v]?.type) {
-                            case 'input' :
-                                return <div style={{width : `${estimateTotalWriteInfo[v]?.size -1}%`, float : 'left', marginLeft : 3}}>
-                                    <div>{estimateTotalWriteInfo[v]?.title}</div>
-                                    <Input id={v} style={{margin : `7px 0`, fontSize : 11, height : 28}} onChange={onChangeFunc}/></div>
-                            case 'selectBox' :
-                                return  <div style={{width : `${estimateTotalWriteInfo[v]?.size -1}%`, float : 'left', marginLeft : 3}}>
-                                    <div>{estimateTotalWriteInfo[v]?.title}</div>
-                                    <Select id={v} onChange={selectFunc} defaultValue={0} options={
-                                        estimateTotalWriteInfo[v]?.boxList?.map((src, idx) => {
-                                            return {value: idx, label: src}
-                                        })
-                                    } style={{margin : `7px 0`, fontSize : 11, width : '100%', height : 28}}>
-                                    </Select></div>
-                            case 'searchInput' :
-                                return  <div style={{width : `${estimateTotalWriteInfo[v]?.size -1}%`, float : 'left', marginLeft : 3}}>
-                                    <div>{estimateTotalWriteInfo[v]?.title}</div>
-                                    <Input id={v} style={{margin : `7px 0`, fontSize : 11, height : 28}}suffix={'search'}/></div>
-                            case 'datePicker' :
-                                return  <div style={{width : `${estimateTotalWriteInfo[v]?.size -1}%`, float : 'left', marginLeft : 3}}>
-                                    <div>{estimateTotalWriteInfo[v]?.title}</div>
-                                    <RangePicker onChange={datePickerFunc} style={{margin : `7px 0`, fontSize : 11, width : '100%', fontSize : 11, height : 28}}/></div>
-                        }
-                    })}
-                    <div style={{display: 'flex', justifyContent: 'space-between', float : 'right', paddingTop : 20}}>
-                        <Button type={'primary'} size={'small'} style={{fontSize: 11}} onClick={searchFunc}><SearchOutlined />검색</Button>
-                        <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft : 5}} onClick={searchFunc}><AuditOutlined />통합발행</Button>
+                        <div style={{paddingTop: 8}}>
+                            <div style={{paddingBottom: 3}}>작성일자</div>
+                            <RangePicker id={'searchStartDate'} size={'small'} style={{width : '100%'}} />
+                        </div>
 
-                    </div>
+                        <div style={{paddingTop: 8}}>
+                            <div style={{paddingBottom: 3}}>검색조건</div>
+                            <Select id={'searchType'} size={'small'} defaultValue={0} options={[
+                                {value: 0, label: '전체'},
+                                {value: 1, label: '주문'},
+                                {value: 2, label: '미주문'}
+                            ]} style={{width : '100%'}}>
+                            </Select>
+                        </div>
+
+                        <div style={{paddingTop: 8}}>
+                            <div style={{paddingBottom: 3}}>문서번호</div>
+                            <Input id={'searchDocumentNumber'} size={'small'} onChange={onChange}/>
+                        </div>
+
+                        <div style={{paddingTop: 8}}>
+                            <div style={{paddingBottom: 3}}>거래처명</div>
+                            <Input id={'searchCustomerName'} size={'small'} onChange={onChange}/>
+                        </div>
+
+                        <div style={{paddingTop: 8}}>
+                            <div style={{paddingBottom: 3}}>MAKER</div>
+                            <Input id={'searchMaker'} size={'small'} onChange={onChange}/>
+                        </div>
+
+                        <div style={{paddingTop: 8}}>
+                            <div style={{paddingBottom: 3}}>대리점코드</div>
+                            <Input id={'agencyCode'} size={'small'} onChange={onChange}/>
+                        </div>
+
+                        <div style={{paddingTop: 8}}>
+                            <div style={{paddingBottom: 3}}>MODEL</div>
+                            <Input id={'searchModel'} size={'small'} onChange={onChange}/>
+                        </div>
+
+                        <div style={{paddingTop: 8}}>
+                            <div style={{paddingBottom: 3}}>ITEM</div>
+                            <Input id={'searchItem'} size={'small'} onChange={onChange}/>
+                        </div>
+                        <div style={{paddingTop: 8}}>
+                            <div style={{paddingBottom: 3}}>등록직원명</div>
+                            <Input id={'searchCreatedBy'} size={'small'} onChange={onChange}/>
+                        </div>
+                    </Card>
+
+
+
                 </Card>
-                <CustomTable/>
+
+
+                <CustomTable columns={estimateTotalWriteColumns} initial={subRfqWriteInitial} dataInfo={subRfqWriteInfo}/>
+
             </div>
         </LayoutComponent>
     </>

@@ -1,17 +1,21 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Input from "antd/lib/input/Input";
-import Select from "antd/lib/Select";
-import {estimateInfo, estimateTotalWriteColumn, estimateWriteInitial} from "@/utils/common";
 import LayoutComponent from "@/component/LayoutComponent";
 import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
 import TextArea from "antd/lib/input/TextArea";
-import {FileSearchOutlined, FormOutlined, SaveOutlined} from "@ant-design/icons";
-import Button from "antd/lib/button";
+import {FileSearchOutlined, RetweetOutlined, SaveOutlined} from "@ant-design/icons";
 import {rfqWriteColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
 import {rfqWriteInitial, subRfqWriteInitial} from "@/utils/initialList";
 import {subRfqWriteInfo} from "@/utils/modalDataList";
+import moment from "moment";
+import Button from "antd/lib/button";
+import message from "antd/lib/message";
+import {getData} from "@/manage/function/api";
+import {wrapper} from "@/store/store";
+import initialServerRouter from "@/manage/function/initialServerRouter";
+import {setUserInfo} from "@/store/user/userSlice";
 
 const TwinInputBox = ({children}) => {
     return <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: 5, paddingTop: 8}}>
@@ -25,7 +29,14 @@ export default function rqfWrite() {
     }
 
     const [info, setInfo] = useState(rfqWriteInitial)
-    const [tableInfo, setTableInfo] = useState([])
+
+
+    useEffect(() => {
+        let copyData = {...rfqWriteInitial}
+        copyData['writtenDate'] = moment();
+        setInfo(copyData)
+    }, [])
+
 
     function onChange(e) {
 
@@ -37,7 +48,23 @@ export default function rqfWrite() {
         })
     }
 
+    async function saveFunc() {
+        if (!info['estimateRequestDetailList'].length) {
+            message.warn('하위 데이터 1개 이상이여야 합니다')
+        } else {
+            const copyData = {...info}
+            copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
+
+            await getData.post('estimate/addEstimateRequest', copyData).then(v => {
+                console.log(v, ':::')
+            })
+        }
+
+    }
+
     console.log(info,':::')
+
+    // console.log(moment(info['writtenDate']).format('YYYY-MM-DD'),'??')
     return <>
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateColumns: '350px 1fr', height: '100%', gridColumnGap: 5}}>
@@ -49,11 +76,18 @@ export default function rqfWrite() {
                         <TwinInputBox>
                             <div>
                                 <div style={{paddingBottom: 3}}>INQUIRY NO.</div>
-                                <Input disabled={true} size={'small'} onChange={onChange}/>
+                                <Input disabled={true} size={'small'}/>
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>작성일</div>
-                                <DatePicker id={'writtenDate'} size={'small'}/>
+                                <DatePicker value={info['writtenDate']}
+                                            onChange={(date, dateString) => onChange({
+                                                target: {
+                                                    id: 'writtenDate',
+                                                    value: date
+                                                }
+                                            })
+                                            } id={'writtenDate'} size={'small'}/>
                             </div>
                         </TwinInputBox>
                     </Card>
@@ -67,12 +101,12 @@ export default function rqfWrite() {
                         <TwinInputBox>
                             <div>
                                 <div style={{paddingBottom: 3}}>대리점코드</div>
-                                <Input id={'agencyCode'} onChange={onChange} size={'small'}
-                                       suffix={<FileSearchOutlined/>}/>
+                                <Input id={'agencyCode'} value={info['agencyCode']} onChange={onChange} size={'small'}
+                                       suffix={<FileSearchOutlined style={{cursor: 'pointer'}}/>}/>
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>대리점명</div>
-                                <Input id={'agencyName'} onChange={onChange} size={'small'}/>
+                                <Input id={'agencyName'} value={info['agencyName']} onChange={onChange} size={'small'}/>
                             </div>
                         </TwinInputBox>
                     </Card>
@@ -84,7 +118,7 @@ export default function rqfWrite() {
                     }}>
                         <div>
                             <div style={{paddingBottom: 3}}>담당자</div>
-                            <Input id={'customerName'} size={'small'}/>
+                            <Input id={'managerName'} value={info['managerName']} onChange={onChange} size={'small'}/>
                         </div>
                     </Card>
 
@@ -96,21 +130,24 @@ export default function rqfWrite() {
                         <TwinInputBox>
                             <div>
                                 <div style={{paddingBottom: 3}}>상호명</div>
-                                <Input size={'small'}/>
+                                <Input id={'customerName'} value={info['customerName']} onChange={onChange}
+                                       size={'small'} suffix={<FileSearchOutlined style={{cursor: 'pointer'}}/>}/>
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>담당자</div>
-                                <Input size={'small'}/>
+                                <Input id={'managerName'} value={info['managerName']} onChange={onChange}
+                                       size={'small'}/>
                             </div>
                         </TwinInputBox>
                         <TwinInputBox>
                             <div>
                                 <div style={{paddingBottom: 3}}>전화번호</div>
-                                <Input size={'small'}/>
+                                <Input id={'phoneNumber'} value={info['phoneNumber']} onChange={onChange}
+                                       size={'small'}/>
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>팩스/이메일</div>
-                                <Input size={'small'}/>
+                                <Input id={'faxNumber'} value={info['faxNumber']} onChange={onChange} size={'small'}/>
                             </div>
                         </TwinInputBox>
                     </Card>
@@ -122,27 +159,51 @@ export default function rqfWrite() {
                     }}>
                         <div style={{paddingTop: 8}}>
                             <div style={{paddingBottom: 3}}>MAKER</div>
-                            <Input size={'small'}/>
+                            <Input id={'maker'} value={info['maker']} onChange={onChange} size={'small'}/>
                         </div>
                         <div style={{paddingTop: 8}}>
                             <div style={{paddingBottom: 3}}>ITEM</div>
-                            <Input size={'small'}/>
+                            <Input id={'item'} value={info['item']} onChange={onChange} size={'small'}/>
                         </div>
                         <div style={{paddingTop: 8}}>
                             <div style={{paddingBottom: 3}}>비고란</div>
-                            <Input size={'small'}/>
+                            <Input id={'remarks'} value={info['remarks']} onChange={onChange} size={'small'}/>
                         </div>
                         <div style={{paddingTop: 8}}>
                             <div style={{paddingBottom: 3}}>지시사항</div>
-                            <TextArea size={'small'}/>
+                            <TextArea id={'instructions'} value={info['instructions']} onChange={onChange}
+                                      size={'small'}/>
+                        </div>
+
+                        <div style={{paddingTop: 20, textAlign: 'right'}}>
+                            <Button type={'primary'} style={{marginRight: 8}}
+                                    onClick={saveFunc}><SaveOutlined/>저장</Button>
+                            <Button type={'danger'}><RetweetOutlined/>초기화</Button>
                         </div>
                     </Card>
                 </Card>
 
 
-                <CustomTable columns={rfqWriteColumns} initial={subRfqWriteInitial} dataInfo={subRfqWriteInfo}/>
+                <CustomTable  columns={rfqWriteColumns} initial={subRfqWriteInitial} dataInfo={subRfqWriteInfo} setInfo={setInfo} info={info['estimateRequestDetailList']} />
 
             </div>
         </LayoutComponent>
     </>
 }
+
+export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
+
+
+    const userAgent = ctx.req.headers['user-agent'];
+    let param = {}
+
+    const {userInfo} = await initialServerRouter(ctx, store);
+
+    console.log(userInfo,'userInfo:')
+    if (userInfo) {
+        store.dispatch(setUserInfo(userInfo));
+    }
+
+
+    return param
+})
