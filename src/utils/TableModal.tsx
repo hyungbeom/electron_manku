@@ -43,7 +43,7 @@ export default function TableModal({data, dataInfo}) {
         <Card title={'의뢰작성 내용 추가'} style={{marginTop: 30}}>
             {Object.keys(data).map(v => {
 
-                switch (TagTypeList[v].type) {
+                switch (TagTypeList??[][v].type) {
                     case 'input' :
                         return <div style={{paddingTop: 8}}>
                             <div>{dataInfo[v]?.title}</div>

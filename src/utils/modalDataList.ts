@@ -14,3 +14,37 @@ export const subRfqWriteInfo = {
     "replyDate":  {title : '회신일'},
     "remarks":  {title : '비고'},
 }
+
+
+export const subRfqReadInfo = {
+    "model": {title : 'MODEL'},
+    "quantity": {title : '수량'},
+    "unit": {title : '수량'},
+    "currency": {title : 'CURR'},
+    "net": {title : 'NET/P'},
+    // "sentStatus": {title : '납기'},
+    // "serialNumber": {title : '시리얼넘버'},
+    // "replySummaryID": {title : '시리얼넘버'},
+    "unitPrice": {title : '단가'},
+    // "currencyUnit":   {title : '단위'},
+    "deliveryDate": {title : '납기'},
+    "content": {title : '내용'},
+    "replyDate":  {title : '회신일'},
+    "remarks":  {title : '비고'},
+}
+
+export const subRfqMailSendInfo = {
+    "writtenDate": {title : '작성일자'},
+    "documentNumberFull": {title : '문서번호'},
+    "agencyCode": {title : '대리점코드'},
+    "agencyName": {title : '거래처명'},
+    "maker": {title : 'MAKER'},
+    "item": {title : 'ITEM'},
+    "model": {title : 'MODEL'},
+    "quantity": {title : '수량'},
+    "unit": {title : '단위'},
+    "isSent": {title : '전송여부'},
+    "attachment": {title : '첨부파일'},
+    "writer":  {title : '등록자'},
+    "remarks":  {title : '비고'},
+}

@@ -1,14 +1,13 @@
 import React, {useState} from "react";
 import Input from "antd/lib/input/Input";
 import Select from "antd/lib/Select";
-import {estimateInfo, estimateTotalWriteColumn, estimateWriteInitial} from "@/utils/common";
 import LayoutComponent from "@/component/LayoutComponent";
 import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
 import TextArea from "antd/lib/input/TextArea";
 import {FileSearchOutlined, FormOutlined, SaveOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
-import {rfqWriteColumns} from "@/utils/columnList";
+import {subRfqWriteColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
 import {rfqWriteInitial, subRfqWriteInitial} from "@/utils/initialList";
 import {subRfqWriteInfo} from "@/utils/modalDataList";
@@ -49,11 +48,11 @@ export default function rqfWrite() {
                         <TwinInputBox>
                             <div>
                                 <div style={{paddingBottom: 3}}>INQUIRY NO.</div>
-                                <Input disabled={true} size={'small'} onChange={onChange}/>
+                                <Input id={'documentNumberFull'} disabled={true} size={'small'} onChange={onChange}/>
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>작성일</div>
-                                <DatePicker id={'writtenDate'} size={'small'}/>
+                                <DatePicker id={'writtenDate'} size={'small'} onChange={onChange}/>
                             </div>
                         </TwinInputBox>
                     </Card>
@@ -84,7 +83,7 @@ export default function rqfWrite() {
                     }}>
                         <div>
                             <div style={{paddingBottom: 3}}>담당자</div>
-                            <Input id={'inCharge'} size={'small'}/>
+                            <Input id={'managerName'} size={'small'} onChange={onChange}/>
                         </div>
                     </Card>
 
@@ -96,21 +95,21 @@ export default function rqfWrite() {
                         <TwinInputBox>
                             <div>
                                 <div style={{paddingBottom: 3}}>상호명</div>
-                                <Input id={'customerName'} size={'small'}/>
+                                <Input id={'customerName'} size={'small'} onChange={onChange}/>
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>담당자</div>
-                                <Input id={'managerName'} size={'small'}/>
+                                <Input id={'customerManager'} size={'small'} onChange={onChange}/>
                             </div>
                         </TwinInputBox>
                         <TwinInputBox>
                             <div>
                                 <div style={{paddingBottom: 3}}>전화번호</div>
-                                <Input id={'phoneNumber'} size={'small'}/>
+                                <Input id={'phoneNumber'} size={'small'} onChange={onChange}/>
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>팩스/이메일</div>
-                                <Input id={'faxNumber'} size={'small'}/>
+                                <Input id={'faxNumber'} size={'small'} onChange={onChange}/>
                             </div>
                         </TwinInputBox>
                     </Card>
@@ -122,25 +121,25 @@ export default function rqfWrite() {
                     }}>
                         <div style={{paddingTop: 8}}>
                             <div style={{paddingBottom: 3}}>MAKER</div>
-                            <Input id={'maker'} size={'small'}/>
+                            <Input id={'maker'} size={'small'} onChange={onChange}/>
                         </div>
                         <div style={{paddingTop: 8}}>
                             <div style={{paddingBottom: 3}}>ITEM</div>
-                            <Input id={'item'} size={'small'}/>
+                            <Input id={'item'} size={'small'} onChange={onChange}/>
                         </div>
                         <div style={{paddingTop: 8}}>
                             <div style={{paddingBottom: 3}}>비고란</div>
-                            <Input id={'remarks'} size={'small'}/>
+                            <Input id={'remarks'} size={'small'} onChange={onChange}/>
                         </div>
                         <div style={{paddingTop: 8}}>
                             <div style={{paddingBottom: 3}}>지시사항</div>
-                            <TextArea id={'instructions'} size={'small'}/>
+                            <TextArea id={'instructions'} size={'small'} onChange={onChange}/>
                         </div>
                     </Card>
                 </Card>
 
 
-                <CustomTable columns={rfqWriteColumns} initial={subRfqWriteInitial} dataInfo={subRfqWriteInfo}/>
+                <CustomTable columns={subRfqWriteColumns} initial={subRfqWriteInitial} dataInfo={subRfqWriteInfo}/>
 
             </div>
         </LayoutComponent>

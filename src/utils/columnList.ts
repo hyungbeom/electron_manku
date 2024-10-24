@@ -42,7 +42,7 @@ export const estimateWriteColumns = [
 
 
 
-export const rfqWriteColumns = [
+export const subRfqWriteColumns = [
     {
         title: 'Model',
         dataIndex: 'model',
@@ -99,29 +99,22 @@ export const rfqWriteColumns = [
 ];
 
 
-export const rfqReadColumns = [
+export const subRfqReadColumns = [
     {
         title: '작성일자',
-        dataIndex: 'searchDate',
-        key: 'searchDate',
+        dataIndex: 'writtenDate',
+        key: 'writtenDate',
         fixed: 'left',
-
     },
-
+    {
+        title: '문서번호',
+        dataIndex: 'documentNumberFull',
+        key: 'documentNumberFull',
+    },
     {
         title: '거래처명',
-        dataIndex: 'searchCustomerName',
-        key: 'searchCustomerName',
-        fixed: 'left',
-    },  {
-        title: '금액',
-        dataIndex: 'amount',
-        key: 'amount',
-        fixed: 'left',
-    },{
-        title: '단가',
-        dataIndex: 'unitPrice',
-        key: 'unitPrice',
+        dataIndex: 'customerName',
+        key: 'customerName',
         fixed: 'left',
     },
     {
@@ -143,45 +136,121 @@ export const rfqReadColumns = [
         title: '수량',
         dataIndex: 'quantity',
         key: 'quantity',
-
     },
     {
         title: '단위',
         dataIndex: 'unit',
         key: 'unit',
-
-    },    {
-        title: '문서번호',
-        dataIndex: 'searchDocumentNumber',
-        key: 'searchDocumentNumber',
-    },   {
+    },
+    {
         title: 'CURR',
         dataIndex: 'currency',
         key: 'currency',
-    },    {
+    },
+    {
         title: 'NET',
         dataIndex: 'net',
         key: 'net',
-    },  {
-        title: '화폐단위',
+    },
+    {
+        title: '납기',
         dataIndex: 'payUnit',
         key: 'payUnit',
     },
     {
-        title: '코드',
-        dataIndex: 'agencyCode',
-        key: 'agencyCode',
+        title: '내용',
+        dataIndex: 'contents',
+        key: 'content',
     },
     {
         title: '등록자',
         dataIndex: 'writer',
         key: 'writer',
-        fixed: 'right',
     },
     {
-        title: '등록일자',
-        dataIndex: 'registDate',
-        key: 'registDate',
+        title: '비고',
+        dataIndex: 'remarks',
+        key: 'remarks',
+    },
+    {
+        title: '수정일자',
+        dataIndex: 'editDate',
+        key: 'editDate',
         fixed: 'right',
     },
+];
+
+
+
+export const subMailSendColumns = [
+    {
+        title: '작성일자',
+        dataIndex: 'writtenDate',
+        key: 'writtenDate',
+        fixed: 'left',
+    },
+    {
+        title: '문서번호',
+        dataIndex: 'documentNumberFull',
+        key: 'documentNumberFull',
+    },
+    {
+        title: '대리점코드',
+        dataIndex: 'agencyCode',
+        key: 'agencyCode',
+    },
+    {
+        title: '거래처명',
+        dataIndex: 'customerName',
+        key: 'customerName',
+    },
+    {
+        title: 'MAKER',
+        dataIndex: 'maker',
+        key: 'maker',
+    },
+    {
+        title: 'ITEM',
+        dataIndex: 'item',
+        key: 'item',
+    },
+    {
+        title: 'MODEL',
+        dataIndex: 'model',
+        key: 'model',
+    },
+    {
+        title: '수량',
+        dataIndex: 'quantity',
+        key: 'quantity',
+    },
+    {
+        title: '단위',
+        dataIndex: 'unit',
+        key: 'unit',
+    },
+
+    {
+        title: '전송여부',
+        dataIndex: 'isSent',
+        key: 'isSent',
+    },
+    {
+        title: '첨부파일',
+        dataIndex: 'attachment',
+        key: 'attachment',
+    },
+
+
+    {
+        title: '등록자',
+        dataIndex: 'writer',
+        key: 'writer',
+    },
+    {
+        title: '비고',
+        dataIndex: 'remarks',
+        key: 'remarks',
+    },
+
 ];

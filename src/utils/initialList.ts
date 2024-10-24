@@ -21,15 +21,16 @@ export const estimateWriteInitial = {
     "remarks": "",          // 비고란
 }
 export const rfqWriteInitial = {
+    "documentNumberFull": "",
     "writtenDate": "",
     "agencyCode": "",
     "agencyName": "",
     "customerCode": "",
+    "managerName": '', // 담당자
     "customerName": "", // 상호명
     "customerManager" : '', // customer 담당자
     "phoneNumber": "", // 전화번호
     "faxNumber": "", // 팩스번호
-    "managerName": '', // 담당자
     "maker": "",
     "item": "",
     "remarks": "",
@@ -37,14 +38,66 @@ export const rfqWriteInitial = {
 }
 
 export const subRfqWriteInitial = {
-    "model": "",
-    "quantity": 0,
-    "unit":'',
-    "currency": "krw",
-    "net": 0,
-    "unitPrice": 0,
-    "deliveryDate": "",
-    "content": "",
-    "replyDate": "",
-    "remarks": ""
+    // "model": "",
+    // "quantity": 0,
+    // "unit":'ea',
+    // "currency": "krw",
+    // "net": 0,
+    // "unitPrice": 0,
+    // "deliveryDate": "",
+    // "content": "",
+    // "replyDate": "",
+    // "remarks": ""
 }
+
+export const rfqReadInitial = {
+    "searchStartDate": "",
+    "searchEndDate": "",
+    "searchDocumentNumber": "",
+    "searchType": "",
+    "searchCreatedBy": "",
+    "searchCustomerName": "",
+    "searchMaker": "",
+    "searchModel": 0,
+    "searchItem":'ea',
+}
+
+export const subRfqReadInitial = {
+    "startDate": "",
+    "endDate": "",
+    "documentNumberFull":"",
+    "agencyCode": "",
+    "agencyName": "",
+    "searchTypeSend": 0,
+    "searchTypeReply": 0,
+    "customerName": "",
+    "managerName": "",
+}
+
+export const rfqMailSendInitial = {
+    "startDate": "",
+    "endDate": "",
+    "documentNumberFull":"",
+    "agencyCode": "",
+    "agencyName": "",
+    "searchTypeSend": 0,
+    "searchTypeReply": 0,
+    "customerName": "",
+}
+
+export const subRfqMailSendInitial = {
+    "writtenDate": "",
+    "documentNumberFull":"",
+    "agencyCode": "",
+    "agencyName": "",
+    "maker": "",
+    "item": "",
+    "model": "",
+    "quantity": "",
+    "unit": "ea",
+    "isSent": false,
+    "attachment": null,
+    "writer": "",
+    "remarks": "",
+}
+

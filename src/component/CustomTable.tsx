@@ -41,7 +41,7 @@ const data = [
 ];
 
 const CustomTable = ({columns, initial, dataInfo}) => {
-    const defaultCheckedList = columns.map((item) => item.key);
+    const defaultCheckedList = columns?.map((item) => item.key);
     const [checkedList, setCheckedList] = useState(defaultCheckedList);
     const [open, setOpen] = useState(false);
 
@@ -51,7 +51,7 @@ const CustomTable = ({columns, initial, dataInfo}) => {
     };
 
     // 선택된 컬럼에 해당하는 항목만 필터링하여 테이블에 표시
-    const visibleColumns = columns.filter((item) => checkedList.includes(item.key));
+    const visibleColumns = columns?.filter((item) => checkedList.includes(item.key));
 
     return (
         <div style={{overflow: 'auto', maxHeight: '100%', maxWidth: '100%'}}>
