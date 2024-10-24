@@ -19,7 +19,7 @@ function createWindow() {
         }
     });
 
-    mainWindow.loadURL('http://192.168.219.102:3000'); // 올바른 URL 확인
+    mainWindow.loadURL('http://localhost:3000'); // 올바른 URL 확인
 }
 
 app.whenReady().then(createWindow);

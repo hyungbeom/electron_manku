@@ -1,13 +1,20 @@
 import React, {useState} from "react";
 import Input from "antd/lib/input/Input";
 import Select from "antd/lib/Select";
-import {estimateInfo, estimateReadInfo, estimateReadInitial, estimateWriteInitial} from "@/utils/common";
+import {
+    estimateInfo,
+    estimateReadInfo,
+    estimateReadInitial,
+    estimateTotalInfo, estimateTotalInitial,
+    estimateWriteInitial
+} from "@/utils/common";
 import LayoutComponent from "@/component/LayoutComponent";
 import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
 import DatePicker from 'antd/lib/date-picker'
 import Button from "antd/lib/button";
 import {FormOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
+import {estimateTotalColumns} from "@/utils/column";
 
 const {RangePicker} = DatePicker;
 
@@ -16,7 +23,7 @@ export default function Estimate_read() {
         validityPeriod : 1
     }
 
-    const [info, setInfo] = useState(estimateReadInitial)
+    const [info, setInfo] = useState(estimateTotalInitial)
 
     const [date, setDate] = useState(null);
 
@@ -30,9 +37,9 @@ export default function Estimate_read() {
         <LayoutComponent>
 
             <div style={{display: 'grid', gridTemplateColumns: '400px 1fr', height: '100vh',gridColumnGap : 5}}>
-                <Card title={'견적서 조회'} style={{fontSize: 12, border : '1px solid lightGray'}}>
+                <Card title={'통합 견적서 작성'} style={{fontSize: 12, border : '1px solid lightGray'}}>
                     {Object.keys(info).map(v => {
-                        switch (estimateReadInfo[v]?.type) {
+                        switch (estimateTotalInfo[v]?.type) {
                             case 'input' :
                                 return <div style={{width : `${estimateReadInfo[v]?.size -1}%`, float : 'left', marginLeft : 3}}>
                                     <div>{estimateReadInfo[v]?.title}</div>
@@ -61,7 +68,7 @@ export default function Estimate_read() {
 
                     </div>
                 </Card>
-                <CustomTable/>
+                <CustomTable columns={estimateTotalColumns}/>
             </div>
         </LayoutComponent>
     </>

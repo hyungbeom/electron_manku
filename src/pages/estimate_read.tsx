@@ -1,13 +1,19 @@
 import React, {useState} from "react";
 import Input from "antd/lib/input/Input";
 import Select from "antd/lib/Select";
-import {estimateInfo, estimateReadInfo, estimateReadInitial, estimateWriteInitial} from "@/utils/common";
+import {
+    estimateInfo,
+    estimateReadInfo,
+    estimateReadInitial,
+    estimateWriteInitial
+} from "@/utils/common";
 import LayoutComponent from "@/component/LayoutComponent";
 import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
 import DatePicker from 'antd/lib/date-picker'
 import Button from "antd/lib/button";
 import {FormOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
+import {estimateReadColumns} from "@/utils/column";
 
 const {RangePicker} = DatePicker;
 
@@ -61,7 +67,7 @@ export default function Estimate_read() {
 
                     </div>
                 </Card>
-                <CustomTable/>
+                <CustomTable columns={estimateReadColumns}/>
             </div>
         </LayoutComponent>
     </>

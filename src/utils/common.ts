@@ -78,3 +78,62 @@ export const estimateReadInfo = {
     searchItem : {type : 'input', title : 'ITEM', size : 50},
     searchCreatedBy : {type : 'input', title : '등록직원명', size : 50},
 }
+
+export const estimateTotalInitial = {
+    searchDocumentNumber : '',
+    searchDate : '',
+    searchType : '',
+    searchCustomerName : '',
+    searchMaker :'',
+    searchAgencyCode: '',
+    searchModel : '',
+    searchItem : '',
+    searchCreatedBy : '',
+}
+
+export const estimateTotalInfo = {
+    searchDocumentNumber : {type : 'input', title : '문서번호', size : 50},
+    searchDate : {type : 'datePicker', title : '작성일자', size : 50},
+    searchCustomerName : {type : 'input', title : '거래처명', size : 50},
+    searchMaker : {type : 'input', title : 'MAKER', size : 50},
+    searchAgencyCode : {type : 'input', title : '대리점코드', size : 50},
+    searchModel : {type : 'input', title : 'MODEL', size : 50},
+    searchItem : {type : 'input', title : 'ITEM', size : 50},
+    searchCreatedBy : {type : 'input', title : '등록직원명', size : 50},
+}
+
+export const requestWriteInitial = {
+    "estimateRequestID": "",
+    "documentNumberFull": "", // INQUIRY No.
+    "writtenDate": "",    // 작성일
+    "agencyCode": "",            // 대리점코드
+    "agencyName": "",            // 대리점코드
+    "customerCode": "",             // CUSTOMER 코드
+    "customerName": "",    // 상호명
+    "managerName": "",      // 담당자
+    "phoneNumber": "",  // 전화번호
+    "faxNumber": "",                // 팩스번호
+    "validityPeriod": "",    // 유효기간
+    "paymentTerms": "",                // 결제조건
+    "shippingTerms": "",             // 운송조건
+    "exchangeRate": "",                  // 환율
+    "estimateManager": "",            // 담당자
+    "email": "",             // E-MAIL
+    "managerPhoneNumber": "",   // 전화번호
+    "managerFaxNumber": "",       // 팩스번호
+    "maker": "",      // MAKER
+    "item": "",      // ITEM
+    "delivery": "",    // Delivery
+    "remarks": "",          // 비고란
+    "estimateDetailList": [
+        {
+            "model": "",   // MODEL
+            "quantity": 0,                  // 수량
+            "unit": "",                   // 단위
+            "currency": "",              // CURR
+            "net": 0,                 // NET/P
+            "unitPrice": 0,           // 단가
+            "amount": 0               // 금액
+        }
+    ]
+}

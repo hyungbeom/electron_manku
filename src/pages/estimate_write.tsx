@@ -8,6 +8,7 @@ import Card from "antd/lib/card/Card";
 import TextArea from "antd/lib/input/TextArea";
 import {FileSearchOutlined, FormOutlined, SaveOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
+import {estimateWriteColumns} from "@/utils/column";
 
 export default function Estimate_write() {
     const sub = {
@@ -66,7 +67,7 @@ export default function Estimate_write() {
 
                     </div>
                 </Card>
-                <CustomTable/>
+                <CustomTable columns={estimateWriteColumns}/>
             </div>
         </LayoutComponent>
     </>
