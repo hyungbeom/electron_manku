@@ -1,32 +1,25 @@
 import React, {useState} from 'react';
-import Table from 'antd/lib/table';
-import Card from 'antd/lib/card/Card';
-import Select from 'antd/lib/select';
-import Button from 'antd/lib/button';
-import {
-    CopyOutlined,
-    DeleteOutlined,
-    DownOutlined,
-    PrinterOutlined,
-    SettingOutlined,
-    UpOutlined
-} from '@ant-design/icons';
-import TableModal from "@/utils/TableModal";
-import {subRfqWriteInitial} from "@/utils/initialList";
+// import { Button, Form, Input, Popconfirm, Table } from 'antd';
+import Table from 'antd/lib/table'
+import Card from "antd/lib/card/Card";
+import Space from "antd/lib/space";
+import Tag from "antd/lib/tag";
+import Button from "antd/lib/button";
+import {CopyOutlined, DeleteOutlined, PrinterOutlined} from "@ant-design/icons";
 
-const {Option} = Select;
+// const {Option} = Select;
 
 const data = [
     {
-        key: '1',
-        name: 'John Brown',
+        key: 'documentNumberFull',
+        model: 'John Brown',
         age: 32,
         address: 'New York No. 1 Lake Park',
         tags: ['nice', 'developer'],
     },
     {
-        key: '2',
-        name: 'Jim Green',
+        key: 'documentNumberFull',
+        model: 'Jim Green',
         age: 42,
         address: 'London No. 1 Lake Park',
         tags: ['loser'],
@@ -54,48 +47,13 @@ const CustomTable = ({columns, initial, dataInfo}) => {
     const visibleColumns = columns.filter((item) => checkedList.includes(item.key));
 
     return (
-        <div style={{overflow: 'auto', maxHeight: '100%', maxWidth: '100%'}}>
-            <Card style={{border: '1px solid lightGray', height : '100%'}}
-                  title={
-                      <>
-                          <span>LIST</span>
-                          <div style={{display: 'flex', justifyContent: 'space-between', width: 170, float: 'right'}}>
-                              <Button type={'primary'} size={'small'} style={{fontSize: 11}}>
-                                  <CopyOutlined/>복사
-                              </Button>
-                              <Button type={'dashed'} size={'small'} style={{fontSize: 11}}>
-                                  <PrinterOutlined/>출력
-                              </Button>
-                          </div>
-                      </>
-                  }>
-
-
-                <TableModal data={subRfqWriteInitial} dataInfo={dataInfo}/>
-                <Button style={{marginBottom: 10, float : 'right'}} onClick={() => setOpen(v => !v)} type={'primary'}><SettingOutlined/>Column
-                    Setting {open ?
-                        <UpOutlined/> : <DownOutlined/>} </Button>
-                {open && <Select
-                    mode="multiple"
-                    style={{width: '100%', marginBottom: '16px'}}
-                    placeholder="Select columns to display"
-                    value={checkedList}
-                    onChange={handleSelectChange}
-                >
-                    {columns.map(({key, title}) => (
-                        <Option key={key} value={key}>
-                            {title}
-                        </Option>
-                    ))}
-                </Select>}
-
-
-
-                <Table style={{fontSize: 11}} size={'large'} columns={visibleColumns} dataSource={data}
-                       scroll={{x: 'max-content'}} />
-            </Card>
-        </div>
+        <Card style={{border: '1px solid lightGray'}}
+              title={<><span>LIST</span><div style={{display: 'flex', justifyContent: 'space-between', width: 170,  float : 'right'}}><Button
+                  type={'primary'} size={'small'} style={{fontSize: 11}}><CopyOutlined/>복사</Button><Button
+                  type={'danger'} size={'small'} style={{fontSize: 11}}><DeleteOutlined/>삭제</Button><Button
+                  type={'dashed'} size={'small'} style={{fontSize: 11}}><PrinterOutlined/>출력</Button></div></>}>
+            <Table style={{fontSize : 11}} size={'small'} columns={columns} dataSource={data}/>
+        </Card>
     );
 };
-
 export default CustomTable;
