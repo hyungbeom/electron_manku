@@ -145,7 +145,7 @@ export default function LayoutComponent({children}) {
                 </Menu>
             </Sider>
             <Layout style={{backgroundColor: '#f5f5f5'}}>
-                <Content style={{padding : 25}}>
+                <Content style={{padding : 5}}>
 
                     {children}
 

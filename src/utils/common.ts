@@ -1,3 +1,42 @@
+
+export const refWriteInitial = {
+    "documentNumber": 1,
+    "writtenDate": "2024-09-11",
+    "agencyCode": "k10",
+    "agencyName": "인텍오토메이션",
+    "customerCode": "1",
+    "customerName": "(주)발해에프유테크",
+    "phoneNumber": "test",
+    "faxNumber": "033-921984109",
+    "customerManagerID": 2,
+    "managerName": null,
+    "maker": "maker",
+    "item": "item",
+    "remarks": "note",
+    "footerTag": null,
+    "createdBy": "sample1",
+    "attachment": "",
+    "instructions": "remarks",
+    "estimateRequestDetailList": [
+        {
+            "model": "model",
+            "quantity": 1,
+            "unit": "ea",
+            "currency": "krw",
+            "net": 60000.00,
+            "sentStatus": null,
+            "serialNumber": 1,
+            "replySummaryID": 43407,
+            "unitPrice": 60000.00,
+            "currencyUnit": "ea",
+            "deliveryDate": "a day ago",
+            "content": "test",
+            "replyDate": "2024-09-27",
+            "remarks": "test"
+        }
+    ]
+}
+
 export const estimateWriteInitial = {
     "documentNumberFull": "", // INQUIRY No.
     "writtenDate": "",    // 작성일
@@ -60,7 +99,7 @@ export const estimateInfo = {
 export const estimateReadInitial = {
     searchDocumentNumber : '',
     searchDate : '',
-    searchType : '',
+    searchType : 0,
     searchCustomerName : '',
     searchMaker :'',
     searchModel : '',
@@ -78,3 +117,107 @@ export const estimateReadInfo = {
     searchItem : {type : 'input', title : 'ITEM', size : 50},
     searchCreatedBy : {type : 'input', title : '등록직원명', size : 50},
 }
+
+
+export const estimateTotalWriteInitial = {
+    searchDocumentNumber : '',
+    searchDate : '',
+    searchCustomerName : '',
+    searchMaker :'',
+    storeCode :'',
+    searchModel : '',
+    searchItem : '',
+    searchCreatedBy : '',
+}
+
+export const estimateTotalWriteInfo = {
+    searchDocumentNumber : {type : 'input', title : '문서번호', size : 50},
+    searchDate : {type : 'datePicker', title : '작성일자', size : 50},
+    searchType : {type : 'selectBox', title : '검색조건',boxList : ['전체','주문','미주문'], size : 50},
+    searchCustomerName : {type : 'input', title : '거래처명', size : 50},
+    searchMaker : {type : 'input', title : 'MAKER', size : 50},
+    storeCode : {type : 'input', title : '대리점코드', size : 50},
+    searchModel : {type : 'input', title : 'MODEL', size : 50},
+    searchItem : {type : 'input', title : 'ITEM', size : 50},
+    searchCreatedBy : {type : 'input', title : '등록직원명', size : 50},
+}
+
+export const estimateTotalWriteColumn = [
+    {
+        title: '작성일자',
+        dataIndex: 'searchDate',
+        key: 'searchDate',
+        fixed: 'left',
+
+    },
+    {
+        title: '문서번호',
+        dataIndex: 'searchDocumentNumber',
+        key: 'searchDocumentNumber',
+    },
+    {
+        title: '코드',
+        dataIndex: 'agencyCode',
+        key: 'agencyCode',
+    },
+    {
+        title: '거래처명',
+        dataIndex: 'searchCustomerName',
+        key: 'searchCustomerName',
+    },
+    {
+        title: 'MAKER',
+        dataIndex: 'maker',
+        key: 'maker',
+    },
+    {
+        title: 'ITEM',
+        dataIndex: 'item',
+        key: 'item',
+    },
+    {
+        title: 'MODEL',
+        dataIndex: 'model',
+        key: 'model',
+    },
+    {
+        title: '수량',
+        dataIndex: 'quantity',
+        key: 'quantity',
+    },
+    {
+        title: '단위',
+        dataIndex: 'unit',
+        key: 'unit',
+    },    {
+        title: 'CURR',
+        dataIndex: 'currency',
+        key: 'currency',
+    },    {
+        title: 'NET',
+        dataIndex: 'net',
+        key: 'net',
+    },  {
+        title: '금액',
+        dataIndex: 'amount',
+        key: 'amount',
+    },  {
+        title: '화폐단위',
+        dataIndex: 'payUnit',
+        key: 'payUnit',
+    },  {
+        title: '단가',
+        dataIndex: 'unitPrice',
+        key: 'unitPrice',
+    },  {
+        title: '등록자',
+        dataIndex: 'writer',
+        key: 'writer',
+    },  {
+        title: '등록일자',
+        dataIndex: 'registDate',
+        key: 'registDate',
+    },
+];
+
+// =============================   data   ================================

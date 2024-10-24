@@ -106,7 +106,7 @@ export default function Main(){
 
     return <>
         <LayoutComponent>
-            <div style={{padding : 25}}>
+            <div style={{padding : 5}}>
             <Card style={{borderRadius : 8}} title={'업무일정'}>
                 <Calendar cellRender={cellRender}  />
             </Card>
