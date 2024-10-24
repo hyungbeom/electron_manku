@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 // import { Button, Form, Input, Popconfirm, Table } from 'antd';
 import Table from 'antd/lib/table'
 import Card from "antd/lib/card/Card";
@@ -7,6 +7,7 @@ import Tag from "antd/lib/tag";
 import Button from "antd/lib/button";
 import {CopyOutlined, DeleteOutlined, PrinterOutlined} from "@ant-design/icons";
 
+// const {Option} = Select;
 
 const data = [
     {
@@ -33,6 +34,18 @@ const data = [
 ];
 
 const CustomTable = ({columns}) => {
+const CustomTable = ({columns, initial, dataInfo}) => {
+    const defaultCheckedList = columns?.map((item) => item.key);
+    const [checkedList, setCheckedList] = useState(defaultCheckedList);
+    const [open, setOpen] = useState(false);
+
+
+    const handleSelectChange = (value) => {
+        setCheckedList(value);
+    };
+
+    // 선택된 컬럼에 해당하는 항목만 필터링하여 테이블에 표시
+    const visibleColumns = columns.filter((item) => checkedList.includes(item.key));
 
     return (
         <Card style={{border: '1px solid lightGray'}}
