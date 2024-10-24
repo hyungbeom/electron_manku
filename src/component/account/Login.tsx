@@ -31,9 +31,9 @@ export default function Login() {
 
     return <>
         <Input id={'memberId'} value={info['memberId']} onChange={infoChange} style={{borderRadius: 5}}
-               placeHolder={'input your id'}/>
+               placeholder={'input your id'}/>
         <Password id={'memberPwd'} value={info['memberPwd']} onChange={infoChange} style={{borderRadius: 5}}
-                  placeHolder={'input your password'}/>
+                  placeholder={'input your password'}/>
         <div style={{textAlign: 'left'}}>
             <Checkbox onChange={onChange} style={{color: 'gray'}}>아이디저장</Checkbox>
         </div>

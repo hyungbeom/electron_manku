@@ -18,12 +18,12 @@ export default function SignUp(){
 
 
     return <>
-        <Input id={'memberId'} value={info['memberId']} onChange={infoChange} style={{borderRadius: 5}} placeHolder={'input your id'}/>
-        <Password id={'memberPwd'} value={info['memberPwd']} onChange={infoChange} style={{borderRadius: 5}} placeHolder={'input your password'}/>
-        <Password id={'memberConfirmPwd'} value={info['memberConfirmPwd']} onChange={infoChange} style={{borderRadius: 5}} placeHolder={'input your confirm password'}/>
-        <Input id={'company'} value={info['company']} onChange={infoChange} style={{borderRadius: 5}} placeHolder={'input your company'}/>
-        <Input id={'homepage'} value={info['homepage']} onChange={infoChange} style={{borderRadius: 5}} placeHolder={'input your homepage'}/>
-        <Input id={'note'} value={info['note']} onChange={infoChange} style={{borderRadius: 5}} placeHolder={'input your note'}/>
+        <Input id={'memberId'} value={info['memberId']} onChange={infoChange} style={{borderRadius: 5}} placeholder={'input your id'}/>
+        <Password id={'memberPwd'} value={info['memberPwd']} onChange={infoChange} style={{borderRadius: 5}} placeholder={'input your password'}/>
+        <Password id={'memberConfirmPwd'} value={info['memberConfirmPwd']} onChange={infoChange} style={{borderRadius: 5}} placeholder={'input your confirm password'}/>
+        <Input id={'company'} value={info['company']} onChange={infoChange} style={{borderRadius: 5}} placeholder={'input your company'}/>
+        <Input id={'homepage'} value={info['homepage']} onChange={infoChange} style={{borderRadius: 5}} placeholder={'input your homepage'}/>
+        <Input id={'note'} value={info['note']} onChange={infoChange} style={{borderRadius: 5}} placeholder={'input your note'}/>
 
 
 

@@ -3,7 +3,8 @@ import Layout, {Content} from "antd/lib/layout/layout";
 import Sider from "antd/lib/layout/Sider";
 import Menu from "antd/lib/menu";
 import {
-    BarcodeOutlined,
+    ArrowLeftOutlined, ArrowRightOutlined,
+    BarcodeOutlined, CaretLeftFilled, CaretRightFilled,
     FormOutlined,
     LeftCircleFilled,
     ProductOutlined,
@@ -71,14 +72,12 @@ export default function LayoutComponent({children}) {
     const [openKeys, setOpenKeys] = useState([]);
 
 
-
     useEffect(() => {
 
         // setOpenKeys([router.pathname.split(/[/_]/)[1]])
 
 
     }, [router.pathname]); // pathname이 변경될 때마다 실행
-
 
 
     const onOpenChange = (keys) => {
@@ -98,6 +97,18 @@ export default function LayoutComponent({children}) {
     }
 
     return <>
+        <div style={{
+            width: 55,
+            backgroundColor: '#f5f5f5',
+            width: '100%',
+            borderBottom: '1px solid lightGray',
+            padding: 10
+        }}>
+
+            <CaretLeftFilled style={{fontSize: 25, cursor: "pointer"}} onClick={() => router.back()}/>
+            <CaretRightFilled style={{fontSize: 25, cursor: 'pointer'}} onClick={() => router.back()}/>
+
+        </div>
         <Layout style={{minHeight: '100vh'}}>
 
 
@@ -132,12 +143,13 @@ export default function LayoutComponent({children}) {
                     onOpenChange={onOpenChange}
                 >
 
-                    <Menu.Item onClick={()=>router.push('/main')}>HOME</Menu.Item>
+                    <Menu.Item onClick={() => router.push('/main')}>HOME</Menu.Item>
 
                     {Object.keys(menuList).map(v => {
                         return <SubMenu key={v} icon={menuList[v].icon} title={menuList[v].title}>
                             {menuList[v].list.map(src => {
-                                return <Menu.Item onClick={()=>moveRouter(src.key)} key={src.key}>{src.title}</Menu.Item>
+                                return <Menu.Item onClick={() => moveRouter(src.key)}
+                                                  key={src.key}>{src.title}</Menu.Item>
                             })}
                         </SubMenu>
                     })}
@@ -145,13 +157,12 @@ export default function LayoutComponent({children}) {
                 </Menu>
             </Sider>
             <Layout style={{backgroundColor: '#f5f5f5'}}>
-                <Content style={{padding : 5}}>
+                <Content style={{padding: 5}}>
 
                     {children}
 
                 </Content>
             </Layout>
         </Layout>
-        }
     </>
 }
