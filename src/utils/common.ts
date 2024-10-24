@@ -1,4 +1,19 @@
 
+
+
+export const TagTypeList = {
+    "model": {type : 'input'},
+    "quantity": {type : 'inputNumber'},
+
+    "currency": {type : 'select', boxList : ['USD', 'EUR', 'JPY', 'KRW', 'GBP']},
+    "net": {type : 'input'},
+
+    "currencyUnit": {type : 'select', boxList : ['EA', 'SET', 'M', 'FEAT', 'ROLL', 'BOX','G','KG','PACK', 'INCH', 'MOQ']},
+    "deliveryDate": {type : 'input'},
+    "content": {type : 'selectInput'},
+    "replyDate": {type : 'date'},
+    "remarks": {type : 'textArea'},
+}
 export const refWriteInitial = {
     "documentNumber": 1,
     "writtenDate": "2024-09-11",

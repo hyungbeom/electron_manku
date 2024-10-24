@@ -13,7 +13,7 @@ const userSlice = createSlice({
     reducers: {
         setUserInfo: (state, action) => {
             const {payload} = action;
-            console.log(payload,'payload:')
+            console.log(payload,'::::???')
             return {...state, ...payload };
         },
         getProductInfo: (state, action) => {

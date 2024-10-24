@@ -1,14 +1,22 @@
 import React, {useState} from 'react';
-// import { Button, Form, Input, Popconfirm, Table } from 'antd';
-import Table from 'antd/lib/table'
-import Card from "antd/lib/card/Card";
-import Checkbox from "antd/lib/checkbox";
+import Table from 'antd/lib/table';
+import Card from 'antd/lib/card/Card';
+import Select from 'antd/lib/select';
+import Button from 'antd/lib/button';
+import {
+    CopyOutlined,
+    DeleteOutlined,
+    DownOutlined,
+    PrinterOutlined,
+    SettingOutlined,
+    UpOutlined
+} from '@ant-design/icons';
+import TableModal from "@/utils/TableModal";
+import {subRfqWriteInitial} from "@/utils/initialList";
 
-import Button from "antd/lib/button";
-import {CopyOutlined, DeleteOutlined, PrinterOutlined} from "@ant-design/icons";
-import {estimateTotalWriteColumn} from "@/utils/common";
+const {Option} = Select;
 
-const data:any = [
+const data = [
     {
         key: '1',
         name: 'John Brown',
@@ -32,41 +40,62 @@ const data:any = [
     },
 ];
 
+const CustomTable = ({columns, initial, dataInfo}) => {
+    const defaultCheckedList = columns.map((item) => item.key);
+    const [checkedList, setCheckedList] = useState(defaultCheckedList);
+    const [open, setOpen] = useState(false);
 
 
-const defaultCheckedList = estimateTotalWriteColumn.map((item) => item.key);
+    const handleSelectChange = (value) => {
+        setCheckedList(value);
+    };
 
-const CustomTable = () => {
-    const [checkedList, setCheckedList] = useState<any>(defaultCheckedList);
-
-    const options = estimateTotalWriteColumn.map(({ key, title }) => ({
-        label: title,
-        value: key,
-    }));
-
-    const newColumns:any = estimateTotalWriteColumn.map((item) => ({
-        ...item,
-        hidden: !checkedList.includes(item.key),
-    }));
-
+    // 선택된 컬럼에 해당하는 항목만 필터링하여 테이블에 표시
+    const visibleColumns = columns.filter((item) => checkedList.includes(item.key));
 
     return (
-        <Card style={{border: '1px solid lightGray'}}
-              title={<><span>LIST</span><div style={{display: 'flex', justifyContent: 'space-between', width: 170,  float : 'right'}}><Button
-                  type={'primary'} size={'small'} style={{fontSize: 11}}><CopyOutlined/>복사</Button><Button
-                  // type={'danger'} size={'small'} style={{fontSize: 11}}><DeleteOutlined/>삭제</Button><Button
-                  type={'dashed'} size={'small'} style={{fontSize: 11}}><PrinterOutlined/>출력</Button></div></>}>
+        <div style={{overflow: 'auto', maxHeight: '100%', maxWidth: '100%'}}>
+            <Card style={{border: '1px solid lightGray', height : '100%'}}
+                  title={
+                      <>
+                          <span>LIST</span>
+                          <div style={{display: 'flex', justifyContent: 'space-between', width: 170, float: 'right'}}>
+                              <Button type={'primary'} size={'small'} style={{fontSize: 11}}>
+                                  <CopyOutlined/>복사
+                              </Button>
+                              <Button type={'dashed'} size={'small'} style={{fontSize: 11}}>
+                                  <PrinterOutlined/>출력
+                              </Button>
+                          </div>
+                      </>
+                  }>
 
-            <Checkbox.Group
-                value={checkedList}
-                options={options}
-                onChange={(value) => {
-                    setCheckedList(value);
-                }}
-            />
 
-            <Table style={{fontSize : 11}} size={'small'} columns={newColumns} dataSource={data} scroll={{x:'max-content'}} />
-        </Card>
+                <TableModal data={subRfqWriteInitial} dataInfo={dataInfo}/>
+                <Button style={{marginBottom: 10, float : 'right'}} onClick={() => setOpen(v => !v)} type={'primary'}><SettingOutlined/>Column
+                    Setting {open ?
+                        <UpOutlined/> : <DownOutlined/>} </Button>
+                {open && <Select
+                    mode="multiple"
+                    style={{width: '100%', marginBottom: '16px'}}
+                    placeholder="Select columns to display"
+                    value={checkedList}
+                    onChange={handleSelectChange}
+                >
+                    {columns.map(({key, title}) => (
+                        <Option key={key} value={key}>
+                            {title}
+                        </Option>
+                    ))}
+                </Select>}
+
+
+
+                <Table style={{fontSize: 11}} size={'large'} columns={visibleColumns} dataSource={data}
+                       scroll={{x: 'max-content'}} />
+            </Card>
+        </div>
     );
 };
+
 export default CustomTable;

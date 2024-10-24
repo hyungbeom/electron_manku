@@ -6,20 +6,22 @@ export const rfqWriteColumns = [
         fixed: 'left',
 
     },
-    {
-        title: '문서번호',
-        dataIndex: 'searchDocumentNumber',
-        key: 'searchDocumentNumber',
-    },
-    {
-        title: '코드',
-        dataIndex: 'agencyCode',
-        key: 'agencyCode',
-    },
+
     {
         title: '거래처명',
         dataIndex: 'searchCustomerName',
         key: 'searchCustomerName',
+        fixed: 'left',
+    },  {
+        title: '금액',
+        dataIndex: 'amount',
+        key: 'amount',
+        fixed: 'left',
+    },{
+        title: '단가',
+        dataIndex: 'unitPrice',
+        key: 'unitPrice',
+        fixed: 'left',
     },
     {
         title: 'MAKER',
@@ -40,12 +42,18 @@ export const rfqWriteColumns = [
         title: '수량',
         dataIndex: 'quantity',
         key: 'quantity',
+
     },
     {
         title: '단위',
         dataIndex: 'unit',
         key: 'unit',
+
     },    {
+        title: '문서번호',
+        dataIndex: 'searchDocumentNumber',
+        key: 'searchDocumentNumber',
+    },   {
         title: 'CURR',
         dataIndex: 'currency',
         key: 'currency',
@@ -54,24 +62,22 @@ export const rfqWriteColumns = [
         dataIndex: 'net',
         key: 'net',
     },  {
-        title: '금액',
-        dataIndex: 'amount',
-        key: 'amount',
-    },  {
         title: '화폐단위',
         dataIndex: 'payUnit',
         key: 'payUnit',
-    },  {
-        title: '단가',
-        dataIndex: 'unitPrice',
-        key: 'unitPrice',
-    },  {
+    }, {
+        title: '코드',
+        dataIndex: 'agencyCode',
+        key: 'agencyCode',
+    }, {
         title: '등록자',
         dataIndex: 'writer',
         key: 'writer',
+        fixed: 'right',
     },  {
         title: '등록일자',
         dataIndex: 'registDate',
         key: 'registDate',
+        fixed: 'right',
     },
 ];

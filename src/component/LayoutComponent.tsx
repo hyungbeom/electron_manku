@@ -9,7 +9,7 @@ import {
     LeftCircleFilled,
     ProductOutlined,
     RightCircleFilled,
-    SendOutlined, SettingOutlined,
+    SendOutlined, SettingOutlined, UserSwitchOutlined,
     WalletOutlined,
 } from '@ant-design/icons';
 import {useRouter} from "next/router";
@@ -59,11 +59,11 @@ const menuList = {
         ]
     },
     setting: {title: 'Setting', icon: <SettingOutlined/>, list: [{title: '기본설정', key: 'setting_default'}]},
-
+    manage: {title: 'manage', icon: <UserSwitchOutlined />, list: [{title: '관리자모드', key: 'manage'}]},
 }
 
 
-export default function LayoutComponent({children}) {
+export default function LayoutComponent({children, userInfo}) {
 
     const router = useRouter();
 
@@ -146,6 +146,11 @@ export default function LayoutComponent({children}) {
                     <Menu.Item onClick={() => router.push('/main')}>HOME</Menu.Item>
 
                     {Object.keys(menuList).map(v => {
+
+
+                        if(v === 'manage' && userInfo?.authority !== 0){
+                            return null;
+                        }
                         return <SubMenu key={v} icon={menuList[v].icon} title={menuList[v].title}>
                             {menuList[v].list.map(src => {
                                 return <Menu.Item onClick={() => moveRouter(src.key)}
@@ -164,5 +169,6 @@ export default function LayoutComponent({children}) {
                 </Content>
             </Layout>
         </Layout>
+        }
     </>
 }
