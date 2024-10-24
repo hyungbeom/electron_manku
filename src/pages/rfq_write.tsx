@@ -19,7 +19,7 @@ const TwinInputBox = ({children}) => {
     </div>
 }
 
-export default function OrderWrite() {
+export default function rqfWrite() {
     const sub = {
         validityPeriod: 1
     }

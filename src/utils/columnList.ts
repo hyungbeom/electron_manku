@@ -1,3 +1,47 @@
+
+export const estimateWriteColumns = [
+    {
+        title: 'Model',
+        dataIndex: 'model',
+        key: 'model',
+        fixed: 'left',
+    },
+    {
+        title: '수량',
+        dataIndex: 'quantity',
+        key: 'quantity',
+        fixed: 'left',
+    },  {
+        title: '단위',
+        dataIndex: 'unit',
+        key: 'unit',
+        fixed: 'left',
+    },{
+        title: '단가',
+        dataIndex: 'unitPrice',
+        key: 'unitPrice',
+        fixed: 'left',
+    },
+    {
+        title: '금액',
+        dataIndex: 'amount',
+        key: 'amount',
+    },
+    {
+        title: 'CURR',
+        dataIndex: 'currency',
+        key: 'currency',
+    },
+    {
+        title: 'NET/P',
+        dataIndex: 'net',
+        key: 'net',
+    }
+];
+
+
+
+
 export const rfqWriteColumns = [
     {
         title: '작성일자',
