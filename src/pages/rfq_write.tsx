@@ -10,7 +10,7 @@ import {FileSearchOutlined, FormOutlined, SaveOutlined} from "@ant-design/icons"
 import Button from "antd/lib/button";
 import {rfqWriteColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {subRfqWriteInitial} from "@/utils/initialList";
+import {rfqWriteInitial, subRfqWriteInitial} from "@/utils/initialList";
 import {subRfqWriteInfo} from "@/utils/modalDataList";
 
 const TwinInputBox = ({children}) => {
@@ -24,49 +24,75 @@ export default function OrderWrite() {
         validityPeriod: 1
     }
 
-    const [info, setInfo] = useState(subRfqWriteInitial)
+    const [info, setInfo] = useState(rfqWriteInitial)
     const [tableInfo, setTableInfo] = useState([])
 
+    function onChange(e) {
 
+        let bowl = {}
+        bowl[e.target.id] = e.target.value;
+
+        setInfo(v => {
+            return {...v, ...bowl}
+        })
+    }
+
+    console.log(info,':::')
     return <>
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateColumns: '350px 1fr', height: '100%', gridColumnGap: 5}}>
                 <Card title={'의뢰 작성'} style={{fontSize: 12, border: '1px solid lightGray'}}>
-                    <Card size={'small'} style={{fontSize: 13,  boxShadow : '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'}}>
+                    <Card size={'small'} style={{
+                        fontSize: 13,
+                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                    }}>
                         <TwinInputBox>
                             <div>
                                 <div style={{paddingBottom: 3}}>INQUIRY NO.</div>
-                                <Input size={'small'}/>
+                                <Input disabled={true} size={'small'} onChange={onChange}/>
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>작성일</div>
-                                <DatePicker size={'small'}/>
+                                <DatePicker id={'writtenDate'} size={'small'}/>
                             </div>
                         </TwinInputBox>
                     </Card>
 
                     <Card title={'inpuiry 정보 및 supplier information'} size={'small'}
-                          style={{fontSize: 13, marginTop: 20,  boxShadow : '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'}}>
+                          style={{
+                              fontSize: 13,
+                              marginTop: 20,
+                              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                          }}>
                         <TwinInputBox>
                             <div>
                                 <div style={{paddingBottom: 3}}>대리점코드</div>
-                                <Input size={'small'} suffix={<FileSearchOutlined/>}/>
+                                <Input id={'agencyCode'} onChange={onChange} size={'small'}
+                                       suffix={<FileSearchOutlined/>}/>
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>대리점명</div>
-                                <Input size={'small'}/>
+                                <Input id={'agencyName'} onChange={onChange} size={'small'}/>
                             </div>
                         </TwinInputBox>
                     </Card>
 
-                    <Card title={'담당자 정보'} size={'small'} style={{fontSize: 13, marginTop: 20,  boxShadow : '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'}}>
+                    <Card title={'담당자 정보'} size={'small'} style={{
+                        fontSize: 13,
+                        marginTop: 20,
+                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                    }}>
                         <div>
                             <div style={{paddingBottom: 3}}>담당자</div>
-                            <Input size={'small'}/>
+                            <Input id={'customerName'} size={'small'}/>
                         </div>
                     </Card>
 
-                    <Card title={'CUSTOMER INFORMATION'} size={'small'} style={{fontSize: 13, marginTop: 20,  boxShadow : '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'}}>
+                    <Card title={'CUSTOMER INFORMATION'} size={'small'} style={{
+                        fontSize: 13,
+                        marginTop: 20,
+                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                    }}>
                         <TwinInputBox>
                             <div>
                                 <div style={{paddingBottom: 3}}>상호명</div>
@@ -89,7 +115,11 @@ export default function OrderWrite() {
                         </TwinInputBox>
                     </Card>
 
-                    <Card title={'ETC'} size={'small'} style={{fontSize: 13, marginTop: 20,  boxShadow : '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'}}>
+                    <Card title={'ETC'} size={'small'} style={{
+                        fontSize: 13,
+                        marginTop: 20,
+                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                    }}>
                         <div style={{paddingTop: 8}}>
                             <div style={{paddingBottom: 3}}>MAKER</div>
                             <Input size={'small'}/>
