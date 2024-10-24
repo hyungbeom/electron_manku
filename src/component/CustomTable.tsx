@@ -33,7 +33,6 @@ const data = [
     },
 ];
 
-const CustomTable = ({columns}) => {
 const CustomTable = ({columns, initial, dataInfo}) => {
     const defaultCheckedList = columns?.map((item) => item.key);
     const [checkedList, setCheckedList] = useState(defaultCheckedList);
