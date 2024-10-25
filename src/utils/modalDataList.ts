@@ -22,3 +22,17 @@ export const subRfqReadInfo = {
     "searchItem": {title : 'ITEM'},                   // ITEM
     "searchCreatedBy": {title : '등록직원명'},              // 등록직원명
 }
+
+export const subOrderWriteInfo = {
+    "model": {title : 'MODEL'},           // MODEL
+    "quantity": {title : '수량'},              // 수량
+    "unit": {title : '단위'},               // 단위
+    "currency": {title : 'CURR'},          // CURR
+    "net": {title : 'NET/P'},            // NET/P
+    "amount": {title : 'Amount'},
+    "orderQuantity": {title : '주문'},
+    "receivedQuantity": {title : '입고'},
+    "unreceivedQuantity": {title : '미입고'},
+    "unitPrice": {title : '단가'},
+    "price": {title : '금액'},
+}

@@ -86,3 +86,36 @@ export const subRfqReadInitial = {
     "limit": 10
 }
 
+export const OrderWriteInitial = {
+    "writtenDate": "",
+    "documentNumberFull": "",
+    "yourPoNo": "",
+    "messrs": "",        // 없음
+    "attnTo": "",       //없음
+    "responsibility": "",
+    "managerPhoneNumber": "",
+    "managerFaxNumber": "",
+    "managerEmail": "",
+    "customerName": "",
+    "estimateManager": "",
+    "paymentTerms": "",
+    "deliveryTerms": "",
+    "maker": "",
+    "item": "",
+    "remarks": "",
+    "delivery": "",
+}
+
+export const subOrderWriteInitial = {
+    "model": '',           // MODEL
+    "quantity": 0,              // 수량
+    "unit": 'EA',               // 단위
+    "currency":'USD',          // CURR
+    "net": 0 ,            // NET/P
+    "amount": 0 ,            // NET/P
+    "orderQuantity": '',   // 납기
+    "receivedQuantity": '',   // 납기
+    "unreceivedQuantity": '',   // 납기
+    "unitPrice": '',         // 내용
+    "price": '',  // 회신일
+}

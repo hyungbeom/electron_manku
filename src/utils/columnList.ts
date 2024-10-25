@@ -444,3 +444,62 @@ export const rfqMailColumns = [
         fixed: 'right',
     }
 ];
+
+
+export const subOrderWriteColumns = [
+    {
+        title: 'MODEL',
+        dataIndex: 'model',
+        key: 'model',
+    },
+    {
+        title: '수량',
+        dataIndex: 'quantity',
+        key: 'quantity',
+    },
+    {
+        title: '단위',
+        dataIndex: 'unit',
+        key: 'unit',
+    },
+    {
+        title: 'CURR',
+        dataIndex: 'currency',
+        key: 'currency',
+    },
+    {
+        title: 'NET/P',
+        dataIndex: 'net',
+        key: 'net',
+    },
+    {
+        title: 'Amount',
+        dataIndex: 'amount',
+        key: 'amount',
+    },
+    {
+        title: '주문',  // 없음
+        dataIndex: 'orderQuantity',
+        key: 'orderQuantity',
+    },
+    {
+        title: '입고',
+        dataIndex: 'receivedQuantity',
+        key: 'receivedQuantity',
+    },
+    {
+        title: '미입고',  // 없음
+        dataIndex: 'unreceivedQuantity',
+        key: 'unreceivedQuantity',
+    },
+    {
+        title: '단가',
+        dataIndex: 'unitPrice',
+        key: 'unitPrice',
+    },
+    {
+        title: '금액',  //없음 (amount 컬럼이 이미 있음)
+        dataIndex: 'price',
+        key: 'price',
+    },
+];
