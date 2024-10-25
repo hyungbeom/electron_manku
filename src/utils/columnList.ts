@@ -711,18 +711,53 @@ export const subCustomerReadColumns = [
     },
     {
         title: '미입고금액',
-        dataIndex: 'unreceivedAmount',
-        key: 'unreceivedAmount',
+        dataIndex: 'unpaidAmount',
+        key: 'unpaidAmount',
     },
     {
         title: '입고금액',
-        dataIndex: 'receivedAmount',
-        key: 'receivedAmount',
+        dataIndex: 'paidAmount',
+        key: 'paidAmount',
     },
     {
         title: '합계',
-        dataIndex: 'total',
-        key: 'total',
+        dataIndex: 'totalAmount',
+        key: 'totalAmount',
     },
 ];
+
+export const subAgencyReadColumns = [
+    {
+        title: '코드',
+        dataIndex: 'agencyCode',
+        key: 'agencyCode',
+    },
+
+    {
+        title: '대리점명',
+        dataIndex: 'agencyName',
+        key: 'agencyName',
+    },
+    {
+        title: '미입고외화',
+        dataIndex: 'unpaidAmount',
+        key: 'unpaidAmount',
+    },
+    {
+        title: '입고외화',
+        dataIndex: 'paidAmount',
+        key: 'paidAmount',
+    },
+    {
+        title: '외화합계',
+        dataIndex: 'totalAmount',
+        key: 'totalAmount',
+    },
+    {
+        title: '원화합계',
+        dataIndex: 'krwTotalAmount',
+        key: 'krwTotalAmount',
+    },
+];
+
 

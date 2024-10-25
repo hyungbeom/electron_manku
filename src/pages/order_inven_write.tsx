@@ -30,7 +30,7 @@ const TwinInputBox = ({children}) => {
     </div>
 }
 
-export default function OrderWriter() {
+export default function OrderInvenWriter() {
     const sub = {
         validityPeriod: 1
     }
@@ -92,7 +92,7 @@ export default function OrderWriter() {
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>문서번호</div>
-                                <Input id={'documentNumberFull'} value={info['documentNumberFull']} onChange={onChange}
+                                <Input id={'documentNumber'} value={info['documentNumber']} onChange={onChange}
                                        size={'small'}/>
                             </div>
                         </TwinInputBox>

@@ -71,7 +71,16 @@ export const subInvenWriteInfo = {
 
 export const subCustomerReadInfo = {
     "customerName": {title : '거래처명'},                  // MAKER
-    "unreceivedAmount": {title : '미입고금액'},                  // MAKER
-    "receivedAmount": {title : '입고금액'},                  // MODEL
-    "total": {title : '합계'},                   // ITEM
+    "unpaidAmount": {title : '미입고금액'},                  // MAKER
+    "paidAmount": {title : '입고금액'},                  // MODEL
+    "totalAmount": {title : '합계'},                   // ITEM
+}
+
+export const subAgencyReadInfo = {
+    "agencyCode": {title : '코드'},                  // MAKER
+    "agencyName": {title : '대리점명'},                  // MAKER
+    "unpaidAmount": {title : '미입고외화'},                  // MAKER
+    "paidAmount": {title : '입고외화'},                  // MODEL
+    "totalAmount": {title : '외화합계'},                   // ITEM
+    "krwTotalAmount": {title : '원화합계'},                   // ITEM
 }
