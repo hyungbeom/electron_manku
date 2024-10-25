@@ -25,7 +25,7 @@ export const estimateWriteInitial = {
         {
             "model": "AV56-A1CBF8YXQ000",   // MODEL
             "quantity": 2,                  // 수량
-            "unit": "ea",                   // 단위
+            "unit": "EA",                   // 단위
             "currency": "USD",              // CURR
             "net": 1765.00,                 // NET/P
             "unitPrice": 2700000,           // 단가
@@ -94,7 +94,7 @@ export const OrderWriteInitial = {
     "agencyCode": "",  // Messrs
     "customerName": "",          // 거래처명
     "estimateManager": "",            // 견적서담당자
-    "managerID": "sample",                 // Responsibility
+    "managerID": "",                 // Responsibility
     "managerPhoneNumber": "",  // Tel
     "managerFaxNumber": "",      // E-Mail
     "managerEmail": "",   // Fax
@@ -107,6 +107,20 @@ export const OrderWriteInitial = {
     "orderDetailList": []
 }
 
+export const invenWriteInitial = {
+    "receiptDate": null,        // 입고일자
+    "documentNumber": "",     // 문서번호
+    "maker": "",                 // MAKER
+    "model": "",                 // Model
+    "importUnitPrice": 0,          // 수입단가
+    "currencyUnit": "KRW",              // 화폐단위
+    "receivedQuantity": 0,           // 입고수량
+    "unit": "EA",                       // 단위
+    "location": "",            // 위치
+    "remarks": "",          // 비고
+}
+
+
 export const subOrderWriteInitial = {
     "model": '',           // MODEL
     "quantity": 0,              // 수량
@@ -114,13 +128,12 @@ export const subOrderWriteInitial = {
     "currency":'USD',          // CURR
     "net": 0 ,            // NET/P
     "amount": 0 ,            // NET/P
-    "orderQuantity": '',   // 납기
-    "receivedQuantity": '',   // 납기
-    "unreceivedQuantity": '',   // 납기
-    "unitPrice": '',         // 내용
-    "price": '',  // 회신일
+    "orderQuantity": 0,   // 납기
+    "receivedQuantity": 0,   // 납기
+    "unreceivedQuantity": 0,   // 납기
+    "unitPrice": 0,         // 내용
+    "price": 0,  // 회신일
 }
-
 
 export const orderReadInitial = {
     "searchDate": "",              // 작성일자 시작일
@@ -132,4 +145,27 @@ export const orderReadInitial = {
     "searchEstimateManager": "",              // 등록직원명
     "page": 1,
     "limit": 10
+}
+
+export const invenReadInitial = {
+    "searchText": "",              // 재고 등록 검색 (문서번호, MAKER, Model)
+    "searchMaker": "",                  // MAKER
+    "searchModel": "",                  // MODEL
+    "searchLocation": "",                   // ITEM
+    "page": 1,
+    "limit": 10
+}
+
+
+export const subInvenWriteInitial = {
+    "receiptDate": "",        // 입고일자
+    "documentNumber": "",     // 문서번호
+    "maker": "",                 // MAKER
+    "model": "",                 // Model
+    "importUnitPrice": 0,          // 수입단가
+    "currencyUnit": "KRW",              // 화폐단위
+    "receivedQuantity": 0,           // 입고수량
+    "unit": "EA",                       // 단위
+    "location": "",            // 위치
+    "remarks": ""          // 비고
 }

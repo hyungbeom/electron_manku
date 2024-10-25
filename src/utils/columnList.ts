@@ -610,3 +610,96 @@ export const subOrderReadColumns = [
         key: 'remarks',
     },
 ];
+
+export const subInvenReadColumns = [
+    {
+        title: 'MAKER',
+        dataIndex: 'maker',
+        key: 'maker',
+    },
+    {
+        title: 'ITEM',
+        dataIndex: 'item',
+        key: 'item',
+    }, {
+        title: 'MODEL',
+        dataIndex: 'model',
+        key: 'model',
+        fixed: 'left',
+    },
+    {
+        title: '잔량',
+        dataIndex: 'quantity',
+        key: 'quantity',
+        fixed: 'left',
+    },
+    {
+        title: '출고',
+        dataIndex: 'release',
+        key: 'release',
+    },
+    {
+        title: '합계',
+        dataIndex: 'total',
+        key: 'total',
+    },
+    {
+        title: '위치',
+        dataIndex: 'location',
+        key: 'location',
+    },
+];
+
+export const subInvenWriteColumns = [
+    {
+        title: '입고일자',
+        dataIndex: 'receiptDate',
+        key: 'receiptDate',
+    },
+    {
+        title: '문서번호',
+        dataIndex: 'documentNumber',
+        key: 'documentNumber',
+    },
+    {
+        title: 'MAKER',
+        dataIndex: 'maker',
+        key: 'maker',
+    },
+    {
+        title: 'MODEL',
+        dataIndex: 'model',
+        key: 'model',
+    },
+    {
+        title: '수입단가',
+        dataIndex: 'importUnitPrice',
+        key: 'importUnitPrice',
+    },
+    {
+        title: '화폐단위',
+        dataIndex: 'currencyUnit',
+        key: 'currencyUnit',
+    },
+    {
+        title: '입고수량',
+        dataIndex: 'receivedQuantity',
+        key: 'receivedQuantity',
+    },
+    {
+        title: '단위',
+        dataIndex: 'unit',
+        key: 'unit',
+    },
+    {
+        title: '위치',
+        dataIndex: 'location',
+        key: 'location',
+    },
+    {
+        title: '비고',
+        dataIndex: 'remarks',
+        key: 'remarks',
+    },
+];
+

@@ -48,3 +48,23 @@ export const subOrderReadInfo = {
     "searchItem": {title : 'ITEM'},                   // ITEM
     "searchCreatedBy": {title : '등록직원명'},              // 등록직원명
 }
+
+export const subInvenReadInfo = {
+    "searchText": {title : '재고등록검색(문서번호, MAKER, Model)'},                  // MAKER
+    "searchMaker": {title : 'MAKER'},                  // MAKER
+    "searchModel": {title : 'MODEL'},                  // MODEL
+    "searchItem": {title : 'ITEM'},                   // ITEM
+}
+
+export const subInvenWriteInfo = {
+    "receiptDate": {title : '입고일자'},           // MODEL
+    "documentNumber": {title : '문서번호'},               // 단위
+    "maker": {title : 'Maker'},            // NET/P
+    "model": {title : 'Model'},
+    "importUnitPrice": {title : '수입단가'},
+    "currencyUnit": {title : '화폐단위'},
+    "receivedQuantity": {title : '입고수량'},
+    "unit": {title : '단위'},
+    "location": {title : '위치'},
+    "remarks": {title : '비고'},
+}
