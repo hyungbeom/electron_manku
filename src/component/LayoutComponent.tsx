@@ -38,7 +38,10 @@ const menuList = {
         title: '발주관리',
         icon: <WalletOutlined/>,
         list: [{title: '발주서 작성', key: 'order_write'}, {title: '발주 조회', key: 'order_read'},
-            {title: '재고 조회', key: 'inven_read'}, {title: '재고 등록', key: 'inven_write'}, {title: '정산 관리', key: 'order_result_manage'}]
+            {title: '재고 조회', key: 'order_inven_read'}, {title: '재고 등록', key: 'order_inven_write'},
+            {title: '거래처 별 주문조회', key: 'order_result_manage'},
+            // {title: '해외대리점 별 주문조회', key: 'order_agency_read'},
+        ]
     },
     maker: {title: 'Maker 관리', icon: <ProductOutlined/>, list: [{title: '메이커 검색', key: 'maker_read'}]},
     code: {

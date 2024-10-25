@@ -109,7 +109,7 @@ export const OrderWriteInitial = {
 
 export const invenWriteInitial = {
     "receiptDate": null,        // 입고일자
-    "documentNumber": "",     // 문서번호
+    "documentNumber": "",    // 문서번호
     "maker": "",                 // MAKER
     "model": "",                 // Model
     "importUnitPrice": 0,          // 수입단가
@@ -168,4 +168,12 @@ export const subInvenWriteInitial = {
     "unit": "EA",                       // 단위
     "location": "",            // 위치
     "remarks": ""          // 비고
+}
+
+
+export const customerReadInitial = {
+    "searchText": "",              // 재고 등록 검색 (문서번호, MAKER, Model)
+    "searchDate": "",                  // MAKER
+    "page": 1,
+    "limit": 10
 }

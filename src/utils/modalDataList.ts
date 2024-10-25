@@ -68,3 +68,10 @@ export const subInvenWriteInfo = {
     "location": {title : '위치'},
     "remarks": {title : '비고'},
 }
+
+export const subCustomerReadInfo = {
+    "customerName": {title : '거래처명'},                  // MAKER
+    "unreceivedAmount": {title : '미입고금액'},                  // MAKER
+    "receivedAmount": {title : '입고금액'},                  // MODEL
+    "total": {title : '합계'},                   // ITEM
+}

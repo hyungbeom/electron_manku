@@ -703,3 +703,26 @@ export const subInvenWriteColumns = [
     },
 ];
 
+export const subCustomerReadColumns = [
+    {
+        title: '거래처명',
+        dataIndex: 'customerName',
+        key: 'customerName',
+    },
+    {
+        title: '미입고금액',
+        dataIndex: 'unreceivedAmount',
+        key: 'unreceivedAmount',
+    },
+    {
+        title: '입고금액',
+        dataIndex: 'receivedAmount',
+        key: 'receivedAmount',
+    },
+    {
+        title: '합계',
+        dataIndex: 'total',
+        key: 'total',
+    },
+];
+
