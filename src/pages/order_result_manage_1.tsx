@@ -52,6 +52,8 @@ export default function OrderResultManage1({searchList}) {
     const [info, setInfo] = useState(agencyReadInitial)
     const [tableInfo, setTableInfo] = useState([])
 
+    console.log(searchList, 'searchList')
+
     function onChange(e) {
 
         let bowl = {}
@@ -152,7 +154,7 @@ export default function OrderResultManage1({searchList}) {
                 </Card>
 
 
-                <CustomTable columns={subAgencyReadColumns} initial={subAgencyReadInfo} dataInfo={subAgencyReadInfo}
+                <CustomTable columns={subAgencyReadColumns} initial={agencyReadInitial} dataInfo={subAgencyReadInfo}
                              info={tableInfo}/>
 
             </div>
