@@ -1,4 +1,5 @@
 import {spans} from "next/dist/build/webpack/plugins/profiling-plugin";
+import moment from "moment";
 
 const makeAbsoluteUrl = (url) => {
     if (!/^https?:\/\//i.test(url)) {
@@ -9,6 +10,105 @@ const makeAbsoluteUrl = (url) => {
 export default function Test(){
 
 }
+export const codeDomesticPurchaseColumn = [
+    {
+        title: '코드',
+        dataIndex: 'agencyCode',
+        key: 'agencyCode',
+        width : 50,
+        render: (text) => <div style={{width : 80}} className="ellipsis-cell">{text}</div>,
+        fixed: 'left',
+    },
+    {
+        title: '상호',
+        dataIndex: 'agencyName',
+        key: 'agencyName',
+        render: (text) => <div style={{width : 80}} className="ellipsis-cell">{text}</div>,
+        fixed: 'left',
+    },  {
+        title: '딜러구분',
+        dataIndex: 'dealerType',
+        key: 'dealerType',
+        render: (text) => <a rel="noopener noreferrer"  href={makeAbsoluteUrl(text)}><div style={{width : 100}} className="ellipsis-cell">{text}</div></a>,
+
+    },
+    {
+        title: '등급',
+        dataIndex: 'grade',
+        key: 'grade',
+        align : 'center',
+        render: (text) => <div className="ellipsis-cell" style={{width : 50}}>{text}</div>
+    },
+    {
+        title: '마진',
+        dataIndex: 'margin',
+        key: 'margin',
+        align : 'center',
+        render: (text) => <div className="ellipsis-cell" style={{width : 50}}>{text}</div>
+    },
+    {
+        title: '홈페이지', //없음
+        dataIndex: 'homepage',
+        key: 'homepage',
+        align : 'center',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>
+    },
+    {
+        title: 'MAKER',
+        dataIndex: 'maker',
+        key: 'maker',
+        render: (text) => <div className="ellipsis-cell" style={{width : 100}}>{text}</div>
+    },
+    {
+        title: 'ITEM',
+        dataIndex: 'item',
+        key: 'item',
+        render: (text) => <div className="ellipsis-cell" style={{width : 50}}>{text}</div>
+    },
+    {
+        title: '거래시작일',
+        dataIndex: 'tradeStartDate', // 없음
+        key: 'tradeStartDate',
+        render: (text) => <div className="ellipsis-cell" style={{width : 50}}>{text}</div>
+    },
+    {
+        title: '사업자번호',
+        dataIndex: 'businessRegistrationNumber',
+        key: 'businessRegistrationNumber',
+        render: (text) => <div className="ellipsis-cell" >{text}</div>
+    },    {
+        title: '계좌번호',
+        dataIndex: 'bankAccountNumber',
+        key: 'bankAccountNumber',
+        render: (text) => <div className="ellipsis-cell" >{text}</div>
+    },
+    {
+        title: '등록자',
+        dataIndex: 'createdDate',
+        key: 'createdDate',
+        render: (text) => <div className="ellipsis-cell" >{text}</div>
+    },
+    {
+        title: '등록일자',
+        dataIndex: 'instructions',
+        key: 'instructions',
+        render: (text) => <div className="ellipsis-cell" >{text}</div>
+    },
+    {
+        title: '수정자',
+        dataIndex: 'modifiedBy',
+        key: 'modifiedBy',
+        render: (text) => <div className="ellipsis-cell" >{text}</div>
+    },
+    {
+        title: '수정일자',
+        dataIndex: 'modifiedDate',
+        key: 'modifiedDate',
+        render: (text) => <div className="ellipsis-cell" >{text}</div>
+    },
+];
+
+
 export const makerColumn = [
     {
         title: 'MAKER',
@@ -85,22 +185,28 @@ export const OrderWriteColumn = [
         dataIndex: 'model',
         key: 'model',
         fixed: 'left',
+        render: (text) => <div style={{width : 80}} className="ellipsis-cell">{text}</div>,
     },
     {
         title: '수량',
         dataIndex: 'quantity',
         key: 'quantity',
+        align : 'center',
+        render: (text) => <div style={{width : 40}} className="ellipsis-cell">{text}</div>,
         fixed: 'left',
     },  {
         title: '단위',
         dataIndex: 'unit',
         key: 'unit',
-        fixed: 'left',
+        align : 'center',
+        render: (text) => <div style={{width : 40}} className="ellipsis-cell">{text}</div>,
     },
     {
         title: 'CURR',
         dataIndex: 'currency',
         key: 'currency',
+        align : 'center',
+        render: (text) => <div style={{width : 40}} className="ellipsis-cell">{text}</div>,
     },
     {
         title: 'NET/P',
@@ -108,35 +214,30 @@ export const OrderWriteColumn = [
         key: 'net',
     },
     {
-        title: '주문', //없음
-        dataIndex: 'order',
-        key: 'order',
+        title: '납기', //없음
+        dataIndex: 'deliveryDate',
+        key: 'deliveryDate',
+        render: (text) => <div style={{width : 100}} className="ellipsis-cell">{text}</div>,
     },
     {
-        title: 'Amount',
-        dataIndex: 'amount',
-        key: 'amount',
+        title: '내용',
+        dataIndex: 'content',
+        key: 'content',
+        render: (text) => <div style={{width : 100}} className="ellipsis-cell">{text}</div>,
     },
     {
-        title: '입고',
-        dataIndex: 'receivedQuantity',
-        key: 'receivedQuantity',
+        title: '회신일',
+        dataIndex: 'replyDate',
+        key: 'replyDate',
+        render: (text) => <div style={{width : 90}} className="ellipsis-cell">{moment(text).format('YYYY-MM-DD')}</div>,
     },
     {
-        title: '미입고',
-        dataIndex: 'unrReceivedQuantity', // 없음
-        key: 'unrReceivedQuantity',
-    },
-    {
-        title: '단가',
-        dataIndex: 'unitPrice',
-        key: 'unitPrice',
-    },
-    {
-        title: '금액',
-        dataIndex: 'price',
-        key: 'price',
-    },
+        title: '비고',
+        dataIndex: 'remarks', // 없음
+        key: 'remarks',
+        fixed: 'right',
+        render: (text) => <div className="ellipsis-cell" >{text}</div>
+    }
 ];
 
 export const estimateTotalWriteColumns = [

@@ -10,7 +10,7 @@ export const TagTypeList = {
 
     "currencyUnit": {type : 'select', boxList : ['EA', 'SET', 'M', 'FEAT', 'ROLL', 'BOX','G','KG','PACK', 'INCH', 'MOQ']},
     "deliveryDate": {type : 'input'},
-    "content": {type : 'selectInput'},
+    "content": {type : 'input'},
     "replyDate": {type : 'date'},
     "remarks": {type : 'textArea'},
     "searchType": {type : 'select'},

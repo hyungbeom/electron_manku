@@ -73,15 +73,15 @@ export const rfqWriteInitial = {
 }
 
 export const subRfqWriteInitial = {
-    "model": '',           // MODEL
-    "quantity": 0,              // 수량
-    "unit": 'EA',               // 단위
-    "currency":'USD',          // CURR
-    "net": 0 ,            // NET/P
-    "deliveryDate": '',   // 납기
-    "content": '',         // 내용
-    "replyDate": '',  // 회신일
-    "remarks": ''      // 비고
+    "model": "",           // MODEL
+    "quantity": 1,              // 수량
+    "unit": "ea",               // 단위
+    "currency": "krw",          // CURR
+    "net": 0,            // NET/P
+    "deliveryDate": "",   // 납기
+    "content": "",         // 내용
+    "replyDate": "",  // 회신일
+    "remarks": ""           // 비고
 }
 
 export const subRfqReadInitial = {

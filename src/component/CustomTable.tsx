@@ -16,7 +16,7 @@ import { subRfqWriteInitial } from "@/utils/initialList";
 
 const { Option } = Select;
 
-const CustomTable = ({ columns, initial, dataInfo, setInfo, info }) => {
+const CustomTable = ({ columns, info, content }) => {
     const defaultCheckedList = columns.map((item) => item.key);
     const [checkedList, setCheckedList] = useState(defaultCheckedList);
     const [open, setOpen] = useState(false);
@@ -41,7 +41,7 @@ const CustomTable = ({ columns, initial, dataInfo, setInfo, info }) => {
 
     return (
         <div style={{ overflow: 'auto', maxHeight: '100%', maxWidth: '100%' }}>
-            <Card style={{ border: '1px solid lightGray', height: '100%' }}
+            <Card size={'small'} style={{ border: '1px solid lightGray', height: '100%' }}
                   title={
                       <>
                           <span>LIST</span>
@@ -55,8 +55,9 @@ const CustomTable = ({ columns, initial, dataInfo, setInfo, info }) => {
                           </div>
                       </>
                   }>
-                <TableModal data={initial} dataInfo={dataInfo} setInfoList={setInfo} />
-                <Button style={{ marginBottom: 10, float: 'right' }} onClick={() => setOpen(v => !v)} type={'primary'}>
+                {/*<TableModal data={initial} dataInfo={dataInfo} setInfoList={setInfo} />*/}
+                {content}
+                <Button  style={{ marginBottom: 10, float: 'right', borderRadius : 5 }} onClick={() => setOpen(v => !v)}  size={'small'} type={'dashed'}>
                     <SettingOutlined />Column Setting {open ? <UpOutlined /> : <DownOutlined />}
                 </Button>
                 {open && <Select
@@ -72,6 +73,7 @@ const CustomTable = ({ columns, initial, dataInfo, setInfo, info }) => {
                         </Option>
                     ))}
                 </Select>}
+
 
                 <Table
                     style={{ fontSize: 11, width : '100%' }}

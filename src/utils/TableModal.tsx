@@ -10,7 +10,7 @@ import Select from "antd/lib/select";
 import TextArea from "antd/lib/input/TextArea";
 import DatePicker from "antd/lib/date-picker";
 
-export default function TableModal({data, dataInfo, setInfoList}) {
+export default function TableModal({title, data, dataInfo, setInfoList}) {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const [info, setInfo] = useState<any>(data)
@@ -46,9 +46,9 @@ export default function TableModal({data, dataInfo, setInfoList}) {
         })
     }
 
-    return <>  <Button type={'primary'} style={{float: 'left'}} onClick={showModal}>ADD</Button><Modal
+    return <>  <Button type={'primary'} style={{float: 'left', borderRadius : 5}} onClick={showModal} size={'small'}>add</Button><Modal
         open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
-        <Card title={'의뢰작성 내용 추가'} style={{marginTop: 30}}>
+        <Card title={title} style={{marginTop: 30}}>
             {Object.keys(data).map(v => {
 
                 switch (TagTypeList[v]?.type) {
@@ -81,7 +81,7 @@ export default function TableModal({data, dataInfo, setInfoList}) {
                     case 'date' :
                         return  <div style={{paddingTop: 8}}>
                             <div>{dataInfo[v]?.title}</div>
-                            <DatePicker style={{width : '100%'}}/>
+                            <DatePicker id={v} style={{width : '100%'}} onChange={(src)=>inputChange({target : {id : v, value : src}})}/>
                         </div>
                 }
 

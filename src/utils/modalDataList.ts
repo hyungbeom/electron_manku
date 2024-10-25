@@ -9,6 +9,7 @@ export const subRfqWriteInfo = {
     "content": {title : '내용'},         // 내용
     "replyDate": {title : '회신일'},  // 회신일
     "remarks": {title : '비고'}      // 비고
+
 }
 
 export const subRfqReadInfo = {

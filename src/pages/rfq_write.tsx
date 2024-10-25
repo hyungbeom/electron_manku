@@ -16,6 +16,8 @@ import {getData} from "@/manage/function/api";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
+import CustomModal from "@/component/CustomModal";
+import TableModal from "@/utils/TableModal";
 
 const TwinInputBox = ({children}) => {
     return <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: 5, paddingTop: 8}}>
@@ -24,10 +26,6 @@ const TwinInputBox = ({children}) => {
 }
 
 export default function rqfWrite() {
-    const sub = {
-        validityPeriod: 1
-    }
-
     const [info, setInfo] = useState<any>(rfqWriteInitial)
 
 
@@ -63,6 +61,7 @@ export default function rqfWrite() {
 
     }
 
+    console.log(info['estimateRequestDetailList'],'info[\'estimateRequestDetailList\']:')
 
     // console.log(moment(info['writtenDate']).format('YYYY-MM-DD'),'??')
     return <>
@@ -185,7 +184,7 @@ export default function rqfWrite() {
                 </Card>
 
 
-                <CustomTable columns={OrderWriteColumn} initial={subRfqWriteInitial} dataInfo={subRfqWriteInfo} setInfo={setInfo} info={info['estimateRequestDetailList']} />
+                <CustomTable content={ <TableModal title={'의뢰작성 세부 추가'} data={subRfqWriteInitial} dataInfo={subRfqWriteInfo} setInfoList={setInfo} />} columns={OrderWriteColumn}   info={info['estimateRequestDetailList']} />
 
             </div>
         </LayoutComponent>
