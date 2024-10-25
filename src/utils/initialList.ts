@@ -20,7 +20,17 @@ export const estimateWriteInitial = {
     "item": "Encoder",      // ITEM
     "delivery": "6~8주",    // Delivery
     "remarks": "",          // 비고란
-    "estimateDetailList": []
+    "estimateDetailList": [
+        {
+            "model": "AV56-A1CBF8YXQ000",   // MODEL
+            "quantity": 2,                  // 수량
+            "unit": "ea",                   // 단위
+            "currency": "USD",              // CURR
+            "net": 1765.00,                 // NET/P
+            "unitPrice": 2700000,           // 단가
+            "amount": 5400000               // 금액
+        }
+    ]
 }
 export const rfqWriteInitial = {
     "writtenDate": "",        // 작성일

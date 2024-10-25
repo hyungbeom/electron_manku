@@ -7,7 +7,7 @@ import TextArea from "antd/lib/input/TextArea";
 import {FileSearchOutlined, RetweetOutlined, SaveOutlined} from "@ant-design/icons";
 import {rfqWriteColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {estimateWriteInitial, rfqWriteInitial, subRfqWriteInitial} from "@/utils/initialList";
+import {rfqWriteInitial, subRfqWriteInitial} from "@/utils/initialList";
 import {subRfqWriteInfo} from "@/utils/modalDataList";
 import moment from "moment";
 import Button from "antd/lib/button";
@@ -28,11 +28,12 @@ export default function EstimateWrite() {
         validityPeriod: 1
     }
 
-    const [info, setInfo] = useState(estimateWriteInitial)
+    const [info, setInfo] = useState<any>(rfqWriteInitial)
 
 
     useEffect(() => {
-        let copyData = {...estimateWriteInitial}
+        let copyData = {...rfqWriteInitial}
+        // @ts-ignored
         copyData['writtenDate'] = moment();
         setInfo(copyData)
     }, [])
@@ -238,6 +239,7 @@ export default function EstimateWrite() {
                         <div style={{paddingTop: 20, textAlign: 'right'}}>
                             <Button type={'primary'} style={{marginRight: 8}}
                                     onClick={saveFunc}><SaveOutlined/>저장</Button>
+                            {/*@ts-ignored*/}
                             <Button type={'danger'}><RetweetOutlined/>초기화</Button>
                         </div>
                     </Card>
@@ -251,7 +253,7 @@ export default function EstimateWrite() {
         </LayoutComponent>
     </>
 }
-
+// @ts-ignore
 export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
 
 

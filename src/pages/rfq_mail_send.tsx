@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import Input from "antd/lib/input/Input";
-import Select from "antd/lib/Select";
+import Select from "antd/lib/select";
 import {estimateInfo, estimateTotalWriteColumn, estimateWriteInitial} from "@/utils/common";
 import LayoutComponent from "@/component/LayoutComponent";
 import CustomTable from "@/component/CustomTable";
@@ -84,8 +84,8 @@ export default function rfqMainSend({searchList}) {
     };
 
     async function searchInfo() {
-        const copyData = {...info}
-        const {writtenDate} = copyData;
+        const copyData:any = {...info}
+        const {writtenDate}:any = copyData;
         if (writtenDate) {
             copyData['searchStartDate'] = moment(writtenDate[0]).format('YYYY-MM-DD');
             copyData['searchEndDate'] = moment(writtenDate[1]).format('YYYY-MM-DD');
@@ -108,7 +108,7 @@ export default function rfqMainSend({searchList}) {
                     }}>
                         <div>
                             <div style={{paddingBottom: 3}}>작성일자</div>
-                            <RangePicker id={'searchDate'} onChange={onChange} size={'small'}  onChange={(date, dateString) => onChange({
+                            <RangePicker id={'searchDate'} size={'small'}  onChange={(date, dateString) => onChange({
                                 target: {
                                     id: 'writtenDate',
                                     value: date

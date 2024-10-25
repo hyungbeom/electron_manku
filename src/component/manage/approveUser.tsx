@@ -5,7 +5,7 @@ import Button from "antd/lib/button";
 import {getData} from "@/manage/function/api";
 import {setCookies} from "@/manage/function/cookie";
 
-export default function ApproveUser({memberList}){
+export default function ApproveUser({memberList}:any){
 
     const [list, setList] = useState([])
 

@@ -40,7 +40,7 @@ const data = [
     },
 ];
 
-const CustomTable = ({columns, initial, dataInfo, setInfo, info}) => {
+const CustomTable = ({columns, initial, dataInfo, setInfo, info}:any) => {
     const defaultCheckedList = columns.map((item) => item.key);
     const [checkedList, setCheckedList] = useState(defaultCheckedList);
     const [open, setOpen] = useState(false);

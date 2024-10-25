@@ -6,7 +6,7 @@ import Input from "antd/lib/input";
 import InputNumber from "antd/lib/input-number";
 import Card from "antd/lib/card/Card";
 import {estimateReadInfo, TagTypeList} from "@/utils/common";
-import Select from "antd/lib/Select";
+import Select from "antd/lib/select";
 import TextArea from "antd/lib/input/TextArea";
 import DatePicker from "antd/lib/date-picker";
 

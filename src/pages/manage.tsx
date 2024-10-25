@@ -10,14 +10,14 @@ import TotalUser from "@/component/manage/totalUser";
 import ApproveUser from "@/component/manage/approveUser";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 
-export default function Manage({memberList}) {
+export default function Manage({memberList}:any) {
     const userInfo = useAppSelector((state) => state.user);
     console.log(memberList,'memberList:')
     const items = [
         {
             key: '1',
             label: '전체 사용자',
-            children: <TotalUser memberList={memberList}/>  ,
+            children: <TotalUser/>  ,
         },
         {
             key: '2',

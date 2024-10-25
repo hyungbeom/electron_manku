@@ -63,7 +63,7 @@ const menuList = {
 }
 
 
-export default function LayoutComponent({children, userInfo}) {
+export default function LayoutComponent({children, userInfo = null}) {
 
     const router = useRouter();
 
@@ -98,7 +98,6 @@ export default function LayoutComponent({children, userInfo}) {
 
     return <>
         <div style={{
-            width: 55,
             backgroundColor: '#f5f5f5',
             width: '100%',
             borderBottom: '1px solid lightGray',
@@ -169,6 +168,6 @@ export default function LayoutComponent({children, userInfo}) {
                 </Content>
             </Layout>
         </Layout>
-        }
+
     </>
 }

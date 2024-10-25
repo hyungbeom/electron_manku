@@ -112,6 +112,7 @@ export default function Main(props){
         <LayoutComponent userInfo={userInfo}>
             <div style={{padding : 5}}>
             <Card style={{borderRadius : 8}} title={'업무일정'}>
+                {/*@ts-ignored*/}
                 <Calendar cellRender={cellRender}  />
             </Card>
             </div>

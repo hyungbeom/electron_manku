@@ -8,6 +8,10 @@ import DatePicker from "antd/lib/date-picker";
 import {estimateWriteInitial, subRfqWriteInitial} from "@/utils/initialList";
 import {subRfqWriteInfo} from "@/utils/modalDataList";
 import Select from "antd/lib/select";
+import {wrapper} from "@/store/store";
+import initialServerRouter from "@/manage/function/initialServerRouter";
+import {getData} from "@/manage/function/api";
+import {setUserInfo} from "@/store/user/userSlice";
 
 const {RangePicker} = DatePicker
 
@@ -35,7 +39,7 @@ export default function EstimateRead() {
         })
     }
 
-    console.log(info,':::')
+
     return <>
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateColumns: '350px 1fr', height: '100%', gridColumnGap: 5}}>
@@ -98,3 +102,30 @@ export default function EstimateRead() {
         </LayoutComponent>
     </>
 }
+
+
+
+// @ts-ignore
+export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
+
+
+    let param = {}
+
+    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
+
+
+
+    if (userInfo) {
+        store.dispatch(setUserInfo(userInfo));
+    }
+    if (codeInfo !== 1) {
+        param = {
+            redirect: {
+                destination: '/', // 리다이렉트할 대상 페이지
+                permanent: false, // true로 설정하면 301 영구 리다이렉트, false면 302 임시 리다이렉트
+            },
+        };
+    }
+
+    return param
+})

@@ -28,11 +28,12 @@ export default function rqfWrite() {
         validityPeriod: 1
     }
 
-    const [info, setInfo] = useState(rfqWriteInitial)
+    const [info, setInfo] = useState<any>(rfqWriteInitial)
 
 
     useEffect(() => {
         let copyData = {...rfqWriteInitial}
+        // @ts-ignored
         copyData['writtenDate'] = moment();
         setInfo(copyData)
     }, [])
@@ -178,6 +179,7 @@ export default function rqfWrite() {
                         <div style={{paddingTop: 20, textAlign: 'right'}}>
                             <Button type={'primary'} style={{marginRight: 8}}
                                     onClick={saveFunc}><SaveOutlined/>저장</Button>
+                            {/*@ts-ignored*/}
                             <Button type={'danger'}><RetweetOutlined/>초기화</Button>
                         </div>
                     </Card>
@@ -191,6 +193,7 @@ export default function rqfWrite() {
     </>
 }
 
+// @ts-ignored
 export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
 
 
