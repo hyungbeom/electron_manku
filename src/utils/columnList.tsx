@@ -1,4 +1,83 @@
+import {spans} from "next/dist/build/webpack/plugins/profiling-plugin";
 
+const makeAbsoluteUrl = (url) => {
+    if (!/^https?:\/\//i.test(url)) {
+        return `https://${url}`;
+    }
+    return url;
+};
+export default function Test(){
+
+}
+export const makerColumn = [
+    {
+        title: 'MAKER',
+        dataIndex: 'makerName',
+        key: 'makerName',
+        width : 50,
+        render: (text) => <div style={{width : 80}} className="ellipsis-cell">{text}</div>,
+        fixed: 'left',
+    },
+    {
+        title: 'ITEM',
+        dataIndex: 'item',
+        key: 'item',
+        render: (text) => <div style={{width : 80}} className="ellipsis-cell">{text}</div>,
+        fixed: 'left',
+    },  {
+        title: '홈페이지',
+        dataIndex: 'homepage',
+        key: 'homepage',
+        render: (text) => <a rel="noopener noreferrer"  href={makeAbsoluteUrl(text)}><div style={{width : 100}} className="ellipsis-cell">{text}</div></a>,
+
+    },
+    {
+        title: 'AREA',
+        dataIndex: 'area',
+        key: 'area',
+        align : 'center',
+        render: (text) => <div className="ellipsis-cell" style={{width : 50}}>{text}</div>
+    },
+    {
+        title: '원산지',
+        dataIndex: 'origin',
+        key: 'origin',
+        align : 'center',
+        render: (text) => <div className="ellipsis-cell" style={{width : 50}}>{text}</div>
+    },
+    {
+        title: '담당자확인', //없음
+        dataIndex: 'managerConfirm',
+        key: 'managerConfirm',
+        align : 'center',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>
+    },
+    {
+        title: '한국대리점',
+        dataIndex: 'koreanAgency',
+        key: 'koreanAgency',
+        render: (text) => <div className="ellipsis-cell" style={{width : 100}}>{text}</div>
+    },
+    {
+        title: '직접확인',
+        dataIndex: 'directConfirm',
+        key: 'directConfirm',
+        render: (text) => <div className="ellipsis-cell" style={{width : 50}}>{text}</div>
+    },
+    {
+        title: 'FTA_No.',
+        dataIndex: 'ftaNumber', // 없음
+        key: 'ftaNumber',
+        align : 'center',
+        render: (text) => <div className="ellipsis-cell" style={{width : 50}}>{text}</div>
+    },
+    {
+        title: '지시사항',
+        dataIndex: 'instructions',
+        key: 'instructions',
+        render: (text) => <div className="ellipsis-cell" >{text}</div>
+    },
+];
 
 export const OrderWriteColumn = [
     {

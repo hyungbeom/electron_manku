@@ -1,21 +1,20 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
 import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
 import TextArea from "antd/lib/input/TextArea";
-import {FileSearchOutlined, RetweetOutlined, SaveOutlined} from "@ant-design/icons";
-import {OrderWriteColumn, rfqWriteColumns} from "@/utils/columnList";
-import DatePicker from "antd/lib/date-picker";
-import {makerRegistInitial, rfqWriteInitial, subRfqWriteInitial} from "@/utils/initialList";
+
+import {makerRegistInitial, subRfqWriteInitial} from "@/utils/initialList";
 import {subRfqWriteInfo} from "@/utils/modalDataList";
-import moment from "moment";
-import Button from "antd/lib/button";
-import message from "antd/lib/message";
 import {getData} from "@/manage/function/api";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
+import Button from "antd/lib/button";
+import {RetweetOutlined, SaveOutlined} from "@ant-design/icons";
+import message from "antd/lib/message";
+import {makerColumn} from "@/utils/columnList";
 
 const TwinInputBox = ({children}) => {
     return <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: 5, paddingTop: 8}}>
@@ -24,12 +23,13 @@ const TwinInputBox = ({children}) => {
 }
 
 export default function makerRead({dataList}) {
-    const sub = {
-        validityPeriod: 1
-    }
+
+    const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
     const [info, setInfo] = useState<any>(makerRegistInitial)
+    const [listData, setListData] = useState<any>(dataList?.makerList)
 
+    console.log(selectedRowKeys,'selectedRowKeys:')
 
     function onChange(e) {
 
@@ -42,6 +42,13 @@ export default function makerRead({dataList}) {
     }
 
     async function saveFunc() {
+        if(!info['makerName'] || !info['item']){
+           return message.warn('MAKER 또는 ITEM 내용을 입력하셔야 합니다')
+        }
+           const result = await getData.post('maker/addMaker', info)
+
+            console.log(result,':::')
+
         // if (!info['estimateRequestDetailList'].length) {
         //     message.warn('하위 데이터 1개 이상이여야 합니다')
         // } else {
@@ -53,12 +60,10 @@ export default function makerRead({dataList}) {
         // }
     }
 
-
-    // console.log(moment(info['writtenDate']).format('YYYY-MM-DD'),'??')
     return <>
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateColumns: '350px 1fr', height: '100%', gridColumnGap: 5}}>
-                <Card title={'의뢰 작성'} style={{fontSize: 12, border: '1px solid lightGray'}}>
+                <Card title={'메이커 관리'} style={{fontSize: 12, border: '1px solid lightGray'}}>
                     <Card size={'small'} style={{
                         fontSize: 13,
                         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
@@ -112,13 +117,19 @@ export default function makerRead({dataList}) {
                             <div style={{paddingBottom: 3}}>지시사항</div>
                             <TextArea id={'instructions'} value={info['instructions']} onChange={onChange} size={'small'}/>
                         </div>
-
                     </Card>
+
+                    <div style={{float :'right', paddingTop : 10}}>
+                    <Button size={'small'} type={'primary'} style={{marginRight: 8}}
+                            onClick={saveFunc}><SaveOutlined/>저장</Button>
+                    {/*@ts-ignored*/}
+                    <Button size={'small'} type={'danger'} style={{marginRight: 8}}
+                            onClick={()=>setInfo(makerRegistInitial)}><RetweetOutlined/>초기화</Button>
+                    </div>
                 </Card>
 
 
-                {/*<CustomTable columns={OrderWriteColumn} initial={subRfqWriteInitial} dataInfo={subRfqWriteInfo} setInfo={setInfo} info={info['estimateRequestDetailList']} />*/}
-
+                <CustomTable selectedRowKeys={selectedRowKeys} setSelectedRowKeys={setSelectedRowKeys} columns={makerColumn} initial={subRfqWriteInitial} dataInfo={subRfqWriteInfo} setInfo={setInfo} info={listData} />
             </div>
         </LayoutComponent>
     </>
