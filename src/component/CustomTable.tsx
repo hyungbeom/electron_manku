@@ -46,6 +46,7 @@ const CustomTable = ({columns, initial, dataInfo, setInfo, info}:any) => {
     const [open, setOpen] = useState(false);
 
 
+
     const handleSelectChange = (value) => {
         setCheckedList(value);
     };
@@ -92,7 +93,7 @@ const CustomTable = ({columns, initial, dataInfo, setInfo, info}:any) => {
 
 
 
-                {/*<Table style={{fontSize: 11}} size={'large'} columns={visibleColumns} dataSource={[...info]} />*/}
+                <Table style={{fontSize: 11}} size={'large'} columns={visibleColumns} dataSource={[...info]} />
             </Card>
         </div>
     );

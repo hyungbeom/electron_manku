@@ -17,7 +17,8 @@ export const OrderWriteColumn = [
         dataIndex: 'unit',
         key: 'unit',
         fixed: 'left',
-    },{
+    },
+    {
         title: 'CURR',
         dataIndex: 'currency',
         key: 'currency',
@@ -28,29 +29,34 @@ export const OrderWriteColumn = [
         key: 'net',
     },
     {
-        title: '금액',
+        title: '주문', //없음
         dataIndex: 'order',
         key: 'order',
-    }, {
-        title: '주문',
+    },
+    {
+        title: 'Amount',
         dataIndex: 'amount',
         key: 'amount',
-    }, {
+    },
+    {
         title: '입고',
         dataIndex: 'receivedQuantity',
         key: 'receivedQuantity',
-    },{
+    },
+    {
         title: '미입고',
-        dataIndex: 'unrReceivedQuantity',
+        dataIndex: 'unrReceivedQuantity', // 없음
         key: 'unrReceivedQuantity',
-    },{
+    },
+    {
         title: '단가',
         dataIndex: 'unitPrice',
         key: 'unitPrice',
-    },{
+    },
+    {
         title: '금액',
-        dataIndex: 'amount',
-        key: 'amount',
+        dataIndex: 'price',
+        key: 'price',
     },
 ];
 
@@ -321,7 +327,8 @@ export const rfqReadColumns = [
         dataIndex: 'agencyName',
         key: 'agencyName',
         fixed: 'left',
-    }, {
+    },
+    {
         title: 'MAKER',
         dataIndex: 'maker',
         key: 'maker',
@@ -330,12 +337,13 @@ export const rfqReadColumns = [
         title: 'ITEM',
         dataIndex: 'item',
         key: 'item',
-    }, {
+    },{
         title: 'MODEL',
         dataIndex: 'model',
         key: 'model',
         fixed: 'left',
-    },{
+    },
+    {
         title: '수량',
         dataIndex: 'quantity',
         key: 'quantity',
@@ -488,7 +496,7 @@ export const subOrderWriteColumns = [
         key: 'receivedQuantity',
     },
     {
-        title: '미입고',  // 없음
+        title: '미입고',
         dataIndex: 'unreceivedQuantity',
         key: 'unreceivedQuantity',
     },
@@ -498,8 +506,107 @@ export const subOrderWriteColumns = [
         key: 'unitPrice',
     },
     {
-        title: '금액',  //없음 (amount 컬럼이 이미 있음)
+        title: '금액',
         dataIndex: 'price',
         key: 'price',
+    },
+];
+
+export const subOrderReadColumns = [
+    {
+        title: '작성일자',
+        dataIndex: 'writtenDate',
+        key: 'writtenDate',
+        fixed: 'left',
+
+    },   {
+        title: '문서번호',
+        dataIndex: 'documentNumber',
+        key: 'documentNumber',
+    },
+    {
+        title: '거래처명',
+        dataIndex: 'agencyName',
+        key: 'agencyName',
+        fixed: 'left',
+    }, {
+        title: 'MAKER',
+        dataIndex: 'maker',
+        key: 'maker',
+    },
+    {
+        title: 'ITEM',
+        dataIndex: 'item',
+        key: 'item',
+    }, {
+        title: 'MODEL',
+        dataIndex: 'model',
+        key: 'model',
+        fixed: 'left',
+    },{
+        title: '수량',
+        dataIndex: 'quantity',
+        key: 'quantity',
+        fixed: 'left',
+    },
+    {
+        title: '단위',
+        dataIndex: 'unit',
+        key: 'unit',
+    },
+    {
+        title: 'CURR',
+        dataIndex: 'currency',
+        key: 'currency',
+    },
+    {
+        title: 'NET',
+        dataIndex: 'net',
+        key: 'net',
+    },
+    {
+        title: 'Amount',
+        dataIndex: 'amount',
+        key: 'amount',
+    },
+    {
+        title: '주문수량',
+        dataIndex: 'orderQuantity',
+        key: 'orderQuantity',
+    },
+    {
+        title: '입고수량',
+        dataIndex: 'receivedQuantity',
+        key: 'receivedQuantity',
+    },
+    {
+        title: '미입고수량',
+        dataIndex: 'unreceivedQuantity',
+        key: 'unreceivedQuantity',
+    },
+    {
+        title: '단가',
+        dataIndex: 'unitPrice',
+        key: 'unitPrice',
+    },
+    {
+        title: '금액',
+        dataIndex: 'amount',
+        key: 'amount',
+    },
+    {
+        title: '예상납기',  // 없음
+        dataIndex: 'deliveryDate',
+        key: 'deliveryDate',
+    },
+    {
+        title: '(견적서)담당자',
+        dataIndex: 'estimateManager',
+        key: 'estimateManager',
+    },
+    {
+        title: '비고란',
+        dataIndex: 'remarks',
+        key: 'remarks',
     },
 ];

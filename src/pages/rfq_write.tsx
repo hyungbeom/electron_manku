@@ -5,7 +5,7 @@ import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
 import TextArea from "antd/lib/input/TextArea";
 import {FileSearchOutlined, RetweetOutlined, SaveOutlined} from "@ant-design/icons";
-import {rfqWriteColumns} from "@/utils/columnList";
+import {OrderWriteColumn, rfqWriteColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
 import {rfqWriteInitial, subRfqWriteInitial} from "@/utils/initialList";
 import {subRfqWriteInfo} from "@/utils/modalDataList";
@@ -186,7 +186,7 @@ export default function rqfWrite() {
                 </Card>
 
 
-                <CustomTable  columns={rfqWriteColumns} initial={subRfqWriteInitial} dataInfo={subRfqWriteInfo} setInfo={setInfo} info={info['estimateRequestDetailList']} />
+                <CustomTable columns={OrderWriteColumn} initial={subRfqWriteInitial} dataInfo={subRfqWriteInfo} setInfo={setInfo} info={info['estimateRequestDetailList']} />
 
             </div>
         </LayoutComponent>

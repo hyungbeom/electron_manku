@@ -36,3 +36,15 @@ export const subOrderWriteInfo = {
     "unitPrice": {title : '단가'},
     "price": {title : '금액'},
 }
+
+export const subOrderReadInfo = {
+    "searchType": {title : '검색조건'},                   // 검색조건 1: 회신, 2: 미회신
+    "searchStartDate": {title : '시작일'},              // 작성일자 시작일
+    "searchEndDate": {title : '종료일'},              // 작성일자 종료일
+    "searchDocumentNumber": {title : '문서번호'},         // 문서번호
+    "searchCustomerName": {title : '거래처명'},           // 거래처명
+    "searchMaker": {title : 'MAKER'},                  // MAKER
+    "searchModel": {title : 'MODEL'},                  // MODEL
+    "searchItem": {title : 'ITEM'},                   // ITEM
+    "searchCreatedBy": {title : '등록직원명'},              // 등록직원명
+}

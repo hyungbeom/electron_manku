@@ -1,3 +1,4 @@
+import {subOrderReadColumns} from "@/utils/columnList";
 
 export const estimateWriteInitial = {
     "documentNumberFull": "AWM-24-0093-1", // INQUIRY No.
@@ -87,23 +88,23 @@ export const subRfqReadInitial = {
 }
 
 export const OrderWriteInitial = {
-    "writtenDate": "",
-    "documentNumberFull": "",
-    "yourPoNo": "",
-    "messrs": "",        // 없음
-    "attnTo": "",       //없음
-    "responsibility": "",
-    "managerPhoneNumber": "",
-    "managerFaxNumber": "",
-    "managerEmail": "",
-    "customerName": "",
-    "estimateManager": "",
-    "paymentTerms": "",
-    "deliveryTerms": "",
-    "maker": "",
-    "item": "",
-    "remarks": "",
-    "delivery": "",
+    "documentNumberFull": "",    // Our PO No
+    "writtenDate": null,            // 작성일
+    "yourPoNo": "",                // Your PO No
+    "agencyCode": "",  // Messrs
+    "customerName": "",          // 거래처명
+    "estimateManager": "",            // 견적서담당자
+    "managerID": "sample",                 // Responsibility
+    "managerPhoneNumber": "",  // Tel
+    "managerFaxNumber": "",      // E-Mail
+    "managerEmail": "",   // Fax
+    "paymentTerms": "",    // Payment Terms
+    "deliveryTerms": "",              // Delivery Terms
+    "maker": "",                    // MAKER
+    "item": "",                       // ITEM
+    "delivery": null,               // Delivery
+    "remarks": "",                      // 비고란
+    "orderDetailList": []
 }
 
 export const subOrderWriteInitial = {
@@ -118,4 +119,17 @@ export const subOrderWriteInitial = {
     "unreceivedQuantity": '',   // 납기
     "unitPrice": '',         // 내용
     "price": '',  // 회신일
+}
+
+
+export const orderReadInitial = {
+    "searchDate": "",              // 작성일자 시작일
+    "searchDocumentNumber": "",         // 문서번호
+    "searchCustomerName": "",           // 거래처명
+    "searchMaker": "",                  // MAKER
+    "searchModel": "",                  // MODEL
+    "searchItem": "",                   // ITEM
+    "searchEstimateManager": "",              // 등록직원명
+    "page": 1,
+    "limit": 10
 }

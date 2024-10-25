@@ -100,8 +100,7 @@ export default function OrderWriter() {
                         <TwinInputBox>
                             <div>
                                 <div style={{paddingBottom: 3}}>Our PO No</div>
-                                <Input id={'documentNumberFull'} value={info['documentNumberFull']} onChange={onChange} size={'small'}
-                                       suffix={<FileSearchOutlined style={{cursor: 'pointer'}}/>}/>
+                                <Input id={'documentNumberFull'} value={info['documentNumberFull']} onChange={onChange} size={'small'}/>
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>Your PO no</div>
@@ -111,8 +110,7 @@ export default function OrderWriter() {
                         <TwinInputBox>
                             <div>
                                 <div style={{paddingBottom: 3}}>Messrs</div>
-                                <Input id={'messrs'} value={info['messrs']} onChange={onChange} size={'small'}
-                                       suffix={<FileSearchOutlined style={{cursor: 'pointer'}}/>}/>
+                                <Input id={'agencyCode'} value={info['agencyCode']} onChange={onChange} size={'small'}/>
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>Attn To</div>
@@ -131,8 +129,7 @@ export default function OrderWriter() {
                         <TwinInputBox>
                             <div>
                                 <div style={{paddingBottom: 3}}>Responsibility</div>
-                                <Input id={'responsibility'} value={info['responsibility']} onChange={onChange}
-                                       size={'small'} suffix={<FileSearchOutlined style={{cursor: 'pointer'}}/>}/>
+                                <Input disabled={true}  id={'managerID'} value={info['managerID']} onChange={onChange} size={'small'} />
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>TEL</div>
@@ -220,7 +217,7 @@ export default function OrderWriter() {
 
 
                 <CustomTable columns={subOrderWriteColumns} initial={subOrderWriteInitial} dataInfo={subOrderWriteInfo}
-                             setInfo={setInfo} info={info['estimateRequestDetailList']}/>
+                             setInfo={setInfo} info={info['orderDetailList']}/>
 
             </div>
         </LayoutComponent>
