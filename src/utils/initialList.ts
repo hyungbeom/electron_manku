@@ -193,9 +193,57 @@ export const customerReadInitial = {
     "limit": 10
 }
 
+
+
+export const codeDiplomaInitial = {
+    "searchDate": "",                  // MAKER
+    "searchDocumentNumber": "",         // 문서번호
+    "page": 1,
+    "limit": 10
+}
+
+export const SubCodeDiplomaInitial = {
+    "searchText": "",              // 재고 등록 검색 (문서번호, MAKER, Model)
+    "searchDate": "",                  // MAKER
+    "page": 1,
+    "limit": 10
+}
+
+
 export const agencyReadInitial = {
     "searchText": "",              // 재고 등록 검색 (문서번호, MAKER, Model)
     "searchDate": "",                  // MAKER
+    "page": 1,
+    "limit": 10
+}
+
+
+export const subCodeExchangeInitial = {
+    "searchDate": "",              // 작성일자 시작일
+    "searchDocumentNumber": "",         // 문서번호
+    "searchCustomerName": "",           // 거래처명
+    "searchMaker": "",                  // MAKER
+    "searchModel": "",                  // MODEL
+    "searchItem": "",                   // ITEM
+    "searchEstimateManager": "",              // 등록직원명
+    "page": 1,
+    "limit": 10
+}
+
+export const codeReadInitial = {
+    "item": "",                  // MAKER
+    "hsCode": "",         // 문서번호
+    "searchText": "",         // 문서번호
+    "page": 1,
+    "limit": 10
+}
+
+export const codeUserInitial = {
+    "customerName": "",                  // MAKER
+    "homepage": "",         // 문서번호
+    "id": "",
+    "pw": "",
+    "remarks": "",
     "page": 1,
     "limit": 10
 }

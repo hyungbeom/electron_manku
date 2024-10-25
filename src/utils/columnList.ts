@@ -760,19 +760,6 @@ export const subAgencyReadColumns = [
     },
 ];
 
-export const codeDiplomaColumns = [
-    {
-        title: '작성일자',
-        dataIndex: 'writtenDate',
-        key: 'writtenDate',
-        fixed: 'left',
-
-    },   {
-        title: '문서번호',
-        dataIndex: 'documentNumber',
-        key: 'documentNumber',
-    },
-]
 
 export const subCodeDiplomaColumns = [
     {
@@ -904,3 +891,92 @@ export const codeDomesticPurchaseColumns = [
         key: 'modifiedDate',
     },
 ];
+
+export const subCodeExchangeColumns = [
+    {
+        title: '통화',
+        dataIndex: 'documentNumber',
+        key: 'documentNumber',
+    },
+    {
+        title: '통화명',
+        dataIndex: 'documentNumber',
+        key: 'documentNumber',
+    },
+    {
+        title: '매매기준율',
+        dataIndex: 'model',
+        key: 'model',
+    },
+    {
+        title: '송금보낼때',
+        dataIndex: 'importUnitPrice',
+        key: 'importUnitPrice',
+    },
+    {
+        title: '송금받을때',
+        dataIndex: 'currencyUnit',
+        key: 'currencyUnit',
+    },
+    {
+        title: '현찰살때(스프레드)',
+        dataIndex: 'currencyUnit',
+        key: 'currencyUnit',
+    },
+    {
+        title: '현찰팔때(스프레드)',
+        dataIndex: 'currencyUnit',
+        key: 'currencyUnit',
+    },
+    {
+        title: 'T/C살때',
+        dataIndex: 'currencyUnit',
+        key: 'currencyUnit',
+    },
+    {
+        title: '미화환산율',
+        dataIndex: 'currencyUnit',
+        key: 'currencyUnit',
+    },
+]
+
+export const subCodeReadColumns = [
+    {
+        title: 'ITEM',
+        dataIndex: 'item',
+        key: 'item',
+    },
+    {
+        title: 'HS-CODE',
+        dataIndex: 'hsCode',
+        key: 'hsCode',
+    },
+    ]
+
+export const subCodeUserColumns = [
+    {
+        title: '업체명',
+        dataIndex: 'customerName',
+        key: 'customerName',
+    },
+    {
+        title: 'id',
+        dataIndex: 'id',
+        key: 'id',
+    },
+    {
+        title: 'Password',
+        dataIndex: 'pw',
+        key: 'pw',
+    },
+    {
+        title: '홈페이지',
+        dataIndex: 'homepage',
+        key: 'homepage',
+    },    {
+        title: '비고',
+        dataIndex: 'remarks',
+        key: 'remarks',
+    },
+
+]

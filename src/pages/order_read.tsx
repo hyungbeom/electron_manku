@@ -10,7 +10,7 @@ import {FileSearchOutlined, FormOutlined, RetweetOutlined, SaveOutlined, SearchO
 import Button from "antd/lib/button";
 import {rfqReadColumns, rfqWriteColumns, subOrderReadColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {orderReadInitial, subRfqReadInitial, subRfqWriteInitial} from "@/utils/initialList";
+import {codeDiplomaInitial, orderReadInitial, subRfqReadInitial, subRfqWriteInitial} from "@/utils/initialList";
 import {subOrderReadInfo, subRfqReadInfo, subRfqWriteInfo} from "@/utils/modalDataList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
@@ -29,7 +29,7 @@ const TwinInputBox = ({children}) => {
 export default function OrderRead({searchList}) {
 
 
-    const [info, setInfo] = useState(orderReadInitial)
+    const [info, setInfo] = useState(codeDiplomaInitial)
     const [tableInfo, setTableInfo] = useState([])
 
     function onChange(e) {
@@ -108,7 +108,7 @@ export default function OrderRead({searchList}) {
                         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                     }}>
                         <div>
-                            <div style={{paddingBottom: 3}}>발주일자</div>
+                            <div style={{paddingBottom: 3}}>작성일자</div>
                             <RangePicker id={'searchDate'}  size={'small'}  onChange={(date, dateString) => onChange({
                                 target: {
                                     id: 'searchDate',
