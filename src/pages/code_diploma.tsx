@@ -10,23 +10,20 @@ import {FileSearchOutlined, FormOutlined, RetweetOutlined, SaveOutlined, SearchO
 import Button from "antd/lib/button";
 import {
     rfqReadColumns,
-    rfqWriteColumns, subAgencyReadColumns,
-    subCustomerReadColumns,
+    rfqWriteColumns, subCodeDiplomaColumns,
     subInvenReadColumns,
     subOrderReadColumns
 } from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
 import {
-    agencyReadInitial,
-    customerReadInitial,
+    agencyReadInitial, codeDiplomaInitial,
     invenReadInitial,
-    orderReadInitial,
+    orderReadInitial, SubCodeDiplomaInitial,
     subRfqReadInitial,
     subRfqWriteInitial
 } from "@/utils/initialList";
 import {
-    subAgencyReadInfo,
-    subCustomerReadInfo,
+    subCodeDiplomaInfo,
     subInvenReadInfo,
     subOrderReadInfo,
     subRfqReadInfo,
@@ -46,7 +43,7 @@ const TwinInputBox = ({children}) => {
     </div>
 }
 
-export default function OrderResultManage1({searchList}) {
+export default function Codediploma({searchList}) {
 
 
     const [info, setInfo] = useState(agencyReadInitial)
@@ -121,38 +118,38 @@ export default function OrderResultManage1({searchList}) {
     return <>
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateColumns: '350px 1fr', height: '100%', gridColumnGap: 5}}>
-                <Card title={'해외대리점 별 주문조회'} style={{fontSize: 12, border: '1px solid lightGray'}}>
+                <Card title={'공문서'} style={{fontSize: 12, border: '1px solid lightGray'}}>
                     <Card size={'small'} style={{
                         fontSize: 13,
                         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                     }}>
                         <div>
-                            <div style={{paddingBottom: 3}}>조회일자</div>
+                            <div style={{paddingBottom: 3}}>발주일자</div>
                             <RangePicker id={'searchDate'} size={'small'} onChange={(date, dateString) => onChange({
                                 target: {
-                                    id: 'writtenDate',
+                                    id: 'searchDate',
                                     value: date
                                 }
                             })
                             }/>
                         </div>
                         <div>
-                                <div style={{paddingBottom: 3}}>대리점코드</div>
-                                <Input id={'searchText'} onChange={onChange} size={'small'}/>
+                            <div style={{paddingBottom: 3}}>문서번호</div>
+                            <Input id={'searchDocumentNumber'} onChange={onChange} size={'small'}/>
                         </div>
 
 
                     </Card>
                     <div style={{paddingTop: 20, textAlign: 'right'}}>
                         <Button type={'primary'} style={{marginRight: 8}}
-                                onClick={searchInfo}><SearchOutlined/>조회</Button>
+                                onClick={searchInfo}><SearchOutlined/>검색</Button>
                         {/*@ts-ignored*/}
-                        <Button type={'danger'}><RetweetOutlined/>엑셀</Button>
+                        <Button type={'danger'}><RetweetOutlined/>새로만들기</Button>
                     </div>
                 </Card>
 
 
-                <CustomTable columns={subAgencyReadColumns} initial={subAgencyReadInfo} dataInfo={subAgencyReadInfo}
+                <CustomTable columns={subCodeDiplomaColumns} initial={SubCodeDiplomaInitial} dataInfo={subCodeDiplomaInfo}
                              info={tableInfo}/>
 
             </div>

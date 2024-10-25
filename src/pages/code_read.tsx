@@ -8,10 +8,27 @@ import Card from "antd/lib/card/Card";
 import TextArea from "antd/lib/input/TextArea";
 import {FileSearchOutlined, FormOutlined, RetweetOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
-import {rfqReadColumns, rfqWriteColumns, subInvenReadColumns, subOrderReadColumns} from "@/utils/columnList";
+import {
+    rfqReadColumns,
+    rfqWriteColumns, subCodeDiplomaColumns, subCodeExchangeColumns, subCodeReadColumns,
+    subInvenReadColumns,
+    subOrderReadColumns
+} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {invenReadInitial, orderReadInitial, subRfqReadInitial, subRfqWriteInitial} from "@/utils/initialList";
-import {subInvenReadInfo, subOrderReadInfo, subRfqReadInfo, subRfqWriteInfo} from "@/utils/modalDataList";
+import {
+    agencyReadInitial, codeExchangeInitial, codeReadInitial,
+    invenReadInitial,
+    orderReadInitial,
+    subRfqReadInitial,
+    subRfqWriteInitial
+} from "@/utils/initialList";
+import {
+    subCodeDiplomaInfo, subCodeExchangeInfo, subCodeReadInfo,
+    subInvenReadInfo,
+    subOrderReadInfo,
+    subRfqReadInfo,
+    subRfqWriteInfo
+} from "@/utils/modalDataList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
@@ -26,10 +43,10 @@ const TwinInputBox = ({children}) => {
     </div>
 }
 
-export default function OrderInvenRead({searchList}) {
+export default function CodeRead({searchList}) {
 
 
-    const [info, setInfo] = useState(invenReadInitial)
+    const [info, setInfo] = useState(codeReadInitial)
     const [tableInfo, setTableInfo] = useState([])
 
     function onChange(e) {
@@ -101,36 +118,50 @@ export default function OrderInvenRead({searchList}) {
     return <>
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateColumns: '350px 1fr', height: '100%', gridColumnGap: 5}}>
-                <Card title={'재고 조회'} style={{fontSize: 12, border: '1px solid lightGray'}}>
-                    <Card size={'small'} style={{
+                <Card title={'HS-code 조회'} style={{fontSize: 12, border: '1px solid lightGray'}}>
+                    <Card size={'small'} title={'조회/저장/수정'} style={{
                         fontSize: 13,
                         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                     }}>
                         <div>
-                            <div style={{paddingBottom: 3}}>MAKER</div>
-                            <Input id={'searchMaker'} onChange={onChange} size={'small'}/>
+                            <div style={{paddingBottom: 3}}>ITEM</div>
+                            <Input id={'item'} onChange={onChange} size={'small'}/>
                         </div>
-                        <div>
-                            <div style={{paddingBottom: 3}}>MODEL</div>
-                            <Input id={'searchModel'} onChange={onChange} size={'small'}/>
+                        <div style={{paddingTop: 8}}>
+                            <div style={{paddingBottom: 3}}>HSCODE</div>
+                            <Input id={'hsCode'} onChange={onChange} size={'small'}/>
                         </div>
-                        <div>
-                            <div style={{paddingBottom: 3}}>위치</div>
-                            <Input id={'searchLocation'} onChange={onChange} size={'small'}/>
+                        <div style={{paddingTop: 20, textAlign: 'right'}}>
+                            {/*@ts-ignored*/}
+                            <Button type={'danger'} style={{marginRight: 8, letterSpacing: -1}}>
+                                <RetweetOutlined/>초기화</Button>
+                            <Button type={'primary'} style={{marginRight: 8}}
+                                    onClick={searchInfo}><SearchOutlined/>저장</Button>
+                            {/*@ts-ignored*/}
+                            <Button type={'danger'}><RetweetOutlined/>삭제</Button>
                         </div>
-
-
                     </Card>
-                    <div style={{paddingTop: 20, textAlign: 'right'}}>
-                        <Button type={'primary'} style={{marginRight: 8}}
-                                onClick={searchInfo}><SearchOutlined/>검색</Button>
-                        {/*@ts-ignored*/}
-                        <Button type={'danger'}><RetweetOutlined/>엑셀</Button>
-                    </div>
+                    <Card  size={'small'} title={'검색'} style={{
+                        fontSize: 13,  marginTop:8,
+                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                    }}>
+                        <div>
+                            <div style={{paddingBottom: 3}}>검색</div>
+                            <Input id={'searchText'} onChange={onChange} size={'small'}/>
+                        </div>
+                        <div style={{paddingTop: 20, textAlign: 'right'}}>
+                            {/*@ts-ignored*/}
+                            <Button type={'danger'} style={{marginRight: 8}}>
+                                <RetweetOutlined/>검색</Button>
+                        </div>
+                    </Card>
+
+
                 </Card>
 
 
-                <CustomTable columns={subInvenReadColumns} initial={invenReadInitial} dataInfo={subInvenReadInfo}
+                <CustomTable columns={subCodeReadColumns} initial={codeReadInitial}
+                             dataInfo={subCodeReadInfo}
                              info={tableInfo}/>
 
             </div>

@@ -40,8 +40,8 @@ const menuList = {
         list: [{title: '발주서 작성', key: 'order_write'}, {title: '발주 조회', key: 'order_read'},
             {title: '재고 조회', key: 'order_inven_read'}, {title: '재고 등록', key: 'order_inven_write'},
             {title: '정산 관리', key: 'order_agency_read', subList: [
-                    { title: '거래처 별 주문조회', key: 'order_result_manage' },
-                    { title: '해외 대리점 별 주문조회', key: '*' },
+                    { title: '거래처 별 주문조회', key: 'order_read_customer' },
+                    { title: '해외 대리점 별 주문조회', key: 'order_read_agency' },
                 ],},
         ]
     },

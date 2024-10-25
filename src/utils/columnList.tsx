@@ -941,3 +941,222 @@ export const subAgencyReadColumns = [
 ];
 
 
+export const subCodeDiplomaColumns = [
+    {
+        title: '문서번호',
+        dataIndex: 'documentNumber',
+        key: 'documentNumber',
+    },
+    {
+        title: '문서제목',
+        dataIndex: 'documentNumber',
+        key: 'documentNumber',
+    },
+    {
+        title: '수신',
+        dataIndex: 'model',
+        key: 'model',
+    },
+    {
+        title: '참조',
+        dataIndex: 'importUnitPrice',
+        key: 'importUnitPrice',
+    },
+    {
+        title: '소제목',
+        dataIndex: 'currencyUnit',
+        key: 'currencyUnit',
+    },
+    {
+        title: '내용',
+        dataIndex: 'currencyUnit',
+        key: 'currencyUnit',
+    },
+    {
+        title: '등록자',
+        dataIndex: 'currencyUnit',
+        key: 'currencyUnit',
+    },
+    {
+        title: '등록일자',
+        dataIndex: 'currencyUnit',
+        key: 'currencyUnit',
+    },
+    {
+        title: '수정자',
+        dataIndex: 'currencyUnit',
+        key: 'currencyUnit',
+    },
+    {
+        title: '수정일자',
+        dataIndex: 'currencyUnit',
+        key: 'currencyUnit',
+    },
+    ]
+
+export const codeDomesticPurchaseColumns = [
+    {
+        title: '코드',
+        dataIndex: 'agencyCode',
+        key: 'agencyCode',
+    },
+    {
+        title: '상호',
+        dataIndex: 'agencyName',
+        key: 'agencyName',
+    },
+    {
+        title: '딜러구분',
+        dataIndex: 'dealerType',
+        key: 'dealerType',
+    },
+    {
+        title: '등급',
+        dataIndex: 'grade',
+        key: 'grade',
+    },
+    {
+        title: '마진',
+        dataIndex: 'margin',
+        key: 'margin',
+    },
+    {
+        title: '홈페이지',
+        dataIndex: 'homepage',
+        key: 'homepage',
+    },
+    {
+        title: 'ITEM',
+        dataIndex: 'item',
+        key: 'item',
+    },
+    {
+        title: 'MAKER',
+        dataIndex: 'maker',
+        key: 'maker',
+    },
+    {
+        title: '거래시작일',
+        dataIndex: 'tradeStartDate',
+        key: 'tradeStartDate',
+    },
+    {
+        title: '사업자번호',
+        dataIndex: 'businessRegistrationNumber',
+        key: 'businessRegistrationNumber',
+    },
+    {
+        title: '계좌번호',
+        dataIndex: 'bankAccountNumber',
+        key: 'bankAccountNumber',
+    },
+    {
+        title: '등록자',
+        dataIndex: 'createdBy',
+        key: 'createdBy',
+    },
+    {
+        title: '등록일자',
+        dataIndex: 'createdDate',
+        key: 'createdDate',
+    },
+    {
+        title: '수정자',
+        dataIndex: 'modifiedBy',
+        key: 'modifiedBy',
+    },
+    {
+        title: '수정일자',
+        dataIndex: 'modifiedDate',
+        key: 'modifiedDate',
+    },
+];
+
+export const subCodeExchangeColumns = [
+    {
+        title: '통화',
+        dataIndex: 'documentNumber',
+        key: 'documentNumber',
+    },
+    {
+        title: '통화명',
+        dataIndex: 'documentNumber',
+        key: 'documentNumber',
+    },
+    {
+        title: '매매기준율',
+        dataIndex: 'model',
+        key: 'model',
+    },
+    {
+        title: '송금보낼때',
+        dataIndex: 'importUnitPrice',
+        key: 'importUnitPrice',
+    },
+    {
+        title: '송금받을때',
+        dataIndex: 'currencyUnit',
+        key: 'currencyUnit',
+    },
+    {
+        title: '현찰살때(스프레드)',
+        dataIndex: 'currencyUnit',
+        key: 'currencyUnit',
+    },
+    {
+        title: '현찰팔때(스프레드)',
+        dataIndex: 'currencyUnit',
+        key: 'currencyUnit',
+    },
+    {
+        title: 'T/C살때',
+        dataIndex: 'currencyUnit',
+        key: 'currencyUnit',
+    },
+    {
+        title: '미화환산율',
+        dataIndex: 'currencyUnit',
+        key: 'currencyUnit',
+    },
+]
+
+export const subCodeReadColumns = [
+    {
+        title: 'ITEM',
+        dataIndex: 'item',
+        key: 'item',
+    },
+    {
+        title: 'HS-CODE',
+        dataIndex: 'hsCode',
+        key: 'hsCode',
+    },
+    ]
+
+export const subCodeUserColumns = [
+    {
+        title: '업체명',
+        dataIndex: 'customerName',
+        key: 'customerName',
+    },
+    {
+        title: 'id',
+        dataIndex: 'id',
+        key: 'id',
+    },
+    {
+        title: 'Password',
+        dataIndex: 'pw',
+        key: 'pw',
+    },
+    {
+        title: '홈페이지',
+        dataIndex: 'homepage',
+        key: 'homepage',
+    },    {
+        title: '비고',
+        dataIndex: 'remarks',
+        key: 'remarks',
+    },
+
+]

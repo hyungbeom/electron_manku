@@ -8,8 +8,7 @@ import {FileSearchOutlined, RetweetOutlined, SaveOutlined} from "@ant-design/ico
 import {rfqWriteColumns, subInvenWriteColumns, subOrderWriteColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
 import {
-    invenWriteInitial,
-    OrderWriteInitial,
+    invenWriteInitial, orderWriteInitial,
     rfqWriteInitial, subInvenWriteInitial,
     subOrderWriteInitial,
     subRfqWriteInitial
@@ -35,11 +34,11 @@ export default function OrderInvenWriter() {
         validityPeriod: 1
     }
 
-    const [info, setInfo] = useState<any>(OrderWriteInitial)
+    const [info, setInfo] = useState<any>(orderWriteInitial)
 
 
     useEffect(() => {
-        let copyData = {...OrderWriteInitial}
+        let copyData = {...orderWriteInitial}
         // @ts-ignored
         copyData['writtenDate'] = moment();
         setInfo(copyData)

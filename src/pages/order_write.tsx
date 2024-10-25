@@ -7,7 +7,7 @@ import TextArea from "antd/lib/input/TextArea";
 import {FileSearchOutlined, RetweetOutlined, SaveOutlined} from "@ant-design/icons";
 import {rfqWriteColumns, subOrderWriteColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {OrderWriteInitial, rfqWriteInitial, subOrderWriteInitial, subRfqWriteInitial} from "@/utils/initialList";
+import {orderWriteInitial, rfqWriteInitial, subOrderWriteInitial, subRfqWriteInitial} from "@/utils/initialList";
 import {subOrderWriteInfo, subRfqWriteInfo} from "@/utils/modalDataList";
 import moment from "moment";
 import Button from "antd/lib/button";
@@ -29,11 +29,11 @@ export default function OrderWriter() {
         validityPeriod: 1
     }
 
-    const [info, setInfo] = useState<any>(OrderWriteInitial)
+    const [info, setInfo] = useState<any>(orderWriteInitial)
 
 
     useEffect(() => {
-        let copyData = {...OrderWriteInitial}
+        let copyData = {...orderWriteInitial}
         // @ts-ignored
         copyData['writtenDate'] = moment();
         setInfo(copyData)
