@@ -123,16 +123,16 @@ export const OrderWriteInitial = {
 }
 
 export const invenWriteInitial = {
-    "receiptDate": null,        // 입고일자
-    "documentNumber": "",    // 문서번호
-    "maker": "",                 // MAKER
-    "model": "",                 // Model
-    "importUnitPrice": 0,          // 수입단가
+    "receiptDate":  null,        // 입고일자
+    "documentNumber": "K0-24-0061",     // 문서번호
+    "maker": "삼솔정공",                 // MAKER
+    "model": "SF14X20",                 // Model
+    "importUnitPrice": 890.00,          // 수입단가
     "currencyUnit": "KRW",              // 화폐단위
-    "receivedQuantity": 0,           // 입고수량
+    "receivedQuantity": 1500,           // 입고수량
     "unit": "EA",                       // 단위
-    "location": "",            // 위치
-    "remarks": "",          // 비고
+    "location": "베란다 창고",            // 위치
+    "remarks": "SK시그넷 스프링"          // 비고
 }
 
 
@@ -187,6 +187,13 @@ export const subInvenWriteInitial = {
 
 
 export const customerReadInitial = {
+    "searchText": "",              // 재고 등록 검색 (문서번호, MAKER, Model)
+    "searchDate": "",                  // MAKER
+    "page": 1,
+    "limit": 10
+}
+
+export const agencyReadInitial = {
     "searchText": "",              // 재고 등록 검색 (문서번호, MAKER, Model)
     "searchDate": "",                  // MAKER
     "page": 1,
