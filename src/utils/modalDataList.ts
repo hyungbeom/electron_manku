@@ -1,3 +1,5 @@
+import {subCodeDiplomaColumns} from "@/utils/columnList";
+
 export const subRfqWriteInfo = {
     "model": {title : 'MODEL'},           // MODEL
     "quantity": {title : '수량'},              // 수량
@@ -83,4 +85,17 @@ export const subAgencyReadInfo = {
     "paidAmount": {title : '입고외화'},                  // MODEL
     "totalAmount": {title : '외화합계'},                   // ITEM
     "krwTotalAmount": {title : '원화합계'},                   // ITEM
+}
+
+export const subCodeDiplomaInfo = {
+    "model": {title : '문서번호'},           // MODEL
+    "quantity": {title : '문서제목'},              // 수량
+    "unit": {title : '수신'},               // 단위
+    "currency": {title : '참조'},          // CURR
+    "net": {title : '소제목'},            // NET/P
+    "amount": {title : '내용'},
+    "orderQuantity": {title : '등록자'},
+    "receivedQuantity": {title : '등록일자'},
+    "unreceivedQuantity": {title : '수정자'},
+    "unitPrice": {title : '수정일자'},
 }

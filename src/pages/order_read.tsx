@@ -26,7 +26,7 @@ const TwinInputBox = ({children}) => {
     </div>
 }
 
-export default function rfqRead({searchList}) {
+export default function OrderRead({searchList}) {
 
 
     const [info, setInfo] = useState(orderReadInitial)
@@ -47,6 +47,7 @@ export default function rfqRead({searchList}) {
 
     const transformData = (data) => {
 
+        console.log(data, 'data~~~~')
         // 데이터를 변환하여 새로운 배열을 생성
         const transformedArray = data.flatMap((item) => {
             // estimateRequestDetailList의 항목 개수에 따라 첫 번째만 정보 포함

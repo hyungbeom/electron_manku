@@ -8,10 +8,28 @@ import Card from "antd/lib/card/Card";
 import TextArea from "antd/lib/input/TextArea";
 import {FileSearchOutlined, FormOutlined, RetweetOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
-import {rfqReadColumns, rfqWriteColumns, subInvenReadColumns, subOrderReadColumns} from "@/utils/columnList";
+import {
+    codeDiplomaColumns,
+    rfqReadColumns,
+    rfqWriteColumns, subCodeDiplomaColumns,
+    subInvenReadColumns,
+    subOrderReadColumns
+} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {invenReadInitial, orderReadInitial, subRfqReadInitial, subRfqWriteInitial} from "@/utils/initialList";
-import {subInvenReadInfo, subOrderReadInfo, subRfqReadInfo, subRfqWriteInfo} from "@/utils/modalDataList";
+import {
+    agencyReadInitial,
+    invenReadInitial,
+    orderReadInitial,
+    subRfqReadInitial,
+    subRfqWriteInitial
+} from "@/utils/initialList";
+import {
+    subCodeDiplomaInfo,
+    subInvenReadInfo,
+    subOrderReadInfo,
+    subRfqReadInfo,
+    subRfqWriteInfo
+} from "@/utils/modalDataList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
@@ -26,10 +44,10 @@ const TwinInputBox = ({children}) => {
     </div>
 }
 
-export default function OrderInvenRead({searchList}) {
+export default function Codediploma({searchList}) {
 
 
-    const [info, setInfo] = useState(invenReadInitial)
+    const [info, setInfo] = useState(agencyReadInitial)
     const [tableInfo, setTableInfo] = useState([])
 
     function onChange(e) {
@@ -101,22 +119,24 @@ export default function OrderInvenRead({searchList}) {
     return <>
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateColumns: '350px 1fr', height: '100%', gridColumnGap: 5}}>
-                <Card title={'재고 조회'} style={{fontSize: 12, border: '1px solid lightGray'}}>
+                <Card title={'공문서'} style={{fontSize: 12, border: '1px solid lightGray'}}>
                     <Card size={'small'} style={{
                         fontSize: 13,
                         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                     }}>
                         <div>
-                            <div style={{paddingBottom: 3}}>MAKER</div>
-                            <Input id={'searchMaker'} onChange={onChange} size={'small'}/>
+                            <div style={{paddingBottom: 3}}>발주일자</div>
+                            <RangePicker id={'searchDate'} size={'small'} onChange={(date, dateString) => onChange({
+                                target: {
+                                    id: 'searchDate',
+                                    value: date
+                                }
+                            })
+                            }/>
                         </div>
                         <div>
-                            <div style={{paddingBottom: 3}}>MODEL</div>
-                            <Input id={'searchModel'} onChange={onChange} size={'small'}/>
-                        </div>
-                        <div>
-                            <div style={{paddingBottom: 3}}>위치</div>
-                            <Input id={'searchLocation'} onChange={onChange} size={'small'}/>
+                            <div style={{paddingBottom: 3}}>문서번호</div>
+                            <Input id={'searchDocumentNumber'} onChange={onChange} size={'small'}/>
                         </div>
 
 
@@ -125,12 +145,12 @@ export default function OrderInvenRead({searchList}) {
                         <Button type={'primary'} style={{marginRight: 8}}
                                 onClick={searchInfo}><SearchOutlined/>검색</Button>
                         {/*@ts-ignored*/}
-                        <Button type={'danger'}><RetweetOutlined/>엑셀</Button>
+                        <Button type={'danger'}><RetweetOutlined/>새로만들기</Button>
                     </div>
                 </Card>
 
 
-                <CustomTable columns={subInvenReadColumns} initial={invenReadInitial} dataInfo={subInvenReadInfo}
+                <CustomTable columns={subCodeDiplomaColumns} initial={codeDiplomaColumns} dataInfo={subCodeDiplomaInfo}
                              info={tableInfo}/>
 
             </div>

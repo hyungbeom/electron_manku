@@ -102,7 +102,7 @@ export const subRfqReadInitial = {
     "limit": 10
 }
 
-export const OrderWriteInitial = {
+export const orderWriteInitial = {
     "documentNumberFull": "",    // Our PO No
     "writtenDate": null,            // 작성일
     "yourPoNo": "",                // Your PO No

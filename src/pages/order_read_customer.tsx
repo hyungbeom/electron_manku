@@ -10,14 +10,13 @@ import {FileSearchOutlined, FormOutlined, RetweetOutlined, SaveOutlined, SearchO
 import Button from "antd/lib/button";
 import {
     rfqReadColumns,
-    rfqWriteColumns, subAgencyReadColumns,
+    rfqWriteColumns,
     subCustomerReadColumns,
     subInvenReadColumns,
     subOrderReadColumns
 } from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
 import {
-    agencyReadInitial,
     customerReadInitial,
     invenReadInitial,
     orderReadInitial,
@@ -25,7 +24,6 @@ import {
     subRfqWriteInitial
 } from "@/utils/initialList";
 import {
-    subAgencyReadInfo,
     subCustomerReadInfo,
     subInvenReadInfo,
     subOrderReadInfo,
@@ -46,13 +44,11 @@ const TwinInputBox = ({children}) => {
     </div>
 }
 
-export default function OrderResultManage1({searchList}) {
+export default function OrderReadCustomer({searchList}) {
 
 
-    const [info, setInfo] = useState(agencyReadInitial)
+    const [info, setInfo] = useState(customerReadInitial)
     const [tableInfo, setTableInfo] = useState([])
-
-    console.log(searchList, 'searchList')
 
     function onChange(e) {
 
@@ -123,7 +119,7 @@ export default function OrderResultManage1({searchList}) {
     return <>
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateColumns: '350px 1fr', height: '100%', gridColumnGap: 5}}>
-                <Card title={'해외대리점 별 주문조회'} style={{fontSize: 12, border: '1px solid lightGray'}}>
+                <Card title={'재고 조회'} style={{fontSize: 12, border: '1px solid lightGray'}}>
                     <Card size={'small'} style={{
                         fontSize: 13,
                         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
@@ -139,7 +135,7 @@ export default function OrderResultManage1({searchList}) {
                             }/>
                         </div>
                         <div>
-                                <div style={{paddingBottom: 3}}>대리점코드</div>
+                                <div style={{paddingBottom: 3}}>거래처명</div>
                                 <Input id={'searchText'} onChange={onChange} size={'small'}/>
                         </div>
 
@@ -154,7 +150,7 @@ export default function OrderResultManage1({searchList}) {
                 </Card>
 
 
-                <CustomTable columns={subAgencyReadColumns} initial={agencyReadInitial} dataInfo={subAgencyReadInfo}
+                <CustomTable columns={subCustomerReadColumns} initial={customerReadInitial} dataInfo={subCustomerReadInfo}
                              info={tableInfo}/>
 
             </div>
