@@ -57,13 +57,13 @@ export default function EstimateWrite() {
             copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
 
             await getData.post('estimate/addEstimate', copyData).then(v => {
-                console.log(v, ':::')
+
             })
         }
 
     }
 
-    console.log(info, ':::')
+
 
     // console.log(moment(info['writtenDate']).format('YYYY-MM-DD'),'??')
     return <>

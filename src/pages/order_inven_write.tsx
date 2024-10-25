@@ -64,7 +64,7 @@ export default function OrderWriter() {
             copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
 
             await getData.post('estimate/addEstimateRequest', copyData).then(v => {
-                console.log(v, ':::')
+
             })
         }
 

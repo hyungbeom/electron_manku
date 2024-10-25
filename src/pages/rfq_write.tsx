@@ -57,13 +57,12 @@ export default function rqfWrite() {
             copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
 
             await getData.post('estimate/addEstimateRequest', copyData).then(v => {
-                console.log(v, ':::')
+
             })
         }
 
     }
 
-    console.log(info,':::')
 
     // console.log(moment(info['writtenDate']).format('YYYY-MM-DD'),'??')
     return <>

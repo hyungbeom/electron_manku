@@ -1,5 +1,20 @@
 import {subOrderReadColumns} from "@/utils/columnList";
 
+
+
+
+export const makerRegistInitial = {
+    "makerName": "",                   // MAKER
+    "item": "",               // ITEM
+    "homepage": "",  // 홈페이지
+    "area": "",                            // AREA
+    "origin": "",                               // 원산지
+    "managerConfirm": "",                       // 담당자확인
+    "koreanAgency": "",                         // 한국대리점
+    "directConfirm": "",                        // 직접확인
+    "ftaNumber": "",                            // FTA-No
+    "instructions": ""                          // 지시사항
+}
 export const estimateWriteInitial = {
     "documentNumberFull": "AWM-24-0093-1", // INQUIRY No.
     "writtenDate": "2024-09-04",    // 작성일
