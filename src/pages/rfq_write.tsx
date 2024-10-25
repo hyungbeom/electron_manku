@@ -202,11 +202,8 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     const {userInfo} = await initialServerRouter(ctx, store);
 
-    console.log(userInfo,'userInfo:')
     if (userInfo) {
         store.dispatch(setUserInfo(userInfo));
     }
-
-
     return param
 })
