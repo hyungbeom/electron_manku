@@ -19,6 +19,7 @@
     "strictNullChecks": false, // null과 undefined 체크를 엄격하게 하지 않음
     "noImplicitThis": false,  // this 타입의 체크를 비활성화
     "alwaysStrict": false,     // 엄격한 모드를 해제
+
     "paths": {
       "@/*": ["./src/*"]
     }

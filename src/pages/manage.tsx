@@ -12,7 +12,6 @@ import {useAppSelector} from "@/utils/common/function/reduxHooks";
 
 export default function Manage({memberList}:any) {
     const userInfo = useAppSelector((state) => state.user);
-    console.log(memberList,'memberList:')
     const items = [
         {
             key: '1',
