@@ -6,7 +6,14 @@ import LayoutComponent from "@/component/LayoutComponent";
 import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
 import TextArea from "antd/lib/input/TextArea";
-import {FileSearchOutlined, FormOutlined, RetweetOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
+import {
+    EditOutlined,
+    FileSearchOutlined,
+    FormOutlined,
+    RetweetOutlined,
+    SaveOutlined,
+    SearchOutlined
+} from "@ant-design/icons";
 import Button from "antd/lib/button";
 import {
     rfqReadColumns,
@@ -133,7 +140,7 @@ export default function Codediploma({searchList}) {
                             })
                             }/>
                         </div>
-                        <div>
+                        <div style={{paddingTop:8}}>
                             <div style={{paddingBottom: 3}}>문서번호</div>
                             <Input id={'searchDocumentNumber'} onChange={onChange} size={'small'}/>
                         </div>
@@ -144,7 +151,7 @@ export default function Codediploma({searchList}) {
                         <Button type={'primary'} style={{marginRight: 8}}
                                 onClick={searchInfo}><SearchOutlined/>검색</Button>
                         {/*@ts-ignored*/}
-                        <Button type={'danger'}><RetweetOutlined/>새로만들기</Button>
+                        <Button style={{letterSpacing: -2}} type={'primary'}><EditOutlined/>새로만들기</Button>
                     </div>
                 </Card>
 

@@ -6,7 +6,14 @@ import LayoutComponent from "@/component/LayoutComponent";
 import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
 import TextArea from "antd/lib/input/TextArea";
-import {FileSearchOutlined, FormOutlined, RetweetOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
+import {
+    DeleteOutlined,
+    FileSearchOutlined,
+    FormOutlined,
+    RetweetOutlined,
+    SaveOutlined,
+    SearchOutlined
+} from "@ant-design/icons";
 import Button from "antd/lib/button";
 import {
     rfqReadColumns,
@@ -133,12 +140,12 @@ export default function CodeRead({searchList}) {
                         </div>
                         <div style={{paddingTop: 20, textAlign: 'right'}}>
                             {/*@ts-ignored*/}
-                            <Button type={'danger'} style={{marginRight: 8, letterSpacing: -1}}>
+                            <Button type={'danger'} style={{marginRight: 8, letterSpacing: -2}}>
                                 <RetweetOutlined/>초기화</Button>
                             <Button type={'primary'} style={{marginRight: 8}}
-                                    onClick={searchInfo}><SearchOutlined/>저장</Button>
+                                    onClick={searchInfo}><SaveOutlined/>저장</Button>
                             {/*@ts-ignored*/}
-                            <Button type={'danger'}><RetweetOutlined/>삭제</Button>
+                            <Button type={'danger'}><DeleteOutlined/>삭제</Button>
                         </div>
                     </Card>
                     <Card  size={'small'} title={'검색'} style={{
@@ -146,13 +153,12 @@ export default function CodeRead({searchList}) {
                         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                     }}>
                         <div>
-                            <div style={{paddingBottom: 3}}>검색</div>
                             <Input id={'searchText'} onChange={onChange} size={'small'}/>
                         </div>
                         <div style={{paddingTop: 20, textAlign: 'right'}}>
                             {/*@ts-ignored*/}
-                            <Button type={'danger'} style={{marginRight: 8}}>
-                                <RetweetOutlined/>검색</Button>
+                            <Button type={'primary'} style={{marginRight: 8}}>
+                                <SearchOutlined/>검색</Button>
                         </div>
                     </Card>
 

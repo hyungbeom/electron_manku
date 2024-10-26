@@ -1,31 +1,19 @@
 import React, {useEffect, useState} from "react";
-import Input from "antd/lib/input/Input";
-import Select from "antd/lib/select";
-import { Checkbox } from 'antd';
-import {estimateInfo, estimateTotalWriteColumn, estimateWriteInitial} from "@/utils/common";
-import LayoutComponent from "@/component/LayoutComponent";
-import CustomTable from "@/component/CustomTable";
-import Card from "antd/lib/card/Card";
-import TextArea from "antd/lib/input/TextArea";
-import {FileSearchOutlined, FormOutlined, RetweetOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
-import Button from "antd/lib/button";
-import {subCodeReadColumns, subCodeUserColumns} from "@/utils/columnList";
-import DatePicker from "antd/lib/date-picker";
-import {codeReadInitial, codeUserInitial,} from "@/utils/initialList";
-import {subCodeReadInfo, subCodeUserInfo,} from "@/utils/modalDataList";
+import {codeUserInitial} from "@/utils/initialList";
+import moment from "moment/moment";
+import {getData} from "@/manage/function/api";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
-import {getData} from "@/manage/function/api";
-import moment from "moment";
-
-const {RangePicker} = DatePicker
-
-const TwinInputBox = ({children}) => {
-    return <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: 5, paddingTop: 8}}>
-        {children}
-    </div>
-}
+import LayoutComponent from "@/component/LayoutComponent";
+import Card from "antd/lib/card/Card";
+import {subCodeUserColumns} from "@/utils/columnList";
+import CustomTable from "@/component/CustomTable";
+import {subCodeUserInfo} from "@/utils/modalDataList";
+import Input from "antd/lib/input/Input";
+import {Checkbox} from "antd";
+import Button from "antd/lib/button";
+import {DeleteOutlined, RetweetOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
 
 export default function CodeRead({searchList}) {
 
@@ -99,72 +87,73 @@ export default function CodeRead({searchList}) {
 
     }
 
-    return <>
-        <LayoutComponent>
-            <div style={{display: 'grid', gridTemplateColumns: '350px 1fr', height: '100%', gridColumnGap: 5}}>
-                <Card title={'ERP 계정 관리'} style={{fontSize: 12, border: '1px solid lightGray'}}>
-                    <Card size={'small'} style={{
-                        fontSize: 13,
-                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                    }}>
-                        <div>
-                            <div style={{paddingBottom: 3}}>ID</div>
-                            <Input id={'id'} onChange={onChange} size={'small'}/>
-                        </div>
-                        <div style={{paddingTop: 8}}>
-                            <div style={{paddingBottom: 3}}>Password</div>
-                            <Input id={'pw'} onChange={onChange} size={'small'}/>
-                        </div>
-                        <div style={{paddingTop: 8}}>
-                            <div style={{paddingBottom: 3}}>이름</div>
-                            <Input id={'name'} onChange={onChange} size={'small'}/>
-                        </div>
-                        <div style={{paddingTop: 8}}>
-                            <div style={{paddingBottom: 3}}>직급</div>
-                            <Input id={'position'} onChange={onChange} size={'small'}/>
-                        </div>
-                        <div style={{paddingTop: 8}}>
-                            <div style={{paddingBottom: 3}}>권한</div>
-                            <Input id={'right'} onChange={onChange} size={'small'}/>
-                        </div>
-                        <div style={{paddingTop: 8}}>
-                            <div style={{paddingBottom: 3}}>이메일</div>
-                            <Input id={'email'} onChange={onChange} size={'small'}/>
-                        </div>
-                        <div style={{paddingTop: 8}}>
-                            <div style={{paddingBottom: 3}}>연락처</div>
-                            <Input id={'phoneNumber'} onChange={onChange} size={'small'}/>
-                        </div>
-                        <div style={{paddingTop: 8}}>
-                            <div style={{paddingBottom: 3}}>팩스번호</div>
-                            <Input id={'faxNumber'} onChange={onChange} size={'small'}/>
-                        </div>
-                        <div style={{paddingTop: 8}}>
-                            <div style={{paddingBottom: 3}}>권한정보&nbsp;&nbsp;&nbsp;
-                            <Checkbox id={'calculateRight'} style={{fontSize:13}} onChange={onChange}>정산관리</Checkbox></div>
-                        </div>
-                        <div style={{paddingTop: 20, textAlign: 'right'}}>
-                            {/*@ts-ignored*/}
-                            <Button type={'danger'} style={{marginRight: 8, letterSpacing: -1}}>
-                                <RetweetOutlined/>초기화</Button>
-                            <Button type={'primary'} style={{marginRight: 8}}
-                                    onClick={searchInfo}><SearchOutlined/>저장</Button>
-                            {/*@ts-ignored*/}
-                            <Button type={'danger'}><RetweetOutlined/>삭제</Button>
-                        </div>
+    return(
+        <>
+            <LayoutComponent>
+                <div style={{display: 'grid', gridTemplateColumns: '350px 1fr', height: '100%', gridColumnGap: 5}}>
+                    <Card title={'ERP 계정 관리'} style={{fontSize: 12, border: '1px solid lightGray'}}>
+                        <Card size={'small'} style={{
+                            fontSize: 13,
+                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                        }}>
+                            <div>
+                                <div style={{paddingBottom: 3}}>ID</div>
+                                <Input id={'id'} onChange={onChange} size={'small'}/>
+                            </div>
+                            <div style={{paddingTop: 8}}>
+                                <div style={{paddingBottom: 3}}>Password</div>
+                                <Input id={'pw'} onChange={onChange} size={'small'}/>
+                            </div>
+                            <div style={{paddingTop: 8}}>
+                                <div style={{paddingBottom: 3}}>이름</div>
+                                <Input id={'name'} onChange={onChange} size={'small'}/>
+                            </div>
+                            <div style={{paddingTop: 8}}>
+                                <div style={{paddingBottom: 3}}>직급</div>
+                                <Input id={'position'} onChange={onChange} size={'small'}/>
+                            </div>
+                            <div style={{paddingTop: 8}}>
+                                <div style={{paddingBottom: 3}}>권한</div>
+                                <Input id={'right'} onChange={onChange} size={'small'}/>
+                            </div>
+                            <div style={{paddingTop: 8}}>
+                                <div style={{paddingBottom: 3}}>이메일</div>
+                                <Input id={'email'} onChange={onChange} size={'small'}/>
+                            </div>
+                            <div style={{paddingTop: 8}}>
+                                <div style={{paddingBottom: 3}}>연락처</div>
+                                <Input id={'phoneNumber'} onChange={onChange} size={'small'}/>
+                            </div>
+                            <div style={{paddingTop: 8}}>
+                                <div style={{paddingBottom: 3}}>팩스번호</div>
+                                <Input id={'faxNumber'} onChange={onChange} size={'small'}/>
+                            </div>
+                            <div style={{paddingTop: 8}}>
+                                <div style={{paddingBottom: 3}}>권한정보&nbsp;&nbsp;&nbsp;
+                                    <Checkbox id={'calculateRight'} style={{fontSize: 13}}
+                                              onChange={onChange}>정산관리</Checkbox></div>
+                            </div>
+                            <div style={{paddingTop: 20, textAlign: 'right'}}>
+                                {/*@ts-ignored*/}
+                                <Button type={'danger'} style={{marginRight: 8, letterSpacing: -2}}>
+                                    <RetweetOutlined/>초기화</Button>
+                                <Button type={'primary'} style={{marginRight: 8}}
+                                        onClick={searchInfo}><SaveOutlined/>저장</Button>
+                                {/*@ts-ignored*/}
+                                <Button type={'danger'}><DeleteOutlined/>삭제</Button>
+                            </div>
+                        </Card>
+
+
                     </Card>
 
-                </Card>
+                    <CustomTable columns={subCodeUserColumns} dataInfo={subCodeUserInfo}
+                                 info={tableInfo}/>
+                </div>
 
-
-                <CustomTable columns={subCodeUserColumns} initial={codeUserInitial}
-                             dataInfo={subCodeUserInfo}
-                             info={tableInfo}/>
-
-            </div>
-        </LayoutComponent>
+            </LayoutComponent>
     </>
-}
+    )}
 
 
 // @ts-ignore
