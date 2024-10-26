@@ -22,7 +22,6 @@ import Table from "antd/lib/table";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import * as XLSX from 'xlsx';
 import MyComponent from "@/component/MyComponent";
-import {useRouter} from "next/router";
 
 const TwinInputBox = ({children}) => {
     return <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: 5, paddingTop: 8}}>
@@ -33,8 +32,6 @@ const TwinInputBox = ({children}) => {
 export default function rqfWrite() {
 
     let checkList = []
-
-    const router = useRouter();
 
     const userInfo = useAppSelector((state) => state.user);
     const [info, setInfo] = useState<any>(rfqWriteInitial)
@@ -248,13 +245,14 @@ export default function rqfWrite() {
 
             checkList  = selectedRowKeys
 
-        }
+        },
+        getCheckboxProps: (record) => ({
+            disabled: record.name === 'Disabled User',
+            // Column configuration not to be checked
+            name: record.name,
+        }),
     };
 
-    const handleDoubleClick = (record, rowIndex) => {
-        console.log(record)
-        // 더블 클릭 시 필요한 로직을 추가
-    };
     return <>
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateColumns: '350px 1fr', height: '100%', gridColumnGap: 5}}>
@@ -390,7 +388,7 @@ export default function rqfWrite() {
                 </Card>
 
 
-                <CustomTable rowSelection={rowSelection} onRowDoubleClick={handleDoubleClick} onUpdate={setInfo}
+                <CustomTable rowSelection={rowSelection} setDatabase={setInfo} listType={'estimateRequestDetailList'}
                              content={<TableModal title={'의뢰작성 세부 추가'} data={subRfqWriteInitial}
                                                   dataInfo={subRfqWriteInfo}
                                                   setInfoList={setInfo}/>} columns={OrderWriteColumn}

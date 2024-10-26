@@ -78,3 +78,16 @@ html, body {
     text-overflow: ellipsis;    /* 초과 텍스트를 '...' 처리 */
     max-width: 350px;           /* 원하는 최대 너비 설정 */
 }
+
+
+/* styles.css 또는 글로벌 CSS 파일에 추가 */
+.editable-cell-value-wrap {
+    transition: background-color 0.3s ease;
+    cursor: pointer; /* 마우스를 올렸을 때 커서가 변경되도록 설정 */
+}
+
+.editable-cell-value-wrap:hover {
+    background-color: #e6f7ff; /* hover 시 배경색 변경 */
+    border: 1px solid lightGray; /* 밑줄을 점선으로 표시하여 강조 */
+    border-radius: 3px;
+}

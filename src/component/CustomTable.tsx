@@ -1,128 +1,177 @@
-import React, { useState } from 'react';
-import Input from 'antd/lib/input';
-import Button from 'antd/lib/button';
-import Select from 'antd/lib/select';
-import  Card from 'antd/lib/card';
+import React, {useEffect, useRef, useState} from 'react';
 import Table from 'antd/lib/table';
-import { DownOutlined, SettingOutlined, UpOutlined } from '@ant-design/icons';
-
+import Card from 'antd/lib/card/Card';
+import Select from 'antd/lib/select';
+import Button from 'antd/lib/button';
+import message from "antd/lib/message";
+import ColumnSetting from "@/component/ColumnSetting";
+import {EditableCell, EditableRow} from "@/component/TableAboutRows";
+import {DropArea} from "@/styled/common";
+import {useDropzone} from "react-dropzone";
+import * as XLSX from 'xlsx';
+import {InboxOutlined} from "@ant-design/icons";
+import Upload from "antd/lib/upload";
 const { Option } = Select;
+const { Dragger } = Upload;
+const CustomTable = ({ columns, info, setDatabase,content, subContent, rowSelection, listType }) => {
+    const defaultCheckedList = columns.map((item) => item.key);
+    const [checkedList, setCheckedList] = useState(defaultCheckedList);
 
-const CustomTable = ({ columns, info, content, subContent, rowSelection, onRowDoubleClick, onUpdate }) => {
-    // 상태 관리
-    const [checkedList, setCheckedList] = useState(columns.map((item) => item.key));
-    const [open, setOpen] = useState(false);
-    const [editingKey, setEditingKey] = useState(null);
-    const [editingData, setEditingData] = useState({});
 
-    // 편집 모드로 전환
-    const enterEditMode = (record) => {
-        setEditingKey(record.key);
-        setEditingData({ ...record });
+
+    // 엑셀 파일을 읽어들이는 함수
+    const handleFile = (file) => {
+        const reader = new FileReader();
+
+        reader.onload = (e) => {
+            const binaryStr = e.target.result;
+            const workbook = XLSX.read(binaryStr, { type: 'binary' });
+
+            // 첫 번째 시트 선택
+            const worksheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[worksheetName];
+
+            // 데이터를 JSON 형식으로 변환 (첫 번째 행을 컬럼 키로 사용)
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+            // 데이터 첫 번째 행을 컬럼 이름으로 사용
+            const headers = jsonData[0];
+            const dataRows = jsonData.slice(1);
+
+
+
+            // 테이블 데이터 설정 (컬럼 키를 사용)
+            const tableData = dataRows.map((row, index) => {
+                const rowData = {};
+                row.forEach((cell, cellIndex) => {
+                    rowData[headers[cellIndex]] = cell; // 컬럼 키를 사용하여 데이터 설정
+                });
+                return { key: index, ...rowData };
+            });
+
+            setDatabase(v=>{
+                const copyData = {...v};
+                copyData[listType] = tableData;
+                return copyData
+            })
+
+        };
+
+        reader.readAsBinaryString(file);
+    };
+    const uploadProps = {
+        name: 'file',
+        accept: '.xlsx, .xls',
+        multiple: false,
+        showUploadList: false,
+        beforeUpload: (file) => {
+            const isExcel = file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || file.type === 'application/vnd.ms-excel';
+
+            if (!isExcel) {
+                message.error('엑셀 파일만 업로드 가능합니다.');
+                return Upload.LIST_IGNORE;
+            }
+
+            // 파일 읽기
+            handleFile(file);
+
+            // false를 반환하여 업로드 방지 (자동 업로드 차단)
+            return false;
+        },
     };
 
-    // 편집 모드 종료 및 데이터 저장
-    const saveEdit = () => {
-        if (editingKey === null) return;
 
-        const updatedData = info.map((item) =>
-            item.key === editingKey ? { ...editingData } : item
-        );
 
-        onUpdate((prevInfo) => ({
-            ...prevInfo,
-            estimateRequestDetailList: updatedData,
-        }));
+    const visibleColumns = columns.filter((item) => checkedList.includes(item.key));
 
-        setEditingKey(null);
+    const tableRef = useRef()
+    // table column checkList
+    const handleSelectChange = (value) => {
+        setCheckedList(value);
     };
 
-    // Input 변경 시 편집 데이터 업데이트
-    const handleInputChange = ({ target: { value } }, dataIndex) => {
-        setEditingData((prev) => ({ ...prev, [dataIndex]: value }));
+    // =====================================================
+
+    const handleSave = (row) => {
+        const newData = [...info];
+        const index = newData.findIndex((item) => row.key === item.key);
+        const item = newData[index];
+        newData.splice(index, 1, {
+            ...item,
+            ...row,
+        });
+
+        setDatabase(v=>{
+            const copyData = {...v};
+            copyData[listType] = newData;
+            return copyData
+        })
     };
 
-    // 컬럼을 렌더링하는 함수
-    const renderEditableCell = (text, record, dataIndex) =>
-        editingKey === record.key ? (
-            <Input
-                size="small"
-                value={editingData[dataIndex]}
-                onChange={(e) => handleInputChange(e, dataIndex)}
-                onBlur={saveEdit}
-            />
-        ) : (
-            text
-        );
-
-    // 선택된 컬럼에 해당하는 항목만 필터링하여 테이블에 표시
-    const visibleColumns = columns
-        .filter((item) => checkedList.includes(item.key))
-        .map((col) => ({
+    const components = {
+        body: {
+            row: EditableRow,
+            cell: EditableCell,
+        },
+    };
+    const setColumns = visibleColumns.map((col) => {
+        if (!col.editable) {
+            return col;
+        }
+        return {
             ...col,
-            render: (text, record) => renderEditableCell(text, record, col.dataIndex),
-        }));
+            onCell: (record) => ({
+                record,
+                editable: col.editable,
+                dataIndex: col.dataIndex,
+                title: col.title,
+                handleSave,
+            }),
+        };
+    });
+
+
+
+
 
     return (
         <div style={{ overflow: 'auto', maxHeight: '100%', maxWidth: '100%' }}>
-            <Card
-                size="small"
-                style={{ border: '1px solid lightGray', height: '100%' }}
-                title={
-                    <>
-                        <span>LIST</span>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', width: 170, float: 'right' }}>
-                            {subContent}
-                        </div>
-                    </>
-                }
-            >
+            <Card size={'small'} style={{ border: '1px solid lightGray', height: '100%' }}
+                  title={
+                      <>
+                          <span>LIST</span>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', width: 170, float: 'right' }}>
+                              {subContent}
+                          </div>
+                      </>
+                  }>
                 {content}
-                <Button
-                    style={{ marginBottom: 10, float: 'right', borderRadius: 5 }}
-                    onClick={() => setOpen((prev) => !prev)}
-                    size="small"
-                    type="dashed"
-                >
-                    <SettingOutlined />
-                    Column Setting {open ? <UpOutlined /> : <DownOutlined />}
-                </Button>
 
-                {open && (
-                    <Select
-                        mode="multiple"
-                        style={{ width: '100%', marginBottom: 16 }}
-                        placeholder="Select columns to display"
-                        value={checkedList}
-                        onChange={setCheckedList}
-                    >
-                        {columns.map(({ key, title }) => (
-                            <Option key={key} value={key}>
-                                {title}
-                            </Option>
-                        ))}
-                    </Select>
-                )}
+                <ColumnSetting columns={columns} checkedList={checkedList} handleSelectChange={handleSelectChange}/>
 
-                <Table
-                    style={{ fontSize: 11, width: '100%' }}
-                    scroll={{ x: true }}
-                    size="small"
-                    columns={visibleColumns}
+                <Table ref={tableRef}
+
+                    style={{ fontSize: 11, width : '100%'}}
+                    scroll={{x : true}}
+                    size={'small'}
+                    bordered
+                    columns={setColumns}
                     dataSource={[...info]}
-                    onRow={(record) => ({
-                        style: { cursor: 'pointer' },
-                        onDoubleClick: () => {
-                            enterEditMode(record);
-                            onRowDoubleClick && onRowDoubleClick(record); // 부모의 더블 클릭 이벤트도 호출
-                        },
-                    })}
+                    components={components}
+                    rowClassName={() => 'editable-row'}
                     rowSelection={{
-                        style: { cursor: 'pointer' },
                         type: 'checkbox',
                         ...rowSelection,
                     }}
                 />
+
+                <Dragger {...uploadProps} style={{ marginBottom: '20px' }}>
+                    <p className="ant-upload-drag-icon">
+                        <InboxOutlined />
+                    </p>
+                    <p className="ant-upload-text">여기에 파일을 드래그 앤 드롭하거나 클릭하여 업로드하세요.</p>
+                    <p className="ant-upload-hint">엑셀 파일(.xlsx, .xls)만 지원합니다.</p>
+                </Dragger>
             </Card>
         </div>
     );
