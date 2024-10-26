@@ -6,11 +6,11 @@ import Input from "antd/lib/input";
 import InputNumber from "antd/lib/input-number";
 import Card from "antd/lib/card/Card";
 import {estimateReadInfo, TagTypeList} from "@/utils/common";
-import Select from "antd/lib/Select";
+import Select from "antd/lib/select";
 import TextArea from "antd/lib/input/TextArea";
 import DatePicker from "antd/lib/date-picker";
 
-export default function TableModal({data, dataInfo}) {
+export default function TableModal({title, data, dataInfo, setInfoList}) {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const [info, setInfo] = useState<any>(data)
@@ -21,6 +21,15 @@ export default function TableModal({data, dataInfo}) {
     };
 
     const handleOk = () => {
+
+
+        setInfoList(v => {
+            let copyData = {...info}
+            const copyData2 = {...v}
+            copyData['key'] = copyData2['estimateRequestDetailList']?.length + 1;
+            copyData2['estimateRequestDetailList'].push(copyData);
+            return copyData2;
+        })
         setIsModalOpen(false);
     };
 
@@ -30,7 +39,6 @@ export default function TableModal({data, dataInfo}) {
 
 
     function inputChange(e) {
-        console.log(e, 'e.target.id:')
         let bowl = {};
         bowl[e.target.id] = e.target.value;
         setInfo(v => {
@@ -38,12 +46,12 @@ export default function TableModal({data, dataInfo}) {
         })
     }
 
-    return <>  <Button type={'primary'} style={{float: 'left'}} onClick={showModal}>ADD</Button><Modal
+    return <>  <Button type={'primary'} style={{float: 'left', borderRadius : 5}} onClick={showModal} size={'small'}>add</Button><Modal
         open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
-        <Card title={'의뢰작성 내용 추가'} style={{marginTop: 30}}>
+        <Card title={title} style={{marginTop: 30}}>
             {Object.keys(data).map(v => {
 
-                switch (TagTypeList??[][v].type) {
+                switch (TagTypeList[v]?.type) {
                     case 'input' :
                         return <div style={{paddingTop: 8}}>
                             <div>{dataInfo[v]?.title}</div>
@@ -58,9 +66,9 @@ export default function TableModal({data, dataInfo}) {
                     case 'select' :
                         return <div style={{paddingTop: 8}}>
                             <div>{dataInfo[v]?.title}</div>
-                            <Select id={v} value={info[v]} onChange={(src) => inputChange({target: {id: v, value: src}})}  defaultValue={0} options={
+                            <Select id={v} value={info[v]} onChange={(src) => inputChange({target: {id: v, value: src}})}   options={
                                 TagTypeList[v]?.boxList?.map((src, idx) => {
-                                    return {value: idx, label: src}
+                                    return {value: src, label: src}
                                 })
                             } style={{margin : `7px 0`, fontSize : 11, width : '100%', height : 28}}>
                             </Select>
@@ -73,7 +81,7 @@ export default function TableModal({data, dataInfo}) {
                     case 'date' :
                         return  <div style={{paddingTop: 8}}>
                             <div>{dataInfo[v]?.title}</div>
-                            <DatePicker style={{width : '100%'}}/>
+                            <DatePicker id={v} style={{width : '100%'}} onChange={(src)=>inputChange({target : {id : v, value : src}})}/>
                         </div>
                 }
 

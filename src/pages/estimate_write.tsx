@@ -1,16 +1,21 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
 import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
 import TextArea from "antd/lib/input/TextArea";
-import {FileSearchOutlined} from "@ant-design/icons";
-import {estimateWriteColumns, rfqWriteColumns} from "@/utils/columnList";
+import {FileSearchOutlined, RetweetOutlined, SaveOutlined} from "@ant-design/icons";
+import {rfqWriteColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {estimateWriteInitial, subRfqWriteInitial} from "@/utils/initialList";
+import {rfqWriteInitial, subRfqWriteInitial} from "@/utils/initialList";
 import {subRfqWriteInfo} from "@/utils/modalDataList";
-import {estimateTotalWriteInfo} from "@/utils/common";
-import Select from "antd/lib/select";
+import moment from "moment";
+import Button from "antd/lib/button";
+import message from "antd/lib/message";
+import {getData} from "@/manage/function/api";
+import {wrapper} from "@/store/store";
+import initialServerRouter from "@/manage/function/initialServerRouter";
+import {setUserInfo} from "@/store/user/userSlice";
 
 const TwinInputBox = ({children}) => {
     return <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: 5, paddingTop: 8}}>
@@ -18,12 +23,20 @@ const TwinInputBox = ({children}) => {
     </div>
 }
 
-export default function estimateWrite() {
+export default function EstimateWrite() {
     const sub = {
         validityPeriod: 1
     }
 
-    const [info, setInfo] = useState(estimateWriteInitial)
+    const [info, setInfo] = useState<any>(rfqWriteInitial)
+
+
+    useEffect(() => {
+        let copyData = {...rfqWriteInitial}
+        // @ts-ignored
+        copyData['writtenDate'] = moment();
+        setInfo(copyData)
+    }, [])
 
 
     function onChange(e) {
@@ -36,11 +49,27 @@ export default function estimateWrite() {
         })
     }
 
-    console.log(info,':::')
+    async function saveFunc() {
+        if (!info['estimateRequestDetailList'].length) {
+            message.warn('하위 데이터 1개 이상이여야 합니다')
+        } else {
+            const copyData = {...info}
+            copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
+
+            await getData.post('estimate/addEstimate', copyData).then(v => {
+
+            })
+        }
+
+    }
+
+
+
+    // console.log(moment(info['writtenDate']).format('YYYY-MM-DD'),'??')
     return <>
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateColumns: '350px 1fr', height: '100%', gridColumnGap: 5}}>
-                <Card title={'의뢰 작성'} style={{fontSize: 12, border: '1px solid lightGray'}}>
+                <Card title={'견적서 작성'} style={{fontSize: 12, border: '1px solid lightGray'}}>
                     <Card size={'small'} style={{
                         fontSize: 13,
                         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
@@ -48,11 +77,18 @@ export default function estimateWrite() {
                         <TwinInputBox>
                             <div>
                                 <div style={{paddingBottom: 3}}>INQUIRY NO.</div>
-                                <Input id={'documentNumberFull'} disabled={true} size={'small'} onChange={onChange}/>
+                                <Input disabled={true} size={'small'}/>
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>작성일</div>
-                                <DatePicker id={'writtenDate'} size={'small'}/>
+                                <DatePicker value={info['writtenDate']}
+                                            onChange={(date, dateString) => onChange({
+                                                target: {
+                                                    id: 'writtenDate',
+                                                    value: date
+                                                }
+                                            })
+                                            } id={'writtenDate'} size={'small'}/>
                             </div>
                         </TwinInputBox>
                     </Card>
@@ -65,16 +101,17 @@ export default function estimateWrite() {
                           }}>
                         <TwinInputBox>
                             <div>
-                                <div style={{paddingBottom: 3}}>연결 INQUIRY No</div>
-                                <Input id={'documentNumberFull'} onChange={onChange} size={'small'}
-                                       suffix={<FileSearchOutlined/>} />
+                                <div style={{paddingBottom: 3}}>연결 INQUIRY No.</div>
+                                <Input  size={'small'}
+                                       suffix={<FileSearchOutlined style={{cursor: 'pointer'}}/>}/>
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>대리점코드</div>
-                                <Input id={'agencyCode'} onChange={onChange} size={'small'}/>
+                                <Input id={'agencyCode'} value={info['agencyCode']} onChange={onChange} size={'small'}/>
                             </div>
                         </TwinInputBox>
                     </Card>
+
 
 
                     <Card title={'CUSTOMER INFORMATION'} size={'small'} style={{
@@ -85,61 +122,61 @@ export default function estimateWrite() {
                         <TwinInputBox>
                             <div>
                                 <div style={{paddingBottom: 3}}>CUSTOMER 코드</div>
-                                <Input id={'customerCode'} size={'small'} onChange={onChange}/>
+                                <Input id={'customerCode'} value={info['customerCode']} onChange={onChange}
+                                       size={'small'} suffix={<FileSearchOutlined style={{cursor: 'pointer'}}/>}/>
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>상호명</div>
-                                <Input id={'customerName'} size={'small'} onChange={onChange}/>
+                                <Input id={'customerName'} value={info['customerName']} onChange={onChange}
+                                       size={'small'}/>
                             </div>
                         </TwinInputBox>
                         <TwinInputBox>
                             <div>
                                 <div style={{paddingBottom: 3}}>담당자</div>
-                                <Input id={'managerName'} size={'small'} onChange={onChange}/>
+                                <Input id={'managerName'} value={info['managerName']} onChange={onChange}
+                                       size={'small'}/>
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>전화번호</div>
-                                <Input id={'phoneNumber'} size={'small'} onChange={onChange}/>
+                                <Input id={'phoneNumber'} value={info['phoneNumber']} onChange={onChange} size={'small'}/>
                             </div>
                         </TwinInputBox>
                         <TwinInputBox>
                             <div>
                                 <div style={{paddingBottom: 3}}>팩스번호</div>
-                                <Input id={'faxNumber'} size={'small'} onChange={onChange}/>
+                                <Input id={'faxNumber'} value={info['faxNumber']} onChange={onChange}
+                                       size={'small'}/>
                             </div>
+                        </TwinInputBox>
+                    </Card>
+
+                    <Card title={'OPTION'} size={'small'} style={{
+                        fontSize: 13,
+                        marginTop: 20,
+                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                    }}>
+                        <TwinInputBox>
                             <div>
                                 <div style={{paddingBottom: 3}}>유효기간</div>
-                                <Select id={'validityPeriod'} size={'small'} defaultValue={0} options={[
-                           {value: 0, label: '견적 발행 후 10일간'},
-                                    {value: 1, label: '견적 발행 후 30일간'}
-                                ]} style={{width : '100%'}}>
-                                </Select>
+                                <Input id={'validityPeriod'} value={info['validityPeriod']} onChange={onChange}
+                                       size={'small'} suffix={<FileSearchOutlined style={{cursor: 'pointer'}}/>}/>
                             </div>
-                        </TwinInputBox>
-                        <TwinInputBox>
                             <div>
                                 <div style={{paddingBottom: 3}}>결제조건</div>
-                                <Select id={'paymentTerms'} size={'small'} defaultValue={0} options={[
-                                    {value: 0, label: '발주/납품시 50%'},
-                                    {value: 1, label: '납품시 현금결제'},
-                                    {value: 2, label: '정기결제'}
-                                ]} style={{width : '100%'}}>
-                                </Select>
-                            </div>
-                            <div>
-                                <div style={{paddingBottom: 3}}>운송조건</div>
-                                <Select id={'shippingTerms'} size={'small'} defaultValue={0} options={[
-                                    {value: 0, label: '발주/납품시 50%'},
-                                    {value: 1, label: '납품시 현금결제'},
-                                    {value: 2, label: '정기결제'}
-                                ]} style={{width : '100%'}}>
-                                </Select>
+                                <Input id={'paymentTerms'} value={info['paymentTerms']} onChange={onChange}
+                                       size={'small'}/>
                             </div>
                         </TwinInputBox>
                         <TwinInputBox>
                             <div>
+                                <div style={{paddingBottom: 3}}>운송조건</div>
+                                <Input id={'shippingTerms'} value={info['shippingTerms']} onChange={onChange}
+                                       size={'small'}/>
+                            </div>
+                            <div>
                                 <div style={{paddingBottom: 3}}>환율</div>
-                                <Input id={'exchangeRate'} size={'small'}/>
+                                <Input id={'exchangeRate'} value={info['exchangeRate']} onChange={onChange} size={'small'}/>
                             </div>
                         </TwinInputBox>
                     </Card>
@@ -153,50 +190,83 @@ export default function estimateWrite() {
                         <TwinInputBox>
                             <div>
                                 <div style={{paddingBottom: 3}}>담당자</div>
-                                <Input id={'estimateManager'} size={'small'} onChange={onChange}/>
+                                <Input id={'estimateManager'} value={info['estimateManager']} onChange={onChange}
+                                       size={'small'}/>
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>E-Mail</div>
-                                <Input id={'email'} size={'small'} onChange={onChange}/>
+                                <Input id={'email'} value={info['email']} onChange={onChange}
+                                       size={'small'}/>
                             </div>
                         </TwinInputBox>
                         <TwinInputBox>
                             <div>
                                 <div style={{paddingBottom: 3}}>전화번호</div>
-                                <Input id={'managerPhoneNumber'} size={'small'} onChange={onChange}/>
+                                <Input id={'managerPhoneNumber'} value={info['managerPhoneNumber']} onChange={onChange}
+                                       size={'small'}/>
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>팩스번호</div>
-                                <Input id={'managerFaxNumber'} size={'small'} onChange={onChange}/>
+                                <Input id={'managerFaxNumber'} value={info['managerFaxNumber']} onChange={onChange}
+                                       size={'small'}/>
                             </div>
                         </TwinInputBox>
+                    </Card>
 
+                    <Card title={'ETC'} size={'small'} style={{
+                        fontSize: 13,
+                        marginTop: 20,
+                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                    }}>
                         <div style={{paddingTop: 8}}>
                             <div style={{paddingBottom: 3}}>MAKER</div>
-                            <Input id={'maker'} size={'small'} onChange={onChange}/>
+                            <Input id={'maker'} value={info['maker']} onChange={onChange} size={'small'}/>
                         </div>
                         <div style={{paddingTop: 8}}>
                             <div style={{paddingBottom: 3}}>ITEM</div>
-                            <Input id={'item'} size={'small'} onChange={onChange}/>
+                            <Input id={'item'} value={info['item']} onChange={onChange} size={'small'}/>
                         </div>
                         <div style={{paddingTop: 8}}>
                             <div style={{paddingBottom: 3}}>Delivery</div>
-                            <Input id={'delivery'} size={'small'} onChange={onChange}/>
+                            <Input id={'remarks'} value={info['remarks']} onChange={onChange} size={'small'}/>
                         </div>
                         <div style={{paddingTop: 8}}>
                             <div style={{paddingBottom: 3}}>비고란</div>
-                            <TextArea id={'remarks'} size={'small'} onChange={onChange}/>
+                            <TextArea id={'instructions'} value={info['instructions']} onChange={onChange}
+                                      size={'small'}/>
+                        </div>
+
+                        <div style={{paddingTop: 20, textAlign: 'right'}}>
+                            <Button type={'primary'} style={{marginRight: 8}}
+                                    onClick={saveFunc}><SaveOutlined/>저장</Button>
+                            {/*@ts-ignored*/}
+                            <Button type={'danger'}><RetweetOutlined/>초기화</Button>
                         </div>
                     </Card>
-
-
-
                 </Card>
 
 
-                <CustomTable columns={estimateWriteColumns} initial={subRfqWriteInitial} dataInfo={subRfqWriteInfo}/>
+                <CustomTable columns={rfqWriteColumns} initial={subRfqWriteInitial} dataInfo={subRfqWriteInfo}
+                             setInfo={setInfo} info={info['estimateRequestDetailList']}/>
 
             </div>
         </LayoutComponent>
     </>
 }
+// @ts-ignore
+export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
+
+
+    const userAgent = ctx.req.headers['user-agent'];
+    let param = {}
+
+    const {userInfo} = await initialServerRouter(ctx, store);
+
+    console.log(userInfo, 'userInfo:')
+    if (userInfo) {
+        store.dispatch(setUserInfo(userInfo));
+    }
+
+
+    return param
+})

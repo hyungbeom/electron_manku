@@ -1,17 +1,24 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Input from "antd/lib/input/Input";
-import Select from "antd/lib/Select";
+import Select from "antd/lib/select";
 import {estimateInfo, estimateTotalWriteColumn, estimateWriteInitial} from "@/utils/common";
 import LayoutComponent from "@/component/LayoutComponent";
 import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
 import TextArea from "antd/lib/input/TextArea";
-import {FileSearchOutlined, FormOutlined, SaveOutlined} from "@ant-design/icons";
+import {FileSearchOutlined, FormOutlined, RetweetOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
-import {rfqWriteColumns, subMailSendColumns} from "@/utils/columnList";
+import {rfqMailColumns, rfqReadColumns, rfqWriteColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {rfqMailSendInitial, subRfqMailSendInitial, subRfqReadInitial, subRfqWriteInitial} from "@/utils/initialList";
-import {subRfqMailSendInfo, subRfqWriteInfo} from "@/utils/modalDataList";
+import {subRfqReadInitial, subRfqWriteInitial} from "@/utils/initialList";
+import {subRfqReadInfo, subRfqWriteInfo} from "@/utils/modalDataList";
+import {wrapper} from "@/store/store";
+import initialServerRouter from "@/manage/function/initialServerRouter";
+import {setUserInfo} from "@/store/user/userSlice";
+import {getData} from "@/manage/function/api";
+import moment from "moment";
+
+const {RangePicker} = DatePicker
 
 const TwinInputBox = ({children}) => {
     return <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: 5, paddingTop: 8}}>
@@ -19,12 +26,10 @@ const TwinInputBox = ({children}) => {
     </div>
 }
 
-export default function rfqMailSend() {
-    const sub = {
-        validityPeriod: 1
-    }
+export default function rfqMainSend({searchList}) {
 
-    const [info, setInfo] = useState(rfqMailSendInitial)
+
+    const [info, setInfo] = useState(subRfqReadInitial)
     const [tableInfo, setTableInfo] = useState([])
 
     function onChange(e) {
@@ -36,71 +41,171 @@ export default function rfqMailSend() {
             return {...v, ...bowl}
         })
     }
+    useEffect(()=>{
+        setTableInfo(transformData(searchList));
+    },[])
 
+    const transformData = (data) => {
+
+        // 데이터를 변환하여 새로운 배열을 생성
+        const transformedArray = data.flatMap((item) => {
+            // estimateRequestDetailList의 항목 개수에 따라 첫 번째만 정보 포함
+            return item.estimateRequestDetailList.map((detail, index) => ({
+                modifiedDate: moment(item.modifiedDate).format('YYYY-MM-DD') ,
+                managerName: item.managerName ,
+                agencyName: index === 0 ? item.agencyName : null,
+                writtenDate: index === 0 ? item.writtenDate : null,
+                documentNumber: index === 0 ? item.documentNumber : null,
+                maker: index === 0 ? item.maker : null,
+                item: index === 0 ? item.item : null,
+
+
+                content: detail.content || '',
+                estimateRequestId: detail.estimateRequestId || '',
+                estimateRequestDetailId: detail.estimateRequestDetailId || '',
+                model: detail.model || '',
+                quantity: detail.quantity || '',
+                unit: detail.unit || '',
+                currency: detail.currency || '',
+                net: detail.net || '',
+                sentStatus: detail.sentStatus || '',
+                serialNumber: detail.serialNumber || '',
+                replySummaryId: detail.replySummaryId || '',
+                unitPrice: detail.unitPrice || '',
+                currencyUnit: detail.currencyUnit || '',
+                deliveryDate: detail.deliveryDate || '',
+                replyDate: detail.replyDate || '',
+
+
+            }));
+        });
+
+        return transformedArray;
+    };
+
+    async function searchInfo() {
+        const copyData:any = {...info}
+        const {writtenDate}:any = copyData;
+        if (writtenDate) {
+            copyData['searchStartDate'] = moment(writtenDate[0]).format('YYYY-MM-DD');
+            copyData['searchEndDate'] = moment(writtenDate[1]).format('YYYY-MM-DD');
+        }
+        delete copyData?.writtenDate;
+        const result = await getData.post('estimate/getEstimateRequestList', copyData);
+
+        setTableInfo(transformData(result?.data?.entity?.estimateRequestList));
+
+
+    }
 
     return <>
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateColumns: '350px 1fr', height: '100%', gridColumnGap: 5}}>
                 <Card title={'메일 전송'} style={{fontSize: 12, border: '1px solid lightGray'}}>
-                    <TwinInputBox>
+                    <Card size={'small'} style={{
+                        fontSize: 13,
+                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                    }}>
                         <div>
-                            <div style={{paddingBottom: 3}}>작성일(시작)</div>
-                            <DatePicker id={'startDate'} size={'small'} onChange={onChange}/>
+                            <div style={{paddingBottom: 3}}>작성일자</div>
+                            <RangePicker id={'searchDate'} size={'small'}  onChange={(date, dateString) => onChange({
+                                target: {
+                                    id: 'writtenDate',
+                                    value: date
+                                }
+                            })
+                            } style={{width : '100%'}}/>
                         </div>
                         <div>
-                            <div style={{paddingBottom: 3}}>작성일(종료)</div>
-                            <DatePicker id={'endDate'} size={'small'} onChange={onChange}/>
+                            <div style={{paddingBottom: 3}}>검색조건</div>
+                            <Select id={'searchType'}  onChange={(src) => onChange({target: {id: 'searchType', value: src}})} size={'small'} defaultValue={0} options={[
+                                {value: 0, label: '전체'},
+                                {value: 1, label: '전송'},
+                                {value: 2, label: '미전송'}
+                            ]} style={{width: '50%'}}>
+                            </Select>
+                            <Select id={'searchType'}  onChange={(src) => onChange({target: {id: 'searchType', value: src}})} size={'small'} defaultValue={0} options={[
+                                {value: 0, label: '전체'},
+                                {value: 1, label: '회신'},
+                                {value: 2, label: '미회신'}
+                            ]} style={{width: '50%'}}>
+                            </Select>
                         </div>
-                    </TwinInputBox>
-
                         <div>
                             <div style={{paddingBottom: 3}}>문서번호</div>
-                            <Input id={'documentNumberFull'} size={'small'} onChange={onChange}/>
+                            <Input id={'searchDocumentNumber'} value={info['searchDocumentNumber']} onChange={onChange} size={'small'}/>
                         </div>
-
-                    <TwinInputBox>
                         <div>
                             <div style={{paddingBottom: 3}}>대리점코드</div>
-                            <Input id={'agencyCode'} size={'small'} suffix={<FileSearchOutlined/>} onChange={onChange}/>
+                            <Input id={'agencyCode'} value={info['agencyCode']} onChange={onChange} size={'small'}/>
                         </div>
                         <div>
                             <div style={{paddingBottom: 3}}>거래처명</div>
-                            <Input id={'agencyName'} size={'small'} onChange={onChange}/>
-                        </div>
-                    </TwinInputBox>
-
-                    <TwinInputBox>
-                    <div>
-                        <div style={{paddingBottom: 3}}>검색조건(전송)</div>
-                        <Select id={'searchTypeSend'} onChange={onChange} size={'small'} defaultValue={0} options={[
-                            {value: 0, label: '미전송'},
-                            {value: 1, label: '전송'},
-                            {value: 2, label: '전체'}
-                        ]} style={{width: '100%'}}>
-                        </Select>
-                    </div>
-                    <div>
-                        <div style={{paddingBottom: 3}}>검색조건(회신)</div>
-                        <Select id={'searchTypeReply'} onChange={onChange} size={'small'} defaultValue={0} options={[
-                            {value: 0, label: '미회신'},
-                            {value: 1, label: '전체'}
-                        ]} style={{width: '100%'}}>
-                        </Select>
-                    </div>
-                    </TwinInputBox>
-
-                        <div>
-                            <div style={{paddingBottom: 3}}>상호명</div>
-                            <Input id={'customerName'} size={'small'} onChange={onChange}/>
+                            <Input id={'searchCustomerName'} value={info['searchCustomerName']} onChange={onChange} size={'small'}/>
                         </div>
 
 
+                    </Card>
+                    <div style={{paddingTop: 20, textAlign: 'right'}}>
+                        <Button type={'primary'} style={{marginRight: 8}}
+                                onClick={searchInfo}><SearchOutlined />검색</Button>
+                    </div>
                 </Card>
 
 
-                <CustomTable columns={subMailSendColumns} initial={subRfqMailSendInitial} dataInfo={subRfqMailSendInfo}/>
+                <CustomTable columns={rfqMailColumns} initial={subRfqReadInitial} dataInfo={subRfqReadInfo}
+                             info={tableInfo}/>
 
             </div>
         </LayoutComponent>
     </>
 }
+
+
+// @ts-ignore
+export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
+
+
+    let param = {}
+
+    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
+
+    const result = await getData.post('estimate/getEstimateRequestList', {
+        "searchEstimateRequestId": "",      // 견적의뢰 Id
+        "searchType": "",                   // 검색조건 1: 회신, 2: 미회신
+        "searchStartDate": "",              // 작성일자 시작일
+        "searchEndDate": "",                // 작성일자 종료일
+        "searchDocumentNumber": "",         // 문서번호
+        "searchCustomerName": "",           // 거래처명
+        "searchMaker": "",                  // MAKER
+        "searchModel": "",                  // MODEL
+        "searchItem": "",                   // ITEM
+        "searchCreatedBy": "",              // 등록직원명
+        "searchManagerName": "",            // 담당자명
+        "searchMobileNumber": "",           // 담당자 연락처
+        "searchBiddingNumber": "",          // 입찰번호(미완성)
+        "page": 1,
+        "limit": 10
+    });
+
+
+    if (userInfo) {
+        store.dispatch(setUserInfo(userInfo));
+    }
+    if (codeInfo !== 1) {
+        param = {
+            redirect: {
+                destination: '/', // 리다이렉트할 대상 페이지
+                permanent: false, // true로 설정하면 301 영구 리다이렉트, false면 302 임시 리다이렉트
+            },
+        };
+    } else {
+        // result?.data?.entity?.estimateRequestList
+        param = {
+            props: {searchList: result?.data?.entity?.estimateRequestList}
+        }
+    }
+
+
+    return param
+})

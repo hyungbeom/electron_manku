@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import Input from "antd/lib/input/Input";
 import Select from "antd/lib/select";
+import { Checkbox } from 'antd';
 import {estimateInfo, estimateTotalWriteColumn, estimateWriteInitial} from "@/utils/common";
 import LayoutComponent from "@/component/LayoutComponent";
 import CustomTable from "@/component/CustomTable";
@@ -8,10 +9,10 @@ import Card from "antd/lib/card/Card";
 import TextArea from "antd/lib/input/TextArea";
 import {FileSearchOutlined, FormOutlined, RetweetOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
-import {rfqReadColumns, rfqWriteColumns} from "@/utils/columnList";
+import {subCodeReadColumns, subCodeUserColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {subRfqReadInitial, subRfqWriteInitial} from "@/utils/initialList";
-import {subRfqReadInfo, subRfqWriteInfo} from "@/utils/modalDataList";
+import {codeReadInitial, codeUserInitial,} from "@/utils/initialList";
+import {subCodeReadInfo, subCodeUserInfo,} from "@/utils/modalDataList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
@@ -26,10 +27,10 @@ const TwinInputBox = ({children}) => {
     </div>
 }
 
-export default function rfqRead({searchList}) {
+export default function CodeRead({searchList}) {
 
 
-    const [info, setInfo] = useState(subRfqReadInitial)
+    const [info, setInfo] = useState(codeUserInitial)
     const [tableInfo, setTableInfo] = useState([])
 
     function onChange(e) {
@@ -101,65 +102,63 @@ export default function rfqRead({searchList}) {
     return <>
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateColumns: '350px 1fr', height: '100%', gridColumnGap: 5}}>
-                <Card title={'의뢰 조회'} style={{fontSize: 12, border: '1px solid lightGray'}}>
+                <Card title={'ERP 계정 관리'} style={{fontSize: 12, border: '1px solid lightGray'}}>
                     <Card size={'small'} style={{
                         fontSize: 13,
                         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                     }}>
                         <div>
-                            <div style={{paddingBottom: 3}}>작성일자</div>
-                            <RangePicker id={'searchDate'}  size={'small'}  onChange={(date, dateString) => onChange({
-                                target: {
-                                    id: 'writtenDate',
-                                    value: date
-                                }
-                            })
-                            }/>
+                            <div style={{paddingBottom: 3}}>ID</div>
+                            <Input id={'id'} onChange={onChange} size={'small'}/>
                         </div>
-                        <div>
-                            <div style={{paddingBottom: 3}}>검색조건</div>
-                            <Select id={'searchType'}  onChange={(src) => onChange({target: {id: 'searchType', value: src}})} size={'small'} defaultValue={0} options={[
-                                {value: 0, label: '전체'},
-                                {value: 2, label: '미회신'},
-                                {value: 1, label: '회신'}
-                            ]} style={{width: '100%'}}>
-                            </Select>
+                        <div style={{paddingTop: 8}}>
+                            <div style={{paddingBottom: 3}}>Password</div>
+                            <Input id={'pw'} onChange={onChange} size={'small'}/>
                         </div>
-                        <div>
-                            <div style={{paddingBottom: 3}}>문서번호</div>
-                            <Input id={'searchDocumentNumber'} onChange={onChange} size={'small'}/>
+                        <div style={{paddingTop: 8}}>
+                            <div style={{paddingBottom: 3}}>이름</div>
+                            <Input id={'name'} onChange={onChange} size={'small'}/>
                         </div>
-                        <div>
-                            <div style={{paddingBottom: 3}}>거래처명</div>
-                            <Input id={'searchCustomerName'} onChange={onChange} size={'small'}/>
+                        <div style={{paddingTop: 8}}>
+                            <div style={{paddingBottom: 3}}>직급</div>
+                            <Input id={'position'} onChange={onChange} size={'small'}/>
                         </div>
-                        <div>
-                            <div style={{paddingBottom: 3}}>MAKER</div>
-                            <Input id={'searchMaker'} onChange={onChange} size={'small'}/>
+                        <div style={{paddingTop: 8}}>
+                            <div style={{paddingBottom: 3}}>권한</div>
+                            <Input id={'right'} onChange={onChange} size={'small'}/>
                         </div>
-                        <div>
-                            <div style={{paddingBottom: 3}}>MODEL</div>
-                            <Input id={'searchModel'} onChange={onChange} size={'small'}/>
+                        <div style={{paddingTop: 8}}>
+                            <div style={{paddingBottom: 3}}>이메일</div>
+                            <Input id={'email'} onChange={onChange} size={'small'}/>
                         </div>
-                        <div>
-                            <div style={{paddingBottom: 3}}>ITEM</div>
-                            <Input id={'searchItem'} onChange={onChange} size={'small'}/>
+                        <div style={{paddingTop: 8}}>
+                            <div style={{paddingBottom: 3}}>연락처</div>
+                            <Input id={'phoneNumber'} onChange={onChange} size={'small'}/>
                         </div>
-                        <div>
-                            <div style={{paddingBottom: 3}}>등록직원명</div>
-                            <Input id={'searchCreatedBy'} onChange={onChange} size={'small'}/>
+                        <div style={{paddingTop: 8}}>
+                            <div style={{paddingBottom: 3}}>팩스번호</div>
+                            <Input id={'faxNumber'} onChange={onChange} size={'small'}/>
                         </div>
-
-
+                        <div style={{paddingTop: 8}}>
+                            <div style={{paddingBottom: 3}}>권한정보&nbsp;&nbsp;&nbsp;
+                            <Checkbox id={'calculateRight'} style={{fontSize:13}} onChange={onChange}>정산관리</Checkbox></div>
+                        </div>
+                        <div style={{paddingTop: 20, textAlign: 'right'}}>
+                            {/*@ts-ignored*/}
+                            <Button type={'danger'} style={{marginRight: 8, letterSpacing: -1}}>
+                                <RetweetOutlined/>초기화</Button>
+                            <Button type={'primary'} style={{marginRight: 8}}
+                                    onClick={searchInfo}><SearchOutlined/>저장</Button>
+                            {/*@ts-ignored*/}
+                            <Button type={'danger'}><RetweetOutlined/>삭제</Button>
+                        </div>
                     </Card>
-                    <div style={{paddingTop: 20, textAlign: 'right'}}>
-                        <Button type={'primary'} style={{marginRight: 8}}
-                                onClick={searchInfo}><SearchOutlined />검색</Button>
-                    </div>
+
                 </Card>
 
 
-                <CustomTable columns={rfqReadColumns} initial={subRfqReadInitial} dataInfo={subRfqReadInfo}
+                <CustomTable columns={subCodeUserColumns} initial={codeUserInitial}
+                             dataInfo={subCodeUserInfo}
                              info={tableInfo}/>
 
             </div>

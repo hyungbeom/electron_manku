@@ -13,6 +13,7 @@ export default async function (ctx, store) {
     // let userState = false;
     // let deployResponse = {};
     let userInfo = null;
+    let codeInfo = null;
 
 
     if (ctx.req) {
@@ -28,9 +29,10 @@ export default async function (ctx, store) {
 
         await getData.post("admin/getMyAccount").then((res) => {
 
-            const result = res?.data?.entity;
-            userInfo = result;
 
+            const {entity, code} = res?.data;
+            userInfo = entity;
+            codeInfo = code
 
     //         // user 토근값 유효했을시....
     //         const {result} = res.data.userInfo;
@@ -63,7 +65,7 @@ export default async function (ctx, store) {
     }
 
 
-    return { userInfo: userInfo};
+    return { userInfo: userInfo, codeInfo:codeInfo};
 }
 
 

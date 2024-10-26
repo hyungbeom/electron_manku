@@ -37,10 +37,13 @@ const menuList = {
     order: {
         title: '발주관리',
         icon: <WalletOutlined/>,
-        list: [{title: '발주서 작성', key: 'order_write'}, {title: '발주 조회', key: 'order_read'}, {
-            title: '재고 관리',
-            key: 'order_manage'
-        }, , {title: '정산 관리', key: 'order_result_manage'}]
+        list: [{title: '발주서 작성', key: 'order_write'}, {title: '발주 조회', key: 'order_read'},
+            {title: '재고 조회', key: 'order_inven_read'}, {title: '재고 등록', key: 'order_inven_write'},
+            {title: '정산 관리', key: 'order_agency_read', subList: [
+                    { title: '거래처 별 주문조회', key: 'order_read_customer' },
+                    { title: '해외 대리점 별 주문조회', key: 'order_read_agency' },
+                ],},
+        ]
     },
     maker: {title: 'Maker 관리', icon: <ProductOutlined/>, list: [{title: '메이커 검색', key: 'maker_read'}]},
     code: {
@@ -63,7 +66,7 @@ const menuList = {
 }
 
 
-export default function LayoutComponent({children, userInfo}) {
+export default function LayoutComponent({children, userInfo = null}) {
 
     const router = useRouter();
 
@@ -81,13 +84,16 @@ export default function LayoutComponent({children, userInfo}) {
 
 
     const onOpenChange = (keys) => {
-        // 마지막으로 클릭한 메뉴만 열리도록 설정
-        const latestOpenKey = keys.find(key => openKeys.indexOf(key) === -1);
+        setOpenKeys(keys);
+    };
 
-        if (latestOpenKey) {
-            setOpenKeys([latestOpenKey]);
-        } else {
-            setOpenKeys([]);
+    const handleMenuClick = (key) => {
+        // 메뉴 클릭 시 URL 이동
+        moveRouter(key);
+        // 현재 열린 상태를 유지하기 위해 openKeys 상태 업데이트
+        const parentKey = key.split('_')[0]; // 최상위 메뉴 키 추출
+        if (!openKeys.includes(parentKey)) {
+            setOpenKeys([...openKeys, parentKey]);
         }
     };
 
@@ -98,7 +104,6 @@ export default function LayoutComponent({children, userInfo}) {
 
     return <>
         <div style={{
-            width: 55,
             backgroundColor: '#f5f5f5',
             width: '100%',
             borderBottom: '1px solid lightGray',
@@ -151,12 +156,36 @@ export default function LayoutComponent({children, userInfo}) {
                         if(v === 'manage' && userInfo?.authority !== 0){
                             return null;
                         }
-                        return <SubMenu key={v} icon={menuList[v].icon} title={menuList[v].title}>
-                            {menuList[v].list.map(src => {
-                                return <Menu.Item onClick={() => moveRouter(src.key)}
-                                                  key={src.key}>{src.title}</Menu.Item>
-                            })}
-                        </SubMenu>
+                         return (
+                            <SubMenu key={v} icon={menuList[v].icon} title={menuList[v].title}>
+                                {menuList[v].list.map((src) => {
+                                    if (src.subList) {
+                                        // 3-depth가 있는 경우
+                                        return (
+                                            <SubMenu key={src.key} title={src.title}>
+                                                {src.subList.map((subSrc) => (
+                                                    <Menu.Item
+                                                        onClick={() => handleMenuClick(subSrc.key)}
+                                                        key={subSrc.key}
+                                                    >
+                                                        {subSrc.title}
+                                                    </Menu.Item>
+                                                ))}
+                                            </SubMenu>
+                                        );
+                                    }
+                                    // 2-depth 메뉴 항목
+                                    return (
+                                        <Menu.Item
+                                            onClick={() => handleMenuClick(src.key)}
+                                            key={src.key}
+                                        >
+                                            {src.title}
+                                        </Menu.Item>
+                                    );
+                                })}
+                            </SubMenu>
+                         )
                     })}
                     {/* Home 메뉴 */}
                 </Menu>
@@ -169,6 +198,6 @@ export default function LayoutComponent({children, userInfo}) {
                 </Content>
             </Layout>
         </Layout>
-        }
+
     </>
 }

@@ -9,7 +9,7 @@ export const testFunc = createAsyncThunk(
 
             //실제 axios 비동기 통신 [result => 통신 결과값]
             const result = await getData.post('api/common/getTemp?value=112233');
-            console.log(result,'::::')
+
             return null;
             // return {data: result.data, f: f, s: s, type: type};
 
@@ -27,7 +27,6 @@ export const testFunc = createAsyncThunk(
 
             //실제 axios 비동기 통신 [result => 통신 결과값]
             const result = await getData.get(`api/product/${productNo}`);
-            console.log(result,'::::')
             return {data: result.data, type: type};
 
         } catch (error) {
