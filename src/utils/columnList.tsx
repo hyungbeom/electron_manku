@@ -130,6 +130,7 @@ export const OrderWriteColumn = [
         key: 'model',
         fixed: 'left',
         render: (text) => <div style={{width : 80}} className="ellipsis-cell">{text}</div>,
+        editable: true,
     },
     {
         title: '수량',
@@ -137,6 +138,7 @@ export const OrderWriteColumn = [
         key: 'quantity',
         align : 'center',
         render: (text) => <div style={{width : 40}} className="ellipsis-cell">{text}</div>,
+        editable: true,
         fixed: 'left',
     },  {
         title: '단위',
@@ -144,6 +146,7 @@ export const OrderWriteColumn = [
         key: 'unit',
         align : 'center',
         render: (text) => <div style={{width : 40}} className="ellipsis-cell">{text}</div>,
+        editable: true,
     },
     {
         title: 'CURR',
@@ -151,36 +154,42 @@ export const OrderWriteColumn = [
         key: 'currency',
         align : 'center',
         render: (text) => <div style={{width : 40}} className="ellipsis-cell">{text}</div>,
+        editable: true,
     },
     {
         title: 'NET/P',
         dataIndex: 'net',
         key: 'net',
+        editable: true,
     },
     {
         title: '납기', //없음
         dataIndex: 'deliveryDate',
         key: 'deliveryDate',
         render: (text) => <div style={{width : 100}} className="ellipsis-cell">{text}</div>,
+        editable: true,
     },
     {
         title: '내용',
         dataIndex: 'content',
         key: 'content',
         render: (text) => <div style={{width : 100}} className="ellipsis-cell">{text}</div>,
+        editable: true,
     },
     {
         title: '회신일',
         dataIndex: 'replyDate',
         key: 'replyDate',
         render: (text) => <div style={{width : 90}} className="ellipsis-cell">{moment(text).format('YYYY-MM-DD')}</div>,
+        editable: true,
     },
     {
         title: '비고',
         dataIndex: 'remarks', // 없음
         key: 'remarks',
         fixed: 'right',
-        render: (text) => <div className="ellipsis-cell" >{text}</div>
+        render: (text) => <div className="ellipsis-cell" >{text}</div>,
+        editable: true,
     }
 ];
 
