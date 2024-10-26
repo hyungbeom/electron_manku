@@ -1,8 +1,6 @@
 import CustomTable from "@/component/CustomTable";
-import TableModal from "@/utils/TableModal";
-import {rfqWriteInitial, subRfqWriteInitial} from "@/utils/initialList";
-import {subRfqWriteInfo} from "@/utils/modalDataList";
-import {codeDomesticPurchaseColumn, OrderWriteColumn} from "@/utils/columnList";
+import {rfqWriteInitial} from "@/utils/initialList";
+import {codeDomesticPurchaseColumn} from "@/utils/columnList";
 import React, {useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
