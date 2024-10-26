@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import Table from 'antd/lib/table';
 import Card from 'antd/lib/card/Card';
 import Select from 'antd/lib/select';
-import Button from 'antd/lib/button';
+import Pagination from 'antd/lib/pagination';
 import message from "antd/lib/message";
 import ColumnSetting from "@/component/ColumnSetting";
 import {EditableCell, EditableRow} from "@/component/TableAboutRows";
@@ -11,12 +11,15 @@ import {useDropzone} from "react-dropzone";
 import * as XLSX from 'xlsx';
 import {InboxOutlined} from "@ant-design/icons";
 import Upload from "antd/lib/upload";
-const { Option } = Select;
-const { Dragger } = Upload;
-const CustomTable = ({ columns, info, setDatabase,content, subContent, rowSelection, listType, excel = false }) => {
+import {getData} from "@/manage/function/api";
+import {transformData} from "@/utils/common/common";
+
+
+const {Option} = Select;
+const {Dragger} = Upload;
+const CustomTable = ({columns, info, setDatabase, content, subContent, rowSelection, listType, excel = false, pageInfo, setPaginationInfo, setTableInfo}) => {
     const defaultCheckedList = columns.map((item) => item.key);
     const [checkedList, setCheckedList] = useState(defaultCheckedList);
-
 
 
     // 엑셀 파일을 읽어들이는 함수
@@ -25,19 +28,18 @@ const CustomTable = ({ columns, info, setDatabase,content, subContent, rowSelect
 
         reader.onload = (e) => {
             const binaryStr = e.target.result;
-            const workbook = XLSX.read(binaryStr, { type: 'binary' });
+            const workbook = XLSX.read(binaryStr, {type: 'binary'});
 
             // 첫 번째 시트 선택
             const worksheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[worksheetName];
 
             // 데이터를 JSON 형식으로 변환 (첫 번째 행을 컬럼 키로 사용)
-            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
 
             // 데이터 첫 번째 행을 컬럼 이름으로 사용
             const headers = jsonData[0];
             const dataRows = jsonData.slice(1);
-
 
 
             // 테이블 데이터 설정 (컬럼 키를 사용)
@@ -46,10 +48,10 @@ const CustomTable = ({ columns, info, setDatabase,content, subContent, rowSelect
                 row.forEach((cell, cellIndex) => {
                     rowData[headers[cellIndex]] = cell; // 컬럼 키를 사용하여 데이터 설정
                 });
-                return { key: index, ...rowData };
+                return {key: index, ...rowData};
             });
 
-            setDatabase(v=>{
+            setDatabase(v => {
                 const copyData = {...v};
                 copyData[listType] = tableData;
                 return copyData
@@ -81,7 +83,6 @@ const CustomTable = ({ columns, info, setDatabase,content, subContent, rowSelect
     };
 
 
-
     const visibleColumns = columns.filter((item) => checkedList.includes(item.key));
 
     const tableRef = useRef()
@@ -101,7 +102,7 @@ const CustomTable = ({ columns, info, setDatabase,content, subContent, rowSelect
             ...row,
         });
 
-        setDatabase(v=>{
+        setDatabase(v => {
             const copyData = {...v};
             copyData[listType] = newData;
             return copyData
@@ -131,16 +132,25 @@ const CustomTable = ({ columns, info, setDatabase,content, subContent, rowSelect
     });
 
 
+    async function check(e, size) {
+        setPaginationInfo({rowPerPage: size, page: e, totalRow: pageInfo['totalRow']})
 
+        const copyData: any = {...info}
+        copyData['limit'] = size;
+        copyData['page'] = e;
+        const result = await getData.post('estimate/getEstimateRequestList', copyData);
 
+        console.log(result?.data?.entity?.estimateRequestList,'result?.data?.entity?.estimateRequestList:')
+        setTableInfo(transformData(result?.data?.entity?.estimateRequestList))
+    }
 
     return (
-        <div style={{ overflow: 'auto', maxHeight: '100%', maxWidth: '100%' }}>
-            <Card size={'small'} style={{ border: '1px solid lightGray', height: '100%' }}
+        <div style={{overflow: 'auto', maxHeight: '100%', maxWidth: '100%'}}>
+            <Card size={'small'} style={{border: '1px solid lightGray', height: '100%'}}
                   title={
                       <>
                           <span>LIST</span>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', width: 170, float: 'right' }}>
+                          <div style={{display: 'flex', justifyContent: 'space-between', width: 170, float: 'right'}}>
                               {subContent}
                           </div>
                       </>
@@ -151,19 +161,21 @@ const CustomTable = ({ columns, info, setDatabase,content, subContent, rowSelect
 
                 <Table ref={tableRef}
 
-                    style={{ fontSize: 11, width : '100%'}}
-                    scroll={{x : true}}
-                    size={'small'}
-                    bordered
-                    columns={setColumns}
-                    dataSource={[...info]}
-                    components={components}
-                    rowClassName={() => 'editable-row'}
-                    rowSelection={{
-                        type: 'checkbox',
-                        ...rowSelection,
-                    }}
+                       style={{fontSize: 11, width: '100%'}}
+                       scroll={{x: true}}
+                       size={'small'}
+                       bordered
+                       pagination={false}
+                       columns={setColumns}
+                       dataSource={[...info]}
+                       components={components}
+                       rowClassName={() => 'editable-row'}
+                       rowSelection={{
+                           type: 'checkbox',
+                           ...rowSelection,
+                       }}
                 />
+                <Pagination value={pageInfo['page']} total={pageInfo['totalRow']} style={{float :'right', paddingTop : 25}} pageSize={pageInfo['rowPerPage']} onChange={check}  />
 
                 {excel && <Dragger {...uploadProps} style={{marginBottom: '20px'}}>
                     <p className="ant-upload-drag-icon">

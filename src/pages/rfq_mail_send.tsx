@@ -6,9 +6,16 @@ import LayoutComponent from "@/component/LayoutComponent";
 import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
 import TextArea from "antd/lib/input/TextArea";
-import {FileSearchOutlined, FormOutlined, RetweetOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
+import {
+    CopyOutlined, FileExcelOutlined,
+    FileSearchOutlined,
+    FormOutlined,
+    RetweetOutlined,
+    SaveOutlined,
+    SearchOutlined
+} from "@ant-design/icons";
 import Button from "antd/lib/button";
-import {rfqMailColumns, rfqReadColumns, rfqWriteColumns} from "@/utils/columnList";
+import {rfqReadColumns, rfqWriteColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
 import {subRfqReadInitial, subRfqWriteInitial} from "@/utils/initialList";
 import {subRfqReadInfo, subRfqWriteInfo} from "@/utils/modalDataList";
@@ -17,20 +24,17 @@ import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import {getData} from "@/manage/function/api";
 import moment from "moment";
+import * as XLSX from "xlsx";
 
 const {RangePicker} = DatePicker
 
-const TwinInputBox = ({children}) => {
-    return <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: 5, paddingTop: 8}}>
-        {children}
-    </div>
-}
 
-export default function rfqMainSend({searchList}) {
+export default function rfqRead({dataList}) {
+    let checkList = []
 
-
+    const {estimateRequestList, pageInfo} = dataList;
     const [info, setInfo] = useState(subRfqReadInitial)
-    const [tableInfo, setTableInfo] = useState([])
+    const [tableInfo, setTableInfo] = useState(estimateRequestList)
 
     function onChange(e) {
 
@@ -41,9 +45,13 @@ export default function rfqMainSend({searchList}) {
             return {...v, ...bowl}
         })
     }
-    useEffect(()=>{
-        setTableInfo(transformData(searchList));
-    },[])
+
+    useEffect(() => {
+        const copyData: any = {...info}
+        copyData['searchDate'] = [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
+        setInfo(copyData);
+        setTableInfo(transformData(estimateRequestList));
+    }, [])
 
     const transformData = (data) => {
 
@@ -51,14 +59,13 @@ export default function rfqMainSend({searchList}) {
         const transformedArray = data.flatMap((item) => {
             // estimateRequestDetailList의 항목 개수에 따라 첫 번째만 정보 포함
             return item.estimateRequestDetailList.map((detail, index) => ({
-                modifiedDate: moment(item.modifiedDate).format('YYYY-MM-DD') ,
-                managerName: item.managerName ,
+                modifiedDate: moment(item.modifiedDate).format('YYYY-MM-DD'),
+                managerName: item.managerName,
                 agencyName: index === 0 ? item.agencyName : null,
                 writtenDate: index === 0 ? item.writtenDate : null,
                 documentNumber: index === 0 ? item.documentNumber : null,
                 maker: index === 0 ? item.maker : null,
                 item: index === 0 ? item.item : null,
-
 
                 content: detail.content || '',
                 estimateRequestId: detail.estimateRequestId || '',
@@ -76,7 +83,6 @@ export default function rfqMainSend({searchList}) {
                 deliveryDate: detail.deliveryDate || '',
                 replyDate: detail.replyDate || '',
 
-
             }));
         });
 
@@ -84,77 +90,135 @@ export default function rfqMainSend({searchList}) {
     };
 
     async function searchInfo() {
-        const copyData:any = {...info}
-        const {writtenDate}:any = copyData;
+        const copyData: any = {...info}
+        const {writtenDate}: any = copyData;
         if (writtenDate) {
-            copyData['searchStartDate'] = moment(writtenDate[0]).format('YYYY-MM-DD');
-            copyData['searchEndDate'] = moment(writtenDate[1]).format('YYYY-MM-DD');
+            copyData['searchStartDate'] = writtenDate[0];
+            copyData['searchEndDate'] = writtenDate[1];
         }
-        delete copyData?.writtenDate;
         const result = await getData.post('estimate/getEstimateRequestList', copyData);
+
+        console.log(copyData, 'copyData:')
 
         setTableInfo(transformData(result?.data?.entity?.estimateRequestList));
 
-
     }
 
+    function deleteList() {
+        let copyData = {...info}
+        const result = copyData['estimateRequestDetailList'].filter(v => !checkList.includes(v.serialNumber))
+
+        copyData['estimateRequestDetailList'] = result
+        setInfo(copyData);
+    }
+
+    const downloadExcel = () => {
+        console.log(tableInfo,':::::')
+
+        const worksheet = XLSX.utils.json_to_sheet(tableInfo);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+        XLSX.writeFile(workbook, "example.xlsx");
+    };
+
+    const rowSelection = {
+        onChange: (selectedRowKeys, selectedRows) => {
+
+            checkList  = selectedRowKeys
+
+        },
+        getCheckboxProps: (record) => ({
+            disabled: record.name === 'Disabled User',
+            // Column configuration not to be checked
+            name: record.name,
+        }),
+    };
+
+    console.log(tableInfo,'tableInfo')
     return <>
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateColumns: '350px 1fr', height: '100%', gridColumnGap: 5}}>
-                <Card title={'메일 전송'} style={{fontSize: 12, border: '1px solid lightGray'}}>
+                <Card title={'의뢰 조회'} style={{fontSize: 12, border: '1px solid lightGray'}}>
                     <Card size={'small'} style={{
                         fontSize: 13,
                         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                     }}>
                         <div>
                             <div style={{paddingBottom: 3}}>작성일자</div>
-                            <RangePicker id={'searchDate'} size={'small'}  onChange={(date, dateString) => onChange({
-                                target: {
-                                    id: 'writtenDate',
-                                    value: date
-                                }
-                            })
-                            } style={{width : '100%'}}/>
+                            <RangePicker style={{width: '100%'}}
+                                         value={[moment(info['searchDate'][0]), moment(info['searchDate'][1])]}
+                                         id={'searchDate'} size={'small'} onChange={(date, dateString) => {
+                                onChange({
+                                    target: {
+                                        id: 'searchDate',
+                                        value: date ? [moment(date[0]).format('YYYY-MM-DD'), moment(date[1]).format('YYYY-MM-DD')] : [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
+                                    }
+                                })
+                            }
+                            }/>
                         </div>
                         <div>
                             <div style={{paddingBottom: 3}}>검색조건</div>
-                            <Select id={'searchType'}  onChange={(src) => onChange({target: {id: 'searchType', value: src}})} size={'small'} defaultValue={0} options={[
-                                {value: 0, label: '전체'},
-                                {value: 1, label: '전송'},
-                                {value: 2, label: '미전송'}
-                            ]} style={{width: '50%'}}>
-                            </Select>
-                            <Select id={'searchType'}  onChange={(src) => onChange({target: {id: 'searchType', value: src}})} size={'small'} defaultValue={0} options={[
-                                {value: 0, label: '전체'},
-                                {value: 1, label: '회신'},
-                                {value: 2, label: '미회신'}
-                            ]} style={{width: '50%'}}>
+                            <Select id={'searchType'}
+                                    onChange={(src) => onChange({target: {id: 'searchType', value: src}})}
+                                    size={'small'} value={info['searchType']} options={[
+                                {value: '0', label: '전체'},
+                                {value: '1', label: '회신'},
+                                {value: '2', label: '미회신'}
+                            ]} style={{width: '100%'}}>
                             </Select>
                         </div>
                         <div>
                             <div style={{paddingBottom: 3}}>문서번호</div>
-                            <Input id={'searchDocumentNumber'} value={info['searchDocumentNumber']} onChange={onChange} size={'small'}/>
-                        </div>
-                        <div>
-                            <div style={{paddingBottom: 3}}>대리점코드</div>
-                            <Input id={'agencyCode'} value={info['agencyCode']} onChange={onChange} size={'small'}/>
+                            <Input id={'searchDocumentNumber'} onChange={onChange} size={'small'}/>
                         </div>
                         <div>
                             <div style={{paddingBottom: 3}}>거래처명</div>
-                            <Input id={'searchCustomerName'} value={info['searchCustomerName']} onChange={onChange} size={'small'}/>
+                            <Input id={'searchCustomerName'} onChange={onChange} size={'small'}/>
+                        </div>
+                        <div>
+                            <div style={{paddingBottom: 3}}>MAKER</div>
+                            <Input id={'searchMaker'} onChange={onChange} size={'small'}/>
+                        </div>
+                        <div>
+                            <div style={{paddingBottom: 3}}>MODEL</div>
+                            <Input id={'searchModel'} onChange={onChange} size={'small'}/>
+                        </div>
+                        <div>
+                            <div style={{paddingBottom: 3}}>ITEM</div>
+                            <Input id={'searchItem'} onChange={onChange} size={'small'}/>
+                        </div>
+                        <div>
+                            <div style={{paddingBottom: 3}}>등록직원명</div>
+                            <Input id={'searchCreatedBy'} onChange={onChange} size={'small'}/>
                         </div>
 
 
                     </Card>
                     <div style={{paddingTop: 20, textAlign: 'right'}}>
                         <Button type={'primary'} style={{marginRight: 8}}
-                                onClick={searchInfo}><SearchOutlined />검색</Button>
+                                onClick={searchInfo}><SearchOutlined/>검색</Button>
                     </div>
                 </Card>
 
 
-                <CustomTable columns={rfqMailColumns} initial={subRfqReadInitial} dataInfo={subRfqReadInfo}
-                             info={tableInfo}/>
+                <CustomTable columns={rfqReadColumns}
+                             initial={subRfqReadInitial}
+                             dataInfo={subRfqReadInfo}
+                             info={tableInfo}
+                             rowSelection={rowSelection}
+
+                             subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
+                                 <CopyOutlined/>복사
+                             </Button>
+                                 {/*@ts-ignored*/}
+                                 <Button type={'danger'} size={'small'} style={{fontSize: 11}} onClick={deleteList}>
+                                     <CopyOutlined/>삭제
+                                 </Button>
+                                 <Button type={'dashed'} size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>
+                                     <FileExcelOutlined/>출력
+                                 </Button></>}
+                />
 
             </div>
         </LayoutComponent>
@@ -202,7 +266,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     } else {
         // result?.data?.entity?.estimateRequestList
         param = {
-            props: {searchList: result?.data?.entity?.estimateRequestList}
+            props: {dataList: result?.data?.entity}
         }
     }
 

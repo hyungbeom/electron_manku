@@ -224,6 +224,10 @@ export default function rqfWrite() {
 
     const downloadExcel = () => {
 
+        if(!info['estimateRequestDetailList'].length){
+           return message.warn('출력할 데이터가 존재하지 않습니다.')
+        }
+
         const worksheet = XLSX.utils.json_to_sheet(info['estimateRequestDetailList']);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");

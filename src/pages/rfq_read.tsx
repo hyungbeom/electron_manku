@@ -1,30 +1,22 @@
 import React, {useEffect, useState} from "react";
 import Input from "antd/lib/input/Input";
 import Select from "antd/lib/select";
-import {estimateInfo, estimateTotalWriteColumn, estimateWriteInitial} from "@/utils/common";
 import LayoutComponent from "@/component/LayoutComponent";
 import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
-import TextArea from "antd/lib/input/TextArea";
-import {
-    CopyOutlined, FileExcelOutlined,
-    FileSearchOutlined,
-    FormOutlined,
-    RetweetOutlined,
-    SaveOutlined,
-    SearchOutlined
-} from "@ant-design/icons";
+import {CopyOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
-import {rfqReadColumns, rfqWriteColumns} from "@/utils/columnList";
+import {rfqReadColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {subRfqReadInitial, subRfqWriteInitial} from "@/utils/initialList";
-import {subRfqReadInfo, subRfqWriteInfo} from "@/utils/modalDataList";
+import {subRfqReadInitial} from "@/utils/initialList";
+import {subRfqReadInfo} from "@/utils/modalDataList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import {getData} from "@/manage/function/api";
 import moment from "moment";
 import * as XLSX from "xlsx";
+import {transformData} from "@/utils/common/common";
 
 const {RangePicker} = DatePicker
 
@@ -35,7 +27,9 @@ export default function rfqRead({dataList}) {
     const {estimateRequestList, pageInfo} = dataList;
     const [info, setInfo] = useState(subRfqReadInitial)
     const [tableInfo, setTableInfo] = useState(estimateRequestList)
+    const [paginationInfo, setPaginationInfo] = useState(pageInfo)
 
+    console.log(pageInfo,'pageInfo:')
     function onChange(e) {
 
         let bowl = {}
@@ -53,41 +47,7 @@ export default function rfqRead({dataList}) {
         setTableInfo(transformData(estimateRequestList));
     }, [])
 
-    const transformData = (data) => {
 
-        // 데이터를 변환하여 새로운 배열을 생성
-        const transformedArray = data.flatMap((item) => {
-            // estimateRequestDetailList의 항목 개수에 따라 첫 번째만 정보 포함
-            return item.estimateRequestDetailList.map((detail, index) => ({
-                modifiedDate: moment(item.modifiedDate).format('YYYY-MM-DD'),
-                managerName: item.managerName,
-                agencyName: index === 0 ? item.agencyName : null,
-                writtenDate: index === 0 ? item.writtenDate : null,
-                documentNumber: index === 0 ? item.documentNumber : null,
-                maker: index === 0 ? item.maker : null,
-                item: index === 0 ? item.item : null,
-
-                content: detail.content || '',
-                estimateRequestId: detail.estimateRequestId || '',
-                estimateRequestDetailId: detail.estimateRequestDetailId || '',
-                model: detail.model || '',
-                quantity: detail.quantity || '',
-                unit: detail.unit || '',
-                currency: detail.currency || '',
-                net: detail.net || '',
-                sentStatus: detail.sentStatus || '',
-                serialNumber: detail.serialNumber || '',
-                replySummaryId: detail.replySummaryId || '',
-                unitPrice: detail.unitPrice || '',
-                currencyUnit: detail.currencyUnit || '',
-                deliveryDate: detail.deliveryDate || '',
-                replyDate: detail.replyDate || '',
-
-            }));
-        });
-
-        return transformedArray;
-    };
 
     async function searchInfo() {
         const copyData: any = {...info}
@@ -97,11 +57,7 @@ export default function rfqRead({dataList}) {
             copyData['searchEndDate'] = writtenDate[1];
         }
         const result = await getData.post('estimate/getEstimateRequestList', copyData);
-
-        console.log(copyData, 'copyData:')
-
         setTableInfo(transformData(result?.data?.entity?.estimateRequestList));
-
     }
 
     function deleteList() {
@@ -113,7 +69,6 @@ export default function rfqRead({dataList}) {
     }
 
     const downloadExcel = () => {
-        console.log(tableInfo,':::::')
 
         const worksheet = XLSX.utils.json_to_sheet(tableInfo);
         const workbook = XLSX.utils.book_new();
@@ -134,7 +89,6 @@ export default function rfqRead({dataList}) {
         }),
     };
 
-    console.log(tableInfo,'tableInfo')
     return <>
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateColumns: '350px 1fr', height: '100%', gridColumnGap: 5}}>
@@ -206,7 +160,11 @@ export default function rfqRead({dataList}) {
                              initial={subRfqReadInitial}
                              dataInfo={subRfqReadInfo}
                              info={tableInfo}
+                             setDatabase={setInfo}
+                             setTableInfo={setTableInfo}
                              rowSelection={rowSelection}
+                             pageInfo={paginationInfo}
+                             setPaginationInfo={setPaginationInfo}
 
                              subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
                                  <CopyOutlined/>복사
