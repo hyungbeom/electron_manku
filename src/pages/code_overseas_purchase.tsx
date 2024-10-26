@@ -22,12 +22,17 @@ import message from "antd/lib/message";
 import Select from "antd/lib/select";
 
 import {
-    tableCodeDomesticPurchaseColumns,
+    tableCodeDomesticPurchaseColumns, tableCodeOverseasPurchaseColumns,
 } from "@/utils/columnList";
-import {subRfqReadInfo, subRfqWriteInfo, tableCodeDomesticPurchaseInfo,} from "@/utils/modalDataList";
+import {
+    subRfqReadInfo,
+    subRfqWriteInfo,
+    tableCodeDomesticPurchaseInfo,
+    tableCodeOverseasPurchaseInfo,
+} from "@/utils/modalDataList";
 import {
     codeDomesticPurchaseInitial,
-    subRfqReadInitial, subRfqWriteInitial, tableCodeDomesticPurchaseInitial,
+    subRfqReadInitial, subRfqWriteInitial, tableCodeDomesticPurchaseInitial, tableCodeOverseasPurchaseInitial,
 } from "@/utils/initialList";
 import Radio from "antd/lib/radio";
 import TableModal from "@/utils/TableModal";
@@ -38,7 +43,7 @@ const TwinInputBox = ({children}) => {
         {children}
     </div>
 }
-export default function codeDomesticPurchase({dataList}) {
+export default function codeOverseasPurchase({dataList}) {
 
     let checkList = []
 
@@ -140,7 +145,7 @@ export default function codeDomesticPurchase({dataList}) {
     }
     return <LayoutComponent>
         <div style={{display: 'grid', gridTemplateColumns: '320px 1fr', height: '100%', gridColumnGap: 5}}>
-            <Card size={'small'} title={'국내대리점관리(매입)'} style={{fontSize: 12, border: '1px solid lightGray'}}>
+            <Card size={'small'} title={'해외대리점관리(매입)'} style={{fontSize: 12, border: '1px solid lightGray'}}>
                 <Card size={'small'} style={{
                     fontSize: 13,
                     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
@@ -149,8 +154,9 @@ export default function codeDomesticPurchase({dataList}) {
                         <div style={{paddingBottom: 3}}>조회구분</div>
                         <Radio.Group onChange={onChange} defaultValue={2} id={'searchType'} value={info['searchType']}>
                             <Radio value={1}>코드</Radio>
-                            <Radio value={2}>상호명</Radio>
-                            <Radio value={3}>MAKER</Radio>
+                            <Radio style={{marginLeft:-8}} value={2}>상호명</Radio>
+                            <Radio style={{marginLeft:-8}} value={3}>ITEM</Radio>
+                            <Radio style={{marginLeft:-8}} value={3}>국가</Radio>
                         </Radio.Group>
                     </div>
                     <div style={{marginTop: 8}}>
@@ -165,17 +171,17 @@ export default function codeDomesticPurchase({dataList}) {
 
                 </Card>
             </Card>
-            <CustomTable columns={tableCodeDomesticPurchaseColumns}
-                         initial={tableCodeDomesticPurchaseInitial}
-                         dataInfo={tableCodeDomesticPurchaseInfo}
+            <CustomTable columns={tableCodeOverseasPurchaseColumns}
+                         initial={tableCodeOverseasPurchaseInitial}
+                         dataInfo={tableCodeOverseasPurchaseInfo}
                          info={tableInfo}
                          setDatabase={setInfo}
                          setTableInfo={setTableInfo}
                          rowSelection={rowSelection}
                          pageInfo={paginationInfo}
                          setPaginationInfo={setPaginationInfo}
-                         content={<TableModal title={'데이터 추가'} data={tableCodeDomesticPurchaseInitial}
-                                              dataInfo={tableCodeDomesticPurchaseColumns}
+                         content={<TableModal title={'데이터 추가'} data={tableCodeOverseasPurchaseInitial}
+                                              dataInfo={tableCodeOverseasPurchaseColumns}
                                               setInfoList={setInfo}/>}
                          subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
                              <CopyOutlined/>복사

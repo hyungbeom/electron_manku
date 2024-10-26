@@ -144,6 +144,7 @@ const CustomTable = ({columns, info, setDatabase, content, subContent, rowSelect
         setTableInfo(transformData(result?.data?.entity?.estimateRequestList))
     }
 
+    // @ts-ignore
     return (
         <div style={{overflow: 'auto', maxHeight: '100%', maxWidth: '100%'}}>
             <Card size={'small'} style={{border: '1px solid lightGray', height: '100%'}}
@@ -167,7 +168,8 @@ const CustomTable = ({columns, info, setDatabase, content, subContent, rowSelect
                        bordered
                        pagination={false}
                        columns={setColumns}
-                       dataSource={[...info]}
+                       // dataSource={[...info]}
+                       dataSource={[...info??[]]}
                        components={components}
                        rowClassName={() => 'editable-row'}
                        rowSelection={{
@@ -175,7 +177,7 @@ const CustomTable = ({columns, info, setDatabase, content, subContent, rowSelect
                            ...rowSelection,
                        }}
                 />
-                <Pagination value={pageInfo['page']} total={pageInfo['totalRow']} style={{float :'right', paddingTop : 25}} pageSize={pageInfo['rowPerPage']} onChange={check}  />
+                {/*<Pagination value={pageInfo['page']} total={pageInfo['totalRow']} style={{float :'right', paddingTop : 25}} pageSize={pageInfo['rowPerPage']} onChange={check}  />*/}
 
                 {excel && <Dragger {...uploadProps} style={{marginBottom: '20px'}}>
                     <p className="ant-upload-drag-icon">

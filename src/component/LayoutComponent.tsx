@@ -51,9 +51,9 @@ const menuList = {
         icon: <BarcodeOutlined/>,
         list: [
             {title: '국내 대리점(매입)', key: 'code_domestic_purchase'},
-            {title: '국외 대리점', key: 'code_overseasAgency'},
+            {title: '국외 대리점', key: 'code_overseas_purchase'},
             {title: '국내 거래처(매출)', key: 'code_domestic_sales'},
-            {title: '국외 거래처', key: 'code_overseasCorr'},
+            {title: '국외 거래처', key: 'code_overseas_sales'},
             {title: '공문서', key: 'code_diploma'},
             {title: 'ERP 계정관리', key: 'code_erpUser_manage'},
             {title: '사용자 계정관리', key: 'code_user_manage'},

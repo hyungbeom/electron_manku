@@ -1,4 +1,5 @@
 import {subOrderReadColumns} from "@/utils/columnList";
+import codeDomesticPurchase from "@/pages/code_domestic_purchase";
 
 
 
@@ -196,30 +197,12 @@ export const customerReadInitial = {
     "limit": 10
 }
 
-
-
-export const codeDiplomaInitial = {
-    "searchDate": "",                  // MAKER
-    "searchDocumentNumber": "",         // 문서번호
-    "page": 1,
-    "limit": 10
-}
-
-export const SubCodeDiplomaInitial = {
-    "searchText": "",              // 재고 등록 검색 (문서번호, MAKER, Model)
-    "searchDate": "",                  // MAKER
-    "page": 1,
-    "limit": 10
-}
-
-
 export const agencyReadInitial = {
     "searchText": "",              // 재고 등록 검색 (문서번호, MAKER, Model)
     "searchDate": "",                  // MAKER
     "page": 1,
     "limit": 10
 }
-
 
 export const subCodeExchangeInitial = {
     "searchDate": "",              // 작성일자 시작일
@@ -233,20 +216,122 @@ export const subCodeExchangeInitial = {
     "limit": 10
 }
 
-export const codeReadInitial = {
+// ---------
+
+export const codeSaveInitial = {
     "item": "",                  // MAKER
     "hsCode": "",         // 문서번호
+}
+export const codeReadInitial = {
     "searchText": "",         // 문서번호
     "page": 1,
     "limit": 10
 }
 
-export const codeUserInitial = {
+
+export const codeUserSaveInitial = {
     "customerName": "",                  // MAKER
     "homepage": "",         // 문서번호
     "id": "",
     "pw": "",
     "remarks": "",
+}
+export const codeUserReadInitial = {
+    "searchCustomerName":"",
     "page": 1,
     "limit": 10
+}
+
+export const codeErpSaveInitial = {
+    "id": "",
+    "pw": "",
+    "name": "",
+    "position": "",
+    "right": "",
+    "email": "",
+    "phoneNumber": "",
+    "faxNumber": "",
+    "rightInfo": "",
+}
+export const codeDiplomaInitial = {
+    "searchDate": null,
+    "searchDocumentNumber": "",
+    "page": 1,
+    "limit": 10
+}
+
+export const tableCodeDiplomaInitial = {
+    "documentNumber":"",
+    "title": "",
+    "to": "",
+    "reference": "",
+    "subTitle": "",
+    "content": "",
+    "registerer": "",
+    "registerDate": null,
+    "modifier": "",
+    "modifyDate": null,
+}
+
+export const modalCodeDiplomaInitial = {
+    "documentNumber":"",
+    "title": "",
+    "to": "",
+    "reference": "",
+    "subTitle": "",
+    "content": "",
+}
+
+export const codeDomesticPurchaseInitial = {
+    "searchType": 2,
+    "searchText": "",
+    "page": 1,
+    "limit": 10
+}
+
+export const tableCodeDomesticPurchaseInitial = {
+    "agencyId": 1,
+    "agencyCode": "",
+    "agencyName": "",
+    "dealerType": "딜러",
+    "grade": "",
+    "margin": 0,
+    "homepage": "",
+    "item": "",
+    "tradeStartDate": null,
+    "businessRegistrationNumber": "",
+    "bankAccountNumber": "",
+    "createdBy": "",
+    "createdDate": "",
+    "modifiedBy": "",
+    "modifiedDate": null,
+    "maker": "",
+    "key": 1
+}
+
+
+export const tableCodeOverseasPurchaseInitial = {
+    "agencyId": 1,
+    "agencyCode": "",
+    "agencyName": "",
+    "dealerType": "딜러",
+    "grade": "",
+    "margin": 0,
+    "homepage": "",
+    "item": "",
+    "tradeStartDate": null,
+    "currencyUnit":"USD",
+    "manager":"",
+    "bankAccountNumber": "",
+    "country":"",
+    "ftaNo":"",
+    "bankName":"",
+    "agencyAddress":"",
+    "ibanCode":"",
+    "swiftCode":"",
+    "createdBy": "",
+    "createdDate": "",
+    "modifiedBy": "",
+    "modifiedDate": null,
+    "key": 1
 }

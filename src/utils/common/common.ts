@@ -23,7 +23,28 @@ export const transformData = (data) => {
             };
         }
 
-        const childrenData = item.estimateRequestDetailList.map((detail) => ({
+        // const childrenData = item.estimateRequestDetailList.map((detail) => ({
+        //     key: detail.estimateRequestDetailId,
+        //     content: detail.content,
+        //     estimateRequestId: detail.estimateRequestId,
+        //     model: detail.model,
+        //     quantity: detail.quantity,
+        //     unit: detail.unit,
+        //     currency: detail.currency,
+        //     net: detail.net,
+        //     sentStatus: detail.sentStatus,
+        //     serialNumber: detail.serialNumber,
+        //     replySummaryId: detail.replySummaryId,
+        //     unitPrice: detail.unitPrice,
+        //     currencyUnit: detail.currencyUnit,
+        //     deliveryDate: detail.deliveryDate,
+        //     replyDate: detail.replyDate,
+        // }));
+
+        let childrenData;
+
+        if(item.estimateRequestDetailList){
+        childrenData = item.estimateRequestDetailList.map((detail) => ({
             key: detail.estimateRequestDetailId,
             content: detail.content,
             estimateRequestId: detail.estimateRequestId,
@@ -39,10 +60,11 @@ export const transformData = (data) => {
             currencyUnit: detail.currencyUnit,
             deliveryDate: detail.deliveryDate,
             replyDate: detail.replyDate,
-        }));
+        }));}
 
         // 같은 agencyName에 하위 데이터를 children으로 추가
-        groupedData[agencyName].children.push(...childrenData);
+        // groupedData[agencyName].children.push(...childrenData);
+        groupedData[agencyName].children.push(...childrenData??[]);
     });
 
     // groupedData 객체를 배열 형태로 변환
