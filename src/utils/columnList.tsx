@@ -450,16 +450,17 @@ export const rfqReadColumns = [
         key: 'writtenDate',
         fixed: 'left',
 
-    },   {
-        title: '문서번호',
-        dataIndex: 'documentNumber',
-        key: 'documentNumber',
     },
     {
         title: '거래처명',
         dataIndex: 'agencyName',
         key: 'agencyName',
         fixed: 'left',
+    },
+    {
+        title: '문서번호',
+        dataIndex: 'documentNumber',
+        key: 'documentNumber',
     },
     {
         title: 'MAKER',
@@ -474,7 +475,6 @@ export const rfqReadColumns = [
         title: 'MODEL',
         dataIndex: 'model',
         key: 'model',
-        fixed: 'left',
     },
     {
         title: '수량',

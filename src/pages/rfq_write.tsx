@@ -65,10 +65,9 @@ export default function rqfWrite() {
             const copyData = {...info}
             copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
 
-            console.log(copyData, 'copyData:')
             await getData.post('estimate/addEstimateRequest', copyData).then(v => {
                 console.log(v, ':::::')
-            })
+            });
         }
 
     }
@@ -224,6 +223,10 @@ export default function rqfWrite() {
 
 
     const downloadExcel = () => {
+
+        if(!info['estimateRequestDetailList'].length){
+           return message.warn('출력할 데이터가 존재하지 않습니다.')
+        }
 
         const worksheet = XLSX.utils.json_to_sheet(info['estimateRequestDetailList']);
         const workbook = XLSX.utils.book_new();
@@ -388,7 +391,10 @@ export default function rqfWrite() {
                 </Card>
 
 
-                <CustomTable rowSelection={rowSelection} setDatabase={setInfo} listType={'estimateRequestDetailList'}
+                <CustomTable rowSelection={rowSelection}
+                             setDatabase={setInfo}
+                             listType={'estimateRequestDetailList'}
+                             excel={true}
                              content={<TableModal title={'의뢰작성 세부 추가'} data={subRfqWriteInitial}
                                                   dataInfo={subRfqWriteInfo}
                                                   setInfoList={setInfo}/>} columns={OrderWriteColumn}
