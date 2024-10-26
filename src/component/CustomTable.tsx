@@ -13,7 +13,7 @@ import {InboxOutlined} from "@ant-design/icons";
 import Upload from "antd/lib/upload";
 const { Option } = Select;
 const { Dragger } = Upload;
-const CustomTable = ({ columns, info, setDatabase,content, subContent, rowSelection, listType }) => {
+const CustomTable = ({ columns, info, setDatabase,content, subContent, rowSelection, listType, excel = false }) => {
     const defaultCheckedList = columns.map((item) => item.key);
     const [checkedList, setCheckedList] = useState(defaultCheckedList);
 
@@ -165,13 +165,13 @@ const CustomTable = ({ columns, info, setDatabase,content, subContent, rowSelect
                     }}
                 />
 
-                <Dragger {...uploadProps} style={{ marginBottom: '20px' }}>
+                {excel && <Dragger {...uploadProps} style={{marginBottom: '20px'}}>
                     <p className="ant-upload-drag-icon">
-                        <InboxOutlined />
+                        <InboxOutlined/>
                     </p>
                     <p className="ant-upload-text">여기에 파일을 드래그 앤 드롭하거나 클릭하여 업로드하세요.</p>
                     <p className="ant-upload-hint">엑셀 파일(.xlsx, .xls)만 지원합니다.</p>
-                </Dragger>
+                </Dragger>}
             </Card>
         </div>
     );

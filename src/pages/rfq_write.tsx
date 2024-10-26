@@ -65,10 +65,9 @@ export default function rqfWrite() {
             const copyData = {...info}
             copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
 
-            console.log(copyData, 'copyData:')
             await getData.post('estimate/addEstimateRequest', copyData).then(v => {
                 console.log(v, ':::::')
-            })
+            });
         }
 
     }
@@ -388,7 +387,10 @@ export default function rqfWrite() {
                 </Card>
 
 
-                <CustomTable rowSelection={rowSelection} setDatabase={setInfo} listType={'estimateRequestDetailList'}
+                <CustomTable rowSelection={rowSelection}
+                             setDatabase={setInfo}
+                             listType={'estimateRequestDetailList'}
+                             excel={true}
                              content={<TableModal title={'의뢰작성 세부 추가'} data={subRfqWriteInitial}
                                                   dataInfo={subRfqWriteInfo}
                                                   setInfoList={setInfo}/>} columns={OrderWriteColumn}
