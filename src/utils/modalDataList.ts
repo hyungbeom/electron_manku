@@ -59,7 +59,7 @@ export const subInvenReadInfo = {
     "searchItem": {title : 'ITEM'},                   // ITEM
 }
 
-export const subInvenWriteInfo = {
+export const OrderStockInfo = {
     "receiptDate": {title : '입고일자'},           // MODEL
     "documentNumber": {title : '문서번호'},               // 단위
     "maker": {title : 'Maker'},            // NET/P
@@ -73,6 +73,7 @@ export const subInvenWriteInfo = {
 }
 
 export const subCustomerReadInfo = {
+    "agencyId": {title : 'No'},                  // MAKER
     "customerName": {title : '거래처명'},                  // MAKER
     "unpaidAmount": {title : '미입고금액'},                  // MAKER
     "paidAmount": {title : '입고금액'},                  // MODEL
@@ -80,6 +81,7 @@ export const subCustomerReadInfo = {
 }
 
 export const subAgencyReadInfo = {
+    "agencyId": {title : 'No'},                  // MAKER
     "agencyCode": {title : '코드'},                  // MAKER
     "agencyName": {title : '대리점명'},                  // MAKER
     "unpaidAmount": {title : '미입고외화'},                  // MAKER
@@ -148,7 +150,7 @@ export const modalCodeDiplomaInfo = {
 }
 
 export const tableCodeDomesticPurchaseInfo = {
-    "agencyId": {title : '코드(약칭)'},              // 수량
+    "agencyCode": {title : '코드(약칭)'},              // 수량
     "agencyName": {title : '상호'},
     "dealerType": {title : '딜러'},
     "grade": {title : '등급'},
@@ -175,7 +177,7 @@ export const tableCodeDomesticPurchaseInfo = {
 
 
 export const tableCodeOverseasPurchaseInfo = {
-    "agencyId": {title : '코드(약칭)'},              // 수량
+    "agencyCode": {title : '코드(약칭)'},              // 수량
     "agencyName": {title : '상호'},
     "dealerType": {title : '딜러'},
     "grade": {title : '등급'},

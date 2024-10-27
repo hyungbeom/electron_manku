@@ -4,11 +4,19 @@ import LayoutComponent from "@/component/LayoutComponent";
 import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
 import TextArea from "antd/lib/input/TextArea";
-import {FileSearchOutlined, RetweetOutlined, SaveOutlined} from "@ant-design/icons";
-import {rfqWriteColumns, subOrderWriteColumns} from "@/utils/columnList";
+import {CopyOutlined, FileExcelOutlined, FileSearchOutlined, RetweetOutlined, SaveOutlined} from "@ant-design/icons";
+import {rfqWriteColumns, subOrderWriteColumns, TableCodeUserColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {orderWriteInitial, rfqWriteInitial, subOrderWriteInitial, subRfqWriteInitial} from "@/utils/initialList";
-import {subOrderWriteInfo, subRfqWriteInfo} from "@/utils/modalDataList";
+import {
+    codeUserReadInitial,
+    codeUserSaveInitial,
+    orderWriteInitial,
+    rfqWriteInitial,
+    subOrderWriteInitial,
+    subRfqReadInitial,
+    subRfqWriteInitial
+} from "@/utils/initialList";
+import {subOrderWriteInfo, subRfqWriteInfo, tableCodeUserInfo} from "@/utils/modalDataList";
 import moment from "moment";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
@@ -17,6 +25,8 @@ import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import Select from "antd/lib/select";
+import {transformData} from "@/utils/common/common";
+import * as XLSX from "xlsx";
 
 const TwinInputBox = ({children}) => {
     return <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: 5, paddingTop: 8}}>
@@ -25,19 +35,17 @@ const TwinInputBox = ({children}) => {
 }
 
 export default function OrderWriter() {
-    const sub = {
-        validityPeriod: 1
-    }
 
-    const [info, setInfo] = useState<any>(orderWriteInitial)
+    let checkList = []
 
+    // const {estimateRequestList, pageInfo} = dataList;
+    const [saveInfo, setSaveInfo] = useState(orderWriteInitial);
+    const [info, setInfo] = useState(orderWriteInitial);
+    // const [tableInfo, setTableInfo] = useState(estimateRequestList);
+    // const [paginationInfo, setPaginationInfo] = useState(pageInfo);
 
-    useEffect(() => {
-        let copyData = {...orderWriteInitial}
-        // @ts-ignored
-        copyData['writtenDate'] = moment();
-        setInfo(copyData)
-    }, [])
+    // console.log(pageInfo,'pageInfo:')
+    // console.log(saveInfo,'saveInfo:')
 
 
     function onChange(e) {
@@ -50,19 +58,83 @@ export default function OrderWriter() {
         })
     }
 
+    function onSaveChange(e) {
+
+        let bowl = {}
+        bowl[e.target.id] = e.target.value;
+
+        setSaveInfo(v => {
+            return {...v, ...bowl}
+        })
+    }
+
+
+    useEffect(() => {
+        const copyData: any = {...info}
+        copyData['searchDate'] = [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
+        setInfo(copyData);
+        // setTableInfo(transformData(estimateRequestList));
+
+        const copySaveData: any = {...saveInfo}
+        copySaveData['searchDate'] = [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
+        setSaveInfo(copyData);
+    }, [])
+
+
+    async function searchInfo() {
+        const copyData: any = {...info}
+        const {writtenDate}: any = copyData;
+        if (writtenDate) {
+            copyData['searchStartDate'] = writtenDate[0];
+            copyData['searchEndDate'] = writtenDate[1];
+        }
+        const result = await getData.post('estimate/getEstimateRequestList', copyData);
+        // setTableInfo(transformData(result?.data?.entity?.estimateRequestList));
+    }
+
+    function deleteList() {
+        let copyData = {...info}
+        const result = copyData['estimateRequestDetailList'].filter(v => !checkList.includes(v.serialNumber))
+
+        copyData['estimateRequestDetailList'] = result
+        setInfo(copyData);
+    }
+
+    const downloadExcel = () => {
+
+        // const worksheet = XLSX.utils.json_to_sheet(tableInfo);
+        const workbook = XLSX.utils.book_new();
+        // XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+        XLSX.writeFile(workbook, "example.xlsx");
+    };
+
+    const rowSelection = {
+        onChange: (selectedRowKeys, selectedRows) => {
+
+            checkList  = selectedRowKeys
+
+        },
+        getCheckboxProps: (record) => ({
+            disabled: record.name === 'Disabled User',
+            // Column configuration not to be checked
+            name: record.name,
+        }),
+    };
+
     async function saveFunc() {
-        if (!info['estimateRequestDetailList'].length) {
+        if (!saveInfo['estimateRequestDetailList'].length) {
             message.warn('하위 데이터 1개 이상이여야 합니다')
         } else {
-            const copyData = {...info}
-            copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
+            const copyData = {...saveInfo}
+            copyData['writtenDate'] = moment(saveInfo['writtenDate']).format('YYYY-MM-DD');
 
             await getData.post('estimate/addEstimateRequest', copyData).then(v => {
-
-            })
+                console.log(v, ':::::')
+            });
         }
 
     }
+
     // console.log(moment(info['writtenDate']).format('YYYY-MM-DD'),'??')
     return <>
         <LayoutComponent>
@@ -219,22 +291,45 @@ export default function OrderWriter() {
                 <CustomTable columns={subOrderWriteColumns} initial={subOrderWriteInitial} dataInfo={subOrderWriteInfo}
                              setInfo={setInfo} info={info['orderDetailList']}/>
 
+
+                <CustomTable columns={subOrderWriteColumns}
+                             initial={subOrderWriteInitial}
+                             dataInfo={subOrderWriteInfo}
+                             // info={tableInfo}
+                             setDatabase={setInfo}
+                             // setTableInfo={setTableInfo}
+                             rowSelection={rowSelection}
+                             // pageInfo={paginationInfo}
+                             // setPaginationInfo={setPaginationInfo}
+
+                             subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
+                                 <CopyOutlined/>복사
+                             </Button>
+                                 {/*@ts-ignored*/}
+                                 <Button type={'danger'} size={'small'} style={{fontSize: 11}} onClick={deleteList}>
+                                     <CopyOutlined/>삭제
+                                 </Button>
+                                 <Button type={'dashed'} size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>
+                                     <FileExcelOutlined/>출력
+                                 </Button></>}
+                />
+
             </div>
         </LayoutComponent>
     </>
 }
 
 // @ts-ignored
-// export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
-//
-//
-//     const userAgent = ctx.req.headers['user-agent'];
-//     let param = {}
-//
-//     const {userInfo} = await initialServerRouter(ctx, store);
-//
-//     if (userInfo) {
-//         store.dispatch(setUserInfo(userInfo));
-//     }
-//     return param
-// })
+export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
+
+
+    const userAgent = ctx.req.headers['user-agent'];
+    let param = {}
+
+    const {userInfo} = await initialServerRouter(ctx, store);
+
+    if (userInfo) {
+        store.dispatch(setUserInfo(userInfo));
+    }
+    return param
+})

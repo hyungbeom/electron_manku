@@ -126,17 +126,17 @@ export const orderWriteInitial = {
     "orderDetailList": []
 }
 
-export const invenWriteInitial = {
+export const orderStockInitial = {
     "receiptDate":  null,        // 입고일자
-    "documentNumber": "K0-24-0061",     // 문서번호
-    "maker": "삼솔정공",                 // MAKER
-    "model": "SF14X20",                 // Model
-    "importUnitPrice": 890.00,          // 수입단가
+    "documentNumber": "",     // 문서번호
+    "maker": "",                 // MAKER
+    "model": "",                 // Model
+    "importUnitPrice": 0,          // 수입단가
     "currencyUnit": "KRW",              // 화폐단위
-    "receivedQuantity": 1500,           // 입고수량
+    "receivedQuantity": 0,           // 입고수량
     "unit": "EA",                       // 단위
-    "location": "베란다 창고",            // 위치
-    "remarks": "SK시그넷 스프링"          // 비고
+    "location": "",            // 위치
+    "remarks": ""          // 비고
 }
 
 
@@ -202,6 +202,27 @@ export const agencyReadInitial = {
     "searchDate": "",                  // MAKER
     "page": 1,
     "limit": 10
+}
+
+
+export const tableOrderCustomerInitial = {
+    "agencyId": 0,
+    "agencyCode": "",
+    "agencyName": "",
+    "dealerType": "",
+    "grade": "",
+    "margin": 0,
+    "homepage": "",
+    "item": "",
+    "tradeStartDate": "",
+    "businessRegistrationNumber": "",
+    "bankAccountNumber": "",
+    "createdBy": "",
+    "createdDate": null,
+    "modifiedBy": "",
+    "modifiedDate": null,
+    "maker": "",
+    "key": 1
 }
 
 export const subCodeExchangeInitial = {

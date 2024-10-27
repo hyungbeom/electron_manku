@@ -181,7 +181,7 @@ export default function codeOverseasPurchase({dataList}) {
                          pageInfo={paginationInfo}
                          setPaginationInfo={setPaginationInfo}
                          content={<TableModal title={'데이터 추가'} data={tableCodeOverseasPurchaseInitial}
-                                              dataInfo={tableCodeOverseasPurchaseColumns}
+                                              dataInfo={tableCodeOverseasPurchaseInfo}
                                               setInfoList={setInfo}/>}
                          subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
                              <CopyOutlined/>복사
