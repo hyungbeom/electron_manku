@@ -73,15 +73,14 @@ export const TagTypeList = {
     "checkList": {type : 'TextArea'},
     "cargoCharge": {type : 'select', boxList : ['화물 후불', '택배후불', '화물선불', '택배선불']},               // 단위
     "cargoPoint": {type : 'input'},
-    "paymentMethod": {type : 'select', boxList : ['현금결제', '선수금', '정기결제',]},
+    "paymentMethod": {type : 'select', boxList : ['현금결제', '선수금', '정기결제']},
 
-    "unitPrice": {type : 'input'},           // 단가
-    "amount": {type : 'input'},
+    "unitPrice": {type : 'inputNumber'},           // 단가
+    "amount": {type : 'inputNumber'},
     "unreceivedQuantity": {type : 'input'},
     "price": {type : 'input'},
 
 
-    //... 앞으로 인풋태그 관련된 전체 태그 정보들을 넣는다.
 }
 
 

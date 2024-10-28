@@ -104,4 +104,5 @@ html, body {
 /* 짝수 행의 배경색을 다르게 설정 */
 .editable-row {
     background-color: #f5f5f5; /* 원하는 색상으로 설정 */
+    cursor : pointer;
 }
