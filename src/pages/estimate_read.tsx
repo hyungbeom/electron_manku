@@ -40,6 +40,7 @@ export default function EstimateRead({dataList}) {
         let bowl = {}
         bowl[e.target.id] = e.target.value;
 
+        // console.log(bowl, 'bowl~~~~~~~~')
         setInfo(v => {
             return {...v, ...bowl}
         })
@@ -56,11 +57,14 @@ export default function EstimateRead({dataList}) {
     async function searchInfo() {
         const copyData: any = {...info}
 
-        const {writtenDate}: any = copyData;
-        if (writtenDate) {
-            copyData['searchStartDate'] = writtenDate[0];
-            copyData['searchEndDate'] = writtenDate[1];
+        console.log(copyData, 'copyData~~~~~~~~~~')
+
+        const {searchDate}: any = copyData;
+        if (searchDate) {
+            copyData['searchStartDate'] = searchDate[0];
+            copyData['searchEndDate'] = searchDate[1];
         }
+
         const result = await getData.post('estimate/getEstimateList', copyData);
         setTableInfo(transformData(result?.data?.entity?.estimateList));
     }

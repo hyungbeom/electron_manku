@@ -5,7 +5,7 @@ export const transformData = (data) => {
     const groupedData = {};
 
     data.forEach((item) => {
-        const { estimateRequestId } = item;
+        const { estimateRequestId, estimateId } = item;
 
         // 기존에 같은 agencyName이 있는지 확인
         if (!groupedData[estimateRequestId]) {
@@ -14,7 +14,7 @@ export const transformData = (data) => {
                 key: item.key,
                 agencyName: item.agencyName,
                 writtenDate: item.writtenDate,
-                documentNumber: item.documentNumberFull,
+                documentNumberFull: item.documentNumberFull,
                 estimateRequestId: item.estimateRequestId,
                 managerName: item.managerName,
                 createdBy: item.createdBy,
@@ -22,6 +22,38 @@ export const transformData = (data) => {
                 maker: item.maker,
                 item: item.item,
                 children: [],
+            }
+        } else if (!groupedData[estimateId]) {
+                groupedData[estimateId] = {
+                    estimateId: item.estimateId,
+                    managerName: item.managerName,
+                    documentNumberFull: item.documentNumberFull,
+                    documentNumber: item.documentNumber,
+                    writtenDate: item.writtenDate,
+                    createdBy: item.createdBy,
+                    modifiedDate: item.modifiedDate,
+                    agencyCode: item.agencyCode,
+                    customerCode: item.customerCode,
+                    customerName: item.customerName,
+                    phoneNumber: item.phoneNumber,
+                    faxNumber: item.faxNumber,
+                    validityPeriod: item.validityPeriod,
+                    paymentTerms: item.paymentTerms,
+                    shippingTerms: item.shippingTerms,
+                    exchangeRate: item.exchangeRate,
+                    email: item.email,
+                    managerPhoneNumber: item.managerPhoneNumber,
+                    managerFaxNumber: item.managerFaxNumber,
+                    delivery: item.delivery,
+                    remarks: item.remarks,
+                    createdDate: item.createdDate,
+                    modifiedBy: item.modifiedBy,
+                    subNumber: item.subNumber,
+                    estimateManager: item.estimateManager,
+                    maker: item.maker,
+                    item: item.item,
+                    children: [],
+                
             };
         }
 
@@ -63,11 +95,32 @@ export const transformData = (data) => {
             currencyUnit: detail.currencyUnit,
             deliveryDate: detail.deliveryDate,
             replyDate: detail.replyDate,
-        }));}
+        }));
+            // 같은 agencyName에 하위 데이터를 children으로 추가
+            // groupedData[agencyName].children.push(...childrenData);
+            groupedData[estimateRequestId]?.children.push(...childrenData??[]);
+        } else if(item.estimateDetailList){
+            childrenData = item.estimateDetailList.map((detail) => ({
+                key: detail.estimateDetailId,
+                estimateDetailId: detail.estimateDetailId,
+                estimateId: detail.estimateId,
+                model: detail.model,
+                quantity: detail.quantity,
+                unit: detail.unit,
+                currency: detail.currency,
+                net: detail.net,
+                unitPrice: detail.unitPrice,
+                currencyUnit: detail.currencyUnit,
+                amount: detail.amount,
+                orderProcessing: detail.orderProcessing,
+                orderDate: detail.orderDate,
+                order: detail.order,
+                serialNumber: detail.serialNumber,
+            }));
+            groupedData[estimateId]?.children.push(...childrenData??[]);
+        }
 
-        // 같은 agencyName에 하위 데이터를 children으로 추가
-        // groupedData[agencyName].children.push(...childrenData);
-        groupedData[estimateRequestId].children.push(...childrenData??[]);
+
     });
 
     // groupedData 객체를 배열 형태로 변환
