@@ -65,8 +65,15 @@ export const TagTypeList = {
     "ibanCode": {type : 'input'},
     "swiftCode": {type : 'input'},
 
-
-
+    "agencyId": 1,
+    "region": {type : 'input'},
+    "postalCode": {type : 'input'},
+    "customerName": {type : 'input'},
+    "managerName": {type : 'input'},
+    "checkList": {type : 'TextArea'},
+    "cargoCharge": {type : 'select', boxList : ['화물 후불', '택배후불', '화물선불', '택배선불']},               // 단위
+    "cargoPoint": {type : 'input'},
+    "paymentMethod": {type : 'select', boxList : ['현금결제', '선수금', '정기결제',]},
 
 
 

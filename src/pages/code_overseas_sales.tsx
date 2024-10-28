@@ -22,17 +22,21 @@ import message from "antd/lib/message";
 import Select from "antd/lib/select";
 
 import {
-    tableCodeDomesticPurchaseColumns, tableCodeDomesticSalesColumns,
+    tableCodeDomesticPurchaseColumns, tableCodeDomesticSalesColumns, tableCodeOverseasSalesColumns,
 } from "@/utils/columnList";
 import {
     subRfqReadInfo,
     subRfqWriteInfo,
     tableCodeDomesticPurchaseInfo,
-    tableCodeDomesticSalesInfo,
+    tableCodeDomesticSalesInfo, tableCodeOverseasSalesInfo,
 } from "@/utils/modalDataList";
 import {
     codeDomesticPurchaseInitial,
-    subRfqReadInitial, subRfqWriteInitial, tableCodeDomesticPurchaseInitial, tableCodeDomesticSalesInitial,
+    subRfqReadInitial,
+    subRfqWriteInitial,
+    tableCodeDomesticPurchaseInitial,
+    tableCodeDomesticSalesInitial,
+    tableCodeOverseasSalesInitial,
 } from "@/utils/initialList";
 import Radio from "antd/lib/radio";
 import TableModal from "@/utils/TableModal";
@@ -43,7 +47,7 @@ const TwinInputBox = ({children}) => {
         {children}
     </div>
 }
-export default function codeOverseasSales({dataList}) {
+export default function codeDomesticSales({dataList}) {
 
     let checkList = []
 
@@ -145,7 +149,7 @@ export default function codeOverseasSales({dataList}) {
     }
     return <LayoutComponent>
         <div style={{display: 'grid', gridTemplateColumns: '320px 1fr', height: '100%', gridColumnGap: 5}}>
-            <Card size={'small'} title={'국내거래처(매출)'} style={{fontSize: 12, border: '1px solid lightGray'}}>
+            <Card size={'small'} title={'해외거래처(매출)'} style={{fontSize: 12, border: '1px solid lightGray'}}>
                 <Card size={'small'} style={{
                     fontSize: 13,
                     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
@@ -171,17 +175,17 @@ export default function codeOverseasSales({dataList}) {
 
                 </Card>
             </Card>
-            <CustomTable columns={tableCodeDomesticSalesColumns}
-                         initial={tableCodeDomesticPurchaseInitial}
-                         dataInfo={tableCodeDomesticSalesInfo}
+            <CustomTable columns={tableCodeOverseasSalesColumns}
+                         initial={tableCodeOverseasSalesInitial}
+                         dataInfo={tableCodeOverseasSalesInfo}
                          info={tableInfo}
                          setDatabase={setInfo}
                          setTableInfo={setTableInfo}
                          rowSelection={rowSelection}
                          pageInfo={paginationInfo}
                          setPaginationInfo={setPaginationInfo}
-                         content={<TableModal title={'데이터 추가'} data={tableCodeDomesticSalesInitial}
-                                              dataInfo={tableCodeDomesticSalesInfo}
+                         content={<TableModal title={'데이터 추가'} data={tableCodeOverseasSalesInitial}
+                                              dataInfo={tableCodeOverseasSalesInfo}
                                               setInfoList={setInfo}/>}
                          subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
                              <CopyOutlined/>복사

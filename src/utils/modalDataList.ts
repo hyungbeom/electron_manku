@@ -118,7 +118,7 @@ export const tableCodeReadInfo = {
     "hsCode": {title : 'HS-CODE'},              // 수량
 }
 
-export const tableyarnCodeUserInfo = {
+export const tableCodeUserInfo = {
     "customerName": {title : '업체명'},           // MODEL
     "id": {title : 'ID'},              // 수량
     "pw": {title : 'Password'},              
@@ -157,10 +157,6 @@ export const tableCodeDomesticPurchaseInfo = {
     "homepage": {title : '홈페이지'},
     "businessRegistrationNumber": {title : '사업자번호'},
     "bankAccountNumber": {title : '계좌번호'},
-    "createdBy": {title : '등록자'},
-    "createdDate": {title : '등록일자'},
-    "modifiedBy": {title : '수정자'},
-    "modifiedDate": {title : '수정일자'},
     "item": {title : 'ITEM'},
     "tradeStartDate": {title : '거래시작일'},
     "customerManager": {title : '담당자'},
@@ -171,6 +167,47 @@ export const tableCodeDomesticPurchaseInfo = {
     "countryAgency": {title : '국가대리점'},
     "cellPhoneNumber": {title : '휴대폰'},
     "remarks": {title : '비고'},
+}
+
+export const tableCodeDomesticSalesInfo = {
+    "agencyCode": {title : '코드'},              // 수량
+    "agencyName": {title : '상호'},
+    "region": {title : '지역'},
+    "tradeStartDate": {title : '거래시작일'},
+    "phoneNumber": {title : '전화번호'},
+    "faxNumber": {title : '팩스번호'},
+    "homepage": {title : '홈페이지'},
+    "postalCode": {title : '우편번호'},
+    "address": {title : '주소'},
+    "businessRegistrationNumber": {title : '사업자번호'},
+    "customerName": {title : '거래처'},
+    "remarks": {title : '비고'},
+    "managerName": {title : '만쿠담당자'},
+    "checkList": {title : '업체확인사항'},
+    "cargoCharge": {title : '화물운송료'},
+    "cargoPoint": {title : '화물지점'},
+    "paymentMethod": {title : '결제방법'},
+    "dealerType": {title : '딜러구분'},
+}
+
+export const tableCodeOverseasSalesInfo = {
+    "agencyCode": {title : '코드'},              // 수량
+    "agencyName": {title : '상호'},
+    "region": {title : '지역'},
+    "tradeStartDate": {title : '거래시작일'},
+    "phoneNumber": {title : '전화번호'},
+    "faxNumber": {title : '팩스번호'},
+    "currencyUnit": {title : '화폐단위'},
+    "managerName": {title : '만쿠담당자'},
+    "checkList": {title : '업체확인사항'},
+    "ftaNo": {title : 'FTANo'},
+    "homepage": {title : '홈페이지'},
+    "postalCode": {title : '우편번호'},
+    "address": {title : '주소'},
+    "customerName": {title : '거래처'},
+    "remarks": {title : '비고'},
+    "customerManager": {title : '담당자'},
+    "email": {title : '이메일'},
 }
 
 

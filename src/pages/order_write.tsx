@@ -3,20 +3,18 @@ import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
 import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
-import TextArea from "antd/lib/input/TextArea";
-import {CopyOutlined, FileExcelOutlined, FileSearchOutlined, RetweetOutlined, SaveOutlined} from "@ant-design/icons";
-import {rfqWriteColumns, subOrderWriteColumns, TableCodeUserColumns} from "@/utils/columnList";
+import {CopyOutlined, FileExcelOutlined,RetweetOutlined, SaveOutlined} from "@ant-design/icons";
+import {
+    OrderWriteColumn,
+    searchAgencyCodeColumn,
+    searchCustomerColumn,
+    subOrderWriteColumns,
+} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
 import {
-    codeUserReadInitial,
-    codeUserSaveInitial,
-    orderWriteInitial,
-    rfqWriteInitial,
-    subOrderWriteInitial,
-    subRfqReadInitial,
-    subRfqWriteInitial
+    orderWriteInitial, rfqWriteInitial, subOrderWriteInitial, subRfqWriteInitial,
 } from "@/utils/initialList";
-import {subOrderWriteInfo, subRfqWriteInfo, tableCodeUserInfo} from "@/utils/modalDataList";
+import {subOrderWriteInfo, subRfqWriteInfo} from "@/utils/modalDataList";
 import moment from "moment";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
@@ -25,8 +23,11 @@ import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import Select from "antd/lib/select";
-import {transformData} from "@/utils/common/common";
 import * as XLSX from "xlsx";
+import {useAppSelector} from "@/utils/common/function/reduxHooks";
+import Modal from "antd/lib/modal/Modal";
+import Table from "antd/lib/table";
+import TableModal from "@/utils/TableModal";
 
 const TwinInputBox = ({children}) => {
     return <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: 5, paddingTop: 8}}>
@@ -38,14 +39,21 @@ export default function OrderWriter() {
 
     let checkList = []
 
-    // const {estimateRequestList, pageInfo} = dataList;
-    const [saveInfo, setSaveInfo] = useState(orderWriteInitial);
-    const [info, setInfo] = useState(orderWriteInitial);
-    // const [tableInfo, setTableInfo] = useState(estimateRequestList);
-    // const [paginationInfo, setPaginationInfo] = useState(pageInfo);
+    const userInfo = useAppSelector((state) => state.user);
+    const [info, setInfo] = useState<any>(orderWriteInitial)
+    const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
 
-    // console.log(pageInfo,'pageInfo:')
-    // console.log(saveInfo,'saveInfo:')
+
+    useEffect(() => {
+
+        let copyData = {...orderWriteInitial}
+
+        // @ts-ignored
+        copyData['writtenDate'] = moment();
+        // @ts-ignored
+        copyData['delivery'] = moment();
+        setInfo(copyData);
+    }, [])
 
 
     function onChange(e) {
@@ -58,55 +66,193 @@ export default function OrderWriter() {
         })
     }
 
-    function onSaveChange(e) {
+    async function saveFunc() {
+        if (!info['orderDetailList'].length) {
+            message.warn('하위 데이터 1개 이상이여야 합니다')
+        } else {
+            const copyData = {...info}
+            copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
+            copyData['delivery'] = moment(info['delivery']).format('YYYY-MM-DD');
 
-        let bowl = {}
-        bowl[e.target.id] = e.target.value;
-
-        setSaveInfo(v => {
-            return {...v, ...bowl}
-        })
-    }
-
-
-    useEffect(() => {
-        const copyData: any = {...info}
-        copyData['searchDate'] = [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
-        setInfo(copyData);
-        // setTableInfo(transformData(estimateRequestList));
-
-        const copySaveData: any = {...saveInfo}
-        copySaveData['searchDate'] = [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
-        setSaveInfo(copyData);
-    }, [])
-
-
-    async function searchInfo() {
-        const copyData: any = {...info}
-        const {writtenDate}: any = copyData;
-        if (writtenDate) {
-            copyData['searchStartDate'] = writtenDate[0];
-            copyData['searchEndDate'] = writtenDate[1];
+            await getData.post('order/addOrder', copyData).then(v => {
+                console.log(v, ':::::')
+            });
         }
-        const result = await getData.post('estimate/getEstimateRequestList', copyData);
-        // setTableInfo(transformData(result?.data?.entity?.estimateRequestList));
+
     }
 
-    function deleteList() {
-        let copyData = {...info}
-        const result = copyData['estimateRequestDetailList'].filter(v => !checkList.includes(v.serialNumber))
+    function findAgency() {
 
-        copyData['estimateRequestDetailList'] = result
-        setInfo(copyData);
     }
+
+
+    function SearchAgencyCode() {
+        const [data, setData] = useState([])
+        const [modalInfo, setModalInfo] = useState({
+            "searchType": "2",      // 1: 코드, 2: 상호명, 3: MAKER
+            "searchText": "",
+            "page": 1,
+            "limit": 0
+        });
+
+        useEffect(() => {
+            searchFunc();
+        }, [])
+
+        async function searchFunc() {
+            const result = await getData.post('agency/getAgencyList', modalInfo);
+            setData(result?.data?.entity?.agencyList)
+        }
+
+
+        return <Modal
+            // @ts-ignored
+            id={'event1'}
+            title={'대리점 코드 조회'}
+            onCancel={() => setIsModalOpen({event1: false, event2: false})}
+            open={isModalOpen?.event1}
+            width={'60vw'}
+            onOk={() => setIsModalOpen({event1: false, event2: false})}
+        >
+            <div style={{height: '60vh'}}>
+                <Card title={'검색어'} size={'small'} style={{marginTop: 10}}>
+                    <Input
+                        value={modalInfo['searchText']}
+                        onChange={e => {
+                            let bowl = {};
+                            bowl['searchText'] = e.target.value;
+                            setModalInfo(v => {
+                                return {...v, ...bowl};
+                            });
+                        }}
+                    />
+                </Card>
+
+                <Button onClick={searchFunc} type={'primary'} style={{width: '100%', marginTop: 10}}>조회</Button>
+
+                {/* 테이블 데이터를 감싸는 Card */}
+                <Card style={{marginTop: 10}}>
+                    <Table
+                        style={{width: '100%'}}
+                        scroll={{y: 300}}
+                        columns={searchAgencyCodeColumn}
+                        dataSource={data}
+                        // pagination={true}
+                        onRow={(record, rowIndex) => {
+                            return {
+                                style: {cursor: 'pointer'},
+                                onClick: (event) => {
+
+                                    let copyData = {...info}
+                                    copyData['agencyCode'] = record.agencyCode;
+                                    copyData['agencyName'] = record.agencyName;
+                                    setInfo(copyData);
+                                    setIsModalOpen({event1: false, event2: false})
+                                }
+                            };
+                        }}
+                    />
+                </Card>
+            </div>
+        </Modal>
+    }
+
+
+    function SearchCustomer() {
+        const [data, setData] = useState([])
+        const [modalInfo, setModalInfo] = useState({
+            "searchText": "",       // 상호명
+            "page": 1,
+            "limit": 100000000
+        });
+
+        useEffect(() => {
+            searchFunc()
+        }, [])
+
+        async function searchFunc() {
+            console.log(modalInfo, 'modalInfo:')
+            const result = await getData.post('customer/getCustomerListForEstimate', modalInfo);
+            setData(result?.data?.entity?.customerList)
+        }
+
+
+        return <Modal
+            title={'거래처 조회'}
+            // @ts-ignored
+            id={'event2'}
+            onCancel={() => setIsModalOpen({event1: false, event2: false})}
+            open={isModalOpen?.event2}
+            width={'60vw'}
+            onOk={() => setIsModalOpen({event1: false, event2: false})}
+        >
+            <div style={{height: '60vh'}}>
+                <Card title={'검색어'} size={'small'} style={{marginTop: 10}}>
+                    <Input
+                        value={modalInfo['searchText']}
+                        onChange={e => {
+                            let bowl = {};
+                            bowl['searchText'] = e.target.value;
+                            setModalInfo(v => {
+                                return {...v, ...bowl};
+                            });
+                        }}
+                    />
+                </Card>
+
+                <Button onClick={searchFunc} type={'primary'} style={{width: '100%', marginTop: 10}}>조회</Button>
+
+                {/* 테이블 데이터를 감싸는 Card */}
+                <Card style={{marginTop: 10}}>
+                    <Table
+                        style={{width: '100%'}}
+                        scroll={{y: 300}}
+                        columns={searchCustomerColumn}
+                        dataSource={data}
+                        // pagination={true}
+                        onRow={(record, rowIndex) => {
+                            return {
+                                style: {cursor: 'pointer'},
+                                onClick: (event) => {
+
+                                    let copyData = {...info}
+                                    copyData['customerCode'] = record.customerCode;
+                                    copyData['customerName'] = record.customerName;
+                                    copyData['managerName'] = record.managerName;
+                                    copyData['phoneNumber'] = record.directTel;
+                                    copyData['faxNumber'] = record.faxNumber;
+                                    setInfo(copyData);
+                                    setIsModalOpen({event1: false, event2: false})
+                                }
+                            };
+                        }}
+                    />
+                </Card>
+            </div>
+        </Modal>
+    }
+
 
     const downloadExcel = () => {
 
-        // const worksheet = XLSX.utils.json_to_sheet(tableInfo);
+        if(!info['orderDetailList'].length){
+            return message.warn('출력할 데이터가 존재하지 않습니다.')
+        }
+
+        const worksheet = XLSX.utils.json_to_sheet(info['orderDetailList']);
         const workbook = XLSX.utils.book_new();
-        // XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
         XLSX.writeFile(workbook, "example.xlsx");
     };
+
+    function deleteList() {
+        let copyData = {...info}
+        const result = copyData['orderDetailList'].filter(v => !checkList.includes(v.serialNumber))
+
+        copyData['orderDetailList'] = result
+        setInfo(copyData);
+
+    }
 
     const rowSelection = {
         onChange: (selectedRowKeys, selectedRows) => {
@@ -120,22 +266,6 @@ export default function OrderWriter() {
             name: record.name,
         }),
     };
-
-    async function saveFunc() {
-        if (!saveInfo['estimateRequestDetailList'].length) {
-            message.warn('하위 데이터 1개 이상이여야 합니다')
-        } else {
-            const copyData = {...saveInfo}
-            copyData['writtenDate'] = moment(saveInfo['writtenDate']).format('YYYY-MM-DD');
-
-            await getData.post('estimate/addEstimateRequest', copyData).then(v => {
-                console.log(v, ':::::')
-            });
-        }
-
-    }
-
-    // console.log(moment(info['writtenDate']).format('YYYY-MM-DD'),'??')
     return <>
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateColumns: '350px 1fr', height: '100%', gridColumnGap: 5}}>
@@ -282,21 +412,21 @@ export default function OrderWriter() {
                             <Button type={'primary'} style={{marginRight: 8}}
                                     onClick={saveFunc}><SaveOutlined/>저장</Button>
                             {/*@ts-ignored*/}
-                            <Button type={'danger'}><RetweetOutlined/>초기화</Button>
+                            <Button style={{letterSpacing: -2}} type={'danger'}><RetweetOutlined/>초기화</Button>
                         </div>
                     </Card>
                 </Card>
 
-                <CustomTable columns={subOrderWriteColumns}
-                             initial={subOrderWriteInitial}
-                             dataInfo={subOrderWriteInfo}
-                             // info={tableInfo}
-                             setDatabase={setInfo}
-                             // setTableInfo={setTableInfo}
-                             rowSelection={rowSelection}
-                             // pageInfo={paginationInfo}
-                             // setPaginationInfo={setPaginationInfo}
 
+                <CustomTable rowSelection={rowSelection}
+                             setDatabase={setInfo}
+                             listType={'orderDetailList'}
+                             excel={true}
+                             columns={OrderWriteColumn}
+                             info={info['orderDetailList']}
+                             content={<TableModal title={'의뢰작성 세부 추가'} data={subRfqWriteInitial}
+                                                  dataInfo={subRfqWriteInfo}
+                                                  setInfoList={setInfo}/>}
                              subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
                                  <CopyOutlined/>복사
                              </Button>
@@ -307,7 +437,7 @@ export default function OrderWriter() {
                                  <Button type={'dashed'} size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>
                                      <FileExcelOutlined/>출력
                                  </Button></>}
-                />
+                             />
 
             </div>
         </LayoutComponent>

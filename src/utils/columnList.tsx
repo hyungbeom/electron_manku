@@ -69,7 +69,8 @@ export const makerColumn = [
         key: 'item',
         render: (text) => <div style={{width : 80}} className="ellipsis-cell">{text}</div>,
         fixed: 'left',
-    },  {
+    },
+    {
         title: '홈페이지',
         dataIndex: 'homepage',
         key: 'homepage',
@@ -1338,6 +1339,303 @@ export const tableCodeOverseasPurchaseColumns = [
     ,editable: true,},
 
 ];
+
+export const tableCodeDomesticSalesColumns = [
+    {
+        title: '코드',
+        dataIndex: 'agencyCode',
+        key: 'agencyCode',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>,
+        editable: true,
+    },
+    {
+        title: '상호',
+        dataIndex: 'agencyName',
+        key: 'agencyName',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>,
+        editable: true,
+    },
+    {
+        title: '지역',
+        dataIndex: 'region',
+        key: 'region',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>,
+        editable: true,
+    },
+    {
+        title: '거래시작일',
+        dataIndex: 'tradeStartDate',
+        key: 'tradeStartDate',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{moment(text).format('YYYY-MM-DD')}</div>,
+        editable: true,
+    },
+    {
+        title: '전화번호',
+        dataIndex: 'phoneNumber',
+        key: 'phoneNumber',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>
+        ,editable: true,},
+    {
+        title: '팩스번호',
+        dataIndex: 'faxNumber',
+        key: 'faxNumber',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>
+        ,editable: true,
+    },
+    {
+        title: '홈페이지',
+        dataIndex: 'homepage',
+        key: 'homepage',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>
+        ,editable: true,
+    },
+    {
+        title: '우편번호',
+        dataIndex: 'postalCode',
+        key: 'postalCode',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>
+        ,editable: true,
+    },
+    {
+        title: '주소',
+        dataIndex: 'address',
+        key: 'address',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>
+        ,editable: true,
+    },
+    {
+        title: '사업자번호',
+        dataIndex: 'businessRegistrationNumber',
+        key: 'businessRegistrationNumber',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>
+        ,editable: true,
+    },
+    {
+        title: '거래처',
+        dataIndex: 'customerName',
+        key: 'customerName',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>,
+        editable: true,
+    },
+    {
+        title: '비고',
+        dataIndex: 'remarks',
+        key: 'remarks',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>,
+        editable: true,
+    },
+    {
+        title: '만쿠담당자',
+        dataIndex: 'managerName',
+        key: 'managerName',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>,
+        editable: true,
+    },
+    {
+        title: '업체확인사항',
+        dataIndex: 'checkList',
+        key: 'checkList',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>,
+        editable: true,
+    },
+    {
+        title: '화물운송료',
+        dataIndex: 'cargoCharge',
+        key: 'cargoCharge',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>,
+        editable: true,
+    },
+    {
+        title: '화물지점',
+        dataIndex: 'cargoPoint',
+        key: 'cargoPoint',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>,
+        editable: true,
+    },
+    {
+        title: '결제방법',
+        dataIndex: 'paymentMethod',
+        key: 'paymentMethod',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>,
+        editable: true,
+    },
+    {
+        title: '업체형태',
+        dataIndex: 'dealerType',
+        key: 'dealerType',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>,
+        editable: true,
+    },
+    {
+        title: '등록자',
+        dataIndex: 'createdBy',
+        key: 'createdBy',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>
+        ,editable: true,},
+    {
+        title: '등록일자',
+        dataIndex: 'createdDate',
+        key: 'createdDate',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{moment(text).format('YYYY-MM-DD')}</div>
+        ,editable: true,},
+    {
+        title: '수정자',
+        dataIndex: 'modifiedBy',
+        key: 'modifiedBy',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>
+        ,editable: true,},
+    {
+        title: '수정일자',
+        dataIndex: 'modifiedDate',
+        key: 'modifiedDate',
+        ender: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>,
+        editable: true,
+    },
+
+];
+
+export const tableCodeOverseasSalesColumns = [
+    {
+        title: '코드',
+        dataIndex: 'agencyCode',
+        key: 'agencyCode',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>,
+        editable: true,
+    },
+    {
+        title: '상호',
+        dataIndex: 'agencyName',
+        key: 'agencyName',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>,
+        editable: true,
+    },
+    {
+        title: '지역',
+        dataIndex: 'region',
+        key: 'region',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>,
+        editable: true,
+    },
+    {
+        title: '거래시작일',
+        dataIndex: 'tradeStartDate',
+        key: 'tradeStartDate',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{moment(text).format('YYYY-MM-DD')}</div>,
+        editable: true,
+    },
+    {
+        title: '전화번호',
+        dataIndex: 'phoneNumber',
+        key: 'phoneNumber',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>
+        ,editable: true,},
+    {
+        title: '팩스번호',
+        dataIndex: 'faxNumber',
+        key: 'faxNumber',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>
+        ,editable: true,
+    },
+    {
+        title: '우편번호',
+        dataIndex: 'postalCode',
+        key: 'postalCode',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>
+        ,editable: true,
+    },
+    {
+        title: '주소',
+        dataIndex: 'address',
+        key: 'address',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>
+        ,editable: true,
+    },
+    {
+        title: '거래처',
+        dataIndex: 'customerName',
+        key: 'customerName',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>,
+        editable: true,
+    },
+    {
+
+        title: '홈페이지',
+        dataIndex: 'homepage',
+        key: 'homepage',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>
+        ,editable: true,
+    },
+    {
+
+        title: '비고란',
+        dataIndex: 'remarks',
+        key: 'remarks',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>
+        ,editable: true,
+    },
+    {
+        title: '화폐단위',
+        dataIndex: 'currencyUnit',
+        key: 'customerName',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>,
+        editable: true,
+    },
+    {
+        title: '만쿠담당자',
+        dataIndex: 'managerName',
+        key: 'managerName',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>,
+        editable: true,
+    },
+    {
+        title: '거래처담당자',
+        dataIndex: 'customerManager',
+        key: 'customerManager',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>,
+        editable: true,
+    },
+    {
+        title: 'FTANo',
+        dataIndex: 'ftaNo',
+        key: 'ftaNo',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>,
+        editable: true,
+    },
+    {
+        title: '업체확인사항',
+        dataIndex: 'checkList',
+        key: 'checkList',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>,
+        editable: true,
+    },
+    {
+        title: '등록자',
+        dataIndex: 'createdBy',
+        key: 'createdBy',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>
+        ,editable: true,},
+    {
+        title: '등록일자',
+        dataIndex: 'createdDate',
+        key: 'createdDate',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{moment(text).format('YYYY-MM-DD')}</div>
+        ,editable: true,},
+    {
+        title: '수정자',
+        dataIndex: 'modifiedBy',
+        key: 'modifiedBy',
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>
+        ,editable: true,},
+    {
+        title: '수정일자',
+        dataIndex: 'modifiedDate',
+        key: 'modifiedDate',
+        ender: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>,
+        editable: true,
+    },
+
+];
+
 
 export const tableCodeExchangeColumns = [
     {

@@ -108,7 +108,7 @@ export const subRfqReadInitial = {
 
 export const orderWriteInitial = {
     "documentNumberFull": "",    // Our PO No
-    "writtenDate": null,            // 작성일
+    "writtenDate": "",            // 작성일
     "yourPoNo": "",                // Your PO No
     "agencyCode": "",  // Messrs
     "customerName": "",          // 거래처명
@@ -121,9 +121,10 @@ export const orderWriteInitial = {
     "deliveryTerms": "",              // Delivery Terms
     "maker": "",                    // MAKER
     "item": "",                       // ITEM
-    "delivery": null,               // Delivery
+    "delivery": "",               // Delivery
     "remarks": "",                      // 비고란
-    "orderDetailList": []
+    "orderDetailList": [],
+    // "estimateRequestDetailList": [],
 }
 
 export const orderStockInitial = {
@@ -322,12 +323,64 @@ export const tableCodeDomesticPurchaseInitial = {
     "tradeStartDate": null,
     "businessRegistrationNumber": "",
     "bankAccountNumber": "",
-    "createdBy": "",
-    "createdDate": "",
-    "modifiedBy": "",
-    "modifiedDate": null,
+    // "createdBy": "",
+    // "createdDate": null,
+    // "modifiedBy": "",
+    // "modifiedDate": null,
     "maker": "",
     "key": 1
+}
+
+export const tableCodeDomesticSalesInitial = {
+    "agencyId": 1,
+    "agencyCode": "",
+    "agencyName": "",
+    "region": "",
+    "tradeStartDate": null,
+    "phoneNumber": "",
+    "faxNumber": "",
+    "homepage": "",
+    "postalCode": "",
+    "address": "",
+    "businessRegistrationNumber": "",
+    "customerName": "",
+    "remarks": "",
+    "managerName": "",
+    "checkList": "",
+    "cargoCharge": "화물후불",
+    "cargoPoint": "",
+    "paymentMethod": "현금결제",
+    "dealerType": "딜러",
+    // "createdBy": "",
+    // "createdDate": null,
+    // "modifiedBy": "",
+    // "modifiedDate": null,
+    "key": 1,
+}
+
+export const tableCodeOverseasSalesInitial = {
+    "agencyId": 1,
+    "agencyCode": "",
+    "agencyName": "",
+    "region": "",
+    "tradeStartDate": null,
+    "phoneNumber": "",
+    "faxNumber": "",
+    "homepage": "",
+    "postalCode": "",
+    "address": "",
+    "customerName": "",
+    "remarks": "",
+    "managerName": "",
+    "customerManager": "",
+    "checkList": "",
+    "currencyUnit": {title : '화폐단위'},
+    "ftaNo": "",
+    // "createdBy": "",
+    // "createdDate": "",
+    // "modifiedBy": "",
+    // "modifiedDate": null,
+    "key": 1,
 }
 
 
@@ -350,9 +403,9 @@ export const tableCodeOverseasPurchaseInitial = {
     "agencyAddress":"",
     "ibanCode":"",
     "swiftCode":"",
-    "createdBy": "",
-    "createdDate": "",
-    "modifiedBy": "",
-    "modifiedDate": null,
+    // "createdBy": "",
+    // "createdDate": null,
+    // "modifiedBy": "",
+    // "modifiedDate": null,
     "key": 1
 }
