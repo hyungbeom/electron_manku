@@ -1,36 +1,67 @@
 import React, {useEffect, useState} from "react";
 import Input from "antd/lib/input/Input";
-import Select from "antd/lib/select";
 import LayoutComponent from "@/component/LayoutComponent";
 import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
-import {CopyOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
-import Button from "antd/lib/button";
-import {rfqReadColumns} from "@/utils/columnList";
+import TextArea from "antd/lib/input/TextArea";
+import {
+    CopyOutlined,
+    FileExcelOutlined,
+    FileSearchOutlined,
+    RetweetOutlined,
+    SaveOutlined,
+    SearchOutlined
+} from "@ant-design/icons";
+import {
+    OrderWriteColumn,
+    rfqWriteColumns,
+    searchAgencyCodeColumn,
+    searchCustomerColumn,
+    tableEstimateReadColumns
+} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {subRfqReadInitial} from "@/utils/initialList";
-import {subRfqReadInfo} from "@/utils/modalDataList";
+import {
+    estimateReadInitial,
+    estimateWriteInitial,
+    rfqWriteInitial,
+    subRfqWriteInitial, tableEstimateReadInitial,
+    tableEstimateWriteInitial
+} from "@/utils/initialList";
+import {subRfqWriteInfo, tableEstimateReadInfo} from "@/utils/modalDataList";
+import moment from "moment";
+import Button from "antd/lib/button";
+import message from "antd/lib/message";
+import {getData} from "@/manage/function/api";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
-import {getData} from "@/manage/function/api";
-import moment from "moment";
+import {useAppSelector} from "@/utils/common/function/reduxHooks";
+import Modal from "antd/lib/modal/Modal";
+import Table from "antd/lib/table";
 import * as XLSX from "xlsx";
+import TableModal from "@/utils/TableModal";
 import {transformData} from "@/utils/common/common";
+import Select from "antd/lib/select";
 
 const {RangePicker} = DatePicker
 
+const TwinInputBox = ({children}) => {
+    return <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: 5, paddingTop: 8}}>
+        {children}
+    </div>
+}
 
-export default function rfqRead({dataList}) {
+export default function EstimateMerge({dataList}) {
+
+
     let checkList = []
 
-
-    const {estimateRequestList, pageInfo} = dataList;
-    const [info, setInfo] = useState(subRfqReadInitial)
-    const [tableInfo, setTableInfo] = useState(estimateRequestList)
+    const {estimateList, pageInfo} = dataList;
+    const [info, setInfo] = useState(estimateReadInitial)
+    const [tableInfo, setTableInfo] = useState(estimateList)
     const [paginationInfo, setPaginationInfo] = useState(pageInfo)
 
-
+    console.log(pageInfo,'pageInfo:')
     function onChange(e) {
 
         let bowl = {}
@@ -45,7 +76,7 @@ export default function rfqRead({dataList}) {
         const copyData: any = {...info}
         copyData['searchDate'] = [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
         setInfo(copyData);
-        setTableInfo(transformData(estimateRequestList));
+        setTableInfo(transformData(estimateList));
     }, [])
 
 
@@ -57,15 +88,15 @@ export default function rfqRead({dataList}) {
             copyData['searchStartDate'] = writtenDate[0];
             copyData['searchEndDate'] = writtenDate[1];
         }
-        const result = await getData.post('estimate/getEstimateRequestList', copyData);
+        const result = await getData.post('estimate/getEstimateList', copyData);
         setTableInfo(transformData(result?.data?.entity?.estimateRequestList));
     }
 
     function deleteList() {
         let copyData = {...info}
-        const result = copyData['estimateRequestDetailList'].filter(v => !checkList.includes(v.serialNumber))
+        const result = copyData['estimateDetailList'].filter(v => !checkList.includes(v.serialNumber))
 
-        copyData['estimateRequestDetailList'] = result
+        copyData['estimateDetailList'] = result
         setInfo(copyData);
     }
 
@@ -93,12 +124,15 @@ export default function rfqRead({dataList}) {
     return <>
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateColumns: '350px 1fr', height: '100%', gridColumnGap: 5}}>
-                <Card title={'의뢰 조회'} style={{fontSize: 12, border: '1px solid lightGray'}}>
+                <Card title={'견적서 통합 발행'} style={{fontSize: 12, border: '1px solid lightGray'}}>
                     <Card size={'small'} style={{
                         fontSize: 13,
+                        marginTop: 20,
                         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                     }}>
-                        <div>
+
+
+                        <div style={{paddingTop: 8}}>
                             <div style={{paddingBottom: 3}}>작성일자</div>
                             <RangePicker style={{width: '100%'}}
                                          value={[moment(info['searchDate'][0]), moment(info['searchDate'][1])]}
@@ -112,54 +146,51 @@ export default function rfqRead({dataList}) {
                             }
                             }/>
                         </div>
-                        <div style={{marginTop: 8}}>
+
+                        <div style={{paddingTop: 8}}>
                             <div style={{paddingBottom: 3}}>검색조건</div>
-                            <Select id={'searchType'}
-                                    onChange={(src) => onChange({target: {id: 'searchType', value: src}})}
-                                    size={'small'} value={info['searchType']} options={[
-                                {value: '0', label: '전체'},
-                                {value: '1', label: '회신'},
-                                {value: '2', label: '미회신'}
+                            <Select id={'searchType'} size={'small'} value={info['searchType']}  defaultValue={0} options={[
+                                {value: 0, label: '전체'},
+                                {value: 1, label: '주문'},
+                                {value: 2, label: '미주문'}
                             ]} style={{width: '100%'}}>
                             </Select>
                         </div>
-                        <div style={{marginTop: 8}}>
+                        <div style={{paddingTop: 8}}>
                             <div style={{paddingBottom: 3}}>문서번호</div>
-                            <Input id={'searchDocumentNumber'} onChange={onChange} size={'small'}/>
+                            <Input id={'searchDocumentNumber'} value={info['searchDocumentNumber']}  size={'small'} onChange={onChange}/>
                         </div>
-                        <div style={{marginTop: 8}}>
+                        <div style={{paddingTop: 8}}>
                             <div style={{paddingBottom: 3}}>거래처명</div>
-                            <Input id={'searchCustomerName'} onChange={onChange} size={'small'}/>
+                            <Input id={'searchCustomerName'} value={info['searchCustomerName']}  size={'small'} onChange={onChange}/>
                         </div>
-                        <div style={{marginTop: 8}}>
+                        <div style={{paddingTop: 8}}>
                             <div style={{paddingBottom: 3}}>MAKER</div>
-                            <Input id={'searchMaker'} onChange={onChange} size={'small'}/>
+                            <Input id={'searchMaker'} value={info['searchMaker']} size={'small'} onChange={onChange}/>
                         </div>
-                        <div style={{marginTop: 8}}>
+                        <div style={{paddingTop: 8}}>
                             <div style={{paddingBottom: 3}}>MODEL</div>
-                            <Input id={'searchModel'} onChange={onChange} size={'small'}/>
+                            <Input id={'searchModel'} value={info['searchModel']} size={'small'} onChange={onChange}/>
                         </div>
-                        <div style={{marginTop: 8}}>
+                        <div style={{paddingTop: 8}}>
                             <div style={{paddingBottom: 3}}>ITEM</div>
-                            <Input id={'searchItem'} onChange={onChange} size={'small'}/>
+                            <Input id={'searchItem'} value={info['searchItem']} size={'small'} onChange={onChange}/>
                         </div>
-                        <div style={{marginTop: 8}}>
+                        <div style={{paddingTop: 8}}>
                             <div style={{paddingBottom: 3}}>등록직원명</div>
-                            <Input id={'searchCreatedBy'} onChange={onChange} size={'small'}/>
+                            <Input id={'searchCreatedBy'} value={info['searchCreatedBy']} size={'small'} onChange={onChange}/>
                         </div>
                         <div style={{paddingTop: 20, textAlign: 'right'}}>
-                            <Button type={'primary'} style={{marginRight: 8}}
-                                    onClick={searchInfo}><SearchOutlined/>조회</Button>
+                            {/*@ts-ignored*/}
+                            <Button onClick={searchInfo} type={'primary'} style={{marginRight: 8}}>
+                                <SearchOutlined/>조회</Button>
                         </div>
-
                     </Card>
-
                 </Card>
 
-
-                <CustomTable columns={rfqReadColumns}
-                             initial={subRfqReadInitial}
-                             dataInfo={subRfqReadInfo}
+                <CustomTable columns={tableEstimateReadColumns}
+                             initial={tableEstimateReadInitial}
+                             dataInfo={tableEstimateReadInfo}
                              info={tableInfo}
                              setDatabase={setInfo}
                              setTableInfo={setTableInfo}
@@ -180,34 +211,20 @@ export default function rfqRead({dataList}) {
                                  </Button></>}
                 />
 
+
             </div>
         </LayoutComponent>
     </>
 }
-
-
-// @ts-ignore
+// @ts-ignored
 export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
-
 
 
     let param = {}
 
-    const {userInfo} = await initialServerRouter(ctx, store);
+    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
-    if (!userInfo) {
-        return {
-            redirect: {
-                destination: '/', // 리다이렉트할 경로
-                permanent: false, // true면 301 리다이렉트, false면 302 리다이렉트
-            },
-        };
-    }
-
-    store.dispatch(setUserInfo(userInfo));
-
-    const result = await getData.post('estimate/getEstimateRequestList', {
-        "searchEstimateRequestId": "",      // 견적의뢰 Id
+    const result = await getData.post('estimate/getEstimateList', {
         "searchType": "",                   // 검색조건 1: 회신, 2: 미회신
         "searchStartDate": "",              // 작성일자 시작일
         "searchEndDate": "",                // 작성일자 종료일
@@ -217,16 +234,28 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
         "searchModel": "",                  // MODEL
         "searchItem": "",                   // ITEM
         "searchCreatedBy": "",              // 등록직원명
-        "searchManagerName": "",            // 담당자명
-        "searchMobileNumber": "",           // 담당자 연락처
-        "searchBiddingNumber": "",          // 입찰번호(미완성)
         "page": 1,
         "limit": 10
     });
 
 
-
-    return {
-        props: {dataList: result?.data?.entity}
+    if (userInfo) {
+        store.dispatch(setUserInfo(userInfo));
     }
+    if (codeInfo !== 1) {
+        param = {
+            redirect: {
+                destination: '/', // 리다이렉트할 대상 페이지
+                permanent: false, // true로 설정하면 301 영구 리다이렉트, false면 302 임시 리다이렉트
+            },
+        };
+    } else {
+        // result?.data?.entity?.estimateRequestList
+        param = {
+            props: {dataList: result?.data?.entity}
+        }
+    }
+
+
+    return param
 })

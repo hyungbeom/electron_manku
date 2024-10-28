@@ -28,13 +28,24 @@ export default function TableModal({title, data, dataInfo, setInfoList}) {
             let copyData = {...info}
             const copyData2 = {...v}
             copyData['replyDate'] = moment(copyData['replyDate']).format('YYYY-MM-DD')
-            copyData2['estimateRequestDetailList'].push(copyData);
 
+            if(copyData2['estimateRequestDetailList']) {
+                copyData2['estimateRequestDetailList'].push(copyData);
 
-            copyData2['estimateRequestDetailList'].forEach((v, idx)=>{
+                copyData2['estimateRequestDetailList'].forEach((v, idx)=>{
                 copyData2['estimateRequestDetailList'][idx]['serialNumber']  = idx + 1;
                 copyData2['estimateRequestDetailList'][idx]['key']  = idx + 1;
-            })
+                })
+            }
+            else if(copyData2['estimateDetailList']) {
+                copyData2['estimateDetailList'].push(copyData);
+
+                copyData2['estimateDetailList'].forEach((v, idx)=>{
+                copyData2['estimateDetailList'][idx]['serialNumber']  = idx + 1;
+                copyData2['estimateDetailList'][idx]['key']  = idx + 1;
+                })
+            }
+
 
             return copyData2;
         })

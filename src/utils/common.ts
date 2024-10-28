@@ -75,6 +75,8 @@ export const TagTypeList = {
     "cargoPoint": {type : 'input'},
     "paymentMethod": {type : 'select', boxList : ['현금결제', '선수금', '정기결제',]},
 
+    "unitPrice": 0,           // 단가
+    "amount": 0               // 금액
 
 
     //... 앞으로 인풋태그 관련된 전체 태그 정보들을 넣는다.

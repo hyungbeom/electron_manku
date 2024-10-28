@@ -24,6 +24,36 @@ export const subRfqReadInfo = {
     "searchCreatedBy": {title : '등록직원명'},              // 등록직원명
 }
 
+export const tableEstimateReadInfo = {
+    "writtenDate" : {title : '작성일자'},
+    "documentNumber":{title : '문서번호'},
+    "agencyCode": {title : '코드'},                   // 검색조건 1: 회신, 2: 미회신
+    "customerName": {title : '거래처명'},               // 작성일자 시작일
+    "maker": {title : 'MAKER'},                // 작성일자 종료일
+    "item": {title : 'ITEM'},        // 문서번호
+    "model": {title : 'MODEL'},            // 거래처명
+    "quantity": {title : '수량'},                   // MAKER
+    "unit": {title : '단위'},                 // MODEL
+    "deliveryDate": {title : '납기'},                     // ITEM
+    "order": {title : '주문'},                // 등록직원명
+    "unitPrice": {title : '단가'},             // 담당자명
+    "total": {title : '합계'},            // 담당자 연락처
+    "register": {title : '등록자'},            // 입찰번호(미완성)
+    "remarks": {title : '비고란'},           // 입찰번호(미완성)
+}
+
+export const tableEstimateWriteInfo = {
+    "model": {title : 'MODEL'},            // 거래처명
+    "quantity": {title : '수량'},                   // MAKER
+    "unit": {title : '단위'},                 // MODEL
+    "currency" : {title : 'CURR'},
+    "net": {title : 'NET/P'},
+    "unitPrice": {title : '단가'},             // 담당자명
+    "amount": {title : '금액'},
+}
+
+
+
 export const subOrderWriteInfo = {
     "model": {title : 'MODEL'},           // MODEL
     "quantity": {title : '수량'},              // 수량

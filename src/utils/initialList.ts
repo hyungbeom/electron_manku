@@ -17,38 +17,40 @@ export const makerRegistInitial = {
     "instructions": ""                          // 지시사항
 }
 export const estimateWriteInitial = {
-    "documentNumberFull": "AWM-24-0093-1", // INQUIRY No.
-    "writtenDate": "2024-09-04",    // 작성일
-    "agencyCode": "AWM",            // 대리점코드
+    "writtenDate": null,    // 작성일
+    "documentNumberFull": "", // INQUIRY No.
+    "agencyCode": "",            // 대리점코드
     "customerCode": "",             // CUSTOMER 코드
-    "customerName": "(주)엔투비",    // 상호명
-    "managerName": "김연후 님",      // 담당자
-    "phoneNumber": "02-2007-0760",  // 전화번호
+    "customerName": "",    // 상호명
+    "managerName": "",      // 담당자
+    "phoneNumber": "",  // 전화번호
     "faxNumber": "",                // 팩스번호
-    "validityPeriod": "견적 발행 후 10일간",    // 유효기간
-    "paymentTerms": "정기결제",                // 결제조건
-    "shippingTerms": "귀사도착도",             // 운송조건
-    "exchangeRate": "1400",                  // 환율
-    "estimateManager": "sample1",            // 담당자
-    "email": "info@manku.co.kr",             // E-MAIL
-    "managerPhoneNumber": "010-8667-8252",   // 전화번호
-    "managerFaxNumber": "02-465-7839",       // 팩스번호
-    "maker": "Avtron",      // MAKER
-    "item": "Encoder",      // ITEM
-    "delivery": "6~8주",    // Delivery
+    "validityPeriod": "",    // 유효기간
+    "paymentTerms": "",                // 결제조건
+    "shippingTerms": "",             // 운송조건
+    "exchangeRate": "",                  // 환율
+    "estimateManager": "",            // 담당자
+    "email": "",             // E-MAIL
+    "managerPhoneNumber": "",   // 전화번호
+    "managerFaxNumber": "",       // 팩스번호
+    "maker": "",      // MAKER
+    "item": "",      // ITEM
+    "delivery": null,    // Delivery
     "remarks": "",          // 비고란
-    "estimateDetailList": [
-        {
-            "model": "AV56-A1CBF8YXQ000",   // MODEL
-            "quantity": 2,                  // 수량
-            "unit": "EA",                   // 단위
-            "currency": "USD",              // CURR
-            "net": 1765.00,                 // NET/P
-            "unitPrice": 2700000,           // 단가
-            "amount": 5400000               // 금액
-        }
-    ]
+    "estimateDetailList": []
 }
+
+export const tableEstimateWriteInitial = {
+    "model": "",   // MODEL
+    "quantity": 0,                  // 수량
+    "unit": "EA",                   // 단위
+    "currency": "USD",              // CURR
+    "net": 0,                 // NET/P
+    "unitPrice": 0,           // 단가
+    "amount": 0               // 금액
+}
+
+
 export const rfqWriteInitial = {
     "writtenDate": "",        // 작성일
     "agencyCode": "",                // 대리점코드
@@ -105,6 +107,72 @@ export const subRfqReadInitial = {
     "page": 1,
     "limit": 10
 }
+
+export const estimateReadInitial = {
+    "searchDate" : "",   // front 사용
+    "searchType": 0,                   // 검색조건 1: 회신, 2: 미회신
+    "searchStartDate": "",              // 작성일자 시작일
+    "searchEndDate": "",                // 작성일자 종료일
+    "searchDocumentNumber": "",         // 문서번호
+    "searchCustomerName": "",           // 거래처명
+    "searchMaker": "",                  // MAKER
+    "searchModel": "",                  // MODEL
+    "searchItem": "",                   // ITEM
+    "page": 1,
+    "limit": 10
+}
+
+
+export const tableEstimateReadInitial = {
+        "estimateId": 14462,
+        "documentNumber": 0,
+        "writtenDate": "2024-09-04",
+        "agencyCode": "AWM",
+        "agencyName": null,
+        "customerCode": "",
+        "customerName": "(주)엔투비",
+        "phoneNumber": "02-2007-0760",
+        "faxNumber": "",
+        "validityPeriod": "견적 발행 후 10일간",
+        "paymentTerms": "정기결제",
+        "shippingTerms": "귀사도착도",
+        "exchangeRate": "1400",
+        "managerName": "김연후 님",
+        "email": "info@manku.co.kr",
+        "managerPhoneNumber": "010-8667-8252",
+        "managerFaxNumber": "02-465-7839",
+        "maker": "Avtron",
+        "item": "Encoder",
+        "delivery": "6~8주",
+        "remarks": "",
+        "createdBy": "sample1",
+        "createdDate": "2024-09-20T09:07:45.237",
+        "modifiedBy": "sample1",
+        "modifiedDate": "2024-09-20T09:07:45.237",
+        "documentNumberFull": "AWM-24-0093-1",
+        "subNumber": 0,
+        "estimateManager": "sample1",
+        "key": 1,
+        "estimateDetailList": [
+            {
+                "estimateDetailId": 28807,
+                "estimateId": 14462,
+                "model": "AV56-A1CBF8YXQ000",
+                "quantity": 2,
+                "unit": "ea",
+                "currency": "USD",
+                "net": 1765.00,
+                "unitPrice": 2700000,
+                "currencyUnit": null,
+                "amount": 5400000,
+                "orderProcessing": null,
+                "orderDate": null,
+                "order": null,
+                "serialNumber": null
+            }
+        ]
+}
+
 
 export const orderWriteInitial = {
     "documentNumberFull": "",    // Our PO No
