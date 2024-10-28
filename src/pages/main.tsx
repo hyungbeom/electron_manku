@@ -134,7 +134,6 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     store.dispatch(setUserInfo(userInfo));
 
-
     const today = new Date();
     const year = today.getFullYear(); // 오늘의 연도
     const month = today.getMonth() + 1; // 오늘의 월 (0부터 시작하므로 +1)

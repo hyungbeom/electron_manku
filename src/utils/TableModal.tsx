@@ -11,7 +11,7 @@ import TextArea from "antd/lib/input/TextArea";
 import DatePicker from "antd/lib/date-picker";
 import moment from "moment";
 
-export default function TableModal({title, data, dataInfo, setInfoList}) {
+export default function TableModal({title, data, dataInfo, setInfoList, listType}) {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const [info, setInfo] = useState<any>(data)
@@ -27,33 +27,15 @@ export default function TableModal({title, data, dataInfo, setInfoList}) {
         setInfoList(v => {
             let copyData = {...info}
             const copyData2 = {...v}
-            copyData['replyDate'] = moment(copyData['replyDate']).format('YYYY-MM-DD')
+            copyData['replyDate'] = moment(copyData['replyDate']).format('YYYY-MM-DD');
+            console.log(copyData2,'copyData2:')
+            copyData2[listType].push(copyData);
 
-            if(copyData2['estimateRequestDetailList']) {
-                copyData2['estimateRequestDetailList'].push(copyData);
 
-                copyData2['estimateRequestDetailList'].forEach((v, idx)=>{
-                    copyData2['estimateRequestDetailList'][idx]['serialNumber']  = idx + 1;
-                    copyData2['estimateRequestDetailList'][idx]['key']  = idx + 1;
-                })
-            }
-            else if(copyData2['estimateDetailList']) {
-                copyData2['estimateDetailList'].push(copyData);
-
-                copyData2['estimateDetailList'].forEach((v, idx)=>{
-                    copyData2['estimateDetailList'][idx]['serialNumber']  = idx + 1;
-                    copyData2['estimateDetailList'][idx]['key']  = idx + 1;
-                })
-            }
-            else if(copyData2['orderDetailList']) {
-                copyData2['orderDetailList'].push(copyData);
-
-                copyData2['orderDetailList'].forEach((v, idx)=>{
-                    copyData2['orderDetailList'][idx]['serialNumber']  = idx + 1;
-                    copyData2['orderDetailList'][idx]['key']  = idx + 1;
-                })
-            }
-
+            copyData2[listType].forEach((v, idx)=>{
+                copyData2[listType][idx]['serialNumber']  = idx + 1;
+                copyData2[listType][idx]['key']  = idx + 1;
+            })
 
             return copyData2;
         })

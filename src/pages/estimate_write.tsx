@@ -71,10 +71,11 @@ export default function EstimateWrite() {
             copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
 
             await getData.post('estimate/addEstimate', copyData).then(v => {
-                console.log(v, ':::::')
+                if(v.code === 1){
+                    console.log(v, ':::::')
+                }
             });
         }
-
     }
 
     function findAgency() {
@@ -231,7 +232,7 @@ export default function EstimateWrite() {
 
     const downloadExcel = () => {
 
-        if(!info['estimateDetailList'].length){
+        if (!info['estimateDetailList'].length) {
             return message.warn('출력할 데이터가 존재하지 않습니다.')
         }
 
@@ -253,7 +254,7 @@ export default function EstimateWrite() {
     const rowSelection = {
         onChange: (selectedRowKeys, selectedRows) => {
 
-            checkList  = selectedRowKeys
+            checkList = selectedRowKeys
 
         },
         getCheckboxProps: (record) => ({
@@ -304,7 +305,7 @@ export default function EstimateWrite() {
                         <TwinInputBox>
                             <div>
                                 <div style={{paddingBottom: 3}}>연결 INQUIRY No.</div>
-                                <Input  size={'small'}
+                                <Input size={'small'}
                                        suffix={<FileSearchOutlined style={{cursor: 'pointer'}}/>}/>
                             </div>
                             <div>
@@ -319,7 +320,6 @@ export default function EstimateWrite() {
                             </div>
                         </TwinInputBox>
                     </Card>
-
 
 
                     <Card title={'CUSTOMER INFORMATION'} size={'small'} style={{
@@ -352,7 +352,8 @@ export default function EstimateWrite() {
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>전화번호</div>
-                                <Input id={'phoneNumber'} value={info['phoneNumber']} onChange={onChange} size={'small'}/>
+                                <Input id={'phoneNumber'} value={info['phoneNumber']} onChange={onChange}
+                                       size={'small'}/>
                             </div>
                         </TwinInputBox>
                         <TwinInputBox>
@@ -369,27 +370,27 @@ export default function EstimateWrite() {
                         marginTop: 20,
                         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                     }}>
-                            <div>
-                                <div style={{paddingBottom: 3}}>유효기간</div>
-                                <Select id={'validityPeriod'} defaultValue={'0'}
-                                        onChange={(src) => onChange({target: {id: 'validityPeriod', value: src}})}
-                                        size={'small'} value={info['validityPeriod']} options={[
-                                    {value: '0', label: '견적 발행 후 10일간'},
-                                    {value: '1', label: '견적 발행 후 30일간'},
-                                ]} style={{width: '100%'}}>
-                                </Select>
-                            </div>
-                            <div style={{marginTop:8}}>
-                                <div style={{paddingBottom: 3}}>결제조건</div>
-                                <Select id={'validityPeriod'} defaultValue={'0'}
-                                        onChange={(src) => onChange({target: {id: 'paymentTerms', value: src}})}
-                                        size={'small'} value={info['paymentTerms']} options={[
-                                    {value: '0', label: '발주시 50% / 납품시 50%'},
-                                    {value: '1', label: '납품시 현금결제'},
-                                    {value: '2', label: '정기결제'},
-                                ]} style={{width: '100%'}}>
-                                </Select>
-                            </div>
+                        <div>
+                            <div style={{paddingBottom: 3}}>유효기간</div>
+                            <Select id={'validityPeriod'} defaultValue={'0'}
+                                    onChange={(src) => onChange({target: {id: 'validityPeriod', value: src}})}
+                                    size={'small'} value={info['validityPeriod']} options={[
+                                {value: '0', label: '견적 발행 후 10일간'},
+                                {value: '1', label: '견적 발행 후 30일간'},
+                            ]} style={{width: '100%'}}>
+                            </Select>
+                        </div>
+                        <div style={{marginTop: 8}}>
+                            <div style={{paddingBottom: 3}}>결제조건</div>
+                            <Select id={'validityPeriod'} defaultValue={'0'}
+                                    onChange={(src) => onChange({target: {id: 'paymentTerms', value: src}})}
+                                    size={'small'} value={info['paymentTerms']} options={[
+                                {value: '0', label: '발주시 50% / 납품시 50%'},
+                                {value: '1', label: '납품시 현금결제'},
+                                {value: '2', label: '정기결제'},
+                            ]} style={{width: '100%'}}>
+                            </Select>
+                        </div>
                         <TwinInputBox>
                             <div>
                                 <div style={{paddingBottom: 3}}>운송조건</div>
@@ -398,7 +399,8 @@ export default function EstimateWrite() {
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>환율</div>
-                                <Input id={'exchangeRate'} value={info['exchangeRate']} onChange={onChange} size={'small'}/>
+                                <Input id={'exchangeRate'} value={info['exchangeRate']} onChange={onChange}
+                                       size={'small'}/>
                             </div>
                         </TwinInputBox>
                     </Card>
@@ -412,7 +414,8 @@ export default function EstimateWrite() {
                         <TwinInputBox>
                             <div>
                                 <div style={{paddingBottom: 3}}>담당자</div>
-                                <Input disabled={true} id={'estimateManager'} value={userInfo['name']} onChange={onChange}
+                                <Input disabled={true} id={'estimateManager'} value={userInfo['name']}
+                                       onChange={onChange}
                                        size={'small'}/>
                             </div>
                             <div>
@@ -471,7 +474,8 @@ export default function EstimateWrite() {
                              setDatabase={setInfo}
                              listType={'estimateDetailList'}
                              excel={true}
-                             content={<TableModal title={'견적작성 세부추가'} data={tableEstimateWriteInitial}
+                             content={<TableModal listType={'estimateDetailList'} title={'견적작성 세부추가'}
+                                                  data={tableEstimateWriteInitial}
                                                   dataInfo={tableEstimateWriteInfo}
                                                   setInfoList={setInfo}/>} columns={tableEstimateWriteColumns}
                              subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
@@ -494,15 +498,20 @@ export default function EstimateWrite() {
 export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
 
 
-    const userAgent = ctx.req.headers['user-agent'];
     let param = {}
 
     const {userInfo} = await initialServerRouter(ctx, store);
 
-    console.log(userInfo, 'userInfo:')
-    if (userInfo) {
-        store.dispatch(setUserInfo(userInfo));
+    if (!userInfo) {
+        return {
+            redirect: {
+                destination: '/', // 리다이렉트할 경로
+                permanent: false, // true면 301 리다이렉트, false면 302 리다이렉트
+            },
+        };
     }
+
+    store.dispatch(setUserInfo(userInfo));
 
 
     return param
