@@ -35,7 +35,6 @@ export default function EstimateRead({dataList}) {
     const [tableInfo, setTableInfo] = useState(estimateList)
     const [paginationInfo, setPaginationInfo] = useState(pageInfo)
 
-    console.log(pageInfo,'pageInfo:')
     function onChange(e) {
 
         let bowl = {}
@@ -53,17 +52,16 @@ export default function EstimateRead({dataList}) {
         setTableInfo(transformData(estimateList));
     }, [])
 
-
-
     async function searchInfo() {
         const copyData: any = {...info}
+
         const {writtenDate}: any = copyData;
         if (writtenDate) {
             copyData['searchStartDate'] = writtenDate[0];
             copyData['searchEndDate'] = writtenDate[1];
         }
         const result = await getData.post('estimate/getEstimateList', copyData);
-        setTableInfo(transformData(result?.data?.entity?.estimateRequestList));
+        setTableInfo(transformData(result?.data?.entity?.estimateList));
     }
 
     function deleteList() {
@@ -102,12 +100,9 @@ export default function EstimateRead({dataList}) {
                 <Card title={'견적서 조회'} style={{fontSize: 12, border: '1px solid lightGray'}}>
                     <Card size={'small'} style={{
                         fontSize: 13,
-                        marginTop: 20,
                         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                     }}>
-
-
-                        <div style={{paddingTop: 8}}>
+                        <div>
                             <div style={{paddingBottom: 3}}>작성일자</div>
                             <RangePicker style={{width: '100%'}}
                                          value={[moment(info['searchDate'][0]), moment(info['searchDate'][1])]}
@@ -164,9 +159,6 @@ export default function EstimateRead({dataList}) {
 
 
                 </Card>
-
-
-                {/*<CustomTable columns={estimateReadColumns} initial={subRfqWriteInitial} dataInfo={subRfqWriteInfo}/>*/}
 
                 <CustomTable columns={tableEstimateReadColumns}
                              initial={tableEstimateReadInitial}

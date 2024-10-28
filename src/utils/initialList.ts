@@ -35,7 +35,7 @@ export const estimateWriteInitial = {
     "managerFaxNumber": "",       // 팩스번호
     "maker": "",      // MAKER
     "item": "",      // ITEM
-    "delivery": "",    // Delivery
+    "delivery": null,    // Delivery
     "remarks": "",          // 비고란
     "estimateDetailList": []
 }
@@ -124,23 +124,53 @@ export const estimateReadInitial = {
 
 
 export const tableEstimateReadInitial = {
-    "writtenDate" : "",   // front 사용
-    "documentNumber": "",      // 견적의뢰 Id
-    "agencyCode": "0",                   // 검색조건 1: 회신, 2: 미회신
-    "customerName": "",              // 작성일자 시작일
-    "maker": "",                // 작성일자 종료일
-    "item": "",         // 문서번호
-    "model": "",           // 거래처명
-    "quantity": "",                  // MAKER
-    "unit": "",                  // MODEL
-    "deliveryDate": "",                   // ITEM
-    "order": "",              // 등록직원명
-    "unitPrice": "",            // 담당자명
-    "total": "",           // 담당자 연락처
-    "register": "",          // 입찰번호(미완성)
-    "remarks": "",          // 입찰번호(미완성)
-    "page": 1,
-    "limit": 10
+        "estimateId": 14462,
+        "documentNumber": 0,
+        "writtenDate": "2024-09-04",
+        "agencyCode": "AWM",
+        "agencyName": null,
+        "customerCode": "",
+        "customerName": "(주)엔투비",
+        "phoneNumber": "02-2007-0760",
+        "faxNumber": "",
+        "validityPeriod": "견적 발행 후 10일간",
+        "paymentTerms": "정기결제",
+        "shippingTerms": "귀사도착도",
+        "exchangeRate": "1400",
+        "managerName": "김연후 님",
+        "email": "info@manku.co.kr",
+        "managerPhoneNumber": "010-8667-8252",
+        "managerFaxNumber": "02-465-7839",
+        "maker": "Avtron",
+        "item": "Encoder",
+        "delivery": "6~8주",
+        "remarks": "",
+        "createdBy": "sample1",
+        "createdDate": "2024-09-20T09:07:45.237",
+        "modifiedBy": "sample1",
+        "modifiedDate": "2024-09-20T09:07:45.237",
+        "documentNumberFull": "AWM-24-0093-1",
+        "subNumber": 0,
+        "estimateManager": "sample1",
+        "key": 1,
+        "estimateDetailList": [
+            {
+                "estimateDetailId": 28807,
+                "estimateId": 14462,
+                "model": "AV56-A1CBF8YXQ000",
+                "quantity": 2,
+                "unit": "ea",
+                "currency": "USD",
+                "net": 1765.00,
+                "unitPrice": 2700000,
+                "currencyUnit": null,
+                "amount": 5400000,
+                "orderProcessing": null,
+                "orderDate": null,
+                "order": null,
+                "serialNumber": null
+            }
+        ]
 }
 
 

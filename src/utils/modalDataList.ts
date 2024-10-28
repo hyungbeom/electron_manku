@@ -42,6 +42,17 @@ export const tableEstimateReadInfo = {
     "remarks": {title : '비고란'},           // 입찰번호(미완성)
 }
 
+export const tableEstimateWriteInfo = {
+    "model": {title : 'MODEL'},            // 거래처명
+    "quantity": {title : '수량'},                   // MAKER
+    "unit": {title : '단위'},                 // MODEL
+    "currency" : {title : 'CURR'},
+    "net": {title : 'NET/P'},
+    "unitPrice": {title : '단가'},             // 담당자명
+    "amount": {title : '금액'},
+}
+
+
 
 export const subOrderWriteInfo = {
     "model": {title : 'MODEL'},           // MODEL

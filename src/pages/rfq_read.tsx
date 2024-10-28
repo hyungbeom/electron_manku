@@ -124,7 +124,6 @@ export default function rfqRead({dataList}) {
                         </div>
                         <div style={{marginTop: 8}}>
                             <div style={{paddingBottom: 3}}>문서번호</div>
-                            <div style={{paddingBottom: 3}}>문서번호</div>
                             <Input id={'searchDocumentNumber'} onChange={onChange} size={'small'}/>
                         </div>
                         <div style={{marginTop: 8}}>
@@ -147,13 +146,13 @@ export default function rfqRead({dataList}) {
                             <div style={{paddingBottom: 3}}>등록직원명</div>
                             <Input id={'searchCreatedBy'} onChange={onChange} size={'small'}/>
                         </div>
-
+                        <div style={{paddingTop: 20, textAlign: 'right'}}>
+                            <Button type={'primary'} style={{marginRight: 8}}
+                                    onClick={searchInfo}><SearchOutlined/>조회</Button>
+                        </div>
 
                     </Card>
-                    <div style={{paddingTop: 20, textAlign: 'right'}}>
-                        <Button type={'primary'} style={{marginRight: 8}}
-                                onClick={searchInfo}><SearchOutlined/>검색</Button>
-                    </div>
+
                 </Card>
 
 

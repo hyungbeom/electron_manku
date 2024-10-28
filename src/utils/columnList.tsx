@@ -356,43 +356,59 @@ export const tableEstimateReadColumns = [
     }
 ];
 
-export const estimateWriteColumns = [
+export const tableEstimateWriteColumns = [
     {
         title: 'Model',
         dataIndex: 'model',
         key: 'model',
         fixed: 'left',
+        render: (text) => <div className="ellipsis-cell" style={{width: 70}}>{moment(text).format('YYYY-MM-DD')}</div>,
+        editable: true,
     },
     {
         title: '수량',
         dataIndex: 'quantity',
         key: 'quantity',
         fixed: 'left',
-    },  {
+        render: (text) => <div className="ellipsis-cell" style={{width: 70}}>{moment(text).format('YYYY-MM-DD')}</div>,
+        editable: true,
+    },
+    {
         title: '단위',
         dataIndex: 'unit',
         key: 'unit',
         fixed: 'left',
-    },{
+        render: (text) => <div className="ellipsis-cell" style={{width: 70}}>{moment(text).format('YYYY-MM-DD')}</div>,
+        editable: true,
+    },
+    {
         title: '단가',
         dataIndex: 'unitPrice',
         key: 'unitPrice',
         fixed: 'left',
+        render: (text) => <div className="ellipsis-cell" style={{width: 70}}>{moment(text).format('YYYY-MM-DD')}</div>,
+        editable: true,
     },
     {
         title: '금액',
         dataIndex: 'amount',
         key: 'amount',
+        render: (text) => <div className="ellipsis-cell" style={{width: 70}}>{moment(text).format('YYYY-MM-DD')}</div>,
+        editable: true,
     },
     {
         title: 'CURR',
         dataIndex: 'currency',
         key: 'currency',
+        render: (text) => <div className="ellipsis-cell" style={{width: 70}}>{moment(text).format('YYYY-MM-DD')}</div>,
+        editable: true,
     },
     {
         title: 'NET/P',
         dataIndex: 'net',
         key: 'net',
+        render: (text) => <div className="ellipsis-cell" style={{width: 70}}>{moment(text).format('YYYY-MM-DD')}</div>,
+        editable: true,
     }
 ];
 
