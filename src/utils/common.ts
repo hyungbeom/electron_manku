@@ -10,7 +10,7 @@ export const TagTypeList = {
 
     "currencyUnit": {type : 'select', boxList : ['EA', 'SET', 'M', 'FEAT', 'ROLL', 'BOX','G','KG','PACK', 'INCH', 'MOQ']},
     "deliveryDate": {type : 'input'},
-    "content": {type : 'input'},
+    "content": {type : 'textArea'},
     "replyDate": {type : 'date'},
     "remarks": {type : 'textArea'},
     "searchType": {type : 'select'},
@@ -23,6 +23,52 @@ export const TagTypeList = {
     "searchItem": {type : 'input'},              // ITEM
     "searchCreatedBy": {type : 'input'},        // 등록직원명
     "unit": {type : 'select', boxList : ['EA', 'SET', 'M', 'FEAT', 'ROLL', 'BOX','G','KG','PACK', 'INCH', 'MOQ']},               // 단위
+
+    "agencyCode": {type : 'input'},
+    "dealerType": {type : 'select', boxList : ['딜러', '제조',]},
+    "grade": {type : 'select', boxList : ['A', 'B', 'C', 'D']},
+    "margin": {type : 'input'},
+    "agencyName": {type : 'input'},
+    "maker": {type : 'input'},
+    "homepage": {type : 'input'},
+    "businessRegistrationNumber": {type : 'input'},
+    "item": {type : 'input'},
+    "tradeStartDate": {type : 'input'},
+    "bankAccountNumber": {type : 'input'},
+    "createdBy": {type : 'input'},
+    "createdDate": {type : 'date'},
+    "modifiedBy": {type : 'input'},
+    "modifiedDate": {type : 'date'},
+    "customerManager": {type : 'input'},
+    "phoneNumber": {type : 'input'},
+    "faxNumber": {type : 'input'},
+    "email": {type : 'input'},
+    "address": {type : 'input'},
+    "countryAgency": {type : 'input'},
+    "cellPhoneNumber": {type : 'input'},
+
+    "receiptDate": {type : 'date'},
+    "documentNumber": {type : 'input'},
+    "importUnitPrice": {type : 'inputNumber'},
+    "receivedQuantity": {type : 'input'},
+    "location": {type : 'input'},
+
+    "title": {type : 'input'},
+    "to": {type : 'input'},
+    "reference": {type : 'input'},
+    "subTitle": {type : 'input'},
+
+    "manager": {type : 'input'},
+    "country": {type : 'input'},
+    "ftaNo": {type : 'input'},
+    "bankName": {type : 'input'},
+    "ibanCode": {type : 'input'},
+    "swiftCode": {type : 'input'},
+
+
+
+
+
 
     //... 앞으로 인풋태그 관련된 전체 태그 정보들을 넣는다.
 }

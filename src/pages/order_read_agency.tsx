@@ -6,7 +6,14 @@ import LayoutComponent from "@/component/LayoutComponent";
 import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
 import TextArea from "antd/lib/input/TextArea";
-import {FileSearchOutlined, FormOutlined, RetweetOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
+import {
+    CopyOutlined, FileExcelOutlined,
+    FileSearchOutlined,
+    FormOutlined,
+    RetweetOutlined,
+    SaveOutlined,
+    SearchOutlined
+} from "@ant-design/icons";
 import Button from "antd/lib/button";
 import {
     rfqReadColumns,
@@ -22,7 +29,7 @@ import {
     invenReadInitial,
     orderReadInitial,
     subRfqReadInitial,
-    subRfqWriteInitial
+    subRfqWriteInitial, tableOrderCustomerInitial
 } from "@/utils/initialList";
 import {
     subAgencyReadInfo,
@@ -37,6 +44,8 @@ import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import {getData} from "@/manage/function/api";
 import moment from "moment";
+import {transformData} from "@/utils/common/common";
+import * as XLSX from "xlsx";
 
 const {RangePicker} = DatePicker
 
@@ -46,14 +55,15 @@ const TwinInputBox = ({children}) => {
     </div>
 }
 
-export default function OrderReadAgency({searchList}) {
+export default function OrderReadAgency({dataList}) {
+    let checkList = []
 
+    const {agencyList, pageInfo} = dataList;
+    const [info, setInfo] = useState(subRfqReadInitial)
+    const [tableInfo, setTableInfo] = useState(agencyList)
+    const [paginationInfo, setPaginationInfo] = useState(pageInfo)
 
-    const [info, setInfo] = useState(agencyReadInitial)
-    const [tableInfo, setTableInfo] = useState([])
-
-    console.log(searchList, 'searchList')
-
+    console.log(pageInfo,'pageInfo:')
     function onChange(e) {
 
         let bowl = {}
@@ -63,62 +73,56 @@ export default function OrderReadAgency({searchList}) {
             return {...v, ...bowl}
         })
     }
-    useEffect(()=>{
-        setTableInfo(transformData(searchList));
-    },[])
 
-    const transformData = (data) => {
-
-        // 데이터를 변환하여 새로운 배열을 생성
-        const transformedArray = data.flatMap((item) => {
-            // estimateRequestDetailList의 항목 개수에 따라 첫 번째만 정보 포함
-            return item.estimateRequestDetailList.map((detail, index) => ({
-                modifiedDate: moment(item.modifiedDate).format('YYYY-MM-DD') ,
-                managerName: item.managerName ,
-                agencyName: index === 0 ? item.agencyName : null,
-                writtenDate: index === 0 ? item.writtenDate : null,
-                documentNumber: index === 0 ? item.documentNumber : null,
-                maker: index === 0 ? item.maker : null,
-                item: index === 0 ? item.item : null,
+    useEffect(() => {
+        const copyData: any = {...info}
+        copyData['searchDate'] = [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
+        setInfo(copyData);
+        setTableInfo(transformData(agencyList));
+    }, [])
 
 
-                content: detail.content || '',
-                estimateRequestId: detail.estimateRequestId || '',
-                estimateRequestDetailId: detail.estimateRequestDetailId || '',
-                model: detail.model || '',
-                quantity: detail.quantity || '',
-                unit: detail.unit || '',
-                currency: detail.currency || '',
-                net: detail.net || '',
-                sentStatus: detail.sentStatus || '',
-                serialNumber: detail.serialNumber || '',
-                replySummaryId: detail.replySummaryId || '',
-                unitPrice: detail.unitPrice || '',
-                currencyUnit: detail.currencyUnit || '',
-                deliveryDate: detail.deliveryDate || '',
-                replyDate: detail.replyDate || '',
-
-
-            }));
-        });
-
-        return transformedArray;
-    };
 
     async function searchInfo() {
-        const copyData:any = {...info}
-        const {writtenDate}:any = copyData;
+        const copyData: any = {...info}
+        const {writtenDate}: any = copyData;
         if (writtenDate) {
-            copyData['searchStartDate'] = moment(writtenDate[0]).format('YYYY-MM-DD');
-            copyData['searchEndDate'] = moment(writtenDate[1]).format('YYYY-MM-DD');
+            copyData['searchStartDate'] = writtenDate[0];
+            copyData['searchEndDate'] = writtenDate[1];
         }
-        delete copyData?.writtenDate;
-        const result = await getData.post('estimate/getEstimateRequestList', copyData);
-
-        setTableInfo(transformData(result?.data?.entity?.estimateRequestList));
-
-
+        const result = await getData.post('agency/getAgencyList', copyData);
+        setTableInfo(transformData(result?.data?.entity?.agencyList));
     }
+
+    function deleteList() {
+        let copyData = {...info}
+        const result = copyData['agencyList'].filter(v => !checkList.includes(v.serialNumber))
+
+        copyData['inventoryList'] = result
+        setInfo(copyData);
+    }
+
+    const downloadExcel = () => {
+
+        const worksheet = XLSX.utils.json_to_sheet(tableInfo);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+        XLSX.writeFile(workbook, "example.xlsx");
+    };
+
+    const rowSelection = {
+        onChange: (selectedRowKeys, selectedRows) => {
+
+            checkList  = selectedRowKeys
+
+        },
+        getCheckboxProps: (record) => ({
+            disabled: record.name === 'Disabled User',
+            // Column configuration not to be checked
+            name: record.name,
+        }),
+    };
+
 
     return <>
         <LayoutComponent>
@@ -154,8 +158,28 @@ export default function OrderReadAgency({searchList}) {
                 </Card>
 
 
-                <CustomTable columns={subAgencyReadColumns} initial={agencyReadInitial} dataInfo={subAgencyReadInfo}
-                             info={tableInfo}/>
+                <CustomTable columns={subAgencyReadColumns}
+                             initial={tableOrderCustomerInitial}
+                             dataInfo={subAgencyReadInfo}
+                             info={tableInfo}
+                             setDatabase={setInfo}
+                             setTableInfo={setTableInfo}
+                             rowSelection={rowSelection}
+                             pageInfo={paginationInfo}
+                             setPaginationInfo={setPaginationInfo}
+
+                             subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
+                                 <CopyOutlined/>복사
+                             </Button>
+                                 {/*@ts-ignored*/}
+                                 <Button type={'danger'} size={'small'} style={{fontSize: 11}} onClick={deleteList}>
+                                     <CopyOutlined/>삭제
+                                 </Button>
+                                 <Button type={'dashed'} size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>
+                                     <FileExcelOutlined/>출력
+                                 </Button></>}
+                />
+
 
             </div>
         </LayoutComponent>
@@ -171,22 +195,11 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
-    const result = await getData.post('estimate/getEstimateRequestList', {
-        "searchEstimateRequestId": "",      // 견적의뢰 Id
-        "searchType": "",                   // 검색조건 1: 회신, 2: 미회신
-        "searchStartDate": "",              // 작성일자 시작일
-        "searchEndDate": "",                // 작성일자 종료일
-        "searchDocumentNumber": "",         // 문서번호
-        "searchCustomerName": "",           // 거래처명
-        "searchMaker": "",                  // MAKER
-        "searchModel": "",                  // MODEL
-        "searchItem": "",                   // ITEM
-        "searchCreatedBy": "",              // 등록직원명
-        "searchManagerName": "",            // 담당자명
-        "searchMobileNumber": "",           // 담당자 연락처
-        "searchBiddingNumber": "",          // 입찰번호(미완성)
+    const result = await getData.post('agency/getAgencyList', {
+        "searchType": "1",      // 1: 코드, 2: 상호명, 3: MAKER
+        "searchText": "K0",
         "page": 1,
-        "limit": 10
+        "limit": 20
     });
 
 
@@ -203,7 +216,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     } else {
         // result?.data?.entity?.estimateRequestList
         param = {
-            props: {searchList: result?.data?.entity?.estimateRequestList}
+            props: {dataList: result?.data?.entity}
         }
     }
 

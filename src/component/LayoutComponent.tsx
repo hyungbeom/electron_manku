@@ -38,8 +38,8 @@ const menuList = {
         title: '발주관리',
         icon: <WalletOutlined/>,
         list: [{title: '발주서 작성', key: 'order_write'}, {title: '발주 조회', key: 'order_read'},
-            {title: '재고 조회', key: 'order_inven_read'}, {title: '재고 등록', key: 'order_inven_write'},
-            {title: '정산 관리', key: 'order_agency_read', subList: [
+            {title: '재고 관리', key: 'order_stock_manage'},
+            {title: '정산 관리', key: 'order_manage', subList: [
                     { title: '거래처 별 주문조회', key: 'order_read_customer' },
                     { title: '해외 대리점 별 주문조회', key: 'order_read_agency' },
                 ],},
@@ -51,9 +51,9 @@ const menuList = {
         icon: <BarcodeOutlined/>,
         list: [
             {title: '국내 대리점(매입)', key: 'code_domestic_purchase'},
-            {title: '국외 대리점', key: 'code_overseasAgency'},
+            {title: '국외 대리점', key: 'code_overseas_purchase'},
             {title: '국내 거래처(매출)', key: 'code_domestic_sales'},
-            {title: '국외 거래처', key: 'code_overseasCorr'},
+            {title: '국외 거래처', key: 'code_overseas_sales'},
             {title: '공문서', key: 'code_diploma'},
             {title: 'ERP 계정관리', key: 'code_erpUser_manage'},
             {title: '사용자 계정관리', key: 'code_user_manage'},

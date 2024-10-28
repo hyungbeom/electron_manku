@@ -59,7 +59,7 @@ export const subInvenReadInfo = {
     "searchItem": {title : 'ITEM'},                   // ITEM
 }
 
-export const subInvenWriteInfo = {
+export const OrderStockInfo = {
     "receiptDate": {title : '입고일자'},           // MODEL
     "documentNumber": {title : '문서번호'},               // 단위
     "maker": {title : 'Maker'},            // NET/P
@@ -73,6 +73,7 @@ export const subInvenWriteInfo = {
 }
 
 export const subCustomerReadInfo = {
+    "agencyId": {title : 'No'},                  // MAKER
     "customerName": {title : '거래처명'},                  // MAKER
     "unpaidAmount": {title : '미입고금액'},                  // MAKER
     "paidAmount": {title : '입고금액'},                  // MODEL
@@ -80,6 +81,7 @@ export const subCustomerReadInfo = {
 }
 
 export const subAgencyReadInfo = {
+    "agencyId": {title : 'No'},                  // MAKER
     "agencyCode": {title : '코드'},                  // MAKER
     "agencyName": {title : '대리점명'},                  // MAKER
     "unpaidAmount": {title : '미입고외화'},                  // MAKER
@@ -88,20 +90,20 @@ export const subAgencyReadInfo = {
     "krwTotalAmount": {title : '원화합계'},                   // ITEM
 }
 
-export const subCodeDiplomaInfo = {
-    "model": {title : '문서번호'},           // MODEL
-    "quantity": {title : '문서제목'},              // 수량
-    "unit": {title : '수신'},               // 단위
-    "currency": {title : '참조'},          // CURR
-    "net": {title : '소제목'},            // NET/P
-    "amount": {title : '내용'},
-    "orderQuantity": {title : '등록자'},
-    "receivedQuantity": {title : '등록일자'},
-    "unreceivedQuantity": {title : '수정자'},
-    "unitPrice": {title : '수정일자'},
+export const tableCodeDiplomaInfo = {
+    "documentNumber": {title : '문서번호'},           // MODEL
+    "title": {title : '문서제목'},              // 수량
+    "to": {title : '수신'},               // 단위
+    "reference": {title : '참조'},          // CURR
+    "subTitle": {title : '소제목'},            // NET/P
+    "content": {title : '내용'},
+    "registerer": {title : '등록자'},
+    "registerDate": {title : '등록일자'},
+    "modifier": {title : '수정자'},
+    "modifyDate": {title : '수정일자'},
 }
 
-export const subCodeExchangeInfo = {
+export const tableCodeExchangeInfo = {
     "model": {title : '통화'},           // MODEL
     "quantity": {title : '통화명'},              // 수량
     "unit": {title : '매매기준율'},               // 단위
@@ -113,16 +115,97 @@ export const subCodeExchangeInfo = {
     "unitPrice": {title : '미화환산율'},
 }
 
-export const subCodeReadInfo = {
+export const tableCodeReadInfo = {
     "item": {title : 'ITEM'},           // MODEL
     "hsCode": {title : 'HS-CODE'},              // 수량
 }
 
-export const subCodeUserInfo = {
+export const tableCodeUserInfo = {
     "customerName": {title : '업체명'},           // MODEL
     "id": {title : 'ID'},              // 수량
     "pw": {title : 'Password'},              
     "homepage": {title : '홈페이지'},              
     "remarks": {title : '비고'},              
 }
+
+export const tableCodeErpInfo = {
+    "id": {title : 'ID'},              // 수량
+    "pw": {title : 'Password'},
+    "name": {title : '이름'},
+    "position": {title : '직급'},
+    "right": {title : '권한'},
+    "email": {title : '이메일'},
+    "phoneNumber": {title : '연락처'},
+    "faxNumber": {title : '팩스번호'},
+    "rightInfo": {title : '권한정보'},
+}
+
+export const modalCodeDiplomaInfo = {
+    "documentNumber": {title : '문서번호'},              // 수량
+    "title": {title : '제목'},
+    "to": {title : '수신'},
+    "reference": {title : '참조'},
+    "subTitle": {title : '소제목'},
+    "content": {title : '내용'},
+}
+
+export const tableCodeDomesticPurchaseInfo = {
+    "agencyCode": {title : '코드(약칭)'},              // 수량
+    "agencyName": {title : '상호'},
+    "dealerType": {title : '딜러'},
+    "grade": {title : '등급'},
+    "margin": {title : '마진'},
+    "maker": {title : 'MAKER'},
+    "homepage": {title : '홈페이지'},
+    "businessRegistrationNumber": {title : '사업자번호'},
+    "bankAccountNumber": {title : '계좌번호'},
+    "createdBy": {title : '등록자'},
+    "createdDate": {title : '등록일자'},
+    "modifiedBy": {title : '수정자'},
+    "modifiedDate": {title : '수정일자'},
+    "item": {title : 'ITEM'},
+    "tradeStartDate": {title : '거래시작일'},
+    "customerManager": {title : '담당자'},
+    "phoneNumber": {title : '전화번호'},
+    "faxNumber": {title : '팩스번호'},
+    "email": {title : '이메일'},
+    "address": {title : '주소'},
+    "countryAgency": {title : '국가대리점'},
+    "cellPhoneNumber": {title : '휴대폰'},
+    "remarks": {title : '비고'},
+}
+
+
+export const tableCodeOverseasPurchaseInfo = {
+    "agencyCode": {title : '코드(약칭)'},              // 수량
+    "agencyName": {title : '상호'},
+    "dealerType": {title : '딜러'},
+    "grade": {title : '등급'},
+    "margin": {title : '마진'},
+    "homepage": {title : '홈페이지'},
+    "item": {title : 'ITEM'},
+    "tradeStartDate": {title : '거래시작일'},
+    "currencyUnit":{title : '화폐단위'},
+    "manager":{title : '거래시작일'},
+    "bankAccountNumber": {title : '계좌번호'},
+    "country":{title : '국가'},
+    "ftaNo":{title : 'FTANo'},
+    "bankName":{title : '송금중개은행'},
+    "agencyAddress":{title : '주소'},
+    "ibanCode":{title : 'IBanCode'},
+    "swiftCode":{title : 'SwiftCode'},
+    "createdBy": {title : '등록자'},
+    "createdDate": {title : '등록일자'},
+    "modifiedBy": {title : '수정자'},
+    "modifiedDate": {title : '수정일자'},
+    "customerManager": {title : '담당자'},
+    "phoneNumber": {title : '전화번호'},
+    "faxNumber": {title : '팩스번호'},
+    "email": {title : '이메일'},
+    "address": {title : '주소'},
+    "countryAgency": {title : '국가대리점'},
+    "cellPhoneNumber": {title : '휴대폰'},
+    "remarks": {title : '비고'},
+}
+
 

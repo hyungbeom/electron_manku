@@ -111,7 +111,7 @@ export default function rfqRead({dataList}) {
                             }
                             }/>
                         </div>
-                        <div>
+                        <div style={{marginTop: 8}}>
                             <div style={{paddingBottom: 3}}>검색조건</div>
                             <Select id={'searchType'}
                                     onChange={(src) => onChange({target: {id: 'searchType', value: src}})}
@@ -122,27 +122,27 @@ export default function rfqRead({dataList}) {
                             ]} style={{width: '100%'}}>
                             </Select>
                         </div>
-                        <div>
+                        <div style={{marginTop: 8}}>
                             <div style={{paddingBottom: 3}}>문서번호</div>
                             <Input id={'searchDocumentNumber'} onChange={onChange} size={'small'}/>
                         </div>
-                        <div>
+                        <div style={{marginTop: 8}}>
                             <div style={{paddingBottom: 3}}>거래처명</div>
                             <Input id={'searchCustomerName'} onChange={onChange} size={'small'}/>
                         </div>
-                        <div>
+                        <div style={{marginTop: 8}}>
                             <div style={{paddingBottom: 3}}>MAKER</div>
                             <Input id={'searchMaker'} onChange={onChange} size={'small'}/>
                         </div>
-                        <div>
+                        <div style={{marginTop: 8}}>
                             <div style={{paddingBottom: 3}}>MODEL</div>
                             <Input id={'searchModel'} onChange={onChange} size={'small'}/>
                         </div>
-                        <div>
+                        <div style={{marginTop: 8}}>
                             <div style={{paddingBottom: 3}}>ITEM</div>
                             <Input id={'searchItem'} onChange={onChange} size={'small'}/>
                         </div>
-                        <div>
+                        <div style={{marginTop: 8}}>
                             <div style={{paddingBottom: 3}}>등록직원명</div>
                             <Input id={'searchCreatedBy'} onChange={onChange} size={'small'}/>
                         </div>
