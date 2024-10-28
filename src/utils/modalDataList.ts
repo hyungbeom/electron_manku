@@ -120,7 +120,7 @@ export const tableCodeReadInfo = {
     "hsCode": {title : 'HS-CODE'},              // 수량
 }
 
-export const tableCodeUserInfo = {
+export const tableyarnCodeUserInfo = {
     "customerName": {title : '업체명'},           // MODEL
     "id": {title : 'ID'},              // 수량
     "pw": {title : 'Password'},              

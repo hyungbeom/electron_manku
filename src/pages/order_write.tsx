@@ -287,11 +287,6 @@ export default function OrderWriter() {
                     </Card>
                 </Card>
 
-
-                <CustomTable columns={subOrderWriteColumns} initial={subOrderWriteInitial} dataInfo={subOrderWriteInfo}
-                             setInfo={setInfo} info={info['orderDetailList']}/>
-
-
                 <CustomTable columns={subOrderWriteColumns}
                              initial={subOrderWriteInitial}
                              dataInfo={subOrderWriteInfo}
