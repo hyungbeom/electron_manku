@@ -66,10 +66,11 @@ export default function rqfWrite() {
             copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
 
             await getData.post('estimate/addEstimateRequest', copyData).then(v => {
-                console.log(v, ':::::')
+              if(v.data.code === 1){
+                    message.success('저장에 성공하셨습니다')
+              }
             });
         }
-
     }
 
     function findAgency() {
@@ -226,8 +227,8 @@ export default function rqfWrite() {
 
     const downloadExcel = () => {
 
-        if(!info['estimateRequestDetailList'].length){
-           return message.warn('출력할 데이터가 존재하지 않습니다.')
+        if (!info['estimateRequestDetailList'].length) {
+            return message.warn('출력할 데이터가 존재하지 않습니다.')
         }
 
         const worksheet = XLSX.utils.json_to_sheet(info['estimateRequestDetailList']);
@@ -248,7 +249,7 @@ export default function rqfWrite() {
     const rowSelection = {
         onChange: (selectedRowKeys, selectedRows) => {
 
-            checkList  = selectedRowKeys
+            checkList = selectedRowKeys
 
         },
         getCheckboxProps: (record) => ({
@@ -397,7 +398,8 @@ export default function rqfWrite() {
                              setDatabase={setInfo}
                              listType={'estimateRequestDetailList'}
                              excel={true}
-                             content={<TableModal title={'의뢰작성 세부 추가'} data={subRfqWriteInitial}
+                             content={<TableModal listType={'estimateRequestDetailList'} title={'의뢰작성 세부 추가'}
+                                                  data={subRfqWriteInitial}
                                                   dataInfo={subRfqWriteInfo}
                                                   setInfoList={setInfo}/>} columns={OrderWriteColumn}
                              subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
@@ -422,13 +424,21 @@ export default function rqfWrite() {
 export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
 
 
-    const userAgent = ctx.req.headers['user-agent'];
     let param = {}
 
     const {userInfo} = await initialServerRouter(ctx, store);
 
-    if (userInfo) {
-        store.dispatch(setUserInfo(userInfo));
+    if (!userInfo) {
+        return {
+            redirect: {
+                destination: '/', // 리다이렉트할 경로
+                permanent: false, // true면 301 리다이렉트, false면 302 리다이렉트
+            },
+        };
     }
+
+    store.dispatch(setUserInfo(userInfo));
+
+
     return param
 })

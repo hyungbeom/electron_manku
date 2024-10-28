@@ -19,6 +19,7 @@ const CustomTable = ({columns, info, setDatabase, content, subContent, rowSelect
     const defaultCheckedList = columns?.map((item) => item.key);
     const [checkedList, setCheckedList] = useState(defaultCheckedList);
 
+    console.log(info,'info:')
 
     // 엑셀 파일을 읽어들이는 함수
     const handleFile = (file) => {
@@ -139,9 +140,9 @@ const CustomTable = ({columns, info, setDatabase, content, subContent, rowSelect
         copyData['page'] = e;
         const result = await getData.post('estimate/getEstimateRequestList', copyData);
 
-        console.log(result?.data?.entity?.estimateRequestList,'result?.data?.entity?.estimateRequestList:')
         setTableInfo(transformData(result?.data?.entity?.estimateRequestList))
     }
+
 
     return (
         <div style={{overflow: 'auto', maxHeight: '100%', maxWidth: '100%'}}>
