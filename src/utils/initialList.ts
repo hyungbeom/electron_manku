@@ -106,6 +106,42 @@ export const subRfqReadInitial = {
     "limit": 10
 }
 
+export const estimateReadInitial = {
+    "searchDate" : "",   // front 사용
+    "searchType": 0,                   // 검색조건 1: 회신, 2: 미회신
+    "searchStartDate": "",              // 작성일자 시작일
+    "searchEndDate": "",                // 작성일자 종료일
+    "searchDocumentNumber": "",         // 문서번호
+    "searchCustomerName": "",           // 거래처명
+    "searchMaker": "",                  // MAKER
+    "searchModel": "",                  // MODEL
+    "searchItem": "",                   // ITEM
+    "page": 1,
+    "limit": 10
+}
+
+
+export const tableEstimateReadInitial = {
+    "writtenDate" : "",   // front 사용
+    "documentNumber": "",      // 견적의뢰 Id
+    "agencyCode": "0",                   // 검색조건 1: 회신, 2: 미회신
+    "customerName": "",              // 작성일자 시작일
+    "maker": "",                // 작성일자 종료일
+    "item": "",         // 문서번호
+    "model": "",           // 거래처명
+    "quantity": "",                  // MAKER
+    "unit": "",                  // MODEL
+    "deliveryDate": "",                   // ITEM
+    "order": "",              // 등록직원명
+    "unitPrice": "",            // 담당자명
+    "total": "",           // 담당자 연락처
+    "register": "",          // 입찰번호(미완성)
+    "remarks": "",          // 입찰번호(미완성)
+    "page": 1,
+    "limit": 10
+}
+
+
 export const orderWriteInitial = {
     "documentNumberFull": "",    // Our PO No
     "writtenDate": "",            // 작성일

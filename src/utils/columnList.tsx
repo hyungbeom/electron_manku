@@ -274,24 +274,26 @@ export const estimateTotalWriteColumns = [
         key: 'registDate',
     }
 ];
-export const estimateReadColumns = [
+export const tableEstimateReadColumns = [
     {
         title: '작성일자',
-        dataIndex: 'searchStartDate',
-        key: 'searchStartDate',
+        dataIndex: 'writtenDate',
+        key: 'writtenDate',
         fixed: 'left',
     },
     {
         title: '문서번호',
-        dataIndex: 'searchDocumentNumber',
-        key: 'searchDocumentNumber',
+        dataIndex: 'documentNumber',
+        key: 'documentNumber',
         fixed: 'left',
-    },  {
+    },
+    {
         title: '코드',
         dataIndex: 'agencyCode',
         key: 'agencyCode',
         fixed: 'left',
-    },{
+    },
+    {
         title: '거래처명',
         dataIndex: 'customerName',
         key: 'customerName',
@@ -306,7 +308,8 @@ export const estimateReadColumns = [
         title: 'ITEM',
         dataIndex: 'item',
         key: 'item',
-    }, {
+    },
+    {
         title: 'MODEL',
         dataIndex: 'model',
         key: 'model',
