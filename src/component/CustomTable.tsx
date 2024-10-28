@@ -16,7 +16,7 @@ import {transformData} from "@/utils/common/common";
 const {Option} = Select;
 const {Dragger} = Upload;
 const CustomTable = ({columns, info, setDatabase, content, subContent, rowSelection, listType, excel = false, pageInfo, setPaginationInfo, setTableInfo, visible}:any) => {
-    const defaultCheckedList = columns.map((item) => item.key);
+    const defaultCheckedList = columns?.map((item) => item.key);
     const [checkedList, setCheckedList] = useState(defaultCheckedList);
 
 

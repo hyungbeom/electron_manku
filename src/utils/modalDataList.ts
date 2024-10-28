@@ -1,5 +1,3 @@
-import {subCodeDiplomaColumns} from "@/utils/columnList";
-
 export const subRfqWriteInfo = {
     "model": {title : 'MODEL'},           // MODEL
     "quantity": {title : '수량'},              // 수량
