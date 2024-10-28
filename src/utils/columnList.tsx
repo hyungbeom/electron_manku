@@ -194,6 +194,93 @@ export const OrderWriteColumn = [
     }
 ];
 
+export const tableOrderWriteColumn = [
+    {
+        title: 'Model',
+        dataIndex: 'model',
+        key: 'model',
+        fixed: 'left',
+        render: (text) => <div style={{width : 80}} className="ellipsis-cell">{text}</div>,
+        editable: true,
+    },
+    {
+        title: '수량',
+        dataIndex: 'quantity',
+        key: 'quantity',
+        align : 'center',
+        render: (text) => <div style={{width : 40}} className="ellipsis-cell">{text}</div>,
+        editable: true,
+        fixed: 'left',
+    },
+    {
+        title: '단위',
+        dataIndex: 'unit',
+        key: 'unit',
+        align : 'center',
+        render: (text) => <div style={{width : 40}} className="ellipsis-cell">{text}</div>,
+        editable: true,
+    },
+    {
+        title: 'CURR',
+        dataIndex: 'currency',
+        key: 'currency',
+        align : 'center',
+        render: (text) => <div style={{width : 40}} className="ellipsis-cell">{text}</div>,
+        editable: true,
+    },
+    {
+        title: 'NET/P',
+        dataIndex: 'net',
+        key: 'net',
+        editable: true,
+        render: (text) => <div style={{width : 40}} className="ellipsis-cell">{text}</div>,
+    },
+    {
+        title: 'Amount', //없음
+        dataIndex: 'amount',
+        key: 'amount',
+        render: (text) => <div style={{width : 100}} className="ellipsis-cell">{text}</div>,
+        editable: true,
+    },
+    {
+        title: '주문수량',
+        dataIndex: 'quantity',
+        key: 'quantity',
+        render: (text) => <div style={{width : 100}} className="ellipsis-cell">{text}</div>,
+        editable: true,
+    },
+    {
+        title: '입고',
+        dataIndex: 'receivedQuantity',
+        key: 'receivedQuantity',
+        render: (text) => <div style={{width : 100}} className="ellipsis-cell" >{text}</div>,
+        editable: true,
+    },
+    {
+        title: '미입고',
+        dataIndex: 'unreceivedQuantity',
+        key: 'unreceivedQuantity',
+        render: (text) =>  <div style={{width : 100}} className="ellipsis-cell" >{text}</div>,
+        editable: true,
+    },
+    {
+        title: '단가',
+        dataIndex: 'unitPrice',
+        key: 'unitPrice',
+        render: (text) =><div style={{width : 100}} className="ellipsis-cell" >{text}</div>,
+        editable: true,
+    },
+    {
+        title: '금액',
+        dataIndex: 'price', // 없음
+        key: 'price',
+        fixed: 'right',
+        render: (text) =><div style={{width : 100}} className="ellipsis-cell" >{text}</div>,
+        editable: true,
+    }
+];
+
+
 export const estimateTotalWriteColumns = [
     {
         title: '작성일자',
@@ -692,110 +779,151 @@ export const subOrderWriteColumns = [
     },
 ];
 
-export const subOrderReadColumns = [
+export const tableOrderReadColumns = [
     {
         title: 'No',
-        dataIndex: 'inventoryId',
-        key: 'inventoryId',
+        dataIndex: 'orderId',
+        key: 'orderId',
         fixed: 'left',
-
+        render: (text) => <div className="ellipsis-cell" style={{width: 70}}>{moment(text).format('YYYY-MM-DD')}</div>,
+        editable: true,
     },
     {
         title: '작성일자',
         dataIndex: 'writtenDate',
         key: 'writtenDate',
         fixed: 'left',
-
+        render: (text) => <div className="ellipsis-cell" style={{width: 70}}>{moment(text).format('YYYY-MM-DD')}</div>,
+        editable: true,
     },
     {
         title: '문서번호',
-        dataIndex: 'documentNumber',
-        key: 'documentNumber',
+        dataIndex: 'documentNumberFull',
+        key: 'documentNumberFull',
+        render: (text) => <div style={{width : 80}} className="ellipsis-cell">{text}</div>,
+        editable: true,
     },
     {
         title: '거래처명',
-        dataIndex: 'agencyName',
-        key: 'agencyName',
+        dataIndex: 'customerName',
+        key: 'customerName',
         fixed: 'left',
-    }, {
+        render: (text) => <div style={{width : 80}} className="ellipsis-cell">{text}</div>,
+        editable: true,
+    },
+    {
         title: 'MAKER',
         dataIndex: 'maker',
         key: 'maker',
+        render: (text) => <div style={{width : 80}} className="ellipsis-cell">{text}</div>,
+        editable: true,
     },
     {
         title: 'ITEM',
         dataIndex: 'item',
         key: 'item',
-    }, {
+        render: (text) => <div style={{width : 80}} className="ellipsis-cell">{text}</div>,
+        editable: true,
+    },
+    {
         title: 'MODEL',
         dataIndex: 'model',
         key: 'model',
         fixed: 'left',
-    },{
-        title: '수량',
-        dataIndex: 'quantity',
-        key: 'quantity',
-        fixed: 'left',
+        render: (text) => <div style={{width : 80}} className="ellipsis-cell">{text}</div>,
+        editable: true,
     },
+    // {
+    //     title: '수량',
+    //     dataIndex: 'quantity',
+    //     key: 'quantity',
+    //     fixed: 'left',
+    //     render: (text) => <div style={{width : 80}} className="ellipsis-cell">{text}</div>,
+    //     editable: true,
+    // },
     {
         title: '단위',
         dataIndex: 'unit',
         key: 'unit',
+        render: (text) => <div style={{width : 80}} className="ellipsis-cell">{text}</div>,
+        editable: true,
     },
     {
         title: 'CURR',
         dataIndex: 'currency',
         key: 'currency',
+        render: (text) => <div style={{width : 80}} className="ellipsis-cell">{text}</div>,
+        editable: true,
     },
     {
         title: 'NET',
         dataIndex: 'net',
         key: 'net',
+        render: (text) => <div style={{width : 80}} className="ellipsis-cell">{text}</div>,
+        editable: true,
     },
     {
         title: 'Amount',
         dataIndex: 'amount',
         key: 'amount',
+        render: (text) => <div style={{width : 80}} className="ellipsis-cell">{text}</div>,
+        editable: true,
     },
     {
         title: '주문수량',
-        dataIndex: 'orderQuantity',
-        key: 'orderQuantity',
+        dataIndex: 'quantity',
+        key: 'quantity',
+        render: (text) => <div style={{width : 80}} className="ellipsis-cell">{text}</div>,
+        editable: true,
     },
     {
         title: '입고수량',
         dataIndex: 'receivedQuantity',
         key: 'receivedQuantity',
+        render: (text) => <div style={{width : 80}} className="ellipsis-cell">{text}</div>,
+        editable: true,
     },
     {
         title: '미입고수량',
         dataIndex: 'unreceivedQuantity',
         key: 'unreceivedQuantity',
+        render: (text) => <div style={{width : 80}} className="ellipsis-cell">{text}</div>,
+        editable: true,
     },
     {
         title: '단가',
         dataIndex: 'unitPrice',
         key: 'unitPrice',
+        render: (text) => <div style={{width : 80}} className="ellipsis-cell">{text}</div>,
+        editable: true,
     },
     {
         title: '금액',
-        dataIndex: 'amount',
-        key: 'amount',
+        dataIndex: 'price',
+        key: 'price',
+        render: (text) => <div style={{width : 80}} className="ellipsis-cell">{text}</div>,
+        editable: true,
     },
     {
         title: '예상납기',  // 없음
-        dataIndex: 'deliveryDate',
-        key: 'deliveryDate',
+        dataIndex: 'inspection',
+        key: 'inspection',
+        render: (text) => <div style={{width : 80}} className="ellipsis-cell">{text}</div>,
+        editable: true,
     },
     {
         title: '(견적서)담당자',
         dataIndex: 'estimateManager',
         key: 'estimateManager',
+        render: (text) => <div style={{width : 80}} className="ellipsis-cell">{text}</div>,
+        editable: true,
     },
     {
         title: '비고란',
         dataIndex: 'remarks',
         key: 'remarks',
+        render: (text) => <div style={{width : 80}} className="ellipsis-cell">{text}</div>,
+        editable: true,
     },
 ];
 

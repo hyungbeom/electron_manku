@@ -55,29 +55,38 @@ export const tableEstimateWriteInfo = {
 
 
 export const subOrderWriteInfo = {
-    "model": {title : 'MODEL'},           // MODEL
-    "quantity": {title : '수량'},              // 수량
+    "model": {title : 'MODEL'},           // MODEL     // 수량
     "unit": {title : '단위'},               // 단위
     "currency": {title : 'CURR'},          // CURR
     "net": {title : 'NET/P'},            // NET/P
     "amount": {title : 'Amount'},
-    "orderQuantity": {title : '주문'},
+    "quantity": {title : '주문수량'},
     "receivedQuantity": {title : '입고'},
     "unreceivedQuantity": {title : '미입고'},
     "unitPrice": {title : '단가'},
     "price": {title : '금액'},
 }
 
-export const subOrderReadInfo = {
-    "searchType": {title : '검색조건'},                   // 검색조건 1: 회신, 2: 미회신
-    "searchStartDate": {title : '시작일'},              // 작성일자 시작일
-    "searchEndDate": {title : '종료일'},              // 작성일자 종료일
-    "searchDocumentNumber": {title : '문서번호'},         // 문서번호
-    "searchCustomerName": {title : '거래처명'},           // 거래처명
-    "searchMaker": {title : 'MAKER'},                  // MAKER
-    "searchModel": {title : 'MODEL'},                  // MODEL
-    "searchItem": {title : 'ITEM'},                   // ITEM
-    "searchCreatedBy": {title : '등록직원명'},              // 등록직원명
+export const tableOrderReadInfo = {
+    "orderId": {title : 'No'},                   // 검색조건 1: 회신, 2: 미회신
+    "writtenDate": {title : '작성일자'},              // 작성일자 시작일
+    "documentNumberFull": {title : '문서번호'},              // 작성일자 종료일
+    "customerName": {title : '거래처명'},         // 문서번호
+    "item": {title : 'ITEM'},           // 거래처명
+    "maker": {title : 'MAKER'},                  // MAKER
+    "model": {title : 'MODEL'},                  // MODEL
+    "unit": {title : '단위'},                   // ITEM
+    "currency": {title : 'CURR'},                   // ITEM
+    "net": {title : 'NET'},                   // ITEM
+    "amount": {title : 'Amount'},                   // ITEM
+    "quantity": {title : '주문수량'},                   // ITEM
+    "receivedQuantity": {title : '입고수량'},              // 등록직원명
+    "unreceivedQuantity": {title : '미입고수량'},              // 등록직원명
+    "unitPrice": {title : '단가'},              // 등록직원명
+    "price": {title : '금액'},              // 등록직원명
+    "inspection": {title : '예상납기'},              // 등록직원명
+    "estimateManager": {title : '(견적서)담당자'},              // 등록직원명
+    "remarks": {title : '비고란'},              // 등록직원명
 }
 
 export const subInvenReadInfo = {

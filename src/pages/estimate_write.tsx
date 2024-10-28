@@ -267,6 +267,10 @@ export default function EstimateWrite() {
     return <>
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateColumns: '350px 1fr', height: '100%', gridColumnGap: 5}}>
+
+                <SearchAgencyCode/>
+                <SearchCustomer/>
+
                 <Card title={'견적서 작성'} style={{fontSize: 12, border: '1px solid lightGray'}}>
                     <Card size={'small'} style={{
                         fontSize: 13,
@@ -332,7 +336,12 @@ export default function EstimateWrite() {
                             <div>
                                 <div style={{paddingBottom: 3}}>상호명</div>
                                 <Input id={'customerName'} value={info['customerName']} onChange={onChange}
-                                       size={'small'} suffix={<FileSearchOutlined style={{cursor: 'pointer'}}/>}/>
+                                       size={'small'} suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
+                                    (e) => {
+                                        e.stopPropagation();
+                                        setIsModalOpen({event1: false, event2: true})
+                                    }
+                                }/>}/>
                             </div>
                         </TwinInputBox>
                         <TwinInputBox>

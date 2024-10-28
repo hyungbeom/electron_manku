@@ -33,16 +33,24 @@ export default function TableModal({title, data, dataInfo, setInfoList}) {
                 copyData2['estimateRequestDetailList'].push(copyData);
 
                 copyData2['estimateRequestDetailList'].forEach((v, idx)=>{
-                copyData2['estimateRequestDetailList'][idx]['serialNumber']  = idx + 1;
-                copyData2['estimateRequestDetailList'][idx]['key']  = idx + 1;
+                    copyData2['estimateRequestDetailList'][idx]['serialNumber']  = idx + 1;
+                    copyData2['estimateRequestDetailList'][idx]['key']  = idx + 1;
                 })
             }
             else if(copyData2['estimateDetailList']) {
                 copyData2['estimateDetailList'].push(copyData);
 
                 copyData2['estimateDetailList'].forEach((v, idx)=>{
-                copyData2['estimateDetailList'][idx]['serialNumber']  = idx + 1;
-                copyData2['estimateDetailList'][idx]['key']  = idx + 1;
+                    copyData2['estimateDetailList'][idx]['serialNumber']  = idx + 1;
+                    copyData2['estimateDetailList'][idx]['key']  = idx + 1;
+                })
+            }
+            else if(copyData2['orderDetailList']) {
+                copyData2['orderDetailList'].push(copyData);
+
+                copyData2['orderDetailList'].forEach((v, idx)=>{
+                    copyData2['orderDetailList'][idx]['serialNumber']  = idx + 1;
+                    copyData2['orderDetailList'][idx]['key']  = idx + 1;
                 })
             }
 
