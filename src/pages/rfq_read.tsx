@@ -45,7 +45,7 @@ export default function rfqRead({dataList}) {
         const copyData: any = {...info}
         copyData['searchDate'] = [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
         setInfo(copyData);
-        setTableInfo(transformData(estimateRequestList));
+        setTableInfo(transformData(estimateRequestList, 'estimateRequestId', 'estimateRequestDetailList'));
     }, [])
 
 
@@ -58,7 +58,7 @@ export default function rfqRead({dataList}) {
             copyData['searchEndDate'] = writtenDate[1];
         }
         const result = await getData.post('estimate/getEstimateRequestList', copyData);
-        setTableInfo(transformData(result?.data?.entity?.estimateRequestList));
+        setTableInfo(transformData(result?.data?.entity?.estimateRequestList, 'estimateRequestId', 'estimateRequestDetailList'));
     }
 
     function deleteList() {
@@ -84,9 +84,9 @@ export default function rfqRead({dataList}) {
 
         },
         getCheckboxProps: (record) => ({
-            disabled: record.name === 'Disabled User',
+            disabled: record?.name === 'Disabled User',
             // Column configuration not to be checked
-            name: record.name,
+            name: record?.name,
         }),
     };
 

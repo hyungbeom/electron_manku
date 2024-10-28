@@ -439,6 +439,8 @@ export const tableEstimateReadColumns = [
         title: '비고란',
         dataIndex: 'remarks',
         key: 'remarks',
+        render: (text) =><div style={{width : 100}} className="ellipsis-cell" >{text}</div>,
+        // fixed: 
     }
 ];
 
@@ -448,7 +450,8 @@ export const tableEstimateWriteColumns = [
         dataIndex: 'model',
         key: 'model',
         fixed: 'left',
-        render: (text) => <div className="ellipsis-cell" style={{width: 100}}>{text}</div>,
+        width : 180,
+        render: (text) => <div className="ellipsis-cell" style={{width: 180}}>{text}</div>,
         editable: true,
     },
     {
@@ -476,7 +479,8 @@ export const tableEstimateWriteColumns = [
         title: '금액',
         dataIndex: 'amount',
         key: 'amount',
-        render: (text) => <div className="ellipsis-cell" style={{width: 50}}>{text}</div>,
+        width : 120,
+        render: (text) => <div className="ellipsis-cell" style={{width: 70}}>{text}</div>,
         editable: true,
     },
     {

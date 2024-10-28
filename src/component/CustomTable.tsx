@@ -11,6 +11,7 @@ import {InboxOutlined} from "@ant-design/icons";
 import Upload from "antd/lib/upload";
 import {getData} from "@/manage/function/api";
 import {transformData} from "@/utils/common/common";
+import Tag from "antd/lib/tag";
 
 
 const {Option} = Select;
@@ -169,6 +170,36 @@ const CustomTable = ({columns, info, setDatabase, content, subContent, rowSelect
                        columns={setColumns}
                        dataSource={[...info]}
                        components={components}
+                       footer={(src, tt)=> {
+
+                           console.log(listType,'listType:')
+                           if(listType  !==  'estimateDetailList'){
+                               return null;
+                           }
+
+                          const result = src.reduce((acc, cur, idx)=>{
+                                const {quantity, unitPrice, amount} = cur;
+                                return {quantity : acc['quantity'] + parseInt(quantity), unitPrice : acc['unitPrice'] + parseInt(unitPrice), amount : acc['amount'] + parseInt(amount)}
+                           },{quantity : 0, unitPrice : 0, amount : 0})
+
+
+                          return <div style={{textAlign : 'center'}}>
+                              <span style={{padding : '0 10px'}}>총수량</span>
+                              <Tag color={'red'}>
+                                  {result['quantity']}
+                              </Tag>
+
+                              <span style={{padding : '0 10px'}}>총단가</span>
+                              <Tag color={'red'}>
+                                  {result['unitPrice']}
+                              </Tag>
+
+                              <span style={{padding : '0 10px'}}>총금액</span>
+                              <Tag color={'blue'}>
+                                  {result['amount']}
+                              </Tag>
+                          </div>
+                       }}
                        rowClassName={(record, index) => (!record?.children ? 'editable-row' : '')}
                        rowSelection={{
                            type: 'checkbox',

@@ -49,7 +49,7 @@ export default function EstimateRead({dataList}) {
         const copyData: any = {...info}
         copyData['searchDate'] = [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
         setInfo(copyData);
-        setTableInfo(transformData(estimateList));
+        setTableInfo(transformData(estimateList, 'estimateId', 'estimateDetailList'));
     }, [])
 
     async function searchInfo() {
@@ -61,7 +61,7 @@ export default function EstimateRead({dataList}) {
             copyData['searchEndDate'] = writtenDate[1];
         }
         const result = await getData.post('estimate/getEstimateList', copyData);
-        setTableInfo(transformData(result?.data?.entity?.estimateList));
+        setTableInfo(transformData(result?.data?.entity?.estimateList, 'estimateId', 'estimateDetailList'));
     }
 
     function deleteList() {

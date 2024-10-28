@@ -4,7 +4,14 @@ import LayoutComponent from "@/component/LayoutComponent";
 import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
 import TextArea from "antd/lib/input/TextArea";
-import {CopyOutlined, FileExcelOutlined, FileSearchOutlined, RetweetOutlined, SaveOutlined} from "@ant-design/icons";
+import {
+    CopyOutlined,
+    DownloadOutlined,
+    FileExcelOutlined,
+    FileSearchOutlined,
+    RetweetOutlined,
+    SaveOutlined
+} from "@ant-design/icons";
 import {
     searchAgencyCodeColumn,
     searchCustomerColumn, tableEstimateWriteColumns
@@ -42,6 +49,7 @@ export default function EstimateWrite() {
     const [info, setInfo] = useState<any>(estimateWriteInitial)
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
 
+    console.log(userInfo, 'userInfo:')
 
     useEffect(() => {
 
@@ -71,7 +79,7 @@ export default function EstimateWrite() {
             copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
 
             await getData.post('estimate/addEstimate', copyData).then(v => {
-                if(v.code === 1){
+                if (v.code === 1) {
                     console.log(v, ':::::')
                 }
             });
@@ -168,7 +176,6 @@ export default function EstimateWrite() {
         }, [])
 
         async function searchFunc() {
-            console.log(modalInfo, 'modalInfo:')
             const result = await getData.post('customer/getCustomerListForEstimate', modalInfo);
             setData(result?.data?.entity?.customerList)
         }
@@ -264,6 +271,27 @@ export default function EstimateWrite() {
         }),
     };
 
+    async function findDocument() {
+
+        const result = await getData.post('estimate/getEstimateList', {
+            "searchType": "",           // 검색조건 1: 주문, 2: 미주문
+            "searchStartDate": "",      // 작성일 검색 시작일
+            "searchEndDate": "",        // 작성일 검색 종료일
+            "searchDocumentNumber": info['documentNumberFull'], // 문서번호
+            "searchCustomerName": "",   // 거래처명
+            "searchModel": "",          // MODEL
+            "searchMaker": "",          // MAKER
+            "searchItem": "",           // ITEM
+            "searchCreatedBy": "",      // 등록 관리자 이름
+            "page": 1,
+            "limit": 20
+        });
+
+        if (result?.data?.code === 1) {
+            console.log(result?.data?.entity?.estimateList, '::::::')
+        }
+    }
+
 
     return <>
         <LayoutComponent>
@@ -305,8 +333,9 @@ export default function EstimateWrite() {
                         <TwinInputBox>
                             <div>
                                 <div style={{paddingBottom: 3}}>연결 INQUIRY No.</div>
-                                <Input size={'small'}
-                                       suffix={<FileSearchOutlined style={{cursor: 'pointer'}}/>}/>
+                                <Input size={'small'} id={'documentNumberFull'} value={info['documentNumberFull']}
+                                       onChange={onChange}
+                                       suffix={<DownloadOutlined style={{cursor: 'pointer'}} onClick={findDocument}/>}/>
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>대리점코드</div>
@@ -370,27 +399,29 @@ export default function EstimateWrite() {
                         marginTop: 20,
                         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                     }}>
-                        <div>
-                            <div style={{paddingBottom: 3}}>유효기간</div>
-                            <Select id={'validityPeriod'} defaultValue={'0'}
-                                    onChange={(src) => onChange({target: {id: 'validityPeriod', value: src}})}
-                                    size={'small'} value={info['validityPeriod']} options={[
-                                {value: '0', label: '견적 발행 후 10일간'},
-                                {value: '1', label: '견적 발행 후 30일간'},
-                            ]} style={{width: '100%'}}>
-                            </Select>
-                        </div>
-                        <div style={{marginTop: 8}}>
-                            <div style={{paddingBottom: 3}}>결제조건</div>
-                            <Select id={'validityPeriod'} defaultValue={'0'}
-                                    onChange={(src) => onChange({target: {id: 'paymentTerms', value: src}})}
-                                    size={'small'} value={info['paymentTerms']} options={[
-                                {value: '0', label: '발주시 50% / 납품시 50%'},
-                                {value: '1', label: '납품시 현금결제'},
-                                {value: '2', label: '정기결제'},
-                            ]} style={{width: '100%'}}>
-                            </Select>
-                        </div>
+                        <TwinInputBox>
+                            <div>
+                                <div style={{paddingBottom: 3}}>유효기간</div>
+                                <Select id={'validityPeriod'} defaultValue={'0'}
+                                        onChange={(src) => onChange({target: {id: 'validityPeriod', value: src}})}
+                                        size={'small'} value={info['validityPeriod']} options={[
+                                    {value: '0', label: '견적 발행 후 10일간'},
+                                    {value: '1', label: '견적 발행 후 30일간'},
+                                ]} style={{width: '100%'}}>
+                                </Select>
+                            </div>
+                            <div>
+                                <div style={{paddingBottom: 3}}>결제조건</div>
+                                <Select id={'validityPeriod'} defaultValue={'0'}
+                                        onChange={(src) => onChange({target: {id: 'paymentTerms', value: src}})}
+                                        size={'small'} value={info['paymentTerms']} options={[
+                                    {value: '0', label: '발주시 50% / 납품시 50%'},
+                                    {value: '1', label: '납품시 현금결제'},
+                                    {value: '2', label: '정기결제'},
+                                ]} style={{width: '100%'}}>
+                                </Select>
+                            </div>
+                        </TwinInputBox>
                         <TwinInputBox>
                             <div>
                                 <div style={{paddingBottom: 3}}>운송조건</div>
@@ -420,19 +451,19 @@ export default function EstimateWrite() {
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>E-Mail</div>
-                                <Input id={'email'} value={info['email']} onChange={onChange}
+                                <Input disabled={true} id={'email'} value={userInfo['email']} onChange={onChange}
                                        size={'small'}/>
                             </div>
                         </TwinInputBox>
                         <TwinInputBox>
                             <div>
                                 <div style={{paddingBottom: 3}}>전화번호</div>
-                                <Input id={'managerPhoneNumber'} value={info['managerPhoneNumber']} onChange={onChange}
+                                <Input disabled={true}  id={'managerPhoneNumber'} value={userInfo['contactNumber']} onChange={onChange}
                                        size={'small'}/>
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>팩스번호</div>
-                                <Input id={'managerFaxNumber'} value={info['managerFaxNumber']} onChange={onChange}
+                                <Input disabled={true}  id={'managerFaxNumber'} value={userInfo['faxNumber']} onChange={onChange}
                                        size={'small'}/>
                             </div>
                         </TwinInputBox>
