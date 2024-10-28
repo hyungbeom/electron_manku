@@ -1,41 +1,23 @@
 import React, {useEffect, useState} from "react";
 import Input from "antd/lib/input/Input";
-import Select from "antd/lib/select";
-import {estimateInfo, estimateTotalWriteColumn, estimateWriteInitial} from "@/utils/common";
 import LayoutComponent from "@/component/LayoutComponent";
 import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
-import TextArea from "antd/lib/input/TextArea";
 import {
     CopyOutlined, FileExcelOutlined,
-    FileSearchOutlined,
-    FormOutlined,
-    RetweetOutlined,
-    SaveOutlined,
     SearchOutlined
 } from "@ant-design/icons";
 import Button from "antd/lib/button";
 import {
     orderStockColumns,
-    rfqReadColumns,
-    rfqWriteColumns,
-    subInvenReadColumns,
-    subOrderReadColumns
 } from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
 import {
-    invenReadInitial,
-    orderReadInitial,
     orderStockInitial,
-    subRfqReadInitial,
-    subRfqWriteInitial
+    subRfqReadInitial, tableOrderStockInitial,
 } from "@/utils/initialList";
 import {
     OrderStockInfo,
-    subInvenReadInfo,
-    subOrderReadInfo,
-    subRfqReadInfo,
-    subRfqWriteInfo
 } from "@/utils/modalDataList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
@@ -54,13 +36,13 @@ const TwinInputBox = ({children}) => {
     </div>
 }
 
-export default function OrderInvenRead({dataList}) {
+export default function OrderInventoryRead({dataList}) {
 
     let checkList = []
 
-    const {estimateRequestList, pageInfo} = dataList;
-    const [info, setInfo] = useState(subRfqReadInitial)
-    const [tableInfo, setTableInfo] = useState(estimateRequestList)
+    const {inventoryList, pageInfo} = dataList;
+    const [info, setInfo] = useState(orderStockInitial)
+    const [tableInfo, setTableInfo] = useState(inventoryList)
     const [paginationInfo, setPaginationInfo] = useState(pageInfo)
 
     console.log(pageInfo,'pageInfo:')
@@ -78,7 +60,7 @@ export default function OrderInvenRead({dataList}) {
         const copyData: any = {...info}
         copyData['searchDate'] = [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
         setInfo(copyData);
-        setTableInfo(transformData(estimateRequestList));
+        setTableInfo(transformData(inventoryList));
     }, [])
 
 
@@ -90,8 +72,8 @@ export default function OrderInvenRead({dataList}) {
             copyData['searchStartDate'] = writtenDate[0];
             copyData['searchEndDate'] = writtenDate[1];
         }
-        const result = await getData.post('estimate/getEstimateRequestList', copyData);
-        setTableInfo(transformData(result?.data?.entity?.estimateRequestList));
+        const result = await getData.post('inventory/getInventoryList', copyData);
+        setTableInfo(transformData(result?.data?.entity?.inventoryList));
     }
 
     function deleteList() {
@@ -134,15 +116,15 @@ export default function OrderInvenRead({dataList}) {
                     }}>
                         <div>
                             <div style={{paddingBottom: 3}}>MAKER</div>
-                            <Input id={'searchMaker'} onChange={onChange} size={'small'}/>
+                            <Input id={'searchMaker'} value={info['searchMaker']} onChange={onChange} size={'small'}/>
                         </div>
                         <div style={{marginTop: 8}}>
                             <div style={{paddingBottom: 3}}>MODEL</div>
-                            <Input id={'searchModel'} onChange={onChange} size={'small'}/>
+                            <Input id={'searchModel'} value={info['searchModel']} onChange={onChange} size={'small'}/>
                         </div>
                         <div style={{marginTop:8}}>
                             <div style={{paddingBottom: 3}}>위치</div>
-                            <Input id={'searchLocation'} onChange={onChange} size={'small'}/>
+                            <Input id={'searchLocation'}  value={info['searchLocation']} onChange={onChange} size={'small'}/>
                         </div>
 
 
@@ -159,7 +141,7 @@ export default function OrderInvenRead({dataList}) {
 
 
                 <CustomTable columns={orderStockColumns}
-                             initial={orderStockInitial}
+                             initial={tableOrderStockInitial}
                              dataInfo={OrderStockInfo}
                              info={tableInfo}
                              setDatabase={setInfo}
@@ -198,22 +180,12 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
-    const result = await getData.post('estimate/getEstimateRequestList', {
-        "searchEstimateRequestId": "",      // 견적의뢰 Id
-        "searchType": "",                   // 검색조건 1: 회신, 2: 미회신
-        "searchStartDate": "",              // 작성일자 시작일
-        "searchEndDate": "",                // 작성일자 종료일
-        "searchDocumentNumber": "",         // 문서번호
-        "searchCustomerName": "",           // 거래처명
-        "searchMaker": "",                  // MAKER
-        "searchModel": "",                  // MODEL
-        "searchItem": "",                   // ITEM
-        "searchCreatedBy": "",              // 등록직원명
-        "searchManagerName": "",            // 담당자명
-        "searchMobileNumber": "",           // 담당자 연락처
-        "searchBiddingNumber": "",          // 입찰번호(미완성)
+    const result = await getData.post('inventory/getInventoryList', {
+        "searchMaker": "",          // MAKER 검색
+        "searchModel": "",          // MODEL 검색
+        "searchLocation": "",       // 위치 검색
         "page": 1,
-        "limit": 10
+        "limit": 20
     });
 
 

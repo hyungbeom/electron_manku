@@ -7,12 +7,11 @@ import {CopyOutlined, FileExcelOutlined,RetweetOutlined, SaveOutlined} from "@an
 import {
     OrderWriteColumn,
     searchAgencyCodeColumn,
-    searchCustomerColumn,
-    subOrderWriteColumns,
+    searchCustomerColumn, tableOrderWriteColumn,
 } from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
 import {
-    orderWriteInitial, rfqWriteInitial, subOrderWriteInitial, subRfqWriteInitial,
+    orderWriteInitial, rfqWriteInitial, subOrderWriteInitial, subRfqWriteInitial, tableOrderWriteInitial,
 } from "@/utils/initialList";
 import {subOrderWriteInfo, subRfqWriteInfo} from "@/utils/modalDataList";
 import moment from "moment";
@@ -75,10 +74,12 @@ export default function OrderWriter() {
             copyData['delivery'] = moment(info['delivery']).format('YYYY-MM-DD');
 
             await getData.post('order/addOrder', copyData).then(v => {
-                console.log(v, ':::::')
+                console.log(v, '저장 되었습니다.')
             });
         }
-
+        setInfo(orderWriteInitial)
+        // setInfo(prev=>(prev.orderDetailList=tableOrderWriteInitial))
+        alert('저장 되었습니다.')
     }
 
     function findAgency() {
@@ -277,7 +278,7 @@ export default function OrderWriter() {
                         <TwinInputBox>
                             <div>
                                 <div style={{paddingBottom: 3}}>PO No.</div>
-                                <Input disabled={true} size={'small'}/>
+                                <Input disabled={true} value={info['documentNumberFull']} size={'small'}/>
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>작성일</div>
@@ -331,7 +332,7 @@ export default function OrderWriter() {
                         <TwinInputBox>
                             <div>
                                 <div style={{paddingBottom: 3}}>Responsibility</div>
-                                <Input disabled={true}  id={'managerID'} value={info['managerID']} onChange={onChange} size={'small'} />
+                                <Input disabled={true} id={'managerID'} value={userInfo['name']} onChange={onChange} size={'small'} />
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>TEL</div>
@@ -422,10 +423,10 @@ export default function OrderWriter() {
                              setDatabase={setInfo}
                              listType={'orderDetailList'}
                              excel={true}
-                             columns={OrderWriteColumn}
+                             columns={tableOrderWriteColumn}
                              info={info['orderDetailList']}
-                             content={<TableModal title={'의뢰작성 세부 추가'} data={subRfqWriteInitial}
-                                                  dataInfo={subRfqWriteInfo}
+                             content={<TableModal title={'발주서 세부 작성'} data={tableOrderWriteInitial}
+                                                  dataInfo={subOrderWriteInfo}
                                                   setInfoList={setInfo}/>}
                              subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
                                  <CopyOutlined/>복사

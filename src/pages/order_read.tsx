@@ -1,24 +1,21 @@
 import React, {useEffect, useState} from "react";
 import Input from "antd/lib/input/Input";
-import Select from "antd/lib/select";
-import {estimateInfo, estimateTotalWriteColumn, estimateWriteInitial} from "@/utils/common";
 import LayoutComponent from "@/component/LayoutComponent";
 import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
-import TextArea from "antd/lib/input/TextArea";
 import {
     CopyOutlined, FileExcelOutlined,
-    FileSearchOutlined,
-    FormOutlined,
-    RetweetOutlined,
-    SaveOutlined,
     SearchOutlined
 } from "@ant-design/icons";
 import Button from "antd/lib/button";
-import {rfqReadColumns, rfqWriteColumns, subOrderReadColumns} from "@/utils/columnList";
+import {tableOrderReadColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {codeDiplomaInitial, orderReadInitial, subRfqReadInitial, subRfqWriteInitial} from "@/utils/initialList";
-import {subOrderReadInfo, subRfqReadInfo, subRfqWriteInfo} from "@/utils/modalDataList";
+import {
+    orderReadInitial,
+    subRfqReadInitial,
+    tableOrderReadInitial
+} from "@/utils/initialList";
+import {tableOrderReadInfo} from "@/utils/modalDataList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
@@ -38,12 +35,12 @@ const TwinInputBox = ({children}) => {
 export default function OrderRead({dataList}) {
     let checkList = []
 
-    const {inventoryList, pageInfo} = dataList;
-    const [info, setInfo] = useState(subRfqReadInitial)
-    const [tableInfo, setTableInfo] = useState(inventoryList)
+    const {orderList, pageInfo} = dataList;
+    const [info, setInfo] = useState(orderReadInitial)
+    const [tableInfo, setTableInfo] = useState(orderList)
     const [paginationInfo, setPaginationInfo] = useState(pageInfo)
 
-    console.log(pageInfo,'pageInfo:')
+    console.log(orderList,'orderList:')
     function onChange(e) {
 
         let bowl = {}
@@ -58,7 +55,7 @@ export default function OrderRead({dataList}) {
         const copyData: any = {...info}
         copyData['searchDate'] = [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
         setInfo(copyData);
-        setTableInfo(transformData(inventoryList));
+        setTableInfo(transformData(orderList));
     }, [])
 
 
@@ -70,15 +67,15 @@ export default function OrderRead({dataList}) {
             copyData['searchStartDate'] = writtenDate[0];
             copyData['searchEndDate'] = writtenDate[1];
         }
-        const result = await getData.post('inventory/getInventoryList', copyData);
-        setTableInfo(transformData(result?.data?.entity?.inventoryList));
+        const result = await getData.post('order/getOrderList', copyData);
+        setTableInfo(transformData(result?.data?.entity?.orderList));
     }
 
     function deleteList() {
         let copyData = {...info}
-        const result = copyData['inventoryList'].filter(v => !checkList.includes(v.serialNumber))
+        const result = copyData['orderDetailList'].filter(v => !checkList.includes(v.serialNumber))
 
-        copyData['inventoryList'] = result
+        copyData['orderDetailList'] = result
         setInfo(copyData);
     }
 
@@ -113,37 +110,41 @@ export default function OrderRead({dataList}) {
                     }}>
                         <div>
                             <div style={{paddingBottom: 3}}>작성일자</div>
-                            <RangePicker id={'searchDate'} size={'small'} onChange={(date, dateString) => onChange({
-                                target: {
-                                    id: 'searchDate',
-                                    value: date
-                                }
-                            })
+                            <RangePicker style={{width: '100%'}}
+                                         value={[moment(info['searchDate'][0]), moment(info['searchDate'][1])]}
+                                         id={'searchDate'} size={'small'} onChange={(date, dateString) => {
+                                onChange({
+                                    target: {
+                                        id: 'searchDate',
+                                        value: date ? [moment(date[0]).format('YYYY-MM-DD'), moment(date[1]).format('YYYY-MM-DD')] : [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
+                                    }
+                                })
+                            }
                             }/>
                         </div>
                         <div style={{marginTop: 8}}>
                             <div style={{paddingBottom: 3}}>문서번호</div>
-                            <Input id={'searchDocumentNumber'} onChange={onChange} size={'small'}/>
+                            <Input id={'searchDocumentNumber'} value={info['searchDocumentNumber']} onChange={onChange} size={'small'}/>
                         </div>
                         <div style={{marginTop: 8}}>
                             <div style={{paddingBottom: 3}}>거래처명</div>
-                            <Input id={'searchCustomerName'} onChange={onChange} size={'small'}/>
+                            <Input id={'searchCustomerName'} value={info['searchCustomerName']} onChange={onChange} size={'small'}/>
                         </div>
                         <div style={{marginTop: 8}}>
                             <div style={{paddingBottom: 3}}>MAKER</div>
-                            <Input id={'searchMaker'} onChange={onChange} size={'small'}/>
+                            <Input id={'searchMaker'} value={info['searchModel']} onChange={onChange} size={'small'}/>
                         </div>
                         <div style={{marginTop: 8}}>
                             <div style={{paddingBottom: 3}}>MODEL</div>
-                            <Input id={'searchModel'} onChange={onChange} size={'small'}/>
+                            <Input id={'searchModel'} value={info['searchModel']} onChange={onChange} size={'small'}/>
                         </div>
                         <div style={{marginTop: 8}}>
                             <div style={{paddingBottom: 3}}>ITEM</div>
-                            <Input id={'searchItem'} onChange={onChange} size={'small'}/>
+                            <Input id={'searchItem'} value={info['searchItem']} onChange={onChange} size={'small'}/>
                         </div>
                         <div style={{marginTop: 8}}>
                             <div style={{paddingBottom: 3}}>견적서담당자</div>
-                            <Input id={'searchEstimateManager'} onChange={onChange} size={'small'}/>
+                            <Input id={'searchEstimateManager'} value={info['searchEstimateManager']} onChange={onChange} size={'small'}/>
                         </div>
 
 
@@ -154,14 +155,15 @@ export default function OrderRead({dataList}) {
                     </div>
                 </Card>
 
-                <CustomTable columns={subOrderReadColumns}
-                             initial={orderReadInitial}
-                             dataInfo={subOrderReadInfo}
+                <CustomTable columns={tableOrderReadColumns}
+                             initial={tableOrderReadInitial}
+                             dataInfo={tableOrderReadInfo}
                              info={tableInfo}
                              setDatabase={setInfo}
                              setTableInfo={setTableInfo}
                              rowSelection={rowSelection}
                              pageInfo={paginationInfo}
+                             visible={true}
                              setPaginationInfo={setPaginationInfo}
 
                              subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
@@ -190,10 +192,15 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
-    const result = await getData.post('inventory/getInventoryList', {
-        "searchMaker": "",          // MAKER 검색
-        "searchModel": "",          // MODEL 검색
-        "searchLocation": "",       // 위치 검색
+    const result = await getData.post('order/getOrderList', {
+        "searchStartDate": "",          // 발주일자 검색 시작일
+        "searchEndDate": "",            // 발주일자 검색 종료일
+        "searchDocumentNumber": "",     // 문서번호
+        "searchCustomerName": "",       // 거래처명
+        "searchMaker": "",              // MAKER
+        "searchModel": "",              // MODEL
+        "searchItem": "",               // ITEM
+        "searchEstimateManager": "",    // 견적서담당자명
         "page": 1,
         "limit": 20
     });

@@ -1,7 +1,3 @@
-import {subOrderReadColumns} from "@/utils/columnList";
-import codeDomesticPurchase from "@/pages/code_domestic_purchase";
-
-
 
 
 export const makerRegistInitial = {
@@ -88,6 +84,20 @@ export const subRfqWriteInitial = {
     "serialNumber": 0           // 견적의뢰 내역 순서 (1부터 시작)
 
 }
+
+export const tableOrderWriteInitial = {
+    "model": "model",           // MODEL
+    "quantity": 1,              // 수량
+    "unit": "ea",               // 단위
+    "currency": "krw",          // CURR
+    "net": 0,            // NET/P
+    "amount": 0,
+    "receivedQuantity": 0,
+    "unreceivedQuantity": 0,
+    "unitPrice": 0,
+    "price": 0
+}
+
 
 export const subRfqReadInitial = {
     "searchDate" : "",   // front 사용
@@ -192,10 +202,17 @@ export const orderWriteInitial = {
     "delivery": "",               // Delivery
     "remarks": "",                      // 비고란
     "orderDetailList": [],
-    // "estimateRequestDetailList": [],
 }
 
 export const orderStockInitial = {
+    "searchMaker": "",          // MAKER 검색
+    "searchModel": "",          // MODEL 검색
+    "searchLocation": "",       // 위치 검색
+    "page": 1,
+    "limit": 20
+}
+
+export const tableOrderStockInitial = {
     "receiptDate":  null,        // 입고일자
     "documentNumber": "",     // 문서번호
     "maker": "",                 // MAKER
@@ -223,8 +240,54 @@ export const subOrderWriteInitial = {
     "price": 0,  // 회신일
 }
 
+export const tableOrderReadInitial = {
+    "orderId": 4114,
+    "documentNumberFull": "ARC-24-0326-1",
+    "writtenDate": "2024-09-04",
+    "agencyCode": "R&D Trading Co.",
+    "customerName": "정원엔지니어링",
+    "managerId": "MinkukKim",
+    "managerPhoneNumber": "02-465-7838",
+    "managerFaxNumber": "02-465-7839",
+    "managerEmail": "sales@manku.co.kr",
+    "paymentTerms": "By in advance T/T",
+    "packing": null,
+    "deliveryTerms": "7~8weeks",
+    "inspection": null,
+    "maker": "Dynapar",
+    "item": "Encoder",
+    "delivery": "2024-10-25",
+    "remarks": "",
+    "createdBy": "MinkukKim",
+    "createdDate": "2024-09-04T17:46:31.63",
+    "modifiedBy": "MinkukKim",
+    "modifiedDate": "2024-09-04T17:46:31.63",
+    "estimateManager": "권혁구",
+    "yourPoNo": "",
+    "key": 5,
+    "orderDetailList": [
+    {
+        "orderDetailId": 7504,
+        "orderId": 4114,
+        "model": "X253600033",
+        "quantity": 1,
+        "unit": "ea",
+        "currency": "USD",
+        "net": 2140.00,
+        "currencyUnit": "",
+        "unitPrice": 3724000,
+        "amount": 3724000,
+        "estimateDetailId": 28729,
+        "receivedQuantity": 0,
+        "serialNumber": 1
+    }
+]
+}
+
 export const orderReadInitial = {
     "searchDate": "",              // 작성일자 시작일
+    "searchStartDate": "",              // 작성일자 시작일
+    "searchEndDate": "",              // 작성일자 시작일
     "searchDocumentNumber": "",         // 문서번호
     "searchCustomerName": "",           // 거래처명
     "searchMaker": "",                  // MAKER
