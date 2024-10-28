@@ -15,5 +15,7 @@ const nextConfig = {
 
 // withTM을 사용하여 필요한 모듈을 추가
 export default withTM([
-  'antd', 'react-dnd'
+  'antd',
+  'rc-util',         // rc-util을 포함하여 트랜스파일
+  'xlsx'
 ])(nextConfig);

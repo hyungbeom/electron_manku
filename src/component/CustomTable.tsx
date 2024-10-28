@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useRef, useState} from 'react';
 import Table from 'antd/lib/table';
 import Card from 'antd/lib/card/Card';
 import Select from 'antd/lib/select';
@@ -6,8 +6,6 @@ import Pagination from 'antd/lib/pagination';
 import message from "antd/lib/message";
 import ColumnSetting from "@/component/ColumnSetting";
 import {EditableCell, EditableRow} from "@/component/TableAboutRows";
-import {DropArea} from "@/styled/common";
-import {useDropzone} from "react-dropzone";
 import * as XLSX from 'xlsx';
 import {InboxOutlined} from "@ant-design/icons";
 import Upload from "antd/lib/upload";
