@@ -3,16 +3,10 @@ import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
 import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
-import {estimateReadColumns, rfqReadColumns, tableEstimateReadColumns} from "@/utils/columnList";
+import {tableEstimateReadColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {
-    estimateReadInitial,
-    estimateWriteInitial,
-    subRfqReadInitial,
-    subRfqWriteInitial,
-    tableEstimateReadInitial
-} from "@/utils/initialList";
-import {subRfqReadInfo, subRfqWriteInfo, tableEstimateReadInfo} from "@/utils/modalDataList";
+import {estimateReadInitial, tableEstimateReadInitial} from "@/utils/initialList";
+import {tableEstimateReadInfo} from "@/utils/modalDataList";
 import Select from "antd/lib/select";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
