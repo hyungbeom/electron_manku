@@ -50,7 +50,7 @@ export default function rfqRead({dataList}) {
         const copyData: any = {...info}
         copyData['searchDate'] = [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
         setInfo(copyData);
-        setTableInfo(transformData(estimateRequestList));
+        // setTableInfo(transformData(estimateRequestList));
     }, [])
 
     const transformData = (data) => {
@@ -100,7 +100,7 @@ export default function rfqRead({dataList}) {
 
         console.log(copyData, 'copyData:')
 
-        setTableInfo(transformData(result?.data?.entity?.estimateRequestList));
+        // setTableInfo(transformData(result?.data?.entity?.estimateRequestList));
 
     }
 

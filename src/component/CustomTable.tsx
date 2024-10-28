@@ -170,7 +170,7 @@ const CustomTable = ({columns, info, setDatabase, content, subContent, rowSelect
                        columns={setColumns}
                        dataSource={[...info]}
                        components={components}
-                       footer={(src, tt)=> {
+                       footer={(src:any)=> {
 
                            console.log(listType,'listType:')
                            if(listType  !==  'estimateDetailList'){

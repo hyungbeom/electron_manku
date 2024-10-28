@@ -618,7 +618,7 @@ export const rfqReadColumns = [
         dataIndex: 'quantity',
         key: 'quantity',
         align : 'center',
-        render: (text) => <div style={{width : 25, text}} className="ellipsis-cell">{text}</div>,
+        render: (text) => <div style={{width : 25}} className="ellipsis-cell">{text}</div>,
     },
 
     {
@@ -626,14 +626,14 @@ export const rfqReadColumns = [
         dataIndex: 'unit',
         key: 'unit',
         align : 'center',
-        render: (text) => <div style={{width : 25, text}} className="ellipsis-cell">{text}</div>,
+        render: (text) => <div style={{width : 25}} className="ellipsis-cell">{text}</div>,
     },
     {
         title: 'CURR',
         dataIndex: 'currency',
         key: 'currency',
         align : 'center',
-        render: (text) => <div style={{width : 40, text}} className="ellipsis-cell">{text}</div>,
+        render: (text) => <div style={{width : 40}} className="ellipsis-cell">{text}</div>,
 
     },
     {
@@ -641,25 +641,25 @@ export const rfqReadColumns = [
         dataIndex: 'net',
         key: 'net',
         align : 'center',
-        render: (text) => <div style={{width : 40, text}} className="ellipsis-cell">{text}</div>,
+        render: (text) => <div style={{width : 40}} className="ellipsis-cell">{text}</div>,
     },   {
         title: '납기',
         dataIndex: 'replyDate',
         key: 'replyDate',
         align : 'center',
-        render: (text) => <div style={{width : 40, text}} className="ellipsis-cell">{text}</div>,
+        render: (text) => <div style={{width : 40}} className="ellipsis-cell">{text}</div>,
     },    {
         title: '내용',
         dataIndex: 'content',
         key: 'content',
         align : 'center',
-        render: (text) => <div style={{width : 40, text}} className="ellipsis-cell">{text}</div>,
+        render: (text) => <div style={{width : 40}} className="ellipsis-cell">{text}</div>,
     },  {
         title: '등록자',
         dataIndex: 'createdBy',
         key: 'createdBy',
         align : 'center',
-        render: (text) => <div style={{width : 40, text}} className="ellipsis-cell">{text}</div>,
+        render: (text) => <div style={{width : 40}} className="ellipsis-cell">{text}</div>,
     },
     {
         title: '수정일자',

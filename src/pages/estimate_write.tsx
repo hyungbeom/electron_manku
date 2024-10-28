@@ -78,8 +78,8 @@ export default function EstimateWrite() {
             const copyData = {...info}
             copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
 
-            await getData.post('estimate/addEstimate', copyData).then(v => {
-                if (v.code === 1) {
+            await getData.post('estimate/addEstimate', copyData).then((v:any) => {
+                if (v?.code === 1) {
                     console.log(v, ':::::')
                 }
             });

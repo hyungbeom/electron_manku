@@ -76,7 +76,7 @@ export default function EstimateMerge({dataList}) {
         const copyData: any = {...info}
         copyData['searchDate'] = [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
         setInfo(copyData);
-        setTableInfo(transformData(estimateList));
+        // setTableInfo(transformData(estimateList));
     }, [])
 
 
@@ -89,7 +89,7 @@ export default function EstimateMerge({dataList}) {
             copyData['searchEndDate'] = writtenDate[1];
         }
         const result = await getData.post('estimate/getEstimateList', copyData);
-        setTableInfo(transformData(result?.data?.entity?.estimateRequestList));
+        // setTableInfo(transformData(result?.data?.entity?.estimateRequestList));
     }
 
     function deleteList() {

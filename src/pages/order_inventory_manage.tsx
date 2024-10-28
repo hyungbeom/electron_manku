@@ -60,7 +60,7 @@ export default function OrderInventoryRead({dataList}) {
         const copyData: any = {...info}
         copyData['searchDate'] = [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
         setInfo(copyData);
-        setTableInfo(transformData(inventoryList));
+        // setTableInfo(transformData(inventoryList));
     }, [])
 
 
@@ -73,7 +73,7 @@ export default function OrderInventoryRead({dataList}) {
             copyData['searchEndDate'] = writtenDate[1];
         }
         const result = await getData.post('inventory/getInventoryList', copyData);
-        setTableInfo(transformData(result?.data?.entity?.inventoryList));
+        // setTableInfo(transformData(result?.data?.entity?.inventoryList));
     }
 
     function deleteList() {

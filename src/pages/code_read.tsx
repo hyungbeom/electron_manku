@@ -78,7 +78,7 @@ const CodeRead = ({dataList}) => {
         const copyData: any = {...info}
         copyData['searchDate'] = [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
         setInfo(copyData);
-        setTableInfo(transformData(estimateRequestList));
+        // setTableInfo(transformData(estimateRequestList));
 
         const copySaveData: any = {...saveInfo}
         copySaveData['searchDate'] = [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
@@ -94,7 +94,7 @@ const CodeRead = ({dataList}) => {
             copyData['searchEndDate'] = writtenDate[1];
         }
         const result = await getData.post('estimate/getEstimateRequestList', copyData);
-        setTableInfo(transformData(result?.data?.entity?.estimateRequestList));
+        // setTableInfo(transformData(result?.data?.entity?.estimateRequestList));
     }
 
     function deleteList() {

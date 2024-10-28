@@ -55,7 +55,7 @@ export default function OrderRead({dataList}) {
         const copyData: any = {...info}
         copyData['searchDate'] = [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
         setInfo(copyData);
-        setTableInfo(transformData(orderList));
+        // setTableInfo(transformData(orderList));
     }, [])
 
 
@@ -68,7 +68,7 @@ export default function OrderRead({dataList}) {
             copyData['searchEndDate'] = writtenDate[1];
         }
         const result = await getData.post('order/getOrderList', copyData);
-        setTableInfo(transformData(result?.data?.entity?.orderList));
+        // setTableInfo(transformData(result?.data?.entity?.orderList));
     }
 
     function deleteList() {

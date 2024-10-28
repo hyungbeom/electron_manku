@@ -1,50 +1,19 @@
 import React, {useEffect, useState} from "react";
 import Input from "antd/lib/input/Input";
-import Select from "antd/lib/select";
-import {estimateInfo, estimateTotalWriteColumn, estimateWriteInitial} from "@/utils/common";
 import LayoutComponent from "@/component/LayoutComponent";
 import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
-import TextArea from "antd/lib/input/TextArea";
-import {
-    CopyOutlined, FileExcelOutlined,
-    FileSearchOutlined,
-    FormOutlined,
-    RetweetOutlined,
-    SaveOutlined,
-    SearchOutlined
-} from "@ant-design/icons";
+import {CopyOutlined, FileExcelOutlined, RetweetOutlined, SearchOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
-import {
-    rfqReadColumns,
-    rfqWriteColumns, subAgencyReadColumns,
-    subCustomerReadColumns,
-    subInvenReadColumns,
-    subOrderReadColumns
-} from "@/utils/columnList";
+import {subAgencyReadColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {
-    agencyReadInitial,
-    customerReadInitial,
-    invenReadInitial,
-    orderReadInitial,
-    subRfqReadInitial,
-    subRfqWriteInitial, tableOrderCustomerInitial
-} from "@/utils/initialList";
-import {
-    subAgencyReadInfo,
-    subCustomerReadInfo,
-    subInvenReadInfo,
-    subOrderReadInfo,
-    subRfqReadInfo,
-    subRfqWriteInfo
-} from "@/utils/modalDataList";
+import {subRfqReadInitial, tableOrderCustomerInitial} from "@/utils/initialList";
+import {subAgencyReadInfo} from "@/utils/modalDataList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import {getData} from "@/manage/function/api";
 import moment from "moment";
-import {transformData} from "@/utils/common/common";
 import * as XLSX from "xlsx";
 
 const {RangePicker} = DatePicker
@@ -78,7 +47,7 @@ export default function OrderReadAgency({dataList}) {
         const copyData: any = {...info}
         copyData['searchDate'] = [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
         setInfo(copyData);
-        setTableInfo(transformData(agencyList));
+        // setTableInfo(transformData(agencyList));
     }, [])
 
 
@@ -91,7 +60,7 @@ export default function OrderReadAgency({dataList}) {
             copyData['searchEndDate'] = writtenDate[1];
         }
         const result = await getData.post('agency/getAgencyList', copyData);
-        setTableInfo(transformData(result?.data?.entity?.agencyList));
+        // setTableInfo(transformData(result?.data?.entity?.agencyList));
     }
 
     function deleteList() {

@@ -11,7 +11,7 @@ import TextArea from "antd/lib/input/TextArea";
 import DatePicker from "antd/lib/date-picker";
 import moment from "moment";
 
-export default function TableModal({title, data, dataInfo, setInfoList, listType}) {
+export default function TableModal({title, data, dataInfo, setInfoList, listType}:any) {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const [info, setInfo] = useState<any>(data)
