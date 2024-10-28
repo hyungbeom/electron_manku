@@ -78,9 +78,9 @@ export default function OrderInventoryRead({dataList}) {
 
     function deleteList() {
         let copyData = {...info}
-        const result = copyData['estimateRequestDetailList'].filter(v => !checkList.includes(v.serialNumber))
+        const result = copyData['inventoryList'].filter(v => !checkList.includes(v.serialNumber))
 
-        copyData['estimateRequestDetailList'] = result
+        copyData['inventoryList'] = result
         setInfo(copyData);
     }
 
@@ -134,11 +134,6 @@ export default function OrderInventoryRead({dataList}) {
                                 onClick={searchInfo}><SearchOutlined/>검색</Button>
                     </div>
                 </Card>
-
-
-                {/*<CustomTable columns={subInvenReadColumns} initial={invenReadInitial} dataInfo={subInvenReadInfo}*/}
-                {/*             info={tableInfo}/>*/}
-
 
                 <CustomTable columns={orderStockColumns}
                              initial={tableOrderStockInitial}
