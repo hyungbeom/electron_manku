@@ -79,6 +79,7 @@ const getMonthData = (value) => {
 };
 
 export default function Main(props){
+
     const userInfo = useAppSelector((state) => state.user);
 
     const monthCellRender = (value) => {
