@@ -97,8 +97,9 @@ export default function rqfWrite() {
 
 
         return <Modal
-            title={'대리점 코드 조회'}
+            // @ts-ignored
             id={'event1'}
+            title={'대리점 코드 조회'}
             onCancel={() => setIsModalOpen({event1: false, event2: false})}
             open={isModalOpen?.event1}
             width={'60vw'}
@@ -127,7 +128,7 @@ export default function rqfWrite() {
                         scroll={{y: 300}}
                         columns={searchAgencyCodeColumn}
                         dataSource={data}
-                        pagination={true}
+                        // pagination={true}
                         onRow={(record, rowIndex) => {
                             return {
                                 style: {cursor: 'pointer'},
@@ -169,6 +170,7 @@ export default function rqfWrite() {
 
         return <Modal
             title={'거래처 조회'}
+            // @ts-ignored
             id={'event2'}
             onCancel={() => setIsModalOpen({event1: false, event2: false})}
             open={isModalOpen?.event2}
@@ -198,7 +200,7 @@ export default function rqfWrite() {
                         scroll={{y: 300}}
                         columns={searchCustomerColumn}
                         dataSource={data}
-                        pagination={true}
+                        // pagination={true}
                         onRow={(record, rowIndex) => {
                             return {
                                 style: {cursor: 'pointer'},

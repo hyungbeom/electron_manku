@@ -164,6 +164,7 @@ export default function rfqRead({dataList}) {
                              setTableInfo={setTableInfo}
                              rowSelection={rowSelection}
                              pageInfo={paginationInfo}
+                             visible={true}
                              setPaginationInfo={setPaginationInfo}
 
                              subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>

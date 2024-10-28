@@ -28,11 +28,11 @@ export default function ColumnSetting({columns, checkedList, handleSelectChange}
             const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
             // 데이터 첫 번째 행을 컬럼 이름으로 사용
-            const headers = jsonData[0];
-            const dataRows = jsonData.slice(1);
+            const headers:any = jsonData[0];
+            const dataRows:any = jsonData.slice(1);
 
             // 테이블 컬럼 설정
-            const tableColumns = headers.map((header, index) => ({
+            const tableColumns = headers?.map((header, index) => ({
                 title: header,
                 dataIndex: index,
                 key: index,
@@ -88,7 +88,8 @@ export default function ColumnSetting({columns, checkedList, handleSelectChange}
             value={checkedList}
             onChange={handleSelectChange}
         >
-            {columns.map(({ key, title }) => (
+            {columns?.map(({ key, title }) => (
+                // @ts-ignored
                 <Option key={key} value={key}>
                     {title}
                 </Option>
