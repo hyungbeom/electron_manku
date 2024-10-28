@@ -91,3 +91,10 @@ html, body {
     border: 1px solid lightGray; /* 밑줄을 점선으로 표시하여 강조 */
     border-radius: 3px;
 }
+
+.hoverText {
+    color : black;
+}
+.hoverText:hover {
+    color : blue;
+}
