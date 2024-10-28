@@ -1,6 +1,6 @@
 import CustomTable from "@/component/CustomTable";
 import {rfqWriteInitial} from "@/utils/initialList";
-import {codeDomesticPurchaseColumn} from "@/utils/columnList";
+
 import React, {useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
@@ -30,19 +30,12 @@ export default function codeDomesticPurchase() {
                         </div>
                         <div>
                             <div style={{paddingBottom: 3}}>작성일</div>
-                            <DatePicker value={info['writtenDate']}
-                                        onChange={(date, dateString) => onChange({
-                                            target: {
-                                                id: 'writtenDate',
-                                                value: date
-                                            }
-                                        })
-                                        } id={'writtenDate'} size={'small'}/>
+                            <DatePicker value={info['writtenDate']} id={'writtenDate'} size={'small'}/>
                         </div>
                     </TwinInputBox>
                 </Card>
             </Card>
-            <CustomTable content={<div>asdfs</div>} columns={codeDomesticPurchaseColumn} info={[]}/>
+            <CustomTable content={<div>asdfs</div>} info={[]}/>
         </div>
         <div style={{display: 'grid', gridTemplateColumns: '300px 1fr', backgroundColor : 'white', padding : 10}}>
             <Card size={'small'} title={'의뢰 작성'} style={{fontSize: 12, border: '1px solid lightGray'}}>
@@ -58,18 +51,12 @@ export default function codeDomesticPurchase() {
                         <div>
                             <div style={{paddingBottom: 3}}>작성일</div>
                             <DatePicker value={info['writtenDate']}
-                                        onChange={(date, dateString) => onChange({
-                                            target: {
-                                                id: 'writtenDate',
-                                                value: date
-                                            }
-                                        })
-                                        } id={'writtenDate'} size={'small'}/>
+                                       id={'writtenDate'} size={'small'}/>
                         </div>
                     </TwinInputBox>
                 </Card>
             </Card>
-            <CustomTable content={<div>asdfs</div>} columns={codeDomesticPurchaseColumn} info={[]}/>
+            <CustomTable content={<div>asdfs</div>}  info={[]}/>
         </div>
 
     </LayoutComponent>

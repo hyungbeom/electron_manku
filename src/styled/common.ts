@@ -7,7 +7,7 @@ export const DropArea = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: ${(props) => (props?.isDragActive ? '#f0f5ff' : '#fafafa')};
+  background-color: ${(props:any) => (props?.isDragActive ? '#f0f5ff' : '#fafafa')};
   transition: background-color 0.3s ease;
   cursor: pointer;
 `;

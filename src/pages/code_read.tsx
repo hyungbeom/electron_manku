@@ -1,34 +1,14 @@
 import React, {useEffect, useState} from "react";
 import Input from "antd/lib/input/Input";
-import Select from "antd/lib/select";
-import {estimateInfo, estimateTotalWriteColumn, estimateWriteInitial} from "@/utils/common";
 import LayoutComponent from "@/component/LayoutComponent";
 import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
-import TextArea from "antd/lib/input/TextArea";
-import {FileSearchOutlined, FormOutlined, RetweetOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
+import {RetweetOutlined, SearchOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
-import {
-    rfqReadColumns,
-    rfqWriteColumns, subCodeDiplomaColumns, subCodeExchangeColumns, subCodeReadColumns,
-    subInvenReadColumns,
-    subOrderReadColumns
-} from "@/utils/columnList";
+import {subCodeReadColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {
-    agencyReadInitial, codeExchangeInitial, codeReadInitial,
-    invenReadInitial,
-    orderReadInitial,
-    subRfqReadInitial,
-    subRfqWriteInitial
-} from "@/utils/initialList";
-import {
-    subCodeDiplomaInfo, subCodeExchangeInfo, subCodeReadInfo,
-    subInvenReadInfo,
-    subOrderReadInfo,
-    subRfqReadInfo,
-    subRfqWriteInfo
-} from "@/utils/modalDataList";
+import {codeReadInitial} from "@/utils/initialList";
+import {subCodeReadInfo} from "@/utils/modalDataList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";

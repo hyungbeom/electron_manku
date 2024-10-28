@@ -17,7 +17,7 @@ import {transformData} from "@/utils/common/common";
 
 const {Option} = Select;
 const {Dragger} = Upload;
-const CustomTable = ({columns, info, setDatabase, content, subContent, rowSelection, listType, excel = false, pageInfo, setPaginationInfo, setTableInfo}) => {
+const CustomTable = ({columns, info, setDatabase, content, subContent, rowSelection, listType, excel = false, pageInfo, setPaginationInfo, setTableInfo, visible}:any) => {
     const defaultCheckedList = columns.map((item) => item.key);
     const [checkedList, setCheckedList] = useState(defaultCheckedList);
 
@@ -43,9 +43,10 @@ const CustomTable = ({columns, info, setDatabase, content, subContent, rowSelect
 
 
             // 테이블 데이터 설정 (컬럼 키를 사용)
-            const tableData = dataRows.map((row, index) => {
+            const tableData = dataRows.map((row, index):any => {
                 const rowData = {};
-                row.forEach((cell, cellIndex) => {
+                // @ts-ignored
+                row?.forEach((cell, cellIndex) => {
                     rowData[headers[cellIndex]] = cell; // 컬럼 키를 사용하여 데이터 설정
                 });
                 return {key: index, ...rowData};
@@ -175,7 +176,10 @@ const CustomTable = ({columns, info, setDatabase, content, subContent, rowSelect
                            ...rowSelection,
                        }}
                 />
-                <Pagination value={pageInfo['page']} total={pageInfo['totalRow']} style={{float :'right', paddingTop : 25}} pageSize={pageInfo['rowPerPage']} onChange={check}  />
+                {/*@ts-ignored*/}
+                {visible && <Pagination value={pageInfo['page']} total={pageInfo['totalRow']}
+                             style={{float: 'right', paddingTop: 25}} pageSize={pageInfo['rowPerPage']}
+                             onChange={check}/>}
 
                 {excel && <Dragger {...uploadProps} style={{marginBottom: '20px'}}>
                     <p className="ant-upload-drag-icon">
