@@ -139,9 +139,9 @@ const CustomTable = ({columns, info, setDatabase, content, subContent, rowSelect
         const copyData: any = {...info}
         copyData['limit'] = size;
         copyData['page'] = e;
-        const result = await getData.post('estimate/getEstimateRequestList', copyData);
+        // const result = await getData.post('estimate/getEstimateRequestList', copyData);
 
-        setTableInfo(transformData(result?.data?.entity?.estimateRequestList))
+        // setTableInfo(transformData(result?.data?.entity?.estimateRequestList))
     }
 
 
