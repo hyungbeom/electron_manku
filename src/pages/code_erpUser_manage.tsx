@@ -181,6 +181,7 @@ const CodeErpUserManage = ({dataList}) => {
                                               onChange={onChange}>정산관리</Checkbox></div>
                             </div>
                             <div style={{paddingTop: 20, textAlign: 'right'}}>
+                               {/*@ts-ignored*/}
                                 <Button type={'danger'} style={{marginRight: 8, letterSpacing: -2}}>
                                     <RetweetOutlined/>초기화</Button>
                                 <Button type={'primary'} style={{marginRight: 8}}

@@ -8,45 +8,17 @@ import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
 import CustomTable from "@/component/CustomTable";
 import Input from "antd/lib/input/Input";
-import {Checkbox} from "antd";
 import Button from "antd/lib/button";
-import {
-    CopyOutlined, EditOutlined,
-    FileExcelOutlined,
-    RetweetOutlined,
-    SaveOutlined, SearchOutlined,
-} from "@ant-design/icons";
+import {CopyOutlined, FileExcelOutlined, SearchOutlined,} from "@ant-design/icons";
 import {transformData} from "@/utils/common/common";
 import * as XLSX from "xlsx";
 import message from "antd/lib/message";
-import Select from "antd/lib/select";
 
 
-import {
-    modalCodeDiplomaColumn,
-    OrderWriteColumn,
-    rfqReadColumns,
-    rfqWriteColumns, subCodeDiplomaColumns,
-    subInvenReadColumns,
-    subOrderReadColumns, tableCodeDiplomaColumns, TableCodeErpColumns
-} from "@/utils/columnList";
+import {tableCodeDiplomaColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {
-    agencyReadInitial, codeDiplomaInitial, codeErpSaveInitial,
-    invenReadInitial, modalCodeDiplomaInitial,
-    orderReadInitial, SubCodeDiplomaInitial,
-    subRfqReadInitial,
-    subRfqWriteInitial, tableCodeDiplomaInitial
-} from "@/utils/initialList";
-import {
-    modalCodeDiplomaInfo,
-    subCodeDiplomaInfo,
-    subInvenReadInfo,
-    subOrderReadInfo,
-    subRfqReadInfo,
-    subRfqWriteInfo, tableCodeDiplomaInfo, tableCodeErpInfo
-} from "@/utils/modalDataList";
-import CodeErpUserManage from "@/pages/code_erpUser_manage";
+import {codeDiplomaInitial, modalCodeDiplomaInitial, tableCodeDiplomaInitial} from "@/utils/initialList";
+import {modalCodeDiplomaInfo, tableCodeDiplomaInfo} from "@/utils/modalDataList";
 import TableModal from "@/utils/TableModal";
 
 

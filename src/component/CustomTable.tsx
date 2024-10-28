@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useRef, useState} from 'react';
 import Table from 'antd/lib/table';
 import Card from 'antd/lib/card/Card';
 import Select from 'antd/lib/select';
@@ -6,8 +6,6 @@ import Pagination from 'antd/lib/pagination';
 import message from "antd/lib/message";
 import ColumnSetting from "@/component/ColumnSetting";
 import {EditableCell, EditableRow} from "@/component/TableAboutRows";
-import {DropArea} from "@/styled/common";
-import {useDropzone} from "react-dropzone";
 import * as XLSX from 'xlsx';
 import {InboxOutlined} from "@ant-design/icons";
 import Upload from "antd/lib/upload";
@@ -18,7 +16,7 @@ import {transformData} from "@/utils/common/common";
 const {Option} = Select;
 const {Dragger} = Upload;
 const CustomTable = ({columns, info, setDatabase, content, subContent, rowSelection, listType, excel = false, pageInfo, setPaginationInfo, setTableInfo, visible}:any) => {
-    const defaultCheckedList = columns.map((item) => item.key);
+    const defaultCheckedList = columns?.map((item) => item.key);
     const [checkedList, setCheckedList] = useState(defaultCheckedList);
 
 
@@ -168,8 +166,7 @@ const CustomTable = ({columns, info, setDatabase, content, subContent, rowSelect
                        bordered
                        pagination={false}
                        columns={setColumns}
-                       // dataSource={[...info]}
-                       dataSource={[...info??[]]}
+                       dataSource={[...info]}
                        components={components}
                        rowClassName={() => 'editable-row'}
                        rowSelection={{
