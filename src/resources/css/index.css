@@ -73,10 +73,12 @@ html, body {
 
 /* 스타일 정의 */
 .ellipsis-cell {
+    font-size : 12px;
     white-space: nowrap;        /* 텍스트를 한 줄로 유지 */
     overflow: hidden;           /* 넘치는 텍스트 숨김 */
     text-overflow: ellipsis;    /* 초과 텍스트를 '...' 처리 */
     max-width: 350px;           /* 원하는 최대 너비 설정 */
+
 }
 
 
@@ -97,4 +99,9 @@ html, body {
 }
 .hoverText:hover {
     color : blue;
+}
+
+/* 짝수 행의 배경색을 다르게 설정 */
+.editable-row {
+    background-color: #f5f5f5; /* 원하는 색상으로 설정 */
 }

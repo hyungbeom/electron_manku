@@ -1,6 +1,5 @@
-import {spans} from "next/dist/build/webpack/plugins/profiling-plugin";
 import moment from "moment";
-import {orderStockInitial} from "@/utils/initialList";
+import {convertDateTimeToKoreanFormat} from "@/utils/common/convertTimeToKoreanFormat";
 
 const makeAbsoluteUrl = (url) => {
     if (!/^https?:\/\//i.test(url)) {
@@ -451,6 +450,8 @@ export const rfqReadColumns = [
         dataIndex: 'writtenDate',
         key: 'writtenDate',
         fixed: 'left',
+        align : 'center',
+        render: (text) => <div style={{width : 90}} className="ellipsis-cell">{text}</div>,
 
     },
     {
@@ -458,67 +459,92 @@ export const rfqReadColumns = [
         dataIndex: 'agencyName',
         key: 'agencyName',
         fixed: 'left',
+        align : 'center',
+        render: (text) => <div style={{width : 90}} className="ellipsis-cell">{text}</div>,
     },
     {
         title: '문서번호',
         dataIndex: 'documentNumber',
         key: 'documentNumber',
+        align : 'center',
+        render: (text) => <div style={{width : 70}} className="ellipsis-cell">{text}</div>,
     },
     {
         title: 'MAKER',
         dataIndex: 'maker',
         key: 'maker',
+        align : 'center',
+        render: (text) => <div style={{width : 90}} className="ellipsis-cell">{text}</div>,
     },
     {
         title: 'ITEM',
         dataIndex: 'item',
         key: 'item',
+        align : 'center',
+        render: (text) => <div style={{width : 90}} className="ellipsis-cell">{text}</div>,
     },{
         title: 'MODEL',
         dataIndex: 'model',
         key: 'model',
+        align : 'center',
+        render: (text) => <div style={{width : 90}} className="ellipsis-cell">{text}</div>,
     },
     {
         title: '수량',
         dataIndex: 'quantity',
         key: 'quantity',
-        fixed: 'left',
+        align : 'center',
+        render: (text) => <div style={{width : 25, text}} className="ellipsis-cell">{text}</div>,
     },
 
     {
         title: '단위',
         dataIndex: 'unit',
         key: 'unit',
+        align : 'center',
+        render: (text) => <div style={{width : 25, text}} className="ellipsis-cell">{text}</div>,
     },
     {
         title: 'CURR',
         dataIndex: 'currency',
         key: 'currency',
+        align : 'center',
+        render: (text) => <div style={{width : 40, text}} className="ellipsis-cell">{text}</div>,
 
     },
     {
         title: 'NET/P',
         dataIndex: 'net',
         key: 'net',
-
+        align : 'center',
+        render: (text) => <div style={{width : 40, text}} className="ellipsis-cell">{text}</div>,
     },   {
         title: '납기',
         dataIndex: 'replyDate',
         key: 'replyDate',
+        align : 'center',
+        render: (text) => <div style={{width : 40, text}} className="ellipsis-cell">{text}</div>,
     },    {
         title: '내용',
         dataIndex: 'content',
         key: 'content',
+        align : 'center',
+        render: (text) => <div style={{width : 40, text}} className="ellipsis-cell">{text}</div>,
     },  {
         title: '등록자',
-        dataIndex: 'managerName',
-        key: 'managerName',
+        dataIndex: 'createdBy',
+        key: 'createdBy',
+        align : 'center',
+        render: (text) => <div style={{width : 40, text}} className="ellipsis-cell">{text}</div>,
     },
     {
         title: '수정일자',
         dataIndex: 'modifiedDate',
         key: 'modifiedDate',
         fixed: 'right',
+        align : 'center',
+
+        render: (text) => <div style={{width : 150}} className="ellipsis-cell">{convertDateTimeToKoreanFormat(text)}</div>,
     }
 ];
 

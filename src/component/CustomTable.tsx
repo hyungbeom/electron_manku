@@ -168,7 +168,7 @@ const CustomTable = ({columns, info, setDatabase, content, subContent, rowSelect
                        columns={setColumns}
                        dataSource={[...info]}
                        components={components}
-                       rowClassName={() => 'editable-row'}
+                       rowClassName={(record, index) => (!record?.children ? 'editable-row' : '')}
                        rowSelection={{
                            type: 'checkbox',
                            ...rowSelection,

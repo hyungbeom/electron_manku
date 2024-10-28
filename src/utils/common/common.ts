@@ -5,17 +5,19 @@ export const transformData = (data) => {
     const groupedData = {};
 
     data.forEach((item) => {
-        const { agencyName } = item;
+        const { estimateRequestId } = item;
 
         // 기존에 같은 agencyName이 있는지 확인
-        if (!groupedData[agencyName]) {
+        if (!groupedData[estimateRequestId]) {
             // 같은 agencyName이 없으면 초기화
-            groupedData[agencyName] = {
+            groupedData[estimateRequestId] = {
                 key: item.key,
-                agencyName: agencyName,
+                agencyName: item.agencyName,
                 writtenDate: item.writtenDate,
                 documentNumber: item.documentNumberFull,
+                estimateRequestId: item.estimateRequestId,
                 managerName: item.managerName,
+                createdBy: item.createdBy,
                 modifiedDate: item.modifiedDate,
                 maker: item.maker,
                 item: item.item,
@@ -46,6 +48,7 @@ export const transformData = (data) => {
         if(item.estimateRequestDetailList){
         childrenData = item.estimateRequestDetailList.map((detail) => ({
             key: detail.estimateRequestDetailId,
+            estimateRequestDetailId: detail.estimateRequestDetailId,
             content: detail.content,
             estimateRequestId: detail.estimateRequestId,
             model: detail.model,
@@ -64,7 +67,7 @@ export const transformData = (data) => {
 
         // 같은 agencyName에 하위 데이터를 children으로 추가
         // groupedData[agencyName].children.push(...childrenData);
-        groupedData[agencyName].children.push(...childrenData??[]);
+        groupedData[estimateRequestId].children.push(...childrenData??[]);
     });
 
     // groupedData 객체를 배열 형태로 변환

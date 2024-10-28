@@ -24,12 +24,13 @@ const {RangePicker} = DatePicker
 export default function rfqRead({dataList}) {
     let checkList = []
 
+
     const {estimateRequestList, pageInfo} = dataList;
     const [info, setInfo] = useState(subRfqReadInitial)
     const [tableInfo, setTableInfo] = useState(estimateRequestList)
     const [paginationInfo, setPaginationInfo] = useState(pageInfo)
 
-    console.log(pageInfo,'pageInfo:')
+
     function onChange(e) {
 
         let bowl = {}
@@ -189,9 +190,21 @@ export default function rfqRead({dataList}) {
 export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
 
 
+
     let param = {}
 
-    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
+    const {userInfo} = await initialServerRouter(ctx, store);
+
+    if (!userInfo) {
+        return {
+            redirect: {
+                destination: '/', // 리다이렉트할 경로
+                permanent: false, // true면 301 리다이렉트, false면 302 리다이렉트
+            },
+        };
+    }
+
+    store.dispatch(setUserInfo(userInfo));
 
     const result = await getData.post('estimate/getEstimateRequestList', {
         "searchEstimateRequestId": "",      // 견적의뢰 Id
@@ -212,23 +225,8 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     });
 
 
-    if (userInfo) {
-        store.dispatch(setUserInfo(userInfo));
-    }
-    if (codeInfo !== 1) {
-        param = {
-            redirect: {
-                destination: '/', // 리다이렉트할 대상 페이지
-                permanent: false, // true로 설정하면 301 영구 리다이렉트, false면 302 임시 리다이렉트
-            },
-        };
-    } else {
-        // result?.data?.entity?.estimateRequestList
-        param = {
-            props: {dataList: result?.data?.entity}
-        }
-    }
 
-
-    return param
+    return {
+        props: {dataList: result?.data?.entity}
+    }
 })
