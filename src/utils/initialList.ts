@@ -72,17 +72,16 @@ export const rfqWriteInitial = {
 }
 
 export const subRfqWriteInitial = {
-    "model": "model",           // MODEL
+    "model": "",           // MODEL
     "quantity": 1,              // 수량
     "unit": "ea",               // 단위
     "currency": "krw",          // CURR
     "net": 60000.00,            // NET/P
     "deliveryDate": "3weeks",   // 납기
     "content": "미회신",         // 내용
-    "replyDate": "2024-10-24",  // 회신일
+    "replyDate": "",  // 회신일
     "remarks": "비고",           // 비고
     "serialNumber": 0           // 견적의뢰 내역 순서 (1부터 시작)
-
 }
 
 export const tableOrderWriteInitial = {
