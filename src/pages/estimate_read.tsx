@@ -50,6 +50,7 @@ export default function EstimateRead({dataList}) {
         copyData['searchDate'] = [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
         setInfo(copyData);
         setTableInfo(transformData(estimateList));
+
     }, [])
 
     async function searchInfo() {
