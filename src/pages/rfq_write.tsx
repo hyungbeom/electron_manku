@@ -43,12 +43,12 @@ export default function rqfWrite({dataInfo}) {
 
     useEffect(() => {
 
-        let copyData:any = {...rfqWriteInitial}
+        let copyData: any = {...rfqWriteInitial}
 
-        if(dataInfo){
+        if (dataInfo) {
             copyData = dataInfo;
             copyData['writtenDate'] = moment(copyData['writtenDate']);
-        }else{
+        } else {
             // @ts-ignored
             copyData['writtenDate'] = moment();
         }
@@ -76,9 +76,9 @@ export default function rqfWrite({dataInfo}) {
             copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
 
             await getData.post('estimate/addEstimateRequest', copyData).then(v => {
-              if(v.data.code === 1){
+                if (v.data.code === 1) {
                     message.success('저장에 성공하셨습니다')
-              }
+                }
             });
         }
     }
@@ -395,16 +395,18 @@ export default function rqfWrite({dataInfo}) {
 
 
                         <div style={{paddingTop: 20, textAlign: 'right'}}>
-                           {/*@ts-ignored*/}
+                            {/*@ts-ignored*/}
                             {dataInfo ? <Button type={'danger'} style={{marginRight: 8}}
-                                                onClick={saveFunc}><SaveOutlined/>수정</Button> : <Button type={'primary'} style={{marginRight: 8}}
-                                     onClick={saveFunc}><SaveOutlined/>신규</Button>}
+                                                onClick={saveFunc}><SaveOutlined/>수정</Button> :
+                                <Button type={'primary'} style={{marginRight: 8}}
+                                        onClick={saveFunc}><SaveOutlined/>신규</Button>}
 
 
                             {dataInfo ? <Button type={'primary'} style={{marginRight: 8}}
-                                                // @ts-ignored
-                                                onClick={()=>router?.push('/rfq_write')}><SaveOutlined/>신규</Button> :  <Button type={'danger'}
-                                                                                                         onClick={() => setInfo(rfqWriteInitial)}><RetweetOutlined/>초기화</Button>}
+                                    // @ts-ignored
+                                                onClick={() => router?.push('/rfq_write')}><SaveOutlined/>신규</Button> :
+                                <Button type={'danger'}
+                                        onClick={() => setInfo(rfqWriteInitial)}><RetweetOutlined/>초기화</Button>}
 
                         </div>
                     </Card>
@@ -456,10 +458,10 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     store.dispatch(setUserInfo(userInfo));
 
-    const { estimateRequestId } = ctx.query;
+    const {estimateRequestId} = ctx.query;
 
 
-   const result = await getData.post('estimate/getEstimateRequestList', {
+    const result = await getData.post('estimate/getEstimateRequestList', {
         "searchEstimateRequestId": estimateRequestId,      // 견적의뢰 Id
         "searchType": "",                   // 검색조건 1: 회신, 2: 미회신
         "searchStartDate": "2024-08-01",              // 작성일자 시작일
@@ -478,7 +480,5 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     });
 
 
-
-
-    return {props : {dataInfo : estimateRequestId?  result?.data?.entity?.estimateRequestList[0]: null}}
+    return {props: {dataInfo: estimateRequestId ? result?.data?.entity?.estimateRequestList[0] : null}}
 })
