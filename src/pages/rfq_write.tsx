@@ -43,7 +43,7 @@ export default function rqfWrite({dataInfo}) {
 
     useEffect(() => {
 
-        let copyData = {...rfqWriteInitial}
+        let copyData:any = {...rfqWriteInitial}
 
         if(dataInfo){
             copyData = dataInfo;
@@ -393,13 +393,16 @@ export default function rqfWrite({dataInfo}) {
                                       size={'small'}/>
                         </div>
 
+
                         <div style={{paddingTop: 20, textAlign: 'right'}}>
+                           {/*@ts-ignored*/}
                             {dataInfo ? <Button type={'danger'} style={{marginRight: 8}}
                                                 onClick={saveFunc}><SaveOutlined/>수정</Button> : <Button type={'primary'} style={{marginRight: 8}}
                                      onClick={saveFunc}><SaveOutlined/>신규</Button>}
 
 
                             {dataInfo ? <Button type={'primary'} style={{marginRight: 8}}
+                                                // @ts-ignored
                                                 onClick={()=>router?.push('/rfq_write')}><SaveOutlined/>신규</Button> :  <Button type={'danger'}
                                                                                                          onClick={() => setInfo(rfqWriteInitial)}><RetweetOutlined/>초기화</Button>}
 
