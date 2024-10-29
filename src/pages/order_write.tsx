@@ -88,7 +88,7 @@ export default function OrderWriter({dataInfo}) {
             });
         }
         setInfo(orderWriteInitial);
-        setInfo(prev=>(prev.orderDetailList=tableOrderWriteInitial));
+        // setInfo(prev=>(prev.orderDetailList=tableOrderWriteInitial));
     }
 
     function findAgency() {
@@ -380,12 +380,12 @@ export default function OrderWriter({dataInfo}) {
                     }}>
                         <div style={{paddingTop: 8}}>
                             <div style={{paddingBottom: 3}}>Payment Terms</div>
-                            <Select id={'paymentTerms'} size={'small'} defaultValue={0} options={[
-                                {value: 0, label: 'By in advance T/T'},
-                                {value: 1, label: 'Credit Card'},
-                                {value: 2, label: 'L/C'},
-                                {value: 3, label: 'Order 30% Before Shipping 70%'},
-                                {value: 4, label: 'Order 50% Before Shipping 50%'},
+                            <Select id={'paymentTerms'} size={'small'} defaultValue={'0'} options={[
+                                {value: '0', label: 'By in advance T/T'},
+                                {value: '1', label: 'Credit Card'},
+                                {value: '2', label: 'L/C'},
+                                {value: '3', label: 'Order 30% Before Shipping 70%'},
+                                {value: '4', label: 'Order 50% Before Shipping 50%'},
                             ]} style={{width : '100%'}}>
                             </Select>
                         </div>
