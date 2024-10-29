@@ -3,6 +3,10 @@ import {useRouter} from "next/router";
 import Tabs from "antd/lib/tabs";
 import Login from "@/component/account/Login";
 import SignUp from "@/component/account/SignUp";
+import {wrapper} from "@/store/store";
+import initialServerRouter from "@/manage/function/initialServerRouter";
+import {setUserInfo} from "@/store/user/userSlice";
+import {getData} from "@/manage/function/api";
 
 export default function Home(props) {
 
@@ -82,10 +86,27 @@ export default function Home(props) {
 }
 
 
-export async function getServerSideProps() {
+
+// @ts-ignore
+export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
+
+
+    let param = {}
+
+    const {userInfo} = await initialServerRouter(ctx, store);
+
+    if (userInfo) {
+        return {
+            redirect: {
+                destination: '/main', // 리다이렉트할 경로
+                permanent: false, // true면 301 리다이렉트, false면 302 리다이렉트
+            },
+        };
+    }
+
+
 
     return {
-        props: {},
-    };
-}
-
+        props: {}
+    }
+})

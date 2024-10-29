@@ -17,12 +17,14 @@ import {getData} from "@/manage/function/api";
 import moment from "moment";
 import * as XLSX from "xlsx";
 import {transformData} from "@/utils/common/common";
+import {useRouter} from "next/router";
 
 const {RangePicker} = DatePicker
 
 
 export default function rfqRead({dataList}) {
     let checkList = []
+
 
 
     const {estimateRequestList, pageInfo} = dataList;
@@ -47,7 +49,6 @@ export default function rfqRead({dataList}) {
         setInfo(copyData);
         setTableInfo(transformData(estimateRequestList, 'estimateRequestId', 'estimateRequestDetailList'));
     }, [])
-
 
 
     async function searchInfo() {
@@ -79,9 +80,10 @@ export default function rfqRead({dataList}) {
 
     const rowSelection = {
         onChange: (selectedRowKeys, selectedRows) => {
-
-            checkList  = selectedRowKeys
-
+            checkList = selectedRowKeys
+        },
+        onDoubleClick: (src) => {
+            console.log(src, ':::')
         },
         getCheckboxProps: (record) => ({
             disabled: record?.name === 'Disabled User',
@@ -190,7 +192,6 @@ export default function rfqRead({dataList}) {
 export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
 
 
-
     let param = {}
 
     const {userInfo} = await initialServerRouter(ctx, store);
@@ -223,7 +224,6 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
         "page": 1,
         "limit": 10
     });
-
 
 
     return {

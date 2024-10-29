@@ -12,15 +12,29 @@ import Upload from "antd/lib/upload";
 import {getData} from "@/manage/function/api";
 import {transformData} from "@/utils/common/common";
 import Tag from "antd/lib/tag";
+import {useRouter} from "next/router";
 
 
 const {Option} = Select;
 const {Dragger} = Upload;
-const CustomTable = ({columns, info, setDatabase, content, subContent, rowSelection, listType, excel = false, pageInfo, setPaginationInfo, setTableInfo, visible}:any) => {
+const CustomTable = ({
+                         columns,
+                         info,
+                         setDatabase,
+                         content,
+                         subContent,
+                         rowSelection,
+                         listType,
+                         excel = false,
+                         pageInfo,
+                         setPaginationInfo,
+                         setTableInfo,
+                         visible
+                     }: any) => {
     const defaultCheckedList = columns?.map((item) => item.key);
     const [checkedList, setCheckedList] = useState(defaultCheckedList);
 
-    console.log(info,'info:')
+    const router = useRouter();
 
     // 엑셀 파일을 읽어들이는 함수
     const handleFile = (file) => {
@@ -43,7 +57,7 @@ const CustomTable = ({columns, info, setDatabase, content, subContent, rowSelect
 
 
             // 테이블 데이터 설정 (컬럼 키를 사용)
-            const tableData = dataRows.map((row, index):any => {
+            const tableData = dataRows.map((row, index): any => {
                 const rowData = {};
                 // @ts-ignored
                 row?.forEach((cell, cellIndex) => {
@@ -144,7 +158,10 @@ const CustomTable = ({columns, info, setDatabase, content, subContent, rowSelect
         // setTableInfo(transformData(result?.data?.entity?.estimateRequestList))
     }
 
-
+    const handleRowDoubleClick = (record) => {
+        router.push(`/rfq_write?estimateRequestId=${record?.estimateRequestId}`)
+        // 여기에 더블 클릭 시 실행할 로직을 추가하세요.
+    };
     return (
         <div style={{overflow: 'auto', maxHeight: '100%', maxWidth: '100%'}}>
             <Card size={'small'} style={{border: '1px solid lightGray', height: '100%'}}
@@ -168,37 +185,47 @@ const CustomTable = ({columns, info, setDatabase, content, subContent, rowSelect
                        bordered
                        pagination={false}
                        columns={setColumns}
+                       onRow={(record) => ({
+
+                           onDoubleClick: () => {
+                               if (!excel) handleRowDoubleClick(record)
+                           },
+                       })}
                        dataSource={[...info]}
                        components={components}
-                       footer={(src:any)=> {
+                       footer={(src: any) => {
 
-                           console.log(listType,'listType:')
-                           if(listType  !==  'estimateDetailList'){
+
+                           if (listType !== 'estimateDetailList') {
                                return null;
                            }
 
-                          const result = src.reduce((acc, cur, idx)=>{
-                                const {quantity, unitPrice, amount} = cur;
-                                return {quantity : acc['quantity'] + parseInt(quantity), unitPrice : acc['unitPrice'] + parseInt(unitPrice), amount : acc['amount'] + parseInt(amount)}
-                           },{quantity : 0, unitPrice : 0, amount : 0})
+                           const result = src.reduce((acc, cur, idx) => {
+                               const {quantity, unitPrice, amount} = cur;
+                               return {
+                                   quantity: acc['quantity'] + parseInt(quantity),
+                                   unitPrice: acc['unitPrice'] + parseInt(unitPrice),
+                                   amount: acc['amount'] + parseInt(amount)
+                               }
+                           }, {quantity: 0, unitPrice: 0, amount: 0})
 
 
-                          return <div style={{textAlign : 'center'}}>
-                              <span style={{padding : '0 10px'}}>총수량</span>
-                              <Tag color={'red'}>
-                                  {result['quantity']}
-                              </Tag>
+                           return <div style={{textAlign: 'center'}}>
+                               <span style={{padding: '0 10px'}}>총수량</span>
+                               <Tag color={'red'}>
+                                   {result['quantity']}
+                               </Tag>
 
-                              <span style={{padding : '0 10px'}}>총단가</span>
-                              <Tag color={'red'}>
-                                  {result['unitPrice']}
-                              </Tag>
+                               <span style={{padding: '0 10px'}}>총단가</span>
+                               <Tag color={'red'}>
+                                   {result['unitPrice']}
+                               </Tag>
 
-                              <span style={{padding : '0 10px'}}>총금액</span>
-                              <Tag color={'blue'}>
-                                  {result['amount']}
-                              </Tag>
-                          </div>
+                               <span style={{padding: '0 10px'}}>총금액</span>
+                               <Tag color={'blue'}>
+                                   {result['amount']}
+                               </Tag>
+                           </div>
                        }}
                        rowClassName={(record, index) => (!record?.children ? 'editable-row' : '')}
                        rowSelection={{
@@ -208,8 +235,8 @@ const CustomTable = ({columns, info, setDatabase, content, subContent, rowSelect
                 />
                 {/*@ts-ignored*/}
                 {visible && <Pagination value={pageInfo['page']} total={pageInfo['totalRow']}
-                             style={{float: 'right', paddingTop: 25}} pageSize={pageInfo['rowPerPage']}
-                             onChange={check}/>}
+                                        style={{float: 'right', paddingTop: 25}} pageSize={pageInfo['rowPerPage']}
+                                        onChange={check}/>}
 
                 {excel && <Dragger {...uploadProps} style={{marginBottom: '20px'}}>
                     <p className="ant-upload-drag-icon">

@@ -22,6 +22,7 @@ import Table from "antd/lib/table";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import * as XLSX from 'xlsx';
 import MyComponent from "@/component/MyComponent";
+import {useRouter} from "next/router";
 
 const TwinInputBox = ({children}) => {
     return <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: 5, paddingTop: 8}}>
@@ -29,7 +30,9 @@ const TwinInputBox = ({children}) => {
     </div>
 }
 
-export default function rqfWrite() {
+export default function rqfWrite({dataInfo}) {
+
+    const router = useRouter();
 
     let checkList = []
 
@@ -42,10 +45,17 @@ export default function rqfWrite() {
 
         let copyData = {...rfqWriteInitial}
 
-        // @ts-ignored
-        copyData['writtenDate'] = moment();
+        if(dataInfo){
+            copyData = dataInfo;
+            copyData['writtenDate'] = moment(copyData['writtenDate']);
+        }else{
+            // @ts-ignored
+            copyData['writtenDate'] = moment();
+        }
+
+
         setInfo(copyData);
-    }, [])
+    }, [dataInfo, router])
 
 
     function onChange(e) {
@@ -384,11 +394,15 @@ export default function rqfWrite() {
                         </div>
 
                         <div style={{paddingTop: 20, textAlign: 'right'}}>
-                            <Button type={'primary'} style={{marginRight: 8}}
-                                    onClick={saveFunc}><SaveOutlined/>저장</Button>
-                            {/*@ts-ignored*/}
-                            <Button type={'danger'}
-                                    onClick={() => setInfo(rfqWriteInitial)}><RetweetOutlined/>초기화</Button>
+                            {dataInfo ? <Button type={'danger'} style={{marginRight: 8}}
+                                                onClick={saveFunc}><SaveOutlined/>수정</Button> : <Button type={'primary'} style={{marginRight: 8}}
+                                     onClick={saveFunc}><SaveOutlined/>신규</Button>}
+
+
+                            {dataInfo ? <Button type={'primary'} style={{marginRight: 8}}
+                                                onClick={()=>router?.push('/rfq_write')}><SaveOutlined/>신규</Button> :  <Button type={'danger'}
+                                                                                                         onClick={() => setInfo(rfqWriteInitial)}><RetweetOutlined/>초기화</Button>}
+
                         </div>
                     </Card>
                 </Card>
@@ -439,6 +453,29 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     store.dispatch(setUserInfo(userInfo));
 
+    const { estimateRequestId } = ctx.query;
 
-    return param
+
+   const result = await getData.post('estimate/getEstimateRequestList', {
+        "searchEstimateRequestId": estimateRequestId,      // 견적의뢰 Id
+        "searchType": "",                   // 검색조건 1: 회신, 2: 미회신
+        "searchStartDate": "2024-08-01",              // 작성일자 시작일
+        "searchEndDate": "2024-12-31",                // 작성일자 종료일
+        "searchDocumentNumber": "",         // 문서번호
+        "searchCustomerName": "",           // 거래처명
+        "searchMaker": "",                  // MAKER
+        "searchModel": "",                  // MODEL
+        "searchItem": "",                   // ITEM
+        "searchCreatedBy": "",              // 등록직원명
+        "searchManagerName": "",            // 담당자명
+        "searchMobileNumber": "",           // 담당자 연락처
+        "searchBiddingNumber": "",          // 입찰번호(미완성)
+        "page": 1,
+        "limit": 100000
+    });
+
+
+
+
+    return {props : {dataInfo : estimateRequestId?  result?.data?.entity?.estimateRequestList[0]: null}}
 })

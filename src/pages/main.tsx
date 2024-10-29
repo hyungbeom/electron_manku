@@ -140,8 +140,8 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
 
     const result = await getData.post('order/getOrderListByMonth', {
-        "year": year,     // 조회년도
-        "month": month,       // 조회월
+        "year": '2024',     // 조회년도
+        "month": '10',       // 조회월
 
         "searchDocumentNumber": "",     // 문서번호 검색
         "searchCustomerName": ""        // 거래처명 검색
@@ -150,7 +150,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     return {
         props: {
-            dataList: result.data.entity?.ordersCalendar,
+            dataList: result.data?.entity?.ordersCalendar,
             date : {year : year, month : month}
         }
     }
