@@ -402,9 +402,8 @@ export default function rqfWrite({dataInfo}) {
                                         onClick={saveFunc}><SaveOutlined/>신규</Button>}
 
 
-                            {dataInfo ? <Button type={'primary'} style={{marginRight: 8}}
+                            {dataInfo ? <Button type={'primary'} style={{marginRight: 8}}onClick={() => router?.push('/rfq_write')}><SaveOutlined/>신규</Button> :
                                     // @ts-ignored
-                                                onClick={() => router?.push('/rfq_write')}><SaveOutlined/>신규</Button> :
                                 <Button type={'danger'}
                                         onClick={() => setInfo(rfqWriteInitial)}><RetweetOutlined/>초기화</Button>}
 
