@@ -3,18 +3,11 @@ import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
 import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
-import {
-    CopyOutlined, FileExcelOutlined,
-    SearchOutlined
-} from "@ant-design/icons";
+import {CopyOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
 import {tableOrderReadColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {
-    orderReadInitial,
-    subRfqReadInitial,
-    tableOrderReadInitial
-} from "@/utils/initialList";
+import {orderReadInitial, tableOrderReadInitial} from "@/utils/initialList";
 import {tableOrderReadInfo} from "@/utils/modalDataList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
@@ -40,7 +33,7 @@ export default function OrderRead({dataList}) {
     const [tableInfo, setTableInfo] = useState(orderList)
     const [paginationInfo, setPaginationInfo] = useState(pageInfo)
 
-    console.log(orderList,'orderList:')
+    // console.log(orderList,'orderList:')
     function onChange(e) {
 
         let bowl = {}
@@ -55,7 +48,7 @@ export default function OrderRead({dataList}) {
         const copyData: any = {...info}
         copyData['searchDate'] = [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
         setInfo(copyData);
-        // setTableInfo(transformData(orderList));
+        setTableInfo(transformData(orderList, 'orderId', 'orderDetailList'));
     }, [])
 
 
@@ -68,7 +61,7 @@ export default function OrderRead({dataList}) {
             copyData['searchEndDate'] = writtenDate[1];
         }
         const result = await getData.post('order/getOrderList', copyData);
-        // setTableInfo(transformData(result?.data?.entity?.orderList));
+        setTableInfo(transformData(result?.data?.entity?.orderList, 'orderId', 'orderDetailList'));
     }
 
     function deleteList() {
@@ -151,7 +144,7 @@ export default function OrderRead({dataList}) {
                     </Card>
                     <div style={{paddingTop: 20, textAlign: 'right'}}>
                         <Button type={'primary'} style={{marginRight: 8}}
-                                onClick={searchInfo}><SearchOutlined />검색</Button>
+                                onClick={searchInfo}><SearchOutlined />조회</Button>
                     </div>
                 </Card>
 

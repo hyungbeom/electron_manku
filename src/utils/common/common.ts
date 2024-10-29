@@ -69,6 +69,56 @@ const rfqRead = (src) => {
   }
 }
 
+const orderRead = (src) => {
+    return {
+        key: src.key,
+        orderId: src.orderId,
+        documentNumberFull: src.documentNumberFull,
+        agencyCode: src.agencyCode,
+        customerName: src.customerName,
+        managerId: src.managerId,
+        managerPhoneNumber: src.managerPhoneNumber,
+        managerFaxNumber: src.managerFaxNumber,
+        managerEmail: src.managerEmail,
+        paymentTerms: src.paymentTerms,
+        packing: src.packing,
+        deliveryTerms: src.deliveryTerms,
+        inspection: src.inspection,
+        maker: src.maker,
+        item: src.item,
+        delivery: src.delivery,
+        remarks: src.remarks,
+        createdBy: src.createdBy,
+        createdDate: src.createdDate,
+        modifiedBy: src.modifiedBy,
+        modifiedDate: src.modifiedDate,
+        estimateManager: src.estimateManager,
+        yourPoNo: src.yourPoNo,
+        children: [],
+    }
+}
+
+const orderDetailRead = (detail) => {
+    return {
+        key: detail.orderDetailId,
+        orderId: detail.orderId,
+        orderDetailId: detail.orderDetailId,
+        model: detail.model,
+        quantity: detail.quantity,
+        unit: detail.unit,
+        currency: detail.currency,
+        net: detail.net,
+        unitPrice: detail.unitPrice,
+        currencyUnit: detail.currencyUnit,
+        amount: detail.amount,
+        estimateDetailId: detail.estimateDetailId,
+        receivedQuantity: detail.receivedQuantity,
+        price: detail.price,
+        serialNumber: detail.serialNumber
+    }
+}
+
+
 const rfqDetailRead = (detail) => {
     return {
         key: detail.estimateRequestDetailId,
@@ -103,9 +153,12 @@ export const transformData = (data, type, listType) => {
                 case 'estimateId' :
                     groupedData[mainKey] = estimateRead(item);
                     break;
-                    //견적의뢰쪽
                 case 'estimateRequestId' :
-                    groupedData[mainKey] = rfqRead(item)
+                    groupedData[mainKey] = rfqRead(item);
+                    break;
+                case 'orderId':
+                    groupedData[mainKey] = orderRead(item);
+                    break;
             }
         }
 
@@ -117,9 +170,11 @@ export const transformData = (data, type, listType) => {
             case 'estimateId' :
                 childrenData = item[listType]?.map((detail) =>estimateDetailRead(detail))
                 break;
-            //견적의뢰쪽
             case 'estimateRequestId' :
                 childrenData = item[listType]?.map((detail) =>rfqDetailRead(detail));
+                break;
+            case 'orderId' :
+                childrenData = item[listType]?.map((detail) =>orderDetailRead(detail));
                 break;
         }
         // if(item[listType]){
