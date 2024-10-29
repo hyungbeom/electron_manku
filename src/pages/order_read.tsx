@@ -62,6 +62,7 @@ export default function OrderRead({dataList}) {
         }
         const result = await getData.post('order/getOrderList', copyData);
         setTableInfo(transformData(result?.data?.entity?.orderList, 'orderId', 'orderDetailList'));
+        setPaginationInfo(result?.data?.entity?.pageInfo)
     }
 
     function deleteList() {
@@ -185,9 +186,18 @@ export default function OrderRead({dataList}) {
 export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
 
 
-    let param = {}
+    const {userInfo} = await initialServerRouter(ctx, store);
 
-    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
+    if (!userInfo) {
+        return {
+            redirect: {
+                destination: '/', // 리다이렉트할 경로
+                permanent: false, // true면 301 리다이렉트, false면 302 리다이렉트
+            },
+        };
+    }
+
+    store.dispatch(setUserInfo(userInfo));
 
     const result = await getData.post('order/getOrderList', {
         "searchStartDate": "",          // 발주일자 검색 시작일
@@ -199,27 +209,11 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
         "searchItem": "",               // ITEM
         "searchEstimateManager": "",    // 견적서담당자명
         "page": 1,
-        "limit": 20
+        "limit": 10
     });
 
 
-    if (userInfo) {
-        store.dispatch(setUserInfo(userInfo));
+    return {
+        props: {dataList: result?.data?.entity}
     }
-    if (codeInfo !== 1) {
-        param = {
-            redirect: {
-                destination: '/', // 리다이렉트할 대상 페이지
-                permanent: false, // true로 설정하면 301 영구 리다이렉트, false면 302 임시 리다이렉트
-            },
-        };
-    } else {
-        // result?.data?.entity?.estimateRequestList
-        param = {
-            props: {dataList: result?.data?.entity}
-        }
-    }
-
-
-    return param
 })

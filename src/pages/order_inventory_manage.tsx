@@ -3,21 +3,12 @@ import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
 import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
-import {
-    CopyOutlined, FileExcelOutlined,
-    SearchOutlined
-} from "@ant-design/icons";
+import {CopyOutlined, DeleteOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
-import {
-    orderStockColumns,
-} from "@/utils/columnList";
+import {tableOrderInventoryColumns,} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {
-    orderStockInitial, tableOrderStockInitial,
-} from "@/utils/initialList";
-import {
-    orderStockInfo,
-} from "@/utils/modalDataList";
+import {inventoryReadInitial, tableOrderInventoryInitial,} from "@/utils/initialList";
+import {tableOrderInventoryInfo,} from "@/utils/modalDataList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
@@ -26,6 +17,7 @@ import moment from "moment";
 import {transformData} from "@/utils/common/common";
 import * as XLSX from "xlsx";
 import TableModal from "@/utils/TableModal";
+
 
 const {RangePicker} = DatePicker
 
@@ -37,21 +29,25 @@ const TwinInputBox = ({children}) => {
 
 export default function OrderInventoryRead({dataList}) {
 
-    let checkList = []
 
     const {inventoryList, pageInfo} = dataList;
-    const [info, setInfo] = useState(tableOrderStockInitial)
+    const [info, setInfo] = useState(tableOrderInventoryInitial)
+    const [readInfo, setReadInfo] = useState(inventoryReadInitial);
     const [tableInfo, setTableInfo] = useState(inventoryList)
     const [paginationInfo, setPaginationInfo] = useState(pageInfo)
-    const [modalOpen, setModalOpen] = useState(false);
 
-    console.log(pageInfo,'pageInfo:')
+    let checkList = []
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [itemId, setItemId] = useState(null);
+
+
     function onChange(e) {
 
         let bowl = {}
         bowl[e.target.id] = e.target.value;
 
-        setInfo(v => {
+        setReadInfo(v => {
             return {...v, ...bowl}
         })
     }
@@ -60,28 +56,48 @@ export default function OrderInventoryRead({dataList}) {
         const copyData: any = {...info}
         copyData['searchDate'] = [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
         setInfo(copyData);
-        setTableInfo(transformData(inventoryList, 'inventoryId', 'inventoryId'));
+
+        // setTableInfo(transformData(inventoryList, 'inventoryId', 'inventoryList'));
     }, [])
 
 
 
     async function searchInfo() {
-        const copyData: any = {...info}
-        const {searchDate}: any = copyData;
-        if (searchDate) {
-            copyData['searchStartDate'] = searchDate[0];
-            copyData['searchEndDate'] = searchDate[1];
-        }
+        const copyData: any = {...readInfo}
+        // const {searchDate}: any = copyData;
+        // if (searchDate) {
+        //     copyData['searchStartDate'] = searchDate[0];
+        //     copyData['searchEndDate'] = searchDate[1];
+        // }
+
         const result = await getData.post('inventory/getInventoryList', copyData);
-        setTableInfo(transformData(result?.data?.entity?.inventoryList, 'inventoryId', ''));
+        console.log(result?.data?.entity, 'result')
+        // setTableInfo(transformData(result?.data?.entity?.inventoryList, 'inventoryId', 'inventoryList'));
+        setTableInfo(result?.data?.entity?.inventoryList);
+        setPaginationInfo(result?.data?.entity?.pageInfo)
     }
 
-    function deleteList() {
-        let copyData = {...info}
-        const result = copyData['inventoryList'].filter(v => !checkList.includes(v.serialNumber))
 
-        copyData['inventoryList'] = result
-        setInfo(copyData);
+
+    async function deleteList() {
+        const copyData: any = {...tableInfo}
+        // @ts-ignore
+        const deleteItemList= Object.values(copyData).filter(v=>checkList.includes(v.key))
+
+        console.log(checkList,  "checkList")
+        console.log(deleteItemList,  "deleteItemList")
+
+        if (deleteItemList.length < 1)
+            alert('하나 이상의 항목을 선택해주세요.')
+        else {
+            // @ts-ignore
+            for (const v of deleteItemList) {await getData.post(`inventory/deleteInventory?inventoryId=${v.inventoryId}`).then(r=>{
+                if(r.data.code === 1)
+                    alert('삭제되었습니다.')
+            });
+            }
+        }
+        await searchInfo();
     }
 
     const downloadExcel = () => {
@@ -96,6 +112,7 @@ export default function OrderInventoryRead({dataList}) {
         onChange: (selectedRowKeys, selectedRows) => {
 
             checkList  = selectedRowKeys
+            // console.log(checkList, 'checkList')
 
         },
         getCheckboxProps: (record) => ({
@@ -104,7 +121,6 @@ export default function OrderInventoryRead({dataList}) {
             name: record.name,
         }),
     };
-
 
     return <>
         <LayoutComponent>
@@ -116,28 +132,28 @@ export default function OrderInventoryRead({dataList}) {
                     }}>
                         <div>
                             <div style={{paddingBottom: 3}}>MAKER</div>
-                            <Input id={'searchMaker'} value={info['searchMaker']} onChange={onChange} size={'small'}/>
+                            <Input id={'searchMaker'} value={readInfo['searchMaker']} onChange={onChange} size={'small'}/>
                         </div>
                         <div style={{marginTop: 8}}>
                             <div style={{paddingBottom: 3}}>MODEL</div>
-                            <Input id={'searchModel'} value={info['searchModel']} onChange={onChange} size={'small'}/>
+                            <Input id={'searchModel'} value={readInfo['searchModel']} onChange={onChange} size={'small'}/>
                         </div>
                         <div style={{marginTop:8}}>
                             <div style={{paddingBottom: 3}}>위치</div>
-                            <Input id={'searchLocation'}  value={info['searchLocation']} onChange={onChange} size={'small'}/>
+                            <Input id={'searchLocation'}  value={readInfo['searchLocation']} onChange={onChange} size={'small'}/>
                         </div>
 
 
                     </Card>
                     <div style={{paddingTop: 20, textAlign: 'right'}}>
                         <Button type={'primary'} style={{marginRight: 8}}
-                                onClick={searchInfo}><SearchOutlined/>검색</Button>
+                                onClick={searchInfo}><SearchOutlined/>조회</Button>
                     </div>
                 </Card>
 
-                <CustomTable columns={orderStockColumns}
-                             initial={tableOrderStockInitial}
-                             dataInfo={orderStockInfo}
+                <CustomTable columns={tableOrderInventoryColumns}
+                             initial={tableOrderInventoryInitial}
+                             dataInfo={tableOrderInventoryInfo}
                              visible={true}
                              info={tableInfo}
                              listType={'inventoryList'}
@@ -146,11 +162,15 @@ export default function OrderInventoryRead({dataList}) {
                              rowSelection={rowSelection}
                              pageInfo={paginationInfo}
                              setPaginationInfo={setPaginationInfo}
+                             setIsModalOpen={setIsModalOpen}
+                             setItemId={setItemId}
                              content={<TableModal listType={'inventoryList'} title={'재고 등록'}
-                                                  data={orderStockInitial}
-                                                  dataInfo={orderStockInfo}
+                                                  data={tableOrderInventoryInitial}
+                                                  dataInfo={tableOrderInventoryInfo}
                                                   setInfoList={setInfo}
-                                                  modalOpen={modalOpen}
+                                                  isModalOpen={isModalOpen}
+                                                  setIsModalOpen={setIsModalOpen}
+                                                  itemId={itemId}
                              />}
 
                              subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
@@ -158,7 +178,7 @@ export default function OrderInventoryRead({dataList}) {
                              </Button>
                                  {/*@ts-ignored*/}
                                  <Button type={'danger'} size={'small'} style={{fontSize: 11}} onClick={deleteList}>
-                                     <CopyOutlined/>삭제
+                                     <DeleteOutlined/>삭제
                                  </Button>
                                  <Button type={'dashed'} size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>
                                      <FileExcelOutlined/>출력
@@ -185,7 +205,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
         "searchModel": "",          // MODEL 검색
         "searchLocation": "",       // 위치 검색
         "page": 1,
-        "limit": 20
+        "limit": 10
     });
 
 

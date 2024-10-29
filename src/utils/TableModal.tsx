@@ -9,26 +9,43 @@ import Select from "antd/lib/select";
 import TextArea from "antd/lib/input/TextArea";
 import DatePicker from "antd/lib/date-picker";
 import moment from "moment";
+import {getData} from "@/manage/function/api";
+import message from "antd/lib/message";
+import {async} from "rxjs";
 
-export default function TableModal({title, data, dataInfo, setInfoList, listType, modalOpen}:any) {
-    const [isModalOpen, setIsModalOpen] = useState(false);
+export default function TableModal({title, data, dataInfo, setInfoList, listType,
+                                       isModalOpen=false, setIsModalOpen=undefined, itemId=null }:any) {
+    // const [isModalOpen, setIsModalOpen] = useState(false);
 
     const [info, setInfo] = useState<any>(data)
 
-    if(modalOpen)
-        setIsModalOpen(true)
 
-    const showModal = () => {
+    async function showModal () {
+        if (itemId!=null){
+            getListFunc(listType, itemId)
+        }
+
         setIsModalOpen(true);
-    };
+        console.log(dataInfo)
+    }
 
     const handleOk = () => {
 
-
         setInfoList(v => {
             let copyData = {...info}
+            copyData['replyDate'] = moment(info['replyDate']).format('YYYY-MM-DD');
+            copyData['receiptDate'] = moment(info['receiptDate']).format('YYYY-MM-DD');
+            copyData['remainingQuantity'] = info['receiptDate']-info['receiptDate'];
+
+            if(listType==='inventoryList'){
+                if(itemId===null){
+                    return saveFunc(listType, copyData)
+                }else {
+                    return updateFunc(listType, copyData)
+                }
+            }
+
             const copyData2 = {...v}
-            copyData['replyDate'] = moment(copyData['replyDate']).format('YYYY-MM-DD');
             console.log(copyData2,'copyData2:')
             copyData2[listType].push(copyData);
 
@@ -43,6 +60,54 @@ export default function TableModal({title, data, dataInfo, setInfoList, listType
         setIsModalOpen(false);
     };
 
+    async function getListFunc(listType, itemId){
+
+        let url=''
+
+        switch (listType){
+            case 'inventoryList':
+                url = `inventory/getInventoryList?searchInventoryId=${itemId}`
+                break;
+        }
+
+        const result=await getData.post(url);
+        setInfo(result?.data?.entity?.inventoryList[0])
+    }
+
+    async function saveFunc(listType, copyData){
+
+        let url=''
+
+        switch (listType){
+            case 'inventoryList':
+                url = 'inventory/addInventory'
+                break;
+        }
+
+        await getData.post(url, copyData).then(v => {
+            if (v.data.code === 1) {
+                message.success('저장되었습니다')
+            }
+        })
+    }
+
+    async function updateFunc(listType, copyData){
+
+        let url=''
+
+        switch (listType){
+            case 'inventoryList':
+                url = 'inventory/updateInventory'
+                break;
+        }
+
+        await getData.post(url, copyData).then(v => {
+            if (v.data.code === 1) {
+                message.success('수정되었습니다')
+            }
+        })
+    }
+
     const handleCancel = () => {
         setIsModalOpen(false);
     };
@@ -51,6 +116,9 @@ export default function TableModal({title, data, dataInfo, setInfoList, listType
     function inputChange(e) {
         let bowl = {};
         bowl[e.target.id] = e.target.value;
+
+        // console.log(e.target.id, 'e.target.id')
+
         setInfo(v => {
             return {...v, ...bowl}
         })
@@ -60,10 +128,9 @@ export default function TableModal({title, data, dataInfo, setInfoList, listType
         open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
         <Card title={title} style={{marginTop: 30}}>
             {Object.keys(data).map(v => {
-
                 switch (TagTypeList[v]?.type) {
                     case 'input' :
-                        return <div style={{paddingTop: 8}}>
+                        return <div style={{paddingTop: 8,}}>
                             <div>{dataInfo[v]?.title}</div>
                             <Input id={v} value={info[v]} onChange={inputChange}/>
                         </div>
@@ -99,3 +166,33 @@ export default function TableModal({title, data, dataInfo, setInfoList, listType
         </Card>
     </Modal></>
 }
+
+// @ts-ignored
+// export const getServerSideProps = wrapper.getStaticProps(( listType, itemId, store: any) => async (ctx: any) => {
+//
+//     let param = {}
+//
+//     // const {userInfo} = await initialServerRouter(ctx, store);
+//
+//     // if (!userInfo) {
+//     //     return {
+//     //         redirect: {
+//     //             destination: '/', // 리다이렉트할 경로
+//     //             permanent: false, // true면 301 리다이렉트, false면 302 리다이렉트
+//     //         },
+//     //     };
+//     // }
+//
+//     // store.dispatch(setUserInfo(userInfo));
+//
+//     if(listType==='inventoryList')
+//
+//
+//     const {orderId} = ctx.query;
+//
+//
+//     const result = await getData.post(`inventory/deleteInventory?inventoryId=${itemId}`);
+//
+//
+//     return {props: {dataInfo: orderId ? result?.data?.entity?.orderList[0] : null}}
+// })

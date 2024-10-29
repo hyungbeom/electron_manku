@@ -45,6 +45,7 @@ export default function rqfWrite({dataInfo}) {
 
     const userInfo = useAppSelector((state) => state.user);
     const [info, setInfo] = useState<any>(rfqWriteInitial)
+    const [isMainModalOpen, setIsMainModalOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
 
 
@@ -406,7 +407,7 @@ export default function rqfWrite({dataInfo}) {
                             {dataInfo ? <Button type={'danger'} style={{marginRight: 8}}
                                                 onClick={saveFunc}><SaveOutlined/>수정</Button> :
                                 <Button type={'primary'} style={{marginRight: 8}}
-                                        onClick={saveFunc}><SaveOutlined/>신규</Button>}
+                                        onClick={saveFunc}><SaveOutlined/>저장</Button>}
 
 
                             {dataInfo ? <Button type={'primary'} style={{marginRight: 8}}
@@ -424,10 +425,14 @@ export default function rqfWrite({dataInfo}) {
                              setDatabase={setInfo}
                              listType={'estimateRequestDetailList'}
                              excel={true}
+                             columns={subRfqWriteColumn}
                              content={<TableModal listType={'estimateRequestDetailList'} title={'견적의뢰 세부 작성'}
                                                   data={subRfqWriteInitial}
                                                   dataInfo={subRfqWriteInfo}
-                                                  setInfoList={setInfo}/>} columns={subRfqWriteColumn}
+                                                  setInfoList={setInfo}
+                                                  isModalOpen={isMainModalOpen}
+                                                  setIsModalOpen={setIsMainModalOpen}
+                             />}
                              subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
                                  <CopyOutlined/>복사
                              </Button>

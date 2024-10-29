@@ -37,7 +37,9 @@ export default function OrderWriter({dataInfo}) {
 
     const userInfo = useAppSelector((state) => state.user);
     const [info, setInfo] = useState<any>(orderWriteInitial)
+    const [isMainModalOpen, setIsMainModalOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
+
 
 
     useEffect(() => {
@@ -82,12 +84,11 @@ export default function OrderWriter({dataInfo}) {
 
             await getData.post('order/addOrder', copyData).then(v => {
                 if(v.data.code === 1){
-                    message.success('저장에 성공하셨습니다')}
+                    message.success('저장되었습니다')}
             });
         }
         setInfo(orderWriteInitial);
         setInfo(prev=>(prev.orderDetailList=tableOrderWriteInitial));
-        alert('저장 되었습니다.')
     }
 
     function findAgency() {
@@ -441,7 +442,10 @@ export default function OrderWriter({dataInfo}) {
                                  title={'발주서 세부 작성'}
                                  data={tableOrderWriteInitial}
                                  dataInfo={subOrderWriteInfo}
-                                 setInfoList={setInfo}/>}
+                                 setInfoList={setInfo}
+                                 isModalOpen={isMainModalOpen}
+                                 setIsModalOpen={setIsMainModalOpen}
+                             />}
                              subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
                                  <CopyOutlined/>복사
                              </Button>

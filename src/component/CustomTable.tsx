@@ -27,8 +27,9 @@ const CustomTable = ({
                          pageInfo,
                          setPaginationInfo,
                          setTableInfo,
-                         visible,
-                         setModalOpen,
+                         visible = false,
+                         setIsModalOpen = undefined,
+                         setItemId = undefined,
                      }: any) => {
     const defaultCheckedList = columns?.map((item) => item.key);
     const [checkedList, setCheckedList] = useState(defaultCheckedList);
@@ -163,8 +164,14 @@ const CustomTable = ({
             router.push(`/rfq_write?estimateRequestId=${record?.estimateRequestId}`)
         if(record.orderId)
             router.push(`/order_write?orderId=${record?.orderId}`)
-        if(record.inventoryId)
-            setModalOpen(true)
+        if(record.inventoryId) {
+            let itemId = record.inventoryId;
+            setIsModalOpen(true)
+            setItemId(itemId)
+
+        }
+
+
 
         // 여기에 더블 클릭 시 실행할 로직을 추가하세요.
     };
