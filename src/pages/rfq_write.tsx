@@ -67,8 +67,7 @@ export default function rqfWrite() {
 
             await getData.post('estimate/addEstimateRequest', copyData).then(v => {
               if(v.data.code === 1){
-                    message.success('저장에 성공하셨습니다')
-              }
+                    message.success('저장에 성공하셨습니다')}
             });
         }
     }
@@ -398,7 +397,7 @@ export default function rqfWrite() {
                              setDatabase={setInfo}
                              listType={'estimateRequestDetailList'}
                              excel={true}
-                             content={<TableModal listType={'estimateRequestDetailList'} title={'의뢰작성 세부 추가'}
+                             content={<TableModal listType={'estimateRequestDetailList'} title={'견적의뢰 세부 작성'}
                                                   data={subRfqWriteInitial}
                                                   dataInfo={subRfqWriteInfo}
                                                   setInfoList={setInfo}/>} columns={OrderWriteColumn}

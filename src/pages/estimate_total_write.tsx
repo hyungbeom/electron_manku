@@ -3,44 +3,27 @@ import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
 import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
-import TextArea from "antd/lib/input/TextArea";
 import {
     CopyOutlined,
     FileExcelOutlined,
-    FileSearchOutlined,
-    RetweetOutlined,
-    SaveOutlined,
     SearchOutlined
 } from "@ant-design/icons";
 import {
-    OrderWriteColumn,
-    rfqWriteColumns,
-    searchAgencyCodeColumn,
-    searchCustomerColumn,
     tableEstimateReadColumns
 } from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
 import {
     estimateReadInitial,
-    estimateWriteInitial,
-    rfqWriteInitial,
-    subRfqWriteInitial, tableEstimateReadInitial,
-    tableEstimateWriteInitial
+    tableEstimateReadInitial,
 } from "@/utils/initialList";
-import {subRfqWriteInfo, tableEstimateReadInfo} from "@/utils/modalDataList";
+import {tableEstimateReadInfo} from "@/utils/modalDataList";
 import moment from "moment";
 import Button from "antd/lib/button";
-import message from "antd/lib/message";
 import {getData} from "@/manage/function/api";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
-import {useAppSelector} from "@/utils/common/function/reduxHooks";
-import Modal from "antd/lib/modal/Modal";
-import Table from "antd/lib/table";
 import * as XLSX from "xlsx";
-import TableModal from "@/utils/TableModal";
-import {transformData} from "@/utils/common/common";
 import Select from "antd/lib/select";
 
 const {RangePicker} = DatePicker

@@ -4,16 +4,10 @@ import LayoutComponent from "@/component/LayoutComponent";
 import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
 import {CopyOutlined, FileExcelOutlined,RetweetOutlined, SaveOutlined} from "@ant-design/icons";
-import {
-    OrderWriteColumn,
-    searchAgencyCodeColumn,
-    searchCustomerColumn, tableOrderWriteColumn,
-} from "@/utils/columnList";
+import {searchAgencyCodeColumn, searchCustomerColumn, tableOrderWriteColumn,} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {
-    orderWriteInitial, rfqWriteInitial, subOrderWriteInitial, subRfqWriteInitial, tableOrderWriteInitial,
-} from "@/utils/initialList";
-import {subOrderWriteInfo, subRfqWriteInfo} from "@/utils/modalDataList";
+import {orderWriteInitial, tableOrderWriteInitial} from "@/utils/initialList";
+import {subOrderWriteInfo} from "@/utils/modalDataList";
 import moment from "moment";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
@@ -74,11 +68,11 @@ export default function OrderWriter() {
             copyData['delivery'] = moment(info['delivery']).format('YYYY-MM-DD');
 
             await getData.post('order/addOrder', copyData).then(v => {
-                console.log(v, '저장 되었습니다.')
+                if(v.data.code === 1){
+                    message.success('저장에 성공하셨습니다')}
             });
         }
-        setInfo(orderWriteInitial)
-        // setInfo(prev=>(prev.orderDetailList=tableOrderWriteInitial))
+        setInfo(orderWriteInitial);
         alert('저장 되었습니다.')
     }
 
@@ -422,12 +416,14 @@ export default function OrderWriter() {
                 <CustomTable rowSelection={rowSelection}
                              setDatabase={setInfo}
                              listType={'orderDetailList'}
-                             excel={true}
                              columns={tableOrderWriteColumn}
                              info={info['orderDetailList']}
-                             content={<TableModal title={'발주서 세부 작성'} data={tableOrderWriteInitial}
-                                                  dataInfo={subOrderWriteInfo}
-                                                  setInfoList={setInfo}/>}
+                             content={<TableModal
+                                 listType={'orderDetailList'}
+                                 title={'발주서 세부 작성'}
+                                 data={tableOrderWriteInitial}
+                                 dataInfo={subOrderWriteInfo}
+                                 setInfoList={setInfo}/>}
                              subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
                                  <CopyOutlined/>복사
                              </Button>
@@ -448,14 +444,21 @@ export default function OrderWriter() {
 // @ts-ignored
 export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
 
-
-    const userAgent = ctx.req.headers['user-agent'];
     let param = {}
 
     const {userInfo} = await initialServerRouter(ctx, store);
 
-    if (userInfo) {
-        store.dispatch(setUserInfo(userInfo));
+    if (!userInfo) {
+        return {
+            redirect: {
+                destination: '/', // 리다이렉트할 경로
+                permanent: false, // true면 301 리다이렉트, false면 302 리다이렉트
+            },
+        };
     }
+
+    store.dispatch(setUserInfo(userInfo));
+
+
     return param
 })

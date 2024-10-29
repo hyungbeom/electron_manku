@@ -1,11 +1,10 @@
 import Modal from "antd/lib/modal/Modal";
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import Button from "antd/lib/button";
-import {subRfqWriteInfo} from "@/utils/modalDataList";
 import Input from "antd/lib/input";
 import InputNumber from "antd/lib/input-number";
 import Card from "antd/lib/card/Card";
-import {estimateReadInfo, TagTypeList} from "@/utils/common";
+import {TagTypeList} from "@/utils/common";
 import Select from "antd/lib/select";
 import TextArea from "antd/lib/input/TextArea";
 import DatePicker from "antd/lib/date-picker";

@@ -54,11 +54,10 @@ export default function EstimateRead({dataList}) {
 
     async function searchInfo() {
         const copyData: any = {...info}
-
-        const {writtenDate}: any = copyData;
-        if (writtenDate) {
-            copyData['searchStartDate'] = writtenDate[0];
-            copyData['searchEndDate'] = writtenDate[1];
+        const {searchDate}: any = copyData;
+        if (searchDate) {
+            copyData['searchStartDate'] = searchDate[0];
+            copyData['searchEndDate'] = searchDate[1];
         }
         const result = await getData.post('estimate/getEstimateList', copyData);
         setTableInfo(transformData(result?.data?.entity?.estimateList, 'estimateId', 'estimateDetailList'));
@@ -151,7 +150,6 @@ export default function EstimateRead({dataList}) {
                             <Input id={'searchCreatedBy'} value={info['searchCreatedBy']} size={'small'} onChange={onChange}/>
                         </div>
                         <div style={{paddingTop: 20, textAlign: 'right'}}>
-                            {/*@ts-ignored*/}
                             <Button onClick={searchInfo} type={'primary'} style={{marginRight: 8}}>
                                 <SearchOutlined/>조회</Button>
                         </div>
