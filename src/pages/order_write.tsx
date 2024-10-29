@@ -3,10 +3,10 @@ import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
 import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
-import {CopyOutlined, FileExcelOutlined,RetweetOutlined, SaveOutlined} from "@ant-design/icons";
+import {CopyOutlined, EditOutlined, FileExcelOutlined, RetweetOutlined, SaveOutlined} from "@ant-design/icons";
 import {searchAgencyCodeColumn, searchCustomerColumn, tableOrderWriteColumn,} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {orderWriteInitial, tableOrderWriteInitial} from "@/utils/initialList";
+import {orderWriteInitial, rfqWriteInitial, tableOrderWriteInitial} from "@/utils/initialList";
 import {subOrderWriteInfo} from "@/utils/modalDataList";
 import moment from "moment";
 import Button from "antd/lib/button";
@@ -21,6 +21,7 @@ import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import Modal from "antd/lib/modal/Modal";
 import Table from "antd/lib/table";
 import TableModal from "@/utils/TableModal";
+import {useRouter} from "next/router";
 
 const TwinInputBox = ({children}) => {
     return <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: 5, paddingTop: 8}}>
@@ -28,7 +29,9 @@ const TwinInputBox = ({children}) => {
     </div>
 }
 
-export default function OrderWriter() {
+export default function OrderWriter({dataInfo}) {
+
+    const router = useRouter();
 
     let checkList = []
 
@@ -39,14 +42,24 @@ export default function OrderWriter() {
 
     useEffect(() => {
 
-        let copyData = {...orderWriteInitial}
+        let copyData: any = {...orderWriteInitial}
 
-        // @ts-ignored
-        copyData['writtenDate'] = moment();
-        // @ts-ignored
-        copyData['delivery'] = moment();
+        if (dataInfo) {
+            copyData = dataInfo;
+            copyData['writtenDate'] = moment(copyData['writtenDate']);
+            // @ts-ignored
+            copyData['delivery'] = moment(copyData['delivery']);
+        } else {
+            // @ts-ignored
+            copyData['writtenDate'] = moment();
+            // @ts-ignored
+            copyData['delivery'] = moment();
+        }
+
+
         setInfo(copyData);
-    }, [])
+    }, [dataInfo, router])
+
 
 
     function onChange(e) {
@@ -73,6 +86,7 @@ export default function OrderWriter() {
             });
         }
         setInfo(orderWriteInitial);
+        setInfo(prev=>(prev.orderDetailList=tableOrderWriteInitial));
         alert('저장 되었습니다.')
     }
 
@@ -403,11 +417,15 @@ export default function OrderWriter() {
                         </div>
 
 
-                        <div style={{paddingTop: 20, textAlign: 'right'}}>
-                            <Button type={'primary'} style={{marginRight: 8}}
-                                    onClick={saveFunc}><SaveOutlined/>저장</Button>
-                            {/*@ts-ignored*/}
-                            <Button style={{letterSpacing: -2}} type={'danger'}><RetweetOutlined/>초기화</Button>
+                        <div style={{paddingTop: 20, textAlign: 'right', width:'100%'}}>
+                            <Button type={'primary'} style={{marginRight:8 , letterSpacing:dataInfo?-2:0}}
+                                    onClick={saveFunc}><SaveOutlined/>{dataInfo? '변경사항 저장' : '저장'}</Button>
+                            {dataInfo ? // @ts-ignored
+                                <Button type={'danger'} style={{letterSpacing:-2}}
+                                                onClick={() => router?.push('/order_write')}><EditOutlined/>새로 작성하기</Button> :
+                                // @ts-ignored
+                                <Button type={'danger'} style={{letterSpacing:-1}}
+                                        onClick={() => setInfo(orderWriteInitial)}><RetweetOutlined/>초기화</Button>}
                         </div>
                     </Card>
                 </Card>
@@ -459,6 +477,22 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     store.dispatch(setUserInfo(userInfo));
 
+    const {orderId} = ctx.query;
 
-    return param
+
+    const result = await getData.post('order/getOrderList', {
+        "searchStartDate": "",          // 발주일자 검색 시작일
+        "searchEndDate": "",            // 발주일자 검색 종료일
+        "searchDocumentNumber": "",     // 문서번호
+        "searchCustomerName": "",       // 거래처명
+        "searchMaker": "",              // MAKER
+        "searchModel": "",              // MODEL
+        "searchItem": "",               // ITEM
+        "searchEstimateManager": "",    // 견적서담당자명
+        "page": 1,
+        "limit": 20
+    });
+
+
+    return {props: {dataInfo: orderId ? result?.data?.entity?.orderList[0] : null}}
 })

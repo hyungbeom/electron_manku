@@ -1,6 +1,3 @@
-
-
-
 export const TagTypeList = {
     "model": {type : 'input'},
     "quantity": {type : 'inputNumber'},
@@ -80,11 +77,7 @@ export const TagTypeList = {
     "unreceivedQuantity": {type : 'input'},
     "price": {type : 'input'},
 
-
 }
-
-
-
 
 
 

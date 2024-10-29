@@ -9,8 +9,6 @@ import {EditableCell, EditableRow} from "@/component/TableAboutRows";
 import * as XLSX from 'xlsx';
 import {InboxOutlined} from "@ant-design/icons";
 import Upload from "antd/lib/upload";
-import {getData} from "@/manage/function/api";
-import {transformData} from "@/utils/common/common";
 import Tag from "antd/lib/tag";
 import {useRouter} from "next/router";
 
@@ -29,10 +27,12 @@ const CustomTable = ({
                          pageInfo,
                          setPaginationInfo,
                          setTableInfo,
-                         visible
+                         visible,
+                         setModalOpen,
                      }: any) => {
     const defaultCheckedList = columns?.map((item) => item.key);
     const [checkedList, setCheckedList] = useState(defaultCheckedList);
+
 
     const router = useRouter();
 
@@ -159,7 +159,13 @@ const CustomTable = ({
     }
 
     const handleRowDoubleClick = (record) => {
-        router.push(`/rfq_write?estimateRequestId=${record?.estimateRequestId}`)
+        if(record.estimateRequestId)
+            router.push(`/rfq_write?estimateRequestId=${record?.estimateRequestId}`)
+        if(record.orderId)
+            router.push(`/order_write?orderId=${record?.orderId}`)
+        if(record.inventoryId)
+            setModalOpen(true)
+
         // 여기에 더블 클릭 시 실행할 로직을 추가하세요.
     };
     return (
