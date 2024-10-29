@@ -96,7 +96,7 @@ export const subInvenReadInfo = {
     "searchItem": {title : 'ITEM'},                   // ITEM
 }
 
-export const OrderStockInfo = {
+export const orderStockInfo = {
     "receiptDate": {title : '입고일자'},           // MODEL
     "documentNumber": {title : '문서번호'},               // 단위
     "maker": {title : 'Maker'},            // NET/P

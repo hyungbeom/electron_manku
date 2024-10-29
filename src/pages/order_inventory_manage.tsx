@@ -13,11 +13,10 @@ import {
 } from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
 import {
-    orderStockInitial,
-    subRfqReadInitial, tableOrderStockInitial,
+    orderStockInitial, tableOrderStockInitial,
 } from "@/utils/initialList";
 import {
-    OrderStockInfo,
+    orderStockInfo,
 } from "@/utils/modalDataList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
@@ -41,9 +40,10 @@ export default function OrderInventoryRead({dataList}) {
     let checkList = []
 
     const {inventoryList, pageInfo} = dataList;
-    const [info, setInfo] = useState(orderStockInitial)
+    const [info, setInfo] = useState(tableOrderStockInitial)
     const [tableInfo, setTableInfo] = useState(inventoryList)
     const [paginationInfo, setPaginationInfo] = useState(pageInfo)
+    const [modalOpen, setModalOpen] = useState(false);
 
     console.log(pageInfo,'pageInfo:')
     function onChange(e) {
@@ -60,20 +60,20 @@ export default function OrderInventoryRead({dataList}) {
         const copyData: any = {...info}
         copyData['searchDate'] = [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
         setInfo(copyData);
-        // setTableInfo(transformData(inventoryList));
+        setTableInfo(transformData(inventoryList, 'inventoryId', 'inventoryId'));
     }, [])
 
 
 
     async function searchInfo() {
         const copyData: any = {...info}
-        const {writtenDate}: any = copyData;
-        if (writtenDate) {
-            copyData['searchStartDate'] = writtenDate[0];
-            copyData['searchEndDate'] = writtenDate[1];
+        const {searchDate}: any = copyData;
+        if (searchDate) {
+            copyData['searchStartDate'] = searchDate[0];
+            copyData['searchEndDate'] = searchDate[1];
         }
         const result = await getData.post('inventory/getInventoryList', copyData);
-        // setTableInfo(transformData(result?.data?.entity?.inventoryList));
+        setTableInfo(transformData(result?.data?.entity?.inventoryList, 'inventoryId', ''));
     }
 
     function deleteList() {
@@ -137,16 +137,21 @@ export default function OrderInventoryRead({dataList}) {
 
                 <CustomTable columns={orderStockColumns}
                              initial={tableOrderStockInitial}
-                             dataInfo={OrderStockInfo}
+                             dataInfo={orderStockInfo}
+                             visible={true}
                              info={tableInfo}
+                             listType={'inventoryList'}
                              setDatabase={setInfo}
                              setTableInfo={setTableInfo}
                              rowSelection={rowSelection}
                              pageInfo={paginationInfo}
                              setPaginationInfo={setPaginationInfo}
-                             content={<TableModal title={'재고 등록'} data={orderStockInitial}
-                                                  dataInfo={OrderStockInfo}
-                                                  setInfoList={setInfo}/>}
+                             content={<TableModal listType={'inventoryList'} title={'재고 등록'}
+                                                  data={orderStockInitial}
+                                                  dataInfo={orderStockInfo}
+                                                  setInfoList={setInfo}
+                                                  modalOpen={modalOpen}
+                             />}
 
                              subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
                                  <CopyOutlined/>복사

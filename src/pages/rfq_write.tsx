@@ -4,8 +4,15 @@ import LayoutComponent from "@/component/LayoutComponent";
 import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
 import TextArea from "antd/lib/input/TextArea";
-import {CopyOutlined, FileExcelOutlined, FileSearchOutlined, RetweetOutlined, SaveOutlined} from "@ant-design/icons";
-import {OrderWriteColumn, searchAgencyCodeColumn, searchCustomerColumn} from "@/utils/columnList";
+import {
+    CopyOutlined,
+    EditOutlined,
+    FileExcelOutlined,
+    FileSearchOutlined,
+    RetweetOutlined,
+    SaveOutlined
+} from "@ant-design/icons";
+import {searchAgencyCodeColumn, searchCustomerColumn, subRfqWriteColumn} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
 import {rfqWriteInitial, subRfqWriteInitial} from "@/utils/initialList";
 import {subRfqWriteInfo} from "@/utils/modalDataList";
@@ -403,8 +410,8 @@ export default function rqfWrite({dataInfo}) {
 
 
                             {dataInfo ? <Button type={'primary'} style={{marginRight: 8}}
-                                    // @ts-ignored
-                                                onClick={() => router?.push('/rfq_write')}><SaveOutlined/>신규</Button> :
+                                                onClick={() => router?.push('/rfq_write')}><EditOutlined/>신규</Button> :
+                                // @ts-ignored
                                 <Button type={'danger'}
                                         onClick={() => setInfo(rfqWriteInitial)}><RetweetOutlined/>초기화</Button>}
 
@@ -417,10 +424,10 @@ export default function rqfWrite({dataInfo}) {
                              setDatabase={setInfo}
                              listType={'estimateRequestDetailList'}
                              excel={true}
-                             content={<TableModal listType={'estimateRequestDetailList'} title={'의뢰작성 세부 추가'}
+                             content={<TableModal listType={'estimateRequestDetailList'} title={'견적의뢰 세부 작성'}
                                                   data={subRfqWriteInitial}
                                                   dataInfo={subRfqWriteInfo}
-                                                  setInfoList={setInfo}/>} columns={OrderWriteColumn}
+                                                  setInfoList={setInfo}/>} columns={subRfqWriteColumn}
                              subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
                                  <CopyOutlined/>복사
                              </Button>

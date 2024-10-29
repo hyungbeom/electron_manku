@@ -82,14 +82,15 @@ export default function OrderRead({dataList}) {
 
     const rowSelection = {
         onChange: (selectedRowKeys, selectedRows) => {
-
             checkList  = selectedRowKeys
-
+        },
+        onDoubleClick: (src) => {
+            console.log(src, ':::')
         },
         getCheckboxProps: (record) => ({
-            disabled: record.name === 'Disabled User',
+            disabled: record?.name === 'Disabled User',
             // Column configuration not to be checked
-            name: record.name,
+            name: record?.name,
         }),
     };
 
@@ -117,15 +118,17 @@ export default function OrderRead({dataList}) {
                         </div>
                         <div style={{marginTop: 8}}>
                             <div style={{paddingBottom: 3}}>문서번호</div>
-                            <Input id={'searchDocumentNumber'} value={info['searchDocumentNumber']} onChange={onChange} size={'small'}/>
+                            <Input id={'searchDocumentNumber'} value={info['searchDocumentNumber']} onChange={onChange}
+                                   size={'small'}/>
                         </div>
                         <div style={{marginTop: 8}}>
                             <div style={{paddingBottom: 3}}>거래처명</div>
-                            <Input id={'searchCustomerName'} value={info['searchCustomerName']} onChange={onChange} size={'small'}/>
+                            <Input id={'searchCustomerName'} value={info['searchCustomerName']} onChange={onChange}
+                                   size={'small'}/>
                         </div>
                         <div style={{marginTop: 8}}>
                             <div style={{paddingBottom: 3}}>MAKER</div>
-                            <Input id={'searchMaker'} value={info['searchModel']} onChange={onChange} size={'small'}/>
+                            <Input id={'searchMaker'} value={info['searchMaker']} onChange={onChange} size={'small'}/>
                         </div>
                         <div style={{marginTop: 8}}>
                             <div style={{paddingBottom: 3}}>MODEL</div>
@@ -137,15 +140,16 @@ export default function OrderRead({dataList}) {
                         </div>
                         <div style={{marginTop: 8}}>
                             <div style={{paddingBottom: 3}}>견적서담당자</div>
-                            <Input id={'searchEstimateManager'} value={info['searchEstimateManager']} onChange={onChange} size={'small'}/>
+                            <Input id={'searchEstimateManager'} value={info['searchEstimateManager']}
+                                   onChange={onChange} size={'small'}/>
+                        </div>
+                        <div style={{paddingTop: 20, textAlign: 'right'}}>
+                            <Button type={'primary'} style={{marginRight: 8}}
+                                    onClick={searchInfo}><SearchOutlined/>조회</Button>
                         </div>
 
-
                     </Card>
-                    <div style={{paddingTop: 20, textAlign: 'right'}}>
-                        <Button type={'primary'} style={{marginRight: 8}}
-                                onClick={searchInfo}><SearchOutlined />조회</Button>
-                    </div>
+
                 </Card>
 
                 <CustomTable columns={tableOrderReadColumns}

@@ -53,6 +53,23 @@ const estimateDetailRead = (detail) => {
     }
 }
 
+const inventoryRead = (src) => {
+    return {
+        key: src.key,
+        inventoryId: src.inventoryId,
+        receiptDate: src.receiptDate,
+        documentNumber: src.documentNumberFull,
+        estimateRequestId: src.estimateRequestId,
+        managerName: src.managerName,
+        createdBy: src.createdBy,
+        modifiedDate: src.modifiedDate,
+        maker: src.maker,
+        item: src.item,
+        children: [],
+    }
+}
+
+
 const rfqRead = (src) => {
   return {
       key: src.key,
@@ -111,8 +128,8 @@ const orderDetailRead = (detail) => {
         unitPrice: detail.unitPrice,
         currencyUnit: detail.currencyUnit,
         amount: detail.amount,
-        estimateDetailId: detail.estimateDetailId,
         receivedQuantity: detail.receivedQuantity,
+        estimateDetailId: detail.estimateDetailId,
         price: detail.price,
         serialNumber: detail.serialNumber
     }
@@ -159,6 +176,9 @@ export const transformData = (data, type, listType) => {
                 case 'orderId':
                     groupedData[mainKey] = orderRead(item);
                     break;
+                case 'inventoryId':
+                    groupedData[mainKey] = inventoryRead(item);
+                    break;
             }
         }
 
@@ -176,6 +196,9 @@ export const transformData = (data, type, listType) => {
             case 'orderId' :
                 childrenData = item[listType]?.map((detail) =>orderDetailRead(detail));
                 break;
+            // case 'inventoryId':
+            //     childrenData = item[listType]?.map((detail) =>inventoryRead(detail));
+            //     break;
         }
         // if(item[listType]){
         // childrenData = item[listType]?.map((detail) =>rfqDetailRead(detail));}
