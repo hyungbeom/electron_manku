@@ -3,7 +3,7 @@ import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
 import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
-import {CopyOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
+import {FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
 import {tableOrderCustomerColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
@@ -15,7 +15,7 @@ import {setUserInfo} from "@/store/user/userSlice";
 import {getData} from "@/manage/function/api";
 import moment from "moment";
 import * as XLSX from "xlsx";
-import {transformData} from "@/utils/common/common";
+import dayjs from 'dayjs';
 
 const {RangePicker} = DatePicker
 
@@ -69,26 +69,6 @@ export default function OrderReadCustomer({dataList}) {
         setPaginationInfo(result?.data?.entity?.pageInfo)
     }
 
-    async function deleteList() {
-        const copyData: any = {...tableInfo}
-        // @ts-ignore
-        const deleteItemList= Object.values(copyData).filter(v=>checkList.includes(v.key))
-
-        console.log(checkList,  "checkList")
-        console.log(deleteItemList,  "deleteItemList")
-
-        if (deleteItemList.length < 1)
-            alert('하나 이상의 항목을 선택해주세요.')
-        else {
-            // @ts-ignore
-            for (const v of deleteItemList) {await getData.post(`inventory/deleteInventory?inventoryId=${v.inventoryId}`).then(r=>{
-                if(r.data.code === 1)
-                    alert('삭제되었습니다.')
-            });
-            }
-        }
-        await searchInfo();
-    }
 
     const downloadExcel = () => {
 
@@ -122,6 +102,7 @@ export default function OrderReadCustomer({dataList}) {
                     }}>
                         <div>
                             <div style={{paddingBottom: 3}}>조회일자</div>
+                            {/*@ts-ignore*/}
                             <RangePicker style={{width: '100%'}}
                                          value={[moment(info['searchDate'][0]), moment(info['searchDate'][1])]}
                                          id={'searchDate'} size={'small'} onChange={(date, dateString) => {
