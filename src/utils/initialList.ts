@@ -309,14 +309,16 @@ export const inventoryReadInitial = {
 }
 
 
-export const customerReadInitial = {
-    "searchText": "",              // 재고 등록 검색 (문서번호, MAKER, Model)
-    "searchDate": "",                  // MAKER
+export const orderCustomerReadInitial = {
+    "searchDate" :"",
+    "searchStartDate": "",      // 조회일자 시작일
+    "searchEndDate": "",        // 조회일자 종료일
+    "searchCustomerName": "",   // 거래처명
     "page": 1,
-    "limit": 10
+    "limit": 20
 }
 
-export const agencyReadInitial = {
+export const orderAgencyReadInitial = {
     "searchText": "",              // 재고 등록 검색 (문서번호, MAKER, Model)
     "searchDate": "",                  // MAKER
     "page": 1,
@@ -325,22 +327,10 @@ export const agencyReadInitial = {
 
 
 export const tableOrderCustomerInitial = {
-    "agencyId": 0,
-    "agencyCode": "",
-    "agencyName": "",
-    "dealerType": "",
-    "grade": "",
-    "margin": 0,
-    "homepage": "",
-    "item": "",
-    "tradeStartDate": "",
-    "businessRegistrationNumber": "",
-    "bankAccountNumber": "",
-    "createdBy": "",
-    "createdDate": null,
-    "modifiedBy": "",
-    "modifiedDate": null,
-    "maker": "",
+    "customerName": "",
+    "unpaidAmount": 0,
+    "paidAmount": 0,
+    "totalAmount": 0,
     "key": 1
 }
 

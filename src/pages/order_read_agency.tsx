@@ -111,7 +111,7 @@ export default function OrderReadAgency({dataList}) {
                             })
                             }/>
                         </div>
-                        <div>
+                        <div style={{marginTop:8}}>
                                 <div style={{paddingBottom: 3}}>대리점코드</div>
                                 <Input id={'searchText'} onChange={onChange} size={'small'}/>
                         </div>
@@ -137,14 +137,8 @@ export default function OrderReadAgency({dataList}) {
                              pageInfo={paginationInfo}
                              setPaginationInfo={setPaginationInfo}
 
-                             subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
-                                 <CopyOutlined/>복사
-                             </Button>
-                                 {/*@ts-ignored*/}
-                                 <Button type={'danger'} size={'small'} style={{fontSize: 11}} onClick={deleteList}>
-                                     <CopyOutlined/>삭제
-                                 </Button>
-                                 <Button type={'dashed'} size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>
+                             subContent={<>
+                                 <Button type={'dashed'} size={'small'} style={{fontSize: 11, margin:'0 0 0 auto'}} onClick={downloadExcel}>
                                      <FileExcelOutlined/>출력
                                  </Button></>}
                 />
@@ -164,11 +158,12 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
-    const result = await getData.post('agency/getAgencyList', {
-        "searchType": "1",      // 1: 코드, 2: 상호명, 3: MAKER
-        "searchText": "K0",
+    const result = await getData.post('settlement/getOrderListByCustomer', {
+        "searchStartDate": "",      // 조회일자 시작일
+        "searchEndDate": "",        // 조회일자 종료일
+        "searchCustomerName": "",   // 거래처명
         "page": 1,
-        "limit": 20
+        "limit": 10
     });
 
 
@@ -188,7 +183,6 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
             props: {dataList: result?.data?.entity}
         }
     }
-
 
     return param
 })

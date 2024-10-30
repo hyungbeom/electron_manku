@@ -55,10 +55,10 @@ export default function OrderRead({dataList}) {
 
     async function searchInfo() {
         const copyData: any = {...info}
-        const {writtenDate}: any = copyData;
-        if (writtenDate) {
-            copyData['searchStartDate'] = writtenDate[0];
-            copyData['searchEndDate'] = writtenDate[1];
+        const {searchDate}: any = copyData;
+        if (searchDate) {
+            copyData['searchStartDate'] = searchDate[0];
+            copyData['searchEndDate'] = searchDate[1];
         }
         const result = await getData.post('order/getOrderList', copyData);
         setTableInfo(transformData(result?.data?.entity?.orderList, 'orderId', 'orderDetailList'));

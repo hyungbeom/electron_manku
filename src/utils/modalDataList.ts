@@ -110,8 +110,8 @@ export const tableOrderInventoryInfo = {
     "remarks": {title : '비고'},
 }
 
-export const subCustomerReadInfo = {
-    "agencyId": {title : 'No'},                  // MAKER
+export const tableOrderCustomerInfo = {
+    "key": {title : 'No'},                  // MAKER
     "customerName": {title : '거래처명'},                  // MAKER
     "unpaidAmount": {title : '미입고금액'},                  // MAKER
     "paidAmount": {title : '입고금액'},                  // MODEL

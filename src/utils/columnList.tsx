@@ -1077,11 +1077,11 @@ export const tableOrderInventoryColumns = [
     },
 ];
 
-export const subCustomerReadColumns = [
+export const tableOrderCustomerColumns = [
     {
         title: 'No',
-        dataIndex: 'agencyId',
-        key: 'agencyId',
+        dataIndex: 'key',
+        key: 'key',
     },
     {
         title: '거래처명',
