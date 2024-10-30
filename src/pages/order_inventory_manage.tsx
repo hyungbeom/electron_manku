@@ -164,13 +164,15 @@ export default function OrderInventoryRead({dataList}) {
                              setPaginationInfo={setPaginationInfo}
                              setIsModalOpen={setIsModalOpen}
                              setItemId={setItemId}
-                             content={<TableModal listType={'inventoryList'} title={'재고 등록'}
+                             content={<TableModal listType={'inventoryList'} title={itemId?'등록 재고 수정':'재고 등록'}
                                                   data={tableOrderInventoryInitial}
                                                   dataInfo={tableOrderInventoryInfo}
                                                   setInfoList={setInfo}
                                                   isModalOpen={isModalOpen}
                                                   setIsModalOpen={setIsModalOpen}
+                                                  setItemId={setItemId}
                                                   itemId={itemId}
+                                                  searchInfo={searchInfo}
                              />}
 
                              subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>

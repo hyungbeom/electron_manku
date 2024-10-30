@@ -168,6 +168,7 @@ const CustomTable = ({
             let itemId = record.inventoryId;
             setIsModalOpen(true)
             setItemId(itemId)
+            // console.log(itemId, 'itemId')
 
         }
 

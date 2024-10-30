@@ -1,5 +1,5 @@
 import Modal from "antd/lib/modal/Modal";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Button from "antd/lib/button";
 import Input from "antd/lib/input";
 import InputNumber from "antd/lib/input-number";
@@ -14,19 +14,19 @@ import message from "antd/lib/message";
 import {async} from "rxjs";
 
 export default function TableModal({title, data, dataInfo, setInfoList, listType,
-                                       isModalOpen=false, setIsModalOpen=undefined, itemId=null }:any) {
+                                       searchInfo=undefined, isModalOpen=false, setIsModalOpen=undefined, itemId=null, setItemId=undefined }:any) {
     // const [isModalOpen, setIsModalOpen] = useState(false);
-
     const [info, setInfo] = useState<any>(data)
+
+    useEffect(()=>{
+        if(itemId){
+            getListFunc(listType, itemId)
+        }
+    }, [itemId, listType])
 
 
     async function showModal () {
-        if (itemId!=null){
-            getListFunc(listType, itemId)
-        }
-
         setIsModalOpen(true);
-        console.log(dataInfo)
     }
 
     const handleOk = () => {
@@ -58,20 +58,32 @@ export default function TableModal({title, data, dataInfo, setInfoList, listType
             return copyData2;
         })
         setIsModalOpen(false);
+        searchInfo && setItemId(null);
+        setInfo(data);
     };
 
     async function getListFunc(listType, itemId){
 
         let url=''
+        let searchKey=''
 
         switch (listType){
             case 'inventoryList':
-                url = `inventory/getInventoryList?searchInventoryId=${itemId}`
+                url = `inventory/getInventoryList`;
+                searchKey = "searchInventoryId"
                 break;
         }
 
-        const result=await getData.post(url);
+        const requestData={
+            [searchKey]:itemId,
+            page: 1,
+            limit: 10
+        }
+
+        const result=await getData.post(url,requestData);
+        // console.log(result?.data?.entity?.inventoryList[0], 'result~~')
         setInfo(result?.data?.entity?.inventoryList[0])
+
     }
 
     async function saveFunc(listType, copyData){
@@ -105,11 +117,14 @@ export default function TableModal({title, data, dataInfo, setInfoList, listType
             if (v.data.code === 1) {
                 message.success('수정되었습니다')
             }
+            searchInfo()
         })
     }
 
     const handleCancel = () => {
         setIsModalOpen(false);
+        setItemId(null);
+        setInfo(data)
     };
 
 
