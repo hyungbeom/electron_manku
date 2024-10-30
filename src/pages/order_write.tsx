@@ -82,13 +82,15 @@ export default function OrderWriter({dataInfo}) {
             copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
             copyData['delivery'] = moment(info['delivery']).format('YYYY-MM-DD');
 
+            console.log(copyData, 'copyData~~~~~~~~~~~')
             await getData.post('order/addOrder', copyData).then(v => {
                 if(v.data.code === 1){
                     message.success('저장되었습니다')}
             });
         }
+        const checkList = Array.from({ length: info['orderDetailList'].length }, (_, i) => i + 1);
         setInfo(orderWriteInitial);
-        // setInfo(prev=>(prev.orderDetailList=tableOrderWriteInitial));
+        deleteList(checkList)
     }
 
     function findAgency() {
@@ -255,7 +257,7 @@ export default function OrderWriter({dataInfo}) {
         XLSX.writeFile(workbook, "example.xlsx");
     };
 
-    function deleteList() {
+    function deleteList(checkList) {
         let copyData = {...info}
         const result = copyData['orderDetailList'].filter(v => !checkList.includes(v.serialNumber))
 
@@ -450,7 +452,7 @@ export default function OrderWriter({dataInfo}) {
                                  <CopyOutlined/>복사
                              </Button>
                                  {/*@ts-ignored*/}
-                                 <Button type={'danger'} size={'small'} style={{fontSize: 11}} onClick={deleteList}>
+                                 <Button type={'danger'} size={'small'} style={{fontSize: 11}} onClick={()=>deleteList(checkList)}>
                                      <CopyOutlined/>삭제
                                  </Button>
                                  <Button type={'dashed'} size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>

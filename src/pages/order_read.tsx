@@ -65,12 +65,28 @@ export default function OrderRead({dataList}) {
         setPaginationInfo(result?.data?.entity?.pageInfo)
     }
 
-    function deleteList() {
-        let copyData = {...info}
-        const result = copyData['orderDetailList'].filter(v => !checkList.includes(v.serialNumber))
+    async function deleteList() {
+        let copyData = {...tableInfo}
 
-        copyData['orderDetailList'] = result
-        setInfo(copyData);
+        // @ts-ignore
+        const deleteItemList= Object.values(copyData).filter(v=>checkList.includes(v.key))
+
+        console.log(deleteItemList, 'deleteItemList')
+
+        if (deleteItemList.length < 1)
+            alert('하나 이상의 항목을 선택해주세요.')
+        else {
+            // @ts-ignore
+            for (const v of deleteItemList) {const orderId=v.orderId;
+                await getData.post('order/deleteOrder', {
+                orderId:orderId}).then(r=>{
+                if(r.data.code === 1)
+                    alert('삭제되었습니다.')
+            });
+            }
+        }
+
+        await searchInfo();
     }
 
     const downloadExcel = () => {

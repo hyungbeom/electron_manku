@@ -46,7 +46,7 @@ export default function TableModal({title, data, dataInfo, setInfoList, listType
             }
 
             const copyData2 = {...v}
-            console.log(copyData2,'copyData2:')
+            // console.log(copyData2,'copyData2:')
             copyData2[listType].push(copyData);
 
 
