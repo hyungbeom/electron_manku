@@ -96,21 +96,22 @@ export const subInvenReadInfo = {
     "searchItem": {title : 'ITEM'},                   // ITEM
 }
 
-export const orderStockInfo = {
+export const tableOrderInventoryInfo = {
     "receiptDate": {title : '입고일자'},           // MODEL
     "documentNumber": {title : '문서번호'},               // 단위
     "maker": {title : 'Maker'},            // NET/P
     "model": {title : 'Model'},
     "importUnitPrice": {title : '수입단가'},
     "currencyUnit": {title : '화폐단위'},
-    "receivedQuantity": {title : '입고수량'},
+    "receivedQuantity": {title : '입고량'},
+    "usageQuantity": {title : '출고량'},
     "unit": {title : '단위'},
     "location": {title : '위치'},
     "remarks": {title : '비고'},
 }
 
-export const subCustomerReadInfo = {
-    "agencyId": {title : 'No'},                  // MAKER
+export const tableOrderCustomerInfo = {
+    "key": {title : 'No'},                  // MAKER
     "customerName": {title : '거래처명'},                  // MAKER
     "unpaidAmount": {title : '미입고금액'},                  // MAKER
     "paidAmount": {title : '입고금액'},                  // MODEL

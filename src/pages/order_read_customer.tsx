@@ -5,16 +5,17 @@ import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
 import {CopyOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
-import {subCustomerReadColumns} from "@/utils/columnList";
+import {tableOrderCustomerColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {subRfqReadInitial, tableOrderCustomerInitial} from "@/utils/initialList";
-import {subCustomerReadInfo} from "@/utils/modalDataList";
+import {orderCustomerReadInitial, tableOrderCustomerInitial} from "@/utils/initialList";
+import {tableOrderCustomerInfo} from "@/utils/modalDataList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import {getData} from "@/manage/function/api";
 import moment from "moment";
 import * as XLSX from "xlsx";
+import {transformData} from "@/utils/common/common";
 
 const {RangePicker} = DatePicker
 
@@ -27,12 +28,12 @@ const TwinInputBox = ({children}) => {
 export default function OrderReadCustomer({dataList}) {
     let checkList = []
 
-    const {agencyList, pageInfo} = dataList;
-    const [info, setInfo] = useState(subRfqReadInitial)
-    const [tableInfo, setTableInfo] = useState(agencyList)
+    const {orderList, pageInfo} = dataList;
+    const [info, setInfo] = useState(orderCustomerReadInitial)
+    const [tableInfo, setTableInfo] = useState(orderList)
     const [paginationInfo, setPaginationInfo] = useState(pageInfo)
 
-    console.log(pageInfo,'pageInfo:')
+    // console.log(pageInfo,'pageInfo:')
     function onChange(e) {
 
         let bowl = {}
@@ -47,28 +48,46 @@ export default function OrderReadCustomer({dataList}) {
         const copyData: any = {...info}
         copyData['searchDate'] = [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
         setInfo(copyData);
-        // setTableInfo(transformData(agencyList));
+        // setTableInfo(transformData(orderList, 'customerName', 'orderList'));
     }, [])
 
 
 
     async function searchInfo() {
         const copyData: any = {...info}
-        const {writtenDate}: any = copyData;
-        if (writtenDate) {
-            copyData['searchStartDate'] = writtenDate[0];
-            copyData['searchEndDate'] = writtenDate[1];
+        const {searchDate}: any = copyData;
+        if (searchDate) {
+            copyData['searchStartDate'] = searchDate[0];
+            copyData['searchEndDate'] = searchDate[1];
         }
-        const result = await getData.post('agency/getAgencyList', copyData);
-        // setTableInfo(transformData(result?.data?.entity?.agencyList));
+        console.log(searchDate, 'searchDate')
+
+        const result = await getData.post('settlement/getOrderListByCustomer', copyData);
+        console.log(result?.data?.entity, 'result')
+        // setTableInfo(transformData(result?.data?.entity?.inventoryList, 'inventoryId', 'inventoryList'));
+        setTableInfo(result?.data?.entity?.orderList);
+        setPaginationInfo(result?.data?.entity?.pageInfo)
     }
 
-    function deleteList() {
-        let copyData = {...info}
-        const result = copyData['agencyList'].filter(v => !checkList.includes(v.serialNumber))
+    async function deleteList() {
+        const copyData: any = {...tableInfo}
+        // @ts-ignore
+        const deleteItemList= Object.values(copyData).filter(v=>checkList.includes(v.key))
 
-        copyData['inventoryList'] = result
-        setInfo(copyData);
+        console.log(checkList,  "checkList")
+        console.log(deleteItemList,  "deleteItemList")
+
+        if (deleteItemList.length < 1)
+            alert('하나 이상의 항목을 선택해주세요.')
+        else {
+            // @ts-ignore
+            for (const v of deleteItemList) {await getData.post(`inventory/deleteInventory?inventoryId=${v.inventoryId}`).then(r=>{
+                if(r.data.code === 1)
+                    alert('삭제되었습니다.')
+            });
+            }
+        }
+        await searchInfo();
     }
 
     const downloadExcel = () => {
@@ -103,17 +122,21 @@ export default function OrderReadCustomer({dataList}) {
                     }}>
                         <div>
                             <div style={{paddingBottom: 3}}>조회일자</div>
-                            <RangePicker id={'searchDate'} size={'small'} onChange={(date, dateString) => onChange({
-                                target: {
-                                    id: 'writtenDate',
-                                    value: date
-                                }
-                            })
+                            <RangePicker style={{width: '100%'}}
+                                         value={[moment(info['searchDate'][0]), moment(info['searchDate'][1])]}
+                                         id={'searchDate'} size={'small'} onChange={(date, dateString) => {
+                                onChange({
+                                    target: {
+                                        id: 'searchDate',
+                                        value: date ? [moment(date[0]).format('YYYY-MM-DD'), moment(date[1]).format('YYYY-MM-DD')] : [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
+                                    }
+                                })
+                            }
                             }/>
                         </div>
                         <div style={{marginTop:8}}>
                                 <div style={{paddingBottom: 3}}>거래처명</div>
-                                <Input id={'searchText'} onChange={onChange} size={'small'}/>
+                                <Input id={'searchCustomerName'} value={info['searchCustomerName']} onChange={onChange} size={'small'}/>
                         </div>
 
 
@@ -124,9 +147,9 @@ export default function OrderReadCustomer({dataList}) {
                     </div>
                 </Card>
 
-                <CustomTable columns={subCustomerReadColumns}
+                <CustomTable columns={tableOrderCustomerColumns}
                              initial={tableOrderCustomerInitial}
-                             dataInfo={subCustomerReadInfo}
+                             dataInfo={tableOrderCustomerInfo}
                              info={tableInfo}
                              setDatabase={setInfo}
                              setTableInfo={setTableInfo}
@@ -134,14 +157,8 @@ export default function OrderReadCustomer({dataList}) {
                              pageInfo={paginationInfo}
                              setPaginationInfo={setPaginationInfo}
 
-                             subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
-                                 <CopyOutlined/>복사
-                             </Button>
-                                 {/*@ts-ignored*/}
-                                 <Button type={'danger'} size={'small'} style={{fontSize: 11}} onClick={deleteList}>
-                                     <CopyOutlined/>삭제
-                                 </Button>
-                                 <Button type={'dashed'} size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>
+                             subContent={<>
+                                 <Button type={'dashed'} size={'small'} style={{fontSize: 11, margin:'0 0 0 auto'}} onClick={downloadExcel}>
                                      <FileExcelOutlined/>출력
                                  </Button></>}
                 />
@@ -160,11 +177,12 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
-    const result = await getData.post('agency/getAgencyList', {
-        "searchType": "1",      // 1: 코드, 2: 상호명, 3: MAKER
-        "searchText": "K0",
+    const result = await getData.post('settlement/getOrderListByCustomer', {
+        "searchStartDate": "",      // 조회일자 시작일
+        "searchEndDate": "",        // 조회일자 종료일
+        "searchCustomerName": "",   // 거래처명
         "page": 1,
-        "limit": 20
+        "limit": 10
     });
 
 
@@ -184,7 +202,6 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
             props: {dataList: result?.data?.entity}
         }
     }
-
 
     return param
 })

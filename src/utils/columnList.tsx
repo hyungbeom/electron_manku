@@ -977,21 +977,13 @@ export const subInvenReadColumns = [
     },
 ];
 
-export const orderStockColumns = [
+export const tableOrderInventoryColumns = [
     {
-        title: '입고일자',
-        dataIndex: 'receiptDate',
-        key: 'receiptDate',
+        title: 'No.',
+        dataIndex: 'key',
+        key: 'key',
         fixed: 'left',
-        render: (text) => <div className="ellipsis-cell" style={{width: 70}}>{moment(text).format('YYYY-MM-DD')}</div>,
-        align : 'center',
-    },
-    {
-        title: '문서번호',
-        dataIndex: 'documentNumber',
-        key: 'documentNumber',
-        fixed: 'left',
-        render: (text) => <div style={{width : 80}} className="ellipsis-cell">{text}</div>,
+        render: (text) => <div style={{width : 15}} className="ellipsis-cell">{text}</div>,
         align : 'center',
     },
     {
@@ -999,7 +991,7 @@ export const orderStockColumns = [
         dataIndex: 'maker',
         key: 'maker',
         fixed: 'left',
-        render: (text) => <div style={{width : 80}} className="ellipsis-cell">{text}</div>,
+        render: (text) => <div style={{width : 100}} className="ellipsis-cell">{text}</div>,
         align : 'center',
     },
     {
@@ -1007,39 +999,7 @@ export const orderStockColumns = [
         dataIndex: 'model',
         key: 'model',
         fixed: 'left',
-        render: (text) => <div style={{width : 80}} className="ellipsis-cell">{text}</div>,
-        align : 'center',
-    },
-    {
-        title: '수입단가',
-        dataIndex: 'importUnitPrice',
-        key: 'importUnitPrice',
-        fixed: 'left',
-        render: (text) => <div style={{width : 80}} className="ellipsis-cell">{text}</div>,
-        align : 'center',
-    },
-    {
-        title: '화폐단위',
-        dataIndex: 'currencyUnit',
-        key: 'currencyUnit',
-        fixed: 'left',
-        render: (text) => <div style={{width : 80}} className="ellipsis-cell">{text}</div>,
-        align : 'center',
-    },
-    {
-        title: '입고수량',
-        dataIndex: 'receivedQuantity',
-        key: 'receivedQuantity',
-        fixed: 'left',
-        render: (text) => <div style={{width : 80}} className="ellipsis-cell">{text}</div>,
-        align : 'center',
-    },
-    {
-        title: '단위',
-        dataIndex: 'unit',
-        key: 'unit',
-        fixed: 'left',
-        render: (text) => <div style={{width : 80}} className="ellipsis-cell">{text}</div>,
+        render: (text) => <div style={{width :120}} className="ellipsis-cell">{text}</div>,
         align : 'center',
     },
     {
@@ -1051,20 +1011,78 @@ export const orderStockColumns = [
         align : 'center',
     },
     {
+        title: '잔량',
+        dataIndex: 'remainingQuantity',
+        key: 'remainingQuantity',
+        fixed: 'left',
+        render: (text) => <div style={{width : 50}} className="ellipsis-cell">{text}</div>,
+        align : 'center',
+    },
+    {
+        title: '출고량',
+        dataIndex: 'usageQuantity',
+        key: 'usageQuantity',
+        fixed: 'left',
+        render: (text) => <div style={{width : 50}} className="ellipsis-cell">{text}</div>,
+        align : 'center',
+    },
+    {
+        title: '입고량',
+        dataIndex: 'receivedQuantity',
+        key: 'receivedQuantity',
+        render: (text) => <div style={{width : 50}} className="ellipsis-cell">{text}</div>,
+        align : 'center',
+    },
+    {
+        title: '입고일자',
+        dataIndex: 'receiptDate',
+        key: 'receiptDate',
+        render: (text) => <div className="ellipsis-cell" style={{width: 70}}>{moment(text).format('YYYY-MM-DD')}</div>,
+        align : 'center',
+    },
+    {
+        title: '문서번호',
+        dataIndex: 'documentNumber',
+        key: 'documentNumber',
+        render: (text) => <div style={{width : 80}} className="ellipsis-cell">{text}</div>,
+        align : 'center',
+    },
+    {
+        title: '수입단가',
+        dataIndex: 'importUnitPrice',
+        key: 'importUnitPrice',
+        render: (text) => <div style={{width : 58}} className="ellipsis-cell">{text}</div>,
+        align : 'center',
+    },
+    {
+        title: '화폐단위',
+        dataIndex: 'currencyUnit',
+        key: 'currencyUnit',
+        render: (text) => <div style={{width : 58}} className="ellipsis-cell">{text}</div>,
+        align : 'center',
+    },
+    {
+        title: '단위',
+        dataIndex: 'unit',
+        key: 'unit',
+        render: (text) => <div style={{width : 50}} className="ellipsis-cell">{text}</div>,
+        align : 'center',
+    },
+    {
         title: '비고',
         dataIndex: 'remarks',
         key: 'remarks',
-        fixed: 'left',
-        render: (text) => <div style={{width : 80}} className="ellipsis-cell">{text}</div>,
+        fixed: 'right',
+        render: (text) => <div style={{width : 120}} className="ellipsis-cell">{text}</div>,
         align : 'center',
     },
 ];
 
-export const subCustomerReadColumns = [
+export const tableOrderCustomerColumns = [
     {
         title: 'No',
-        dataIndex: 'agencyId',
-        key: 'agencyId',
+        dataIndex: 'key',
+        key: 'key',
     },
     {
         title: '거래처명',

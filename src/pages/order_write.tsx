@@ -37,7 +37,9 @@ export default function OrderWriter({dataInfo}) {
 
     const userInfo = useAppSelector((state) => state.user);
     const [info, setInfo] = useState<any>(orderWriteInitial)
+    const [isMainModalOpen, setIsMainModalOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
+
 
 
     useEffect(() => {
@@ -80,14 +82,15 @@ export default function OrderWriter({dataInfo}) {
             copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
             copyData['delivery'] = moment(info['delivery']).format('YYYY-MM-DD');
 
+            console.log(copyData, 'copyData~~~~~~~~~~~')
             await getData.post('order/addOrder', copyData).then(v => {
                 if(v.data.code === 1){
-                    message.success('저장에 성공하셨습니다')}
+                    message.success('저장되었습니다')}
             });
         }
+        const checkList = Array.from({ length: info['orderDetailList'].length }, (_, i) => i + 1);
         setInfo(orderWriteInitial);
-        setInfo(prev=>(prev.orderDetailList=tableOrderWriteInitial));
-        alert('저장 되었습니다.')
+        deleteList(checkList)
     }
 
     function findAgency() {
@@ -254,7 +257,7 @@ export default function OrderWriter({dataInfo}) {
         XLSX.writeFile(workbook, "example.xlsx");
     };
 
-    function deleteList() {
+    function deleteList(checkList) {
         let copyData = {...info}
         const result = copyData['orderDetailList'].filter(v => !checkList.includes(v.serialNumber))
 
@@ -379,12 +382,12 @@ export default function OrderWriter({dataInfo}) {
                     }}>
                         <div style={{paddingTop: 8}}>
                             <div style={{paddingBottom: 3}}>Payment Terms</div>
-                            <Select id={'paymentTerms'} size={'small'} defaultValue={0} options={[
-                                {value: 0, label: 'By in advance T/T'},
-                                {value: 1, label: 'Credit Card'},
-                                {value: 2, label: 'L/C'},
-                                {value: 3, label: 'Order 30% Before Shipping 70%'},
-                                {value: 4, label: 'Order 50% Before Shipping 50%'},
+                            <Select id={'paymentTerms'} size={'small'} defaultValue={'0'} options={[
+                                {value: '0', label: 'By in advance T/T'},
+                                {value: '1', label: 'Credit Card'},
+                                {value: '2', label: 'L/C'},
+                                {value: '3', label: 'Order 30% Before Shipping 70%'},
+                                {value: '4', label: 'Order 50% Before Shipping 50%'},
                             ]} style={{width : '100%'}}>
                             </Select>
                         </div>
@@ -441,12 +444,15 @@ export default function OrderWriter({dataInfo}) {
                                  title={'발주서 세부 작성'}
                                  data={tableOrderWriteInitial}
                                  dataInfo={subOrderWriteInfo}
-                                 setInfoList={setInfo}/>}
+                                 setInfoList={setInfo}
+                                 isModalOpen={isMainModalOpen}
+                                 setIsModalOpen={setIsMainModalOpen}
+                             />}
                              subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
                                  <CopyOutlined/>복사
                              </Button>
                                  {/*@ts-ignored*/}
-                                 <Button type={'danger'} size={'small'} style={{fontSize: 11}} onClick={deleteList}>
+                                 <Button type={'danger'} size={'small'} style={{fontSize: 11}} onClick={()=>deleteList(checkList)}>
                                      <CopyOutlined/>삭제
                                  </Button>
                                  <Button type={'dashed'} size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>

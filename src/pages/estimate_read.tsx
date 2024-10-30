@@ -61,6 +61,7 @@ export default function EstimateRead({dataList}) {
         }
         const result = await getData.post('estimate/getEstimateList', copyData);
         setTableInfo(transformData(result?.data?.entity?.estimateList, 'estimateId', 'estimateDetailList'));
+        setPaginationInfo(result?.data?.entity?.pageInfo)
     }
 
     function deleteList() {

@@ -24,7 +24,7 @@ export const TagTypeList = {
     "agencyCode": {type : 'input'},
     "dealerType": {type : 'select', boxList : ['딜러', '제조',]},
     "grade": {type : 'select', boxList : ['A', 'B', 'C', 'D']},
-    "margin": {type : 'input'},
+    "margin": {type : 'inputNumber'},
     "agencyName": {type : 'input'},
     "maker": {type : 'input'},
     "homepage": {type : 'input'},
@@ -47,7 +47,7 @@ export const TagTypeList = {
     "receiptDate": {type : 'date'},
     "documentNumber": {type : 'input'},
     "importUnitPrice": {type : 'inputNumber'},
-    "receivedQuantity": {type : 'input'},
+    "receivedQuantity": {type : 'inputNumber'},
     "location": {type : 'input'},
 
     "title": {type : 'input'},
@@ -62,7 +62,7 @@ export const TagTypeList = {
     "ibanCode": {type : 'input'},
     "swiftCode": {type : 'input'},
 
-    "agencyId": 1,
+    "agencyId": {type:'input'},
     "region": {type : 'input'},
     "postalCode": {type : 'input'},
     "customerName": {type : 'input'},
@@ -74,8 +74,13 @@ export const TagTypeList = {
 
     "unitPrice": {type : 'inputNumber'},           // 단가
     "amount": {type : 'inputNumber'},
-    "unreceivedQuantity": {type : 'input'},
-    "price": {type : 'input'},
+    "unreceivedQuantity": {type : 'inputNumber'},
+    "price": {type : 'inputNumber'},
+
+    "remainingQuantity": {type : 'inputNumber'},
+    "usageQuantity": {type : 'inputNumber'},
+
+
 
 }
 

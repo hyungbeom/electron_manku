@@ -55,21 +55,38 @@ export default function OrderRead({dataList}) {
 
     async function searchInfo() {
         const copyData: any = {...info}
-        const {writtenDate}: any = copyData;
-        if (writtenDate) {
-            copyData['searchStartDate'] = writtenDate[0];
-            copyData['searchEndDate'] = writtenDate[1];
+        const {searchDate}: any = copyData;
+        if (searchDate) {
+            copyData['searchStartDate'] = searchDate[0];
+            copyData['searchEndDate'] = searchDate[1];
         }
         const result = await getData.post('order/getOrderList', copyData);
         setTableInfo(transformData(result?.data?.entity?.orderList, 'orderId', 'orderDetailList'));
+        setPaginationInfo(result?.data?.entity?.pageInfo)
     }
 
-    function deleteList() {
-        let copyData = {...info}
-        const result = copyData['orderDetailList'].filter(v => !checkList.includes(v.serialNumber))
+    async function deleteList() {
+        let copyData = {...tableInfo}
 
-        copyData['orderDetailList'] = result
-        setInfo(copyData);
+        // @ts-ignore
+        const deleteItemList= Object.values(copyData).filter(v=>checkList.includes(v.key))
+
+        console.log(deleteItemList, 'deleteItemList')
+
+        if (deleteItemList.length < 1)
+            alert('하나 이상의 항목을 선택해주세요.')
+        else {
+            // @ts-ignore
+            for (const v of deleteItemList) {const orderId=v.orderId;
+                await getData.post('order/deleteOrder', {
+                orderId:orderId}).then(r=>{
+                if(r.data.code === 1)
+                    alert('삭제되었습니다.')
+            });
+            }
+        }
+
+        await searchInfo();
     }
 
     const downloadExcel = () => {
@@ -185,9 +202,18 @@ export default function OrderRead({dataList}) {
 export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
 
 
-    let param = {}
+    const {userInfo} = await initialServerRouter(ctx, store);
 
-    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
+    if (!userInfo) {
+        return {
+            redirect: {
+                destination: '/', // 리다이렉트할 경로
+                permanent: false, // true면 301 리다이렉트, false면 302 리다이렉트
+            },
+        };
+    }
+
+    store.dispatch(setUserInfo(userInfo));
 
     const result = await getData.post('order/getOrderList', {
         "searchStartDate": "",          // 발주일자 검색 시작일
@@ -199,27 +225,11 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
         "searchItem": "",               // ITEM
         "searchEstimateManager": "",    // 견적서담당자명
         "page": 1,
-        "limit": 20
+        "limit": 10
     });
 
 
-    if (userInfo) {
-        store.dispatch(setUserInfo(userInfo));
+    return {
+        props: {dataList: result?.data?.entity}
     }
-    if (codeInfo !== 1) {
-        param = {
-            redirect: {
-                destination: '/', // 리다이렉트할 대상 페이지
-                permanent: false, // true로 설정하면 301 영구 리다이렉트, false면 302 임시 리다이렉트
-            },
-        };
-    } else {
-        // result?.data?.entity?.estimateRequestList
-        param = {
-            props: {dataList: result?.data?.entity}
-        }
-    }
-
-
-    return param
 })

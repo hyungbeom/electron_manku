@@ -85,7 +85,7 @@ export const subRfqWriteInitial = {
 }
 
 export const tableOrderWriteInitial = {
-    "model": "model",           // MODEL
+    "model": "",           // MODEL
     "quantity": 1,              // 수량
     "unit": "ea",               // 단위
     "currency": "krw",          // CURR
@@ -205,21 +205,22 @@ export const orderWriteInitial = {
 }
 
 export const orderStockInitial = {
-    "searchMaker": "",          // MAKER 검색
-    "searchModel": "",          // MODEL 검색
-    "searchLocation": "",       // 위치 검색
+    "receiptDate": "",          // MAKER 검색
+    "documentNumber": "",          // MODEL 검색
+    "maker": "",       // 위치 검색
     "page": 1,
     "limit": 20
 }
 
-export const tableOrderStockInitial = {
-    "receiptDate":  null,        // 입고일자
+export const tableOrderInventoryInitial = {
+    "receiptDate":  "",        // 입고일자
     "documentNumber": "",     // 문서번호
     "maker": "",                 // MAKER
     "model": "",                 // Model
-    "importUnitPrice": 0,          // 수입단가
+    "importUnitPrice": null,          // 수입단가
     "currencyUnit": "KRW",              // 화폐단위
-    "receivedQuantity": 0,           // 입고수량
+    "receivedQuantity": null,           // 입고수량
+    "usageQuantity": null,           // 입고수량
     "unit": "EA",                       // 단위
     "location": "",            // 위치
     "remarks": ""          // 비고
@@ -298,7 +299,7 @@ export const orderReadInitial = {
     "limit": 10
 }
 
-export const invenReadInitial = {
+export const inventoryReadInitial = {
     "searchText": "",              // 재고 등록 검색 (문서번호, MAKER, Model)
     "searchMaker": "",                  // MAKER
     "searchModel": "",                  // MODEL
@@ -308,28 +309,16 @@ export const invenReadInitial = {
 }
 
 
-export const subInvenWriteInitial = {
-    "receiptDate": "",        // 입고일자
-    "documentNumber": "",     // 문서번호
-    "maker": "",                 // MAKER
-    "model": "",                 // Model
-    "importUnitPrice": 0,          // 수입단가
-    "currencyUnit": "KRW",              // 화폐단위
-    "receivedQuantity": 0,           // 입고수량
-    "unit": "EA",                       // 단위
-    "location": "",            // 위치
-    "remarks": ""          // 비고
-}
-
-
-export const customerReadInitial = {
-    "searchText": "",              // 재고 등록 검색 (문서번호, MAKER, Model)
-    "searchDate": "",                  // MAKER
+export const orderCustomerReadInitial = {
+    "searchDate" :"",
+    "searchStartDate": "",      // 조회일자 시작일
+    "searchEndDate": "",        // 조회일자 종료일
+    "searchCustomerName": "",   // 거래처명
     "page": 1,
-    "limit": 10
+    "limit": 20
 }
 
-export const agencyReadInitial = {
+export const orderAgencyReadInitial = {
     "searchText": "",              // 재고 등록 검색 (문서번호, MAKER, Model)
     "searchDate": "",                  // MAKER
     "page": 1,
@@ -338,22 +327,10 @@ export const agencyReadInitial = {
 
 
 export const tableOrderCustomerInitial = {
-    "agencyId": 0,
-    "agencyCode": "",
-    "agencyName": "",
-    "dealerType": "",
-    "grade": "",
-    "margin": 0,
-    "homepage": "",
-    "item": "",
-    "tradeStartDate": "",
-    "businessRegistrationNumber": "",
-    "bankAccountNumber": "",
-    "createdBy": "",
-    "createdDate": null,
-    "modifiedBy": "",
-    "modifiedDate": null,
-    "maker": "",
+    "customerName": "",
+    "unpaidAmount": 0,
+    "paidAmount": 0,
+    "totalAmount": 0,
     "key": 1
 }
 
