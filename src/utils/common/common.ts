@@ -185,7 +185,7 @@ export const transformData = (data, type, listType) => {
         let childrenData;
 
 
-        console.log(listType,'type:')
+        // console.log(listType,'type:')
         switch (type) {
             case 'estimateId' :
                 childrenData = item[listType]?.map((detail) =>estimateDetailRead(detail))
@@ -196,9 +196,7 @@ export const transformData = (data, type, listType) => {
             case 'orderId' :
                 childrenData = item[listType]?.map((detail) =>orderDetailRead(detail));
                 break;
-            // case 'inventoryId':
-            //     childrenData = item[listType]?.map((detail) =>inventoryRead(detail));
-            //     break;
+
         }
         // if(item[listType]){
         // childrenData = item[listType]?.map((detail) =>rfqDetailRead(detail));}

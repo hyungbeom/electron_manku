@@ -16,6 +16,8 @@ import {getData} from "@/manage/function/api";
 import moment from "moment";
 import {transformData} from "@/utils/common/common";
 import * as XLSX from "xlsx";
+import is from "@sindresorhus/is";
+import set = is.set;
 
 const {RangePicker} = DatePicker
 
@@ -33,7 +35,9 @@ export default function OrderRead({dataList}) {
     const [tableInfo, setTableInfo] = useState(orderList)
     const [paginationInfo, setPaginationInfo] = useState(pageInfo)
 
-    // console.log(orderList,'orderList:')
+console.log(pageInfo,'pageInfo~~~~~~~~~~~:')
+
+
     function onChange(e) {
 
         let bowl = {}
@@ -65,6 +69,8 @@ export default function OrderRead({dataList}) {
         setPaginationInfo(result?.data?.entity?.pageInfo)
     }
 
+
+
     async function deleteList() {
         let copyData = {...tableInfo}
 
@@ -85,7 +91,6 @@ export default function OrderRead({dataList}) {
             });
             }
         }
-
         await searchInfo();
     }
 
@@ -110,6 +115,21 @@ export default function OrderRead({dataList}) {
             name: record?.name,
         }),
     };
+
+    async function handlePageChange(e) {
+        console.log(e, "page~~~~~~~~~~")
+        console.log(info['page'], "info~~~~~~~~~~")
+
+        info['page']=e
+        // setPaginationInfo({rowPerPage: size, page: e, totalRow: pageInfo['totalRow']})
+        //
+        // const copyData: any = {...info}
+        // copyData['limit'] = size;
+        // copyData['page'] = e;
+        // const result = await getData.post('estimate/getEstimateRequestList', copyData);
+        //
+        // setTableInfo(transformData(result?.data?.entity?.estimateRequestList))
+    }
 
     return <>
         <LayoutComponent>
@@ -177,8 +197,9 @@ export default function OrderRead({dataList}) {
                              setTableInfo={setTableInfo}
                              rowSelection={rowSelection}
                              pageInfo={paginationInfo}
-                             visible={true}
                              setPaginationInfo={setPaginationInfo}
+                             visible={true}
+                             handlePageChange={handlePageChange}
 
                              subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
                                  <CopyOutlined/>복사
@@ -225,7 +246,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
         "searchItem": "",               // ITEM
         "searchEstimateManager": "",    // 견적서담당자명
         "page": 1,
-        "limit": 10
+        "limit": 100
     });
 
 

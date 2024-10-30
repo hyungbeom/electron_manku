@@ -27,6 +27,7 @@ const CustomTable = ({
                          pageInfo,
                          setPaginationInfo,
                          setTableInfo,
+                         handlePageChange,
                          visible = false,
                          setIsModalOpen = undefined,
                          setItemId = undefined,
@@ -148,16 +149,18 @@ const CustomTable = ({
     });
 
 
-    async function check(e, size) {
-        setPaginationInfo({rowPerPage: size, page: e, totalRow: pageInfo['totalRow']})
-
-        const copyData: any = {...info}
-        copyData['limit'] = size;
-        copyData['page'] = e;
-        // const result = await getData.post('estimate/getEstimateRequestList', copyData);
-
-        // setTableInfo(transformData(result?.data?.entity?.estimateRequestList))
-    }
+    // async function handlePageChange(e) {
+    //     console.log(e, "page~~~~~~~~~~")
+    //
+    //     setPaginationInfo({rowPerPage: size, page: e, totalRow: pageInfo['totalRow']})
+    //
+    //     const copyData: any = {...info}
+    //     copyData['limit'] = size;
+    //     copyData['page'] = e;
+    //     // const result = await getData.post('estimate/getEstimateRequestList', copyData);
+    //     //
+    //     // setTableInfo(transformData(result?.data?.entity?.estimateRequestList))
+    // }
 
     const handleRowDoubleClick = (record) => {
         if(record.estimateRequestId)
@@ -176,6 +179,7 @@ const CustomTable = ({
 
         // 여기에 더블 클릭 시 실행할 로직을 추가하세요.
     };
+
     return (
         <div style={{overflow: 'auto', maxHeight: '100%', maxWidth: '100%'}}>
             <Card size={'small'} style={{border: '1px solid lightGray', height: '100%'}}
@@ -197,8 +201,9 @@ const CustomTable = ({
                        scroll={{x: true}}
                        size={'small'}
                        bordered
-                       pagination={false}
+                       pagination={{pageSize:100}}
                        columns={setColumns}
+                       sortDirections={['ascend', 'descend']}
                        onRow={(record) => ({
 
                            onDoubleClick: () => {
@@ -248,9 +253,9 @@ const CustomTable = ({
                        }}
                 />
                 {/*@ts-ignored*/}
-                {visible && <Pagination value={pageInfo['page']} total={pageInfo['totalRow']}
-                                        style={{float: 'right', paddingTop: 25}} pageSize={pageInfo['rowPerPage']}
-                                        onChange={check}/>}
+                {/*{visible && <Pagination value={pageInfo['page']} total={pageInfo['totalRow']}*/}
+                {/*                        style={{float: 'right', paddingTop: 25}} pageSize={pageInfo['rowPerPage']}*/}
+                {/*                        onChange={handlePageChange}/>}*/}
 
                 {excel && <Dragger {...uploadProps} style={{marginBottom: '20px'}}>
                     <p className="ant-upload-drag-icon">

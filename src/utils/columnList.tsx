@@ -200,16 +200,14 @@ export const tableOrderWriteColumn = [
         dataIndex: 'model',
         key: 'model',
         fixed: 'left',
-        render: (text) => <div style={{width : 80}} className="ellipsis-cell">{text}</div>,
-        editable: true,
+        render: (text) => <div style={{width : 150}} className="ellipsis-cell">{text}</div>,
     },
     {
         title: '수량',
         dataIndex: 'quantity',
         key: 'quantity',
         align : 'center',
-        render: (text) => <div style={{width : 40}} className="ellipsis-cell">{text}</div>,
-        editable: true,
+        render: (text) => <div style={{width : 50}} className="ellipsis-cell">{text}</div>,
         fixed: 'left',
     },
     {
@@ -218,7 +216,6 @@ export const tableOrderWriteColumn = [
         key: 'unit',
         align : 'center',
         render: (text) => <div style={{width : 40}} className="ellipsis-cell">{text}</div>,
-        editable: true,
     },
     {
         title: 'CURR',
@@ -226,13 +223,12 @@ export const tableOrderWriteColumn = [
         key: 'currency',
         align : 'center',
         render: (text) => <div style={{width : 40}} className="ellipsis-cell">{text}</div>,
-        editable: true,
     },
     {
         title: 'NET/P',
         dataIndex: 'net',
         key: 'net',
-        editable: true,
+        align : 'center',
         render: (text) => <div style={{width : 40}} className="ellipsis-cell">{text}</div>,
     },
     {
@@ -243,7 +239,7 @@ export const tableOrderWriteColumn = [
         editable: true,
     },
     {
-        title: '주문수량',
+        title: '주문\n수량',
         dataIndex: 'quantity',
         key: 'quantity',
         render: (text) => <div style={{width : 100}} className="ellipsis-cell">{text}</div>,
@@ -739,64 +735,6 @@ export const rfqMailColumns = [
 ];
 
 
-export const subOrderWriteColumns = [
-    {
-        title: 'MODEL',
-        dataIndex: 'model',
-        key: 'model',
-    },
-    {
-        title: '수량',
-        dataIndex: 'quantity',
-        key: 'quantity',
-    },
-    {
-        title: '단위',
-        dataIndex: 'unit',
-        key: 'unit',
-    },
-    {
-        title: 'CURR',
-        dataIndex: 'currency',
-        key: 'currency',
-    },
-    {
-        title: 'NET/P',
-        dataIndex: 'net',
-        key: 'net',
-    },
-    {
-        title: 'Amount',
-        dataIndex: 'amount',
-        key: 'amount',
-    },
-    {
-        title: '주문',  // 없음
-        dataIndex: 'orderQuantity',
-        key: 'orderQuantity',
-    },
-    {
-        title: '입고',
-        dataIndex: 'receivedQuantity',
-        key: 'receivedQuantity',
-    },
-    {
-        title: '미입고',
-        dataIndex: 'unreceivedQuantity',
-        key: 'unreceivedQuantity',
-    },
-    {
-        title: '단가',
-        dataIndex: 'unitPrice',
-        key: 'unitPrice',
-    },
-    {
-        title: '금액',
-        dataIndex: 'price',
-        key: 'price',
-    },
-];
-
 export const tableOrderReadColumns = [
     {
         title: '작성일자',
@@ -804,7 +742,10 @@ export const tableOrderReadColumns = [
         key: 'writtenDate',
         fixed: 'left',
         align : 'center',
-        render: (text) => <div style={{width: 100}} className="ellipsis-cell">{moment(text).format('YYYY-MM-DD')}</div>,
+        defaultSortOrder: 'descend',
+        sorter:  (a, b) => moment(b.writtenDate).valueOf() - moment(a.writtenDate).valueOf(),
+        sortDirections: ['ascend', 'descend'],
+        render: (text) => <div style={{width : 80}} className="ellipsis-cell">{moment(text).format('YYYY-MM-DD')}</div>,
     },
     {
         title: '문서번호',
@@ -884,6 +825,8 @@ export const tableOrderReadColumns = [
         dataIndex: 'quantity',
         key: 'quantity',
         align : 'center',
+        sorter:  (a, b) => b.quantity - a.quantity,
+        sortDirections: ['ascend', 'descend'],
         render: (text) => <div style={{paddingRight:5, textAlign:'right', width : 70}} className="ellipsis-cell">{text}</div>,
     },
     {
@@ -891,6 +834,8 @@ export const tableOrderReadColumns = [
         dataIndex: 'receivedQuantity',
         key: 'receivedQuantity',
         align : 'center',
+        sorter:  (a, b) => b.quantity - a.quantity,
+        sortDirections: ['ascend', 'descend'],
         render: (text) => <div style={{paddingRight:5, textAlign:'right', width : 70}} className="ellipsis-cell">{text}</div>,
     },
     {
@@ -898,6 +843,8 @@ export const tableOrderReadColumns = [
         dataIndex: 'unreceivedQuantity',
         key: 'unreceivedQuantity',
         align : 'center',
+        sorter:  (a, b) => b.quantity - a.quantity,
+        sortDirections: ['ascend', 'descend'],
         render: (text) => <div style={{paddingRight:5, textAlign:'right', width : 70}} className="ellipsis-cell">{text}</div>,
     },
     {
@@ -905,6 +852,8 @@ export const tableOrderReadColumns = [
         dataIndex: 'unitPrice',
         key: 'unitPrice',
         align : 'center',
+        sorter:  (a, b) => b.quantity - a.quantity,
+        sortDirections: ['ascend', 'descend'],
         render: (text) => <div style={{paddingRight:5, textAlign:'right', width : 70}} className="ellipsis-cell">{text}</div>,
     },
     {
