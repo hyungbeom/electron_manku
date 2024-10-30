@@ -136,6 +136,7 @@ export default function OrderReadCustomer({dataList}) {
                              setTableInfo={setTableInfo}
                              rowSelection={rowSelection}
                              pageInfo={paginationInfo}
+                             visible={true}
                              setPaginationInfo={setPaginationInfo}
 
                              subContent={<>
