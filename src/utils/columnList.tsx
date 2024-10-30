@@ -130,7 +130,8 @@ export const subRfqWriteColumn = [
         dataIndex: 'model',
         key: 'model',
         fixed: 'left',
-        render: (text) => <div style={{width : 80}} className="ellipsis-cell">{text}</div>,
+        width : 180,
+        render: (text) => <div style={{width : 180}} className="ellipsis-cell">{text}</div>,
         editable: true,
     },
     {
