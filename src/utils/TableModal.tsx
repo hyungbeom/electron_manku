@@ -58,7 +58,7 @@ export default function TableModal({title, data, dataInfo, setInfoList, listType
             return copyData2;
         })
         setIsModalOpen(false);
-        searchInfo && setItemId(null);
+        itemId && setItemId(null);
         setInfo(data);
     };
 
@@ -123,7 +123,7 @@ export default function TableModal({title, data, dataInfo, setInfoList, listType
 
     const handleCancel = () => {
         setIsModalOpen(false);
-        setItemId(null);
+        itemId && setItemId(null);
         setInfo(data)
     };
 
