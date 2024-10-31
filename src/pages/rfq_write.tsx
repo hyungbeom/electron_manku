@@ -30,14 +30,12 @@ import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import * as XLSX from 'xlsx';
 import MyComponent from "@/component/MyComponent";
 import {useRouter} from "next/router";
+import nookies from "nookies";
+import {TwinInputBox} from "@/utils/common/component/Common";
 
-const TwinInputBox = ({children}) => {
-    return <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: 5, paddingTop: 8}}>
-        {children}
-    </div>
-}
 
-export default function rqfWrite({dataInfo}) {
+
+export default function rqfWrite({dataInfo, display}) {
 
     const router = useRouter();
 
@@ -284,6 +282,7 @@ export default function rqfWrite({dataInfo}) {
                 <SearchAgencyCode/>
                 <SearchCustomer/>
                 <Card title={'의뢰 작성'} style={{fontSize: 12, border: '1px solid lightGray'}}>
+                    <div>
                     <Card size={'small'} style={{
                         fontSize: 13,
                         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
@@ -418,6 +417,7 @@ export default function rqfWrite({dataInfo}) {
 
                         </div>
                     </Card>
+                    </div>
                 </Card>
 
 
@@ -458,7 +458,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     let param = {}
 
     const {userInfo} = await initialServerRouter(ctx, store);
-
+    const cookies = nookies.get(ctx)
     if (!userInfo) {
         return {
             redirect: {
@@ -467,6 +467,9 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
             },
         };
     }
+
+    const {display='horizon'} = cookies;
+
 
     store.dispatch(setUserInfo(userInfo));
 
@@ -492,5 +495,5 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     });
 
 
-    return {props: {dataInfo: estimateRequestId ? result?.data?.entity?.estimateRequestList[0] : null}}
+    return {props: {dataInfo: estimateRequestId ? result?.data?.entity?.estimateRequestList[0] : null, display : display}}
 })
