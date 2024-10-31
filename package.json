@@ -25,6 +25,7 @@
     }
   },
   "dependencies": {
+    "@ag-grid-community/theming": "^32.3.2",
     "@ant-design/icons": "^5.5.1",
     "ag-grid-community": "^32.3.2",
     "ag-grid-react": "^32.3.2",

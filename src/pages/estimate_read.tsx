@@ -3,10 +3,10 @@ import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
 import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
-import {tableEstimateReadColumns} from "@/utils/columnList";
+import {rfqReadColumns, tableEstimateReadColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {estimateReadInitial, tableEstimateReadInitial} from "@/utils/initialList";
-import {tableEstimateReadInfo} from "@/utils/modalDataList";
+import {estimateReadInitial, tableEstimateReadInitial, tableOrderReadInitial} from "@/utils/initialList";
+import {tableEstimateReadInfo, tableOrderReadInfo} from "@/utils/modalDataList";
 import Select from "antd/lib/select";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
@@ -17,6 +17,7 @@ import {transformData} from "@/utils/common/common";
 import * as XLSX from "xlsx";
 import Button from "antd/lib/button";
 import {CopyOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
+import TableGrid from "@/pages/tableGrid";
 
 const {RangePicker} = DatePicker
 
@@ -159,28 +160,51 @@ export default function EstimateRead({dataList}) {
 
                 </Card>
 
-                <CustomTable columns={tableEstimateReadColumns}
-                             initial={tableEstimateReadInitial}
-                             dataInfo={tableEstimateReadInfo}
-                             info={tableInfo}
-                             setDatabase={setInfo}
-                             setTableInfo={setTableInfo}
-                             rowSelection={rowSelection}
-                             pageInfo={paginationInfo}
-                             visible={true}
-                             setPaginationInfo={setPaginationInfo}
-
-                             subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
-                                 <CopyOutlined/>복사
-                             </Button>
-                                 {/*@ts-ignored*/}
-                                 <Button type={'danger'} size={'small'} style={{fontSize: 11}} onClick={deleteList}>
-                                     <CopyOutlined/>삭제
-                                 </Button>
-                                 <Button type={'dashed'} size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>
-                                     <FileExcelOutlined/>출력
-                                 </Button></>}
+                <TableGrid
+                    columns={rfqReadColumns}
+                    data={tableInfo}
+                    setDatabase={setInfo}
+                    setTableInfo={setTableInfo}
+                    rowSelection={rowSelection}
+                    pageInfo={paginationInfo}
+                    setPaginationInfo={setPaginationInfo}
+                    visible={true}
+                    excel={true}
+                    funcButtons={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
+                        <CopyOutlined/>복사
+                    </Button>
+                        {/*@ts-ignored*/}
+                        <Button type={'danger'} size={'small'} style={{fontSize: 11}} onClick={deleteList}>
+                            <CopyOutlined/>삭제
+                        </Button>
+                        <Button type={'dashed'} size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>
+                            <FileExcelOutlined/>출력
+                        </Button></>}
                 />
+
+
+                {/*<CustomTable columns={tableEstimateReadColumns}*/}
+                {/*             initial={tableEstimateReadInitial}*/}
+                {/*             dataInfo={tableEstimateReadInfo}*/}
+                {/*             info={tableInfo}*/}
+                {/*             setDatabase={setInfo}*/}
+                {/*             setTableInfo={setTableInfo}*/}
+                {/*             rowSelection={rowSelection}*/}
+                {/*             pageInfo={paginationInfo}*/}
+                {/*             visible={true}*/}
+                {/*             setPaginationInfo={setPaginationInfo}*/}
+
+                {/*             subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>*/}
+                {/*                 <CopyOutlined/>복사*/}
+                {/*             </Button>*/}
+                {/*                 /!*@ts-ignored*!/*/}
+                {/*                 <Button type={'danger'} size={'small'} style={{fontSize: 11}} onClick={deleteList}>*/}
+                {/*                     <CopyOutlined/>삭제*/}
+                {/*                 </Button>*/}
+                {/*                 <Button type={'dashed'} size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>*/}
+                {/*                     <FileExcelOutlined/>출력*/}
+                {/*                 </Button></>}*/}
+                {/*/>*/}
 
 
             </div>

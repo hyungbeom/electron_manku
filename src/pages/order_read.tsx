@@ -18,6 +18,7 @@ import {transformData} from "@/utils/common/common";
 import * as XLSX from "xlsx";
 import is from "@sindresorhus/is";
 import set = is.set;
+import TableGrid from "@/pages/tableGrid";
 
 const {RangePicker} = DatePicker
 
@@ -35,7 +36,7 @@ export default function OrderRead({dataList}) {
     const [tableInfo, setTableInfo] = useState(orderList)
     const [paginationInfo, setPaginationInfo] = useState(pageInfo)
 
-console.log(pageInfo,'pageInfo~~~~~~~~~~~:')
+console.log(tableInfo,'tableInfo~~~~~~~~~~~:')
 
 
     function onChange(e) {
@@ -189,28 +190,53 @@ console.log(pageInfo,'pageInfo~~~~~~~~~~~:')
 
                 </Card>
 
-                <CustomTable columns={tableOrderReadColumns}
-                             initial={tableOrderReadInitial}
-                             dataInfo={tableOrderReadInfo}
-                             info={tableInfo}
-                             setDatabase={setInfo}
-                             setTableInfo={setTableInfo}
-                             rowSelection={rowSelection}
-                             pageInfo={paginationInfo}
-                             setPaginationInfo={setPaginationInfo}
-                             visible={true}
-                             handlePageChange={handlePageChange}
+                {/*<CustomTable columns={tableOrderReadColumns}*/}
+                {/*             initial={tableOrderReadInitial}*/}
+                {/*             dataInfo={tableOrderReadInfo}*/}
+                {/*             info={tableInfo}*/}
+                {/*             setDatabase={setInfo}*/}
+                {/*             setTableInfo={setTableInfo}*/}
+                {/*             rowSelection={rowSelection}*/}
+                {/*             pageInfo={paginationInfo}*/}
+                {/*             setPaginationInfo={setPaginationInfo}*/}
+                {/*             visible={true}*/}
+                {/*             handlePageChange={handlePageChange}*/}
 
-                             subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
-                                 <CopyOutlined/>복사
-                             </Button>
-                                 {/*@ts-ignored*/}
-                                 <Button type={'danger'} size={'small'} style={{fontSize: 11}} onClick={deleteList}>
-                                     <CopyOutlined/>삭제
-                                 </Button>
-                                 <Button type={'dashed'} size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>
-                                     <FileExcelOutlined/>출력
-                                 </Button></>}
+                {/*             subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>*/}
+                {/*                 <CopyOutlined/>복사*/}
+                {/*             </Button>*/}
+                {/*                 /!*@ts-ignored*!/*/}
+                {/*                 <Button type={'danger'} size={'small'} style={{fontSize: 11}} onClick={deleteList}>*/}
+                {/*                     <CopyOutlined/>삭제*/}
+                {/*                 </Button>*/}
+                {/*                 <Button type={'dashed'} size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>*/}
+                {/*                     <FileExcelOutlined/>출력*/}
+                {/*                 </Button></>}*/}
+                {/*/>*/}
+
+                <TableGrid
+                    columns={tableOrderReadColumns}
+                    initial={tableOrderReadInitial}
+                    dataInfo={tableOrderReadInfo}
+                    data={tableInfo}
+                    setDatabase={setInfo}
+                    setTableInfo={setTableInfo}
+                    rowSelection={rowSelection}
+                    pageInfo={paginationInfo}
+                    setPaginationInfo={setPaginationInfo}
+                    visible={true}
+                    excel={true}
+                    handlePageChange={handlePageChange}
+                    subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
+                                         <CopyOutlined/>복사
+                                     </Button>
+                                         {/*@ts-ignored*/}
+                                         <Button type={'danger'} size={'small'} style={{fontSize: 11}} onClick={deleteList}>
+                                             <CopyOutlined/>삭제
+                                         </Button>
+                                         <Button type={'dashed'} size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>
+                                             <FileExcelOutlined/>출력
+                                         </Button></>}
                 />
 
             </div>
