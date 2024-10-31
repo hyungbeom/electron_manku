@@ -80,11 +80,7 @@ export const TagTypeList = {
     "remainingQuantity": {type : 'inputNumber'},
     "usageQuantity": {type : 'inputNumber'},
 
-
-
 }
-
-
 
 
 export const refWriteInitial = {
@@ -309,3 +305,12 @@ export const estimateTotalWriteColumn = [
 ];
 
 // =============================   data   ================================
+
+export const mankuInformation = {
+    registerNumber: {title: "등록번호", content:"714-87-01453", id:"registerNumber"},
+    companyName : {title: "등록번호", content:"714-87-01453", id:"registerNumber"},
+    owner : {title: "등록번호", content:"714-87-01453", id:"registerNumber"},
+    address : {title: "등록번호", content:"714-87-01453", id:"registerNumber"},
+    businessForm : {title: "등록번호", content:"714-87-01453", id:"registerNumber"},
+    businessType : {title: "등록번호", content:"714-87-01453", id:"registerNumber"},
+}

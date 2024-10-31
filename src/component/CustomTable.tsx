@@ -186,7 +186,7 @@ const CustomTable = ({
                   title={
                       <>
                           <span>LIST</span>
-                          <div style={{display: 'flex', justifyContent: 'space-between', width: 170, float: 'right'}}>
+                          <div style={{display: 'flex', justifyContent: 'space-between', width: 'auto', float: 'right'}}>
                               {subContent}
                           </div>
                       </>

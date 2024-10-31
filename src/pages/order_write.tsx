@@ -278,6 +278,14 @@ export default function OrderWriter({dataInfo}) {
             name: record.name,
         }),
     };
+
+    const printSheet = () => {
+
+
+    }
+
+
+
     return <>
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateColumns: '350px 1fr', height: '100%', gridColumnGap: 5}}>
@@ -452,12 +460,16 @@ export default function OrderWriter({dataInfo}) {
                                  <CopyOutlined/>복사
                              </Button>
                                  {/*@ts-ignored*/}
-                                 <Button type={'danger'} size={'small'} style={{fontSize: 11}} onClick={()=>deleteList(checkList)}>
+                                 <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft:5}} onClick={()=>deleteList(checkList)}>
                                      <CopyOutlined/>삭제
                                  </Button>
-                                 <Button type={'dashed'} size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>
-                                     <FileExcelOutlined/>출력
-                                 </Button></>}
+                                 <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5}} onClick={printSheet}>
+                                     <FileExcelOutlined/>거래명세표 출력
+                                 </Button>
+                                 <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5}} onClick={downloadExcel}>
+                                     <FileExcelOutlined/>엑셀 출력
+                                 </Button>
+                </>}
                              />
 
             </div>
