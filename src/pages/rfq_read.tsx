@@ -6,10 +6,10 @@ import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
 import {CopyOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
-import {rfqReadColumns} from "@/utils/columnList";
+import {rfqReadColumns, tableOrderReadColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {subRfqReadInitial} from "@/utils/initialList";
-import {subRfqReadInfo} from "@/utils/modalDataList";
+import {subRfqReadInitial, tableOrderReadInitial} from "@/utils/initialList";
+import {subRfqReadInfo, tableOrderReadInfo} from "@/utils/modalDataList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
@@ -18,6 +18,7 @@ import moment from "moment";
 import * as XLSX from "xlsx";
 import {transformData} from "@/utils/common/common";
 import {useRouter} from "next/router";
+import TableGrid from "@/pages/tableGrid";
 
 const {RangePicker} = DatePicker
 
@@ -25,13 +26,13 @@ const {RangePicker} = DatePicker
 export default function rfqRead({dataList}) {
     let checkList = []
 
-
-
     const {estimateRequestList, pageInfo} = dataList;
     const [info, setInfo] = useState(subRfqReadInitial)
     const [tableInfo, setTableInfo] = useState(estimateRequestList)
     const [paginationInfo, setPaginationInfo] = useState(pageInfo)
 
+
+    console.log(estimateRequestList)
 
     function onChange(e) {
 
@@ -68,6 +69,14 @@ export default function rfqRead({dataList}) {
 
         copyData['estimateRequestDetailList'] = result
         setInfo(copyData);
+    }
+
+
+    async function getDetailData(params) {
+        const result = await getData.post('estimate/getEstimateRequestDetail', {
+            estimateRequestId:params
+        });
+        setTableInfo(result?.data?.entity?.estimateRequestList)
     }
 
     const downloadExcel = () => {
@@ -158,29 +167,49 @@ export default function rfqRead({dataList}) {
 
                 </Card>
 
-
-                <CustomTable columns={rfqReadColumns}
-                             initial={subRfqReadInitial}
-                             dataInfo={subRfqReadInfo}
-                             info={tableInfo}
-                             setDatabase={setInfo}
-                             setTableInfo={setTableInfo}
-                             rowSelection={rowSelection}
-                             pageInfo={paginationInfo}
-                             visible={true}
-                             setPaginationInfo={setPaginationInfo}
-
-                             subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
-                                 <CopyOutlined/>복사
-                             </Button>
-                                 {/*@ts-ignored*/}
-                                 <Button type={'danger'} size={'small'} style={{fontSize: 11}} onClick={deleteList}>
-                                     <CopyOutlined/>삭제
-                                 </Button>
-                                 <Button type={'dashed'} size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>
-                                     <FileExcelOutlined/>출력
-                                 </Button></>}
+                <TableGrid
+                    columns={rfqReadColumns}
+                    data={estimateRequestList}
+                    dataInfo={tableOrderReadInfo}
+                    setDatabase={setInfo}
+                    setTableInfo={setTableInfo}
+                    pageInfo={paginationInfo}
+                    excel={true}
+                    funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
+                        <CopyOutlined/>복사
+                    </Button>
+                        {/*@ts-ignored*/}
+                        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={deleteList}>
+                            <CopyOutlined/>삭제
+                        </Button>
+                        <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={downloadExcel}>
+                            <FileExcelOutlined/>출력
+                        </Button></div>}
                 />
+
+
+                {/*<CustomTable columns={rfqReadColumns}*/}
+                {/*             initial={subRfqReadInitial}*/}
+                {/*             dataInfo={subRfqReadInfo}*/}
+                {/*             info={tableInfo}*/}
+                {/*             setDatabase={setInfo}*/}
+                {/*             setTableInfo={setTableInfo}*/}
+                {/*             rowSelection={rowSelection}*/}
+                {/*             pageInfo={paginationInfo}*/}
+                {/*             visible={true}*/}
+                {/*             setPaginationInfo={setPaginationInfo}*/}
+
+                {/*             subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>*/}
+                {/*                 <CopyOutlined/>복사*/}
+                {/*             </Button>*/}
+                {/*                 /!*@ts-ignored*!/*/}
+                {/*                 <Button type={'danger'} size={'small'} style={{fontSize: 11}} onClick={deleteList}>*/}
+                {/*                     <CopyOutlined/>삭제*/}
+                {/*                 </Button>*/}
+                {/*                 <Button type={'dashed'} size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>*/}
+                {/*                     <FileExcelOutlined/>출력*/}
+                {/*                 </Button></>}*/}
+                {/*/>*/}
 
             </div>
         </LayoutComponent>
@@ -222,7 +251,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
         "searchMobileNumber": "",           // 담당자 연락처
         "searchBiddingNumber": "",          // 입찰번호(미완성)
         "page": 1,
-        "limit": 10
+        "limit": 100
     });
 
 
