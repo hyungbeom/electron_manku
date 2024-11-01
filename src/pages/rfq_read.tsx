@@ -32,7 +32,7 @@ export default function rfqRead({dataList}) {
     const [paginationInfo, setPaginationInfo] = useState(pageInfo)
 
 
-    // console.log(paginationInfo)
+    console.log(estimateRequestList)
 
     function onChange(e) {
 
