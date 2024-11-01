@@ -18,7 +18,7 @@ import {transformData} from "@/utils/common/common";
 import * as XLSX from "xlsx";
 import is from "@sindresorhus/is";
 import set = is.set;
-import TableGrid from "@/component/tableGrid";
+import TableGrid from "@/pages/tableGrid";
 
 const {RangePicker} = DatePicker
 
@@ -55,6 +55,7 @@ console.log(tableInfo,'tableInfo~~~~~~~~~~~:')
         copyData['searchDate'] = [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
         setInfo(copyData);
         setTableInfo(transformData(orderList, 'orderId', 'orderDetailList'));
+        setTableInfo(orderList)
     }, [])
 
 
@@ -67,7 +68,8 @@ console.log(tableInfo,'tableInfo~~~~~~~~~~~:')
             copyData['searchEndDate'] = searchDate[1];
         }
         const result = await getData.post('order/getOrderList', copyData);
-        setTableInfo(transformData(result?.data?.entity?.orderList, 'orderId', 'orderDetailList'));
+        // setTableInfo(transformData(result?.data?.entity?.orderList, 'orderId', 'orderDetailList'));
+        setTableInfo(result?.data?.entity?.orderList)
         setPaginationInfo(result?.data?.entity?.pageInfo)
     }
 

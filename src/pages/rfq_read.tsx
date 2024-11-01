@@ -18,7 +18,7 @@ import moment from "moment";
 import * as XLSX from "xlsx";
 import {transformData} from "@/utils/common/common";
 import {useRouter} from "next/router";
-import TableGrid from "@/component/tableGrid";
+import TableGrid from "@/pages/tableGrid";
 
 const {RangePicker} = DatePicker
 
@@ -32,8 +32,8 @@ export default function rfqRead({dataList}) {
     const [paginationInfo, setPaginationInfo] = useState(pageInfo)
 
 
-    console.log(estimateRequestList,'estimateRequestList')
-    console.log(tableInfo,'tableInfo')
+    // console.log(estimateRequestList,'estimateRequestList')
+    // console.log(tableInfo,'tableInfo')
 
 
     function onChange(e) {
@@ -50,7 +50,8 @@ export default function rfqRead({dataList}) {
         const copyData: any = {...info}
         copyData['searchDate'] = [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
         setInfo(copyData);
-        setTableInfo(transformData(estimateRequestList, 'estimateRequestId', 'estimateRequestDetailList'));
+        // setTableInfo(transformData(estimateRequestList, 'estimateRequestId', 'estimateRequestDetailList'));
+        setTableInfo(estimateRequestList);
     }, [])
 
 
@@ -62,7 +63,9 @@ export default function rfqRead({dataList}) {
             copyData['searchEndDate'] = searchDate[1];
         }
         const result = await getData.post('estimate/getEstimateRequestList', copyData);
-        setTableInfo(transformData(result?.data?.entity?.estimateRequestList, 'estimateRequestId', 'estimateRequestDetailList'));
+        // setTableInfo(transformData(result?.data?.entity?.estimateRequestList, 'estimateRequestId', 'estimateRequestDetailList'));
+        setTableInfo(result?.data?.entity?.estimateRequestList);
+        setPaginationInfo(result?.data?.entity?.pageInfo)
     }
 
     function deleteList() {

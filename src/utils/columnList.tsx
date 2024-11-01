@@ -64,7 +64,7 @@ export const makerColumn = [
         headerName: 'MAKER',
         field: 'makerName',
         key: 'makerName',
-        width : 50,
+        minWidth:180,
         render: (text) => <div style={{width : 80}} className="ellipsis-cell">{text}</div>,
         fixed: 'left',
     },
@@ -136,7 +136,7 @@ export const subRfqWriteColumn = [
         field: 'model',
         key: 'model',
         fixed: 'left',
-        width : 180,
+        minWidth: 150,
         render: (text) => <div style={{width : 180}} className="ellipsis-cell">{text}</div>,
         editable: true,
     },
@@ -207,6 +207,7 @@ export const tableOrderWriteColumn = [
         field: 'model',
         key: 'model',
         fixed: 'left',
+        minWidth: 150,
         render: (text) => <div style={{width : 150}} className="ellipsis-cell">{text}</div>,
     },
     {
@@ -311,6 +312,7 @@ export const estimateTotalWriteColumns = [
         headerName: 'MAKER',
         field: 'maker',
         key: 'maker',
+        minWidth:180,
     },
     {
         headerName: 'ITEM',
@@ -320,6 +322,7 @@ export const estimateTotalWriteColumns = [
         headerName: 'MODEL',
         field: 'model',
         key: 'model',
+        minWidth: 150,
     },
     {
         headerName: '수량',
@@ -409,6 +412,7 @@ export const tableEstimateReadColumns = [
         headerName: 'MODEL',
         field: 'model',
         key: 'model',
+        minWidth: 150,
         render: (text) =><div style={{width : 80}} className="ellipsis-cell" >{text}</div>,
     },
     {
@@ -470,7 +474,7 @@ export const tableEstimateWriteColumns = [
         field: 'model',
         key: 'model',
         fixed: 'left',
-        width : 180,
+        minWidth: 150,
         render: (text) => <div className="ellipsis-cell" style={{width: 180}}>{text}</div>,
         editable: true,
     },
@@ -525,6 +529,7 @@ export const rfqWriteColumns = [
         headerName: 'MODEL',
         field: 'model',
         key: 'model',
+        minWidth: 150,
     },
     {
         headerName: '수량',
@@ -597,8 +602,8 @@ export const rfqReadColumns = [
         headerName: 'MAKER',
         field: 'maker',
         key: 'maker',
-        minWidth: 100,
-        maxWidth: 120,
+        minWidth: 180,
+        // maxWidth: 120,
     },
     {
         headerName: 'ITEM',
@@ -611,14 +616,14 @@ export const rfqReadColumns = [
         headerName: 'MODEL',
         field: 'model',
         key: 'model',
-        minWidth: 100,
-        maxWidth: 120,
+        minWidth: 150,
+        // maxWidth: 120,
     },
     {
         headerName: '수량',
         field: 'quantity',
         key: 'quantity',
-        minWidth: 100,
+        minWidth: 60,
         maxWidth: 120,
         // valueFormatter: formatNumber,
     },
@@ -626,21 +631,21 @@ export const rfqReadColumns = [
         headerName: '단위',
         field: 'unit',
         key: 'unit',
-        minWidth: 100,
+        minWidth: 60,
         maxWidth: 120,
     },
     {
         headerName: 'CURR',
         field: 'currency',
         key: 'currency',
-        minWidth: 100,
+        minWidth: 60,
         maxWidth: 120,
     },
     {
         headerName: 'NET/P',
         field: 'net',
         key: 'net',
-        minWidth: 100,
+        minWidth: 60,
         maxWidth: 120,
     },
     {
@@ -654,22 +659,14 @@ export const rfqReadColumns = [
         headerName: '내용',
         field: 'content',
         key: 'content',
-        minWidth: 100,
-        maxWidth: 120,
-    },
-
-    {
-        headerName: '내용',
-        field: 'content',
-        key: 'content',
-        minWidth: 100,
+        minWidth: 120,
         maxWidth: 120,
     },
     {
         headerName: '등록자',
         field: 'createdBy',
         key: 'createdBy',
-        minWidth: 100,
+        minWidth: 60,
         maxWidth: 120,
     },
     {
@@ -691,14 +688,14 @@ export const rfqReadColumns = [
         headerName: '지시사항',
         field: 'instructions',
         key: 'instructions',
-        minWidth: 100,
+        minWidth: 180,
         maxWidth: 120,
     },
     {
         headerName: '하단 태그란',
         field: 'footerTag',
         key: 'footerTag',
-        minWidth: 100,
+        minWidth: 200,
         maxWidth: 120,
     },
 
@@ -730,6 +727,7 @@ export const rfqMailColumns = [
         headerName: 'MAKER',
         field: 'maker',
         key: 'maker',
+        minWidth:180,
     },
     {
         headerName: 'ITEM',
@@ -739,6 +737,7 @@ export const rfqMailColumns = [
         headerName: 'MODEL',
         field: 'model',
         key: 'model',
+        minWidth: 150,
         fixed: 'left',
     },{
         headerName: '수량',
@@ -805,6 +804,7 @@ export const tableOrderReadColumns = [
         field: 'maker',
         key: 'maker',
         align : 'center',
+        minWidth:180,
         render: (text) => <div style={{width : 150}} className="ellipsis-cell">{text}</div>,
     },
     {
@@ -818,6 +818,7 @@ export const tableOrderReadColumns = [
         headerName: 'MODEL',
         field: 'model',
         key: 'model',
+        minWidth: 150,
         align : 'center',
         render: (text) => <div style={{width : 80}} className="ellipsis-cell">{text}</div>,
     },
@@ -924,44 +925,6 @@ export const tableOrderReadColumns = [
     },
 ];
 
-export const subInvenReadColumns = [
-    {
-        headerName: 'MAKER',
-        field: 'maker',
-        key: 'maker',
-    },
-    {
-        headerName: 'ITEM',
-        field: 'item',
-        key: 'item',
-    }, {
-        headerName: 'MODEL',
-        field: 'model',
-        key: 'model',
-        fixed: 'left',
-    },
-    {
-        headerName: '잔량',
-        field: 'quantity',
-        key: 'quantity',
-        fixed: 'left',
-    },
-    {
-        headerName: '출고',
-        field: 'release',
-        key: 'release',
-    },
-    {
-        headerName: '합계',
-        field: 'total',
-        key: 'total',
-    },
-    {
-        headerName: '위치',
-        field: 'location',
-        key: 'location',
-    },
-];
 
 export const tableOrderInventoryColumns = [
     {
@@ -979,11 +942,13 @@ export const tableOrderInventoryColumns = [
         fixed: 'left',
         render: (text) => <div style={{width : 100}} className="ellipsis-cell">{text}</div>,
         align : 'center',
+        minWidth:180,
     },
     {
         headerName: 'MODEL',
         field: 'model',
         key: 'model',
+        minWidth: 150,
         fixed: 'left',
         render: (text) => <div style={{width :120}} className="ellipsis-cell">{text}</div>,
         align : 'center',
@@ -1254,8 +1219,9 @@ export const tableCodeDomesticPurchaseColumns = [
         headerName: 'MAKER',
         field: 'maker',
         key: 'maker',
-        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>
-    ,editable: true,},
+        render: (text) => <div className="ellipsis-cell" style={{width : 70}}>{text}</div>,
+        minWidth:180,
+        editable: true,},
     {
         headerName: '거래시작일',
         field: 'tradeStartDate',
@@ -1840,6 +1806,7 @@ export const tableCodeExchangeColumns = [
         headerName: '매매기준율',
         field: 'model',
         key: 'model',
+        minWidth: 150,
     },
     {
         headerName: '송금보낼때',

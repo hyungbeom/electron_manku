@@ -17,7 +17,7 @@ import {transformData} from "@/utils/common/common";
 import * as XLSX from "xlsx";
 import Button from "antd/lib/button";
 import {CopyOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
-import TableGrid from "@/component/tableGrid";
+import TableGrid from "@/pages/tableGrid";
 
 const {RangePicker} = DatePicker
 
@@ -52,7 +52,8 @@ export default function EstimateRead({dataList}) {
         const copyData: any = {...info}
         copyData['searchDate'] = [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
         setInfo(copyData);
-        setTableInfo(transformData(estimateList, 'estimateId', 'estimateDetailList'));
+        // setTableInfo(transformData(estimateList, 'estimateId', 'estimateDetailList'));
+        setTableInfo(estimateList);
     }, [])
 
     async function searchInfo() {
@@ -63,7 +64,8 @@ export default function EstimateRead({dataList}) {
             copyData['searchEndDate'] = searchDate[1];
         }
         const result = await getData.post('estimate/getEstimateList', copyData);
-        setTableInfo(transformData(result?.data?.entity?.estimateList, 'estimateId', 'estimateDetailList'));
+        // setTableInfo(transformData(result?.data?.entity?.estimateList, 'estimateId', 'estimateDetailList'));
+        setTableInfo(result?.data?.entity?.estimateList)
         setPaginationInfo(result?.data?.entity?.pageInfo)
     }
 
