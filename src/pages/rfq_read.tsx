@@ -18,7 +18,7 @@ import moment from "moment";
 import * as XLSX from "xlsx";
 import {transformData} from "@/utils/common/common";
 import {useRouter} from "next/router";
-import TableGrid from "@/pages/tableGrid";
+import TableGrid from "@/component/tableGrid";
 
 const {RangePicker} = DatePicker
 
