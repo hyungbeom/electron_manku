@@ -17,7 +17,7 @@ import {transformData} from "@/utils/common/common";
 import * as XLSX from "xlsx";
 import Button from "antd/lib/button";
 import {CopyOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
-import TableGrid from "@/pages/tableGrid";
+import TableGrid from "@/component/tableGrid";
 
 const {RangePicker} = DatePicker
 

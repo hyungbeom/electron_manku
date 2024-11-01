@@ -18,7 +18,7 @@ import {transformData} from "@/utils/common/common";
 import * as XLSX from "xlsx";
 import is from "@sindresorhus/is";
 import set = is.set;
-import TableGrid from "@/pages/tableGrid";
+import TableGrid from "@/component/tableGrid";
 
 const {RangePicker} = DatePicker
 
