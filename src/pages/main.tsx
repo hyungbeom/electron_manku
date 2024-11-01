@@ -11,7 +11,6 @@ import Input from "antd/lib/input";
 import Button from "antd/lib/button";
 import moment from "moment";
 import {useState} from "react";
-import GoogleDriveIntegration from "@/component/GoogleDriveIntegration";
 
 
 export default function Main({dataList, date}) {
@@ -90,7 +89,6 @@ export default function Main({dataList, date}) {
     }
 
     return <>
-        <GoogleDriveIntegration/>
         <LayoutComponent userInfo={userInfo}>
             <div style={{padding: 5}}>
                 <Card style={{borderRadius: 8}} title={'업무일정'}>
