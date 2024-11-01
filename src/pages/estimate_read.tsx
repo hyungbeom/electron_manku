@@ -233,7 +233,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
         "searchItem": "",                   // ITEM
         "searchCreatedBy": "",              // 등록직원명
         "page": 1,
-        "limit": 10
+        "limit": 100
     });
 
 

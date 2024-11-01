@@ -32,7 +32,7 @@ export default function rfqRead({dataList}) {
     const [paginationInfo, setPaginationInfo] = useState(pageInfo)
 
 
-    console.log(paginationInfo)
+    // console.log(paginationInfo)
 
     function onChange(e) {
 
@@ -69,6 +69,14 @@ export default function rfqRead({dataList}) {
 
         copyData['estimateRequestDetailList'] = result
         setInfo(copyData);
+    }
+
+
+    async function getDetailData(params) {
+        const result = await getData.post('estimate/getEstimateRequestDetail', {
+            estimateRequestId:params
+        });
+        setTableInfo(result?.data?.entity?.estimateRequestList)
     }
 
     const downloadExcel = () => {
@@ -161,15 +169,15 @@ export default function rfqRead({dataList}) {
 
                 <TableGrid
                     columns={rfqReadColumns}
-                    initial={tableOrderReadInitial}
-                    dataInfo={tableOrderReadInfo}
                     data={tableInfo}
+                    // initial={tableOrderReadInitial}
+                    dataInfo={tableOrderReadInfo}
                     setDatabase={setInfo}
                     setTableInfo={setTableInfo}
-                    rowSelection={rowSelection}
+                    // rowSelection={rowSelection}
                     pageInfo={paginationInfo}
-                    setPaginationInfo={setPaginationInfo}
-                    visible={true}
+                    // setPaginationInfo={setPaginationInfo}
+                    // visible={true}
                     excel={true}
                     funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
                         <CopyOutlined/>복사

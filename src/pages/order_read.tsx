@@ -36,7 +36,7 @@ export default function OrderRead({dataList}) {
     const [tableInfo, setTableInfo] = useState(orderList)
     const [paginationInfo, setPaginationInfo] = useState(pageInfo)
 
-console.log(tableInfo,'tableInfo~~~~~~~~~~~:')
+console.log(tableInfo,'info~~~~~~~~~~~:')
 
 
     function onChange(e) {

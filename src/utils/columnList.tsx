@@ -573,12 +573,19 @@ export const rfqWriteColumns = [
 
 export const rfqReadColumns = [
     {
+        headerName: 'ID',
+        field: 'estimateRequestId',
+        key: 'estimateRequestId',
+        minWidth: 100,
+        maxWidth: 120,
+        cellRenderer: 'agGroupCellRenderer'
+    },
+    {
         headerName: '작성일자',
         field: 'writtenDate',
         key: 'writtenDate',
         minWidth: 100,
         maxWidth: 120,
-        type: ['centerAligned',]
     },
     {
         headerName: '거래처명',
@@ -586,7 +593,7 @@ export const rfqReadColumns = [
         key: 'agencyName',
         minWidth: 100,
         maxWidth: 120,
-        type: ['centerAligned',]
+        
     },
     {
         headerName: '문서번호',
@@ -594,7 +601,7 @@ export const rfqReadColumns = [
         key: 'documentNumber',
         minWidth: 100,
         maxWidth: 120,
-        type: ['centerAligned',]
+
     },
     {
         headerName: 'MAKER',
@@ -602,7 +609,7 @@ export const rfqReadColumns = [
         key: 'maker',
         minWidth: 100,
         maxWidth: 120,
-        type: ['centerAligned',]
+        
     },
     {
         headerName: 'ITEM',
@@ -610,7 +617,7 @@ export const rfqReadColumns = [
         key: 'item',
         minWidth: 100,
         maxWidth: 120,
-        type: ['centerAligned',]
+        
     },
     {
         headerName: 'MODEL',
@@ -618,7 +625,7 @@ export const rfqReadColumns = [
         key: 'model',
         minWidth: 100,
         maxWidth: 120,
-        type: ['centerAligned',]
+        
     },
     {
         headerName: '수량',
@@ -627,7 +634,7 @@ export const rfqReadColumns = [
         minWidth: 100,
         maxWidth: 120,
         valueFormatter: formatNumber,
-        type: ['centerAligned',]
+        
     },
 
     {
@@ -636,7 +643,7 @@ export const rfqReadColumns = [
         key: 'unit',
         minWidth: 100,
         maxWidth: 120,
-        type: ['centerAligned',]
+        
     },
     {
         headerName: 'CURR',
@@ -644,7 +651,7 @@ export const rfqReadColumns = [
         key: 'currency',
         minWidth: 100,
         maxWidth: 120,
-        type: ['centerAligned',]
+        
     },
     {
         headerName: 'NET/P',
@@ -652,7 +659,7 @@ export const rfqReadColumns = [
         key: 'net',
         minWidth: 100,
         maxWidth: 120,
-        type: ['centerAligned',]
+        
     },
     {
         headerName: '납기',
@@ -660,7 +667,7 @@ export const rfqReadColumns = [
         key: 'replyDate',
         minWidth: 100,
         maxWidth: 120,
-        type: ['centerAligned',]
+        
     },
     {
         headerName: '내용',
@@ -668,7 +675,7 @@ export const rfqReadColumns = [
         key: 'content',
         minWidth: 100,
         maxWidth: 120,
-        type: ['centerAligned',]
+        
     },
     {
         headerName: '등록자',
@@ -676,7 +683,7 @@ export const rfqReadColumns = [
         key: 'createdBy',
         minWidth: 100,
         maxWidth: 120,
-        type: ['centerAligned',]
+        
     },
     {
         headerName: '수정일자',
@@ -684,7 +691,7 @@ export const rfqReadColumns = [
         key: 'modifiedDate',
         minWidth: 100,
         maxWidth: 120,
-        type: ['centerAligned',]
+        
     }
 ];
 
@@ -758,7 +765,7 @@ export const rfqMailColumns = [
 export const tableOrderReadColumns = [
     {
         headerName: '작성일자',
-        field: 'name',
+        field: 'writtenDate',
         key: 'writtenDate',
 
         // fixed: 'left',
