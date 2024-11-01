@@ -11,7 +11,6 @@ import DatePicker from "antd/lib/date-picker";
 import moment from "moment";
 import {getData} from "@/manage/function/api";
 import message from "antd/lib/message";
-import {async} from "rxjs";
 
 export default function TableModal({title, data, dataInfo, setInfoList, listType,
                                        searchInfo=undefined, isModalOpen=false, setIsModalOpen=undefined, itemId=null, setItemId=undefined }:any) {
@@ -139,7 +138,7 @@ export default function TableModal({title, data, dataInfo, setInfoList, listType
         })
     }
 
-    return <>  <Button type={'primary'} style={{float: 'left', borderRadius : 5}} onClick={showModal} size={'small'}>add</Button><Modal
+    return <>  <Button type={'primary'} style={{margin:'10px 0', height:30, width:60, float: 'left', borderRadius : 5}} onClick={showModal} size={'small'}>Add</Button><Modal
         open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
         <Card title={title} style={{marginTop: 30}}>
             {Object.keys(data).map(v => {

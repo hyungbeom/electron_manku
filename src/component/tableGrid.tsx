@@ -27,12 +27,14 @@ const tableTheme = themeQuartz
 
 const TableGrid  = ({
                         columns, data,
+                        // tableData,
+                        // setTableData,
                         setDatabase,
-                        content,
+                        modalComponent,
                         funcButtons,
                         listType,
                         excel = false,
-                        pageInfo,
+                        pageInfo=null,
                         setPaginationInfo,
                         setTableInfo,
                         handlePageChange,
@@ -42,11 +44,12 @@ const TableGrid  = ({
                     }: any) => {
 
     const gridRef = useRef(null);
-    const [rowData, setRowData] = useState();
+    const [tableData, setInfo] = useState();
 
     useEffect(() => {
-        setRowData(data)
-    }, [rowData]);
+        setInfo(data)
+        console.log(data, '~!~DSDSAFSDGFDS')
+    }, [data]);
 
 
     const defaultColDef = useMemo(() => {
@@ -64,6 +67,15 @@ const TableGrid  = ({
         return { mode: "multiRow"};
     }, []);
 
+    const handleSelectionChange = (e) => {
+        console.log(e)
+    }
+
+    const handleRowValueChange = (e) => {
+        console.log(e.api.getEdit)
+
+    }
+
 
     return (
         <div className="ag-theme-quartz" style={{ height: '100%', width: '100%', display:'flex', flexDirection:'column', overflowX:'auto' }}>
@@ -72,20 +84,21 @@ const TableGrid  = ({
                 <span>LIST</span>
                 {funcButtons}
             </div>
-
+            {modalComponent}
 
             <AgGridReact theme={tableTheme} ref={gridRef}
-                        //@ts-ignore
-                        style={{ width: '100%', height: '90%' }}
-
-                        columnDefs={columns}
-                        //@ts-ignore
-                        rowSelection={rowSelection}
-                        rowData={rowData}
+                         //@ts-ignore
+                         style={{ width: '100%', height: '90%' }}
+                         onSelectionChanged={handleSelectionChange}
+                         onRowValueChanged={handleRowValueChange}
+                         //@ts-ignore
+                         rowSelection={rowSelection}
                          defaultColDef={defaultColDef}
-                        pagination={true}
-                        paginationPageSize={pageInfo.rowperPge}
-                        cacheBlockSize={10}
+                         columnDefs={columns}
+                         tableData={tableData}
+                         pagination={!!pageInfo}
+                         paginationPageSize={pageInfo?.rowperPge}
+                         cacheBlockSize={10}
             />
 
         </div>

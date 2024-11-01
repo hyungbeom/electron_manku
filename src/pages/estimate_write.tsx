@@ -14,14 +14,14 @@ import {
 } from "@ant-design/icons";
 import {
     searchAgencyCodeColumn,
-    searchCustomerColumn, tableEstimateWriteColumns
+    searchCustomerColumn, tableEstimateWriteColumns, tableOrderWriteColumn
 } from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
 import {
     estimateWriteInitial,
-    tableEstimateWriteInitial
+    tableEstimateWriteInitial, tableOrderWriteInitial
 } from "@/utils/initialList";
-import {tableEstimateWriteInfo} from "@/utils/modalDataList";
+import {subOrderWriteInfo, tableEstimateWriteInfo} from "@/utils/modalDataList";
 import moment from "moment";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
@@ -35,6 +35,7 @@ import Table from "antd/lib/table";
 import * as XLSX from "xlsx";
 import TableModal from "@/utils/TableModal";
 import Select from "antd/lib/select";
+import TableGrid from "@/component/tableGrid";
 
 const TwinInputBox = ({children}) => {
     return <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: 5, paddingTop: 8}}>
@@ -47,6 +48,7 @@ export default function EstimateWrite() {
 
     const userInfo = useAppSelector((state) => state.user);
     const [info, setInfo] = useState<any>(estimateWriteInitial)
+    const [isMainModalOpen, setIsMainModalOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
 
     console.log(userInfo, 'userInfo:')
@@ -501,25 +503,52 @@ export default function EstimateWrite() {
                     </Card>
                 </Card>
 
-                <CustomTable rowSelection={rowSelection}
-                             setDatabase={setInfo}
-                             listType={'estimateDetailList'}
-                             excel={true}
-                             content={<TableModal listType={'estimateDetailList'} title={'견적작성 세부추가'}
-                                                  data={tableEstimateWriteInitial}
-                                                  dataInfo={tableEstimateWriteInfo}
-                                                  setInfoList={setInfo}/>} columns={tableEstimateWriteColumns}
-                             subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
-                                 <CopyOutlined/>복사
-                             </Button>
-                                 {/*@ts-ignored*/}
-                                 <Button type={'danger'} size={'small'} style={{fontSize: 11}} onClick={deleteList}>
-                                     <CopyOutlined/>삭제
-                                 </Button>
-                                 <Button type={'dashed'} size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>
-                                     <FileExcelOutlined/>출력
-                                 </Button></>}
-                             info={info['estimateDetailList']}/>
+                <TableGrid
+                    columns={tableOrderWriteColumn}
+                    data={info['estimateDetailList'][0]}
+                    // dataInfo={tableOrderReadInfo}
+                    setInfo={setInfo}
+                    // setTableInfo={setTableInfo}
+                    excel={true}
+                    modalComponent={
+                        <TableModal listType={'estimateDetailList'} title={'견적의뢰 세부 작성'}
+                                    data={tableOrderWriteInitial}
+                                    dataInfo={subOrderWriteInfo}
+                                    setInfoList={setInfo}
+                                    isModalOpen={isMainModalOpen}
+                                    setIsModalOpen={setIsMainModalOpen}
+                        />}
+                    funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
+                        <CopyOutlined/>복사
+                    </Button>
+                        {/*@ts-ignored*/}
+                        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={deleteList}>
+                            <CopyOutlined/>삭제
+                        </Button>
+                        <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={downloadExcel}>
+                            <FileExcelOutlined/>출력
+                        </Button></div>}
+                />
+
+                {/*<CustomTable rowSelection={rowSelection}*/}
+                {/*             setDatabase={setInfo}*/}
+                {/*             listType={'estimateDetailList'}*/}
+                {/*             excel={true}*/}
+                {/*             content={<TableModal listType={'estimateDetailList'} title={'견적작성 세부추가'}*/}
+                {/*                                  data={tableEstimateWriteInitial}*/}
+                {/*                                  dataInfo={tableEstimateWriteInfo}*/}
+                {/*                                  setInfoList={setInfo}/>} columns={tableEstimateWriteColumns}*/}
+                {/*             subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>*/}
+                {/*                 <CopyOutlined/>복사*/}
+                {/*             </Button>*/}
+                {/*                 /!*@ts-ignored*!/*/}
+                {/*                 <Button type={'danger'} size={'small'} style={{fontSize: 11}} onClick={deleteList}>*/}
+                {/*                     <CopyOutlined/>삭제*/}
+                {/*                 </Button>*/}
+                {/*                 <Button type={'dashed'} size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>*/}
+                {/*                     <FileExcelOutlined/>출력*/}
+                {/*                 </Button></>}*/}
+                {/*             info={info['estimateDetailList']}/>*/}
 
             </div>
         </LayoutComponent>

@@ -4,10 +4,15 @@ import LayoutComponent from "@/component/LayoutComponent";
 import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
 import {CopyOutlined, EditOutlined, FileExcelOutlined, RetweetOutlined, SaveOutlined} from "@ant-design/icons";
-import {searchAgencyCodeColumn, searchCustomerColumn, tableOrderWriteColumn,} from "@/utils/columnList";
+import {
+    searchAgencyCodeColumn,
+    searchCustomerColumn,
+    subRfqWriteColumn,
+    tableOrderWriteColumn,
+} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {orderWriteInitial, rfqWriteInitial, tableOrderWriteInitial} from "@/utils/initialList";
-import {subOrderWriteInfo} from "@/utils/modalDataList";
+import {orderWriteInitial, rfqWriteInitial, subRfqWriteInitial, tableOrderWriteInitial} from "@/utils/initialList";
+import {subOrderWriteInfo, subRfqWriteInfo} from "@/utils/modalDataList";
 import moment from "moment";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
@@ -22,6 +27,7 @@ import Modal from "antd/lib/modal/Modal";
 import Table from "antd/lib/table";
 import TableModal from "@/utils/TableModal";
 import {useRouter} from "next/router";
+import TableGrid from "@/component/tableGrid";
 
 const TwinInputBox = ({children}) => {
     return <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: 5, paddingTop: 8}}>
@@ -441,36 +447,62 @@ export default function OrderWriter({dataInfo}) {
                     </Card>
                 </Card>
 
+                <TableGrid
+                    columns={tableOrderWriteColumn}
+                    data={info['orderDetailList'][0]}
+                    // dataInfo={tableOrderReadInfo}
+                    setInfo={setInfo}
+                    // setTableInfo={setTableInfo}
+                    excel={true}
+                    modalComponent={
+                        <TableModal listType={'orderDetailList'} title={'견적의뢰 세부 작성'}
+                                    data={tableOrderWriteInitial}
+                                    dataInfo={subOrderWriteInfo}
+                                    setInfoList={setInfo}
+                                    isModalOpen={isMainModalOpen}
+                                    setIsModalOpen={setIsMainModalOpen}
+                        />}
+                    funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
+                        <CopyOutlined/>복사
+                    </Button>
+                        {/*@ts-ignored*/}
+                        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={deleteList}>
+                            <CopyOutlined/>삭제
+                        </Button>
+                        <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={downloadExcel}>
+                            <FileExcelOutlined/>출력
+                        </Button></div>}
+                />
 
-                <CustomTable rowSelection={rowSelection}
-                             setDatabase={setInfo}
-                             listType={'orderDetailList'}
-                             columns={tableOrderWriteColumn}
-                             info={info['orderDetailList']}
-                             content={<TableModal
-                                 listType={'orderDetailList'}
-                                 title={'발주서 세부 작성'}
-                                 data={tableOrderWriteInitial}
-                                 dataInfo={subOrderWriteInfo}
-                                 setInfoList={setInfo}
-                                 isModalOpen={isMainModalOpen}
-                                 setIsModalOpen={setIsMainModalOpen}
-                             />}
-                             subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
-                                 <CopyOutlined/>복사
-                             </Button>
-                                 {/*@ts-ignored*/}
-                                 <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft:5}} onClick={()=>deleteList(checkList)}>
-                                     <CopyOutlined/>삭제
-                                 </Button>
-                                 <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5}} onClick={printSheet}>
-                                     <FileExcelOutlined/>거래명세표 출력
-                                 </Button>
-                                 <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5}} onClick={downloadExcel}>
-                                     <FileExcelOutlined/>엑셀 출력
-                                 </Button>
-                </>}
-                             />
+                {/*<CustomTable rowSelection={rowSelection}*/}
+                {/*             setDatabase={setInfo}*/}
+                {/*             listType={'orderDetailList'}*/}
+                {/*             columns={tableOrderWriteColumn}*/}
+                {/*             info={info['orderDetailList']}*/}
+                {/*             content={<TableModal*/}
+                {/*                 listType={'orderDetailList'}*/}
+                {/*                 title={'발주서 세부 작성'}*/}
+                {/*                 data={tableOrderWriteInitial}*/}
+                {/*                 dataInfo={subOrderWriteInfo}*/}
+                {/*                 setInfoList={setInfo}*/}
+                {/*                 isModalOpen={isMainModalOpen}*/}
+                {/*                 setIsModalOpen={setIsMainModalOpen}*/}
+                {/*             />}*/}
+                {/*             subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>*/}
+                {/*                 <CopyOutlined/>복사*/}
+                {/*             </Button>*/}
+                {/*                 /!*@ts-ignored*!/*/}
+                {/*                 <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft:5}} onClick={()=>deleteList(checkList)}>*/}
+                {/*                     <CopyOutlined/>삭제*/}
+                {/*                 </Button>*/}
+                {/*                 <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5}} onClick={printSheet}>*/}
+                {/*                     <FileExcelOutlined/>거래명세표 출력*/}
+                {/*                 </Button>*/}
+                {/*                 <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5}} onClick={downloadExcel}>*/}
+                {/*                     <FileExcelOutlined/>엑셀 출력*/}
+                {/*                 </Button>*/}
+                {/*</>}*/}
+                {/*             />*/}
 
             </div>
         </LayoutComponent>

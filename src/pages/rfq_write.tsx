@@ -12,7 +12,7 @@ import {
     RetweetOutlined,
     SaveOutlined
 } from "@ant-design/icons";
-import {searchAgencyCodeColumn, searchCustomerColumn, subRfqWriteColumn} from "@/utils/columnList";
+import {rfqReadColumns, searchAgencyCodeColumn, searchCustomerColumn, subRfqWriteColumn} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
 import {rfqWriteInitial, subRfqWriteInitial} from "@/utils/initialList";
 import {subRfqWriteInfo} from "@/utils/modalDataList";
@@ -32,6 +32,7 @@ import MyComponent from "@/component/MyComponent";
 import {useRouter} from "next/router";
 import nookies from "nookies";
 import {TwinInputBox} from "@/utils/common/component/Common";
+import TableGrid from "@/component/tableGrid";
 
 
 
@@ -43,8 +44,10 @@ export default function rqfWrite({dataInfo, display}) {
 
     const userInfo = useAppSelector((state) => state.user);
     const [info, setInfo] = useState<any>(rfqWriteInitial)
+
     const [isMainModalOpen, setIsMainModalOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
+
 
 
     useEffect(() => {
@@ -88,11 +91,6 @@ export default function rqfWrite({dataInfo, display}) {
             });
         }
     }
-
-    function findAgency() {
-
-    }
-
 
     function SearchAgencyCode() {
         const [data, setData] = useState([])
@@ -179,7 +177,7 @@ export default function rqfWrite({dataInfo, display}) {
         }, [])
 
         async function searchFunc() {
-            console.log(modalInfo, 'modalInfo:')
+            // console.log(modalInfo, 'modalInfo:')
             const result = await getData.post('customer/getCustomerListForEstimate', modalInfo);
             setData(result?.data?.entity?.customerList)
         }
@@ -421,29 +419,59 @@ export default function rqfWrite({dataInfo, display}) {
                 </Card>
 
 
-                <CustomTable rowSelection={rowSelection}
-                             setDatabase={setInfo}
-                             listType={'estimateRequestDetailList'}
-                             excel={true}
-                             columns={subRfqWriteColumn}
-                             content={<TableModal listType={'estimateRequestDetailList'} title={'견적의뢰 세부 작성'}
-                                                  data={subRfqWriteInitial}
-                                                  dataInfo={subRfqWriteInfo}
-                                                  setInfoList={setInfo}
-                                                  isModalOpen={isMainModalOpen}
-                                                  setIsModalOpen={setIsMainModalOpen}
-                             />}
-                             subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
-                                 <CopyOutlined/>복사
-                             </Button>
-                                 {/*@ts-ignored*/}
-                                 <Button type={'danger'} size={'small'} style={{fontSize: 11}} onClick={deleteList}>
-                                     <CopyOutlined/>삭제
-                                 </Button>
-                                 <Button type={'dashed'} size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>
-                                     <FileExcelOutlined/>출력
-                                 </Button></>}
-                             info={info['estimateRequestDetailList']}/>
+                <TableGrid
+                    columns={subRfqWriteColumn}
+                    data={info['estimateRequestDetailList'][0]}
+                    // dataInfo={tableOrderReadInfo}
+                    setInfo={setInfo}
+                    // setTableInfo={setTableInfo}
+                    excel={true}
+                    modalComponent={
+                        <TableModal listType={'estimateRequestDetailList'} title={'견적의뢰 세부 작성'}
+                          data={subRfqWriteInitial}
+                          dataInfo={subRfqWriteInfo}
+                          setInfoList={setInfo}
+                          isModalOpen={isMainModalOpen}
+                          setIsModalOpen={setIsMainModalOpen}
+                    />}
+                    funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
+                        <CopyOutlined/>복사
+                    </Button>
+                        {/*@ts-ignored*/}
+                        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={deleteList}>
+                            <CopyOutlined/>삭제
+                        </Button>
+                        <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={downloadExcel}>
+                            <FileExcelOutlined/>출력
+                        </Button></div>}
+                />
+
+                {/*<CustomTable rowSelection={rowSelection}*/}
+                {/*             setDatabase={setInfo}*/}
+                {/*             listType={'estimateRequestDetailList'}*/}
+                {/*             excel={true}*/}
+                {/*             columns={subRfqWriteColumn}*/}
+                {/*             content={<TableModal listType={'estimateRequestDetailList'} title={'견적의뢰 세부 작성'}*/}
+                {/*                                  data={subRfqWriteInitial}*/}
+                {/*                                  dataInfo={subRfqWriteInfo}*/}
+                {/*                                  setInfoList={setInfo}*/}
+                {/*                                  isModalOpen={isMainModalOpen}*/}
+                {/*                                  setIsModalOpen={setIsMainModalOpen}*/}
+                {/*             />}*/}
+                {/*             subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>*/}
+                {/*                 <CopyOutlined/>복사*/}
+                {/*             </Button>*/}
+                {/*                 /!*@ts-ignored*!/*/}
+                {/*                 <Button type={'danger'} size={'small'} style={{fontSize: 11}} onClick={deleteList}>*/}
+                {/*                     <CopyOutlined/>삭제*/}
+                {/*                 </Button>*/}
+                {/*                 <Button type={'dashed'} size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>*/}
+                {/*                     <FileExcelOutlined/>출력*/}
+                {/*                 </Button></>}*/}
+                {/*             info={info['estimateRequestDetailList']}/>*/}
+
+
+
 
             </div>
             <MyComponent/>
