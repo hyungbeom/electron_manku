@@ -1,9 +1,6 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import { themeQuartz, iconSetMaterial } from '@ag-grid-community/theming';
-import Card from "antd/lib/card/Card";
-import {getData} from "@/manage/function/api";
-
 
 const tableTheme = themeQuartz
     .withPart(iconSetMaterial)
