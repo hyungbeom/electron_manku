@@ -165,29 +165,31 @@ export default function codeDomesticPurchase({dataList}) {
 
                 </Card>
             </Card>
-            <CustomTable columns={tableCodeDomesticPurchaseColumns}
-                         initial={tableCodeDomesticPurchaseInitial}
-                         dataInfo={tableCodeDomesticPurchaseInfo}
-                         info={tableInfo}
-                         setDatabase={setInfo}
-                         setTableInfo={setTableInfo}
-                         rowSelection={rowSelection}
-                         pageInfo={paginationInfo}
-                         setPaginationInfo={setPaginationInfo}
-                         content={<TableModal title={'데이터 추가'} data={tableCodeDomesticPurchaseInitial}
-                                              dataInfo={tableCodeDomesticPurchaseInfo}
-                                              setInfoList={setInfo}/>}
-                         subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
-                             <CopyOutlined/>복사
-                         </Button>
-                             {/*@ts-ignored*/}
-                             <Button type={'danger'} size={'small'} style={{fontSize: 11}} onClick={deleteList}>
-                                 <CopyOutlined/>삭제
-                             </Button>
-                             <Button type={'dashed'} size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>
-                                 <FileExcelOutlined/>출력
-                             </Button></>}
-            />
+
+
+            {/*<CustomTable columns={tableCodeDomesticPurchaseColumns}*/}
+            {/*             initial={tableCodeDomesticPurchaseInitial}*/}
+            {/*             dataInfo={tableCodeDomesticPurchaseInfo}*/}
+            {/*             info={tableInfo}*/}
+            {/*             setDatabase={setInfo}*/}
+            {/*             setTableInfo={setTableInfo}*/}
+            {/*             rowSelection={rowSelection}*/}
+            {/*             pageInfo={paginationInfo}*/}
+            {/*             setPaginationInfo={setPaginationInfo}*/}
+            {/*             content={<TableModal title={'데이터 추가'} data={tableCodeDomesticPurchaseInitial}*/}
+            {/*                                  dataInfo={tableCodeDomesticPurchaseInfo}*/}
+            {/*                                  setInfoList={setInfo}/>}*/}
+            {/*             subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>*/}
+            {/*                 <CopyOutlined/>복사*/}
+            {/*             </Button>*/}
+            {/*                 /!*@ts-ignored*!/*/}
+            {/*                 <Button type={'danger'} size={'small'} style={{fontSize: 11}} onClick={deleteList}>*/}
+            {/*                     <CopyOutlined/>삭제*/}
+            {/*                 </Button>*/}
+            {/*                 <Button type={'dashed'} size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>*/}
+            {/*                     <FileExcelOutlined/>출력*/}
+            {/*                 </Button></>}*/}
+            {/*/>*/}
 
         </div>
     </LayoutComponent>

@@ -583,6 +583,11 @@ export const rfqReadColumns = [
         key: 'writtenDate',
         minWidth: 100,
         maxWidth: 120,
+        enableRowGroup: true, // 그룹화 기능
+        enablePivot: true,    // 피벗 기능
+        enableValue: true,    // 집계 기능
+        menuTabs: ['filterMenuTab', 'generalMenuTab', 'columnsMenuTab'] // 메뉴 탭 활성화
+
     },
     {
         headerName: '문서번호',
