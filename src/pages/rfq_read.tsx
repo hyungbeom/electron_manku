@@ -32,7 +32,9 @@ export default function rfqRead({dataList}) {
     const [paginationInfo, setPaginationInfo] = useState(pageInfo)
 
 
-    console.log(estimateRequestList)
+    console.log(estimateRequestList,'estimateRequestList')
+    console.log(tableInfo,'tableInfo')
+
 
     function onChange(e) {
 
@@ -169,8 +171,8 @@ export default function rfqRead({dataList}) {
 
                 <TableGrid
                     columns={rfqReadColumns}
-                    data={estimateRequestList}
-                    dataInfo={tableOrderReadInfo}
+                    data={tableInfo}
+                    // dataInfo={tableOrderReadInfo}
                     setDatabase={setInfo}
                     setTableInfo={setTableInfo}
                     pageInfo={paginationInfo}

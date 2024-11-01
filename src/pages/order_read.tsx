@@ -219,7 +219,7 @@ console.log(tableInfo,'tableInfo~~~~~~~~~~~:')
                     columns={tableOrderReadColumns}
                     initial={tableOrderReadInitial}
                     dataInfo={tableOrderReadInfo}
-                    data={orderList}
+                    data={tableInfo}
                     setDatabase={setInfo}
                     setTableInfo={setTableInfo}
                     rowSelection={rowSelection}

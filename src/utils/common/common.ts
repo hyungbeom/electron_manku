@@ -75,8 +75,9 @@ const rfqRead = (src) => {
       key: src.key,
       agencyName: src.agencyName,
       writtenDate: src.writtenDate,
-      documentNumber: src.documentNumberFull,
+      documentNumberFull: src.documentNumberFull,
       estimateRequestId: src.estimateRequestId,
+      customerName: src.customerName,
       managerName: src.managerName,
       createdBy: src.createdBy,
       modifiedDate: src.modifiedDate,
@@ -89,6 +90,7 @@ const rfqRead = (src) => {
 const orderRead = (src) => {
     return {
         key: src.key,
+        writtenDate: src.writtenDate,
         orderId: src.orderId,
         documentNumberFull: src.documentNumberFull,
         agencyCode: src.agencyCode,
