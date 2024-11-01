@@ -36,7 +36,8 @@ export default function OrderRead({dataList}) {
     const [tableInfo, setTableInfo] = useState(orderList)
     const [paginationInfo, setPaginationInfo] = useState(pageInfo)
 
-console.log(tableInfo,'info~~~~~~~~~~~:')
+console.log(orderList,'orderList~~~~~~~~~~~:')
+console.log(tableInfo,'tableInfo~~~~~~~~~~~:')
 
 
     function onChange(e) {
@@ -218,7 +219,7 @@ console.log(tableInfo,'info~~~~~~~~~~~:')
                     columns={tableOrderReadColumns}
                     initial={tableOrderReadInitial}
                     dataInfo={tableOrderReadInfo}
-                    data={tableInfo}
+                    data={orderList}
                     setDatabase={setInfo}
                     setTableInfo={setTableInfo}
                     rowSelection={rowSelection}

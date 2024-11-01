@@ -169,15 +169,11 @@ export default function rfqRead({dataList}) {
 
                 <TableGrid
                     columns={rfqReadColumns}
-                    data={tableInfo}
-                    // initial={tableOrderReadInitial}
+                    data={estimateRequestList}
                     dataInfo={tableOrderReadInfo}
                     setDatabase={setInfo}
                     setTableInfo={setTableInfo}
-                    // rowSelection={rowSelection}
                     pageInfo={paginationInfo}
-                    // setPaginationInfo={setPaginationInfo}
-                    // visible={true}
                     excel={true}
                     funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
                         <CopyOutlined/>복사

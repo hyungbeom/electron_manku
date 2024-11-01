@@ -572,14 +572,6 @@ export const rfqWriteColumns = [
 
 
 export const rfqReadColumns = [
-    // {
-    //     headerName: 'ID',
-    //     field: 'estimateRequestId',
-    //     key: 'estimateRequestId',
-    //     minWidth: 100,
-    //     maxWidth: 120,
-    //     cellRenderer: 'agGroupCellRenderer'
-    // },
     {
         headerName: '작성일자',
         field: 'writtenDate',
@@ -589,7 +581,7 @@ export const rfqReadColumns = [
     },
     {
         headerName: '문서번호',
-        field: 'documentNumber',
+        field: 'documentNumberFull',
         key: 'documentNumberFull',
         minWidth: 100,
         maxWidth: 120,
@@ -628,7 +620,7 @@ export const rfqReadColumns = [
         key: 'quantity',
         minWidth: 100,
         maxWidth: 120,
-        valueFormatter: formatNumber,
+        // valueFormatter: formatNumber,
     },
     {
         headerName: '단위',
@@ -665,10 +657,25 @@ export const rfqReadColumns = [
         minWidth: 100,
         maxWidth: 120,
     },
+
+    {
+        headerName: '내용',
+        field: 'content',
+        key: 'content',
+        minWidth: 100,
+        maxWidth: 120,
+    },
     {
         headerName: '등록자',
         field: 'createdBy',
         key: 'createdBy',
+        minWidth: 100,
+        maxWidth: 120,
+    },
+    {
+        headerName: '비고',
+        field: 'remarks',
+        key: 'remarks',
         minWidth: 100,
         maxWidth: 120,
     },
@@ -678,7 +685,27 @@ export const rfqReadColumns = [
         key: 'modifiedDate',
         minWidth: 100,
         maxWidth: 120,
-    }
+    },
+    //.........
+    {
+        headerName: '지시사항',
+        field: 'instructions',
+        key: 'instructions',
+        minWidth: 100,
+        maxWidth: 120,
+    },
+    {
+        headerName: '하단 태그란',
+        field: 'footerTag',
+        key: 'footerTag',
+        minWidth: 100,
+        maxWidth: 120,
+    },
+
+
+
+
+
 ];
 
 
@@ -753,10 +780,9 @@ export const tableOrderReadColumns = [
         headerName: '작성일자',
         field: 'writtenDate',
         key: 'writtenDate',
-
-        // fixed: 'left',
-        // align : 'center',
-        // render: (text) => <div style={{width : 80}} className="ellipsis-cell">{moment(text).format('YYYY-MM-DD')}</div>,
+        fixed: 'left',
+        align : 'center',
+        render: (text) => <div style={{width : 80}} className="ellipsis-cell">{moment(text).format('YYYY-MM-DD')}</div>,
     },
     {
         headerName: '문서번호',

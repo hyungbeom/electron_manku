@@ -36,6 +36,8 @@ export default function EstimateRead({dataList}) {
     const [tableInfo, setTableInfo] = useState(estimateList)
     const [paginationInfo, setPaginationInfo] = useState(pageInfo)
 
+    console.log(estimateList, 'tableEstimateReadColumns')
+
     function onChange(e) {
 
         let bowl = {}
@@ -161,7 +163,7 @@ export default function EstimateRead({dataList}) {
                 </Card>
 
                 <TableGrid
-                    columns={rfqReadColumns}
+                    columns={tableEstimateReadColumns}
                     data={tableInfo}
                     setDatabase={setInfo}
                     setTableInfo={setTableInfo}
