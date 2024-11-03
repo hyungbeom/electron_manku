@@ -33,10 +33,10 @@ export default function EstimateRead({dataList}) {
 
     const {estimateList, pageInfo} = dataList;
     const [info, setInfo] = useState(estimateReadInitial)
-    const [tableInfo, setTableInfo] = useState(estimateList)
+    const [tableData, setTableData] = useState(estimateList)
     const [paginationInfo, setPaginationInfo] = useState(pageInfo)
 
-    console.log(estimateList, 'tableEstimateReadColumns')
+    // console.log(estimateList, 'tableEstimateReadColumns')
 
     function onChange(e) {
 
@@ -53,7 +53,7 @@ export default function EstimateRead({dataList}) {
         copyData['searchDate'] = [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
         setInfo(copyData);
         // setTableInfo(transformData(estimateList, 'estimateId', 'estimateDetailList'));
-        setTableInfo(estimateList);
+        // setTableInfo(estimateList);
     }, [])
 
     async function searchInfo() {
@@ -65,7 +65,7 @@ export default function EstimateRead({dataList}) {
         }
         const result = await getData.post('estimate/getEstimateList', copyData);
         // setTableInfo(transformData(result?.data?.entity?.estimateList, 'estimateId', 'estimateDetailList'));
-        setTableInfo(result?.data?.entity?.estimateList)
+        setTableData(result?.data?.entity?.estimateList)
         setPaginationInfo(result?.data?.entity?.pageInfo)
     }
 
@@ -79,7 +79,7 @@ export default function EstimateRead({dataList}) {
 
     const downloadExcel = () => {
 
-        const worksheet = XLSX.utils.json_to_sheet(tableInfo);
+        const worksheet = XLSX.utils.json_to_sheet(tableData);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
         XLSX.writeFile(workbook, "example.xlsx");
@@ -166,24 +166,22 @@ export default function EstimateRead({dataList}) {
 
                 <TableGrid
                     columns={tableEstimateReadColumns}
-                    data={tableInfo}
-                    setDatabase={setInfo}
-                    setTableInfo={setTableInfo}
-                    rowSelection={rowSelection}
+                    tableData={tableData}
+                    // setDatabase={setInfo}
+                    // setTableData={setTableData}
+                    // rowSelection={rowSelection}
                     pageInfo={paginationInfo}
-                    setPaginationInfo={setPaginationInfo}
-                    visible={true}
                     excel={true}
-                    funcButtons={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
+                    funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
                         <CopyOutlined/>복사
                     </Button>
                         {/*@ts-ignored*/}
-                        <Button type={'danger'} size={'small'} style={{fontSize: 11}} onClick={deleteList}>
+                        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={deleteList}>
                             <CopyOutlined/>삭제
                         </Button>
-                        <Button type={'dashed'} size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>
+                        <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={downloadExcel}>
                             <FileExcelOutlined/>출력
-                        </Button></>}
+                        </Button></div>}
                 />
 
 

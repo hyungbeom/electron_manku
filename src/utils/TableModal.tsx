@@ -12,10 +12,11 @@ import moment from "moment";
 import {getData} from "@/manage/function/api";
 import message from "antd/lib/message";
 
-export default function TableModal({title, data, dataInfo, setInfoList, listType,
+export default function TableModal({title, initialData, dataInfo, setInfoList, listType,
                                        searchInfo=undefined, isModalOpen=false, setIsModalOpen=undefined, itemId=null, setItemId=undefined }:any) {
-    // const [isModalOpen, setIsModalOpen] = useState(false);
-    const [info, setInfo] = useState<any>(data)
+    const [detailList, setDetailList] = useState<any>(initialData)
+
+    console.log(detailList, 'initialData')
 
     useEffect(()=>{
         if(itemId){
@@ -31,10 +32,10 @@ export default function TableModal({title, data, dataInfo, setInfoList, listType
     const handleOk = () => {
 
         setInfoList(v => {
-            let copyData = {...info}
-            copyData['replyDate'] = moment(info['replyDate']).format('YYYY-MM-DD');
-            copyData['receiptDate'] = moment(info['receiptDate']).format('YYYY-MM-DD');
-            copyData['remainingQuantity'] = info['receiptDate']-info['receiptDate'];
+            let copyData = {...detailList}
+            copyData['replyDate'] = moment(detailList['replyDate']).format('YYYY-MM-DD');
+            copyData['receiptDate'] = moment(detailList['receiptDate']).format('YYYY-MM-DD');
+            copyData['remainingQuantity'] = detailList['receiptQuantity']-detailList['usageQuantity'];
 
             if(listType==='inventoryList'){
                 if(itemId===null){
@@ -54,11 +55,13 @@ export default function TableModal({title, data, dataInfo, setInfoList, listType
                 copyData2[listType][idx]['key']  = idx + 1;
             })
 
+            console.log(copyData2, 'copyData2')
             return copyData2;
         })
         setIsModalOpen(false);
         itemId && setItemId(null);
-        setInfo(data);
+        setDetailList(initialData);
+        console.log(detailList, 'detailList')
     };
 
     async function getListFunc(listType, itemId){
@@ -81,7 +84,7 @@ export default function TableModal({title, data, dataInfo, setInfoList, listType
 
         const result=await getData.post(url,requestData);
         // console.log(result?.data?.entity?.inventoryList[0], 'result~~')
-        setInfo(result?.data?.entity?.inventoryList[0])
+        setDetailList(result?.data?.entity?.inventoryList[0])
 
     }
 
@@ -123,7 +126,7 @@ export default function TableModal({title, data, dataInfo, setInfoList, listType
     const handleCancel = () => {
         setIsModalOpen(false);
         itemId && setItemId(null);
-        setInfo(data)
+        setDetailList(initialData)
     };
 
 
@@ -133,7 +136,7 @@ export default function TableModal({title, data, dataInfo, setInfoList, listType
 
         // console.log(e.target.id, 'e.target.id')
 
-        setInfo(v => {
+        setDetailList(v => {
             return {...v, ...bowl}
         })
     }
@@ -141,23 +144,23 @@ export default function TableModal({title, data, dataInfo, setInfoList, listType
     return <>  <Button type={'primary'} style={{margin:'10px 0', height:30, width:60, float: 'left', borderRadius : 5}} onClick={showModal} size={'small'}>Add</Button><Modal
         open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
         <Card title={title} style={{marginTop: 30}}>
-            {Object.keys(data).map(v => {
+            {Object.keys(initialData).map(v => {
                 switch (TagTypeList[v]?.type) {
                     case 'input' :
                         return <div style={{paddingTop: 8,}}>
                             <div>{dataInfo[v]?.title}</div>
-                            <Input id={v} value={info[v]} onChange={inputChange}/>
+                            <Input id={v} value={detailList[v]} onChange={inputChange}/>
                         </div>
                     case 'inputNumber' :
                         return <div style={{paddingTop: 8}}>
                             <div>{dataInfo[v]?.title}</div>
-                            <InputNumber id={v} value={info[v]}
+                            <InputNumber id={v} value={detailList[v]}
                                          onChange={(src) => inputChange({target: {id: v, value: src}})} style={{width : '100%'}}/>
                         </div>
                     case 'select' :
                         return <div style={{paddingTop: 8}}>
                             <div>{dataInfo[v]?.title}</div>
-                            <Select id={v} value={info[v]} onChange={(src) => inputChange({target: {id: v, value: src}})}   options={
+                            <Select id={v} value={detailList[v]} onChange={(src) => inputChange({target: {id: v, value: src}})}   options={
                                 TagTypeList[v]?.boxList?.map((src, idx) => {
                                     return {value: src, label: src}
                                 })
@@ -167,7 +170,7 @@ export default function TableModal({title, data, dataInfo, setInfoList, listType
                     case 'textArea' :
                         return  <div style={{paddingTop: 8}}>
                             <div>{dataInfo[v]?.title}</div>
-                            <TextArea id={v} value={info[v]} onChange={inputChange}/>
+                            <TextArea id={v} value={detailList[v]} onChange={inputChange}/>
                         </div>
                     case 'date' :
                         return  <div style={{paddingTop: 8}}>

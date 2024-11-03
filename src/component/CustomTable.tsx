@@ -27,7 +27,7 @@ const CustomTable = ({
                          pageInfo,
                          setPaginationInfo,
                          setTableInfo,
-                         handlePageChange,
+                         // handlePageChange,
                          visible = false,
                          setIsModalOpen = undefined,
                          setItemId = undefined,
@@ -253,9 +253,9 @@ const CustomTable = ({
                        }}
                 />
                 {/*@ts-ignored*/}
-                {/*{visible && <Pagination value={pageInfo['page']} total={pageInfo['totalRow']}*/}
-                {/*                        style={{float: 'right', paddingTop: 25}} pageSize={pageInfo['rowPerPage']}*/}
-                {/*                        onChange={handlePageChange}/>}*/}
+                {visible && <Pagination value={pageInfo['page']} total={pageInfo['totalRow']}
+                                        style={{float: 'right', paddingTop: 25}} pageSize={pageInfo['rowPerPage']}
+                                        onChange={undefined}/>}
 
                 {excel && <Dragger {...uploadProps} style={{marginBottom: '20px'}}>
                     <p className="ant-upload-drag-icon">

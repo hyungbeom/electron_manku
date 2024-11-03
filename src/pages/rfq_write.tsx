@@ -14,7 +14,7 @@ import {
 } from "@ant-design/icons";
 import {rfqReadColumns, searchAgencyCodeColumn, searchCustomerColumn, subRfqWriteColumn} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {rfqWriteInitial, subRfqWriteInitial} from "@/utils/initialList";
+import {orderWriteInitial, rfqWriteInitial, subRfqWriteInitial} from "@/utils/initialList";
 import {subRfqWriteInfo} from "@/utils/modalDataList";
 import moment from "moment";
 import Button from "antd/lib/button";
@@ -44,10 +44,8 @@ export default function rqfWrite({dataInfo, display}) {
 
     const userInfo = useAppSelector((state) => state.user);
     const [info, setInfo] = useState<any>(rfqWriteInitial)
-
     const [isMainModalOpen, setIsMainModalOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
-
 
 
     useEffect(() => {
@@ -83,14 +81,29 @@ export default function rqfWrite({dataInfo, display}) {
         } else {
             const copyData = {...info}
             copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
+            copyData['replyDate'] = moment(info['replyDate']).format('YYYY-MM-DD');
 
             await getData.post('estimate/addEstimateRequest', copyData).then(v => {
                 if (v.data.code === 1) {
-                    message.success('저장에 성공하셨습니다')
+                    message.success('저장되었습니다.')
                 }
             });
         }
+        const checkList = Array.from({ length: info['estimateRequestDetailList'].length }, (_, i) => i + 1);
+        setInfo(orderWriteInitial);
+        deleteList(checkList)
     }
+
+    function deleteList(checkList) {
+        let copyData = {...info}
+        const result = copyData['estimateRequestDetailList'].filter(v => !checkList.includes(v.serialNumber))
+
+        copyData['estimateRequestDetailList'] = result
+        setInfo(copyData);
+
+    }
+
+
 
     function SearchAgencyCode() {
         const [data, setData] = useState([])
@@ -251,14 +264,6 @@ export default function rqfWrite({dataInfo, display}) {
         XLSX.writeFile(workbook, "example.xlsx");
     };
 
-    function deleteList() {
-        let copyData = {...info}
-        const result = copyData['estimateRequestDetailList'].filter(v => !checkList.includes(v.serialNumber))
-
-        copyData['estimateRequestDetailList'] = result
-        setInfo(copyData);
-
-    }
 
     const rowSelection = {
         onChange: (selectedRowKeys, selectedRows) => {
@@ -272,6 +277,11 @@ export default function rqfWrite({dataInfo, display}) {
             name: record.name,
         }),
     };
+
+
+
+
+
 
     return <>
         <LayoutComponent>
@@ -421,19 +431,20 @@ export default function rqfWrite({dataInfo, display}) {
 
                 <TableGrid
                     columns={subRfqWriteColumn}
-                    data={info['estimateRequestDetailList'][0]}
+                    tableData={info['estimateRequestDetailList']}
+                    // listType={'estimateRequestDetailList'}
                     // dataInfo={tableOrderReadInfo}
                     setInfo={setInfo}
                     // setTableInfo={setTableInfo}
                     excel={true}
                     modalComponent={
                         <TableModal listType={'estimateRequestDetailList'} title={'견적의뢰 세부 작성'}
-                          data={subRfqWriteInitial}
-                          dataInfo={subRfqWriteInfo}
-                          setInfoList={setInfo}
-                          isModalOpen={isMainModalOpen}
-                          setIsModalOpen={setIsMainModalOpen}
-                    />}
+                                    initialData={subRfqWriteInitial}
+                                    dataInfo={subRfqWriteInfo}
+                                    setInfoList={setInfo}
+                                    isModalOpen={isMainModalOpen}
+                                    setIsModalOpen={setIsMainModalOpen}
+                        />}
                     funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
                         <CopyOutlined/>복사
                     </Button>

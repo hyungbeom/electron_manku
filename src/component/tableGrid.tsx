@@ -26,7 +26,7 @@ const tableTheme = themeQuartz
 
 
 const TableGrid  = ({
-                        columns, data,
+                        columns, tableData,
                         // tableData,
                         // setTableData,
                         setDatabase,
@@ -36,7 +36,7 @@ const TableGrid  = ({
                         excel = false,
                         pageInfo=null,
                         setPaginationInfo,
-                        setTableInfo,
+                        setTableData,
                         handlePageChange,
                         visible = false,
                         setIsModalOpen = undefined,
@@ -44,13 +44,13 @@ const TableGrid  = ({
                     }: any) => {
 
     const gridRef = useRef(null);
-    const [tableData, setInfo] = useState();
+    const [data, setData] = useState(tableData);
 
     useEffect(() => {
-        setInfo(data)
-        console.log(data, '~!~DSDSAFSDGFDS')
-    }, [data]);
 
+        setData([...tableData || []]); // 새로운 배열로 설정
+        // console.log(tableData, '~!~table grid');
+    }, [tableData.length]);
 
     const defaultColDef = useMemo(() => {
         return {
@@ -95,10 +95,9 @@ const TableGrid  = ({
                          rowSelection={rowSelection}
                          defaultColDef={defaultColDef}
                          columnDefs={columns}
-                         tableData={tableData}
+                         rowData={data}
                          pagination={!!pageInfo}
                          paginationPageSize={pageInfo?.rowperPge}
-                         cacheBlockSize={10}
             />
 
         </div>

@@ -449,14 +449,14 @@ export default function OrderWriter({dataInfo}) {
 
                 <TableGrid
                     columns={tableOrderWriteColumn}
-                    data={info['orderDetailList'][0]}
+                    tableData={info['orderDetailList']}
                     // dataInfo={tableOrderReadInfo}
                     setInfo={setInfo}
                     // setTableInfo={setTableInfo}
                     excel={true}
                     modalComponent={
                         <TableModal listType={'orderDetailList'} title={'견적의뢰 세부 작성'}
-                                    data={tableOrderWriteInitial}
+                                    initialData={tableOrderWriteInitial}
                                     dataInfo={subOrderWriteInfo}
                                     setInfoList={setInfo}
                                     isModalOpen={isMainModalOpen}

@@ -18,7 +18,7 @@ import {
 } from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
 import {
-    estimateWriteInitial,
+    estimateWriteInitial, orderWriteInitial,
     tableEstimateWriteInitial, tableOrderWriteInitial
 } from "@/utils/initialList";
 import {subOrderWriteInfo, tableEstimateWriteInfo} from "@/utils/modalDataList";
@@ -44,6 +44,7 @@ const TwinInputBox = ({children}) => {
 }
 
 export default function EstimateWrite() {
+
     let checkList = []
 
     const userInfo = useAppSelector((state) => state.user);
@@ -51,7 +52,6 @@ export default function EstimateWrite() {
     const [isMainModalOpen, setIsMainModalOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
 
-    console.log(userInfo, 'userInfo:')
 
     useEffect(() => {
 
@@ -80,13 +80,26 @@ export default function EstimateWrite() {
             const copyData = {...info}
             copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
 
-            await getData.post('estimate/addEstimate', copyData).then((v:any) => {
-                if (v?.code === 1) {
-                    console.log(v, ':::::')
+            await getData.post('estimate/addEstimate', copyData).then(v => {
+                if (v.data.code === 1) {
+                    message.success('저장되었습니다.')
                 }
             });
         }
+        const checkList = Array.from({ length: info['estimateDetailList'].length }, (_, i) => i + 1);
+        setInfo(orderWriteInitial);
+        deleteList(checkList)
     }
+
+    function deleteList(checkList) {
+        let copyData = {...info}
+        const result = copyData['estimateRequestDetailList'].filter(v => !checkList.includes(v.serialNumber))
+
+        copyData['estimateRequestDetailList'] = result
+        setInfo(copyData);
+
+    }
+
 
     function findAgency() {
 
@@ -250,15 +263,6 @@ export default function EstimateWrite() {
         XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
         XLSX.writeFile(workbook, "example.xlsx");
     };
-
-    function deleteList() {
-        let copyData = {...info}
-        const result = copyData['estimateDetailList'].filter(v => !checkList.includes(v.serialNumber))
-
-        copyData['estimateDetailList'] = result
-        setInfo(copyData);
-
-    }
 
     const rowSelection = {
         onChange: (selectedRowKeys, selectedRows) => {
@@ -505,14 +509,14 @@ export default function EstimateWrite() {
 
                 <TableGrid
                     columns={tableOrderWriteColumn}
-                    data={info['estimateDetailList'][0]}
+                    tableData={info['estimateDetailList']}
                     // dataInfo={tableOrderReadInfo}
                     setInfo={setInfo}
                     // setTableInfo={setTableInfo}
                     excel={true}
                     modalComponent={
                         <TableModal listType={'estimateDetailList'} title={'견적의뢰 세부 작성'}
-                                    data={tableOrderWriteInitial}
+                                    initialData={tableOrderWriteInitial}
                                     dataInfo={subOrderWriteInfo}
                                     setInfoList={setInfo}
                                     isModalOpen={isMainModalOpen}

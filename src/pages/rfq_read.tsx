@@ -28,13 +28,8 @@ export default function rfqRead({dataList}) {
 
     const {estimateRequestList, pageInfo} = dataList;
     const [info, setInfo] = useState(subRfqReadInitial)
-    const [tableInfo, setTableInfo] = useState(estimateRequestList)
+    const [tableData, setTableData] = useState(estimateRequestList)
     const [paginationInfo, setPaginationInfo] = useState(pageInfo)
-
-
-    // console.log(estimateRequestList,'estimateRequestList')
-    // console.log(tableInfo,'tableInfo')
-
 
     function onChange(e) {
 
@@ -51,8 +46,9 @@ export default function rfqRead({dataList}) {
         copyData['searchDate'] = [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
         setInfo(copyData);
         // setTableInfo(transformData(estimateRequestList, 'estimateRequestId', 'estimateRequestDetailList'));
-        setTableInfo(estimateRequestList);
-    }, [])
+        // setTableData(estimateRequestList);
+        // console.log(tableData, 'setTableData')
+    }, [info])
 
 
     async function searchInfo() {
@@ -64,7 +60,7 @@ export default function rfqRead({dataList}) {
         }
         const result = await getData.post('estimate/getEstimateRequestList', copyData);
         // setTableInfo(transformData(result?.data?.entity?.estimateRequestList, 'estimateRequestId', 'estimateRequestDetailList'));
-        setTableInfo(result?.data?.entity?.estimateRequestList);
+        setTableData(result?.data?.entity?.estimateRequestList);
         setPaginationInfo(result?.data?.entity?.pageInfo)
     }
 
@@ -81,12 +77,12 @@ export default function rfqRead({dataList}) {
         const result = await getData.post('estimate/getEstimateRequestDetail', {
             estimateRequestId:params
         });
-        setTableInfo(result?.data?.entity?.estimateRequestList)
+        setTableData(result?.data?.entity?.estimateRequestList)
     }
 
     const downloadExcel = () => {
 
-        const worksheet = XLSX.utils.json_to_sheet(tableInfo);
+        const worksheet = XLSX.utils.json_to_sheet(tableData);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
         XLSX.writeFile(workbook, "example.xlsx");
@@ -174,10 +170,10 @@ export default function rfqRead({dataList}) {
 
                 <TableGrid
                     columns={rfqReadColumns}
-                    data={tableInfo}
+                    tableData={tableData}
                     // dataInfo={tableOrderReadInfo}
-                    setDatabase={setInfo}
-                    setTableInfo={setTableInfo}
+                    // setDatabase={setInfo}
+                    // setTableInfo={setTableData}
                     pageInfo={paginationInfo}
                     excel={true}
                     funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>

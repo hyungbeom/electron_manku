@@ -33,11 +33,8 @@ export default function OrderRead({dataList}) {
 
     const {orderList, pageInfo} = dataList;
     const [info, setInfo] = useState(orderReadInitial)
-    const [tableInfo, setTableInfo] = useState(orderList)
+    const [tableData, setTableData] = useState(orderList)
     const [paginationInfo, setPaginationInfo] = useState(pageInfo)
-
-console.log(orderList,'orderList~~~~~~~~~~~:')
-console.log(tableInfo,'tableInfo~~~~~~~~~~~:')
 
 
     function onChange(e) {
@@ -54,9 +51,9 @@ console.log(tableInfo,'tableInfo~~~~~~~~~~~:')
         const copyData: any = {...info}
         copyData['searchDate'] = [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
         setInfo(copyData);
-        setTableInfo(transformData(orderList, 'orderId', 'orderDetailList'));
-        setTableInfo(orderList)
-    }, [])
+        // setTableInfo(transformData(orderList, 'orderId', 'orderDetailList'));
+        // setTableInfo(orderList)
+    }, [info])
 
 
 
@@ -69,14 +66,14 @@ console.log(tableInfo,'tableInfo~~~~~~~~~~~:')
         }
         const result = await getData.post('order/getOrderList', copyData);
         // setTableInfo(transformData(result?.data?.entity?.orderList, 'orderId', 'orderDetailList'));
-        setTableInfo(result?.data?.entity?.orderList)
+        setTableData(result?.data?.entity?.orderList)
         setPaginationInfo(result?.data?.entity?.pageInfo)
     }
 
 
 
     async function deleteList() {
-        let copyData = {...tableInfo}
+        let copyData = {...tableData}
 
         // @ts-ignore
         const deleteItemList= Object.values(copyData).filter(v=>checkList.includes(v.key))
@@ -84,7 +81,7 @@ console.log(tableInfo,'tableInfo~~~~~~~~~~~:')
         console.log(deleteItemList, 'deleteItemList')
 
         if (deleteItemList.length < 1)
-            alert('하나 이상의 항목을 선택해주세요.')
+            return alert('하나 이상의 항목을 선택해주세요.')
         else {
             // @ts-ignore
             for (const v of deleteItemList) {const orderId=v.orderId;
@@ -94,13 +91,13 @@ console.log(tableInfo,'tableInfo~~~~~~~~~~~:')
                     alert('삭제되었습니다.')
             });
             }
+            await searchInfo();
         }
-        await searchInfo();
     }
 
     const downloadExcel = () => {
 
-        const worksheet = XLSX.utils.json_to_sheet(tableInfo);
+        const worksheet = XLSX.utils.json_to_sheet(tableData);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
         XLSX.writeFile(workbook, "example.xlsx");
@@ -219,27 +216,22 @@ console.log(tableInfo,'tableInfo~~~~~~~~~~~:')
 
                 <TableGrid
                     columns={tableOrderReadColumns}
-                    initial={tableOrderReadInitial}
-                    dataInfo={tableOrderReadInfo}
-                    data={tableInfo}
-                    setDatabase={setInfo}
-                    setTableInfo={setTableInfo}
-                    rowSelection={rowSelection}
+                    tableData={tableData}
+                    // setDatabase={setInfo}
+                    // setTableData={setTableData}
+                    // rowSelection={rowSelection}
                     pageInfo={paginationInfo}
-                    setPaginationInfo={setPaginationInfo}
-                    visible={true}
                     excel={true}
-                    handlePageChange={handlePageChange}
-                    subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
-                                         <CopyOutlined/>복사
-                                     </Button>
-                                         {/*@ts-ignored*/}
-                                         <Button type={'danger'} size={'small'} style={{fontSize: 11}} onClick={deleteList}>
-                                             <CopyOutlined/>삭제
-                                         </Button>
-                                         <Button type={'dashed'} size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>
-                                             <FileExcelOutlined/>출력
-                                         </Button></>}
+                    funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
+                        <CopyOutlined/>복사
+                    </Button>
+                        {/*@ts-ignored*/}
+                        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={deleteList}>
+                            <CopyOutlined/>삭제
+                        </Button>
+                        <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={downloadExcel}>
+                            <FileExcelOutlined/>출력
+                        </Button></div>}
                 />
 
             </div>

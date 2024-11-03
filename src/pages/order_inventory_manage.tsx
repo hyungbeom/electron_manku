@@ -5,7 +5,7 @@ import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
 import {CopyOutlined, DeleteOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
-import {tableOrderInventoryColumns,} from "@/utils/columnList";
+import {tableOrderInventory, tableOrderInventoryColumns,} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
 import {inventoryReadInitial, tableOrderInventoryInitial,} from "@/utils/initialList";
 import {tableOrderInventoryInfo,} from "@/utils/modalDataList";
@@ -151,21 +151,21 @@ export default function OrderInventoryRead({dataList}) {
                     </div>
                 </Card>
 
-                <CustomTable columns={tableOrderInventoryColumns}
+                <CustomTable columns={tableOrderInventory}
                              initial={tableOrderInventoryInitial}
                              dataInfo={tableOrderInventoryInfo}
                              visible={true}
                              info={tableInfo}
                              listType={'inventoryList'}
                              setDatabase={setInfo}
-                             setTableInfo={setTableInfo}
+                             // setTableInfo={setTableInfo}
                              rowSelection={rowSelection}
                              pageInfo={paginationInfo}
-                             setPaginationInfo={setPaginationInfo}
+                             // setPaginationInfo={setPaginationInfo}
                              setIsModalOpen={setIsModalOpen}
                              setItemId={setItemId}
-                             content={<TableModal listType={'inventoryList'} title={itemId?'등록 재고 수정':'재고 등록'}
-                                                  data={tableOrderInventoryInitial}
+                             modalComponent={<TableModal listType={'inventoryList'} title={itemId?'등록 재고 수정':'재고 등록'}
+                                                  initialData={tableOrderInventoryInitial}
                                                   dataInfo={tableOrderInventoryInfo}
                                                   setInfoList={setInfo}
                                                   isModalOpen={isModalOpen}
@@ -175,16 +175,16 @@ export default function OrderInventoryRead({dataList}) {
                                                   searchInfo={searchInfo}
                              />}
 
-                             subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
+                             funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
                                  <CopyOutlined/>복사
                              </Button>
                                  {/*@ts-ignored*/}
-                                 <Button type={'danger'} size={'small'} style={{fontSize: 11}} onClick={deleteList}>
-                                     <DeleteOutlined/>삭제
+                                 <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={deleteList}>
+                                     <CopyOutlined/>삭제
                                  </Button>
-                                 <Button type={'dashed'} size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>
+                                 <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={downloadExcel}>
                                      <FileExcelOutlined/>출력
-                                 </Button></>}
+                                 </Button></div>}
                 />
 
 
