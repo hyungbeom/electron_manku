@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {useRouter} from "next/router";
 import Tabs from "antd/lib/tabs";
-import Login from "@/pages/Login";
+import Login from "@/component/account/Login";
 import SignUp from "@/component/account/SignUp";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
