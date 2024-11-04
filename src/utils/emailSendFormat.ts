@@ -1,10 +1,18 @@
 import axios from "axios";
+import {getData} from "@/manage/function/api";
+import message from "antd/lib/message";
+import moment from "moment/moment";
+import {orderWriteInitial} from "@/utils/initialList";
 
 export default function emailSendFormat(userInfo, data) {
 
 
     console.log(userInfo, 'userInfo');
     console.log(data, 'emailSendFormat');
+
+
+    const documentNumberList = []
+    const detailIdList = []
 
     const modelCard = Object.values(data)
         .map((card, i) => {
@@ -13,6 +21,12 @@ export default function emailSendFormat(userInfo, data) {
                 //@ts-ignore
                 .map((row, idx) => {
                     totalQuantity += row.quantity;
+
+                    detailIdList.push(row.estimateRequestDetailId)
+
+                    if(!idx)
+                        documentNumberList.push(row.documentNumberFull)
+
 
                     return `
                         ${!idx ? `
@@ -89,6 +103,7 @@ export default function emailSendFormat(userInfo, data) {
             <div style="line-height: 2.6; display: flex; flex-direction:column; flex-flow:column; margin-top: 60px">
                 ${modelCard}
             </div>
+            <div>감사합니다.</div>
         </div>
     `;
 
@@ -110,17 +125,34 @@ export default function emailSendFormat(userInfo, data) {
     //     `);
     //     newWindow.document.close();
     // }
-// }
-    axios.post("/api/send-email", {
-        emailTemplate,
-        recipient: userInfo['email'], // 수신자 이메일 주소
-        subject: "[만쿠] 견적서 이메일 보내드립니다.",
-    })
-        .then(response => {
-            console.log("이메일이 성공적으로 전송되었습니다.");
-        })
-        .catch(error => {
-            console.error("이메일 전송 실패:", error);
+
+
+    const documentNumberString = documentNumberList.join(", ");
+
+    console.log(`rfq ${documentNumberString}`, 'rfq 제목')
+
+    async function sendEmail() {
+
+        const mailList={
+            subject:`rfq ${documentNumberString}`,
+            content:emailTemplate,
+            estimateRequestDetailIdList:detailIdList,
+            ccList:['hblee@progist.co.kr'],
+            // email:userInfo['email'],
+            email:'kjh@progist.co.kr',
+        }
+
+        console.log(mailList, 'mailList~~~')
+
+        await getData.post('estimate/sendMailEstimateRequests', mailList).then(v => {
+            if (v.data.code === 1) {
+                message.success('메일이 발송되었습니다.')
+            }else{
+                message.error('메일 발송에 실패하였습니다.')
+            }
         });
+    }
+
+    sendEmail()
 
 }

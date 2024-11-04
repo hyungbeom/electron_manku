@@ -4,7 +4,7 @@ import Select from "antd/lib/select";
 import LayoutComponent from "@/component/LayoutComponent";
 import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
-import {CopyOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
+import {MailOutlined, SearchOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
 import {rfqReadColumns, tableOrderReadColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
@@ -139,7 +139,7 @@ export default function rfqRead({dataList}) {
     };
 
 // 버튼 클릭 시 체크된 데이터 출력
-    const handleButtonClick = () => {
+    const handleSendMail = () => {
         const checkedData = getCheckedRowsData();
         const result = checkedData.reduce((acc, cur, idx) => {
             let id = cur['estimateRequestId']
@@ -154,10 +154,10 @@ export default function rfqRead({dataList}) {
                     acc[id][idx] = {...acc[id][idx], quantity: acc[id][idx].quantity + quantity, unit : cur.unit}
                     return acc;
                 }else{
-                    acc[id].push({managerName: cur.managerName, documentNumberFull : cur.documentNumberFull, maker : cur.maker,item : cur.item,model: cur.model, quantity: cur.quantity, unit : cur.unit})
+                    acc[id].push({estimateRequestDetailId:cur.estimateRequestDetailId, managerName: cur.managerName, documentNumberFull : cur.documentNumberFull, maker : cur.maker,item : cur.item,model: cur.model, quantity: cur.quantity, unit : cur.unit})
                 }
             } else {
-                acc[id] = [{managerName: cur.managerName, documentNumberFull : cur.documentNumberFull, maker : cur.maker, item : cur.item, model: cur.model, quantity: cur.quantity, unit : cur.unit}];
+                acc[id] = [{estimateRequestDetailId:cur.estimateRequestDetailId, managerName: cur.managerName, documentNumberFull : cur.documentNumberFull, maker : cur.maker, item : cur.item, model: cur.model, quantity: cur.quantity, unit : cur.unit}];
             }
             return acc
         }, {})
@@ -172,6 +172,7 @@ export default function rfqRead({dataList}) {
     function sendMail(){
         emailSendFormat(userInfo, previewData)
     }
+
     return <>
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateRows: '250px 1fr', height: '100%', gridColumnGap: 5}}>
@@ -196,7 +197,7 @@ export default function rfqRead({dataList}) {
                                             <>
                                                 {!idx && (
                                                     <>
-                                                        <div style={{ width: "100%", height: "35px", fontSize: "13px", borderTop: "1px solid #121212", borderBottom: "1px solid #A3A3A3", backgroundColor: "#EBF6F7" }}>
+                                                        <div style={{ width: "100%", height: "35px", fontSize: "15px", borderTop: "1px solid #121212", borderBottom: "1px solid #A3A3A3", backgroundColor: "#EBF6F7" }}>
                                                             {row.documentNumberFull}
                                                         </div>
                                                         <div style={{ width: "100%", height: "35px", borderBottom: "1px solid #A3A3A3", display: "flex" }}>
@@ -304,11 +305,12 @@ export default function rfqRead({dataList}) {
                                 ]} style={{width: '100%'}}>
                                 </Select>
                             </div>
-                            <div>
+                            <div style={{marginTop:20}}>
                                 <Button type={'primary'} style={{marginRight: 8}}
                                         onClick={searchInfo}><SearchOutlined/>조회</Button>
-                                <Button type={'primary'} style={{marginRight: 8}}
-                                        onClick={handleButtonClick}><SearchOutlined/>조회</Button>
+                                {/*@ts-ignore*/}
+                                <Button type={'danger'} style={{marginRight: 8, letterSpacing:-1}}
+                                        onClick={handleSendMail}><MailOutlined/>선택 견적서 발송</Button>
                             </div>
                         </div>
                     </div>

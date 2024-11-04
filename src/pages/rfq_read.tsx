@@ -67,11 +67,9 @@ export default function rfqRead({dataList}) {
     }
 
 
-    function deleteList(checkList) {
+    function deleteList() {
 
         const api = gridRef.current.api;
-
-
         console.log(api.getSelectedRows(),':::')
 
     }
