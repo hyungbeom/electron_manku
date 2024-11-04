@@ -27,38 +27,32 @@ const tableTheme = themeQuartz
 
 const TableGrid  = ({
                         columns, tableData,
-                        // tableData,
-                        // setTableData,
-                        setDatabase,
                         modalComponent,
                         funcButtons,
-                        listType,
-                        excel = false,
-                        pageInfo=null,
-                        setPaginationInfo,
-                        setTableData,
-                        handlePageChange,
-                        visible = false,
-                        setIsModalOpen = undefined,
-                        setItemId = undefined,
+                        pageInfo=null
                     }: any) => {
 
     const gridRef = useRef(null);
     const [data, setData] = useState(tableData);
 
     useEffect(() => {
-
         setData([...tableData || []]); // 새로운 배열로 설정
-        // console.log(tableData, '~!~table grid');
     }, [tableData.length]);
 
     const defaultColDef = useMemo(() => {
         return {
             flex: 1,
             minWidth: 80,
-            filter: true,
+            filter: 'agNumberColumnFilter',
             floatingFilter: true,
             editable: true,
+            valueGetter: (params) => {
+
+                const previousRowData = params?.context?.rowData[params?.node?.rowIndex - 1];
+                console.log(previousRowData,':::')
+                // return previousRowData ? myCustomFunction(params.data, previousRowData) : params.data.exampleField;
+            },
+
         };
     }, []);
 
@@ -96,9 +90,8 @@ const TableGrid  = ({
                          defaultColDef={defaultColDef}
                          columnDefs={columns}
                          rowData={data}
-                         pagination={!!pageInfo}
-                         paginationPageSize={pageInfo?.rowperPge}
-            />
+                         context={{ data }}
+                         pagination={true}/>
 
         </div>
     );
