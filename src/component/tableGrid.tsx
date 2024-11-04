@@ -27,46 +27,55 @@ const tableTheme = themeQuartz
 
 const TableGrid  = ({
                         columns, tableData,
+                        setSelectedRows,
+                        // tableData,
+                        // setTableData,
+                        setDatabase,
                         modalComponent,
                         funcButtons,
-                        pageInfo=null
+                        listType,
+                        excel = false,
+                        pageInfo=null,
+                        setPaginationInfo,
+                        setTableData,
+                        handlePageChange,
+                        visible = false,
+                        setIsModalOpen = undefined,
+                        setItemId = undefined,
                     }: any) => {
 
     const gridRef = useRef(null);
     const [data, setData] = useState(tableData);
 
     useEffect(() => {
+
         setData([...tableData || []]); // 새로운 배열로 설정
+        // console.log(tableData, '~!~table grid');
     }, [tableData.length]);
 
     const defaultColDef = useMemo(() => {
         return {
             flex: 1,
             minWidth: 80,
-            filter: 'agNumberColumnFilter',
+            filter: true,
             floatingFilter: true,
             editable: true,
-            valueGetter: (params) => {
-
-                const previousRowData = params?.context?.rowData[params?.node?.rowIndex - 1];
-                console.log(previousRowData,':::')
-                // return previousRowData ? myCustomFunction(params.data, previousRowData) : params.data.exampleField;
-            },
-
         };
     }, []);
 
+    let selectedRows=[]
 
     const rowSelection = useMemo(() => {
         return { mode: "multiRow"};
     }, []);
 
     const handleSelectionChange = (e) => {
-        console.log(e)
+        setSelectedRows(e.api.getSelectedRows())
     }
 
     const handleRowValueChange = (e) => {
-        console.log(e.api.getEdit)
+        // console.log(e.api)
+        // console.log(e.api.getEdit)
 
     }
 
@@ -90,8 +99,9 @@ const TableGrid  = ({
                          defaultColDef={defaultColDef}
                          columnDefs={columns}
                          rowData={data}
-                         context={{ data }}
-                         pagination={true}/>
+                         pagination={!!pageInfo}
+                         paginationPageSize={pageInfo?.rowperPge}
+            />
 
         </div>
     );

@@ -18,6 +18,7 @@ import * as XLSX from "xlsx";
 import Button from "antd/lib/button";
 import {CopyOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
 import TableGrid from "@/component/tableGrid";
+import message from "antd/lib/message";
 
 const {RangePicker} = DatePicker
 
@@ -29,14 +30,12 @@ const TwinInputBox = ({children}) => {
 
 export default function EstimateRead({dataList}) {
 
-    let checkList = []
-
+    const [selectedRows, setSelectedRows] = useState([]);
     const {estimateList, pageInfo} = dataList;
     const [info, setInfo] = useState(estimateReadInitial)
     const [tableData, setTableData] = useState(estimateList)
     const [paginationInfo, setPaginationInfo] = useState(pageInfo)
 
-    // console.log(estimateList, 'tableEstimateReadColumns')
 
     function onChange(e) {
 
@@ -69,13 +68,32 @@ export default function EstimateRead({dataList}) {
         setPaginationInfo(result?.data?.entity?.pageInfo)
     }
 
-    function deleteList() {
-        let copyData = {...info}
-        const result = copyData['estimateDetailList'].filter(v => !checkList.includes(v.serialNumber))
 
-        copyData['estimateDetailList'] = result
-        setInfo(copyData);
+    async function deleteList() {
+
+        let deleteIdList = [];
+        selectedRows.forEach(v=>(
+            deleteIdList.push(v.estimateId)
+        ))
+
+        console.log(deleteIdList, 'deleteIdList')
+
+        if (deleteIdList.length < 1)
+            return alert('하나 이상의 항목을 선택해주세요.')
+        else {
+            // @ts-ignore
+            for (const v of deleteIdList) {
+                await getData.post('estimate/deleteEstimate', {
+                    estimateId: v}).then(r=>{
+                    if(r.data.code === 1)
+                        console.log(v+'삭제완료')
+                });
+            }
+            message.success('삭제되었습니다.')
+            window.location.reload();
+        }
     }
+
 
     const downloadExcel = () => {
 
@@ -88,7 +106,7 @@ export default function EstimateRead({dataList}) {
     const rowSelection = {
         onChange: (selectedRowKeys, selectedRows) => {
 
-            checkList  = selectedRowKeys
+            selectedRows  = selectedRowKeys
 
         },
         getCheckboxProps: (record) => ({
@@ -167,9 +185,6 @@ export default function EstimateRead({dataList}) {
                 <TableGrid
                     columns={tableEstimateReadColumns}
                     tableData={tableData}
-                    // setDatabase={setInfo}
-                    // setTableData={setTableData}
-                    // rowSelection={rowSelection}
                     pageInfo={paginationInfo}
                     excel={true}
                     funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
@@ -183,31 +198,6 @@ export default function EstimateRead({dataList}) {
                             <FileExcelOutlined/>출력
                         </Button></div>}
                 />
-
-
-                {/*<CustomTable columns={tableEstimateReadColumns}*/}
-                {/*             initial={tableEstimateReadInitial}*/}
-                {/*             dataInfo={tableEstimateReadInfo}*/}
-                {/*             info={tableInfo}*/}
-                {/*             setDatabase={setInfo}*/}
-                {/*             setTableInfo={setTableInfo}*/}
-                {/*             rowSelection={rowSelection}*/}
-                {/*             pageInfo={paginationInfo}*/}
-                {/*             visible={true}*/}
-                {/*             setPaginationInfo={setPaginationInfo}*/}
-
-                {/*             subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>*/}
-                {/*                 <CopyOutlined/>복사*/}
-                {/*             </Button>*/}
-                {/*                 /!*@ts-ignored*!/*/}
-                {/*                 <Button type={'danger'} size={'small'} style={{fontSize: 11}} onClick={deleteList}>*/}
-                {/*                     <CopyOutlined/>삭제*/}
-                {/*                 </Button>*/}
-                {/*                 <Button type={'dashed'} size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>*/}
-                {/*                     <FileExcelOutlined/>출력*/}
-                {/*                 </Button></>}*/}
-                {/*/>*/}
-
 
             </div>
         </LayoutComponent>
