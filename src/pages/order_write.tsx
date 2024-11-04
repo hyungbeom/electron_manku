@@ -39,14 +39,14 @@ export default function OrderWriter({dataInfo}) {
 
     const router = useRouter();
 
-    let checkList = []
+    const [selectedRows, setSelectedRows] = useState([]);
 
     const userInfo = useAppSelector((state) => state.user);
     const [info, setInfo] = useState<any>(orderWriteInitial)
     const [isMainModalOpen, setIsMainModalOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
 
-    console.log(dataInfo, 'dataInfo~~')
+    // console.log(dataInfo, 'dataInfo~~')
 
 
     useEffect(() => {
@@ -261,18 +261,24 @@ export default function OrderWriter({dataInfo}) {
     };
 
     function deleteList(checkList) {
-        let copyData = {...info}
-        const result = copyData['orderDetailList'].filter(v => !checkList.includes(v.serialNumber))
+        let copyData = { ...info };
 
-        copyData['orderDetailList'] = result
-        setInfo(copyData);
+        console.log(checkList, "checkList");
+        checkList.forEach(v => console.log(v.serialNumber, "serialNumber"));
 
+        const checkSerialNumbers = checkList.map(item => item.serialNumber);
+
+        const result = copyData['orderDetailList'].filter(v => !checkSerialNumbers.includes(v.serialNumber));
+        console.log(result, "result");
+        copyData['orderDetailList']=result;
+
+        setInfo(copyData)
     }
 
     const rowSelection = {
         onChange: (selectedRowKeys, selectedRows) => {
 
-            checkList  = selectedRowKeys
+            selectedRows  = selectedRowKeys
 
         },
         getCheckboxProps: (record) => ({
@@ -447,12 +453,14 @@ export default function OrderWriter({dataInfo}) {
                 <TableGrid
                     columns={tableOrderWriteColumn}
                     tableData={info['orderDetailList']}
+                    setSelectedRows={setSelectedRows}
+                    listType={'orderId'}
                     // dataInfo={tableOrderReadInfo}
                     setInfo={setInfo}
                     // setTableInfo={setTableInfo}
                     excel={true}
                     modalComponent={
-                        <TableModal listType={'orderDetailList'} title={'견적의뢰 세부 작성'}
+                        <TableModal listType={'orderDetailList'} title={'발주서 세부 작성'}
                                     initialData={tableOrderWriteInitial}
                                     dataInfo={subOrderWriteInfo}
                                     setInfoList={setInfo}
@@ -463,7 +471,7 @@ export default function OrderWriter({dataInfo}) {
                         <CopyOutlined/>복사
                     </Button>
                         {/*@ts-ignored*/}
-                        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={deleteList}>
+                        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={()=>deleteList(selectedRows)}>
                             <CopyOutlined/>삭제
                         </Button>
                         <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={downloadExcel}>
@@ -471,35 +479,6 @@ export default function OrderWriter({dataInfo}) {
                         </Button></div>}
                 />
 
-                {/*<CustomTable rowSelection={rowSelection}*/}
-                {/*             setDatabase={setInfo}*/}
-                {/*             listType={'orderDetailList'}*/}
-                {/*             columns={tableOrderWriteColumn}*/}
-                {/*             info={info['orderDetailList']}*/}
-                {/*             content={<TableModal*/}
-                {/*                 listType={'orderDetailList'}*/}
-                {/*                 title={'발주서 세부 작성'}*/}
-                {/*                 data={tableOrderWriteInitial}*/}
-                {/*                 dataInfo={subOrderWriteInfo}*/}
-                {/*                 setInfoList={setInfo}*/}
-                {/*                 isModalOpen={isMainModalOpen}*/}
-                {/*                 setIsModalOpen={setIsMainModalOpen}*/}
-                {/*             />}*/}
-                {/*             subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>*/}
-                {/*                 <CopyOutlined/>복사*/}
-                {/*             </Button>*/}
-                {/*                 /!*@ts-ignored*!/*/}
-                {/*                 <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft:5}} onClick={()=>deleteList(checkList)}>*/}
-                {/*                     <CopyOutlined/>삭제*/}
-                {/*                 </Button>*/}
-                {/*                 <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5}} onClick={printSheet}>*/}
-                {/*                     <FileExcelOutlined/>거래명세표 출력*/}
-                {/*                 </Button>*/}
-                {/*                 <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5}} onClick={downloadExcel}>*/}
-                {/*                     <FileExcelOutlined/>엑셀 출력*/}
-                {/*                 </Button>*/}
-                {/*</>}*/}
-                {/*             />*/}
 
             </div>
         </LayoutComponent>
@@ -527,19 +506,10 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     const {orderId} = ctx.query;
 
 
-    const result = await getData.post('order/getOrderList', {
-        "searchStartDate": "",          // 발주일자 검색 시작일
-        "searchEndDate": "",            // 발주일자 검색 종료일
-        "searchDocumentNumber": "",     // 문서번호
-        "searchCustomerName": "",       // 거래처명
-        "searchMaker": "",              // MAKER
-        "searchModel": "",              // MODEL
-        "searchItem": "",               // ITEM
-        "searchEstimateManager": "",    // 견적서담당자명
-        "page": 1,
-        "limit": 20
+    const result = await getData.post('order/getOrderDetail', {
+        orderId:orderId
     });
 
 
-    return {props: {dataInfo: orderId ? result?.data?.entity?.orderList[0] : null}}
+    return {props: {dataInfo: orderId ? result?.data?.entity?.orderDetail : null}}
 })
