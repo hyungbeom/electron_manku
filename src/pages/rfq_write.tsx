@@ -1,16 +1,9 @@
-import React, {useEffect, useMemo, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
 import TextArea from "antd/lib/input/TextArea";
-import {
-    CopyOutlined,
-    EditOutlined,
-    FileExcelOutlined,
-    FileSearchOutlined,
-    RetweetOutlined,
-    SaveOutlined
-} from "@ant-design/icons";
+import {CopyOutlined, EditOutlined, FileSearchOutlined, RetweetOutlined, SaveOutlined} from "@ant-design/icons";
 import {searchAgencyCodeColumn, searchCustomerColumn, subRfqWriteColumn} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
 import {orderWriteInitial, rfqWriteInitial} from "@/utils/initialList";
@@ -22,36 +15,17 @@ import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import Modal from "antd/lib/modal/Modal";
-import Table from "antd/lib/table";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import * as XLSX from 'xlsx';
 import MyComponent from "@/component/MyComponent";
 import {useRouter} from "next/router";
 import nookies from "nookies";
-import {TwinInputBox} from "@/utils/common/component/Common";
 import TableGrid from "@/component/tableGrid";
 import {AgGridReact} from "ag-grid-react";
 import {iconSetMaterial, themeQuartz} from "@ag-grid-community/theming";
+import SearchAgendaModal from "@/component/SearchAgendaModal";
+import SearchCustomerModal from "@/component/SearchCustomerModal";
 
-const tableTheme = themeQuartz
-    .withPart(iconSetMaterial)
-    .withParams({
-        browserColorScheme: "light",
-        cellHorizontalPaddingScale: 0.5,
-        columnBorder: true,
-        fontSize: "10px",
-        headerBackgroundColor: "#FDFDFD",
-        headerFontSize: "12px",
-        headerFontWeight: 550,
-        headerVerticalPaddingScale: 0.8,
-        iconSize: "11px",
-        rowBorder: true,
-        rowVerticalPaddingScale: 0.8,
-        sidePanelBorder: true,
-        spacing: "5px",
-        wrapperBorder: true,
-        wrapperBorderRadius: "6px",
-    });
 export default function rqfWrite({dataInfo, display}) {
     const gridRef = useRef(null);
     const router = useRouter();
@@ -104,7 +78,7 @@ export default function rqfWrite({dataInfo, display}) {
             await getData.post('estimate/addEstimateRequest', copyData).then(v => {
                 if (v.data.code === 1) {
                     message.success('저장되었습니다.')
-                }else{
+                } else {
                     message.error('저장에 실패하였습니다.')
                 }
             });
@@ -129,7 +103,7 @@ export default function rqfWrite({dataInfo, display}) {
 
         let copyData = {...info}
         copyData['estimateRequestDetailList'] = uncheckedData;
-        console.log(copyData,'copyData::')
+        console.log(copyData, 'copyData::')
         setInfo(copyData);
 
     }
@@ -139,9 +113,9 @@ export default function rqfWrite({dataInfo, display}) {
         const [data, setData] = useState(agencyData)
         const [code, setCode] = useState(info['agencyCode']);
 
-        // useEffect(() => {
-        //     searchFunc();
-        // }, [])
+        useEffect(() => {
+            searchFunc();
+        }, [])
 
         async function searchFunc() {
             const result = await getData.post('agency/getAgencyListForEstimate', {
@@ -152,7 +126,7 @@ export default function rqfWrite({dataInfo, display}) {
             setData(result?.data?.entity?.agencyList)
         }
 
-        function handleKeyPress(e){
+        function handleKeyPress(e) {
             if (e.key === 'Enter') {
                 searchFunc();
             }
@@ -168,20 +142,22 @@ export default function rqfWrite({dataInfo, display}) {
             onOk={() => setIsModalOpen({event1: false, event2: false})}
         >
             <div style={{height: '50vh'}}>
-                <div style={{display:'flex', justifyContent:'space-between', gap:15, marginBottom: 20}}>
-                    <Input style={{width:'100%'}} onKeyDown={handleKeyPress} id={'agencyCode'} value={code} onChange={(e)=>setCode(e.target.value)}></Input>
+                <div style={{display: 'flex', justifyContent: 'space-between', gap: 15, marginBottom: 20}}>
+                    <Input style={{width: '100%'}} onKeyDown={handleKeyPress} id={'agencyCode'} value={code}
+                           onChange={(e) => setCode(e.target.value)}></Input>
                     <Button onClick={searchFunc}>조회</Button>
                 </div>
 
-                <AgGridReact containerStyle={{height:'93%', width:'100%' }} theme={tableTheme}
-                             onCellClicked={(e)=>{
-                                setInfo(v=>{
-                                    return {
-                                    ...v, ... e.data
-                                }})
+                <AgGridReact containerStyle={{height: '93%', width: '100%'}} theme={tableTheme}
+                             onCellClicked={(e) => {
+                                 setInfo(v => {
+                                     return {
+                                         ...v, ...e.data
+                                     }
+                                 })
                                  setIsModalOpen({event1: false, event2: false})
                              }}
-                      rowData={data}
+                             rowData={data}
                              columnDefs={searchAgencyCodeColumn}
                              pagination={true}
 
@@ -196,6 +172,10 @@ export default function rqfWrite({dataInfo, display}) {
         const [customer, setCustomer] = useState(info['customerName']);
 
 
+        useEffect(() => {
+            searchFunc();
+        }, [])
+
         async function searchFunc() {
             // console.log(modalInfo, 'modalInfo:')
             const result = await getData.post('customer/getCustomerListForEstimate', {
@@ -206,7 +186,7 @@ export default function rqfWrite({dataInfo, display}) {
             setData(result?.data?.entity?.customerList)
         }
 
-        function handleKeyPress(e){
+        function handleKeyPress(e) {
             if (e.key === 'Enter') {
                 searchFunc();
             }
@@ -229,12 +209,13 @@ export default function rqfWrite({dataInfo, display}) {
                     <Button onClick={searchFunc}>조회</Button>
                 </div>
 
-                <AgGridReact containerStyle={{height:'93%', width:'100%' }} theme={tableTheme}
-                             onCellClicked={(e)=>{
-                                 setInfo(v=>{
+                <AgGridReact containerStyle={{height: '93%', width: '100%'}} theme={tableTheme}
+                             onCellClicked={(e) => {
+                                 setInfo(v => {
                                      return {
-                                         ...v,phoneNumber: e?.data?.directTel, ... e.data
-                                     }})
+                                         ...v, phoneNumber: e?.data?.directTel, ...e.data
+                                     }
+                                 })
                                  setIsModalOpen({event1: false, event2: false})
                              }}
                              rowData={data}
@@ -259,8 +240,6 @@ export default function rqfWrite({dataInfo, display}) {
     };
 
 
-
-
     function addRow() {
         let copyData = {...info};
         copyData['estimateRequestDetailList'].push({
@@ -280,10 +259,9 @@ export default function rqfWrite({dataInfo, display}) {
     }
 
     const handleKeyPress = async (e) => {
-        console.log(e.target.id)
         if (e.key === 'Enter') {
             if (e.target.id === 'agencyCode') {
-                if(!info['agencyCode']){
+                if (!info['agencyCode']) {
                     return false;
                 }
                 const result = await getData.post('agency/getAgencyListForEstimate', {
@@ -301,8 +279,8 @@ export default function rqfWrite({dataInfo, display}) {
                         return {...v, agencyCode: agencyCode, agencyName: agencyName}
                     })
                 }
-            }else{
-                if(!info['customerName']){
+            } else {
+                if (!info['customerName']) {
                     return false
                 }
                 const result = await getData.post('customer/getCustomerListForEstimate', {
@@ -310,7 +288,7 @@ export default function rqfWrite({dataInfo, display}) {
                     "page": 1,
                     "limit": -1
                 })
-                if(result.data.entity.customerList.length > 1){
+                if (result.data.entity.customerList.length > 1) {
                     setCustomerData(result.data.entity.customerList)
                     setIsModalOpen({event1: false, event2: true})
                 } else if (!!result.data.entity.customerList.length) {
@@ -318,7 +296,13 @@ export default function rqfWrite({dataInfo, display}) {
 
 
                     setInfo(v => {
-                        return {...v, customerName: customerName, managerName: managerName,phoneNumber:directTel, faxNumber : faxNumber }
+                        return {
+                            ...v,
+                            customerName: customerName,
+                            managerName: managerName,
+                            phoneNumber: directTel,
+                            faxNumber: faxNumber
+                        }
                     })
                 }
             }
@@ -329,30 +313,33 @@ export default function rqfWrite({dataInfo, display}) {
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateRows: '450px 1fr', height: '100%', gridColumnGap: 5}}>
 
-                <SearchAgencyCode/>
-                <SearchCustomer/>
+                <SearchAgendaModal info={info} setInfo={setInfo} agencyData={agencyData} isModalOpen={isModalOpen}
+                                   setIsModalOpen={setIsModalOpen}/>
+                <SearchCustomerModal info={info} setInfo={setInfo} customerData={customerData} isModalOpen={isModalOpen}
+                                     setIsModalOpen={setIsModalOpen}/>
+                {/*<SearchCustomer/>*/}
                 <Card title={'의뢰 작성'} style={{fontSize: 12, border: '1px solid lightGray'}}>
-                    <div style={{display : 'grid', gridTemplateColumns : '220px 320px 320px 1fr', columnGap : 10}}>
-                        <Card size={'small'} style={{
+                    <div style={{display: 'grid', gridTemplateColumns: '220px 320px 320px 1fr', columnGap: 10}}>
+                        <Card title={'base'} size={'small'} style={{
                             fontSize: 13,
                             boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                         }}>
 
-                                <div>
-                                    <div style={{paddingBottom: 3}}>INQUIRY NO.</div>
-                                    <Input disabled={true} size={'small'}/>
-                                </div>
-                                <div>
-                                    <div style={{paddingBottom: 3}}>작성일</div>
-                                    <DatePicker value={info['writtenDate']}
-                                                onChange={(date, dateString) => onChange({
-                                                    target: {
-                                                        id: 'writtenDate',
-                                                        value: date
-                                                    }
-                                                })
-                                                } id={'writtenDate'} size={'small'}/>
-                                </div>
+                            <div>
+                                <div style={{paddingTop: 8}}>INQUIRY NO.</div>
+                                <Input disabled={true} size={'small'}/>
+                            </div>
+                            <div>
+                                <div style={{paddingTop: 8}}>작성일</div>
+                                <DatePicker value={info['writtenDate']}
+                                            onChange={(date, dateString) => onChange({
+                                                target: {
+                                                    id: 'writtenDate',
+                                                    value: date
+                                                }
+                                            })
+                                            } id={'writtenDate'} size={'small'}/>
+                            </div>
 
                         </Card>
 
@@ -361,57 +348,57 @@ export default function rqfWrite({dataInfo, display}) {
                                   fontSize: 13,
                                   boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                               }}>
-                                <div>
-                                    <div style={{paddingBottom: 3}}>대리점코드</div>
-                                    <Input id={'agencyCode'} value={info['agencyCode']} onChange={onChange}
-                                           size={'small'}
-                                           onKeyDown={handleKeyPress}
-                                           suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
-                                               (e) => {
-                                                   e.stopPropagation();
-                                                   setIsModalOpen({event1: true, event2: false})
-                                               }
-                                           }/>}/>
-                                </div>
-                                <div>
-                                    <div style={{paddingBottom: 3}}>대리점명</div>
-                                    <Input id={'agencyName'} value={info['agencyName']} onChange={onChange}
-                                           size={'small'}/>
-                                </div>
+                            <div>
+                                <div style={{paddingTop: 8}}>대리점코드</div>
+                                <Input id={'agencyCode'} value={info['agencyCode']} onChange={onChange}
+                                       size={'small'}
+                                       onKeyDown={handleKeyPress}
+                                       suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
+                                           (e) => {
+                                               e.stopPropagation();
+                                               setIsModalOpen({event1: true, event2: false})
+                                           }
+                                       }/>}/>
+                            </div>
+                            <div>
+                                <div style={{paddingTop: 8}}>대리점명</div>
+                                <Input id={'agencyName'} value={info['agencyName']} onChange={onChange}
+                                       size={'small'}/>
+                            </div>
                         </Card>
 
                         <Card title={'CUSTOMER INFORMATION'} size={'small'} style={{
                             fontSize: 13,
                             boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                         }}>
-                                <div>
-                                    <div style={{paddingBottom: 3}}>상호명</div>
-                                    <Input id={'customerName'} value={info['customerName']} onChange={onChange}
-                                           size={'small'}
-                                           onKeyDown={handleKeyPress}
-                                           suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
-                                               (e) => {
-                                                   e.stopPropagation();
-                                                   setIsModalOpen({event1: false, event2: true})
-                                               }
-                                           }/>}/>
-                                </div>
-                                <div>
-                                    <div style={{paddingBottom: 3}}>담당자</div>
-                                    <Input id={'managerName'} value={info['managerName']} onChange={onChange}
-                                           size={'small'}/>
-                                </div>
+                            <div>
+                                <div style={{paddingTop: 8}}>상호명</div>
+                                <Input id={'customerName'} value={info['customerName']} onChange={onChange}
+                                       size={'small'}
+                                       onKeyDown={handleKeyPress}
+                                       suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
+                                           (e) => {
+                                               e.stopPropagation();
+                                               setIsModalOpen({event1: false, event2: true})
+                                           }
+                                       }/>}/>
+                            </div>
+                            <div>
+                                <div style={{paddingTop: 8}}>담당자</div>
+                                <Input id={'managerName'} value={info['managerName']} onChange={onChange}
+                                       size={'small'}/>
+                            </div>
 
-                                <div>
-                                    <div style={{paddingBottom: 3}}>전화번호</div>
-                                    <Input id={'phoneNumber'} value={info['phoneNumber']} onChange={onChange}
-                                           size={'small'}/>
-                                </div>
-                                <div>
-                                    <div style={{paddingBottom: 3}}>팩스/이메일</div>
-                                    <Input id={'faxNumber'} value={info['faxNumber']} onChange={onChange}
-                                           size={'small'}/>
-                                </div>
+                            <div>
+                                <div style={{paddingTop: 8}}>전화번호</div>
+                                <Input id={'phoneNumber'} value={info['phoneNumber']} onChange={onChange}
+                                       size={'small'}/>
+                            </div>
+                            <div>
+                                <div style={{paddingTop: 8}}>팩스/이메일</div>
+                                <Input id={'faxNumber'} value={info['faxNumber']} onChange={onChange}
+                                       size={'small'}/>
+                            </div>
                         </Card>
 
                         <Card title={'ETC'} size={'small'} style={{
@@ -439,17 +426,12 @@ export default function rqfWrite({dataInfo, display}) {
                         </Card>
                         <div style={{paddingTop: 20}}>
                             {/*@ts-ignored*/}
-                            {dataInfo ? <Button type={'danger'} size={'small'} style={{marginRight: 8}}
-                                                onClick={saveFunc}><SaveOutlined/>수정</Button> :
-                                <Button type={'primary'} size={'small'} style={{marginRight: 8}}
-                                        onClick={saveFunc}><SaveOutlined/>저장</Button>}
 
+                            <Button type={'primary'} size={'small'} style={{marginRight: 8}}
+                                    onClick={saveFunc}><SaveOutlined/>저장</Button>
 
-                            {dataInfo ? <Button size={'small'}  type={'primary'} style={{marginRight: 8}}
-                                                onClick={() => router?.push('/rfq_write')}><EditOutlined/>신규</Button> :
-                                // @ts-ignored
-                                <Button type={'danger'} size={'small'}
-                                        onClick={() => setInfo(rfqWriteInitial)}><RetweetOutlined/>초기화</Button>}
+                            <Button type={'danger'} size={'small'}
+                                    onClick={() => setInfo(rfqWriteInitial)}><RetweetOutlined/>초기화</Button>
 
                         </div>
                     </div>
@@ -477,7 +459,7 @@ export default function rqfWrite({dataInfo, display}) {
                                 onClick={deleteList}>
                             <CopyOutlined/>삭제
                         </Button>
-                        </div>}
+                    </div>}
                 />
 
 

@@ -1,3 +1,5 @@
+import {iconSetMaterial, themeQuartz} from "@ag-grid-community/theming";
+
 export const TagTypeList = {
     "model": {type : 'input'},
     "quantity": {type : 'inputNumber'},
@@ -314,3 +316,24 @@ export const mankuInformation = {
     businessForm : {title: "등록번호", content:"714-87-01453", id:"registerNumber"},
     businessType : {title: "등록번호", content:"714-87-01453", id:"registerNumber"},
 }
+
+
+export const tableTheme = themeQuartz
+    .withPart(iconSetMaterial)
+    .withParams({
+        browserColorScheme: "light",
+        cellHorizontalPaddingScale: 0.5,
+        columnBorder: true,
+        fontSize: "10px",
+        headerBackgroundColor: "#FDFDFD",
+        headerFontSize: "12px",
+        headerFontWeight: 550,
+        headerVerticalPaddingScale: 0.8,
+        iconSize: "11px",
+        rowBorder: true,
+        rowVerticalPaddingScale: 0.8,
+        sidePanelBorder: true,
+        spacing: "5px",
+        wrapperBorder: true,
+        wrapperBorderRadius: "6px",
+    });

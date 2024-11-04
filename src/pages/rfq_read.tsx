@@ -177,7 +177,7 @@ export default function rfqRead({dataList}) {
                     // dataInfo={tableOrderReadInfo}
                     // setDatabase={setInfo}
                     // setTableInfo={setTableData}
-
+                    type={'read'}
                     excel={true}
                     funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
                         <CopyOutlined/>복사
