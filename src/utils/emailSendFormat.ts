@@ -1,6 +1,8 @@
-import React from "react";
+import axios from "axios";
 
 export default function emailSendFormat(userInfo, data) {
+
+
     console.log(userInfo, 'userInfo');
     console.log(data, 'emailSendFormat');
 
@@ -90,22 +92,35 @@ export default function emailSendFormat(userInfo, data) {
         </div>
     `;
 
-    const newWindow = window.open("", "_blank");
-    if (newWindow) {
-        newWindow.document.open();
-        newWindow.document.write(`
-            <html>
-                <head>
-                    <title>견적 이메일 미리보기</title>
-                    <style>
-                        /* 여기에 추가적인 스타일을 적용할 수 있습니다 */
-                    </style>
-                </head>
-                <body>
-                    ${emailTemplate}
-                </body>
-            </html>
-        `);
-        newWindow.document.close();
-    }
+    // const newWindow = window.open("", "_blank");
+    // if (newWindow) {
+    //     newWindow.document.open();
+    //     newWindow.document.write(`
+    //         <html>
+    //             <head>
+    //                 <title>견적 이메일 미리보기</title>
+    //                 <style>
+    //                     /* 여기에 추가적인 스타일을 적용할 수 있습니다 */
+    //                 </style>
+    //             </head>
+    //             <body>
+    //                 ${emailTemplate}
+    //             </body>
+    //         </html>
+    //     `);
+    //     newWindow.document.close();
+    // }
+// }
+    axios.post("/api/send-email", {
+        emailTemplate,
+        recipient: userInfo['email'], // 수신자 이메일 주소
+        subject: "[만쿠] 견적서 이메일 보내드립니다.",
+    })
+        .then(response => {
+            console.log("이메일이 성공적으로 전송되었습니다.");
+        })
+        .catch(error => {
+            console.error("이메일 전송 실패:", error);
+        });
+
 }
