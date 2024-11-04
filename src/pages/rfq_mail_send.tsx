@@ -170,13 +170,13 @@ export default function rfqRead({dataList}) {
 
 
     function sendMail(){
-        emailSendFormat(previewData)
+        emailSendFormat(userInfo, previewData)
     }
     return <>
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateRows: '250px 1fr', height: '100%', gridColumnGap: 5}}>
-                <Card title={<>'메일전송'<Button onClick={sendMail}>전송</Button></>} style={{fontSize: 12, border: '1px solid lightGray'}} >
-                    <Modal title="Basic Modal" open={isModalOpen} >
+                <Card title={'메일전송'} style={{fontSize: 12, border: '1px solid lightGray'}} >
+                    <Modal title={<>'메일전송'<Button onClick={sendMail}>전송</Button></>} open={isModalOpen} >
                         <img src='/manku_ci_black_text.png' width={116} alt='manku logo'></img>
                         {/*@ts-ignore*/}
                         {/*<div>{(Object.values(previewData))[0].managerName}님</div>*/}
