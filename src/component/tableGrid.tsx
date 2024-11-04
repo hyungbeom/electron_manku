@@ -51,6 +51,7 @@ const TableGrid = ({
 
     const [data, setData] = useState(tableData);
 
+
     // useEffect(() => {
     //
     //     setData([...tableData || []]); // 새로운 배열로 설정
@@ -68,8 +69,13 @@ const TableGrid = ({
 
 
                 let sendData = params.data[params.column.colId];
-                if (params.node.rowIndex > 0 && type === 'read') { // 첫 번째 행이 아닌 경우에만 이전 행 참조
+
+
+                if (!!params.node.rowIndex && type === 'read') { // 첫 번째 행이 아닌 경우에만 이전 행 참조
                     const previousRowData = params.context?.data?.[params.node.rowIndex - 1];
+
+                    console.log(previousRowData,'previousRowData:')
+
 
                     if (previousRowData && params.data[listType] === previousRowData[listType]) {
                         if (params.column.colId === 'writtenDate' || params.column.colId === 'documentNumberFull') {
@@ -248,8 +254,8 @@ const TableGrid = ({
                          rowSelection={rowSelection}
                          defaultColDef={defaultColDef}
                          columnDefs={columns}
-                         rowData={[...tableData]}
-                         context={{tableData}}
+                         rowData={data}
+                         context={{data}}
                          pagination={true}
                          onRowSelected={handleRowSelected}
                          onCellValueChanged={dataChange}

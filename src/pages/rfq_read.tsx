@@ -2,22 +2,18 @@ import React, {useEffect, useState} from "react";
 import Input from "antd/lib/input/Input";
 import Select from "antd/lib/select";
 import LayoutComponent from "@/component/LayoutComponent";
-import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
 import {CopyOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
-import {rfqReadColumns, tableOrderReadColumns} from "@/utils/columnList";
+import {rfqReadColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {subRfqReadInitial, tableOrderReadInitial} from "@/utils/initialList";
-import {subRfqReadInfo, tableOrderReadInfo} from "@/utils/modalDataList";
+import {subRfqReadInitial} from "@/utils/initialList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import {getData} from "@/manage/function/api";
 import moment from "moment";
 import * as XLSX from "xlsx";
-import {transformData} from "@/utils/common/common";
-import {useRouter} from "next/router";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
 
@@ -47,7 +43,7 @@ export default function rfqRead({dataList}) {
 
     useEffect(() => {
         const copyData: any = {...info}
-        copyData['searchDate'] = [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
+        copyData['searchDate'] = [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
         setInfo(copyData);
         // setTableInfo(transformData(estimateRequestList, 'estimateRequestId', 'estimateRequestDetailList'));
         // setTableData(estimateRequestList);
@@ -238,8 +234,8 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     const result = await getData.post('estimate/getEstimateRequestList', {
         "searchEstimateRequestId": "",      // 견적의뢰 Id
         "searchType": "",                   // 검색조건 1: 회신, 2: 미회신
-        "searchStartDate": "",              // 작성일자 시작일
-        "searchEndDate": "",                // 작성일자 종료일
+        "searchStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),              // 작성일자 시작일
+        "searchEndDate": moment().format('YYYY-MM-DD'),                // 작성일자 종료일
         "searchDocumentNumber": "",         // 문서번호
         "searchCustomerName": "",           // 거래처명
         "searchMaker": "",                  // MAKER
@@ -250,7 +246,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
         "searchMobileNumber": "",           // 담당자 연락처
         "searchBiddingNumber": "",          // 입찰번호(미완성)
         "page": 1,
-        "limit": 100
+        "limit": -1
     });
 
 
