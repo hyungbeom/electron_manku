@@ -99,6 +99,17 @@ const TableGrid = ({
         // console.log(e.api)
         // console.log(e.api.getEdit)
     }
+
+    const [estimateList, setEtimateList] = useState([])
+
+    let estimate = {
+        documentNumberFull: "",
+        maker: "",
+        item: "",
+        models: []
+    };
+
+
     let isUpdatingSelection = false; // 중복 선택 이벤트 발생 방지 플래그
 
     const handleRowSelected = (e) => {
@@ -147,8 +158,40 @@ const TableGrid = ({
             }
         }
 
+        console.log(currentRowData, 'currentRowData')
+
+
+        if (estimateList.length === 0 || estimateList.some(item => item.documentNumberFull != estimate.documentNumberFull)) {
+            estimate.documentNumberFull = currentRowData.documentNumberFull;
+            estimate.maker = currentRowData.maker;
+            estimate.item = currentRowData.item;
+
+            const model = { title: "", quantity: null };
+            model.title = currentRowData.model;
+            model.quantity = currentRowData.quantity;
+
+            estimate.models.push(model);
+            estimateList.push(estimate);
+        } else if (estimateList.some(item => item.documentNumberFull === estimate.documentNumberFull)) {
+            const existingEstimate = estimateList.find(item => item.documentNumberFull === estimate.documentNumberFull);
+
+            if (existingEstimate) {
+                const model = { title: "", quantity: null };
+                model.title = currentRowData.model;
+                model.quantity = currentRowData.quantity;
+
+                existingEstimate.models.push(model);
+            }
+        }
+
+        console.log(estimateList, 'estimateList~~~~');
+
+
         isUpdatingSelection = false; // 선택 업데이트 종료
+
     };
+
+
     const handleDoubleClicked = (e) => {
         if (e.data.estimateRequestId)
             router.push(`/rfq_write?estimateRequestId=${e?.data?.estimateRequestId}`)
@@ -169,8 +212,15 @@ const TableGrid = ({
     const getCheckedRowsData = () => {
         const selectedNodes = gridRef.current.api.getSelectedNodes(); // gridOptions 대신 gridRef 사용
         const selectedData = selectedNodes.map(node => node.data);
+        console.log(selectedData, 'selectedData')
+
         return selectedData;
+
+
     };
+
+
+
 
 // 버튼 클릭 시 체크된 데이터 출력
     const handleButtonClick = () => {

@@ -32,7 +32,7 @@ export default function rfqRead({dataList}) {
     const [tableData, setTableData] = useState(estimateRequestList);
     const [paginationInfo, setPaginationInfo] = useState(pageInfo);
 
-    // console.log(selectedRows, 'selectedRows')
+    console.log(selectedRows, 'selectedRows')
 
 
     function onChange(e) {
