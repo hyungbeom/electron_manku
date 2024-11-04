@@ -2,30 +2,38 @@ import React, {useEffect, useState} from "react";
 import Input from "antd/lib/input/Input";
 import Select from "antd/lib/select";
 import LayoutComponent from "@/component/LayoutComponent";
+import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
 import {CopyOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
-import {rfqReadColumns} from "@/utils/columnList";
+import {rfqReadColumns, tableOrderReadColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {subRfqReadInitial} from "@/utils/initialList";
+import {subRfqReadInitial, tableOrderReadInitial} from "@/utils/initialList";
+import {subRfqReadInfo, tableOrderReadInfo} from "@/utils/modalDataList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import {getData} from "@/manage/function/api";
 import moment from "moment";
 import * as XLSX from "xlsx";
+import {transformData} from "@/utils/common/common";
+import {useRouter} from "next/router";
 import TableGrid from "@/component/tableGrid";
+import message from "antd/lib/message";
 
 const {RangePicker} = DatePicker
 
 
-export default function rfqMailSend({dataList}) {
-    let checkList = []
+export default function rfqRead({dataList}) {
 
+    const [selectedRows, setSelectedRows] = useState([]);
     const {estimateRequestList, pageInfo} = dataList;
-    const [info, setInfo] = useState(subRfqReadInitial)
-    const [tableData, setTableData] = useState(estimateRequestList)
-    const [paginationInfo, setPaginationInfo] = useState(pageInfo)
+    const [info, setInfo] = useState(subRfqReadInitial);
+    const [tableData, setTableData] = useState(estimateRequestList);
+    const [paginationInfo, setPaginationInfo] = useState(pageInfo);
+
+    // console.log(selectedRows, 'selectedRows')
+
 
     function onChange(e) {
 
@@ -44,7 +52,7 @@ export default function rfqMailSend({dataList}) {
         // setTableInfo(transformData(estimateRequestList, 'estimateRequestId', 'estimateRequestDetailList'));
         // setTableData(estimateRequestList);
         // console.log(tableData, 'setTableData')
-    }, [info])
+    }, [])
 
 
     async function searchInfo() {
@@ -60,12 +68,29 @@ export default function rfqMailSend({dataList}) {
         setPaginationInfo(result?.data?.entity?.pageInfo)
     }
 
-    function deleteList() {
-        let copyData = {...info}
-        const result = copyData['estimateRequestDetailList'].filter(v => !checkList.includes(v.serialNumber))
+    async function deleteList() {
 
-        copyData['estimateRequestDetailList'] = result
-        setInfo(copyData);
+        let deleteIdList = [];
+        selectedRows.forEach(v=>(
+            deleteIdList.push(v.estimateRequestId)
+        ))
+
+        console.log(deleteIdList, 'deleteIdList')
+
+        if (deleteIdList.length < 1)
+            return alert('하나 이상의 항목을 선택해주세요.')
+        else {
+            // @ts-ignore
+            for (const v of deleteIdList) {
+                await getData.post('estimate/deleteEstimateRequest', {
+                    estimateRequestId: v}).then(r=>{
+                    if(r.data.code === 1)
+                        console.log(v+'삭제완료')
+                });
+            }
+            message.success('삭제되었습니다.')
+            window.location.reload();
+        }
     }
 
 
@@ -86,7 +111,7 @@ export default function rfqMailSend({dataList}) {
 
     const rowSelection = {
         onChange: (selectedRowKeys, selectedRows) => {
-            checkList = selectedRowKeys
+            selectedRows = selectedRowKeys
         },
         onDoubleClick: (src) => {
             console.log(src, ':::')
@@ -167,6 +192,10 @@ export default function rfqMailSend({dataList}) {
                 <TableGrid
                     columns={rfqReadColumns}
                     tableData={tableData}
+                    setSelectedRows={setSelectedRows}
+                    // dataInfo={tableOrderReadInfo}
+                    // setDatabase={setInfo}
+                    // setTableInfo={setTableData}
                     pageInfo={paginationInfo}
                     excel={true}
                     funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
@@ -178,8 +207,32 @@ export default function rfqMailSend({dataList}) {
                         </Button>
                         <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={downloadExcel}>
                             <FileExcelOutlined/>출력
-                        </Button></div>}/>
+                        </Button></div>}
+                />
 
+
+                {/*<CustomTable columns={rfqReadColumns}*/}
+                {/*             initial={subRfqReadInitial}*/}
+                {/*             dataInfo={subRfqReadInfo}*/}
+                {/*             info={tableInfo}*/}
+                {/*             setDatabase={setInfo}*/}
+                {/*             setTableInfo={setTableInfo}*/}
+                {/*             rowSelection={rowSelection}*/}
+                {/*             pageInfo={paginationInfo}*/}
+                {/*             visible={true}*/}
+                {/*             setPaginationInfo={setPaginationInfo}*/}
+
+                {/*             subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>*/}
+                {/*                 <CopyOutlined/>복사*/}
+                {/*             </Button>*/}
+                {/*                 /!*@ts-ignored*!/*/}
+                {/*                 <Button type={'danger'} size={'small'} style={{fontSize: 11}} onClick={deleteList}>*/}
+                {/*                     <CopyOutlined/>삭제*/}
+                {/*                 </Button>*/}
+                {/*                 <Button type={'dashed'} size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>*/}
+                {/*                     <FileExcelOutlined/>출력*/}
+                {/*                 </Button></>}*/}
+                {/*/>*/}
 
             </div>
         </LayoutComponent>

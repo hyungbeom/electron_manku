@@ -1,8 +1,8 @@
 // @ts-nocheck
 
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import { AgGridReact } from 'ag-grid-react';
-import { themeQuartz, iconSetMaterial } from '@ag-grid-community/theming';
+import {AgGridReact} from 'ag-grid-react';
+import {themeQuartz, iconSetMaterial} from '@ag-grid-community/theming';
 
 const tableTheme = themeQuartz
     .withPart(iconSetMaterial)
@@ -25,24 +25,18 @@ const tableTheme = themeQuartz
     });
 
 
-const TableGrid  = ({
-                        columns, tableData,
-                        setSelectedRows,
-                        // tableData,
-                        // setTableData,
-                        setDatabase,
-                        modalComponent,
-                        funcButtons,
-                        listType,
-                        excel = false,
-                        pageInfo=null,
-                        setPaginationInfo,
-                        setTableData,
-                        handlePageChange,
-                        visible = false,
-                        setIsModalOpen = undefined,
-                        setItemId = undefined,
-                    }: any) => {
+const TableGrid = ({
+                       columns, tableData,
+                       setSelectedRows,
+                       // tableData,
+                       // setTableData,
+                       setDatabase,
+                       modalComponent,
+                       funcButtons,
+                       listType = 'estimateRequestId',
+                       excel = false,
+                       pageInfo = null,
+                   }: any) => {
 
     const gridRef = useRef(null);
     const [data, setData] = useState(tableData);
@@ -60,13 +54,30 @@ const TableGrid  = ({
             filter: true,
             floatingFilter: true,
             editable: true,
+            valueGetter: (params) => {
+
+
+                let sendData = params.data[params.column.colId];
+                if (params.node.rowIndex) {
+                    const previousRowData = params.context.data[params.node.rowIndex - 1];
+
+                    if(params.data[listType] === previousRowData[listType]){
+                        if(params.column.colId === 'writtenDate'){
+                            sendData = ''
+                        }
+                    }
+                }
+
+
+                return sendData;
+            },
         };
     }, []);
 
-    let selectedRows=[]
+    let selectedRows = []
 
     const rowSelection = useMemo(() => {
-        return { mode: "multiRow"};
+        return {mode: "multiRow"};
     }, []);
 
     const handleSelectionChange = (e) => {
@@ -81,7 +92,8 @@ const TableGrid  = ({
 
 
     return (
-        <div className="ag-theme-quartz" style={{ height: '100%', width: '100%', display:'flex', flexDirection:'column', overflowX:'auto' }}>
+        <div className="ag-theme-quartz"
+             style={{height: '100%', width: '100%', display: 'flex', flexDirection: 'column', overflowX: 'auto'}}>
 
             <div style={{width: '100%', display: 'flex', justifyContent: 'space-between', margin: '10px 0'}}>
                 <span>LIST</span>
@@ -90,16 +102,17 @@ const TableGrid  = ({
             {modalComponent}
 
             <AgGridReact theme={tableTheme} ref={gridRef}
-                         //@ts-ignore
-                         style={{ width: '100%', height: '90%' }}
+                //@ts-ignore
+                         style={{width: '100%', height: '90%'}}
                          onSelectionChanged={handleSelectionChange}
                          onRowValueChanged={handleRowValueChange}
-                         //@ts-ignore
+                //@ts-ignore
                          rowSelection={rowSelection}
                          defaultColDef={defaultColDef}
                          columnDefs={columns}
                          rowData={data}
                          pagination={!!pageInfo}
+                         context={{data}}
                          paginationPageSize={pageInfo?.rowperPge}
             />
 
