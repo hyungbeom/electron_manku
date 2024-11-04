@@ -68,12 +68,12 @@ const TableGrid = ({
 
 
                 let sendData = params.data[params.column.colId];
-                if (params.node.rowIndex && type === 'read') {
-                    const previousRowData = params.context.data[params.node.rowIndex - 1];
+                if (params.node.rowIndex > 0 && type === 'read') { // 첫 번째 행이 아닌 경우에만 이전 행 참조
+                    const previousRowData = params.context?.data?.[params.node.rowIndex - 1];
 
-                    if (params.data[listType] === previousRowData[listType]) {
+                    if (previousRowData && params.data[listType] === previousRowData[listType]) {
                         if (params.column.colId === 'writtenDate' || params.column.colId === 'documentNumberFull') {
-                            sendData = ''
+                            sendData = '';
                         }
                     }
                 }
