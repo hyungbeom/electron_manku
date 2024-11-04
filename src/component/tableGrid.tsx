@@ -29,18 +29,18 @@ const tableTheme = themeQuartz
 const TableGrid = ({
                        columns, tableData,
                        setSelectedRows,
-                       // tableData,
-                       // setTableData,
+                       setInfo,
                        setDatabase,
                        modalComponent,
                        funcButtons,
                        listType = 'estimateRequestId',
+                       listDetailType = 'estimateRequestDetailList',
                        excel = false,
                        pageInfo = null,
                        setPaginationInfo,
                        setTableData,
                        handlePageChange,
-                       visible = false,
+                       type='read',
                        setIsModalOpen = undefined,
                        setItemId = undefined,
                        gridRef
@@ -51,11 +51,11 @@ const TableGrid = ({
 
     const [data, setData] = useState(tableData);
 
-    useEffect(() => {
-
-        setData([...tableData || []]); // 새로운 배열로 설정
-        // console.log(tableData, '~!~table grid');
-    }, [tableData || [].length]);
+    // useEffect(() => {
+    //
+    //     setData([...tableData || []]); // 새로운 배열로 설정
+    //     // console.log(tableData, '~!~table grid');
+    // }, [tableData || [].length]);
 
     const defaultColDef = useMemo(() => {
         return {
@@ -68,7 +68,7 @@ const TableGrid = ({
 
 
                 let sendData = params.data[params.column.colId];
-                if (params.node.rowIndex) {
+                if (params.node.rowIndex && type === 'read') {
                     const previousRowData = params.context.data[params.node.rowIndex - 1];
 
                     if (params.data[listType] === previousRowData[listType]) {
@@ -86,6 +86,7 @@ const TableGrid = ({
 
     let selectedRows = []
 
+
     const rowSelection = useMemo(() => {
         return {mode: "multiRow"};
     }, []);
@@ -101,6 +102,9 @@ const TableGrid = ({
     let isUpdatingSelection = false; // 중복 선택 이벤트 발생 방지 플래그
 
     const handleRowSelected = (e) => {
+        if(type === 'write'){
+            return false;
+        }
         if (isUpdatingSelection) return; // 중복 선택 이벤트 발생 시 종료
         isUpdatingSelection = true;
 
@@ -157,8 +161,8 @@ const TableGrid = ({
             router.push(`/order_write?orderId=${e?.data?.orderId}`)
         if (e.data.inventoryId) {
             let itemId = e.data.inventoryId;
-            setIsModalOpen(true)
-            setItemId(itemId)
+            setIsModalOpen(true);
+            setItemId(itemId);
             // console.log(itemId, 'itemId')
 
         }
@@ -176,6 +180,26 @@ const TableGrid = ({
         const checkedData = getCheckedRowsData();
         console.log("체크된 행의 데이터:", checkedData);
     };
+
+
+    function dataChange(e){
+        const updatedData = e.data; // 수정된 행의 전체 데이터
+        const updatedField = e.colDef.field; // 수정된 컬럼의 필드명
+        const newValue = e.newValue; // 새로운 값
+        const oldValue = e.oldValue; // 이전 값
+
+
+        // 변경 사항이 있을 때만 처리
+        if (newValue !== oldValue) {
+
+            setInfo(v=>{
+                let copyData = {...v}
+                copyData[listDetailType][e.node.rowIndex] = updatedData
+                return copyData
+            })
+            console.log("업데이트된 데이터:", updatedData);
+        }
+    }
 
     return (
         <div className="ag-theme-quartz"
@@ -197,11 +221,12 @@ const TableGrid = ({
                          rowSelection={rowSelection}
                          defaultColDef={defaultColDef}
                          columnDefs={columns}
-                         rowData={data}
-                         context={{data}}
+                         rowData={[...tableData]}
+                         context={{tableData}}
                          pagination={!!pageInfo}
                          paginationPageSize={pageInfo?.rowperPge}
                          onRowSelected={handleRowSelected}
+                         onCellValueChanged={dataChange}
             />
 
         </div>
