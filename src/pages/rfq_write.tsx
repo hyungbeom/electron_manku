@@ -63,6 +63,7 @@ export default function rqfWrite({dataInfo, display}) {
     const [isMainModalOpen, setIsMainModalOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
     const [agencyData, setAgencyData] = useState([]);
+    const [customerData, setCustomerData] = useState([]);
 
 
     useEffect(() => {
@@ -103,6 +104,8 @@ export default function rqfWrite({dataInfo, display}) {
             await getData.post('estimate/addEstimateRequest', copyData).then(v => {
                 if (v.data.code === 1) {
                     message.success('저장되었습니다.')
+                }else{
+                    message.error('저장에 실패하였습니다.')
                 }
             });
         }
@@ -125,32 +128,35 @@ export default function rqfWrite({dataInfo, display}) {
         }
 
         let copyData = {...info}
-        copyData['estimateRequestDetailList'] = uncheckedData
+        copyData['estimateRequestDetailList'] = uncheckedData;
+        console.log(copyData,'copyData::')
         setInfo(copyData);
 
     }
 
 
     function SearchAgencyCode() {
-        const [data, setData] = useState([])
-        const [modalInfo, setModalInfo] = useState({
-            "searchType": "2",      // 1: 코드, 2: 상호명, 3: MAKER
-            "searchText": "",
-            "page": 1,
-            "limit": 0
-        });
+        const [data, setData] = useState(agencyData)
+        const [code, setCode] = useState(info['agencyCode']);
 
-        useEffect(() => {
-            searchFunc();
-        }, [])
+        // useEffect(() => {
+        //     searchFunc();
+        // }, [])
 
         async function searchFunc() {
-            const result = await getData.post('agency/getAgencyList', modalInfo);
+            const result = await getData.post('agency/getAgencyListForEstimate', {
+                "searchText": code,       // 대리점코드 or 대리점 상호명
+                "page": 1,
+                "limit": -1
+            });
             setData(result?.data?.entity?.agencyList)
         }
 
-
-
+        function handleKeyPress(e){
+            if (e.key === 'Enter') {
+                searchFunc();
+            }
+        }
 
         return <Modal
             // @ts-ignored
@@ -161,9 +167,10 @@ export default function rqfWrite({dataInfo, display}) {
             width={'60vw'}
             onOk={() => setIsModalOpen({event1: false, event2: false})}
         >
-            <div style={{height: '60vh'}}>
+            <div style={{height: '50vh'}}>
                 <div>
-                    <Input id={'agencyCode'} value={info['agencyCode']} onChange={onChange}></Input>
+                    <Input onKeyDown={handleKeyPress} id={'agencyCode'} value={code} onChange={(e)=>setCode(e.target.value)}></Input>
+                    <Button onClick={searchFunc}>조회</Button>
                 </div>
 
                 <AgGridReact theme={tableTheme}
@@ -174,7 +181,7 @@ export default function rqfWrite({dataInfo, display}) {
                                 }})
                                  setIsModalOpen({event1: false, event2: false})
                              }}
-                      rowData={agencyData}
+                      rowData={data}
                              columnDefs={searchAgencyCodeColumn}
                              pagination={true}
 
@@ -185,21 +192,24 @@ export default function rqfWrite({dataInfo, display}) {
 
 
     function SearchCustomer() {
-        const [data, setData] = useState([])
-        const [modalInfo, setModalInfo] = useState({
-            "searchText": "",       // 상호명
-            "page": 1,
-            "limit": 100000000
-        });
+        const [data, setData] = useState(customerData)
+        const [customer, setCustomer] = useState(info['customerName']);
 
-        useEffect(() => {
-            searchFunc()
-        }, [])
 
         async function searchFunc() {
             // console.log(modalInfo, 'modalInfo:')
-            const result = await getData.post('customer/getCustomerListForEstimate', modalInfo);
+            const result = await getData.post('customer/getCustomerListForEstimate', {
+                "searchText": customer,       // 상호명
+                "page": 1,
+                "limit": -1
+            });
             setData(result?.data?.entity?.customerList)
+        }
+
+        function handleKeyPress(e){
+            if (e.key === 'Enter') {
+                searchFunc();
+            }
         }
 
 
@@ -212,48 +222,24 @@ export default function rqfWrite({dataInfo, display}) {
             width={'60vw'}
             onOk={() => setIsModalOpen({event1: false, event2: false})}
         >
-            <div style={{height: '60vh'}}>
-                <Card title={'검색어'} size={'small'} style={{marginTop: 10}}>
-                    <Input
-                        value={modalInfo['searchText']}
-                        onChange={e => {
-                            let bowl = {};
-                            bowl['searchText'] = e.target.value;
-                            setModalInfo(v => {
-                                return {...v, ...bowl};
-                            });
-                        }}
-                    />
-                </Card>
+            <div style={{height: '50vh'}}>
+                <div>
+                    <Input onKeyDown={handleKeyPress} id={'customerName'} value={customer} onChange={(e)=>setCustomer(e.target.value)}></Input>
+                    <Button onClick={searchFunc}>조회</Button>
+                </div>
 
-                <Button onClick={searchFunc} type={'primary'} style={{width: '100%', marginTop: 10}}>조회</Button>
-
-                {/* 테이블 데이터를 감싸는 Card */}
-                <Card style={{marginTop: 10}}>
-                    <Table
-                        style={{width: '100%'}}
-                        scroll={{y: 300}}
-                        columns={searchCustomerColumn}
-                        dataSource={data}
-                        // pagination={true}
-                        onRow={(record, rowIndex) => {
-                            return {
-                                style: {cursor: 'pointer'},
-                                onClick: (event) => {
-
-                                    let copyData = {...info}
-                                    copyData['customerCode'] = record.customerCode;
-                                    copyData['customerName'] = record.customerName;
-                                    copyData['managerName'] = record.managerName;
-                                    copyData['phoneNumber'] = record.directTel;
-                                    copyData['faxNumber'] = record.faxNumber;
-                                    setInfo(copyData);
-                                    setIsModalOpen({event1: false, event2: false})
-                                }
-                            };
-                        }}
-                    />
-                </Card>
+                <AgGridReact theme={tableTheme}
+                             onCellClicked={(e)=>{
+                                 setInfo(v=>{
+                                     return {
+                                         ...v,phoneNumber: e?.data?.directTel, ... e.data
+                                     }})
+                                 setIsModalOpen({event1: false, event2: false})
+                             }}
+                             rowData={data}
+                             columnDefs={searchCustomerColumn}
+                             pagination={true}
+                />
             </div>
         </Modal>
     }
@@ -324,13 +310,14 @@ export default function rqfWrite({dataInfo, display}) {
                     "limit": -1
                 })
                 if(result.data.entity.customerList.length > 1){
-
+                    setCustomerData(result.data.entity.customerList)
+                    setIsModalOpen({event1: false, event2: true})
                 } else if (!!result.data.entity.customerList.length) {
                     const {customerName, managerName, directTel, faxNumber} = result.data.entity.customerList[0]
 
 
                     setInfo(v => {
-                        return {customerName: customerName, managerName: managerName,directTel:directTel, faxNumber : faxNumber }
+                        return {...v, customerName: customerName, managerName: managerName,phoneNumber:directTel, faxNumber : faxNumber }
                     })
                 }
             }
@@ -478,19 +465,18 @@ export default function rqfWrite({dataInfo, display}) {
                     // setTableInfo={setTableInfo}
                     excel={true}
                     type={'write'}
-                    modalComponent={<Button onClick={addRow}>add</Button>}
-                    funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
-                        <CopyOutlined/>복사
-                    </Button>
+                    funcButtons={<div>
+                        {/*@ts-ignored*/}
+                        <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
+                                onClick={addRow}>
+                            <SaveOutlined/>추가
+                        </Button>
                         {/*@ts-ignored*/}
                         <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
                                 onClick={deleteList}>
                             <CopyOutlined/>삭제
                         </Button>
-                        <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
-                                onClick={downloadExcel}>
-                            <FileExcelOutlined/>출력
-                        </Button></div>}
+                        </div>}
                 />
 
 
