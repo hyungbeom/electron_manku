@@ -16,7 +16,7 @@ export default function TableModal({title, initialData, dataInfo, setInfoList, l
                                        searchInfo=undefined, isModalOpen=false, setIsModalOpen=undefined, itemId=null, setItemId=undefined }:any) {
     const [detailList, setDetailList] = useState<any>(initialData)
 
-    console.log(detailList, 'initialData')
+    // console.log(detailList, 'initialData')
 
     useEffect(()=>{
         if(itemId){

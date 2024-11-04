@@ -91,6 +91,7 @@ const TableGrid  = ({
 
     const handleSelectionChange = (e) => {
         setSelectedRows(e.api.getSelectedRows())
+
     }
 
     const handleRowValueChange = (e) => {

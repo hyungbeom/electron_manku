@@ -6,7 +6,7 @@ import Card from "antd/lib/card/Card";
 import TextArea from "antd/lib/input/TextArea";
 import {
     CopyOutlined,
-    DownloadOutlined,
+    DownloadOutlined, EditOutlined,
     FileExcelOutlined,
     FileSearchOutlined,
     RetweetOutlined,
@@ -36,6 +36,7 @@ import * as XLSX from "xlsx";
 import TableModal from "@/utils/TableModal";
 import Select from "antd/lib/select";
 import TableGrid from "@/component/tableGrid";
+import {useRouter} from "next/router";
 
 const TwinInputBox = ({children}) => {
     return <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: 5, paddingTop: 8}}>
@@ -43,9 +44,11 @@ const TwinInputBox = ({children}) => {
     </div>
 }
 
-export default function EstimateWrite() {
+export default function EstimateWrite({dataInfo}) {
 
-    let checkList = []
+    const router = useRouter();
+
+    const [selectedRows, setSelectedRows] = useState([]);
 
     const userInfo = useAppSelector((state) => state.user);
     const [info, setInfo] = useState<any>(estimateWriteInitial)
@@ -53,15 +56,26 @@ export default function EstimateWrite() {
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
 
 
+
+
     useEffect(() => {
 
         let copyData = {...estimateWriteInitial}
 
-        // @ts-ignored
-        copyData['writtenDate'] = moment();
-        setInfo(copyData);
-    }, [])
+        if (dataInfo) {
+            copyData = dataInfo;
+            copyData['writtenDate'] = moment(copyData['writtenDate']);
+            // @ts-ignored
+            copyData['delivery'] = moment(copyData['delivery']);
+        } else {
+            // @ts-ignored
+            copyData['writtenDate'] = moment();
+            // @ts-ignored
+            copyData['delivery'] = moment();
+        }
 
+        setInfo(copyData);
+    }, [dataInfo, router])
 
     function onChange(e) {
 
@@ -267,7 +281,7 @@ export default function EstimateWrite() {
     const rowSelection = {
         onChange: (selectedRowKeys, selectedRows) => {
 
-            checkList = selectedRowKeys
+            selectedRows = selectedRowKeys
 
         },
         getCheckboxProps: (record) => ({
@@ -306,7 +320,7 @@ export default function EstimateWrite() {
                 <SearchAgencyCode/>
                 <SearchCustomer/>
 
-                <Card title={'견적서 작성'} style={{fontSize: 12, border: '1px solid lightGray'}}>
+                <Card title={dataInfo? '견적서 수정':'견적서 작성'} style={{fontSize: 12, border: '1px solid lightGray'}}>
                     <Card size={'small'} style={{
                         fontSize: 13,
                         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
@@ -498,11 +512,15 @@ export default function EstimateWrite() {
                                       size={'small'}/>
                         </div>
 
-                        <div style={{paddingTop: 20, textAlign: 'right'}}>
-                            <Button type={'primary'} style={{marginRight: 8}}
-                                    onClick={saveFunc}><SaveOutlined/>저장</Button>
-                            {/*@ts-ignored*/}
-                            <Button type={'danger'}><RetweetOutlined/>초기화</Button>
+                        <div style={{paddingTop: 20, textAlign: 'right', width: '100%'}}>
+                            <Button type={'primary'} style={{marginRight: 8, letterSpacing: dataInfo ? -2 : 0}}
+                                    onClick={saveFunc}><SaveOutlined/>{dataInfo ? '변경사항 저장' : '저장'}</Button>
+                            {dataInfo ? // @ts-ignored
+                                <Button type={'danger'} style={{letterSpacing: -2}}
+                                        onClick={() => router?.push('/order_write')}><EditOutlined/>새로 작성하기</Button> :
+                                // @ts-ignored
+                                <Button type={'danger'} style={{letterSpacing: -1}}
+                                        onClick={() => setInfo(orderWriteInitial)}><RetweetOutlined/>초기화</Button>}
                         </div>
                     </Card>
                 </Card>
@@ -510,12 +528,13 @@ export default function EstimateWrite() {
                 <TableGrid
                     columns={tableOrderWriteColumn}
                     tableData={info['estimateDetailList']}
+                    setSelectedRows={setSelectedRows}
                     // dataInfo={tableOrderReadInfo}
                     setInfo={setInfo}
                     // setTableInfo={setTableInfo}
                     excel={true}
                     modalComponent={
-                        <TableModal listType={'estimateDetailList'} title={'견적의뢰 세부 작성'}
+                        <TableModal listType={'estimateDetailList'} title={'견적서 세부 작성'}
                                     initialData={tableOrderWriteInitial}
                                     dataInfo={subOrderWriteInfo}
                                     setInfoList={setInfo}
@@ -534,33 +553,12 @@ export default function EstimateWrite() {
                         </Button></div>}
                 />
 
-                {/*<CustomTable rowSelection={rowSelection}*/}
-                {/*             setDatabase={setInfo}*/}
-                {/*             listType={'estimateDetailList'}*/}
-                {/*             excel={true}*/}
-                {/*             content={<TableModal listType={'estimateDetailList'} title={'견적작성 세부추가'}*/}
-                {/*                                  data={tableEstimateWriteInitial}*/}
-                {/*                                  dataInfo={tableEstimateWriteInfo}*/}
-                {/*                                  setInfoList={setInfo}/>} columns={tableEstimateWriteColumns}*/}
-                {/*             subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>*/}
-                {/*                 <CopyOutlined/>복사*/}
-                {/*             </Button>*/}
-                {/*                 /!*@ts-ignored*!/*/}
-                {/*                 <Button type={'danger'} size={'small'} style={{fontSize: 11}} onClick={deleteList}>*/}
-                {/*                     <CopyOutlined/>삭제*/}
-                {/*                 </Button>*/}
-                {/*                 <Button type={'dashed'} size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>*/}
-                {/*                     <FileExcelOutlined/>출력*/}
-                {/*                 </Button></>}*/}
-                {/*             info={info['estimateDetailList']}/>*/}
-
             </div>
         </LayoutComponent>
     </>
 }
 // @ts-ignore
 export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
-
 
     let param = {}
 
@@ -577,6 +575,13 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     store.dispatch(setUserInfo(userInfo));
 
+    const {estimateId} = ctx.query;
 
-    return param
+
+    const result = await getData.post('estimate/getEstimateDetail', {
+        estimateId:estimateId
+    });
+
+
+    return {props: {dataInfo: estimateId ? result?.data?.entity?.estimateDetail : null}}
 })

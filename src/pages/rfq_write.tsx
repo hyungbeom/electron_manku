@@ -40,7 +40,7 @@ export default function rqfWrite({dataInfo, display}) {
 
     const router = useRouter();
 
-    let checkList = []
+    const [selectedRows, setSelectedRows] = useState([]);
 
     const userInfo = useAppSelector((state) => state.user);
     const [info, setInfo] = useState<any>(rfqWriteInitial)
@@ -94,14 +94,22 @@ export default function rqfWrite({dataInfo, display}) {
         deleteList(checkList)
     }
 
+
     function deleteList(checkList) {
-        let copyData = {...info}
-        const result = copyData['estimateRequestDetailList'].filter(v => !checkList.includes(v.serialNumber))
+        let copyData = { ...info };
 
-        copyData['estimateRequestDetailList'] = result
-        setInfo(copyData);
+        console.log(checkList, "checkList");
+        checkList.forEach(v => console.log(v.serialNumber, "serialNumber"));
 
+        const checkSerialNumbers = checkList.map(item => item.serialNumber);
+
+        const result = copyData['estimateRequestDetailList'].filter(v => !checkSerialNumbers.includes(v.serialNumber));
+        console.log(result, "result");
+        copyData['estimateRequestDetailList']=result;
+
+        setInfo(copyData)
     }
+
 
 
 
@@ -268,7 +276,7 @@ export default function rqfWrite({dataInfo, display}) {
     const rowSelection = {
         onChange: (selectedRowKeys, selectedRows) => {
 
-            checkList = selectedRowKeys
+            selectedRows = selectedRowKeys
 
         },
         getCheckboxProps: (record) => ({
@@ -289,7 +297,7 @@ export default function rqfWrite({dataInfo, display}) {
 
                 <SearchAgencyCode/>
                 <SearchCustomer/>
-                <Card title={'의뢰 작성'} style={{fontSize: 12, border: '1px solid lightGray'}}>
+                <Card title={dataInfo?'견적의뢰 수정':'견적의뢰 작성'} style={{fontSize: 12, border: '1px solid lightGray'}}>
                     <div>
                     <Card size={'small'} style={{
                         fontSize: 13,
@@ -385,46 +393,43 @@ export default function rqfWrite({dataInfo, display}) {
                         </TwinInputBox>
                     </Card>
 
-                    <Card title={'ETC'} size={'small'} style={{
-                        fontSize: 13,
-                        marginTop: 20,
-                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                    }}>
-                        <div style={{paddingTop: 8}}>
-                            <div style={{paddingBottom: 3}}>MAKER</div>
-                            <Input id={'maker'} value={info['maker']} onChange={onChange} size={'small'}/>
-                        </div>
-                        <div style={{paddingTop: 8}}>
-                            <div style={{paddingBottom: 3}}>ITEM</div>
-                            <Input id={'item'} value={info['item']} onChange={onChange} size={'small'}/>
-                        </div>
-                        <div style={{paddingTop: 8}}>
-                            <div style={{paddingBottom: 3}}>비고란</div>
-                            <Input id={'remarks'} value={info['remarks']} onChange={onChange} size={'small'}/>
-                        </div>
-                        <div style={{paddingTop: 8}}>
-                            <div style={{paddingBottom: 3}}>지시사항</div>
-                            <TextArea id={'instructions'} value={info['instructions']} onChange={onChange}
-                                      size={'small'}/>
-                        </div>
+                        <Card title={'ETC'} size={'small'} style={{
+                            fontSize: 13,
+                            marginTop: 20,
+                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                        }}>
+                            <div style={{paddingTop: 8}}>
+                                <div style={{paddingBottom: 3}}>MAKER</div>
+                                <Input id={'maker'} value={info['maker']} onChange={onChange} size={'small'}/>
+                            </div>
+                            <div style={{paddingTop: 8}}>
+                                <div style={{paddingBottom: 3}}>ITEM</div>
+                                <Input id={'item'} value={info['item']} onChange={onChange} size={'small'}/>
+                            </div>
+                            <div style={{paddingTop: 8}}>
+                                <div style={{paddingBottom: 3}}>비고란</div>
+                                <Input id={'remarks'} value={info['remarks']} onChange={onChange} size={'small'}/>
+                            </div>
+                            <div style={{paddingTop: 8}}>
+                                <div style={{paddingBottom: 3}}>지시사항</div>
+                                <TextArea id={'instructions'} value={info['instructions']} onChange={onChange}
+                                          size={'small'}/>
+                            </div>
 
 
-                        <div style={{paddingTop: 20, textAlign: 'right'}}>
-                            {/*@ts-ignored*/}
-                            {dataInfo ? <Button type={'danger'} style={{marginRight: 8}}
-                                                onClick={saveFunc}><SaveOutlined/>수정</Button> :
-                                <Button type={'primary'} style={{marginRight: 8}}
-                                        onClick={saveFunc}><SaveOutlined/>저장</Button>}
+                            <div style={{paddingTop: 20, textAlign: 'right', width: '100%'}}>
+                                <Button type={'primary'} style={{marginRight: 8, letterSpacing: dataInfo ? -2 : 0}}
+                                        onClick={saveFunc}><SaveOutlined/>{dataInfo ? '변경사항 저장' : '저장'}</Button>
+                                {dataInfo ?
+                                    // @ts-ignored
+                                    <Button type={'danger'} style={{marginRight: 8}}
+                                            onClick={() => router?.push('/rfq_write')}><EditOutlined/>새로 작성하기</Button> :
+                                    // @ts-ignored
+                                    <Button type={'danger'} style={{letterSpacing: -1}}
+                                            onClick={() => setInfo(rfqWriteInitial)}><RetweetOutlined/>초기화</Button>}
 
-
-                            {dataInfo ? <Button type={'primary'} style={{marginRight: 8}}
-                                                onClick={() => router?.push('/rfq_write')}><EditOutlined/>신규</Button> :
-                                // @ts-ignored
-                                <Button type={'danger'}
-                                        onClick={() => setInfo(rfqWriteInitial)}><RetweetOutlined/>초기화</Button>}
-
-                        </div>
-                    </Card>
+                            </div>
+                        </Card>
                     </div>
                 </Card>
 
@@ -433,6 +438,7 @@ export default function rqfWrite({dataInfo, display}) {
                     columns={subRfqWriteColumn}
                     tableData={info['estimateRequestDetailList']}
                     listType={'estimateRequestId'}
+                    setSelectedRows={setSelectedRows}
                     // dataInfo={tableOrderReadInfo}
                     setInfo={setInfo}
                     // setTableInfo={setTableInfo}
@@ -456,32 +462,6 @@ export default function rqfWrite({dataInfo, display}) {
                             <FileExcelOutlined/>출력
                         </Button></div>}
                 />
-
-                {/*<CustomTable rowSelection={rowSelection}*/}
-                {/*             setDatabase={setInfo}*/}
-                {/*             listType={'estimateRequestDetailList'}*/}
-                {/*             excel={true}*/}
-                {/*             columns={subRfqWriteColumn}*/}
-                {/*             content={<TableModal listType={'estimateRequestDetailList'} title={'견적의뢰 세부 작성'}*/}
-                {/*                                  data={subRfqWriteInitial}*/}
-                {/*                                  dataInfo={subRfqWriteInfo}*/}
-                {/*                                  setInfoList={setInfo}*/}
-                {/*                                  isModalOpen={isMainModalOpen}*/}
-                {/*                                  setIsModalOpen={setIsMainModalOpen}*/}
-                {/*             />}*/}
-                {/*             subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>*/}
-                {/*                 <CopyOutlined/>복사*/}
-                {/*             </Button>*/}
-                {/*                 /!*@ts-ignored*!/*/}
-                {/*                 <Button type={'danger'} size={'small'} style={{fontSize: 11}} onClick={deleteList}>*/}
-                {/*                     <CopyOutlined/>삭제*/}
-                {/*                 </Button>*/}
-                {/*                 <Button type={'dashed'} size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>*/}
-                {/*                     <FileExcelOutlined/>출력*/}
-                {/*                 </Button></>}*/}
-                {/*             info={info['estimateRequestDetailList']}/>*/}
-
-
 
 
             </div>
@@ -515,24 +495,10 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     const {estimateRequestId} = ctx.query;
 
 
-    const result = await getData.post('estimate/getEstimateRequestList', {
-        "searchEstimateRequestId": estimateRequestId,      // 견적의뢰 Id
-        "searchType": "",                   // 검색조건 1: 회신, 2: 미회신
-        "searchStartDate": "2024-08-01",              // 작성일자 시작일
-        "searchEndDate": "2024-12-31",                // 작성일자 종료일
-        "searchDocumentNumber": "",         // 문서번호
-        "searchCustomerName": "",           // 거래처명
-        "searchMaker": "",                  // MAKER
-        "searchModel": "",                  // MODEL
-        "searchItem": "",                   // ITEM
-        "searchCreatedBy": "",              // 등록직원명
-        "searchManagerName": "",            // 담당자명
-        "searchMobileNumber": "",           // 담당자 연락처
-        "searchBiddingNumber": "",          // 입찰번호(미완성)
-        "page": 1,
-        "limit": 100000
+    const result = await getData.post('estimate/getEstimateRequestDetail', {
+        estimateRequestId:estimateRequestId
     });
 
 
-    return {props: {dataInfo: estimateRequestId ? result?.data?.entity?.estimateRequestList[0] : null, display : display}}
+    return {props: {dataInfo: estimateRequestId ? result?.data?.entity?.estimateRequestDetail : null, display : display}}
 })
