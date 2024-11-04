@@ -305,7 +305,7 @@ export default function rfqRead({dataList}) {
                                 ]} style={{width: '100%'}}>
                                 </Select>
                             </div>
-                            <div style={{marginTop:20}}>
+                            <div style={{marginTop:20, width: 250}}>
                                 <Button type={'primary'} style={{marginRight: 8}}
                                         onClick={searchInfo}><SearchOutlined/>조회</Button>
                                 {/*@ts-ignore*/}
