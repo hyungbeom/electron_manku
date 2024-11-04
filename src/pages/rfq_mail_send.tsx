@@ -20,6 +20,7 @@ import {transformData} from "@/utils/common/common";
 import {useRouter} from "next/router";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
+import Modal from "antd/lib/modal/Modal";
 
 const {RangePicker} = DatePicker
 
@@ -149,7 +150,11 @@ export default function rfqRead({dataList}) {
             <div style={{display: 'grid', gridTemplateRows: '250px 1fr', height: '100%', gridColumnGap: 5}}>
                 <Card title={'메일전송'} style={{fontSize: 12, border: '1px solid lightGray'}}>
 
-
+                    <Modal title="Basic Modal">
+                        <p>Some contents...</p>
+                        <p>Some contents...</p>
+                        <p>Some contents...</p>
+                    </Modal>
                         <div style={{display : 'grid', gridTemplateColumns : '1fr 1fr 1fr', gridColumnGap : 10}}>
                             <div>
                                 <div style={{paddingBottom: 3}}>작성일자</div>

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
 import CustomTable from "@/component/CustomTable";
@@ -35,12 +35,11 @@ import {TwinInputBox} from "@/utils/common/component/Common";
 import TableGrid from "@/component/tableGrid";
 
 
-
 export default function rqfWrite({dataInfo, display}) {
-
+    const gridRef = useRef(null);
     const router = useRouter();
 
-    const [selectedRows, setSelectedRows] = useState([]);
+    let checkList = []
 
     const userInfo = useAppSelector((state) => state.user);
     const [info, setInfo] = useState<any>(rfqWriteInitial)
@@ -89,28 +88,29 @@ export default function rqfWrite({dataInfo, display}) {
                 }
             });
         }
-        const checkList = Array.from({ length: info['estimateRequestDetailList'].length }, (_, i) => i + 1);
+        const checkList = Array.from({length: info['estimateRequestDetailList'].length}, (_, i) => i + 1);
         setInfo(orderWriteInitial);
         deleteList(checkList)
     }
 
-
     function deleteList(checkList) {
-        let copyData = { ...info };
 
-        console.log(checkList, "checkList");
-        checkList.forEach(v => console.log(v.serialNumber, "serialNumber"));
+        const api = gridRef.current.api;
 
-        const checkSerialNumbers = checkList.map(item => item.serialNumber);
+        // 전체 행 반복하면서 선택되지 않은 행만 추출
+        const uncheckedData = [];
+        for (let i = 0; i < api.getDisplayedRowCount(); i++) {
+            const rowNode = api.getDisplayedRowAtIndex(i);
+            if (!rowNode.isSelected()) {
+                uncheckedData.push(rowNode.data);
+            }
+        }
 
-        const result = copyData['estimateRequestDetailList'].filter(v => !checkSerialNumbers.includes(v.serialNumber));
-        console.log(result, "result");
-        copyData['estimateRequestDetailList']=result;
+        let copyData = {...info}
+        copyData['estimateRequestDetailList'] = uncheckedData
+        setInfo(copyData);
 
-        setInfo(copyData)
     }
-
-
 
 
     function SearchAgencyCode() {
@@ -273,22 +273,25 @@ export default function rqfWrite({dataInfo, display}) {
     };
 
 
-    const rowSelection = {
-        onChange: (selectedRowKeys, selectedRows) => {
-
-            selectedRows = selectedRowKeys
-
-        },
-        getCheckboxProps: (record) => ({
-            disabled: record.name === 'Disabled User',
-            // Column configuration not to be checked
-            name: record.name,
-        }),
-    };
 
 
+    function addRow() {
+        let copyData = {...info};
+        copyData['estimateRequestDetailList'].push({
+            "model": "",           // MODEL
+            "quantity": 1,              // 수량
+            "unit": "ea",               // 단위
+            "currency": "krw",          // CURR
+            "net": 0,            // NET/P
+            "deliveryDate": "",   // 납기
+            "content": "",         // 내용
+            "replyDate": '',  // 회신일
+            "remarks": "",           // 비고
+            "serialNumber": 1           // 견적의뢰 내역 순서 (1부터 시작)
+        })
 
-
+        setInfo(copyData)
+    }
 
 
     return <>
@@ -297,101 +300,105 @@ export default function rqfWrite({dataInfo, display}) {
 
                 <SearchAgencyCode/>
                 <SearchCustomer/>
-                <Card title={dataInfo?'견적의뢰 수정':'견적의뢰 작성'} style={{fontSize: 12, border: '1px solid lightGray'}}>
+                <Card title={'의뢰 작성'} style={{fontSize: 12, border: '1px solid lightGray'}}>
                     <div>
-                    <Card size={'small'} style={{
-                        fontSize: 13,
-                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                    }}>
-                        <TwinInputBox>
-                            <div>
-                                <div style={{paddingBottom: 3}}>INQUIRY NO.</div>
-                                <Input disabled={true} size={'small'}/>
-                            </div>
-                            <div>
-                                <div style={{paddingBottom: 3}}>작성일</div>
-                                <DatePicker value={info['writtenDate']}
-                                            onChange={(date, dateString) => onChange({
-                                                target: {
-                                                    id: 'writtenDate',
-                                                    value: date
-                                                }
-                                            })
-                                            } id={'writtenDate'} size={'small'}/>
-                            </div>
-                        </TwinInputBox>
-                    </Card>
+                        <Card size={'small'} style={{
+                            fontSize: 13,
+                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                        }}>
+                            <TwinInputBox>
+                                <div>
+                                    <div style={{paddingBottom: 3}}>INQUIRY NO.</div>
+                                    <Input disabled={true} size={'small'}/>
+                                </div>
+                                <div>
+                                    <div style={{paddingBottom: 3}}>작성일</div>
+                                    <DatePicker value={info['writtenDate']}
+                                                onChange={(date, dateString) => onChange({
+                                                    target: {
+                                                        id: 'writtenDate',
+                                                        value: date
+                                                    }
+                                                })
+                                                } id={'writtenDate'} size={'small'}/>
+                                </div>
+                            </TwinInputBox>
+                        </Card>
 
-                    <Card title={'inpuiry 정보 및 supplier information'} size={'small'}
-                          style={{
-                              fontSize: 13,
-                              marginTop: 20,
-                              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                          }}>
-                        <TwinInputBox>
-                            <div>
-                                <div style={{paddingBottom: 3}}>대리점코드</div>
-                                <Input id={'agencyCode'} value={info['agencyCode']} onChange={onChange} size={'small'}
-                                       suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
-                                           (e) => {
-                                               e.stopPropagation();
-                                               setIsModalOpen({event1: true, event2: false})
-                                           }
-                                       }/>}/>
-                            </div>
-                            <div>
-                                <div style={{paddingBottom: 3}}>대리점명</div>
-                                <Input id={'agencyName'} value={info['agencyName']} onChange={onChange} size={'small'}/>
-                            </div>
-                        </TwinInputBox>
-                    </Card>
+                        <Card title={'inpuiry 정보 및 supplier information'} size={'small'}
+                              style={{
+                                  fontSize: 13,
+                                  marginTop: 20,
+                                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                              }}>
+                            <TwinInputBox>
+                                <div>
+                                    <div style={{paddingBottom: 3}}>대리점코드</div>
+                                    <Input id={'agencyCode'} value={info['agencyCode']} onChange={onChange}
+                                           size={'small'}
+                                           suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
+                                               (e) => {
+                                                   e.stopPropagation();
+                                                   setIsModalOpen({event1: true, event2: false})
+                                               }
+                                           }/>}/>
+                                </div>
+                                <div>
+                                    <div style={{paddingBottom: 3}}>대리점명</div>
+                                    <Input id={'agencyName'} value={info['agencyName']} onChange={onChange}
+                                           size={'small'}/>
+                                </div>
+                            </TwinInputBox>
+                        </Card>
 
-                    <Card title={'담당자 정보'} size={'small'} style={{
-                        fontSize: 13,
-                        marginTop: 20,
-                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                    }}>
-                        <div>
-                            <div style={{paddingBottom: 3}}>담당자</div>
-                            <Input id={'managerName'} value={userInfo['name']} disabled={true} onChange={onChange}
-                                   size={'small'}/>
-                        </div>
-                    </Card>
-
-                    <Card title={'CUSTOMER INFORMATION'} size={'small'} style={{
-                        fontSize: 13,
-                        marginTop: 20,
-                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                    }}>
-                        <TwinInputBox>
-                            <div>
-                                <div style={{paddingBottom: 3}}>상호명</div>
-                                <Input id={'customerName'} value={info['customerName']} onChange={onChange}
-                                       size={'small'} suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
-                                    (e) => {
-                                        e.stopPropagation();
-                                        setIsModalOpen({event1: false, event2: true})
-                                    }
-                                }/>}/>
-                            </div>
+                        <Card title={'담당자 정보'} size={'small'} style={{
+                            fontSize: 13,
+                            marginTop: 20,
+                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                        }}>
                             <div>
                                 <div style={{paddingBottom: 3}}>담당자</div>
-                                <Input id={'managerName'} value={info['managerName']} onChange={onChange}
+                                <Input id={'managerName'} value={userInfo['name']} disabled={true} onChange={onChange}
                                        size={'small'}/>
                             </div>
-                        </TwinInputBox>
-                        <TwinInputBox>
-                            <div>
-                                <div style={{paddingBottom: 3}}>전화번호</div>
-                                <Input id={'phoneNumber'} value={info['phoneNumber']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-                            <div>
-                                <div style={{paddingBottom: 3}}>팩스/이메일</div>
-                                <Input id={'faxNumber'} value={info['faxNumber']} onChange={onChange} size={'small'}/>
-                            </div>
-                        </TwinInputBox>
-                    </Card>
+                        </Card>
+
+                        <Card title={'CUSTOMER INFORMATION'} size={'small'} style={{
+                            fontSize: 13,
+                            marginTop: 20,
+                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                        }}>
+                            <TwinInputBox>
+                                <div>
+                                    <div style={{paddingBottom: 3}}>상호명</div>
+                                    <Input id={'customerName'} value={info['customerName']} onChange={onChange}
+                                           size={'small'}
+                                           suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
+                                               (e) => {
+                                                   e.stopPropagation();
+                                                   setIsModalOpen({event1: false, event2: true})
+                                               }
+                                           }/>}/>
+                                </div>
+                                <div>
+                                    <div style={{paddingBottom: 3}}>담당자</div>
+                                    <Input id={'managerName'} value={info['managerName']} onChange={onChange}
+                                           size={'small'}/>
+                                </div>
+                            </TwinInputBox>
+                            <TwinInputBox>
+                                <div>
+                                    <div style={{paddingBottom: 3}}>전화번호</div>
+                                    <Input id={'phoneNumber'} value={info['phoneNumber']} onChange={onChange}
+                                           size={'small'}/>
+                                </div>
+                                <div>
+                                    <div style={{paddingBottom: 3}}>팩스/이메일</div>
+                                    <Input id={'faxNumber'} value={info['faxNumber']} onChange={onChange}
+                                           size={'small'}/>
+                                </div>
+                            </TwinInputBox>
+                        </Card>
 
                         <Card title={'ETC'} size={'small'} style={{
                             fontSize: 13,
@@ -417,15 +424,18 @@ export default function rqfWrite({dataInfo, display}) {
                             </div>
 
 
-                            <div style={{paddingTop: 20, textAlign: 'right', width: '100%'}}>
-                                <Button type={'primary'} style={{marginRight: 8, letterSpacing: dataInfo ? -2 : 0}}
-                                        onClick={saveFunc}><SaveOutlined/>{dataInfo ? '변경사항 저장' : '저장'}</Button>
-                                {dataInfo ?
+                            <div style={{paddingTop: 20, textAlign: 'right'}}>
+                                {/*@ts-ignored*/}
+                                {dataInfo ? <Button type={'danger'} style={{marginRight: 8}}
+                                                    onClick={saveFunc}><SaveOutlined/>수정</Button> :
+                                    <Button type={'primary'} style={{marginRight: 8}}
+                                            onClick={saveFunc}><SaveOutlined/>저장</Button>}
+
+
+                                {dataInfo ? <Button type={'primary'} style={{marginRight: 8}}
+                                                    onClick={() => router?.push('/rfq_write')}><EditOutlined/>신규</Button> :
                                     // @ts-ignored
-                                    <Button type={'danger'} style={{marginRight: 8}}
-                                            onClick={() => router?.push('/rfq_write')}><EditOutlined/>새로 작성하기</Button> :
-                                    // @ts-ignored
-                                    <Button type={'danger'} style={{letterSpacing: -1}}
+                                    <Button type={'danger'}
                                             onClick={() => setInfo(rfqWriteInitial)}><RetweetOutlined/>초기화</Button>}
 
                             </div>
@@ -435,30 +445,26 @@ export default function rqfWrite({dataInfo, display}) {
 
 
                 <TableGrid
+                    gridRef={gridRef}
                     columns={subRfqWriteColumn}
                     tableData={info['estimateRequestDetailList']}
-                    setSelectedRows={setSelectedRows}
                     listType={'estimateRequestId'}
                     // dataInfo={tableOrderReadInfo}
                     setInfo={setInfo}
                     // setTableInfo={setTableInfo}
                     excel={true}
-                    modalComponent={
-                        <TableModal listType={'estimateRequestDetailList'} title={'견적의뢰 세부 작성'}
-                                    initialData={subRfqWriteInitial}
-                                    dataInfo={subRfqWriteInfo}
-                                    setInfoList={setInfo}
-                                    isModalOpen={isMainModalOpen}
-                                    setIsModalOpen={setIsMainModalOpen}
-                        />}
+                    type={'write'}
+                    modalComponent={<Button onClick={addRow}>add</Button>}
                     funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
                         <CopyOutlined/>복사
                     </Button>
                         {/*@ts-ignored*/}
-                        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={()=>deleteList(selectedRows)}>
+                        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
+                                onClick={deleteList}>
                             <CopyOutlined/>삭제
                         </Button>
-                        <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={downloadExcel}>
+                        <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
+                                onClick={downloadExcel}>
                             <FileExcelOutlined/>출력
                         </Button></div>}
                 />
@@ -487,7 +493,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
         };
     }
 
-    const {display='horizon'} = cookies;
+    const {display = 'horizon'} = cookies;
 
 
     store.dispatch(setUserInfo(userInfo));
@@ -495,10 +501,29 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     const {estimateRequestId} = ctx.query;
 
 
-    const result = await getData.post('estimate/getEstimateRequestDetail', {
-        estimateRequestId:estimateRequestId
+    const result = await getData.post('estimate/getEstimateRequestList', {
+        "searchEstimateRequestId": estimateRequestId,      // 견적의뢰 Id
+        "searchType": "",                   // 검색조건 1: 회신, 2: 미회신
+        "searchStartDate": "2024-08-01",              // 작성일자 시작일
+        "searchEndDate": "2024-12-31",                // 작성일자 종료일
+        "searchDocumentNumber": "",         // 문서번호
+        "searchCustomerName": "",           // 거래처명
+        "searchMaker": "",                  // MAKER
+        "searchModel": "",                  // MODEL
+        "searchItem": "",                   // ITEM
+        "searchCreatedBy": "",              // 등록직원명
+        "searchManagerName": "",            // 담당자명
+        "searchMobileNumber": "",           // 담당자 연락처
+        "searchBiddingNumber": "",          // 입찰번호(미완성)
+        "page": 1,
+        "limit": 100000
     });
 
 
-    return {props: {dataInfo: estimateRequestId ? result?.data?.entity?.estimateRequestDetail : null, display : display}}
+    return {
+        props: {
+            dataInfo: estimateRequestId ? result?.data?.entity?.estimateRequestList[0] : null,
+            display: display
+        }
+    }
 })
