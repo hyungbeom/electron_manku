@@ -162,6 +162,10 @@ export default function rqfWrite({dataInfo, display}) {
             onOk={() => setIsModalOpen({event1: false, event2: false})}
         >
             <div style={{height: '60vh'}}>
+                <div>
+                    <Input id={'agencyCode'} value={info['agencyCode']} onChange={onChange}></Input>
+                </div>
+
                 <AgGridReact theme={tableTheme}
                              onCellClicked={(e)=>{
                                 setInfo(v=>{
