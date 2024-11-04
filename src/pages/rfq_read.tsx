@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Input from "antd/lib/input/Input";
 import Select from "antd/lib/select";
 import LayoutComponent from "@/component/LayoutComponent";
@@ -21,12 +21,12 @@ const {RangePicker} = DatePicker
 
 
 export default function rfqRead({dataList}) {
-
+    const gridRef = useRef(null);
     const [selectedRows, setSelectedRows] = useState([]);
     const {estimateRequestList, pageInfo} = dataList;
     const [info, setInfo] = useState(subRfqReadInitial);
     const [tableData, setTableData] = useState(estimateRequestList);
-    const [paginationInfo, setPaginationInfo] = useState(pageInfo);
+
 
     // console.log(selectedRows, 'selectedRows')
 
@@ -58,10 +58,12 @@ export default function rfqRead({dataList}) {
             copyData['searchStartDate'] = searchDate[0];
             copyData['searchEndDate'] = searchDate[1];
         }
-        const result = await getData.post('estimate/getEstimateRequestList', copyData);
+        console.log(copyData,'copyData:')
+        const result = await getData.post('estimate/getEstimateRequestList', {...copyData,   "page": 1,
+            "limit": -1});
         // setTableInfo(transformData(result?.data?.entity?.estimateRequestList, 'estimateRequestId', 'estimateRequestDetailList'));
+        console.log(result?.data?.entity?.estimateRequestList,'result?.data?.entity?.estimateRequestList:')
         setTableData(result?.data?.entity?.estimateRequestList);
-        setPaginationInfo(result?.data?.entity?.pageInfo)
     }
 
     async function deleteList() {
@@ -88,6 +90,26 @@ export default function rfqRead({dataList}) {
             window.location.reload();
         }
     }
+    function deleteList(checkList) {
+
+        const api = gridRef.current.api;
+
+        // 전체 행 반복하면서 선택되지 않은 행만 추출
+        const uncheckedData = [];
+        for (let i = 0; i < api.getDisplayedRowCount(); i++) {
+            const rowNode = api.getDisplayedRowAtIndex(i);
+            if (!rowNode.isSelected()) {
+                uncheckedData.push(rowNode.data);
+            }
+        }
+
+        let copyData = {...info}
+        // copyData['estimateRequestDetailList'] = uncheckedData;
+        console.log(uncheckedData,'copyData::')
+        setInfo(copyData);
+
+    }
+
 
 
     async function getDetailData(params) {
@@ -186,13 +208,14 @@ export default function rfqRead({dataList}) {
                 </Card>
 
                 <TableGrid
+                    gridRef={gridRef}
                     columns={rfqReadColumns}
                     tableData={tableData}
                     setSelectedRows={setSelectedRows}
                     // dataInfo={tableOrderReadInfo}
                     // setDatabase={setInfo}
                     // setTableInfo={setTableData}
-                    pageInfo={paginationInfo}
+
                     excel={true}
                     funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
                         <CopyOutlined/>복사

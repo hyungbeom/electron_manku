@@ -99,7 +99,7 @@ export const tableOrderWriteInitial = {
 
 
 
-export const subRfqReadInitial = {
+    export const subRfqReadInitial = {
     "searchDate" : "",   // front 사용
     "searchEstimateRequestId": "",      // 견적의뢰 Id
     "searchType": "0",                   // 검색조건 1: 회신, 2: 미회신

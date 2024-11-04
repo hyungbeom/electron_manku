@@ -1,6 +1,6 @@
 // @ts-nocheck
 
-import React, {useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {AgGridReact} from 'ag-grid-react';
 import {iconSetMaterial, themeQuartz} from '@ag-grid-community/theming';
 import {useRouter} from "next/router";
@@ -58,6 +58,11 @@ const TableGrid = ({
     //     // console.log(tableData, '~!~table grid');
     // }, [tableData || [].length]);
 
+
+
+    useEffect(()=>{
+        setData(tableData)
+    },[tableData])
     const defaultColDef = useMemo(() => {
         return {
             flex: 1,
