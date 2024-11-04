@@ -62,7 +62,7 @@ const TableGrid = ({
                     const previousRowData = params.context.data[params.node.rowIndex - 1];
 
                     if(params.data[listType] === previousRowData[listType]){
-                        if(params.column.colId === 'writtenDate'){
+                        if(params.column.colId === 'writtenDate' || params.column.colId === 'documentNumberFull'){
                             sendData = ''
                         }
                     }
