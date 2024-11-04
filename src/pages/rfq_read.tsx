@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Input from "antd/lib/input/Input";
 import Select from "antd/lib/select";
 import LayoutComponent from "@/component/LayoutComponent";
@@ -21,7 +21,7 @@ const {RangePicker} = DatePicker
 
 
 export default function rfqRead({dataList}) {
-
+    const gridRef = useRef(null);
     const [selectedRows, setSelectedRows] = useState([]);
     const {estimateRequestList, pageInfo} = dataList;
     const [info, setInfo] = useState(subRfqReadInitial);
@@ -90,6 +90,26 @@ export default function rfqRead({dataList}) {
             window.location.reload();
         }
     }
+    function deleteList(checkList) {
+
+        const api = gridRef.current.api;
+
+        // 전체 행 반복하면서 선택되지 않은 행만 추출
+        const uncheckedData = [];
+        for (let i = 0; i < api.getDisplayedRowCount(); i++) {
+            const rowNode = api.getDisplayedRowAtIndex(i);
+            if (!rowNode.isSelected()) {
+                uncheckedData.push(rowNode.data);
+            }
+        }
+
+        let copyData = {...info}
+        // copyData['estimateRequestDetailList'] = uncheckedData;
+        console.log(uncheckedData,'copyData::')
+        setInfo(copyData);
+
+    }
+
 
 
     async function getDetailData(params) {
@@ -188,6 +208,7 @@ export default function rfqRead({dataList}) {
                 </Card>
 
                 <TableGrid
+                    gridRef={gridRef}
                     columns={rfqReadColumns}
                     tableData={tableData}
                     setSelectedRows={setSelectedRows}
