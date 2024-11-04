@@ -222,7 +222,7 @@ export default function rfqRead({dataList}) {
                                                 )}
 
                                                 <div style={{ width: "100%", height: "35px", borderBottom: "1px solid #A3A3A3", display: "flex" }}>
-                                                    <div style={{ fontSize: "13px", letterSpacing: "-1px", lineHeight: 2.5, width: "320px", height: "100%", borderRight: "1px solid #121212" }}>
+                                                    <div style={{ fontSize: "13px", letterSpacing: "-1px", lineHeight: 2.5, width: "360px", height: "100%", borderRight: "1px solid #121212" }}>
                                                         {row.model}
                                                     </div>
                                                     <div style={{ lineHeight: 2, paddingLeft: "30px" }}>
@@ -235,7 +235,7 @@ export default function rfqRead({dataList}) {
                                                     idx === card.length - 1 && (
                                                     <>
                                                         <div style={{ backgroundColor: "#EBF6F7", width: "100%", height: "35px", display: "flex", borderBottom: "1px solid #121212" }}>
-                                                            <div style={{ fontSize: "13px", width: "3200px", height: "100%", borderRight: "1px solid #121212" }}>
+                                                            <div style={{ fontSize: "13px", width: "360px", height: "100%", borderRight: "1px solid #121212" }}>
                                                                 total
                                                             </div>
                                                             <div style={{ lineHeight: 2, paddingLeft: "30px" }}>
