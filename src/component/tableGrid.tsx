@@ -1,8 +1,8 @@
 // @ts-nocheck
 
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import {AgGridReact} from 'ag-grid-react';
-import {themeQuartz, iconSetMaterial} from '@ag-grid-community/theming';
+import {iconSetMaterial, themeQuartz} from '@ag-grid-community/theming';
 import {useRouter} from "next/router";
 
 const tableTheme = themeQuartz
@@ -162,31 +162,7 @@ const TableGrid = ({
             }
         }
 
-        console.log(currentRowData, 'currentRowData')
 
-
-        if (estimateList.length === 0 || estimateList.some(item => item.documentNumberFull != estimate.documentNumberFull)) {
-            estimate.documentNumberFull = currentRowData.documentNumberFull;
-            estimate.maker = currentRowData.maker;
-            estimate.item = currentRowData.item;
-
-            const model = { title: "", quantity: null };
-            model.title = currentRowData.model;
-            model.quantity = currentRowData.quantity;
-
-            estimate.models.push(model);
-            estimateList.push(estimate);
-        } else if (estimateList.some(item => item.documentNumberFull === estimate.documentNumberFull)) {
-            const existingEstimate = estimateList.find(item => item.documentNumberFull === estimate.documentNumberFull);
-
-            if (existingEstimate) {
-                const model = { title: "", quantity: null };
-                model.title = currentRowData.model;
-                model.quantity = currentRowData.quantity;
-
-                existingEstimate.models.push(model);
-            }
-        }
 
         console.log(estimateList, 'estimateList~~~~');
 
@@ -274,8 +250,7 @@ const TableGrid = ({
                          columnDefs={columns}
                          rowData={[...tableData]}
                          context={{tableData}}
-                         pagination={!!pageInfo}
-                         paginationPageSize={pageInfo?.rowperPge}
+                         pagination={true}
                          onRowSelected={handleRowSelected}
                          onCellValueChanged={dataChange}
             />

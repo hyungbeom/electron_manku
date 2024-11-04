@@ -32,8 +32,8 @@ export default function rfqRead({dataList}) {
     const [info, setInfo] = useState(subRfqReadInitial);
     const [tableData, setTableData] = useState(estimateRequestList);
     const [paginationInfo, setPaginationInfo] = useState(pageInfo);
-
-    console.log(selectedRows, 'selectedRows')
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [previewData, setPreviewData] = useState({});
 
 
     function onChange(e) {
@@ -137,80 +137,115 @@ export default function rfqRead({dataList}) {
 // 버튼 클릭 시 체크된 데이터 출력
     const handleButtonClick = () => {
         const checkedData = getCheckedRowsData();
-        console.log("체크된 행의 데이터:", checkedData);
+        const result = checkedData.reduce((acc, cur, idx) => {
+            let id = cur['estimateRequestId']
+            if (acc[id]) {
+                let idx = 0;
+                const findModel = acc[id].find((v, index) => {
+                    idx = index;
+                    return v.model === cur.model
+                })
+                if (findModel) {
+                    const { quantity} = findModel;
+                    acc[id][idx] = {...acc[id][idx], quantity: acc[id][idx].quantity + quantity, unit : cur.unit}
+                    return acc;
+                }else{
+                    acc[id].push({maker : cur.maker,item : cur.item,model: cur.model, quantity: cur.quantity, unit : cur.unit})
+                }
+            } else {
+                acc[id] = [{maker : cur.maker, item : cur.item, model: cur.model, quantity: cur.quantity, unit : cur.unit}];
+            }
+            return acc
+        }, {})
+
+        setPreviewData(result)
+
+        setIsModalOpen(true)
+
     };
-
-
-
-
 
 
     return <>
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateRows: '250px 1fr', height: '100%', gridColumnGap: 5}}>
                 <Card title={'메일전송'} style={{fontSize: 12, border: '1px solid lightGray'}}>
+                    <Modal title="Basic Modal" open={isModalOpen} >
+                        {Object.values(previewData).map(v=>{
 
-                    <Modal title="Basic Modal">
-                        <p>Some contents...</p>
-                        <p>Some contents...</p>
-                        <p>Some contents...</p>
-                    </Modal>
-                        <div style={{display : 'grid', gridTemplateColumns : '1fr 1fr 1fr', gridColumnGap : 10}}>
-                            <div>
-                                <div style={{paddingBottom: 3}}>작성일자</div>
-                                <RangePicker style={{width: '100%'}}
-                                             value={[moment(info['searchDate'][0]), moment(info['searchDate'][1])]}
-                                             id={'searchDate'} size={'small'} onChange={(date, dateString) => {
-                                    onChange({
-                                        target: {
-                                            id: 'searchDate',
-                                            value: date ? [moment(date[0]).format('YYYY-MM-DD'), moment(date[1]).format('YYYY-MM-DD')] : [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
-                                        }
-                                    })
+                            return <Card>
+                                {v?.map((src, idx)=>{
+                                    return <>
+                                        <div>{!idx ? src.maker : null}</div>
+                                        <div>{!idx ? src.item : null}</div> &nbsp;&nbsp;
+                                        <span>{src.model}</span> &nbsp;&nbsp;
+                                        <span>{src.quantity}</span> &nbsp;&nbsp;
+                                        <span>{src.unit}</span>
+                                    </>
+                                })
                                 }
-                                }/>
-                                <div style={{marginTop: 8}}>
-                                    <div style={{paddingBottom: 3}}>문서번호</div>
-                                    <Input id={'searchDocumentNumber'} onChange={onChange} size={'small'}/>
-                                </div>
-                                <div style={{marginTop: 8}}>
-                                    <div style={{paddingBottom: 3}}>대리점코드</div>
-                                    <Input id={'searchCustomerName'} onChange={onChange} size={'small'}/>
-                                </div>
+                            </Card>
+
+
+
+                        })}
+                    </Modal>
+
+                    <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gridColumnGap: 10}}>
+                        <div>
+                            <div style={{paddingBottom: 3}}>작성일자</div>
+                            <RangePicker style={{width: '100%'}}
+                                         value={[moment(info['searchDate'][0]), moment(info['searchDate'][1])]}
+                                         id={'searchDate'} size={'small'} onChange={(date, dateString) => {
+                                onChange({
+                                    target: {
+                                        id: 'searchDate',
+                                        value: date ? [moment(date[0]).format('YYYY-MM-DD'), moment(date[1]).format('YYYY-MM-DD')] : [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
+                                    }
+                                })
+                            }
+                            }/>
+                            <div style={{marginTop: 8}}>
+                                <div style={{paddingBottom: 3}}>문서번호</div>
+                                <Input id={'searchDocumentNumber'} onChange={onChange} size={'small'}/>
                             </div>
-
-
-                            <div>
-                                <div >
-                                    <div style={{paddingBottom: 3}}>검색조건</div>
-                                    <Select id={'searchType'}
-                                            onChange={(src) => onChange({target: {id: 'searchType', value: src}})}
-                                            size={'small'} value={info['searchType']} options={[
-                                        {value: '0', label: '전체'},
-                                        {value: '1', label: '회신'},
-                                        {value: '2', label: '미회신'}
-                                    ]} style={{width: '100%'}}>
-                                    </Select>
-                                </div>
-                                <div style={{marginTop: 8}}>
-                                    <div style={{paddingBottom: 3}}>검색조건</div>
-                                    <Select id={'searchType'}
-                                            onChange={(src) => onChange({target: {id: 'searchType', value: src}})}
-                                            size={'small'} value={info['searchType']} options={[
-                                        {value: '0', label: '전체'},
-                                        {value: '1', label: '회신'},
-                                        {value: '2', label: '미회신'}
-                                    ]} style={{width: '100%'}}>
-                                    </Select>
-                                </div>
-                                <div>
-                                    <Button type={'primary'} style={{marginRight: 8}}
-                                            onClick={searchInfo}><SearchOutlined/>조회</Button>
-                                    <Button type={'primary'} style={{marginRight: 8}}
-                                            onClick={handleButtonClick}><SearchOutlined/>조회</Button>
-                                </div>
+                            <div style={{marginTop: 8}}>
+                                <div style={{paddingBottom: 3}}>대리점코드</div>
+                                <Input id={'searchCustomerName'} onChange={onChange} size={'small'}/>
                             </div>
                         </div>
+
+
+                        <div>
+                            <div>
+                                <div style={{paddingBottom: 3}}>검색조건</div>
+                                <Select id={'searchType'}
+                                        onChange={(src) => onChange({target: {id: 'searchType', value: src}})}
+                                        size={'small'} value={info['searchType']} options={[
+                                    {value: '0', label: '전체'},
+                                    {value: '1', label: '회신'},
+                                    {value: '2', label: '미회신'}
+                                ]} style={{width: '100%'}}>
+                                </Select>
+                            </div>
+                            <div style={{marginTop: 8}}>
+                                <div style={{paddingBottom: 3}}>검색조건</div>
+                                <Select id={'searchType'}
+                                        onChange={(src) => onChange({target: {id: 'searchType', value: src}})}
+                                        size={'small'} value={info['searchType']} options={[
+                                    {value: '0', label: '전체'},
+                                    {value: '1', label: '회신'},
+                                    {value: '2', label: '미회신'}
+                                ]} style={{width: '100%'}}>
+                                </Select>
+                            </div>
+                            <div>
+                                <Button type={'primary'} style={{marginRight: 8}}
+                                        onClick={searchInfo}><SearchOutlined/>조회</Button>
+                                <Button type={'primary'} style={{marginRight: 8}}
+                                        onClick={handleButtonClick}><SearchOutlined/>조회</Button>
+                            </div>
+                        </div>
+                    </div>
 
                 </Card>
 
