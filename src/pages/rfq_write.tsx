@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
@@ -168,12 +168,12 @@ export default function rqfWrite({dataInfo, display}) {
             onOk={() => setIsModalOpen({event1: false, event2: false})}
         >
             <div style={{height: '50vh'}}>
-                <div>
-                    <Input onKeyDown={handleKeyPress} id={'agencyCode'} value={code} onChange={(e)=>setCode(e.target.value)}></Input>
+                <div style={{display:'flex', justifyContent:'space-between', gap:15, marginBottom: 20}}>
+                    <Input style={{width:'100%'}} onKeyDown={handleKeyPress} id={'agencyCode'} value={code} onChange={(e)=>setCode(e.target.value)}></Input>
                     <Button onClick={searchFunc}>조회</Button>
                 </div>
 
-                <AgGridReact theme={tableTheme}
+                <AgGridReact containerStyle={{height:'93%', width:'100%' }} theme={tableTheme}
                              onCellClicked={(e)=>{
                                 setInfo(v=>{
                                     return {
@@ -214,7 +214,7 @@ export default function rqfWrite({dataInfo, display}) {
 
 
         return <Modal
-            title={'거래처 조회'}
+            title={'거래처 상호명 조회'}
             // @ts-ignored
             id={'event2'}
             onCancel={() => setIsModalOpen({event1: false, event2: false})}
@@ -223,12 +223,13 @@ export default function rqfWrite({dataInfo, display}) {
             onOk={() => setIsModalOpen({event1: false, event2: false})}
         >
             <div style={{height: '50vh'}}>
-                <div>
-                    <Input onKeyDown={handleKeyPress} id={'customerName'} value={customer} onChange={(e)=>setCustomer(e.target.value)}></Input>
+                <div style={{display: 'flex', justifyContent: 'space-between', gap: 15, marginBottom: 20}}>
+                    <Input onKeyDown={handleKeyPress} id={'customerName'} value={customer}
+                           onChange={(e) => setCustomer(e.target.value)}></Input>
                     <Button onClick={searchFunc}>조회</Button>
                 </div>
 
-                <AgGridReact theme={tableTheme}
+                <AgGridReact containerStyle={{height:'93%', width:'100%' }} theme={tableTheme}
                              onCellClicked={(e)=>{
                                  setInfo(v=>{
                                      return {
