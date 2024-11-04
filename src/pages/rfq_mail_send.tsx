@@ -47,7 +47,9 @@ export default function rfqRead({dataList}) {
 
     useEffect(() => {
         const copyData: any = {...info}
-        copyData['searchDate'] = [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
+        copyData['searchDate'] = [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
+        console.log(moment().subtract(1, 'years').format('YYYY-MM-DD'),':::')
+
         setInfo(copyData);
         // setTableInfo(transformData(estimateRequestList, 'estimateRequestId', 'estimateRequestDetailList'));
         // setTableData(estimateRequestList);
@@ -126,7 +128,7 @@ export default function rfqRead({dataList}) {
     return <>
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateColumns: '350px 1fr', height: '100%', gridColumnGap: 5}}>
-                <Card title={'의뢰 조회'} style={{fontSize: 12, border: '1px solid lightGray'}}>
+                <Card title={'메일전송'} style={{fontSize: 12, border: '1px solid lightGray'}}>
                     <Card size={'small'} style={{
                         fontSize: 13,
                         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
@@ -262,8 +264,8 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     const result = await getData.post('estimate/getEstimateRequestList', {
         "searchEstimateRequestId": "",      // 견적의뢰 Id
         "searchType": "",                   // 검색조건 1: 회신, 2: 미회신
-        "searchStartDate": "",              // 작성일자 시작일
-        "searchEndDate": "",                // 작성일자 종료일
+        "searchStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),              // 작성일자 시작일
+        "searchEndDate": moment().format('YYYY-MM-DD'),                // 작성일자 종료일
         "searchDocumentNumber": "",         // 문서번호
         "searchCustomerName": "",           // 거래처명
         "searchMaker": "",                  // MAKER
