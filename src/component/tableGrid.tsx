@@ -3,6 +3,7 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import { themeQuartz, iconSetMaterial } from '@ag-grid-community/theming';
+import {useRouter} from "next/router";
 
 const tableTheme = themeQuartz
     .withPart(iconSetMaterial)
@@ -33,7 +34,7 @@ const TableGrid  = ({
                         setDatabase,
                         modalComponent,
                         funcButtons,
-                        listType,
+                        listType = 'estimateRequestId',
                         excel = false,
                         pageInfo=null,
                         setPaginationInfo,
@@ -44,6 +45,8 @@ const TableGrid  = ({
                         setItemId = undefined,
                     }: any) => {
 
+
+    const router = useRouter();
     const gridRef = useRef(null);
     const [data, setData] = useState(tableData);
 
@@ -51,7 +54,7 @@ const TableGrid  = ({
 
         setData([...tableData || []]); // 새로운 배열로 설정
         // console.log(tableData, '~!~table grid');
-    }, [tableData.length]);
+    }, [tableData || [].length]);
 
     const defaultColDef = useMemo(() => {
         return {
@@ -60,6 +63,23 @@ const TableGrid  = ({
             filter: true,
             floatingFilter: true,
             // editable: true,
+            valueGetter: (params) => {
+
+
+                let sendData = params.data[params.column.colId];
+                if (params.node.rowIndex) {
+                    const previousRowData = params.context.data[params.node.rowIndex - 1];
+
+                    if(params.data[listType] === previousRowData[listType]){
+                        if(params.column.colId === 'writtenDate' || params.column.colId === 'documentNumberFull'){
+                            sendData = ''
+                        }
+                    }
+                }
+
+
+                return sendData;
+            },
         };
     }, []);
 
@@ -121,6 +141,7 @@ const TableGrid  = ({
                          defaultColDef={defaultColDef}
                          columnDefs={columns}
                          rowData={data}
+                         context={{data}}
                          pagination={!!pageInfo}
                          paginationPageSize={pageInfo?.rowperPge}
             />

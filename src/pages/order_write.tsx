@@ -46,6 +46,7 @@ export default function OrderWriter({dataInfo}) {
     const [isMainModalOpen, setIsMainModalOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
 
+    console.log(dataInfo, 'dataInfo~~')
 
 
     useEffect(() => {
@@ -97,10 +98,6 @@ export default function OrderWriter({dataInfo}) {
         const checkList = Array.from({ length: info['orderDetailList'].length }, (_, i) => i + 1);
         setInfo(orderWriteInitial);
         deleteList(checkList)
-    }
-
-    function findAgency() {
-
     }
 
 
@@ -295,7 +292,7 @@ export default function OrderWriter({dataInfo}) {
     return <>
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateColumns: '350px 1fr', height: '100%', gridColumnGap: 5}}>
-                <Card title={'발주서 작성'} style={{fontSize: 12, border: '1px solid lightGray'}}>
+                <Card title={dataInfo? '발주서 수정':'발주서 작성'} style={{fontSize: 12, border: '1px solid lightGray'}}>
                     <Card size={'small'} style={{
                         fontSize: 13,
                         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
