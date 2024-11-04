@@ -59,7 +59,7 @@ const TableGrid  = ({
             minWidth: 80,
             filter: true,
             floatingFilter: true,
-            editable: true,
+            // editable: true,
         };
     }, []);
 
@@ -76,8 +76,29 @@ const TableGrid  = ({
     const handleRowValueChange = (e) => {
         // console.log(e.api)
         // console.log(e.api.getEdit)
-
     }
+
+    const handleDoubleClicked = (e) =>{
+        // console.log(e.data.estimateId, "handleDoubleClicked")
+
+        if(e.data.estimateRequestId)
+            router.push(`/rfq_write?estimateRequestId=${e?.data?.estimateRequestId}`)
+        if(e.data.estimateId)
+            router.push(`/estimate_write?estimateId=${e?.data?.estimateId}`)
+        if(e.data.orderId)
+            router.push(`/order_write?orderId=${e?.data?.orderId}`)
+        if(e.data.inventoryId) {
+            let itemId = e.data.inventoryId;
+            setIsModalOpen(true)
+            setItemId(itemId)
+            // console.log(itemId, 'itemId')
+
+        }
+
+
+
+        // 여기에 더블 클릭 시 실행할 로직을 추가하세요.
+    };
 
 
     return (
@@ -93,6 +114,7 @@ const TableGrid  = ({
                          //@ts-ignore
                          style={{ width: '100%', height: '90%' }}
                          onSelectionChanged={handleSelectionChange}
+                         onRowDoubleClicked={handleDoubleClicked}
                          onRowValueChanged={handleRowValueChange}
                          //@ts-ignore
                          rowSelection={rowSelection}
