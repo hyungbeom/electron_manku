@@ -26,7 +26,7 @@ export default function rfqRead({dataList}) {
     const {estimateRequestList, pageInfo} = dataList;
     const [info, setInfo] = useState(subRfqReadInitial);
     const [tableData, setTableData] = useState(estimateRequestList);
-    const [paginationInfo, setPaginationInfo] = useState(pageInfo);
+
 
     // console.log(selectedRows, 'selectedRows')
 
@@ -58,10 +58,12 @@ export default function rfqRead({dataList}) {
             copyData['searchStartDate'] = searchDate[0];
             copyData['searchEndDate'] = searchDate[1];
         }
-        const result = await getData.post('estimate/getEstimateRequestList', copyData);
+        console.log(copyData,'copyData:')
+        const result = await getData.post('estimate/getEstimateRequestList', {...copyData,   "page": 1,
+            "limit": -1});
         // setTableInfo(transformData(result?.data?.entity?.estimateRequestList, 'estimateRequestId', 'estimateRequestDetailList'));
+        console.log(result?.data?.entity?.estimateRequestList,'result?.data?.entity?.estimateRequestList:')
         setTableData(result?.data?.entity?.estimateRequestList);
-        setPaginationInfo(result?.data?.entity?.pageInfo)
     }
 
     async function deleteList() {
@@ -192,7 +194,7 @@ export default function rfqRead({dataList}) {
                     // dataInfo={tableOrderReadInfo}
                     // setDatabase={setInfo}
                     // setTableInfo={setTableData}
-                    pageInfo={paginationInfo}
+
                     excel={true}
                     funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
                         <CopyOutlined/>복사
