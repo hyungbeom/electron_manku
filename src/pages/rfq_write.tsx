@@ -437,8 +437,8 @@ export default function rqfWrite({dataInfo, display}) {
                 <TableGrid
                     columns={subRfqWriteColumn}
                     tableData={info['estimateRequestDetailList']}
-                    listType={'estimateRequestId'}
                     setSelectedRows={setSelectedRows}
+                    listType={'estimateRequestId'}
                     // dataInfo={tableOrderReadInfo}
                     setInfo={setInfo}
                     // setTableInfo={setTableInfo}
@@ -455,7 +455,7 @@ export default function rqfWrite({dataInfo, display}) {
                         <CopyOutlined/>복사
                     </Button>
                         {/*@ts-ignored*/}
-                        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={deleteList}>
+                        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={()=>deleteList(selectedRows)}>
                             <CopyOutlined/>삭제
                         </Button>
                         <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={downloadExcel}>

@@ -454,6 +454,7 @@ export default function OrderWriter({dataInfo}) {
                     columns={tableOrderWriteColumn}
                     tableData={info['orderDetailList']}
                     setSelectedRows={setSelectedRows}
+                    listType={'orderId'}
                     // dataInfo={tableOrderReadInfo}
                     setInfo={setInfo}
                     // setTableInfo={setTableInfo}

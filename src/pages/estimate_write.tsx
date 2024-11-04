@@ -105,18 +105,20 @@ export default function EstimateWrite({dataInfo}) {
         deleteList(checkList)
     }
 
+
     function deleteList(checkList) {
-        let copyData = {...info}
-        const result = copyData['estimateRequestDetailList'].filter(v => !checkList.includes(v.serialNumber))
+        let copyData = { ...info };
 
-        copyData['estimateRequestDetailList'] = result
-        setInfo(copyData);
+        console.log(checkList, "checkList");
+        checkList.forEach(v => console.log(v.serialNumber, "serialNumber"));
 
-    }
+        const checkSerialNumbers = checkList.map(item => item.serialNumber);
 
+        const result = copyData['estimateRequestDetailList'].filter(v => !checkSerialNumbers.includes(v.serialNumber));
+        console.log(result, "result");
+        copyData['estimateRequestDetailList']=result;
 
-    function findAgency() {
-
+        setInfo(copyData)
     }
 
 
@@ -529,6 +531,7 @@ export default function EstimateWrite({dataInfo}) {
                     columns={tableOrderWriteColumn}
                     tableData={info['estimateDetailList']}
                     setSelectedRows={setSelectedRows}
+                    listType={'estimateId'}
                     // dataInfo={tableOrderReadInfo}
                     setInfo={setInfo}
                     // setTableInfo={setTableInfo}
@@ -545,7 +548,7 @@ export default function EstimateWrite({dataInfo}) {
                         <CopyOutlined/>복사
                     </Button>
                         {/*@ts-ignored*/}
-                        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={deleteList}>
+                        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={()=>deleteList(selectedRows)}>
                             <CopyOutlined/>삭제
                         </Button>
                         <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={downloadExcel}>
