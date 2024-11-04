@@ -3,6 +3,8 @@ import {getData} from "@/manage/function/api";
 import message from "antd/lib/message";
 import moment from "moment/moment";
 import {orderWriteInitial} from "@/utils/initialList";
+import {useState} from "react";
+import {use} from "builder-util";
 
 export default function emailSendFormat(userInfo, data) {
 
@@ -11,8 +13,17 @@ export default function emailSendFormat(userInfo, data) {
     console.log(data, 'emailSendFormat');
 
 
-    const documentNumberList = []
-    const detailIdList = []
+    const initialItem = {
+        subject: "",
+        content: "",
+        estimateRequestDetailIdList: [],
+        ccList: ['hblee@progist.co.kr'],
+        email:"",
+        // email: 'kjh@progist.co.kr',
+    }
+
+    const mailList=[]
+    const [mailItem, setMailItem]=useState(initialItem)
 
     const modelCard = Object.values(data)
         .map((card, i) => {
@@ -22,11 +33,13 @@ export default function emailSendFormat(userInfo, data) {
                 .map((row, idx) => {
                     totalQuantity += row.quantity;
 
-                    detailIdList.push(row.estimateRequestDetailId)
+                    mailItem.estimateRequestDetailIdList.push(row.estimateRequestDetailId)
 
-                    if(!idx)
-                        documentNumberList.push(row.documentNumberFull)
-
+                    if(!idx) {
+                        mailItem.subject=`rfq ${row.documentNumberFull}`
+                        // mailItem.email=row.email
+                        mailItem.email='kjh@progist.co.kr'
+                    }
 
                     return `
                         ${!idx ? `
@@ -66,7 +79,8 @@ export default function emailSendFormat(userInfo, data) {
 
                         ${
                         //@ts-ignore
-                        idx === card.length - 1 ? `
+                        idx === card.length - 1 ?
+                            ` 
                             <div style="background-color: #EBF6F7; width: 100%; height:60px; display: flex; border-bottom: 1px solid #121212;">
                                 <div style="font-size:22px; width: 460px; height:100%; border-right: 1px solid #121212;">
                                     total
@@ -76,6 +90,7 @@ export default function emailSendFormat(userInfo, data) {
                                 </div>
                             </div>
                             <div style="background-color: #B9DCDF; width: 100%; height: 1px; margin: 25px 0;"></div>
+                            
                         ` : ""}
 
                     `;
@@ -107,50 +122,22 @@ export default function emailSendFormat(userInfo, data) {
         </div>
     `;
 
-    // const newWindow = window.open("", "_blank");
-    // if (newWindow) {
-    //     newWindow.document.open();
-    //     newWindow.document.write(`
-    //         <html>
-    //             <head>
-    //                 <title>견적 이메일 미리보기</title>
-    //                 <style>
-    //                     /* 여기에 추가적인 스타일을 적용할 수 있습니다 */
-    //                 </style>
-    //             </head>
-    //             <body>
-    //                 ${emailTemplate}
-    //             </body>
-    //         </html>
-    //     `);
-    //     newWindow.document.close();
-    // }
-
-
-    const documentNumberString = documentNumberList.join(", ");
-
-    console.log(`rfq ${documentNumberString}`, 'rfq 제목')
 
     async function sendEmail() {
 
-        const mailList={
-            subject:`rfq ${documentNumberString}`,
-            content:emailTemplate,
-            estimateRequestDetailIdList:detailIdList,
-            ccList:['hblee@progist.co.kr'],
-            // email:userInfo['email'],
-            email:'kjh@progist.co.kr',
-        }
 
-        console.log(mailList, 'mailList~~~')
+        console.log(mailList, "mailList~~~~")
 
-        await getData.post('estimate/sendMailEstimateRequests', mailList).then(v => {
-            if (v.data.code === 1) {
-                message.success('메일이 발송되었습니다.')
-            }else{
-                message.error('메일 발송에 실패하였습니다.')
-            }
-        });
+
+        // await getData.post('estimate/sendMailEstimateRequests', {
+        //     mailList:mailList
+        // }).then(v => {
+        //     if (v.data.code === 1) {
+        //         message.success('메일이 발송되었습니다.')
+        //     }else{
+        //         message.error('메일 발송에 실패하였습니다.')
+        //     }
+        // });
     }
 
     sendEmail()

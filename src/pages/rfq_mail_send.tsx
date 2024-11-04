@@ -142,7 +142,8 @@ export default function rfqRead({dataList}) {
     const handleSendMail = () => {
         const checkedData = getCheckedRowsData();
         const result = checkedData.reduce((acc, cur, idx) => {
-            let id = cur['estimateRequestId']
+        //     let id = cur['estimateRequestId']
+                let id = cur.managerName;
             if (acc[id]) {
                 let idx = 0;
                 const findModel = acc[id].find((v, index) => {
@@ -162,8 +163,8 @@ export default function rfqRead({dataList}) {
             return acc
         }, {})
 
+        console.log(result, 'result~~~')
         setPreviewData(result)
-
         setIsModalOpen(true)
 
     };
@@ -178,74 +179,164 @@ export default function rfqRead({dataList}) {
             <div style={{display: 'grid', gridTemplateRows: '250px 1fr', height: '100%', gridColumnGap: 5}}>
                 <Card title={'메일전송'} style={{fontSize: 12, border: '1px solid lightGray'}} >
                     <Modal title={<div style={{display:'flex', justifyContent:'space-between', padding:'0 20px', boxSizing:'border-box', lineHeight: 2.5, fontWeight:550 }}>메일전송<Button onClick={sendMail}>전송</Button></div>} open={isModalOpen} onCancel={()=>setIsModalOpen(false)} >
-                        <div style={{position:"relative", width: '100%', height:'auto', display:'flex', flexDirection:'column', justifyContent:'center'}}>
-                            <img style={{position:'absolute', left:'40%', top:0}} src='/manku_ci_black_text.png' width={80} alt='manku logo'/>
-                            <div style={{width:'100%', height:'auto', marginTop: 100, textAlign: 'left', fontSize: 18, whiteSpace: 'pre-line'}}>
-                <span style={{fontWeight: 550}}>[
-                    {Object.values(previewData)?.[0]?.[0]?.managerName}]</span> 님<br/><br/>
+
+                        {Object.values(previewData).map((card, i) => {
+                            let totalQuantity = 0;
+                            return(
+
+                        <div style={{
+                            position: "relative",
+                            width: '100%',
+                            height: 'auto',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                            marginBottom:'30px'
+                        }}>
+                            <img style={{position: 'absolute', left: '40%', top: 0}} src='/manku_ci_black_text.png'
+                                 width={80} alt='manku logo'/>
+                            <div style={{
+                                width: '100%',
+                                height: 'auto',
+                                marginTop: 100,
+                                textAlign: 'left',
+                                fontSize: 18,
+                                whiteSpace: 'pre-line'
+                            }}>
+                                <span style={{fontWeight: 550}}>[
+                                    {card[0]?.managerName}]</span> 님<br/><br/>
                                 안녕하십니까. <span style={{fontWeight: 550}}>만쿠무역 [{userInfo.name}]</span> 입니다.<br/>
                                 아래 견적 부탁드립니다.
                             </div>
-                            {Object.values(previewData).map((card, i)=>{
-                                let totalQuantity = 0;
-                                return <div style={{textAlign:'center', lineHeight:2.2, display:'flex', flexDirection:'column', flexFlow:'column', marginTop:40}}>
+                            {/*{Object.values(previewData).map((card, i) => {*/}
+                                <div style={{
+                                    textAlign: 'center',
+                                    lineHeight: 2.2,
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    flexFlow: 'column',
+                                    marginTop: 40
+                                }}>
                                     {/*@ts-ignore*/}
-                                    {card?.map((row, idx)=>{
-                                        totalQuantity+=row.quantity;
+                                    {card?.map((row, idx) => {
+                                        // let totalQuantity = 0;
+                                        totalQuantity += row.quantity;
                                         return (
 
                                             <>
                                                 {!idx && (
                                                     <>
-                                                        <div style={{ width: "100%", height: "35px", fontSize: "15px", borderTop: "1px solid #121212", borderBottom: "1px solid #A3A3A3", backgroundColor: "#EBF6F7" }}>
+                                                        <div style={{
+                                                            width: "100%",
+                                                            height: "35px",
+                                                            fontSize: "15px",
+                                                            borderTop: "1px solid #121212",
+                                                            borderBottom: "1px solid #A3A3A3",
+                                                            backgroundColor: "#EBF6F7"
+                                                        }}>
                                                             {row.documentNumberFull}
                                                         </div>
-                                                        <div style={{ width: "100%", height: "35px", borderBottom: "1px solid #A3A3A3", display: "flex" }}>
-                                                            <div style={{ fontSize: "13px", backgroundColor: "#EBF6F7", width: "102px", height: "100%", borderRight: "1px solid #121212" }}>
+                                                        <div style={{
+                                                            width: "100%",
+                                                            height: "35px",
+                                                            borderBottom: "1px solid #A3A3A3",
+                                                            display: "flex"
+                                                        }}>
+                                                            <div style={{
+                                                                fontSize: "13px",
+                                                                backgroundColor: "#EBF6F7",
+                                                                width: "102px",
+                                                                height: "100%",
+                                                                borderRight: "1px solid #121212"
+                                                            }}>
                                                                 maker
                                                             </div>
-                                                            <div style={{ lineHeight: 2, paddingLeft: "32px" }}>
+                                                            <div style={{lineHeight: 2, paddingLeft: "32px"}}>
                                                                 {row.maker}
                                                             </div>
                                                         </div>
-                                                        <div style={{ width: "100%", height: "35px", display: "flex" }}>
-                                                            <div style={{ fontSize: "13px", backgroundColor: "#EBF6F7", width: "102px", height: "100%", borderRight: "1px solid #121212" }}>
+                                                        <div style={{width: "100%", height: "35px", display: "flex"}}>
+                                                            <div style={{
+                                                                fontSize: "13px",
+                                                                backgroundColor: "#EBF6F7",
+                                                                width: "102px",
+                                                                height: "100%",
+                                                                borderRight: "1px solid #121212"
+                                                            }}>
                                                                 item
                                                             </div>
-                                                            <div style={{ lineHeight: 2, paddingLeft: "32px" }}>
+                                                            <div style={{lineHeight: 2, paddingLeft: "32px"}}>
                                                                 {row.item}
                                                             </div>
                                                         </div>
-                                                        <div style={{ lineHeight: 1.9, width: "100%", height: "35px", fontSize: "18px", borderTop: "1px solid #121212", borderBottom: "1px solid #A3A3A3", backgroundColor: "#EBF6F7", fontWeight: 540 }}>
+                                                        <div style={{
+                                                            lineHeight: 1.9,
+                                                            width: "100%",
+                                                            height: "35px",
+                                                            fontSize: "18px",
+                                                            borderTop: "1px solid #121212",
+                                                            borderBottom: "1px solid #A3A3A3",
+                                                            backgroundColor: "#EBF6F7",
+                                                            fontWeight: 540
+                                                        }}>
                                                             MODEL
                                                         </div>
                                                     </>
                                                 )}
 
-                                                <div style={{ width: "100%", height: "35px", borderBottom: "1px solid #A3A3A3", display: "flex" }}>
-                                                    <div style={{ fontSize: "13px", letterSpacing: "-1px", lineHeight: 2.5, width: "360px", height: "100%", borderRight: "1px solid #121212" }}>
+                                                <div style={{
+                                                    width: "100%",
+                                                    height: "35px",
+                                                    borderBottom: "1px solid #A3A3A3",
+                                                    display: "flex"
+                                                }}>
+                                                    <div style={{
+                                                        fontSize: "13px",
+                                                        letterSpacing: "-1px",
+                                                        lineHeight: 2.5,
+                                                        width: "360px",
+                                                        height: "100%",
+                                                        borderRight: "1px solid #121212"
+                                                    }}>
                                                         {row.model}
                                                     </div>
-                                                    <div style={{ lineHeight: 2, paddingLeft: "30px" }}>
-                                                        <span style={{ fontWeight: 550 }}>{row.quantity}</span> {row.unit}
+                                                    <div style={{lineHeight: 2, paddingLeft: "30px"}}>
+                                                        <span style={{fontWeight: 550}}>{row.quantity}</span> {row.unit}
                                                     </div>
                                                 </div>
 
                                                 {
                                                     //@ts-ignore
                                                     idx === card.length - 1 && (
-                                                    <>
-                                                        <div style={{ backgroundColor: "#EBF6F7", width: "100%", height: "35px", display: "flex", borderBottom: "1px solid #121212" }}>
-                                                            <div style={{ fontSize: "13px", width: "360px", height: "100%", borderRight: "1px solid #121212" }}>
-                                                                total
+                                                        <>
+                                                            <div style={{
+                                                                backgroundColor: "#EBF6F7",
+                                                                width: "100%",
+                                                                height: "35px",
+                                                                display: "flex",
+                                                                borderBottom: "1px solid #121212"
+                                                            }}>
+                                                                <div style={{
+                                                                    fontSize: "13px",
+                                                                    width: "360px",
+                                                                    height: "100%",
+                                                                    borderRight: "1px solid #121212"
+                                                                }}>
+                                                                    total
+                                                                </div>
+                                                                <div style={{lineHeight: 2, paddingLeft: "30px"}}>
+                                                                    <span
+                                                                        style={{fontWeight: 550}}>{totalQuantity}</span> {row.unit}
+                                                                </div>
                                                             </div>
-                                                            <div style={{ lineHeight: 2, paddingLeft: "30px" }}>
-                                                                <span style={{ fontWeight: 550 }}>{totalQuantity}</span> {row.unit}
-                                                            </div>
-                                                        </div>
-                                                        <div style={{ backgroundColor: "#B9DCDF", width: "100%", height: "1px", margin: "25px 0" }}></div>
-                                                    </>
-                                                )}
+                                                            <div style={{
+                                                                backgroundColor: "#B9DCDF",
+                                                                width: "100%",
+                                                                height: "1px",
+                                                                margin: "25px 0"
+                                                            }}></div>
+                                                        </>
+                                                    )}
 
                                             </>
 
@@ -253,8 +344,10 @@ export default function rfqRead({dataList}) {
                                     })
                                     }
                                 </div>
-                            })}
+
+                            <div>감사합니다.</div>
                         </div>
+                            )})}
                     </Modal>
 
                     <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gridColumnGap: 10}}>
