@@ -185,7 +185,7 @@ const TableGrid = ({
 
     const handleDoubleClicked = (e) => {
         if (e.data.estimateRequestId)
-            router.push(`/rfq_write?estimateRequestId=${e?.data?.estimateRequestId}`)
+            router.push(`/rfq_update?estimateRequestId=${e?.data?.estimateRequestId}`)
         if (e.data.estimateId)
             router.push(`/estimate_write?estimateId=${e?.data?.estimateId}`)
         if (e.data.orderId)
