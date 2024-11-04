@@ -19,17 +19,21 @@ import * as XLSX from "xlsx";
 import {transformData} from "@/utils/common/common";
 import {useRouter} from "next/router";
 import TableGrid from "@/component/tableGrid";
+import message from "antd/lib/message";
 
 const {RangePicker} = DatePicker
 
 
 export default function rfqRead({dataList}) {
-    let checkList = []
 
+    const [selectedRows, setSelectedRows] = useState([]);
     const {estimateRequestList, pageInfo} = dataList;
-    const [info, setInfo] = useState(subRfqReadInitial)
-    const [tableData, setTableData] = useState(estimateRequestList)
-    const [paginationInfo, setPaginationInfo] = useState(pageInfo)
+    const [info, setInfo] = useState(subRfqReadInitial);
+    const [tableData, setTableData] = useState(estimateRequestList);
+    const [paginationInfo, setPaginationInfo] = useState(pageInfo);
+
+    // console.log(selectedRows, 'selectedRows')
+
 
     function onChange(e) {
 
@@ -48,7 +52,7 @@ export default function rfqRead({dataList}) {
         // setTableInfo(transformData(estimateRequestList, 'estimateRequestId', 'estimateRequestDetailList'));
         // setTableData(estimateRequestList);
         // console.log(tableData, 'setTableData')
-    }, [info])
+    }, [])
 
 
     async function searchInfo() {
@@ -64,12 +68,29 @@ export default function rfqRead({dataList}) {
         setPaginationInfo(result?.data?.entity?.pageInfo)
     }
 
-    function deleteList() {
-        let copyData = {...info}
-        const result = copyData['estimateRequestDetailList'].filter(v => !checkList.includes(v.serialNumber))
+    async function deleteList() {
 
-        copyData['estimateRequestDetailList'] = result
-        setInfo(copyData);
+        let deleteIdList = [];
+        selectedRows.forEach(v=>(
+            deleteIdList.push(v.estimateRequestId)
+        ))
+
+        console.log(deleteIdList, 'deleteIdList')
+
+        if (deleteIdList.length < 1)
+            return alert('하나 이상의 항목을 선택해주세요.')
+        else {
+            // @ts-ignore
+            for (const v of deleteIdList) {
+                await getData.post('estimate/deleteEstimateRequest', {
+                    estimateRequestId: v}).then(r=>{
+                    if(r.data.code === 1)
+                        console.log(v+'삭제완료')
+                });
+            }
+            message.success('삭제되었습니다.')
+            window.location.reload();
+        }
     }
 
 
@@ -90,7 +111,7 @@ export default function rfqRead({dataList}) {
 
     const rowSelection = {
         onChange: (selectedRowKeys, selectedRows) => {
-            checkList = selectedRowKeys
+            selectedRows = selectedRowKeys
         },
         onDoubleClick: (src) => {
             console.log(src, ':::')
@@ -171,6 +192,7 @@ export default function rfqRead({dataList}) {
                 <TableGrid
                     columns={rfqReadColumns}
                     tableData={tableData}
+                    setSelectedRows={setSelectedRows}
                     // dataInfo={tableOrderReadInfo}
                     // setDatabase={setInfo}
                     // setTableInfo={setTableData}

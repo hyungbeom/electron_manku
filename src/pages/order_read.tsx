@@ -19,6 +19,7 @@ import * as XLSX from "xlsx";
 import is from "@sindresorhus/is";
 import set = is.set;
 import TableGrid from "@/component/tableGrid";
+import message from "antd/lib/message";
 
 const {RangePicker} = DatePicker
 
@@ -29,8 +30,8 @@ const TwinInputBox = ({children}) => {
 }
 
 export default function OrderRead({dataList}) {
-    let checkList = []
 
+    const [selectedRows, setSelectedRows] = useState([]);
     const {orderList, pageInfo} = dataList;
     const [info, setInfo] = useState(orderReadInitial)
     const [tableData, setTableData] = useState(orderList)
@@ -73,25 +74,27 @@ export default function OrderRead({dataList}) {
 
 
     async function deleteList() {
-        let copyData = {...tableData}
 
-        // @ts-ignore
-        const deleteItemList= Object.values(copyData).filter(v=>checkList.includes(v.key))
+        let deleteIdList = [];
+        selectedRows.forEach(v=>(
+            deleteIdList.push(v.orderId)
+        ))
 
-        console.log(deleteItemList, 'deleteItemList')
+        console.log(deleteIdList, 'deleteIdList')
 
-        if (deleteItemList.length < 1)
+        if (deleteIdList.length < 1)
             return alert('하나 이상의 항목을 선택해주세요.')
         else {
             // @ts-ignore
-            for (const v of deleteItemList) {const orderId=v.orderId;
+            for (const v of deleteIdList) {
                 await getData.post('order/deleteOrder', {
-                orderId:orderId}).then(r=>{
-                if(r.data.code === 1)
-                    alert('삭제되었습니다.')
-            });
+                    orderId: v}).then(r=>{
+                    if(r.data.code === 1)
+                        console.log(v+'삭제완료')
+                });
             }
-            await searchInfo();
+            message.success('삭제되었습니다.')
+            window.location.reload();
         }
     }
 
@@ -105,7 +108,7 @@ export default function OrderRead({dataList}) {
 
     const rowSelection = {
         onChange: (selectedRowKeys, selectedRows) => {
-            checkList  = selectedRowKeys
+            selectedRows  = selectedRowKeys
         },
         onDoubleClick: (src) => {
             console.log(src, ':::')
@@ -117,20 +120,6 @@ export default function OrderRead({dataList}) {
         }),
     };
 
-    async function handlePageChange(e) {
-        console.log(e, "page~~~~~~~~~~")
-        console.log(info['page'], "info~~~~~~~~~~")
-
-        info['page']=e
-        // setPaginationInfo({rowPerPage: size, page: e, totalRow: pageInfo['totalRow']})
-        //
-        // const copyData: any = {...info}
-        // copyData['limit'] = size;
-        // copyData['page'] = e;
-        // const result = await getData.post('estimate/getEstimateRequestList', copyData);
-        //
-        // setTableInfo(transformData(result?.data?.entity?.estimateRequestList))
-    }
 
     return <>
         <LayoutComponent>

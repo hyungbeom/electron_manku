@@ -27,6 +27,7 @@ const tableTheme = themeQuartz
 
 const TableGrid  = ({
                         columns, tableData,
+                        setSelectedRows,
                         // tableData,
                         // setTableData,
                         setDatabase,
@@ -62,17 +63,19 @@ const TableGrid  = ({
         };
     }, []);
 
+    let selectedRows=[]
 
     const rowSelection = useMemo(() => {
         return { mode: "multiRow"};
     }, []);
 
     const handleSelectionChange = (e) => {
-        console.log(e)
+        setSelectedRows(e.api.getSelectedRows())
     }
 
     const handleRowValueChange = (e) => {
-        console.log(e.api.getEdit)
+        // console.log(e.api)
+        // console.log(e.api.getEdit)
 
     }
 
