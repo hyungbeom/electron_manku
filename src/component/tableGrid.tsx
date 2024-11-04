@@ -1,8 +1,8 @@
 // @ts-nocheck
 
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import { AgGridReact } from 'ag-grid-react';
-import { themeQuartz, iconSetMaterial } from '@ag-grid-community/theming';
+import {AgGridReact} from 'ag-grid-react';
+import {themeQuartz, iconSetMaterial} from '@ag-grid-community/theming';
 import {useRouter} from "next/router";
 
 const tableTheme = themeQuartz
@@ -26,28 +26,29 @@ const tableTheme = themeQuartz
     });
 
 
-const TableGrid  = ({
-                        columns, tableData,
-                        setSelectedRows,
-                        // tableData,
-                        // setTableData,
-                        setDatabase,
-                        modalComponent,
-                        funcButtons,
-                        listType = 'estimateRequestId',
-                        excel = false,
-                        pageInfo=null,
-                        setPaginationInfo,
-                        setTableData,
-                        handlePageChange,
-                        visible = false,
-                        setIsModalOpen = undefined,
-                        setItemId = undefined,
-                    }: any) => {
+const TableGrid = ({
+                       columns, tableData,
+                       setSelectedRows,
+                       // tableData,
+                       // setTableData,
+                       setDatabase,
+                       modalComponent,
+                       funcButtons,
+                       listType = 'estimateRequestId',
+                       excel = false,
+                       pageInfo = null,
+                       setPaginationInfo,
+                       setTableData,
+                       handlePageChange,
+                       visible = false,
+                       setIsModalOpen = undefined,
+                       setItemId = undefined,
+                       gridRef
+                   }: any) => {
 
 
     const router = useRouter();
-    const gridRef = useRef(null);
+
     const [data, setData] = useState(tableData);
 
     useEffect(() => {
@@ -70,8 +71,8 @@ const TableGrid  = ({
                 if (params.node.rowIndex) {
                     const previousRowData = params.context.data[params.node.rowIndex - 1];
 
-                    if(params.data[listType] === previousRowData[listType]){
-                        if(params.column.colId === 'writtenDate' || params.column.colId === 'documentNumberFull'){
+                    if (params.data[listType] === previousRowData[listType]) {
+                        if (params.column.colId === 'writtenDate' || params.column.colId === 'documentNumberFull') {
                             sendData = ''
                         }
                     }
@@ -83,10 +84,10 @@ const TableGrid  = ({
         };
     }, []);
 
-    let selectedRows=[]
+    let selectedRows = []
 
     const rowSelection = useMemo(() => {
-        return { mode: "multiRow"};
+        return {mode: "multiRow"};
     }, []);
 
     const handleSelectionChange = (e) => {
@@ -98,32 +99,88 @@ const TableGrid  = ({
         // console.log(e.api)
         // console.log(e.api.getEdit)
     }
+    let isUpdatingSelection = false; // 중복 선택 이벤트 발생 방지 플래그
 
-    const handleDoubleClicked = (e) =>{
-        // console.log(e.data.estimateId, "handleDoubleClicked")
+    const handleRowSelected = (e) => {
+        if (isUpdatingSelection) return; // 중복 선택 이벤트 발생 시 종료
+        isUpdatingSelection = true;
 
-        if(e.data.estimateRequestId)
+        const currentRowData = e.node.data;
+        const currentDocumentNumber = currentRowData.documentNumberFull;
+        const isCurrentlySelected = e.node.isSelected();
+        const api = e.api;
+
+        // 부모 행인지 확인하는 함수 (연속된 `documentNumberFull` 값이 다르면 부모로 간주)
+        const isParent = (nodeIndex) => {
+            if (nodeIndex === 0) return true;
+            const previousRowData = api.getDisplayedRowAtIndex(nodeIndex - 1).data;
+            return previousRowData.documentNumberFull !== currentDocumentNumber;
+        };
+
+        if (isParent(e.node.rowIndex)) {
+            // 부모가 선택된 경우 자식들만 선택/해제하고, 중복 이벤트 발생 방지
+            const selectedId = currentRowData.estimateRequestId;
+            api.forEachNode((node) => {
+                if (node.data.estimateRequestId === selectedId && node !== e.node) {
+                    node.setSelected(isCurrentlySelected, false); // 자식만 선택/해제
+                }
+            });
+        } else {
+            // 자식 행이 선택/해제되었을 때 부모 상태 동기화
+            const selectedId = currentRowData.estimateRequestId;
+            let allChildrenSelected = true;
+            let parentNode = null;
+
+            api.forEachNode((node) => {
+                if (node.data.estimateRequestId === selectedId) {
+                    if (isParent(node.rowIndex)) {
+                        parentNode = node; // 부모 노드를 추적
+                    } else if (!node.isSelected()) {
+                        allChildrenSelected = false; // 자식 중 하나라도 선택 해제 시
+                    }
+                }
+            });
+
+            // 자식이 모두 선택되었을 때만 부모 선택, 자식 중 하나라도 해제되면 부모 해제
+            if (parentNode) {
+                parentNode.setSelected(allChildrenSelected, false);
+            }
+        }
+
+        isUpdatingSelection = false; // 선택 업데이트 종료
+    };
+    const handleDoubleClicked = (e) => {
+        if (e.data.estimateRequestId)
             router.push(`/rfq_write?estimateRequestId=${e?.data?.estimateRequestId}`)
-        if(e.data.estimateId)
+        if (e.data.estimateId)
             router.push(`/estimate_write?estimateId=${e?.data?.estimateId}`)
-        if(e.data.orderId)
+        if (e.data.orderId)
             router.push(`/order_write?orderId=${e?.data?.orderId}`)
-        if(e.data.inventoryId) {
+        if (e.data.inventoryId) {
             let itemId = e.data.inventoryId;
             setIsModalOpen(true)
             setItemId(itemId)
             // console.log(itemId, 'itemId')
 
         }
-
-
-
-        // 여기에 더블 클릭 시 실행할 로직을 추가하세요.
     };
 
+    // 체크된 행의 데이터 가져오기 함수 수정
+    const getCheckedRowsData = () => {
+        const selectedNodes = gridRef.current.api.getSelectedNodes(); // gridOptions 대신 gridRef 사용
+        const selectedData = selectedNodes.map(node => node.data);
+        return selectedData;
+    };
+
+// 버튼 클릭 시 체크된 데이터 출력
+    const handleButtonClick = () => {
+        const checkedData = getCheckedRowsData();
+        console.log("체크된 행의 데이터:", checkedData);
+    };
 
     return (
-        <div className="ag-theme-quartz" style={{ height: '100%', width: '100%', display:'flex', flexDirection:'column', overflowX:'auto' }}>
+        <div className="ag-theme-quartz"
+             style={{height: '100%', width: '100%', display: 'flex', flexDirection: 'column', overflowX: 'auto'}}>
 
             <div style={{width: '100%', display: 'flex', justifyContent: 'space-between', margin: '10px 0'}}>
                 <span>LIST</span>
@@ -132,12 +189,12 @@ const TableGrid  = ({
             {modalComponent}
 
             <AgGridReact theme={tableTheme} ref={gridRef}
-                         //@ts-ignore
-                         style={{ width: '100%', height: '90%' }}
-                         onSelectionChanged={handleSelectionChange}
+                //@ts-ignore
+                         style={{width: '100%', height: '90%'}}
+                // onSelectionChanged={handleSelectionChange}
                          onRowDoubleClicked={handleDoubleClicked}
                          onRowValueChanged={handleRowValueChange}
-                         //@ts-ignore
+                //@ts-ignore
                          rowSelection={rowSelection}
                          defaultColDef={defaultColDef}
                          columnDefs={columns}
@@ -145,6 +202,7 @@ const TableGrid  = ({
                          context={{data}}
                          pagination={!!pageInfo}
                          paginationPageSize={pageInfo?.rowperPge}
+                         onRowSelected={handleRowSelected}
             />
 
         </div>
