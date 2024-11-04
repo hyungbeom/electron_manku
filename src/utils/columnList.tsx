@@ -45,6 +45,12 @@ export const searchCustomerColumn = [
 ];
 export const searchAgencyCodeColumn = [
     {
+        headerName: '구분',
+        field: 'agencyType',
+        key: 'agencyType',
+
+    },
+    {
         headerName: '코드',
         field: 'agencyCode',
         key: 'agencyCode',

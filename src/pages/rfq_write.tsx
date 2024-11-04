@@ -1,7 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
-import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
 import TextArea from "antd/lib/input/TextArea";
 import {
@@ -12,10 +11,9 @@ import {
     RetweetOutlined,
     SaveOutlined
 } from "@ant-design/icons";
-import {rfqReadColumns, searchAgencyCodeColumn, searchCustomerColumn, subRfqWriteColumn} from "@/utils/columnList";
+import {searchAgencyCodeColumn, searchCustomerColumn, subRfqWriteColumn} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {orderWriteInitial, rfqWriteInitial, subRfqWriteInitial} from "@/utils/initialList";
-import {subRfqWriteInfo} from "@/utils/modalDataList";
+import {orderWriteInitial, rfqWriteInitial} from "@/utils/initialList";
 import moment from "moment";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
@@ -23,7 +21,6 @@ import {getData} from "@/manage/function/api";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
-import TableModal from "@/utils/TableModal";
 import Modal from "antd/lib/modal/Modal";
 import Table from "antd/lib/table";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
@@ -33,8 +30,28 @@ import {useRouter} from "next/router";
 import nookies from "nookies";
 import {TwinInputBox} from "@/utils/common/component/Common";
 import TableGrid from "@/component/tableGrid";
+import {AgGridReact} from "ag-grid-react";
+import {iconSetMaterial, themeQuartz} from "@ag-grid-community/theming";
 
-
+const tableTheme = themeQuartz
+    .withPart(iconSetMaterial)
+    .withParams({
+        browserColorScheme: "light",
+        cellHorizontalPaddingScale: 0.5,
+        columnBorder: true,
+        fontSize: "10px",
+        headerBackgroundColor: "#FDFDFD",
+        headerFontSize: "12px",
+        headerFontWeight: 550,
+        headerVerticalPaddingScale: 0.8,
+        iconSize: "11px",
+        rowBorder: true,
+        rowVerticalPaddingScale: 0.8,
+        sidePanelBorder: true,
+        spacing: "5px",
+        wrapperBorder: true,
+        wrapperBorderRadius: "6px",
+    });
 export default function rqfWrite({dataInfo, display}) {
     const gridRef = useRef(null);
     const router = useRouter();
@@ -45,6 +62,7 @@ export default function rqfWrite({dataInfo, display}) {
     const [info, setInfo] = useState<any>(rfqWriteInitial)
     const [isMainModalOpen, setIsMainModalOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
+    const [agencyData, setAgencyData] = useState([]);
 
 
     useEffect(() => {
@@ -132,6 +150,8 @@ export default function rqfWrite({dataInfo, display}) {
         }
 
 
+
+
         return <Modal
             // @ts-ignored
             id={'event1'}
@@ -142,44 +162,19 @@ export default function rqfWrite({dataInfo, display}) {
             onOk={() => setIsModalOpen({event1: false, event2: false})}
         >
             <div style={{height: '60vh'}}>
-                <Card title={'검색어'} size={'small'} style={{marginTop: 10}}>
-                    <Input
-                        value={modalInfo['searchText']}
-                        onChange={e => {
-                            let bowl = {};
-                            bowl['searchText'] = e.target.value;
-                            setModalInfo(v => {
-                                return {...v, ...bowl};
-                            });
-                        }}
-                    />
-                </Card>
+                <AgGridReact theme={tableTheme}
+                             onCellClicked={(e)=>{
+                                setInfo(v=>{
+                                    return {
+                                    ...v, ... e.data
+                                }})
+                                 setIsModalOpen({event1: false, event2: false})
+                             }}
+                      rowData={agencyData}
+                             columnDefs={searchAgencyCodeColumn}
+                             pagination={true}
 
-                <Button onClick={searchFunc} type={'primary'} style={{width: '100%', marginTop: 10}}>조회</Button>
-
-                {/* 테이블 데이터를 감싸는 Card */}
-                <Card style={{marginTop: 10}}>
-                    <Table
-                        style={{width: '100%'}}
-                        scroll={{y: 300}}
-                        columns={searchAgencyCodeColumn}
-                        dataSource={data}
-                        // pagination={true}
-                        onRow={(record, rowIndex) => {
-                            return {
-                                style: {cursor: 'pointer'},
-                                onClick: (event) => {
-
-                                    let copyData = {...info}
-                                    copyData['agencyCode'] = record.agencyCode;
-                                    copyData['agencyName'] = record.agencyName;
-                                    setInfo(copyData);
-                                    setIsModalOpen({event1: false, event2: false})
-                                }
-                            };
-                        }}
-                    />
-                </Card>
+                />
             </div>
         </Modal>
     }
@@ -293,20 +288,64 @@ export default function rqfWrite({dataInfo, display}) {
         setInfo(copyData)
     }
 
+    const handleKeyPress = async (e) => {
+        console.log(e.target.id)
+        if (e.key === 'Enter') {
+            if (e.target.id === 'agencyCode') {
+                if(!info['agencyCode']){
+                    return false;
+                }
+                const result = await getData.post('agency/getAgencyListForEstimate', {
+                    "searchText": info['agencyCode'],       // 대리점코드 or 대리점 상호명
+                    "page": 1,
+                    "limit": -1
+                })
+                if (result.data.entity.agencyList.length > 1) {
+                    setAgencyData(result.data.entity.agencyList)
+                    setIsModalOpen({event1: true, event2: false})
+                } else if (!!result.data.entity.agencyList.length) {
+                    const {agencyCode, agencyName} = result.data.entity.agencyList[0]
+
+                    setInfo(v => {
+                        return {...v, agencyCode: agencyCode, agencyName: agencyName}
+                    })
+                }
+            }else{
+                if(!info['customerName']){
+                    return false
+                }
+                const result = await getData.post('customer/getCustomerListForEstimate', {
+                    "searchText": info['customerName'],       // 대리점코드 or 대리점 상호명
+                    "page": 1,
+                    "limit": -1
+                })
+                if(result.data.entity.customerList.length > 1){
+
+                } else if (!!result.data.entity.customerList.length) {
+                    const {customerName, managerName, directTel, faxNumber} = result.data.entity.customerList[0]
+
+
+                    setInfo(v => {
+                        return {customerName: customerName, managerName: managerName,directTel:directTel, faxNumber : faxNumber }
+                    })
+                }
+            }
+        }
+    };
 
     return <>
         <LayoutComponent>
-            <div style={{display: 'grid', gridTemplateColumns: '350px 1fr', height: '100%', gridColumnGap: 5}}>
+            <div style={{display: 'grid', gridTemplateRows: '450px 1fr', height: '100%', gridColumnGap: 5}}>
 
                 <SearchAgencyCode/>
                 <SearchCustomer/>
                 <Card title={'의뢰 작성'} style={{fontSize: 12, border: '1px solid lightGray'}}>
-                    <div>
+                    <div style={{display : 'grid', gridTemplateColumns : '220px 320px 320px 1fr', columnGap : 10}}>
                         <Card size={'small'} style={{
                             fontSize: 13,
                             boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                         }}>
-                            <TwinInputBox>
+
                                 <div>
                                     <div style={{paddingBottom: 3}}>INQUIRY NO.</div>
                                     <Input disabled={true} size={'small'}/>
@@ -322,20 +361,19 @@ export default function rqfWrite({dataInfo, display}) {
                                                 })
                                                 } id={'writtenDate'} size={'small'}/>
                                 </div>
-                            </TwinInputBox>
+
                         </Card>
 
                         <Card title={'inpuiry 정보 및 supplier information'} size={'small'}
                               style={{
                                   fontSize: 13,
-                                  marginTop: 20,
                                   boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                               }}>
-                            <TwinInputBox>
                                 <div>
                                     <div style={{paddingBottom: 3}}>대리점코드</div>
                                     <Input id={'agencyCode'} value={info['agencyCode']} onChange={onChange}
                                            size={'small'}
+                                           onKeyDown={handleKeyPress}
                                            suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
                                                (e) => {
                                                    e.stopPropagation();
@@ -348,31 +386,17 @@ export default function rqfWrite({dataInfo, display}) {
                                     <Input id={'agencyName'} value={info['agencyName']} onChange={onChange}
                                            size={'small'}/>
                                 </div>
-                            </TwinInputBox>
-                        </Card>
-
-                        <Card title={'담당자 정보'} size={'small'} style={{
-                            fontSize: 13,
-                            marginTop: 20,
-                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                        }}>
-                            <div>
-                                <div style={{paddingBottom: 3}}>담당자</div>
-                                <Input id={'managerName'} value={userInfo['name']} disabled={true} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
                         </Card>
 
                         <Card title={'CUSTOMER INFORMATION'} size={'small'} style={{
                             fontSize: 13,
-                            marginTop: 20,
                             boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                         }}>
-                            <TwinInputBox>
                                 <div>
                                     <div style={{paddingBottom: 3}}>상호명</div>
                                     <Input id={'customerName'} value={info['customerName']} onChange={onChange}
                                            size={'small'}
+                                           onKeyDown={handleKeyPress}
                                            suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
                                                (e) => {
                                                    e.stopPropagation();
@@ -385,8 +409,7 @@ export default function rqfWrite({dataInfo, display}) {
                                     <Input id={'managerName'} value={info['managerName']} onChange={onChange}
                                            size={'small'}/>
                                 </div>
-                            </TwinInputBox>
-                            <TwinInputBox>
+
                                 <div>
                                     <div style={{paddingBottom: 3}}>전화번호</div>
                                     <Input id={'phoneNumber'} value={info['phoneNumber']} onChange={onChange}
@@ -397,12 +420,10 @@ export default function rqfWrite({dataInfo, display}) {
                                     <Input id={'faxNumber'} value={info['faxNumber']} onChange={onChange}
                                            size={'small'}/>
                                 </div>
-                            </TwinInputBox>
                         </Card>
 
                         <Card title={'ETC'} size={'small'} style={{
                             fontSize: 13,
-                            marginTop: 20,
                             boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                         }}>
                             <div style={{paddingTop: 8}}>
@@ -423,23 +444,22 @@ export default function rqfWrite({dataInfo, display}) {
                                           size={'small'}/>
                             </div>
 
-
-                            <div style={{paddingTop: 20, textAlign: 'right'}}>
-                                {/*@ts-ignored*/}
-                                {dataInfo ? <Button type={'danger'} style={{marginRight: 8}}
-                                                    onClick={saveFunc}><SaveOutlined/>수정</Button> :
-                                    <Button type={'primary'} style={{marginRight: 8}}
-                                            onClick={saveFunc}><SaveOutlined/>저장</Button>}
-
-
-                                {dataInfo ? <Button type={'primary'} style={{marginRight: 8}}
-                                                    onClick={() => router?.push('/rfq_write')}><EditOutlined/>신규</Button> :
-                                    // @ts-ignored
-                                    <Button type={'danger'}
-                                            onClick={() => setInfo(rfqWriteInitial)}><RetweetOutlined/>초기화</Button>}
-
-                            </div>
                         </Card>
+                        <div style={{paddingTop: 20}}>
+                            {/*@ts-ignored*/}
+                            {dataInfo ? <Button type={'danger'} size={'small'} style={{marginRight: 8}}
+                                                onClick={saveFunc}><SaveOutlined/>수정</Button> :
+                                <Button type={'primary'} size={'small'} style={{marginRight: 8}}
+                                        onClick={saveFunc}><SaveOutlined/>저장</Button>}
+
+
+                            {dataInfo ? <Button size={'small'}  type={'primary'} style={{marginRight: 8}}
+                                                onClick={() => router?.push('/rfq_write')}><EditOutlined/>신규</Button> :
+                                // @ts-ignored
+                                <Button type={'danger'} size={'small'}
+                                        onClick={() => setInfo(rfqWriteInitial)}><RetweetOutlined/>초기화</Button>}
+
+                        </div>
                     </div>
                 </Card>
 
