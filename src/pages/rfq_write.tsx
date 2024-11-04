@@ -432,7 +432,7 @@ export default function rqfWrite({dataInfo, display}) {
                 <TableGrid
                     columns={subRfqWriteColumn}
                     tableData={info['estimateRequestDetailList']}
-                    // listType={'estimateRequestDetailList'}
+                    listType={'estimateRequestId'}
                     // dataInfo={tableOrderReadInfo}
                     setInfo={setInfo}
                     // setTableInfo={setTableInfo}
