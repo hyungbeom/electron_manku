@@ -66,47 +66,13 @@ export default function rfqRead({dataList}) {
         setTableData(result?.data?.entity?.estimateRequestList);
     }
 
-    async function deleteList() {
 
-        let deleteIdList = [];
-        selectedRows.forEach(v=>(
-            deleteIdList.push(v.estimateRequestId)
-        ))
-
-        console.log(deleteIdList, 'deleteIdList')
-
-        if (deleteIdList.length < 1)
-            return alert('하나 이상의 항목을 선택해주세요.')
-        else {
-            // @ts-ignore
-            for (const v of deleteIdList) {
-                await getData.post('estimate/deleteEstimateRequest', {
-                    estimateRequestId: v}).then(r=>{
-                    if(r.data.code === 1)
-                        console.log(v+'삭제완료')
-                });
-            }
-            message.success('삭제되었습니다.')
-            window.location.reload();
-        }
-    }
     function deleteList(checkList) {
 
         const api = gridRef.current.api;
 
-        // 전체 행 반복하면서 선택되지 않은 행만 추출
-        const uncheckedData = [];
-        for (let i = 0; i < api.getDisplayedRowCount(); i++) {
-            const rowNode = api.getDisplayedRowAtIndex(i);
-            if (!rowNode.isSelected()) {
-                uncheckedData.push(rowNode.data);
-            }
-        }
 
-        let copyData = {...info}
-        // copyData['estimateRequestDetailList'] = uncheckedData;
-        console.log(uncheckedData,'copyData::')
-        setInfo(copyData);
+        console.log(api.getSelectedRows(),':::')
 
     }
 
