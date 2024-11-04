@@ -21,6 +21,9 @@ import {useRouter} from "next/router";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
 import Modal from "antd/lib/modal/Modal";
+import {userInfo} from "node:os";
+import {useAppSelector} from "@/utils/common/function/reduxHooks";
+import emailSendFormat from "@/utils/emailSendFormat";
 
 const {RangePicker} = DatePicker
 
@@ -29,6 +32,7 @@ export default function rfqRead({dataList}) {
     const gridRef = useRef(null);
     const [selectedRows, setSelectedRows] = useState([]);
     const {estimateRequestList, pageInfo} = dataList;
+    const userInfo = useAppSelector((state) => state.user);
     const [info, setInfo] = useState(subRfqReadInitial);
     const [tableData, setTableData] = useState(estimateRequestList);
     const [paginationInfo, setPaginationInfo] = useState(pageInfo);
@@ -150,10 +154,10 @@ export default function rfqRead({dataList}) {
                     acc[id][idx] = {...acc[id][idx], quantity: acc[id][idx].quantity + quantity, unit : cur.unit}
                     return acc;
                 }else{
-                    acc[id].push({maker : cur.maker,item : cur.item,model: cur.model, quantity: cur.quantity, unit : cur.unit})
+                    acc[id].push({managerName: cur.managerName, documentNumberFull : cur.documentNumberFull, maker : cur.maker,item : cur.item,model: cur.model, quantity: cur.quantity, unit : cur.unit})
                 }
             } else {
-                acc[id] = [{maker : cur.maker, item : cur.item, model: cur.model, quantity: cur.quantity, unit : cur.unit}];
+                acc[id] = [{managerName: cur.managerName, documentNumberFull : cur.documentNumberFull, maker : cur.maker, item : cur.item, model: cur.model, quantity: cur.quantity, unit : cur.unit}];
             }
             return acc
         }, {})
@@ -165,28 +169,34 @@ export default function rfqRead({dataList}) {
     };
 
 
+    function sendMail(){
+        emailSendFormat(userInfo, previewData)
+    }
     return <>
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateRows: '250px 1fr', height: '100%', gridColumnGap: 5}}>
-                <Card title={'메일전송'} style={{fontSize: 12, border: '1px solid lightGray'}}>
-                    <Modal title="Basic Modal" open={isModalOpen} >
+                <Card title={'메일전송'} style={{fontSize: 12, border: '1px solid lightGray'}} >
+                    <Modal title={<>'메일전송'<Button onClick={sendMail}>전송</Button></>} open={isModalOpen} >
+                        <img src='/manku_ci_black_text.png' width={116} alt='manku logo'></img>
+                        {/*@ts-ignore*/}
+                        {/*<div>{(Object.values(previewData))[0].managerName}님</div>*/}
+                        <div>안녕하십니까. 만쿠무역 {userInfo['name']}입니다.<br/>
+                        </div>
                         {Object.values(previewData).map(v=>{
-
                             return <Card>
+                                {/*@ts-ignore*/}
                                 {v?.map((src, idx)=>{
-                                    return <>
-                                        <div>{!idx ? src.maker : null}</div>
+                                    return <div style={{gridTemplateRows:"repeat(7, 60px)", gridAutoFlow:'row'}}>
+                                        <div style={{borderTop:'1px solid #121212', borderBottom: '1px solid #A3A3A3'}}>{!idx ? src.documentNumberFull : null}</div>
+                                        <div style={{}}>{!idx ? src.maker : null}</div>
                                         <div>{!idx ? src.item : null}</div> &nbsp;&nbsp;
                                         <span>{src.model}</span> &nbsp;&nbsp;
                                         <span>{src.quantity}</span> &nbsp;&nbsp;
                                         <span>{src.unit}</span>
-                                    </>
+                                    </div>
                                 })
                                 }
                             </Card>
-
-
-
                         })}
                     </Modal>
 
