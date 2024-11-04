@@ -254,15 +254,13 @@ const TableGrid = ({
                          rowSelection={rowSelection}
                          defaultColDef={defaultColDef}
                          columnDefs={columns}
-                         rowData={data}
+                         rowData={[...data]}
                          context={{data}}
                          pagination={true}
                          onRowSelected={handleRowSelected}
                          onCellValueChanged={dataChange}
             />
-
         </div>
     );
 };
-
 export default TableGrid;
