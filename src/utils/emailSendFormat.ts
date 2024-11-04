@@ -40,7 +40,7 @@ export default function emailSendFormat(userInfo, data) {
                         </div>` : ""}
 
                         <div style="width: 100%; height:60px; border-bottom: 1px solid #A3A3A3; display: flex;">
-                            <div style="font-size:22px; letter-spacing:-1; line-height: 1.9; width: 460px; height:100%; border-right: 1px solid #121212;">
+                            <div style="font-size:22px; letter-spacing:-1; line-height: 2.5; width: 460px; height:100%; border-right: 1px solid #121212;">
                                 ${row.model}
                             </div>
                             <div style="line-height: 2; padding-left: 30px;">
@@ -82,7 +82,7 @@ export default function emailSendFormat(userInfo, data) {
         //@ts-ignore
         Object.values(data)[0][0]?.managerName}]</span> 님<br/>
                 안녕하십니까. <span style="font-weight: 550">만쿠무역 [${userInfo.name}]</span> 입니다.
-                아래 견적 부탁 드립니다.
+                아래 견적 부탁드립니다.
             </div>
             <div style="line-height: 2.6; display: flex; flex-direction:column; flex-flow:column; margin-top: 60px">
                 ${modelCard}

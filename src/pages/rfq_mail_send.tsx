@@ -176,28 +176,84 @@ export default function rfqRead({dataList}) {
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateRows: '250px 1fr', height: '100%', gridColumnGap: 5}}>
                 <Card title={'메일전송'} style={{fontSize: 12, border: '1px solid lightGray'}} >
-                    <Modal title={<>'메일전송'<Button onClick={sendMail}>전송</Button></>} open={isModalOpen} closeIcon={!isModalOpen} >
-                        <img src='/manku_ci_black_text.png' width={116} alt='manku logo'></img>
-                        {/*@ts-ignore*/}
-                        {/*<div>{(Object.values(previewData))[0].managerName}님</div>*/}
-                        <div>안녕하십니까. 만쿠무역 {userInfo['name']}입니다.<br/>
+                    <Modal title={<div style={{display:'flex', justifyContent:'space-between', padding:'0 20px', boxSizing:'border-box', lineHeight: 2.5, fontWeight:550 }}>메일전송<Button onClick={sendMail}>전송</Button></div>} open={isModalOpen} onCancel={()=>setIsModalOpen(false)} >
+                        <div style={{position:"relative", width: '100%', height:'auto', display:'flex', flexDirection:'column', justifyContent:'center'}}>
+                            <img style={{position:'absolute', left:'40%', top:0}} src='/manku_ci_black_text.png' width={80} alt='manku logo'/>
+                            <div style={{width:'100%', height:'auto', marginTop: 100, textAlign: 'left', fontSize: 18, whiteSpace: 'pre-line'}}>
+                <span style={{fontWeight: 550}}>[
+                    {Object.values(previewData)?.[0]?.[0]?.managerName}]</span> 님<br/><br/>
+                                안녕하십니까. <span style={{fontWeight: 550}}>만쿠무역 [{userInfo.name}]</span> 입니다.<br/>
+                                아래 견적 부탁드립니다.
+                            </div>
+                            {Object.values(previewData).map((card, i)=>{
+                                let totalQuantity = 0;
+                                return <div style={{textAlign:'center', lineHeight:2.2, display:'flex', flexDirection:'column', flexFlow:'column', marginTop:40}}>
+                                    {/*@ts-ignore*/}
+                                    {card?.map((row, idx)=>{
+                                        totalQuantity+=row.quantity;
+                                        return (
+
+                                            <>
+                                                {!idx && (
+                                                    <>
+                                                        <div style={{ width: "100%", height: "35px", fontSize: "13px", borderTop: "1px solid #121212", borderBottom: "1px solid #A3A3A3", backgroundColor: "#EBF6F7" }}>
+                                                            {row.documentNumberFull}
+                                                        </div>
+                                                        <div style={{ width: "100%", height: "35px", borderBottom: "1px solid #A3A3A3", display: "flex" }}>
+                                                            <div style={{ fontSize: "13px", backgroundColor: "#EBF6F7", width: "102px", height: "100%", borderRight: "1px solid #121212" }}>
+                                                                maker
+                                                            </div>
+                                                            <div style={{ lineHeight: 2, paddingLeft: "32px" }}>
+                                                                {row.maker}
+                                                            </div>
+                                                        </div>
+                                                        <div style={{ width: "100%", height: "35px", display: "flex" }}>
+                                                            <div style={{ fontSize: "13px", backgroundColor: "#EBF6F7", width: "102px", height: "100%", borderRight: "1px solid #121212" }}>
+                                                                item
+                                                            </div>
+                                                            <div style={{ lineHeight: 2, paddingLeft: "32px" }}>
+                                                                {row.item}
+                                                            </div>
+                                                        </div>
+                                                        <div style={{ lineHeight: 1.9, width: "100%", height: "35px", fontSize: "18px", borderTop: "1px solid #121212", borderBottom: "1px solid #A3A3A3", backgroundColor: "#EBF6F7", fontWeight: 540 }}>
+                                                            MODEL
+                                                        </div>
+                                                    </>
+                                                )}
+
+                                                <div style={{ width: "100%", height: "35px", borderBottom: "1px solid #A3A3A3", display: "flex" }}>
+                                                    <div style={{ fontSize: "13px", letterSpacing: "-1px", lineHeight: 2.5, width: "320px", height: "100%", borderRight: "1px solid #121212" }}>
+                                                        {row.model}
+                                                    </div>
+                                                    <div style={{ lineHeight: 2, paddingLeft: "30px" }}>
+                                                        <span style={{ fontWeight: 550 }}>{row.quantity}</span> {row.unit}
+                                                    </div>
+                                                </div>
+
+                                                {
+                                                    //@ts-ignore
+                                                    idx === card.length - 1 && (
+                                                    <>
+                                                        <div style={{ backgroundColor: "#EBF6F7", width: "100%", height: "35px", display: "flex", borderBottom: "1px solid #121212" }}>
+                                                            <div style={{ fontSize: "13px", width: "3200px", height: "100%", borderRight: "1px solid #121212" }}>
+                                                                total
+                                                            </div>
+                                                            <div style={{ lineHeight: 2, paddingLeft: "30px" }}>
+                                                                <span style={{ fontWeight: 550 }}>{totalQuantity}</span> {row.unit}
+                                                            </div>
+                                                        </div>
+                                                        <div style={{ backgroundColor: "#B9DCDF", width: "100%", height: "1px", margin: "25px 0" }}></div>
+                                                    </>
+                                                )}
+
+                                            </>
+
+                                        )
+                                    })
+                                    }
+                                </div>
+                            })}
                         </div>
-                        {Object.values(previewData).map(v=>{
-                            return <Card>
-                                {/*@ts-ignore*/}
-                                {v?.map((src, idx)=>{
-                                    return <div style={{gridTemplateRows:"repeat(7, 60px)", gridAutoFlow:'row'}}>
-                                        <div style={{borderTop:'1px solid #121212', borderBottom: '1px solid #A3A3A3'}}>{!idx ? src.documentNumberFull : null}</div>
-                                        <div style={{}}>{!idx ? src.maker : null}</div>
-                                        <div>{!idx ? src.item : null}</div> &nbsp;&nbsp;
-                                        <span>{src.model}</span> &nbsp;&nbsp;
-                                        <span>{src.quantity}</span> &nbsp;&nbsp;
-                                        <span>{src.unit}</span>
-                                    </div>
-                                })
-                                }
-                            </Card>
-                        })}
                     </Modal>
 
                     <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gridColumnGap: 10}}>
