@@ -194,7 +194,7 @@ export default function rfqRead({dataList}) {
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateRows: '250px 1fr', height: '100%', gridColumnGap: 5}}>
                 <Card title={'메일전송'} style={{fontSize: 12, border: '1px solid lightGray'}} >
-                    <Modal title={<div style={{display:'flex', justifyContent:'space-between', padding:'0 20px', boxSizing:'border-box', lineHeight: 2.5, fontWeight:550 }}>메일전송<Button onClick={sendMail}>전송</Button></div>} open={isModalOpen} onCancel={()=>setIsModalOpen(false)} >
+                    <Modal okText={'메일 전송'} cancelText={'취소'} onOk={sendMail} title={<div style={{ lineHeight: 2.5, fontWeight:550 }}>메일전송</div>} open={isModalOpen} onCancel={()=>setIsModalOpen(false)} >
 
                         {Object.values(previewData).map((mail, i1) => {
 
@@ -220,7 +220,7 @@ export default function rfqRead({dataList}) {
                                     whiteSpace: 'pre-line'
                                 }}>
                                     <span style={{fontWeight: 550}}>[
-                                        {mail?.[0]?.[0]?.managerName}]</span> 님<br/><br/>
+                                        {Object.values(mail)?.[0]?.[0].managerName}]</span> 님<br/><br/>
                                     안녕하십니까. <span style={{fontWeight: 550}}>만쿠무역 [{userInfo.name}]</span> 입니다.<br/>
                                     아래 견적 부탁드립니다.
                                 </div>
