@@ -17,7 +17,12 @@ export default function Main({dataList, date}) {
     const userInfo = useAppSelector((state) => state.user);
 
     const [datas, setDatas] = useState(dataList)
-    const [info, setInfo] = useState({searchDocumentNumber: '', searchCustomerName: '', year : date['year'], month : date['month']})
+    const [info, setInfo] = useState({
+        searchDocumentNumber: '',
+        searchCustomerName: '',
+        year: date['year'],
+        month: date['month']
+    })
 
     const dateCellRender = (value) => {
 
@@ -64,8 +69,8 @@ export default function Main({dataList, date}) {
 
     async function searchInfo() {
 
-        console.log(info['year'],'info[\'year\']:')
-        console.log(info['month'],'info[\'year\']:')
+        console.log(info['year'], 'info[\'year\']:')
+        console.log(info['month'], 'info[\'year\']:')
         const result = await getData.post('order/getOrderListByMonth', {
             "year": info['year'],     // 조회년도
             "month": info['month'],       // 조회월
@@ -104,11 +109,20 @@ export default function Main({dataList, date}) {
                         <Button type={'primary'} onClick={searchInfo}>조회</Button>
                     </div>
                     {/*@ts-ignored*/}
-                    <Calendar mode={"month"}
-                        dateCellRender={dateCellRender}
-                        // monthCellRender={monthCellRender}
-                        onPanelChange={onPanelChange}/>
-
+                    <div style={{display: "grid", gridTemplateColumns: '1fr 1fr', columnGap: 30, paddingTop: 50}}>
+                        <Card title={'거래 예상 납기'}>
+                            <Calendar mode={"month"}
+                                      dateCellRender={dateCellRender}
+                                // monthCellRender={monthCellRender}
+                                      onPanelChange={onPanelChange}/>
+                        </Card>
+                        <Card title={'거래 납기'}>
+                            <Calendar mode={"month"}
+                                      dateCellRender={dateCellRender}
+                                // monthCellRender={monthCellRender}
+                                      onPanelChange={onPanelChange}/>
+                        </Card>
+                    </div>
                 </Card>
             </div>
         </LayoutComponent>
@@ -151,7 +165,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     return {
         props: {
             dataList: result.data?.entity?.ordersCalendar,
-            date : {year : year, month : month}
+            date: {year: year, month: month}
         }
     }
 })

@@ -1,35 +1,35 @@
-import React, {useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Input from "antd/lib/input/Input";
+import Select from "antd/lib/select";
 import LayoutComponent from "@/component/LayoutComponent";
-import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
-import TextArea from "antd/lib/input/TextArea";
-
-import {makerRegistInitial, subRfqWriteInitial} from "@/utils/initialList";
-import {subRfqWriteInfo} from "@/utils/modalDataList";
-import {getData} from "@/manage/function/api";
+import {CopyOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
+import Button from "antd/lib/button";
+import {rfqReadColumns} from "@/utils/columnList";
+import DatePicker from "antd/lib/date-picker";
+import {subRfqReadInitial} from "@/utils/initialList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
-import Button from "antd/lib/button";
-import {RetweetOutlined, SaveOutlined} from "@ant-design/icons";
+import {getData} from "@/manage/function/api";
+import moment from "moment";
+import * as XLSX from "xlsx";
+import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
-import {makerColumn} from "@/utils/columnList";
 
-const TwinInputBox = ({children}) => {
-    return <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: 5, paddingTop: 8}}>
-        {children}
-    </div>
-}
+const {RangePicker} = DatePicker
 
-export default function makerRead({dataList}) {
 
-    const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+export default function MakerRead({dataList}) {
+    const gridRef = useRef(null);
+    const [selectedRows, setSelectedRows] = useState([]);
+    const {estimateRequestList, pageInfo} = dataList;
+    const [info, setInfo] = useState(subRfqReadInitial);
+    const [tableData, setTableData] = useState(estimateRequestList);
 
-    const [info, setInfo] = useState<any>(makerRegistInitial)
-    const [listData, setListData] = useState<any>(dataList?.makerList)
 
-    console.log(selectedRowKeys,'selectedRowKeys:')
+    // console.log(selectedRows, 'selectedRows')
+
 
     function onChange(e) {
 
@@ -41,120 +41,200 @@ export default function makerRead({dataList}) {
         })
     }
 
-    async function saveFunc() {
-        if(!info['makerName'] || !info['item']){
-           return message.warn('MAKER 또는 ITEM 내용을 입력하셔야 합니다')
+    useEffect(() => {
+        const copyData: any = {...info}
+        copyData['searchDate'] = [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
+        setInfo(copyData);
+        // setTableInfo(transformData(estimateRequestList, 'estimateRequestId', 'estimateRequestDetailList'));
+        // setTableData(estimateRequestList);
+        // console.log(tableData, 'setTableData')
+    }, [])
+
+
+    async function searchInfo() {
+        const copyData: any = {...info}
+        const {searchDate}: any = copyData;
+        if (searchDate) {
+            copyData['searchStartDate'] = searchDate[0];
+            copyData['searchEndDate'] = searchDate[1];
         }
-           const result = await getData.post('maker/addMaker', info)
-
-            console.log(result,':::')
-
-        // if (!info['estimateRequestDetailList'].length) {
-        //     message.warn('하위 데이터 1개 이상이여야 합니다')
-        // } else {
-        //     const copyData = {...info}
-        //     copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
-        //
-        //     await getData.post('estimate/addEstimateRequest', copyData).then(v => {
-        //     })
-        // }
+        console.log(copyData,'copyData:')
+        const result = await getData.post('estimate/getEstimateRequestList', {...copyData,   "page": 1,
+            "limit": -1});
+        // setTableInfo(transformData(result?.data?.entity?.estimateRequestList, 'estimateRequestId', 'estimateRequestDetailList'));
+        console.log(result?.data?.entity?.estimateRequestList,'result?.data?.entity?.estimateRequestList:')
+        setTableData(result?.data?.entity?.estimateRequestList);
     }
+
+
+    function deleteList(checkList) {
+        const api = gridRef.current.api;
+        console.log(api.getSelectedRows(),':::')
+    }
+
+
+
+    async function getDetailData(params) {
+        const result = await getData.post('estimate/getEstimateRequestDetail', {
+            estimateRequestId:params
+        });
+        setTableData(result?.data?.entity?.estimateRequestList)
+    }
+
+    const downloadExcel = () => {
+
+        const worksheet = XLSX.utils.json_to_sheet(tableData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+        XLSX.writeFile(workbook, "example.xlsx");
+    };
+
+    const rowSelection = {
+        onChange: (selectedRowKeys, selectedRows) => {
+            selectedRows = selectedRowKeys
+        },
+        onDoubleClick: (src) => {
+            console.log(src, ':::')
+        },
+        getCheckboxProps: (record) => ({
+            disabled: record?.name === 'Disabled User',
+            // Column configuration not to be checked
+            name: record?.name,
+        }),
+    };
 
     return <>
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateColumns: '350px 1fr', height: '100%', gridColumnGap: 5}}>
-                <Card title={'메이커 관리'} style={{fontSize: 12, border: '1px solid lightGray'}}>
+                <Card title={'의뢰 조회'} style={{fontSize: 12, border: '1px solid lightGray'}}>
                     <Card size={'small'} style={{
                         fontSize: 13,
                         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                     }}>
-                        <TwinInputBox>
-                            <div>
-                                <div style={{paddingBottom: 3}}>MAKER</div>
-                                <Input id={'makerName'} value={info['makerName']} onChange={onChange} size={'small'}/>
-                            </div>
-                            <div>
-                                <div style={{paddingBottom: 3}}>ITEM</div>
-                                <Input id={'item'} value={info['item']} onChange={onChange} size={'small'}/>
-                            </div>
-                        </TwinInputBox>
-                        <TwinInputBox>
-                            <div>
-                                <div style={{paddingBottom: 3}}>홈페이지</div>
-                                <Input id={'homepage'} value={info['homepage']} onChange={onChange} size={'small'}/>
-                            </div>
-                            <div>
-                                <div style={{paddingBottom: 3}}>AREA</div>
-                                <Input id={'area'} value={info['area']} onChange={onChange} size={'small'}/>
-                            </div>
-                        </TwinInputBox>
-                        <TwinInputBox>
-                            <div>
-                                <div style={{paddingBottom: 3}}>원산지</div>
-                                <Input id={'origin'} value={info['origin']} onChange={onChange} size={'small'}/>
-                            </div>
-                            <div>
-                                <div style={{paddingBottom: 3}}>담당자확인</div>
-                                <Input id={'managerConfirm'} value={info['managerConfirm']} onChange={onChange} size={'small'}/>
-                            </div>
-                        </TwinInputBox>
-                        <TwinInputBox>
-                            <div>
-                                <div style={{paddingBottom: 3}}>한국대리점</div>
-                                <Input id={'koreanAgency'} value={info['koreanAgency']} onChange={onChange} size={'small'}/>
-                            </div>
-                            <div>
-                                <div style={{paddingBottom: 3}}>직접확인</div>
-                                <Input id={'directConfirm'} value={info['directConfirm']} onChange={onChange} size={'small'}/>
-                            </div>
-                        </TwinInputBox>
+                        <div>
+                            <div style={{paddingBottom: 3}}>작성일자</div>
+                            <RangePicker style={{width: '100%'}}
+                                         value={[moment(info['searchDate'][0]), moment(info['searchDate'][1])]}
+                                         id={'searchDate'} size={'small'} onChange={(date, dateString) => {
+                                onChange({
+                                    target: {
+                                        id: 'searchDate',
+                                        value: date ? [moment(date[0]).format('YYYY-MM-DD'), moment(date[1]).format('YYYY-MM-DD')] : [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
+                                    }
+                                })
+                            }
+                            }/>
+                        </div>
+                        <div style={{marginTop: 8}}>
+                            <div style={{paddingBottom: 3}}>검색조건</div>
+                            <Select id={'searchType'}
+                                    onChange={(src) => onChange({target: {id: 'searchType', value: src}})}
+                                    size={'small'} value={info['searchType']} options={[
+                                {value: '0', label: '전체'},
+                                {value: '1', label: '회신'},
+                                {value: '2', label: '미회신'}
+                            ]} style={{width: '100%'}}>
+                            </Select>
+                        </div>
+                        <div style={{marginTop: 8}}>
+                            <div style={{paddingBottom: 3}}>문서번호</div>
+                            <Input id={'searchDocumentNumber'} onChange={onChange} size={'small'}/>
+                        </div>
+                        <div style={{marginTop: 8}}>
+                            <div style={{paddingBottom: 3}}>거래처명</div>
+                            <Input id={'searchCustomerName'} onChange={onChange} size={'small'}/>
+                        </div>
+                        <div style={{marginTop: 8}}>
+                            <div style={{paddingBottom: 3}}>MAKER</div>
+                            <Input id={'searchMaker'} onChange={onChange} size={'small'}/>
+                        </div>
+                        <div style={{marginTop: 8}}>
+                            <div style={{paddingBottom: 3}}>MODEL</div>
+                            <Input id={'searchModel'} onChange={onChange} size={'small'}/>
+                        </div>
+                        <div style={{marginTop: 8}}>
+                            <div style={{paddingBottom: 3}}>ITEM</div>
+                            <Input id={'searchItem'} onChange={onChange} size={'small'}/>
+                        </div>
+                        <div style={{marginTop: 8}}>
+                            <div style={{paddingBottom: 3}}>등록직원명</div>
+                            <Input id={'searchCreatedBy'} onChange={onChange} size={'small'}/>
+                        </div>
+                        <div style={{paddingTop: 20, textAlign: 'right'}}>
+                            <Button type={'primary'} style={{marginRight: 8}}
+                                    onClick={searchInfo}><SearchOutlined/>조회</Button>
+                        </div>
 
-                        <div>
-                            <div style={{paddingBottom: 3}}>FTA-No.</div>
-                            <Input id={'ftaNumber'} value={info['ftaNumber']} onChange={onChange} size={'small'}/>
-                        </div>
-                        <div>
-                            <div style={{paddingBottom: 3}}>지시사항</div>
-                            <TextArea id={'instructions'} value={info['instructions']} onChange={onChange} size={'small'}/>
-                        </div>
                     </Card>
 
-                    <div style={{float :'right', paddingTop : 10}}>
-                    <Button size={'small'} type={'primary'} style={{marginRight: 8}}
-                            onClick={saveFunc}><SaveOutlined/>저장</Button>
-                    {/*@ts-ignored*/}
-                    <Button size={'small'} type={'danger'} style={{marginRight: 8}}
-                            onClick={()=>setInfo(makerRegistInitial)}><RetweetOutlined/>초기화</Button>
-                    </div>
                 </Card>
 
+                <TableGrid
+                    gridRef={gridRef}
+                    columns={rfqReadColumns}
+                    tableData={tableData}
+                    setSelectedRows={setSelectedRows}
+                    // dataInfo={tableOrderReadInfo}
+                    // setDatabase={setInfo}
+                    // setTableInfo={setTableData}
+                    type={'read'}
+                    excel={true}
+                    funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
+                        <CopyOutlined/>복사
+                    </Button>
+                        {/*@ts-ignored*/}
+                        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={deleteList}>
+                            <CopyOutlined/>삭제
+                        </Button>
+                        <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={downloadExcel}>
+                            <FileExcelOutlined/>출력
+                        </Button></div>}
+                />
 
-                <CustomTable selectedRowKeys={selectedRowKeys} setSelectedRowKeys={setSelectedRowKeys} columns={makerColumn} initial={subRfqWriteInitial} dataInfo={subRfqWriteInfo} setInfo={setInfo} info={listData} />
             </div>
         </LayoutComponent>
     </>
 }
 
-// @ts-ignored
+
+// @ts-ignore
 export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
 
 
-    const userAgent = ctx.req.headers['user-agent'];
     let param = {}
 
     const {userInfo} = await initialServerRouter(ctx, store);
 
-    const result = await getData.post('maker/getMakerList', {
-        "searchType": "",       // 구분 1: MAKER, 2: ITEM, 3: "AREA"
-        "searchText": "",       // 검색어
+    if (!userInfo) {
+        return {
+            redirect: {
+                destination: '/', // 리다이렉트할 경로
+                permanent: false, // true면 301 리다이렉트, false면 302 리다이렉트
+            },
+        };
+    }
+
+    store.dispatch(setUserInfo(userInfo));
+
+    const result = await getData.post('estimate/getEstimateRequestList', {
+        "searchEstimateRequestId": "",      // 견적의뢰 Id
+        "searchType": "",                   // 검색조건 1: 회신, 2: 미회신
+        "searchStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),              // 작성일자 시작일
+        "searchEndDate": moment().format('YYYY-MM-DD'),                // 작성일자 종료일
+        "searchDocumentNumber": "",         // 문서번호
+        "searchCustomerName": "",           // 거래처명
+        "searchMaker": "",                  // MAKER
+        "searchModel": "",                  // MODEL
+        "searchItem": "",                   // ITEM
+        "searchCreatedBy": "",              // 등록직원명
+        "searchManagerName": "",            // 담당자명
+        "searchMobileNumber": "",           // 담당자 연락처
+        "searchBiddingNumber": "",          // 입찰번호(미완성)
         "page": 1,
-        "limit": 20
+        "limit": -1
     });
 
 
-    if (userInfo) {
-        store.dispatch(setUserInfo(userInfo));
-    }
     return {
         props: {dataList: result?.data?.entity}
     }

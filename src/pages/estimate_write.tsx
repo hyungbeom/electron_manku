@@ -4,13 +4,13 @@ import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
 import TextArea from "antd/lib/input/TextArea";
 import {
-    CopyOutlined,
+    CopyOutlined, DownCircleFilled,
     DownloadOutlined,
     EditOutlined,
     FileExcelOutlined,
     FileSearchOutlined,
     RetweetOutlined,
-    SaveOutlined
+    SaveOutlined, UpCircleFilled
 } from "@ant-design/icons";
 import {tableOrderWriteColumn} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
@@ -48,7 +48,7 @@ export default function EstimateWrite({dataInfo}) {
     const [info, setInfo] = useState<any>(estimateWriteInitial)
     const [isMainModalOpen, setIsMainModalOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
-
+    const [mini, setMini] = useState(true);
     const [agencyData, setAgencyData] = useState([]);
     const [customerData, setCustomerData] = useState([]);
 
@@ -200,36 +200,44 @@ export default function EstimateWrite({dataInfo}) {
             "searchItem": "",           // ITEM
             "searchCreatedBy": "",      // 등록 관리자 이름
             "page": 1,
-            "limit": 20
+            "limit": -1
         });
 
         if (result?.data?.code === 1) {
-            console.log(result?.data?.entity?.estimateList, '::::::')
+
+            if(result?.data?.entity?.estimateList.length) {
+                setInfo(v => {
+                        return {...v, ...result?.data?.entity?.estimateList[0], writtenDate : moment(result?.data?.entity?.estimateList[0].writtenDate)}
+                    }
+                )
+            }
+        }
+    }
+
+    function handleKeyPressDoc(e) {
+        if (e.key === 'Enter') {
+            findDocument();
         }
     }
 
 
     return <>
         <LayoutComponent>
-            <div style={{display: 'grid', gridTemplateRows: '450px 1fr', height: '100%', gridColumnGap: 5}}>
+            <div style={{display: 'grid', gridTemplateRows: `${mini ? '500px' : '65px'} 1fr`, height: '100%', gridColumnGap: 5}}>
 
                 <SearchAgendaModal info={info} setInfo={setInfo} agencyData={agencyData} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
                 <SearchCustomerModal info={info} setInfo={setInfo} customerData={customerData} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
-                <Card title={dataInfo? '견적서 수정':'견적서 작성'} style={{fontSize: 12, border: '1px solid lightGray'}}>
+                <Card title={dataInfo? '견적서 수정':'견적서 작성'} style={{fontSize: 12, border: '1px solid lightGray'}} extra={<span style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>setMini(v => !v)}> {!mini ? <UpCircleFilled/> : <DownCircleFilled/>}</span>} >
 
-                    <div style={{display : 'grid', gridTemplateColumns : '220px 320px 320px 320px 1fr', columnGap : 10}}>
-                    <Card title={'base'} size={'small'} style={{
+                    <Card size={'small'} style={{
                         fontSize: 13,
-                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
+                        marginBottom : 5
                     }}>
-
+                        <div style={{display : 'grid', gridTemplateColumns : '1fr 1fr 1fr', width : 640, columnGap : 20}}>
                             <div>
-                                <div style={{paddingTop: 8}}>INQUIRY NO.</div>
-                                <Input disabled={true} size={'small'}/>
-                            </div>
-                            <div>
-                                <div style={{paddingTop: 8}}>작성일</div>
-                                <DatePicker value={info['writtenDate']}
+                                <div style={{paddingTop: 8, width : '100%'}}>작성일</div>
+                                <DatePicker value={info['writtenDate']} style={{width : '100%'}}
                                             onChange={(date, dateString) => onChange({
                                                 target: {
                                                     id: 'writtenDate',
@@ -238,10 +246,17 @@ export default function EstimateWrite({dataInfo}) {
                                             })
                                             } id={'writtenDate'} size={'small'}/>
                             </div>
-
+                            <div>
+                                <div style={{paddingTop: 8}}>INQUIRY NO.</div>
+                                <Input disabled={true} size={'small'}/>
+                            </div>
+                        </div>
                     </Card>
 
-                    <Card title={'inpuiry 정보 및 supplier information'} size={'small'}
+
+                    <div style={{display : 'grid', gridTemplateColumns : '1fr 1.2fr  1.22fr 1.5fr', columnGap : 10}}>
+
+                    <Card size={'small'}
                           style={{
                               fontSize: 13,
                               boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
@@ -251,6 +266,7 @@ export default function EstimateWrite({dataInfo}) {
                                 <div style={{paddingTop: 8}}>연결 INQUIRY No.</div>
                                 <Input size={'small'} id={'documentNumberFull'} value={info['documentNumberFull']}
                                        onChange={onChange}
+                                       onKeyDown={handleKeyPressDoc}
                                        suffix={<DownloadOutlined style={{cursor: 'pointer'}} onClick={findDocument}/>}/>
                             </div>
                             <div>
@@ -267,7 +283,7 @@ export default function EstimateWrite({dataInfo}) {
                     </Card>
 
 
-                    <Card title={'CUSTOMER INFORMATION'} size={'small'} style={{
+                    <Card size={'small'} style={{
                         fontSize: 13,
                         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                     }}>
@@ -308,7 +324,7 @@ export default function EstimateWrite({dataInfo}) {
 
                     </Card>
 
-                    <Card title={'OPTION'} size={'small'} style={{
+                    <Card size={'small'} style={{
                         fontSize: 13,
                         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                     }}>
@@ -348,7 +364,7 @@ export default function EstimateWrite({dataInfo}) {
 
                     </Card>
 
-                    <Card title={'ETC'} size={'small'} style={{
+                    <Card size={'small'} style={{
                         fontSize: 13,
                         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                     }}>
@@ -371,7 +387,7 @@ export default function EstimateWrite({dataInfo}) {
                         </div>
 
                     </Card>
-                        <div style={{paddingTop: 20}}>
+                        <div style={{paddingTop: 10}}>
                             {/*@ts-ignored*/}
 
                             <Button type={'primary'} size={'small'} style={{marginRight: 8}}
