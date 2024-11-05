@@ -448,30 +448,6 @@ export default function rfqRead({dataList}) {
                     pageInfo={paginationInfo}
                     excel={true}/>
 
-
-                {/*<CustomTable columns={rfqReadColumns}*/}
-                {/*             initial={subRfqReadInitial}*/}
-                {/*             dataInfo={subRfqReadInfo}*/}
-                {/*             info={tableInfo}*/}
-                {/*             setDatabase={setInfo}*/}
-                {/*             setTableInfo={setTableInfo}*/}
-                {/*             rowSelection={rowSelection}*/}
-                {/*             pageInfo={paginationInfo}*/}
-                {/*             visible={true}*/}
-                {/*             setPaginationInfo={setPaginationInfo}*/}
-
-                {/*             subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>*/}
-                {/*                 <CopyOutlined/>복사*/}
-                {/*             </Button>*/}
-                {/*                 /!*@ts-ignored*!/*/}
-                {/*                 <Button type={'danger'} size={'small'} style={{fontSize: 11}} onClick={deleteList}>*/}
-                {/*                     <CopyOutlined/>삭제*/}
-                {/*                 </Button>*/}
-                {/*                 <Button type={'dashed'} size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>*/}
-                {/*                     <FileExcelOutlined/>출력*/}
-                {/*                 </Button></>}*/}
-                {/*/>*/}
-
             </div>
         </LayoutComponent>
     </>
