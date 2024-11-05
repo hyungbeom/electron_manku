@@ -11,16 +11,10 @@ const TableGrid = ({
                        columns, tableData,
                        setSelectedRows,
                        setInfo,
-                       setDatabase,
                        modalComponent,
                        funcButtons,
                        listType = 'estimateRequestId',
                        listDetailType = 'estimateRequestDetailList',
-                       excel = false,
-                       pageInfo = null,
-                       setPaginationInfo,
-                       setTableData,
-                       handlePageChange,
                        type='read',
                        setIsModalOpen = undefined,
                        setItemId = undefined,
@@ -31,14 +25,6 @@ const TableGrid = ({
     const router = useRouter();
 
     const [data, setData] = useState(tableData);
-
-
-    // useEffect(() => {
-    //
-    //     setData([...tableData || []]); // 새로운 배열로 설정
-    //     // console.log(tableData, '~!~table grid');
-    // }, [tableData || [].length]);
-
 
 
     useEffect(()=>{
@@ -164,8 +150,8 @@ const TableGrid = ({
 
     };
 
-
     const handleDoubleClicked = (e) => {
+
         if (e.data.estimateRequestId)
             router.push(`/rfq_update?estimateRequestId=${e?.data?.estimateRequestId}`)
         if (e.data.estimateId)
@@ -234,7 +220,6 @@ const TableGrid = ({
             <AgGridReact theme={tableTheme} ref={gridRef}
                 //@ts-ignore
                          style={{width: '100%', height: '90%'}}
-                // onSelectionChanged={handleSelectionChange}
                          onRowDoubleClicked={handleDoubleClicked}
                          onRowValueChanged={handleRowValueChange}
                 //@ts-ignore
