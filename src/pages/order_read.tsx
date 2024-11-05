@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
 import CustomTable from "@/component/CustomTable";
@@ -23,19 +23,16 @@ import message from "antd/lib/message";
 
 const {RangePicker} = DatePicker
 
-const TwinInputBox = ({children}) => {
-    return <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: 5, paddingTop: 8}}>
-        {children}
-    </div>
-}
 
 export default function OrderRead({dataList}) {
+
+    const gridRef = useRef(null);
+
 
     const [selectedRows, setSelectedRows] = useState([]);
     const {orderList, pageInfo} = dataList;
     const [info, setInfo] = useState(orderReadInitial)
     const [tableData, setTableData] = useState(orderList)
-    const [paginationInfo, setPaginationInfo] = useState(pageInfo)
 
 
     function onChange(e) {
@@ -68,34 +65,12 @@ export default function OrderRead({dataList}) {
         const result = await getData.post('order/getOrderList', copyData);
         // setTableInfo(transformData(result?.data?.entity?.orderList, 'orderId', 'orderDetailList'));
         setTableData(result?.data?.entity?.orderList)
-        setPaginationInfo(result?.data?.entity?.pageInfo)
     }
 
-
-
-    async function deleteList() {
-
-        let deleteIdList = [];
-        selectedRows.forEach(v=>(
-            deleteIdList.push(v.orderId)
-        ))
-
-        console.log(deleteIdList, 'deleteIdList')
-
-        if (deleteIdList.length < 1)
-            return alert('하나 이상의 항목을 선택해주세요.')
-        else {
-            // @ts-ignore
-            for (const v of deleteIdList) {
-                await getData.post('order/deleteOrder', {
-                    orderId: v}).then(r=>{
-                    if(r.data.code === 1)
-                        console.log(v+'삭제완료')
-                });
-            }
-            message.success('삭제되었습니다.')
-            window.location.reload();
-        }
+    function deleteList(checkList) {
+        const api = gridRef.current.api;
+        console.log(api.getSelectedRows(),':::')
+        message.success('삭제되었습니다.')
     }
 
     const downloadExcel = () => {
@@ -179,37 +154,12 @@ export default function OrderRead({dataList}) {
 
                 </Card>
 
-                {/*<CustomTable columns={tableOrderReadColumns}*/}
-                {/*             initial={tableOrderReadInitial}*/}
-                {/*             dataInfo={tableOrderReadInfo}*/}
-                {/*             info={tableInfo}*/}
-                {/*             setDatabase={setInfo}*/}
-                {/*             setTableInfo={setTableInfo}*/}
-                {/*             rowSelection={rowSelection}*/}
-                {/*             pageInfo={paginationInfo}*/}
-                {/*             setPaginationInfo={setPaginationInfo}*/}
-                {/*             visible={true}*/}
-                {/*             handlePageChange={handlePageChange}*/}
-
-                {/*             subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>*/}
-                {/*                 <CopyOutlined/>복사*/}
-                {/*             </Button>*/}
-                {/*                 /!*@ts-ignored*!/*/}
-                {/*                 <Button type={'danger'} size={'small'} style={{fontSize: 11}} onClick={deleteList}>*/}
-                {/*                     <CopyOutlined/>삭제*/}
-                {/*                 </Button>*/}
-                {/*                 <Button type={'dashed'} size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>*/}
-                {/*                     <FileExcelOutlined/>출력*/}
-                {/*                 </Button></>}*/}
-                {/*/>*/}
-
                 <TableGrid
+                    gridRef={gridRef}
+                    listType={'orderId'}
                     columns={tableOrderReadColumns}
                     tableData={tableData}
-                    // setDatabase={setInfo}
-                    // setTableData={setTableData}
-                    // rowSelection={rowSelection}
-                    pageInfo={paginationInfo}
+                    type={'read'}
                     excel={true}
                     funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
                         <CopyOutlined/>복사
@@ -256,7 +206,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
         "searchItem": "",               // ITEM
         "searchEstimateManager": "",    // 견적서담당자명
         "page": 1,
-        "limit": 100
+        "limit": -1
     });
 
 

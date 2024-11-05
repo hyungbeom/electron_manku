@@ -21,6 +21,7 @@ const {RangePicker} = DatePicker
 
 
 export default function rfqRead({dataList}) {
+
     const gridRef = useRef(null);
     const [selectedRows, setSelectedRows] = useState([]);
     const {estimateRequestList, pageInfo} = dataList;
@@ -47,7 +48,6 @@ export default function rfqRead({dataList}) {
         setInfo(copyData);
         // setTableInfo(transformData(estimateRequestList, 'estimateRequestId', 'estimateRequestDetailList'));
         // setTableData(estimateRequestList);
-        // console.log(tableData, 'setTableData')
     }, [])
 
 
@@ -173,7 +173,7 @@ export default function rfqRead({dataList}) {
                     gridRef={gridRef}
                     columns={rfqReadColumns}
                     tableData={tableData}
-                    setSelectedRows={setSelectedRows}
+                    // setSelectedRows={setSelectedRows}
                     // dataInfo={tableOrderReadInfo}
                     // setDatabase={setInfo}
                     // setTableInfo={setTableData}

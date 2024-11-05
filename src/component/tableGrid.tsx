@@ -44,13 +44,14 @@ const TableGrid = ({
     useEffect(()=>{
         setData(tableData)
     },[tableData])
+
+
     const defaultColDef = useMemo(() => {
         return {
             flex: 1,
             minWidth: 80,
             filter: true,
             floatingFilter: true,
-            // editable: true,
             valueGetter: (params) => {
 
 
@@ -94,7 +95,6 @@ const TableGrid = ({
         // console.log(e.api.getEdit)
     }
 
-    const [estimateList, setEtimateList] = useState([])
 
     let estimate = {
         documentNumberFull: "",
