@@ -111,62 +111,8 @@ export default function MakerRead({dataList}) {
                         fontSize: 13,
                         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                     }}>
-                        <div>
-                            <div style={{paddingBottom: 3}}>작성일자</div>
-                            <RangePicker style={{width: '100%'}}
-                                         value={[moment(info['searchDate'][0]), moment(info['searchDate'][1])]}
-                                         id={'searchDate'} size={'small'} onChange={(date, dateString) => {
-                                onChange({
-                                    target: {
-                                        id: 'searchDate',
-                                        value: date ? [moment(date[0]).format('YYYY-MM-DD'), moment(date[1]).format('YYYY-MM-DD')] : [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
-                                    }
-                                })
-                            }
-                            }/>
-                        </div>
-                        <div style={{marginTop: 8}}>
-                            <div style={{paddingBottom: 3}}>검색조건</div>
-                            <Select id={'searchType'}
-                                    onChange={(src) => onChange({target: {id: 'searchType', value: src}})}
-                                    size={'small'} value={info['searchType']} options={[
-                                {value: '0', label: '전체'},
-                                {value: '1', label: '회신'},
-                                {value: '2', label: '미회신'}
-                            ]} style={{width: '100%'}}>
-                            </Select>
-                        </div>
-                        <div style={{marginTop: 8}}>
-                            <div style={{paddingBottom: 3}}>문서번호</div>
-                            <Input id={'searchDocumentNumber'} onChange={onChange} size={'small'}/>
-                        </div>
-                        <div style={{marginTop: 8}}>
-                            <div style={{paddingBottom: 3}}>거래처명</div>
-                            <Input id={'searchCustomerName'} onChange={onChange} size={'small'}/>
-                        </div>
-                        <div style={{marginTop: 8}}>
-                            <div style={{paddingBottom: 3}}>MAKER</div>
-                            <Input id={'searchMaker'} onChange={onChange} size={'small'}/>
-                        </div>
-                        <div style={{marginTop: 8}}>
-                            <div style={{paddingBottom: 3}}>MODEL</div>
-                            <Input id={'searchModel'} onChange={onChange} size={'small'}/>
-                        </div>
-                        <div style={{marginTop: 8}}>
-                            <div style={{paddingBottom: 3}}>ITEM</div>
-                            <Input id={'searchItem'} onChange={onChange} size={'small'}/>
-                        </div>
-                        <div style={{marginTop: 8}}>
-                            <div style={{paddingBottom: 3}}>등록직원명</div>
-                            <Input id={'searchCreatedBy'} onChange={onChange} size={'small'}/>
-                        </div>
-                        <div style={{paddingTop: 20, textAlign: 'right'}}>
-                            <Button type={'primary'} style={{marginRight: 8}}
-                                    onClick={searchInfo}><SearchOutlined/>조회</Button>
-                        </div>
-
+                        ㄴㅇㄹ
                     </Card>
-
                 </Card>
 
                 <TableGrid

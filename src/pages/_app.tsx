@@ -12,7 +12,7 @@ function App({Component, pageProps = {title: ''}, ...rest}: any) {
 
       return   <>
             <Script src={"https://accounts.google.com/gsi/client"} async defer/>
-
+          <Script src="https://apis.google.com/js/api.js" async defer/>
 
             <Provider store={store}>
                 <Component {...pageProps} />

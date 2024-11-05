@@ -401,6 +401,11 @@ export default function rqfWrite({dataInfo, display}) {
                                     <Input id={'agencyName'} value={info['agencyName']} onChange={onChange}
                                            size={'small'}/>
                                 </div>
+                                <div>
+                                    <div style={{paddingTop: 8}}>담당자</div>
+                                    <Input id={'agencyName'} value={info['agencyName']} onChange={onChange}
+                                           size={'small'}/>
+                                </div>
                             </Card>
 
                             <Card  size={'small'} style={{
@@ -468,9 +473,16 @@ export default function rqfWrite({dataInfo, display}) {
                                     <div style={{paddingBottom: 3}}>프로젝트 제목</div>
                                     <Input id={'maker'} value={info['maker']} onChange={onChange} size={'small'}/>
                                 </div>
-                                <div style={{paddingTop: 8}}>
-                                    <div style={{paddingBottom: 3}}>마감일자</div>
-                                    <Input id={'item'} value={info['item']} onChange={onChange} size={'small'}/>
+                                <div>
+                                    <div style={{paddingTop: 8, width : '100%'}}>마감일자</div>
+                                    <DatePicker value={info['writtenDate']} style={{width : '100%'}}
+                                                onChange={(date, dateString) => onChange({
+                                                    target: {
+                                                        id: 'writtenDate',
+                                                        value: date
+                                                    }
+                                                })
+                                                } id={'writtenDate'} size={'small'}/>
                                 </div>
                                 <div style={{paddingTop: 8}}>
                                     <div style={{paddingBottom: 3}}>End User</div>

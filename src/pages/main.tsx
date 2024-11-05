@@ -11,9 +11,10 @@ import Input from "antd/lib/input";
 import Button from "antd/lib/button";
 import moment from "moment";
 import {useState} from "react";
+import GoogleDrive from "@/component/Sample";
 
 
-export default function Main({dataList, date}) {
+export default function Main({dataList=[], date}) {
     const userInfo = useAppSelector((state) => state.user);
 
     const [datas, setDatas] = useState(dataList)
@@ -125,6 +126,7 @@ export default function Main({dataList, date}) {
                     </div>
                 </Card>
             </div>
+            <GoogleDrive/>
         </LayoutComponent>
     </>
 }
@@ -164,7 +166,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     return {
         props: {
-            dataList: result.data?.entity?.ordersCalendar,
+            // dataList: result.data?.entity?.ordersCalendar,
             date: {year: year, month: month}
         }
     }

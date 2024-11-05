@@ -105,7 +105,7 @@ export default function rfqRead({dataList}) {
 
     return <>
         <LayoutComponent>
-            <div style={{display: 'grid', gridTemplateColumns: '350px 1fr', height: '100%', gridColumnGap: 5}}>
+            <div style={{display: 'grid', gridTemplateRows: '150px 1fr', height: '100%', gridColumnGap: 5}}>
                 <Card title={'의뢰 조회'} style={{fontSize: 12, border: '1px solid lightGray'}}>
                     <Card size={'small'} style={{
                         fontSize: 13,

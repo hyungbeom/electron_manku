@@ -397,11 +397,12 @@ export default function rfqRead({dataList}) {
                                 ]} style={{width: '100%'}}>
                                 </Select>
                             </div>
-                            <div style={{marginTop: 20, width: 250}}>
-                                <Button type={'primary'} style={{marginRight: 8}}
+                            <div style={{paddingTop : 30}}>
+
+                                <Button type={'primary'} size={'small'} style={{marginRight: 8}}
                                         onClick={searchInfo}><SearchOutlined/>조회</Button>
                                 {/*@ts-ignore*/}
-                                <Button type={'danger'} style={{marginRight: 8, letterSpacing: -1}}
+                                <Button type={'danger'} size={'small'} style={{marginRight: 8, letterSpacing: -1}}
                                         onClick={handleSendMail}><MailOutlined/>선택 견적서 발송</Button>
                             </div>
                         </div>
