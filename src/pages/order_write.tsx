@@ -1,20 +1,14 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
-import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
-import {
-    CopyOutlined, DownCircleFilled, DownloadOutlined,
-    EditOutlined,
-    FileExcelOutlined, FileSearchOutlined,
+import {CopyOutlined, DownCircleFilled, DownloadOutlined,
     RetweetOutlined,
     SaveOutlined,
-    UpCircleFilled
-} from "@ant-design/icons";
+    UpCircleFilled} from "@ant-design/icons";
 import {
     searchAgencyCodeColumn,
     searchCustomerColumn,
-    subRfqWriteColumn, tableEstimateWriteColumns,
     tableOrderWriteColumn,
 } from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
@@ -39,27 +33,18 @@ import SearchAgendaModal from "@/component/SearchAgendaModal";
 import SearchCustomerModal from "@/component/SearchCustomerModal";
 import TextArea from "antd/lib/input/TextArea";
 
-const TwinInputBox = ({children}) => {
-    return <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: 5, paddingTop: 8}}>
-        {children}
-    </div>
-}
-
 export default function OrderWriter({dataInfo}) {
-
+    const gridRef = useRef(null);
     const router = useRouter();
 
-    const [selectedRows, setSelectedRows] = useState([]);
+    let checkList = []
 
     const userInfo = useAppSelector((state) => state.user);
     const [info, setInfo] = useState<any>(orderWriteInitial)
-    const [isMainModalOpen, setIsMainModalOpen] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
     const [mini, setMini] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
     const [agencyData, setAgencyData] = useState([]);
     const [customerData, setCustomerData] = useState([]);
-
-    // console.log(dataInfo, 'dataInfo~~')
 
 
     useEffect(() => {
@@ -113,6 +98,88 @@ export default function OrderWriter({dataInfo}) {
         deleteList(checkList)
     }
 
+    function deleteList(checkList) {
+
+        const api = gridRef.current.api;
+
+        // 전체 행 반복하면서 선택되지 않은 행만 추출
+        const uncheckedData = [];
+        for (let i = 0; i < api.getDisplayedRowCount(); i++) {
+            const rowNode = api.getDisplayedRowAtIndex(i);
+            if (!rowNode.isSelected()) {
+                uncheckedData.push(rowNode.data);
+            }
+        }
+
+        let copyData = {...info}
+        copyData['orderDetailList'] = uncheckedData;
+        console.log(copyData, 'copyData::')
+        setInfo(copyData);
+
+    }
+
+    function addRow() {
+        let copyData = {...info};
+        copyData['orderDetailList'].push({
+            "model": "",           // MODEL
+            "unit": "ea",               // 단위
+            "currency": "krw",          // CURR
+            "net": 0,            // NET/P
+            "quantity": 1,              // 수량
+            "receivedQuantity": 0,
+            "unreceivedQuantity": 0,
+            "unitPrice": 0,
+            "amount": 0,
+        })
+
+        setInfo(copyData)
+    }
+
+
+    const handleKeyPress = async (e) => {
+        if (e.key === 'Enter') {
+            if (e.target.id === 'agencyCode') {
+                if(!info['agencyCode']){
+                    return false;
+                }
+                const result = await getData.post('agency/getAgencyListForEstimate', {
+                    "searchText": info['agencyCode'],       // 대리점코드 or 대리점 상호명
+                    "page": 1,
+                    "limit": -1
+                })
+                if (result.data.entity.agencyList.length > 1) {
+                    setAgencyData(result.data.entity.agencyList)
+                    setIsModalOpen({event1: true, event2: false})
+                } else if (!!result.data.entity.agencyList.length) {
+                    const {agencyCode, agencyName} = result.data.entity.agencyList[0]
+
+                    setInfo(v => {
+                        return {...v, agencyCode: agencyCode, agencyName: agencyName}
+                    })
+                }
+            }else{
+                if(!info['customerName']){
+                    return false
+                }
+                const result = await getData.post('customer/getCustomerListForEstimate', {
+                    "searchText": info['customerName'],       // 대리점코드 or 대리점 상호명
+                    "page": 1,
+                    "limit": -1
+                })
+                if(result.data.entity.customerList.length > 1){
+                    setCustomerData(result.data.entity.customerList)
+                    setIsModalOpen({event1: false, event2: true})
+                } else if (!!result.data.entity.customerList.length) {
+                    const {customerName, managerName, directTel, faxNumber} = result.data.entity.customerList[0]
+
+
+                    setInfo(v => {
+                        return {...v, customerName: customerName, managerName: managerName,phoneNumber:directTel, faxNumber : faxNumber }
+                    })
+                }
+            }
+        }
+    };
 
     function SearchAgencyCode() {
         const [data, setData] = useState([])
@@ -260,51 +327,6 @@ export default function OrderWriter({dataInfo}) {
         </Modal>
     }
 
-    const handleKeyPress = async (e) => {
-        if (e.key === 'Enter') {
-            if (e.target.id === 'agencyCode') {
-                if(!info['agencyCode']){
-                    return false;
-                }
-                const result = await getData.post('agency/getAgencyListForEstimate', {
-                    "searchText": info['agencyCode'],       // 대리점코드 or 대리점 상호명
-                    "page": 1,
-                    "limit": -1
-                })
-                if (result.data.entity.agencyList.length > 1) {
-                    setAgencyData(result.data.entity.agencyList)
-                    setIsModalOpen({event1: true, event2: false})
-                } else if (!!result.data.entity.agencyList.length) {
-                    const {agencyCode, agencyName} = result.data.entity.agencyList[0]
-
-                    setInfo(v => {
-                        return {...v, agencyCode: agencyCode, agencyName: agencyName}
-                    })
-                }
-            }else{
-                if(!info['customerName']){
-                    return false
-                }
-                const result = await getData.post('customer/getCustomerListForEstimate', {
-                    "searchText": info['customerName'],       // 대리점코드 or 대리점 상호명
-                    "page": 1,
-                    "limit": -1
-                })
-                if(result.data.entity.customerList.length > 1){
-                    setCustomerData(result.data.entity.customerList)
-                    setIsModalOpen({event1: false, event2: true})
-                } else if (!!result.data.entity.customerList.length) {
-                    const {customerName, managerName, directTel, faxNumber} = result.data.entity.customerList[0]
-
-
-                    setInfo(v => {
-                        return {...v, customerName: customerName, managerName: managerName,phoneNumber:directTel, faxNumber : faxNumber }
-                    })
-                }
-            }
-        }
-    };
-
 
 
     const downloadExcel = () => {
@@ -319,33 +341,6 @@ export default function OrderWriter({dataInfo}) {
         XLSX.writeFile(workbook, "example.xlsx");
     };
 
-    function deleteList(checkList) {
-        let copyData = { ...info };
-
-        console.log(checkList, "checkList");
-        checkList.forEach(v => console.log(v.serialNumber, "serialNumber"));
-
-        const checkSerialNumbers = checkList.map(item => item.serialNumber);
-
-        const result = copyData['orderDetailList'].filter(v => !checkSerialNumbers.includes(v.serialNumber));
-        console.log(result, "result");
-        copyData['orderDetailList']=result;
-
-        setInfo(copyData)
-    }
-
-    const rowSelection = {
-        onChange: (selectedRowKeys, selectedRows) => {
-
-            selectedRows  = selectedRowKeys
-
-        },
-        getCheckboxProps: (record) => ({
-            disabled: record.name === 'Disabled User',
-            // Column configuration not to be checked
-            name: record.name,
-        }),
-    };
 
     const printSheet = () => {
 
@@ -358,7 +353,7 @@ export default function OrderWriter({dataInfo}) {
             "searchDocumentNumber": info['documentNumberFull'],     // 문서번호
             "searchCustomerName": "",       // 거래처명
             "searchMaker": "",              // MAKER
-            "searchModel": "sssss",              // MODEL
+            "searchModel": "",              // MODEL
             "searchItem": "",               // ITEM
             "searchEstimateManager": "",    // 견적서담당자명
             "page": 1,
@@ -367,9 +362,11 @@ export default function OrderWriter({dataInfo}) {
 
         if (result?.data?.code === 1) {
 
-            if(result?.data?.entity?.estimateList.length) {
+            if(result?.data?.entity?.orderList.length) {
                 setInfo(v => {
-                        return {...v, ...result?.data?.entity?.estimateList[0], writtenDate : moment(result?.data?.entity?.estimateList[0].writtenDate)}
+                        return {...v, ...result?.data?.entity?.orderList[0], writtenDate : moment(result?.data?.entity?.orderList[0].writtenDate),
+                            delivery : moment(result?.data?.entity?.orderList[0].delivery)
+                        }
                     }
                 )
             }
@@ -556,179 +553,29 @@ export default function OrderWriter({dataInfo}) {
                 </Card>
 
                 <TableGrid
+                    gridRef={gridRef}
                     columns={tableOrderWriteColumn}
                     tableData={info['orderDetailList']}
-                    setSelectedRows={setSelectedRows}
                     listType={'orderId'}
-                    // dataInfo={tableOrderReadInfo}
+                    listDetailType={'orderDetailList'}
                     setInfo={setInfo}
-                    // setTableInfo={setTableInfo}
                     excel={true}
-                    modalComponent={
-                        <TableModal listType={'orderDetailList'} title={'발주서 세부 작성'}
-                                    initialData={tableOrderWriteInitial}
-                                    dataInfo={subOrderWriteInfo}
-                                    setInfoList={setInfo}
-                                    isModalOpen={isMainModalOpen}
-                                    setIsModalOpen={setIsMainModalOpen}
-                        />}
-                    funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
-                        <CopyOutlined/>복사
-                    </Button>
+                    funcButtons={<div>
+                        {/*@ts-ignored*/}
+                        <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
+                                onClick={addRow}>
+                            <SaveOutlined/>추가
+                        </Button>
                         {/*@ts-ignored*/}
                         <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
-                                onClick={() => deleteList(selectedRows)}>
+                                onClick={deleteList}>
                             <CopyOutlined/>삭제
                         </Button>
-                        <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
-                                onClick={downloadExcel}>
-                            <FileExcelOutlined/>출력
-                        </Button></div>}
+                    </div>}
                 />
 
             </div>
         </LayoutComponent>
-
-
-        {/*<LayoutComponent>*/}
-        {/*    <div style={{display: 'grid', gridTemplateColumns: '350px 1fr', height: '100%', gridColumnGap: 5}}>*/}
-        {/*        <Card title={dataInfo? '발주서 수정':'발주서 작성'} style={{fontSize: 12, border: '1px solid lightGray'}}>*/}
-        {/*            <Card size={'small'} style={{*/}
-        {/*                fontSize: 13,*/}
-        {/*                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'*/}
-        {/*            }}>*/}
-        {/*                <TwinInputBox>*/}
-        {/*                    <div>*/}
-        {/*                        <div style={{paddingBottom: 3}}>PO No.</div>*/}
-        {/*                        <Input disabled={true} value={info['documentNumberFull']} size={'small'}/>*/}
-        {/*                    </div>*/}
-        {/*                    <div>*/}
-        {/*                        <div style={{paddingBottom: 3}}>작성일</div>*/}
-        {/*                        <DatePicker value={info['writtenDate']}*/}
-        {/*                                    onChange={(date, dateString) => onChange({*/}
-        {/*                                        target: {*/}
-        {/*                                            id: 'writtenDate',*/}
-        {/*                                            value: date*/}
-        {/*                                        }*/}
-        {/*                                    })*/}
-        {/*                                    } id={'writtenDate'} size={'small'}/>*/}
-        {/*                    </div>*/}
-        {/*                </TwinInputBox>*/}
-        {/*            </Card>*/}
-
-        {/*            <Card title={'inpuiry 정보 및 supplier information'} size={'small'}*/}
-        {/*                  style={{*/}
-        {/*                      fontSize: 13,*/}
-        {/*                      marginTop: 20,*/}
-        {/*                      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'*/}
-        {/*                  }}>*/}
-        {/*                <TwinInputBox>*/}
-        {/*                    <div>*/}
-        {/*                        <div style={{paddingBottom: 3}}>Our PO No</div>*/}
-        {/*                        <Input id={'documentNumberFull'} value={info['documentNumberFull']} onChange={onChange} size={'small'}/>*/}
-        {/*                    </div>*/}
-        {/*                    <div>*/}
-        {/*                        <div style={{paddingBottom: 3}}>Your PO no</div>*/}
-        {/*                        <Input id={'yourPoNo'} value={info['yourPoNo']} onChange={onChange} size={'small'}/>*/}
-        {/*                    </div>*/}
-        {/*                </TwinInputBox>*/}
-        {/*                <TwinInputBox>*/}
-        {/*                    <div>*/}
-        {/*                        <div style={{paddingBottom: 3}}>Messrs</div>*/}
-        {/*                        <Input id={'agencyCode'} value={info['agencyCode']} onChange={onChange} size={'small'}/>*/}
-        {/*                    </div>*/}
-        {/*                    <div>*/}
-        {/*                        <div style={{paddingBottom: 3}}>Attn To</div>*/}
-        {/*                        <Input id={'attnTo'} value={info['attnTo']} onChange={onChange} size={'small'}/>*/}
-        {/*                    </div>*/}
-        {/*                </TwinInputBox>*/}
-
-
-        {/*            </Card>*/}
-
-        {/*            <Card title={'CUSTOMER INFORMATION'} size={'small'} style={{*/}
-        {/*                fontSize: 13,*/}
-        {/*                marginTop: 20,*/}
-        {/*                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'*/}
-        {/*            }}>*/}
-        {/*                <TwinInputBox>*/}
-        {/*                    <div>*/}
-        {/*                        <div style={{paddingBottom: 3}}>Responsibility</div>*/}
-        {/*                        <Input disabled={true} id={'managerID'} value={userInfo['name']} onChange={onChange} size={'small'} />*/}
-        {/*                    </div>*/}
-        {/*                    <div>*/}
-        {/*                        <div style={{paddingBottom: 3}}>TEL</div>*/}
-        {/*                        <Input id={'managerPhoneNumber'} value={info['managerPhoneNumber']} onChange={onChange}*/}
-        {/*                               size={'small'}/>*/}
-        {/*                    </div>*/}
-        {/*                </TwinInputBox>*/}
-        {/*                <TwinInputBox>*/}
-        {/*                    <div>*/}
-        {/*                        <div style={{paddingBottom: 3}}>Fax</div>*/}
-        {/*                        <Input id={'managerFaxNumber'} value={info['managerFaxNumber']} onChange={onChange}*/}
-        {/*                               size={'small'}/>*/}
-        {/*                    </div>*/}
-        {/*                    <div>*/}
-        {/*                        <div style={{paddingBottom: 3}}>E-Mail</div>*/}
-        {/*                        <Input id={'managerEmail'} value={info['managerEmail']} onChange={onChange} size={'small'}/>*/}
-        {/*                    </div>*/}
-        {/*                </TwinInputBox>*/}
-
-        {/*            </Card>*/}
-
-        {/*            <Card title={'ETC'} size={'small'} style={{*/}
-        {/*                fontSize: 13,*/}
-        {/*                marginTop: 20,*/}
-        {/*                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'*/}
-        {/*            }}>*/}
-
-
-
-        {/*                <div style={{paddingTop: 20, textAlign: 'right', width:'100%'}}>*/}
-        {/*                    <Button type={'primary'} style={{marginRight:8 , letterSpacing:dataInfo?-2:0}}*/}
-        {/*                            onClick={saveFunc}><SaveOutlined/>{dataInfo? '변경사항 저장' : '저장'}</Button>*/}
-        {/*                    {dataInfo ? // @ts-ignored*/}
-        {/*                        <Button type={'danger'} style={{letterSpacing:-2}}*/}
-        {/*                                        onClick={() => router?.push('/order_write')}><EditOutlined/>새로 작성하기</Button> :*/}
-        {/*                        // @ts-ignored*/}
-        {/*                        <Button type={'danger'} style={{letterSpacing:-1}}*/}
-        {/*                                onClick={() => setInfo(orderWriteInitial)}><RetweetOutlined/>초기화</Button>}*/}
-        {/*                </div>*/}
-        {/*            </Card>*/}
-        {/*        </Card>*/}
-
-        {/*        <TableGrid*/}
-        {/*            columns={tableOrderWriteColumn}*/}
-        {/*            tableData={info['orderDetailList']}*/}
-        {/*            setSelectedRows={setSelectedRows}*/}
-        {/*            listType={'orderId'}*/}
-        {/*            // dataInfo={tableOrderReadInfo}*/}
-        {/*            setInfo={setInfo}*/}
-        {/*            // setTableInfo={setTableInfo}*/}
-        {/*            excel={true}*/}
-        {/*            modalComponent={*/}
-        {/*                <TableModal listType={'orderDetailList'} title={'발주서 세부 작성'}*/}
-        {/*                            initialData={tableOrderWriteInitial}*/}
-        {/*                            dataInfo={subOrderWriteInfo}*/}
-        {/*                            setInfoList={setInfo}*/}
-        {/*                            isModalOpen={isMainModalOpen}*/}
-        {/*                            setIsModalOpen={setIsMainModalOpen}*/}
-        {/*                />}*/}
-        {/*            funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>*/}
-        {/*                <CopyOutlined/>복사*/}
-        {/*            </Button>*/}
-        {/*                /!*@ts-ignored*!/*/}
-        {/*                <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={()=>deleteList(selectedRows)}>*/}
-        {/*                    <CopyOutlined/>삭제*/}
-        {/*                </Button>*/}
-        {/*                <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={downloadExcel}>*/}
-        {/*                    <FileExcelOutlined/>출력*/}
-        {/*                </Button></div>}*/}
-        {/*        />*/}
-
-
-        {/*    </div>*/}
-        {/*</LayoutComponent>*/}
     </>
 }
 

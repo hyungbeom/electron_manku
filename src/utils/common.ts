@@ -77,7 +77,7 @@ export const TagTypeList = {
     "unitPrice": {type : 'inputNumber'},           // 단가
     "amount": {type : 'inputNumber'},
     "unreceivedQuantity": {type : 'inputNumber'},
-    "price": {type : 'inputNumber'},
+    "totalPrice": {type : 'inputNumber'},
 
     "remainingQuantity": {type : 'inputNumber'},
     "usageQuantity": {type : 'inputNumber'},

@@ -27,7 +27,7 @@ export default function emailSendFormat(userInfo, data) {
             justify-content: center;
             margin-bottom: 30px;
         ">
-            <img style="position: absolute; left: 40%; top: 20px;" src="/manku_ci_black_text.png" width="80" alt="manku logo"/>
+            <img style="position: absolute; left: 40%; top: 20px;" src="https://image.season-market.co.kr/SeasonMarket/manku_ci_black_text.png" width="80" alt="manku logo"/>
             <div style="
                 width: 100%;
                 height: auto;

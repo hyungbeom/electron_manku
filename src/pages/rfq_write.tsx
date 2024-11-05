@@ -510,6 +510,7 @@ export default function rqfWrite({dataInfo, display}) {
                     columns={subRfqWriteColumn}
                     tableData={info['estimateRequestDetailList']}
                     listType={'estimateRequestId'}
+                    listDetailType={'estimateRequestDetailList'}
                     // dataInfo={tableOrderReadInfo}
                     setInfo={setInfo}
                     // setTableInfo={setTableInfo}

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
 import CustomTable from "@/component/CustomTable";
@@ -22,19 +22,14 @@ import message from "antd/lib/message";
 
 const {RangePicker} = DatePicker
 
-const TwinInputBox = ({children}) => {
-    return <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: 5, paddingTop: 8}}>
-        {children}
-    </div>
-}
 
 export default function EstimateRead({dataList}) {
 
-    const [selectedRows, setSelectedRows] = useState([]);
+    const gridRef = useRef(null);
+
     const {estimateList, pageInfo} = dataList;
     const [info, setInfo] = useState(estimateReadInitial)
     const [tableData, setTableData] = useState(estimateList)
-    const [paginationInfo, setPaginationInfo] = useState(pageInfo)
 
 
     function onChange(e) {
@@ -65,33 +60,13 @@ export default function EstimateRead({dataList}) {
         const result = await getData.post('estimate/getEstimateList', copyData);
         // setTableInfo(transformData(result?.data?.entity?.estimateList, 'estimateId', 'estimateDetailList'));
         setTableData(result?.data?.entity?.estimateList)
-        setPaginationInfo(result?.data?.entity?.pageInfo)
     }
 
 
-    async function deleteList() {
-
-        let deleteIdList = [];
-        selectedRows.forEach(v=>(
-            deleteIdList.push(v.estimateId)
-        ))
-
-        console.log(deleteIdList, 'deleteIdList')
-
-        if (deleteIdList.length < 1)
-            return alert('하나 이상의 항목을 선택해주세요.')
-        else {
-            // @ts-ignore
-            for (const v of deleteIdList) {
-                await getData.post('estimate/deleteEstimate', {
-                    estimateId: v}).then(r=>{
-                    if(r.data.code === 1)
-                        console.log(v+'삭제완료')
-                });
-            }
-            message.success('삭제되었습니다.')
-            window.location.reload();
-        }
+    function deleteList(checkList) {
+        const api = gridRef.current.api;
+        console.log(api.getSelectedRows(),':::')
+        message.success('삭제되었습니다.')
     }
 
 
@@ -183,9 +158,11 @@ export default function EstimateRead({dataList}) {
                 </Card>
 
                 <TableGrid
+                    gridRef={gridRef}
+                    listType={'estimateId'}
                     columns={tableEstimateReadColumns}
                     tableData={tableData}
-                    pageInfo={paginationInfo}
+                    type={'read'}
                     excel={true}
                     funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
                         <CopyOutlined/>복사
@@ -216,8 +193,8 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     const result = await getData.post('estimate/getEstimateList', {
         "searchType": "",                   // 검색조건 1: 회신, 2: 미회신
-        "searchStartDate": "",              // 작성일자 시작일
-        "searchEndDate": "",                // 작성일자 종료일
+        "searchStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),              // 작성일자 시작일
+        "searchEndDate": moment().format('YYYY-MM-DD'),                // 작성일자 종료일
         "searchDocumentNumber": "",         // 문서번호
         "searchCustomerName": "",           // 거래처명
         "searchMaker": "",                  // MAKER
@@ -225,7 +202,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
         "searchItem": "",                   // ITEM
         "searchCreatedBy": "",              // 등록직원명
         "page": 1,
-        "limit": 100
+        "limit": -1,
     });
 
 
