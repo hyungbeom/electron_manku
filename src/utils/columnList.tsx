@@ -143,43 +143,50 @@ export const subRfqWriteColumn = [
         key: 'model',
         fixed: 'left',
         minWidth: 150,
+        editable: true,
     },
     {
         headerName: '수량',
         field: 'quantity',
         key: 'quantity',
-
+        editable: true,
     },
     {
         headerName: '단위',
         field: 'unit',
         key: 'unit',
+        editable: true,
     },
     {
         headerName: 'CURR',
         field: 'currency',
         key: 'currency',
+        editable: true,
     },
     {
         headerName: 'NET/P',
         field: 'net',
         key: 'net',
+        editable: true,
     },
     {
         headerName: '납기', //없음
         field: 'deliveryDate',
         key: 'deliveryDate',
+        editable: true,
     },
     {
         headerName: '내용',
         field: 'content',
         key: 'content',
+        editable: true,
 
     },
     {
         headerName: '회신일',
         field: 'replyDate',
         key: 'replyDate',
+        editable: true,
 
     },
     {
@@ -187,6 +194,7 @@ export const subRfqWriteColumn = [
         field: 'remarks', // 없음
         key: 'remarks',
         fixed: 'right',
+        editable: true,
 
     }
 ];
@@ -196,82 +204,65 @@ export const tableOrderWriteColumn = [
         headerName: 'Model',
         field: 'model',
         key: 'model',
-        fixed: 'left',
         minWidth: 150,
-        render: (text) => <div style={{width : 150}} className="ellipsis-cell">{text}</div>,
-    },
-    {
-        headerName: '수량',
-        field: 'quantity',
-        key: 'quantity',
-        align : 'center',
-        render: (text) => <div style={{width : 50}} className="ellipsis-cell">{text}</div>,
-        fixed: 'left',
+        editable: true,
     },
     {
         headerName: '단위',
         field: 'unit',
         key: 'unit',
-        align : 'center',
-        render: (text) => <div style={{width : 40}} className="ellipsis-cell">{text}</div>,
+        editable: true,
+        cellEditor: 'agSelectCellEditor',
+        cellEditorParams: {
+            values: ['ea', 'set', 'm', 'feet', 'roll','box', 'g', 'kg', 'Pack', 'Inch', 'MOQ'],
+        },
     },
     {
         headerName: 'CURR',
         field: 'currency',
         key: 'currency',
-        align : 'center',
-        render: (text) => <div style={{width : 40}} className="ellipsis-cell">{text}</div>,
+        editable: true,
     },
     {
         headerName: 'NET/P',
         field: 'net',
         key: 'net',
-        align : 'center',
-        render: (text) => <div style={{width : 40}} className="ellipsis-cell">{text}</div>,
-    },
-    {
-        headerName: 'Amount', //없음
-        field: 'amount',
-        key: 'amount',
-        render: (text) => <div style={{width : 100}} className="ellipsis-cell">{text}</div>,
         editable: true,
     },
     {
-        headerName: '주문\n수량',
+        headerName: '주문수량',
         field: 'quantity',
         key: 'quantity',
-        render: (text) => <div style={{width : 100}} className="ellipsis-cell">{text}</div>,
         editable: true,
     },
     {
         headerName: '입고',
         field: 'receivedQuantity',
         key: 'receivedQuantity',
-        render: (text) => <div style={{width : 100}} className="ellipsis-cell" >{text}</div>,
         editable: true,
     },
     {
         headerName: '미입고',
         field: 'unreceivedQuantity',
         key: 'unreceivedQuantity',
-        render: (text) =>  <div style={{width : 100}} className="ellipsis-cell" >{text}</div>,
         editable: true,
     },
     {
         headerName: '단가',
         field: 'unitPrice',
         key: 'unitPrice',
-        render: (text) =><div style={{width : 100}} className="ellipsis-cell" >{text}</div>,
         editable: true,
+        cellEditor: 'agSelectCellEditor',
+        cellEditorParams: {
+            values: ['USD', 'EUR', 'JPY', 'KRW', 'GBP',],
+        }
     },
     {
-        headerName: '금액',
-        field: 'price', // 없음
-        key: 'price',
-        fixed: 'right',
-        render: (text) =><div style={{width : 100}} className="ellipsis-cell" >{text}</div>,
+        headerName: 'Amount',
+        field: 'amount',
+        key: 'amount',
         editable: true,
-    }
+    },
 ];
 
 
@@ -536,45 +527,52 @@ export const tableEstimateWriteColumns = [
         headerName: 'Model',
         field: 'model',
         key: 'model',
-        fixed: 'left',
-        minWidth: 150,
+        editable: true,
     },
     {
         headerName: '수량',
         field: 'quantity',
         key: 'quantity',
-        minWidth: 40,
+        editable: true,
     },
     {
         headerName: '단위',
         field: 'unit',
         key: 'unit',
-        minWidth: 40,
+        cellEditor: 'agSelectCellEditor',
+        cellEditorParams: {
+            values: ['ea', 'set', 'm', 'feet', 'roll','box', 'g', 'kg', 'Pack', 'Inch', 'MOQ'],
+        },
+        editable: true,
     },
     {
         headerName: '단가',
         field: 'unitPrice',
         key: 'unitPrice',
-        minWidth: 40,
+        editable: true,
     },
     {
         headerName: '금액',
         field: 'amount',
         key: 'amount',
         width : 120,
-        minWidth: 40,
+        editable: true,
     },
     {
         headerName: 'CURR',
         field: 'currency',
         key: 'currency',
-        minWidth: 40,
+        editable: true,
+        cellEditor: 'agSelectCellEditor',
+        cellEditorParams: {
+            values: ['USD', 'EUR', 'JPY', 'KRW', 'GBP',],
+        }
     },
     {
         headerName: 'NET/P',
         field: 'net',
         key: 'net',
-        minWidth: 40,
+        editable: true,
     }
 ];
 

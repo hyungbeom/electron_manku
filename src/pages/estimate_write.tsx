@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
@@ -6,8 +6,6 @@ import TextArea from "antd/lib/input/TextArea";
 import {
     CopyOutlined, DownCircleFilled,
     DownloadOutlined,
-    EditOutlined,
-    FileExcelOutlined,
     FileSearchOutlined,
     RetweetOutlined,
     SaveOutlined, UpCircleFilled
@@ -25,7 +23,6 @@ import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import * as XLSX from "xlsx";
-import TableModal from "@/utils/TableModal";
 import Select from "antd/lib/select";
 import TableGrid from "@/component/tableGrid";
 import {useRouter} from "next/router";
@@ -34,16 +31,15 @@ import SearchCustomerModal from "@/component/SearchCustomerModal";
 
 
 export default function EstimateWrite({dataInfo}) {
-
+    const gridRef = useRef(null);
     const router = useRouter();
 
-    const [selectedRows, setSelectedRows] = useState([]);
+    let checkList = []
 
     const userInfo = useAppSelector((state) => state.user);
     const [info, setInfo] = useState<any>(estimateWriteInitial)
-    const [isMainModalOpen, setIsMainModalOpen] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
     const [mini, setMini] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
     const [agencyData, setAgencyData] = useState([]);
     const [customerData, setCustomerData] = useState([]);
 
@@ -55,13 +51,9 @@ export default function EstimateWrite({dataInfo}) {
         if (dataInfo) {
             copyData = dataInfo;
             copyData['writtenDate'] = moment(copyData['writtenDate']);
-            // @ts-ignored
-            copyData['delivery'] = moment(copyData['delivery']);
         } else {
             // @ts-ignored
             copyData['writtenDate'] = moment();
-            // @ts-ignored
-            copyData['delivery'] = moment();
         }
 
         setInfo(copyData);
@@ -87,6 +79,8 @@ export default function EstimateWrite({dataInfo}) {
             await getData.post('estimate/addEstimate', copyData).then(v => {
                 if (v.data.code === 1) {
                     message.success('저장되었습니다.')
+                } else {
+                    message.error('저장에 실패하였습니다.')
                 }
             });
         }
@@ -97,19 +91,41 @@ export default function EstimateWrite({dataInfo}) {
 
 
     function deleteList(checkList) {
-        let copyData = { ...info };
 
-        console.log(checkList, "checkList");
-        checkList.forEach(v => console.log(v.serialNumber, "serialNumber"));
+        const api = gridRef.current.api;
 
-        const checkSerialNumbers = checkList.map(item => item.serialNumber);
+        // 전체 행 반복하면서 선택되지 않은 행만 추출
+        const uncheckedData = [];
+        for (let i = 0; i < api.getDisplayedRowCount(); i++) {
+            const rowNode = api.getDisplayedRowAtIndex(i);
+            if (!rowNode.isSelected()) {
+                uncheckedData.push(rowNode.data);
+            }
+        }
 
-        const result = copyData['estimateRequestDetailList'].filter(v => !checkSerialNumbers.includes(v.serialNumber));
-        console.log(result, "result");
-        copyData['estimateRequestDetailList']=result;
+        let copyData = {...info}
+        copyData['estimateDetailList'] = uncheckedData;
+        console.log(copyData, 'copyData::')
+        setInfo(copyData);
+
+    }
+
+    function addRow() {
+        let copyData = {...info};
+        copyData['estimateDetailList'].push({
+            "model": "",   // MODEL
+            "quantity": 0,                  // 수량
+            "unit": "EA",                   // 단위
+            "currency": "USD",              // CURR
+            "net": 0,                 // NET/P
+            "unitPrice": 0,           // 단가
+            "amount": 0,               // 금액
+            "serialNumber": 1           // 견적의뢰 내역 순서 (1부터 시작)
+        })
 
         setInfo(copyData)
     }
+
 
     const handleKeyPress = async (e) => {
         if (e.key === 'Enter') {
@@ -169,18 +185,6 @@ export default function EstimateWrite({dataInfo}) {
         XLSX.writeFile(workbook, "example.xlsx");
     };
 
-    const rowSelection = {
-        onChange: (selectedRowKeys, selectedRows) => {
-
-            selectedRows = selectedRowKeys
-
-        },
-        getCheckboxProps: (record) => ({
-            disabled: record.name === 'Disabled User',
-            // Column configuration not to be checked
-            name: record.name,
-        }),
-    };
 
     async function findDocument() {
 
@@ -396,32 +400,26 @@ export default function EstimateWrite({dataInfo}) {
                 </Card>
 
                 <TableGrid
+                    gridRef={gridRef}
                     columns={tableEstimateWriteColumns}
                     tableData={info['estimateDetailList']}
-                    setSelectedRows={setSelectedRows}
                     listType={'estimateId'}
-                    // dataInfo={tableOrderReadInfo}
+                    listDetailType={'estimateDetailList'}
                     setInfo={setInfo}
-                    // setTableInfo={setTableInfo}
                     excel={true}
-                    modalComponent={
-                        <TableModal listType={'estimateDetailList'} title={'견적서 세부 작성'}
-                                    initialData={tableOrderWriteInitial}
-                                    dataInfo={subOrderWriteInfo}
-                                    setInfoList={setInfo}
-                                    isModalOpen={isMainModalOpen}
-                                    setIsModalOpen={setIsMainModalOpen}
-                        />}
-                    funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
-                        <CopyOutlined/>복사
-                    </Button>
+                    type={'write'}
+                    funcButtons={<div>
                         {/*@ts-ignored*/}
-                        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={()=>deleteList(selectedRows)}>
+                        <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
+                                onClick={addRow}>
+                            <SaveOutlined/>추가
+                        </Button>
+                        {/*@ts-ignored*/}
+                        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
+                                onClick={deleteList}>
                             <CopyOutlined/>삭제
                         </Button>
-                        <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={downloadExcel}>
-                            <FileExcelOutlined/>출력
-                        </Button></div>}
+                    </div>}
                 />
 
             </div>

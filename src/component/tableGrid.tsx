@@ -4,26 +4,7 @@ import React, {useEffect, useMemo, useState} from 'react';
 import {AgGridReact} from 'ag-grid-react';
 import {iconSetMaterial, themeQuartz} from '@ag-grid-community/theming';
 import {useRouter} from "next/router";
-
-const tableTheme = themeQuartz
-    .withPart(iconSetMaterial)
-    .withParams({
-        browserColorScheme: "light",
-        cellHorizontalPaddingScale: 0.5,
-        columnBorder: true,
-        fontSize: "10px",
-        headerBackgroundColor: "#FDFDFD",
-        headerFontSize: "12px",
-        headerFontWeight: 550,
-        headerVerticalPaddingScale: 0.8,
-        iconSize: "11px",
-        rowBorder: true,
-        rowVerticalPaddingScale: 0.8,
-        sidePanelBorder: true,
-        spacing: "5px",
-        wrapperBorder: true,
-        wrapperBorderRadius: "6px",
-    });
+import {tableTheme} from "@/utils/common";
 
 
 const TableGrid = ({

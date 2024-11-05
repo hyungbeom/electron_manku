@@ -86,15 +86,14 @@ export const subRfqWriteInitial = {
 
 export const tableOrderWriteInitial = {
     "model": "",           // MODEL
-    "quantity": 1,              // 수량
     "unit": "ea",               // 단위
     "currency": "krw",          // CURR
     "net": 0,            // NET/P
-    "amount": 0,
+    "quantity": 1,              // 수량
     "receivedQuantity": 0,
     "unreceivedQuantity": 0,
     "unitPrice": 0,
-    "price": 0
+    "amount": 0,
 }
 
 

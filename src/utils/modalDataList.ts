@@ -59,12 +59,11 @@ export const subOrderWriteInfo = {
     "unit": {title : '단위'},               // 단위
     "currency": {title : 'CURR'},          // CURR
     "net": {title : 'NET/P'},            // NET/P
-    "amount": {title : 'Amount'},
     "quantity": {title : '주문수량'},
     "receivedQuantity": {title : '입고'},
     "unreceivedQuantity": {title : '미입고'},
     "unitPrice": {title : '단가'},
-    "price": {title : '금액'},
+    "amount": {title : 'Amount'},
 }
 
 export const tableOrderReadInfo = {
