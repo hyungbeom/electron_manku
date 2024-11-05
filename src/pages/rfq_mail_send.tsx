@@ -194,7 +194,7 @@ export default function rfqRead({dataList}) {
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateRows: '250px 1fr', height: '100%', gridColumnGap: 5}}>
                 <Card title={'메일전송'} style={{fontSize: 12, border: '1px solid lightGray'}} >
-                    <Modal title={<div style={{display:'flex', justifyContent:'space-between', padding:'0 20px', boxSizing:'border-box', lineHeight: 2.5, fontWeight:550 }}>메일전송<Button onClick={sendMail}>전송</Button></div>} open={isModalOpen} onCancel={()=>setIsModalOpen(false)} >
+                    <Modal okText={'메일 전송'} cancelText={'취소'} onOk={sendMail} title={<div style={{ lineHeight: 2.5, fontWeight:550 }}>메일전송</div>} open={isModalOpen} onCancel={()=>setIsModalOpen(false)} >
 
                         {Object.values(previewData).map((mail, i1) => {
 
