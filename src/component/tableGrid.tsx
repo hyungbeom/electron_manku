@@ -80,8 +80,8 @@ const TableGrid = ({
                     const previousRowData = params.context?.data?.[params.node.rowIndex - 1];
 
 
-                    console.log(params.data[listType],'params.data[listType]:')
-                    console.log(previousRowData,'params.data[listType]22:')
+                    // console.log(params.data[listType],'params.data[listType]:')
+                    // console.log(previousRowData,'params.data[listType]22:')
 
                     if (previousRowData && params.data[listType] === previousRowData[listType]) {
                         if (params.column.colId === 'writtenDate' || params.column.colId === 'documentNumberFull') {

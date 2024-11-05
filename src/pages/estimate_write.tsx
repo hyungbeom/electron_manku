@@ -388,11 +388,11 @@ export default function EstimateWrite({dataInfo}) {
 
                     </Card>
                         <div style={{paddingTop: 10}}>
-                            {/*@ts-ignored*/}
 
                             <Button type={'primary'} size={'small'} style={{marginRight: 8}}
                                     onClick={saveFunc}><SaveOutlined/>저장</Button>
 
+                            {/*@ts-ignored*/}
                             <Button type={'danger'} size={'small'}
                                     onClick={() => setInfo(orderWriteInitial)}><RetweetOutlined/>초기화</Button>
 
