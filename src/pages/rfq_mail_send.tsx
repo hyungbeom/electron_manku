@@ -198,10 +198,6 @@ export default function rfqRead({dataList}) {
 
                         {Object.values(previewData).map((mail, i1) => {
 
-
-                            console.log(Object.values(mail)?.[0]?.[0], 'mail?.[0]?.[0].managerName')
-
-
                             return(
 
                             <div key={i1} style={{
