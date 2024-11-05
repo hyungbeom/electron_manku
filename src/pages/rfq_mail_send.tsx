@@ -198,6 +198,10 @@ export default function rfqRead({dataList}) {
 
                         {Object.values(previewData).map((mail, i1) => {
 
+
+                            console.log(Object.values(mail)?.[0]?.[0], 'mail?.[0]?.[0].managerName')
+
+
                             return(
 
                             <div key={i1} style={{
@@ -220,7 +224,7 @@ export default function rfqRead({dataList}) {
                                     whiteSpace: 'pre-line'
                                 }}>
                                     <span style={{fontWeight: 550}}>[
-                                        {mail?.[0]?.[0]?.managerName}]</span> 님<br/><br/>
+                                        {Object.values(mail)?.[0]?.[0].managerName}]</span> 님<br/><br/>
                                     안녕하십니까. <span style={{fontWeight: 550}}>만쿠무역 [{userInfo.name}]</span> 입니다.<br/>
                                     아래 견적 부탁드립니다.
                                 </div>

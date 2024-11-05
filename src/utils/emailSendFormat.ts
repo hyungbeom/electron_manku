@@ -116,6 +116,30 @@ export default function emailSendFormat(userInfo, data) {
         //         message.error('메일 발송에 실패하였습니다.');
         //     }
         // });
+        mailList.forEach((mail) => {
+            const newWindow = window.open("", "_blank");
+            newWindow?.document.write(`
+            <html>
+                <head>
+                    <title>Email Preview</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+                        .email-container { width: 530px; margin: 0 auto; padding: 30px 20px; box-sizing: border-box; }
+                        .header { text-align: center; margin-bottom: 20px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="email-container">
+                        ${mail.content}
+                    </div>
+                </body>
+            </html>
+        `);
+            newWindow.document.close();
+
+        })
+
+
     }
 
     sendEmail();
