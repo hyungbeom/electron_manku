@@ -12,7 +12,7 @@ import {
     RetweetOutlined,
     SaveOutlined, UpCircleFilled
 } from "@ant-design/icons";
-import {tableOrderWriteColumn} from "@/utils/columnList";
+import {tableEstimateWriteColumns, tableOrderWriteColumn} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
 import {estimateWriteInitial, orderWriteInitial, rfqWriteInitial, tableOrderWriteInitial} from "@/utils/initialList";
 import {subOrderWriteInfo} from "@/utils/modalDataList";
@@ -32,11 +32,6 @@ import {useRouter} from "next/router";
 import SearchAgendaModal from "@/component/SearchAgendaModal";
 import SearchCustomerModal from "@/component/SearchCustomerModal";
 
-const TwinInputBox = ({children}) => {
-    return <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: 5, paddingTop: 8}}>
-        {children}
-    </div>
-}
 
 export default function EstimateWrite({dataInfo}) {
 
@@ -388,11 +383,11 @@ export default function EstimateWrite({dataInfo}) {
 
                     </Card>
                         <div style={{paddingTop: 10}}>
-                            {/*@ts-ignored*/}
 
                             <Button type={'primary'} size={'small'} style={{marginRight: 8}}
                                     onClick={saveFunc}><SaveOutlined/>저장</Button>
 
+                            {/*@ts-ignored*/}
                             <Button type={'danger'} size={'small'}
                                     onClick={() => setInfo(orderWriteInitial)}><RetweetOutlined/>초기화</Button>
 
@@ -401,7 +396,7 @@ export default function EstimateWrite({dataInfo}) {
                 </Card>
 
                 <TableGrid
-                    columns={tableOrderWriteColumn}
+                    columns={tableEstimateWriteColumns}
                     tableData={info['estimateDetailList']}
                     setSelectedRows={setSelectedRows}
                     listType={'estimateId'}

@@ -143,67 +143,51 @@ export const subRfqWriteColumn = [
         key: 'model',
         fixed: 'left',
         minWidth: 150,
-        render: (text) => <div style={{width : 180}} className="ellipsis-cell">{text}</div>,
-        editable: true,
     },
     {
         headerName: '수량',
         field: 'quantity',
         key: 'quantity',
-        align : 'center',
-        render: (text) => <div style={{width : 40}} className="ellipsis-cell">{text}</div>,
-        editable: true,
-        fixed: 'left',
-    },  {
+
+    },
+    {
         headerName: '단위',
         field: 'unit',
         key: 'unit',
-        align : 'center',
-        render: (text) => <div style={{width : 40}} className="ellipsis-cell">{text}</div>,
-        editable: true,
     },
     {
         headerName: 'CURR',
         field: 'currency',
         key: 'currency',
-        align : 'center',
-        render: (text) => <div style={{width : 40}} className="ellipsis-cell">{text}</div>,
-        editable: true,
     },
     {
         headerName: 'NET/P',
         field: 'net',
         key: 'net',
-        editable: true,
     },
     {
         headerName: '납기', //없음
         field: 'deliveryDate',
         key: 'deliveryDate',
-        render: (text) => <div style={{width : 100}} className="ellipsis-cell">{text}</div>,
-        editable: true,
     },
     {
         headerName: '내용',
         field: 'content',
         key: 'content',
-        render: (text) => <div style={{width : 100}} className="ellipsis-cell">{text}</div>,
-        editable: true,
+
     },
     {
         headerName: '회신일',
         field: 'replyDate',
         key: 'replyDate',
-        render: (text) => <div style={{width : 90}} className="ellipsis-cell">{moment(text).format('YYYY-MM-DD')}</div>,
-        editable: true,
+
     },
     {
         headerName: '비고',
         field: 'remarks', // 없음
         key: 'remarks',
         fixed: 'right',
-        render: (text) => <div className="ellipsis-cell" >{text}</div>,
-        editable: true,
+
     }
 ];
 
@@ -554,51 +538,43 @@ export const tableEstimateWriteColumns = [
         key: 'model',
         fixed: 'left',
         minWidth: 150,
-        render: (text) => <div className="ellipsis-cell" style={{width: 180}}>{text}</div>,
-        editable: true,
     },
     {
         headerName: '수량',
         field: 'quantity',
         key: 'quantity',
-        render: (text) => <div className="ellipsis-cell" style={{width: 20}}>{text}</div>,
-        editable: true,
+        minWidth: 40,
     },
     {
         headerName: '단위',
         field: 'unit',
         key: 'unit',
-        render: (text) => <div className="ellipsis-cell" style={{width: 20}}>{text}</div>,
-        editable: true,
+        minWidth: 40,
     },
     {
         headerName: '단가',
         field: 'unitPrice',
         key: 'unitPrice',
-        render: (text) => <div className="ellipsis-cell" style={{width: 50}}>{text}</div>,
-        editable: true,
+        minWidth: 40,
     },
     {
         headerName: '금액',
         field: 'amount',
         key: 'amount',
         width : 120,
-        render: (text) => <div className="ellipsis-cell" style={{width: 70}}>{text}</div>,
-        editable: true,
+        minWidth: 40,
     },
     {
         headerName: 'CURR',
         field: 'currency',
         key: 'currency',
-        render: (text) => <div className="ellipsis-cell" style={{width: 25}}>{text}</div>,
-        editable: true,
+        minWidth: 40,
     },
     {
         headerName: 'NET/P',
         field: 'net',
         key: 'net',
-        render: (text) => <div className="ellipsis-cell" style={{width: 25}}>{text}</div>,
-        editable: true,
+        minWidth: 40,
     }
 ];
 

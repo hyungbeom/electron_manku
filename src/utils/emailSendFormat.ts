@@ -10,25 +10,17 @@ export default function emailSendFormat(userInfo, data) {
 
 
     Object.values(data).forEach((mail, i1) => {
+
+        let totalQuantity = 0;
+
         const email= "kjh@progist.co.kr"
         const ccList = []
         const estimateRequestDetailIdList = []
-        const subject = `rfq ${Object.values(mail)?.[0]?.[0].documentNumberFull}`;
-        const mailContent = `
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Email Preview</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
-        .email-container { width: 520px; margin: 0 auto; padding: 30px 20px; box-sizing: border-box; }
-    </style>
-</head>
-                    <body>
-                        <div class="email-container">
-        <div style="
+        const subject = `rfq ${Object.values(mail)?.[0]?.documentNumberFull}`;
+
+        const mailContent = `<div style="
             position: relative;
-            width: 520px;
+            width: 100%;
             height: auto;
             display: flex;
             flex-direction: column;
@@ -44,23 +36,20 @@ export default function emailSendFormat(userInfo, data) {
                 font-size: 18px;
                 white-space: pre-line;
             ">
-                <span style="font-weight: 550">[${Object.values(mail)?.[0]?.[0].managerName}]</span> 님<br/><br/>
-                안녕하십니까. <span style="font-weight: 550">만쿠무역 [${userInfo.name}]</span> 입니다.<br/>
+                <span style="font-weight: 550">[${Object.values(mail)?.[0].managerName}]</span> 님<br><br>
+                안녕하십니까. <span style="font-weight: 550">만쿠무역 [${userInfo.name}]</span> 입니다.<br>
                 아래 견적 부탁드립니다.
             </div>
 
-            ${Object.values(mail).map((document, i2) => {
-            let totalQuantity = 0;
-            return `
-                <div style="
-                    text-align: center;
-                    line-height: 2.2;
-                    display: flex;
-                    flex-direction: column;
-                    flex-flow: column;
-                ">
-                    ${document.map((item, idx) => {
-                estimateRequestDetailIdList.push(item.estimateRequestDetailId)
+            <div style="
+                text-align: center;
+                line-height: 2.2;
+                display: flex;
+                flex-direction: column;
+                flex-flow: column;
+            ">
+                ${//@ts-ignore
+            mail.map((item, idx) => {
                 totalQuantity += item.quantity;
                 return `
                         ${!idx ? `
@@ -146,7 +135,8 @@ export default function emailSendFormat(userInfo, data) {
                             </div>
                         </div>
 
-                        ${idx === document.length - 1 ? `
+                        ${//@ts-ignore
+                    idx === mail.length - 1 ? `
                             <div style="
                                 background-color: #EBF6F7;
                                 width: 100%;
@@ -167,24 +157,14 @@ export default function emailSendFormat(userInfo, data) {
                                     <span style="font-weight: 550">${totalQuantity}</span> ${item.unit}
                                 </div>
                             </div>
-                            <div style="
-                                background-color: #B9DCDF;
-                                width: 100%;
-                                height: 1px;
-                                margin: 25px 0;
-                            "></div>
                         ` : ''}
                     `;
             }).join('')}
-                </div>
-            `;
-        }).join('')}
+            </div>
 
-            <div style="text-align: left"> 감사합니다.</div>
+            <div style="margin-top: 50px;"> 감사합니다.</div>
         </div>
-                                </div>
-                    </body>
-                </html>
+        
     `;
 
         mailList.push({
@@ -217,7 +197,7 @@ export default function emailSendFormat(userInfo, data) {
             const newWindow = window.open("", "_blank");
             if (newWindow) {
                 newWindow.document.write(`
-                <html>
+                <html lang="en">
                     <head>
                         <title>Email Preview</title>
                         <style>

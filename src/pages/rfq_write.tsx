@@ -31,6 +31,29 @@ import TableGrid from "@/component/tableGrid";
 import {AgGridReact} from "ag-grid-react";
 import SearchAgendaModal from "@/component/SearchAgendaModal";
 import SearchCustomerModal from "@/component/SearchCustomerModal";
+import {iconSetMaterial, themeQuartz} from "@ag-grid-community/theming";
+
+const tableTheme = themeQuartz
+    .withPart(iconSetMaterial)
+    .withParams({
+        browserColorScheme: "light",
+        cellHorizontalPaddingScale: 0.5,
+        columnBorder: true,
+        fontSize: "10px",
+        headerBackgroundColor: "#FDFDFD",
+        headerFontSize: "12px",
+        headerFontWeight: 550,
+        headerVerticalPaddingScale: 0.8,
+        iconSize: "11px",
+        rowBorder: true,
+        rowVerticalPaddingScale: 0.8,
+        sidePanelBorder: true,
+        spacing: "5px",
+        wrapperBorder: true,
+        wrapperBorderRadius: "6px",
+    });
+
+
 
 export default function rqfWrite({dataInfo, display}) {
     const gridRef = useRef(null);
@@ -456,11 +479,11 @@ export default function rqfWrite({dataInfo, display}) {
 
                             </Card>
                             <div style={{paddingTop: 10}}>
-                                {/*@ts-ignored*/}
 
                                 <Button type={'primary'} size={'small'} style={{marginRight: 8}}
                                         onClick={saveFunc}><SaveOutlined/>저장</Button>
 
+                                {/*@ts-ignored*/}
                                 <Button type={'danger'} size={'small'}
                                         onClick={() => setInfo(rfqWriteInitial)}><RetweetOutlined/>초기화</Button>
 
