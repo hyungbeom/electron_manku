@@ -55,8 +55,6 @@ const menuList = {
             {title: '국내 거래처(매출)', key: 'code_domestic_sales'},
             {title: '해외 거래처(매출)', key: 'code_overseas_sales'},
             {title: '공문서', key: 'code_diploma'},
-            {title: 'ERP 계정관리', key: 'code_erpUser_manage'},
-            {title: '사용자 계정관리', key: 'code_user_manage'},
             {title: '환율조회', key: 'code_exchange_read'},
             {title: 'HS CODE 조회', key: 'code_read'},
         ]

@@ -102,14 +102,15 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     const {display = 'horizon'} = cookies;
     setCookies(ctx, 'display', display)
 
-    if (userInfo) {
-        return {
-            redirect: {
-                destination: '/main', // 리다이렉트할 경로
-                permanent: false, // true면 301 리다이렉트, false면 302 리다이렉트
-            },
-        };
-    }
+    console.log(userInfo,'userInfo:')
+    // if (userInfo) {
+    //     return {
+    //         redirect: {
+    //             destination: '/main', // 리다이렉트할 경로
+    //             permanent: false, // true면 301 리다이렉트, false면 302 리다이렉트
+    //         },
+    //     };
+    // }
 
 
     return {

@@ -11,7 +11,6 @@ import Input from "antd/lib/input";
 import Button from "antd/lib/button";
 import moment from "moment";
 import {useState} from "react";
-import GoogleDrive from "@/component/Sample";
 
 
 export default function Main({dataList=[], date}) {
@@ -126,7 +125,6 @@ export default function Main({dataList=[], date}) {
                     </div>
                 </Card>
             </div>
-            <GoogleDrive/>
         </LayoutComponent>
     </>
 }
