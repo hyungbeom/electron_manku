@@ -3,11 +3,18 @@ import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
 import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
-import {CopyOutlined, EditOutlined, FileExcelOutlined, RetweetOutlined, SaveOutlined} from "@ant-design/icons";
+import {
+    CopyOutlined, DownCircleFilled, DownloadOutlined,
+    EditOutlined,
+    FileExcelOutlined, FileSearchOutlined,
+    RetweetOutlined,
+    SaveOutlined,
+    UpCircleFilled
+} from "@ant-design/icons";
 import {
     searchAgencyCodeColumn,
     searchCustomerColumn,
-    subRfqWriteColumn,
+    subRfqWriteColumn, tableEstimateWriteColumns,
     tableOrderWriteColumn,
 } from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
@@ -28,6 +35,9 @@ import Table from "antd/lib/table";
 import TableModal from "@/utils/TableModal";
 import {useRouter} from "next/router";
 import TableGrid from "@/component/tableGrid";
+import SearchAgendaModal from "@/component/SearchAgendaModal";
+import SearchCustomerModal from "@/component/SearchCustomerModal";
+import TextArea from "antd/lib/input/TextArea";
 
 const TwinInputBox = ({children}) => {
     return <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: 5, paddingTop: 8}}>
@@ -45,6 +55,9 @@ export default function OrderWriter({dataInfo}) {
     const [info, setInfo] = useState<any>(orderWriteInitial)
     const [isMainModalOpen, setIsMainModalOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
+    const [mini, setMini] = useState(true);
+    const [agencyData, setAgencyData] = useState([]);
+    const [customerData, setCustomerData] = useState([]);
 
     // console.log(dataInfo, 'dataInfo~~')
 
@@ -247,6 +260,52 @@ export default function OrderWriter({dataInfo}) {
         </Modal>
     }
 
+    const handleKeyPress = async (e) => {
+        if (e.key === 'Enter') {
+            if (e.target.id === 'agencyCode') {
+                if(!info['agencyCode']){
+                    return false;
+                }
+                const result = await getData.post('agency/getAgencyListForEstimate', {
+                    "searchText": info['agencyCode'],       // 대리점코드 or 대리점 상호명
+                    "page": 1,
+                    "limit": -1
+                })
+                if (result.data.entity.agencyList.length > 1) {
+                    setAgencyData(result.data.entity.agencyList)
+                    setIsModalOpen({event1: true, event2: false})
+                } else if (!!result.data.entity.agencyList.length) {
+                    const {agencyCode, agencyName} = result.data.entity.agencyList[0]
+
+                    setInfo(v => {
+                        return {...v, agencyCode: agencyCode, agencyName: agencyName}
+                    })
+                }
+            }else{
+                if(!info['customerName']){
+                    return false
+                }
+                const result = await getData.post('customer/getCustomerListForEstimate', {
+                    "searchText": info['customerName'],       // 대리점코드 or 대리점 상호명
+                    "page": 1,
+                    "limit": -1
+                })
+                if(result.data.entity.customerList.length > 1){
+                    setCustomerData(result.data.entity.customerList)
+                    setIsModalOpen({event1: false, event2: true})
+                } else if (!!result.data.entity.customerList.length) {
+                    const {customerName, managerName, directTel, faxNumber} = result.data.entity.customerList[0]
+
+
+                    setInfo(v => {
+                        return {...v, customerName: customerName, managerName: managerName,phoneNumber:directTel, faxNumber : faxNumber }
+                    })
+                }
+            }
+        }
+    };
+
+
 
     const downloadExcel = () => {
 
@@ -293,20 +352,57 @@ export default function OrderWriter({dataInfo}) {
 
     }
 
+    async function findDocument() {
+
+        const result = await getData.post('order/getOrderList', {
+            "searchDocumentNumber": info['documentNumberFull'],     // 문서번호
+            "searchCustomerName": "",       // 거래처명
+            "searchMaker": "",              // MAKER
+            "searchModel": "sssss",              // MODEL
+            "searchItem": "",               // ITEM
+            "searchEstimateManager": "",    // 견적서담당자명
+            "page": 1,
+            "limit": -1,
+        });
+
+        if (result?.data?.code === 1) {
+
+            if(result?.data?.entity?.estimateList.length) {
+                setInfo(v => {
+                        return {...v, ...result?.data?.entity?.estimateList[0], writtenDate : moment(result?.data?.entity?.estimateList[0].writtenDate)}
+                    }
+                )
+            }
+        }
+    }
+
+
+
+    function handleKeyPressDoc(e) {
+        if (e.key === 'Enter') {
+            findDocument();
+        }
+    }
+
 
 
     return <>
         <LayoutComponent>
-            <div style={{display: 'grid', gridTemplateColumns: '350px 1fr', height: '100%', gridColumnGap: 5}}>
-                <Card title={dataInfo? '발주서 수정':'발주서 작성'} style={{fontSize: 12, border: '1px solid lightGray'}}>
+            <div style={{display: 'grid', gridTemplateRows: `${mini ? '500px' : '65px'} 1fr`, height: '100%', gridColumnGap: 5}}>
+
+                <SearchAgendaModal info={info} setInfo={setInfo} agencyData={agencyData} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
+                <SearchCustomerModal info={info} setInfo={setInfo} customerData={customerData} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
+                <Card title={dataInfo? '발주서 수정':'발주서 작성'} style={{fontSize: 12, border: '1px solid lightGray'}} extra={<span style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>setMini(v => !v)}> {!mini ? <UpCircleFilled/> : <DownCircleFilled/>}</span>} >
+
                     <Card size={'small'} style={{
                         fontSize: 13,
-                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
+                        marginBottom : 5
                     }}>
-                        <TwinInputBox>
+                        <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', width: 640, columnGap: 20}}>
                             <div>
                                 <div style={{paddingBottom: 3}}>PO No.</div>
-                                <Input disabled={true} value={info['documentNumberFull']} size={'small'}/>
+                                <Input value={info['documentNumberFull']} size={'small'}/>
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>작성일</div>
@@ -319,26 +415,31 @@ export default function OrderWriter({dataInfo}) {
                                             })
                                             } id={'writtenDate'} size={'small'}/>
                             </div>
-                        </TwinInputBox>
+                        </div>
+
                     </Card>
 
-                    <Card title={'inpuiry 정보 및 supplier information'} size={'small'}
-                          style={{
-                              fontSize: 13,
-                              marginTop: 20,
-                              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                          }}>
-                        <TwinInputBox>
+
+                    <div style={{display: 'grid', gridTemplateColumns: '1fr 1.2fr  1.22fr 1.5fr', columnGap: 10}}>
+
+                        <Card size={'small'}
+                              style={{
+                                  fontSize: 13,
+                                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                              }}>
+
                             <div>
-                                <div style={{paddingBottom: 3}}>Our PO No</div>
-                                <Input id={'documentNumberFull'} value={info['documentNumberFull']} onChange={onChange} size={'small'}/>
+                                <div style={{paddingTop: 8}}>연결 PO No.</div>
+                                <Input size={'small'} id={'documentNumberFull'} value={info['documentNumberFull']}
+                                       onChange={onChange}
+                                       onKeyDown={handleKeyPressDoc}
+                                       suffix={<DownloadOutlined style={{cursor: 'pointer'}} onClick={findDocument}/>}/>
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>Your PO no</div>
                                 <Input id={'yourPoNo'} value={info['yourPoNo']} onChange={onChange} size={'small'}/>
                             </div>
-                        </TwinInputBox>
-                        <TwinInputBox>
+
                             <div>
                                 <div style={{paddingBottom: 3}}>Messrs</div>
                                 <Input id={'agencyCode'} value={info['agencyCode']} onChange={onChange} size={'small'}/>
@@ -347,17 +448,16 @@ export default function OrderWriter({dataInfo}) {
                                 <div style={{paddingBottom: 3}}>Attn To</div>
                                 <Input id={'attnTo'} value={info['attnTo']} onChange={onChange} size={'small'}/>
                             </div>
-                        </TwinInputBox>
+
+                        </Card>
 
 
-                    </Card>
+                        <Card size={'small'} style={{
+                            fontSize: 13,
+                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                        }}>
 
-                    <Card title={'CUSTOMER INFORMATION'} size={'small'} style={{
-                        fontSize: 13,
-                        marginTop: 20,
-                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                    }}>
-                        <TwinInputBox>
+
                             <div>
                                 <div style={{paddingBottom: 3}}>Responsibility</div>
                                 <Input disabled={true} id={'managerID'} value={userInfo['name']} onChange={onChange} size={'small'} />
@@ -367,8 +467,7 @@ export default function OrderWriter({dataInfo}) {
                                 <Input id={'managerPhoneNumber'} value={info['managerPhoneNumber']} onChange={onChange}
                                        size={'small'}/>
                             </div>
-                        </TwinInputBox>
-                        <TwinInputBox>
+
                             <div>
                                 <div style={{paddingBottom: 3}}>Fax</div>
                                 <Input id={'managerFaxNumber'} value={info['managerFaxNumber']} onChange={onChange}
@@ -378,8 +477,14 @@ export default function OrderWriter({dataInfo}) {
                                 <div style={{paddingBottom: 3}}>E-Mail</div>
                                 <Input id={'managerEmail'} value={info['managerEmail']} onChange={onChange} size={'small'}/>
                             </div>
-                        </TwinInputBox>
-                        <TwinInputBox>
+
+                        </Card>
+
+                        <Card size={'small'} style={{
+                            fontSize: 13,
+                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                        }}>
+
                             <div>
                                 <div style={{paddingBottom: 3}}>거래처명</div>
                                 <Input id={'customerName'} value={info['customerName']} onChange={onChange}
@@ -387,67 +492,67 @@ export default function OrderWriter({dataInfo}) {
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>견적서담당자</div>
-                                <Input id={'estimateManager'} value={info['estimateManager']} onChange={onChange} size={'small'}/>
+                                <Input id={'estimateManager'} value={info['estimateManager']} onChange={onChange}
+                                       size={'small'}/>
                             </div>
-                        </TwinInputBox>
-                    </Card>
+                            <div style={{paddingTop: 8}}>
+                                <div style={{paddingBottom: 3}}>비고란</div>
+                                <Input id={'remarks'} value={info['remarks']} onChange={onChange} size={'small'}/>
+                            </div>
+                        </Card>
 
-                    <Card title={'ETC'} size={'small'} style={{
-                        fontSize: 13,
-                        marginTop: 20,
-                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                    }}>
-                        <div style={{paddingTop: 8}}>
+                        <Card size={'small'} style={{
+                            fontSize: 13,
+                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                        }}>
+                            <div>
                             <div style={{paddingBottom: 3}}>Payment Terms</div>
-                            <Select id={'paymentTerms'} size={'small'} defaultValue={'0'} options={[
-                                {value: '0', label: 'By in advance T/T'},
-                                {value: '1', label: 'Credit Card'},
-                                {value: '2', label: 'L/C'},
-                                {value: '3', label: 'Order 30% Before Shipping 70%'},
-                                {value: '4', label: 'Order 50% Before Shipping 50%'},
-                            ]} style={{width : '100%'}}>
-                            </Select>
-                        </div>
-                        <div style={{paddingTop: 8}}>
-                            <div style={{paddingBottom: 3}}>Delivery Terms</div>
-                            <Input id={'deliveryTerms'} value={info['deliveryTerms']} onChange={onChange} size={'small'}/>
-                        </div>
-                        <div style={{paddingTop: 8}}>
-                            <div style={{paddingBottom: 3}}>MAKER</div>
-                            <Input id={'maker'} value={info['maker']} onChange={onChange} size={'small'}/>
-                        </div>
-                        <div style={{paddingTop: 8}}>
-                            <div style={{paddingBottom: 3}}>ITEM</div>
-                            <Input id={'item'} value={info['item']} onChange={onChange} size={'small'}/>
-                        </div>
-                        <div style={{paddingTop: 8}}>
-                            <div style={{paddingBottom: 3}}>Delivery</div>
-                            <DatePicker value={info['delivery']}
-                                        onChange={(date, dateString) => onChange({
-                                            target: {
-                                                id: 'delivery',
-                                                value: date
-                                            }
-                                        })
-                                        } id={'delivery'} size={'small'}/>
-                        </div>
-                        <div style={{paddingTop: 8}}>
-                            <div style={{paddingBottom: 3}}>비고란</div>
-                            <Input id={'remarks'} value={info['remarks']} onChange={onChange} size={'small'}/>
-                        </div>
+                                <Select id={'paymentTerms'} size={'small'} defaultValue={'0'} options={[
+                                    {value: '0', label: 'By in advance T/T'},
+                                    {value: '1', label: 'Credit Card'},
+                                    {value: '2', label: 'L/C'},
+                                    {value: '3', label: 'Order 30% Before Shipping 70%'},
+                                    {value: '4', label: 'Order 50% Before Shipping 50%'},
+                                ]} style={{width: '100%'}}>
+                                </Select>
+                            </div>
+                            <div style={{paddingTop: 8}}>
+                                <div style={{paddingBottom: 3}}>Delivery Terms</div>
+                                <Input id={'deliveryTerms'} value={info['deliveryTerms']} onChange={onChange}
+                                       size={'small'}/>
+                            </div>
+                            <div style={{paddingTop: 8}}>
+                                <div style={{paddingBottom: 3}}>MAKER</div>
+                                <Input id={'maker'} value={info['maker']} onChange={onChange} size={'small'}/>
+                            </div>
+                            <div style={{paddingTop: 8}}>
+                                <div style={{paddingBottom: 3}}>ITEM</div>
+                                <Input id={'item'} value={info['item']} onChange={onChange} size={'small'}/>
+                            </div>
+                            <div style={{paddingTop: 8}}>
+                                <div style={{paddingBottom: 3}}>Delivery</div>
+                                <DatePicker value={info['delivery']}
+                                            onChange={(date, dateString) => onChange({
+                                                target: {
+                                                    id: 'delivery',
+                                                    value: date
+                                                }
+                                            })
+                                            } id={'delivery'} size={'small'}/>
+                            </div>
 
+                        </Card>
+                        <div style={{paddingTop: 10,}}>
 
-                        <div style={{paddingTop: 20, textAlign: 'right', width:'100%'}}>
-                            <Button type={'primary'} style={{marginRight:8 , letterSpacing:dataInfo?-2:0}}
-                                    onClick={saveFunc}><SaveOutlined/>{dataInfo? '변경사항 저장' : '저장'}</Button>
-                            {dataInfo ? // @ts-ignored
-                                <Button type={'danger'} style={{letterSpacing:-2}}
-                                                onClick={() => router?.push('/order_write')}><EditOutlined/>새로 작성하기</Button> :
-                                // @ts-ignored
-                                <Button type={'danger'} style={{letterSpacing:-1}}
-                                        onClick={() => setInfo(orderWriteInitial)}><RetweetOutlined/>초기화</Button>}
+                            <Button type={'primary'} size={'small'} style={{fontSize: 11,marginRight: 8}}
+                                    onClick={saveFunc}><SaveOutlined/>저장</Button>
+
+                            {/*@ts-ignored*/}
+                            <Button type={'danger'} size={'small'} style={{fontSize: 11,}}
+                                    onClick={() => setInfo(orderWriteInitial)}><RetweetOutlined/>초기화</Button>
+
                         </div>
-                    </Card>
+                    </div>
                 </Card>
 
                 <TableGrid
@@ -471,17 +576,159 @@ export default function OrderWriter({dataInfo}) {
                         <CopyOutlined/>복사
                     </Button>
                         {/*@ts-ignored*/}
-                        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={()=>deleteList(selectedRows)}>
+                        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
+                                onClick={() => deleteList(selectedRows)}>
                             <CopyOutlined/>삭제
                         </Button>
-                        <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={downloadExcel}>
+                        <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
+                                onClick={downloadExcel}>
                             <FileExcelOutlined/>출력
                         </Button></div>}
                 />
 
-
             </div>
         </LayoutComponent>
+
+
+        {/*<LayoutComponent>*/}
+        {/*    <div style={{display: 'grid', gridTemplateColumns: '350px 1fr', height: '100%', gridColumnGap: 5}}>*/}
+        {/*        <Card title={dataInfo? '발주서 수정':'발주서 작성'} style={{fontSize: 12, border: '1px solid lightGray'}}>*/}
+        {/*            <Card size={'small'} style={{*/}
+        {/*                fontSize: 13,*/}
+        {/*                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'*/}
+        {/*            }}>*/}
+        {/*                <TwinInputBox>*/}
+        {/*                    <div>*/}
+        {/*                        <div style={{paddingBottom: 3}}>PO No.</div>*/}
+        {/*                        <Input disabled={true} value={info['documentNumberFull']} size={'small'}/>*/}
+        {/*                    </div>*/}
+        {/*                    <div>*/}
+        {/*                        <div style={{paddingBottom: 3}}>작성일</div>*/}
+        {/*                        <DatePicker value={info['writtenDate']}*/}
+        {/*                                    onChange={(date, dateString) => onChange({*/}
+        {/*                                        target: {*/}
+        {/*                                            id: 'writtenDate',*/}
+        {/*                                            value: date*/}
+        {/*                                        }*/}
+        {/*                                    })*/}
+        {/*                                    } id={'writtenDate'} size={'small'}/>*/}
+        {/*                    </div>*/}
+        {/*                </TwinInputBox>*/}
+        {/*            </Card>*/}
+
+        {/*            <Card title={'inpuiry 정보 및 supplier information'} size={'small'}*/}
+        {/*                  style={{*/}
+        {/*                      fontSize: 13,*/}
+        {/*                      marginTop: 20,*/}
+        {/*                      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'*/}
+        {/*                  }}>*/}
+        {/*                <TwinInputBox>*/}
+        {/*                    <div>*/}
+        {/*                        <div style={{paddingBottom: 3}}>Our PO No</div>*/}
+        {/*                        <Input id={'documentNumberFull'} value={info['documentNumberFull']} onChange={onChange} size={'small'}/>*/}
+        {/*                    </div>*/}
+        {/*                    <div>*/}
+        {/*                        <div style={{paddingBottom: 3}}>Your PO no</div>*/}
+        {/*                        <Input id={'yourPoNo'} value={info['yourPoNo']} onChange={onChange} size={'small'}/>*/}
+        {/*                    </div>*/}
+        {/*                </TwinInputBox>*/}
+        {/*                <TwinInputBox>*/}
+        {/*                    <div>*/}
+        {/*                        <div style={{paddingBottom: 3}}>Messrs</div>*/}
+        {/*                        <Input id={'agencyCode'} value={info['agencyCode']} onChange={onChange} size={'small'}/>*/}
+        {/*                    </div>*/}
+        {/*                    <div>*/}
+        {/*                        <div style={{paddingBottom: 3}}>Attn To</div>*/}
+        {/*                        <Input id={'attnTo'} value={info['attnTo']} onChange={onChange} size={'small'}/>*/}
+        {/*                    </div>*/}
+        {/*                </TwinInputBox>*/}
+
+
+        {/*            </Card>*/}
+
+        {/*            <Card title={'CUSTOMER INFORMATION'} size={'small'} style={{*/}
+        {/*                fontSize: 13,*/}
+        {/*                marginTop: 20,*/}
+        {/*                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'*/}
+        {/*            }}>*/}
+        {/*                <TwinInputBox>*/}
+        {/*                    <div>*/}
+        {/*                        <div style={{paddingBottom: 3}}>Responsibility</div>*/}
+        {/*                        <Input disabled={true} id={'managerID'} value={userInfo['name']} onChange={onChange} size={'small'} />*/}
+        {/*                    </div>*/}
+        {/*                    <div>*/}
+        {/*                        <div style={{paddingBottom: 3}}>TEL</div>*/}
+        {/*                        <Input id={'managerPhoneNumber'} value={info['managerPhoneNumber']} onChange={onChange}*/}
+        {/*                               size={'small'}/>*/}
+        {/*                    </div>*/}
+        {/*                </TwinInputBox>*/}
+        {/*                <TwinInputBox>*/}
+        {/*                    <div>*/}
+        {/*                        <div style={{paddingBottom: 3}}>Fax</div>*/}
+        {/*                        <Input id={'managerFaxNumber'} value={info['managerFaxNumber']} onChange={onChange}*/}
+        {/*                               size={'small'}/>*/}
+        {/*                    </div>*/}
+        {/*                    <div>*/}
+        {/*                        <div style={{paddingBottom: 3}}>E-Mail</div>*/}
+        {/*                        <Input id={'managerEmail'} value={info['managerEmail']} onChange={onChange} size={'small'}/>*/}
+        {/*                    </div>*/}
+        {/*                </TwinInputBox>*/}
+
+        {/*            </Card>*/}
+
+        {/*            <Card title={'ETC'} size={'small'} style={{*/}
+        {/*                fontSize: 13,*/}
+        {/*                marginTop: 20,*/}
+        {/*                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'*/}
+        {/*            }}>*/}
+
+
+
+        {/*                <div style={{paddingTop: 20, textAlign: 'right', width:'100%'}}>*/}
+        {/*                    <Button type={'primary'} style={{marginRight:8 , letterSpacing:dataInfo?-2:0}}*/}
+        {/*                            onClick={saveFunc}><SaveOutlined/>{dataInfo? '변경사항 저장' : '저장'}</Button>*/}
+        {/*                    {dataInfo ? // @ts-ignored*/}
+        {/*                        <Button type={'danger'} style={{letterSpacing:-2}}*/}
+        {/*                                        onClick={() => router?.push('/order_write')}><EditOutlined/>새로 작성하기</Button> :*/}
+        {/*                        // @ts-ignored*/}
+        {/*                        <Button type={'danger'} style={{letterSpacing:-1}}*/}
+        {/*                                onClick={() => setInfo(orderWriteInitial)}><RetweetOutlined/>초기화</Button>}*/}
+        {/*                </div>*/}
+        {/*            </Card>*/}
+        {/*        </Card>*/}
+
+        {/*        <TableGrid*/}
+        {/*            columns={tableOrderWriteColumn}*/}
+        {/*            tableData={info['orderDetailList']}*/}
+        {/*            setSelectedRows={setSelectedRows}*/}
+        {/*            listType={'orderId'}*/}
+        {/*            // dataInfo={tableOrderReadInfo}*/}
+        {/*            setInfo={setInfo}*/}
+        {/*            // setTableInfo={setTableInfo}*/}
+        {/*            excel={true}*/}
+        {/*            modalComponent={*/}
+        {/*                <TableModal listType={'orderDetailList'} title={'발주서 세부 작성'}*/}
+        {/*                            initialData={tableOrderWriteInitial}*/}
+        {/*                            dataInfo={subOrderWriteInfo}*/}
+        {/*                            setInfoList={setInfo}*/}
+        {/*                            isModalOpen={isMainModalOpen}*/}
+        {/*                            setIsModalOpen={setIsMainModalOpen}*/}
+        {/*                />}*/}
+        {/*            funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>*/}
+        {/*                <CopyOutlined/>복사*/}
+        {/*            </Button>*/}
+        {/*                /!*@ts-ignored*!/*/}
+        {/*                <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={()=>deleteList(selectedRows)}>*/}
+        {/*                    <CopyOutlined/>삭제*/}
+        {/*                </Button>*/}
+        {/*                <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={downloadExcel}>*/}
+        {/*                    <FileExcelOutlined/>출력*/}
+        {/*                </Button></div>}*/}
+        {/*        />*/}
+
+
+        {/*    </div>*/}
+        {/*</LayoutComponent>*/}
     </>
 }
 
