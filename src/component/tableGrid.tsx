@@ -162,7 +162,7 @@ const TableGrid = ({
             let itemId = e.data.inventoryId;
             setIsModalOpen(true);
             setItemId(itemId);
-            // console.log(itemId, 'itemId')
+            console.log(itemId, 'itemId')
         }
     };
 

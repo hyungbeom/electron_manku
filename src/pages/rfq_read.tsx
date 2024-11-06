@@ -43,7 +43,7 @@ export default function rfqRead({dataList}) {
         const copyData: any = {...info}
         copyData['searchDate'] = [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
         setInfo(copyData);
-    }, [info])
+    }, [])
 
     async function searchInfo() {
         const copyData: any = {...info}
