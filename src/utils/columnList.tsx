@@ -1,19 +1,10 @@
 import moment from "moment";
-import {convertDateTimeToKoreanFormat} from "@/utils/common/convertTimeToKoreanFormat";
 
 const makeAbsoluteUrl = (url) => {
     if (!/^https?:\/\//i.test(url)) {
         return `https://${url}`;
     }
     return url;
-};
-
-export default function Test() {
-
-}
-
-const formatNumber = (number) => {
-    return Math.floor(number).toLocaleString();
 };
 
 export const searchCustomerColumn = [
@@ -158,12 +149,20 @@ export const subRfqWriteColumn = [
         field: 'unit',
         key: 'unit',
         editable: true,
+        cellEditor: 'agSelectCellEditor',
+        cellEditorParams: {
+            values: ['ea', 'set', 'm', 'feet', 'roll', 'box', 'g', 'kg', 'Pack', 'Inch', 'MOQ'],
+        }
     },
     {
         headerName: 'CURR',
         field: 'currency',
         key: 'currency',
         editable: true,
+        cellEditor: 'agSelectCellEditor',
+        cellEditorParams: {
+            values: ['KWD', 'EUR', 'JPY', 'USD', 'GBP',],
+        }
     },
     {
         headerName: 'NET/P',
@@ -178,11 +177,11 @@ export const subRfqWriteColumn = [
         editable: true,
     },
     {
-        headerName: '내용',
+        headerName: '회신여부',
         field: 'content',
         key: 'content',
         editable: true,
-
+        initialValue: '미회신'
     },
     {
         headerName: '회신일',
@@ -224,6 +223,10 @@ export const tableOrderWriteColumn = [
         field: 'currency',
         key: 'currency',
         editable: true,
+        cellEditor: 'agSelectCellEditor',
+        cellEditorParams: {
+            values: ['KWD', 'EUR', 'JPY', 'USD', 'GBP',],
+        }
     },
     {
         headerName: 'NET/P',
@@ -254,10 +257,6 @@ export const tableOrderWriteColumn = [
         field: 'unitPrice',
         key: 'unitPrice',
         editable: true,
-        cellEditor: 'agSelectCellEditor',
-        cellEditorParams: {
-            values: ['USD', 'EUR', 'JPY', 'KRW', 'GBP',],
-        }
     },
     {
         headerName: 'Amount',
@@ -436,16 +435,9 @@ export const tableEstimateReadColumns = [
             },
         ]
     },
-
     {
         headerName: '운송',
         children: [
-            {
-                headerName: '유효기간',
-                field: 'validityPeriod',
-                key: 'validityPeriod',
-                minWidth: 100,
-            },
 
             {
                 headerName: '결제조건',
@@ -470,6 +462,7 @@ export const tableEstimateReadColumns = [
                 field: 'exchangeRate',
                 key: 'exchangeRate',
                 minWidth: 100,
+                cellDataType: 'number'
             },
         ]
     },
@@ -500,37 +493,44 @@ export const tableEstimateReadColumns = [
                 field: 'quantity',
                 key: 'quantity',
                 minWidth: 40,
+                cellDataType: 'number'
             },
             {
                 headerName: '단위',
                 field: 'unit',
                 key: 'unit',
                 minWidth: 40,
-                cellEditor: 'agSelectCellEditor',
-                cellEditorParams: {
-                    values: ['ea', 'set', 'm', 'feet', 'roll', 'box', 'g', 'kg', 'Pack', 'Inch', 'MOQ'],
-                }
             },
 
             {
-                headerName: '주문',
+                headerName: '주문여부',
                 field: 'order',
                 key: 'order',
                 minWidth: 80,
+                cellDataType: 'text',
+                initialValue: '미주문'
             },
             {
                 headerName: '단가',
                 field: 'unitPrice',
                 key: 'unitPrice',
                 minWidth: 40,
+                cellDataType: 'number'
             },
             {
                 headerName: '합계',
                 field: 'total',
                 key: 'total',
                 minWidth: 40,
+                cellDataType: 'number'
             },
         ]
+    },
+    {
+        headerName: '견적유효기간',
+        field: 'validityPeriod',
+        key: 'validityPeriod',
+        minWidth: 100,
     },
     {
         headerName: '비고란',
@@ -590,7 +590,7 @@ export const tableEstimateWriteColumns = [
         editable: true,
         cellEditor: 'agSelectCellEditor',
         cellEditorParams: {
-            values: ['USD', 'EUR', 'JPY', 'KRW', 'GBP',],
+            values: ['KWD', 'EUR', 'JPY', 'USD', 'GBP',],
         }
     },
     {
@@ -629,7 +629,7 @@ export const rfqWriteColumns = [
         key: 'currency',
         cellEditor: 'agSelectCellEditor',
         cellEditorParams: {
-            values: ['USD', 'EUR', 'JPY', 'KRW', 'GBP',],
+            values: ['KWD', 'EUR', 'JPY', 'USD', 'GBP',],
         }
     },
     {
@@ -641,11 +641,13 @@ export const rfqWriteColumns = [
         headerName: '납기',
         field: 'deliveryDate',
         key: 'deliveryDate',
+        cellDataType: 'date'
     },
     {
-        headerName: '내용',
+        headerName: '회신여부',
         field: 'content',
         key: 'content',
+        initialValue: '미회신'
     },
     {
         headerName: '회신일',
@@ -768,7 +770,7 @@ export const rfqReadColumns = [
                 maxWidth: 120,
                 cellEditor: 'agSelectCellEditor',
                 cellEditorParams: {
-                    values: ['USD', 'EUR', 'JPY', 'KRW', 'GBP',],
+                    values: ['KWD', 'EUR', 'JPY', 'USD', 'GBP',],
                 }
             },
             {
@@ -930,120 +932,132 @@ export const tableOrderReadColumns = [
         headerName: '작성일자',
         field: 'writtenDate',
         key: 'writtenDate',
-        minWidth: 70,
-        editable: false,
+        width: 70,
+        pinned:'left',
     },
     {
         headerName: '문서번호',
         field: 'documentNumberFull',
         key: 'documentNumberFull',
-        minWidth: 80,
+        width: 80,
+        pinned:'left',
     },
     {
         headerName: '거래처명',
         field: 'customerName',
         key: 'customerName',
-        minWidth: 100,
-    },
-    {
-        headerName: 'MAKER',
-        field: 'maker',
-        key: 'maker',
-        align: 'center',
-        minWidth: 180,
-    },
-    {
-        headerName: 'ITEM',
-        field: 'item',
-        key: 'item',
-        align: 'center',
-        minWidth: 100,
-
-    },
-    {
-        headerName: 'MODEL',
-        field: 'model',
-        key: 'model',
         minWidth: 150,
     },
     {
-        headerName: '수량',
-        field: 'quantity',
-        key: 'quantity',
-        minWidth: 40,
+        headerName: '물품',
+        children:[
+            {
+                headerName: 'MAKER',
+                field: 'maker',
+                key: 'maker',
+                align: 'center',
+                minWidth: 180,
+            },
+            {
+                headerName: 'ITEM',
+                field: 'item',
+                key: 'item',
+                align: 'center',
+                minWidth: 100,
+
+            },
+            {
+                headerName: 'MODEL',
+                field: 'model',
+                key: 'model',
+                minWidth: 150,
+            },
+            {
+                headerName: '수량',
+                field: 'quantity',
+                key: 'quantity',
+                minWidth: 70,
+            },
+            {
+                headerName: '단위',
+                field: 'unit',
+                key: 'unit',
+                align: 'center',
+                minWidth: 70,
+                cellEditor: 'agSelectCellEditor',
+                cellEditorParams: {
+                    values: ['ea', 'set', 'm', 'feet', 'roll', 'box', 'g', 'kg', 'Pack', 'Inch', 'MOQ'],
+                }
+            },
+            {
+                headerName: 'CURR',
+                field: 'currency',
+                key: 'currency',
+                align: 'center',
+                minWidth: 50,
+                cellEditor: 'agSelectCellEditor',
+                cellEditorParams: {
+                    values: ['KWD', 'EUR', 'JPY', 'USD', 'GBP',],
+                }
+            },
+            {
+                headerName: 'NET',
+                field: 'net',
+                key: 'net',
+                align: 'center',
+                minWidth: 40,
+            },
+        ]
     },
     {
-        headerName: '단위',
-        field: 'unit',
-        key: 'unit',
-        align: 'center',
-        minWidth: 40,
-        cellEditor: 'agSelectCellEditor',
-        cellEditorParams: {
-            values: ['ea', 'set', 'm', 'feet', 'roll', 'box', 'g', 'kg', 'Pack', 'Inch', 'MOQ'],
-        }
+        headerName: '비용',
+        children: [
+
+            {
+                headerName: 'Amount',
+                field: 'amount',
+                key: 'amount',
+                align: 'center',
+                minWidth: 60,
+            },
+            {
+                headerName: '주문수량',
+                field: 'quantity',
+                key: 'quantity',
+                align: 'center',
+                minWidth: 70,
+            },
+            {
+                headerName: '입고수량',
+                field: 'receivedQuantity',
+                key: 'receivedQuantity',
+                align: 'center',
+                minWidth: 70,
+            },
+            {
+                headerName: '미입고수량',
+                field: 'unreceivedQuantity',
+                key: 'unreceivedQuantity',
+                align: 'center',
+                minWidth: 70,
+            },
+            {
+                headerName: '단가',
+                field: 'unitPrice',
+                key: 'unitPrice',
+                align: 'center',
+                minWidth: 50,
+            },
+            {
+                headerName: '금액',
+                field: 'totalPrice',
+                key: 'totalPrice',
+                align: 'center',
+                minWidth: 60,
+            },
+        ]
     },
-    {
-        headerName: 'CURR',
-        field: 'currency',
-        key: 'currency',
-        align: 'center',
-        minWidth: 40,
-        cellEditor: 'agSelectCellEditor',
-        cellEditorParams: {
-            values: ['USD', 'EUR', 'JPY', 'KRW', 'GBP',],
-        }
-    },
-    {
-        headerName: 'NET',
-        field: 'net',
-        key: 'net',
-        align: 'center',
-        minWidth: 40,
-    },
-    {
-        headerName: 'Amount',
-        field: 'amount',
-        key: 'amount',
-        align: 'center',
-        minWidth: 40,
-    },
-    {
-        headerName: '주문수량',
-        type: ['currency', 'shaded'],
-        field: 'quantity',
-        key: 'quantity',
-        align: 'center',
-        minWidth: 40,
-    },
-    {
-        headerName: '입고수량',
-        field: 'receivedQuantity',
-        key: 'receivedQuantity',
-        align: 'center',
-        minWidth: 40,
-    },
-    {
-        headerName: '미입고수량',
-        field: 'unreceivedQuantity',
-        key: 'unreceivedQuantity',
-        align: 'center',
-        minWidth: 40,
-    },
-    {
-        headerName: '단가',
-        field: 'unitPrice',
-        key: 'unitPrice',
-        align: 'center',
-        minWidth: 50,
-    },
-    {
-        headerName: '금액',
-        field: 'totalPrice',
-        key: 'totalPrice',
-        align: 'center',
-        minWidth: 50,
-    },
+
     {
         headerName: '예상납기',
         field: 'delivery',
@@ -1052,11 +1066,11 @@ export const tableOrderReadColumns = [
         minWidth: 80,
     },
     {
-        headerName: '(견적서)담당자',
+        headerName: '견적서담당자',
         field: 'estimateManager',
         key: 'estimateManager',
         align: 'center',
-        minWidth: 40,
+        minWidth: 70,
     },
     {
         headerName: '비고란',

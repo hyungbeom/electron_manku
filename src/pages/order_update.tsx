@@ -2,10 +2,12 @@ import React, {useEffect, useRef, useState} from "react";
 import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
-import {CopyOutlined, DownCircleFilled, DownloadOutlined,
+import {
+    CopyOutlined, DownCircleFilled, DownloadOutlined, EditOutlined,
     RetweetOutlined,
     SaveOutlined,
-    UpCircleFilled} from "@ant-design/icons";
+    UpCircleFilled
+} from "@ant-design/icons";
 import {
     searchAgencyCodeColumn,
     searchCustomerColumn,
@@ -83,7 +85,7 @@ export default function OrderWriter({dataInfo}) {
             copyData['delivery'] = moment(info['delivery']).format('YYYY-MM-DD');
 
             // console.log(copyData, 'copyData~~~~~~~~~~~')
-            await getData.post('order/addOrder', copyData).then(v => {
+            await getData.post('order/updateOrder', copyData).then(v => {
                 if(v.data.code === 1){
                     message.success('저장되었습니다')
                     setInfo(rfqWriteInitial);
@@ -186,7 +188,7 @@ export default function OrderWriter({dataInfo}) {
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateRows: 'auto 1fr', height: '100%', columnGap: 5}}>
 
-                <Card title={'발주서 작성'} style={{fontSize: 12, border: '1px solid lightGray'}} extra={<span style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>setMini(v => !v)}> {!mini ? <UpCircleFilled/> : <DownCircleFilled/>}</span>} >
+                <Card title={'발주서 수정'} style={{fontSize: 12, border: '1px solid lightGray'}} extra={<span style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>setMini(v => !v)}> {!mini ? <UpCircleFilled/> : <DownCircleFilled/>}</span>} >
 
                     <Card size={'small'} title={'INQUIRY & PO no'}
                           style={{ fontSize: 13, marginBottom : 5, boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
@@ -251,8 +253,9 @@ export default function OrderWriter({dataInfo}) {
 
 
                             <div>
-                            <div style={{paddingBottom: 3}}>Responsibility</div>
-                                <Input disabled={true} id={'managerID'} value={userInfo['name']} onChange={onChange} size={'small'} />
+                                <div style={{paddingBottom: 3}}>Responsibility</div>
+                                <Input disabled={true} id={'managerID'} value={userInfo['name']} onChange={onChange}
+                                       size={'small'}/>
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>TEL</div>
@@ -267,7 +270,8 @@ export default function OrderWriter({dataInfo}) {
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>E-Mail</div>
-                                <Input id={'managerEmail'} value={info['managerEmail']} onChange={onChange} size={'small'}/>
+                                <Input id={'managerEmail'} value={info['managerEmail']} onChange={onChange}
+                                       size={'small'}/>
                             </div>
 
                         </Card>
@@ -277,7 +281,7 @@ export default function OrderWriter({dataInfo}) {
                             boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                         }}>
                             <div>
-                            <div style={{paddingBottom: 3}}>Payment Terms</div>
+                                <div style={{paddingBottom: 3}}>Payment Terms</div>
                                 <Select id={'paymentTerms'} size={'small'} defaultValue={'0'} options={[
                                     {value: '0', label: 'By in advance T/T'},
                                     {value: '1', label: 'Credit Card'},
@@ -335,14 +339,13 @@ export default function OrderWriter({dataInfo}) {
                             </div>
                         </Card>
 
-                        <div style={{paddingTop: 10,}}>
+                        <div style={{paddingTop: 10}}>
 
-                            <Button type={'primary'} size={'small'} style={{fontSize: 11,marginRight: 8}}
-                                    onClick={saveFunc}><SaveOutlined/>저장</Button>
-
+                            <Button type={'primary'} size={'small'} style={{marginRight: 8}}
+                                    onClick={saveFunc}><SaveOutlined/>수정</Button>
                             {/*@ts-ignored*/}
-                            <Button type={'danger'} size={'small'} style={{fontSize: 11,}}
-                                    onClick={() => setInfo(orderWriteInitial)}><RetweetOutlined/>초기화</Button>
+                            <Button size={'small'} type={'ghost'} style={{marginRight: 8,}}
+                                    onClick={() => router?.push('/order_write')}><EditOutlined/>신규작성</Button>
 
                         </div>
                     </div>

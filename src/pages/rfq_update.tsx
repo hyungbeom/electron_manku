@@ -32,35 +32,16 @@ import {TwinInputBox} from "@/utils/common/component/Common";
 import TableGrid from "@/component/tableGrid";
 import {AgGridReact} from "ag-grid-react";
 import {iconSetMaterial, themeQuartz} from "@ag-grid-community/theming";
+import {tableTheme} from "@/utils/common";
+import SearchAgendaModal from "@/component/SearchAgendaModal";
+import SearchCustomerModal from "@/component/SearchCustomerModal";
 
-const tableTheme = themeQuartz
-    .withPart(iconSetMaterial)
-    .withParams({
-        browserColorScheme: "light",
-        cellHorizontalPaddingScale: 0.5,
-        columnBorder: true,
-        fontSize: "10px",
-        headerBackgroundColor: "#FDFDFD",
-        headerFontSize: "12px",
-        headerFontWeight: 550,
-        headerVerticalPaddingScale: 0.8,
-        iconSize: "11px",
-        rowBorder: true,
-        rowVerticalPaddingScale: 0.8,
-        sidePanelBorder: true,
-        spacing: "5px",
-        wrapperBorder: true,
-        wrapperBorderRadius: "6px",
-    });
 export default function rqfUpdate({dataInfo, display}) {
     const gridRef = useRef(null);
     const router = useRouter();
 
-    let checkList = []
-
     const userInfo = useAppSelector((state) => state.user);
     const [info, setInfo] = useState<any>(dataInfo)
-    const [isMainModalOpen, setIsMainModalOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
     const [agencyData, setAgencyData] = useState([]);
     const [customerData, setCustomerData] = useState([]);
@@ -78,24 +59,27 @@ export default function rqfUpdate({dataInfo, display}) {
     }
 
     async function saveFunc() {
-
-
+        if (!info['estimateRequestDetailList'].length) {
+            message.warn('하위 데이터 1개 이상이여야 합니다')
+        } else {
             const copyData = {...info}
+            copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
+            copyData['replyDate'] = moment(info['replyDate']).format('YYYY-MM-DD');
 
             await getData.post('estimate/updateEstimateRequest', copyData).then(v => {
                 if (v.data.code === 1) {
                     message.success('저장되었습니다.')
+                    setInfo(rfqWriteInitial);
+                    deleteList()
+                    window.location.href = '/rfq_read'
                 }else{
                     message.error('저장에 실패하였습니다.')
                 }
             });
         }
-        // const checkList = Array.from({length: info['estimateRequestDetailList'].length}, (_, i) => i + 1);
-        // setInfo(orderWriteInitial);
-        // deleteList(checkList)
+    }
 
-
-    function deleteList(checkList) {
+    function deleteList() {
 
         const api = gridRef.current.api;
 
@@ -116,131 +100,6 @@ export default function rqfUpdate({dataInfo, display}) {
     }
 
 
-    function SearchAgencyCode() {
-        const [data, setData] = useState(agencyData)
-        const [code, setCode] = useState(info['agencyCode']);
-
-        // useEffect(() => {
-        //     searchFunc();
-        // }, [])
-
-        async function searchFunc() {
-            const result = await getData.post('agency/getAgencyListForEstimate', {
-                "searchText": code,       // 대리점코드 or 대리점 상호명
-                "page": 1,
-                "limit": -1
-            });
-            setData(result?.data?.entity?.agencyList)
-        }
-
-        function handleKeyPress(e){
-            if (e.key === 'Enter') {
-                searchFunc();
-            }
-        }
-
-        return <Modal
-            // @ts-ignored
-            id={'event1'}
-            title={'대리점 코드 조회'}
-            onCancel={() => setIsModalOpen({event1: false, event2: false})}
-            open={isModalOpen?.event1}
-            width={'60vw'}
-            onOk={() => setIsModalOpen({event1: false, event2: false})}
-        >
-            <div style={{height: '50vh'}}>
-                <div>
-                    <Input onKeyDown={handleKeyPress} id={'agencyCode'} value={code} onChange={(e)=>setCode(e.target.value)}></Input>
-                    <Button onClick={searchFunc}>조회</Button>
-                </div>
-
-                <AgGridReact theme={tableTheme}
-                             onCellClicked={(e)=>{
-                                 setInfo(v=>{
-                                     return {
-                                         ...v, ... e.data
-                                     }})
-                                 setIsModalOpen({event1: false, event2: false})
-                             }}
-                             rowData={data}
-                             columnDefs={searchAgencyCodeColumn}
-                             pagination={true}
-
-                />
-            </div>
-        </Modal>
-    }
-
-
-    function SearchCustomer() {
-        const [data, setData] = useState(customerData)
-        const [customer, setCustomer] = useState(info['customerName']);
-
-
-        async function searchFunc() {
-            // console.log(modalInfo, 'modalInfo:')
-            const result = await getData.post('customer/getCustomerListForEstimate', {
-                "searchText": customer,       // 상호명
-                "page": 1,
-                "limit": -1
-            });
-            setData(result?.data?.entity?.customerList)
-        }
-
-        function handleKeyPress(e){
-            if (e.key === 'Enter') {
-                searchFunc();
-            }
-        }
-
-
-        return <Modal
-            title={'거래처 조회'}
-            // @ts-ignored
-            id={'event2'}
-            onCancel={() => setIsModalOpen({event1: false, event2: false})}
-            open={isModalOpen?.event2}
-            width={'60vw'}
-            onOk={() => setIsModalOpen({event1: false, event2: false})}
-        >
-            <div style={{height: '50vh'}}>
-                <div>
-                    <Input onKeyDown={handleKeyPress} id={'customerName'} value={customer} onChange={(e)=>setCustomer(e.target.value)}></Input>
-                    <Button onClick={searchFunc}>조회</Button>
-                </div>
-
-                <AgGridReact theme={tableTheme}
-                             onCellClicked={(e)=>{
-                                 setInfo(v=>{
-                                     return {
-                                         ...v,phoneNumber: e?.data?.directTel, ... e.data
-                                     }})
-                                 setIsModalOpen({event1: false, event2: false})
-                             }}
-                             rowData={data}
-                             columnDefs={searchCustomerColumn}
-                             pagination={true}
-                />
-            </div>
-        </Modal>
-    }
-
-
-    const downloadExcel = () => {
-
-        if (!info['estimateRequestDetailList'].length) {
-            return message.warn('출력할 데이터가 존재하지 않습니다.')
-        }
-
-        const worksheet = XLSX.utils.json_to_sheet(info['estimateRequestDetailList']);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-        XLSX.writeFile(workbook, "example.xlsx");
-    };
-
-
-
-
     function addRow() {
         let copyData = {...info};
         copyData['estimateRequestDetailList'].push({
@@ -250,7 +109,7 @@ export default function rqfUpdate({dataInfo, display}) {
             "currency": "krw",          // CURR
             "net": 0,            // NET/P
             "deliveryDate": "",   // 납기
-            "content": "",         // 내용
+            "content": "미회신",         // 내용
             "replyDate": '',  // 회신일
             "remarks": "",           // 비고
             "serialNumber": 1           // 견적의뢰 내역 순서 (1부터 시작)
@@ -305,13 +164,29 @@ export default function rqfUpdate({dataInfo, display}) {
         }
     };
 
+    const downloadExcel = () => {
+
+        if (!info['estimateRequestDetailList'].length) {
+            return message.warn('출력할 데이터가 존재하지 않습니다.')
+        }
+
+        const worksheet = XLSX.utils.json_to_sheet(info['estimateRequestDetailList']);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+        XLSX.writeFile(workbook, "example.xlsx");
+    };
+
+
     return <>
         <LayoutComponent>
-            <div style={{display: 'grid', gridTemplateRows: '450px 1fr', height: '100%', gridColumnGap: 5}}>
+            <div style={{display: 'grid', gridTemplateRows: 'auto 1fr', height: '100%', columnGap: 5}}>
 
-                <SearchAgencyCode/>
-                <SearchCustomer/>
-                <Card title={'의뢰 작성'} style={{fontSize: 12, border: '1px solid lightGray'}}>
+                <SearchAgendaModal info={info} setInfo={setInfo} agencyData={agencyData} isModalOpen={isModalOpen}
+                                   setIsModalOpen={setIsModalOpen}/>
+                <SearchCustomerModal info={info} setInfo={setInfo} customerData={customerData} isModalOpen={isModalOpen}
+                                     setIsModalOpen={setIsModalOpen}/>
+
+                <Card title={'견적의뢰 수정'} style={{fontSize: 12, border: '1px solid lightGray'}}>
                     <div style={{display : 'grid', gridTemplateColumns : '220px 320px 320px 1fr', columnGap : 10}}>
                         <Card size={'small'} style={{
                             fontSize: 13,
@@ -435,9 +310,7 @@ export default function rqfUpdate({dataInfo, display}) {
                     columns={subRfqWriteColumn}
                     tableData={info['estimateRequestDetailList']}
                     listType={'estimateRequestId'}
-                    // dataInfo={tableOrderReadInfo}
                     setInfo={setInfo}
-                    // setTableInfo={setTableInfo}
                     excel={true}
                     type={'write'}
                     funcButtons={<div>

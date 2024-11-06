@@ -23,13 +23,10 @@ const {RangePicker} = DatePicker
 export default function rfqRead({dataList}) {
 
     const gridRef = useRef(null);
-    const [selectedRows, setSelectedRows] = useState([]);
-    const {estimateRequestList, pageInfo} = dataList;
+
+    const {estimateRequestList} = dataList;
     const [info, setInfo] = useState(subRfqReadInitial);
     const [tableData, setTableData] = useState(estimateRequestList);
-
-
-    // console.log(selectedRows, 'selectedRows')
 
 
     function onChange(e) {
@@ -46,10 +43,7 @@ export default function rfqRead({dataList}) {
         const copyData: any = {...info}
         copyData['searchDate'] = [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
         setInfo(copyData);
-        // setTableInfo(transformData(estimateRequestList, 'estimateRequestId', 'estimateRequestDetailList'));
-        // setTableData(estimateRequestList);
-    }, [])
-
+    }, [info])
 
     async function searchInfo() {
         const copyData: any = {...info}
@@ -58,28 +52,33 @@ export default function rfqRead({dataList}) {
             copyData['searchStartDate'] = searchDate[0];
             copyData['searchEndDate'] = searchDate[1];
         }
-        console.log(copyData,'copyData:')
-        const result = await getData.post('estimate/getEstimateRequestList', {...copyData,   "page": 1,
-            "limit": -1});
-        // setTableInfo(transformData(result?.data?.entity?.estimateRequestList, 'estimateRequestId', 'estimateRequestDetailList'));
-        console.log(result?.data?.entity?.estimateRequestList,'result?.data?.entity?.estimateRequestList:')
+        const result = await getData.post('estimate/getEstimateRequestList',
+            {...copyData,   "page": 1, "limit": -1});
         setTableData(result?.data?.entity?.estimateRequestList);
     }
 
-
-    function deleteList(checkList) {
+    async function deleteList() {
         const api = gridRef.current.api;
         console.log(api.getSelectedRows(),':::')
+
+        if (api.getSelectedRows().length<1) {
+            message.error('삭제할 데이터를 선택해주세요.')
+        } else {
+            for (const item of api.getSelectedRows()) {
+                const response = await getData.post('estimate/deleteEstimateRequest', {
+                    estimateRequestId:item.estimateRequestId
+                });
+                console.log(response)
+                if (response.data.code===1) {
+                    message.success('삭제되었습니다.')
+                    window.location.reload();
+                } else {
+                    message.error('오류가 발생하였습니다. 다시 시도해주세요.')
+                }
+            }
+        }
     }
 
-
-
-    async function getDetailData(params) {
-        const result = await getData.post('estimate/getEstimateRequestDetail', {
-            estimateRequestId:params
-        });
-        setTableData(result?.data?.entity?.estimateRequestList)
-    }
 
     const downloadExcel = () => {
 
@@ -89,94 +88,90 @@ export default function rfqRead({dataList}) {
         XLSX.writeFile(workbook, "example.xlsx");
     };
 
-    const rowSelection = {
-        onChange: (selectedRowKeys, selectedRows) => {
-            selectedRows = selectedRowKeys
-        },
-        onDoubleClick: (src) => {
-            console.log(src, ':::')
-        },
-        getCheckboxProps: (record) => ({
-            disabled: record?.name === 'Disabled User',
-            // Column configuration not to be checked
-            name: record?.name,
-        }),
-    };
-
     return <>
         <LayoutComponent>
-            <div style={{display: 'grid', gridTemplateRows: '150px 1fr', height: '100%', gridColumnGap: 5}}>
-                <Card title={'의뢰 조회'} style={{fontSize: 12, border: '1px solid lightGray'}}>
-                    <Card size={'small'} style={{
-                        fontSize: 13,
-                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                    }}>
-                        <div>
-                            <div style={{paddingBottom: 3}}>작성일자</div>
-                            <RangePicker style={{width: '100%'}}
-                                         value={[moment(info['searchDate'][0]), moment(info['searchDate'][1])]}
-                                         id={'searchDate'} size={'small'} onChange={(date, dateString) => {
-                                onChange({
-                                    target: {
-                                        id: 'searchDate',
-                                        value: date ? [moment(date[0]).format('YYYY-MM-DD'), moment(date[1]).format('YYYY-MM-DD')] : [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
+            <div style={{display: 'grid', gridTemplateRows: 'auto 1fr', height: '100%', columnGap: 5}}>
+                <Card title={<span style={{fontSize: 12,}}>견적의뢰 조회</span>} headStyle={{marginTop:-10, height:30}}
+                      style={{border: '1px solid lightGray',}} bodyStyle={{padding: '10px 24px'}}>
+                    <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1.5fr', width: '100%', columnGap: 20}}>
+
+                        <Card size={'small'} style={{
+                            fontSize: 11,
+                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
+                        }}>
+                                <div>
+                                    <div style={{paddingBottom: 3,}}>작성일자</div>
+
+                                    <RangePicker
+                                        value={[moment(info['searchDate'][0]), moment(info['searchDate'][1])]}
+                                        id={'searchDate'} size={'small'} onChange={(date, dateString) => {
+                                        onChange({
+                                            target: {
+                                                id: 'searchDate',
+                                                value: date ? [moment(date[0]).format('YYYY-MM-DD'), moment(date[1]).format('YYYY-MM-DD')] : [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
+                                            }
+                                        })
                                     }
-                                })
-                            }
-                            }/>
-                        </div>
-                        <div style={{marginTop: 8}}>
-                            <div style={{paddingBottom: 3}}>검색조건</div>
-                            <Select id={'searchType'}
-                                    onChange={(src) => onChange({target: {id: 'searchType', value: src}})}
-                                    size={'small'} value={info['searchType']} options={[
-                                {value: '0', label: '전체'},
-                                {value: '1', label: '회신'},
-                                {value: '2', label: '미회신'}
-                            ]} style={{width: '100%'}}>
-                            </Select>
-                        </div>
-                        <div style={{marginTop: 8}}>
-                            <div style={{paddingBottom: 3}}>문서번호</div>
-                            <Input id={'searchDocumentNumber'} onChange={onChange} size={'small'}/>
-                        </div>
-                        <div style={{marginTop: 8}}>
-                            <div style={{paddingBottom: 3}}>거래처명</div>
-                            <Input id={'searchCustomerName'} onChange={onChange} size={'small'}/>
-                        </div>
-                        <div style={{marginTop: 8}}>
-                            <div style={{paddingBottom: 3}}>MAKER</div>
-                            <Input id={'searchMaker'} onChange={onChange} size={'small'}/>
-                        </div>
-                        <div style={{marginTop: 8}}>
-                            <div style={{paddingBottom: 3}}>MODEL</div>
-                            <Input id={'searchModel'} onChange={onChange} size={'small'}/>
-                        </div>
-                        <div style={{marginTop: 8}}>
-                            <div style={{paddingBottom: 3}}>ITEM</div>
-                            <Input id={'searchItem'} onChange={onChange} size={'small'}/>
-                        </div>
-                        <div style={{marginTop: 8}}>
-                            <div style={{paddingBottom: 3}}>등록직원명</div>
-                            <Input id={'searchCreatedBy'} onChange={onChange} size={'small'}/>
-                        </div>
-                        <div style={{paddingTop: 20, textAlign: 'right'}}>
-                            <Button type={'primary'} style={{marginRight: 8}}
-                                    onClick={searchInfo}><SearchOutlined/>조회</Button>
-                        </div>
+                                    } style={{width: '100%',}}/>
+                                </div>
+                                <div>
+                                    <div style={{paddingBottom: 3}}>회신 여부</div>
+                                    <Select id={'searchType'}
+                                            onChange={(src) => onChange({target: {id: 'searchType', value: src}})}
+                                            size={'small'} value={info['searchType']} options={[
+                                        {value: '0', label: '전체'},
+                                        {value: '1', label: '회신'},
+                                        {value: '2', label: '미회신'}
+                                    ]} style={{width: '100%',}}/>
+                                </div>
+                        </Card>
+                        <Card size={'small'} style={{
+                            fontSize: 11,
+                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
+                        }}>
+                                <div>
+                                    <div style={{paddingBottom: 3}}>문서번호</div>
+                                    <Input id={'searchDocumentNumber'} onChange={onChange} size={'small'}/>
+                                </div>
+                                <div>
+                                    <div style={{paddingBottom: 3}}>등록직원명</div>
+                                    <Input id={'searchCreatedBy'} onChange={onChange} size={'small'}/>
+                                </div>
+                            <div>
+                                <div style={{marginTop: 8, paddingBottom: 3}}>거래처명</div>
+                                <Input id={'searchCustomerName'} onChange={onChange} size={'small'}/>
+                            </div>
+                        </Card>
 
-                    </Card>
+                        <Card size={'small'} style={{
+                            fontSize: 11,
+                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
+                            marginBottom: 5
+                        }}>
+                            <div>
+                                <div style={{paddingBottom: 3}}>MAKER</div>
+                                <Input id={'searchMaker'} onChange={onChange} size={'small'}/>
+                            </div>
+                            <div style={{marginTop: 8}}>
+                                <div style={{paddingBottom: 3}}>MODEL</div>
+                                <Input id={'searchModel'} onChange={onChange} size={'small'}/>
+                            </div>
+                            <div style={{marginTop: 8}}>
+                                <div style={{paddingBottom: 3}}>ITEM</div>
+                                <Input id={'searchItem'} onChange={onChange} size={'small'}/>
+                            </div>
 
+                        </Card>
+                    </div>
+                    <div style={{marginTop: 8, textAlign:'right'}}>
+                        <Button type={'primary'} onClick={searchInfo}><SearchOutlined/>조회</Button>
+                    </div>
                 </Card>
 
                 <TableGrid
                     gridRef={gridRef}
                     columns={rfqReadColumns}
                     tableData={tableData}
-                    // setSelectedRows={setSelectedRows}
-                    // dataInfo={tableOrderReadInfo}
-                    // setDatabase={setInfo}
-                    // setTableInfo={setTableData}
                     type={'read'}
                     excel={true}
                     funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>

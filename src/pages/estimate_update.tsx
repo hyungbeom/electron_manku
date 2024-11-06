@@ -5,7 +5,7 @@ import Card from "antd/lib/card/Card";
 import TextArea from "antd/lib/input/TextArea";
 import {
     CopyOutlined, DownCircleFilled,
-    DownloadOutlined,
+    DownloadOutlined, EditOutlined,
     FileSearchOutlined,
     RetweetOutlined,
     SaveOutlined, UpCircleFilled
@@ -74,7 +74,7 @@ export default function EstimateWrite({dataInfo}) {
             const copyData = {...info}
             copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
 
-            await getData.post('estimate/addEstimate', copyData).then(v => {
+            await getData.post('estimate/updateEstimate', copyData).then(v => {
                 if (v.data.code === 1) {
                     message.success('저장되었습니다.')
                     setInfo(rfqWriteInitial);
@@ -112,8 +112,8 @@ export default function EstimateWrite({dataInfo}) {
         let copyData = {...info};
         copyData['estimateDetailList'].push({
             "model": "",   // MODEL
-            "quantity": 0,                  // 수량
-            "unit": "EA",                   // 단위
+            "quantity": 1,                  // 수량
+            "unit": "ea",                   // 단위
             "currency": "USD",              // CURR
             "net": 0,                 // NET/P
             "unitPrice": 0,           // 단가
@@ -224,27 +224,27 @@ export default function EstimateWrite({dataInfo}) {
 
                 <SearchAgendaModal info={info} setInfo={setInfo} agencyData={agencyData} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
                 <SearchCustomerModal info={info} setInfo={setInfo} customerData={customerData} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
-                <Card title={'견적서 작성'} style={{fontSize: 12, border: '1px solid lightGray'}} extra={<span style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>setMini(v => !v)}> {!mini ? <UpCircleFilled/> : <DownCircleFilled/>}</span>} >
+                <Card title={'견적서 수정'} style={{fontSize: 12, border: '1px solid lightGray'}} extra={<span style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>setMini(v => !v)}> {!mini ? <UpCircleFilled/> : <DownCircleFilled/>}</span>} >
 
                     <Card size={'small'} style={{
-                        fontSize: 13,
+                        fontSize: 11,
                         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
                         marginBottom : 5
                     }}>
                         <div style={{display : 'grid', gridTemplateColumns : '1fr 1fr 1fr', width : 640, columnGap : 20}}>
+                            {/*<div>*/}
+                            {/*    <div style={{marginTop: 8, width : '100%'}}>작성일</div>*/}
+                            {/*    <DatePicker value={info['writtenDate']} style={{width : '100%'}}*/}
+                            {/*                onChange={(date, dateString) => onChange({*/}
+                            {/*                    target: {*/}
+                            {/*                        id: 'writtenDate',*/}
+                            {/*                        value: date*/}
+                            {/*                    }*/}
+                            {/*                })*/}
+                            {/*                } id={'writtenDate'} size={'small'}/>*/}
+                            {/*</div>*/}
                             <div>
-                                <div style={{paddingTop: 8, width : '100%'}}>작성일</div>
-                                <DatePicker value={info['writtenDate']} style={{width : '100%'}}
-                                            onChange={(date, dateString) => onChange({
-                                                target: {
-                                                    id: 'writtenDate',
-                                                    value: date
-                                                }
-                                            })
-                                            } id={'writtenDate'} size={'small'}/>
-                            </div>
-                            <div>
-                                <div style={{paddingTop: 8}}>INQUIRY NO.</div>
+                                <div style={{marginTop: 8}}>INQUIRY NO.</div>
                                 <Input disabled={true} size={'small'}/>
                             </div>
                         </div>
@@ -253,21 +253,21 @@ export default function EstimateWrite({dataInfo}) {
 
                     <div style={{display : 'grid', gridTemplateColumns : '1fr 1.2fr  1.22fr 1.5fr', columnGap : 10}}>
 
-                    <Card size={'small'}
+                    <Card title={'inpuiry 정보 및 supplier information'} size={'small'}
                           style={{
-                              fontSize: 13,
+                              fontSize: 11,
                               boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                           }}>
 
                             <div>
-                                <div style={{paddingTop: 8}}>연결 INQUIRY No.</div>
+                                <div>연결 INQUIRY No.</div>
                                 <Input size={'small'} id={'documentNumberFull'} value={info['documentNumberFull']}
                                        onChange={onChange}
                                        onKeyDown={handleKeyPressDoc}
                                        suffix={<DownloadOutlined style={{cursor: 'pointer'}} onClick={findDocument}/>}/>
                             </div>
                             <div>
-                                <div style={{paddingTop: 8}}>대리점코드</div>
+                                <div style={{marginTop: 8}}>대리점코드</div>
                                 <Input id={'agencyCode'}  onKeyDown={handleKeyPress} value={info['agencyCode']} onChange={onChange} size={'small'}
                                        suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
                                            (e) => {
@@ -281,17 +281,17 @@ export default function EstimateWrite({dataInfo}) {
 
 
                     <Card size={'small'} style={{
-                        fontSize: 13,
+                        fontSize: 11,
                         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                     }}>
 
                             <div>
-                                <div style={{paddingTop: 8}}>CUSTOMER 코드</div>
+                                <div style={{marginBottom: 3}}>CUSTOMER 코드</div>
                                 <Input id={'customerCode'} value={info['customerCode']} onChange={onChange}
                                        size={'small'}/>
                             </div>
                             <div>
-                                <div style={{paddingTop: 8}}>상호명</div>
+                                <div style={{marginTop: 8, marginBottom: 3}}>상호명</div>
                                 <Input id={'customerName'}  onKeyDown={handleKeyPress} value={info['customerName']} onChange={onChange}
                                        size={'small'} suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
                                     (e) => {
@@ -303,18 +303,18 @@ export default function EstimateWrite({dataInfo}) {
 
 
                             <div>
-                                <div style={{paddingTop: 8}}>담당자</div>
+                                <div style={{marginTop: 8, marginBottom: 3}}>담당자</div>
                                 <Input id={'managerName'} value={info['managerName']} onChange={onChange}
                                        size={'small'}/>
                             </div>
                             <div>
-                                <div style={{paddingTop: 8}}>전화번호</div>
+                                <div style={{marginTop: 8, marginBottom: 3}}>전화번호</div>
                                 <Input id={'phoneNumber'} value={info['phoneNumber']} onChange={onChange}
                                        size={'small'}/>
                             </div>
 
                             <div>
-                                <div style={{paddingTop: 8}}>팩스번호</div>
+                                <div style={{marginTop: 8, marginBottom: 3}}>팩스번호</div>
                                 <Input id={'faxNumber'} value={info['faxNumber']} onChange={onChange}
                                        size={'small'}/>
                             </div>
@@ -327,7 +327,7 @@ export default function EstimateWrite({dataInfo}) {
                     }}>
 
                             <div>
-                                <div style={{paddingTop: 8}}>유효기간</div>
+                                <div>유효기간</div>
                                 <Select id={'validityPeriod'} defaultValue={'0'}
                                         onChange={(src) => onChange({target: {id: 'validityPeriod', value: src}})}
                                         size={'small'} value={info['validityPeriod']} options={[
@@ -337,7 +337,7 @@ export default function EstimateWrite({dataInfo}) {
                                 </Select>
                             </div>
                             <div>
-                                <div style={{paddingTop: 8}}>결제조건</div>
+                                <div style={{marginTop: 8}}>결제조건</div>
                                 <Select id={'validityPeriod'} defaultValue={'0'}
                                         onChange={(src) => onChange({target: {id: 'paymentTerms', value: src}})}
                                         size={'small'} value={info['paymentTerms']} options={[
@@ -349,12 +349,12 @@ export default function EstimateWrite({dataInfo}) {
                             </div>
 
                             <div>
-                                <div style={{paddingTop: 8}}>운송조건</div>
+                                <div style={{marginTop: 8}}>운송조건</div>
                                 <Input id={'shippingTerms'} value={info['shippingTerms']} onChange={onChange}
                                        size={'small'}/>
                             </div>
                             <div>
-                                <div style={{paddingTop: 8}}>환율</div>
+                                <div style={{marginTop: 8}}>환율</div>
                                 <Input id={'exchangeRate'} value={info['exchangeRate']} onChange={onChange}
                                        size={'small'}/>
                             </div>
@@ -365,19 +365,19 @@ export default function EstimateWrite({dataInfo}) {
                         fontSize: 13,
                         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                     }}>
-                        <div style={{paddingTop: 8}}>
+                        <div style={{marginTop: 8}}>
                             <div style={{paddingBottom: 3}}>MAKER</div>
                             <Input id={'maker'} value={info['maker']} onChange={onChange} size={'small'}/>
                         </div>
-                        <div style={{paddingTop: 8}}>
+                        <div style={{marginTop: 8}}>
                             <div style={{paddingBottom: 3}}>ITEM</div>
                             <Input id={'item'} value={info['item']} onChange={onChange} size={'small'}/>
                         </div>
-                        <div style={{paddingTop: 8}}>
+                        <div style={{marginTop: 8}}>
                             <div style={{paddingBottom: 3}}>Delivery</div>
                             <Input id={'remarks'} value={info['remarks']} onChange={onChange} size={'small'}/>
                         </div>
-                        <div style={{paddingTop: 8}}>
+                        <div style={{marginTop: 8}}>
                             <div style={{paddingBottom: 3}}>비고란</div>
                             <TextArea id={'instructions'} value={info['instructions']} onChange={onChange}
                                       size={'small'}/>
@@ -387,11 +387,10 @@ export default function EstimateWrite({dataInfo}) {
                         <div style={{paddingTop: 10}}>
 
                             <Button type={'primary'} size={'small'} style={{marginRight: 8}}
-                                    onClick={saveFunc}><SaveOutlined/>저장</Button>
-
+                                    onClick={saveFunc}><SaveOutlined/>수정</Button>
                             {/*@ts-ignored*/}
-                            <Button type={'danger'} size={'small'}
-                                    onClick={() => setInfo(orderWriteInitial)}><RetweetOutlined/>초기화</Button>
+                            <Button size={'small'}  type={'ghost'} style={{marginRight: 8,}}
+                                    onClick={() => router?.push('/estimate_write')}><EditOutlined/>신규작성</Button>
 
                         </div>
                   </div>
@@ -424,6 +423,7 @@ export default function EstimateWrite({dataInfo}) {
         </LayoutComponent>
     </>
 }
+
 // @ts-ignore
 export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
 
@@ -442,13 +442,13 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     store.dispatch(setUserInfo(userInfo));
 
-    // const {estimateId} = ctx.query;
-
-    //
-    // const result = await getData.post('estimate/getEstimateDetail', {
-    //     estimateId:estimateId
-    // });
+    const {estimateId} = ctx.query;
 
 
-    // return {props: {dataInfo: estimateId ? result?.data?.entity?.estimateDetail : null}}
+    const result = await getData.post('estimate/getEstimateDetail', {
+        estimateId:estimateId
+    });
+
+
+    return {props: {dataInfo: estimateId ? result?.data?.entity?.estimateDetail : null}}
 })

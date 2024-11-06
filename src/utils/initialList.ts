@@ -176,7 +176,7 @@ export const tableEstimateReadInitial = {
                 "amount": 0,
                 "orderProcessing": null,
                 "orderDate": null,
-                "order": null,
+                "order": '미주문',
                 "serialNumber": null
             }
         ]

@@ -42,10 +42,16 @@ export default function Login() {
         })
     }
 
+    function handleKeyPressDoc(e) {
+        if (e.key === 'Enter') {
+            getLogin();
+        }
+    }
+
     return <>
         <Input id={'adminName'} value={info['adminName']} onChange={infoChange} style={{borderRadius: 5}}
                placeholder={'input your id'}/>
-        <Password id={'password'} value={info['password']} onChange={infoChange} style={{borderRadius: 5}}
+        <Password id={'password'} value={info['password']} onKeyDown={handleKeyPressDoc} onChange={infoChange} style={{borderRadius: 5}}
                   placeholder={'input your password'}/>
         <div style={{textAlign: 'left'}}>
             <Checkbox style={{color: 'gray'}}>아이디저장</Checkbox>

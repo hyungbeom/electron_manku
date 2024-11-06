@@ -68,7 +68,7 @@ const TableGrid = ({
 
 
     const rowSelection = useMemo(() => {
-        return {mode: "multiRow"};
+        return {mode: "multiRow",};
     }, []);
 
     const handleSelectionChange = (e) => {
@@ -155,15 +155,14 @@ const TableGrid = ({
         if (e.data.estimateRequestId)
             router.push(`/rfq_update?estimateRequestId=${e?.data?.estimateRequestId}`)
         if (e.data.estimateId)
-            router.push(`/estimate_write?estimateId=${e?.data?.estimateId}`)
+            router.push(`/estimate_update?estimateId=${e?.data?.estimateId}`)
         if (e.data.orderId)
-            router.push(`/order_write?orderId=${e?.data?.orderId}`)
+            router.push(`/order_update?orderId=${e?.data?.orderId}`)
         if (e.data.inventoryId) {
             let itemId = e.data.inventoryId;
             setIsModalOpen(true);
             setItemId(itemId);
             // console.log(itemId, 'itemId')
-
         }
     };
 
@@ -217,9 +216,8 @@ const TableGrid = ({
             </div>
             {modalComponent}
 
-            <AgGridReact theme={tableTheme} ref={gridRef}
+            <AgGridReact theme={tableTheme} ref={gridRef} containerStyle={{width: '100%', height: '84%'}}
                 //@ts-ignore
-                         style={{width: '100%', height: '90%'}}
                          onRowDoubleClicked={handleDoubleClicked}
                          onRowValueChanged={handleRowValueChange}
                 //@ts-ignore

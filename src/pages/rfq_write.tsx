@@ -13,7 +13,7 @@ import {
 } from "@ant-design/icons";
 import {searchAgencyCodeColumn, searchCustomerColumn, subRfqWriteColumn} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {orderWriteInitial, rfqWriteInitial} from "@/utils/initialList";
+import {rfqWriteInitial} from "@/utils/initialList";
 import moment from "moment";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
@@ -32,34 +32,11 @@ import {AgGridReact} from "ag-grid-react";
 import SearchAgendaModal from "@/component/SearchAgendaModal";
 import SearchCustomerModal from "@/component/SearchCustomerModal";
 import {iconSetMaterial, themeQuartz} from "@ag-grid-community/theming";
-
-const tableTheme = themeQuartz
-    .withPart(iconSetMaterial)
-    .withParams({
-        browserColorScheme: "light",
-        cellHorizontalPaddingScale: 0.5,
-        columnBorder: true,
-        fontSize: "10px",
-        headerBackgroundColor: "#FDFDFD",
-        headerFontSize: "12px",
-        headerFontWeight: 550,
-        headerVerticalPaddingScale: 0.8,
-        iconSize: "11px",
-        rowBorder: true,
-        rowVerticalPaddingScale: 0.8,
-        sidePanelBorder: true,
-        spacing: "5px",
-        wrapperBorder: true,
-        wrapperBorderRadius: "6px",
-    });
-
-
+import {tableTheme} from "@/utils/common";
 
 export default function rqfWrite({dataInfo, display}) {
     const gridRef = useRef(null);
     const router = useRouter();
-
-    let checkList = []
 
     const userInfo = useAppSelector((state) => state.user);
     const [info, setInfo] = useState<any>(rfqWriteInitial)
@@ -107,17 +84,17 @@ export default function rqfWrite({dataInfo, display}) {
             await getData.post('estimate/addEstimateRequest', copyData).then(v => {
                 if (v.data.code === 1) {
                     message.success('저장되었습니다.')
+                    setInfo(rfqWriteInitial);
+                    deleteList()
+                    window.location.href = '/rfq_read'
                 } else {
                     message.error('저장에 실패하였습니다.')
                 }
             });
         }
-        const checkList = Array.from({length: info['estimateRequestDetailList'].length}, (_, i) => i + 1);
-        setInfo(orderWriteInitial);
-        deleteList(checkList)
     }
 
-    function deleteList(checkList) {
+    function deleteList() {
 
         const api = gridRef.current.api;
 
@@ -136,138 +113,6 @@ export default function rqfWrite({dataInfo, display}) {
         setInfo(copyData);
 
     }
-
-
-    function SearchAgencyCode() {
-        const [data, setData] = useState(agencyData)
-        const [code, setCode] = useState(info['agencyCode']);
-
-        useEffect(() => {
-            searchFunc();
-        }, [])
-
-        async function searchFunc() {
-            const result = await getData.post('agency/getAgencyListForEstimate', {
-                "searchText": code,       // 대리점코드 or 대리점 상호명
-                "page": 1,
-                "limit": -1
-            });
-            setData(result?.data?.entity?.agencyList)
-        }
-
-        function handleKeyPress(e) {
-            if (e.key === 'Enter') {
-                searchFunc();
-            }
-        }
-
-        return <Modal
-            // @ts-ignored
-            id={'event1'}
-            title={'대리점 코드 조회'}
-            onCancel={() => setIsModalOpen({event1: false, event2: false})}
-            open={isModalOpen?.event1}
-            width={'60vw'}
-            onOk={() => setIsModalOpen({event1: false, event2: false})}
-        >
-            <div style={{height: '50vh'}}>
-                <div style={{display: 'flex', justifyContent: 'space-between', gap: 15, marginBottom: 20}}>
-                    <Input style={{width: '100%'}} onKeyDown={handleKeyPress} id={'agencyCode'} value={code}
-                           onChange={(e) => setCode(e.target.value)}></Input>
-                    <Button onClick={searchFunc}>조회</Button>
-                </div>
-
-                <AgGridReact containerStyle={{height: '93%', width: '100%'}} theme={tableTheme}
-                             onCellClicked={(e) => {
-                                 setInfo(v => {
-                                     return {
-                                         ...v, ...e.data
-                                     }
-                                 })
-                                 setIsModalOpen({event1: false, event2: false})
-                             }}
-                             rowData={data}
-                             columnDefs={searchAgencyCodeColumn}
-                             pagination={true}
-
-                />
-            </div>
-        </Modal>
-    }
-
-
-    function SearchCustomer() {
-        const [data, setData] = useState(customerData)
-        const [customer, setCustomer] = useState(info['customerName']);
-
-
-        useEffect(() => {
-            searchFunc();
-        }, [])
-
-        async function searchFunc() {
-            // console.log(modalInfo, 'modalInfo:')
-            const result = await getData.post('customer/getCustomerListForEstimate', {
-                "searchText": customer,       // 상호명
-                "page": 1,
-                "limit": -1
-            });
-            setData(result?.data?.entity?.customerList)
-        }
-
-        function handleKeyPress(e) {
-            if (e.key === 'Enter') {
-                searchFunc();
-            }
-        }
-
-
-        return <Modal
-            title={'거래처 상호명 조회'}
-            // @ts-ignored
-            id={'event2'}
-            onCancel={() => setIsModalOpen({event1: false, event2: false})}
-            open={isModalOpen?.event2}
-            width={'60vw'}
-            onOk={() => setIsModalOpen({event1: false, event2: false})}
-        >
-            <div style={{height: '50vh'}}>
-                <div style={{display: 'flex', justifyContent: 'space-between', gap: 15, marginBottom: 20}}>
-                    <Input onKeyDown={handleKeyPress} id={'customerName'} value={customer}
-                           onChange={(e) => setCustomer(e.target.value)}></Input>
-                    <Button onClick={searchFunc}>조회</Button>
-                </div>
-
-                <AgGridReact containerStyle={{height: '93%', width: '100%'}} theme={tableTheme}
-                             onCellClicked={(e) => {
-                                 setInfo(v => {
-                                     return {
-                                         ...v, phoneNumber: e?.data?.directTel, ...e.data
-                                     }
-                                 })
-                                 setIsModalOpen({event1: false, event2: false})
-                             }}
-                             rowData={data}
-                             columnDefs={searchCustomerColumn}
-                             pagination={true}
-                />
-            </div>
-        </Modal>
-    }
-
-
-    const downloadExcel = () => {
-
-        if (!info['estimateRequestDetailList'].length) {
-            return message.warn('출력할 데이터가 존재하지 않습니다.')
-        }
-
-        const worksheet = XLSX.utils.json_to_sheet(info['estimateRequestDetailList']);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-        XLSX.writeFile(workbook, "example.xlsx");
-    };
-
 
     function addRow() {
         let copyData = {...info};
@@ -338,16 +183,29 @@ export default function rqfWrite({dataInfo, display}) {
         }
     };
 
+    const downloadExcel = () => {
+
+        if (!info['estimateRequestDetailList'].length) {
+            return message.warn('출력할 데이터가 존재하지 않습니다.')
+        }
+
+        const worksheet = XLSX.utils.json_to_sheet(info['estimateRequestDetailList']);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+        XLSX.writeFile(workbook, "example.xlsx");
+    };
+
+
     return <>
         <LayoutComponent>
-            <div style={{display: 'grid', gridTemplateRows: `${mini ? '490px' : '65px'} 1fr`, height: '100%', gridColumnGap: 5}}>
+            <div style={{display: 'grid', gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`, height: '100%', columnGap: 5}}>
 
                 <SearchAgendaModal info={info} setInfo={setInfo} agencyData={agencyData} isModalOpen={isModalOpen}
                                    setIsModalOpen={setIsModalOpen}/>
                 <SearchCustomerModal info={info} setInfo={setInfo} customerData={customerData} isModalOpen={isModalOpen}
                                      setIsModalOpen={setIsModalOpen}/>
-                {/*<SearchCustomer/>*/}
-                <Card title={'의뢰 작성'} style={{fontSize: 12, border: '1px solid lightGray'}} extra={<span style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>setMini(v => !v)}> {!mini ? <UpCircleFilled/> : <DownCircleFilled/>}</span>} >
+
+                <Card title={'견적의뢰 작성'} style={{fontSize: 12, border: '1px solid lightGray'}} extra={<span style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>setMini(v => !v)}> {!mini ? <UpCircleFilled/> : <DownCircleFilled/>}</span>} >
                     {mini ?  <div>
                         <Card size={'small'} style={{
                             fontSize: 13,
@@ -556,34 +414,32 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     const {display = 'horizon'} = cookies;
 
-
     store.dispatch(setUserInfo(userInfo));
 
-    const {estimateRequestId} = ctx.query;
-
-
-    const result = await getData.post('estimate/getEstimateRequestList', {
-        "searchEstimateRequestId": estimateRequestId,      // 견적의뢰 Id
-        "searchType": "",                   // 검색조건 1: 회신, 2: 미회신
-        "searchStartDate": "2024-08-01",              // 작성일자 시작일
-        "searchEndDate": "2024-12-31",                // 작성일자 종료일
-        "searchDocumentNumber": "",         // 문서번호
-        "searchCustomerName": "",           // 거래처명
-        "searchMaker": "",                  // MAKER
-        "searchModel": "",                  // MODEL
-        "searchItem": "",                   // ITEM
-        "searchCreatedBy": "",              // 등록직원명
-        "searchManagerName": "",            // 담당자명
-        "searchMobileNumber": "",           // 담당자 연락처
-        "searchBiddingNumber": "",          // 입찰번호(미완성)
-        "page": 1,
-        "limit": 100000
-    });
-
-
+    // const {estimateRequestId} = ctx.query;
+    //
+    // const result = await getData.post('estimate/getEstimateRequestList', {
+    //     "searchEstimateRequestId": estimateRequestId,      // 견적의뢰 Id
+    //     "searchType": "",                   // 검색조건 1: 회신, 2: 미회신
+    //     "searchStartDate": "2024-08-01",              // 작성일자 시작일
+    //     "searchEndDate": "2024-12-31",                // 작성일자 종료일
+    //     "searchDocumentNumber": "",         // 문서번호
+    //     "searchCustomerName": "",           // 거래처명
+    //     "searchMaker": "",                  // MAKER
+    //     "searchModel": "",                  // MODEL
+    //     "searchItem": "",                   // ITEM
+    //     "searchCreatedBy": "",              // 등록직원명
+    //     "searchManagerName": "",            // 담당자명
+    //     "searchMobileNumber": "",           // 담당자 연락처
+    //     "searchBiddingNumber": "",          // 입찰번호(미완성)
+    //     "page": 1,
+    //     "limit": 100000
+    // });
+    //
+    //
     return {
         props: {
-            dataInfo: estimateRequestId ? result?.data?.entity?.estimateRequestList[0] : null,
+            // dataInfo: estimateRequestId ? result?.data?.entity?.estimateRequestList[0] : null,
             display: display
         }
     }
