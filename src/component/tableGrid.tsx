@@ -77,8 +77,8 @@ const TableGrid = ({
     }
 
     const handleRowValueChange = (e) => {
-        // console.log(e.api)
-        // console.log(e.api.getEdit)
+        console.log(e.api)
+        console.log(e.api.getEdit)
     }
 
 
@@ -104,47 +104,6 @@ const TableGrid = ({
         const isCurrentlySelected = e.node.isSelected();
         const api = e.api;
 
-        // 부모 행인지 확인하는 함수 (연속된 `documentNumberFull` 값이 다르면 부모로 간주)
-        const isParent = (nodeIndex) => {
-            if (nodeIndex === 0) return true;
-            const previousRowData = api.getDisplayedRowAtIndex(nodeIndex - 1).data;
-            return previousRowData.documentNumberFull !== currentDocumentNumber;
-        };
-
-        if (isParent(e.node.rowIndex)) {
-            // 부모가 선택된 경우 자식들만 선택/해제하고, 중복 이벤트 발생 방지
-            const selectedId = currentRowData.estimateRequestId;
-            api.forEachNode((node) => {
-                if (node.data.estimateRequestId === selectedId && node !== e.node) {
-                    node.setSelected(isCurrentlySelected, false); // 자식만 선택/해제
-                }
-            });
-        } else {
-            // 자식 행이 선택/해제되었을 때 부모 상태 동기화
-            const selectedId = currentRowData.estimateRequestId;
-            let allChildrenSelected = true;
-            let parentNode = null;
-
-            api.forEachNode((node) => {
-                if (node.data.estimateRequestId === selectedId) {
-                    if (isParent(node.rowIndex)) {
-                        parentNode = node; // 부모 노드를 추적
-                    } else if (!node.isSelected()) {
-                        allChildrenSelected = false; // 자식 중 하나라도 선택 해제 시
-                    }
-                }
-            });
-
-            // 자식이 모두 선택되었을 때만 부모 선택, 자식 중 하나라도 해제되면 부모 해제
-            if (parentNode) {
-                parentNode.setSelected(allChildrenSelected, false);
-            }
-        }
-
-
-
-        // console.log(estimateList, 'estimateList~~~~');
-
 
         isUpdatingSelection = false; // 선택 업데이트 종료
 
@@ -158,12 +117,15 @@ const TableGrid = ({
             router.push(`/estimate_update?estimateId=${e?.data?.estimateId}`)
         if (e.data.orderId)
             router.push(`/order_update?orderId=${e?.data?.orderId}`)
-        if (e.data.inventoryId) {
-            let itemId = e.data.inventoryId;
-            setIsModalOpen(true);
-            setItemId(itemId);
-            console.log(itemId, 'itemId')
-        }
+        if (e.data.inventoryId)
+            router.push(`/inventory_update?inventoryId=${e?.data?.inventoryId}`)
+
+        // if (e.data.inventoryId) {
+        //     let itemId = e.data.inventoryId;
+        //     setIsModalOpen(true);
+        //     setItemId(itemId);
+        //     console.log(itemId, 'itemId')
+        // }
     };
 
     // 체크된 행의 데이터 가져오기 함수 수정
@@ -174,9 +136,7 @@ const TableGrid = ({
 
         return selectedData;
 
-
     };
-
 
 
 
@@ -217,10 +177,9 @@ const TableGrid = ({
             {modalComponent}
 
             <AgGridReact theme={tableTheme} ref={gridRef} containerStyle={{width: '100%', height: '84%'}}
-                //@ts-ignore
+                        //@ts-ignore
                          onRowDoubleClicked={handleDoubleClicked}
-                         onRowValueChanged={handleRowValueChange}
-                //@ts-ignore
+                        //@ts-ignore
                          rowSelection={rowSelection}
                          defaultColDef={defaultColDef}
                          columnDefs={columns}

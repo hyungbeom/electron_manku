@@ -38,7 +38,7 @@ const menuList = {
         title: '발주관리',
         icon: <WalletOutlined/>,
         list: [{title: '발주서 작성', key: 'order_write'}, {title: '발주 조회', key: 'order_read'},
-            {title: '재고 관리', key: 'order_inventory_manage'},
+            {title: '재고 관리', key: 'inventory_manage'},
             {title: '정산 관리', key: 'order_manage', subList: [
                     { title: '거래처 별 주문조회', key: 'order_read_customer' },
                     { title: '해외 대리점 별 주문조회', key: 'order_read_agency' },

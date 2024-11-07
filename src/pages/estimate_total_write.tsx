@@ -1,22 +1,18 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
-import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
 import {
-    CopyOutlined,
     FileExcelOutlined,
     SearchOutlined
 } from "@ant-design/icons";
 import {
-    tableEstimateReadColumns
+    estimateTotalColumns,
 } from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
 import {
     estimateReadInitial,
-    tableEstimateReadInitial,
 } from "@/utils/initialList";
-import {tableEstimateReadInfo} from "@/utils/modalDataList";
 import moment from "moment";
 import Button from "antd/lib/button";
 import {getData} from "@/manage/function/api";
@@ -25,26 +21,22 @@ import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import * as XLSX from "xlsx";
 import Select from "antd/lib/select";
+import TableGrid from "@/component/tableGrid";
+import message from "antd/lib/message";
 
 const {RangePicker} = DatePicker
 
-const TwinInputBox = ({children}) => {
-    return <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: 5, paddingTop: 8}}>
-        {children}
-    </div>
-}
 
 export default function EstimateMerge({dataList}) {
 
 
-    let checkList = []
+    const gridRef = useRef(null);
 
-    const {estimateList, pageInfo} = dataList;
+    const {estimateList} = dataList;
     const [info, setInfo] = useState(estimateReadInitial)
-    const [tableInfo, setTableInfo] = useState(estimateList)
-    const [paginationInfo, setPaginationInfo] = useState(pageInfo)
+    const [tableData, setTableData] = useState(estimateList)
 
-    console.log(pageInfo,'pageInfo:')
+
     function onChange(e) {
 
         let bowl = {}
@@ -57,56 +49,55 @@ export default function EstimateMerge({dataList}) {
 
     useEffect(() => {
         const copyData: any = {...info}
-        copyData['searchDate'] = [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
+        copyData['searchDate'] = [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
         setInfo(copyData);
-        // setTableInfo(transformData(estimateList));
     }, [])
-
-
 
     async function searchInfo() {
         const copyData: any = {...info}
-        const {writtenDate}: any = copyData;
-        if (writtenDate) {
-            copyData['searchStartDate'] = writtenDate[0];
-            copyData['searchEndDate'] = writtenDate[1];
+        const {searchDate}: any = copyData;
+        if (searchDate) {
+            copyData['searchStartDate'] = searchDate[0];
+            copyData['searchEndDate'] = searchDate[1];
         }
-        const result = await getData.post('estimate/getEstimateList', copyData);
-        // setTableInfo(transformData(result?.data?.entity?.estimateRequestList));
+        const result = await getData.post('estimate/getEstimateList',
+            {...copyData,   "page": 1, "limit": -1});
+        setTableData(result?.data?.entity?.estimateList)
     }
 
-    function deleteList() {
-        let copyData = {...info}
-        const result = copyData['estimateDetailList'].filter(v => !checkList.includes(v.serialNumber))
+    async function deleteList() {
+        const api = gridRef.current.api;
+        console.log(api.getSelectedRows(),':::')
 
-        copyData['estimateDetailList'] = result
-        setInfo(copyData);
+        if (api.getSelectedRows().length<1) {
+            message.error('삭제할 데이터를 선택해주세요.')
+        } else {
+            for (const item of api.getSelectedRows()) {
+                const response = await getData.post('estimate/deleteEstimate', {
+                    estimateId:item.estimateId
+                });
+                console.log(response)
+                if (response.data.code===1) {
+                    message.success('삭제되었습니다.')
+                    window.location.reload();
+                } else {
+                    message.error('오류가 발생하였습니다. 다시 시도해주세요.')
+                }
+            }
+        }
     }
 
     const downloadExcel = () => {
 
-        const worksheet = XLSX.utils.json_to_sheet(tableInfo);
+        const worksheet = XLSX.utils.json_to_sheet(tableData);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
         XLSX.writeFile(workbook, "example.xlsx");
     };
 
-    const rowSelection = {
-        onChange: (selectedRowKeys, selectedRows) => {
-
-            checkList  = selectedRowKeys
-
-        },
-        getCheckboxProps: (record) => ({
-            disabled: record.name === 'Disabled User',
-            // Column configuration not to be checked
-            name: record.name,
-        }),
-    };
-
     return <>
         <LayoutComponent>
-            <div style={{display: 'grid', gridTemplateColumns: '350px 1fr', height: '100%', gridColumnGap: 5}}>
+            <div style={{display: 'grid', gridTemplateRows: 'auto 1fr',  height: '100%', gridColumnGap: 5}}>
                 <Card title={<span style={{fontSize: 12,}}>통합견적서 발행</span>} headStyle={{marginTop: -10, height: 30}}
                       style={{fontSize: 12, border: '1px solid lightGray'}} bodyStyle={{padding: '10px 24px'}}>
                     <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1.5fr', width: '100%', columnGap: 20}}>
@@ -131,34 +122,30 @@ export default function EstimateMerge({dataList}) {
                                 } style={{width: '100%',}}/>
                             </div>
 
-                            <div>
-                                <div style={{paddingBottom: 3}}>주문 여부</div>
-                                <Select id={'searchType'} onChange={(src) => onChange({target: {id: 'searchType', value: src}})} size={'small'} value={info['searchType']} defaultValue={0}
-                                        options={[
-                                            {value: 0, label: '전체'},
-                                            {value: 1, label: '주문'},
-                                            {value: 2, label: '미주문'}
-                                        ]} style={{width: '100%'}}>
-                                </Select>
+                            <div style={{marginTop: 8}}>
+                                <div style={{paddingBottom: 3}}>문서번호</div>
+                                <Input id={'searchDocumentNumber'} value={info['searchDocumentNumber']}
+                                       size={'small'}
+                                       onChange={onChange}/>
                             </div>
+
                         </Card>
                         <Card size={'small'} style={{
                             fontSize: 11,
                             boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                         }}>
                             <div>
-                                <div style={{paddingBottom: 3}}>문서번호</div>
-                                <Input id={'searchDocumentNumber'} value={info['searchDocumentNumber']}
-                                       size={'small'}
-                                       onChange={onChange}/>
-                            </div>
-                            <div>
                                 <div style={{paddingBottom: 3}}>등록직원명</div>
                                 <Input id={'searchCreatedBy'} value={info['searchCreatedBy']} size={'small'}
                                        onChange={onChange}/>
                             </div>
-                            <div>
-                                <div style={{marginTop: 8, paddingBottom: 3}}>거래처명</div>
+                            <div style={{marginTop: 8}}>
+                                <div style={{paddingBottom: 3}}>대리점코드</div>
+                                <Input id={'searchAgencyCode'} value={info['searchAgencyCode']} size={'small'}
+                                       onChange={onChange}/>
+                            </div>
+                            <div style={{marginTop: 8}}>
+                                <div style={{paddingBottom: 3}}>거래처명</div>
                                 <Input id={'searchCustomerName'} value={info['searchCustomerName']} size={'small'}
                                        onChange={onChange}/>
                             </div>
@@ -185,98 +172,24 @@ export default function EstimateMerge({dataList}) {
                         </Card>
                     </div>
                     <div style={{marginTop: 8, textAlign: 'right'}}>
-                        <Button onClick={searchInfo} type={'primary'}><SearchOutlined/>조회</Button>
+                        <Button size={'small'}  style={{fontSize: 11}} onClick={searchInfo} type={'primary'}><SearchOutlined/>조회</Button>
                     </div>
 
 
-                    <Card size={'small'} style={{
-                        fontSize: 13,
-                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                    }}>
 
-
-                        <div style={{paddingTop: 8}}>
-                            <div style={{paddingBottom: 3}}>작성일자</div>
-                            <RangePicker style={{width: '100%'}}
-                                         value={[moment(info['searchDate'][0]), moment(info['searchDate'][1])]}
-                                         id={'searchDate'} size={'small'} onChange={(date, dateString) => {
-                                onChange({
-                                    target: {
-                                        id: 'searchDate',
-                                        value: date ? [moment(date[0]).format('YYYY-MM-DD'), moment(date[1]).format('YYYY-MM-DD')] : [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
-                                    }
-                                })
-                            }
-                            }/>
-                        </div>
-
-                        <div style={{paddingTop: 8}}>
-                            <div style={{paddingBottom: 3}}>검색조건</div>
-                            <Select id={'searchType'} size={'small'} value={info['searchType']} defaultValue={0}
-                                    options={[
-                                        {value: 0, label: '전체'},
-                                        {value: 1, label: '주문'},
-                                        {value: 2, label: '미주문'}
-                                    ]} style={{width: '100%'}}>
-                            </Select>
-                        </div>
-                        <div style={{paddingTop: 8}}>
-                            <div style={{paddingBottom: 3}}>문서번호</div>
-                            <Input id={'searchDocumentNumber'} value={info['searchDocumentNumber']} size={'small'}
-                                   onChange={onChange}/>
-                        </div>
-                        <div style={{paddingTop: 8}}>
-                            <div style={{paddingBottom: 3}}>거래처명</div>
-                            <Input id={'searchCustomerName'} value={info['searchCustomerName']} size={'small'}
-                                   onChange={onChange}/>
-                        </div>
-                        <div style={{paddingTop: 8}}>
-                            <div style={{paddingBottom: 3}}>MAKER</div>
-                            <Input id={'searchMaker'} value={info['searchMaker']} size={'small'} onChange={onChange}/>
-                        </div>
-                        <div style={{paddingTop: 8}}>
-                            <div style={{paddingBottom: 3}}>MODEL</div>
-                            <Input id={'searchModel'} value={info['searchModel']} size={'small'} onChange={onChange}/>
-                        </div>
-                        <div style={{paddingTop: 8}}>
-                            <div style={{paddingBottom: 3}}>ITEM</div>
-                            <Input id={'searchItem'} value={info['searchItem']} size={'small'} onChange={onChange}/>
-                        </div>
-                        <div style={{paddingTop: 8}}>
-                            <div style={{paddingBottom: 3}}>등록직원명</div>
-                            <Input id={'searchCreatedBy'} value={info['searchCreatedBy']} size={'small'}
-                                   onChange={onChange}/>
-                        </div>
-                        <div style={{paddingTop: 20, textAlign: 'right'}}>
-                            {/*@ts-ignored*/}
-                            <Button onClick={searchInfo} type={'primary'} style={{marginRight: 8}}>
-                                <SearchOutlined/>조회</Button>
-                        </div>
-                    </Card>
                 </Card>
 
 
-                <CustomTable columns={tableEstimateReadColumns}
-                             initial={tableEstimateReadInitial}
-                             dataInfo={tableEstimateReadInfo}
-                             info={tableInfo}
-                             setDatabase={setInfo}
-                             setTableInfo={setTableInfo}
-                             rowSelection={rowSelection}
-                             pageInfo={paginationInfo}
-                             visible={true}
-                             setPaginationInfo={setPaginationInfo}
-
-                             subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
-                                 <CopyOutlined/>복사
-                             </Button>
-                                 {/*@ts-ignored*/}
-                                 <Button type={'danger'} size={'small'} style={{fontSize: 11}} onClick={deleteList}>
-                                     <CopyOutlined/>삭제
-                                 </Button>
-                                 <Button type={'dashed'} size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>
-                                     <FileExcelOutlined/>출력
-                                 </Button></>}
+                <TableGrid
+                    gridRef={gridRef}
+                    columns={estimateTotalColumns}
+                    tableData={tableData}
+                    type={'read'}
+                    excel={true}
+                    funcButtons={<div>
+                        <Button type={'primary'} size={'small'} style={{backgroundColor:'green', border:'none', fontSize: 11, marginLeft:5,}} onClick={downloadExcel}>
+                            <FileExcelOutlined/>통합 견적서 발행
+                        </Button></div>}
                 />
 
 
@@ -294,8 +207,8 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     const result = await getData.post('estimate/getEstimateList', {
         "searchType": "",                   // 검색조건 1: 회신, 2: 미회신
-        "searchStartDate": "",              // 작성일자 시작일
-        "searchEndDate": "",                // 작성일자 종료일
+        "searchStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),              // 작성일자 시작일
+        "searchEndDate": moment().format('YYYY-MM-DD'),                // 작성일자 종료일
         "searchDocumentNumber": "",         // 문서번호
         "searchCustomerName": "",           // 거래처명
         "searchMaker": "",                  // MAKER
@@ -303,7 +216,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
         "searchItem": "",                   // ITEM
         "searchCreatedBy": "",              // 등록직원명
         "page": 1,
-        "limit": 10
+        "limit": -1
     });
 
 
@@ -318,7 +231,6 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
             },
         };
     } else {
-        // result?.data?.entity?.estimateRequestList
         param = {
             props: {dataList: result?.data?.entity}
         }

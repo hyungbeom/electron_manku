@@ -261,7 +261,7 @@ export default function rqfWrite({dataInfo, display}) {
                                 </div>
                                 <div>
                                     <div style={{paddingTop: 8}}>담당자</div>
-                                    <Input id={'agencyName'} value={info['agencyName']} onChange={onChange}
+                                    <Input id={'managerName'} value={info['managerName']} onChange={onChange}
                                            size={'small'}/>
                                 </div>
                             </Card>

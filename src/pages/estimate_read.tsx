@@ -119,7 +119,8 @@ export default function EstimateRead({dataList}) {
 
                                 <div>
                                     <div style={{paddingBottom: 3}}>주문 여부</div>
-                                    <Select id={'searchType'} size={'small'} value={info['searchType']} defaultValue={0}
+                                    <Select onChange={(src) => onChange({target: {id: 'searchType', value: src}})}
+                                        id={'searchType'} size={'small'} value={info['searchType']} defaultValue={0}
                                             options={[
                                                 {value: 0, label: '전체'},
                                                 {value: 1, label: '주문'},

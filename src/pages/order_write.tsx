@@ -133,18 +133,6 @@ export default function OrderWriter({dataInfo}) {
         setInfo(copyData)
     }
 
-    const downloadExcel = () => {
-
-        if(!info['orderDetailList'].length){
-            return message.warn('출력할 데이터가 존재하지 않습니다.')
-        }
-
-        const worksheet = XLSX.utils.json_to_sheet(info['orderDetailList']);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-        XLSX.writeFile(workbook, "example.xlsx");
-    };
-
 
     async function findDocument() {
 
@@ -232,11 +220,11 @@ export default function OrderWriter({dataInfo}) {
                                 <div style={{paddingBottom: 3}}>Messrs</div>
                                 <Input id={'agencyCode'} value={info['agencyCode']} onChange={onChange} size={'small'}/>
                             </div>
-                            <div>
+                            <div style={{marginTop: 8}}>
                                 <div style={{paddingBottom: 3}}>Attn To</div>
                                 <Input id={'attnTo'} value={info['attnTo']} onChange={onChange} size={'small'}/>
                             </div>
-                            <div>
+                            <div style={{marginTop: 8}}>
                                 <div style={{paddingBottom: 3}}>거래처명</div>
                                 <Input id={'customerName'} value={info['customerName']} onChange={onChange}
                                        size={'small'}/>
@@ -254,20 +242,20 @@ export default function OrderWriter({dataInfo}) {
                             <div style={{paddingBottom: 3}}>Responsibility</div>
                                 <Input disabled={true} id={'managerID'} value={userInfo['name']} onChange={onChange} size={'small'} />
                             </div>
-                            <div>
+                            <div style={{marginTop: 8}}>
                                 <div style={{paddingBottom: 3}}>TEL</div>
                                 <Input id={'managerPhoneNumber'} value={info['managerPhoneNumber']} onChange={onChange}
                                        size={'small'}/>
                             </div>
-
-                            <div>
+                            <div style={{marginTop: 8}}>
                                 <div style={{paddingBottom: 3}}>Fax</div>
                                 <Input id={'managerFaxNumber'} value={info['managerFaxNumber']} onChange={onChange}
                                        size={'small'}/>
                             </div>
-                            <div>
+                            <div style={{marginTop: 8}}>
                                 <div style={{paddingBottom: 3}}>E-Mail</div>
-                                <Input id={'managerEmail'} value={info['managerEmail']} onChange={onChange} size={'small'}/>
+                                <Input id={'managerEmail'} value={info['managerEmail']} onChange={onChange}
+                                       size={'small'}/>
                             </div>
 
                         </Card>
@@ -278,7 +266,8 @@ export default function OrderWriter({dataInfo}) {
                         }}>
                             <div>
                             <div style={{paddingBottom: 3}}>Payment Terms</div>
-                                <Select id={'paymentTerms'} size={'small'} defaultValue={'0'} options={[
+                                <Select id={'paymentTerms'} size={'small'} defaultValue={'0'}
+                                        onChange={(src) => onChange({target: {id: 'searchType', value: src}})} options={[
                                     {value: '0', label: 'By in advance T/T'},
                                     {value: '1', label: 'Credit Card'},
                                     {value: '2', label: 'L/C'},
