@@ -63,14 +63,14 @@ export const makerColumn = [
         key: 'makerName',
         minWidth: 180,
         render: (text) => <div style={{width: 80}} className="ellipsis-cell">{text}</div>,
-        fixed: 'left',
+        
     },
     {
         headerName: 'ITEM',
         field: 'item',
         key: 'item',
         render: (text) => <div style={{width: 80}} className="ellipsis-cell">{text}</div>,
-        fixed: 'left',
+        
     },
     {
         headerName: '홈페이지',
@@ -134,7 +134,7 @@ export const subRfqWriteColumn = [
         headerName: 'Model',
         field: 'model',
         key: 'model',
-        fixed: 'left',
+        
         minWidth: 150,
         editable: true,
     },
@@ -181,7 +181,7 @@ export const subRfqWriteColumn = [
         field: 'content',
         key: 'content',
         editable: true,
-        initialValue: '미회신'
+
     },
     {
         headerName: '회신일',
@@ -194,7 +194,7 @@ export const subRfqWriteColumn = [
         headerName: '비고',
         field: 'remarks', // 없음
         key: 'remarks',
-        fixed: 'right',
+
         editable: true,
 
     }
@@ -272,24 +272,24 @@ export const estimateTotalWriteColumns = [
         headerName: '작성일자',
         field: 'searchStartDate',
         key: 'searchStartDate',
-        fixed: 'left',
+        
         editable: false,
     },
     {
         headerName: '문서번호',
         field: 'searchDocumentNumber',
         key: 'searchDocumentNumber',
-        fixed: 'left',
+        
     }, {
         headerName: '코드',
         field: 'agencyCode',
         key: 'agencyCode',
-        fixed: 'left',
+        
     }, {
         headerName: '거래처명',
         field: 'customerName',
         key: 'customerName',
-        fixed: 'left',
+        
     },
     {
         headerName: 'MAKER',
@@ -647,7 +647,7 @@ export const rfqWriteColumns = [
         headerName: '회신여부',
         field: 'content',
         key: 'content',
-        initialValue: '미회신'
+
     },
     {
         headerName: '회신일',
@@ -862,7 +862,6 @@ export const rfqMailColumns = [
         headerName: '작성일자',
         field: 'writtenDate',
         key: 'writtenDate',
-        fixed: 'left',
         minWidth: 70,
         editable: false,
 
@@ -875,7 +874,7 @@ export const rfqMailColumns = [
         headerName: '거래처명',
         field: 'agencyName',
         key: 'agencyName',
-        fixed: 'left',
+        
     }, {
         headerName: 'MAKER',
         field: 'maker',
@@ -891,12 +890,12 @@ export const rfqMailColumns = [
         field: 'model',
         key: 'model',
         minWidth: 150,
-        fixed: 'left',
+        
     }, {
         headerName: '수량',
         field: 'quantity',
         key: 'quantity',
-        fixed: 'left',
+        
     },
 
     {
@@ -922,7 +921,7 @@ export const rfqMailColumns = [
         headerName: '비고',
         field: 'modifiedDate',
         key: 'modifiedDate',
-        fixed: 'right',
+
     }
 ];
 
@@ -1087,7 +1086,7 @@ export const tableOrderInventoryColumns = [
         headerName: 'No.',
         field: 'key',
         key: 'key',
-        fixed: 'left',
+        
         render: (text) => <div style={{width: 15}} className="ellipsis-cell">{text}</div>,
         align: 'center',
     },
@@ -1095,7 +1094,7 @@ export const tableOrderInventoryColumns = [
         headerName: 'MAKER',
         field: 'maker',
         key: 'maker',
-        fixed: 'left',
+        
         render: (text) => <div style={{width: 100}} className="ellipsis-cell">{text}</div>,
         align: 'center',
         minWidth: 180,
@@ -1105,7 +1104,7 @@ export const tableOrderInventoryColumns = [
         field: 'model',
         key: 'model',
         minWidth: 150,
-        fixed: 'left',
+        
         render: (text) => <div style={{width: 120}} className="ellipsis-cell">{text}</div>,
         align: 'center',
     },
@@ -1113,7 +1112,7 @@ export const tableOrderInventoryColumns = [
         headerName: '위치',
         field: 'location',
         key: 'location',
-        fixed: 'left',
+        
         render: (text) => <div style={{width: 80}} className="ellipsis-cell">{text}</div>,
         align: 'center',
     },
@@ -1121,7 +1120,7 @@ export const tableOrderInventoryColumns = [
         headerName: '잔량',
         field: 'remainingQuantity',
         key: 'remainingQuantity',
-        fixed: 'left',
+        
         render: (text) => <div style={{width: 50}} className="ellipsis-cell">{text}</div>,
         align: 'center',
     },
@@ -1129,7 +1128,7 @@ export const tableOrderInventoryColumns = [
         headerName: '출고량',
         field: 'usageQuantity',
         key: 'usageQuantity',
-        fixed: 'left',
+        
         render: (text) => <div style={{width: 50}} className="ellipsis-cell">{text}</div>,
         align: 'center',
     },
@@ -1179,7 +1178,7 @@ export const tableOrderInventoryColumns = [
         headerName: '비고',
         field: 'remarks',
         key: 'remarks',
-        fixed: 'right',
+
         render: (text) => <div style={{width: 120}} className="ellipsis-cell">{text}</div>,
         align: 'center',
     },
@@ -1191,7 +1190,7 @@ export const tableOrderInventory = [
         title: '입고일자',
         dataIndex: 'receiptDate',
         key: 'receiptDate',
-        fixed: 'left',
+        
         render: (text) => <div className="ellipsis-cell" style={{width: 70}}>{moment(text).format('YYYY-MM-DD')}</div>,
         align: 'center',
     },
@@ -1199,7 +1198,7 @@ export const tableOrderInventory = [
         title: '문서번호',
         dataIndex: 'documentNumber',
         key: 'documentNumber',
-        fixed: 'left',
+        
         render: (text) => <div style={{width: 80}} className="ellipsis-cell">{text}</div>,
         align: 'center',
     },
@@ -1207,7 +1206,7 @@ export const tableOrderInventory = [
         title: 'MAKER',
         dataIndex: 'maker',
         key: 'maker',
-        fixed: 'left',
+        
         render: (text) => <div style={{width: 80}} className="ellipsis-cell">{text}</div>,
         align: 'center',
     },
@@ -1215,7 +1214,7 @@ export const tableOrderInventory = [
         title: 'MODEL',
         dataIndex: 'model',
         key: 'model',
-        fixed: 'left',
+        
         render: (text) => <div style={{width: 80}} className="ellipsis-cell">{text}</div>,
         align: 'center',
     },
@@ -1223,7 +1222,7 @@ export const tableOrderInventory = [
         title: '수입단가',
         dataIndex: 'importUnitPrice',
         key: 'importUnitPrice',
-        fixed: 'left',
+        
         render: (text) => <div style={{width: 80}} className="ellipsis-cell">{text}</div>,
         align: 'center',
     },
@@ -1231,7 +1230,7 @@ export const tableOrderInventory = [
         title: '화폐단위',
         dataIndex: 'currencyUnit',
         key: 'currencyUnit',
-        fixed: 'left',
+        
         render: (text) => <div style={{width: 80}} className="ellipsis-cell">{text}</div>,
         align: 'center',
     },
@@ -1239,7 +1238,7 @@ export const tableOrderInventory = [
         title: '입고수량',
         dataIndex: 'receivedQuantity',
         key: 'receivedQuantity',
-        fixed: 'left',
+        
         render: (text) => <div style={{width: 80}} className="ellipsis-cell">{text}</div>,
         align: 'center',
     },
@@ -1247,7 +1246,7 @@ export const tableOrderInventory = [
         title: '단위',
         dataIndex: 'unit',
         key: 'unit',
-        fixed: 'left',
+        
         render: (text) => <div style={{width: 80}} className="ellipsis-cell">{text}</div>,
         align: 'center',
     },
@@ -1255,7 +1254,7 @@ export const tableOrderInventory = [
         title: '위치',
         dataIndex: 'location',
         key: 'location',
-        fixed: 'left',
+        
         render: (text) => <div style={{width: 80}} className="ellipsis-cell">{text}</div>,
         align: 'center',
     },
@@ -1263,7 +1262,7 @@ export const tableOrderInventory = [
         title: '비고',
         dataIndex: 'remarks',
         key: 'remarks',
-        fixed: 'left',
+        
         render: (text) => <div style={{width: 80}} className="ellipsis-cell">{text}</div>,
         align: 'center',
     },
@@ -2253,7 +2252,7 @@ export const modalCodeDiplomaColumn = [
         headerName: '문서번호',
         field: 'documentNumber',
         key: 'documentNumber',
-        fixed: 'left',
+        
         render: (text) => <div style={{width: 80}} className="ellipsis-cell">{text}</div>,
         editable: true,
     },

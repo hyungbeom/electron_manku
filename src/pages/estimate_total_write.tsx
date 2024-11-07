@@ -107,10 +107,90 @@ export default function EstimateMerge({dataList}) {
     return <>
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateColumns: '350px 1fr', height: '100%', gridColumnGap: 5}}>
-                <Card title={'견적서 통합 발행'} style={{fontSize: 12, border: '1px solid lightGray'}}>
+                <Card title={<span style={{fontSize: 12,}}>통합견적서 발행</span>} headStyle={{marginTop: -10, height: 30}}
+                      style={{fontSize: 12, border: '1px solid lightGray'}} bodyStyle={{padding: '10px 24px'}}>
+                    <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1.5fr', width: '100%', columnGap: 20}}>
+
+                        <Card size={'small'} style={{
+                            fontSize: 11,
+                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                        }}>
+
+                            <div>
+                                <div style={{paddingBottom: 3}}>작성일자</div>
+                                <RangePicker
+                                    value={[moment(info['searchDate'][0]), moment(info['searchDate'][1])]}
+                                    id={'searchDate'} size={'small'} onChange={(date, dateString) => {
+                                    onChange({
+                                        target: {
+                                            id: 'searchDate',
+                                            value: date ? [moment(date[0]).format('YYYY-MM-DD'), moment(date[1]).format('YYYY-MM-DD')] : [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
+                                        }
+                                    })
+                                }
+                                } style={{width: '100%',}}/>
+                            </div>
+
+                            <div>
+                                <div style={{paddingBottom: 3}}>주문 여부</div>
+                                <Select id={'searchType'} onChange={(src) => onChange({target: {id: 'searchType', value: src}})} size={'small'} value={info['searchType']} defaultValue={0}
+                                        options={[
+                                            {value: 0, label: '전체'},
+                                            {value: 1, label: '주문'},
+                                            {value: 2, label: '미주문'}
+                                        ]} style={{width: '100%'}}>
+                                </Select>
+                            </div>
+                        </Card>
+                        <Card size={'small'} style={{
+                            fontSize: 11,
+                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                        }}>
+                            <div>
+                                <div style={{paddingBottom: 3}}>문서번호</div>
+                                <Input id={'searchDocumentNumber'} value={info['searchDocumentNumber']}
+                                       size={'small'}
+                                       onChange={onChange}/>
+                            </div>
+                            <div>
+                                <div style={{paddingBottom: 3}}>등록직원명</div>
+                                <Input id={'searchCreatedBy'} value={info['searchCreatedBy']} size={'small'}
+                                       onChange={onChange}/>
+                            </div>
+                            <div>
+                                <div style={{marginTop: 8, paddingBottom: 3}}>거래처명</div>
+                                <Input id={'searchCustomerName'} value={info['searchCustomerName']} size={'small'}
+                                       onChange={onChange}/>
+                            </div>
+                        </Card>
+                        <Card size={'small'} style={{
+                            fontSize: 11,
+                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                        }}>
+                            <div>
+                                <div style={{paddingBottom: 3}}>MAKER</div>
+                                <Input id={'searchMaker'} value={info['searchMaker']} size={'small'}
+                                       onChange={onChange}/>
+                            </div>
+                            <div style={{marginTop: 8}}>
+                                <div style={{paddingBottom: 3}}>MODEL</div>
+                                <Input id={'searchModel'} value={info['searchModel']} size={'small'}
+                                       onChange={onChange}/>
+                            </div>
+                            <div style={{marginTop: 8}}>
+                                <div style={{paddingBottom: 3}}>ITEM</div>
+                                <Input id={'searchItem'} value={info['searchItem']} size={'small'} onChange={onChange}/>
+                            </div>
+
+                        </Card>
+                    </div>
+                    <div style={{marginTop: 8, textAlign: 'right'}}>
+                        <Button onClick={searchInfo} type={'primary'}><SearchOutlined/>조회</Button>
+                    </div>
+
+
                     <Card size={'small'} style={{
                         fontSize: 13,
-                        marginTop: 20,
                         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                     }}>
 
@@ -132,20 +212,23 @@ export default function EstimateMerge({dataList}) {
 
                         <div style={{paddingTop: 8}}>
                             <div style={{paddingBottom: 3}}>검색조건</div>
-                            <Select id={'searchType'} size={'small'} value={info['searchType']}  defaultValue={0} options={[
-                                {value: 0, label: '전체'},
-                                {value: 1, label: '주문'},
-                                {value: 2, label: '미주문'}
-                            ]} style={{width: '100%'}}>
+                            <Select id={'searchType'} size={'small'} value={info['searchType']} defaultValue={0}
+                                    options={[
+                                        {value: 0, label: '전체'},
+                                        {value: 1, label: '주문'},
+                                        {value: 2, label: '미주문'}
+                                    ]} style={{width: '100%'}}>
                             </Select>
                         </div>
                         <div style={{paddingTop: 8}}>
                             <div style={{paddingBottom: 3}}>문서번호</div>
-                            <Input id={'searchDocumentNumber'} value={info['searchDocumentNumber']}  size={'small'} onChange={onChange}/>
+                            <Input id={'searchDocumentNumber'} value={info['searchDocumentNumber']} size={'small'}
+                                   onChange={onChange}/>
                         </div>
                         <div style={{paddingTop: 8}}>
                             <div style={{paddingBottom: 3}}>거래처명</div>
-                            <Input id={'searchCustomerName'} value={info['searchCustomerName']}  size={'small'} onChange={onChange}/>
+                            <Input id={'searchCustomerName'} value={info['searchCustomerName']} size={'small'}
+                                   onChange={onChange}/>
                         </div>
                         <div style={{paddingTop: 8}}>
                             <div style={{paddingBottom: 3}}>MAKER</div>
@@ -161,7 +244,8 @@ export default function EstimateMerge({dataList}) {
                         </div>
                         <div style={{paddingTop: 8}}>
                             <div style={{paddingBottom: 3}}>등록직원명</div>
-                            <Input id={'searchCreatedBy'} value={info['searchCreatedBy']} size={'small'} onChange={onChange}/>
+                            <Input id={'searchCreatedBy'} value={info['searchCreatedBy']} size={'small'}
+                                   onChange={onChange}/>
                         </div>
                         <div style={{paddingTop: 20, textAlign: 'right'}}>
                             {/*@ts-ignored*/}
@@ -170,6 +254,7 @@ export default function EstimateMerge({dataList}) {
                         </div>
                     </Card>
                 </Card>
+
 
                 <CustomTable columns={tableEstimateReadColumns}
                              initial={tableEstimateReadInitial}

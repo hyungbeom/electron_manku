@@ -229,6 +229,9 @@ const TableGrid = ({
                          pagination={true}
                          onRowSelected={handleRowSelected}
                          onCellValueChanged={dataChange}
+                         gridOptions={{
+                             loadThemeGoogleFonts: true,
+                         }}
             />
         </div>
     );

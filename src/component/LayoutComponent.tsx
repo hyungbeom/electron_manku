@@ -30,7 +30,7 @@ const menuList = {
         title: '견적서',
         icon: <FormOutlined/>,
         list: [{title: '견적서 작성', key: 'estimate_write'}, {title: '견적서 조회', key: 'estimate_read'}, {
-            title: '통합견적서 작성',
+            title: '통합견적서 발행',
             key: 'estimate_total_write'
         }]
     },
