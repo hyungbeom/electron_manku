@@ -133,7 +133,7 @@ export default function OrderInventoryRead({dataList}) {
                         </span>
                         <span style={{paddingTop: 8, textAlign: 'right'}}>
                             <Button type={'ghost'} style={{marginRight: 8,}}
-                                    onClick={() => router?.push('/order_inventory_write')}><EditOutlined/>신규작성</Button>
+                                    onClick={() => router?.push('/inventory_write')}><EditOutlined/>신규작성</Button>
                         </span>
                     </div>
 

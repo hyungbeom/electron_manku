@@ -52,7 +52,20 @@ export const searchAgencyCodeColumn = [
         field: 'agencyName',
         key: 'agencyName',
 
-    }
+    },
+    {
+        headerName: '담당자',
+        field: 'managerName',
+        key: 'managerName',
+
+    },
+    {
+        headerName: '전화번호',
+        field: 'phoneNumber',
+        key: 'phoneNumber',
+    },
+
+
 ];
 
 

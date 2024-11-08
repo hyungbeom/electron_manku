@@ -35,6 +35,7 @@ import SearchAgendaModal from "@/component/SearchAgendaModal";
 import SearchCustomerModal from "@/component/SearchCustomerModal";
 import TextArea from "antd/lib/input/TextArea";
 
+
 export default function OrderWriter({dataInfo}) {
     const gridRef = useRef(null);
     const router = useRouter();
@@ -396,13 +397,13 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     store.dispatch(setUserInfo(userInfo));
 
-    const {orderId} = ctx.query;
+    const {inventoryId} = ctx.query;
 
 
-    const result = await getData.post('order/getOrderDetail', {
-        orderId:orderId
+    const result = await getData.post('inventory/getInventoryList', {
+        inventoryId:inventoryId
     });
 
 
-    return {props: {dataInfo: orderId ? result?.data?.entity?.orderDetail : null}}
+    return {props: {dataInfo: inventoryId ? result?.data?.entity?.inventoryList[0] : null}}
 })

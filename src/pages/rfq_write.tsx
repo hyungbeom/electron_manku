@@ -11,7 +11,7 @@ import {
     SaveOutlined,
     UpCircleFilled
 } from "@ant-design/icons";
-import {searchAgencyCodeColumn, searchCustomerColumn, subRfqWriteColumn} from "@/utils/columnList";
+import {subRfqWriteColumn} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
 import {rfqWriteInitial} from "@/utils/initialList";
 import moment from "moment";
@@ -31,14 +31,11 @@ import TableGrid from "@/component/tableGrid";
 import {AgGridReact} from "ag-grid-react";
 import SearchAgendaModal from "@/component/SearchAgendaModal";
 import SearchCustomerModal from "@/component/SearchCustomerModal";
-import {iconSetMaterial, themeQuartz} from "@ag-grid-community/theming";
-import {tableTheme} from "@/utils/common";
 
 export default function rqfWrite({dataInfo, display}) {
     const gridRef = useRef(null);
     const router = useRouter();
 
-    const userInfo = useAppSelector((state) => state.user);
     const [info, setInfo] = useState<any>(rfqWriteInitial)
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
@@ -143,6 +140,7 @@ export default function rqfWrite({dataInfo, display}) {
                     "page": 1,
                     "limit": -1
                 })
+
                 if (result.data.entity.agencyList.length > 1) {
                     setAgencyData(result.data.entity.agencyList)
                     setIsModalOpen({event1: true, event2: false})

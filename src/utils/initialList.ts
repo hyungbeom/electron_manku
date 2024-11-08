@@ -71,6 +71,20 @@ export const rfqWriteInitial = {
     "estimateRequestDetailList": []
 }
 
+
+export const makerWriteInitial = {
+    "makerName": "",                   // MAKER
+    "item": "",               // ITEM
+    "homepage": "",  // 홈페이지
+    "area": "",                            // AREA
+    "origin": "",                               // 원산지
+    "managerConfirm": "",                       // 담당자확인
+    "koreanAgency": "",                         // 한국대리점
+    "directConfirm": "",                        // 직접확인
+    "ftaNumber": "",                            // FTA-No
+    "instructions": ""
+}
+
 export const subRfqWriteInitial = {
     "model": "",           // MODEL
     "quantity": 1,              // 수량

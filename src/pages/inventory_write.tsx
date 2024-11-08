@@ -35,7 +35,7 @@ import {useRouter} from "next/router";
 import TextArea from "antd/lib/input/TextArea";
 
 
-export default function OrderInventoryRead() {
+export default function OrderInventoryWrite() {
 
     const [info, setInfo] = useState(tableOrderInventoryInitial)
 
@@ -76,7 +76,7 @@ export default function OrderInventoryRead() {
 
     return <>
         <LayoutComponent>
-            <div style={{display: 'grid', gridTemplateRows: 'auto 1fr', height: '100%', gridColumnGap: 5}}>
+            <div style={{display: 'grid', gridTemplateRows: 'auto 1fr', height: '100%', columnGap: 5}}>
                 <Card title={<span style={{fontSize: 12,}}>재고 등록</span>} headStyle={{marginTop: -10, height: 30}}
                       style={{border: '1px solid lightGray',}} bodyStyle={{padding: '10px 24px'}}>
 

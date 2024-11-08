@@ -119,6 +119,8 @@ const TableGrid = ({
             router.push(`/order_update?orderId=${e?.data?.orderId}`)
         if (e.data.inventoryId)
             router.push(`/inventory_update?inventoryId=${e?.data?.inventoryId}`)
+        if (e.data.makerId)
+            router.push(`/maker_update?makerId=${e?.data?.makerId}`)
 
         // if (e.data.inventoryId) {
         //     let itemId = e.data.inventoryId;

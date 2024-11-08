@@ -15,12 +15,18 @@ export default function SearchAgendaModal({agencyData, info, setInfo, isModalOpe
         searchFunc();
     }, [])
 
+    useEffect(() => {
+        setData(agencyData);
+    }, [agencyData])
+
     async function searchFunc() {
         const result = await getData.post('agency/getAgencyListForEstimate', {
             "searchText": code,       // 대리점코드 or 대리점 상호명
             "page": 1,
             "limit": -1
         });
+
+        // console.log(result, 'result~~~~')
         setData(result?.data?.entity?.agencyList)
     }
 

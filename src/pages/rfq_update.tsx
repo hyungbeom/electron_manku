@@ -11,7 +11,7 @@ import {
     RetweetOutlined,
     SaveOutlined
 } from "@ant-design/icons";
-import {searchAgencyCodeColumn, searchCustomerColumn, subRfqWriteColumn} from "@/utils/columnList";
+import {subRfqWriteColumn} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
 import {orderWriteInitial, rfqWriteInitial} from "@/utils/initialList";
 import moment from "moment";
