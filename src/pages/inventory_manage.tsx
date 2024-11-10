@@ -29,9 +29,9 @@ export default function OrderInventoryRead({dataList}) {
 
     const {inventoryList} = dataList;
     const [info, setInfo] = useState(tableOrderInventoryInitial)
-    const [readInfo, setReadInfo] = useState(inventoryReadInitial);
     const [tableData, setTableData] = useState(inventoryList);
 
+    // console.log(inventoryList, 'inventoryList')
 
     function onChange(e) {
 
@@ -83,6 +83,35 @@ export default function OrderInventoryRead({dataList}) {
     }
 
 
+    async function copyRow() {
+        const api = gridRef.current.api;
+
+        if (api.getSelectedRows().length<1) {
+            message.error('복사할 데이터를 선택해주세요.')
+        } else {
+            for (const item of api.getSelectedRows()) {
+
+                let newItem={...item}
+
+                delete newItem.inventoryId;
+                delete newItem.createdBy;
+                delete newItem.createdDate;
+                delete newItem.modifiedBy;
+                delete newItem.modifiedDate;
+
+                const response = await getData.post('inventory/addInventory', newItem);
+                console.log(response)
+                if (response.data.code===1) {
+                    message.success('복사되었습니다.')
+                    window.location.reload();
+                } else {
+                    message.error('오류가 발생하였습니다. 다시 시도해주세요.')
+                }
+            }
+        }
+    }
+
+
     const downloadExcel = () => {
 
         const worksheet = XLSX.utils.json_to_sheet(tableData);
@@ -109,24 +138,24 @@ export default function OrderInventoryRead({dataList}) {
                         }}>
                             <div>
                                 <div style={{paddingBottom: 3}}>MAKER</div>
-                                <Input id={'searchMaker'} value={readInfo['searchMaker']} onChange={onChange}
+                                <Input id={'searchMaker'} value={info['searchMaker']} onChange={onChange}
                                        size={'small'}/>
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>MODEL</div>
-                                <Input id={'searchModel'} value={readInfo['searchModel']} onChange={onChange}
+                                <Input id={'searchModel'} value={info['searchModel']} onChange={onChange}
                                        size={'small'}/>
                             </div>
                             <div>
                                 <div style={{paddingBottom: 3}}>위치</div>
-                                <Input id={'searchLocation'} value={readInfo['searchLocation']} onChange={onChange}
+                                <Input id={'searchLocation'} value={info['searchLocation']} onChange={onChange}
                                        size={'small'}/>
                             </div>
 
                         </div>
 
                     </Card>
-                    <div style={{width:'100%', textAlign:'right'}}>
+                    <div style={{width:'100%', textAlign:'right', marginTop: 15}}>
                         <span style={{paddingTop: 8, textAlign: 'right',}}>
                             <Button type={'primary'} style={{marginRight: 8}}
                                     onClick={searchInfo}><SearchOutlined/>조회</Button>
@@ -146,7 +175,7 @@ export default function OrderInventoryRead({dataList}) {
                     tableData={tableData}
                     type={'read'}
                     excel={true}
-                    funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
+                    funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11,}} onClick={copyRow}>
                         <CopyOutlined/>복사
                     </Button>
                         {/*@ts-ignored*/}
@@ -194,7 +223,6 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
             },
         };
     } else {
-        // result?.data?.entity?.estimateRequestList
         param = {
             props: {dataList: result?.data?.entity}
         }

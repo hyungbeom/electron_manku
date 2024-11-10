@@ -99,6 +99,7 @@ const TableGrid = ({
         if (isUpdatingSelection) return; // 중복 선택 이벤트 발생 시 종료
         isUpdatingSelection = true;
 
+        // console.log(e, 'handleSelectionChange')
         const currentRowData = e.node.data;
         const currentDocumentNumber = currentRowData.documentNumberFull;
         const isCurrentlySelected = e.node.isSelected();
@@ -126,7 +127,7 @@ const TableGrid = ({
         //     let itemId = e.data.inventoryId;
         //     setIsModalOpen(true);
         //     setItemId(itemId);
-        //     console.log(itemId, 'itemId')
+            console.log(e.data.inventoryId, 'itemId')
         // }
     };
 

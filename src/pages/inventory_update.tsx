@@ -4,9 +4,7 @@ import LayoutComponent from "@/component/LayoutComponent";
 import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
 import {
-    CopyOutlined,
-    DeleteOutlined, DownloadOutlined,
-    FileExcelOutlined,
+
     RetweetOutlined,
     SaveOutlined,
     SearchOutlined

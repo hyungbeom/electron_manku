@@ -20,21 +20,15 @@ import TableGrid from "@/component/tableGrid";
 import Search from "antd/lib/input/Search";
 
 
-const TwinInputBox = ({children}) => {
-    return <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: 5, paddingTop: 8}}>
-        {children}
-    </div>
-}
 export default function codeDomesticPurchase({dataList}) {
     const gridRef = useRef(null);
     let checkList = []
 
     const {agencyList, pageInfo} = dataList;
-    const [saveInfo, setSaveInfo] = useState(codeDomesticPurchaseInitial);
+    // const [saveInfo, setSaveInfo] = useState(codeDomesticPurchaseInitial);
     const [info, setInfo] = useState(codeDomesticPurchaseInitial);
     const [tableData, setTableData] = useState(agencyList);
 
-    const [paginationInfo, setPaginationInfo] = useState(pageInfo);
 
     // console.log(saveInfo,'saveInfo:')
 
@@ -56,9 +50,69 @@ export default function codeDomesticPurchase({dataList}) {
         }
     }
 
+    async function deleteList() {
+        const api = gridRef.current.api;
+        console.log(api.getSelectedRows(),':::')
+
+        if (api.getSelectedRows().length<1) {
+            message.error('삭제할 데이터를 선택해주세요.')
+        } else {
+            for (const item of api.getSelectedRows()) {
+                const response = await getData.post('inventory/deleteInventory', {
+                    inventoryId:item.inventoryId
+                });
+                console.log(response)
+                if (response.data.code===1) {
+                    message.success('삭제되었습니다.')
+                    window.location.reload();
+                } else {
+                    message.error('오류가 발생하였습니다. 다시 시도해주세요.')
+                }
+            }
+        }
+    }
+
+
+    async function copyRow() {
+        const api = gridRef.current.api;
+
+        if (api.getSelectedRows().length<1) {
+            message.error('복사할 데이터를 선택해주세요.')
+        } else {
+            for (const item of api.getSelectedRows()) {
+
+                let newItem={...item}
+
+                delete newItem.inventoryId;
+                delete newItem.createdBy;
+                delete newItem.createdDate;
+                delete newItem.modifiedBy;
+                delete newItem.modifiedDate;
+
+                const response = await getData.post('inventory/addInventory', newItem);
+                console.log(response)
+                if (response.data.code===1) {
+                    message.success('복사되었습니다.')
+                    window.location.reload();
+                } else {
+                    message.error('오류가 발생하였습니다. 다시 시도해주세요.')
+                }
+            }
+        }
+    }
+
+
+    const downloadExcel = () => {
+
+        const worksheet = XLSX.utils.json_to_sheet(tableData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+        XLSX.writeFile(workbook, "inventory_list.xlsx");
+    };
+
     return <LayoutComponent>
         <div style={{display: 'grid', gridTemplateRows: '120px 1fr', height: '100%', gridColumnGap: 5}}>
-            <Card size={'small'} title={'국내대리점관리(매입)'} style={{fontSize: 12, border: '1px solid lightGray'}}>
+            <Card size={'small'} title={'국내 매입처 관리'} style={{fontSize: 12, border: '1px solid lightGray'}}>
                 <Card size={'small'} style={{
                     fontSize: 13,
                     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
@@ -95,16 +149,16 @@ export default function codeDomesticPurchase({dataList}) {
                 tableData={tableData}
                 type={'read'}
                 excel={true}
-                // funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
-                //     <CopyOutlined/>복사
-                // </Button>
-                //     {/*@ts-ignored*/}
-                //     <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={deleteList}>
-                //         <CopyOutlined/>삭제
-                //     </Button>
-                //     <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={downloadExcel}>
-                //         <FileExcelOutlined/>출력
-                //     </Button></div>}
+                funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}} onClick={copyRow}>
+                    <CopyOutlined/>복사
+                </Button>
+                    {/*@ts-ignored*/}
+                    <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={deleteList}>
+                        <CopyOutlined/>삭제
+                    </Button>
+                    <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={downloadExcel}>
+                        <FileExcelOutlined/>출력
+                    </Button></div>}
             />
 
         </div>

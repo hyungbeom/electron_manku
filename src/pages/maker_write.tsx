@@ -51,7 +51,7 @@ export default function makerRead() {
                 message.success('저장되었습니다')
                 setInfo(makerWriteInitial);
 
-                window.location.href = '/getMakerList'
+                window.location.href = '/maker_read'
             } else {
                 message.error('저장에 실패하였습니다.')
             }

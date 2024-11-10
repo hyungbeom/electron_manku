@@ -80,6 +80,37 @@ export default function makerRead({dataList}) {
         }
     }
 
+
+    async function copyRow() {
+        const api = gridRef.current.api;
+
+        if (api.getSelectedRows().length<1) {
+            message.error('복사할 데이터를 선택해주세요.')
+        } else {
+            for (const item of api.getSelectedRows()) {
+
+                let newItem={...item}
+
+                delete newItem.makerId;
+                delete newItem.key;
+                delete newItem.createdBy;
+                delete newItem.createdDate;
+                delete newItem.modifiedBy;
+                delete newItem.modifiedDate;
+
+                const response = await getData.post('maker/addMaker', newItem);
+                console.log(response)
+                if (response.data.code===1) {
+                    message.success('복사되었습니다.')
+                    window.location.reload();
+                } else {
+                    message.error('오류가 발생하였습니다. 다시 시도해주세요.')
+                }
+            }
+        }
+    }
+
+
     const downloadExcel = () => {
 
         const worksheet = XLSX.utils.json_to_sheet(tableData);
@@ -134,7 +165,7 @@ export default function makerRead({dataList}) {
                 tableData={tableData}
                 type={'read'}
                 excel={true}
-                funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
+                funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}} onClick={copyRow}>
                     <CopyOutlined/>복사
                 </Button>
                     {/*@ts-ignored*/}
