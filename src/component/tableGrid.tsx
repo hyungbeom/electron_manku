@@ -112,20 +112,23 @@ const TableGrid = ({
 
     const handleDoubleClicked = (e) => {
 
-        if (e.data.estimateRequestId)
-            router.push(`/rfq_update?estimateRequestId=${e?.data?.estimateRequestId}`)
-        if (e.data.estimateId)
-            router.push(`/estimate_update?estimateId=${e?.data?.estimateId}`)
-        if (e.data.orderId)
-            router.push(`/order_update?orderId=${e?.data?.orderId}`)
-        if (e.data.inventoryId)
-            router.push(`/inventory_update?inventoryId=${e?.data?.inventoryId}`)
-        if (e.data.makerId)
-            router.push(`/maker_update?makerId=${e?.data?.makerId}`)
-        if (e.data.agencyId)
-            router.push(`/code_domestic_agency_update?agencyCode=${e?.data?.agencyCode}`)
-        if (e.data.overseasAgencyId)
-            router.push(`/code_overseas_agency_update?agencyCode=${e?.data?.agencyCode}`)
+        if (type==='read'){
+            if (e.data.estimateRequestId)
+                router.push(`/rfq_update?estimateRequestId=${e?.data?.estimateRequestId}`)
+            if (e.data.estimateId)
+                router.push(`/estimate_update?estimateId=${e?.data?.estimateId}`)
+            if (e.data.orderId)
+                router.push(`/order_update?orderId=${e?.data?.orderId}`)
+            if (e.data.inventoryId)
+                router.push(`/inventory_update?inventoryId=${e?.data?.inventoryId}`)
+            if (e.data.makerId)
+                router.push(`/maker_update?makerId=${e?.data?.makerId}`)
+            if (e.data.agencyId)
+                router.push(`/code_domestic_agency_update?agencyCode=${e?.data?.agencyCode}`)
+            if (e.data.overseasAgencyId)
+                router.push(`/code_overseas_agency_update?agencyCode=${e?.data?.agencyCode}`)
+
+        }
 
 
 
@@ -133,7 +136,7 @@ const TableGrid = ({
         //     let itemId = e.data.inventoryId;
         //     setIsModalOpen(true);
         //     setItemId(itemId);
-            console.log(e.data.overseasAgencyId, 'itemId')
+        //     console.log(e.data.overseasAgencyId, 'itemId')
         // }
     };
 

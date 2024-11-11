@@ -13,7 +13,7 @@ import {
 } from "@ant-design/icons";
 import {subRfqWriteColumn} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {orderWriteInitial, rfqWriteInitial} from "@/utils/initialList";
+import {codeOverseasAgencyWriteInitial, orderWriteInitial, rfqWriteInitial} from "@/utils/initialList";
 import moment from "moment";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
@@ -36,16 +36,26 @@ import {tableTheme} from "@/utils/common";
 import SearchAgendaModal from "@/component/SearchAgendaModal";
 import SearchCustomerModal from "@/component/SearchCustomerModal";
 
-export default function rqfUpdate({dataInfo, display}) {
+export default function rqfUpdate({dataInfo}) {
     const gridRef = useRef(null);
     const router = useRouter();
 
-    const userInfo = useAppSelector((state) => state.user);
+    // const userInfo = useAppSelector((state) => state.user);
     const [info, setInfo] = useState<any>(dataInfo)
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
     const [agencyData, setAgencyData] = useState([]);
     const [customerData, setCustomerData] = useState([]);
 
+
+    useEffect(() => {
+        let copyData: any = {...info}
+        // @ts-ignored
+        copyData['writtenDate'] = moment();
+        copyData['replyDate'] = moment();
+
+        setInfo(copyData);
+
+    }, [])
 
 
     function onChange(e) {
@@ -56,6 +66,7 @@ export default function rqfUpdate({dataInfo, display}) {
         setInfo(v => {
             return {...v, ...bowl}
         })
+        console.log(info, 'onChange~~~')
     }
 
     async function saveFunc() {
@@ -67,6 +78,7 @@ export default function rqfUpdate({dataInfo, display}) {
             copyData['replyDate'] = moment(info['replyDate']).format('YYYY-MM-DD');
 
             await getData.post('estimate/updateEstimateRequest', copyData).then(v => {
+
                 if (v.data.code === 1) {
                     message.success('저장되었습니다.')
                     setInfo(rfqWriteInitial);
@@ -106,11 +118,11 @@ export default function rqfUpdate({dataInfo, display}) {
             "model": "",           // MODEL
             "quantity": 1,              // 수량
             "unit": "ea",               // 단위
-            "currency": "krw",          // CURR
+            "currency": "KRW",          // CURR
             "net": 0,            // NET/P
             "deliveryDate": "",   // 납기
             "content": "미회신",         // 내용
-            "replyDate": '',  // 회신일
+            "replyDate": "",  // 회신일
             "remarks": "",           // 비고
             "serialNumber": 1           // 견적의뢰 내역 순서 (1부터 시작)
         })
@@ -164,18 +176,6 @@ export default function rqfUpdate({dataInfo, display}) {
         }
     };
 
-    const downloadExcel = () => {
-
-        if (!info['estimateRequestDetailList'].length) {
-            return message.warn('출력할 데이터가 존재하지 않습니다.')
-        }
-
-        const worksheet = XLSX.utils.json_to_sheet(info['estimateRequestDetailList']);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-        XLSX.writeFile(workbook, "example.xlsx");
-    };
-
 
     return <>
         <LayoutComponent>
@@ -187,7 +187,7 @@ export default function rqfUpdate({dataInfo, display}) {
                                      setIsModalOpen={setIsModalOpen}/>
 
                 <Card title={'견적의뢰 수정'} style={{fontSize: 12, border: '1px solid lightGray'}}>
-                    <div style={{display : 'grid', gridTemplateColumns : '220px 320px 320px 1fr', columnGap : 10}}>
+                    <div style={{display : 'grid', gridTemplateColumns : '1fr 1fr 1fr 1.3fr', columnGap : 10}}>
                         <Card size={'small'} style={{
                             fontSize: 13,
                             boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
@@ -197,17 +197,17 @@ export default function rqfUpdate({dataInfo, display}) {
                                 <div style={{paddingBottom: 3}}>INQUIRY NO.</div>
                                 <Input disabled={true} value={info['documentNumberFull']} size={'small'}/>
                             </div>
-                            {/*<div>*/}
-                            {/*    <div style={{paddingBottom: 3}}>작성일</div>*/}
-                            {/*    <DatePicker value={info['writtenDate']}*/}
-                            {/*                onChange={(date, dateString) => onChange({*/}
-                            {/*                    target: {*/}
-                            {/*                        id: 'writtenDate',*/}
-                            {/*                        value: date*/}
-                            {/*                    }*/}
-                            {/*                })*/}
-                            {/*                } id={'writtenDate'} size={'small'}/>*/}
-                            {/*</div>*/}
+                            <div>
+                                <div style={{paddingBottom: 3}}>작성일</div>
+                                <DatePicker value={moment(info['writtenDate'])}
+                                            onChange={(date, dateString) => onChange({
+                                                target: {
+                                                    id: 'writtenDate',
+                                                    value: date
+                                                }
+                                            })
+                                            } id={'writtenDate'} size={'small'} disabled={true}/>
+                            </div>
 
                         </Card>
 

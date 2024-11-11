@@ -77,7 +77,7 @@ export default function code_domestic_agency_write({data}) {
         }
 
         let copyData = {...info}
-        copyData['overseasAgencyList'] = uncheckedData;
+        copyData['overseasAgencyManagerList'] = uncheckedData;
         console.log(copyData, 'copyData::')
         setInfo(copyData);
 
@@ -86,21 +86,15 @@ export default function code_domestic_agency_write({data}) {
 
     function addRow() {
         let copyData = {...info};
-        copyData['overseasAgencyList'].push({
-            "overseasManagerId": null,
-            "overseasAgencyId": null,
-            "managerName": "",
-            "phoneNumber": "",
-            "faxNumber": null,
-            "email": "",
-            "address": "",
-            "remarks": null,
-            "countryAgency": "",
-            "mobilePhone": "",
-            "createdBy": "",
-            "createdDate": "",
-            "modifiedBy": "",
-            "modifiedDate": ""
+        copyData['overseasAgencyManagerList'].push({
+            "managerName": "",        // 담당자
+            "phoneNumber": "",   // 전화번호
+            "faxNumber": "",      // 팩스번호
+            "email": "",       // 이메일
+            "address": "",              //  주소
+            "countryAgency": "",            // 국가대리점
+            "mobilePhone":  "",             // 핸드폰
+            "remarks": ""                // 비고
         })
 
         setInfo(copyData)

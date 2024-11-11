@@ -146,21 +146,21 @@ export const subRfqWriteColumn = [
     {
         headerName: 'Model',
         field: 'model',
-        key: 'model',
-        
+        // key: 'model',
         minWidth: 150,
         editable: true,
     },
     {
         headerName: '수량',
         field: 'quantity',
-        key: 'quantity',
+        // key: 'quantity',
         editable: true,
+        cellEditor: 'agNumberCellEditor',
     },
     {
         headerName: '단위',
         field: 'unit',
-        key: 'unit',
+        // key: 'unit',
         editable: true,
         cellEditor: 'agSelectCellEditor',
         cellEditorParams: {
@@ -170,44 +170,52 @@ export const subRfqWriteColumn = [
     {
         headerName: 'CURR',
         field: 'currency',
-        key: 'currency',
+        // key: 'currency',
         editable: true,
         cellEditor: 'agSelectCellEditor',
         cellEditorParams: {
-            values: ['KWD', 'EUR', 'JPY', 'USD', 'GBP',],
+            values: ['KRW', 'EUR', 'JPY', 'USD', 'GBP',],
         }
     },
     {
         headerName: 'NET/P',
         field: 'net',
-        key: 'net',
+        // key: 'net',
         editable: true,
     },
     {
         headerName: '납기', //없음
         field: 'deliveryDate',
-        key: 'deliveryDate',
+        // key: 'deliveryDate',
         editable: true,
+        cellEditor: 'agNumberCellEditor',
+        cellEditorParams: {
+            min: 0,
+            max: 100
+        }
     },
     {
         headerName: '회신여부',
         field: 'content',
-        key: 'content',
+        // key: 'content',
         editable: true,
 
     },
     {
         headerName: '회신일',
         field: 'replyDate',
-        key: 'replyDate',
+        // key: 'replyDate',
         editable: true,
-
+        cellEditor: 'agDateCellEditor',
+        cellEditorParams: {
+            min: '2024-06-01',
+            max: '2027-12-31',
+        },
     },
     {
         headerName: '비고',
         field: 'remarks', // 없음
-        key: 'remarks',
-
+        // key: 'remarks',
         editable: true,
 
     }
@@ -238,7 +246,7 @@ export const tableOrderWriteColumn = [
         editable: true,
         cellEditor: 'agSelectCellEditor',
         cellEditorParams: {
-            values: ['KWD', 'EUR', 'JPY', 'USD', 'GBP',],
+            values: ['KRW', 'EUR', 'JPY', 'USD', 'GBP',],
         }
     },
     {
@@ -605,7 +613,7 @@ export const tableEstimateWriteColumns = [
         editable: true,
         cellEditor: 'agSelectCellEditor',
         cellEditorParams: {
-            values: ['KWD', 'EUR', 'JPY', 'USD', 'GBP',],
+            values: ['KRW', 'EUR', 'JPY', 'USD', 'GBP',],
         }
     },
     {
@@ -644,7 +652,7 @@ export const rfqWriteColumns = [
         key: 'currency',
         cellEditor: 'agSelectCellEditor',
         cellEditorParams: {
-            values: ['KWD', 'EUR', 'JPY', 'USD', 'GBP',],
+            values: ['KRW', 'EUR', 'JPY', 'USD', 'GBP',],
         }
     },
     {
@@ -778,7 +786,7 @@ export const rfqReadColumns = [
                 maxWidth: 120,
                 cellEditor: 'agSelectCellEditor',
                 cellEditorParams: {
-                    values: ['KWD', 'EUR', 'JPY', 'USD', 'GBP',],
+                    values: ['KRW', 'EUR', 'JPY', 'USD', 'GBP',],
                 }
             },
             {
@@ -1004,7 +1012,7 @@ export const tableOrderReadColumns = [
                 minWidth: 50,
                 cellEditor: 'agSelectCellEditor',
                 cellEditorParams: {
-                    values: ['KWD', 'EUR', 'JPY', 'USD', 'GBP',],
+                    values: ['KRW', 'EUR', 'JPY', 'USD', 'GBP',],
                 }
             },
             {
