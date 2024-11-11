@@ -1,24 +1,18 @@
 import React, {useEffect, useRef, useState} from "react";
 import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
-import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
 import {
 
     RetweetOutlined,
     SaveOutlined,
-    SearchOutlined
 } from "@ant-design/icons";
 import Button from "antd/lib/button";
-import {rfqReadColumns, tableOrderInventory, tableOrderInventoryColumns,} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
 import {
-    inventoryReadInitial,
-    orderWriteInitial, rfqWriteInitial,
-    subRfqReadInitial,
+    orderWriteInitial,
     tableOrderInventoryInitial,
 } from "@/utils/initialList";
-import {tableOrderInventoryInfo,} from "@/utils/modalDataList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";

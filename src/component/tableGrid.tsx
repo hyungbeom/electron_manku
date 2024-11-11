@@ -122,6 +122,12 @@ const TableGrid = ({
             router.push(`/inventory_update?inventoryId=${e?.data?.inventoryId}`)
         if (e.data.makerId)
             router.push(`/maker_update?makerId=${e?.data?.makerId}`)
+        if (e.data.agencyId)
+            router.push(`/code_domestic_agency_update?agencyCode=${e?.data?.agencyCode}`)
+        // if (e.data.overseasAgencyId)
+        //     router.push(`/code_overseas_agency_update?agencyCode=${e?.data?.agencyCode}`)
+
+
 
         // if (e.data.inventoryId) {
         //     let itemId = e.data.inventoryId;

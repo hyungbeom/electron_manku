@@ -432,25 +432,22 @@ export const codeDomesticPurchaseInitial = {
     "limit": -1
 }
 
-export const tableCodeDomesticPurchaseInitial = {
-    "agencyId": 1,
-    "agencyCode": "",
-    "agencyName": "",
-    "dealerType": "딜러",
-    "grade": "",
-    "margin": 0,
-    "homepage": "",
-    "item": "",
-    "tradeStartDate": null,
-    "businessRegistrationNumber": "",
-    "bankAccountNumber": "",
-    // "createdBy": "",
-    // "createdDate": null,
-    // "modifiedBy": "",
-    // "modifiedDate": null,
-    "maker": "",
-    "key": 1
+
+export const codeDomesticAgencyWriteInitial = {
+    "agencyCode": "",        // 코드(약칭)
+    "dealerType": "딜러",        // "딜러", "제조"
+    "grade": "A",               // 등급
+    "margin": null,                // 마진
+    "agencyName": "",   // 상호
+    "maker": "",            // MAKER
+    "homepage": "",   // 홈페이지
+    "tradeStartDate": "",         // 거래시작일
+    "businessRegistrationNumber": "",       // 사업자 번호
+    "bankAccountNumber": "",                // 계좌번호
+    "item": "",                             // 아이템
+    "agencyManagerList": []
 }
+
 
 export const tableCodeDomesticSalesInitial = {
     "customerId": 0,
@@ -505,28 +502,51 @@ export const tableCodeOverseasSalesInitial = {
 }
 
 
-export const tableCodeOverseasPurchaseInitial = {
-    "agencyId": 1,
+export const codeOverseasAgencyInitial = {
+    "overseasAgencyId": null,
     "agencyCode": "",
     "agencyName": "",
     "dealerType": "딜러",
     "grade": "",
-    "margin": 0,
+    "margin": null,
     "homepage": "",
     "item": "",
-    "tradeStartDate": null,
-    "currencyUnit":"USD",
-    "manager":"",
+    "tradeStartDate": "",
+    "currencyUnit": "",
+    "manager": "",
     "bankAccountNumber": "",
-    "country":"",
-    "ftaNo":"",
-    "bankName":"",
-    "agencyAddress":"",
-    "ibanCode":"",
-    "swiftCode":"",
-    // "createdBy": "",
-    // "createdDate": null,
-    // "modifiedBy": "",
-    // "modifiedDate": null,
-    "key": 1
+    "country": "USA",
+    "ftaNumber": "",
+    "intermediaryBank": "",
+    "address": "",
+    "ibanCode": "",
+    "swiftCode": "",
+    "createdBy": "",
+    "createdDate": "",
+    "modifiedBy": "",
+    "modifiedDate": "",
+    "key": 1,
+    "overseasAgencyManagerList": []
 }
+
+export const codeOverseasAgencyWriteInitial = {
+    "agencyCode": "",                      // 코드(약칭)
+    "agencyName": "",       // 상호
+    "dealerType": "",               // 딜러/제조
+    "grade": "",                             // 등급
+    "margin": null,                           // 마진
+    "homepage": "",   // 홈페이지
+    "item": "",                        // ITEM
+    "tradeStartDate": "",               // 거래 시작일
+    "currencyUnit": "",                        // 화폐단위
+    "manager": "",                     // 담당자
+    "bankAccountNumber": "",            // Account No
+    "country": "",                             // 국가
+    "ftaNumber": "",                      // FTA No
+    "intermediaryBank": "",        // 송금중개은행
+    "address": "",  // 주소
+    "ibanCode": "",           // IBan Code
+    "swiftCode": "",                      // Swift Code
+    "overseasAgencyManagerList": []
+}
+

@@ -13,30 +13,23 @@ import {CopyOutlined, EditOutlined, FileExcelOutlined, SearchOutlined,} from "@a
 import * as XLSX from "xlsx";
 import message from "antd/lib/message";
 
-import {
-    makerColumn,
-    rfqReadColumns,
-    tableCodeDomesticPurchaseColumns,
-    tableCodeDomesticSalesColumns,
-    tableCodeOverseasPurchaseColumns,
-} from "@/utils/columnList";
-import {
-    codeDomesticPurchaseInitial,
-    tableCodeDomesticSalesInitial,
-    tableCodeOverseasSalesInitial,
-} from "@/utils/initialList";
+import {rfqReadColumns, tableCodeDomesticPurchaseColumns,} from "@/utils/columnList";
+import {codeDomesticPurchaseInitial,} from "@/utils/initialList";
 import Radio from "antd/lib/radio";
 import TableGrid from "@/component/tableGrid";
 import Search from "antd/lib/input/Search";
 import {useRouter} from "next/router";
 
-export default function makerRead({dataList}) {
-    const gridRef = useRef(null);
 
-    const {makerList} = dataList;
-    const [info, setInfo] = useState(codeDomesticPurchaseInitial);
-    const [tableData, setTableData] = useState(makerList);
+export default function codeDomesticPurchase({dataList}) {
+    const gridRef = useRef(null);
     const router=useRouter();
+
+    const {agencyList} = dataList;
+    const [info, setInfo] = useState(codeDomesticPurchaseInitial);
+    const [tableData, setTableData] = useState(agencyList);
+
+
 
 
     function onChange(e) {
@@ -50,58 +43,26 @@ export default function makerRead({dataList}) {
     }
 
     async function onSearch() {
-        const result = await getData.post('maker/getMakerList', info);
-        console.log(result?.data?.entity?.makerList,'result:')
+        const result = await getData.post('agency/getAgencyList', info);
         if(result?.data?.code === 1){
-            setTableData(result?.data?.entity?.makerList)
+            setTableData(result?.data?.entity?.agencyList)
         }
-        console.log(info['searchType'], 'searchType')
     }
 
     async function deleteList() {
         const api = gridRef.current.api;
-        // console.log(api.getSelectedRows(),':::')
+        console.log(api.getSelectedRows(),':::')
 
         if (api.getSelectedRows().length<1) {
             message.error('삭제할 데이터를 선택해주세요.')
         } else {
             for (const item of api.getSelectedRows()) {
-                const response = await getData.post('maker/deleteMaker', {
-                    makerId:item.makerId
+                const response = await getData.post('agency/deleteAgency', {
+                    agencyId:item.agencyId
                 });
                 console.log(response)
                 if (response.data.code===1) {
                     message.success('삭제되었습니다.')
-                    window.location.reload();
-                } else {
-                    message.error('오류가 발생하였습니다. 다시 시도해주세요.')
-                }
-            }
-        }
-    }
-
-
-    async function copyRow() {
-        const api = gridRef.current.api;
-
-        if (api.getSelectedRows().length<1) {
-            message.error('복사할 데이터를 선택해주세요.')
-        } else {
-            for (const item of api.getSelectedRows()) {
-
-                let newItem={...item}
-
-                delete newItem.makerId;
-                delete newItem.key;
-                delete newItem.createdBy;
-                delete newItem.createdDate;
-                delete newItem.modifiedBy;
-                delete newItem.modifiedDate;
-
-                const response = await getData.post('maker/addMaker', newItem);
-                console.log(response)
-                if (response.data.code===1) {
-                    message.success('복사되었습니다.')
                     window.location.reload();
                 } else {
                     message.error('오류가 발생하였습니다. 다시 시도해주세요.')
@@ -116,12 +77,12 @@ export default function makerRead({dataList}) {
         const worksheet = XLSX.utils.json_to_sheet(tableData);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-        XLSX.writeFile(workbook, "maker_list.xlsx");
+        XLSX.writeFile(workbook, "inventory_list.xlsx");
     };
 
     return <LayoutComponent>
-        <div style={{display: 'grid', gridTemplateRows: '120px 1fr', height: '100%', gridColumnGap: 5}}>
-            <Card size={'small'} title={'Maker 관리'} style={{fontSize: 12, border: '1px solid lightGray'}}>
+        <div style={{display: 'grid', gridTemplateRows: '120px 1fr', height: '100%', columnGap: 5}}>
+            <Card size={'small'} title={'국내 매입처 관리'} style={{fontSize: 12, border: '1px solid lightGray'}}>
                 <Card size={'small'} style={{
                     fontSize: 13,
                     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
@@ -132,44 +93,39 @@ export default function makerRead({dataList}) {
                                 return {...v, searchType: e.target.value}
                             })} defaultValue={2} id={'searchType'}
                                          value={info['searchType']}>
-                                <Radio value={1}>Maker</Radio>
-                                <Radio value={2}>Item</Radio>
-                                <Radio value={3}>Area</Radio>
+                                <Radio value={1}>코드</Radio>
+                                <Radio value={2}>상호명</Radio>
+                                <Radio value={3}>MAKER</Radio>
                             </Radio.Group>
                         </div>
 
-                            <Search
-                                onSearch={onSearch}
-                                onChange={onChange}
-                                id={'searchText'}
-                                placeholder="input search text"
-                                allowClear
-                                enterButton={<><SearchOutlined/>&nbsp;&nbsp; 조회</>}
-                            />
-                            <div style={{margin:'0 10px'}}>
-                            <Button type={'primary'} style={{backgroundColor:'green', border: 'none'}}
-                                    onClick={() => router?.push('/maker_write')}><EditOutlined/>신규작성</Button>
+                        <Search
+                            onSearch={onSearch}
+                            onChange={onChange}
+                            id={'searchText'}
+                            placeholder="input search text"
+                            allowClear
+                            enterButton={<><SearchOutlined/>&nbsp;&nbsp; 조회</>}
+                        />
+                        <div style={{margin: '0 10px'}}>
+                            <Button type={'primary'} style={{backgroundColor: 'green', border: 'none'}}
+                                    onClick={() => router?.push('/code_domestic_agency_write')}><EditOutlined/>신규작성</Button>
                         </div>
-
 
                     </div>
 
                 </Card>
-
-
             </Card>
 
             <TableGrid
                 gridRef={gridRef}
-                columns={makerColumn}
+                columns={tableCodeDomesticPurchaseColumns}
                 tableData={tableData}
                 type={'read'}
                 excel={true}
-                funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}} onClick={copyRow}>
-                    <CopyOutlined/>복사
-                </Button>
+                funcButtons={<div>
                     {/*@ts-ignored*/}
-                    <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}} onClick={deleteList}>
+                    <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={deleteList}>
                         <CopyOutlined/>삭제
                     </Button>
                     <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={downloadExcel}>
@@ -189,14 +145,13 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
-    const result = await getData.post('maker/getMakerList', {
+    const result = await getData.post('agency/getAgencyList', {
         "searchType": "1",      // 1: 코드, 2: 상호명, 3: MAKER
         "searchText": "",
         "page": 1,
         "limit": -1
     });
 
-    // console.log(result?.data?.entity,'result?.data?.entity:')
 
     if (userInfo) {
         store.dispatch(setUserInfo(userInfo));
@@ -209,7 +164,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
             },
         };
     } else {
-        // result?.data?.entity?.estimateRequestList
+
         param = {
             props: {dataList: result?.data?.entity}
         }

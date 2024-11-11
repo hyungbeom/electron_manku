@@ -21,18 +21,15 @@ import {getData} from "@/manage/function/api";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
-import Modal from "antd/lib/modal/Modal";
-import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import * as XLSX from 'xlsx';
 import MyComponent from "@/component/MyComponent";
 import {useRouter} from "next/router";
 import nookies from "nookies";
 import TableGrid from "@/component/tableGrid";
-import {AgGridReact} from "ag-grid-react";
 import SearchAgendaModal from "@/component/SearchAgendaModal";
 import SearchCustomerModal from "@/component/SearchCustomerModal";
 
-export default function rqfWrite({dataInfo, display}) {
+export default function rqfWrite({dataInfo}) {
     const gridRef = useRef(null);
     const router = useRouter();
 
@@ -46,18 +43,19 @@ export default function rqfWrite({dataInfo, display}) {
     useEffect(() => {
 
         let copyData: any = {...rfqWriteInitial}
-
-        if (dataInfo) {
-            copyData = dataInfo;
-            copyData['writtenDate'] = moment(copyData['writtenDate']);
-        } else {
+        //
+        // if (dataInfo) {
+        //     copyData = dataInfo;
+        //     copyData['writtenDate'] = moment(copyData['writtenDate']);
+        // } else {
             // @ts-ignored
             copyData['writtenDate'] = moment();
-        }
+        // }
 
 
         setInfo(copyData);
-    }, [dataInfo, router])
+    // }, [dataInfo, router])
+    }, [])
 
 
     function onChange(e) {
@@ -180,19 +178,6 @@ export default function rqfWrite({dataInfo, display}) {
             }
         }
     };
-
-    const downloadExcel = () => {
-
-        if (!info['estimateRequestDetailList'].length) {
-            return message.warn('출력할 데이터가 존재하지 않습니다.')
-        }
-
-        const worksheet = XLSX.utils.json_to_sheet(info['estimateRequestDetailList']);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-        XLSX.writeFile(workbook, "example.xlsx");
-    };
-
 
     return <>
         <LayoutComponent>
