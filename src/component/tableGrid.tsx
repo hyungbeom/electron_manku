@@ -124,8 +124,8 @@ const TableGrid = ({
             router.push(`/maker_update?makerId=${e?.data?.makerId}`)
         if (e.data.agencyId)
             router.push(`/code_domestic_agency_update?agencyCode=${e?.data?.agencyCode}`)
-        // if (e.data.overseasAgencyId)
-        //     router.push(`/code_overseas_agency_update?agencyCode=${e?.data?.agencyCode}`)
+        if (e.data.overseasAgencyId)
+            router.push(`/code_overseas_agency_update?agencyCode=${e?.data?.agencyCode}`)
 
 
 
@@ -133,7 +133,7 @@ const TableGrid = ({
         //     let itemId = e.data.inventoryId;
         //     setIsModalOpen(true);
         //     setItemId(itemId);
-            console.log(e.data.inventoryId, 'itemId')
+            console.log(e.data.overseasAgencyId, 'itemId')
         // }
     };
 

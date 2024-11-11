@@ -252,9 +252,9 @@ export default function code_domestic_agency_write({data}) {
             <TableGrid
                 gridRef={gridRef}
                 columns={tableCodeDomesticAgencyWriteColumns}
-                tableData={info['overseasAgencyList']}
-                listType={'agencyId'}
-                listDetailType={'overseasAgencyList'}
+                tableData={info['overseasAgencyManagerList']}
+                listType={'overseasAgencyId'}
+                listDetailType={'overseasAgencyManagerList'}
                 // dataInfo={tableOrderReadInfo}
                 setInfo={setInfo}
                 // setTableInfo={setTableInfo}
@@ -307,7 +307,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
         searchType: 1,
         searchText: agencyCode,
         page:1,
-        limit:1,
+        limit:-1,
     });
 
 
