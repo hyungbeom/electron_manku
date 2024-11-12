@@ -29,9 +29,8 @@ import TableGrid from "@/component/tableGrid";
 import SearchAgendaModal from "@/component/SearchAgendaModal";
 import SearchCustomerModal from "@/component/SearchCustomerModal";
 
-export default function rqfWrite({dataInfo}) {
+export default function rqfWrite() {
     const gridRef = useRef(null);
-    const router = useRouter();
 
     const [info, setInfo] = useState<any>(rfqWriteInitial)
     const [mini, setMini] = useState(true);
@@ -43,18 +42,13 @@ export default function rqfWrite({dataInfo}) {
     useEffect(() => {
 
         let copyData: any = {...rfqWriteInitial}
-        //
-        // if (dataInfo) {
-        //     copyData = dataInfo;
-        //     copyData['writtenDate'] = moment(copyData['writtenDate']);
-        // } else {
+
             // @ts-ignored
             copyData['writtenDate'] = moment();
-        // }
-
+            copyData['replyDate'] = moment();
+            copyData['dueDate'] = moment();
 
         setInfo(copyData);
-    // }, [dataInfo, router])
     }, [])
 
 
@@ -75,6 +69,7 @@ export default function rqfWrite({dataInfo}) {
             const copyData = {...info}
             copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
             copyData['replyDate'] = moment(info['replyDate']).format('YYYY-MM-DD');
+            copyData['dueDate'] = moment(info['dueDate']).format('YYYY-MM-DD');
 
             await getData.post('estimate/addEstimateRequest', copyData).then(v => {
                 if (v.data.code === 1) {
@@ -214,15 +209,15 @@ export default function rqfWrite({dataInfo}) {
                                     </div>
                                     <div>
                                         <div style={{paddingTop: 8}}>INQUIRY NO.</div>
-                                        <Input disabled={true} size={'small'}/>
+                                        <Input id={'documentNumberFull'} value={info['documentNumberFull']} onChange={onChange} disabled={true} size={'small'}/>
                                     </div>
                                     <div>
                                         <div style={{paddingTop: 8}}>RFQ NO.</div>
-                                        <Input size={'small'}/>
+                                        <Input id={'rfqNo'} value={info['rfqNo']} onChange={onChange} size={'small'}/>
                                     </div>
                                     <div style={{paddingTop: 8}}>
                                         <div style={{paddingBottom: 3}}>프로젝트 제목</div>
-                                        <Input id={'maker'} value={info['maker']} onChange={onChange} size={'small'}/>
+                                        <Input id={'projectTitle'} value={info['projectTitle']} onChange={onChange} size={'small'}/>
                                     </div>
                                 </div>
                             </Card>
@@ -252,20 +247,20 @@ export default function rqfWrite({dataInfo}) {
                                                size={'small'}/>
                                     </div>
                                     <div>
-                                        <div style={{paddingTop: 8}}>담당자</div>
-                                        <Input id={'managerName'} value={info['managerName']} onChange={onChange}
+                                        <div style={{paddingTop: 8}}>만쿠담당자</div>
+                                        <Input id={'adminId'} value={info['adminId']} onChange={onChange}
                                                size={'small'}/>
                                     </div>
                                     <div>
                                     <div style={{paddingTop: 8, width: '100%'}}>마감일자</div>
-                                    <DatePicker value={info['writtenDate']} style={{width: '100%'}}
+                                    <DatePicker value={info['dueDate']} style={{width: '100%'}}
                                                 onChange={(date, dateString) => onChange({
                                                     target: {
-                                                        id: 'writtenDate',
+                                                        id: 'dueDate',
                                                         value: date
                                                     }
                                                 })
-                                                } id={'writtenDate'} size={'small'}/>
+                                                } id={'dueDate'} size={'small'}/>
                             </div>
 
                         </Card>
@@ -287,7 +282,7 @@ export default function rqfWrite({dataInfo}) {
                                            }/>}/>
                                 </div>
                                 <div>
-                                    <div style={{paddingTop: 8}}>담당자</div>
+                                    <div style={{paddingTop: 8}}>거래처 담당자</div>
                                     <Input id={'managerName'} value={info['managerName']} onChange={onChange}
                                            size={'small'}/>
                                 </div>
@@ -319,7 +314,7 @@ export default function rqfWrite({dataInfo}) {
                                 </div>
                                 <div style={{paddingTop: 8}}>
                                     <div style={{paddingBottom: 3}}>End User</div>
-                                    <Input id={'remarks'} value={info['remarks']} onChange={onChange} size={'small'}/>
+                                    <Input id={'endUser'} value={info['endUser']} onChange={onChange} size={'small'}/>
                                 </div>
                                 <div style={{paddingTop: 8}}>
                                     <div style={{paddingBottom: 3}}>지시사항</div>
@@ -361,9 +356,7 @@ export default function rqfWrite({dataInfo}) {
                     tableData={info['estimateRequestDetailList']}
                     listType={'estimateRequestId'}
                     listDetailType={'estimateRequestDetailList'}
-                    // dataInfo={tableOrderReadInfo}
                     setInfo={setInfo}
-                    // setTableInfo={setTableInfo}
                     excel={true}
                     type={'write'}
                     funcButtons={<div>
