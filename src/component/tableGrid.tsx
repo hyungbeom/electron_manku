@@ -129,7 +129,8 @@ const TableGrid = ({
                 router.push(`/code_overseas_agency_update?agencyCode=${e?.data?.agencyCode}`)
             if (e.data.customerId)
                 router.push(`/code_domestic_customer_update?customerCode=${e?.data?.customerCode}`)
-
+            if (e.data.overseasCustomerId)
+                router.push(`/code_overseas_customer_update?customerCode=${e?.data?.customerCode}`)
 
 
 

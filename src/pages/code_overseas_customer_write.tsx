@@ -8,7 +8,7 @@ import {
 } from "@ant-design/icons";
 import message from "antd/lib/message";
 import {tableCodeDomesticWriteColumn,} from "@/utils/columnList";
-import {codeDomesticSalesWriteInitial,} from "@/utils/initialList";
+import {codeDomesticSalesWriteInitial, codeOverseasSalesWriteInitial,} from "@/utils/initialList";
 import TableGrid from "@/component/tableGrid";
 import {useRouter} from "next/router";
 import moment from "moment/moment";
@@ -26,11 +26,11 @@ export default function code_domestic_agency_write() {
     const gridRef = useRef(null);
 
     const [mini, setMini] = useState(true);
-    const [info, setInfo] = useState(codeDomesticSalesWriteInitial);
+    const [info, setInfo] = useState(codeOverseasSalesWriteInitial);
 
 
     useEffect(() => {
-        let copyData: any = {...codeDomesticSalesWriteInitial}
+        let copyData: any = {...codeOverseasSalesWriteInitial}
         // @ts-ignored
         copyData['tradeStartDate'] = moment();
 
@@ -53,12 +53,12 @@ export default function code_domestic_agency_write() {
         const copyData = {...info}
         copyData['tradeStartDate'] = moment(info['tradeStartDate']).format('YYYY-MM-DD');
 
-        await getData.post('customer/addCustomer', copyData).then(v => {
+        await getData.post('customer/addOverseasCustomer', copyData).then(v => {
             if (v.data.code === 1) {
                 message.success('저장되었습니다.')
-                setInfo(codeDomesticSalesWriteInitial);
+                setInfo(codeOverseasSalesWriteInitial);
                 deleteList()
-                window.location.href = '/code_domestic_customer'
+                window.location.href = '/code_overseas_customer'
             } else {
                 message.error('저장에 실패하였습니다.')
             }
@@ -81,7 +81,7 @@ export default function code_domestic_agency_write() {
         }
 
         let copyData = {...info}
-        copyData['customerManagerList'] = uncheckedData;
+        copyData['overseasCustomerManagerList'] = uncheckedData;
         console.log(copyData, 'copyData::')
         setInfo(copyData);
 
@@ -90,7 +90,7 @@ export default function code_domestic_agency_write() {
 
     function addRow() {
         let copyData = {...info};
-        copyData['customerManagerList'].push({
+        copyData['overseasCustomerManagerList'].push({
             "managerName": "",       // 담당자명
             "directTel": "",     // 직통전화
             "faxNumber": "",   // 팩스번호
@@ -104,7 +104,7 @@ export default function code_domestic_agency_write() {
 
     return <LayoutComponent>
         <div style={{display: 'grid', gridTemplateRows:  `${mini ? 'auto' : '65px'} 1fr`, height: '100%', columnGap: 5,}}>
-            <Card title={'국내 거래처 등록'} style={{fontSize: 12, border: '1px solid lightGray'}} extra={<span style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>setMini(v => !v)}> {!mini ? <UpCircleFilled/> : <DownCircleFilled/>}</span>} >
+            <Card title={'해외 거래처 등록'} style={{fontSize: 12, border: '1px solid lightGray'}} extra={<span style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>setMini(v => !v)}> {!mini ? <UpCircleFilled/> : <DownCircleFilled/>}</span>} >
                 {mini ?<>
                     <div style={{display: 'grid', gridTemplateColumns: '0.5fr 1.5fr 1.5fr 1.5fr', columnGap: 20}}>
                         <Card size={'small'} style={{
@@ -122,24 +122,25 @@ export default function code_domestic_agency_write() {
                                 <Input id={'customerRegion'} value={info['customerRegion']} onChange={onChange}
                                        size={'small'}/>
                             </div>
-
                             <div>
-                                <div style={{paddingTop: 8}}>업태</div>
-                                <Input id={'businessType'} value={info['businessType']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-                            <div>
-                                <div style={{paddingTop: 8}}>종목</div>
-                                <Input id={'businessItem'} value={info['businessItem']} onChange={onChange}
+                                <div>FTA No</div>
+                                <Input id={'ftaNumber'} value={info['ftaNumber']}
+                                       onChange={onChange}
                                        size={'small'}/>
                             </div>
 
                             <div>
-                                <div style={{paddingTop: 8}}>대표자</div>
-                                <Input id={'representative'} value={info['representative']} onChange={onChange}
-                                       size={'small'}/>
+                                <div style={{paddingTop: 8}}>화폐단위</div>
+                                <Select id={'currencyUnit'}
+                                        onChange={(src) => onChange({target: {id: 'currencyUnit', value: src}})}
+                                        size={'small'} value={info['currencyUnit']} options={[
+                                    {value: '0', label: 'KRW'},
+                                    {value: '1', label: 'EUR'},
+                                    {value: '2', label: 'JPY'},
+                                    {value: '3', label: 'USD'},
+                                    {value: '4', label: 'GBP'},
+                                ]} style={{width: '100%',}}/>
                             </div>
-
 
                         </Card>
                         <Card size={'small'} style={{
@@ -176,17 +177,32 @@ export default function code_domestic_agency_write() {
                                        size={'small'}/>
                             </div>
 
+
+
+                        </Card>
+
+
+                        <Card size={'small'}
+                              style={{
+                                  fontSize: 13,
+                                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                              }}>
+
                             <div>
                                 <div style={{paddingTop: 8}}>전화번호</div>
-                                <Input id={'customerTel'} value={info['customerTel']} onChange={onChange}
+                                <Input id={'phoneNumber'} value={info['phoneNumber']} onChange={onChange}
                                        size={'small'}/>
                             </div>
                             <div>
                                 <div style={{paddingTop: 8}}>팩스번호</div>
-                                <Input id={'customerFax'} value={info['customerFax']} onChange={onChange}
+                                <Input id={'faxNumber'} value={info['faxNumber']} onChange={onChange}
                                        size={'small'}/>
                             </div>
-
+                            <div>
+                                <div style={{paddingTop: 8}}>만쿠 담당자</div>
+                                <Input id={'mankuTradeManager'} value={info['mankuTradeManager']} onChange={onChange}
+                                       size={'small'}/>
+                            </div>
 
                         </Card>
 
@@ -197,71 +213,17 @@ export default function code_domestic_agency_write() {
                                   boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                               }}>
                             <div>
-                                <div>사업자번호</div>
-                                <Input id={'businessRegistrationNumber'} value={info['businessRegistrationNumber']}
-                                       onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-                            <div>
                                 <div style={{paddingTop: 8}}>업체확인사항</div>
-                                <TextArea id={'companyVerify'} value={info['companyVerify']} onChange={onChange}
-                                       size={'small'}/>
+                                <TextArea id={'companyVerification'} value={info['companyVerification']}
+                                          onChange={onChange}
+                                          size={'small'}/>
                             </div>
                             <div>
                                 <div style={{paddingTop: 8}}>비고란</div>
                                 <TextArea id={'remarks'} value={info['remarks']} onChange={onChange}
-                                       size={'small'} style={{height: 150}}/>
+                                          size={'small'} style={{height: 100}}/>
                             </div>
 
-                        </Card>
-
-
-                        <Card size={'small'}
-                              style={{
-                                  fontSize: 13,
-                                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                              }}>
-                            <div>
-                                <div style={{paddingTop: 8}}>화물운송료</div>
-                                <Select id={'freightCharge'}
-                                        onChange={(src) => onChange({target: {id: 'freightCharge', value: src}})}
-                                        size={'small'} value={info['freightCharge']} options={[
-                                    {value: '0', label: '화물 선불'},
-                                    {value: '1', label: '화물 후불'},
-                                    {value: '2', label: '택배 선불'},
-                                    {value: '3', label: '택배 후불'},
-                                ]} style={{width: '100%',}}/>
-                            </div>
-                            <div>
-                                <div style={{paddingTop: 8}}>화물지점</div>
-                                <Input id={'freightBranch'} value={info['freightBranch']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-                            <div>
-                                <div style={{paddingTop: 8}}>결제방법</div>
-                                <Select id={'paymentMethod'}
-                                        onChange={(src) => onChange({target: {id: 'paymentMethod', value: src}})}
-                                        size={'small'} value={info['paymentMethod']} options={[
-                                    {value: '0', label: '현금 결제'},
-                                    {value: '1', label: '선수금'},
-                                    {value: '2', label: '정기 결제'},
-                                ]} style={{width: '100%',}}/>
-                            </div>
-                            <div>
-                                <div style={{paddingTop: 8}}>업체형태</div>
-                                <Select id={'grade'}
-                                        onChange={(src) => onChange({target: {id: 'grade', value: src}})}
-                                        size={'small'} value={info['grade']} options={[
-                                    {value: '0', label: '딜러'},
-                                    {value: '1', label: '제조'},
-                                    {value: '2', label: '공공기관'},
-                                ]} style={{width: '100%',}}/>
-                            </div>
-                            <div>
-                                <div style={{paddingTop: 8}}>만쿠담당자</div>
-                                <Input id={'mankuTradeManager'} value={info['mankuTradeManager']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
                         </Card>
 
                     </div>
@@ -272,7 +234,7 @@ export default function code_domestic_agency_write() {
 
                         {/*@ts-ignored*/}
                         <Button type={'danger'} size={'small'}
-                                onClick={() => setInfo(codeDomesticSalesWriteInitial)}><RetweetOutlined/>초기화</Button>
+                                onClick={() => setInfo(codeOverseasSalesWriteInitial)}><RetweetOutlined/>초기화</Button>
 
                     </div>
                 </> : null}
@@ -282,9 +244,9 @@ export default function code_domestic_agency_write() {
             <TableGrid
                 gridRef={gridRef}
                 columns={tableCodeDomesticWriteColumn}
-                tableData={info['customerManagerList']}
+                tableData={info['overseasCustomerManagerList']}
                 listType={'customerCode'}
-                listDetailType={'customerManagerList'}
+                listDetailType={'overseasCustomerManagerList'}
                 // dataInfo={tableOrderReadInfo}
                 setInfo={setInfo}
                 // setTableInfo={setTableInfo}

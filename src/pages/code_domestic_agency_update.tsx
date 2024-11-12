@@ -208,7 +208,7 @@ export default function code_domestic_agency_write({data}) {
                                 onClick={saveFunc}><SaveOutlined/>저장</Button>
 
                         <Button size={'small'}  type={'primary'} style={{marginRight: 8}}
-                                onClick={() => router?.push('/code_domestic_agency_write')}><EditOutlined/>신규</Button>
+                                onClick={() => router?.push('/code_domestic_agency_write')}>o<EditOutlined/>신규</Button>
 
                     </div></>: null}
             </Card>

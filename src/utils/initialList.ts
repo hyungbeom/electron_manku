@@ -480,6 +480,25 @@ export const codeDomesticSalesWriteInitial = {
     "customerManagerList": []
 }
 
+export const codeOverseasSalesWriteInitial = {
+    "customerCode": "",
+    "customerName": "",
+    "tradeStartDate": "",
+    "phoneNumber": "",
+    "customerRegion": "",
+    "homepage": "",
+    "faxNumber": "",
+    "currencyUnit": "USD",
+    "manager": "",
+    "ftaNumber": "",
+    "customerType": "",
+    "address": "",
+    "mankuTradeManager": "",
+    "remarks": "",
+    "companyVerification": "",
+    "overseasCustomerManagerList": []
+}
+
 
 export const tableCodeDomesticSalesInitial = {
     "customerId": 0,

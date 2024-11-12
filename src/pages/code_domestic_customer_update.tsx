@@ -4,7 +4,7 @@ import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
 import Button from "antd/lib/button";
 import {
-    CopyOutlined, DownCircleFilled, RetweetOutlined, SaveOutlined, UpCircleFilled,
+    CopyOutlined, DownCircleFilled, EditOutlined, RetweetOutlined, SaveOutlined, UpCircleFilled,
 } from "@ant-design/icons";
 import message from "antd/lib/message";
 import {tableCodeDomesticWriteColumn,} from "@/utils/columnList";
@@ -24,19 +24,10 @@ import TextArea from "antd/lib/input/TextArea";
 
 export default function code_domestic_agency_write({data}) {
     const gridRef = useRef(null);
+    const router=useRouter();
 
     const [mini, setMini] = useState(true);
     const [info, setInfo] = useState<any>(data);
-
-
-    // useEffect(() => {
-    //     let copyData: any = {...codeDomesticSalesWriteInitial}
-    //     // @ts-ignored
-    //     copyData['tradeStartDate'] = moment();
-    //
-    //     setInfo(copyData);
-    //
-    // }, [])
 
 
     function onChange(e) {
@@ -53,7 +44,7 @@ export default function code_domestic_agency_write({data}) {
         const copyData = {...info}
         copyData['tradeStartDate'] = moment(info['tradeStartDate']).format('YYYY-MM-DD');
 
-        await getData.post('customer/addCustomer', copyData).then(v => {
+        await getData.post('customer/updateCustomer', copyData).then(v => {
             if (v.data.code === 1) {
                 message.success('저장되었습니다.')
                 setInfo(codeDomesticSalesWriteInitial);
@@ -272,7 +263,7 @@ export default function code_domestic_agency_write({data}) {
 
                         {/*@ts-ignored*/}
                         <Button type={'danger'} size={'small'}
-                                onClick={() => setInfo(codeDomesticSalesWriteInitial)}><RetweetOutlined/>초기화</Button>
+                                nClick={() => router?.push('/code_domestic_customer_write')}><EditOutlined/>신규</Button>
 
                     </div>
                 </> : null}

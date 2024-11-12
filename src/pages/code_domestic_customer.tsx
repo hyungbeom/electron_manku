@@ -7,7 +7,7 @@ import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
 
 import {tableCodeDomesticSalesColumns,} from "@/utils/columnList";
-import {tableCodeDomesticSalesInitial,} from "@/utils/initialList";
+import {codeDomesticPurchaseInitial, tableCodeDomesticSalesInitial,} from "@/utils/initialList";
 import Radio from "antd/lib/radio";
 import TableGrid from "@/component/tableGrid";
 import Search from "antd/lib/input/Search";
@@ -22,7 +22,7 @@ export default function codeOverseasPurchase({dataList}) {
     const router=useRouter();
 
     const {customerList} = dataList;
-    const [info, setInfo] = useState(tableCodeDomesticSalesInitial);
+    const [info, setInfo] = useState(codeDomesticPurchaseInitial);
     const [tableData, setTableData] = useState(customerList);
 
     // console.log(customerList,'saveInfo:')
@@ -40,6 +40,7 @@ export default function codeOverseasPurchase({dataList}) {
 
     async function onSearch() {
         const result = await getData.post('customer/getCustomerList', info);
+        console.log(info,'info:')
         console.log(result?.data?.entity?.customerList,'result:')
         if(result?.data?.code === 1){
             setTableData(result?.data?.entity?.customerList)
@@ -55,7 +56,7 @@ export default function codeOverseasPurchase({dataList}) {
         } else {
             for (const item of api.getSelectedRows()) {
                 const response = await getData.post('customer/deleteCustomer', {
-                    agencyId:item.agencyId
+                    customerId:item.customerId
                 });
                 console.log(response)
                 if (response.data.code===1) {

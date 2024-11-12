@@ -11,10 +11,9 @@ import {
     tableCodeDomesticAgencyWriteColumns,
 } from "@/utils/columnList";
 import {
-    codeDomesticAgencyWriteInitial, codeOverseasAgencyInitial,
+    codeDomesticAgencyWriteInitial,
 } from "@/utils/initialList";
 import TableGrid from "@/component/tableGrid";
-import {useRouter} from "next/router";
 import moment from "moment/moment";
 import DatePicker from "antd/lib/date-picker";
 import Input from "antd/lib/input/Input";

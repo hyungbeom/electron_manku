@@ -1764,115 +1764,116 @@ export const tableCodeOverseasAgencyWriteColumns = [
 
 export const tableCodeDomesticSalesColumns = [
 
-        {
-            headerName: '코드',
-            field: 'customerCode',
+    {
+        headerName: '코드',
+        field: 'customerCode',
 
-        },
-        {
-            headerName: '상호',
-            field: 'customerName',
+    },
+    {
+        headerName: '상호',
+        field: 'customerName',
 
-        },
-        {
-            headerName: '지역',
-            field: 'customerRegion',
+    },
+    {
+        headerName: '지역',
+        field: 'customerRegion',
 
-        },
-        {
-            headerName: '거래시작일',
-            field: 'tradeStartDate',
-        },
-        {
-            headerName: '전화번호',
-            field: 'customerTel',
+    },
+    {
+        headerName: '거래시작일',
+        field: 'tradeStartDate',
+    },
+    {
+        headerName: '전화번호',
+        field: 'customerTel',
 
-        },
-        {
-            headerName: '팩스번호',
-            field: 'customerFax',
+    },
+    {
+        headerName: '팩스번호',
+        field: 'customerFax',
 
-        },
-        {
-            headerName: '홈페이지',
-            field: 'homepage',
+    },
+    {
+        headerName: '홈페이지',
+        field: 'homepage',
 
-        },
-        {
-            headerName: '우편번호',
-            field: 'zipCode',
+    },
+    {
+        headerName: '우편번호',
+        field: 'zipCode',
 
-        },
-        {
-            headerName: '주소',
-            field: 'address',
+    },
+    {
+        headerName: '주소',
+        field: 'address',
 
-        },
-        {
-            headerName: '사업자번호',
-            field: 'businessRegistrationNumber',
+    },
+    {
+        headerName: '사업자번호',
+        field: 'businessRegistrationNumber',
 
-        },
-        {
-            headerName: '거래처',
-            field: 'customerType',
+    },
+    {
+        headerName: '거래처',
+        field: 'customerType',
 
-        },
+    },
 
-        {
-            headerName: '비고',
-            field: 'remarks',
+    {
+        headerName: '비고',
+        field: 'remarks',
 
-        },
-        {
-            headerName: '만쿠담당자',
-            field: 'mankuTradeManager',
-        },
-        {
-            headerName: '업체확인사항',
-            field: 'companyVerify',
-        },
-        {
-            headerName: '화물운송료',
-            field: 'freightCharge',
+    },
+    {
+        headerName: '만쿠담당자',
+        field: 'mankuTradeManager',
+    },
+    {
+        headerName: '업체확인사항',
+        field: 'companyVerify',
+    },
+    {
+        headerName: '화물운송료',
+        field: 'freightCharge',
 
-        },
+    },
 
-        {
-            headerName: '화물지점',
-            field: 'freightBranch',
+    {
+        headerName: '화물지점',
+        field: 'freightBranch',
 
-        },
-        {
-            headerName: '결제방법',
-            field: 'paymentMethod',
+    },
+    {
+        headerName: '결제방법',
+        field: 'paymentMethod',
 
-        },
-        {
-            headerName: '업체형태',
-            field: 'companyType',
+    },
+    {
+        headerName: '업체형태',
+        field: 'companyType',
 
-        },
-        {
-            headerName: '등록자',
-            field: 'createdBy',
+    },
+    {
+        headerName: '등록자',
+        field: 'createdBy',
 
-        },
-        {
-            headerName: '등록일자',
-            field: 'createdDate',
+    },
+    {
+        headerName: '등록일자',
+        field: 'createdDate',
 
-        },
-        {
-            headerName: '수정자',
-            field: 'modifiedBy',
-        },
-        {
-            headerName: '수정일자',
-            field: 'modifiedDate',
-        },
+    },
+    {
+        headerName: '수정자',
+        field: 'modifiedBy',
+    },
+    {
+        headerName: '수정일자',
+        field: 'modifiedDate',
+    },
 
-    ];
+];
+
 
 export const tableCodeDomesticWriteColumn  = [
     {
@@ -1912,144 +1913,84 @@ export const tableCodeOverseasSalesColumns = [
     {
         headerName: '코드',
         field: 'agencyCode',
-        key: 'agencyCode',
-        render: (text) => <div className="ellipsis-cell" style={{width: 70}}>{text}</div>,
-        editable: true,
     },
     {
         headerName: '상호',
         field: 'agencyName',
-        key: 'agencyName',
-        render: (text) => <div className="ellipsis-cell" style={{width: 70}}>{text}</div>,
-        editable: true,
     },
     {
         headerName: '지역',
         field: 'region',
-        key: 'region',
-        render: (text) => <div className="ellipsis-cell" style={{width: 70}}>{text}</div>,
-        editable: true,
     },
     {
         headerName: '거래시작일',
         field: 'tradeStartDate',
-        key: 'tradeStartDate',
-        render: (text) => <div className="ellipsis-cell" style={{width: 70}}>{moment(text).format('YYYY-MM-DD')}</div>,
-        editable: true,
     },
     {
         headerName: '전화번호',
         field: 'phoneNumber',
-        key: 'phoneNumber',
-        render: (text) => <div className="ellipsis-cell" style={{width: 70}}>{text}</div>
-        , editable: true,
     },
     {
         headerName: '팩스번호',
         field: 'faxNumber',
-        key: 'faxNumber',
-        render: (text) => <div className="ellipsis-cell" style={{width: 70}}>{text}</div>
-        , editable: true,
     },
     {
         headerName: '우편번호',
         field: 'postalCode',
-        key: 'postalCode',
-        render: (text) => <div className="ellipsis-cell" style={{width: 70}}>{text}</div>
-        , editable: true,
     },
     {
         headerName: '주소',
         field: 'address',
-        key: 'address',
-        render: (text) => <div className="ellipsis-cell" style={{width: 70}}>{text}</div>
-        , editable: true,
     },
     {
         headerName: '거래처',
         field: 'customerName',
-        key: 'customerName',
-        render: (text) => <div className="ellipsis-cell" style={{width: 70}}>{text}</div>,
-        editable: true,
     },
     {
 
         headerName: '홈페이지',
         field: 'homepage',
-        key: 'homepage',
-        render: (text) => <div className="ellipsis-cell" style={{width: 70}}>{text}</div>
-        , editable: true,
     },
     {
 
         headerName: '비고란',
         field: 'remarks',
-        key: 'remarks',
-        render: (text) => <div className="ellipsis-cell" style={{width: 70}}>{text}</div>
-        , editable: true,
     },
     {
         headerName: '화폐단위',
         field: 'currencyUnit',
-        key: 'customerName',
-        render: (text) => <div className="ellipsis-cell" style={{width: 70}}>{text}</div>,
-        editable: true,
     },
     {
         headerName: '만쿠담당자',
         field: 'managerName',
-        key: 'managerName',
-        render: (text) => <div className="ellipsis-cell" style={{width: 70}}>{text}</div>,
-        editable: true,
     },
     {
         headerName: '거래처담당자',
         field: 'customerManager',
-        key: 'customerManager',
-        render: (text) => <div className="ellipsis-cell" style={{width: 70}}>{text}</div>,
-        editable: true,
     },
     {
         headerName: 'FTANo',
         field: 'ftaNo',
-        key: 'ftaNo',
-        render: (text) => <div className="ellipsis-cell" style={{width: 70}}>{text}</div>,
-        editable: true,
     },
     {
         headerName: '업체확인사항',
         field: 'checkList',
-        key: 'checkList',
-        render: (text) => <div className="ellipsis-cell" style={{width: 70}}>{text}</div>,
-        editable: true,
     },
     {
         headerName: '등록자',
         field: 'createdBy',
-        key: 'createdBy',
-        render: (text) => <div className="ellipsis-cell" style={{width: 70}}>{text}</div>
-        , editable: true,
     },
     {
         headerName: '등록일자',
         field: 'createdDate',
-        key: 'createdDate',
-        render: (text) => <div className="ellipsis-cell" style={{width: 70}}>{moment(text).format('YYYY-MM-DD')}</div>
-        , editable: true,
     },
     {
         headerName: '수정자',
         field: 'modifiedBy',
-        key: 'modifiedBy',
-        render: (text) => <div className="ellipsis-cell" style={{width: 70}}>{text}</div>
-        , editable: true,
     },
     {
         headerName: '수정일자',
         field: 'modifiedDate',
-        key: 'modifiedDate',
-        ender: (text) => <div className="ellipsis-cell" style={{width: 70}}>{text}</div>,
-        editable: true,
     },
 
 ];
