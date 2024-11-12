@@ -30,8 +30,6 @@ export default function codeDomesticPurchase({dataList}) {
     const [tableData, setTableData] = useState(agencyList);
 
 
-
-
     function onChange(e) {
 
         let bowl = {}

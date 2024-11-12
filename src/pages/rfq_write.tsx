@@ -189,16 +189,76 @@ export default function rqfWrite({dataInfo}) {
                                      setIsModalOpen={setIsModalOpen}/>
 
                 <Card title={'견적의뢰 작성'} style={{fontSize: 12, border: '1px solid lightGray'}} extra={<span style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>setMini(v => !v)}> {!mini ? <UpCircleFilled/> : <DownCircleFilled/>}</span>} >
-                    {mini ?  <div>
-                        <Card size={'small'} style={{
-                            fontSize: 13,
-                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
-                            marginBottom : 5
-                        }}>
-                            <div style={{display : 'grid', gridTemplateColumns : '1fr 1fr 1fr', width : 640, columnGap : 20}}>
-                                <div>
-                                    <div style={{paddingTop: 8, width : '100%'}}>작성일</div>
-                                    <DatePicker value={info['writtenDate']} style={{width : '100%'}}
+                    {mini ? <div>
+                            <Card size={'small'} style={{
+                                fontSize: 13,
+                                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
+                                marginBottom: 5
+                            }}>
+                                <div style={{
+                                    display: 'grid',
+                                    gridTemplateColumns: '1fr 1fr 1fr 1fr',
+                                    width: 740,
+                                    columnGap: 20
+                                }}>
+                                    <div>
+                                        <div style={{paddingTop: 8, width: '100%'}}>작성일</div>
+                                        <DatePicker value={info['writtenDate']} style={{width: '100%'}}
+                                                    onChange={(date, dateString) => onChange({
+                                                        target: {
+                                                            id: 'writtenDate',
+                                                            value: date
+                                                        }
+                                                    })
+                                                    } id={'writtenDate'} size={'small'}/>
+                                    </div>
+                                    <div>
+                                        <div style={{paddingTop: 8}}>INQUIRY NO.</div>
+                                        <Input disabled={true} size={'small'}/>
+                                    </div>
+                                    <div>
+                                        <div style={{paddingTop: 8}}>RFQ NO.</div>
+                                        <Input size={'small'}/>
+                                    </div>
+                                    <div style={{paddingTop: 8}}>
+                                        <div style={{paddingBottom: 3}}>프로젝트 제목</div>
+                                        <Input id={'maker'} value={info['maker']} onChange={onChange} size={'small'}/>
+                                    </div>
+                                </div>
+                            </Card>
+                            <div style={{display: 'grid', gridTemplateColumns: '1fr 1.2fr  1.5fr 1.22fr', columnGap: 10}}>
+
+
+                                <Card size={'small'}
+                                      style={{
+                                          fontSize: 13,
+                                          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                                      }}>
+                                    <div>
+                                        <div>대리점코드</div>
+                                        <Input id={'agencyCode'} value={info['agencyCode']} onChange={onChange}
+                                               size={'small'}
+                                               onKeyDown={handleKeyPress}
+                                               suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
+                                                   (e) => {
+                                                       e.stopPropagation();
+                                                       setIsModalOpen({event1: true, event2: false})
+                                                   }
+                                               }/>}/>
+                                    </div>
+                                    <div>
+                                        <div style={{paddingTop: 8}}>매입처명</div>
+                                        <Input id={'agencyName'} value={info['agencyName']} onChange={onChange}
+                                               size={'small'}/>
+                                    </div>
+                                    <div>
+                                        <div style={{paddingTop: 8}}>담당자</div>
+                                        <Input id={'managerName'} value={info['managerName']} onChange={onChange}
+                                               size={'small'}/>
+                                    </div>
+                                    <div>
+                                    <div style={{paddingTop: 8, width: '100%'}}>마감일자</div>
+                                    <DatePicker value={info['writtenDate']} style={{width: '100%'}}
                                                 onChange={(date, dateString) => onChange({
                                                     target: {
                                                         id: 'writtenDate',
@@ -206,60 +266,21 @@ export default function rqfWrite({dataInfo}) {
                                                     }
                                                 })
                                                 } id={'writtenDate'} size={'small'}/>
-                                </div>
-                                <div>
-                                    <div style={{paddingTop: 8}}>INQUIRY NO.</div>
-                                    <Input disabled={true} size={'small'}/>
-                                </div>
-                                <div>
-                                    <div style={{paddingTop: 8}}>RFQ NO.</div>
-                                    <Input size={'small'}/>
-                                </div>
                             </div>
+
                         </Card>
-                        <div style={{display: 'grid', gridTemplateColumns: '1fr 1.2fr  1.5fr 1.22fr', columnGap: 10}}>
 
-
-                            <Card size={'small'}
-                                  style={{
-                                      fontSize: 13,
-                                      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                                  }}>
-                                <div>
-                                    <div style={{paddingTop: 8}}>대리점코드</div>
-                                    <Input id={'agencyCode'} value={info['agencyCode']} onChange={onChange}
-                                           size={'small'}
-                                           onKeyDown={handleKeyPress}
-                                           suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
-                                               (e) => {
-                                                   e.stopPropagation();
-                                                   setIsModalOpen({event1: true, event2: false})
-                                               }
-                                           }/>}/>
-                                </div>
-                                <div>
-                                    <div style={{paddingTop: 8}}>매입처명</div>
-                                    <Input id={'agencyName'} value={info['agencyName']} onChange={onChange}
-                                           size={'small'}/>
-                                </div>
-                                <div>
-                                    <div style={{paddingTop: 8}}>담당자</div>
-                                    <Input id={'managerName'} value={info['managerName']} onChange={onChange}
-                                           size={'small'}/>
-                                </div>
-                            </Card>
-
-                            <Card  size={'small'} style={{
-                                fontSize: 13,
-                                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                            }}>
-                                <div>
-                                    <div style={{paddingTop: 8}}>상호명</div>
-                                    <Input id={'customerName'} value={info['customerName']} onChange={onChange}
-                                           size={'small'}
-                                           onKeyDown={handleKeyPress}
-                                           suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
-                                               (e) => {
+                        <Card size={'small'} style={{
+                            fontSize: 13,
+                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                        }}>
+                            <div>
+                                <div>상호명</div>
+                                <Input id={'customerName'} value={info['customerName']} onChange={onChange}
+                                       size={'small'}
+                                       onKeyDown={handleKeyPress}
+                                       suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
+                                           (e) => {
                                                    e.stopPropagation();
                                                    setIsModalOpen({event1: false, event2: true})
                                                }
@@ -270,6 +291,7 @@ export default function rqfWrite({dataInfo}) {
                                     <Input id={'managerName'} value={info['managerName']} onChange={onChange}
                                            size={'small'}/>
                                 </div>
+
 
                                 <div>
                                     <div style={{paddingTop: 8}}>전화번호</div>
@@ -287,7 +309,7 @@ export default function rqfWrite({dataInfo}) {
                                 fontSize: 13,
                                 boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                             }}>
-                                <div style={{paddingTop: 8}}>
+                                <div>
                                     <div style={{paddingBottom: 3}}>MAKER</div>
                                     <Input id={'maker'} value={info['maker']} onChange={onChange} size={'small'}/>
                                 </div>
@@ -296,7 +318,7 @@ export default function rqfWrite({dataInfo}) {
                                     <Input id={'item'} value={info['item']} onChange={onChange} size={'small'}/>
                                 </div>
                                 <div style={{paddingTop: 8}}>
-                                    <div style={{paddingBottom: 3}}>비고란</div>
+                                    <div style={{paddingBottom: 3}}>End User</div>
                                     <Input id={'remarks'} value={info['remarks']} onChange={onChange} size={'small'}/>
                                 </div>
                                 <div style={{paddingTop: 8}}>
@@ -306,28 +328,15 @@ export default function rqfWrite({dataInfo}) {
                                 </div>
 
                             </Card>
-                            <Card  size={'small'} style={{
+                            <Card size={'small'} style={{
                                 fontSize: 13,
                                 boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                             }}>
+
+
                                 <div style={{paddingTop: 8}}>
-                                    <div style={{paddingBottom: 3}}>프로젝트 제목</div>
-                                    <Input id={'maker'} value={info['maker']} onChange={onChange} size={'small'}/>
-                                </div>
-                                <div>
-                                    <div style={{paddingTop: 8, width : '100%'}}>마감일자</div>
-                                    <DatePicker value={info['writtenDate']} style={{width : '100%'}}
-                                                onChange={(date, dateString) => onChange({
-                                                    target: {
-                                                        id: 'writtenDate',
-                                                        value: date
-                                                    }
-                                                })
-                                                } id={'writtenDate'} size={'small'}/>
-                                </div>
-                                <div style={{paddingTop: 8}}>
-                                    <div style={{paddingBottom: 3}}>End User</div>
-                                    <Input id={'remarks'} value={info['remarks']} onChange={onChange} size={'small'}/>
+                                    <div style={{paddingBottom: 3}}>비고란</div>
+                                    <TextArea style={{height:'250px'}} id={'remarks'} value={info['remarks']} onChange={onChange} size={'small'}/>
                                 </div>
 
                             </Card>

@@ -127,17 +127,14 @@ const TableGrid = ({
                 router.push(`/code_domestic_agency_update?agencyCode=${e?.data?.agencyCode}`)
             if (e.data.overseasAgencyId)
                 router.push(`/code_overseas_agency_update?agencyCode=${e?.data?.agencyCode}`)
+            if (e.data.customerId)
+                router.push(`/code_domestic_customer_update?customerCode=${e?.data?.customerCode}`)
+
+
+
 
         }
 
-
-
-        // if (e.data.inventoryId) {
-        //     let itemId = e.data.inventoryId;
-        //     setIsModalOpen(true);
-        //     setItemId(itemId);
-        //     console.log(e.data.overseasAgencyId, 'itemId')
-        // }
     };
 
     // 체크된 행의 데이터 가져오기 함수 수정

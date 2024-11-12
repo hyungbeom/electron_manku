@@ -449,6 +449,38 @@ export const codeDomesticAgencyWriteInitial = {
 }
 
 
+export const codeDomesticSalesWriteInitial = {
+    "customerId": 1,
+    "customerCode": "",
+    "customerName": "",
+    "customerRegion": "",
+    "tradeStartDate": "",
+    "customerTel": "",
+    "customerFax": "",
+    "homepage": "",
+    "zipCode": "",
+    "address": "",
+    "businessRegistrationNumber": "",
+    "customerType": "",
+    "remarks": "",
+    "mankuTradeManager": "",
+    "companyVerify": "",
+    "freightCharge": "화물 후불",
+    "freightBranch": "",
+    "paymentMethod": "현금 결제",
+    "companyType": "딜러",
+    "createdBy": "",
+    "createdDate": "",
+    "modifiedBy": "",
+    "modifiedDate": "",
+    "representative": "",
+    "businessType": "",
+    "businessItem": "",
+    "key": 1,
+    "customerManagerList": []
+}
+
+
 export const tableCodeDomesticSalesInitial = {
     "customerId": 0,
     "customerCode": "",
