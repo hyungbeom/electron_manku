@@ -135,6 +135,8 @@ const TableGrid = ({
                 router.push(`/code_domestic_customer_update?customerCode=${e?.data?.customerCode}`)
             if (e.data.overseasCustomerId)
                 router.push(`/code_overseas_customer_update?customerCode=${e?.data?.customerCode}`)
+            if (e.data.officialDocumentId)
+                router.push(`/code_diploma_update?officialDocumentId=${e?.data?.officialDocumentId}`)
         }
 
         if (type==='hsCode'){

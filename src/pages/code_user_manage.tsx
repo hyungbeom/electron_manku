@@ -30,8 +30,6 @@ import {transformData} from "@/utils/common/common";
 import * as XLSX from "xlsx";
 import message from "antd/lib/message";
 
-const {RangePicker} = DatePicker
-
 const TwinInputBox = ({children}) => {
     return <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: 5, paddingTop: 8}}>
         {children}

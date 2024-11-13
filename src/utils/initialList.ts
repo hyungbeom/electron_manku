@@ -404,11 +404,10 @@ export const codeErpSaveInitial = {
     "faxNumber": "",
     "rightInfo": "",
 }
-export const codeDiplomaInitial = {
-    "searchDate": null,
-    "searchDocumentNumber": "",
-    "page": 1,
-    "limit": 10
+export const codeDiplomaReadInitial = {
+    "searchStartDate": "",      // 작성일자 검색 시작일
+    "searchEndDate": "",        // 작성일자 검색 종료일
+    "searchDocumentNumber": "",           // 문서번호 검색
 }
 
 export const tableCodeDiplomaInitial = {

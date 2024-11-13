@@ -9,7 +9,7 @@ import Card from "antd/lib/card/Card";
 import Input from "antd/lib/input/Input";
 
 import Button from "antd/lib/button";
-import {CopyOutlined, FileExcelOutlined, SearchOutlined,} from "@ant-design/icons";
+import {CopyOutlined, EditOutlined, FileExcelOutlined, SearchOutlined,} from "@ant-design/icons";
 import * as XLSX from "xlsx";
 import message from "antd/lib/message";
 
@@ -21,6 +21,7 @@ import {
     tableCodeOverseasPurchaseColumns,
 } from "@/utils/columnList";
 import {
+    codeDiplomaReadInitial,
     codeDomesticPurchaseInitial,
     tableCodeDomesticSalesInitial,
     tableCodeOverseasSalesInitial,
@@ -28,29 +29,25 @@ import {
 import Radio from "antd/lib/radio";
 import TableGrid from "@/component/tableGrid";
 import Search from "antd/lib/input/Search";
+import {useRouter} from "next/router";
+import DatePicker from "antd/lib/date-picker";
 
+const {RangePicker} = DatePicker
 
-const TwinInputBox = ({children}) => {
-    return <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: 5, paddingTop: 8}}>
-        {children}
-    </div>
-}
 export default function codeOverseasPurchase({dataList}) {
     const gridRef = useRef(null);
-    let checkList = []
+    const router=useRouter();
 
-    const {officialDocumentList, pageInfo} = dataList;
-
-    const [info, setInfo] = useState({
-        "searchStartDate": "",      // 작성일자 검색 시작일
-        "searchEndDate": "",        // 작성일자 검색 종료일
-        "searchDocumentNumber": "",           // 문서번호 검색
-        "page": 1,
-        "limit": -1
-    });
+    const {officialDocumentList} = dataList;
+    const [info, setInfo] = useState(codeDiplomaReadInitial);
     const [tableData, setTableData] = useState(officialDocumentList);
 
-    const [paginationInfo, setPaginationInfo] = useState(pageInfo);
+
+    useEffect(() => {
+        const copyData: any = {...info}
+        copyData['searchDate'] = [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
+        setInfo(copyData);
+    }, [])
 
 
     function onChange(e) {
@@ -63,43 +60,52 @@ export default function codeOverseasPurchase({dataList}) {
         })
     }
 
-    async function onSearch() {
-        const result = await getData.post('officialDocument/getOfficialDocumentList', info);
-        console.log(result?.data?.entity?.officialDocumentList,'result?.data?.entity?.officialDocumentList:')
-        if(result?.data?.code === 1){
-            setTableData(result?.data?.entity?.officialDocumentList)
+    async function searchInfo() {
+
+        const copyData: any = {...info}
+        const {searchDate}: any = copyData;
+        if (searchDate) {
+            copyData['searchStartDate'] = searchDate[0];
+            copyData['searchEndDate'] = searchDate[1];
         }
+        const result = await getData.post('officialDocument/getOfficialDocumentList',
+            {...copyData,   "page": 1, "limit": -1});
+        setTableData(result?.data?.entity?.officialDocumentList)
+
     }
 
     return <LayoutComponent>
-        <div style={{display: 'grid', gridTemplateRows: '120px 1fr', height: '100%', gridColumnGap: 5}}>
-            <Card size={'small'} title={'국내대리점관리(매입)'} style={{fontSize: 12, border: '1px solid lightGray'}}>
+        <div style={{display: 'grid', gridTemplateRows: 'auto 1fr', height: '100%', gridColumnGap: 5}}>
+            <Card size={'small'} title={'공문서 관리'} style={{fontSize: 12, border: '1px solid lightGray'}}>
                 <Card size={'small'} style={{
                     fontSize: 13,
                     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                 }}>
-                    <div style={{display: 'grid', gridTemplateColumns: '300px 1fr'}}>
+                    <div style={{display: 'grid', gridTemplateColumns: '300px 1fr 100px'}}>
                         <div>
-                            <Radio.Group onChange={e=> setInfo(v=>{return {...v, searchType: e.target.value}})} defaultValue={2} id={'searchType'}
-                                         value={info['searchType']}>
-                                <Radio value={1}>코드</Radio>
-                                <Radio value={2}>상호명</Radio>
-                                <Radio value={3}>지역</Radio>
-                                <Radio value={4}>전화번호</Radio>
-                            </Radio.Group>
+                            <div style={{paddingBottom: 3}}>조회일자</div>
+                            <RangePicker id={'searchDate'} size={'small'} onChange={(date, dateString) => onChange({
+                                target: {
+                                    id: 'writtenDate',
+                                    value: date
+                                }
+                            })
+                            }/>
                         </div>
 
-                        <Search
-                            onSearch={onSearch}
-                            onChange={onChange}
-                            id={'searchText'}
-                            placeholder="input search text"
-                            allowClear
-                            enterButton="검색"
-                            size="small"
-                            // onSearch={onSearch}
-                        />
+                        <div style={{marginTop: 8}}>
+                            <div style={{marginBottom: 3}}>문서번호</div>
+                            <Input id={'searchDocumentNumber'} value={info['searchDocumentNumber']}
+                                   onChange={onChange}
+                                   size={'small'}/>
+                        </div>
 
+                    </div>
+
+                    <div style={{paddingTop: 8, textAlign: 'right'}}>
+                        <Button type={'primary'} onClick={searchInfo}><SearchOutlined/>조회</Button>
+                        <Button type={'primary'} style={{backgroundColor:'green', border: 'none', marginLeft:10}}
+                                onClick={() => router?.push('/code_diploma_write')}><EditOutlined/>신규작성</Button>
                     </div>
 
                 </Card>
@@ -136,8 +142,9 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
     const result = await getData.post('officialDocument/getOfficialDocumentList', {
-        "searchType": "1",      // 1: 코드, 2: 상호명, 3: MAKER
-        "searchText": "",
+        "searchStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),              // 작성일자 시작일
+        "searchEndDate": moment().format('YYYY-MM-DD'),
+        "searchDocumentNumber": "",           // 문서번호 검색
         "page": 1,
         "limit": -1
     });
