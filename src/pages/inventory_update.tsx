@@ -35,7 +35,7 @@ export default function OrderInventoryRead({dataInfo}) {
 
     useEffect(() => {
 
-        let copyData: any = {...orderWriteInitial}
+        let copyData: any = {...info}
 
         if (dataInfo) {
             copyData = dataInfo;
@@ -65,7 +65,7 @@ export default function OrderInventoryRead({dataInfo}) {
         const copyData = {...info}
         copyData['receiptDate'] = moment(info['receiptDate']).format('YYYY-MM-DD');
 
-        await getData.post('inventory/addInventory', copyData).then(v => {
+        await getData.post('inventory/updateInventory', copyData).then(v => {
             if(v.data.code === 1){
                 message.success('저장되었습니다')
                 setInfo(tableOrderInventoryInitial);
@@ -93,7 +93,7 @@ export default function OrderInventoryRead({dataInfo}) {
                             <div>
                                 <div style={{paddingBottom: 3}}>입고일자</div>
                                 {/*@ts-ignore*/}
-                                <DatePicker value={info['receiptDate']}
+                                <DatePicker value={moment(info['receiptDate'])}
                                             onChange={(date, dateString) => onChange({
                                                 target: {
                                                     id: 'receiptDate',
@@ -207,12 +207,14 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     const {maker, model} = ctx.query;
 
-
+    console.log(model, 'model')
+    console.log(maker, 'result')
     const result = await getData.post('inventory/getInventoryDetail', {
         maker:maker,
         model:model,
     });
 
+    console.log(result, 'result')
 
-    return {props: {dataInfo: result?.data?.entity?.inventoryList?.[0]}}
+    return {props: {dataInfo: result?.data?.entity?.inventoryItemList?.[0]}}
 })
