@@ -5,6 +5,10 @@ import {AgGridReact} from 'ag-grid-react';
 import {iconSetMaterial, themeQuartz} from '@ag-grid-community/theming';
 import {useRouter} from "next/router";
 import {tableTheme} from "@/utils/common";
+import moment from "moment";
+import {getData} from "@/manage/function/api";
+import message from "antd/lib/message";
+import {codeDomesticAgencyWriteInitial} from "@/utils/initialList";
 
 
 const TableGrid = ({
@@ -77,8 +81,8 @@ const TableGrid = ({
     }
 
     const handleRowValueChange = (e) => {
-        // console.log(e.api)
-        // console.log(e.api.getEdit)
+        console.log(e.api)
+        console.log(e.api.getEdit)
     }
 
 
@@ -99,51 +103,11 @@ const TableGrid = ({
         if (isUpdatingSelection) return; // 중복 선택 이벤트 발생 시 종료
         isUpdatingSelection = true;
 
+        // console.log(e, 'handleSelectionChange')
         const currentRowData = e.node.data;
         const currentDocumentNumber = currentRowData.documentNumberFull;
         const isCurrentlySelected = e.node.isSelected();
         const api = e.api;
-
-        // 부모 행인지 확인하는 함수 (연속된 `documentNumberFull` 값이 다르면 부모로 간주)
-        const isParent = (nodeIndex) => {
-            if (nodeIndex === 0) return true;
-            const previousRowData = api.getDisplayedRowAtIndex(nodeIndex - 1).data;
-            return previousRowData.documentNumberFull !== currentDocumentNumber;
-        };
-
-        if (isParent(e.node.rowIndex)) {
-            // 부모가 선택된 경우 자식들만 선택/해제하고, 중복 이벤트 발생 방지
-            const selectedId = currentRowData.estimateRequestId;
-            api.forEachNode((node) => {
-                if (node.data.estimateRequestId === selectedId && node !== e.node) {
-                    node.setSelected(isCurrentlySelected, false); // 자식만 선택/해제
-                }
-            });
-        } else {
-            // 자식 행이 선택/해제되었을 때 부모 상태 동기화
-            const selectedId = currentRowData.estimateRequestId;
-            let allChildrenSelected = true;
-            let parentNode = null;
-
-            api.forEachNode((node) => {
-                if (node.data.estimateRequestId === selectedId) {
-                    if (isParent(node.rowIndex)) {
-                        parentNode = node; // 부모 노드를 추적
-                    } else if (!node.isSelected()) {
-                        allChildrenSelected = false; // 자식 중 하나라도 선택 해제 시
-                    }
-                }
-            });
-
-            // 자식이 모두 선택되었을 때만 부모 선택, 자식 중 하나라도 해제되면 부모 해제
-            if (parentNode) {
-                parentNode.setSelected(allChildrenSelected, false);
-            }
-        }
-
-
-
-        // console.log(estimateList, 'estimateList~~~~');
 
 
         isUpdatingSelection = false; // 선택 업데이트 종료
@@ -152,19 +116,35 @@ const TableGrid = ({
 
     const handleDoubleClicked = (e) => {
 
-        if (e.data.estimateRequestId)
-            router.push(`/rfq_update?estimateRequestId=${e?.data?.estimateRequestId}`)
-        if (e.data.estimateId)
-            router.push(`/estimate_update?estimateId=${e?.data?.estimateId}`)
-        if (e.data.orderId)
-            router.push(`/order_update?orderId=${e?.data?.orderId}`)
-        if (e.data.inventoryId) {
-            let itemId = e.data.inventoryId;
-            setIsModalOpen(true);
-            setItemId(itemId);
-            console.log(itemId, 'itemId')
+        if (type==='read'){
+            if (e.data.estimateRequestId)
+                router.push(`/rfq_update?estimateRequestId=${e?.data?.estimateRequestId}`)
+            if (e.data.estimateId)
+                router.push(`/estimate_update?estimateId=${e?.data?.estimateId}`)
+            if (e.data.orderId)
+                router.push(`/order_update?orderId=${e?.data?.orderId}`)
+            if (e.data.inventoryId)
+                router.push(`/inventory_update?maker=${e?.data?.maker}&item=${e?.data?.model}`)
+            if (e.data.makerId)
+                router.push(`/maker_update?makerId=${e?.data?.makerId}`)
+            if (e.data.agencyId)
+                router.push(`/code_domestic_agency_update?agencyCode=${e?.data?.agencyCode}`)
+            if (e.data.overseasAgencyId)
+                router.push(`/code_overseas_agency_update?agencyCode=${e?.data?.agencyCode}`)
+            if (e.data.customerId)
+                router.push(`/code_domestic_customer_update?customerCode=${e?.data?.customerCode}`)
+            if (e.data.overseasCustomerId)
+                router.push(`/code_overseas_customer_update?customerCode=${e?.data?.customerCode}`)
         }
+
+        if (type==='hsCode'){
+            console.log(e.data, 'hsCode')
+            setInfo(e.data)
+        }
+
     };
+
+
 
     // 체크된 행의 데이터 가져오기 함수 수정
     const getCheckedRowsData = () => {
@@ -174,9 +154,7 @@ const TableGrid = ({
 
         return selectedData;
 
-
     };
-
 
 
 
@@ -217,10 +195,9 @@ const TableGrid = ({
             {modalComponent}
 
             <AgGridReact theme={tableTheme} ref={gridRef} containerStyle={{width: '100%', height: '84%'}}
-                //@ts-ignore
+                        //@ts-ignore
                          onRowDoubleClicked={handleDoubleClicked}
-                         onRowValueChanged={handleRowValueChange}
-                //@ts-ignore
+                        //@ts-ignore
                          rowSelection={rowSelection}
                          defaultColDef={defaultColDef}
                          columnDefs={columns}
@@ -229,6 +206,9 @@ const TableGrid = ({
                          pagination={true}
                          onRowSelected={handleRowSelected}
                          onCellValueChanged={dataChange}
+                         gridOptions={{
+                             loadThemeGoogleFonts: true,
+                         }}
             />
         </div>
     );

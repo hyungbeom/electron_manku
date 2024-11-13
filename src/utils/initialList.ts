@@ -49,18 +49,15 @@ export const tableEstimateWriteInitial = {
 
 export const rfqWriteInitial = {
     "writtenDate": "",        // 작성일
+    "documentNumberFull": "", // INQUIRY No.
     "agencyCode": "",                // 대리점코드
     "agencyName": "",       // 대리점명
-    "customerCode": "",                // 거래처코드(거래처 관리 > 거래처 조회(견적용) API 조회)
 
-    // '거래처 조회(견적용)' API 에서 '상호명' 을 넣고 조회한 목록에서 정보 가져옴.
-    "customerName": "",   // 거래처명(상호명)
+    "customerCode": "",                // 거래처코드
+    "customerName": "",  // 거래처명(상호명)
     "phoneNumber": "",              // 전화번호
     "faxNumber": "",       // 팩스/이메일
-    "customerManagerId": 0,             // 담당자아이디
     "managerName": "",       // 담당자명
-    // END //
-
 
     "maker": "",                   // MAKER
     "item": "",                     // ITEM
@@ -68,7 +65,31 @@ export const rfqWriteInitial = {
     "footerTag": "",                    // 하단 태그란
     "attachment": "",                   // 첨부파일 여부 (있으면 "V", 없으면 "")
     "instructions": "",                 // 지시사항
+
+    "rfqNo": "",                        // RFQ NO.
+    "projectTitle": "",                 // 프로젝트 제목
+    "endUser": "",                      // End User
+    "dueDate": "",                      // 마감일자
+
+    "agencyManagerId": 1,               // 대리점 담당자 Id (메일 전송용)
+    "agencyType": "",                // 대리점 타입
+    "adminId": 1,                       // 만쿠 관리자 Id
+
     "estimateRequestDetailList": []
+}
+
+
+export const makerWriteInitial = {
+    "makerName": "",                   // MAKER
+    "item": "",               // ITEM
+    "homepage": "",  // 홈페이지
+    "area": "",                            // AREA
+    "origin": "",                               // 원산지
+    "managerConfirm": "",                       // 담당자확인
+    "koreanAgency": "",                         // 한국대리점
+    "directConfirm": "",                        // 직접확인
+    "ftaNumber": "",                            // FTA-No
+    "instructions": ""
 }
 
 export const subRfqWriteInitial = {
@@ -358,6 +379,7 @@ export const codeReadInitial = {
 }
 
 
+
 export const codeUserSaveInitial = {
     "customerName": "",                  // MAKER
     "homepage": "",         // 문서번호
@@ -418,25 +440,73 @@ export const codeDomesticPurchaseInitial = {
     "limit": -1
 }
 
-export const tableCodeDomesticPurchaseInitial = {
-    "agencyId": 1,
-    "agencyCode": "",
-    "agencyName": "",
-    "dealerType": "딜러",
-    "grade": "",
-    "margin": 0,
-    "homepage": "",
-    "item": "",
-    "tradeStartDate": null,
-    "businessRegistrationNumber": "",
-    "bankAccountNumber": "",
-    // "createdBy": "",
-    // "createdDate": null,
-    // "modifiedBy": "",
-    // "modifiedDate": null,
-    "maker": "",
-    "key": 1
+
+export const codeDomesticAgencyWriteInitial = {
+    "agencyCode": "",        // 코드(약칭)
+    "dealerType": "딜러",        // "딜러", "제조"
+    "grade": "A",               // 등급
+    "margin": null,                // 마진
+    "agencyName": "",   // 상호
+    "maker": "",            // MAKER
+    "homepage": "",   // 홈페이지
+    "tradeStartDate": "",         // 거래시작일
+    "businessRegistrationNumber": "",       // 사업자 번호
+    "bankAccountNumber": "",                // 계좌번호
+    "item": "",                             // 아이템
+    "agencyManagerList": []
 }
+
+
+export const codeDomesticSalesWriteInitial = {
+    "customerId": 1,
+    "customerCode": "",
+    "customerName": "",
+    "customerRegion": "",
+    "tradeStartDate": "",
+    "customerTel": "",
+    "customerFax": "",
+    "homepage": "",
+    "zipCode": "",
+    "address": "",
+    "businessRegistrationNumber": "",
+    "customerType": "",
+    "remarks": "",
+    "mankuTradeManager": "",
+    "companyVerify": "",
+    "freightCharge": "화물 후불",
+    "freightBranch": "",
+    "paymentMethod": "현금 결제",
+    "companyType": "딜러",
+    "createdBy": "",
+    "createdDate": "",
+    "modifiedBy": "",
+    "modifiedDate": "",
+    "representative": "",
+    "businessType": "",
+    "businessItem": "",
+    "key": 1,
+    "customerManagerList": []
+}
+
+export const codeOverseasSalesWriteInitial = {
+    "customerCode": "",
+    "customerName": "",
+    "tradeStartDate": "",
+    "phoneNumber": "",
+    "customerRegion": "",
+    "homepage": "",
+    "faxNumber": "",
+    "currencyUnit": "USD",
+    "manager": "",
+    "ftaNumber": "",
+    "customerType": "",
+    "address": "",
+    "mankuTradeManager": "",
+    "remarks": "",
+    "companyVerification": "",
+    "overseasCustomerManagerList": []
+}
+
 
 export const tableCodeDomesticSalesInitial = {
     "customerId": 0,
@@ -491,28 +561,51 @@ export const tableCodeOverseasSalesInitial = {
 }
 
 
-export const tableCodeOverseasPurchaseInitial = {
-    "agencyId": 1,
+export const codeOverseasAgencyInitial = {
+    "overseasAgencyId": null,
     "agencyCode": "",
     "agencyName": "",
     "dealerType": "딜러",
     "grade": "",
-    "margin": 0,
+    "margin": null,
     "homepage": "",
     "item": "",
-    "tradeStartDate": null,
-    "currencyUnit":"USD",
-    "manager":"",
+    "tradeStartDate": "",
+    "currencyUnit": "",
+    "manager": "",
     "bankAccountNumber": "",
-    "country":"",
-    "ftaNo":"",
-    "bankName":"",
-    "agencyAddress":"",
-    "ibanCode":"",
-    "swiftCode":"",
-    // "createdBy": "",
-    // "createdDate": null,
-    // "modifiedBy": "",
-    // "modifiedDate": null,
-    "key": 1
+    "country": "USA",
+    "ftaNumber": "",
+    "intermediaryBank": "",
+    "address": "",
+    "ibanCode": "",
+    "swiftCode": "",
+    "createdBy": "",
+    "createdDate": "",
+    "modifiedBy": "",
+    "modifiedDate": "",
+    "key": 1,
+    "overseasAgencyManagerList": []
 }
+
+export const codeOverseasAgencyWriteInitial = {
+    "agencyCode": "",                      // 코드(약칭)
+    "agencyName": "",       // 상호
+    "dealerType": "",               // 딜러/제조
+    "grade": "",                             // 등급
+    "margin": null,                           // 마진
+    "homepage": "",   // 홈페이지
+    "item": "",                        // ITEM
+    "tradeStartDate": "",               // 거래 시작일
+    "currencyUnit": "",                        // 화폐단위
+    "manager": "",                     // 담당자
+    "bankAccountNumber": "",            // Account No
+    "country": "",                             // 국가
+    "ftaNumber": "",                      // FTA No
+    "intermediaryBank": "",        // 송금중개은행
+    "address": "",  // 주소
+    "ibanCode": "",           // IBan Code
+    "swiftCode": "",                      // Swift Code
+    "overseasAgencyManagerList": []
+}
+

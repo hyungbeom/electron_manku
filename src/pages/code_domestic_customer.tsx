@@ -1,42 +1,31 @@
 import React, {useEffect, useRef, useState} from "react";
-import moment from "moment/moment";
 import {getData} from "@/manage/function/api";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
-import Input from "antd/lib/input/Input";
 
-import Button from "antd/lib/button";
-import {CopyOutlined, EditOutlined, FileExcelOutlined, SearchOutlined,} from "@ant-design/icons";
-import * as XLSX from "xlsx";
-import message from "antd/lib/message";
-
-import {
-    makerColumn,
-    rfqReadColumns,
-    tableCodeDomesticPurchaseColumns,
-    tableCodeDomesticSalesColumns,
-    tableCodeOverseasPurchaseColumns,
-} from "@/utils/columnList";
-import {
-    codeDomesticPurchaseInitial,
-    tableCodeDomesticSalesInitial,
-    tableCodeOverseasSalesInitial,
-} from "@/utils/initialList";
+import {tableCodeDomesticSalesColumns,} from "@/utils/columnList";
+import {codeDomesticPurchaseInitial, tableCodeDomesticSalesInitial,} from "@/utils/initialList";
 import Radio from "antd/lib/radio";
 import TableGrid from "@/component/tableGrid";
 import Search from "antd/lib/input/Search";
+import message from "antd/lib/message";
+import * as XLSX from "xlsx";
+import Button from "antd/lib/button";
+import {CopyOutlined, EditOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
 import {useRouter} from "next/router";
 
-export default function makerRead({dataList}) {
+export default function codeOverseasPurchase({dataList}) {
     const gridRef = useRef(null);
-
-    const {makerList} = dataList;
-    const [info, setInfo] = useState(codeDomesticPurchaseInitial);
-    const [tableData, setTableData] = useState(makerList);
     const router=useRouter();
+
+    const {customerList} = dataList;
+    const [info, setInfo] = useState(codeDomesticPurchaseInitial);
+    const [tableData, setTableData] = useState(customerList);
+
+    // console.log(customerList,'saveInfo:')
 
 
     function onChange(e) {
@@ -50,58 +39,28 @@ export default function makerRead({dataList}) {
     }
 
     async function onSearch() {
-        const result = await getData.post('maker/getMakerList', info);
-        console.log(result?.data?.entity?.makerList,'result:')
+        const result = await getData.post('customer/getCustomerList', info);
+        console.log(info,'info:')
+        console.log(result?.data?.entity?.customerList,'result:')
         if(result?.data?.code === 1){
-            setTableData(result?.data?.entity?.makerList)
+            setTableData(result?.data?.entity?.customerList)
         }
-        console.log(info['searchType'], 'searchType')
     }
 
     async function deleteList() {
         const api = gridRef.current.api;
-        // console.log(api.getSelectedRows(),':::')
+        console.log(api.getSelectedRows(),':::')
 
         if (api.getSelectedRows().length<1) {
             message.error('삭제할 데이터를 선택해주세요.')
         } else {
             for (const item of api.getSelectedRows()) {
-                const response = await getData.post('maker/deleteMaker', {
-                    makerId:item.makerId
+                const response = await getData.post('customer/deleteCustomer', {
+                    customerId:item.customerId
                 });
                 console.log(response)
                 if (response.data.code===1) {
                     message.success('삭제되었습니다.')
-                    window.location.reload();
-                } else {
-                    message.error('오류가 발생하였습니다. 다시 시도해주세요.')
-                }
-            }
-        }
-    }
-
-
-    async function copyRow() {
-        const api = gridRef.current.api;
-
-        if (api.getSelectedRows().length<1) {
-            message.error('복사할 데이터를 선택해주세요.')
-        } else {
-            for (const item of api.getSelectedRows()) {
-
-                let newItem={...item}
-
-                delete newItem.makerId;
-                delete newItem.key;
-                delete newItem.createdBy;
-                delete newItem.createdDate;
-                delete newItem.modifiedBy;
-                delete newItem.modifiedDate;
-
-                const response = await getData.post('maker/addMaker', newItem);
-                console.log(response)
-                if (response.data.code===1) {
-                    message.success('복사되었습니다.')
                     window.location.reload();
                 } else {
                     message.error('오류가 발생하였습니다. 다시 시도해주세요.')
@@ -116,12 +75,12 @@ export default function makerRead({dataList}) {
         const worksheet = XLSX.utils.json_to_sheet(tableData);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-        XLSX.writeFile(workbook, "maker_list.xlsx");
+        XLSX.writeFile(workbook, "domestic_customer_list.xlsx");
     };
 
     return <LayoutComponent>
-        <div style={{display: 'grid', gridTemplateRows: '120px 1fr', height: '100%', gridColumnGap: 5}}>
-            <Card size={'small'} title={'Maker 관리'} style={{fontSize: 12, border: '1px solid lightGray'}}>
+        <div style={{display: 'grid', gridTemplateRows: '120px 1fr', height: '100%', columnGap: 5}}>
+            <Card size={'small'} title={'국내 거래처 관리'} style={{fontSize: 12, border: '1px solid lightGray'}}>
                 <Card size={'small'} style={{
                     fontSize: 13,
                     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
@@ -132,44 +91,42 @@ export default function makerRead({dataList}) {
                                 return {...v, searchType: e.target.value}
                             })} defaultValue={2} id={'searchType'}
                                          value={info['searchType']}>
-                                <Radio value={1}>Maker</Radio>
-                                <Radio value={2}>Item</Radio>
-                                <Radio value={3}>Area</Radio>
+                                <Radio value={1}>코드</Radio>
+                                <Radio value={2}>상호명</Radio>
+                                <Radio value={3}>지역</Radio>
+                                <Radio value={4}>전화번호</Radio>
                             </Radio.Group>
                         </div>
 
-                            <Search
-                                onSearch={onSearch}
-                                onChange={onChange}
-                                id={'searchText'}
-                                placeholder="input search text"
-                                allowClear
-                                enterButton={<><SearchOutlined/>&nbsp;&nbsp; 조회</>}
-                            />
-                            <div style={{margin:'0 10px'}}>
-                            <Button type={'primary'} style={{backgroundColor:'green', border: 'none'}}
-                                    onClick={() => router?.push('/maker_write')}><EditOutlined/>신규작성</Button>
+                        <Search
+                            onSearch={onSearch}
+                            onChange={onChange}
+                            id={'searchText'}
+                            placeholder="input search text"
+                            allowClear
+                            enterButton={<><SearchOutlined/>&nbsp;&nbsp; 조회</>}
+                        />
+                        <div style={{margin: '0 10px'}}>
+                            <Button type={'primary'} style={{backgroundColor: 'green', border: 'none'}}
+                                    onClick={() => router?.push('/code_domestic_customer_write')}><EditOutlined/>신규작성</Button>
                         </div>
-
 
                     </div>
 
                 </Card>
-
-
             </Card>
 
             <TableGrid
                 gridRef={gridRef}
-                columns={makerColumn}
+                columns={tableCodeDomesticSalesColumns}
                 tableData={tableData}
                 type={'read'}
                 excel={true}
-                funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}} onClick={copyRow}>
+                funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
                     <CopyOutlined/>복사
                 </Button>
                     {/*@ts-ignored*/}
-                    <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}} onClick={deleteList}>
+                    <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={deleteList}>
                         <CopyOutlined/>삭제
                     </Button>
                     <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={downloadExcel}>
@@ -189,14 +146,14 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
-    const result = await getData.post('maker/getMakerList', {
+    const result = await getData.post('customer/getCustomerList', {
         "searchType": "1",      // 1: 코드, 2: 상호명, 3: MAKER
         "searchText": "",
         "page": 1,
         "limit": -1
     });
 
-    // console.log(result?.data?.entity,'result?.data?.entity:')
+    console.log(result?.data?.entity,'result?.data?.entity:')
 
     if (userInfo) {
         store.dispatch(setUserInfo(userInfo));

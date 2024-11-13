@@ -30,7 +30,7 @@ const menuList = {
         title: '견적서',
         icon: <FormOutlined/>,
         list: [{title: '견적서 작성', key: 'estimate_write'}, {title: '견적서 조회', key: 'estimate_read'}, {
-            title: '통합견적서 작성',
+            title: '통합견적서 발행',
             key: 'estimate_total_write'
         }]
     },
@@ -38,7 +38,7 @@ const menuList = {
         title: '발주관리',
         icon: <WalletOutlined/>,
         list: [{title: '발주서 작성', key: 'order_write'}, {title: '발주 조회', key: 'order_read'},
-            {title: '재고 관리', key: 'order_inventory_manage'},
+            {title: '재고 관리', key: 'inventory_manage'},
             {title: '정산 관리', key: 'order_manage', subList: [
                     { title: '거래처 별 주문조회', key: 'order_read_customer' },
                     { title: '해외 대리점 별 주문조회', key: 'order_read_agency' },
@@ -50,10 +50,10 @@ const menuList = {
         title: '코드관리',
         icon: <BarcodeOutlined/>,
         list: [
-            {title: '국내 대리점(매입)', key: 'code_domestic_purchase'},
-            {title: '해외 대리점(매입)', key: 'code_overseas_purchase'},
-            {title: '국내 거래처(매출)', key: 'code_domestic_sales'},
-            {title: '해외 거래처(매출)', key: 'code_overseas_sales'},
+            {title: '국내 대리점(매입)', key: 'code_domestic_agency'},
+            {title: '해외 대리점(매입)', key: 'code_overseas_agency'},
+            {title: '국내 거래처(매출)', key: 'code_domestic_customer'},
+            {title: '해외 거래처(매출)', key: 'code_overseas_customer'},
             {title: '공문서', key: 'code_diploma'},
             {title: '환율조회', key: 'code_exchange_read'},
             {title: 'HS CODE 조회', key: 'code_read'},

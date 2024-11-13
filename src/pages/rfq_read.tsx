@@ -85,7 +85,7 @@ export default function rfqRead({dataList}) {
         const worksheet = XLSX.utils.json_to_sheet(tableData);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-        XLSX.writeFile(workbook, "example.xlsx");
+        XLSX.writeFile(workbook, "rfq_list.xlsx");
     };
 
     return <>
@@ -114,7 +114,7 @@ export default function rfqRead({dataList}) {
                                     }
                                     } style={{width: '100%',}}/>
                                 </div>
-                                <div>
+                                <div style={{marginTop:8}}>
                                     <div style={{paddingBottom: 3}}>회신 여부</div>
                                     <Select id={'searchType'}
                                             onChange={(src) => onChange({target: {id: 'searchType', value: src}})}
@@ -133,12 +133,12 @@ export default function rfqRead({dataList}) {
                                     <div style={{paddingBottom: 3}}>문서번호</div>
                                     <Input id={'searchDocumentNumber'} onChange={onChange} size={'small'}/>
                                 </div>
-                                <div>
-                                    <div style={{paddingBottom: 3}}>등록직원명</div>
-                                    <Input id={'searchCreatedBy'} onChange={onChange} size={'small'}/>
-                                </div>
-                            <div>
-                                <div style={{marginTop: 8, paddingBottom: 3}}>거래처명</div>
+                            <div style={{marginTop: 8}}>
+                                <div style={{paddingBottom: 3}}>등록직원명</div>
+                                <Input id={'searchCreatedBy'} onChange={onChange} size={'small'}/>
+                            </div>
+                            <div style={{marginTop: 8}}>
+                                <div style={{paddingBottom: 3}}>거래처명</div>
                                 <Input id={'searchCustomerName'} onChange={onChange} size={'small'}/>
                             </div>
                         </Card>

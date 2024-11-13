@@ -9,7 +9,7 @@ import Card from "antd/lib/card/Card";
 import Input from "antd/lib/input/Input";
 
 import Button from "antd/lib/button";
-import {CopyOutlined, FileExcelOutlined, SearchOutlined,} from "@ant-design/icons";
+import {CopyOutlined, EditOutlined, FileExcelOutlined, SearchOutlined,} from "@ant-design/icons";
 import * as XLSX from "xlsx";
 import message from "antd/lib/message";
 
@@ -18,25 +18,16 @@ import {codeDomesticPurchaseInitial, tableCodeOverseasSalesInitial,} from "@/uti
 import Radio from "antd/lib/radio";
 import TableGrid from "@/component/tableGrid";
 import Search from "antd/lib/input/Search";
+import {useRouter} from "next/router";
 
 
-const TwinInputBox = ({children}) => {
-    return <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: 5, paddingTop: 8}}>
-        {children}
-    </div>
-}
 export default function codeOverseasPurchase({dataList}) {
     const gridRef = useRef(null);
-    let checkList = []
+    const router=useRouter();
 
-    const {overseasAgencyList, pageInfo} = dataList;
-    const [saveInfo, setSaveInfo] = useState(codeDomesticPurchaseInitial);
+    const {overseasAgencyList} = dataList;
     const [info, setInfo] = useState(codeDomesticPurchaseInitial);
     const [tableData, setTableData] = useState(overseasAgencyList);
-
-    const [paginationInfo, setPaginationInfo] = useState(pageInfo);
-
-    // console.log(saveInfo,'saveInfo:')
 
 
     function onChange(e) {
@@ -51,22 +42,55 @@ export default function codeOverseasPurchase({dataList}) {
 
     async function onSearch() {
         const result = await getData.post('agency/getOverseasAgencyList', info);
-        console.log(result?.data?.entity?.overseasAgencyList,'result:')
+        // console.log(result?.data?.entity?.overseasAgencyList,'result:')
         if(result?.data?.code === 1){
             setTableData(result?.data?.entity?.overseasAgencyList)
+        }1
+    }
+
+    async function deleteList() {
+        const api = gridRef.current.api;
+        console.log(api.getSelectedRows(),':::')
+
+        if (api.getSelectedRows().length<1) {
+            message.error('삭제할 데이터를 선택해주세요.')
+        } else {
+            for (const item of api.getSelectedRows()) {
+                const response = await getData.post('agency/deleteOverseasAgency', {
+                    overseasAgencyId:item.overseasAgencyId
+                });
+                console.log(response)
+                if (response.data.code===1) {
+                    message.success('삭제되었습니다.')
+                    window.location.reload();
+                } else {
+                    message.error('오류가 발생하였습니다. 다시 시도해주세요.')
+                }
+            }
         }
     }
 
+    const downloadExcel = () => {
+
+        const worksheet = XLSX.utils.json_to_sheet(tableData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+        XLSX.writeFile(workbook, "inventory_list.xlsx");
+    };
+
+
     return <LayoutComponent>
-        <div style={{display: 'grid', gridTemplateRows: '120px 1fr', height: '100%', gridColumnGap: 5}}>
-            <Card size={'small'} title={'국내대리점관리(매입)'} style={{fontSize: 12, border: '1px solid lightGray'}}>
+        <div style={{display: 'grid', gridTemplateRows: '120px 1fr', height: '100%', columnGap: 5}}>
+            <Card size={'small'} title={'해외 매입처 관리'} style={{fontSize: 12, border: '1px solid lightGray'}}>
                 <Card size={'small'} style={{
                     fontSize: 13,
                     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                 }}>
-                    <div style={{display: 'grid', gridTemplateColumns: '300px 1fr'}}>
-                        <div>
-                            <Radio.Group onChange={e=> setInfo(v=>{return {...v, searchType: e.target.value}})} defaultValue={2} id={'searchType'}
+                    <div style={{display: 'grid', gridTemplateColumns: 'auto 1fr 120px'}}>
+                        <div style={{marginTop: 6}}>
+                            <Radio.Group onChange={e => setInfo(v => {
+                                return {...v, searchType: e.target.value}
+                            })} defaultValue={2} id={'searchType'}
                                          value={info['searchType']}>
                                 <Radio value={1}>코드</Radio>
                                 <Radio value={2}>상호명</Radio>
@@ -81,10 +105,12 @@ export default function codeOverseasPurchase({dataList}) {
                             id={'searchText'}
                             placeholder="input search text"
                             allowClear
-                            enterButton="검색"
-                            size="small"
-                            // onSearch={onSearch}
+                            enterButton={<><SearchOutlined/>&nbsp;&nbsp; 조회</>}
                         />
+                        <div style={{margin: '0 10px'}}>
+                            <Button type={'primary'} style={{backgroundColor: 'green', border: 'none'}}
+                                    onClick={() => router?.push('/code_overseas_agency_write')}><EditOutlined/>신규작성</Button>
+                        </div>
 
                     </div>
 
@@ -97,16 +123,14 @@ export default function codeOverseasPurchase({dataList}) {
                 tableData={tableData}
                 type={'read'}
                 excel={true}
-                // funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
-                //     <CopyOutlined/>복사
-                // </Button>
-                //     {/*@ts-ignored*/}
-                //     <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={deleteList}>
-                //         <CopyOutlined/>삭제
-                //     </Button>
-                //     <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={downloadExcel}>
-                //         <FileExcelOutlined/>출력
-                //     </Button></div>}
+                funcButtons={<div>
+                    {/*@ts-ignored*/}
+                    <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={deleteList}>
+                        <CopyOutlined/>삭제
+                    </Button>
+                    <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={downloadExcel}>
+                        <FileExcelOutlined/>출력
+                    </Button></div>}
             />
 
         </div>

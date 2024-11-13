@@ -16,6 +16,12 @@ export default function SearchCustomerModal({customerData, info, setInfo, isModa
     useEffect(() => {
         searchFunc();
     }, [])
+
+    useEffect(() => {
+        setData(customerData);
+    }, [customerData])
+
+
     async function searchFunc() {
         // console.log(modalInfo, 'modalInfo:')
         const result = await getData.post('customer/getCustomerListForEstimate', {
