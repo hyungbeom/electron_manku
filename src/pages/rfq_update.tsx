@@ -67,7 +67,7 @@ export default function rqfUpdate({dataInfo}) {
         setInfo(v => {
             return {...v, ...bowl}
         })
-        console.log(info, 'onChange~~~')
+        // console.log(info, 'onChange~~~')
     }
 
     async function saveFunc() {

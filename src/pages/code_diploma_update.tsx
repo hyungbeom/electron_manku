@@ -31,7 +31,6 @@ export default function codeOverseasPurchase({data}) {
 
 
     useEffect(() => {
-
     }, [info]);
 
 
@@ -75,7 +74,6 @@ export default function codeOverseasPurchase({data}) {
     }
 
     const downloadExcel = () => {
-
         // const worksheet = XLSX.utils.json_to_sheet(tableInfo);
         // const workbook = XLSX.utils.book_new();
         // XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
