@@ -81,7 +81,7 @@ export default function OrderInventoryRead({dataInfo}) {
     return <>
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateRows: 'auto 1fr', height: '100%', gridColumnGap: 5}}>
-                <Card title={<span style={{fontSize: 12,}}>재고 등록</span>} headStyle={{marginTop: -10, height: 30}}
+                <Card title={<span style={{fontSize: 12,}}>재고 수정</span>} headStyle={{marginTop: -10, height: 30}}
                       style={{border: '1px solid lightGray',}} bodyStyle={{padding: '10px 24px'}}>
 
                     <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', width: '100%', columnGap: 20}}>
@@ -205,13 +205,14 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     store.dispatch(setUserInfo(userInfo));
 
-    const {inventoryId} = ctx.query;
+    const {maker, model} = ctx.query;
 
 
-    const result = await getData.post('inventory/getInventoryList', {
-        inventoryId:inventoryId
+    const result = await getData.post('inventory/getInventoryDetail', {
+        maker:maker,
+        model:model,
     });
 
 
-    return {props: {dataInfo: inventoryId ? result?.data?.entity?.inventoryList : null}}
+    return {props: {dataInfo: result?.data?.entity?.inventoryList?.[0]}}
 })

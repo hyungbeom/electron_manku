@@ -124,7 +124,7 @@ const TableGrid = ({
             if (e.data.orderId)
                 router.push(`/order_update?orderId=${e?.data?.orderId}`)
             if (e.data.inventoryId)
-                router.push(`/inventory_update?inventoryId=${e?.data?.inventoryId}`)
+                router.push(`/inventory_update?maker=${e?.data?.maker}&item=${e?.data?.model}`)
             if (e.data.makerId)
                 router.push(`/maker_update?makerId=${e?.data?.makerId}`)
             if (e.data.agencyId)
@@ -135,7 +135,6 @@ const TableGrid = ({
                 router.push(`/code_domestic_customer_update?customerCode=${e?.data?.customerCode}`)
             if (e.data.overseasCustomerId)
                 router.push(`/code_overseas_customer_update?customerCode=${e?.data?.customerCode}`)
-
         }
 
         if (type==='hsCode'){

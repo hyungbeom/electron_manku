@@ -26,12 +26,7 @@ import {
     tableCodeDomesticSalesColumns,
     tableCodeOverseasPurchaseColumns, tableCodeReadColumns,
 } from "@/utils/columnList";
-import {
-    codeDomesticAgencyWriteInitial,
-    codeDomesticPurchaseInitial, codeReadInitial, codeSaveInitial,
-    tableCodeDomesticSalesInitial,
-    tableCodeOverseasSalesInitial,
-} from "@/utils/initialList";
+import {codeReadInitial, codeSaveInitial,} from "@/utils/initialList";
 import Radio from "antd/lib/radio";
 import TableGrid from "@/component/tableGrid";
 import Search from "antd/lib/input/Search";

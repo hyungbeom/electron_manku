@@ -136,35 +136,42 @@ export default function OrderInventoryRead({dataList}) {
                             width: '100%',
                             columnGap: 20
                         }}>
+                            {/*<div>*/}
+                            {/*    <div style={{paddingBottom: 3}}>MAKER</div>*/}
+                            {/*    <Input id={'searchMaker'} value={info['searchMaker']} onChange={onChange}*/}
+                            {/*           size={'small'}/>*/}
+                            {/*</div>*/}
+                            {/*<div>*/}
+                            {/*    <div style={{paddingBottom: 3}}>MODEL</div>*/}
+                            {/*    <Input id={'searchModel'} value={info['searchModel']} onChange={onChange}*/}
+                            {/*           size={'small'}/>*/}
+                            {/*</div>*/}
+                            {/*<div>*/}
+                            {/*    <div style={{paddingBottom: 3}}>위치</div>*/}
+                            {/*    <Input id={'searchLocation'} value={info['searchLocation']} onChange={onChange}*/}
+                            {/*           size={'small'}/>*/}
+                            {/*</div>*/}
                             <div>
-                                <div style={{paddingBottom: 3}}>MAKER</div>
-                                <Input id={'searchMaker'} value={info['searchMaker']} onChange={onChange}
+                                <div style={{paddingBottom: 3}}>MAKER 또는 MODEL을 입력하세요</div>
+                                <Input id={'searchText'} value={info['searchText']} onChange={onChange}
                                        size={'small'}/>
                             </div>
-                            <div>
-                                <div style={{paddingBottom: 3}}>MODEL</div>
-                                <Input id={'searchModel'} value={info['searchModel']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-                            <div>
-                                <div style={{paddingBottom: 3}}>위치</div>
-                                <Input id={'searchLocation'} value={info['searchLocation']} onChange={onChange}
-                                       size={'small'}/>
+
+                            <div style={{width: '100%', textAlign: 'right', marginTop: 15}}>
+                        <span style={{paddingTop: 8, textAlign: 'right',}}>
+                            <Button type={'primary'} style={{marginRight: 8}}
+                                    onClick={searchInfo}><SearchOutlined/>조회</Button>
+                        </span>
+                                <span style={{paddingTop: 8, textAlign: 'right'}}>
+                            <Button type={'ghost'} style={{marginRight: 8,}}
+                                    onClick={() => router?.push('/inventory_write')}><EditOutlined/>신규작성</Button>
+                        </span>
                             </div>
 
                         </div>
 
                     </Card>
-                    <div style={{width:'100%', textAlign:'right', marginTop: 15}}>
-                        <span style={{paddingTop: 8, textAlign: 'right',}}>
-                            <Button type={'primary'} style={{marginRight: 8}}
-                                    onClick={searchInfo}><SearchOutlined/>조회</Button>
-                        </span>
-                        <span style={{paddingTop: 8, textAlign: 'right'}}>
-                            <Button type={'ghost'} style={{marginRight: 8,}}
-                                    onClick={() => router?.push('/inventory_write')}><EditOutlined/>신규작성</Button>
-                        </span>
-                    </div>
+
 
                 </Card>
 
@@ -179,7 +186,8 @@ export default function OrderInventoryRead({dataList}) {
                         <CopyOutlined/>복사
                     </Button>
                         {/*@ts-ignored*/}
-                        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={deleteList}>
+                        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
+                                onClick={deleteList}>
                             <CopyOutlined/>삭제
                         </Button>
                         <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={downloadExcel}>
@@ -202,13 +210,10 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
-    const result = await getData.post('inventory/getInventoryList', {
-        "searchInventoryId":"",
-        "searchMaker": "",          // MAKER 검색
-        "searchModel": "",          // MODEL 검색
-        "searchLocation": "",       // 위치 검색
+    const result = await getData.post('inventory/getInventoryListForAdd', {
+        "searchText": "",   // 검색어
         "page": 1,
-        "limit": -1,
+        "limit": -1
     });
 
 
