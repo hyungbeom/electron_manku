@@ -15,15 +15,10 @@ import message from "antd/lib/message";
 
 import {
     makerColumn,
-    rfqReadColumns,
-    tableCodeDomesticPurchaseColumns,
-    tableCodeDomesticSalesColumns,
-    tableCodeOverseasPurchaseColumns,
 } from "@/utils/columnList";
 import {
     codeDomesticPurchaseInitial,
-    tableCodeDomesticSalesInitial,
-    tableCodeOverseasSalesInitial,
+
 } from "@/utils/initialList";
 import Radio from "antd/lib/radio";
 import TableGrid from "@/component/tableGrid";
@@ -60,7 +55,7 @@ export default function makerRead({dataList}) {
 
     async function deleteList() {
         const api = gridRef.current.api;
-        // console.log(api.getSelectedRows(),':::')
+        console.log(api.getSelectedRows(),':::')
 
         if (api.getSelectedRows().length<1) {
             message.error('삭제할 데이터를 선택해주세요.')

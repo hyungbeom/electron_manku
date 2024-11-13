@@ -13,9 +13,9 @@ import {makerWriteInitial,} from "@/utils/initialList";
 import Input from "antd/lib/input/Input";
 import TextArea from "antd/lib/input/TextArea";
 
-export default function makerRead() {
+export default function makerRead({data}) {
 
-    const [info, setInfo] = useState(makerWriteInitial);
+    const [info, setInfo] = useState(data);
 
 
     // useEffect(() => {
@@ -46,7 +46,7 @@ export default function makerRead() {
 
     async function saveFunc() {
 
-        await getData.post('maker/addMaker', info).then(v => {
+        await getData.post('maker/updateMaker', info).then(v => {
             if(v.data.code === 1){
                 message.success('저장되었습니다')
                 setInfo(makerWriteInitial);
@@ -178,7 +178,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     } else {
         // result?.data?.entity?.estimateRequestList
         param = {
-            props: {dataList: result?.data?.entity}
+            props: {data: result?.data?.entity?.makerList?.[0]}
         }
     }
 
