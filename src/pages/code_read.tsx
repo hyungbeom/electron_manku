@@ -12,7 +12,7 @@ import Button from "antd/lib/button";
 import {
     CopyOutlined,
     DownCircleFilled,
-    FileExcelOutlined,
+    FileExcelOutlined, RetweetOutlined,
     SaveOutlined,
     SearchOutlined,
     UpCircleFilled,
@@ -27,7 +27,8 @@ import {
     tableCodeOverseasPurchaseColumns, tableCodeReadColumns,
 } from "@/utils/columnList";
 import {
-    codeDomesticPurchaseInitial, codeReadInitial,
+    codeDomesticAgencyWriteInitial,
+    codeDomesticPurchaseInitial, codeReadInitial, codeSaveInitial,
     tableCodeDomesticSalesInitial,
     tableCodeOverseasSalesInitial,
 } from "@/utils/initialList";
@@ -40,115 +41,151 @@ export default function codeRead({dataList}) {
     const gridRef = useRef(null);
     const [mini, setMini] = useState(true);
 
-    const {hsCodeList, } = dataList;
-    const [saveInfo, setSaveInfo] = useState(codeReadInitial);
-    const [info, setInfo] = useState(codeReadInitial);
+    const {hsCodeList} = dataList;
+    const [searchData, setSearchData] = useState(codeReadInitial);
+    const [saveData, setSaveData] = useState(codeSaveInitial);
     const [tableData, setTableData] = useState(hsCodeList);
 
-    console.log(hsCodeList,'saveInfo:')
+    // console.log(hsCodeList,'saveInfo:')
 
-
-    function onChange(e) {
+    function onSearchChange(e) {
 
         let bowl = {}
         bowl[e.target.id] = e.target.value;
 
-        setInfo(v => {
+        setSearchData(v => {
+            return {...v, ...bowl}
+        })
+    }
+
+    function onSaveChange(e) {
+
+        let bowl = {}
+        bowl[e.target.id] = e.target.value;
+
+        setSaveData(v => {
             return {...v, ...bowl}
         })
     }
 
     async function onSearch() {
-        const result = await getData.post('hsCode/getHsCodeList', info);
+        const result = await getData.post('hsCode/getHsCodeList', searchData);
         console.log(result?.data?.entity?.hsCodeList,'result:')
         if(result?.data?.code === 1){
             setTableData(result?.data?.entity?.hsCodeList)
         }
     }
 
-    function deleteList() {
+    async function saveFunc() {
 
+        console.log(saveData['hsCodeId'], 'hsCodeId')
+
+        let api = '';
+
+        if (saveData['hsCodeId'])
+            api = 'hsCode/updateHsCode'
+        else
+            api = 'hsCode/addHsCode'
+
+        await getData.post(api, saveData).then(v => {
+            if (v.data.code === 1) {
+                message.success('저장되었습니다.')
+                setSaveData(codeSaveInitial);
+            } else {
+                message.error('저장에 실패하였습니다.')
+            }
+        });
+        onSearch()
+
+    }
+
+    async function deleteList() {
         const api = gridRef.current.api;
+        // console.log(api.getSelectedRows(),':::')
 
-        // 전체 행 반복하면서 선택되지 않은 행만 추출
-        const uncheckedData = [];
-        for (let i = 0; i < api.getDisplayedRowCount(); i++) {
-            const rowNode = api.getDisplayedRowAtIndex(i);
-            if (!rowNode.isSelected()) {
-                uncheckedData.push(rowNode.data);
+        if (api.getSelectedRows().length<1) {
+            message.error('삭제할 데이터를 선택해주세요.')
+        } else {
+            for (const item of api.getSelectedRows()) {
+                const response = await getData.post('hsCode/deleteHsCode', {
+                    hsCodeId:item.hsCodeId
+                });
+                console.log(response)
+                if (response.data.code===1) {
+                    message.success('삭제되었습니다.')
+                    window.location.reload();
+                } else {
+                    message.error('오류가 발생하였습니다. 다시 시도해주세요.')
+                }
             }
         }
-
-        let copyData = {...info}
-        copyData['overseasCustomerManagerList'] = uncheckedData;
-        console.log(copyData, 'copyData::')
-        setInfo(copyData);
-
     }
 
-
-    function addRow() {
-        let copyData = {...info};
-        copyData['overseasCustomerManagerList'].push({
-            "managerName": "",       // 담당자명
-            "directTel": "",     // 직통전화
-            "faxNumber": "",   // 팩스번호
-            "mobileNumber": "", // 휴대폰번호
-            "email": "",        // 이메일
-            "remarks": ""
-        })
-
-        setInfo(copyData)
-    }
 
 
     return <LayoutComponent>
         <div
             style={{display: 'grid', gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`, height: '100%', columnGap: 5,}}>
-            <Card title={'해외 거래처 등록'} style={{fontSize: 12, border: '1px solid lightGray'}}
+            <Card title={'HS code 관리'} style={{fontSize: 12, border: '1px solid lightGray'}}
                   extra={<span style={{fontSize: 20, cursor: 'pointer'}} onClick={() => setMini(v => !v)}> {!mini ?
                       <UpCircleFilled/> : <DownCircleFilled/>}</span>}>
                 {mini ? <>
-                    <div style={{display: 'grid', gridTemplateColumns: '0.5fr 1.5fr 1.5fr 1.5fr', columnGap: 20}}>
-                        <Card size={'small'}
+                    <div style={{display: 'grid', gridTemplateColumns: '0.6fr 1fr', columnGap: 20}}>
+                        <Card size={'small'} title={'조회'}
                               style={{
                                   fontSize: 13,
-                                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
                               }}>
-
-                            <div>
-                                <div style={{paddingTop: 8}}>ITEM</div>
-                                <Input id={'phoneNumber'} value={info['phoneNumber']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-                            <div>
-                                <div style={{paddingTop: 8}}>HS-CODE</div>
-                                <Input id={'faxNumber'} value={info['faxNumber']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-
-                        </Card>
-                        <div>
-                            {/*@ts-ignored*/}
-                            <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
-                                    onClick={addRow}>
-                                <SaveOutlined/>추가
-                            </Button>
-                            {/*@ts-ignored*/}
-                            <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
-                                    onClick={deleteList}>
-                                <CopyOutlined/>삭제
-                            </Button>
-                        </div>
-
                         <Search
+                            style={{paddingTop:8}}
                             onSearch={onSearch}
-                            onChange={onChange}
+                            onChange={onSearchChange}
                             id={'searchText'}
                             placeholder="input search text"
                             allowClear
                             enterButton={<><SearchOutlined/>&nbsp;&nbsp; 조회</>}
                         />
+                        </Card>
+
+                        <Card size={'small'} title={'추가'}
+                              style={{
+                                  fontSize: 13,
+                                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
+                              }}>
+                            <div style={{display:'grid', gridTemplateColumns: '1fr 1fr 0.7fr', columnGap:20}}>
+
+                                <div>
+                                    <div>ITEM</div>
+                                    <Input id={'item'} value={saveData['item']} onChange={onSaveChange}
+                                           size={'small'}/>
+                                </div>
+                                <div>
+                                    <div>HS-CODE</div>
+                                    <Input id={'hsCode'} value={saveData['hsCode']} onChange={onSaveChange}
+                                           size={'small'}/>
+                                </div>
+
+                            <div style={{paddingTop: 18}}>
+                                {/*@ts-ignored*/}
+                                <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
+                                        onClick={saveFunc}>
+                                    <SaveOutlined/>{saveData['hsCodeId']? '수정':'추가'}
+                                </Button>
+                                {/*@ts-ignored*/}
+                                <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
+                                        onClick={() => setSaveData(codeSaveInitial)}><RetweetOutlined/>초기화</Button>
+                                {/*@ts-ignored*/}
+                                <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
+                                        onClick={deleteList}>
+                                    <CopyOutlined/>삭제
+                                </Button>
+
+                            </div>
+                            </div>
+
+                        </Card>
+
+
 
                     </div>
                 </> : null}
@@ -158,18 +195,9 @@ export default function codeRead({dataList}) {
                 gridRef={gridRef}
                 columns={tableCodeReadColumns}
                 tableData={tableData}
-                type={'read'}
+                type={'hsCode'}
                 excel={true}
-                // funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
-                //     <CopyOutlined/>복사
-                // </Button>
-                //     {/*@ts-ignored*/}
-                //     <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={deleteList}>
-                //         <CopyOutlined/>삭제
-                //     </Button>
-                //     <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={downloadExcel}>
-                //         <FileExcelOutlined/>출력
-                //     </Button></div>}
+                setInfo={setSaveData}
             />
 
         </div>

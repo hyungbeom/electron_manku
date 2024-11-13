@@ -5,6 +5,10 @@ import {AgGridReact} from 'ag-grid-react';
 import {iconSetMaterial, themeQuartz} from '@ag-grid-community/theming';
 import {useRouter} from "next/router";
 import {tableTheme} from "@/utils/common";
+import moment from "moment";
+import {getData} from "@/manage/function/api";
+import message from "antd/lib/message";
+import {codeDomesticAgencyWriteInitial} from "@/utils/initialList";
 
 
 const TableGrid = ({
@@ -132,11 +136,16 @@ const TableGrid = ({
             if (e.data.overseasCustomerId)
                 router.push(`/code_overseas_customer_update?customerCode=${e?.data?.customerCode}`)
 
+        }
 
-
+        if (type==='hsCode'){
+            console.log(e.data, 'hsCode')
+            setInfo(e.data)
         }
 
     };
+
+
 
     // 체크된 행의 데이터 가져오기 함수 수정
     const getCheckedRowsData = () => {

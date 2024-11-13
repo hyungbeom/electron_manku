@@ -2049,12 +2049,11 @@ export const tableCodeReadColumns = [
     {
         headerName: 'ITEM',
         field: 'item',
-        key: 'item',
+        maxWidth: 250
     },
     {
         headerName: 'HS-CODE',
         field: 'hsCode',
-        key: 'hsCode',
     },
 ]
 
