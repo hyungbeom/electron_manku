@@ -1,7 +1,6 @@
 import React from "react";
-import { useMsal } from "@azure/msal-react";
-import { PublicClientApplication } from "@azure/msal-browser";
 
+//test
 function LoginButton() {
 
     // code_verifier 생성 함수
@@ -16,6 +15,7 @@ function LoginButton() {
         const encoder = new TextEncoder();
         const data = encoder.encode(codeVerifier);
         const digest = await window.crypto.subtle.digest("SHA-256", data);
+        // @ts-ignore
         return btoa(String.fromCharCode(...new Uint8Array(digest)))
             .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
     }
