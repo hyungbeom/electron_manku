@@ -24,7 +24,7 @@ function LoginButton() {
         const clientId = "045c4017-c001-4d09-b0e2-a1bb0c222b3f";
         const redirectUri = "http://localhost:3000";
         const authority = "https://login.microsoftonline.com/a4f5fe9e-ff2c-4466-b78a-af1ef5748673/oauth2/v2.0/authorize";
-        const scopes = ["User.Read", "offline_access"];
+        const scopes = ["User.Read", "offline_access, Files.Read"];
 
         const codeVerifier = generateCodeVerifier();
         const codeChallenge = await generateCodeChallenge(codeVerifier);
