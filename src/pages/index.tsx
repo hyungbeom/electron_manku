@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import Tabs from "antd/lib/tabs";
 import Login from "@/component/account/Login";
@@ -20,6 +20,34 @@ export default function Home(props) {
     const pageChange = (e) => {
         setPage(e)
     };
+
+
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const authorizationCode = urlParams.get("code");
+
+        console.log(authorizationCode,'   authorizationCode:')
+        if (authorizationCode) {
+            // code_verifier 가져오기
+            const codeVerifier = localStorage.getItem("code_verifier");
+
+            console.log(codeVerifier,'   codeVerifier:')
+
+            // Authorization Code와 code_verifier를 백엔드로 전송
+            fetch("/api/exchange-code", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ code: authorizationCode, code_verifier: codeVerifier }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Access Token:", data.access_token);
+                })
+                .catch(error => {
+                    console.error("Token exchange error:", error);
+                });
+        }
+    }, []);
 
     return (
 
@@ -101,14 +129,14 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     const cookies = nookies.get(ctx)
     const {display = 'horizon'} = cookies;
     setCookies(ctx, 'display', display)
-    if (userInfo?.email) {
-        return {
-            redirect: {
-                destination: '/main', // 리다이렉트할 경로
-                permanent: false, // true면 301 리다이렉트, false면 302 리다이렉트
-            },
-        };
-    }
+    // if (userInfo?.email) {
+    //     return {
+    //         redirect: {
+    //             destination: '/main', // 리다이렉트할 경로
+    //             permanent: false, // true면 301 리다이렉트, false면 302 리다이렉트
+    //         },
+    //     };
+    // }
 
 
     return {
