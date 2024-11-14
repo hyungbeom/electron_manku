@@ -171,19 +171,6 @@ export default function EstimateWrite({dataInfo}) {
     };
 
 
-    const downloadExcel = () => {
-
-        if (!info['estimateDetailList'].length) {
-            return message.warn('출력할 데이터가 존재하지 않습니다.')
-        }
-
-        const worksheet = XLSX.utils.json_to_sheet(info['estimateDetailList']);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-        XLSX.writeFile(workbook, "example.xlsx");
-    };
-
-
     async function findDocument() {
 
         const result = await getData.post('estimate/getEstimateList', {
@@ -204,7 +191,7 @@ export default function EstimateWrite({dataInfo}) {
 
             if(result?.data?.entity?.estimateList.length) {
                 setInfo(v => {
-                        return {...v, ...result?.data?.entity?.estimateList[0], writtenDate : moment(result?.data?.entity?.estimateList[0].writtenDate)}
+                        return {...v, ...result?.data?.entity?.estimateList[0], writtenDate : moment()}
                     }
                 )
             }

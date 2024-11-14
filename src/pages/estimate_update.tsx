@@ -232,20 +232,20 @@ export default function EstimateWrite({dataInfo}) {
                         marginBottom : 5
                     }}>
                         <div style={{display : 'grid', gridTemplateColumns : '1fr 1fr 1fr', width : 640, columnGap : 20}}>
-                            {/*<div>*/}
-                            {/*    <div style={{marginTop: 8, width : '100%'}}>작성일</div>*/}
-                            {/*    <DatePicker value={info['writtenDate']} style={{width : '100%'}}*/}
-                            {/*                onChange={(date, dateString) => onChange({*/}
-                            {/*                    target: {*/}
-                            {/*                        id: 'writtenDate',*/}
-                            {/*                        value: date*/}
-                            {/*                    }*/}
-                            {/*                })*/}
-                            {/*                } id={'writtenDate'} size={'small'}/>*/}
-                            {/*</div>*/}
+                            <div>
+                                <div style={{marginTop: 8, width : '100%'}}>작성일</div>
+                                <DatePicker value={moment(info['writtenDate'])} style={{width : '100%'}}
+                                            onChange={(date, dateString) => onChange({
+                                                target: {
+                                                    id: 'writtenDate',
+                                                    value: date
+                                                }
+                                            })
+                                            } id={'writtenDate'} size={'small'} disabled={true} />
+                            </div>
                             <div>
                                 <div style={{marginTop: 8}}>INQUIRY NO.</div>
-                                <Input disabled={true} size={'small'}/>
+                                <Input disabled={true} size={'small'} id={'documentNumberFull'} value={info['documentNumberFull']}/>
                             </div>
                         </div>
                     </Card>

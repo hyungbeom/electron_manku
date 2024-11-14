@@ -50,8 +50,8 @@ const menuList = {
         title: '코드관리',
         icon: <BarcodeOutlined/>,
         list: [
-            {title: '국내 대리점(매입)', key: 'code_domestic_agency'},
-            {title: '해외 대리점(매입)', key: 'code_overseas_agency'},
+            {title: '국내 매입처(매입)', key: 'code_domestic_agency'},
+            {title: '해외 매입처(매입)', key: 'code_overseas_agency'},
             {title: '국내 거래처(매출)', key: 'code_domestic_customer'},
             {title: '해외 거래처(매출)', key: 'code_overseas_customer'},
             {title: '공문서', key: 'code_diploma'},

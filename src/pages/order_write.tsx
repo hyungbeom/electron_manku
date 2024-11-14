@@ -136,23 +136,27 @@ export default function OrderWriter({dataInfo}) {
 
     async function findDocument() {
 
-        const result = await getData.post('order/getOrderList', {
-            "searchDocumentNumber": info['documentNumberFull'],     // 문서번호
-            "searchCustomerName": "",       // 거래처명
-            "searchMaker": "",              // MAKER
-            "searchModel": "",              // MODEL
-            "searchItem": "",               // ITEM
-            "searchEstimateManager": "",    // 견적서담당자명
+        const result = await getData.post('estimate/getEstimateList', {
+            "searchType": "",           // 검색조건 1: 주문, 2: 미주문
+            "searchStartDate": "",      // 작성일 검색 시작일
+            "searchEndDate": "",        // 작성일 검색 종료일
+            "searchDocumentNumber": info['documentNumberFull'], // 문서번호
+            "searchCustomerName": "",   // 거래처명
+            "searchModel": "",          // MODEL
+            "searchMaker": "",          // MAKER
+            "searchItem": "",           // ITEM
+            "searchCreatedBy": "",      // 등록 관리자 이름
             "page": 1,
-            "limit": -1,
+            "limit": 1
         });
 
         if (result?.data?.code === 1) {
 
-            if(result?.data?.entity?.orderList.length) {
+            if(result?.data?.entity?.estimateList.length) {
                 setInfo(v => {
-                        return {...v, ...result?.data?.entity?.orderList[0], writtenDate : moment(result?.data?.entity?.orderList[0].writtenDate),
-                            delivery : moment(result?.data?.entity?.orderList[0].delivery)
+                        return {...v, ...result?.data?.entity?.estimateList[0],
+                            writtenDate : moment(),
+                            orderDate : moment(result?.data?.entity?.estimateList[0].orderDate)
                         }
                     }
                 )
@@ -176,6 +180,7 @@ export default function OrderWriter({dataInfo}) {
 
                 <Card title={'발주서 작성'} style={{fontSize: 12, border: '1px solid lightGray'}} extra={<span style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>setMini(v => !v)}> {!mini ? <UpCircleFilled/> : <DownCircleFilled/>}</span>} >
 
+                    {mini ? <div>
                     <Card size={'small'} title={'INQUIRY & PO no'}
                           style={{ fontSize: 13, marginBottom : 5, boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
                     }}>
@@ -335,6 +340,7 @@ export default function OrderWriter({dataInfo}) {
 
                         </div>
                     </div>
+                    </div> : null}
                 </Card>
 
                 <TableGrid
