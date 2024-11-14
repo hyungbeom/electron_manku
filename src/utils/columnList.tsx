@@ -7,6 +7,15 @@ const makeAbsoluteUrl = (url) => {
     return url;
 };
 
+const dateFormat = (params) => {
+    return moment(params.value).format('YYYY-MM-DD')
+};
+
+const numberFormat = (params) => {
+    return Math.floor(params.value).toLocaleString();
+};
+
+
 export const searchCustomerColumn = [
 
     {
@@ -146,21 +155,19 @@ export const subRfqWriteColumn = [
     {
         headerName: 'Model',
         field: 'model',
-        // key: 'model',
         minWidth: 150,
         editable: true,
     },
     {
         headerName: '수량',
         field: 'quantity',
-        // key: 'quantity',
         editable: true,
         cellEditor: 'agNumberCellEditor',
+        valueFormatter: numberFormat,
     },
     {
         headerName: '단위',
         field: 'unit',
-        // key: 'unit',
         editable: true,
         cellEditor: 'agSelectCellEditor',
         cellEditorParams: {
@@ -170,7 +177,6 @@ export const subRfqWriteColumn = [
     {
         headerName: 'CURR',
         field: 'currency',
-        // key: 'currency',
         editable: true,
         cellEditor: 'agSelectCellEditor',
         cellEditorParams: {
@@ -180,13 +186,13 @@ export const subRfqWriteColumn = [
     {
         headerName: 'NET/P',
         field: 'net',
-        // key: 'net',
+        cellEditor: 'agNumberCellEditor',
         editable: true,
+        valueFormatter: numberFormat,
     },
     {
         headerName: '납기', //없음
         field: 'deliveryDate',
-        // key: 'deliveryDate',
         editable: true,
         cellEditor: 'agNumberCellEditor',
         cellEditorParams: {
@@ -197,27 +203,28 @@ export const subRfqWriteColumn = [
     {
         headerName: '회신여부',
         field: 'content',
-        // key: 'content',
         editable: true,
+        cellEditor: 'agSelectCellEditor',
+        cellEditorParams: {
+            values: ['미회신', '회신', '정보부족', '한국대리점', 'MOQ', 'OEM', '단종', '견적포기', '입찰마감', '견적불가', '기타'],
+        }
 
     },
     {
         headerName: '회신일',
         field: 'replyDate',
-        // key: 'replyDate',
         editable: true,
         cellEditor: 'agDateCellEditor',
         cellEditorParams: {
             min: '2024-06-01',
             max: '2027-12-31',
         },
+        valueFormatter: dateFormat,
     },
     {
         headerName: '비고',
-        field: 'remarks', // 없음
-        // key: 'remarks',
+        field: 'remarks',
         editable: true,
-
     }
 ];
 
@@ -376,21 +383,18 @@ export const tableEstimateReadColumns = [
     {
         headerName: '작성일자',
         field: 'writtenDate',
-        key: 'writtenDate',
         width: 70,
         pinned: 'left'
     },
     {
         headerName: '문서번호',
         field: 'documentNumberFull',
-        key: 'documentNumberFull',
         width: 100,
         pinned: 'left'
     },
     {
         headerName: '대리점코드',
         field: 'agencyCode',
-        key: 'agencyCode',
         minWidth: 70,
     },
     {
@@ -399,31 +403,26 @@ export const tableEstimateReadColumns = [
             {
                 headerName: '거래처코드',
                 field: 'customerCode',
-                key: 'customerCode',
                 minWidth: 70,
             },
             {
                 headerName: '거래처명',
                 field: 'customerName',
-                key: 'customerName',
                 minWidth: 100,
             },
             {
                 headerName: '거래처담당자',
                 field: 'managerName',
-                key: 'managerName',
                 minWidth: 100,
             },
             {
                 headerName: '전화번호',
                 field: 'phoneNumber',
-                key: 'phoneNumber',
                 minWidth: 100,
             },
             {
                 headerName: '팩스번호',
                 field: 'faxNumber',
-                key: 'faxNumber',
                 minWidth: 100,
             },
 
@@ -435,25 +434,21 @@ export const tableEstimateReadColumns = [
             {
                 headerName: '담당자',
                 field: 'estimateManager',
-                key: 'estimateManager',
                 minWidth: 70,
             },
             {
                 headerName: '이메일',
                 field: 'email',
-                key: 'email',
                 minWidth: 100,
             },
             {
                 headerName: '전화번호',
                 field: 'managerPhoneNumber',
-                key: 'managerPhoneNumber',
                 minWidth: 100,
             },
             {
                 headerName: '팩스번호',
                 field: 'managerFaxNumber',
-                key: 'managerFaxNumber',
                 minWidth: 100,
             },
         ]
@@ -465,25 +460,21 @@ export const tableEstimateReadColumns = [
             {
                 headerName: '결제조건',
                 field: 'paymentTerms',
-                key: 'paymentTerms',
                 minWidth: 100,
             },
             {
                 headerName: '운송조건',
                 field: 'shippingTerms',
-                key: 'shippingTerms',
                 minWidth: 100,
             },
             {
                 headerName: 'Delivery',
                 field: 'delivery',
-                key: 'delivery',
                 minWidth: 80,
             },
             {
                 headerName: '환율',
                 field: 'exchangeRate',
-                key: 'exchangeRate',
                 minWidth: 100,
                 cellDataType: 'number'
             },
@@ -496,39 +487,34 @@ export const tableEstimateReadColumns = [
             {
                 headerName: 'MAKER',
                 field: 'maker',
-                key: 'maker',
                 minWidth: 80,
             },
             {
                 headerName: 'ITEM',
                 field: 'item',
-                key: 'item',
                 minWidth: 80,
             },
             {
                 headerName: 'MODEL',
                 field: 'model',
-                key: 'model',
                 minWidth: 150,
             },
             {
                 headerName: '수량',
                 field: 'quantity',
-                key: 'quantity',
                 minWidth: 40,
-                cellDataType: 'number'
+                cellDataType: 'number',
+                valueFormatter: numberFormat,
             },
             {
                 headerName: '단위',
                 field: 'unit',
-                key: 'unit',
                 minWidth: 40,
             },
 
             {
                 headerName: '주문여부',
                 field: 'order',
-                key: 'order',
                 minWidth: 80,
                 cellDataType: 'text',
                 initialValue: '미주문'
@@ -536,35 +522,32 @@ export const tableEstimateReadColumns = [
             {
                 headerName: '단가',
                 field: 'unitPrice',
-                key: 'unitPrice',
-                minWidth: 40,
-                cellDataType: 'number'
+                minWidth: 70,
+                cellDataType: 'number',
+                valueFormatter: numberFormat,
             },
             {
                 headerName: '합계',
-                field: 'total',
-                key: 'total',
-                minWidth: 40,
-                cellDataType: 'number'
+                field: 'amount',
+                minWidth: 70,
+                cellDataType: 'number',
+                valueFormatter: numberFormat,
             },
         ]
     },
     {
         headerName: '견적유효기간',
         field: 'validityPeriod',
-        key: 'validityPeriod',
         minWidth: 100,
     },
     {
         headerName: '비고란',
         field: 'remarks',
-        key: 'remarks',
         width: 150,
     },
     {
         headerName: '등록자',
         field: 'createdBy',
-        key: 'createdBy',
         width: 80,
     },
 
@@ -574,19 +557,17 @@ export const tableEstimateWriteColumns = [
     {
         headerName: 'Model',
         field: 'model',
-        key: 'model',
         editable: true,
     },
     {
         headerName: '수량',
         field: 'quantity',
-        key: 'quantity',
         editable: true,
+        valueFormatter: numberFormat,
     },
     {
         headerName: '단위',
         field: 'unit',
-        key: 'unit',
         cellEditor: 'agSelectCellEditor',
         cellEditorParams: {
             values: ['ea', 'set', 'm', 'feet', 'roll', 'box', 'g', 'kg', 'Pack', 'Inch', 'MOQ'],
@@ -596,20 +577,19 @@ export const tableEstimateWriteColumns = [
     {
         headerName: '단가',
         field: 'unitPrice',
-        key: 'unitPrice',
         editable: true,
+        valueFormatter: numberFormat,
     },
     {
         headerName: '금액',
         field: 'amount',
-        key: 'amount',
         width: 120,
         editable: true,
+        valueFormatter: numberFormat,
     },
     {
         headerName: 'CURR',
         field: 'currency',
-        key: 'currency',
         editable: true,
         cellEditor: 'agSelectCellEditor',
         cellEditorParams: {
@@ -619,8 +599,8 @@ export const tableEstimateWriteColumns = [
     {
         headerName: 'NET/P',
         field: 'net',
-        key: 'net',
         editable: true,
+        valueFormatter: numberFormat,
     }
 ];
 
@@ -810,7 +790,7 @@ export const rfqReadColumns = [
             },
 
             {
-                headerName: '내용',
+                headerName: '회신여부',
                 field: 'content',
                 key: 'content',
                 minWidth: 120,
@@ -946,21 +926,18 @@ export const tableOrderReadColumns = [
     {
         headerName: '작성일자',
         field: 'writtenDate',
-        key: 'writtenDate',
         width: 70,
         pinned:'left',
     },
     {
         headerName: '문서번호',
         field: 'documentNumberFull',
-        key: 'documentNumberFull',
         width: 80,
         pinned:'left',
     },
     {
         headerName: '거래처명',
         field: 'customerName',
-        key: 'customerName',
         minWidth: 150,
     },
     {
@@ -969,14 +946,12 @@ export const tableOrderReadColumns = [
             {
                 headerName: 'MAKER',
                 field: 'maker',
-                key: 'maker',
                 align: 'center',
                 minWidth: 180,
             },
             {
                 headerName: 'ITEM',
                 field: 'item',
-                key: 'item',
                 align: 'center',
                 minWidth: 100,
 
@@ -984,19 +959,17 @@ export const tableOrderReadColumns = [
             {
                 headerName: 'MODEL',
                 field: 'model',
-                key: 'model',
                 minWidth: 150,
             },
-            {
-                headerName: '수량',
-                field: 'quantity',
-                key: 'quantity',
-                minWidth: 70,
-            },
+            // {
+            //     headerName: '수량',
+            //     field: 'quantity',
+            //     key: 'quantity',
+            //     minWidth: 70,
+            // },
             {
                 headerName: '단위',
                 field: 'unit',
-                key: 'unit',
                 align: 'center',
                 minWidth: 70,
                 cellEditor: 'agSelectCellEditor',
@@ -1007,7 +980,6 @@ export const tableOrderReadColumns = [
             {
                 headerName: 'CURR',
                 field: 'currency',
-                key: 'currency',
                 align: 'center',
                 minWidth: 50,
                 cellEditor: 'agSelectCellEditor',
@@ -1018,9 +990,9 @@ export const tableOrderReadColumns = [
             {
                 headerName: 'NET',
                 field: 'net',
-                key: 'net',
                 align: 'center',
                 minWidth: 40,
+                valueFormatter: numberFormat,
             },
         ]
     },
@@ -1034,6 +1006,7 @@ export const tableOrderReadColumns = [
                 key: 'amount',
                 align: 'center',
                 minWidth: 60,
+                valueFormatter: numberFormat,
             },
             {
                 headerName: '주문수량',
@@ -1041,6 +1014,7 @@ export const tableOrderReadColumns = [
                 key: 'quantity',
                 align: 'center',
                 minWidth: 70,
+                valueFormatter: numberFormat,
             },
             {
                 headerName: '입고수량',
@@ -1048,6 +1022,7 @@ export const tableOrderReadColumns = [
                 key: 'receivedQuantity',
                 align: 'center',
                 minWidth: 70,
+                valueFormatter: numberFormat,
             },
             {
                 headerName: '미입고수량',
@@ -1055,6 +1030,7 @@ export const tableOrderReadColumns = [
                 key: 'unreceivedQuantity',
                 align: 'center',
                 minWidth: 70,
+                valueFormatter: numberFormat,
             },
             {
                 headerName: '단가',
@@ -1062,6 +1038,7 @@ export const tableOrderReadColumns = [
                 key: 'unitPrice',
                 align: 'center',
                 minWidth: 50,
+                valueFormatter: numberFormat,
             },
             {
                 headerName: '금액',
@@ -1069,6 +1046,7 @@ export const tableOrderReadColumns = [
                 key: 'totalPrice',
                 align: 'center',
                 minWidth: 60,
+                valueFormatter: numberFormat,
             },
         ]
     },

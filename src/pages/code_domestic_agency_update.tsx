@@ -210,7 +210,8 @@ export default function code_domestic_agency_write({data}) {
                         <Button size={'small'}  type={'primary'} style={{marginRight: 8}}
                                 onClick={() => router?.push('/code_domestic_agency_write')}><EditOutlined/>신규</Button>
 
-                    </div></>: null}
+                    </div>
+                </>: null}
             </Card>
 
 

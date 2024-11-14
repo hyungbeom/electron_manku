@@ -23,13 +23,13 @@ import message from "antd/lib/message";
 const {RangePicker} = DatePicker
 
 
-export default function EstimateRead({dataList}) {
+export default function EstimateRead({data}) {
 
     const gridRef = useRef(null);
 
-    const {estimateList} = dataList;
+    // const {estimateList} = dataList;
     const [info, setInfo] = useState(estimateReadInitial)
-    const [tableData, setTableData] = useState(estimateList)
+    const [tableData, setTableData] = useState(data)
 
 
     function onChange(e) {
@@ -205,7 +205,6 @@ export default function EstimateRead({dataList}) {
 // @ts-ignore
 export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
 
-
     let param = {}
 
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
@@ -225,6 +224,13 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     });
 
 
+    let copyData = result?.data?.entity?.estimateList
+    copyData.forEach((v)=>{
+        v.amount=v.quantity*v.unitPrice
+        // console.log(v.amount, 'v.amount')
+    })
+
+
     if (userInfo) {
         store.dispatch(setUserInfo(userInfo));
     }
@@ -236,8 +242,10 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
             },
         };
     } else {
+        // result?.data?.entity?.estimateRequestList
         param = {
-            props: {dataList: result?.data?.entity}
+            // props: {dataList:result?.data?.entity?.estimateList}
+            props: {data:copyData}
         }
     }
 

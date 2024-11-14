@@ -215,6 +215,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     });
 
 
+
     if (userInfo) {
         store.dispatch(setUserInfo(userInfo));
     }

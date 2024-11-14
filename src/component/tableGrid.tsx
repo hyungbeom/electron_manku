@@ -180,6 +180,28 @@ const TableGrid = ({
             setInfo(v=>{
                 let copyData = {...v}
                 copyData[listDetailType][e.node.rowIndex] = updatedData
+
+                if(copyData['estimateRequestDetailList']) {
+                    copyData['estimateRequestDetailList'] = copyData['estimateRequestDetailList'].map(v => ({
+                        ...v,
+                        replyDate: moment(item.replyDate).format('YYYY-MM-DD')}))
+                }
+
+                if(copyData['estimateDetailList']) {
+                    copyData['estimateDetailList'][e.node.rowIndex].amount =
+                        copyData['estimateDetailList'][e.node.rowIndex].quantity*copyData['estimateDetailList'][e.node.rowIndex].unitPrice
+                }
+
+                if(copyData['estimateDetailList']) {
+                    copyData['estimateDetailList'][e.node.rowIndex].amount =
+                        copyData['estimateDetailList'][e.node.rowIndex].quantity*copyData['estimateDetailList'][e.node.rowIndex].unitPrice
+                }
+
+                if(copyData['orderDetailList']) {
+                    copyData['orderDetailList'][e.node.rowIndex].unreceivedQuantity =
+                        copyData['orderDetailList'][e.node.rowIndex].quantity-copyData['orderDetailList'][e.node.rowIndex].receivedQuantity
+                }
+
                 return copyData
             })
             console.log("업데이트된 데이터:", updatedData);

@@ -113,8 +113,8 @@ export default function rqfWrite() {
             "currency": "krw",          // CURR
             "net": 0,            // NET/P
             "deliveryDate": "",   // 납기
-            "content": "",         // 내용
-            "replyDate": '',  // 회신일
+            "content": "미회신",         // 내용
+            "replyDate": moment().format('YYYY-MM-DD'),  // 회신일
             "remarks": "",           // 비고
             "serialNumber": 1           // 견적의뢰 내역 순서 (1부터 시작)
         })

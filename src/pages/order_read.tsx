@@ -24,13 +24,13 @@ import message from "antd/lib/message";
 const {RangePicker} = DatePicker
 
 
-export default function OrderRead({dataList}) {
+export default function OrderRead({data}) {
 
     const gridRef = useRef(null);
 
-    const {orderList} = dataList;
+    // const {orderList} = dataList;
     const [info, setInfo] = useState(orderReadInitial)
-    const [tableData, setTableData] = useState(orderList)
+    const [tableData, setTableData] = useState(data)
 
 
     function onChange(e) {
@@ -228,8 +228,14 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
         "limit": -1
     });
 
+    let copyData = result?.data?.entity?.orderList
+    copyData.forEach((v)=>{
+        v.unreceivedQuantity=v.quantity-v.receivedQuantity
+        // console.log(v.amount, 'v.amount')
+    })
+
 
     return {
-        props: {dataList: result?.data?.entity}
+        props: {data:copyData}
     }
 })

@@ -33,6 +33,7 @@ import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
 import {useRouter} from "next/router";
 import TextArea from "antd/lib/input/TextArea";
+import Select from "antd/lib/select";
 
 
 export default function OrderInventoryWrite() {
@@ -52,6 +53,7 @@ export default function OrderInventoryWrite() {
 
     useEffect(() => {
         const copyData: any = {...info}
+        copyData['receiptDate'] = moment()
         setInfo(copyData);
     }, [])
 
@@ -126,10 +128,17 @@ export default function OrderInventoryWrite() {
                                 <Input id={'importUnitPrice'} value={info['importUnitPrice']} onChange={onChange}
                                        size={'small'}/>
                             </div>
-                            <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>화폐단위</div>
-                                <Input id={'currencyUnit'} value={info['currencyUnit']} onChange={onChange}
-                                       size={'small'}/>
+                            <div>
+                                <div style={{paddingTop: 8}}>화폐단위</div>
+                                <Select id={'currencyUnit'}
+                                        onChange={(src) => onChange({target: {id: 'currencyUnit', value: src}})}
+                                        size={'small'} value={info['currencyUnit']} options={[
+                                    {value: '0', label: 'KRW'},
+                                    {value: '1', label: 'EUR'},
+                                    {value: '2', label: 'JPY'},
+                                    {value: '3', label: 'USD'},
+                                    {value: '4', label: 'GBP'},
+                                ]} style={{width: '100%',}}/>
                             </div>
                             <div style={{marginTop: 8}}>
                                 <div style={{paddingBottom: 3}}>입고수량</div>

@@ -84,12 +84,16 @@ export default function codeOverseasPurchase({dataList}) {
                     <div style={{display: 'grid', gridTemplateColumns: '300px 1fr 100px'}}>
                         <div>
                             <div style={{paddingBottom: 3}}>조회일자</div>
-                            <RangePicker id={'searchDate'} size={'small'} onChange={(date, dateString) => onChange({
-                                target: {
-                                    id: 'writtenDate',
-                                    value: date
-                                }
-                            })
+                            <RangePicker style={{width: '100%'}}
+                                         value={[moment(info['searchDate']?.[0]), moment(info['searchDate']?.[1])]}
+                                         id={'searchDate'} size={'small'} onChange={(date, dateString) => {
+                                onChange({
+                                    target: {
+                                        id: 'searchDate',
+                                        value: date ? [moment(date[0]).format('YYYY-MM-DD'), moment(date[1]).format('YYYY-MM-DD')] : [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
+                                    }
+                                })
+                            }
                             }/>
                         </div>
 

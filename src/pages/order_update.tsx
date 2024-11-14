@@ -187,10 +187,10 @@ export default function OrderWriter({dataInfo}) {
 
     return <>
         <LayoutComponent>
-            <div style={{display: 'grid', gridTemplateRows: 'auto 1fr', height: '100%', columnGap: 5}}>
+            <div style={{display: 'grid', gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`, height: '100%', columnGap: 5}}>
 
                 <Card title={'발주서 수정'} style={{fontSize: 12, border: '1px solid lightGray'}} extra={<span style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>setMini(v => !v)}> {!mini ? <UpCircleFilled/> : <DownCircleFilled/>}</span>} >
-
+                    {mini ? <div>
                     <Card size={'small'} title={'INQUIRY & PO no'}
                           style={{ fontSize: 13, marginBottom : 5, boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
                     }}>
@@ -338,6 +338,7 @@ export default function OrderWriter({dataInfo}) {
                                 <div style={{paddingBottom: 3}}>하단태그</div>
                                 <Input id={'footer'} value={info['footer']} onChange={onChange} size={'small'}/>
                             </div>
+
                         </Card>
 
                         <div style={{paddingTop: 10}}>
@@ -350,7 +351,10 @@ export default function OrderWriter({dataInfo}) {
 
                         </div>
                     </div>
+                    </div>:null}
+
                 </Card>
+
 
                 <TableGrid
                     gridRef={gridRef}
