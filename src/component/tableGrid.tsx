@@ -126,7 +126,7 @@ const TableGrid = ({
             if (e.data.inventoryId)
                 router.push(`/inventory_update?maker=${e?.data?.maker}&model=${e?.data?.model}`)
             if (e.data.makerId)
-                router.push(`/maker_update?makerId=${e?.data?.makerId}`)
+                router.push(`/maker_update?makerName=${e?.data?.makerName}`)
             if (e.data.agencyId)
                 router.push(`/code_domestic_agency_update?agencyCode=${e?.data?.agencyCode}`)
             if (e.data.overseasAgencyId)

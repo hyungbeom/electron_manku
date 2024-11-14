@@ -61,7 +61,7 @@ export default function makerRead({data}) {
 
     return <LayoutComponent>
             <div style={{display: 'grid', gridTemplateRows: 'auto 1fr', height: '100%', columnGap: 5}}>
-                <Card title={<span style={{fontSize: 12,}}>Maker 등록</span>} headStyle={{marginTop: -10, height: 30}}
+                <Card title={<span style={{fontSize: 12,}}>Maker 수정</span>} headStyle={{marginTop: -10, height: 30}}
                       style={{border: '1px solid lightGray',}} bodyStyle={{padding: '10px 24px'}}>
 
                     <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', width: '100%', columnGap: 20}}>
@@ -156,9 +156,12 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
+    const {makerName} = ctx.query;
+
+
     const result = await getData.post('maker/getMakerList', {
         "searchType": "1",      // 1: 코드, 2: 상호명, 3: MAKER
-        "searchText": "",
+        "searchText": makerName,
         "page": 1,
         "limit": -1
     });
@@ -176,7 +179,6 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
             },
         };
     } else {
-        // result?.data?.entity?.estimateRequestList
         param = {
             props: {data: result?.data?.entity?.makerList?.[0]}
         }
