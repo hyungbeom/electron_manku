@@ -411,13 +411,13 @@ export default function rfqRead({dataList}) {
 
                 </Card>
 
-                {/*<TableGrid*/}
-                {/*    columns={rfqReadColumns}*/}
-                {/*    tableData={tableData}*/}
-                {/*    setSelectedRows={setSelectedRows}*/}
-                {/*    gridRef={gridRef}*/}
-                {/*    pageInfo={paginationInfo}*/}
-                {/*    excel={true}/>*/}
+                <TableGrid
+                    columns={rfqReadColumns}
+                    tableData={tableData}
+                    type={'read'}
+                    setSelectedRows={setSelectedRows}
+                    gridRef={gridRef}
+                    excel={true}/>
 
             </div>
         </LayoutComponent>

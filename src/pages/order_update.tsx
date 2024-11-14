@@ -397,13 +397,13 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     store.dispatch(setUserInfo(userInfo));
 
-    const {inventoryId} = ctx.query;
+    const {orderId} = ctx.query;
 
 
-    const result = await getData.post('inventory/getInventoryList', {
-        inventoryId:inventoryId
+    const result = await getData.post('order/getOrderDetail', {
+        orderId:orderId
     });
 
 
-    return {props: {dataInfo: inventoryId ? result?.data?.entity?.inventoryList[0] : null}}
+    return {props: {dataInfo: orderId ? result?.data?.entity?.orderDetail : null}}
 })
