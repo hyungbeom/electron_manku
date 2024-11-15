@@ -745,7 +745,7 @@ export const rfqReadColumns = [
                 key: 'quantity',
                 minWidth: 60,
                 maxWidth: 120,
-                // valueFormatter: formatNumber,
+                valueFormatter: numberFormat,
             },
             {
                 headerName: '단위',
@@ -775,6 +775,7 @@ export const rfqReadColumns = [
                 key: 'net',
                 minWidth: 60,
                 maxWidth: 120,
+                valueFormatter: numberFormat,
             },
             {
                 headerName: '납기',
