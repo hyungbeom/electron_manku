@@ -671,21 +671,18 @@ export const rfqReadColumns = [
     {
         headerName: '작성일자',
         field: 'writtenDate',
-        key: 'writtenDate',
         width: 70,
         pinned: 'left'
     },
     {
         headerName: '문서번호',
         field: 'documentNumberFull',
-        key: 'documentNumberFull',
         width: 100,
         pinned: 'left'
     },
     {
         headerName: '대리점명',
         field: 'agencyName',
-        key: 'agencyName',
         minWidth: 100,
         maxWidth: 120,
     },
@@ -695,7 +692,195 @@ export const rfqReadColumns = [
             {
                 headerName: '거래처명',
                 field: 'customerName',
-                key: 'customerName',
+                minWidth: 100,
+                maxWidth: 120,
+            },
+            {
+                headerName: '담당자',
+                field: 'managerName',
+                minWidth: 100,
+                maxWidth: 120,
+            },
+            {
+                headerName: '거래처명',
+                field: 'phoneNumber',
+                minWidth: 100,
+                maxWidth: 120,
+            },
+        ]
+    },
+
+    {
+        headerName: '물품',
+        children: [
+            {
+                headerName: 'MAKER',
+                field: 'maker',
+                minWidth: 180,
+            },
+            {
+                headerName: 'ITEM',
+                field: 'item',
+                minWidth: 100,
+                maxWidth: 120,
+            },
+            {
+                headerName: 'MODEL',
+                field: 'model',
+                minWidth: 150,
+                // maxWidth: 120,
+            },
+            {
+                headerName: '수량',
+                field: 'quantity',
+                minWidth: 60,
+                maxWidth: 120,
+                valueFormatter: numberFormat,
+            },
+            {
+                headerName: '단위',
+                field: 'unit',
+                minWidth: 60,
+                maxWidth: 120,
+                cellEditor: 'agSelectCellEditor',
+                cellEditorParams: {
+                    values: ['ea', 'set', 'm', 'feet', 'roll', 'box', 'g', 'kg', 'Pack', 'Inch', 'MOQ'],
+                }
+            },
+            {
+                headerName: 'CURR',
+                field: 'currency',
+                minWidth: 60,
+                maxWidth: 120,
+                cellEditor: 'agSelectCellEditor',
+                cellEditorParams: {
+                    values: ['KRW', 'EUR', 'JPY', 'USD', 'GBP',],
+                }
+            },
+            {
+                headerName: 'NET/P',
+                field: 'net',
+                minWidth: 60,
+                maxWidth: 120,
+                valueFormatter: numberFormat,
+            },
+            {
+                headerName: '납기',
+                field: 'deliveryDate',
+                minWidth: 100,
+                maxWidth: 120,
+                cellEditor: 'agDateCellEditor',
+                cellEditorParams: {
+                    min: '2023-01-01',
+                    max: '2028-12-31',
+                }
+            },
+
+            {
+                headerName: '회신여부',
+                field: 'content',
+                minWidth: 120,
+                maxWidth: 120,
+            },
+        ]
+    },
+
+
+    {
+        headerName: '등록자',
+        field: 'createdBy',
+        minWidth: 60,
+        maxWidth: 120,
+    },
+    {
+        headerName: '회신일',
+        field: 'replyDate',
+        minWidth: 100,
+        maxWidth: 120,
+        cellEditor: 'agDateCellEditor',
+        cellEditorParams: {
+            min: '2023-01-01',
+            max: '2028-12-31',
+        }
+    },
+    {
+        headerName: '비고',
+        field: 'remarks',
+        minWidth: 100,
+        maxWidth: 120,
+    },
+    {
+        headerName: '수정일자',
+        field: 'modifiedDate',
+        minWidth: 100,
+        maxWidth: 120,
+    },
+
+    {
+        headerName: '지시사항',
+        field: 'instructions',
+        minWidth: 180,
+        maxWidth: 120,
+    },
+    {
+        headerName: '하단 태그란',
+        field: 'footerTag',
+        minWidth: 200,
+        maxWidth: 120,
+    },
+
+
+];
+
+
+export const projectColumns = [
+    {
+        headerName: '작성일자',
+        field: 'writtenDate',
+        width: 70,
+        pinned: 'left'
+    },
+    {
+        headerName: 'rfq No.',
+        field: 'rfqNo',
+        width: 100,
+        pinned: 'left'
+    },
+    {
+        headerName: '마감일자',
+        field: 'agencyName',
+        minWidth: 100,
+        maxWidth: 120,
+    },
+    {
+        headerName: '거래처',
+        children: [
+            {
+                headerName: '거래처명',
+                field: 'customerName',
+                minWidth: 100,
+                maxWidth: 120,
+            },
+            {
+                headerName: '담당자',
+                field: 'managerName',
+                minWidth: 100,
+                maxWidth: 120,
+            },
+            {
+                headerName: '전화번호',
+                field: 'phoneNumber',
+                minWidth: 100,
+                maxWidth: 120,
+            },
+        ]
+    },
+    {
+        headerName: '매입처',
+        children: [
+            {
+                headerName: '매입처명',
+                field: 'agencyName',
                 minWidth: 100,
                 maxWidth: 120,
             },
@@ -707,7 +892,7 @@ export const rfqReadColumns = [
                 maxWidth: 120,
             },
             {
-                headerName: '거래처명',
+                headerName: '전화번호',
                 field: 'phoneNumber',
                 key: 'phoneNumber',
                 minWidth: 100,
@@ -715,7 +900,6 @@ export const rfqReadColumns = [
             },
         ]
     },
-
     {
         headerName: '물품',
         children: [
@@ -852,7 +1036,6 @@ export const rfqReadColumns = [
 
 
 ];
-
 
 export const rfqMailColumns = [
     {

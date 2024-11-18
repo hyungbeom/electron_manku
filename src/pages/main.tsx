@@ -10,7 +10,9 @@ import {getData} from "@/manage/function/api";
 import Input from "antd/lib/input";
 import Button from "antd/lib/button";
 import moment from "moment";
-import {useState} from "react";
+import React, {useState} from "react";
+import {EditOutlined} from "@ant-design/icons";
+import {useRouter} from "next/router";
 
 const noticeList=[
     {title:'안녕하십니까', content:"안녕하세요", category:'회신', to:'김민국'},
@@ -22,6 +24,7 @@ const noticeList=[
 
 export default function Main({dataList=[], date}) {
     const userInfo = useAppSelector((state) => state.user);
+    const router = useRouter();
 
     const [datas, setDatas] = useState(dataList)
     const [info, setInfo] = useState({
@@ -107,7 +110,14 @@ export default function Main({dataList=[], date}) {
                     <div style={{display: "grid", gridTemplateColumns: '1fr 1fr', columnGap: 30, paddingTop: 10}}>
 
                         <div style={{display:'grid', gridTemplateRows:'200px 200px 200px', rowGap:30}}>
-                            <Card title={<div style={{fontWeight:600, fontSize: 15}}>공지사항</div>} size='small'>
+                            <Card title={<div style={{display:'flex', justifyContent:'space-between'}}><div onClick={() => router.push('/notice')} style={{
+                                cursor: 'pointer',
+                                fontWeight: 600,
+                                fontSize: 15,
+                            }}>공지사항</div><div onClick={()=>router.push('/notice_write')}
+                                  style={{cursor: 'pointer', float: 'right', padding: '0 10px',}}><EditOutlined/></div>
+                            </div>
+                            } size='small'>
                                 {noticeList.map((v,i)=>{
                                 return (
                                     <div style={{marginTop:5, fontSize:13}}>
@@ -115,7 +125,7 @@ export default function Main({dataList=[], date}) {
                                     </div>
                                 )})}
                             </Card>
-                            <Card title={<div style={{fontWeight:600, fontSize: 15}}>금일 송금</div>} size='small'>
+                            <Card title={<div onClick={()=>router.push('/remittance')} style={{cursor:'pointer', fontWeight:600, fontSize: 15}}>금일 송금</div>} size='small'>
                                 {noticeList.map((v,i)=>{
                                     return (
                                         <div style={{marginTop: 5, fontSize: 13}}>
@@ -124,7 +134,7 @@ export default function Main({dataList=[], date}) {
                                     )
                                 })}
                             </Card>
-                            <Card title={<div style={{fontWeight:600, fontSize: 15}}>금일 집하</div>} size='small'>
+                            <Card title={<div onClick={()=>router.push('/order_delivery')} style={{cursor:'pointer', fontWeight:600, fontSize: 15}}>금일 집하</div>} size='small'>
                                 {noticeList.map((v,i)=>{
                                     return (
                                         <div style={{marginTop: 5, fontSize: 13}}>

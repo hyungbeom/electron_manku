@@ -218,7 +218,7 @@ const TableGrid = ({
             </div>
             {modalComponent}
 
-            <AgGridReact theme={tableTheme} ref={gridRef} containerStyle={{width: '100%', height: '84%'}}
+            <AgGridReact theme={tableTheme} ref={gridRef} containerStyle={{width: '100%', height: '100%'}}
                         //@ts-ignore
                          onRowDoubleClicked={handleDoubleClicked}
                         //@ts-ignore

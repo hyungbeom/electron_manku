@@ -25,7 +25,7 @@ const menuList = {
     project: {
         title: '프로젝트',
         icon: <FolderOpenOutlined />,
-        list: [{title: '프로젝트 추가', key: 'project_write'}, {title: '프로젝트 조회', key: 'project_read'},]
+        list: [{title: '프로젝트 작성', key: 'project_write'}, {title: '프로젝트 조회', key: 'project'},]
     },
     rfq: {
         title: '견적의뢰',
@@ -72,18 +72,10 @@ const menuList = {
         title: '송금',
         icon: <MoneyCollectOutlined />,
         list: [
-            {title: '송금 요청', key: 'code_domestic_agency'},
-            {title: '국내 송금 관리', key: 'code_overseas_agency'},
-            {title: '해외 송금 관리', key: 'code_domestic_customer'},
-            {title: '발주/송금 통합 관리', key: 'code_overseas_customer'},
-        ]
-    },
-    notice: {
-        title: '공지사항',
-        icon: <EditOutlined/>,
-        key: 'notice',
-        list: [
-            {title: '국내 매입처(매입)', key: 'code_domestic_agency'},
+            {title: '송금 요청', key: 'remittance_request'},
+            {title: '국내 송금 관리', key: 'remittance_domestic'},
+            {title: '해외 송금 관리', key: 'remittance_overseas'},
+            {title: '발주/송금 통합 관리', key: 'remittance_total'},
         ]
     },
     // setting: {title: 'Setting', icon: <SettingOutlined/>, list: [{title: '기본설정', key: 'setting_default'}]},
@@ -186,6 +178,7 @@ export default function LayoutComponent({children, userInfo = null}) {
                         )
                     })}
                     {/* Home 메뉴 */}
+                    <Menu.Item style={{width:'auto', padding:'0 5px', height:38, margin:0 }} onClick={() => router.push('/notice')}><EditOutlined/> 공지사항</Menu.Item>
                 </Menu>
         </div>
 

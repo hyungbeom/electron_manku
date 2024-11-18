@@ -32,7 +32,6 @@ html, body {
     border: none !important;
 }
 
-
 /* 상위 메뉴의 기본 색상 유지 */
 .ant-menu-submenu-selected {
     background-color: inherit !important; /* 상위 메뉴 배경색을 기본으로 유지 */
@@ -75,7 +74,6 @@ html, body {
     padding: 0 10px 0 10px !important;
     margin: 0 !important;
 }
-
 
 .ant-menu-title-content {
     margin: 2px !important;

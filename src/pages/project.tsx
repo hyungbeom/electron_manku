@@ -90,8 +90,8 @@ export default function rfqRead({dataList}) {
 
     return <>
         <LayoutComponent>
-            <div style={{display: 'grid', gridTemplateRows: 'auto 1fr', height: '100%', columnGap: 5}}>
-                <Card title={<span style={{fontSize: 12,}}>견적의뢰 조회</span>} headStyle={{marginTop:-10, height:30}}
+            <div style={{display: 'grid', gridTemplateRows: 'auto 1fr', height: '100vh', columnGap: 5}}>
+                <Card title={<span style={{fontSize: 12,}}>프로젝트 조회</span>} headStyle={{marginTop:-10, height:30}}
                       style={{border: '1px solid lightGray',}} bodyStyle={{padding: '10px 24px'}}>
                     <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1.5fr', width: '100%', columnGap: 20}}>
 
@@ -99,46 +99,58 @@ export default function rfqRead({dataList}) {
                             fontSize: 11,
                             boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
                         }}>
-                                <div>
-                                    <div style={{paddingBottom: 3,}}>작성일자</div>
-
-                                    <RangePicker
-                                        value={[moment(info['searchDate'][0]), moment(info['searchDate'][1])]}
-                                        id={'searchDate'} size={'small'} onChange={(date, dateString) => {
-                                        onChange({
-                                            target: {
-                                                id: 'searchDate',
-                                                value: date ? [moment(date[0]).format('YYYY-MM-DD'), moment(date[1]).format('YYYY-MM-DD')] : [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
-                                            }
-                                        })
-                                    }
-                                    } style={{width: '100%',}}/>
-                                </div>
-                                <div style={{marginTop:8}}>
-                                    <div style={{paddingBottom: 3}}>회신 여부</div>
-                                    <Select id={'searchType'}
-                                            onChange={(src) => onChange({target: {id: 'searchType', value: src}})}
-                                            size={'small'} value={info['searchType']} options={[
-                                        {value: '0', label: '전체'},
-                                        {value: '1', label: '회신'},
-                                        {value: '2', label: '미회신'}
-                                    ]} style={{width: '100%',}}/>
-                                </div>
+                            <div>
+                                <div style={{paddingBottom: 3}}>rfq No.</div>
+                                <Input id={'searchDocumentNumber'} onChange={onChange} size={'small'}/>
+                            </div>
+                            <div>
+                                <div style={{paddingBottom: 3}}>프로젝트 제목</div>
+                                <Input id={'searchDocumentNumber'} onChange={onChange} size={'small'}/>
+                            </div>
+                            <div>
+                                <div style={{paddingBottom: 3,}}>마감 일자</div>
+                                <RangePicker
+                                    value={[moment(info['searchDate'][0]), moment(info['searchDate'][1])]}
+                                    id={'searchDate'} size={'small'} onChange={(date, dateString) => {
+                                    onChange({
+                                        target: {
+                                            id: 'searchDate',
+                                            value: date ? [moment(date[0]).format('YYYY-MM-DD'), moment(date[1]).format('YYYY-MM-DD')] : [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
+                                        }
+                                    })
+                                }
+                                } style={{width: '100%',}}/>
+                            </div>
+                            <div style={{marginTop: 8}}>
+                                <div style={{paddingBottom: 3}}>등록자</div>
+                                <Input id={'searchCreatedBy'} onChange={onChange} size={'small'}/>
+                            </div>
+                            {/*<div style={{marginTop: 8}}>*/}
+                            {/*    <div style={{paddingBottom: 3}}>회신 여부</div>*/}
+                            {/*    <Select id={'searchType'}*/}
+                            {/*            onChange={(src) => onChange({target: {id: 'searchType', value: src}})}*/}
+                            {/*            size={'small'} value={info['searchType']} options={[*/}
+                            {/*        {value: '0', label: '전체'},*/}
+                            {/*        {value: '1', label: '회신'},*/}
+                            {/*        {value: '2', label: '미회신'}*/}
+                            {/*    ]} style={{width: '100%',}}/>*/}
+                            {/*</div>*/}
                         </Card>
                         <Card size={'small'} style={{
                             fontSize: 11,
                             boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
                         }}>
-                                <div>
-                                    <div style={{paddingBottom: 3}}>문서번호</div>
-                                    <Input id={'searchDocumentNumber'} onChange={onChange} size={'small'}/>
-                                </div>
-                            <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>등록직원명</div>
-                                <Input id={'searchCreatedBy'} onChange={onChange} size={'small'}/>
+                            <div>
+                                <div style={{paddingBottom: 3}}>거래처명</div>
+                                <Input id={'searchDocumentNumber'} onChange={onChange} size={'small'}/>
                             </div>
                             <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>거래처명</div>
+                                <div style={{paddingBottom: 3}}>거래처 담당자?</div>
+                                <Input id={'searchCreatedBy'} onChange={onChange} size={'small'}/>
+                            </div>
+
+                            <div style={{marginTop: 8}}>
+                                <div style={{paddingBottom: 3}}>전화번호?</div>
                                 <Input id={'searchCustomerName'} onChange={onChange} size={'small'}/>
                             </div>
                         </Card>
@@ -149,15 +161,15 @@ export default function rfqRead({dataList}) {
                             marginBottom: 5
                         }}>
                             <div>
-                                <div style={{paddingBottom: 3}}>MAKER</div>
+                                <div style={{paddingBottom: 3}}>매입처명</div>
                                 <Input id={'searchMaker'} onChange={onChange} size={'small'}/>
                             </div>
                             <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>MODEL</div>
+                                <div style={{paddingBottom: 3}}>매입처 정보</div>
                                 <Input id={'searchModel'} onChange={onChange} size={'small'}/>
                             </div>
                             <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>ITEM</div>
+                                <div style={{paddingBottom: 3}}>매입처 전화번호</div>
                                 <Input id={'searchItem'} onChange={onChange} size={'small'}/>
                             </div>
 
@@ -170,7 +182,7 @@ export default function rfqRead({dataList}) {
 
                 <TableGrid
                     gridRef={gridRef}
-                    columns={rfqReadColumns}
+                    columns={projectColumns}
                     tableData={tableData}
                     type={'read'}
                     excel={true}
