@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, Menu } from 'electron';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -20,6 +20,113 @@ function createWindow() {
     });
 
     mainWindow.loadURL('http://localhost:3000'); // 올바른 URL 확인
+
+    // 메뉴 커스터마이징
+    const menu = Menu.buildFromTemplate([
+        {
+            label: 'HOME',
+            submenu: [
+                {
+                    label: 'HOME',
+                    click: () => {
+                        mainWindow.webContents.send('navigate-to', '/main'); // 클라이언트 측에서 페이지 이동 처리
+                    }
+                }
+            ]
+        },
+        {
+            label: '프로젝트',
+            submenu: [
+                {
+                    label: '프로젝트 관리',
+                    accelerator: 'CmdOrCtrl+Q',
+                    click: () => {
+                        app.quit();
+                    }
+                }
+            ]
+        },
+        {
+            label: '견적의뢰',
+            submenu: [
+                {
+                    label: 'Reload',
+                    accelerator: 'CmdOrCtrl+R',
+                    click: () => {
+                        mainWindow.reload();
+                    }
+                },
+                {
+                    label: 'Toggle Full Screen',
+                    accelerator: 'F11',
+                    click: () => {
+                        mainWindow.setFullScreen(!mainWindow.isFullScreen());
+                    }
+                }
+            ]
+        },
+        {
+            label: '견적서',
+            submenu: [
+                {
+                    label: 'Reload',
+                    accelerator: 'CmdOrCtrl+R',
+                    click: () => {
+                        mainWindow.reload();
+                    }
+                },
+                {
+                    label: 'Toggle Full Screen',
+                    accelerator: 'F11',
+                    click: () => {
+                        mainWindow.setFullScreen(!mainWindow.isFullScreen());
+                    }
+                }
+            ]
+        },
+        {
+            label: '발주',
+            submenu: [
+                {
+                    label: 'Reload',
+                    accelerator: 'CmdOrCtrl+R',
+                    click: () => {
+                        mainWindow.reload();
+                    }
+                },
+                {
+                    label: 'Toggle Full Screen',
+                    accelerator: 'F11',
+                    click: () => {
+                        mainWindow.setFullScreen(!mainWindow.isFullScreen());
+                    }
+                }
+            ]
+        },
+        {
+            label: 'Maker',
+            submenu: [
+                {
+                    label: 'Reload',
+                    accelerator: 'CmdOrCtrl+R',
+                    click: () => {
+                        mainWindow.reload();
+                    }
+                },
+                {
+                    label: 'Toggle Full Screen',
+                    accelerator: 'F11',
+                    click: () => {
+                        mainWindow.setFullScreen(!mainWindow.isFullScreen());
+                    }
+                }
+            ]
+        },
+    ]);
+
+    // 애플리케이션에 메뉴 설정
+    Menu.setApplicationMenu(menu);
+
 }
 
 app.whenReady().then(createWindow);

@@ -12,6 +12,13 @@ import Button from "antd/lib/button";
 import moment from "moment";
 import {useState} from "react";
 
+const noticeList=[
+    {title:'안녕하십니까', content:"안녕하세요", category:'회신', to:'김민국'},
+    {title:'안뇽하세요', content:"안녕하세요", category:'회신', to:'김민국'},
+    {title:'안녕하실까', content:"안녕하세요", category:'회신', to:'김민국'},
+    {title:'안녕하시죠', content:"안녕하세요", category:'회신', to:'김민국'},
+    {title:'안녕하십니까', content:"안녕하세요", category:'회신', to:'김민국'},
+]
 
 export default function Main({dataList=[], date}) {
     const userInfo = useAppSelector((state) => state.user);
@@ -96,30 +103,41 @@ export default function Main({dataList=[], date}) {
     return <>
         <LayoutComponent userInfo={userInfo}>
             <div style={{padding: 5}}>
-                <Card style={{borderRadius: 8}} title={'업무일정'}>
-                    <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 100px', width: 750}}>
-                        <div style={{display: 'grid', gridTemplateColumns: '50px 1fr', width: 300}}>
-                            <span>문서번호</span> <Input id={'searchDocumentNumber'} value={info['searchDocumentNumber']}
-                                                     onChange={infoChange}/>
+                <Card style={{borderRadius: 8}} title={'HOME'}>
+                    <div style={{display: "grid", gridTemplateColumns: '1fr 1fr', columnGap: 30, paddingTop: 10}}>
+
+                        <div style={{display:'grid', gridTemplateRows:'200px 200px 200px', rowGap:30}}>
+                            <Card title={<div style={{fontWeight:600, fontSize: 15}}>공지사항</div>} size='small'>
+                                {noticeList.map((v,i)=>{
+                                return (
+                                    <div style={{marginTop:5, fontSize:13}}>
+                                        <span style={{fontWeight:550,}}>[{v.category}]</span> {v.title}
+                                    </div>
+                                )})}
+                            </Card>
+                            <Card title={<div style={{fontWeight:600, fontSize: 15}}>금일 송금</div>} size='small'>
+                                {noticeList.map((v,i)=>{
+                                    return (
+                                        <div style={{marginTop: 5, fontSize: 13}}>
+                                            <span style={{fontWeight: 550}}>[{v.category}]</span> {v.title}
+                                        </div>
+                                    )
+                                })}
+                            </Card>
+                            <Card title={<div style={{fontWeight:600, fontSize: 15}}>금일 집하</div>} size='small'>
+                                {noticeList.map((v,i)=>{
+                                    return (
+                                        <div style={{marginTop: 5, fontSize: 13}}>
+                                            <span style={{fontWeight: 550}}>[{v.category}]</span> {v.title}
+                                        </div>
+                                    )
+                                })}
+                            </Card>
                         </div>
-                        <div style={{display: 'grid', gridTemplateColumns: '50px 1fr', width: 300}}>
-                            <span>거래처명</span> <Input id={'searchCustomerName'} value={info['searchCustomerName']}
-                                                     onChange={infoChange}/>
-                        </div>
-                        <Button type={'primary'} onClick={searchInfo}>조회</Button>
-                    </div>
-                    {/*@ts-ignored*/}
-                    <div style={{display: "grid", gridTemplateColumns: '1fr 1fr', columnGap: 30, paddingTop: 50}}>
-                        <Card title={'거래 예상 납기'}>
+
+                        <Card title={<div style={{fontWeight:600, fontSize: 15}}>거래 납기</div>}>
                             <Calendar mode={"month"}
                                       dateCellRender={dateCellRender}
-                                // monthCellRender={monthCellRender}
-                                      onPanelChange={onPanelChange}/>
-                        </Card>
-                        <Card title={'거래 납기'}>
-                            <Calendar mode={"month"}
-                                      dateCellRender={dateCellRender}
-                                // monthCellRender={monthCellRender}
                                       onPanelChange={onPanelChange}/>
                         </Card>
                     </div>

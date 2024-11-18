@@ -63,6 +63,27 @@ html, body {
 .ant-menu-submenu-title:hover .ant-menu-item-icon {
     /*color: inherit !important; !* 아이콘 색상 유지 *!*/
 }
+.ant-menu-root {
+    height: 38px !important;
+}
+
+.ant-menu-submenu-title:hover {
+    height: 38px !important;
+}
+
+.ant-menu-submenu-title {
+    padding: 0 10px 0 10px !important;
+    margin: 0 !important;
+}
+
+
+.ant-menu-title-content {
+    margin: 2px !important;
+}
+
+.ant-menu-submenu-arrow {
+    right: 0 !important;
+}
 
 /* 서브메뉴 hover 시에도 스타일 유지 */
 .ant-menu-submenu:hover {

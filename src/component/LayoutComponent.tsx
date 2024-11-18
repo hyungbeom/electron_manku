@@ -1,15 +1,19 @@
 import React, {useEffect, useState} from "react";
-import Layout, {Content} from "antd/lib/layout/layout";
-import Sider from "antd/lib/layout/Sider";
+import {Content} from "antd/lib/layout/layout";
 import Menu from "antd/lib/menu";
 import {
-    ArrowLeftOutlined, ArrowRightOutlined,
-    BarcodeOutlined, CaretLeftFilled, CaretRightFilled,
+    BarcodeOutlined,
+    CaretLeftFilled,
+    CaretRightFilled,
+    EditOutlined,
+    FolderOpenOutlined,
     FormOutlined,
-    LeftCircleFilled,
+    HomeOutlined,
+    MoneyCollectOutlined,
     ProductOutlined,
-    RightCircleFilled,
-    SendOutlined, SettingOutlined, UserSwitchOutlined,
+    SendOutlined,
+    SettingOutlined,
+    UserSwitchOutlined,
     WalletOutlined,
 } from '@ant-design/icons';
 import {useRouter} from "next/router";
@@ -18,10 +22,15 @@ import {useRouter} from "next/router";
 const {SubMenu} = Menu;
 
 const menuList = {
+    project: {
+        title: '프로젝트',
+        icon: <FolderOpenOutlined />,
+        list: [{title: '프로젝트 추가', key: 'project_write'}, {title: '프로젝트 조회', key: 'project_read'},]
+    },
     rfq: {
         title: '견적의뢰',
         icon: <SendOutlined/>,
-        list: [{title: '의뢰 작성', key: 'rfq_write'}, {title: '의뢰 조회', key: 'rfq_read'}, , {
+        list: [{title: '의뢰 작성', key: 'rfq_write'}, {title: '의뢰 조회', key: 'rfq_read'}, {
             title: '메일 전송',
             key: 'rfq_mail_send'
         }]
@@ -35,7 +44,7 @@ const menuList = {
         }]
     },
     order: {
-        title: '발주관리',
+        title: '발주',
         icon: <WalletOutlined/>,
         list: [{title: '발주서 작성', key: 'order_write'}, {title: '발주 조회', key: 'order_read'},
             {title: '재고 관리', key: 'inventory_manage'},
@@ -45,9 +54,9 @@ const menuList = {
                 ],},
         ]
     },
-    maker: {title: 'Maker 관리', icon: <ProductOutlined/>, list: [{title: '메이커 검색', key: 'maker_read'}]},
+    maker: {title: 'Maker', icon: <ProductOutlined/>, list: [{title: '메이커 검색', key: 'maker_read'}]},
     code: {
-        title: '코드관리',
+        title: '코드',
         icon: <BarcodeOutlined/>,
         list: [
             {title: '국내 매입처(매입)', key: 'code_domestic_agency'},
@@ -59,8 +68,26 @@ const menuList = {
             {title: 'HS CODE 조회', key: 'code_read'},
         ]
     },
-    setting: {title: 'Setting', icon: <SettingOutlined/>, list: [{title: '기본설정', key: 'setting_default'}]},
-    manage: {title: 'manage', icon: <UserSwitchOutlined />, list: [{title: '관리자모드', key: 'manage'}]},
+    Remittance: {
+        title: '송금',
+        icon: <MoneyCollectOutlined />,
+        list: [
+            {title: '송금 요청', key: 'code_domestic_agency'},
+            {title: '국내 송금 관리', key: 'code_overseas_agency'},
+            {title: '해외 송금 관리', key: 'code_domestic_customer'},
+            {title: '발주/송금 통합 관리', key: 'code_overseas_customer'},
+        ]
+    },
+    notice: {
+        title: '공지사항',
+        icon: <EditOutlined/>,
+        key: 'notice',
+        list: [
+            {title: '국내 매입처(매입)', key: 'code_domestic_agency'},
+        ]
+    },
+    // setting: {title: 'Setting', icon: <SettingOutlined/>, list: [{title: '기본설정', key: 'setting_default'}]},
+    // manage: {title: 'manage', icon: <UserSwitchOutlined />, list: [{title: '관리자모드', key: 'manage'}]},
 }
 
 
@@ -105,48 +132,20 @@ export default function LayoutComponent({children, userInfo = null}) {
             backgroundColor: '#f5f5f5',
             width: '100%',
             borderBottom: '1px solid lightGray',
-            padding: 10
+            display:'flex'
         }}>
 
-            <CaretLeftFilled style={{fontSize: 25, cursor: "pointer"}} onClick={() => router.back()}/>
-            <CaretRightFilled style={{fontSize: 25, cursor: 'pointer'}} onClick={() => router.back()}/>
-
-        </div>
-        <Layout style={{minHeight: '100vh'}}>
-
-
-            <Sider collapsed={collapsed}
-                   style={{borderRight: '1px solid lightGray', paddingRight: 10, zIndex: 10}}>
-                {collapsed ? <RightCircleFilled style={{
-                        position: 'absolute',
-                        right: -12,
-                        top: 30,
-                        fontSize: 22,
-                        backgroundColor: 'white',
-                        cursor: 'pointer',
-                        opacity: 0.7
-                    }} onClick={() => setCollapsed(v => !v)}/>
-                    :
-                    <LeftCircleFilled style={{
-                        position: 'absolute',
-                        right: -12,
-                        top: 30,
-                        fontSize: 22,
-                        backgroundColor: 'white',
-                        cursor: 'pointer',
-                        opacity: 0.7
-                    }} onClick={() => setCollapsed(v => !v)}/>}
-
-
+            <CaretLeftFilled style={{fontSize: 20, cursor: "pointer", marginTop:3}} onClick={() => router.back()}/>
+            <CaretRightFilled style={{fontSize: 20, cursor: 'pointer', marginTop:3}} onClick={() => router.back()}/>
                 <Menu
-
                     theme="light"
-                    mode="inline"
+                    // mode="inline"
                     openKeys={openKeys}  // 열려 있는 서브메뉴를 제어하는 키
                     onOpenChange={onOpenChange}
+                    style={{display:'flex', fontSize:12, marginTop:2}}
                 >
 
-                    <Menu.Item onClick={() => router.push('/main')}>HOME</Menu.Item>
+                    <Menu.Item style={{width:'auto', padding:'0 5px', height:38, margin:0 }} onClick={() => router.push('/main')}><HomeOutlined/> HOME</Menu.Item>
 
                     {Object.keys(menuList).map(v => {
 
@@ -154,16 +153,16 @@ export default function LayoutComponent({children, userInfo = null}) {
                         if(v === 'manage' && userInfo?.authority !== 0){
                             return null;
                         }
-                         return (
-                            <SubMenu key={v} icon={menuList[v].icon} title={menuList[v].title}>
+                        return (
+                            <SubMenu key={v} icon={menuList[v].icon} style={{width:'auto', padding:-10}} title={menuList[v].title}>
                                 {menuList[v].list.map((src) => {
                                     if (src.subList) {
                                         // 3-depth가 있는 경우
                                         return (
                                             <SubMenu key={src.key} title={src.title}>
                                                 {src.subList.map((subSrc) => (
-                                                    <Menu.Item
-                                                        onClick={() => handleMenuClick(subSrc.key)}
+                                                    <Menu.Item style={{width:'auto', padding:-30}}
+                                                               onClick={() => handleMenuClick(subSrc.key)}
                                                         key={subSrc.key}
                                                     >
                                                         {subSrc.title}
@@ -177,25 +176,24 @@ export default function LayoutComponent({children, userInfo = null}) {
                                         <Menu.Item
                                             onClick={() => handleMenuClick(src.key)}
                                             key={src.key}
+                                            style={{fontSize:12}}
                                         >
                                             {src.title}
                                         </Menu.Item>
                                     );
                                 })}
                             </SubMenu>
-                         )
+                        )
                     })}
                     {/* Home 메뉴 */}
                 </Menu>
-            </Sider>
-            <Layout style={{backgroundColor: '#f5f5f5'}}>
+        </div>
+
                 <Content style={{padding: 5}}>
 
                     {children}
 
                 </Content>
-            </Layout>
-        </Layout>
 
     </>
 }
