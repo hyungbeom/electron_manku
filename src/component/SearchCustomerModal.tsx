@@ -43,10 +43,10 @@ export default function SearchCustomerModal({customerData, info, setInfo, isModa
         title={'거래처 상호명 조회'}
         // @ts-ignored
         id={'event2'}
-        onCancel={() => setIsModalOpen({event1: false, event2: false})}
+        onCancel={() => setIsModalOpen({event1: false, event2: false, event3: false})}
         open={isModalOpen?.event2}
         width={'60vw'}
-        onOk={() => setIsModalOpen({event1: false, event2: false})}
+        onOk={() => setIsModalOpen({event1: false, event2: false, event3: false})}
     >
         <div style={{height: '50vh'}}>
             <div style={{display: 'flex', justifyContent: 'space-between', gap: 15, marginBottom: 20}}>
@@ -61,7 +61,7 @@ export default function SearchCustomerModal({customerData, info, setInfo, isModa
                                  return {
                                      ...v,phoneNumber: e?.data?.directTel, ... e.data
                                  }})
-                             setIsModalOpen({event1: false, event2: false})
+                             setIsModalOpen({event1: false, event2: false, event3: false})
                          }}
                          rowData={data}
                          columnDefs={searchCustomerColumn}

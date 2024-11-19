@@ -33,7 +33,7 @@ import TableGrid from "@/component/tableGrid";
 import {AgGridReact} from "ag-grid-react";
 import {iconSetMaterial, themeQuartz} from "@ag-grid-community/theming";
 import {tableTheme} from "@/utils/common";
-import SearchAgendaModal from "@/component/SearchAgendaModal";
+import SearchAgendaModal from "@/component/SearchAgencyModal";
 import SearchCustomerModal from "@/component/SearchCustomerModal";
 
 export default function rqfUpdate({dataInfo}) {

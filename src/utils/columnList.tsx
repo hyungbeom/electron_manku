@@ -131,19 +131,19 @@ export const searchMakerColumn = [
     },
     {
         headerName: '등록자',
-        field: 'registerer',
+        field: 'createdBy',
     },
     {
         headerName: '등록일자',
-        field: 'registerDate',
+        field: 'createdDate',
     },
     {
         headerName: '수정자',
-        field: 'modifier',
+        field: 'modifiedBy',
     },
     {
         headerName: '수정일자',
-        field: 'modifyDate',
+        field: 'modifiedDate',
     },
 
 ];

@@ -105,7 +105,7 @@ export default function makerRead() {
                             </div>
                             <div style={{marginTop: 8}}>
                                 <div style={{paddingBottom: 3}}>원산지</div>
-                                <Input id={'currencyUnit'} value={info['currencyUnit']} onChange={onChange}
+                                <Input id={'origin'} value={info['origin']} onChange={onChange}
                                        size={'small'}/>
                             </div>
                             <div style={{marginTop: 8}}>

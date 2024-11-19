@@ -26,10 +26,11 @@ import MyComponent from "@/component/MyComponent";
 import {useRouter} from "next/router";
 import nookies from "nookies";
 import TableGrid from "@/component/tableGrid";
-import SearchAgendaModal from "@/component/SearchAgendaModal";
 import SearchCustomerModal from "@/component/SearchCustomerModal";
 import Dragger from "antd/lib/upload/Dragger";
 import Upload from "antd/lib/upload";
+import SearchMakerModal from "@/component/SearchMakerModal";
+import SearchAgencyModal from "@/component/SearchAgencyModal";
 
 export default function rqfWrite() {
     const gridRef = useRef(null);
@@ -40,7 +41,6 @@ export default function rqfWrite() {
     const [agencyData, setAgencyData] = useState([]);
     const [customerData, setCustomerData] = useState([]);
     const [makerData, setMakerData] = useState([]);
-
 
     useEffect(() => {
 
@@ -173,6 +173,32 @@ export default function rqfWrite() {
                         }
                     })
                 }
+            } else {
+
+            }if (!info['maker']) {
+                return false
+            }
+            const result = await getData.post('maker/getMakerList', {
+                "searchType": "1",
+                "searchText": info['maker'],       // 대리점코드 or 대리점 상호명
+                "page": 1,
+                "limit": -1
+            })
+            if (result.data.entity.makerList.length > 1) {
+                setMakerData(result.data.entity.makerList)
+                setIsModalOpen({event1: false, event2: false, event3: true,})
+            } else if (!!result.data.entity.makerList.length) {
+                const {makerName, item, instructions} = result.data.entity.makerList[0]
+
+
+                setInfo(v => {
+                    return {
+                        ...v,
+                        maker: makerName,
+                        item: item,
+                        instructions: instructions,
+                    }
+                })
             }
         }
 
@@ -183,9 +209,11 @@ export default function rqfWrite() {
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`, height: '100%', columnGap: 5}}>
 
-                <SearchAgendaModal info={info} setInfo={setInfo} agencyData={agencyData} isModalOpen={isModalOpen}
+                <SearchAgencyModal info={info} setInfo={setInfo} agencyData={agencyData} isModalOpen={isModalOpen}
                                    setIsModalOpen={setIsModalOpen}/>
                 <SearchCustomerModal info={info} setInfo={setInfo} customerData={customerData} isModalOpen={isModalOpen}
+                                     setIsModalOpen={setIsModalOpen}/>
+                <SearchMakerModal info={info} setInfo={setInfo} makerData={makerData} isModalOpen={isModalOpen}
                                      setIsModalOpen={setIsModalOpen}/>
 
                 <Card title={'견적의뢰 작성'} style={{fontSize: 12, border: '1px solid lightGray'}} extra={<span style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>setMini(v => !v)}> {!mini ? <UpCircleFilled/> : <DownCircleFilled/>}</span>} >
@@ -311,14 +339,13 @@ export default function rqfWrite() {
                             }}>
                                 <div>
                                     <div style={{paddingBottom: 3}}>MAKER</div>
-                                    {/*<Input id={'maker'} value={info['maker']} onChange={onChange} size={'small'}/>*/}
                                     <Input id={'maker'} value={info['maker']} onChange={onChange}
                                            size={'small'}
                                            onKeyDown={handleKeyPress}
                                            suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
                                                (e) => {
                                                    e.stopPropagation();
-                                                   setIsModalOpen({event1: false, event2: true, event3: false})
+                                                   setIsModalOpen({event1: false, event2: false, event3: true})
                                                }
                                            }/>}/>
 

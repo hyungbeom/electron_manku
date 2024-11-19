@@ -7,7 +7,7 @@ import React, {useEffect, useState} from "react";
 import {getData} from "@/manage/function/api";
 import {tableTheme} from "@/utils/common";
 
-export default function SearchAgendaModal({agencyData, info, setInfo, isModalOpen, setIsModalOpen}){
+export default function SearchAgencyModal({agencyData, info, setInfo, isModalOpen, setIsModalOpen}){
     const [data, setData] = useState(agencyData)
     const [code, setCode] = useState(info['agencyCode']);
 
@@ -41,10 +41,10 @@ export default function SearchAgendaModal({agencyData, info, setInfo, isModalOpe
         // @ts-ignored
         id={'event1'}
         title={'대리점 코드 조회'}
-        onCancel={() => setIsModalOpen({event1: false, event2: false})}
+        onCancel={() => setIsModalOpen({event1: false, event2: false, event3: false})}
         open={isModalOpen?.event1}
         width={'60vw'}
-        onOk={() => setIsModalOpen({event1: false, event2: false})}
+        onOk={() => setIsModalOpen({event1: false, event2: false, event3: false})}
     >
         <div style={{height: '50vh'}}>
             <div style={{display:'flex', justifyContent:'space-between', gap:15, marginBottom: 20}}>
@@ -58,7 +58,7 @@ export default function SearchAgendaModal({agencyData, info, setInfo, isModalOpe
                                  return {
                                      ...v, ... e.data
                                  }})
-                             setIsModalOpen({event1: false, event2: false})
+                             setIsModalOpen({event1: false, event2: false, event3: false})
                          }}
                          rowData={data}
                          columnDefs={searchAgencyCodeColumn}
