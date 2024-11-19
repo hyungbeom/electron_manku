@@ -45,6 +45,7 @@ export default function rfqRead({dataList}) {
         setInfo(copyData);
     }, [])
 
+
     async function searchInfo() {
         const copyData: any = {...info}
         const {searchDate}: any = copyData;
@@ -101,7 +102,6 @@ export default function rfqRead({dataList}) {
                         }}>
                                 <div>
                                     <div style={{paddingBottom: 3,}}>작성일자</div>
-
                                     <RangePicker
                                         value={[moment(info['searchDate'][0]), moment(info['searchDate'][1])]}
                                         id={'searchDate'} size={'small'} onChange={(date, dateString) => {

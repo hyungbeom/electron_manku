@@ -6,7 +6,7 @@ import TextArea from "antd/lib/input/TextArea";
 import {
     CopyOutlined,
     DownCircleFilled,
-    FileSearchOutlined,
+    FileSearchOutlined, InboxOutlined,
     RetweetOutlined,
     SaveOutlined,
     UpCircleFilled
@@ -28,6 +28,7 @@ import nookies from "nookies";
 import TableGrid from "@/component/tableGrid";
 import SearchAgendaModal from "@/component/SearchAgendaModal";
 import SearchCustomerModal from "@/component/SearchCustomerModal";
+import Dragger from "antd/lib/upload/Dragger";
 
 export default function rqfWrite() {
     const gridRef = useRef(null);
@@ -361,6 +362,12 @@ export default function rqfWrite() {
                     excel={true}
                     type={'write'}
                     funcButtons={<div>
+                        {/*<Dragger {...props}>*/}
+                        {/*    <div>*/}
+                        {/*        <InboxOutlined style={{ width: 20, color: 'blue' }} />*/}
+                        {/*        <span className="ant-upload-text"> 클릭 또는 드래그하여 업로드</span>*/}
+                        {/*    </div>*/}
+                        {/*</Dragger>*/}
                         {/*@ts-ignored*/}
                         <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
                                 onClick={addRow}>

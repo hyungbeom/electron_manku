@@ -78,6 +78,14 @@ const menuList = {
             {title: '발주/송금 통합 관리', key: 'remittance_total'},
         ]
     },
+    delivery: {
+        title: '배송',
+        icon: <MoneyCollectOutlined />,
+        list: [
+            {title: '배송 등록', key: 'delivery_write'},
+            {title: '배송 조회', key: 'delivery_read'},
+        ]
+    },
     // setting: {title: 'Setting', icon: <SettingOutlined/>, list: [{title: '기본설정', key: 'setting_default'}]},
     // manage: {title: 'manage', icon: <UserSwitchOutlined />, list: [{title: '관리자모드', key: 'manage'}]},
 }

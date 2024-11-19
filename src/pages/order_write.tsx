@@ -156,7 +156,7 @@ export default function OrderWriter({dataInfo}) {
                 setInfo(v => {
                         return {...v, ...result?.data?.entity?.estimateList[0],
                             writtenDate : moment(),
-                            orderDate : moment(result?.data?.entity?.estimateList[0].orderDate)
+                            delivery : moment()
                         }
                     }
                 )
@@ -296,7 +296,7 @@ export default function OrderWriter({dataInfo}) {
                             </div>
                             <div style={{paddingTop: 8}}>
                                 <div style={{paddingBottom: 3}}>Delivery</div>
-                                <DatePicker value={info['delivery']}
+                                <DatePicker value={moment(info['delivery'])}
                                             onChange={(date, dateString) => onChange({
                                                 target: {
                                                     id: 'delivery',

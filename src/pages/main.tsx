@@ -20,6 +20,10 @@ const noticeList=[
     {title:'안녕하실까', content:"안녕하세요", category:'회신', to:'김민국'},
     {title:'안녕하시죠', content:"안녕하세요", category:'회신', to:'김민국'},
     {title:'안녕하십니까', content:"안녕하세요", category:'회신', to:'김민국'},
+    //공지 : [카테고리] 인쿼리, 거래처명(판매처), 담당자, 제목 - 클릭시 견적의뢰 문서로...
+    //송금 : 인쿼리넘버, 거래처명(판매처), 담당자
+    //택배 : [택배종류] 인쿼리넘버, 거래처명(판매처), 지불방법, 담당자
+    //계산서 : [상태] 인쿼리넘버, 거래처명, 금액, 담당자.
 ]
 
 export default function Main({dataList=[], date}) {
@@ -125,15 +129,7 @@ export default function Main({dataList=[], date}) {
                                     </div>
                                 )})}
                             </Card>
-                            <Card title={<div onClick={()=>router.push('/remittance')} style={{cursor:'pointer', fontWeight:600, fontSize: 15}}>금일 송금</div>} size='small'>
-                                {noticeList.map((v,i)=>{
-                                    return (
-                                        <div style={{marginTop: 5, fontSize: 13}}>
-                                            <span style={{fontWeight: 550}}>[{v.category}]</span> {v.title}
-                                        </div>
-                                    )
-                                })}
-                            </Card>
+
                             <Card title={<div onClick={()=>router.push('/order_delivery')} style={{cursor:'pointer', fontWeight:600, fontSize: 15}}>금일 집하</div>} size='small'>
                                 {noticeList.map((v,i)=>{
                                     return (
@@ -143,6 +139,27 @@ export default function Main({dataList=[], date}) {
                                     )
                                 })}
                             </Card>
+
+                            <Card title={<div onClick={()=>router.push('/order_delivery')} style={{cursor:'pointer', fontWeight:600, fontSize: 15}}>금일 계산서발행</div>} size='small'>
+                                {noticeList.map((v,i)=>{
+                                    return (
+                                        <div style={{marginTop: 5, fontSize: 13}}>
+                                            <span style={{fontWeight: 550}}>[{v.category}]</span> {v.title}
+                                        </div>
+                                    )
+                                })}
+                            </Card>
+
+                            <Card title={<div onClick={()=>router.push('/remittance')} style={{cursor:'pointer', fontWeight:600, fontSize: 15}}>금일 송금</div>} size='small'>
+                                {noticeList.map((v,i)=>{
+                                    return (
+                                        <div style={{marginTop: 5, fontSize: 13}}>
+                                            <span style={{fontWeight: 550}}>[{v.category}]</span> {v.title}
+                                        </div>
+                                    )
+                                })}
+                            </Card>
+
                         </div>
 
                         <Card title={<div style={{fontWeight:600, fontSize: 15}}>거래 납기</div>}>
