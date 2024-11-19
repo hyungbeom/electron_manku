@@ -178,7 +178,7 @@ const TableGrid = ({
         // 변경 사항이 있을 때만 처리
         if (newValue !== oldValue) {
 
-            setInfo(v=>{
+            setData(v=>{
                 let copyData = {...v}
                 copyData[listDetailType][e.node.rowIndex] = updatedData
 
@@ -236,10 +236,10 @@ const TableGrid = ({
                 row?.forEach((cell, cellIndex) => {
                     rowData[headers[cellIndex]] = cell; // 컬럼 키를 사용하여 데이터 설정
                 });
-                return {key: index, ...rowData};
+                return {headerName: index, ...rowData};
             });
 
-            setInfo(v => {
+            setData(v => {
                 const copyData = {...v};
                 copyData[listType] = tableData;
                 return copyData
@@ -279,12 +279,13 @@ const TableGrid = ({
             <div style={{width: '100%', display: 'flex', justifyContent: 'space-between', margin: '10px 0'}}>
                 <div>LIST</div>
                 <div style={{float:'right'}}>
-                    <Dragger {...uploadProps}>
-                        <div>
-                            <InboxOutlined style={{ width: 20, color: 'blue' }} />
-                            <span className="ant-upload-text"> 클릭 또는 드래그하여 업로드</span>
-                        </div>
-                    </Dragger>
+                    {type==='write'&&
+                        <Dragger {...uploadProps}>
+                            <div>
+                                <InboxOutlined style={{ width: 20, color: 'blue' }} />
+                                <span className="ant-upload-text"> 클릭 또는 드래그하여 업로드</span>
+                            </div>
+                        </Dragger>}
                 {funcButtons}
                 </div>
             </div>

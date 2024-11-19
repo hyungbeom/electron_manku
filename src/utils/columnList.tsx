@@ -77,6 +77,77 @@ export const searchAgencyCodeColumn = [
 
 ];
 
+export const searchMakerColumn = [
+    {
+        headerName: 'MAKER',
+        field: 'makerName',
+        minWidth: 180,
+        editable: true,
+    },
+    {
+        headerName: 'ITEM',
+        field: 'item',
+        editable: true,
+    },
+    {
+        headerName: '홈페이지',
+        field: 'homepage',
+        editable: true,
+    },
+    {
+        headerName: 'AREA',
+        field: 'area',
+        editable: true,
+    },
+    {
+        headerName: '원산지',
+        field: 'origin',
+        editable: true,
+    },
+    {
+        headerName: '담당자확인', //없음
+        field: 'managerConfirm',
+        editable: true,
+    },
+    {
+        headerName: '한국대리점',
+        field: 'koreanAgency',
+        editable: true,
+    },
+    {
+        headerName: '직접확인',
+        field: 'directConfirm',
+        editable: true,
+    },
+    {
+        headerName: 'FTA_No.',
+        field: 'ftaNumber', // 없음
+        editable: true,
+    },
+    {
+        headerName: '지시사항',
+        field: 'instructions',
+        editable: true,
+    },
+    {
+        headerName: '등록자',
+        field: 'registerer',
+    },
+    {
+        headerName: '등록일자',
+        field: 'registerDate',
+    },
+    {
+        headerName: '수정자',
+        field: 'modifier',
+    },
+    {
+        headerName: '수정일자',
+        field: 'modifyDate',
+    },
+
+];
+
 
 export const makerColumn = [
     {

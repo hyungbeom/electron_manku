@@ -36,9 +36,10 @@ export default function rqfWrite() {
 
     const [info, setInfo] = useState<any>(rfqWriteInitial)
     const [mini, setMini] = useState(true);
-    const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
+    const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false, event3: false});
     const [agencyData, setAgencyData] = useState([]);
     const [customerData, setCustomerData] = useState([]);
+    const [makerData, setMakerData] = useState([]);
 
 
     useEffect(() => {
@@ -138,7 +139,7 @@ export default function rqfWrite() {
 
                 if (result.data.entity.agencyList.length > 1) {
                     setAgencyData(result.data.entity.agencyList)
-                    setIsModalOpen({event1: true, event2: false})
+                    setIsModalOpen({event1: true, event2: false, event3: false,})
                 } else if (!!result.data.entity.agencyList.length) {
                     const {agencyCode, agencyName} = result.data.entity.agencyList[0]
 
@@ -146,7 +147,7 @@ export default function rqfWrite() {
                         return {...v, agencyCode: agencyCode, agencyName: agencyName}
                     })
                 }
-            } else {
+            } else if (e.target.id === 'customerName') {
                 if (!info['customerName']) {
                     return false
                 }
@@ -157,7 +158,7 @@ export default function rqfWrite() {
                 })
                 if (result.data.entity.customerList.length > 1) {
                     setCustomerData(result.data.entity.customerList)
-                    setIsModalOpen({event1: false, event2: true})
+                    setIsModalOpen({event1: false, event2: true, event3: false,})
                 } else if (!!result.data.entity.customerList.length) {
                     const {customerName, managerName, directTel, faxNumber} = result.data.entity.customerList[0]
 
@@ -241,7 +242,7 @@ export default function rqfWrite() {
                                                suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
                                                    (e) => {
                                                        e.stopPropagation();
-                                                       setIsModalOpen({event1: true, event2: false})
+                                                       setIsModalOpen({event1: true, event2: false, event3: false})
                                                    }
                                                }/>}/>
                                     </div>
@@ -281,7 +282,7 @@ export default function rqfWrite() {
                                        suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
                                            (e) => {
                                                    e.stopPropagation();
-                                                   setIsModalOpen({event1: false, event2: true})
+                                                   setIsModalOpen({event1: false, event2: true, event3: false})
                                                }
                                            }/>}/>
                                 </div>
@@ -310,7 +311,18 @@ export default function rqfWrite() {
                             }}>
                                 <div>
                                     <div style={{paddingBottom: 3}}>MAKER</div>
-                                    <Input id={'maker'} value={info['maker']} onChange={onChange} size={'small'}/>
+                                    {/*<Input id={'maker'} value={info['maker']} onChange={onChange} size={'small'}/>*/}
+                                    <Input id={'maker'} value={info['maker']} onChange={onChange}
+                                           size={'small'}
+                                           onKeyDown={handleKeyPress}
+                                           suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
+                                               (e) => {
+                                                   e.stopPropagation();
+                                                   setIsModalOpen({event1: false, event2: true, event3: false})
+                                               }
+                                           }/>}/>
+
+
                                 </div>
                                 <div style={{paddingTop: 8}}>
                                     <div style={{paddingBottom: 3}}>ITEM</div>
