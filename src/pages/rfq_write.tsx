@@ -29,6 +29,7 @@ import TableGrid from "@/component/tableGrid";
 import SearchAgendaModal from "@/component/SearchAgendaModal";
 import SearchCustomerModal from "@/component/SearchCustomerModal";
 import Dragger from "antd/lib/upload/Dragger";
+import Upload from "antd/lib/upload";
 
 export default function rqfWrite() {
     const gridRef = useRef(null);
@@ -173,7 +174,9 @@ export default function rqfWrite() {
                 }
             }
         }
+
     };
+
 
     return <>
         <LayoutComponent>
@@ -362,7 +365,7 @@ export default function rqfWrite() {
                     excel={true}
                     type={'write'}
                     funcButtons={<div>
-                        {/*<Dragger {...props}>*/}
+                        {/*<Dragger {...uploadProps}>*/}
                         {/*    <div>*/}
                         {/*        <InboxOutlined style={{ width: 20, color: 'blue' }} />*/}
                         {/*        <span className="ant-upload-text"> 클릭 또는 드래그하여 업로드</span>*/}

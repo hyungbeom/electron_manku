@@ -40,6 +40,7 @@ const CustomTable = ({
 
     // 엑셀 파일을 읽어들이는 함수
     const handleFile = (file) => {
+
         const reader = new FileReader();
 
         reader.onload = (e) => {

@@ -2,13 +2,14 @@
 
 import React, {useEffect, useMemo, useState} from 'react';
 import {AgGridReact} from 'ag-grid-react';
-import {iconSetMaterial, themeQuartz} from '@ag-grid-community/theming';
 import {useRouter} from "next/router";
 import {tableTheme} from "@/utils/common";
 import moment from "moment";
-import {getData} from "@/manage/function/api";
+import * as XLSX from "xlsx";
 import message from "antd/lib/message";
-import {codeDomesticAgencyWriteInitial} from "@/utils/initialList";
+import Upload from "antd/lib/upload";
+import Dragger from "antd/lib/upload/Dragger";
+import {InboxOutlined} from "@ant-design/icons";
 
 
 const TableGrid = ({
@@ -208,13 +209,84 @@ const TableGrid = ({
         }
     }
 
+    const handleFile = (file) => {
+
+        const reader = new FileReader();
+
+        reader.onload = (e) => {
+            const binaryStr = e.target.result;
+            const workbook = XLSX.read(binaryStr, {type: 'binary'});
+
+            // 첫 번째 시트 선택
+            const worksheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[worksheetName];
+
+            // 데이터를 JSON 형식으로 변환 (첫 번째 행을 컬럼 키로 사용)
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+
+            // 데이터 첫 번째 행을 컬럼 이름으로 사용
+            const headers = jsonData[0];
+            const dataRows = jsonData.slice(1);
+
+
+            // 테이블 데이터 설정 (컬럼 키를 사용)
+            const tableData = dataRows.map((row, index): any => {
+                const rowData = {};
+                // @ts-ignored
+                row?.forEach((cell, cellIndex) => {
+                    rowData[headers[cellIndex]] = cell; // 컬럼 키를 사용하여 데이터 설정
+                });
+                return {key: index, ...rowData};
+            });
+
+            setInfo(v => {
+                const copyData = {...v};
+                copyData[listType] = tableData;
+                return copyData
+            })
+
+        };
+
+        reader.readAsBinaryString(file);
+    };
+
+    const uploadProps = {
+        name: 'file',
+        accept: '.xlsx, .xls',
+        multiple: false,
+        showUploadList: false,
+        beforeUpload: (file) => {
+            const isExcel = file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || file.type === 'application/vnd.ms-excel';
+
+            if (!isExcel) {
+                message.error('엑셀 파일만 업로드 가능합니다.');
+                return Upload.LIST_IGNORE;
+            }
+
+            // 파일 읽기
+            handleFile(file);
+
+            // false를 반환하여 업로드 방지 (자동 업로드 차단)
+            return false;
+        },
+    };
+
+
     return (
         <div className="ag-theme-quartz"
              style={{height: '100%', width: '100%', display: 'flex', flexDirection: 'column', overflowX: 'auto'}}>
 
             <div style={{width: '100%', display: 'flex', justifyContent: 'space-between', margin: '10px 0'}}>
-                <span>LIST</span>
+                <div>LIST</div>
+                <div style={{float:'right'}}>
+                    <Dragger {...uploadProps}>
+                        <div>
+                            <InboxOutlined style={{ width: 20, color: 'blue' }} />
+                            <span className="ant-upload-text"> 클릭 또는 드래그하여 업로드</span>
+                        </div>
+                    </Dragger>
                 {funcButtons}
+                </div>
             </div>
             {modalComponent}
 
