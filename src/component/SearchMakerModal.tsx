@@ -166,17 +166,17 @@ export default function SearchMakerModal({makerData, info, setInfo, isModalOpen,
                         </div>
                     </div>
                     <div>
-                    <div style={{marginTop: 8, fontSize: 11}}>
-                        <div style={{paddingBottom: 3}}>FTA-No</div>
-                        <Input id={'ftaNumber'} value={writeData['ftaNumber']} onChange={onChange}
-                               style={{fontSize: 11}} size={'small'}/>
-                    </div>
+                        <div style={{marginTop: 8, fontSize: 11}}>
+                            <div style={{paddingBottom: 3}}>FTA-No</div>
+                            <Input id={'ftaNumber'} value={writeData['ftaNumber']} onChange={onChange}
+                                   style={{fontSize: 11}} size={'small'}/>
+                        </div>
 
-                    <div style={{fontSize: 11}}>
-                        <div style={{paddingBottom: 3}}>지시사항</div>
-                        <TextArea id={'instructions'} value={writeData['instructions']} onChange={onChange}
-                                  style={{fontSize: 11, height: '79%'}} size={'small'}/>
-                    </div>
+                        <div style={{fontSize: 11}}>
+                            <div style={{paddingBottom: 3}}>지시사항</div>
+                            <TextArea id={'instructions'} value={writeData['instructions']} onChange={onChange}
+                                      style={{fontSize: 11, height: '79%'}} size={'small'}/>
+                        </div>
                     </div>
 
                 </div>
