@@ -4,7 +4,7 @@ import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
 import {CopyOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
-import {tableOrderReadColumns} from "@/utils/columnList";
+import {remittanceDomesticColumns, tableOrderReadColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
 import {remittanceDomesticInitial,} from "@/utils/initialList";
 import {wrapper} from "@/store/store";
@@ -22,7 +22,7 @@ import Select from "antd/lib/select";
 const {RangePicker} = DatePicker
 
 
-export default function remittance_domestic({data}) {
+export default function remittance_order_integrate({data}) {
 
     const gridRef = useRef(null);
 
@@ -98,7 +98,7 @@ export default function remittance_domestic({data}) {
     return <>
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateRows: 'auto 1fr', height: '100vh', columnGap: 5}}>
-                <Card title={<span style={{fontSize: 12,}}>국내 송금 관리</span>} headStyle={{marginTop: -10, height: 30}}
+                <Card title={<span style={{fontSize: 12,}}>발주/송금 통합 관리</span>} headStyle={{marginTop: -10, height: 30}}
                       style={{fontSize: 12, border: '1px solid lightGray'}} bodyStyle={{padding: '10px 24px'}}>
                     <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1.5fr', width: '100%', columnGap: 20}}>
 
@@ -107,7 +107,7 @@ export default function remittance_domestic({data}) {
                             boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                         }}>
                             <div>
-                                <div style={{marginBottom: 3}}>송금 요청 일자</div>
+                                <div style={{marginBottom: 3}}>발주일</div>
                                 <RangePicker style={{width: '100%'}}
                                              value={[moment(info['searchRequestDate'][0]), moment(info['searchRequestDate'][1])]}
                                              id={'searchRequestDate'} size={'small'} onChange={(date, dateString) => {
@@ -135,65 +135,89 @@ export default function remittance_domestic({data}) {
                                 }/>
                             </div>
                             <div style={{marginTop: 8}}>
-                                <div style={{marginBottom: 3}}>담당자, 인쿼리, 판매처, 구매처 검색</div>
+                                <div style={{marginBottom: 3}}>Po.No</div>
+                                <Input id={'searchAdminId'} value={info['searchAdminId']}
+                                       onChange={onChange}
+                                       size={'small'}/>
+                            </div>
+                            <div style={{marginTop: 8}}>
+                                <div style={{marginBottom: 3}}>만쿠담당자</div>
+                                <Input id={'searchAdminId'} value={info['searchAdminId']}
+                                       onChange={onChange}
+                                       size={'small'}/>
+                            </div>
+                            <div style={{marginTop: 8}}>
+                                <div style={{marginBottom: 3}}>등록자</div>
+                                <Input id={'searchAdminId'} value={info['searchAdminId']}
+                                       onChange={onChange}
+                                       size={'small'}/>
+                            </div>
+
+                        </Card>
+                        <Card size={'small'} style={{
+                            fontSize: 11,
+                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                        }}>
+                            <div style={{marginTop: 8}}>
+                                <div style={{marginBottom: 3}}>MAKER</div>
+                                <Input id={'searchAdminId'} value={info['searchAdminId']}
+                                       onChange={onChange}
+                                       size={'small'}/>
+                            </div>
+                            <div style={{marginTop: 8}}>
+                                <div style={{marginBottom: 3}}>MODEL</div>
+                                <Input id={'searchAdminId'} value={info['searchAdminId']}
+                                       onChange={onChange}
+                                       size={'small'}/>
+                            </div>
+                            <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 15}}>
+                                <div style={{marginTop: 8}}>
+                                    <div style={{paddingBottom: 3}}>결제여부</div>
+                                    <Select id={'searchType'}
+                                            onChange={(src) => onChange({target: {id: 'searchType', value: src}})}
+                                            size={'small'} value={info['searchType']} options={[
+                                        {value: '0', label: '미결제'},
+                                        {value: '1', label: '부분결제'},
+                                        {value: '2', label: '결제완료'}
+                                    ]} style={{width: '100%'}}>
+                                    </Select>
+                                </div>
+                                <div style={{marginTop: 8}}>
+                                    <div style={{paddingBottom: 3}}>계산서발행여부</div>
+                                    <Select id={'searchType'}
+                                            onChange={(src) => onChange({target: {id: 'searchType', value: src}})}
+                                            size={'small'} value={info['searchType']} options={[
+                                        {value: '0', label: '미발행'},
+                                        {value: '1', label: '발행'},
+                                    ]} style={{width: '100%'}}>
+                                    </Select>
+                                </div>
+                            </div>
+                        </Card>
+                        <Card size={'small'} style={{
+                            fontSize: 11,
+                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                        }}>
+                            <div style={{marginTop: 8}}>
+                                <div style={{marginBottom: 3}}>거래처명</div>
                                 <Input id={'searchText'} value={info['searchText']}
                                        onChange={onChange}
                                        size={'small'}/>
                             </div>
                             <div style={{marginTop: 8}}>
-                                <div style={{marginBottom: 3}}>담당자</div>
+                                <div style={{marginBottom: 3}}>담당자명</div>
+                                <Input id={'searchAdminId'} value={info['searchAdminId']}
+                                       onChange={onChange}
+                                       size={'small'}/>
+                            </div>
+                            <div style={{marginTop: 8}}>
+                                <div style={{marginBottom: 3}}>담당자 연락처</div>
                                 <Input id={'searchAdminId'} value={info['searchAdminId']}
                                        onChange={onChange}
                                        size={'small'}/>
                             </div>
                         </Card>
-                        <Card size={'small'} style={{
-                            fontSize: 11,
-                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                        }}>
 
-                            <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>계산서 발행 여부</div>
-                                <Select id={'searchIsTransferred'} size={'small'} defaultValue={'0'}
-                                        onChange={(src) => onChange({target: {id: 'searchIsTransferred', value: src}})}
-                                        options={[
-                                            {value: false, label: '미발행'},
-                                            {value: true, label: '발행완료'},
-                                        ]} style={{width: '100%'}}>
-                                </Select>
-                            </div>
-                            <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>송금여부</div>
-                                <Select id={'paymentTerms'} size={'small'} defaultValue={false}
-                                        onChange={(src) => onChange({target: {id: 'searchType', value: src}})}
-                                        options={[
-                                            {value: false, label: '미송금'},
-                                            {value: true, label: '송금완료'},
-                                        ]} style={{width: '100%'}}>
-                                </Select>
-                            </div>
-                        </Card>
-                        <Card size={'small'} style={{
-                            fontSize: 11,
-                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                        }}>
-                            <div>
-                                <div style={{marginBottom: 3}}>MAKER</div>
-                                <Input id={'searchMaker'} value={info['searchMaker']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-                            <div style={{marginTop: 8}}>
-                                <div style={{marginBottom: 3}}>MODEL</div>
-                                <Input id={'searchModel'} value={info['searchModel']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-                            <div style={{marginTop: 8}}>
-                                <div style={{marginBottom: 3}}>ITEM</div>
-                                <Input id={'searchItem'} value={info['searchItem']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-
-                        </Card>
 
                     </div>
 
@@ -203,15 +227,13 @@ export default function remittance_domestic({data}) {
                 </Card>
 
                 <TableGrid
-                gridRef={gridRef}
-                listType={'orderId'}
-                columns={tableOrderReadColumns}
+                    gridRef={gridRef}
+                    listType={'orderId'}
+                    columns={remittanceDomesticColumns}
                 tableData={tableData}
                 type={'read'}
                 excel={true}
-                funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
-                        <CopyOutlined/>복사
-                    </Button>
+                funcButtons={<div>
                         {/*@ts-ignored*/}
                         <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={deleteList}>
                             <CopyOutlined/>삭제
@@ -260,6 +282,6 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     });
 
     return {
-        props: {dataList: result?.data?.entity?.remittanceRequestList}
+        props: {data: result?.data?.entity?.remittanceRequestList}
     }
 })

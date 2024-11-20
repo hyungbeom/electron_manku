@@ -210,41 +210,41 @@ const TableGrid = ({
     }
 
     const handleFile = (file) => {
-
         const reader = new FileReader();
 
         reader.onload = (e) => {
             const binaryStr = e.target.result;
-            const workbook = XLSX.read(binaryStr, {type: 'binary'});
+            const workbook = XLSX.read(binaryStr, { type: 'binary' });
 
-            // 첫 번째 시트 선택
+            // 첫 번째 시트 읽기
             const worksheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[worksheetName];
 
             // 데이터를 JSON 형식으로 변환 (첫 번째 행을 컬럼 키로 사용)
-            const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
             // 데이터 첫 번째 행을 컬럼 이름으로 사용
             const headers = jsonData[0];
             const dataRows = jsonData.slice(1);
 
-
-            // 테이블 데이터 설정 (컬럼 키를 사용)
-            const tableData = dataRows.map((row, index): any => {
+            // 테이블 데이터 변환
+            const tableData = dataRows.map((row) => {
                 const rowData = {};
-                // @ts-ignored
                 row?.forEach((cell, cellIndex) => {
-                    rowData[headers[cellIndex]] = cell; // 컬럼 키를 사용하여 데이터 설정
+                    const header = headers[cellIndex];
+                    if (header !== undefined) {
+                        rowData[header] = cell ?? ''; // 값이 없으면 기본값으로 빈 문자열 설정
+                    }
                 });
-                return {headerName: index, ...rowData};
+                return rowData;
             });
 
-            setData(v => {
-                const copyData = {...v};
-                copyData[listType] = tableData;
-                return copyData
-            })
-
+            // tableData가 배열인지 확인하고 상태 업데이트
+            setData((v) => {
+                const copyData = { ...v };
+                copyData[listType] = Array.isArray(tableData) ? tableData : []; // 배열인지 확인 후 설정
+                return copyData;
+            });
         };
 
         reader.readAsBinaryString(file);
@@ -256,7 +256,10 @@ const TableGrid = ({
         multiple: false,
         showUploadList: false,
         beforeUpload: (file) => {
-            const isExcel = file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || file.type === 'application/vnd.ms-excel';
+            const isExcel = file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
+                file.type === 'application/vnd.ms-excel' ||
+                file.name.toLowerCase().endsWith('.xlsx') ||
+                file.name.toLowerCase().endsWith('.xls');
 
             if (!isExcel) {
                 message.error('엑셀 파일만 업로드 가능합니다.');
@@ -278,16 +281,7 @@ const TableGrid = ({
 
             <div style={{width: '100%', display: 'flex', justifyContent: 'space-between', margin: '10px 0'}}>
                 <div>LIST</div>
-                <div style={{float:'right'}}>
-                    {type==='write'&&
-                        <Dragger {...uploadProps}>
-                            <div>
-                                <InboxOutlined style={{ width: 20, color: 'blue' }} />
-                                <span className="ant-upload-text"> 클릭 또는 드래그하여 업로드</span>
-                            </div>
-                        </Dragger>}
                 {funcButtons}
-                </div>
             </div>
             {modalComponent}
 
@@ -307,6 +301,13 @@ const TableGrid = ({
                              loadThemeGoogleFonts: true,
                          }}
             />
+            {type==='write'&&
+                <Dragger {...uploadProps} style={{width:'50%', margin:'15px auto 0 auto'}}>
+                    <p className="ant-upload-drag-icon">
+                        <InboxOutlined/>
+                    </p>
+                    <p className="ant-upload-text">Click or drag file to this area to upload</p>
+                </Dragger>}
         </div>
     );
 };

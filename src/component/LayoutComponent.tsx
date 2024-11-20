@@ -72,10 +72,11 @@ const menuList = {
         title: '송금',
         icon: <MoneyCollectOutlined />,
         list: [
-            {title: '송금 요청', key: 'remittance_request'},
+            // {title: '국내 송금 요청', key: 'remittance_request'},
+            // {title: '해외 송금 요청', key: 'remittance_request'},
             {title: '국내 송금 관리', key: 'remittance_domestic'},
             {title: '해외 송금 관리', key: 'remittance_overseas'},
-            {title: '발주/송금 통합 관리', key: 'remittance_total'},
+            {title: '발주/송금 통합 관리', key: 'remittance_order_integrate'},
         ]
     },
     delivery: {

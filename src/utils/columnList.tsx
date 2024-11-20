@@ -1335,7 +1335,7 @@ export const tableOrderInventoryColumns = [
         headerName: 'No.',
         field: 'key',
         key: 'key',
-        
+
         render: (text) => <div style={{width: 15}} className="ellipsis-cell">{text}</div>,
         align: 'center',
     },
@@ -1343,7 +1343,7 @@ export const tableOrderInventoryColumns = [
         headerName: 'MAKER',
         field: 'maker',
         key: 'maker',
-        
+
         render: (text) => <div style={{width: 100}} className="ellipsis-cell">{text}</div>,
         align: 'center',
         minWidth: 180,
@@ -1353,7 +1353,7 @@ export const tableOrderInventoryColumns = [
         field: 'model',
         key: 'model',
         minWidth: 150,
-        
+
         render: (text) => <div style={{width: 120}} className="ellipsis-cell">{text}</div>,
         align: 'center',
     },
@@ -1361,7 +1361,7 @@ export const tableOrderInventoryColumns = [
         headerName: '위치',
         field: 'location',
         key: 'location',
-        
+
         render: (text) => <div style={{width: 80}} className="ellipsis-cell">{text}</div>,
         align: 'center',
     },
@@ -1369,7 +1369,7 @@ export const tableOrderInventoryColumns = [
         headerName: '잔량',
         field: 'remainingQuantity',
         key: 'remainingQuantity',
-        
+
         render: (text) => <div style={{width: 50}} className="ellipsis-cell">{text}</div>,
         align: 'center',
     },
@@ -1377,7 +1377,7 @@ export const tableOrderInventoryColumns = [
         headerName: '출고량',
         field: 'usageQuantity',
         key: 'usageQuantity',
-        
+
         render: (text) => <div style={{width: 50}} className="ellipsis-cell">{text}</div>,
         align: 'center',
     },
@@ -1432,6 +1432,262 @@ export const tableOrderInventoryColumns = [
         align: 'center',
     },
 ];
+
+export const remittanceDomesticColumns = [
+
+    {
+        headerName: '운송사',
+        field: 'customerName',
+        width: 70,
+        pinned:'left',
+    },
+    {
+        headerName: '문서번호',
+        field: 'documentNumberFull',
+        width: 80,
+        pinned:'left',
+    },
+    {
+        headerName: '거래처코드',
+        field: 'writtenDate',
+        width: 70,
+    },
+    {
+        headerName: '거래처명',
+        field: 'customerName',
+        minWidth: 120,
+    },
+    {
+        headerName: '발주일',
+        field: 'writtenDate',
+        width: 120,
+    },
+    {
+        headerName: '송금일',
+        field: 'writtenDate',
+        width: 120,
+    },
+    {
+        headerName: '송금액',
+        field: 'writtenDate',
+        width: 70,
+    },
+    {
+        headerName: '화폐단위',
+        field: 'unit',
+        align: 'center',
+        minWidth: 70,
+        cellEditor: 'agSelectCellEditor',
+        cellEditorParams: {
+            values: ['ea', 'set', 'm', 'feet', 'roll', 'box', 'g', 'kg', 'Pack', 'Inch', 'MOQ'],
+        },
+    },
+    {
+        headerName: '환율',
+        field: 'customerName',
+        minWidth: 70,
+    },
+    {
+        headerName: '원화',
+        field: 'customerName',
+        minWidth: 70,
+    },
+    {
+        headerName: '수수료',
+        field: 'customerName',
+        minWidth: 70,
+    },
+    {
+        headerName: '부가세',
+        field: 'customerName',
+        minWidth: 70,
+    },
+    {
+        headerName: '관세',
+        field: 'customerName',
+        minWidth: 70,
+    },
+    {
+        headerName: '운임비',
+        field: 'customerName',
+        minWidth: 70,
+    },
+    {
+        headerName: '비용 합계',
+        field: 'customerName',
+        minWidth: 80,
+    },
+    {
+        headerName: 'VAT 포함',
+        field: 'customerName',
+        minWidth: 80,
+    },
+    {
+        headerName: '지불수단',
+        field: 'unit',
+        align: 'center',
+        minWidth: 60,
+        cellEditor: 'agSelectCellEditor',
+        cellEditorParams: {
+            values: ['현금', '신용',],
+        },
+    },
+    {
+        headerName: '판매금액',
+        field: 'customerName',
+        minWidth: 80,
+    },
+    {
+        headerName: '영업이익',
+        field: 'customerName',
+        minWidth: 80,
+    },
+    {
+        headerName: 'VAT 포함',
+        field: 'customerName',
+        minWidth: 80,
+    },
+    {
+        headerName: '입고일',
+        field: 'customerName',
+        minWidth: 120,
+    },
+    {
+        headerName: '출고일',
+        field: 'customerName',
+        minWidth: 120,
+    },
+    {
+        headerName: '계산서발행일',
+        field: 'customerName',
+        minWidth: 120,
+    },
+    {
+        headerName: '결제여부',
+        field: 'unit',
+        align: 'center',
+        minWidth: 70,
+        cellEditor: 'agSelectCellEditor',
+        cellEditorParams: {
+            values: ['미결제', '부분결제', '결제완료'],
+        },
+    },
+    {
+        headerName: '선수금',
+        field: 'customerName',
+        minWidth: 80,
+    },
+    {
+        headerName: '무게',
+        field: 'customerName',
+        minWidth: 70,
+    },
+];
+
+
+//
+// export const tableOrderInventoryColumns = [
+//     {
+//         headerName: 'No.',
+//         field: 'key',
+//         key: 'key',
+//
+//         render: (text) => <div style={{width: 15}} className="ellipsis-cell">{text}</div>,
+//         align: 'center',
+//     },
+//     {
+//         headerName: 'MAKER',
+//         field: 'maker',
+//         key: 'maker',
+//
+//         render: (text) => <div style={{width: 100}} className="ellipsis-cell">{text}</div>,
+//         align: 'center',
+//         minWidth: 180,
+//     },
+//     {
+//         headerName: 'MODEL',
+//         field: 'model',
+//         key: 'model',
+//         minWidth: 150,
+//
+//         render: (text) => <div style={{width: 120}} className="ellipsis-cell">{text}</div>,
+//         align: 'center',
+//     },
+//     {
+//         headerName: '위치',
+//         field: 'location',
+//         key: 'location',
+//
+//         render: (text) => <div style={{width: 80}} className="ellipsis-cell">{text}</div>,
+//         align: 'center',
+//     },
+//     {
+//         headerName: '잔량',
+//         field: 'remainingQuantity',
+//         key: 'remainingQuantity',
+//
+//         render: (text) => <div style={{width: 50}} className="ellipsis-cell">{text}</div>,
+//         align: 'center',
+//     },
+//     {
+//         headerName: '출고량',
+//         field: 'usageQuantity',
+//         key: 'usageQuantity',
+//
+//         render: (text) => <div style={{width: 50}} className="ellipsis-cell">{text}</div>,
+//         align: 'center',
+//     },
+//     {
+//         headerName: '입고량',
+//         field: 'receivedQuantity',
+//         key: 'receivedQuantity',
+//         render: (text) => <div style={{width: 50}} className="ellipsis-cell">{text}</div>,
+//         align: 'center',
+//     },
+//     {
+//         headerName: '입고일자',
+//         field: 'receiptDate',
+//         key: 'receiptDate',
+//         render: (text) => <div className="ellipsis-cell" style={{width: 70}}>{moment(text).format('YYYY-MM-DD')}</div>,
+//         align: 'center',
+//     },
+//     {
+//         headerName: '문서번호',
+//         field: 'documentNumber',
+//         key: 'documentNumber',
+//         render: (text) => <div style={{width: 80}} className="ellipsis-cell">{text}</div>,
+//         align: 'center',
+//     },
+//     {
+//         headerName: '수입단가',
+//         field: 'importUnitPrice',
+//         key: 'importUnitPrice',
+//         render: (text) => <div style={{width: 58}} className="ellipsis-cell">{text}</div>,
+//         align: 'center',
+//     },
+//     {
+//         headerName: '화폐단위',
+//         field: 'currencyUnit',
+//         key: 'currencyUnit',
+//         render: (text) => <div style={{width: 58}} className="ellipsis-cell">{text}</div>,
+//         align: 'center',
+//     },
+//     {
+//         headerName: '단위',
+//         field: 'unit',
+//         key: 'unit',
+//         render: (text) => <div style={{width: 50}} className="ellipsis-cell">{text}</div>,
+//         align: 'center',
+//     },
+//     {
+//         headerName: '비고',
+//         field: 'remarks',
+//         key: 'remarks',
+//
+//         render: (text) => <div style={{width: 120}} className="ellipsis-cell">{text}</div>,
+//         align: 'center',
+//     },
+// ];
 
 
 export const tableOrderInventory = [
