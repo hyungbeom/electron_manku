@@ -207,7 +207,7 @@ export default function rqfWrite() {
 
     return <>
         <LayoutComponent>
-            <div style={{display: 'grid', gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`, height: '100%', columnGap: 5}}>
+            <div style={{display: 'grid', gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`, height: '100vh', columnGap: 5}}>
 
                 <SearchAgencyModal info={info} setInfo={setInfo} agencyData={agencyData} isModalOpen={isModalOpen}
                                    setIsModalOpen={setIsModalOpen}/>
@@ -404,13 +404,6 @@ export default function rqfWrite() {
                     excel={true}
                     type={'write'}
                     funcButtons={<div>
-                        {/*<Dragger {...uploadProps}>*/}
-                        {/*    <div>*/}
-                        {/*        <InboxOutlined style={{ width: 20, color: 'blue' }} />*/}
-                        {/*        <span className="ant-upload-text"> 클릭 또는 드래그하여 업로드</span>*/}
-                        {/*    </div>*/}
-                        {/*</Dragger>*/}
-                        {/*@ts-ignored*/}
                         <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
                                 onClick={addRow}>
                             <SaveOutlined/>추가

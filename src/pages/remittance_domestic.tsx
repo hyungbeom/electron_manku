@@ -263,6 +263,6 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     });
 
     return {
-        props: {dataList: result?.data?.entity?.remittanceRequestList}
+        props: {data: result?.data?.entity?.remittanceRequestList}
     }
 })

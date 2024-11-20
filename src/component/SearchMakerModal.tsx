@@ -8,7 +8,7 @@ import {getData} from "@/manage/function/api";
 import {tableTheme} from "@/utils/common";
 import Card from "antd/lib/card/Card";
 import TextArea from "antd/lib/input/TextArea";
-import {RetweetOutlined, SaveOutlined} from "@ant-design/icons";
+import {RetweetOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
 import {codeSaveInitial, makerWriteInitial} from "@/utils/initialList";
 import message from "antd/lib/message";
 
@@ -85,14 +85,15 @@ export default function SearchMakerModal({makerData, info, setInfo, isModalOpen,
         onCancel={() => setIsModalOpen({event1: false, event2: false, event3: false})}
         open={isModalOpen?.event3}
         width={'50vw'}
+        footer={null}
         onOk={() => setIsModalOpen({event1: false, event2: false, event3: false})}
     >
         <div style={{height: '80vh'}}>
-            <div style={{display:'flex', justifyContent:'space-between', gap:15, marginBottom: 10}}>
-                <Input style={{width:'100%'}} onKeyDown={handleKeyPress} id={'maker'} value={maker} onChange={(e)=>setMaker(e.target.value)}></Input>
-                <Button onClick={searchFunc}>조회</Button>
+            <div style={{marginBottom: 10}}>
+                <Input style={{width:'70%', fontSize: 11,}} onKeyDown={handleKeyPress} id={'maker'} value={maker} onChange={(e)=>setMaker(e.target.value)}></Input>
+                <Button onClick={searchFunc} size={'small'} style={{fontSize: 11, marginLeft: 10}}><SearchOutlined/>조회</Button>
             </div>
-
+            <div  style={{fontSize:11,marginBottom: 8}}>* 선택하려면 더블클릭 하세요.</div>
             <AgGridReact containerStyle={{height:'50%', width:'100%', marginBottom:10 }} theme={tableTheme}
                          onCellClicked={(e)=>{
                              setWriteData(v=>{
@@ -166,30 +167,31 @@ export default function SearchMakerModal({makerData, info, setInfo, isModalOpen,
                         </div>
                     </div>
                     <div>
-                    <div style={{marginTop: 8, fontSize: 11}}>
-                        <div style={{paddingBottom: 3}}>FTA-No</div>
-                        <Input id={'ftaNumber'} value={writeData['ftaNumber']} onChange={onChange}
-                               style={{fontSize: 11}} size={'small'}/>
-                    </div>
+                        <div style={{fontSize: 11}}>
+                            <div style={{paddingBottom: 3}}>FTA-No</div>
+                            <Input id={'ftaNumber'} value={writeData['ftaNumber']} onChange={onChange}
+                                   style={{fontSize: 11}} size={'small'}/>
+                        </div>
 
-                    <div style={{fontSize: 11}}>
-                        <div style={{paddingBottom: 3}}>지시사항</div>
-                        <TextArea id={'instructions'} value={writeData['instructions']} onChange={onChange}
-                                  style={{fontSize: 11, height: '79%'}} size={'small'}/>
-                    </div>
+                        <div style={{fontSize: 11}}>
+                            <div style={{paddingBottom: 3}}>지시사항</div>
+                            <TextArea id={'instructions'} value={writeData['instructions']} onChange={onChange}
+                                      style={{fontSize: 11, height: 80}} size={'small'}/>
+                        </div>
+                        <div style={{width: '100%', textAlign: 'right', marginTop:20}}>
+                            <Button type={'primary'} size={'small'} style={{fontSize: 11, marginRight: 8}}
+                                    onClick={saveFunc}><SaveOutlined/>{writeData['makerId'] ? '수정' : '등록'}</Button>
+
+                            {/*@ts-ignored*/}
+                            <Button type={'danger'} size={'small'} style={{fontSize: 11,}}
+                                    onClick={() => setWriteData(makerWriteInitial)}><RetweetOutlined/>초기화</Button>
+
+                        </div>
                     </div>
 
                 </div>
 
-                <div style={{width: '100%', textAlign: 'right'}}>
-                    <Button type={'primary'} size={'small'} style={{fontSize: 11, marginRight: 8}}
-                            onClick={saveFunc}><SaveOutlined/>{writeData['makerId'] ? '수정' : '등록'}</Button>
 
-                    {/*@ts-ignored*/}
-                    <Button type={'danger'} size={'small'} style={{fontSize: 11,}}
-                            onClick={() => setWriteData(makerWriteInitial)}><RetweetOutlined/>초기화</Button>
-
-                </div>
             </Card>
         </div>
          </Modal>

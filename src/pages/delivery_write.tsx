@@ -34,9 +34,10 @@ import message from "antd/lib/message";
 import {useRouter} from "next/router";
 import TextArea from "antd/lib/input/TextArea";
 import Select from "antd/lib/select";
+import Radio from "antd/lib/radio";
 
 
-export default function OrderInventoryWrite() {
+export default function delivery_write() {
 
     const [info, setInfo] = useState(tableOrderInventoryInitial)
 
@@ -88,7 +89,18 @@ export default function OrderInventoryWrite() {
                             fontSize: 11,
                             boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
                         }}>
+
                             <div>
+                                <div style={{marginTop: 6}}>
+                                    <Radio.Group onChange={e => setInfo(v => {
+                                        return {...v, searchType: e.target.value}
+                                    })} defaultValue={2} id={'searchType'}
+                                                 value={info['searchType']}>
+                                        <Radio value={1}>대한통운</Radio>
+                                        <Radio value={2}>대신택배</Radio>
+                                        <Radio value={3}>퀵/직납/대리점</Radio>
+                                    </Radio.Group>
+                                </div>
                                 <div style={{paddingBottom: 3}}>작성일자</div>
                                 {/*@ts-ignore*/}
                                 <DatePicker value={info['receiptDate']}
