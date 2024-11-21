@@ -184,7 +184,7 @@ export default function rqfUpdate({dataInfo}) {
             <div style={{
                 display: 'grid',
                 gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`,
-                height: '100%',
+                height: '100vh',
                 columnGap: 5
             }}>
 

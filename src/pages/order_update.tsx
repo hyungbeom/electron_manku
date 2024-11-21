@@ -99,6 +99,31 @@ export default function OrderWriter({dataInfo}) {
     }
 }
 
+    async function printTransaction() {
+        if (!info['orderDetailList'].length) {
+            message.warn('하위 데이터 1개 이상이여야 합니다')
+        } else {
+            const copyData = {...info}
+            copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
+            copyData['delivery'] = moment(info['delivery']).format('YYYY-MM-DD');
+
+            // console.log(copyData, 'copyData~~~~~~~~~~~')
+            const result = await getData.post('customer/getCustomerListForOrder', {
+                customerName:info['customerName']
+            }).then(v => {
+                if(v.data.code === 1){
+                    message.success('저장되었습니다')
+                    setInfo(rfqWriteInitial);
+                    deleteList()
+                    window.location.href = '/order_read'
+                } else {
+                    message.error('저장에 실패하였습니다.')
+                }
+            });
+        }
+    }
+
+
     function deleteList() {
 
         const api = gridRef.current.api;
@@ -187,7 +212,7 @@ export default function OrderWriter({dataInfo}) {
 
     return <>
         <LayoutComponent>
-            <div style={{display: 'grid', gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`, height: '100%', columnGap: 5}}>
+            <div style={{display: 'grid', gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`, height: '100vh', columnGap: 5}}>
 
                 <Card title={'발주서 수정'} style={{fontSize: 12, border: '1px solid lightGray'}} extra={<span style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>setMini(v => !v)}> {!mini ? <UpCircleFilled/> : <DownCircleFilled/>}</span>} >
                     {mini ? <div>
@@ -342,7 +367,8 @@ export default function OrderWriter({dataInfo}) {
                         </Card>
 
                         <div style={{paddingTop: 10}}>
-
+                            <Button type={'primary'} size={'small'} style={{marginRight: 8}}
+                                    onClick={saveFunc}><SaveOutlined/>거래명세표 출력</Button>
                             <Button type={'primary'} size={'small'} style={{marginRight: 8}}
                                     onClick={saveFunc}><SaveOutlined/>수정</Button>
                             {/*@ts-ignored*/}

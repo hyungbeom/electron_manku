@@ -173,7 +173,7 @@ export default function rfqRead({dataList}) {
 
     return <>
         <LayoutComponent>
-            <div style={{display: 'grid', gridTemplateRows: '250px 1fr', height: '100%', gridColumnGap: 5}}>
+            <div style={{display: 'grid', gridTemplateRows: '250px 1fr', height: '100vh', gridColumnGap: 5}}>
                 <Card title={'메일전송'} style={{fontSize: 12, border: '1px solid lightGray'}} >
                     <Modal okText={'메일 전송'} cancelText={'취소'} onOk={sendMail} title={<div style={{ lineHeight: 2.5, fontWeight:550 }}>메일전송</div>} open={isModalOpen} onCancel={()=>setIsModalOpen(false)} >
 

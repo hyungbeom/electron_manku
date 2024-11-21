@@ -134,7 +134,7 @@ export default function CodeExchangeRead({dataList}) {
 
     return <>
         <LayoutComponent>
-            <div style={{display: 'grid', gridTemplateColumns: '200px 1fr', height: '100%', gridColumnGap: 5}}>
+            <div style={{display: 'grid', gridTemplateColumns: '200px 1fr', height: '100vh', gridColumnGap: 5}}>
                 <Card title={'환율 조회'} style={{fontSize: 12, border: '1px solid lightGray'}}>
                 </Card>
 
