@@ -4,18 +4,17 @@ import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
 import {
     CopyOutlined, DownCircleFilled, DownloadOutlined, EditOutlined,
-    RetweetOutlined,
-    SaveOutlined,
-    UpCircleFilled
+    SaveOutlined, UpCircleFilled
 } from "@ant-design/icons";
 import {
-    searchAgencyCodeColumn,
-    searchCustomerColumn,
     tableOrderWriteColumn,
 } from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {orderWriteInitial, rfqWriteInitial, subRfqWriteInitial, tableOrderWriteInitial} from "@/utils/initialList";
-import {subOrderWriteInfo, subRfqWriteInfo} from "@/utils/modalDataList";
+import {
+    orderWriteInitial,
+    printEstimateInitial,
+    rfqWriteInitial,
+} from "@/utils/initialList";
 import moment from "moment";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
@@ -26,14 +25,10 @@ import {setUserInfo} from "@/store/user/userSlice";
 import Select from "antd/lib/select";
 import * as XLSX from "xlsx";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
-import Modal from "antd/lib/modal/Modal";
-import Table from "antd/lib/table";
-import TableModal from "@/utils/TableModal";
 import {useRouter} from "next/router";
 import TableGrid from "@/component/tableGrid";
-import SearchAgendaModal from "@/component/SearchAgencyModal";
-import SearchCustomerModal from "@/component/SearchCustomerModal";
-import TextArea from "antd/lib/input/TextArea";
+import PrintTransactionModal from "@/utils/printTransaction";
+// import printTransaction from "@/utils/printTransaction";
 
 
 export default function OrderWriter({dataInfo}) {
@@ -43,7 +38,8 @@ export default function OrderWriter({dataInfo}) {
     const userInfo = useAppSelector((state) => state.user);
     const [info, setInfo] = useState<any>(orderWriteInitial)
     const [mini, setMini] = useState(true);
-
+    const [customerData, setCustomerData] = useState(printEstimateInitial)
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
 
@@ -99,29 +95,25 @@ export default function OrderWriter({dataInfo}) {
     }
 }
 
-    async function printTransaction() {
-        if (!info['orderDetailList'].length) {
-            message.warn('하위 데이터 1개 이상이여야 합니다')
-        } else {
-            const copyData = {...info}
-            copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
-            copyData['delivery'] = moment(info['delivery']).format('YYYY-MM-DD');
+    async function printTransactionStatement () {
+        await searchCustomer();
+        setIsModalOpen(true)
+    }
 
-            // console.log(copyData, 'copyData~~~~~~~~~~~')
-            const result = await getData.post('customer/getCustomerListForOrder', {
-                customerName:info['customerName']
-            }).then(v => {
-                if(v.data.code === 1){
-                    message.success('저장되었습니다')
-                    setInfo(rfqWriteInitial);
-                    deleteList()
-                    window.location.href = '/order_read'
-                } else {
-                    message.error('저장에 실패하였습니다.')
-                }
-            });
+    async function searchCustomer () {
+
+        const result = await getData.post('customer/getCustomerListForOrder', {
+            customerName: info['customerName']
+        })
+
+        if (result?.data?.code === 1) {
+
+            if(result?.data?.entity?.customerList.length) {
+                setCustomerData(result?.data?.entity?.customerList?.[0])
+            }
         }
     }
+
 
 
     function deleteList() {
@@ -213,7 +205,8 @@ export default function OrderWriter({dataInfo}) {
     return <>
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`, height: '100vh', columnGap: 5}}>
-
+                {/*@ts-ignore*/}
+                <PrintTransactionModal data={info} customerData={customerData} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
                 <Card title={'발주서 수정'} style={{fontSize: 12, border: '1px solid lightGray'}} extra={<span style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>setMini(v => !v)}> {!mini ? <UpCircleFilled/> : <DownCircleFilled/>}</span>} >
                     {mini ? <div>
                     <Card size={'small'} title={'INQUIRY & PO no'}
@@ -368,7 +361,7 @@ export default function OrderWriter({dataInfo}) {
 
                         <div style={{paddingTop: 10}}>
                             <Button type={'primary'} size={'small'} style={{marginRight: 8}}
-                                    onClick={saveFunc}><SaveOutlined/>거래명세표 출력</Button>
+                                    onClick={printTransactionStatement}><SaveOutlined/>거래명세표 출력</Button>
                             <Button type={'primary'} size={'small'} style={{marginRight: 8}}
                                     onClick={saveFunc}><SaveOutlined/>수정</Button>
                             {/*@ts-ignored*/}

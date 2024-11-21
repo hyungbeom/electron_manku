@@ -625,3 +625,19 @@ export const codeOverseasAgencyWriteInitial = {
     "overseasAgencyManagerList": []
 }
 
+export const printEstimateInitial = {
+    "customerId": null,
+    "customerCode": "",
+    "customerName": "",
+    "customerRegion": "",
+    "customerTel": "",
+    "address": "",
+    "businessRegistrationNumber": "",
+
+    "representative": "",
+    "businessType": "",
+    "businessItem": "",
+    "manager": null,
+
+    "customerCategory": ""
+}
