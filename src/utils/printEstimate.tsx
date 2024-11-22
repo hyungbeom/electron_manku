@@ -29,7 +29,7 @@ export default function PrintEstimate({ data, isModalOpen, userInfo, setIsModalO
         const pdfHeight = pdf.internal.pageSize.getHeight();
 
         pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-        pdf.save(`${data.documentNumberFull}_거래명세표.pdf`);
+        pdf.save(`${data.documentNumberFull}_견적서.pdf`);
     };
 
     return (
@@ -49,7 +49,7 @@ export default function PrintEstimate({ data, isModalOpen, userInfo, setIsModalO
                 PDF 다운로드
             </button></div>}
             onCancel={() => setIsModalOpen(false)}
-            open={isModalOpen}
+            open={isModalOpen?.event3}
             width={'640px'}
             footer={null}
             onOk={() => setIsModalOpen(false)}

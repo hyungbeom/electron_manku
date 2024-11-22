@@ -174,7 +174,6 @@ export default function EstimateWrite({dataInfo}) {
     };
 
     async function printEstimate () {
-        // await searchCustomer();
         setIsModalOpen({event1: false, event2: false, event3: true})
     }
 
