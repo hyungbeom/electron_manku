@@ -80,7 +80,7 @@ export default function EstimateWrite({dataInfo}) {
             await getData.post('estimate/updateEstimate', copyData).then(v => {
                 if (v.data.code === 1) {
                     message.success('저장되었습니다.')
-                    setInfo(rfqWriteInitial);
+                    setInfo(estimateWriteInitial);
                     deleteList()
                     window.location.href = '/estimate_read'
                 } else {

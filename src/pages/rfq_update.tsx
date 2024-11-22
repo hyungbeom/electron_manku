@@ -58,7 +58,6 @@ export default function rqfUpdate({dataInfo}) {
 
     }, [])
 
-
     function onChange(e) {
 
         let bowl = {}
@@ -124,7 +123,7 @@ export default function rqfUpdate({dataInfo}) {
             "net": 0,            // NET/P
             "deliveryDate": "",   // 납기
             "content": "미회신",         // 내용
-            "replyDate": "",  // 회신일
+            "replyDate": moment().format("YYYY-MM-DD"),  // 회신일
             "remarks": "",           // 비고
             "serialNumber": 1           // 견적의뢰 내역 순서 (1부터 시작)
         })
@@ -353,7 +352,7 @@ export default function rqfUpdate({dataInfo}) {
                             <div style={{paddingTop: 10}}>
 
                                 <Button type={'primary'} size={'small'} style={{marginRight: 8}}
-                                        onClick={saveFunc}><SaveOutlined/>저장</Button>
+                                        onClick={saveFunc}><SaveOutlined/>수정</Button>
 
                                 {/*@ts-ignored*/}
                                 <Button type={'danger'} size={'small'}
