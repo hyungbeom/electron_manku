@@ -1,22 +1,57 @@
-import React from "react";
+import React, {useRef} from "react";
 import Modal from "antd/lib/modal/Modal";
+import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas";
 
 export default function PrintTransactionModal({ data, customerData, isModalOpen, setIsModalOpen }) {
     const { orderDetailList } = data;
+    const pdfRef = useRef();
 
     let totalAmount = 0;
     let totalVat = 0;
 
+    const today = new Date();
+    const formattedDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+
+    function formattedNumber(number) {
+        return number.toLocaleString();
+    }
+
+    const handleDownloadPDF = async () => {
+        const element = pdfRef.current;
+        const canvas = await html2canvas(element, { scale: 2 });
+        const imgData = canvas.toDataURL("image/png");
+
+        const pdf = new jsPDF("portrait", "px", "a4");
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+
+        pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+        pdf.save(`${data.documentNumberFull}_거래명세표.pdf`);
+    };
+
     return (
         <Modal
-            title={'거래명세표 출력'}
+            title={<div style={{width:'100%', display:"flex", justifyContent:'space-between', alignItems:'center'}}><div>거래명세표 출력</div>
+            <button onClick={handleDownloadPDF} style={{
+                padding: "5px 10px",
+                backgroundColor: "#1890ff",
+                color: "#fff",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer",
+                fontSize:11,
+                marginRight:20
+            }}>
+                PDF 다운로드
+            </button></div>}
             onCancel={() => setIsModalOpen(false)}
             open={isModalOpen}
             width={'640px'}
             footer={null}
             onOk={() => setIsModalOpen(false)}
         >
-            <div style={{width: "595px", height: "842px", padding: "40px 24px"}}>
+            <div ref={pdfRef} style={{width: "595px", height: "842px", padding: "40px 24px"}}>
                 {/* Header */}
                 <div style={{fontSize: "24px", textAlign: "center"}}>
                     거 래 명 세 표
@@ -28,7 +63,7 @@ export default function PrintTransactionModal({ data, customerData, isModalOpen,
                             textAlign: "center",
                         }}
                     >
-          거 래 일 자 : 2024-11-21
+          거 래 일 자 : {formattedDate}
         </span>
                 </div>
                 <div style={{textAlign: "right", marginTop: "15px", fontSize: "11px"}}>
@@ -42,7 +77,7 @@ export default function PrintTransactionModal({ data, customerData, isModalOpen,
                     }}
                 >
                     {/* 공급자 정보 */}
-                    <div style={{display: "grid", gridTemplateColumns: "0.5fr 2fr 10fr"}}>
+                    <div style={{display: "grid", gridTemplateColumns: "0.5fr 2.2fr 10fr"}}>
                         <div
                             style={{
                                 fontSize: "14px",
@@ -152,12 +187,13 @@ export default function PrintTransactionModal({ data, customerData, isModalOpen,
                                 style={{
                                     fontSize: "11px",
                                     borderBottom: "1px solid #A3A3A3",
-                                    lineHeight: "1.1",
                                     whiteSpace: "pre-wrap",
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    lineHeight: 1.1
                                 }}
                             >
                                 서울 송파구 충민로 52, 2층 비211, 비212호
-                                <br/>
                                 (문정동, 가든파이브웍스)
                             </div>
                             <div
@@ -166,7 +202,7 @@ export default function PrintTransactionModal({ data, customerData, isModalOpen,
                                     borderBottom: "1px solid #A3A3A3",
                                     lineHeight: "2.2",
                                     display: "grid",
-                                    gridTemplateColumns: "2.2fr 0.7fr 2.8fr",
+                                    gridTemplateColumns: "2.2fr 0.8fr 2.8fr",
                                 }}
                             >
                                 <div style={{borderRight: "1px solid #A3A3A3"}}>도매, 도소매</div>
@@ -178,7 +214,7 @@ export default function PrintTransactionModal({ data, customerData, isModalOpen,
                                     fontSize: "11px",
                                     lineHeight: "2.2",
                                     display: "grid",
-                                    gridTemplateColumns: "2.2fr 1.2fr 2.3fr",
+                                    gridTemplateColumns: "2.2fr 1.3fr 2.3fr",
                                 }}
                             >
                                 <div style={{borderRight: "1px solid #A3A3A3"}}>신단비</div>
@@ -189,7 +225,7 @@ export default function PrintTransactionModal({ data, customerData, isModalOpen,
                     </div>
 
                     {/* 공급받는자 정보 */}
-                    <div style={{display: "grid", gridTemplateColumns: "0.5fr 2fr 10fr"}}>
+                    <div style={{display: "grid", gridTemplateColumns: "0.5fr 2.2fr 10fr"}}>
                         <div
                             style={{
                                 fontSize: "14px",
@@ -300,7 +336,10 @@ export default function PrintTransactionModal({ data, customerData, isModalOpen,
                                 style={{
                                     fontSize: "11px",
                                     borderBottom: "1px solid #A3A3A3",
-                                    lineHeight: "1.1",
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    lineHeight: 1.1,
+                                    justifyContent: 'center',
                                     whiteSpace: "pre-wrap",
                                 }}
                             >
@@ -312,7 +351,7 @@ export default function PrintTransactionModal({ data, customerData, isModalOpen,
                                     borderBottom: "1px solid #A3A3A3",
                                     lineHeight: "2.2",
                                     display: "grid",
-                                    gridTemplateColumns: "2.2fr 0.7fr 2.8fr",
+                                    gridTemplateColumns: "2.2fr 0.8fr 2.8fr",
                                 }}
                             >
                                 <div style={{borderRight: "1px solid #A3A3A3"}}>
@@ -326,7 +365,7 @@ export default function PrintTransactionModal({ data, customerData, isModalOpen,
                                     fontSize: "11px",
                                     lineHeight: "2.2",
                                     display: "grid",
-                                    gridTemplateColumns: "2.2fr 1.2fr 2.3fr",
+                                    gridTemplateColumns: "2.2fr 1.3fr 2.3fr",
                                 }}
                             >
                                 <div style={{borderRight: "1px solid #A3A3A3"}}>
@@ -449,67 +488,145 @@ export default function PrintTransactionModal({ data, customerData, isModalOpen,
                                     "0.3fr 1fr 3fr 0.6fr 0.5fr 0.9fr 0.9fr 0.9fr 1.2fr",
                             }}
                         >
-                            <div
-                                style={{
-                                    borderRight: "1px solid #A3A3A3",
-                                    borderBottom: "1px solid #A3A3A3",
-                                    padding: "3px 0",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                }}
-                            >
+                            <div style={{
+                                borderRight: "1px solid #A3A3A3",
+                                borderBottom: "1px solid #A3A3A3",
+                                padding: "3px 0",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center"
+                            }}>
                                 {i + 1}
                             </div>
-                            <div
-                                style={{
-                                    borderRight: "1px solid #A3A3A3",
-                                    borderBottom: "1px solid #A3A3A3",
-                                    padding: "3px 0",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                }}
-                            >
+                            <div style={{
+                                borderRight: "1px solid #A3A3A3",
+                                borderBottom: "1px solid #A3A3A3",
+                                padding: "3px 0",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center"
+                            }}>
+                                {formattedDate}
+                            </div>
+                            <div style={{
+                                borderRight: "1px solid #A3A3A3",
+                                borderBottom: "1px solid #A3A3A3",
+                                padding: "3px 3px",
+                                display: "flex",
+                                alignItems: "center",
+                                whiteSpace: "pre-wrap"
+                            }}>
                                 {model.model}
                             </div>
-                            <div
-                                style={{
-                                    borderRight: "1px solid #A3A3A3",
-                                    borderBottom: "1px solid #A3A3A3",
-                                    padding: "3px 3px",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    whiteSpace: "pre-wrap",
-                                }}
-                            >
-                                {model.model}
+                            <div style={{
+                                borderRight: "1px solid #A3A3A3",
+                                borderBottom: "1px solid #A3A3A3",
+                                padding: "3px 3px",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center"
+                            }}>
+                                {model.unit}
                             </div>
-                            {/* Rest of the columns */}
+                            <div style={{
+                                borderRight: "1px solid #A3A3A3",
+                                borderBottom: "1px solid #A3A3A3",
+                                padding: "3px 3px",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center"
+                            }}>
+                                {formattedNumber(model.quantity)}
+                            </div>
+                            <div style={{
+                                borderRight: "1px solid #A3A3A3",
+                                borderBottom: "1px solid #A3A3A3",
+                                padding: "3px 3px",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "flex-end"
+                            }}>
+                                {formattedNumber(model.unitPrice)}
+                            </div>
+                            <div style={{
+                                borderRight: "1px solid #A3A3A3",
+                                borderBottom: "1px solid #A3A3A3",
+                                padding: "3px 3px",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "flex-end"
+                            }}>
+                                {formattedNumber(model.amount)}
+                            </div>
+                            <div style={{
+                                borderRight: "1px solid #A3A3A3",
+                                borderBottom: "1px solid #A3A3A3",
+                                padding: "3px 3px",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "flex-end"
+                            }}>
+                                {formattedNumber(model.amount * 0.1)}
+                            </div>
+                            <div style={{
+                                textAlign: "left",
+                                padding: "3px 3px",
+                                borderBottom: "1px solid #A3A3A3",
+                                whiteSpace: "pre-wrap",
+                                display: "flex",
+                                alignItems: "center"
+                            }}>
+                                {data.remarks}
+                            </div>
+
                         </div>
                     );
                 })}
-            </div>
+                    </div>
 
-            {/* 합계 */}
-            <div
-                style={{
-                    fontSize: "11px",
-                    display: "grid",
-                    gridTemplateColumns: "0.6fr 1fr 0.4fr 1fr 0.5fr 1fr 0.5fr 1fr 0.5fr 1fr",
-                }}
-            >
-                <div
-                    style={{
-                        borderRight: "1px solid #A3A3A3",
-                        borderBottom: "1px solid #A3A3A3",
-                        padding: "8px 0",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}
-                >
-                    공급가액
+                    {/* 합계 */}
+                    <div
+                        style={{
+                            fontSize: "11px",
+                            display: "grid",
+                            gridTemplateColumns: "0.7fr 1fr 0.4fr 1fr 0.4fr 1fr 0.5fr 1fr 0.5fr 1fr",
+                        }}
+                    >
+                        <div
+                            style={{
+                                borderRight: "1px solid #A3A3A3",
+                                borderBottom: "1px solid #A3A3A3",
+                                padding: "8px 0",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                            }}
+                        >
+                            공급가액
+                        </div>
+                        <div
+                            style={{
+                                borderRight: "1px solid #A3A3A3",
+                                borderBottom: "1px solid #A3A3A3",
+                                padding: "8px 3px",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "end",
+                            }}
+                        >
+                            {formattedNumber(totalAmount)}
+                        </div>
+                        <div
+                            style={{
+                                borderRight: "1px solid #A3A3A3",
+                                borderBottom: "1px solid #A3A3A3",
+                                padding: "8px 0",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                            }}
+                        >
+                        세액
                 </div>
                 <div
                     style={{
@@ -521,31 +638,7 @@ export default function PrintTransactionModal({ data, customerData, isModalOpen,
                         justifyContent: "end",
                     }}
                 >
-                    {totalAmount}
-                </div>
-                <div
-                    style={{
-                        borderRight: "1px solid #A3A3A3",
-                        borderBottom: "1px solid #A3A3A3",
-                        padding: "8px 0",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}
-                >
-                    세액
-                </div>
-                <div
-                    style={{
-                        borderRight: "1px solid #A3A3A3",
-                        borderBottom: "1px solid #A3A3A3",
-                        padding: "8px 3px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "end",
-                    }}
-                >
-                    {totalVat}
+                    {formattedNumber(totalVat)}
                 </div>
                 <div
                     style={{
@@ -569,7 +662,7 @@ export default function PrintTransactionModal({ data, customerData, isModalOpen,
                         justifyContent: "end",
                     }}
                 >
-                    {totalAmount + totalVat}
+                    {formattedNumber(totalAmount + totalVat)}
                 </div>
                 <div
                     style={{
@@ -617,7 +710,7 @@ export default function PrintTransactionModal({ data, customerData, isModalOpen,
                         justifyContent: "center",
                     }}
                 >
-                    {/* 여기에 인수자 값을 삽입할 수 있습니다. */}
+                    {data.estimateManager}
                 </div>
             </div>
                 </div>

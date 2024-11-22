@@ -41,6 +41,7 @@ export default function OrderWriter({dataInfo}) {
     const [customerData, setCustomerData] = useState(printEstimateInitial)
     const [isModalOpen, setIsModalOpen] = useState(false);
 
+
     useEffect(() => {
 
         let copyData: any = {...orderWriteInitial}
@@ -60,6 +61,10 @@ export default function OrderWriter({dataInfo}) {
 
         setInfo(copyData);
     }, [dataInfo, router])
+
+    useEffect(() => {
+    }, [customerData])
+
 
 
 
@@ -106,14 +111,16 @@ export default function OrderWriter({dataInfo}) {
             customerName: info['customerName']
         })
 
+        // console.log(result?.data?.entity?.customerList?.[0], 'result')
+
         if (result?.data?.code === 1) {
 
             if(result?.data?.entity?.customerList.length) {
                 setCustomerData(result?.data?.entity?.customerList?.[0])
             }
         }
-    }
 
+    }
 
 
     function deleteList() {
@@ -383,6 +390,7 @@ export default function OrderWriter({dataInfo}) {
                     listDetailType={'orderDetailList'}
                     setInfo={setInfo}
                     excel={true}
+                    type={'write'}
                     funcButtons={<div>
                         {/*@ts-ignored*/}
                         <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}

@@ -303,14 +303,12 @@ export const tableOrderWriteColumn = [
     {
         headerName: 'Model',
         field: 'model',
-        key: 'model',
         minWidth: 150,
         editable: true,
     },
     {
         headerName: '단위',
         field: 'unit',
-        key: 'unit',
         editable: true,
         cellEditor: 'agSelectCellEditor',
         cellEditorParams: {
@@ -321,7 +319,6 @@ export const tableOrderWriteColumn = [
         headerName: 'CURR',
         field: 'currency',
         key: 'currency',
-        editable: true,
         cellEditor: 'agSelectCellEditor',
         cellEditorParams: {
             values: ['KRW', 'EUR', 'JPY', 'USD', 'GBP',],
@@ -330,37 +327,30 @@ export const tableOrderWriteColumn = [
     {
         headerName: 'NET/P',
         field: 'net',
-        key: 'net',
         editable: true,
     },
     {
         headerName: '주문수량',
         field: 'quantity',
-        key: 'quantity',
         editable: true,
     },
     {
         headerName: '입고',
         field: 'receivedQuantity',
-        key: 'receivedQuantity',
         editable: true,
     },
     {
         headerName: '미입고',
         field: 'unreceivedQuantity',
-        key: 'unreceivedQuantity',
-        editable: true,
     },
     {
         headerName: '단가',
         field: 'unitPrice',
-        key: 'unitPrice',
         editable: true,
     },
     {
         headerName: 'Amount',
         field: 'amount',
-        key: 'amount',
         editable: true,
     },
 ];

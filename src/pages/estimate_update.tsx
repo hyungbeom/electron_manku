@@ -28,6 +28,9 @@ import TableGrid from "@/component/tableGrid";
 import {useRouter} from "next/router";
 import SearchAgendaModal from "@/component/SearchAgencyModal";
 import SearchCustomerModal from "@/component/SearchCustomerModal";
+import PrintTransactionModal from "@/utils/printTransaction";
+import printEstimate from "@/utils/printEstimate";
+import PrintEstimate from "@/utils/printEstimate";
 
 
 export default function EstimateWrite({dataInfo}) {
@@ -37,7 +40,7 @@ export default function EstimateWrite({dataInfo}) {
     const userInfo = useAppSelector((state) => state.user);
     const [info, setInfo] = useState<any>(estimateWriteInitial)
     const [mini, setMini] = useState(true);
-    const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
+    const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false, event3: false});
     const [agencyData, setAgencyData] = useState([]);
     const [customerData, setCustomerData] = useState([]);
 
@@ -138,7 +141,7 @@ export default function EstimateWrite({dataInfo}) {
                 })
                 if (result.data.entity.agencyList.length > 1) {
                     setAgencyData(result.data.entity.agencyList)
-                    setIsModalOpen({event1: true, event2: false})
+                    setIsModalOpen({event1: true, event2: false, event3: false})
                 } else if (!!result.data.entity.agencyList.length) {
                     const {agencyCode, agencyName} = result.data.entity.agencyList[0]
 
@@ -157,7 +160,7 @@ export default function EstimateWrite({dataInfo}) {
                 })
                 if(result.data.entity.customerList.length > 1){
                     setCustomerData(result.data.entity.customerList)
-                    setIsModalOpen({event1: false, event2: true})
+                    setIsModalOpen({event1: false, event2: true, event3: false})
                 } else if (!!result.data.entity.customerList.length) {
                     const {customerName, managerName, directTel, faxNumber} = result.data.entity.customerList[0]
 
@@ -170,6 +173,10 @@ export default function EstimateWrite({dataInfo}) {
         }
     };
 
+    async function printEstimate () {
+        // await searchCustomer();
+        setIsModalOpen({event1: false, event2: false, event3: true})
+    }
 
     const downloadExcel = () => {
 
@@ -221,7 +228,7 @@ export default function EstimateWrite({dataInfo}) {
     return <>
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`, height: '100vh', gridColumnGap: 5}}>
-
+                <PrintEstimate data={info} isModalOpen={isModalOpen} userInfo={userInfo} setIsModalOpen={setIsModalOpen}/>
                 <SearchAgendaModal info={info} setInfo={setInfo} agencyData={agencyData} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
                 <SearchCustomerModal info={info} setInfo={setInfo} customerData={customerData} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
                 <Card title={'견적서 수정'} style={{fontSize: 12, border: '1px solid lightGray'}} extra={<span style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>setMini(v => !v)}> {!mini ? <UpCircleFilled/> : <DownCircleFilled/>}</span>} >
@@ -272,7 +279,7 @@ export default function EstimateWrite({dataInfo}) {
                                        suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
                                            (e) => {
                                                e.stopPropagation();
-                                               setIsModalOpen({event1: true, event2: false})
+                                               setIsModalOpen({event1: true, event2: false, event3: false})
                                            }
                                        }/>}/>
                             </div>
@@ -296,7 +303,7 @@ export default function EstimateWrite({dataInfo}) {
                                        size={'small'} suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
                                     (e) => {
                                         e.stopPropagation();
-                                        setIsModalOpen({event1: false, event2: true})
+                                        setIsModalOpen({event1: false, event2: true, event3: false})
                                     }
                                 }/>}/>
                             </div>
@@ -385,7 +392,8 @@ export default function EstimateWrite({dataInfo}) {
 
                     </Card>
                         <div style={{paddingTop: 10}}>
-
+                            <Button type={'primary'} size={'small'} style={{marginRight: 8}}
+                                    onClick={printEstimate}><SaveOutlined/>거래명세표 출력</Button>
                             <Button type={'primary'} size={'small'} style={{marginRight: 8}}
                                     onClick={saveFunc}><SaveOutlined/>수정</Button>
                             {/*@ts-ignored*/}
