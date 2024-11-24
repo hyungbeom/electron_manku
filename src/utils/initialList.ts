@@ -48,16 +48,14 @@ export const tableEstimateWriteInitial = {
 
 
 export const rfqWriteInitial = {
-    "writtenDate": "",        // 작성일
+    "writtenDate": null,        // 작성일
     "documentNumberFull": "", // INQUIRY No.
+    // 대리점 > 대리점 조회 API 에서 조회한 데이터
     "agencyCode": "",                // 대리점코드
     "agencyName": "",       // 대리점명
 
-    "customerCode": "",                // 거래처코드
-    "customerName": "",  // 거래처명(상호명)
-    "phoneNumber": "",              // 전화번호
-    "faxNumber": "",       // 팩스/이메일
-    "managerName": "",       // 담당자명
+    // 거래처 관리 > 거래처 조회(견적용) API 에서 '상호명' 을 넣고 조회한 목록에서 정보 가져옴.
+    "customerInfoList": [],
 
     "maker": "",                   // MAKER
     "item": "",                     // ITEM
@@ -69,10 +67,11 @@ export const rfqWriteInitial = {
     "rfqNo": "",                        // RFQ NO.
     "projectTitle": "",                 // 프로젝트 제목
     "endUser": "",                      // End User
-    "dueDate": "",                      // 마감일자
+    "dueDate": null,                      // 마감일자
 
     "agencyManagerId": 1,               // 대리점 담당자 Id (메일 전송용)
-    "agencyType": "",                // 대리점 타입
+    "agencyType": "국내",                // 대리점 타입
+
     "adminId": 1,                       // 만쿠 관리자 Id
 
     "estimateRequestDetailList": []

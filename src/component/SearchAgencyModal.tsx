@@ -7,7 +7,7 @@ import React, {useEffect, useState} from "react";
 import {getData} from "@/manage/function/api";
 import {tableTheme} from "@/utils/common";
 
-export default function SearchAgencyModal({agencyData, info, setInfo, isModalOpen, setIsModalOpen}){
+export default function SearchAgencyModal({agencyData, info, setInfo, isModalOpen, setIsModalOpen, generateNewDocumentNumber=undefined, newDocumentNum=null}){
     const [data, setData] = useState(agencyData)
     const [code, setCode] = useState(info['agencyCode']);
 
@@ -18,6 +18,13 @@ export default function SearchAgencyModal({agencyData, info, setInfo, isModalOpe
     useEffect(() => {
         setData(agencyData);
     }, [agencyData])
+
+    useEffect(() => {
+        setInfo((v)=>({
+            ...v, documentNumberFull:newDocumentNum
+        }))
+    }, [newDocumentNum]);
+
 
     async function searchFunc() {
         const result = await getData.post('agency/getAgencyListForEstimate', {
@@ -58,6 +65,9 @@ export default function SearchAgencyModal({agencyData, info, setInfo, isModalOpe
                                  return {
                                      ...v, ... e.data
                                  }})
+
+                             console.log(e.data.agencyCode, 'e.data.agencyCode')
+                             generateNewDocumentNumber({ agencyCode: e.data.agencyCode})
                              setIsModalOpen({event1: false, event2: false, event3: false})
                          }}
                          rowData={data}

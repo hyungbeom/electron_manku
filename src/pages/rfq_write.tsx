@@ -6,7 +6,7 @@ import TextArea from "antd/lib/input/TextArea";
 import {
     CopyOutlined,
     DownCircleFilled,
-    FileSearchOutlined, InboxOutlined,
+    FileSearchOutlined,
     RetweetOutlined,
     SaveOutlined,
     UpCircleFilled
@@ -41,6 +41,7 @@ export default function rqfWrite() {
     const [agencyData, setAgencyData] = useState([]);
     const [customerData, setCustomerData] = useState([]);
     const [makerData, setMakerData] = useState([]);
+    const [newDocumentNum, setNewDocumentNum] =useState('')
 
     useEffect(() => {
 
@@ -55,6 +56,7 @@ export default function rqfWrite() {
     }, [])
 
 
+
     function onChange(e) {
 
         let bowl = {}
@@ -64,6 +66,56 @@ export default function rqfWrite() {
             return {...v, ...bowl}
         })
     }
+
+    useEffect(() => {
+        setInfo((v)=>({
+            ...v, documentNumberFull:newDocumentNum
+    }))
+    }, [newDocumentNum]);
+
+
+    async function generateNewDocumentNumber  ({agencyCode}) {
+
+        const year = String(new Date().getFullYear()).slice(-2);
+
+        const result = await getData.post('estimate/getEstimateRequestList', {
+            "searchEstimateRequestId": "",      // 견적의뢰 Id
+            "searchType": "",                   // 검색조건 1: 회신, 2: 미회신
+            "searchStartDate": null,              // 작성일자 시작일
+            "searchEndDate": null,           // 작성일자 종료일
+            "searchDocumentNumber": `${agencyCode}-${year}`,         // 문서번호
+            "searchCustomerName": "",           // 거래처명
+            "searchMaker": "",                  // MAKER
+            "searchModel": "",                  // MODEL
+            "searchItem": "",                   // ITEM
+            "searchCreatedBy": "",              // 등록직원명
+            "searchManagerName": "",            // 담당자명
+            "searchMobileNumber": "",           // 담당자 연락처
+            "searchBiddingNumber": "",          // 입찰번호(미완성)
+            "page": 1,
+            "limit": -1
+        })
+
+        let documentNum;
+
+        if (result?.data?.entity?.estimateRequestList.length>0){
+            const latestDocumentNum = result?.data?.entity?.estimateRequestList?.[0]?.documentNumberFull
+
+            const [a, b, lastNumber] = latestDocumentNum.split('-');
+            const nextNumber = parseInt(lastNumber) + 1;
+            documentNum = `${agencyCode}-${year}-${String(nextNumber).padStart(4, '0')}`;
+
+        }
+        else
+
+            documentNum = `${agencyCode}-${year}-0001`;
+
+        setNewDocumentNum(documentNum)
+        console.log(newDocumentNum, 'NewDocumentNumber~~~~')
+
+    }
+
+
 
     async function saveFunc() {
         if (!info['estimateRequestDetailList'].length) {
@@ -144,9 +196,12 @@ export default function rqfWrite() {
                     const {agencyCode, agencyName} = result.data.entity.agencyList[0]
 
                     setInfo(v => {
-                        return {...v, agencyCode: agencyCode, agencyName: agencyName}
+                        return {...v, agencyCode: agencyCode, agencyName: agencyName,}
                     })
+
+                    await generateNewDocumentNumber({agencyCode});
                 }
+
             } else if (e.target.id === 'customerName') {
                 if (!info['customerName']) {
                     return false
@@ -210,7 +265,7 @@ export default function rqfWrite() {
             <div style={{display: 'grid', gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`, height: '100vh', columnGap: 5}}>
 
                 <SearchAgencyModal info={info} setInfo={setInfo} agencyData={agencyData} isModalOpen={isModalOpen}
-                                   setIsModalOpen={setIsModalOpen}/>
+                                   setIsModalOpen={setIsModalOpen} generateNewDocumentNumber={generateNewDocumentNumber} newDocumentNum={newDocumentNum}/>
                 <SearchCustomerModal info={info} setInfo={setInfo} customerData={customerData} isModalOpen={isModalOpen}
                                      setIsModalOpen={setIsModalOpen}/>
                 <SearchMakerModal info={info} setInfo={setInfo} makerData={makerData} isModalOpen={isModalOpen}
@@ -431,6 +486,9 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     const {userInfo} = await initialServerRouter(ctx, store);
     const cookies = nookies.get(ctx)
+    const {display = 'horizon'} = cookies;
+
+
     if (!userInfo) {
         return {
             redirect: {
@@ -440,7 +498,6 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
         };
     }
 
-    const {display = 'horizon'} = cookies;
 
     store.dispatch(setUserInfo(userInfo));
 
@@ -468,7 +525,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     return {
         props: {
             // dataInfo: estimateRequestId ? result?.data?.entity?.estimateRequestList[0] : null,
-            display: display
+            // display: display
         }
     }
 })

@@ -46,6 +46,7 @@ export default function rfqRead({dataList}) {
     }, [])
 
 
+
     async function searchInfo() {
         const copyData: any = {...info}
         const {searchDate}: any = copyData;
