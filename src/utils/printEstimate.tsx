@@ -60,7 +60,7 @@ export default function PrintEstimate({ data, isModalOpen, userInfo, setIsModalO
                 <div style={{display: "flex", width: "100%", alignItems: "center"}}>
                     <div style={{display: "flex", float: "left", alignItems: "center", gap: "20px"}}>
                         <img
-                            src="https://image.season-market.co.kr/SeasonMarket/manku_ci_black_text.png"
+                            src="/manku_ci_black_text.png"
                             width="44px"
                             height="30px"
                             alt="manku logo"
@@ -79,7 +79,7 @@ export default function PrintEstimate({ data, isModalOpen, userInfo, setIsModalO
                     <div style={{fontSize: "24px", fontWeight: 550, margin: "0 auto 0 54px"}}>
                         견적서
                     </div>
-                    <div style={{width: "120px", height: "60px", float: "right", border: "1px solid gray"}}>
+                    <div style={{width: "120px", height: "60px", float: "right",}}>
                         <img src='/manku_stamp_ko.png' width={120} alt='stamp'/>
                     </div>
                 </div>

@@ -23,11 +23,14 @@ import {
     codeDiplomaReadInitial,
 
 } from "@/utils/initialList";
+import PrintDiploma from "@/utils/printDiploma";
 
 
 export default function codeOverseasPurchase({data}) {
 
     const [info, setInfo] = useState(data);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
 
 
     useEffect(() => {
@@ -73,15 +76,13 @@ export default function codeOverseasPurchase({data}) {
 
     }
 
-    const downloadExcel = () => {
-        // const worksheet = XLSX.utils.json_to_sheet(tableInfo);
-        // const workbook = XLSX.utils.book_new();
-        // XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-        // XLSX.writeFile(workbook, "example.xlsx");
-    };
+    async function printForm () {
+        setIsModalOpen(true)
+    }
 
     return <LayoutComponent>
         <div style={{display: 'grid', gridTemplateRows: 'auto 1fr', height: '100vh', columnGap: 5}}>
+            <PrintDiploma  data={data} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
             <Card size={'small'} title={'공문서 등록'} style={{fontSize: 12, border: '1px solid lightGray'}}>
                 <Card size={'small'} style={{
                     fontSize: 13,
@@ -129,8 +130,8 @@ export default function codeOverseasPurchase({data}) {
                         </Button>
 
                          {/*@ts-ignored*/}
-                        <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={downloadExcel}>
-                           <FileExcelOutlined/>출력
+                        <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={printForm}>
+                           <FileExcelOutlined/>PDF 출력
                         </Button>
 
                     </div>

@@ -3,19 +3,12 @@ import Modal from "antd/lib/modal/Modal";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 
-export default function PrintTransactionModal({ data, customerData, isModalOpen, setIsModalOpen }) {
-    const { orderDetailList } = data;
+export default function PrintDiploma({ data, isModalOpen, setIsModalOpen }) {
     const pdfRef = useRef();
 
-    let totalAmount = 0;
-    let totalVat = 0;
-
     const today = new Date();
-    const formattedDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+    const formattedDate = `${today.getFullYear()}. ${String(today.getMonth() + 1).padStart(2, "0")}. ${String(today.getDate()).padStart(2, "0")}.`;
 
-    function formattedNumber(number) {
-        return number.toLocaleString();
-    }
 
     const handleDownloadPDF = async () => {
         const element = pdfRef.current;
@@ -27,12 +20,12 @@ export default function PrintTransactionModal({ data, customerData, isModalOpen,
         const pdfHeight = pdf.internal.pageSize.getHeight();
 
         pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-        pdf.save(`${data.documentNumberFull}_거래명세표.pdf`);
+        pdf.save(`${data.documentNumber}_${data.documentTitle}_공문서.pdf`);
     };
 
     return (
         <Modal
-            title={<div style={{width:'100%', display:"flex", justifyContent:'space-between', alignItems:'center'}}><div>거래명세표 출력</div>
+            title={<div style={{width:'100%', display:"flex", justifyContent:'space-between', alignItems:'center'}}><div>공문서 출력</div>
             <button onClick={handleDownloadPDF} style={{
                 padding: "5px 10px",
                 backgroundColor: "#1890ff",
@@ -51,673 +44,66 @@ export default function PrintTransactionModal({ data, customerData, isModalOpen,
             footer={null}
             onOk={() => setIsModalOpen(false)}
         >
-            <div ref={pdfRef} style={{width: "595px", height: "842px", padding: "40px 24px"}}>
+            <div ref={pdfRef} style={{width: "595px", height: "auto", minHeight:'842px'}}>
                 {/* Header */}
-                <div style={{fontSize: "24px", textAlign: "center"}}>
-                    거 래 명 세 표
-                    <br/>
-                    <span
-                        style={{
-                            fontSize: "14px",
-                            textDecoration: "underline",
-                            textAlign: "center",
-                        }}
-                    >
-          거 래 일 자 : {formattedDate}
-        </span>
-                </div>
-                <div style={{textAlign: "right", marginTop: "15px", fontSize: "11px"}}>
-                    (공급받는자 보관용)
-                </div>
-                <div
-                    style={{
-                        display: "grid",
-                        gridTemplateColumns: "1fr 1fr",
-                        border: "1px solid #121212",
-                    }}
-                >
-                    {/* 공급자 정보 */}
-                    <div style={{display: "grid", gridTemplateColumns: "0.5fr 2.2fr 10fr"}}>
-                        <div
-                            style={{
-                                fontSize: "14px",
-                                display: "flex",
-                                alignItems: "center",
-                                borderRight: "1px solid #A3A3A3",
-                                padding: "0 3px",
-                            }}
-                        >
-                            공 급 자
-                        </div>
-                        <div
-                            style={{
-                                fontSize: "14px",
-                                display: "grid",
-                                gridTemplateRows: "repeat(5, 1fr)",
-                                textAlign: "center",
-                            }}
-                        >
-                            <div
-                                style={{
-                                    fontSize: "11px",
-                                    borderBottom: "1px solid #A3A3A3",
-                                    borderRight: "1px solid #A3A3A3",
-                                    lineHeight: "2.2",
-                                }}
-                            >
-                                등록번호
-                            </div>
-                            <div
-                                style={{
-                                    fontSize: "11px",
-                                    borderBottom: "1px solid #A3A3A3",
-                                    borderRight: "1px solid #A3A3A3",
-                                    lineHeight: "2.2",
-                                }}
-                            >
-                                상호
-                            </div>
-                            <div
-                                style={{
-                                    fontSize: "11px",
-                                    borderBottom: "1px solid #A3A3A3",
-                                    borderRight: "1px solid #A3A3A3",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                }}
-                            >
-                                주소
-                            </div>
-                            <div
-                                style={{
-                                    fontSize: "11px",
-                                    borderBottom: "1px solid #A3A3A3",
-                                    borderRight: "1px solid #A3A3A3",
-                                    lineHeight: "2.2",
-                                }}
-                            >
-                                업태
-                            </div>
-                            <div
-                                style={{
-                                    fontSize: "11px",
-                                    lineHeight: "2.2",
-                                    borderRight: "1px solid #A3A3A3",
-                                }}
-                            >
-                                담당자
-                            </div>
-                        </div>
-                        <div
-                            style={{
-                                fontSize: "14px",
-                                display: "grid",
-                                gridTemplateRows: "repeat(5, 1fr)",
-                                textAlign: "center",
-                            }}
-                        >
-                            <div
-                                style={{
-                                    fontSize: "11px",
-                                    borderBottom: "1px solid #A3A3A3",
-                                    lineHeight: "2.2",
-                                }}
-                            >
-                                714-87-01453
-                            </div>
-                            <div
-                                style={{
-                                    fontSize: "11px",
-                                    borderBottom: "1px solid #A3A3A3",
-                                    lineHeight: "2.2",
-                                    display: "grid",
-                                    gridTemplateColumns: "4fr 1.5fr 2.5fr",
-                                }}
-                            >
-                                <div style={{borderRight: "1px solid #A3A3A3"}}>
-                                    주식회사 만쿠무역
-                                </div>
-                                <div style={{borderRight: "1px solid #A3A3A3"}}>대표자</div>
-                                <div style={{paddingLeft: "3px", textAlign: "left", position: 'relative'}}>
-                                    김민국
-                                    <img src='/manku_stamp_official.png' style={{position: 'absolute'}} width={50}
-                                         alt='stamp'/>
-                                </div>
-                            </div>
-                            <div
-                                style={{
-                                    fontSize: "11px",
-                                    borderBottom: "1px solid #A3A3A3",
-                                    whiteSpace: "pre-wrap",
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    lineHeight: 1.1
-                                }}
-                            >
-                                서울 송파구 충민로 52, 2층 비211, 비212호
-                                (문정동, 가든파이브웍스)
-                            </div>
-                            <div
-                                style={{
-                                    fontSize: "11px",
-                                    borderBottom: "1px solid #A3A3A3",
-                                    lineHeight: "2.2",
-                                    display: "grid",
-                                    gridTemplateColumns: "2.2fr 0.8fr 2.8fr",
-                                }}
-                            >
-                                <div style={{borderRight: "1px solid #A3A3A3"}}>도매, 도소매</div>
-                                <div style={{borderRight: "1px solid #A3A3A3"}}>종목</div>
-                                <div>무역, 기계자재</div>
-                            </div>
-                            <div
-                                style={{
-                                    fontSize: "11px",
-                                    lineHeight: "2.2",
-                                    display: "grid",
-                                    gridTemplateColumns: "2.2fr 1.3fr 2.3fr",
-                                }}
-                            >
-                                <div style={{borderRight: "1px solid #A3A3A3"}}>신단비</div>
-                                <div style={{borderRight: "1px solid #A3A3A3"}}>전화번호</div>
-                                <div>02-465-7838</div>
-                            </div>
+                <div style={{borderBottom: '1px solid #11AFC2', backgroundColor: '#EBF6F7', display: "flex", width: "100%", alignItems: "center",  padding: "30px 24px"}}>
+                    <div style={{width:'auto', display: "flex", position:'absolute', alignItems: "center", gap: "15px"}}>
+                        <img src='/manku_ci_black_text.png' width='44px' alt='manku_logo' />
+                        <div style={{fontSize: "6px", width:'auto'}}>
+                            (주) 만쿠무역
+                            <br/>
+                            Manku Trading Co., Ltd
+                            <br/>
+                            <br/>
+                            서울시 송파구 법원로 114 엠스테이트 B동 804호
+                            <br/>
+                            Tel: 02-465-7838, Fax: 02-465-7839
                         </div>
                     </div>
-
-                    {/* 공급받는자 정보 */}
-                    <div style={{display: "grid", gridTemplateColumns: "0.5fr 2.2fr 10fr"}}>
-                        <div
-                            style={{
-                                fontSize: "14px",
-                                display: "flex",
-                                alignItems: "center",
-                                borderRight: "1px solid #A3A3A3",
-                                borderLeft: "1px solid #121212",
-                                padding: "0 3px",
-                            }}
-                        >
-                            공 급 받 는 자
-                        </div>
-                        <div
-                            style={{
-                                fontSize: "14px",
-                                display: "grid",
-                                gridTemplateRows: "repeat(5, 1fr)",
-                                textAlign: "center",
-                            }}
-                        >
-                            <div
-                                style={{
-                                    fontSize: "11px",
-                                    borderBottom: "1px solid #A3A3A3",
-                                    borderRight: "1px solid #A3A3A3",
-                                    lineHeight: "2.2",
-                                }}
-                            >
-                                등록번호
-                            </div>
-                            <div
-                                style={{
-                                    fontSize: "11px",
-                                    borderBottom: "1px solid #A3A3A3",
-                                    borderRight: "1px solid #A3A3A3",
-                                    lineHeight: "2.2",
-                                }}
-                            >
-                                상호
-                            </div>
-                            <div
-                                style={{
-                                    fontSize: "11px",
-                                    borderBottom: "1px solid #A3A3A3",
-                                    borderRight: "1px solid #A3A3A3",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                }}
-                            >
-                                주소
-                            </div>
-                            <div
-                                style={{
-                                    fontSize: "11px",
-                                    borderBottom: "1px solid #A3A3A3",
-                                    borderRight: "1px solid #A3A3A3",
-                                    lineHeight: "2.2",
-                                }}
-                            >
-                                업태
-                            </div>
-                            <div
-                                style={{
-                                    fontSize: "11px",
-                                    lineHeight: "2.2",
-                                    borderRight: "1px solid #A3A3A3",
-                                }}
-                            >
-                                담당자
-                            </div>
-                        </div>
-                        <div
-                            style={{
-                                fontSize: "14px",
-                                display: "grid",
-                                gridTemplateRows: "repeat(5, 1fr)",
-                                textAlign: "center",
-                            }}
-                        >
-                            <div
-                                style={{
-                                    fontSize: "11px",
-                                    borderBottom: "1px solid #A3A3A3",
-                                    lineHeight: "2.2",
-                                }}
-                            >
-                                {customerData.businessRegistrationNumber}
-                            </div>
-                            <div
-                                style={{
-                                    fontSize: "11px",
-                                    borderBottom: "1px solid #A3A3A3",
-                                    lineHeight: "2.2",
-                                    display: "grid",
-                                    gridTemplateColumns: "4fr 1.5fr 2.5fr",
-                                }}
-                            >
-                                <div style={{borderRight: "1px solid #A3A3A3"}}>
-                                    {customerData.customerName}
-                                </div>
-                                <div style={{borderRight: "1px solid #A3A3A3"}}>대표자</div>
-                                <div style={{paddingLeft: "3px", textAlign: "left"}}>
-                                    {customerData.representative}
-                                </div>
-                            </div>
-                            <div
-                                style={{
-                                    fontSize: "11px",
-                                    borderBottom: "1px solid #A3A3A3",
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    lineHeight: 1.1,
-                                    justifyContent: 'center',
-                                    whiteSpace: "pre-wrap",
-                                }}
-                            >
-                                {customerData.address}
-                            </div>
-                            <div
-                                style={{
-                                    fontSize: "11px",
-                                    borderBottom: "1px solid #A3A3A3",
-                                    lineHeight: "2.2",
-                                    display: "grid",
-                                    gridTemplateColumns: "2.2fr 0.8fr 2.8fr",
-                                }}
-                            >
-                                <div style={{borderRight: "1px solid #A3A3A3"}}>
-                                    {customerData.businessType}
-                                </div>
-                                <div style={{borderRight: "1px solid #A3A3A3"}}>종목</div>
-                                <div>{customerData.businessItem}</div>
-                            </div>
-                            <div
-                                style={{
-                                    fontSize: "11px",
-                                    lineHeight: "2.2",
-                                    display: "grid",
-                                    gridTemplateColumns: "2.2fr 1.3fr 2.3fr",
-                                }}
-                            >
-                                <div style={{borderRight: "1px solid #A3A3A3"}}>
-                                    {customerData.manager}
-                                </div>
-                                <div style={{borderRight: "1px solid #A3A3A3"}}>전화번호</div>
-                                <div>{customerData.customerTel}</div>
-                            </div>
-                        </div>
+                    <div style={{fontSize: "24px", width: '100%', textAlign:'center', fontWeight: 550, margin: "0 auto"}}>
+                        {data.documentTitle}
+                    </div>
+                    <div style={{width: "120px", height: "60px", position:'absolute', right:50,}}>
+                        <img src='/manku_stamp_ko.png' width={120} alt='stamp'/>
                     </div>
                 </div>
 
-                {/* 하단 리스트 */}
-                <div
-                    style={{
-                        borderBottom: "1px solid #121212",
-                        borderLeft: "1px solid #121212",
-                        borderRight: "1px solid #121212",
-                    }}
-                >
-                    {/* Header Row */}
-                    <div
-                        style={{
-                            fontSize: "11px",
-                            display: "grid",
-                            borderBottom: "1px solid #A3A3A3",
-                            gridTemplateColumns:
-                                "0.3fr 1fr 3fr 0.6fr 0.5fr 0.9fr 0.9fr 0.9fr 1.2fr",
-                        }}
-                    >
-                        <div
-                            style={{
-                                borderRight: "1px solid #A3A3A3",
-                                textAlign: "center",
-                                padding: "3px 0",
-                            }}
-                        >
-                            No
-                        </div>
-                        <div
-                            style={{
-                                borderRight: "1px solid #A3A3A3",
-                                textAlign: "center",
-                                padding: "3px 0",
-                            }}
-                        >
-                            날짜
-                        </div>
-                        <div
-                            style={{
-                                borderRight: "1px solid #A3A3A3",
-                                textAlign: "center",
-                                padding: "3px 0",
-                            }}
-                        >
-                            품목
-                        </div>
-                        <div
-                            style={{
-                                borderRight: "1px solid #A3A3A3",
-                                textAlign: "center",
-                                padding: "3px 0",
-                            }}
-                        >
-                            규격
-                        </div>
-                        <div
-                            style={{
-                                borderRight: "1px solid #A3A3A3",
-                                textAlign: "center",
-                                padding: "3px 0",
-                            }}
-                        >
-                            수량
-                        </div>
-                        <div
-                            style={{
-                                borderRight: "1px solid #A3A3A3",
-                                textAlign: "center",
-                                padding: "3px 0",
-                            }}
-                        >
-                            단가
-                        </div>
-                        <div
-                            style={{
-                                borderRight: "1px solid #A3A3A3",
-                                textAlign: "center",
-                                padding: "3px 0",
-                            }}
-                        >
-                            공급가액
-                        </div>
-                        <div
-                            style={{
-                                borderRight: "1px solid #A3A3A3",
-                                textAlign: "center",
-                                padding: "3px 0",
-                            }}
-                        >
-                            세액
-                        </div>
-                        <div style={{textAlign: "center", padding: "3px 0"}}>비고</div>
+
+                <div style={{fontSize: 12, padding: '25px 65px'}}>
+
+                    {/*워터마크*/}
+                    <img
+                        src='/manku_ci_black_text.png'
+                        width="146px"
+                        alt="manku logo"
+                        style={{opacity:0.1, position:'absolute', top: '50%', left:'39%'}}
+                    />
+
+                    {/* 수신 발신 제목*/}
+                    <div style={{width: '100%', borderBottom: '1px solid #D9D9D9', paddingBottom: 5}}>
+                        <span style={{fontWeight: 500}}>수  신 : </span>{data.recipient}
+                    </div>
+                    <div style={{width: '100%', borderBottom: '1px solid #D9D9D9', padding: '5px 0'}}>
+                        <span style={{fontWeight: 500}}>참  조 : </span>{data.reference}
+                    </div>
+                    <div style={{width: '100%', borderBottom: '1px solid #D9D9D9', padding: '5px 0'}}>
+                        <span style={{fontWeight: 500}}>제  목 : </span>{data.subTitle}
                     </div>
 
-                    {/* Data Rows (Dynamic content to be inserted here) */}
-                    <div style={{display: "flex", flexDirection: "column"}}>
-                        {/* 반복되는 데이터 행은 map 함수로 생성 */}
-
-                {orderDetailList.map((model, i) => {
-                    totalAmount += model.amount;
-                    totalVat += model.amount * 0.1;
-                    return (
-                        <div
-                            key={i}
-                            style={{
-                                fontSize: "11px",
-                                display: "grid",
-                                gridTemplateColumns:
-                                    "0.3fr 1fr 3fr 0.6fr 0.5fr 0.9fr 0.9fr 0.9fr 1.2fr",
-                            }}
-                        >
-                            <div style={{
-                                borderRight: "1px solid #A3A3A3",
-                                borderBottom: "1px solid #A3A3A3",
-                                padding: "3px 0",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center"
-                            }}>
-                                {i + 1}
-                            </div>
-                            <div style={{
-                                borderRight: "1px solid #A3A3A3",
-                                borderBottom: "1px solid #A3A3A3",
-                                padding: "3px 0",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center"
-                            }}>
-                                {formattedDate}
-                            </div>
-                            <div style={{
-                                borderRight: "1px solid #A3A3A3",
-                                borderBottom: "1px solid #A3A3A3",
-                                padding: "3px 3px",
-                                display: "flex",
-                                alignItems: "center",
-                                whiteSpace: "pre-wrap"
-                            }}>
-                                {model.model}
-                            </div>
-                            <div style={{
-                                borderRight: "1px solid #A3A3A3",
-                                borderBottom: "1px solid #A3A3A3",
-                                padding: "3px 3px",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center"
-                            }}>
-                                {model.unit}
-                            </div>
-                            <div style={{
-                                borderRight: "1px solid #A3A3A3",
-                                borderBottom: "1px solid #A3A3A3",
-                                padding: "3px 3px",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center"
-                            }}>
-                                {formattedNumber(model.quantity)}
-                            </div>
-                            <div style={{
-                                borderRight: "1px solid #A3A3A3",
-                                borderBottom: "1px solid #A3A3A3",
-                                padding: "3px 3px",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "flex-end"
-                            }}>
-                                {formattedNumber(model.unitPrice)}
-                            </div>
-                            <div style={{
-                                borderRight: "1px solid #A3A3A3",
-                                borderBottom: "1px solid #A3A3A3",
-                                padding: "3px 3px",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "flex-end"
-                            }}>
-                                {formattedNumber(model.amount)}
-                            </div>
-                            <div style={{
-                                borderRight: "1px solid #A3A3A3",
-                                borderBottom: "1px solid #A3A3A3",
-                                padding: "3px 3px",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "flex-end"
-                            }}>
-                                {formattedNumber(model.amount * 0.1)}
-                            </div>
-                            <div style={{
-                                textAlign: "left",
-                                padding: "3px 3px",
-                                borderBottom: "1px solid #A3A3A3",
-                                whiteSpace: "pre-wrap",
-                                display: "flex",
-                                alignItems: "center"
-                            }}>
-                                {data.remarks}
-                            </div>
-
-                        </div>
-                    );
-                })}
+                    {/* 본문 */}
+                    <div style={{padding:'20px 0 50px 0', whiteSpace:'pre-line', lineHeight: 1.8}}>
+                        {data.content}
                     </div>
 
-                    {/* 합계 */}
-                    <div
-                        style={{
-                            fontSize: "11px",
-                            display: "grid",
-                            gridTemplateColumns: "0.7fr 1fr 0.4fr 1fr 0.4fr 1fr 0.5fr 1fr 0.5fr 1fr",
-                        }}
-                    >
-                        <div
-                            style={{
-                                borderRight: "1px solid #A3A3A3",
-                                borderBottom: "1px solid #A3A3A3",
-                                padding: "8px 0",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                            }}
-                        >
-                            공급가액
-                        </div>
-                        <div
-                            style={{
-                                borderRight: "1px solid #A3A3A3",
-                                borderBottom: "1px solid #A3A3A3",
-                                padding: "8px 3px",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "end",
-                            }}
-                        >
-                            {formattedNumber(totalAmount)}
-                        </div>
-                        <div
-                            style={{
-                                borderRight: "1px solid #A3A3A3",
-                                borderBottom: "1px solid #A3A3A3",
-                                padding: "8px 0",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                            }}
-                        >
-                        세액
-                </div>
-                <div
-                    style={{
-                        borderRight: "1px solid #A3A3A3",
-                        borderBottom: "1px solid #A3A3A3",
-                        padding: "8px 3px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "end",
-                    }}
-                >
-                    {formattedNumber(totalVat)}
-                </div>
-                <div
-                    style={{
-                        borderRight: "1px solid #A3A3A3",
-                        borderBottom: "1px solid #A3A3A3",
-                        padding: "8px 0",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}
-                >
-                    합계
-                </div>
-                <div
-                    style={{
-                        borderRight: "1px solid #A3A3A3",
-                        borderBottom: "1px solid #A3A3A3",
-                        padding: "8px 3px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "end",
-                    }}
-                >
-                    {formattedNumber(totalAmount + totalVat)}
-                </div>
-                <div
-                    style={{
-                        borderRight: "1px solid #A3A3A3",
-                        borderBottom: "1px solid #A3A3A3",
-                        padding: "8px 0",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}
-                >
-                    미수금
-                </div>
-                <div
-                    style={{
-                        borderRight: "1px solid #A3A3A3",
-                        borderBottom: "1px solid #A3A3A3",
-                        padding: "8px 3px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "end",
-                    }}
-                >
-                    {/* 여기에 미수금 값을 삽입할 수 있습니다. */}
-                </div>
-                <div
-                    style={{
-                        borderRight: "1px solid #A3A3A3",
-                        borderBottom: "1px solid #A3A3A3",
-                        padding: "8px 0",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}
-                >
-                    인수자
-                </div>
-                <div
-                    style={{
-                        borderRight: "1px solid #A3A3A3",
-                        borderBottom: "1px solid #A3A3A3",
-                        padding: "8px 3px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}
-                >
-                    {data.estimateManager}
+                    {/*날짜*/}
+                    <div style={{marginTop:30, textAlign:'center'}}>
+                        {formattedDate}
+                    </div>
+
+
                 </div>
             </div>
-                </div>
-            </div>
-</Modal>
-)
-    ;
+        </Modal>
+    )
+        ;
 }

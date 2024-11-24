@@ -69,7 +69,7 @@ export default function codeOverseasPurchase({dataList}) {
             copyData['searchEndDate'] = searchDate[1];
         }
         const result = await getData.post('officialDocument/getOfficialDocumentList',
-            {...copyData,   "page": 1, "limit": -1});
+            {...copyData, "page": 1, "limit": -1});
         setTableData(result?.data?.entity?.officialDocumentList)
 
     }

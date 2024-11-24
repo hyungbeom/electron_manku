@@ -181,8 +181,7 @@ export default function PrintTransactionModal({ data, customerData, isModalOpen,
                                 <div style={{borderRight: "1px solid #A3A3A3"}}>대표자</div>
                                 <div style={{paddingLeft: "3px", textAlign: "left", position: 'relative'}}>
                                     김민국
-                                    <img src='/manku_stamp_official.png' style={{position: 'absolute'}} width={50}
-                                         alt='stamp'/>
+                                    <img src='/manku_stamp_only.png' style={{position:'absolute', width:35, top:-5}} alt='stamp'/>
                                 </div>
                             </div>
                             <div

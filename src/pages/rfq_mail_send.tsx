@@ -31,7 +31,7 @@ export default function rfqRead({dataList}) {
     const userInfo = useAppSelector((state) => state.user);
     const [info, setInfo] = useState(subRfqReadInitial);
     const [tableData, setTableData] = useState(estimateRequestList);
-    const [paginationInfo, setPaginationInfo] = useState(pageInfo);
+    const [setPaginationInfo] = useState(pageInfo);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [previewData, setPreviewData] = useState({});
 
