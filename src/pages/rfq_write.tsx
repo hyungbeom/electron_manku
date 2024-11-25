@@ -5,7 +5,7 @@ import Card from "antd/lib/card/Card";
 import TextArea from "antd/lib/input/TextArea";
 import {
     CopyOutlined,
-    DownCircleFilled,
+    DownCircleFilled, EditOutlined,
     FileSearchOutlined,
     RetweetOutlined,
     SaveOutlined,
@@ -128,7 +128,6 @@ export default function rqfWrite() {
     }
 
 
-
     async function saveFunc() {
         if (!info['estimateRequestDetailList'].length) {
             message.warn('하위 데이터 1개 이상이여야 합니다')
@@ -179,11 +178,11 @@ export default function rqfWrite() {
         let copyData = {...info};
         copyData['estimateRequestDetailList'].push({
             "model": "",           // MODEL
-            "quantity": 1,              // 수량
+            "quantity": 0,              // 수량
             "unit": "ea",               // 단위
             "currency": "KRW",          // CURR
             "net": 0,            // NET/P
-            "deliveryDate": "",   // 납기
+            "deliveryDate": 0,   // 납기
             "content": "미회신",         // 내용
             "replyDate": moment().format('YYYY-MM-DD'),  // 회신일
             "remarks": "",           // 비고
@@ -295,7 +294,14 @@ export default function rqfWrite() {
                 <SearchMakerModal info={info} setInfo={setInfo} makerData={makerData} isModalOpen={isModalOpen}
                                      setIsModalOpen={setIsModalOpen}/>
 
-                <Card title={'견적의뢰 작성'} style={{fontSize: 12, border: '1px solid lightGray'}} extra={<span style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>setMini(v => !v)}> {!mini ? <UpCircleFilled/> : <DownCircleFilled/>}</span>} >
+                <Card title={<div style={{display:'flex', justifyContent:'space-between'}}>
+                    <div style={{fontSize:14, fontWeight:550}}>견적의뢰 작성</div> <div>
+                    <Button type={'primary'} size={'small'} style={{marginRight: 8}}
+                            onClick={saveFunc}><SaveOutlined/>저장</Button>
+                    {/*@ts-ignored*/}
+                    <Button type={'danger'} size={'small'} style={{marginRight: 8}}
+                            onClick={clearAll}><RetweetOutlined/>초기화</Button>
+                </div></div>}  style={{fontSize: 12, border: '1px solid lightGray'}} extra={<span style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>setMini(v => !v)}> {!mini ? <DownCircleFilled/> : <UpCircleFilled/>}</span>} >
                     {mini ? <div>
                             <Card size={'small'} style={{
                                 fontSize: 13,
@@ -420,16 +426,6 @@ export default function rqfWrite() {
                                 </div>
 
                             </Card>
-                            <div style={{paddingTop: 10}}>
-
-                                <Button type={'primary'} size={'small'} style={{marginRight: 8}}
-                                        onClick={saveFunc}><SaveOutlined/>저장</Button>
-
-                                {/*@ts-ignored*/}
-                                <Button type={'danger'} size={'small'}
-                                        onClick={clearAll}><RetweetOutlined/>초기화</Button>
-
-                            </div>
                         </div>
                     </div> : null}
 

@@ -5,7 +5,7 @@ import Card from "antd/lib/card/Card";
 import TextArea from "antd/lib/input/TextArea";
 import {
     CopyOutlined, DownCircleFilled,
-    DownloadOutlined,
+    DownloadOutlined, EditOutlined,
     FileSearchOutlined,
     RetweetOutlined,
     SaveOutlined, UpCircleFilled
@@ -244,7 +244,7 @@ export default function EstimateWrite({dataInfo}) {
 
     return <>
         <LayoutComponent>
-            <div style={{display: 'grid', gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`, height: '100vh', gridColumnGap: 5}}>
+            <div style={{display: 'grid', gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`, height: '100vh', columnGap: 5}}>
 
                 <SearchAgencyModal info={info} setInfo={setInfo} agencyData={agencyData} isModalOpen={isModalOpen}
                                    setIsModalOpen={setIsModalOpen}/>
@@ -252,7 +252,15 @@ export default function EstimateWrite({dataInfo}) {
                                      setIsModalOpen={setIsModalOpen}/>
                 <SearchMakerModal info={info} setInfo={setInfo} makerData={makerData} isModalOpen={isModalOpen}
                                   setIsModalOpen={setIsModalOpen}/>
-                <Card title={'견적서 작성'} style={{fontSize: 12, border: '1px solid lightGray'}} extra={<span style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>setMini(v => !v)}> {!mini ? <UpCircleFilled/> : <DownCircleFilled/>}</span>} >
+                <Card title={<div style={{display:'flex', justifyContent:'space-between'}}>
+                    <div style={{fontSize:14, fontWeight:550}}>견적서 작성</div> <div>
+                    <Button type={'primary'} size={'small'} style={{marginRight: 8}}
+                            onClick={saveFunc}><SaveOutlined/>저장</Button>
+                    {/*@ts-ignored*/}
+                    <Button type={'danger'} size={'small'}  style={{marginRight: 8}}
+                            onClick={() => setInfo(orderWriteInitial)}><RetweetOutlined/>초기화</Button>
+
+                </div></div>} style={{fontSize: 12, border: '1px solid lightGray'}} extra={<span style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>setMini(v => !v)}> {!mini ? <DownCircleFilled/> : <UpCircleFilled/>}</span>}>
 
                     <Card size={'small'} style={{
                         fontSize: 13,
@@ -267,9 +275,8 @@ export default function EstimateWrite({dataInfo}) {
                                                 target: {
                                                     id: 'writtenDate',
                                                     value: date
-                                                }
-                                            })
-                                            } id={'writtenDate'} size={'small'}/>
+                                                }})
+                                            } id={'writtenDate'} size={'small'} disabled={true}/>
                             </div>
                             <div>
                                 <div style={{paddingTop: 8}}>INQUIRY NO.</div>
@@ -349,10 +356,10 @@ export default function EstimateWrite({dataInfo}) {
 
                     </Card>
 
-                    <Card size={'small'} style={{
-                        fontSize: 13,
-                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                    }}>
+                        <Card size={'small'} style={{
+                            fontSize: 13,
+                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                        }}>
 
                             <div>
                                 <div style={{paddingTop: 8}}>유효기간</div>
@@ -375,11 +382,14 @@ export default function EstimateWrite({dataInfo}) {
                                 ]} style={{width: '100%'}}>
                                 </Select>
                             </div>
-
-                            <div>
-                                <div style={{paddingTop: 8}}>운송조건</div>
-                                <Input id={'shippingTerms'} value={info['shippingTerms']} onChange={onChange}
-                                       size={'small'}/>
+                            <div style={{marginTop: 8}}>
+                                <div style={{paddingBottom: 3}}>운송조건</div>
+                                <Select id={'shippingTerms'} defaultValue={'0'}
+                                        onChange={(src) => onChange({target: {id: 'shippingTerms', value: src}})}
+                                        size={'small'} value={info['shippingTerms']} options={[
+                                    {value: '0', label: '귀사도착도'},
+                                    {value: '1', label: '화물 및 택배비 별도'},
+                                ]} style={{width: '100%',}}/>
                             </div>
                             <div>
                                 <div style={{paddingTop: 8}}>환율</div>
@@ -387,20 +397,20 @@ export default function EstimateWrite({dataInfo}) {
                                        size={'small'}/>
                             </div>
 
-                    </Card>
+                        </Card>
 
-                    <Card size={'small'} style={{
-                        fontSize: 13,
-                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                    }}>
-                        <div style={{paddingTop: 8}}>
-                            <div style={{paddingBottom: 3}}>MAKER</div>
-                            <Input id={'maker'} value={info['maker']} onChange={onChange}
-                                   size={'small'}
-                                   onKeyDown={handleKeyPress}
-                                   suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
-                                       (e) => {
-                                           e.stopPropagation();
+                        <Card size={'small'} style={{
+                            fontSize: 13,
+                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                        }}>
+                            <div style={{paddingTop: 8}}>
+                                <div style={{paddingBottom: 3}}>MAKER</div>
+                                <Input id={'maker'} value={info['maker']} onChange={onChange}
+                                       size={'small'}
+                                       onKeyDown={handleKeyPress}
+                                       suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
+                                           (e) => {
+                                               e.stopPropagation();
                                            setIsModalOpen({event1: false, event2: false, event3: true})
                                        }
                                    }/>}/>
@@ -421,16 +431,6 @@ export default function EstimateWrite({dataInfo}) {
                         </div>
 
                     </Card>
-                        <div style={{paddingTop: 10}}>
-
-                            <Button type={'primary'} size={'small'} style={{marginRight: 8}}
-                                    onClick={saveFunc}><SaveOutlined/>저장</Button>
-
-                            {/*@ts-ignored*/}
-                            <Button type={'danger'} size={'small'}
-                                    onClick={() => setInfo(orderWriteInitial)}><RetweetOutlined/>초기화</Button>
-
-                        </div>
                   </div>
                 </Card>
 

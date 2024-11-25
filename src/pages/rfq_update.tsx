@@ -47,7 +47,7 @@ export default function rqfUpdate({dataInfo}) {
     const [agencyData, setAgencyData] = useState([]);
     const [customerData, setCustomerData] = useState([]);
     const [makerData, setMakerData] = useState([]);
-    const [customerInfo, setCustomerInfo] = useState(customerInitial)
+    // const [customerInfo, setCustomerInfo] = useState(customerInitial)
 
 
     useEffect(() => {
@@ -68,15 +68,15 @@ export default function rqfUpdate({dataInfo}) {
         })
     }
 
-    function onCustomerInfoChange(e) {
-
-        let bowl = {}
-        bowl[e.target.id] = e.target.value;
-
-        setCustomerInfo(v => {
-            return {...v, ...bowl}
-        })
-    }
+    // function onCustomerInfoChange(e) {
+    //
+    //     let bowl = {}
+    //     bowl[e.target.id] = e.target.value;
+    //
+    //     setCustomerInfo(v => {
+    //         return {...v, ...bowl}
+    //     })
+    // }
 
 
     async function saveFunc() {
@@ -87,7 +87,7 @@ export default function rqfUpdate({dataInfo}) {
             copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
             copyData['replyDate'] = moment(info['replyDate']).format('YYYY-MM-DD');
             copyData['dueDate'] = moment(info['dueDate']).format('YYYY-MM-DD');
-            copyData['customerInfoList'].push(customerInfo)
+            // copyData['customerInfoList'].push(customerInfo)
 
             await getData.post('estimate/updateEstimateRequest', copyData).then(v => {
 
@@ -131,7 +131,7 @@ export default function rqfUpdate({dataInfo}) {
             "unit": "ea",               // 단위
             "currency": "KRW",          // CURR
             "net": 0,            // NET/P
-            "deliveryDate": "",   // 납기
+            "deliveryDate": 0,   // 납기
             "content": "미회신",         // 내용
             "replyDate": moment().format("YYYY-MM-DD"),  // 회신일
             "remarks": "",           // 비고
@@ -143,7 +143,6 @@ export default function rqfUpdate({dataInfo}) {
 
     function clearAll () {
         setInfo(rfqWriteInitial)
-        setCustomerInfo(customerInitial)
     }
 
     const handleKeyPress = async (e) => {
@@ -170,11 +169,13 @@ export default function rqfUpdate({dataInfo}) {
                     })
                 }
             } else if (e.target.id === 'customerName') {
-                if (!customerInfo['customerName']) {
+                // if (!customerInfo['customerName']) {
+                if (!info['customerName']) {
                     return false
                 }
                 const result = await getData.post('customer/getCustomerListForEstimate', {
-                    "searchText": customerInfo['customerName'],       // 대리점코드 or 대리점 상호명
+                    // "searchText": customerInfo['customerName'],       // 대리점코드 or 대리점 상호명
+                    "searchText": info['customerName'],       // 대리점코드 or 대리점 상호명
                     "page": 1,
                     "limit": -1
                 })
@@ -185,7 +186,8 @@ export default function rqfUpdate({dataInfo}) {
                     const {customerName, managerName, directTel, faxNumber} = result.data.entity.customerList[0]
 
                     // setInfo(v => {
-                    setCustomerInfo(v => {
+                    // setCustomerInfo(v => {
+                    info(v => {
                         return {
                             ...v,
                             customerName: customerName,
@@ -238,14 +240,24 @@ export default function rqfUpdate({dataInfo}) {
 
                 <SearchAgendaModal info={info} setInfo={setInfo} agencyData={agencyData} isModalOpen={isModalOpen}
                                    setIsModalOpen={setIsModalOpen}/>
-                <SearchCustomerModal info={info} setInfo={setCustomerInfo} customerData={customerData} isModalOpen={isModalOpen}
-                                     setIsModalOpen={setIsModalOpen}/>
+
+                <SearchCustomerModal info={info} customerData={customerData} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}
+                                     // setInfo={setCustomerInfo}
+                                     setInfo={setInfo}
+                />
                 <SearchMakerModal info={info} setInfo={setInfo} makerData={makerData} isModalOpen={isModalOpen}
                                   setIsModalOpen={setIsModalOpen}/>
 
-                <Card title={'견적의뢰 수정'} style={{fontSize: 12, border: '1px solid lightGray'}}
+                <Card title={<div style={{display:'flex', justifyContent:'space-between'}}>
+                    <div style={{fontSize:14, fontWeight:550}}>견적의뢰 수정</div> <div>
+                    <Button type={'primary'} size={'small'} style={{marginRight: 8}}
+                            onClick={saveFunc}><SaveOutlined/>수정</Button>
+                    {/*@ts-ignored*/}
+                    <Button type={'danger'} size={'small'} style={{marginRight: 8}}
+                            onClick={clearAll}><RetweetOutlined/>초기화</Button>
+                </div></div>} style={{fontSize: 12, border: '1px solid lightGray'}}
                       extra={<span style={{fontSize: 20, cursor: 'pointer'}} onClick={() => setMini(v => !v)}> {!mini ?
-                          <UpCircleFilled/> : <DownCircleFilled/>}</span>}>
+                          <DownCircleFilled/> : <UpCircleFilled/>}</span>}>
                     {mini ? <div>
                         <Card size={'small'} style={{
                             fontSize: 13,
@@ -411,21 +423,11 @@ export default function rqfUpdate({dataInfo}) {
 
                                 <div style={{paddingTop: 8}}>
                                     <div style={{paddingBottom: 3}}>비고란</div>
-                                    <TextArea style={{height: '250px'}} id={'remarks'} value={info['remarks']}
+                                    <TextArea style={{height: '200px'}} id={'remarks'} value={info['remarks']}
                                               onChange={onChange} size={'small'}/>
                                 </div>
 
                             </Card>
-                            <div style={{paddingTop: 10}}>
-
-                                <Button type={'primary'} size={'small'} style={{marginRight: 8}}
-                                        onClick={saveFunc}><SaveOutlined/>수정</Button>
-
-                                {/*@ts-ignored*/}
-                                <Button type={'danger'} size={'small'}
-                                        onClick={clearAll}><RetweetOutlined/>초기화</Button>
-
-                            </div>
                         </div>
                     </div> : null}
                 </Card>
