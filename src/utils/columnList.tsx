@@ -739,7 +739,6 @@ export const rfqReadColumns = [
         headerName: '문서번호',
         field: 'documentNumberFull',
         width: 100,
-        pinned: 'left'
     },
     {
         headerName: '대리점명',

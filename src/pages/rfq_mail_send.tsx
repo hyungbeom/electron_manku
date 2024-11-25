@@ -374,18 +374,18 @@ export default function rfqRead({dataList}) {
 
                         <div>
                             <div>
-                                <div style={{paddingBottom: 3}}>검색조건</div>
+                                <div style={{paddingBottom: 3}}>발송여부</div>
                                 <Select id={'searchType'}
                                         onChange={(src) => onChange({target: {id: 'searchType', value: src}})}
                                         size={'small'} value={info['searchType']} options={[
                                     {value: '0', label: '전체'},
-                                    {value: '1', label: '회신'},
-                                    {value: '2', label: '미회신'}
+                                    {value: '1', label: '발송'},
+                                    {value: '2', label: '미발송'}
                                 ]} style={{width: '100%'}}>
                                 </Select>
                             </div>
                             <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>검색조건</div>
+                                <div style={{paddingBottom: 3}}>회신여부</div>
                                 <Select id={'searchType'}
                                         onChange={(src) => onChange({target: {id: 'searchType', value: src}})}
                                         size={'small'} value={info['searchType']} options={[

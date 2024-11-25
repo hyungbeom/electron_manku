@@ -139,6 +139,7 @@ export default function rqfWrite() {
             copyData['dueDate'] = moment(info['dueDate']).format('YYYY-MM-DD');
             copyData['customerInfoList'].push(customerInfo)
 
+            await generateNewDocumentNumber(info['agencyCode']);
             console.log(copyData, '저장해보자~')
 
             await getData.post('estimate/addEstimateRequest', copyData).then(v => {
@@ -223,8 +224,6 @@ export default function rqfWrite() {
                     setInfo(v => {
                         return {...v, agencyCode: agencyCode, agencyName: agencyName,}
                     })
-
-                    await generateNewDocumentNumber({agencyCode});
                 }
 
             } else if (e.target.id === 'customerName') {
@@ -290,7 +289,7 @@ export default function rqfWrite() {
             <div style={{display: 'grid', gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`, height: '100vh', columnGap: 5}}>
 
                 <SearchAgencyModal info={info} setInfo={setInfo} agencyData={agencyData} isModalOpen={isModalOpen}
-                                   setIsModalOpen={setIsModalOpen} generateNewDocumentNumber={generateNewDocumentNumber} newDocumentNum={newDocumentNum}/>
+                                   setIsModalOpen={setIsModalOpen}/>
                 <SearchCustomerModal info={info} setInfo={setCustomerInfo} customerData={customerData} isModalOpen={isModalOpen}
                                      setIsModalOpen={setIsModalOpen}/>
                 <SearchMakerModal info={info} setInfo={setInfo} makerData={makerData} isModalOpen={isModalOpen}
@@ -376,41 +375,6 @@ export default function rqfWrite() {
                                                 } id={'dueDate'} size={'small'}/>
                             </div>
                         </Card>
-
-                        <Card size={'small'} style={{
-                            fontSize: 13,
-                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                        }}>
-                            <div>
-                                <div>거래처명</div>
-                                <Input id={'customerName'} value={customerInfo['customerName']} onChange={onCustomerInfoChange}
-                                       size={'small'}
-                                       onKeyDown={handleKeyPress}
-                                       suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
-                                           (e) => {
-                                                   e.stopPropagation();
-                                                   setIsModalOpen({event1: false, event2: true, event3: false})
-                                               }
-                                           }/>}/>
-                                </div>
-                                <div>
-                                    <div style={{paddingTop: 8}}>거래처 담당자</div>
-                                    <Input id={'managerName'} value={customerInfo['managerName']} onChange={onCustomerInfoChange}
-                                           size={'small'}/>
-                                </div>
-
-
-                                <div>
-                                    <div style={{paddingTop: 8}}>전화번호</div>
-                                    <Input id={'phoneNumber'} value={customerInfo['phoneNumber']} onChange={onCustomerInfoChange}
-                                           size={'small'}/>
-                                </div>
-                                <div>
-                                    <div style={{paddingTop: 8}}>팩스/이메일</div>
-                                    <Input id={'faxNumber'} value={customerInfo['faxNumber']} onChange={onCustomerInfoChange}
-                                           size={'small'}/>
-                                </div>
-                            </Card>
 
                             <Card size={'small'} style={{
                                 fontSize: 13,
