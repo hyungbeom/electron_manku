@@ -77,6 +77,15 @@ export const rfqWriteInitial = {
     "estimateRequestDetailList": []
 }
 
+export const customerInitial = {
+    "customerCode": "",                // 거래처코드
+    "customerName": "",  // 거래처명(상호명)
+    "phoneNumber": "",              // 전화번호
+    "faxNumber": "",       // 팩스/이메일
+    "managerName": ""        // 담당자명
+}
+
+
 
 export const makerWriteInitial = {
     "makerName": "",                   // MAKER

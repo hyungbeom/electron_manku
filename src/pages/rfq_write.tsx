@@ -13,7 +13,7 @@ import {
 } from "@ant-design/icons";
 import {subRfqWriteColumn} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {rfqWriteInitial} from "@/utils/initialList";
+import {customerInitial, rfqWriteInitial} from "@/utils/initialList";
 import moment from "moment";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
@@ -31,6 +31,7 @@ import Dragger from "antd/lib/upload/Dragger";
 import Upload from "antd/lib/upload";
 import SearchMakerModal from "@/component/SearchMakerModal";
 import SearchAgencyModal from "@/component/SearchAgencyModal";
+import {InputRef} from "antd";
 
 export default function rqfWrite() {
     const gridRef = useRef(null);
@@ -42,6 +43,7 @@ export default function rqfWrite() {
     const [customerData, setCustomerData] = useState([]);
     const [makerData, setMakerData] = useState([]);
     const [newDocumentNum, setNewDocumentNum] =useState('')
+    const [customerInfo, setCustomerInfo] = useState(customerInitial)
 
     useEffect(() => {
 
@@ -56,13 +58,24 @@ export default function rqfWrite() {
     }, [])
 
 
-
     function onChange(e) {
 
         let bowl = {}
         bowl[e.target.id] = e.target.value;
 
+        console.log(bowl['agencyCode'], 'bowl[\'agencyCode\']')
+
         setInfo(v => {
+            return {...v, ...bowl}
+        })
+    }
+
+    function onCustomerInfoChange(e) {
+
+        let bowl = {}
+        bowl[e.target.id] = e.target.value;
+
+        setCustomerInfo(v => {
             return {...v, ...bowl}
         })
     }
@@ -125,6 +138,9 @@ export default function rqfWrite() {
             copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
             copyData['replyDate'] = moment(info['replyDate']).format('YYYY-MM-DD');
             copyData['dueDate'] = moment(info['dueDate']).format('YYYY-MM-DD');
+            copyData['customerInfoList'].push(customerInfo)
+
+            console.log(copyData, '저장해보자~')
 
             await getData.post('estimate/addEstimateRequest', copyData).then(v => {
                 if (v.data.code === 1) {
@@ -177,8 +193,20 @@ export default function rqfWrite() {
         setInfo(copyData)
     }
 
+    function addCustomer() {
+
+    }
+
+    function clearAll () {
+        setInfo(rfqWriteInitial)
+        setCustomerInfo(customerInitial)
+    }
+
+
+
     const handleKeyPress = async (e) => {
         if (e.key === 'Enter') {
+
             if (e.target.id === 'agencyCode') {
                 if (!info['agencyCode']) {
                     return false;
@@ -189,10 +217,10 @@ export default function rqfWrite() {
                     "limit": -1
                 })
 
-                if (result.data.entity.agencyList.length > 1) {
+                if (result?.data?.entity?.agencyList?.length > 1) {
                     setAgencyData(result.data.entity.agencyList)
                     setIsModalOpen({event1: true, event2: false, event3: false,})
-                } else if (!!result.data.entity.agencyList.length) {
+                } else if (!!result?.data?.entity?.agencyList?.length) {
                     const {agencyCode, agencyName} = result.data.entity.agencyList[0]
 
                     setInfo(v => {
@@ -203,22 +231,22 @@ export default function rqfWrite() {
                 }
 
             } else if (e.target.id === 'customerName') {
-                if (!info['customerName']) {
+                if (!customerInfo['customerName']) {
                     return false
                 }
                 const result = await getData.post('customer/getCustomerListForEstimate', {
-                    "searchText": info['customerName'],       // 대리점코드 or 대리점 상호명
+                    "searchText": customerInfo['customerName'],       // 대리점코드 or 대리점 상호명
                     "page": 1,
                     "limit": -1
                 })
-                if (result.data.entity.customerList.length > 1) {
+                if (result?.data?.entity?.customerList?.length > 1) {
                     setCustomerData(result.data.entity.customerList)
                     setIsModalOpen({event1: false, event2: true, event3: false,})
-                } else if (!!result.data.entity.customerList.length) {
+                } else if (!!result?.data?.entity?.customerList?.length) {
                     const {customerName, managerName, directTel, faxNumber} = result.data.entity.customerList[0]
 
-
-                    setInfo(v => {
+                    // setInfo(v => {
+                    setCustomerInfo(v => {
                         return {
                             ...v,
                             customerName: customerName,
@@ -239,10 +267,10 @@ export default function rqfWrite() {
                 "page": 1,
                 "limit": -1
             })
-            if (result.data.entity.makerList.length > 1) {
+            if (result?.data?.entity?.makerList?.length > 1) {
                 setMakerData(result.data.entity.makerList)
                 setIsModalOpen({event1: false, event2: false, event3: true,})
-            } else if (!!result.data.entity.makerList.length) {
+            } else if (!!result?.data?.entity?.makerList?.length) {
                 const {makerName, item, instructions} = result.data.entity.makerList[0]
 
 
@@ -266,7 +294,7 @@ export default function rqfWrite() {
 
                 <SearchAgencyModal info={info} setInfo={setInfo} agencyData={agencyData} isModalOpen={isModalOpen}
                                    setIsModalOpen={setIsModalOpen} generateNewDocumentNumber={generateNewDocumentNumber} newDocumentNum={newDocumentNum}/>
-                <SearchCustomerModal info={info} setInfo={setInfo} customerData={customerData} isModalOpen={isModalOpen}
+                <SearchCustomerModal info={info} setInfo={setCustomerInfo} customerData={customerData} isModalOpen={isModalOpen}
                                      setIsModalOpen={setIsModalOpen}/>
                 <SearchMakerModal info={info} setInfo={setInfo} makerData={makerData} isModalOpen={isModalOpen}
                                      setIsModalOpen={setIsModalOpen}/>
@@ -358,8 +386,8 @@ export default function rqfWrite() {
                             boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                         }}>
                             <div>
-                                <div>상호명</div>
-                                <Input id={'customerName'} value={info['customerName']} onChange={onChange}
+                                <div>거래처명</div>
+                                <Input id={'customerName'} value={customerInfo['customerName']} onChange={onCustomerInfoChange}
                                        size={'small'}
                                        onKeyDown={handleKeyPress}
                                        suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
@@ -371,19 +399,19 @@ export default function rqfWrite() {
                                 </div>
                                 <div>
                                     <div style={{paddingTop: 8}}>거래처 담당자</div>
-                                    <Input id={'managerName'} value={info['managerName']} onChange={onChange}
+                                    <Input id={'managerName'} value={customerInfo['managerName']} onChange={onCustomerInfoChange}
                                            size={'small'}/>
                                 </div>
 
 
                                 <div>
                                     <div style={{paddingTop: 8}}>전화번호</div>
-                                    <Input id={'phoneNumber'} value={info['phoneNumber']} onChange={onChange}
+                                    <Input id={'phoneNumber'} value={customerInfo['phoneNumber']} onChange={onCustomerInfoChange}
                                            size={'small'}/>
                                 </div>
                                 <div>
                                     <div style={{paddingTop: 8}}>팩스/이메일</div>
-                                    <Input id={'faxNumber'} value={info['faxNumber']} onChange={onChange}
+                                    <Input id={'faxNumber'} value={customerInfo['faxNumber']} onChange={onCustomerInfoChange}
                                            size={'small'}/>
                                 </div>
                             </Card>
@@ -440,7 +468,7 @@ export default function rqfWrite() {
 
                                 {/*@ts-ignored*/}
                                 <Button type={'danger'} size={'small'}
-                                        onClick={() => setInfo(rfqWriteInitial)}><RetweetOutlined/>초기화</Button>
+                                        onClick={clearAll}><RetweetOutlined/>초기화</Button>
 
                             </div>
                         </div>
