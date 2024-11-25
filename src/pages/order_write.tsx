@@ -40,6 +40,7 @@ export default function OrderWriter({dataInfo}) {
     const userInfo = useAppSelector((state) => state.user);
     const [info, setInfo] = useState<any>(orderWriteInitial)
     const [mini, setMini] = useState(true);
+    const [searchDocumentNumber, setSearchDocumentNumber] =useState('')
 
 
     useEffect(() => {
@@ -140,7 +141,7 @@ export default function OrderWriter({dataInfo}) {
             "searchType": "",           // 검색조건 1: 주문, 2: 미주문
             "searchStartDate": "",      // 작성일 검색 시작일
             "searchEndDate": "",        // 작성일 검색 종료일
-            "searchDocumentNumber": info['documentNumberFull'], // 문서번호
+            "searchDocumentNumber": searchDocumentNumber, // 문서번호
             "searchCustomerName": "",   // 거래처명
             "searchModel": "",          // MODEL
             "searchMaker": "",          // MAKER

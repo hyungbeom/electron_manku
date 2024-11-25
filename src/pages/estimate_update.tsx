@@ -33,7 +33,7 @@ import printEstimate from "@/utils/printEstimate";
 import PrintEstimate from "@/utils/printEstimate";
 
 
-export default function EstimateWrite({dataInfo}) {
+export default function estimate_update({dataInfo}) {
     const gridRef = useRef(null);
     const router = useRouter();
 
@@ -43,7 +43,6 @@ export default function EstimateWrite({dataInfo}) {
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false, event3: false});
     const [agencyData, setAgencyData] = useState([]);
     const [customerData, setCustomerData] = useState([]);
-    const [tableData, setTableData] = useState(dataInfo['estimateDetailList'])
 
 
     useEffect(() => {
@@ -194,30 +193,37 @@ export default function EstimateWrite({dataInfo}) {
 
     async function findDocument() {
 
-        const result = await getData.post('estimate/getEstimateList', {
-            "searchType": "",           // 검색조건 1: 주문, 2: 미주문
-            "searchStartDate": "",      // 작성일 검색 시작일
-            "searchEndDate": "",        // 작성일 검색 종료일
-            "searchDocumentNumber": info['documentNumberFull'], // 문서번호
-            "searchCustomerName": "",   // 거래처명
-            "searchModel": "",          // MODEL
-            "searchMaker": "",          // MAKER
-            "searchItem": "",           // ITEM
-            "searchCreatedBy": "",      // 등록 관리자 이름
+        const result = await getData.post('estimate/getEstimateRequestList', {
+            "searchEstimateRequestId": "",      // 견적의뢰 Id
+            "searchType": "",                   // 검색조건 1: 회신, 2: 미회신
+            "searchStartDate": "",              // 작성일자 시작일
+            "searchEndDate": "",                // 작성일자 종료일
+            "searchDocumentNumber": info['documentNumberFull'],         // 문서번호
+            "searchCustomerName": "",           // 거래처명
+            "searchMaker": "",                  // MAKER
+            "searchModel": "",                  // MODEL
+            "searchItem": "",                   // ITEM
+            "searchCreatedBy": "",              // 등록직원명
+            "searchManagerName": "",            // 담당자명
+            "searchMobileNumber": "",           // 담당자 연락처
+            "searchBiddingNumber": "",          // 입찰번호(미완성)
             "page": 1,
             "limit": -1
         });
 
+        // console.log(result)
+
         if (result?.data?.code === 1) {
 
-            if(result?.data?.entity?.estimateList.length) {
+            if(result?.data?.entity?.estimateRequestList.length) {
                 setInfo(v => {
-                        return {...v, ...result?.data?.entity?.estimateList[0], writtenDate : moment(result?.data?.entity?.estimateList[0].writtenDate)}
+                        return {...v, ...result?.data?.entity?.estimateRequestList[0], writtenDate : moment()}
                     }
                 )
             }
         }
     }
+
 
     function handleKeyPressDoc(e) {
         if (e.key === 'Enter') {
@@ -232,7 +238,17 @@ export default function EstimateWrite({dataInfo}) {
                 <PrintEstimate data={info} isModalOpen={isModalOpen} userInfo={userInfo} setIsModalOpen={setIsModalOpen}/>
                 <SearchAgendaModal info={info} setInfo={setInfo} agencyData={agencyData} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
                 <SearchCustomerModal info={info} setInfo={setInfo} customerData={customerData} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
-                <Card title={'견적서 수정'} style={{fontSize: 12, border: '1px solid lightGray'}} extra={<span style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>setMini(v => !v)}> {!mini ? <UpCircleFilled/> : <DownCircleFilled/>}</span>} >
+                <Card title={<div style={{display:'flex', justifyContent:'space-between'}}>
+                    <div style={{fontSize:14, fontWeight:550}}>견적서 수정</div> <div>
+                    <Button type={'primary'} size={'small'} style={{marginRight: 8}}
+                            onClick={printEstimate}><SaveOutlined/>견적서 출력</Button>
+                    <Button type={'primary'} size={'small'} style={{marginRight: 8}}
+                            onClick={saveFunc}><SaveOutlined/>수정</Button>
+                    {/*@ts-ignored*/}
+                    <Button size={'small'}  type={'ghost'} style={{marginRight: 8,}}
+                            onClick={() => router?.push('/estimate_write')}><EditOutlined/>신규작성</Button>
+
+                </div></div>} style={{fontSize: 12, border: '1px solid lightGray'}} extra={<span style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>setMini(v => !v)}> {!mini ? <DownCircleFilled/> : <UpCircleFilled/>}</span>}>
 
                     <Card size={'small'} style={{
                         fontSize: 11,
@@ -392,16 +408,6 @@ export default function EstimateWrite({dataInfo}) {
                         </div>
 
                     </Card>
-                        <div style={{paddingTop: 10}}>
-                            <Button type={'primary'} size={'small'} style={{marginRight: 8}}
-                                    onClick={printEstimate}><SaveOutlined/>거래명세표 출력</Button>
-                            <Button type={'primary'} size={'small'} style={{marginRight: 8}}
-                                    onClick={saveFunc}><SaveOutlined/>수정</Button>
-                            {/*@ts-ignored*/}
-                            <Button size={'small'}  type={'ghost'} style={{marginRight: 8,}}
-                                    onClick={() => router?.push('/estimate_write')}><EditOutlined/>신규작성</Button>
-
-                        </div>
                   </div>
                 </Card>
 
