@@ -7,7 +7,7 @@ export default function PrintEstimate({ data, isModalOpen, userInfo, setIsModalO
     const {estimateDetailList} = data;
     const pdfRef = useRef();
 
-    console.log(userInfo, 'userInfo')
+    // console.log(userInfo, 'userInfo')
 
     let totalAmount = 0;
     let totalQuantity = 0;

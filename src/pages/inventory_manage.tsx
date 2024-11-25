@@ -210,7 +210,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
-    const result = await getData.post('inventory/getInventoryListForAdd', {
+    const result = await getData.post('inventory/getInventoryList', {
         "searchText": "",   // 검색어
         "page": 1,
         "limit": -1

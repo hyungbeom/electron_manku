@@ -38,16 +38,17 @@ export default function EstimateWrite({dataInfo}) {
     const router = useRouter();
 
     const userInfo = useAppSelector((state) => state.user);
-    const [info, setInfo] = useState<any>(estimateWriteInitial)
+    const [info, setInfo] = useState<any>(dataInfo)
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false, event3: false});
     const [agencyData, setAgencyData] = useState([]);
     const [customerData, setCustomerData] = useState([]);
+    const [tableData, setTableData] = useState(dataInfo['estimateDetailList'])
 
 
     useEffect(() => {
 
-        let copyData = {...estimateWriteInitial}
+        let copyData = {...dataInfo}
 
         if (dataInfo) {
             copyData = dataInfo;
@@ -125,6 +126,7 @@ export default function EstimateWrite({dataInfo}) {
         })
 
         setInfo(copyData)
+
     }
 
 
@@ -407,6 +409,12 @@ export default function EstimateWrite({dataInfo}) {
                     gridRef={gridRef}
                     columns={tableEstimateWriteColumns}
                     tableData={info['estimateDetailList']}
+
+                    onGridReady={(params) => {
+                        gridRef.current = params;
+                        params.api.setRowData(info['estimateDetailList']); // 초기 데이터 설정
+                    }}
+
                     listType={'estimateId'}
                     listDetailType={'estimateDetailList'}
                     setInfo={setInfo}

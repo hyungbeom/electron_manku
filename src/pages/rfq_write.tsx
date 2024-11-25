@@ -60,15 +60,14 @@ export default function rqfWrite() {
 
     function onChange(e) {
 
-        let bowl = {}
-        bowl[e.target.id] = e.target.value;
-
-        console.log(bowl['agencyCode'], 'bowl[\'agencyCode\']')
-
         setInfo(v => {
-            return {...v, ...bowl}
+            return {...v, [e.target.id]: e.target.value}
         })
     }
+
+    // useEffect(()=>{
+    // },[info['agencyCode']])
+
 
     function onCustomerInfoChange(e) {
 
@@ -181,7 +180,7 @@ export default function rqfWrite() {
             "model": "",           // MODEL
             "quantity": 1,              // 수량
             "unit": "ea",               // 단위
-            "currency": "krw",          // CURR
+            "currency": "KRW",          // CURR
             "net": 0,            // NET/P
             "deliveryDate": "",   // 납기
             "content": "미회신",         // 내용
@@ -201,8 +200,6 @@ export default function rqfWrite() {
         setInfo(rfqWriteInitial)
         setCustomerInfo(customerInitial)
     }
-
-
 
     const handleKeyPress = async (e) => {
         if (e.key === 'Enter') {
@@ -378,7 +375,6 @@ export default function rqfWrite() {
                                                 })
                                                 } id={'dueDate'} size={'small'}/>
                             </div>
-
                         </Card>
 
                         <Card size={'small'} style={{
@@ -431,7 +427,6 @@ export default function rqfWrite() {
                                                    setIsModalOpen({event1: false, event2: false, event3: true})
                                                }
                                            }/>}/>
-
 
                                 </div>
                                 <div style={{paddingTop: 8}}>
