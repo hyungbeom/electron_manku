@@ -2,13 +2,14 @@
 
 import React, {useEffect, useMemo, useState} from 'react';
 import {AgGridReact} from 'ag-grid-react';
-import {iconSetMaterial, themeQuartz} from '@ag-grid-community/theming';
 import {useRouter} from "next/router";
 import {tableTheme} from "@/utils/common";
 import moment from "moment";
-import {getData} from "@/manage/function/api";
+import * as XLSX from "xlsx";
 import message from "antd/lib/message";
-import {codeDomesticAgencyWriteInitial} from "@/utils/initialList";
+import Upload from "antd/lib/upload";
+import Dragger from "antd/lib/upload/Dragger";
+import {InboxOutlined} from "@ant-design/icons";
 
 
 const TableGrid = ({
@@ -20,20 +21,18 @@ const TableGrid = ({
                        listType = 'estimateRequestId',
                        listDetailType = 'estimateRequestDetailList',
                        type='read',
-                       setIsModalOpen = undefined,
-                       setItemId = undefined,
                        gridRef
                    }: any) => {
 
 
     const router = useRouter();
-
     const [data, setData] = useState(tableData);
 
 
     useEffect(()=>{
         setData(tableData)
     },[tableData])
+
 
 
     const defaultColDef = useMemo(() => {
@@ -44,16 +43,10 @@ const TableGrid = ({
             floatingFilter: true,
             valueGetter: (params) => {
 
-
                 let sendData = params.data[params.column.colId];
-
 
                 if (!!params.node.rowIndex && type === 'read') { // 첫 번째 행이 아닌 경우에만 이전 행 참조
                     const previousRowData = params.context?.data?.[params.node.rowIndex - 1];
-
-
-                    // console.log(params.data[listType],'params.data[listType]:')
-                    // console.log(previousRowData,'params.data[listType]22:')
 
                     if (previousRowData && params.data[listType] === previousRowData[listType]) {
                         if (params.column.colId === 'writtenDate' || params.column.colId === 'documentNumberFull') {
@@ -72,7 +65,7 @@ const TableGrid = ({
 
 
     const rowSelection = useMemo(() => {
-        return {mode: "multiRow",};
+        return {mode: "multiRow", };
     }, []);
 
     const handleSelectionChange = (e) => {
@@ -169,56 +162,118 @@ const TableGrid = ({
 
     function dataChange(e){
         const updatedData = e.data; // 수정된 행의 전체 데이터
-        const updatedField = e.colDef.field; // 수정된 컬럼의 필드명
-        const newValue = e.newValue; // 새로운 값
-        const oldValue = e.oldValue; // 이전 값
+        // const updatedField = e.colDef.field; // 수정된 컬럼의 필드명
+        // const newValue = e.newValue; // 새로운 값
+        // const oldValue = e.oldValue; // 이전 값
 
+            console.log("업데이트된 행 데이터:", updatedData);
+            let copyData = {...data}
+            copyData[e.node.rowIndex] = updatedData
+            setData(copyData);
+            console.log(copyData, 'copyData')
 
-        // 변경 사항이 있을 때만 처리
-        if (newValue !== oldValue) {
+            if (Object.values(copyData)[0]?.estimateRequestId) {
+                copyData = Object.values(copyData).map((v) => ({
+                    ...v,
+                    replyDate: moment(v.replyDate).format("YYYY-MM-DD"),
+                }));
+                setData(copyData);
+            }
 
-            setInfo(v=>{
-                let copyData = {...v}
-                copyData[listDetailType][e.node.rowIndex] = updatedData
+            if (Object.values(copyData)[0]?.estimateId) {
+                copyData = Object.values(copyData).map((v) => ({
+                    ...v,
+                    amount: v.quantity*v.unitPrice
+                }));
+                setData(copyData);
+            }
 
-                if(copyData['estimateRequestDetailList']) {
-                    copyData['estimateRequestDetailList'] = copyData['estimateRequestDetailList'].map(v => ({
-                        ...v,
-                        replyDate: moment(item.replyDate).format('YYYY-MM-DD')}))
-                }
-
-                if(copyData['estimateDetailList']) {
-                    copyData['estimateDetailList'][e.node.rowIndex].amount =
-                        copyData['estimateDetailList'][e.node.rowIndex].quantity*copyData['estimateDetailList'][e.node.rowIndex].unitPrice
-                }
-
-                if(copyData['estimateDetailList']) {
-                    copyData['estimateDetailList'][e.node.rowIndex].amount =
-                        copyData['estimateDetailList'][e.node.rowIndex].quantity*copyData['estimateDetailList'][e.node.rowIndex].unitPrice
-                }
-
-                if(copyData['orderDetailList']) {
-                    copyData['orderDetailList'][e.node.rowIndex].unreceivedQuantity =
-                        copyData['orderDetailList'][e.node.rowIndex].quantity-copyData['orderDetailList'][e.node.rowIndex].receivedQuantity
-                }
-
-                return copyData
-            })
-            console.log("업데이트된 데이터:", updatedData);
-        }
+            if (Object.values(copyData)[0]?.orderId) {
+                copyData = Object.values(copyData).map((v) => ({
+                    ...v,
+                    unreceivedQuantity: v.quantity-v.receivedQuantity
+                }));
+                setData(copyData);
+            }
     }
+
+    const handleFile = (file) => {
+        const reader = new FileReader();
+
+        reader.onload = (e) => {
+            const binaryStr = e.target.result;
+            const workbook = XLSX.read(binaryStr, { type: 'binary' });
+
+            // 첫 번째 시트 읽기
+            const worksheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[worksheetName];
+
+            // 데이터를 JSON 형식으로 변환 (첫 번째 행을 컬럼 키로 사용)
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+            // 데이터 첫 번째 행을 컬럼 이름으로 사용
+            const headers = jsonData[0];
+            const dataRows = jsonData.slice(1);
+
+            // 테이블 데이터 변환
+            const tableData = dataRows.map((row) => {
+                const rowData = {};
+                row?.forEach((cell, cellIndex) => {
+                    const header = headers[cellIndex];
+                    if (header !== undefined) {
+                        rowData[header] = cell ?? ''; // 값이 없으면 기본값으로 빈 문자열 설정
+                    }
+                });
+                return rowData;
+            });
+
+            // tableData가 배열인지 확인하고 상태 업데이트
+            setData((v) => {
+                const copyData = { ...v };
+                copyData[listType] = Array.isArray(tableData) ? tableData : []; // 배열인지 확인 후 설정
+                return copyData;
+            });
+        };
+
+        reader.readAsBinaryString(file);
+    };
+
+    const uploadProps = {
+        name: 'file',
+        accept: '.xlsx, .xls',
+        multiple: false,
+        showUploadList: false,
+        beforeUpload: (file) => {
+            const isExcel = file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
+                file.type === 'application/vnd.ms-excel' ||
+                file.name.toLowerCase().endsWith('.xlsx') ||
+                file.name.toLowerCase().endsWith('.xls');
+
+            if (!isExcel) {
+                message.error('엑셀 파일만 업로드 가능합니다.');
+                return Upload.LIST_IGNORE;
+            }
+
+            // 파일 읽기
+            handleFile(file);
+
+            // false를 반환하여 업로드 방지 (자동 업로드 차단)
+            return false;
+        },
+    };
+
 
     return (
         <div className="ag-theme-quartz"
              style={{height: '100%', width: '100%', display: 'flex', flexDirection: 'column', overflowX: 'auto'}}>
 
             <div style={{width: '100%', display: 'flex', justifyContent: 'space-between', margin: '10px 0'}}>
-                <span>LIST</span>
+                <div>LIST</div>
                 {funcButtons}
             </div>
             {modalComponent}
 
-            <AgGridReact theme={tableTheme} ref={gridRef} containerStyle={{width: '100%', height: '84%'}}
+            <AgGridReact theme={tableTheme} ref={gridRef} containerStyle={{width: '100%', height: '78%'}}
                         //@ts-ignore
                          onRowDoubleClicked={handleDoubleClicked}
                         //@ts-ignore
@@ -234,6 +289,13 @@ const TableGrid = ({
                              loadThemeGoogleFonts: true,
                          }}
             />
+            {type==='write'&&
+                <Dragger {...uploadProps} style={{width:'50%',margin:'15px auto 0 auto'}}>
+                    <p className="ant-upload-drag-icon">
+                        <InboxOutlined/>
+                    </p>
+                    <p className="ant-upload-text">Click or drag file to this area to upload</p>
+                </Dragger>}
         </div>
     );
 };

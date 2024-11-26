@@ -23,19 +23,24 @@ import * as XLSX from "xlsx";
 import Select from "antd/lib/select";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
+import PrintEstimate from "@/component/printEstimate";
+import {useAppSelector} from "@/utils/common/function/reduxHooks";
+import printIntegratedEstimate from "@/component/printIntegratedEstimate";
+import PrintIntegratedEstimate from "@/component/printIntegratedEstimate";
 
 const {RangePicker} = DatePicker
 
 
 export default function EstimateMerge({dataList}) {
 
-
     const gridRef = useRef(null);
 
+    const userInfo = useAppSelector((state) => state.user);
     const {estimateList} = dataList;
     const [info, setInfo] = useState(estimateReadInitial)
     const [tableData, setTableData] = useState(estimateList)
-
+    const [selectedRow, setSelectedRow] = useState([])
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     function onChange(e) {
 
@@ -65,39 +70,21 @@ export default function EstimateMerge({dataList}) {
         setTableData(result?.data?.entity?.estimateList)
     }
 
-    async function deleteList() {
-        const api = gridRef.current.api;
-        console.log(api.getSelectedRows(),':::')
+    async function printEstimate () {
 
-        if (api.getSelectedRows().length<1) {
-            message.error('삭제할 데이터를 선택해주세요.')
-        } else {
-            for (const item of api.getSelectedRows()) {
-                const response = await getData.post('estimate/deleteEstimate', {
-                    estimateId:item.estimateId
-                });
-                console.log(response)
-                if (response.data.code===1) {
-                    message.success('삭제되었습니다.')
-                    window.location.reload();
-                } else {
-                    message.error('오류가 발생하였습니다. 다시 시도해주세요.')
-                }
-            }
-        }
+        const api = gridRef.current.api;
+        const checkedData = api.getSelectedRows();
+
+        setSelectedRow(checkedData)
+        // console.log(selectedRow, 'setSelectedRow')
+        setIsModalOpen(true)
     }
 
-    const downloadExcel = () => {
-
-        const worksheet = XLSX.utils.json_to_sheet(tableData);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-        XLSX.writeFile(workbook, "example.xlsx");
-    };
 
     return <>
         <LayoutComponent>
-            <div style={{display: 'grid', gridTemplateRows: 'auto 1fr',  height: '100%', gridColumnGap: 5}}>
+            <PrintIntegratedEstimate data={selectedRow} isModalOpen={isModalOpen} userInfo={userInfo} setIsModalOpen={setIsModalOpen}/>
+            <div style={{display: 'grid', gridTemplateRows: 'auto 1fr',  height: '100vh', columnGap: 5}}>
                 <Card title={<span style={{fontSize: 12,}}>통합견적서 발행</span>} headStyle={{marginTop: -10, height: 30}}
                       style={{fontSize: 12, border: '1px solid lightGray'}} bodyStyle={{padding: '10px 24px'}}>
                     <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1.5fr', width: '100%', columnGap: 20}}>
@@ -187,7 +174,7 @@ export default function EstimateMerge({dataList}) {
                     type={'read'}
                     excel={true}
                     funcButtons={<div>
-                        <Button type={'primary'} size={'small'} style={{backgroundColor:'green', border:'none', fontSize: 11, marginLeft:5,}} onClick={downloadExcel}>
+                        <Button type={'primary'} size={'small'} style={{backgroundColor:'green', border:'none', fontSize: 11, marginLeft:5,}} onClick={printEstimate}>
                             <FileExcelOutlined/>통합 견적서 발행
                         </Button></div>}
                 />

@@ -5,7 +5,7 @@ import Card from "antd/lib/card/Card";
 import TextArea from "antd/lib/input/TextArea";
 import {
     CopyOutlined, DownCircleFilled,
-    DownloadOutlined,
+    DownloadOutlined, EditOutlined,
     FileSearchOutlined,
     RetweetOutlined,
     SaveOutlined, UpCircleFilled
@@ -26,8 +26,10 @@ import * as XLSX from "xlsx";
 import Select from "antd/lib/select";
 import TableGrid from "@/component/tableGrid";
 import {useRouter} from "next/router";
-import SearchAgendaModal from "@/component/SearchAgendaModal";
+import SearchAgendaModal from "@/component/SearchAgencyModal";
 import SearchCustomerModal from "@/component/SearchCustomerModal";
+import SearchAgencyModal from "@/component/SearchAgencyModal";
+import SearchMakerModal from "@/component/SearchMakerModal";
 
 
 export default function EstimateWrite({dataInfo}) {
@@ -37,9 +39,10 @@ export default function EstimateWrite({dataInfo}) {
     const userInfo = useAppSelector((state) => state.user);
     const [info, setInfo] = useState<any>(estimateWriteInitial)
     const [mini, setMini] = useState(true);
-    const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
+    const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false, event3: false});
     const [agencyData, setAgencyData] = useState([]);
     const [customerData, setCustomerData] = useState([]);
+    const [makerData, setMakerData] = useState([]);
 
 
     useEffect(() => {
@@ -128,7 +131,7 @@ export default function EstimateWrite({dataInfo}) {
     const handleKeyPress = async (e) => {
         if (e.key === 'Enter') {
             if (e.target.id === 'agencyCode') {
-                if(!info['agencyCode']){
+                if (!info['agencyCode']) {
                     return false;
                 }
                 const result = await getData.post('agency/getAgencyListForEstimate', {
@@ -136,9 +139,10 @@ export default function EstimateWrite({dataInfo}) {
                     "page": 1,
                     "limit": -1
                 })
+
                 if (result.data.entity.agencyList.length > 1) {
                     setAgencyData(result.data.entity.agencyList)
-                    setIsModalOpen({event1: true, event2: false})
+                    setIsModalOpen({event1: true, event2: false, event3: false,})
                 } else if (!!result.data.entity.agencyList.length) {
                     const {agencyCode, agencyName} = result.data.entity.agencyList[0]
 
@@ -146,8 +150,8 @@ export default function EstimateWrite({dataInfo}) {
                         return {...v, agencyCode: agencyCode, agencyName: agencyName}
                     })
                 }
-            }else{
-                if(!info['customerName']){
+            } else if (e.target.id === 'customerName') {
+                if (!info['customerName']) {
                     return false
                 }
                 const result = await getData.post('customer/getCustomerListForEstimate', {
@@ -155,43 +159,82 @@ export default function EstimateWrite({dataInfo}) {
                     "page": 1,
                     "limit": -1
                 })
-                if(result.data.entity.customerList.length > 1){
+                if (result.data.entity.customerList.length > 1) {
                     setCustomerData(result.data.entity.customerList)
-                    setIsModalOpen({event1: false, event2: true})
+                    setIsModalOpen({event1: false, event2: true, event3: false,})
                 } else if (!!result.data.entity.customerList.length) {
                     const {customerName, managerName, directTel, faxNumber} = result.data.entity.customerList[0]
 
 
                     setInfo(v => {
-                        return {...v, customerName: customerName, managerName: managerName,phoneNumber:directTel, faxNumber : faxNumber }
+                        return {
+                            ...v,
+                            customerName: customerName,
+                            managerName: managerName,
+                            phoneNumber: directTel,
+                            faxNumber: faxNumber
+                        }
                     })
                 }
+            } else {
+
+            }if (!info['maker']) {
+                return false
+            }
+            const result = await getData.post('maker/getMakerList', {
+                "searchType": "1",
+                "searchText": info['maker'],       // 대리점코드 or 대리점 상호명
+                "page": 1,
+                "limit": -1
+            })
+            if (result.data.entity.makerList.length > 1) {
+                setMakerData(result.data.entity.makerList)
+                setIsModalOpen({event1: false, event2: false, event3: true,})
+            } else if (!!result.data.entity.makerList.length) {
+                const {makerName, item, instructions} = result.data.entity.makerList[0]
+
+
+                setInfo(v => {
+                    return {
+                        ...v,
+                        maker: makerName,
+                        item: item,
+                        instructions: instructions,
+                    }
+                })
             }
         }
+
     };
 
 
     async function findDocument() {
 
-        const result = await getData.post('estimate/getEstimateList', {
-            "searchType": "",           // 검색조건 1: 주문, 2: 미주문
-            "searchStartDate": "",      // 작성일 검색 시작일
-            "searchEndDate": "",        // 작성일 검색 종료일
-            "searchDocumentNumber": info['documentNumberFull'], // 문서번호
-            "searchCustomerName": "",   // 거래처명
-            "searchModel": "",          // MODEL
-            "searchMaker": "",          // MAKER
-            "searchItem": "",           // ITEM
-            "searchCreatedBy": "",      // 등록 관리자 이름
+        const result = await getData.post('estimate/getEstimateRequestList', {
+            "searchEstimateRequestId": "",      // 견적의뢰 Id
+            "searchType": "",                   // 검색조건 1: 회신, 2: 미회신
+            "searchStartDate": "",              // 작성일자 시작일
+            "searchEndDate": "",                // 작성일자 종료일
+            "searchDocumentNumber": info['documentNumberFull'],         // 문서번호
+            "searchCustomerName": "",           // 거래처명
+            "searchMaker": "",                  // MAKER
+            "searchModel": "",                  // MODEL
+            "searchItem": "",                   // ITEM
+            "searchCreatedBy": "",              // 등록직원명
+            "searchManagerName": "",            // 담당자명
+            "searchMobileNumber": "",           // 담당자 연락처
+            "searchBiddingNumber": "",          // 입찰번호(미완성)
             "page": 1,
             "limit": -1
         });
 
+        // console.log(result)
+
         if (result?.data?.code === 1) {
 
-            if(result?.data?.entity?.estimateList.length) {
+            if(result?.data?.entity?.estimateRequestList.length) {
                 setInfo(v => {
-                        return {...v, ...result?.data?.entity?.estimateList[0], writtenDate : moment()}
+                        return {...v, ...result?.data?.entity?.estimateRequestList[0], writtenDate : moment()}
                     }
                 )
             }
@@ -207,11 +250,23 @@ export default function EstimateWrite({dataInfo}) {
 
     return <>
         <LayoutComponent>
-            <div style={{display: 'grid', gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`, height: '100%', gridColumnGap: 5}}>
+            <div style={{display: 'grid', gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`, height: '100vh', columnGap: 5}}>
 
-                <SearchAgendaModal info={info} setInfo={setInfo} agencyData={agencyData} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
-                <SearchCustomerModal info={info} setInfo={setInfo} customerData={customerData} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
-                <Card title={'견적서 작성'} style={{fontSize: 12, border: '1px solid lightGray'}} extra={<span style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>setMini(v => !v)}> {!mini ? <UpCircleFilled/> : <DownCircleFilled/>}</span>} >
+                <SearchAgencyModal info={info} setInfo={setInfo} agencyData={agencyData} isModalOpen={isModalOpen}
+                                   setIsModalOpen={setIsModalOpen}/>
+                <SearchCustomerModal info={info} setInfo={setInfo} customerData={customerData} isModalOpen={isModalOpen}
+                                     setIsModalOpen={setIsModalOpen}/>
+                <SearchMakerModal info={info} setInfo={setInfo} makerData={makerData} isModalOpen={isModalOpen}
+                                  setIsModalOpen={setIsModalOpen}/>
+                <Card title={<div style={{display:'flex', justifyContent:'space-between'}}>
+                    <div style={{fontSize:14, fontWeight:550}}>견적서 작성</div> <div>
+                    <Button type={'primary'} size={'small'} style={{marginRight: 8}}
+                            onClick={saveFunc}><SaveOutlined/>저장</Button>
+                    {/*@ts-ignored*/}
+                    <Button type={'danger'} size={'small'}  style={{marginRight: 8}}
+                            onClick={() => setInfo(orderWriteInitial)}><RetweetOutlined/>초기화</Button>
+
+                </div></div>} style={{fontSize: 12, border: '1px solid lightGray'}} extra={<span style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>setMini(v => !v)}> {!mini ? <DownCircleFilled/> : <UpCircleFilled/>}</span>}>
 
                     <Card size={'small'} style={{
                         fontSize: 13,
@@ -226,9 +281,8 @@ export default function EstimateWrite({dataInfo}) {
                                                 target: {
                                                     id: 'writtenDate',
                                                     value: date
-                                                }
-                                            })
-                                            } id={'writtenDate'} size={'small'}/>
+                                                }})
+                                            } id={'writtenDate'} size={'small'} disabled={true}/>
                             </div>
                             <div>
                                 <div style={{paddingTop: 8}}>INQUIRY NO.</div>
@@ -259,7 +313,7 @@ export default function EstimateWrite({dataInfo}) {
                                        suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
                                            (e) => {
                                                e.stopPropagation();
-                                               setIsModalOpen({event1: true, event2: false})
+                                               setIsModalOpen({event1: true, event2: false, event3: false})
                                            }
                                        }/>}/>
                             </div>
@@ -283,7 +337,7 @@ export default function EstimateWrite({dataInfo}) {
                                        size={'small'} suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
                                     (e) => {
                                         e.stopPropagation();
-                                        setIsModalOpen({event1: false, event2: true})
+                                        setIsModalOpen({event1: false, event2: true, event3: false})
                                     }
                                 }/>}/>
                             </div>
@@ -308,10 +362,10 @@ export default function EstimateWrite({dataInfo}) {
 
                     </Card>
 
-                    <Card size={'small'} style={{
-                        fontSize: 13,
-                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                    }}>
+                        <Card size={'small'} style={{
+                            fontSize: 13,
+                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                        }}>
 
                             <div>
                                 <div style={{paddingTop: 8}}>유효기간</div>
@@ -334,11 +388,14 @@ export default function EstimateWrite({dataInfo}) {
                                 ]} style={{width: '100%'}}>
                                 </Select>
                             </div>
-
-                            <div>
-                                <div style={{paddingTop: 8}}>운송조건</div>
-                                <Input id={'shippingTerms'} value={info['shippingTerms']} onChange={onChange}
-                                       size={'small'}/>
+                            <div style={{marginTop: 8}}>
+                                <div style={{paddingBottom: 3}}>운송조건</div>
+                                <Select id={'shippingTerms'} defaultValue={'0'}
+                                        onChange={(src) => onChange({target: {id: 'shippingTerms', value: src}})}
+                                        size={'small'} value={info['shippingTerms']} options={[
+                                    {value: '0', label: '귀사도착도'},
+                                    {value: '1', label: '화물 및 택배비 별도'},
+                                ]} style={{width: '100%',}}/>
                             </div>
                             <div>
                                 <div style={{paddingTop: 8}}>환율</div>
@@ -346,15 +403,24 @@ export default function EstimateWrite({dataInfo}) {
                                        size={'small'}/>
                             </div>
 
-                    </Card>
+                        </Card>
 
-                    <Card size={'small'} style={{
-                        fontSize: 13,
-                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                    }}>
-                        <div style={{paddingTop: 8}}>
-                            <div style={{paddingBottom: 3}}>MAKER</div>
-                            <Input id={'maker'} value={info['maker']} onChange={onChange} size={'small'}/>
+                        <Card size={'small'} style={{
+                            fontSize: 13,
+                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                        }}>
+                            <div style={{paddingTop: 8}}>
+                                <div style={{paddingBottom: 3}}>MAKER</div>
+                                <Input id={'maker'} value={info['maker']} onChange={onChange}
+                                       size={'small'}
+                                       onKeyDown={handleKeyPress}
+                                       suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
+                                           (e) => {
+                                               e.stopPropagation();
+                                           setIsModalOpen({event1: false, event2: false, event3: true})
+                                       }
+                                   }/>}/>
+
                         </div>
                         <div style={{paddingTop: 8}}>
                             <div style={{paddingBottom: 3}}>ITEM</div>
@@ -371,16 +437,6 @@ export default function EstimateWrite({dataInfo}) {
                         </div>
 
                     </Card>
-                        <div style={{paddingTop: 10}}>
-
-                            <Button type={'primary'} size={'small'} style={{marginRight: 8}}
-                                    onClick={saveFunc}><SaveOutlined/>저장</Button>
-
-                            {/*@ts-ignored*/}
-                            <Button type={'danger'} size={'small'}
-                                    onClick={() => setInfo(orderWriteInitial)}><RetweetOutlined/>초기화</Button>
-
-                        </div>
                   </div>
                 </Card>
 

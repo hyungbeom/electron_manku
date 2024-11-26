@@ -29,7 +29,7 @@ import Table from "antd/lib/table";
 import TableModal from "@/utils/TableModal";
 import {useRouter} from "next/router";
 import TableGrid from "@/component/tableGrid";
-import SearchAgendaModal from "@/component/SearchAgendaModal";
+import SearchAgendaModal from "@/component/SearchAgencyModal";
 import SearchCustomerModal from "@/component/SearchCustomerModal";
 import TextArea from "antd/lib/input/TextArea";
 
@@ -40,6 +40,7 @@ export default function OrderWriter({dataInfo}) {
     const userInfo = useAppSelector((state) => state.user);
     const [info, setInfo] = useState<any>(orderWriteInitial)
     const [mini, setMini] = useState(true);
+    const [searchDocumentNumber, setSearchDocumentNumber] =useState('')
 
 
     useEffect(() => {
@@ -140,7 +141,7 @@ export default function OrderWriter({dataInfo}) {
             "searchType": "",           // 검색조건 1: 주문, 2: 미주문
             "searchStartDate": "",      // 작성일 검색 시작일
             "searchEndDate": "",        // 작성일 검색 종료일
-            "searchDocumentNumber": info['documentNumberFull'], // 문서번호
+            "searchDocumentNumber": searchDocumentNumber, // 문서번호
             "searchCustomerName": "",   // 거래처명
             "searchModel": "",          // MODEL
             "searchMaker": "",          // MAKER
@@ -156,7 +157,7 @@ export default function OrderWriter({dataInfo}) {
                 setInfo(v => {
                         return {...v, ...result?.data?.entity?.estimateList[0],
                             writtenDate : moment(),
-                            orderDate : moment(result?.data?.entity?.estimateList[0].orderDate)
+                            delivery : moment()
                         }
                     }
                 )
@@ -176,7 +177,7 @@ export default function OrderWriter({dataInfo}) {
 
     return <>
         <LayoutComponent>
-            <div style={{display: 'grid', gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`,  height: '100%', columnGap: 5}}>
+            <div style={{display: 'grid', gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`,  height: '100vh', columnGap: 5}}>
 
                 <Card title={'발주서 작성'} style={{fontSize: 12, border: '1px solid lightGray'}} extra={<span style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>setMini(v => !v)}> {!mini ? <UpCircleFilled/> : <DownCircleFilled/>}</span>} >
 
@@ -296,7 +297,7 @@ export default function OrderWriter({dataInfo}) {
                             </div>
                             <div style={{paddingTop: 8}}>
                                 <div style={{paddingBottom: 3}}>Delivery</div>
-                                <DatePicker value={info['delivery']}
+                                <DatePicker value={moment(info['delivery'])}
                                             onChange={(date, dateString) => onChange({
                                                 target: {
                                                     id: 'delivery',

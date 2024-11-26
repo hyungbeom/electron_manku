@@ -60,7 +60,7 @@ export default function makerRead() {
     }
 
     return <LayoutComponent>
-            <div style={{display: 'grid', gridTemplateRows: 'auto 1fr', height: '100%', columnGap: 5}}>
+            <div style={{display: 'grid', gridTemplateRows: 'auto 1fr', height: '100vh', columnGap: 5}}>
                 <Card title={<span style={{fontSize: 12,}}>Maker 등록</span>} headStyle={{marginTop: -10, height: 30}}
                       style={{border: '1px solid lightGray',}} bodyStyle={{padding: '10px 24px'}}>
 
@@ -105,7 +105,7 @@ export default function makerRead() {
                             </div>
                             <div style={{marginTop: 8}}>
                                 <div style={{paddingBottom: 3}}>원산지</div>
-                                <Input id={'currencyUnit'} value={info['currencyUnit']} onChange={onChange}
+                                <Input id={'origin'} value={info['origin']} onChange={onChange}
                                        size={'small'}/>
                             </div>
                             <div style={{marginTop: 8}}>

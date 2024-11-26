@@ -75,7 +75,7 @@ export default function codeOverseasPurchase() {
     };
 
     return <LayoutComponent>
-        <div style={{display: 'grid', gridTemplateRows: 'auto 1fr', height: '100%', columnGap: 5}}>
+        <div style={{display: 'grid', gridTemplateRows: 'auto 1fr', height: '100vh', columnGap: 5}}>
             <Card size={'small'} title={'공문서 등록'} style={{fontSize: 12, border: '1px solid lightGray'}}>
                 <Card size={'small'} style={{
                     fontSize: 13,

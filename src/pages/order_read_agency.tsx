@@ -95,7 +95,7 @@ export default function OrderReadAgency({dataList}) {
 
     return <>
         <LayoutComponent>
-            <div style={{display: 'grid', gridTemplateColumns: '350px 1fr', height: '100%', gridColumnGap: 5}}>
+            <div style={{display: 'grid', gridTemplateColumns: '350px 1fr', height: '100vh', gridColumnGap: 5}}>
                 <Card title={'해외대리점 별 주문조회'} style={{fontSize: 12, border: '1px solid lightGray'}}>
                     <Card size={'small'} style={{
                         fontSize: 13,

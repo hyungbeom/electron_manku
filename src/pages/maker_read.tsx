@@ -115,7 +115,7 @@ export default function makerRead({dataList}) {
     };
 
     return <LayoutComponent>
-        <div style={{display: 'grid', gridTemplateRows: '120px 1fr', height: '100%', gridColumnGap: 5}}>
+        <div style={{display: 'grid', gridTemplateRows: '120px 1fr', height: '100vh', gridColumnGap: 5}}>
             <Card size={'small'} title={'Maker 관리'} style={{fontSize: 12, border: '1px solid lightGray'}}>
                 <Card size={'small'} style={{
                     fontSize: 13,

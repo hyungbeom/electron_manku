@@ -5,7 +5,7 @@ import Card from "antd/lib/card/Card";
 import TextArea from "antd/lib/input/TextArea";
 import {
     CopyOutlined,
-    DownCircleFilled,
+    DownCircleFilled, EditOutlined,
     FileSearchOutlined,
     RetweetOutlined,
     SaveOutlined,
@@ -13,7 +13,7 @@ import {
 } from "@ant-design/icons";
 import {subRfqWriteColumn} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {rfqWriteInitial} from "@/utils/initialList";
+import {customerInitial, rfqWriteInitial} from "@/utils/initialList";
 import moment from "moment";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
@@ -26,18 +26,24 @@ import MyComponent from "@/component/MyComponent";
 import {useRouter} from "next/router";
 import nookies from "nookies";
 import TableGrid from "@/component/tableGrid";
-import SearchAgendaModal from "@/component/SearchAgendaModal";
 import SearchCustomerModal from "@/component/SearchCustomerModal";
+import Dragger from "antd/lib/upload/Dragger";
+import Upload from "antd/lib/upload";
+import SearchMakerModal from "@/component/SearchMakerModal";
+import SearchAgencyModal from "@/component/SearchAgencyModal";
+import {InputRef} from "antd";
 
 export default function rqfWrite() {
     const gridRef = useRef(null);
 
     const [info, setInfo] = useState<any>(rfqWriteInitial)
     const [mini, setMini] = useState(true);
-    const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
+    const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false, event3: false});
     const [agencyData, setAgencyData] = useState([]);
     const [customerData, setCustomerData] = useState([]);
-
+    const [makerData, setMakerData] = useState([]);
+    const [newDocumentNum, setNewDocumentNum] =useState('')
+    const [customerInfo, setCustomerInfo] = useState(customerInitial)
 
     useEffect(() => {
 
@@ -54,13 +60,73 @@ export default function rqfWrite() {
 
     function onChange(e) {
 
+        setInfo(v => {
+            return {...v, [e.target.id]: e.target.value}
+        })
+    }
+
+    // useEffect(()=>{
+    // },[info['agencyCode']])
+
+
+    function onCustomerInfoChange(e) {
+
         let bowl = {}
         bowl[e.target.id] = e.target.value;
 
-        setInfo(v => {
+        setCustomerInfo(v => {
             return {...v, ...bowl}
         })
     }
+
+    useEffect(() => {
+        setInfo((v)=>({
+            ...v, documentNumberFull:newDocumentNum
+    }))
+    }, [newDocumentNum]);
+
+
+    async function generateNewDocumentNumber  ({agencyCode}) {
+
+        const year = String(new Date().getFullYear()).slice(-2);
+
+        const result = await getData.post('estimate/getEstimateRequestList', {
+            "searchEstimateRequestId": "",      // 견적의뢰 Id
+            "searchType": "",                   // 검색조건 1: 회신, 2: 미회신
+            "searchStartDate": null,              // 작성일자 시작일
+            "searchEndDate": null,           // 작성일자 종료일
+            "searchDocumentNumber": `${agencyCode}-${year}`,         // 문서번호
+            "searchCustomerName": "",           // 거래처명
+            "searchMaker": "",                  // MAKER
+            "searchModel": "",                  // MODEL
+            "searchItem": "",                   // ITEM
+            "searchCreatedBy": "",              // 등록직원명
+            "searchManagerName": "",            // 담당자명
+            "searchMobileNumber": "",           // 담당자 연락처
+            "searchBiddingNumber": "",          // 입찰번호(미완성)
+            "page": 1,
+            "limit": -1
+        })
+
+        let documentNum;
+
+        if (result?.data?.entity?.estimateRequestList.length>0){
+            const latestDocumentNum = result?.data?.entity?.estimateRequestList?.[0]?.documentNumberFull
+
+            const [a, b, lastNumber] = latestDocumentNum.split('-');
+            const nextNumber = parseInt(lastNumber) + 1;
+            documentNum = `${agencyCode}-${year}-${String(nextNumber).padStart(4, '0')}`;
+
+        }
+        else
+
+            documentNum = `${agencyCode}-${year}-0001`;
+
+        setNewDocumentNum(documentNum)
+        console.log(newDocumentNum, 'NewDocumentNumber~~~~')
+
+    }
+
 
     async function saveFunc() {
         if (!info['estimateRequestDetailList'].length) {
@@ -70,6 +136,10 @@ export default function rqfWrite() {
             copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
             copyData['replyDate'] = moment(info['replyDate']).format('YYYY-MM-DD');
             copyData['dueDate'] = moment(info['dueDate']).format('YYYY-MM-DD');
+            copyData['customerInfoList'].push(customerInfo)
+
+            await generateNewDocumentNumber(info['agencyCode']);
+            console.log(copyData, '저장해보자~')
 
             await getData.post('estimate/addEstimateRequest', copyData).then(v => {
                 if (v.data.code === 1) {
@@ -108,11 +178,11 @@ export default function rqfWrite() {
         let copyData = {...info};
         copyData['estimateRequestDetailList'].push({
             "model": "",           // MODEL
-            "quantity": 1,              // 수량
+            "quantity": 0,              // 수량
             "unit": "ea",               // 단위
-            "currency": "krw",          // CURR
+            "currency": "KRW",          // CURR
             "net": 0,            // NET/P
-            "deliveryDate": "",   // 납기
+            "deliveryDate": 0,   // 납기
             "content": "미회신",         // 내용
             "replyDate": moment().format('YYYY-MM-DD'),  // 회신일
             "remarks": "",           // 비고
@@ -122,8 +192,18 @@ export default function rqfWrite() {
         setInfo(copyData)
     }
 
+    function addCustomer() {
+
+    }
+
+    function clearAll () {
+        setInfo(rfqWriteInitial)
+        setCustomerInfo(customerInitial)
+    }
+
     const handleKeyPress = async (e) => {
         if (e.key === 'Enter') {
+
             if (e.target.id === 'agencyCode') {
                 if (!info['agencyCode']) {
                     return false;
@@ -134,33 +214,34 @@ export default function rqfWrite() {
                     "limit": -1
                 })
 
-                if (result.data.entity.agencyList.length > 1) {
+                if (result?.data?.entity?.agencyList?.length > 1) {
                     setAgencyData(result.data.entity.agencyList)
-                    setIsModalOpen({event1: true, event2: false})
-                } else if (!!result.data.entity.agencyList.length) {
+                    setIsModalOpen({event1: true, event2: false, event3: false,})
+                } else if (!!result?.data?.entity?.agencyList?.length) {
                     const {agencyCode, agencyName} = result.data.entity.agencyList[0]
 
                     setInfo(v => {
-                        return {...v, agencyCode: agencyCode, agencyName: agencyName}
+                        return {...v, agencyCode: agencyCode, agencyName: agencyName,}
                     })
                 }
-            } else {
-                if (!info['customerName']) {
+
+            } else if (e.target.id === 'customerName') {
+                if (!customerInfo['customerName']) {
                     return false
                 }
                 const result = await getData.post('customer/getCustomerListForEstimate', {
-                    "searchText": info['customerName'],       // 대리점코드 or 대리점 상호명
+                    "searchText": customerInfo['customerName'],       // 대리점코드 or 대리점 상호명
                     "page": 1,
                     "limit": -1
                 })
-                if (result.data.entity.customerList.length > 1) {
+                if (result?.data?.entity?.customerList?.length > 1) {
                     setCustomerData(result.data.entity.customerList)
-                    setIsModalOpen({event1: false, event2: true})
-                } else if (!!result.data.entity.customerList.length) {
+                    setIsModalOpen({event1: false, event2: true, event3: false,})
+                } else if (!!result?.data?.entity?.customerList?.length) {
                     const {customerName, managerName, directTel, faxNumber} = result.data.entity.customerList[0]
 
-
-                    setInfo(v => {
+                    // setInfo(v => {
+                    setCustomerInfo(v => {
                         return {
                             ...v,
                             customerName: customerName,
@@ -170,20 +251,57 @@ export default function rqfWrite() {
                         }
                     })
                 }
+            } else {
+
+            }if (!info['maker']) {
+                return false
+            }
+            const result = await getData.post('maker/getMakerList', {
+                "searchType": "1",
+                "searchText": info['maker'],       // 대리점코드 or 대리점 상호명
+                "page": 1,
+                "limit": -1
+            })
+            if (result?.data?.entity?.makerList?.length > 1) {
+                setMakerData(result.data.entity.makerList)
+                setIsModalOpen({event1: false, event2: false, event3: true,})
+            } else if (!!result?.data?.entity?.makerList?.length) {
+                const {makerName, item, instructions} = result.data.entity.makerList[0]
+
+
+                setInfo(v => {
+                    return {
+                        ...v,
+                        maker: makerName,
+                        item: item,
+                        instructions: instructions,
+                    }
+                })
             }
         }
+
     };
+
 
     return <>
         <LayoutComponent>
-            <div style={{display: 'grid', gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`, height: '100%', columnGap: 5}}>
+            <div style={{display: 'grid', gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`, height: '100vh', columnGap: 5}}>
 
-                <SearchAgendaModal info={info} setInfo={setInfo} agencyData={agencyData} isModalOpen={isModalOpen}
+                <SearchAgencyModal info={info} setInfo={setInfo} agencyData={agencyData} isModalOpen={isModalOpen}
                                    setIsModalOpen={setIsModalOpen}/>
-                <SearchCustomerModal info={info} setInfo={setInfo} customerData={customerData} isModalOpen={isModalOpen}
+                <SearchCustomerModal info={info} setInfo={setCustomerInfo} customerData={customerData} isModalOpen={isModalOpen}
+                                     setIsModalOpen={setIsModalOpen}/>
+                <SearchMakerModal info={info} setInfo={setInfo} makerData={makerData} isModalOpen={isModalOpen}
                                      setIsModalOpen={setIsModalOpen}/>
 
-                <Card title={'견적의뢰 작성'} style={{fontSize: 12, border: '1px solid lightGray'}} extra={<span style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>setMini(v => !v)}> {!mini ? <UpCircleFilled/> : <DownCircleFilled/>}</span>} >
+                <Card title={<div style={{display:'flex', justifyContent:'space-between'}}>
+                    <div style={{fontSize:14, fontWeight:550}}>견적의뢰 작성</div> <div>
+                    <Button type={'primary'} size={'small'} style={{marginRight: 8}}
+                            onClick={saveFunc}><SaveOutlined/>저장</Button>
+                    {/*@ts-ignored*/}
+                    <Button type={'danger'} size={'small'} style={{marginRight: 8}}
+                            onClick={clearAll}><RetweetOutlined/>초기화</Button>
+                </div></div>}  style={{fontSize: 12, border: '1px solid lightGray'}} extra={<span style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>setMini(v => !v)}> {!mini ? <DownCircleFilled/> : <UpCircleFilled/>}</span>} >
                     {mini ? <div>
                             <Card size={'small'} style={{
                                 fontSize: 13,
@@ -237,7 +355,7 @@ export default function rqfWrite() {
                                                suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
                                                    (e) => {
                                                        e.stopPropagation();
-                                                       setIsModalOpen({event1: true, event2: false})
+                                                       setIsModalOpen({event1: true, event2: false, event3: false})
                                                    }
                                                }/>}/>
                                     </div>
@@ -262,43 +380,7 @@ export default function rqfWrite() {
                                                 })
                                                 } id={'dueDate'} size={'small'}/>
                             </div>
-
                         </Card>
-
-                        <Card size={'small'} style={{
-                            fontSize: 13,
-                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                        }}>
-                            <div>
-                                <div>상호명</div>
-                                <Input id={'customerName'} value={info['customerName']} onChange={onChange}
-                                       size={'small'}
-                                       onKeyDown={handleKeyPress}
-                                       suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
-                                           (e) => {
-                                                   e.stopPropagation();
-                                                   setIsModalOpen({event1: false, event2: true})
-                                               }
-                                           }/>}/>
-                                </div>
-                                <div>
-                                    <div style={{paddingTop: 8}}>거래처 담당자</div>
-                                    <Input id={'managerName'} value={info['managerName']} onChange={onChange}
-                                           size={'small'}/>
-                                </div>
-
-
-                                <div>
-                                    <div style={{paddingTop: 8}}>전화번호</div>
-                                    <Input id={'phoneNumber'} value={info['phoneNumber']} onChange={onChange}
-                                           size={'small'}/>
-                                </div>
-                                <div>
-                                    <div style={{paddingTop: 8}}>팩스/이메일</div>
-                                    <Input id={'faxNumber'} value={info['faxNumber']} onChange={onChange}
-                                           size={'small'}/>
-                                </div>
-                            </Card>
 
                             <Card size={'small'} style={{
                                 fontSize: 13,
@@ -306,7 +388,16 @@ export default function rqfWrite() {
                             }}>
                                 <div>
                                     <div style={{paddingBottom: 3}}>MAKER</div>
-                                    <Input id={'maker'} value={info['maker']} onChange={onChange} size={'small'}/>
+                                    <Input id={'maker'} value={info['maker']} onChange={onChange}
+                                           size={'small'}
+                                           onKeyDown={handleKeyPress}
+                                           suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
+                                               (e) => {
+                                                   e.stopPropagation();
+                                                   setIsModalOpen({event1: false, event2: false, event3: true})
+                                               }
+                                           }/>}/>
+
                                 </div>
                                 <div style={{paddingTop: 8}}>
                                     <div style={{paddingBottom: 3}}>ITEM</div>
@@ -335,16 +426,6 @@ export default function rqfWrite() {
                                 </div>
 
                             </Card>
-                            <div style={{paddingTop: 10}}>
-
-                                <Button type={'primary'} size={'small'} style={{marginRight: 8}}
-                                        onClick={saveFunc}><SaveOutlined/>저장</Button>
-
-                                {/*@ts-ignored*/}
-                                <Button type={'danger'} size={'small'}
-                                        onClick={() => setInfo(rfqWriteInitial)}><RetweetOutlined/>초기화</Button>
-
-                            </div>
                         </div>
                     </div> : null}
 
@@ -361,7 +442,6 @@ export default function rqfWrite() {
                     excel={true}
                     type={'write'}
                     funcButtons={<div>
-                        {/*@ts-ignored*/}
                         <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
                                 onClick={addRow}>
                             <SaveOutlined/>추가
@@ -389,6 +469,9 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     const {userInfo} = await initialServerRouter(ctx, store);
     const cookies = nookies.get(ctx)
+    const {display = 'horizon'} = cookies;
+
+
     if (!userInfo) {
         return {
             redirect: {
@@ -398,7 +481,6 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
         };
     }
 
-    const {display = 'horizon'} = cookies;
 
     store.dispatch(setUserInfo(userInfo));
 
@@ -426,7 +508,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     return {
         props: {
             // dataInfo: estimateRequestId ? result?.data?.entity?.estimateRequestList[0] : null,
-            display: display
+            // display: display
         }
     }
 })

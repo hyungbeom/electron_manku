@@ -131,7 +131,7 @@ const CodeErpUserManage = ({dataList}) => {
     return (
         <>
             <LayoutComponent>
-                <div style={{display: 'grid', gridTemplateColumns: '350px 1fr', height: '100%', gridColumnGap: 5}}>
+                <div style={{display: 'grid', gridTemplateColumns: '350px 1fr', height: '100vh', gridColumnGap: 5}}>
                     <Card title={'ERP 계정 관리'} style={{fontSize: 12, border: '1px solid lightGray'}}>
                         <Card title={'조회/저장'} size={'small'} style={{
                             fontSize: 13,

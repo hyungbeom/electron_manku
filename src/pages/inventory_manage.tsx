@@ -122,7 +122,7 @@ export default function OrderInventoryRead({dataList}) {
 
     return <>
         <LayoutComponent>
-            <div style={{display: 'grid', gridTemplateRows: 'auto 1fr', height: '100%', gridColumnGap: 5}}>
+            <div style={{display: 'grid', gridTemplateRows: 'auto 1fr', height: '100vh', gridColumnGap: 5}}>
                 <Card title={<span style={{fontSize: 12,}}>재고 조회</span>} headStyle={{marginTop: -10, height: 30}}
                       style={{border: '1px solid lightGray',}} bodyStyle={{padding: '10px 24px'}}>
 
@@ -210,7 +210,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
-    const result = await getData.post('inventory/getInventoryListForAdd', {
+    const result = await getData.post('inventory/getInventoryList', {
         "searchText": "",   // 검색어
         "page": 1,
         "limit": -1

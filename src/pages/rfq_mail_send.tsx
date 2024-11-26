@@ -31,7 +31,7 @@ export default function rfqRead({dataList}) {
     const userInfo = useAppSelector((state) => state.user);
     const [info, setInfo] = useState(subRfqReadInitial);
     const [tableData, setTableData] = useState(estimateRequestList);
-    const [paginationInfo, setPaginationInfo] = useState(pageInfo);
+    const [setPaginationInfo] = useState(pageInfo);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [previewData, setPreviewData] = useState({});
 
@@ -173,7 +173,7 @@ export default function rfqRead({dataList}) {
 
     return <>
         <LayoutComponent>
-            <div style={{display: 'grid', gridTemplateRows: '250px 1fr', height: '100%', gridColumnGap: 5}}>
+            <div style={{display: 'grid', gridTemplateRows: '250px 1fr', height: '100vh', gridColumnGap: 5}}>
                 <Card title={'메일전송'} style={{fontSize: 12, border: '1px solid lightGray'}} >
                     <Modal okText={'메일 전송'} cancelText={'취소'} onOk={sendMail} title={<div style={{ lineHeight: 2.5, fontWeight:550 }}>메일전송</div>} open={isModalOpen} onCancel={()=>setIsModalOpen(false)} >
 
@@ -374,18 +374,18 @@ export default function rfqRead({dataList}) {
 
                         <div>
                             <div>
-                                <div style={{paddingBottom: 3}}>검색조건</div>
+                                <div style={{paddingBottom: 3}}>발송여부</div>
                                 <Select id={'searchType'}
                                         onChange={(src) => onChange({target: {id: 'searchType', value: src}})}
                                         size={'small'} value={info['searchType']} options={[
                                     {value: '0', label: '전체'},
-                                    {value: '1', label: '회신'},
-                                    {value: '2', label: '미회신'}
+                                    {value: '1', label: '발송'},
+                                    {value: '2', label: '미발송'}
                                 ]} style={{width: '100%'}}>
                                 </Select>
                             </div>
                             <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>검색조건</div>
+                                <div style={{paddingBottom: 3}}>회신여부</div>
                                 <Select id={'searchType'}
                                         onChange={(src) => onChange({target: {id: 'searchType', value: src}})}
                                         size={'small'} value={info['searchType']} options={[

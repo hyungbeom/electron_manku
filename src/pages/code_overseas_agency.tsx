@@ -78,7 +78,7 @@ export default function codeOverseasPurchase({dataList}) {
 
 
     return <LayoutComponent>
-        <div style={{display: 'grid', gridTemplateRows: '120px 1fr', height: '100%', columnGap: 5}}>
+        <div style={{display: 'grid', gridTemplateRows: '120px 1fr', height: '100vh', columnGap: 5}}>
             <Card size={'small'} title={'해외 매입처 관리'} style={{fontSize: 12, border: '1px solid lightGray'}}>
                 <Card size={'small'} style={{
                     fontSize: 13,

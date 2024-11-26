@@ -4,18 +4,17 @@ import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
 import {
     CopyOutlined, DownCircleFilled, DownloadOutlined, EditOutlined,
-    RetweetOutlined,
-    SaveOutlined,
-    UpCircleFilled
+    SaveOutlined, UpCircleFilled
 } from "@ant-design/icons";
 import {
-    searchAgencyCodeColumn,
-    searchCustomerColumn,
     tableOrderWriteColumn,
 } from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {orderWriteInitial, rfqWriteInitial, subRfqWriteInitial, tableOrderWriteInitial} from "@/utils/initialList";
-import {subOrderWriteInfo, subRfqWriteInfo} from "@/utils/modalDataList";
+import {
+    orderWriteInitial,
+    printEstimateInitial,
+    rfqWriteInitial,
+} from "@/utils/initialList";
 import moment from "moment";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
@@ -26,31 +25,30 @@ import {setUserInfo} from "@/store/user/userSlice";
 import Select from "antd/lib/select";
 import * as XLSX from "xlsx";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
-import Modal from "antd/lib/modal/Modal";
-import Table from "antd/lib/table";
-import TableModal from "@/utils/TableModal";
 import {useRouter} from "next/router";
 import TableGrid from "@/component/tableGrid";
-import SearchAgendaModal from "@/component/SearchAgendaModal";
-import SearchCustomerModal from "@/component/SearchCustomerModal";
-import TextArea from "antd/lib/input/TextArea";
+import PrintTransactionModal from "@/component/printTransaction";
+import PrintPo from "@/component/printPo";
+// import printTransaction from "@/utils/printTransaction";
 
 
-export default function OrderWriter({dataInfo}) {
+export default function order_update({data}) {
     const gridRef = useRef(null);
     const router = useRouter();
+    const {orderDetail, customerInfo} = data;
 
     const userInfo = useAppSelector((state) => state.user);
     const [info, setInfo] = useState<any>(orderWriteInitial)
     const [mini, setMini] = useState(true);
-
+    const [customerData, setCustomerData] = useState(printEstimateInitial)
+    const [isModalOpen, setIsModalOpen] = useState({event1:false, event2:false});
 
     useEffect(() => {
 
         let copyData: any = {...orderWriteInitial}
 
-        if (dataInfo) {
-            copyData = dataInfo;
+        if (orderDetail) {
+            copyData = orderDetail;
             copyData['writtenDate'] = moment(copyData['writtenDate']);
             // @ts-ignored
             copyData['delivery'] = moment(copyData['delivery']);
@@ -61,9 +59,12 @@ export default function OrderWriter({dataInfo}) {
             copyData['delivery'] = moment();
         }
 
-
         setInfo(copyData);
-    }, [dataInfo, router])
+
+    }, [orderDetail, router])
+
+    useEffect(() => {
+    }, [customerData])
 
 
 
@@ -98,6 +99,33 @@ export default function OrderWriter({dataInfo}) {
         });
     }
 }
+
+    async function printTransactionStatement () {
+        await searchCustomer();
+        setIsModalOpen({event1:true, event2:false});
+    }
+
+    function printPo () {
+        setIsModalOpen({event1:false, event2:true});
+    }
+
+    async function searchCustomer () {
+
+        const result = await getData.post('customer/getCustomerListForOrder', {
+            customerName: info['customerName']
+        })
+
+        // console.log(result?.data?.entity?.customerList?.[0], 'result')
+
+        if (result?.data?.code === 1) {
+
+            if(result?.data?.entity?.customerList.length) {
+                setCustomerData(result?.data?.entity?.customerList?.[0])
+            }
+        }
+
+    }
+
 
     function deleteList() {
 
@@ -187,17 +215,40 @@ export default function OrderWriter({dataInfo}) {
 
     return <>
         <LayoutComponent>
-            <div style={{display: 'grid', gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`, height: '100%', columnGap: 5}}>
-
-                <Card title={'발주서 수정'} style={{fontSize: 12, border: '1px solid lightGray'}} extra={<span style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>setMini(v => !v)}> {!mini ? <UpCircleFilled/> : <DownCircleFilled/>}</span>} >
+            <div style={{display: 'grid', gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`, height: '100vh', columnGap: 5}}>
+                {/*@ts-ignore*/}
+                <PrintTransactionModal data={info} customerData={customerData} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
+                <PrintPo data={data} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
+                <Card title={<div style={{display:'flex', justifyContent:'space-between'}}>
+                    <div style={{fontSize:14, fontWeight:550}}>발주서 수정</div> <div>
+                    <Button type={'primary'} size={'small'} style={{marginRight: 8}}
+                            onClick={printTransactionStatement}><SaveOutlined/>거래명세표 출력</Button>
+                    <Button type={'primary'} size={'small'} style={{marginRight: 8}}
+                            onClick={saveFunc}><SaveOutlined/>수정</Button>
+                    {/*@ts-ignored*/}
+                    <Button size={'small'} type={'ghost'} style={{marginRight: 8,}}
+                            onClick={() => router?.push('/order_write')}><EditOutlined/>신규작성</Button>
+                    <Button type={'primary'} size={'small'} style={{marginRight: 8}}
+                            onClick={printPo}><SaveOutlined/>발주서 출력</Button>
+                </div></div>} style={{fontSize: 12, border: '1px solid lightGray'}}
+                      extra={<span style={{fontSize: 20, cursor: 'pointer'}} onClick={() => setMini(v => !v)}> {!mini ?
+                          <DownCircleFilled/> : <UpCircleFilled/>}</span>}>
                     {mini ? <div>
-                    <Card size={'small'} title={'INQUIRY & PO no'}
-                          style={{ fontSize: 13, marginBottom : 5, boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
-                    }}>
-                        <div style={{display: 'grid', gridTemplateColumns: '0.6fr 1fr 1fr', width: 640, columnGap: 20}}>
-                            <div>
-                                <div style={{paddingBottom: 3}}>작성일</div>
-                                <DatePicker value={info['writtenDate']}
+                        <Card size={'small'} title={'INQUIRY & PO no'}
+                              style={{
+                                  fontSize: 13,
+                                  marginBottom: 5,
+                                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
+                              }}>
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: '0.6fr 1fr 1fr',
+                                width: 640,
+                                columnGap: 20
+                            }}>
+                                <div>
+                                    <div style={{paddingBottom: 3}}>작성일</div>
+                                    <DatePicker value={info['writtenDate']}
                                             onChange={(date, dateString) => onChange({
                                                 target: {
                                                     id: 'writtenDate',
@@ -341,15 +392,6 @@ export default function OrderWriter({dataInfo}) {
 
                         </Card>
 
-                        <div style={{paddingTop: 10}}>
-
-                            <Button type={'primary'} size={'small'} style={{marginRight: 8}}
-                                    onClick={saveFunc}><SaveOutlined/>수정</Button>
-                            {/*@ts-ignored*/}
-                            <Button size={'small'} type={'ghost'} style={{marginRight: 8,}}
-                                    onClick={() => router?.push('/order_write')}><EditOutlined/>신규작성</Button>
-
-                        </div>
                     </div>
                     </div>:null}
 
@@ -364,6 +406,7 @@ export default function OrderWriter({dataInfo}) {
                     listDetailType={'orderDetailList'}
                     setInfo={setInfo}
                     excel={true}
+                    type={'write'}
                     funcButtons={<div>
                         {/*@ts-ignored*/}
                         <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
@@ -409,5 +452,5 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     });
 
 
-    return {props: {dataInfo: orderId ? result?.data?.entity?.orderDetail : null}}
+    return {props: {data: orderId ? result?.data?.entity : null}}
 })

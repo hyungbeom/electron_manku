@@ -138,7 +138,7 @@ export default function CodeRead({dataList}) {
     }
     return <>
         <LayoutComponent>
-            <div style={{display: 'grid', gridTemplateColumns: '350px 1fr', height: '100%', gridColumnGap: 5}}>
+            <div style={{display: 'grid', gridTemplateColumns: '350px 1fr', height: '100vh', gridColumnGap: 5}}>
                 <Card title={'사용자 계정 관리'} style={{fontSize: 12, border: '1px solid lightGray'}}>
                     <Card size={'small'} title={'조회/저장'} style={{
                         fontSize: 13,

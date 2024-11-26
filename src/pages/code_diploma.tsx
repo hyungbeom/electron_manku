@@ -69,13 +69,13 @@ export default function codeOverseasPurchase({dataList}) {
             copyData['searchEndDate'] = searchDate[1];
         }
         const result = await getData.post('officialDocument/getOfficialDocumentList',
-            {...copyData,   "page": 1, "limit": -1});
+            {...copyData, "page": 1, "limit": -1});
         setTableData(result?.data?.entity?.officialDocumentList)
 
     }
 
     return <LayoutComponent>
-        <div style={{display: 'grid', gridTemplateRows: 'auto 1fr', height: '100%', gridColumnGap: 5}}>
+        <div style={{display: 'grid', gridTemplateRows: 'auto 1fr', height: '100vh', gridColumnGap: 5}}>
             <Card size={'small'} title={'공문서 관리'} style={{fontSize: 12, border: '1px solid lightGray'}}>
                 <Card size={'small'} style={{
                     fontSize: 13,

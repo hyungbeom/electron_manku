@@ -13,7 +13,7 @@ import {
 } from "@ant-design/icons";
 import {subRfqWriteColumn} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {codeOverseasAgencyWriteInitial, orderWriteInitial, rfqWriteInitial} from "@/utils/initialList";
+import {codeOverseasAgencyWriteInitial, customerInitial, orderWriteInitial, rfqWriteInitial} from "@/utils/initialList";
 import moment from "moment";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
@@ -33,8 +33,9 @@ import TableGrid from "@/component/tableGrid";
 import {AgGridReact} from "ag-grid-react";
 import {iconSetMaterial, themeQuartz} from "@ag-grid-community/theming";
 import {tableTheme} from "@/utils/common";
-import SearchAgendaModal from "@/component/SearchAgendaModal";
+import SearchAgendaModal from "@/component/SearchAgencyModal";
 import SearchCustomerModal from "@/component/SearchCustomerModal";
+import SearchMakerModal from "@/component/SearchMakerModal";
 
 export default function rqfUpdate({dataInfo}) {
     const gridRef = useRef(null);
@@ -42,9 +43,11 @@ export default function rqfUpdate({dataInfo}) {
     // const userInfo = useAppSelector((state) => state.user);
     const [info, setInfo] = useState<any>(dataInfo)
     const [mini, setMini] = useState(true);
-    const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
+    const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false, event3: false});
     const [agencyData, setAgencyData] = useState([]);
     const [customerData, setCustomerData] = useState([]);
+    const [makerData, setMakerData] = useState([]);
+    // const [customerInfo, setCustomerInfo] = useState(customerInitial)
 
 
     useEffect(() => {
@@ -58,17 +61,23 @@ export default function rqfUpdate({dataInfo}) {
 
     }, [])
 
-
     function onChange(e) {
 
-        let bowl = {}
-        bowl[e.target.id] = e.target.value;
-
         setInfo(v => {
-            return {...v, ...bowl}
+            return {...v, [e.target.id]: e.target.value}
         })
-        // console.log(info, 'onChange~~~')
     }
+
+    // function onCustomerInfoChange(e) {
+    //
+    //     let bowl = {}
+    //     bowl[e.target.id] = e.target.value;
+    //
+    //     setCustomerInfo(v => {
+    //         return {...v, ...bowl}
+    //     })
+    // }
+
 
     async function saveFunc() {
         if (!info['estimateRequestDetailList'].length) {
@@ -78,6 +87,7 @@ export default function rqfUpdate({dataInfo}) {
             copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
             copyData['replyDate'] = moment(info['replyDate']).format('YYYY-MM-DD');
             copyData['dueDate'] = moment(info['dueDate']).format('YYYY-MM-DD');
+            // copyData['customerInfoList'].push(customerInfo)
 
             await getData.post('estimate/updateEstimateRequest', copyData).then(v => {
 
@@ -110,7 +120,6 @@ export default function rqfUpdate({dataInfo}) {
         copyData['estimateRequestDetailList'] = uncheckedData;
         console.log(copyData,'copyData::')
         setInfo(copyData);
-
     }
 
 
@@ -122,9 +131,9 @@ export default function rqfUpdate({dataInfo}) {
             "unit": "ea",               // 단위
             "currency": "KRW",          // CURR
             "net": 0,            // NET/P
-            "deliveryDate": "",   // 납기
+            "deliveryDate": 0,   // 납기
             "content": "미회신",         // 내용
-            "replyDate": "",  // 회신일
+            "replyDate": moment().format("YYYY-MM-DD"),  // 회신일
             "remarks": "",           // 비고
             "serialNumber": 1           // 견적의뢰 내역 순서 (1부터 시작)
         })
@@ -132,9 +141,14 @@ export default function rqfUpdate({dataInfo}) {
         setInfo(copyData)
     }
 
+    function clearAll () {
+        setInfo(rfqWriteInitial)
+    }
+
     const handleKeyPress = async (e) => {
-        console.log(e.target.id)
+        // console.log(e.target.id)
         if (e.key === 'Enter') {
+
             if (e.target.id === 'agencyCode') {
                 if(!info['agencyCode']){
                     return false;
@@ -146,7 +160,7 @@ export default function rqfUpdate({dataInfo}) {
                 })
                 if (result.data.entity.agencyList.length > 1) {
                     setAgencyData(result.data.entity.agencyList)
-                    setIsModalOpen({event1: true, event2: false})
+                    setIsModalOpen({event1: true, event2: false, event3: false,})
                 } else if (!!result.data.entity.agencyList.length) {
                     const {agencyCode, agencyName} = result.data.entity.agencyList[0]
 
@@ -154,28 +168,64 @@ export default function rqfUpdate({dataInfo}) {
                         return {...v, agencyCode: agencyCode, agencyName: agencyName}
                     })
                 }
-            }else{
-                if(!info['customerName']){
+            } else if (e.target.id === 'customerName') {
+                // if (!customerInfo['customerName']) {
+                if (!info['customerName']) {
                     return false
                 }
                 const result = await getData.post('customer/getCustomerListForEstimate', {
+                    // "searchText": customerInfo['customerName'],       // 대리점코드 or 대리점 상호명
                     "searchText": info['customerName'],       // 대리점코드 or 대리점 상호명
                     "page": 1,
                     "limit": -1
                 })
-                if(result.data.entity.customerList.length > 1){
+                if (result?.data?.entity?.customerList?.length > 1) {
                     setCustomerData(result.data.entity.customerList)
-                    setIsModalOpen({event1: false, event2: true})
-                } else if (!!result.data.entity.customerList.length) {
+                    setIsModalOpen({event1: false, event2: true, event3: false,})
+                } else if (!!result?.data?.entity?.customerList?.length) {
                     const {customerName, managerName, directTel, faxNumber} = result.data.entity.customerList[0]
 
-
-                    setInfo(v => {
-                        return {...v, customerName: customerName, managerName: managerName,phoneNumber:directTel, faxNumber : faxNumber }
+                    // setInfo(v => {
+                    // setCustomerInfo(v => {
+                    info(v => {
+                        return {
+                            ...v,
+                            customerName: customerName,
+                            managerName: managerName,
+                            phoneNumber: directTel,
+                            faxNumber: faxNumber
+                        }
                     })
                 }
+            } else {
+
+            }if (!info['maker']) {
+                return false
+            }
+            const result = await getData.post('maker/getMakerList', {
+                "searchType": "1",
+                "searchText": info['maker'],       // 대리점코드 or 대리점 상호명
+                "page": 1,
+                "limit": -1
+            })
+            if (result?.data?.entity?.makerList?.length > 1) {
+                setMakerData(result.data.entity.makerList)
+                setIsModalOpen({event1: false, event2: false, event3: true,})
+            } else if (!!result?.data?.entity?.makerList?.length) {
+                const {makerName, item, instructions} = result.data.entity.makerList[0]
+
+
+                setInfo(v => {
+                    return {
+                        ...v,
+                        maker: makerName,
+                        item: item,
+                        instructions: instructions,
+                    }
+                })
             }
         }
+
     };
 
 
@@ -184,18 +234,30 @@ export default function rqfUpdate({dataInfo}) {
             <div style={{
                 display: 'grid',
                 gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`,
-                height: '100%',
+                height: '100vh',
                 columnGap: 5
             }}>
 
                 <SearchAgendaModal info={info} setInfo={setInfo} agencyData={agencyData} isModalOpen={isModalOpen}
                                    setIsModalOpen={setIsModalOpen}/>
-                <SearchCustomerModal info={info} setInfo={setInfo} customerData={customerData} isModalOpen={isModalOpen}
-                                     setIsModalOpen={setIsModalOpen}/>
 
-                <Card title={'견적의뢰 수정'} style={{fontSize: 12, border: '1px solid lightGray'}}
+                <SearchCustomerModal info={info} customerData={customerData} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}
+                                     // setInfo={setCustomerInfo}
+                                     setInfo={setInfo}
+                />
+                <SearchMakerModal info={info} setInfo={setInfo} makerData={makerData} isModalOpen={isModalOpen}
+                                  setIsModalOpen={setIsModalOpen}/>
+
+                <Card title={<div style={{display:'flex', justifyContent:'space-between'}}>
+                    <div style={{fontSize:14, fontWeight:550}}>견적의뢰 수정</div> <div>
+                    <Button type={'primary'} size={'small'} style={{marginRight: 8}}
+                            onClick={saveFunc}><SaveOutlined/>수정</Button>
+                    {/*@ts-ignored*/}
+                    <Button type={'danger'} size={'small'} style={{marginRight: 8}}
+                            onClick={clearAll}><RetweetOutlined/>초기화</Button>
+                </div></div>} style={{fontSize: 12, border: '1px solid lightGray'}}
                       extra={<span style={{fontSize: 20, cursor: 'pointer'}} onClick={() => setMini(v => !v)}> {!mini ?
-                          <UpCircleFilled/> : <DownCircleFilled/>}</span>}>
+                          <DownCircleFilled/> : <UpCircleFilled/>}</span>}>
                     {mini ? <div>
                         <Card size={'small'} style={{
                             fontSize: 13,
@@ -251,7 +313,7 @@ export default function rqfUpdate({dataInfo}) {
                                            suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
                                                (e) => {
                                                    e.stopPropagation();
-                                                   setIsModalOpen({event1: true, event2: false})
+                                                   setIsModalOpen({event1: true, event2: false, event3: false})
                                                }
                                            }/>}/>
                                 </div>
@@ -283,35 +345,42 @@ export default function rqfUpdate({dataInfo}) {
                                 fontSize: 13,
                                 boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                             }}>
-                                <div>
-                                    <div>상호명</div>
-                                    <Input id={'customerName'} value={info['customerName']} onChange={onChange}
-                                           size={'small'}
-                                           onKeyDown={handleKeyPress}
-                                           suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
-                                               (e) => {
-                                                   e.stopPropagation();
-                                                   setIsModalOpen({event1: false, event2: true})
-                                               }
-                                           }/>}/>
-                                </div>
-                                <div>
-                                    <div style={{paddingTop: 8}}>거래처 담당자</div>
-                                    <Input id={'managerName'} value={info['managerName']} onChange={onChange}
-                                           size={'small'}/>
-                                </div>
+                                {/*{info['customerInfoList'].map(()=>{*/}
+                                {/*    return (*/}
+                                {/*        <>*/}
+                                        <div>
+                                            <div>거래처명</div>
+                                            <Input id={'customerName'} value={info['customerName']} onChange={onChange}
+                                                   size={'small'}
+                                                   onKeyDown={handleKeyPress}
+                                                   suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
+                                                       (e) => {
+                                                           e.stopPropagation();
+                                                           setIsModalOpen({event1: false, event2: true, event3: false})
+                                                       }
+                                                   }/>}/>
+                                        </div>
+                                    <div>
+                                        <div style={{paddingTop: 8}}>거래처 담당자</div>
+                                        <Input id={'managerName'} value={info['managerName']} onChange={onChange}
+                                               size={'small'}/>
+                                    </div>
 
 
-                                <div>
-                                    <div style={{paddingTop: 8}}>전화번호</div>
-                                    <Input id={'phoneNumber'} value={info['phoneNumber']} onChange={onChange}
-                                           size={'small'}/>
-                                </div>
-                                <div>
-                                    <div style={{paddingTop: 8}}>팩스/이메일</div>
-                                    <Input id={'faxNumber'} value={info['faxNumber']} onChange={onChange}
-                                           size={'small'}/>
-                                </div>
+                                    <div>
+                                        <div style={{paddingTop: 8}}>전화번호</div>
+                                        <Input id={'phoneNumber'} value={info['phoneNumber']} onChange={onChange}
+                                               size={'small'}/>
+                                    </div>
+                                    <div>
+                                        <div style={{paddingTop: 8}}>팩스/이메일</div>
+                                        <Input id={'faxNumber'} value={info['faxNumber']} onChange={onChange}
+                                               size={'small'}/>
+                                    </div>
+                                {/*        </>*/}
+                                {/*)*/}
+                                {/*})}*/}
+
                             </Card>
 
                             <Card size={'small'} style={{
@@ -320,7 +389,16 @@ export default function rqfUpdate({dataInfo}) {
                             }}>
                                 <div>
                                     <div style={{paddingBottom: 3}}>MAKER</div>
-                                    <Input id={'maker'} value={info['maker']} onChange={onChange} size={'small'}/>
+                                    <Input id={'maker'} value={info['maker']} onChange={onChange}
+                                           size={'small'}
+                                           onKeyDown={handleKeyPress}
+                                           suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
+                                               (e) => {
+                                                   e.stopPropagation();
+                                                   setIsModalOpen({event1: false, event2: false, event3: true})
+                                               }
+                                           }/>}/>
+
                                 </div>
                                 <div style={{paddingTop: 8}}>
                                     <div style={{paddingBottom: 3}}>ITEM</div>
@@ -345,21 +423,11 @@ export default function rqfUpdate({dataInfo}) {
 
                                 <div style={{paddingTop: 8}}>
                                     <div style={{paddingBottom: 3}}>비고란</div>
-                                    <TextArea style={{height: '250px'}} id={'remarks'} value={info['remarks']}
+                                    <TextArea style={{height: '200px'}} id={'remarks'} value={info['remarks']}
                                               onChange={onChange} size={'small'}/>
                                 </div>
 
                             </Card>
-                            <div style={{paddingTop: 10}}>
-
-                                <Button type={'primary'} size={'small'} style={{marginRight: 8}}
-                                        onClick={saveFunc}><SaveOutlined/>저장</Button>
-
-                                {/*@ts-ignored*/}
-                                <Button type={'danger'} size={'small'}
-                                        onClick={() => setInfo(rfqWriteInitial)}><RetweetOutlined/>초기화</Button>
-
-                            </div>
                         </div>
                     </div> : null}
                 </Card>

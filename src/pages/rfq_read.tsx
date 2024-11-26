@@ -5,7 +5,7 @@ import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
 import {CopyOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
-import {rfqReadColumns} from "@/utils/columnList";
+import {projectColumns, rfqReadColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
 import {subRfqReadInitial} from "@/utils/initialList";
 import {wrapper} from "@/store/store";
@@ -45,6 +45,8 @@ export default function rfqRead({dataList}) {
         setInfo(copyData);
     }, [])
 
+
+
     async function searchInfo() {
         const copyData: any = {...info}
         const {searchDate}: any = copyData;
@@ -57,6 +59,7 @@ export default function rfqRead({dataList}) {
         setTableData(result?.data?.entity?.estimateRequestList);
     }
 
+    // 부모요소 단위로 삭제됨
     async function deleteList() {
         const api = gridRef.current.api;
         console.log(api.getSelectedRows(),':::')
@@ -90,8 +93,9 @@ export default function rfqRead({dataList}) {
 
     return <>
         <LayoutComponent>
-            <div style={{display: 'grid', gridTemplateRows: 'auto 1fr', height: '100%', columnGap: 5}}>
-                <Card title={<span style={{fontSize: 12,}}>견적의뢰 조회</span>} headStyle={{marginTop:-10, height:30}}
+            <div style={{display: 'grid', gridTemplateRows: 'auto 1fr', height: '100vh', columnGap: 5}}>
+                <Card title={<div style={{fontSize: 14, fontWeight: 550}}>견적의뢰 조회</div>}
+                      headStyle={{marginTop: -10, height: 30}}
                       style={{border: '1px solid lightGray',}} bodyStyle={{padding: '10px 24px'}}>
                     <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1.5fr', width: '100%', columnGap: 20}}>
 
@@ -101,7 +105,6 @@ export default function rfqRead({dataList}) {
                         }}>
                                 <div>
                                     <div style={{paddingBottom: 3,}}>작성일자</div>
-
                                     <RangePicker
                                         value={[moment(info['searchDate'][0]), moment(info['searchDate'][1])]}
                                         id={'searchDate'} size={'small'} onChange={(date, dateString) => {
