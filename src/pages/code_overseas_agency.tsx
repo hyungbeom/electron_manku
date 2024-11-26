@@ -90,12 +90,12 @@ export default function codeOverseasPurchase({dataList}) {
                         <div style={{marginTop: 6}}>
                             <Radio.Group onChange={e => setInfo(v => {
                                 return {...v, searchType: e.target.value}
-                            })} defaultValue={2} id={'searchType'}
+                            })} id={'searchType'}
                                          value={info['searchType']}>
-                                <Radio value={1}>코드</Radio>
-                                <Radio value={2}>상호명</Radio>
-                                <Radio value={3}>ITEM</Radio>
-                                <Radio value={4}>국가</Radio>
+                                <Radio value={"1"}>코드</Radio>
+                                <Radio value={"2"}>상호명</Radio>
+                                <Radio value={"2"}>ITEM</Radio>
+                                <Radio value={"4"}>국가</Radio>
                             </Radio.Group>
                         </div>
 

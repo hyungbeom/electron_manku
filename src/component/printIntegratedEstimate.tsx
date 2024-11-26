@@ -29,7 +29,7 @@ export default function PrintIntegratedEstimate({ data, isModalOpen, userInfo, s
     }, []);
 
     console.log(refinedData, 'reducedData');
-    console.log(refinedData[0].documentNumberFull, 'reducedData');
+    // console.log(refinedData[0].documentNumberFull, 'reducedData');
 
     let totalAmount = 0;
     let totalQuantity = 0;

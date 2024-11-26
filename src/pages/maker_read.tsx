@@ -46,6 +46,7 @@ export default function makerRead({dataList}) {
 
     async function onSearch() {
         const result = await getData.post('maker/getMakerList', info);
+        console.log(info,'info:')
         console.log(result?.data?.entity?.makerList,'result:')
         if(result?.data?.code === 1){
             setTableData(result?.data?.entity?.makerList)

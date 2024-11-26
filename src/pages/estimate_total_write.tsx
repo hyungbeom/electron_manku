@@ -83,7 +83,9 @@ export default function EstimateMerge({dataList}) {
 
     return <>
         <LayoutComponent>
+            {selectedRow.length > 0 &&
             <PrintIntegratedEstimate data={selectedRow} isModalOpen={isModalOpen} userInfo={userInfo} setIsModalOpen={setIsModalOpen}/>
+            }
             <div style={{display: 'grid', gridTemplateRows: 'auto 1fr',  height: '100vh', columnGap: 5}}>
                 <Card title={<span style={{fontSize: 12,}}>통합견적서 발행</span>} headStyle={{marginTop: -10, height: 30}}
                       style={{fontSize: 12, border: '1px solid lightGray'}} bodyStyle={{padding: '10px 24px'}}>
