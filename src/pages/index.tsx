@@ -9,6 +9,7 @@ import {setUserInfo} from "@/store/user/userSlice";
 import {getData} from "@/manage/function/api";
 import nookies from "nookies";
 import {setCookies} from "@/manage/function/cookie";
+import LoginButton from "@/component/Sample";
 
 export default function Home(props) {
 
@@ -87,6 +88,9 @@ export default function Home(props) {
                     ]} onChange={pageChange}/>
 
                     {page === 'login' ? <Login/> : <SignUp/>}
+
+                    <div style={{textAlign : 'center'}}>or</div>
+                    <LoginButton/>
                 </div>
 
 
@@ -112,7 +116,6 @@ export default function Home(props) {
                     </div>
                 </div>
             </div>
-
 
         </div>
     );

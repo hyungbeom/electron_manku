@@ -1,20 +1,18 @@
-import React, {useEffect, useRef, useState} from "react";
-import moment from "moment/moment";
+import React, {useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
-import Input from "antd/lib/input/Input";
 
 import Button from "antd/lib/button";
 import {CopyOutlined, EditOutlined, FileExcelOutlined, SearchOutlined,} from "@ant-design/icons";
 import * as XLSX from "xlsx";
 import message from "antd/lib/message";
 
-import {rfqReadColumns, tableCodeDomesticPurchaseColumns, tableCodeOverseasPurchaseColumns,} from "@/utils/columnList";
-import {codeDomesticPurchaseInitial, tableCodeOverseasSalesInitial,} from "@/utils/initialList";
+import {tableCodeOverseasPurchaseColumns,} from "@/utils/columnList";
+import {codeDomesticPurchaseInitial,} from "@/utils/initialList";
 import Radio from "antd/lib/radio";
 import TableGrid from "@/component/tableGrid";
 import Search from "antd/lib/input/Search";

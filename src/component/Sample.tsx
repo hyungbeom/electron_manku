@@ -38,7 +38,9 @@ function LoginButton() {
         window.location.href = authUrl;
     };
 
-    return <button onClick={handleLogin}>로그인</button>;
+    return <div style={{textAlign : 'center', cursor : 'pointer'}} onClick={handleLogin}>
+        <img  src={'https://learn.microsoft.com/ko-kr/entra/identity-platform/media/howto-add-branding-in-apps/ms-symbollockup_signin_dark.svg'} alt=""/>
+    </div>
 }
 
 export default LoginButton;

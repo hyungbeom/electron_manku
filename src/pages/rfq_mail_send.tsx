@@ -404,9 +404,6 @@ export default function rfqRead({dataList}) {
                                         onClick={handleSendMail}><MailOutlined/>선택 견적서 발송</Button>
                             </div>
                         </div>
-                        <div>
-                            <GoogleDrive/>
-                        </div>
                     </div>
 
                 </Card>

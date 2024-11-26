@@ -80,6 +80,7 @@ export default function ColumnSetting({columns, checkedList, handleSelectChange}
 
         <Button  style={{ marginBottom: 10, float: 'right', borderRadius : 5 }} onClick={() => setOpen(v => !v)}  size={'small'} type={'dashed'}>
         <SettingOutlined />Column Setting {open ? <UpOutlined /> : <DownOutlined />}
+
     </Button>
         {open && <Select
             mode="multiple"
