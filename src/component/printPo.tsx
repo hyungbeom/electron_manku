@@ -11,6 +11,8 @@ export default function PrintPo({ data, isModalOpen, setIsModalOpen }) {
 
     let totalAmount = 0;
     let totalQuantity = 0;
+    let unit = '';
+    let currency = '';
 
     const today = new Date();
     const formattedDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
@@ -54,7 +56,7 @@ export default function PrintPo({ data, isModalOpen, setIsModalOpen }) {
             footer={null}
             onOk={() => setIsModalOpen({event1:false, event2:false})}
         >
-            <div ref={pdfRef} style={{position:'relative', width: "595px", height: "842px", padding: "40px 24px"}}>
+            <div ref={pdfRef} style={{position: 'relative', width: "595px", height: "842px", padding: "40px 24px"}}>
                 {/* Header */}
                 <div style={{
                     borderBottom: '1px solid #11AFC2',
@@ -100,13 +102,13 @@ export default function PrintPo({ data, isModalOpen, setIsModalOpen }) {
 
                 {/* 상단 부모 정보 */}
                 <div style={{
-                    fontWeight:550,
+                    fontWeight: 550,
                     fontSize: 9,
                     width: '100%',
                     display: "grid",
                     gridTemplateColumns: '1fr 1fr',
                     gridAutoFlow: 'row',
-                    padding:'45px 40px 40px 35px',
+                    padding: '45px 40px 40px 35px',
                     rowGap: 6,
                 }}>
 
@@ -161,15 +163,121 @@ export default function PrintPo({ data, isModalOpen, setIsModalOpen }) {
                         </span>
                         {orderDetail.inpection}
                     </div>
+                    <div/>
+                    <div>
+                        <span style={{marginRight: 20}}>
+                            - Issue Date:
+                        </span>
+                        {formattedDate}
+                    </div>
                 </div>
 
-                {/* 본문 자식 요소 */}
-                <div>
-                    <div style={{width: '100%', display: 'grid', gridTemplateColumns: '0.7fr 5fr 0.5fr 1fr 1fr'}}>
-                        <div style={{}}>
+                {/* 자식 요소 헤더 */}
+                <div style={{
+                    fontSize: 9,
+                    borderTop: '1px solid #121212',
+                    fontWeight: 500,
+                    width: '100%',
+                    backgroundColor: '#EBF6F7',
+                    display: 'grid',
+                    textAlign: 'center',
+                    gridTemplateColumns: '0.7fr 3fr 0.5fr 1fr 1fr',
+                    borderBottom: '1px solid #A3A3A3'
+                }}>
+                    <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
+                        Item No.
+                    </div>
+                    <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
+                        Specification
+                    </div>
+                    <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
+                        Q`ty
+                    </div>
+                    <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
+                        Unit Price
+                    </div>
+                    <div style={{padding: '3px 0'}}>
+                        Amount
+                    </div>
+                </div>
 
+                {/* 자식 요소 본문*/}
+                <div style={{
+                    fontSize: 9,
+                    fontWeight: 500,
+                    width: '100%',
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 5fr',
+                    borderBottom: '1px solid #A3A3A3'
+                }}>
+                    <div style={{padding: '3px 0', textAlign: 'center', borderRight: '1px solid #121212',}}>
+                        Maker
+                    </div>
+                    <div style={{padding: '3px 10px'}}>
+                        {orderDetail.maker}
+                    </div>
+
+                </div>
+
+                {orderDetail.orderDetailList.map((v,i)=>{
+                    totalQuantity+=v.quantity
+                    totalAmount+=v.amount
+                    unit=v.unit
+                    currency=v.currency
+                    return (
+                        <div key={i} style={{
+                            fontSize: 9,
+                            fontWeight: 500,
+                            width: '100%',
+                            display: 'grid',
+                            textAlign: 'center',
+                            gridTemplateColumns: '0.7fr 3fr 0.5fr 1fr 1fr',
+                            borderBottom: '1px solid #A3A3A3'
+                        }}>
+                            <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
+                                {i+1}
+                            </div>
+                            <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
+                                {v.model}
+                            </div>
+                            <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
+                                {v.quantity} {formattedNumber(v.unit)}
+                            </div>
+                            <div style={{padding: '3px 10px', borderRight: '1px solid #121212', display:'flex', justifyContent: 'space-between'}}>
+                                <div>{v.currency}</div>
+                                <div>{formattedNumber(v.unitPrice)}</div>
+                            </div>
+                            <div style={{padding: '3px 10px', display: 'flex', justifyContent: 'space-between'}}>
+                                <div>{v.currency}</div>
+                                <div>{formattedNumber(v.amount)}</div>
+                            </div>
                         </div>
+                    )
+                })}
 
+                {/* 합계 */}
+                <div style={{
+                    fontSize: 9,
+                    fontWeight: 500,
+                    width: '100%',
+                    backgroundColor: '#EBF6F7',
+                    display: 'grid',
+                    textAlign: 'center',
+                    gridTemplateColumns: '0.7fr 3fr 0.5fr 2fr',
+                    borderBottom: '1px solid #121212'
+                }}>
+                    <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
+
+                    </div>
+                    <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
+                        Total
+                    </div>
+                    <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
+                        {formattedNumber(totalQuantity)} {unit}
+                    </div>
+
+                    <div style={{padding: '3px 20px', display:'flex', justifyContent:'space-between'}}>
+                        <div>{currency}</div><div>{formattedNumber(totalAmount)}</div>
                     </div>
                 </div>
 

@@ -94,7 +94,7 @@ export default function codeOverseasPurchase({dataList}) {
                                          value={info['searchType']}>
                                 <Radio value={"1"}>코드</Radio>
                                 <Radio value={"2"}>상호명</Radio>
-                                <Radio value={"2"}>ITEM</Radio>
+                                <Radio value={"3"}>ITEM</Radio>
                                 <Radio value={"4"}>국가</Radio>
                             </Radio.Group>
                         </div>
