@@ -23,7 +23,7 @@ import {
     codeDiplomaReadInitial,
 
 } from "@/utils/initialList";
-import PrintDiploma from "@/utils/printDiploma";
+import PrintDiploma from "@/component/printDiploma";
 
 
 export default function codeOverseasPurchase({data}) {

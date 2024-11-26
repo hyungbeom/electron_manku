@@ -28,9 +28,7 @@ import TableGrid from "@/component/tableGrid";
 import {useRouter} from "next/router";
 import SearchAgendaModal from "@/component/SearchAgencyModal";
 import SearchCustomerModal from "@/component/SearchCustomerModal";
-import PrintTransactionModal from "@/utils/printTransaction";
-import printEstimate from "@/utils/printEstimate";
-import PrintEstimate from "@/utils/printEstimate";
+import PrintEstimate from "@/component/printEstimate";
 
 
 export default function estimate_update({dataInfo}) {

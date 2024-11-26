@@ -45,11 +45,11 @@ export default function PrintTransactionModal({ data, customerData, isModalOpen,
             }}>
                 PDF 다운로드
             </button></div>}
-            onCancel={() => setIsModalOpen(false)}
-            open={isModalOpen}
+            onCancel={() => setIsModalOpen({event1:false, event2:false})}
+            open={isModalOpen?.event1}
             width={'640px'}
             footer={null}
-            onOk={() => setIsModalOpen(false)}
+            onOk={() => setIsModalOpen({event1:false, event2:false})}
         >
             <div ref={pdfRef} style={{width: "595px", height: "842px", padding: "40px 24px"}}>
                 {/* Header */}

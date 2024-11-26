@@ -27,26 +27,28 @@ import * as XLSX from "xlsx";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {useRouter} from "next/router";
 import TableGrid from "@/component/tableGrid";
-import PrintTransactionModal from "@/utils/printTransaction";
+import PrintTransactionModal from "@/component/printTransaction";
+import PrintPo from "@/component/printPo";
 // import printTransaction from "@/utils/printTransaction";
 
 
-export default function OrderWriter({data}) {
+export default function order_update({data}) {
     const gridRef = useRef(null);
     const router = useRouter();
+    const {orderDetail, customerInfo} = data;
 
     const userInfo = useAppSelector((state) => state.user);
     const [info, setInfo] = useState<any>(orderWriteInitial)
     const [mini, setMini] = useState(true);
     const [customerData, setCustomerData] = useState(printEstimateInitial)
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState({event1:false, event2:false});
 
     useEffect(() => {
 
         let copyData: any = {...orderWriteInitial}
 
-        if (data) {
-            copyData = data;
+        if (orderDetail) {
+            copyData = orderDetail;
             copyData['writtenDate'] = moment(copyData['writtenDate']);
             // @ts-ignored
             copyData['delivery'] = moment(copyData['delivery']);
@@ -59,7 +61,7 @@ export default function OrderWriter({data}) {
 
         setInfo(copyData);
 
-    }, [data, router])
+    }, [orderDetail, router])
 
     useEffect(() => {
     }, [customerData])
@@ -100,7 +102,11 @@ export default function OrderWriter({data}) {
 
     async function printTransactionStatement () {
         await searchCustomer();
-        setIsModalOpen(true)
+        setIsModalOpen({event1:true, event2:false});
+    }
+
+    function printPo () {
+        setIsModalOpen({event1:false, event2:true});
     }
 
     async function searchCustomer () {
@@ -212,6 +218,7 @@ export default function OrderWriter({data}) {
             <div style={{display: 'grid', gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`, height: '100vh', columnGap: 5}}>
                 {/*@ts-ignore*/}
                 <PrintTransactionModal data={info} customerData={customerData} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
+                <PrintPo data={data} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
                 <Card title={<div style={{display:'flex', justifyContent:'space-between'}}>
                     <div style={{fontSize:14, fontWeight:550}}>발주서 수정</div> <div>
                     <Button type={'primary'} size={'small'} style={{marginRight: 8}}
@@ -221,6 +228,8 @@ export default function OrderWriter({data}) {
                     {/*@ts-ignored*/}
                     <Button size={'small'} type={'ghost'} style={{marginRight: 8,}}
                             onClick={() => router?.push('/order_write')}><EditOutlined/>신규작성</Button>
+                    <Button type={'primary'} size={'small'} style={{marginRight: 8}}
+                            onClick={printPo}><SaveOutlined/>발주서 출력</Button>
                 </div></div>} style={{fontSize: 12, border: '1px solid lightGray'}}
                       extra={<span style={{fontSize: 20, cursor: 'pointer'}} onClick={() => setMini(v => !v)}> {!mini ?
                           <DownCircleFilled/> : <UpCircleFilled/>}</span>}>
@@ -443,5 +452,5 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     });
 
 
-    return {props: {data: orderId ? result?.data?.entity?.orderDetail : null}}
+    return {props: {data: orderId ? result?.data?.entity : null}}
 })

@@ -44,7 +44,7 @@ export default function PrintDiploma({ data, isModalOpen, setIsModalOpen }) {
             footer={null}
             onOk={() => setIsModalOpen(false)}
         >
-            <div ref={pdfRef} style={{width: "595px", height: "auto", minHeight:'842px'}}>
+            <div ref={pdfRef} style={{width: "595px", height: "auto", minHeight:'842px', position:'relative',}}>
                 {/* Header */}
                 <div style={{borderBottom: '1px solid #11AFC2', backgroundColor: '#EBF6F7', display: "flex", width: "100%", alignItems: "center",  padding: "30px 24px"}}>
                     <div style={{width:'auto', display: "flex", position:'absolute', alignItems: "center", gap: "15px"}}>

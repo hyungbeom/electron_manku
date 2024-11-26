@@ -23,14 +23,15 @@ import * as XLSX from "xlsx";
 import Select from "antd/lib/select";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
-import PrintEstimate from "@/utils/printEstimate";
+import PrintEstimate from "@/component/printEstimate";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
+import printIntegratedEstimate from "@/component/printIntegratedEstimate";
+import PrintIntegratedEstimate from "@/component/printIntegratedEstimate";
 
 const {RangePicker} = DatePicker
 
 
 export default function EstimateMerge({dataList}) {
-
 
     const gridRef = useRef(null);
 
@@ -38,8 +39,8 @@ export default function EstimateMerge({dataList}) {
     const {estimateList} = dataList;
     const [info, setInfo] = useState(estimateReadInitial)
     const [tableData, setTableData] = useState(estimateList)
+    const [selectedRow, setSelectedRow] = useState([])
     const [isModalOpen, setIsModalOpen] = useState(false);
-
 
     function onChange(e) {
 
@@ -70,20 +71,19 @@ export default function EstimateMerge({dataList}) {
     }
 
     async function printEstimate () {
+
+        const api = gridRef.current.api;
+        const checkedData = api.getSelectedRows();
+
+        setSelectedRow(checkedData)
+        // console.log(selectedRow, 'setSelectedRow')
         setIsModalOpen(true)
     }
 
-    const downloadExcel = () => {
-
-        const worksheet = XLSX.utils.json_to_sheet(tableData);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-        XLSX.writeFile(workbook, "example.xlsx");
-    };
 
     return <>
         <LayoutComponent>
-            {/*<PrintEstimate data={info} isModalOpen={isModalOpen} userInfo={userInfo} setIsModalOpen={setIsModalOpen}/>*/}
+            <PrintIntegratedEstimate data={selectedRow} isModalOpen={isModalOpen} userInfo={userInfo} setIsModalOpen={setIsModalOpen}/>
             <div style={{display: 'grid', gridTemplateRows: 'auto 1fr',  height: '100vh', columnGap: 5}}>
                 <Card title={<span style={{fontSize: 12,}}>통합견적서 발행</span>} headStyle={{marginTop: -10, height: 30}}
                       style={{fontSize: 12, border: '1px solid lightGray'}} bodyStyle={{padding: '10px 24px'}}>
@@ -174,7 +174,7 @@ export default function EstimateMerge({dataList}) {
                     type={'read'}
                     excel={true}
                     funcButtons={<div>
-                        <Button type={'primary'} size={'small'} style={{backgroundColor:'green', border:'none', fontSize: 11, marginLeft:5,}} onClick={downloadExcel}>
+                        <Button type={'primary'} size={'small'} style={{backgroundColor:'green', border:'none', fontSize: 11, marginLeft:5,}} onClick={printEstimate}>
                             <FileExcelOutlined/>통합 견적서 발행
                         </Button></div>}
                 />
