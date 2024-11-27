@@ -14,7 +14,7 @@ import message from "antd/lib/message";
 
 export default function SearchMakerModal({makerData, info, setInfo, isModalOpen, setIsModalOpen}){
     const [data, setData] = useState(makerData)
-    const [maker, setMaker] = useState(info['maker']);
+    const [maker, setMaker] = useState(info);
     const [writeData, setWriteData] = useState(makerWriteInitial);
 
     function onChange(e) {
@@ -80,11 +80,11 @@ export default function SearchMakerModal({makerData, info, setInfo, isModalOpen,
     return <>
          <Modal
         // @ts-ignored
-        id={'event1'}
+        id={'event3'}
         title={'maker 조회'}
         onCancel={() => setIsModalOpen({event1: false, event2: false, event3: false})}
         open={isModalOpen?.event3}
-        width={'50vw'}
+        width={'60vw'}
         footer={null}
         onOk={() => setIsModalOpen({event1: false, event2: false, event3: false})}
     >

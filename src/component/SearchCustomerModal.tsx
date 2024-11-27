@@ -10,7 +10,7 @@ import {tableTheme} from "@/utils/common";
 export default function SearchCustomerModal({customerData, info, setInfo, isModalOpen, setIsModalOpen}){
 
     const [data, setData] = useState(customerData)
-    const [customer, setCustomer] = useState(info['customerName']);
+    const [customer, setCustomer] = useState(info);
 
 
     useEffect(() => {
@@ -40,9 +40,9 @@ export default function SearchCustomerModal({customerData, info, setInfo, isModa
 
 
     return <Modal
-        title={'거래처 상호명 조회'}
         // @ts-ignored
         id={'event2'}
+        title={'거래처 상호명 조회'}
         onCancel={() => setIsModalOpen({event1: false, event2: false, event3: false})}
         open={isModalOpen?.event2}
         width={'60vw'}
