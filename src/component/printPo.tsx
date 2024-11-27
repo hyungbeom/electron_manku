@@ -106,7 +106,7 @@ export default function PrintPo({ data, isModalOpen, setIsModalOpen }) {
                     display: "grid",
                     gridTemplateColumns: '1fr 1fr',
                     gridAutoFlow: 'row',
-                    padding:'50px 40px 40px 40px',
+                    padding:'45px 40px 40px 35px',
                     rowGap: 6,
                 }}>
 
@@ -160,6 +160,16 @@ export default function PrintPo({ data, isModalOpen, setIsModalOpen }) {
                             - Inspection :
                         </span>
                         {orderDetail.inpection}
+                    </div>
+                </div>
+
+                {/* 본문 자식 요소 */}
+                <div>
+                    <div style={{width: '100%', display: 'grid', gridTemplateColumns: '0.7fr 5fr 0.5fr 1fr 1fr'}}>
+                        <div style={{}}>
+
+                        </div>
+
                     </div>
                 </div>
 
