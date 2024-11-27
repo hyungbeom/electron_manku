@@ -1,164 +1,267 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useRef, useState} from "react";
 import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
 import TextArea from "antd/lib/input/TextArea";
 import {
     CopyOutlined,
-    DownCircleFilled,
-    FileSearchOutlined,
+    DownCircleFilled, FileExcelOutlined,
+    FileSearchOutlined, InboxOutlined,
     RetweetOutlined,
     SaveOutlined,
-    UpCircleFilled
+    UpCircleFilled, UploadOutlined
 } from "@ant-design/icons";
 import {subRfqWriteColumn} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {customerInitial, rfqWriteInitial} from "@/utils/initialList";
+import {
+    customterInfoUnit,
+    estimateRequestDetailUnit,
+    ModalInitList,
+    modalList,
+    rfqWriteInitial
+} from "@/utils/initialList";
 import moment from "moment";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
-import {getData} from "@/manage/function/api";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
-import MyComponent from "@/component/MyComponent";
 import nookies from "nookies";
 import TableGrid from "@/component/tableGrid";
-import SearchCustomerModal from "@/component/SearchCustomerModal";
-import SearchMakerModal from "@/component/SearchMakerModal";
-import SearchAgencyModal from "@/component/SearchAgencyModal";
+import {useAppSelector} from "@/utils/common/function/reduxHooks";
+import SearchInfoModal from "@/component/SearchAgencyModal";
+import {getData} from "@/manage/function/api";
+import Dragger from "antd/lib/upload/Dragger";
+import Upload from "antd/lib/upload";
+import * as XLSX from "xlsx";
+
+
+const BoxCard = ({children, title}) => {
+    return <Card size={'small'} title={title}
+                 style={{
+                     fontSize: 13,
+                     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                 }}>
+        {children}
+    </Card>
+}
+
 
 export default function rqfWrite() {
+    const userInfo = useAppSelector((state) => state.user);
+
 
     const gridRef = useRef(null);
 
-    const [info, setInfo] = useState<any>(rfqWriteInitial)
+
+    const [info, setInfo] = useState<any>({
+        ...rfqWriteInitial,
+        adminId: userInfo['adminId'],
+        adminName: userInfo['adminName']
+    })
     const [mini, setMini] = useState(true);
 
-    const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false, event3: false});
-    const [agencyData, setAgencyData] = useState([]);
-    const [customerData, setCustomerData] = useState([]);
-    const [makerData, setMakerData] = useState([]);
+    const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
 
-    const [newDocumentNum, setNewDocumentNum] =useState('')
-    const [customerInfo, setCustomerInfo] = useState(customerInitial) //customerList 등록용 정보
+    const inputForm = ({title, id, disabled = false, suffix = null}) => {
+        let bowl = info;
 
-    useEffect(() => {
+        switch (id) {
+            case 'customerName' :
+            case 'managerName' :
+            case 'phoneNumber' :
+            case 'faxNumber' :
+            case 'customerManagerEmail' :
+                bowl = bowl['customerInfoList'][0]
+        }
 
-        let copyData: any = {...rfqWriteInitial}
+        return <div>
+            <div>{title}</div>
+            <Input id={id} value={bowl[id]} disabled={disabled}
+                   onChange={onChange}
+                   size={'small'}
+                   onKeyDown={handleKeyPress}
+                   suffix={suffix}
 
-            // @ts-ignored
-            copyData['writtenDate'] = moment();
-            copyData['replyDate'] = moment();
-            copyData['dueDate'] = moment();
+            />
+        </div>
+    }
 
-        setInfo(copyData);
-    }, [])
-
-    useEffect(()=>{
-        getAgencyCode()
-    },[info['agencyCode']])
-
-    useEffect(()=>{
-        getCustomerName()
-    },[customerInfo['customerName']])
-
-    useEffect(()=>{
-        getMaker()
-    },[info['maker']])
-
-
-    function onChange(e) {
-
-        setInfo(v => {
-            return {...v, [e.target.id]: e.target.value}
-        })
+    const textAreaForm = ({title, id, rows = 5, disabled = false}) => {
+        return <div>
+            <div>{title}</div>
+            <TextArea rows={rows} id={id} value={info[id]} disabled={disabled}
+                      onChange={onChange}
+                      size={'small'}/>
+        </div>
     }
 
 
-    function onCustomerInfoChange(e) {
+    const datePickerForm = ({title, id, disabled = false}) => {
+        return <div>
+            <div>{title}</div>
+            <DatePicker value={info[id] ? moment(info[id]) : ''} style={{width: '100%'}}
+                        onChange={(date) => onChange({
+                            target: {
+                                id: id,
+                                value: date
+                            }
+                        })
+                        }
+                        disabled={disabled}
+                        disabledDate={disabledDate}
+                        id={id} size={'small'}/>
+        </div>
+    }
 
-        let bowl = {}
-        bowl[e.target.id] = e.target.value;
 
-        setCustomerInfo(v => {
+
+
+    function handleKeyPress(e) {
+        if (e.key === 'Enter') {
+
+            switch (e.target.id) {
+                case 'agencyCode' :
+                case 'customerName' :
+                case 'maker' :
+                    searchFunc(e)
+                    break;
+            }
+
+        }
+    }
+
+    function openModal(e) {
+        let bowl = {};
+        bowl[e] = true
+        setIsModalOpen(v => {
             return {...v, ...bowl}
         })
     }
 
-    useEffect(() => {
-        setInfo((v)=>({
-            ...v, documentNumberFull:newDocumentNum
-    }))
-    }, [newDocumentNum]);
+    function onChange(e) {
 
+        let bowl = {}
+        bowl[e.target.id] = e.target.value;
 
-    async function generateNewDocumentNumber  ({agencyCode}) {
+        switch (e.target.id) {
+            case 'customerName' :
+            case 'managerName' :
+            case 'phoneNumber' :
+            case 'faxNumber' :
+            case 'customerManagerEmail' :
+                setInfo(v => {
+                    v['customerInfoList'][0][e.target.id] = e.target.value
+                    return {...v}
+                })
+            break;
 
-        const year = String(new Date().getFullYear()).slice(-2);
-
-        const result = await getData.post('estimate/getEstimateRequestList', {
-            "searchEstimateRequestId": "",      // 견적의뢰 Id
-            "searchType": "",                   // 검색조건 1: 회신, 2: 미회신
-            "searchStartDate": null,              // 작성일자 시작일
-            "searchEndDate": null,           // 작성일자 종료일
-            "searchDocumentNumber": `${agencyCode}-${year}`,         // 문서번호
-            "searchCustomerName": "",           // 거래처명
-            "searchMaker": "",                  // MAKER
-            "searchModel": "",                  // MODEL
-            "searchItem": "",                   // ITEM
-            "searchCreatedBy": "",              // 등록직원명
-            "searchManagerName": "",            // 담당자명
-            "searchMobileNumber": "",           // 담당자 연락처
-            "searchBiddingNumber": "",          // 입찰번호(미완성)
-            "page": 1,
-            "limit": -1
-        })
-
-        let documentNum;
-
-        if (result?.data?.entity?.estimateRequestList.length>0){
-            const latestDocumentNum = result?.data?.entity?.estimateRequestList?.[0]?.documentNumberFull
-
-            const [a, b, lastNumber] = latestDocumentNum.split('-');
-            const nextNumber = parseInt(lastNumber) + 1;
-            documentNum = `${agencyCode}-${year}-${String(nextNumber).padStart(4, '0')}`;
+            default :
+                setInfo(v => {
+                    return {...v, ...bowl}
+                })
 
         }
-        else
-
-            documentNum = `${agencyCode}-${year}-0001`;
-
-        setNewDocumentNum(documentNum)
-        console.log(newDocumentNum, 'NewDocumentNumber~~~~')
 
     }
 
 
+    async function searchFunc(e) {
+
+        const resultList = await getData.post(modalList[e.target.id]?.url, {
+            "searchType": "1",
+            "searchText": e.target.value,       // 대리점코드 or 대리점 상호명
+            "page": 1,
+            "limit": -1
+        });
+
+        const data = resultList?.data?.entity[modalList[e.target.id]?.list];
+        const size = data?.length;
+
+        if (size > 1) {
+            return openModal(e.target.id);
+        } else if (size === 1) {
+            switch (e.target.id) {
+                case 'agencyCode' :
+                    const {agencyId, agencyCode, agencyName} = data[0];
+                    setInfo(v => {
+                        return {...v, agencyId: agencyId, agencyCode: agencyCode, agencyName: agencyName}
+                    })
+                    break;
+                case 'customerName' :
+                    const {customerName, managerName, directTel, faxNumber, email} = data[0];
+                    setInfo(v => {
+                        return {
+                            ...v,
+                            customerInfoList: [{
+                                customerName: customerName,
+                                managerName: managerName,
+                                phoneNumber: directTel,
+                                faxNumber: faxNumber,
+                                customerManagerEmail: email
+                            }]
+                        }
+                    })
+                    break;
+
+                case 'maker' :
+                    break;
+
+            }
+        } else {
+            message.warn('조회된 데이터가 없습니다.')
+        }
+    }
+
+
+    const disabledDate = (current) => {
+        // current는 moment 객체입니다.
+        // 오늘 이전 날짜를 비활성화
+        return current && current < moment().startOf('day');
+    };
+
+
     async function saveFunc() {
         if (!info['estimateRequestDetailList'].length) {
-            message.warn('하위 데이터 1개 이상이여야 합니다')
-        } else {
-            const copyData = {...info}
-            copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
-            copyData['replyDate'] = moment(info['replyDate']).format('YYYY-MM-DD');
-            copyData['dueDate'] = moment(info['dueDate']).format('YYYY-MM-DD');
-            copyData['customerInfoList'].push(customerInfo)
-
-            await generateNewDocumentNumber(info['agencyCode']);
-            console.log(copyData, '저장해보자~')
-
-            await getData.post('estimate/addEstimateRequest', copyData).then(v => {
-                if (v.data.code === 1) {
-                    message.success('저장되었습니다.')
-                    setInfo(rfqWriteInitial);
-                    deleteList()
-                    window.location.href = '/rfq_read'
-                } else {
-                    message.error('저장에 실패하였습니다.')
-                }
-            });
+            return message.warn('하위 데이터 1개 이상이여야 합니다')
         }
+        if (!info['agencyCode']) {
+            return message.warn('매입처 코드가 누락되었습니다.')
+        }
+
+
+        const copyData = {...info}
+
+
+        // todo : 테이블에서 업데이트 될때 내용이 자동으로 text로 변형되게 나중엔 변경 하여야함
+        const changeTime = gridRef.current.props.context.map(v=>{
+            return {...v, replyDate : moment(v['replyDate']).format('YYYY-MM-DD')}
+        })
+
+        copyData['estimateRequestDetailList'] = changeTime
+
+
+        await getData.post('estimate/addEstimateRequest', copyData).then(v => {
+            if (v.data.code === 1) {
+                message.success('저장되었습니다.')
+                // setInfo(rfqWriteInitial);
+
+                window.location.href = '/rfq_read'
+            } else {
+                if(v.data.code === -20001){
+                    setInfo(src => {
+                        return {
+                            ...src,
+                            documentNumberFull : v.data.entity
+                        }
+                    })
+                    message.error('문서번호가 중복되었습니다.');
+
+                }
+
+            }
+        });
+
     }
 
     function deleteList() {
@@ -176,7 +279,6 @@ export default function rqfWrite() {
 
         let copyData = {...info}
         copyData['estimateRequestDetailList'] = uncheckedData;
-        console.log(copyData, 'copyData::')
         setInfo(copyData);
 
     }
@@ -184,324 +286,198 @@ export default function rqfWrite() {
     function addRow() {
         let copyData = {...info};
         copyData['estimateRequestDetailList'].push({
-            "model": "",           // MODEL
-            "quantity": 0,              // 수량
-            "unit": "ea",               // 단위
-            "currency": "KRW",          // CURR
-            "net": 0,            // NET/P
-            "deliveryDate": 0,   // 납기
-            "content": "미회신",         // 내용
-            "replyDate": moment().format('YYYY-MM-DD'),  // 회신일
-            "remarks": "",           // 비고
-            "serialNumber": 1           // 견적의뢰 내역 순서 (1부터 시작)
+            "model": "",             // MODEL
+            "quantity": 0,           // 수량
+            "unit": "ea",            // 단위
+            "currency": "krw",       // CURR
+            "net": 0,                // NET/P
+            "serialNumber": 0,       // 항목 순서 (1부터 시작)
+            "deliveryDate": "",      // 납기
+            "content": "미회신",       // 내용
+            "replyDate": moment().format('YYYY-MM-DD'),         // 회신일
+            "remarks": ""            // 비고
         })
-
         setInfo(copyData)
     }
 
-    function addCustomer() {
 
+    function clearAll() {
+        setInfo({
+            ...rfqWriteInitial,
+            adminId: userInfo['adminId'],
+            adminName: userInfo['adminName']
+        });
     }
 
-    function clearAll () {
-        setInfo(rfqWriteInitial)
-        setCustomerInfo(customerInitial)
-    }
+    const handleFile = (file) => {
+        const reader = new FileReader();
 
+        reader.onload = (e) => {
+            const binaryStr = e.target.result;
+            const workbook = XLSX.read(binaryStr, { type: 'binary' });
 
-    async function getAgencyCode () {
-        const result = await getData.post('agency/getAgencyListForEstimate', {
-            "searchText": info['agencyCode'],
-            "page": 1,
-            "limit": -1
-        })
+            // 첫 번째 시트 읽기
+            const worksheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[worksheetName];
 
-        const data = result?.data?.entity?.agencyList
-        setAgencyData(data)
-    }
+            // 데이터를 JSON 형식으로 변환 (첫 번째 행을 컬럼 키로 사용)
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-    async function getCustomerName () {
-        const result = await getData.post('customer/getCustomerListForEstimate', {
-            "searchText": customerInfo['customerName'],
-            "page": 1,
-            "limit": -1
-        })
+            // 데이터 첫 번째 행을 컬럼 이름으로 사용
+            const headers = jsonData[0];
+            const dataRows = jsonData.slice(1);
 
-        const data = result?.data?.entity?.customerList
-        setCustomerData(data)
-    }
-
-    async function getMaker () {
-        const result = await getData.post('maker/getMakerList', {
-            "searchType": "1",
-            "searchText": info['maker'],
-            "page": 1,
-            "limit": -1
-        })
-
-        const data = result?.data?.entity?.makerList
-        setMakerData(data)
-    }
-
-    const handleKeyPress = async (e) => {
-        if (e.key === 'Enter') {
-
-            if (e.target.id === 'agencyCode') {
-                if (!info['agencyCode']) {
-                    return false;
-                }
-                await getAgencyCode()
-
-                if (agencyData?.length > 1) {
-                    setIsModalOpen({event1: true, event2: false, event3: false,})
-
-                } else if (!!agencyData?.length) {
-                    const {agencyCode, agencyName} = agencyData[0]
-
-                    setInfo(v => {
-                        return {...v, agencyCode: agencyCode, agencyName: agencyName,}
-                    })
-                }
-
-            } else if (e.target.id === 'customerName') {
-
-                if (!customerInfo['customerName']) {
-                    return false
-                }
-                await getCustomerName()
-
-                if (customerData?.length > 1) {
-                    setIsModalOpen({event1: false, event2: true, event3: false,})
-
-                } else if (!!customerData?.length) {
-                    const {customerName, managerName, directTel, faxNumber} = customerData[0]
-
-                    setCustomerInfo(v => {
-                        return {
-                            ...v,
-                            customerName: customerName,
-                            managerName: managerName,
-                            phoneNumber: directTel,
-                            faxNumber: faxNumber
-                        }
-                    })
-                }
-            } else if (e.target.id === 'maker') {
-
-                if (!info['maker']) {
-                    return false
-                }
-                await getMaker()
-            }
-
-            if (makerData?.length > 1) {
-                setIsModalOpen({event1: false, event2: false, event3: true,})
-
-            } else if (!!makerData?.length) {
-                const {makerName, item, instructions} = makerData[0]
-
-                setInfo(v => {
-                    return {
-                        ...v,
-                        maker: makerName,
-                        item: item,
-                        instructions: instructions,
+            // 테이블 데이터 변환
+            const tableData = dataRows.map((row) => {
+                const rowData = {};
+                row?.forEach((cell, cellIndex) => {
+                    const header = headers[cellIndex];
+                    if (header !== undefined) {
+                        rowData[header] = cell ?? ''; // 값이 없으면 기본값으로 빈 문자열 설정
                     }
-                })
-            } else
-                return null
-        }
+                });
+                return rowData;
+            });
 
+
+            let copyData = {...info}
+            copyData['estimateRequestDetailList'] = tableData;
+            setInfo(copyData);
+
+        };
+
+        reader.readAsBinaryString(file);
     };
 
+    const uploadProps = {
+        name: 'file',
+        accept: '.xlsx, .xls',
+        multiple: false,
+        showUploadList: false,
+        beforeUpload: (file) => {
+            const isExcel = file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
+                file.type === 'application/vnd.ms-excel' ||
+                file.name.toLowerCase().endsWith('.xlsx') ||
+                file.name.toLowerCase().endsWith('.xls');
 
+            if (!isExcel) {
+                message.error('엑셀 파일만 업로드 가능합니다.');
+                return Upload.LIST_IGNORE;
+            }
+
+            // 파일 읽기
+            handleFile(file);
+
+            // false를 반환하여 업로드 방지 (자동 업로드 차단)
+            return false;
+        },
+    };
+
+    const downloadExcel = () => {
+
+        const worksheet = XLSX.utils.json_to_sheet(info['estimateRequestDetailList']);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+        XLSX.writeFile(workbook, "rfq_list.xlsx");
+    };
 
 
     return <>
         <LayoutComponent>
-            <div style={{display: 'grid', gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`, height: '100vh', columnGap: 5}}>
+            <div style={{
+                display: 'grid',
+                gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`,
+                height: '100vh',
+                columnGap: 5
+            }}>
+                <SearchInfoModal type={'agencyList'} info={info} setInfo={setInfo}
+                                 open={isModalOpen}
+                                 setIsModalOpen={setIsModalOpen}/>
+                <Card size={'small'} title={<div style={{display: 'flex', justifyContent: 'space-between'}}>
+                    <div style={{fontSize: 14, fontWeight: 550}}>견적의뢰 작성</div>
+                    <div>
+                        <Button type={'primary'} size={'small'} style={{marginRight: 8}}
+                                onClick={saveFunc}
+                        ><SaveOutlined/>저장</Button>
+                        {/*    /!*@ts-ignored*!/*/}
+                        <Button type={'danger'} size={'small'} style={{marginRight: 8}}
+                                onClick={clearAll}><RetweetOutlined/>초기화</Button>
+                    </div>
+                </div>} style={{fontSize: 12, border: '1px solid lightGray'}}
+                      extra={<span style={{fontSize: 20, cursor: 'pointer'}}
+                                   onClick={() => setMini(v => !v)}> {!mini ?
+                          <DownCircleFilled/> : <UpCircleFilled/>}</span>}>
+                    <div>
 
-                <SearchAgencyModal info={info['agencyCode']} setInfo={setInfo} agencyData={agencyData} isModalOpen={isModalOpen}
-                                   setIsModalOpen={setIsModalOpen}/>
-                <SearchCustomerModal info={customerInfo['customerName']} setInfo={setCustomerInfo} customerData={customerData} isModalOpen={isModalOpen}
-                                     setIsModalOpen={setIsModalOpen}/>
-                <SearchMakerModal info={info['maker']} setInfo={setInfo} makerData={makerData} isModalOpen={isModalOpen}
-                                     setIsModalOpen={setIsModalOpen}/>
-
-                <Card title={<div style={{display:'flex', justifyContent:'space-between'}}>
-                    <div style={{fontSize:14, fontWeight:550}}>견적의뢰 작성</div> <div>
-                    <Button type={'primary'} size={'small'} style={{marginRight: 8}}
-                            onClick={saveFunc}><SaveOutlined/>저장</Button>
-                    {/*@ts-ignored*/}
-                    <Button type={'danger'} size={'small'} style={{marginRight: 8}}
-                            onClick={clearAll}><RetweetOutlined/>초기화</Button>
-                </div></div>}  style={{fontSize: 12, border: '1px solid lightGray'}} extra={<span style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>setMini(v => !v)}> {!mini ? <DownCircleFilled/> : <UpCircleFilled/>}</span>} >
-                    {mini ? <div>
-                            <Card size={'small'} title={'기본 정보'}
-                                  style={{
-                                fontSize: 13,
-                                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
-                                marginBottom: 5
+                        <BoxCard title={'기본 정보'}>
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: '1fr 0.6fr 1fr 1fr 1fr',
+                                maxWidth: 900,
+                                minWidth: 600,
+                                columnGap: 15
                             }}>
-                                <div style={{
-                                    display: 'grid',
-                                    gridTemplateColumns: '1fr 0.6fr 1fr 0.8fr 1fr',
-                                    width: '100%',
-                                    columnGap: 15
-                                }}>
-                                    <div>
-                                        <div style={{width: '100%'}}>작성일</div>
-                                        <DatePicker value={info['writtenDate']} style={{width: '100%'}}
-                                                    onChange={(date, dateString) => onChange({
-                                                        target: {
-                                                            id: 'writtenDate',
-                                                            value: date
-                                                        }
-                                                    })
-                                                    } id={'writtenDate'} size={'small'}/>
-                                    </div>
-                                    <div>
-                                        <div>만쿠담당자</div>
-                                        <Input id={'adminId'} value={info['adminId']} onChange={onChange}
-                                               size={'small'}/>
-                                    </div>
-                                    <div>
-                                        <div>INQUIRY NO.</div>
-                                        <Input id={'documentNumberFull'} value={info['documentNumberFull']}
-                                               onChange={onChange} disabled={true} size={'small'}/>
-                                    </div>
-                                    <div>
-                                        <div>RFQ NO.</div>
-                                        <Input id={'rfqNo'} value={info['rfqNo']} onChange={onChange} size={'small'}/>
-                                    </div>
-                                    <div>
-                                        <div style={{}}>프로젝트 제목</div>
-                                        <Input id={'projectTitle'} value={info['projectTitle']} onChange={onChange}
-                                               size={'small'}/>
-                                    </div>
-                                </div>
-                            </Card>
-                        <div style={{display: 'grid', gridTemplateColumns: '1fr 1.2fr  1.5fr 1.22fr', columnGap: 10}}>
+                                {datePickerForm({title: '작성일', id: 'writtenDate', disabled: true})}
+                                {inputForm({title: '만쿠담당자', id: 'adminName', disabled: true})}
+                                {inputForm({title: 'INQUIRY NO.', id: 'documentNumberFull', disabled: true})}
+                                {inputForm({title: 'RFQ NO.', id: 'rfqNo'})}
+                                {inputForm({title: '프로젝트 제목', id: 'projectTitle'})}
+                            </div>
+                        </BoxCard>
+                        <div style={{display: 'grid', gridTemplateColumns: "repeat(4, 1fr)"}}>
+                            <BoxCard title={'매입처 정보'}>
 
+                                {inputForm({
+                                    title: '매입처코드',
+                                    id: 'agencyCode',
+                                    suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
+                                        (e) => {
+                                            e.stopPropagation();
+                                            openModal('agencyCode');
+                                        }
+                                    }/>
+                                })}
+                                {inputForm({title: '매입처명', id: 'agencyName'})}
+                                {datePickerForm({title: '마감일자(예상)', id: 'dueDate'})}
+                            </BoxCard>
+                            <BoxCard title={'거래처 정보'}>
+                                {inputForm({
+                                    title: '거래처명',
+                                    id: 'customerName',
+                                    suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
+                                        (e) => {
+                                            e.stopPropagation();
+                                            openModal('customerName');
+                                        }
+                                    }/>
+                                })}
+                                {inputForm({title: '담당자명', id: 'managerName'})}
+                                {inputForm({title: '전화번호', id: 'phoneNumber'})}
+                                {inputForm({title: '팩스', id: 'faxNumber'})}
+                                {inputForm({title: '이메일', id: 'customerManagerEmail'})}
+                            </BoxCard>
 
-                            <Card size={'small'} title={'매입처 정보'}
-                                  style={{
-                                      fontSize: 13,
-                                      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                                  }}>
-                                <div>
-                                    <div>매입처코드</div>
-                                    <Input id={'agencyCode'} value={info['agencyCode']} onChange={onChange}
-                                           size={'small'}
-                                           onKeyDown={handleKeyPress}
-                                           suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
-                                               (e) => {
-                                                   e.stopPropagation();
-                                                   setIsModalOpen({event1: true, event2: false, event3: false})
-                                               }
-                                           }/>}/>
-                                </div>
-                                <div>
-                                    <div style={{paddingTop: 8}}>매입처명</div>
-                                    <Input id={'agencyName'} value={info['agencyName']} onChange={onChange}
-                                           size={'small'}/>
-                                </div>
-                                <div>
-                                <div style={{paddingTop: 8, width: '100%'}}>마감일자</div>
-                                <DatePicker value={info['dueDate']} style={{width: '100%'}}
-                                            onChange={(date, dateString) => onChange({
-                                                target: {
-                                                    id: 'dueDate',
-                                                    value: date
-                                                }
-                                            })
-                                            } id={'dueDate'} size={'small'}/>
-                                </div>
-                            </Card>
+                            <BoxCard title={'Maker 정보'}>
+                                {inputForm({
+                                    title: 'MAKER',
+                                    id: 'maker',
+                                    suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
+                                        (e) => {
+                                            e.stopPropagation();
+                                            openModal('maker');
+                                        }
+                                    }/>
+                                })}
+                                {inputForm({title: 'ITEM', id: 'item'})}
+                                {textAreaForm({title: '지시사항', id: 'instructions'})}
 
-                            <Card size={'small'} title={'거래처 정보'}
-                                  style={{
-                                      fontSize: 13,
-                                      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                                  }}>
-                                <div>
-                                    <div>거래처명</div>
-                                    <Input id={'customerName'} value={customerInfo['customerName']} onChange={onCustomerInfoChange}
-                                           size={'small'}
-                                           onKeyDown={handleKeyPress}
-                                           suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
-                                               (e) => {
-                                                   e.stopPropagation();
-                                                   setIsModalOpen({event1: false, event2: true, event3: false})
-                                               }
-                                           }/>}/>
-                                </div>
-                                <div>
-                                    <div style={{paddingTop: 8}}>담당자명</div>
-                                    <Input id={'managerName'} value={customerInfo['managerName']} onChange={onCustomerInfoChange}
-                                           size={'small'}/>
-                                </div>
-
-                                <div>
-                                    <div style={{paddingTop: 8}}>전화번호</div>
-                                    <Input id={'phoneNumber'} value={customerInfo['phoneNumber']} onChange={onCustomerInfoChange}
-                                           size={'small'}/>
-                                </div>
-                                <div>
-                                    <div style={{paddingTop: 8}}>팩스/이메일</div>
-                                    <Input id={'faxNumber'} value={customerInfo['faxNumber']} onChange={onCustomerInfoChange}
-                                           size={'small'}/>
-                                </div>
-
-                            </Card>
-
-                            <Card size={'small'} title={'Maker 정보'}
-                                  style={{
-                                fontSize: 13,
-                                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                            }}>
-                                <div>
-                                    <div style={{}}>MAKER</div>
-                                    <Input id={'maker'} value={info['maker']} onChange={onChange}
-                                           size={'small'}
-                                           onKeyDown={handleKeyPress}
-                                           suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
-                                               (e) => {
-                                                   e.stopPropagation();
-                                                   setIsModalOpen({event1: false, event2: false, event3: true})
-                                               }
-                                           }/>}/>
-                                </div>
-                                <div style={{paddingTop: 8}}>
-                                    <div style={{}}>ITEM</div>
-                                    <Input id={'item'} value={info['item']} onChange={onChange} size={'small'}/>
-                                </div>
-                                <div style={{paddingTop: 8}}>
-                                    <div style={{}}>지시사항</div>
-                                    <TextArea id={'instructions'} value={info['instructions']} onChange={onChange}
-                                              size={'small'}/>
-                                </div>
-
-                            </Card>
-                            <Card size={'small'} title={'ETC'}
-                                  style={{
-                                fontSize: 13,
-                                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                            }}>
-                                <div style={{paddingTop: 8}}>
-                                    <div style={{}}>End User</div>
-                                    <Input id={'endUser'} value={info['endUser']} onChange={onChange} size={'small'}/>
-                                </div>
-
-                                <div style={{paddingTop: 8}}>
-                                    <div style={{}}>비고란</div>
-                                    <TextArea style={{height: '200px'}} id={'remarks'} value={info['remarks']}
-                                              onChange={onChange} size={'small'}/>
-                                </div>
-
-                            </Card>
+                            </BoxCard>
+                            <BoxCard title={'ETC'}>
+                                {inputForm({title: 'End User', id: 'endUser'})}
+                                {textAreaForm({title: '비고란', rows: 7, id: 'remarks'})}
+                            </BoxCard>
                         </div>
-                    </div> : null}
+                    </div>
 
                 </Card>
 
@@ -515,22 +491,28 @@ export default function rqfWrite() {
                     setInfo={setInfo}
                     excel={true}
                     type={'write'}
-                    funcButtons={<div>
-                        <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
+                    funcButtons={<div style={{display : 'grid', gridTemplateColumns : '1fr 0.8fr 0.8fr 0.8fr',alignItems : 'end'}}>
+                        <Upload {...uploadProps} size={'small'} style={{marginLeft: 5}} showUploadList={false}>
+                            <Button  icon={<UploadOutlined />} size={'small'} >엑셀 업로드</Button>
+                        </Upload>
+                        <Button type={'dashed'} size={'small'} style={{marginLeft:5}} onClick={downloadExcel}>
+                            <FileExcelOutlined/>출력
+                        </Button>
+                        <Button type={'primary'} size={'small'} style={{marginLeft: 5}}
                                 onClick={addRow}>
                             <SaveOutlined/>추가
                         </Button>
                         {/*@ts-ignored*/}
-                        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
-                                onClick={deleteList}>
+                        <Button type={'danger'} size={'small'} style={{ marginLeft: 5,}}
+                            onClick={deleteList}
+                        >
                             <CopyOutlined/>삭제
                         </Button>
+
+
                     </div>}
                 />
-
-
             </div>
-            <MyComponent/>
         </LayoutComponent>
     </>
 }
@@ -549,8 +531,8 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     if (!userInfo) {
         return {
             redirect: {
-                destination: '/', // 리다이렉트할 경로
-                permanent: false, // true면 301 리다이렉트, false면 302 리다이렉트
+                destination: '/',
+                permanent: false,
             },
         };
     }
@@ -558,31 +540,8 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     store.dispatch(setUserInfo(userInfo));
 
-    // const {estimateRequestId} = ctx.query;
-    //
-    // const result = await getData.post('estimate/getEstimateRequestList', {
-    //     "searchEstimateRequestId": estimateRequestId,      // 견적의뢰 Id
-    //     "searchType": "",                   // 검색조건 1: 회신, 2: 미회신
-    //     "searchStartDate": "2024-08-01",              // 작성일자 시작일
-    //     "searchEndDate": "2024-12-31",                // 작성일자 종료일
-    //     "searchDocumentNumber": "",         // 문서번호
-    //     "searchCustomerName": "",           // 거래처명
-    //     "searchMaker": "",                  // MAKER
-    //     "searchModel": "",                  // MODEL
-    //     "searchItem": "",                   // ITEM
-    //     "searchCreatedBy": "",              // 등록직원명
-    //     "searchManagerName": "",            // 담당자명
-    //     "searchMobileNumber": "",           // 담당자 연락처
-    //     "searchBiddingNumber": "",          // 입찰번호(미완성)
-    //     "page": 1,
-    //     "limit": 100000
-    // });
-    //
-    //
+
     return {
-        props: {
-            // dataInfo: estimateRequestId ? result?.data?.entity?.estimateRequestList[0] : null,
-            // display: display
-        }
+        props: {}
     }
 })

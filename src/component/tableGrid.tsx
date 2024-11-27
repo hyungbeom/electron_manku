@@ -64,7 +64,8 @@ const TableGrid = ({
     let selectedRows = []
 
 
-    const rowSelection = useMemo(() => {
+    const rowSelection = useMemo((e) => {
+
         return {mode: "multiRow", };
     }, []);
 
@@ -89,22 +90,33 @@ const TableGrid = ({
 
     let isUpdatingSelection = false; // 중복 선택 이벤트 발생 방지 플래그
 
-    const handleRowSelected = (e) => {
+    const handleRowSelected = (event) => {
         if(type === 'write'){
             return false;
         }
-        if (isUpdatingSelection) return; // 중복 선택 이벤트 발생 시 종료
-        isUpdatingSelection = true;
 
-        // console.log(e, 'handleSelectionChange')
-        const currentRowData = e.node.data;
-        const currentDocumentNumber = currentRowData.documentNumberFull;
-        const isCurrentlySelected = e.node.isSelected();
-        const api = e.api;
+        const selectedNode = event.node; // 현재 선택된 노드
+        const selectedData = selectedNode.data; // 선택된 데이터
+        const groupValue = selectedData.documentNumberFull; // 현재 행의 `documentNumberFull` 값
 
 
-        isUpdatingSelection = false; // 선택 업데이트 종료
+        // 현재 선택된 행의 인덱스를 확인
+        const rowIndex = selectedNode.rowIndex;
 
+        // 같은 그룹의 첫 번째 행인지 확인
+        const previousData = event.api.getDisplayedRowAtIndex(rowIndex - 1)?.data?.documentNumberFull;
+
+        // 첫 번째 행인 경우 그룹 체크 동작 수행
+        if (!previousData || previousData !== groupValue) {
+            const isSelected = selectedNode.isSelected(); // 현재 행의 선택 상태
+
+            // 동일한 `documentNumberFull` 값을 가진 모든 노드를 순회하며 선택 상태 변경
+            event.api.forEachNode((node) => {
+                if (node.data.documentNumberFull === groupValue) {
+                    node.setSelected(isSelected); // 같은 그룹을 선택/해제
+                }
+            });
+        }
     };
 
     const handleDoubleClicked = (e) => {
@@ -160,42 +172,7 @@ const TableGrid = ({
     };
 
 
-    function dataChange(e){
-        const updatedData = e.data; // 수정된 행의 전체 데이터
-        // const updatedField = e.colDef.field; // 수정된 컬럼의 필드명
-        // const newValue = e.newValue; // 새로운 값
-        // const oldValue = e.oldValue; // 이전 값
 
-            console.log("업데이트된 행 데이터:", updatedData);
-            let copyData = {...data}
-            copyData[e.node.rowIndex] = updatedData
-            setData(copyData);
-            console.log(copyData, 'copyData')
-
-            if (Object.values(copyData)[0]?.estimateRequestId) {
-                copyData = Object.values(copyData).map((v) => ({
-                    ...v,
-                    replyDate: moment(v.replyDate).format("YYYY-MM-DD"),
-                }));
-                setData(copyData);
-            }
-
-            if (Object.values(copyData)[0]?.estimateId) {
-                copyData = Object.values(copyData).map((v) => ({
-                    ...v,
-                    amount: v.quantity*v.unitPrice
-                }));
-                setData(copyData);
-            }
-
-            if (Object.values(copyData)[0]?.orderId) {
-                copyData = Object.values(copyData).map((v) => ({
-                    ...v,
-                    unreceivedQuantity: v.quantity-v.receivedQuantity
-                }));
-                setData(copyData);
-            }
-    }
 
     const handleFile = (file) => {
         const reader = new FileReader();
@@ -284,18 +261,10 @@ const TableGrid = ({
                          context={data}
                          pagination={true}
                          onRowSelected={handleRowSelected}
-                         onCellValueChanged={dataChange}
                          gridOptions={{
                              loadThemeGoogleFonts: true,
                          }}
             />
-            {type==='write'&&
-                <Dragger {...uploadProps} style={{width:'50%',margin:'15px auto 0 auto'}}>
-                    <p className="ant-upload-drag-icon">
-                        <InboxOutlined/>
-                    </p>
-                    <p className="ant-upload-text">Click or drag file to this area to upload</p>
-                </Dragger>}
         </div>
     );
 };

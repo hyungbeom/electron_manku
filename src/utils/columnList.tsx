@@ -136,6 +136,7 @@ export const searchMakerColumn = [
     {
         headerName: '등록일자',
         field: 'createdDate',
+        valueFormatter: (params) => moment(params.value).format('YYYY-MM-DD')
     },
     {
         headerName: '수정자',
@@ -144,8 +145,9 @@ export const searchMakerColumn = [
     {
         headerName: '수정일자',
         field: 'modifiedDate',
+        valueFormatter: (params) => moment(params.value).format('YYYY-MM-DD')
+        ,
     },
-
 ];
 
 
@@ -736,10 +738,23 @@ export const rfqReadColumns = [
         pinned: 'left'
     },
     {
-        headerName: '문서번호',
+        // headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
+        // checkboxSelection: true, // 각 행에 체크박스 추가
+        headerName: 'Document Number',
         field: 'documentNumberFull',
-        width: 100,
+        cellRenderer: (params) => {
+            const rowIndex = params.node.rowIndex;
+            const currentData = params.value;
+            const previousData = params.api.getDisplayedRowAtIndex(rowIndex - 1)?.data?.documentNumberFull;
+
+            // 이전 값과 같다면 빈 문자열 반환
+            if (rowIndex > 0 && currentData === previousData) {
+                return '';
+            }
+            return currentData; // 첫 번째 값만 출력
+        },
     },
+
     {
         headerName: '대리점명',
         field: 'agencyName',
@@ -874,6 +889,7 @@ export const rfqReadColumns = [
         field: 'modifiedDate',
         minWidth: 100,
         maxWidth: 120,
+        valueFormatter: (params) => moment(params.value).format('YYYY-MM-DD')
     },
 
     {

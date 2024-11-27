@@ -1,4 +1,5 @@
-
+import moment from "moment/moment";
+import {searchAgencyCodeColumn, searchCustomerColumn, searchMakerColumn} from "@/utils/columnList";
 
 export const makerRegistInitial = {
     "makerName": "",                   // MAKER
@@ -47,15 +48,45 @@ export const tableEstimateWriteInitial = {
 }
 
 
+// ======================================    견적의뢰 작성    ========================================
+
+
+export const customterInfoUnit = {
+    "customerCode": "",  // 거래처코드
+    "customerName": "",  // 거래처명(상호명)
+    "phoneNumber": "",   // 전화번호
+    "faxNumber": "",     // 팩스/이메일
+    "customerManagerEmail" : '',
+    "managerName": ""    // 담당자명
+}
+
+export const estimateRequestDetailUnit = {
+    "model": "",             // MODEL
+    "quantity": 0,           // 수량
+    "unit": "ea",            // 단위
+    "currency": "krw",       // CURR
+    "net": 0,                // NET/P
+    "serialNumber": 0,       // 항목 순서 (1부터 시작)
+    "deliveryDate": "",      // 납기
+    "content": "미회신",       // 내용
+    "replyDate": moment().format('YYYY-MM-DD'),         // 회신일
+    "remarks": ""            // 비고
+}
+
+
 export const rfqWriteInitial = {
-    "writtenDate": null,        // 작성일
-    "documentNumberFull": "", // INQUIRY No.
-    // 대리점 > 대리점 조회 API 에서 조회한 데이터
+    "writtenDate": moment().format('YYYY-MM-DD'),        // 작성일
+    // "documentNumberFull": `-${moment().format('YY')}`, // INQUIRY No.
+    "documentNumberFull": "k10-24-0001", // INQUIRY No.
     "agencyCode": "",                // 대리점코드
     "agencyName": "",       // 대리점명
 
     // 거래처 관리 > 거래처 조회(견적용) API 에서 '상호명' 을 넣고 조회한 목록에서 정보 가져옴.
-    "customerInfoList": [],
+    "customerInfoList": [
+        customterInfoUnit
+    ],
+    // END //
+
 
     "maker": "",                   // MAKER
     "item": "",                     // ITEM
@@ -67,24 +98,32 @@ export const rfqWriteInitial = {
     "rfqNo": "",                        // RFQ NO.
     "projectTitle": "",                 // 프로젝트 제목
     "endUser": "",                      // End User
-    "dueDate": null,                      // 마감일자
+    "dueDate": moment().format('YYYY-MM-DD'),                      // 마감일자
 
     "agencyManagerId": 1,               // 대리점 담당자 Id (메일 전송용)
-    "agencyType": "국내",                // 대리점 타입
+    "agencyType": "",                // 대리점 타입
 
-    "adminId": 1,                       // 만쿠 관리자 Id
+    "adminId": null,                       // 만쿠 관리자 Id
+    "adminName": '',                       // 만쿠 관리자 Name [프론트용]
 
-    "estimateRequestDetailList": []
+    "significant": "",            // 특이사항
+
+    "estimateRequestDetailList": [
+        // estimateRequestDetailUnit
+    ]
 }
+
+// ==============================================================================
+
 
 export const customerInitial = {
     "customerCode": "",                // 거래처코드
     "customerName": "",  // 거래처명(상호명)
     "phoneNumber": "",              // 전화번호
-    "faxNumber": "",       // 팩스/이메일
+    "faxNumber": "",       // 팩스
+    "customerManagerEmail": "",       // 이메일
     "managerName": ""        // 담당자명
 }
-
 
 
 export const makerWriteInitial = {
@@ -126,9 +165,8 @@ export const tableOrderWriteInitial = {
 }
 
 
-
-    export const subRfqReadInitial = {
-    "searchDate" : "",   // front 사용
+export const subRfqReadInitial = {
+    "searchDate": [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],   // front 사용
     "searchEstimateRequestId": "",      // 견적의뢰 Id
     "searchType": "0",                   // 검색조건 1: 회신, 2: 미회신
     "searchStartDate": "",              // 작성일자 시작일
@@ -143,11 +181,11 @@ export const tableOrderWriteInitial = {
     "searchMobileNumber": "",           // 담당자 연락처
     "searchBiddingNumber": "",          // 입찰번호(미완성)
     "page": 1,
-    "limit": 10
+    "limit": -1
 }
 
 export const estimateReadInitial = {
-    "searchDate" : "",   // front 사용
+    "searchDate": "",   // front 사용
     "searchType": 0,                   // 검색조건 1: 회신, 2: 미회신
     "searchStartDate": "",              // 작성일자 시작일
     "searchEndDate": "",                // 작성일자 종료일
@@ -162,53 +200,53 @@ export const estimateReadInitial = {
 
 
 export const tableEstimateReadInitial = {
-        "estimateId": 0,
-        "documentNumber": 0,
-        "writtenDate": "",
-        "agencyCode": "",
-        "agencyName": "",
-        "customerCode": "",
-        "customerName": "",
-        "phoneNumber": "",
-        "faxNumber": "",
-        "validityPeriod": "",
-        "paymentTerms": "",
-        "shippingTerms": "",
-        "exchangeRate": "",
-        "managerName": "",
-        "email": "",
-        "managerPhoneNumber": "",
-        "managerFaxNumber": "",
-        "maker": "",
-        "item": "",
-        "delivery": "",
-        "remarks": "",
-        "createdBy": "",
-        "createdDate": "",
-        "modifiedBy": "",
-        "modifiedDate": "",
-        "documentNumberFull": "",
-        "subNumber": 0,
-        "estimateManager": "",
-        "key": 1,
-        "estimateDetailList": [
-            {
-                "estimateDetailId": 0,
-                "estimateId": 0,
-                "model": "",
-                "quantity": 1,
-                "unit": "ea",
-                "currency": "USD",
-                "net": 0,
-                "unitPrice": 0,
-                "currencyUnit": null,
-                "amount": 0,
-                "orderProcessing": null,
-                "orderDate": null,
-                "order": '미주문',
-                "serialNumber": null
-            }
-        ]
+    "estimateId": 0,
+    "documentNumber": 0,
+    "writtenDate": "",
+    "agencyCode": "",
+    "agencyName": "",
+    "customerCode": "",
+    "customerName": "",
+    "phoneNumber": "",
+    "faxNumber": "",
+    "validityPeriod": "",
+    "paymentTerms": "",
+    "shippingTerms": "",
+    "exchangeRate": "",
+    "managerName": "",
+    "email": "",
+    "managerPhoneNumber": "",
+    "managerFaxNumber": "",
+    "maker": "",
+    "item": "",
+    "delivery": "",
+    "remarks": "",
+    "createdBy": "",
+    "createdDate": "",
+    "modifiedBy": "",
+    "modifiedDate": "",
+    "documentNumberFull": "",
+    "subNumber": 0,
+    "estimateManager": "",
+    "key": 1,
+    "estimateDetailList": [
+        {
+            "estimateDetailId": 0,
+            "estimateId": 0,
+            "model": "",
+            "quantity": 1,
+            "unit": "ea",
+            "currency": "USD",
+            "net": 0,
+            "unitPrice": 0,
+            "currencyUnit": null,
+            "amount": 0,
+            "orderProcessing": null,
+            "orderDate": null,
+            "order": '미주문',
+            "serialNumber": null
+        }
+    ]
 }
 
 
@@ -241,7 +279,7 @@ export const orderStockInitial = {
 }
 
 export const tableOrderInventoryInitial = {
-    "receiptDate":  "",        // 입고일자
+    "receiptDate": "",        // 입고일자
     "documentNumber": "",     // 문서번호
     "maker": "",                 // MAKER
     "model": "",                 // Model
@@ -259,9 +297,9 @@ export const subOrderWriteInitial = {
     "model": '',           // MODEL
     "quantity": 0,              // 수량
     "unit": 'EA',               // 단위
-    "currency":'USD',          // CURR
-    "net": 0 ,            // NET/P
-    "amount": 0 ,            // NET/P
+    "currency": 'USD',          // CURR
+    "net": 0,            // NET/P
+    "amount": 0,            // NET/P
     "orderQuantity": 0,   // 납기
     "receivedQuantity": 0,   // 납기
     "unreceivedQuantity": 0,   // 납기
@@ -295,22 +333,22 @@ export const tableOrderReadInitial = {
     "yourPoNo": "",
     "key": 5,
     "orderDetailList": [
-    {
-        "orderDetailId": 7504,
-        "orderId": 4114,
-        "model": "X253600033",
-        "quantity": 1,
-        "unit": "ea",
-        "currency": "USD",
-        "net": 2140.00,
-        "currencyUnit": "",
-        "unitPrice": 3724000,
-        "amount": 3724000,
-        "estimateDetailId": 28729,
-        "receivedQuantity": 0,
-        "serialNumber": 1
-    }
-]
+        {
+            "orderDetailId": 7504,
+            "orderId": 4114,
+            "model": "X253600033",
+            "quantity": 1,
+            "unit": "ea",
+            "currency": "USD",
+            "net": 2140.00,
+            "currencyUnit": "",
+            "unitPrice": 3724000,
+            "amount": 3724000,
+            "estimateDetailId": 28729,
+            "receivedQuantity": 0,
+            "serialNumber": 1
+        }
+    ]
 }
 
 export const orderReadInitial = {
@@ -355,7 +393,7 @@ export const inventoryReadInitial = {
 
 
 export const orderCustomerReadInitial = {
-    "searchDate" :"",
+    "searchDate": "",
     "searchStartDate": "",      // 조회일자 시작일
     "searchEndDate": "",        // 조회일자 종료일
     "searchCustomerName": "",   // 거래처명
@@ -404,7 +442,6 @@ export const codeReadInitial = {
 }
 
 
-
 export const codeUserSaveInitial = {
     "customerName": "",                  // MAKER
     "homepage": "",         // 문서번호
@@ -413,7 +450,7 @@ export const codeUserSaveInitial = {
     "remarks": "",
 }
 export const codeUserReadInitial = {
-    "searchCustomerName":"",
+    "searchCustomerName": "",
     "page": 1,
     "limit": 10
 }
@@ -436,7 +473,7 @@ export const codeDiplomaReadInitial = {
 }
 
 export const tableCodeDiplomaInitial = {
-    "documentNumber":"",
+    "documentNumber": "",
     "title": "",
     "to": "",
     "reference": "",
@@ -449,7 +486,7 @@ export const tableCodeDiplomaInitial = {
 }
 
 export const modalCodeDiplomaInitial = {
-    "documentNumber":"",
+    "documentNumber": "",
     "title": "",
     "to": "",
     "reference": "",
@@ -649,3 +686,32 @@ export const printEstimateInitial = {
 
     "customerCategory": ""
 }
+
+
+export const ModalInitList = {agencyCode: false, customerName: false, maker: false}
+
+export const modalList = {
+    agencyCode: {
+        url: 'agency/getAgencyListForEstimate',
+        title: '대리점 코드 조회',
+        column: searchAgencyCodeColumn,
+        list: 'agencyList',
+        placeholder : '코드 또는 상호를 입력하세요'
+    },
+    customerName: {
+        url: 'customer/getCustomerListForEstimate',
+        title: '거래처 상호명 조회',
+        column: searchCustomerColumn,
+        list: 'customerList',
+        placeholder : '상호명 또는 담당자명 입력하세요'
+    },
+    maker: {
+        url: 'maker/getMakerList',
+        title: 'maker 조회',
+        column: searchMakerColumn,
+        list: 'makerList',
+        placeholder : 'Maker 또는 Area 또는 Item 입력하세요'
+    },
+}
+
+

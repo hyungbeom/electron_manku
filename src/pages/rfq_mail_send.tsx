@@ -26,16 +26,13 @@ const {RangePicker} = DatePicker
 
 export default function rfqRead({dataList}) {
     const gridRef = useRef(null);
-    const [selectedRows, setSelectedRows] = useState([]);
-    const {estimateRequestList, pageInfo} = dataList;
+    const {estimateRequestList} = dataList;
     const userInfo = useAppSelector((state) => state.user);
     const [info, setInfo] = useState(subRfqReadInitial);
     const [tableData, setTableData] = useState(estimateRequestList);
-    const [setPaginationInfo] = useState(pageInfo);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [previewData, setPreviewData] = useState({});
+    const [previewData, setPreviewData] = useState([]);
 
-    console.log(dataList,'dataList:')
 
     function onChange(e) {
 
@@ -47,16 +44,6 @@ export default function rfqRead({dataList}) {
         })
     }
 
-    useEffect(() => {
-        const copyData: any = {...info}
-        copyData['searchDate'] = [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
-        console.log(moment().subtract(1, 'years').format('YYYY-MM-DD'), ':::')
-
-        setInfo(copyData);
-        // setTableInfo(transformData(estimateRequestList, 'estimateRequestId', 'estimateRequestDetailList'));
-        // setTableData(estimateRequestList);
-        // console.log(tableData, 'setTableData')
-    }, [])
 
 
     async function searchInfo() {
@@ -69,64 +56,7 @@ export default function rfqRead({dataList}) {
         const result = await getData.post('estimate/getEstimateRequestList', copyData);
         // setTableInfo(transformData(result?.data?.entity?.estimateRequestList, 'estimateRequestId', 'estimateRequestDetailList'));
         setTableData(result?.data?.entity?.estimateRequestList);
-        setPaginationInfo(result?.data?.entity?.pageInfo)
     }
-
-    async function deleteList() {
-
-        let deleteIdList = [];
-        selectedRows.forEach(v => (
-            deleteIdList.push(v.estimateRequestId)
-        ))
-
-        console.log(deleteIdList, 'deleteIdList')
-
-        if (deleteIdList.length < 1)
-            return alert('하나 이상의 항목을 선택해주세요.')
-        else {
-            // @ts-ignore
-            for (const v of deleteIdList) {
-                await getData.post('estimate/deleteEstimateRequest', {
-                    estimateRequestId: v
-                }).then(r => {
-                    if (r.data.code === 1)
-                        console.log(v + '삭제완료')
-                });
-            }
-            message.success('삭제되었습니다.')
-            window.location.reload();
-        }
-    }
-
-
-    async function getDetailData(params) {
-        const result = await getData.post('estimate/getEstimateRequestDetail', {
-            estimateRequestId: params
-        });
-        setTableData(result?.data?.entity?.estimateRequestList)
-    }
-
-    const downloadExcel = () => {
-
-        const worksheet = XLSX.utils.json_to_sheet(tableData);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-        XLSX.writeFile(workbook, "example.xlsx");
-    };
-
-    const rowSelection = {
-        onChange: (selectedRowKeys, selectedRows) => {
-            selectedRows = selectedRowKeys
-        },
-        onDoubleClick: (src) => {
-            console.log(src, ':::')
-        },
-        getCheckboxProps: (record) => ({
-            disabled: record?.name === 'Disabled User',
-            // Column configuration not to be checked
-            name: record?.name,
-        }),
-    };
 
 
     const getCheckedRowsData = () => {
@@ -135,38 +65,56 @@ export default function rfqRead({dataList}) {
         return selectedData;
     };
 
-// 버튼 클릭 시 체크된 데이터 출력
     const handleSendMail = () => {
         const checkedData = getCheckedRowsData();
-        const result = checkedData.reduce((acc, cur, idx) => {
-            let id = cur['estimateRequestId']
-            if (acc[id]) {
-                let idx = 0;
-                const findModel = acc[id].find((v, index) => {
-                    idx = index;
-                    return v.model === cur.model
-                })
-                if (findModel) {
-                    const { quantity} = findModel;
-                    acc[id][idx] = {...acc[id][idx], quantity: acc[id][idx].quantity + quantity, unit : cur.unit}
-                    return acc;
-                }else{
-                    acc[id].push({estimateRequestDetailId:cur.estimateRequestDetailId, managerName: cur.managerName, documentNumberFull : cur.documentNumberFull, maker : cur.maker,item : cur.item,model: cur.model, quantity: cur.quantity, unit : cur.unit})
-                }
-            } else {
-                acc[id] = [{estimateRequestDetailId:cur.estimateRequestDetailId, managerName: cur.managerName, documentNumberFull : cur.documentNumberFull, maker : cur.maker, item : cur.item, model: cur.model, quantity: cur.quantity, unit : cur.unit}];
-            }
-            return acc
-        }, {})
 
+
+        if(!checkedData.length){
+            return message.warn('선택된 데이터가 없습니다.')
+        }
+
+        const result = Object.values(
+            checkedData.reduce((acc, items) => {
+                const {documentNumberFull, model, quantity, unit, maker, item} = items;
+
+
+                // documentNumberFull로 그룹화
+                if (!acc[documentNumberFull]) {
+                    acc[documentNumberFull] = {
+                        documentNumberFull: documentNumberFull,
+                        list: [],
+                        totalQuantity: 0, // 총 수량 초기화
+                    };
+                }
+
+                // 동일한 모델 찾기
+                const existingModel = acc[documentNumberFull].list.find(
+                    (entry) => entry.model === model && entry.unit === unit
+                );
+
+                if (existingModel) {
+                    // 모델이 동일하면 수량 합산
+                    existingModel.quantity += quantity;
+                } else {
+                    // 새로 추가
+                    acc[documentNumberFull].list.push({model, quantity, unit});
+                }
+
+                // 총 수량 업데이트
+                acc[documentNumberFull].totalQuantity += quantity;
+                acc[documentNumberFull].maker = maker;
+                acc[documentNumberFull].item = item;
+
+                return acc;
+            }, {})
+        );
         setPreviewData(result)
         setIsModalOpen(true)
-        console.log(result, 'result')
 
     };
 
 
-    function sendMail(){
+    function sendMail() {
         emailSendFormat(userInfo, previewData)
     }
 
@@ -174,176 +122,32 @@ export default function rfqRead({dataList}) {
     return <>
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateRows: '250px 1fr', height: '100vh', gridColumnGap: 5}}>
-                <Card title={'메일전송'} style={{fontSize: 12, border: '1px solid lightGray'}} >
-                    <Modal okText={'메일 전송'} cancelText={'취소'} onOk={sendMail} title={<div style={{ lineHeight: 2.5, fontWeight:550 }}>메일전송</div>} open={isModalOpen} onCancel={()=>setIsModalOpen(false)} >
+                <Card title={'메일전송'} style={{fontSize: 12, border: '1px solid lightGray'}}>
+                    <Modal okText={'메일 전송'} cancelText={'취소'} onOk={sendMail}
+                           title={<div style={{lineHeight: 2.5, fontWeight: 550}}>메일전송</div>} open={isModalOpen}
+                           onCancel={() => setIsModalOpen(false)}>
 
-                        {Object.values(previewData).map((mail, i1) => {
-                            let totalQuantity = 0;
-                            return(
+                        {previewData.map((v, idx) => {
 
-                            <div key={i1} style={{
-                                position: "relative",
-                                width: '100%',
-                                height: 'auto',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                justifyContent: 'center',
-                                marginBottom:'30px'
-                            }}>
-                                <img style={{position: 'absolute', left: '40%', top: 20}} src='/manku_ci_black_text.png'
-                                     width={80} alt='manku logo'/>
-                                <div style={{
-                                    width: '100%',
-                                    height: 'auto',
-                                    margin: '100px 0 40px 0',
-                                    textAlign: 'left',
-                                    fontSize: 18,
-                                    whiteSpace: 'pre-line'
-                                }}>
-                                    <span style={{fontWeight: 550}}>[
-                                        {Object.values(mail)?.[0]?.managerName}]</span> 님<br/><br/>
-                                    안녕하십니까. <span style={{fontWeight: 550}}>만쿠무역 [{userInfo.name}]</span> 입니다.<br/>
-                                    아래 견적 부탁드립니다.
-                                </div>
+                            return <>
+                                <div>문서번호 : {v.documentNumberFull}</div>
+                                <div>메이커 : {v.maker}</div>
+                                <div>아이템 : {v.item}</div>
+                                <div>=====항목들=====</div>
+                                {v.list.map(src => {
+                                    return <div>
+                                        <div>모델 : {src.model}</div>
+                                        <div>수량 : {src.quantity}</div>
+                                    </div>
 
-                                <div style={{
-                                    textAlign: 'center',
-                                    lineHeight: 2.2,
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    flexFlow: 'column',
-                                }}>
-                                    {/*@ts-ignore*/}
-                                    {mail?.map((item, idx) => {
-                                        // let totalQuantity = 0;
-                                        totalQuantity += item.quantity;
-                                        return (
-
-                                            <>
-                                                {!idx && (
-                                                    <>
-                                                        <div style={{
-                                                            width: "100%",
-                                                            height: "35px",
-                                                            fontSize: "15px",
-                                                            borderTop: "1px solid #121212",
-                                                            borderBottom: "1px solid #A3A3A3",
-                                                            backgroundColor: "#EBF6F7"
-                                                        }}>
-                                                            {item.documentNumberFull}
-                                                        </div>
-                                                        <div style={{
-                                                            width: "100%",
-                                                            height: "35px",
-                                                            borderBottom: "1px solid #A3A3A3",
-                                                            display: "flex"
-                                                        }}>
-                                                            <div style={{
-                                                                fontSize: "13px",
-                                                                backgroundColor: "#EBF6F7",
-                                                                width: "102px",
-                                                                height: "100%",
-                                                                borderRight: "1px solid #121212"
-                                                            }}>
-                                                                maker
-                                                            </div>
-                                                            <div style={{lineHeight: 2, paddingLeft: "32px"}}>
-                                                                {item.maker}
-                                                            </div>
-                                                        </div>
-                                                        <div style={{
-                                                            width: "100%",
-                                                            height: "35px",
-                                                            display: "flex"
-                                                        }}>
-                                                            <div style={{
-                                                                fontSize: "13px",
-                                                                backgroundColor: "#EBF6F7",
-                                                                width: "102px",
-                                                                height: "100%",
-                                                                borderRight: "1px solid #121212"
-                                                            }}>
-                                                                item
-                                                            </div>
-                                                            <div style={{lineHeight: 2, paddingLeft: "32px"}}>
-                                                                {item.item}
-                                                            </div>
-                                                        </div>
-                                                        <div style={{
-                                                            lineHeight: 1.9,
-                                                            width: "100%",
-                                                            height: "35px",
-                                                            fontSize: "18px",
-                                                            borderTop: "1px solid #121212",
-                                                            borderBottom: "1px solid #A3A3A3",
-                                                            backgroundColor: "#EBF6F7",
-                                                            fontWeight: 540
-                                                        }}>
-                                                            MODEL
-                                                        </div>
-                                                    </>
-                                                )}
+                                })}
+                                <div>총 수량 : {v.totalQuantity}</div>
 
 
-                                                <div style={{
-                                                    width: "100%",
-                                                    height: "35px",
-                                                    borderBottom: "1px solid #A3A3A3",
-                                                    display: "flex"
-                                                }}>
-                                                    <div style={{
-                                                        fontSize: "13px",
-                                                        letterSpacing: "-1px",
-                                                        lineHeight: 2.5,
-                                                        width: "360px",
-                                                        height: "100%",
-                                                        borderRight: "1px solid #121212"
-                                                    }}>
-                                                        {item.model}
-                                                    </div>
-                                                    <div style={{lineHeight: 2, paddingLeft: "30px"}}>
-                                                        <span style={{fontWeight: 550}}>{item.quantity}</span> {item.unit}
-                                                    </div>
-                                                </div>
+                                <div style={{height: 30}}/>
+                            </>
 
-                                                {
-                                                    //@ts-ignore
-                                                    idx === mail.length - 1 && (
-                                                        <>
-                                                            <div style={{
-                                                                backgroundColor: "#EBF6F7",
-                                                                width: "100%",
-                                                                height: "35px",
-                                                                display: "flex",
-                                                                lineHeight: 2.5,
-                                                                borderBottom: "1px solid #121212"
-                                                            }}>
-                                                                <div style={{
-                                                                    fontSize: "13px",
-                                                                    width: "360px",
-                                                                    height: "100%",
-                                                                    borderRight: "1px solid #121212"
-                                                                }}>
-                                                                    total
-                                                                </div>
-                                                                <div style={{lineHeight: 2.5, paddingLeft: "30px"}}>
-                                                                <span
-                                                                    style={{fontWeight: 550}}>{totalQuantity}</span> {item.unit}
-                                                                </div>
-                                                            </div>
-                                                        </>
-                                                    )}
 
-                                                    </>
-
-                                                )
-                                            })
-                                            }
-                                        </div>
-
-                                <div style={{marginTop:50}}> 감사합니다.</div>
-                            </div>
-                            )
                         })}
                     </Modal>
 
@@ -395,7 +199,7 @@ export default function rfqRead({dataList}) {
                                 ]} style={{width: '100%'}}>
                                 </Select>
                             </div>
-                            <div style={{paddingTop : 30}}>
+                            <div style={{paddingTop: 30}}>
 
                                 <Button type={'primary'} size={'small'} style={{marginRight: 8}}
                                         onClick={searchInfo}><SearchOutlined/>조회</Button>
@@ -412,7 +216,6 @@ export default function rfqRead({dataList}) {
                     columns={rfqReadColumns}
                     tableData={tableData}
                     type={'read'}
-                    setSelectedRows={setSelectedRows}
                     gridRef={gridRef}
                     excel={true}/>
 

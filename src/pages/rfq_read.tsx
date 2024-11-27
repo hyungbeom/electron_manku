@@ -19,6 +19,16 @@ import message from "antd/lib/message";
 
 const {RangePicker} = DatePicker
 
+const BoxCard = ({children, title}) => {
+    return <Card size={'small'} title={title}
+                 style={{
+                     fontSize: 13,
+                     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                 }}>
+        {children}
+    </Card>
+}
+
 
 export default function rfqRead({dataList}) {
 
@@ -27,6 +37,31 @@ export default function rfqRead({dataList}) {
     const {estimateRequestList} = dataList;
     const [info, setInfo] = useState(subRfqReadInitial);
     const [tableData, setTableData] = useState(estimateRequestList);
+
+
+    const inputForm = ({title, id, disabled = false, suffix = null}) => {
+        let bowl = info;
+
+
+        return <div>
+            <div>{title}</div>
+            <Input id={id} value={bowl[id]} disabled={disabled}
+                   onChange={onChange}
+                   size={'small'}
+                   onKeyDown={handleKeyPress}
+                   suffix={suffix}
+
+            />
+        </div>
+    }
+
+    function handleKeyPress(e) {
+        if (e.key === 'Enter') {
+
+            searchInfo()
+        }
+    }
+
 
 
     function onChange(e) {
@@ -62,7 +97,6 @@ export default function rfqRead({dataList}) {
     // 부모요소 단위로 삭제됨
     async function deleteList() {
         const api = gridRef.current.api;
-        console.log(api.getSelectedRows(),':::')
 
         if (api.getSelectedRows().length<1) {
             message.error('삭제할 데이터를 선택해주세요.')
@@ -74,7 +108,7 @@ export default function rfqRead({dataList}) {
                 console.log(response)
                 if (response.data.code===1) {
                     message.success('삭제되었습니다.')
-                    window.location.reload();
+                    searchInfo();
                 } else {
                     message.error('오류가 발생하였습니다. 다시 시도해주세요.')
                 }
@@ -128,43 +162,21 @@ export default function rfqRead({dataList}) {
                                     ]} style={{width: '100%',}}/>
                                 </div>
                         </Card>
-                        <Card size={'small'} style={{
-                            fontSize: 11,
-                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
-                        }}>
-                                <div>
-                                    <div style={{paddingBottom: 3}}>문서번호</div>
-                                    <Input id={'searchDocumentNumber'} onChange={onChange} size={'small'}/>
-                                </div>
-                            <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>등록직원명</div>
-                                <Input id={'searchCreatedBy'} onChange={onChange} size={'small'}/>
-                            </div>
-                            <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>거래처명</div>
-                                <Input id={'searchCustomerName'} onChange={onChange} size={'small'}/>
-                            </div>
-                        </Card>
+                        <BoxCard title={''}>
 
-                        <Card size={'small'} style={{
-                            fontSize: 11,
-                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
-                            marginBottom: 5
-                        }}>
-                            <div>
-                                <div style={{paddingBottom: 3}}>MAKER</div>
-                                <Input id={'searchMaker'} onChange={onChange} size={'small'}/>
-                            </div>
-                            <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>MODEL</div>
-                                <Input id={'searchModel'} onChange={onChange} size={'small'}/>
-                            </div>
-                            <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>ITEM</div>
-                                <Input id={'searchItem'} onChange={onChange} size={'small'}/>
-                            </div>
+                            {inputForm({title: '문서번호', id: 'searchDocumentNumber'})}
+                            {inputForm({title: '등록직원명', id: 'searchCreatedBy'})}
+                            {inputForm({title: '거래처명', id: 'searchCustomerName'})}
+                        </BoxCard>
 
-                        </Card>
+
+                        <BoxCard title={''}>
+
+                            {inputForm({title: 'MAKER', id: 'searchMaker'})}
+                            {inputForm({title: 'MODEL', id: 'searchModel'})}
+                            {inputForm({title: 'ITEM', id: 'searchItem'})}
+                        </BoxCard>
+
                     </div>
                     <div style={{marginTop: 8, textAlign:'right'}}>
                         <Button type={'primary'} onClick={searchInfo}><SearchOutlined/>조회</Button>
