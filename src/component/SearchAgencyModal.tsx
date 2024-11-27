@@ -9,7 +9,7 @@ import {tableTheme} from "@/utils/common";
 
 export default function SearchAgencyModal({agencyData, info, setInfo, isModalOpen, setIsModalOpen}){
     const [data, setData] = useState(agencyData)
-    const [code, setCode] = useState(info['agencyCode']);
+    const [code, setCode] = useState(info);
 
     useEffect(() => {
         searchFunc();

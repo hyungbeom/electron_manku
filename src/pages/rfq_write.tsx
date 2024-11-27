@@ -29,16 +29,19 @@ import SearchMakerModal from "@/component/SearchMakerModal";
 import SearchAgencyModal from "@/component/SearchAgencyModal";
 
 export default function rqfWrite() {
+
     const gridRef = useRef(null);
 
     const [info, setInfo] = useState<any>(rfqWriteInitial)
     const [mini, setMini] = useState(true);
+
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false, event3: false});
     const [agencyData, setAgencyData] = useState([]);
     const [customerData, setCustomerData] = useState([]);
     const [makerData, setMakerData] = useState([]);
+
     const [newDocumentNum, setNewDocumentNum] =useState('')
-    const [customerInfo, setCustomerInfo] = useState(customerInitial)
+    const [customerInfo, setCustomerInfo] = useState(customerInitial) //customerList 등록용 정보
 
     useEffect(() => {
 
@@ -52,6 +55,18 @@ export default function rqfWrite() {
         setInfo(copyData);
     }, [])
 
+    useEffect(()=>{
+        getAgencyCode()
+    },[info['agencyCode']])
+
+    useEffect(()=>{
+        getCustomerName()
+    },[customerInfo['customerName']])
+
+    useEffect(()=>{
+        getMaker()
+    },[info['maker']])
+
 
     function onChange(e) {
 
@@ -59,9 +74,6 @@ export default function rqfWrite() {
             return {...v, [e.target.id]: e.target.value}
         })
     }
-
-    // useEffect(()=>{
-    // },[info['agencyCode']])
 
 
     function onCustomerInfoChange(e) {
@@ -196,6 +208,41 @@ export default function rqfWrite() {
         setCustomerInfo(customerInitial)
     }
 
+
+    async function getAgencyCode () {
+        const result = await getData.post('agency/getAgencyListForEstimate', {
+            "searchText": info['agencyCode'],
+            "page": 1,
+            "limit": -1
+        })
+
+        const data = result?.data?.entity?.agencyList
+        setAgencyData(data)
+    }
+
+    async function getCustomerName () {
+        const result = await getData.post('customer/getCustomerListForEstimate', {
+            "searchText": customerInfo['customerName'],
+            "page": 1,
+            "limit": -1
+        })
+
+        const data = result?.data?.entity?.customerList
+        setCustomerData(data)
+    }
+
+    async function getMaker () {
+        const result = await getData.post('maker/getMakerList', {
+            "searchType": "1",
+            "searchText": info['maker'],
+            "page": 1,
+            "limit": -1
+        })
+
+        const data = result?.data?.entity?.makerList
+        setMakerData(data)
+    }
+
     const handleKeyPress = async (e) => {
         if (e.key === 'Enter') {
 
@@ -203,17 +250,13 @@ export default function rqfWrite() {
                 if (!info['agencyCode']) {
                     return false;
                 }
-                const result = await getData.post('agency/getAgencyListForEstimate', {
-                    "searchText": info['agencyCode'],       // 대리점코드 or 대리점 상호명
-                    "page": 1,
-                    "limit": -1
-                })
+                await getAgencyCode()
 
-                if (result?.data?.entity?.agencyList?.length > 1) {
-                    setAgencyData(result.data.entity.agencyList)
+                if (agencyData?.length > 1) {
                     setIsModalOpen({event1: true, event2: false, event3: false,})
-                } else if (!!result?.data?.entity?.agencyList?.length) {
-                    const {agencyCode, agencyName} = result.data.entity.agencyList[0]
+
+                } else if (!!agencyData?.length) {
+                    const {agencyCode, agencyName} = agencyData[0]
 
                     setInfo(v => {
                         return {...v, agencyCode: agencyCode, agencyName: agencyName,}
@@ -221,21 +264,18 @@ export default function rqfWrite() {
                 }
 
             } else if (e.target.id === 'customerName') {
+
                 if (!customerInfo['customerName']) {
                     return false
                 }
-                const result = await getData.post('customer/getCustomerListForEstimate', {
-                    "searchText": customerInfo['customerName'],       // 대리점코드 or 대리점 상호명
-                    "page": 1,
-                    "limit": -1
-                })
-                if (result?.data?.entity?.customerList?.length > 1) {
-                    setCustomerData(result.data.entity.customerList)
-                    setIsModalOpen({event1: false, event2: true, event3: false,})
-                } else if (!!result?.data?.entity?.customerList?.length) {
-                    const {customerName, managerName, directTel, faxNumber} = result.data.entity.customerList[0]
+                await getCustomerName()
 
-                    // setInfo(v => {
+                if (customerData?.length > 1) {
+                    setIsModalOpen({event1: false, event2: true, event3: false,})
+
+                } else if (!!customerData?.length) {
+                    const {customerName, managerName, directTel, faxNumber} = customerData[0]
+
                     setCustomerInfo(v => {
                         return {
                             ...v,
@@ -246,23 +286,19 @@ export default function rqfWrite() {
                         }
                     })
                 }
-            } else {
+            } else if (e.target.id === 'maker') {
 
-            }if (!info['maker']) {
-                return false
+                if (!info['maker']) {
+                    return false
+                }
+                await getMaker()
             }
-            const result = await getData.post('maker/getMakerList', {
-                "searchType": "1",
-                "searchText": info['maker'],       // 대리점코드 or 대리점 상호명
-                "page": 1,
-                "limit": -1
-            })
-            if (result?.data?.entity?.makerList?.length > 1) {
-                setMakerData(result.data.entity.makerList)
-                setIsModalOpen({event1: false, event2: false, event3: true,})
-            } else if (!!result?.data?.entity?.makerList?.length) {
-                const {makerName, item, instructions} = result.data.entity.makerList[0]
 
+            if (makerData?.length > 1) {
+                setIsModalOpen({event1: false, event2: false, event3: true,})
+
+            } else if (!!makerData?.length) {
+                const {makerName, item, instructions} = makerData[0]
 
                 setInfo(v => {
                     return {
@@ -272,21 +308,24 @@ export default function rqfWrite() {
                         instructions: instructions,
                     }
                 })
-            }
+            } else
+                return null
         }
 
     };
+
+
 
 
     return <>
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`, height: '100vh', columnGap: 5}}>
 
-                <SearchAgencyModal info={info} setInfo={setInfo} agencyData={agencyData} isModalOpen={isModalOpen}
+                <SearchAgencyModal info={info['agencyCode']} setInfo={setInfo} agencyData={agencyData} isModalOpen={isModalOpen}
                                    setIsModalOpen={setIsModalOpen}/>
-                <SearchCustomerModal info={info} setInfo={setCustomerInfo} customerData={customerData} isModalOpen={isModalOpen}
+                <SearchCustomerModal info={customerInfo['customerName']} setInfo={setCustomerInfo} customerData={customerData} isModalOpen={isModalOpen}
                                      setIsModalOpen={setIsModalOpen}/>
-                <SearchMakerModal info={info} setInfo={setInfo} makerData={makerData} isModalOpen={isModalOpen}
+                <SearchMakerModal info={info['maker']} setInfo={setInfo} makerData={makerData} isModalOpen={isModalOpen}
                                      setIsModalOpen={setIsModalOpen}/>
 
                 <Card title={<div style={{display:'flex', justifyContent:'space-between'}}>
@@ -298,19 +337,20 @@ export default function rqfWrite() {
                             onClick={clearAll}><RetweetOutlined/>초기화</Button>
                 </div></div>}  style={{fontSize: 12, border: '1px solid lightGray'}} extra={<span style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>setMini(v => !v)}> {!mini ? <DownCircleFilled/> : <UpCircleFilled/>}</span>} >
                     {mini ? <div>
-                            <Card size={'small'} style={{
+                            <Card size={'small'} title={'기본 정보'}
+                                  style={{
                                 fontSize: 13,
                                 boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
                                 marginBottom: 5
                             }}>
                                 <div style={{
                                     display: 'grid',
-                                    gridTemplateColumns: '1fr 1fr 1fr 1fr',
-                                    width: 740,
-                                    columnGap: 20
+                                    gridTemplateColumns: '1fr 0.6fr 1fr 0.8fr 1fr',
+                                    width: '100%',
+                                    columnGap: 15
                                 }}>
                                     <div>
-                                        <div style={{paddingTop: 8, width: '100%'}}>작성일</div>
+                                        <div style={{width: '100%'}}>작성일</div>
                                         <DatePicker value={info['writtenDate']} style={{width: '100%'}}
                                                     onChange={(date, dateString) => onChange({
                                                         target: {
@@ -321,68 +361,107 @@ export default function rqfWrite() {
                                                     } id={'writtenDate'} size={'small'}/>
                                     </div>
                                     <div>
-                                        <div style={{paddingTop: 8}}>INQUIRY NO.</div>
-                                        <Input id={'documentNumberFull'} value={info['documentNumberFull']} onChange={onChange} disabled={true} size={'small'}/>
-                                    </div>
-                                    <div>
-                                        <div style={{paddingTop: 8}}>RFQ NO.</div>
-                                        <Input id={'rfqNo'} value={info['rfqNo']} onChange={onChange} size={'small'}/>
-                                    </div>
-                                    <div style={{paddingTop: 8}}>
-                                        <div style={{paddingBottom: 3}}>프로젝트 제목</div>
-                                        <Input id={'projectTitle'} value={info['projectTitle']} onChange={onChange} size={'small'}/>
-                                    </div>
-                                </div>
-                            </Card>
-                            <div style={{display: 'grid', gridTemplateColumns: '1fr 1.2fr  1.5fr 1.22fr', columnGap: 10}}>
-
-
-                                <Card size={'small'}
-                                      style={{
-                                          fontSize: 13,
-                                          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                                      }}>
-                                    <div>
-                                        <div>대리점코드</div>
-                                        <Input id={'agencyCode'} value={info['agencyCode']} onChange={onChange}
-                                               size={'small'}
-                                               onKeyDown={handleKeyPress}
-                                               suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
-                                                   (e) => {
-                                                       e.stopPropagation();
-                                                       setIsModalOpen({event1: true, event2: false, event3: false})
-                                                   }
-                                               }/>}/>
-                                    </div>
-                                    <div>
-                                        <div style={{paddingTop: 8}}>매입처명</div>
-                                        <Input id={'agencyName'} value={info['agencyName']} onChange={onChange}
-                                               size={'small'}/>
-                                    </div>
-                                    <div>
-                                        <div style={{paddingTop: 8}}>만쿠담당자</div>
+                                        <div>만쿠담당자</div>
                                         <Input id={'adminId'} value={info['adminId']} onChange={onChange}
                                                size={'small'}/>
                                     </div>
                                     <div>
-                                    <div style={{paddingTop: 8, width: '100%'}}>마감일자</div>
-                                    <DatePicker value={info['dueDate']} style={{width: '100%'}}
-                                                onChange={(date, dateString) => onChange({
-                                                    target: {
-                                                        id: 'dueDate',
-                                                        value: date
-                                                    }
-                                                })
-                                                } id={'dueDate'} size={'small'}/>
-                            </div>
-                        </Card>
+                                        <div>INQUIRY NO.</div>
+                                        <Input id={'documentNumberFull'} value={info['documentNumberFull']}
+                                               onChange={onChange} disabled={true} size={'small'}/>
+                                    </div>
+                                    <div>
+                                        <div>RFQ NO.</div>
+                                        <Input id={'rfqNo'} value={info['rfqNo']} onChange={onChange} size={'small'}/>
+                                    </div>
+                                    <div>
+                                        <div style={{}}>프로젝트 제목</div>
+                                        <Input id={'projectTitle'} value={info['projectTitle']} onChange={onChange}
+                                               size={'small'}/>
+                                    </div>
+                                </div>
+                            </Card>
+                        <div style={{display: 'grid', gridTemplateColumns: '1fr 1.2fr  1.5fr 1.22fr', columnGap: 10}}>
 
-                            <Card size={'small'} style={{
+
+                            <Card size={'small'} title={'매입처 정보'}
+                                  style={{
+                                      fontSize: 13,
+                                      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                                  }}>
+                                <div>
+                                    <div>매입처코드</div>
+                                    <Input id={'agencyCode'} value={info['agencyCode']} onChange={onChange}
+                                           size={'small'}
+                                           onKeyDown={handleKeyPress}
+                                           suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
+                                               (e) => {
+                                                   e.stopPropagation();
+                                                   setIsModalOpen({event1: true, event2: false, event3: false})
+                                               }
+                                           }/>}/>
+                                </div>
+                                <div>
+                                    <div style={{paddingTop: 8}}>매입처명</div>
+                                    <Input id={'agencyName'} value={info['agencyName']} onChange={onChange}
+                                           size={'small'}/>
+                                </div>
+                                <div>
+                                <div style={{paddingTop: 8, width: '100%'}}>마감일자</div>
+                                <DatePicker value={info['dueDate']} style={{width: '100%'}}
+                                            onChange={(date, dateString) => onChange({
+                                                target: {
+                                                    id: 'dueDate',
+                                                    value: date
+                                                }
+                                            })
+                                            } id={'dueDate'} size={'small'}/>
+                                </div>
+                            </Card>
+
+                            <Card size={'small'} title={'거래처 정보'}
+                                  style={{
+                                      fontSize: 13,
+                                      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                                  }}>
+                                <div>
+                                    <div>거래처명</div>
+                                    <Input id={'customerName'} value={customerInfo['customerName']} onChange={onCustomerInfoChange}
+                                           size={'small'}
+                                           onKeyDown={handleKeyPress}
+                                           suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
+                                               (e) => {
+                                                   e.stopPropagation();
+                                                   setIsModalOpen({event1: false, event2: true, event3: false})
+                                               }
+                                           }/>}/>
+                                </div>
+                                <div>
+                                    <div style={{paddingTop: 8}}>담당자명</div>
+                                    <Input id={'managerName'} value={customerInfo['managerName']} onChange={onCustomerInfoChange}
+                                           size={'small'}/>
+                                </div>
+
+                                <div>
+                                    <div style={{paddingTop: 8}}>전화번호</div>
+                                    <Input id={'phoneNumber'} value={customerInfo['phoneNumber']} onChange={onCustomerInfoChange}
+                                           size={'small'}/>
+                                </div>
+                                <div>
+                                    <div style={{paddingTop: 8}}>팩스/이메일</div>
+                                    <Input id={'faxNumber'} value={customerInfo['faxNumber']} onChange={onCustomerInfoChange}
+                                           size={'small'}/>
+                                </div>
+
+                            </Card>
+
+                            <Card size={'small'} title={'Maker 정보'}
+                                  style={{
                                 fontSize: 13,
                                 boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                             }}>
                                 <div>
-                                    <div style={{paddingBottom: 3}}>MAKER</div>
+                                    <div style={{}}>MAKER</div>
                                     <Input id={'maker'} value={info['maker']} onChange={onChange}
                                            size={'small'}
                                            onKeyDown={handleKeyPress}
@@ -392,32 +471,32 @@ export default function rqfWrite() {
                                                    setIsModalOpen({event1: false, event2: false, event3: true})
                                                }
                                            }/>}/>
-
                                 </div>
                                 <div style={{paddingTop: 8}}>
-                                    <div style={{paddingBottom: 3}}>ITEM</div>
+                                    <div style={{}}>ITEM</div>
                                     <Input id={'item'} value={info['item']} onChange={onChange} size={'small'}/>
                                 </div>
                                 <div style={{paddingTop: 8}}>
-                                    <div style={{paddingBottom: 3}}>End User</div>
-                                    <Input id={'endUser'} value={info['endUser']} onChange={onChange} size={'small'}/>
-                                </div>
-                                <div style={{paddingTop: 8}}>
-                                    <div style={{paddingBottom: 3}}>지시사항</div>
+                                    <div style={{}}>지시사항</div>
                                     <TextArea id={'instructions'} value={info['instructions']} onChange={onChange}
                                               size={'small'}/>
                                 </div>
 
                             </Card>
-                            <Card size={'small'} style={{
+                            <Card size={'small'} title={'ETC'}
+                                  style={{
                                 fontSize: 13,
                                 boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                             }}>
-
+                                <div style={{paddingTop: 8}}>
+                                    <div style={{}}>End User</div>
+                                    <Input id={'endUser'} value={info['endUser']} onChange={onChange} size={'small'}/>
+                                </div>
 
                                 <div style={{paddingTop: 8}}>
-                                    <div style={{paddingBottom: 3}}>비고란</div>
-                                    <TextArea style={{height:'250px'}} id={'remarks'} value={info['remarks']} onChange={onChange} size={'small'}/>
+                                    <div style={{}}>비고란</div>
+                                    <TextArea style={{height: '200px'}} id={'remarks'} value={info['remarks']}
+                                              onChange={onChange} size={'small'}/>
                                 </div>
 
                             </Card>

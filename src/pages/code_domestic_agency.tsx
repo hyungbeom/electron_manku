@@ -89,11 +89,11 @@ export default function codeDomesticPurchase({dataList}) {
                         <div style={{marginTop: 6}}>
                             <Radio.Group onChange={e => setInfo(v => {
                                 return {...v, searchType: e.target.value}
-                            })} defaultValue={1} id={'searchType'}
+                            })} id={'searchType'}
                                          value={info['searchType']}>
-                                <Radio value={1}>코드</Radio>
-                                <Radio value={2}>상호명</Radio>
-                                <Radio value={3}>MAKER</Radio>
+                                <Radio value={"1"}>코드</Radio>
+                                <Radio value={"2"}>상호명</Radio>
+                                <Radio value={"3"}>MAKER</Radio>
                             </Radio.Group>
                         </div>
 

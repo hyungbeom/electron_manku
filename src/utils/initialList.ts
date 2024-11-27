@@ -458,7 +458,7 @@ export const modalCodeDiplomaInitial = {
 }
 
 export const codeDomesticPurchaseInitial = {
-    "searchType": 2,
+    "searchType": "2",
     "searchText": "",
     "page": 1,
     "limit": -1
