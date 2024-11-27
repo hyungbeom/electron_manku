@@ -5,7 +5,7 @@ import Card from "antd/lib/card/Card";
 import TextArea from "antd/lib/input/TextArea";
 import {
     CopyOutlined,
-    DownCircleFilled, EditOutlined,
+    DownCircleFilled,
     FileSearchOutlined,
     RetweetOutlined,
     SaveOutlined,
@@ -21,17 +21,12 @@ import {getData} from "@/manage/function/api";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
-import * as XLSX from 'xlsx';
 import MyComponent from "@/component/MyComponent";
-import {useRouter} from "next/router";
 import nookies from "nookies";
 import TableGrid from "@/component/tableGrid";
 import SearchCustomerModal from "@/component/SearchCustomerModal";
-import Dragger from "antd/lib/upload/Dragger";
-import Upload from "antd/lib/upload";
 import SearchMakerModal from "@/component/SearchMakerModal";
 import SearchAgencyModal from "@/component/SearchAgencyModal";
-import {InputRef} from "antd";
 
 export default function rqfWrite() {
     const gridRef = useRef(null);
