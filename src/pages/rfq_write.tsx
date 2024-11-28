@@ -96,6 +96,7 @@ export default function rqfWrite() {
     const datePickerForm = ({title, id, disabled = false}) => {
         return <div>
             <div>{title}</div>
+            {/*@ts-ignore*/}
             <DatePicker value={info[id] ? moment(info[id]) : ''} style={{width: '100%'}}
                         onChange={(date) => onChange({
                             target: {
@@ -105,7 +106,6 @@ export default function rqfWrite() {
                         })
                         }
                         disabled={disabled}
-                        disabledDate={disabledDate}
                         id={id} size={'small'}/>
         </div>
     }
@@ -326,6 +326,7 @@ export default function rqfWrite() {
             // 테이블 데이터 변환
             const tableData = dataRows.map((row) => {
                 const rowData = {};
+                // @ts-ignore
                 row?.forEach((cell, cellIndex) => {
                     const header = headers[cellIndex];
                     if (header !== undefined) {
@@ -369,14 +370,6 @@ export default function rqfWrite() {
         },
     };
 
-    // const downloadExcel = () => {
-    //
-    //     const worksheet = XLSX.utils.json_to_sheet(info['estimateRequestDetailList']);
-    //     const workbook = XLSX.utils.book_new();
-    //     XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-    //     XLSX.writeFile(workbook, "rfq_list.xlsx");
-    // };
-
 
     return <>
         <LayoutComponent>
@@ -386,6 +379,7 @@ export default function rqfWrite() {
                 height: '100vh',
                 columnGap: 5
             }}>
+                {/*@ts-ignore*/}
                 <SearchInfoModal type={'agencyList'} info={info} setInfo={setInfo}
                                  open={isModalOpen}
                                  setIsModalOpen={setIsModalOpen}/>
@@ -395,7 +389,7 @@ export default function rqfWrite() {
                         <Button type={'primary'} size={'small'} style={{marginRight: 8}}
                                 onClick={saveFunc}
                         ><SaveOutlined/>저장</Button>
-                        {/*    /!*@ts-ignored*!/*/}
+                        {/*@ts-ignored*/}
                         <Button type={'danger'} size={'small'} style={{marginRight: 8}}
                                 onClick={clearAll}><RetweetOutlined/>초기화</Button>
                     </div>
@@ -488,20 +482,16 @@ export default function rqfWrite() {
                     excel={true}
                     type={'write'}
                     funcButtons={<div style={{display : 'grid', gridTemplateColumns : '1fr 0.8fr 0.8fr 0.8fr',alignItems : 'end'}}>
+                        {/*@ts-ignore*/}
                         <Upload {...uploadProps} size={'small'} style={{marginLeft: 5}} showUploadList={false}>
                             <Button  icon={<UploadOutlined />} size={'small'} >엑셀 업로드</Button>
                         </Upload>
-                        {/*<Button type={'dashed'} size={'small'} style={{marginLeft:5}} onClick={downloadExcel}>*/}
-                        {/*    <FileExcelOutlined/>출력*/}
-                        {/*</Button>*/}
                         <Button type={'primary'} size={'small'} style={{marginLeft: 5}}
                                 onClick={addRow}>
                             <SaveOutlined/>추가
                         </Button>
                         {/*@ts-ignored*/}
-                        <Button type={'danger'} size={'small'} style={{ marginLeft: 5,}}
-                            onClick={deleteList}
-                        >
+                        <Button type={'danger'} size={'small'} style={{ marginLeft: 5,}} onClick={deleteList}>
                             <CopyOutlined/>삭제
                         </Button>
 

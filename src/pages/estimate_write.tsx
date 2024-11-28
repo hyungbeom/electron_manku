@@ -30,6 +30,7 @@ import SearchAgendaModal from "@/component/SearchAgencyModal";
 import SearchCustomerModal from "@/component/SearchCustomerModal";
 import SearchAgencyModal from "@/component/SearchAgencyModal";
 import SearchMakerModal from "@/component/SearchMakerModal";
+import SearchInfoModal from "@/component/SearchAgencyModal";
 
 
 export default function EstimateWrite({dataInfo}) {
@@ -252,13 +253,11 @@ export default function EstimateWrite({dataInfo}) {
     return <>
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`, height: '100vh', columnGap: 5}}>
+                {/*@ts-ignore*/}
+                <SearchInfoModal type={'agencyList'} info={info} setInfo={setInfo}
+                                 open={isModalOpen}
+                                 setIsModalOpen={setIsModalOpen}/>
 
-                {/*<SearchAgencyModal info={info} setInfo={setInfo} agencyData={agencyData} isModalOpen={isModalOpen}*/}
-                {/*                   setIsModalOpen={setIsModalOpen}/>*/}
-                {/*<SearchCustomerModal info={info} setInfo={setInfo} customerData={customerData} isModalOpen={isModalOpen}*/}
-                {/*                     setIsModalOpen={setIsModalOpen}/>*/}
-                {/*<SearchMakerModal info={info} setInfo={setInfo} makerData={makerData} isModalOpen={isModalOpen}*/}
-                {/*                  setIsModalOpen={setIsModalOpen}/>*/}
                 <Card title={<div style={{display:'flex', justifyContent:'space-between'}}>
                     <div style={{fontSize:14, fontWeight:550}}>견적서 작성</div> <div>
                     <Button type={'primary'} size={'small'} style={{marginRight: 8}}

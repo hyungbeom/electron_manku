@@ -50,7 +50,6 @@ export default function rfqRead({dataList}) {
                    size={'small'}
                    onKeyDown={handleKeyPress}
                    suffix={suffix}
-
             />
         </div>
     }

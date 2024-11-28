@@ -27,6 +27,7 @@ const TableGrid = ({
 
     const router = useRouter();
     const [data, setData] = useState(tableData);
+    const [dragging, setDragging] = useState(false);
 
 
     useEffect(()=>{
@@ -204,24 +205,38 @@ const TableGrid = ({
                 return rowData;
             });
 
-            // tableData가 배열인지 확인하고 상태 업데이트
-            setData((v) => {
-                const copyData = { ...v };
-                copyData[listType] = Array.isArray(tableData) ? tableData : []; // 배열인지 확인 후 설정
-                return copyData;
-            });
+            // console.log(tableData, 'tableData~~~')
+            setData(tableData);
+            // setData((v) => {
+            //     const copyData = { ...v };
+            //     copyData[listType] = Array.isArray(tableData) ? tableData : []; // 배열인지 확인 후 설정
+            //     return copyData;
+            // });
+
         };
 
         reader.readAsBinaryString(file);
     };
 
-    const uploadProps = {
-        name: 'file',
-        accept: '.xlsx, .xls',
-        multiple: false,
-        showUploadList: false,
-        beforeUpload: (file) => {
-            const isExcel = file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
+    const handleDragOver = (e) => {
+        e.preventDefault();
+        setDragging(true);
+    };
+
+    const handleDragLeave = () => {
+        setDragging(false);
+    };
+
+    const handleDrop = (e) => {
+        e.preventDefault();
+        setDragging(false);
+
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            const file = files[0];
+
+            const isExcel =
+                file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
                 file.type === 'application/vnd.ms-excel' ||
                 file.name.toLowerCase().endsWith('.xlsx') ||
                 file.name.toLowerCase().endsWith('.xls');
@@ -231,18 +246,36 @@ const TableGrid = ({
                 return Upload.LIST_IGNORE;
             }
 
-            // 파일 읽기
             handleFile(file);
-
-            // false를 반환하여 업로드 방지 (자동 업로드 차단)
-            return false;
-        },
+        }
     };
 
 
     return (
-        <div className="ag-theme-quartz"
-             style={{height: '100%', width: '100%', display: 'flex', flexDirection: 'column', overflowX: 'auto'}}>
+        <div className={`ag-theme-quartz ${dragging ? 'dragging' : ''}`}
+             style={{height: '100%', width: '100%', display: 'flex', flexDirection: 'column', overflowX: 'auto',
+                 border: dragging ? '2px dashed #1890ff' : 'none', position:'relative'}}
+             onDragOver={handleDragOver}
+             onDragLeave={handleDragLeave}
+             onDrop={handleDrop}
+        >
+            {dragging && (
+                <div
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(255, 255, 255, 0.7)', // 반투명 흰색 배경
+                        zIndex: 10,
+                        pointerEvents: 'none', // 오버레이가 이벤트를 방해하지 않도록 설정
+                    }}
+                >
+                    <InboxOutlined style={{color:'blue', fontSize:50, margin:'10% 50% 0 45%'}}/><br/>
+                    Drag & drop
+                </div>
+            )}
 
             <div style={{width: '100%', display: 'flex', justifyContent: 'space-between', margin: '10px 0'}}>
                 <div>LIST</div>

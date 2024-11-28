@@ -27,7 +27,6 @@ export default function EstimateRead({data}) {
 
     const gridRef = useRef(null);
 
-    // const {estimateList} = dataList;
     const [info, setInfo] = useState(estimateReadInitial)
     const [tableData, setTableData] = useState(data)
 
@@ -84,12 +83,32 @@ export default function EstimateRead({data}) {
 
     const downloadExcel = () => {
 
-        const worksheet = XLSX.utils.json_to_sheet(tableData);
+        const headers = [];
+        const fields = [];
+
+        const extractHeaders = (columns) => {
+            columns.forEach((col) => {
+                if (col.children) {
+                    extractHeaders(col.children); // 자식 컬럼 재귀적으로 처리
+                } else {
+                    headers.push(col.headerName); // headerName 추출
+                    fields.push(col.field); // field 추출
+                }
+            });
+        };
+
+        extractHeaders(tableEstimateReadColumns);
+
+        const worksheetData = tableData.map((row) =>
+            fields.map((field) => row[field] || "") // field에 해당하는 데이터 추출
+        );
+
+        const worksheet = XLSX.utils.aoa_to_sheet([headers, ...worksheetData]);
+
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-        XLSX.writeFile(workbook, "example.xlsx");
+        XLSX.writeFile(workbook, "estimate_list.xlsx");
     };
-
 
     return <>
         <LayoutComponent>
