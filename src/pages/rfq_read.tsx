@@ -117,11 +117,36 @@ export default function rfqRead({dataList}) {
     }
 
 
+
     const downloadExcel = () => {
 
-        const worksheet = XLSX.utils.json_to_sheet(tableData);
+        const headers = [];
+        const fields = [];
+
+        const extractHeaders = (columns) => {
+            columns.forEach((col) => {
+                if (col.children) {
+                    extractHeaders(col.children); // 자식 컬럼 재귀적으로 처리
+                } else {
+                    headers.push(col.headerName); // headerName 추출
+                    fields.push(col.field); // field 추출
+                }
+            });
+        };
+
+        extractHeaders(rfqReadColumns);
+
+        // 2. 데이터 매핑
+        const worksheetData = tableData.map((row) =>
+            fields.map((field) => row[field] || "") // field에 해당하는 데이터 추출
+        );
+
+        // 3. 헤더와 데이터 병합
+        const worksheet = XLSX.utils.aoa_to_sheet([headers, ...worksheetData]);
+
+        // 4. Excel 파일 생성
         const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+        XLSX.utils.book_append_sheet(workbook, worksheet, "RFQ Data");
         XLSX.writeFile(workbook, "rfq_list.xlsx");
     };
 

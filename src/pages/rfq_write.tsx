@@ -95,6 +95,7 @@ export default function rqfWrite() {
     const datePickerForm = ({title, id, disabled = false}) => {
         return <div>
             <div>{title}</div>
+            {/*@ts-ignore*/}
             <DatePicker value={info[id] ? moment(info[id]) : ''} style={{width: '100%'}}
                         onChange={(date) => onChange({
                             target: {
@@ -325,6 +326,7 @@ export default function rqfWrite() {
             // 테이블 데이터 변환
             const tableData = dataRows.map((row) => {
                 const rowData = {};
+                // ts-
                 row?.forEach((cell, cellIndex) => {
                     const header = headers[cellIndex];
                     if (header !== undefined) {
