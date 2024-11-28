@@ -76,13 +76,14 @@ export default function rfqRead({dataList}) {
 
         const result = Object.values(
             checkedData.reduce((acc, items) => {
-                const {documentNumberFull, model, agencyManagerName, quantity, unit, maker, item} = items;
+                const {documentNumberFull, model, agencyManagerName, managerName, quantity, unit, maker, item} = items;
 
                 // documentNumberFull로 그룹화
                 if (!acc[documentNumberFull]) {
                     acc[documentNumberFull] = {
                         documentNumberFull: documentNumberFull,
                         agencyManagerName: agencyManagerName,
+                        managerName:managerName,
                         unit:unit,
                         list: [],
                         totalQuantity: 0, // 총 수량 초기화
@@ -128,26 +129,28 @@ export default function rfqRead({dataList}) {
                            title={<div style={{lineHeight: 2.5, fontWeight: 550}}>메일전송</div>} open={isModalOpen}
                            onCancel={() => setIsModalOpen(false)}>
 
-                        <div style={{width: '100%'}}>
-                            {previewData.length > 0 &&
-                                <div style={{width: '100%', height: 'auto'}}>
-                                    [<span
-                                    style={{fontWeight: 550}}>{previewData[0].agencyManagerName}</span>]님<br/><br/>안녕하십니까.
-                                    [<span style={{fontWeight: 550}}>만쿠무역 {userInfo.name}</span>]입니다.<br/>
-                                    아래 견적 부탁드립니다.
-                                </div>}
 
-                            <div style={{
-                                textAlign: 'center',
-                                lineHeight: 2.2,
-                                display: 'flex',
-                                flexDirection: 'column',
-                                flexFlow: 'column'
-                            }}>
 
                                 {previewData.map((v, idx) => {
 
+
                                     return <>
+
+                        <div style={{width: '100%', height: 'auto', paddingTop: 20}}>
+                            [<span
+                            // style={{fontWeight: 550}}>{v.agencyManagerName}</span>]님<br/><br/>안녕하십니까.
+                            style={{fontWeight: 550}}>{v.managerName}</span>]님<br/><br/>안녕하십니까.
+                            [<span style={{fontWeight: 550}}>만쿠무역 {userInfo.name}</span>]입니다.<br/>
+                            아래 견적 부탁드립니다.
+                        </div>
+
+                        <div style={{
+                            textAlign: 'center',
+                            lineHeight: 2.2,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            flexFlow: 'column'
+                        }}>
                                         <div style={{
                                             marginTop: 20,
                                             width: '100%',
@@ -236,11 +239,13 @@ export default function rfqRead({dataList}) {
                                                 <span style={{fontWeight: 550}}>{v.totalQuantity}</span> {v.unit}
                                             </div>
                                         </div>
+                        </div>
 
                                     </>
+
+
                                 })}
-                            </div>
-                        </div>
+
                     </Modal>
 
                     <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gridColumnGap: 10}}>
