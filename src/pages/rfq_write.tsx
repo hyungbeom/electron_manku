@@ -5,21 +5,17 @@ import Card from "antd/lib/card/Card";
 import TextArea from "antd/lib/input/TextArea";
 import {
     CopyOutlined,
-    DownCircleFilled, FileExcelOutlined,
-    FileSearchOutlined, InboxOutlined,
+    DownCircleFilled,
+    FileExcelOutlined,
+    FileSearchOutlined,
     RetweetOutlined,
     SaveOutlined,
-    UpCircleFilled, UploadOutlined
+    UpCircleFilled,
+    UploadOutlined
 } from "@ant-design/icons";
 import {subRfqWriteColumn} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {
-    customterInfoUnit,
-    estimateRequestDetailUnit,
-    ModalInitList,
-    modalList,
-    rfqWriteInitial
-} from "@/utils/initialList";
+import {ModalInitList, modalList, rfqWriteInitial} from "@/utils/initialList";
 import moment from "moment";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
@@ -31,7 +27,6 @@ import TableGrid from "@/component/tableGrid";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import SearchInfoModal from "@/component/SearchAgencyModal";
 import {getData} from "@/manage/function/api";
-import Dragger from "antd/lib/upload/Dragger";
 import Upload from "antd/lib/upload";
 import * as XLSX from "xlsx";
 
@@ -373,13 +368,13 @@ export default function rqfWrite() {
         },
     };
 
-    const downloadExcel = () => {
-
-        const worksheet = XLSX.utils.json_to_sheet(info['estimateRequestDetailList']);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-        XLSX.writeFile(workbook, "rfq_list.xlsx");
-    };
+    // const downloadExcel = () => {
+    //
+    //     const worksheet = XLSX.utils.json_to_sheet(info['estimateRequestDetailList']);
+    //     const workbook = XLSX.utils.book_new();
+    //     XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+    //     XLSX.writeFile(workbook, "rfq_list.xlsx");
+    // };
 
 
     return <>
@@ -495,9 +490,9 @@ export default function rqfWrite() {
                         <Upload {...uploadProps} size={'small'} style={{marginLeft: 5}} showUploadList={false}>
                             <Button  icon={<UploadOutlined />} size={'small'} >엑셀 업로드</Button>
                         </Upload>
-                        <Button type={'dashed'} size={'small'} style={{marginLeft:5}} onClick={downloadExcel}>
-                            <FileExcelOutlined/>출력
-                        </Button>
+                        {/*<Button type={'dashed'} size={'small'} style={{marginLeft:5}} onClick={downloadExcel}>*/}
+                        {/*    <FileExcelOutlined/>출력*/}
+                        {/*</Button>*/}
                         <Button type={'primary'} size={'small'} style={{marginLeft: 5}}
                                 onClick={addRow}>
                             <SaveOutlined/>추가
