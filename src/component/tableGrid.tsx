@@ -291,6 +291,7 @@ const TableGrid = ({
                          defaultColDef={defaultColDef}
                          columnDefs={columns}
                          rowData={[...data]}
+                         // rowData={data}
                          context={data}
                          pagination={true}
                          onRowSelected={handleRowSelected}

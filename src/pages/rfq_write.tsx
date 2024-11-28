@@ -78,7 +78,6 @@ export default function rqfWrite() {
                    size={'small'}
                    onKeyDown={handleKeyPress}
                    suffix={suffix}
-
             />
         </div>
     }
@@ -109,9 +108,6 @@ export default function rqfWrite() {
                         id={id} size={'small'}/>
         </div>
     }
-
-
-
 
     function handleKeyPress(e) {
         if (e.key === 'Enter') {
@@ -383,6 +379,7 @@ export default function rqfWrite() {
                 <SearchInfoModal type={'agencyList'} info={info} setInfo={setInfo}
                                  open={isModalOpen}
                                  setIsModalOpen={setIsModalOpen}/>
+
                 <Card size={'small'} title={<div style={{display: 'flex', justifyContent: 'space-between'}}>
                     <div style={{fontSize: 14, fontWeight: 550}}>견적의뢰 작성</div>
                     <div>
@@ -481,7 +478,7 @@ export default function rqfWrite() {
                     setInfo={setInfo}
                     excel={true}
                     type={'write'}
-                    funcButtons={<div style={{display : 'grid', gridTemplateColumns : '1fr 0.8fr 0.8fr 0.8fr',alignItems : 'end'}}>
+                    funcButtons={<div style={{display : 'flex', alignItems : 'end'}}>
                         {/*@ts-ignore*/}
                         <Upload {...uploadProps} size={'small'} style={{marginLeft: 5}} showUploadList={false}>
                             <Button  icon={<UploadOutlined />} size={'small'} >엑셀 업로드</Button>
@@ -494,8 +491,6 @@ export default function rqfWrite() {
                         <Button type={'danger'} size={'small'} style={{ marginLeft: 5,}} onClick={deleteList}>
                             <CopyOutlined/>삭제
                         </Button>
-
-
                     </div>}
                 />
             </div>
