@@ -272,7 +272,7 @@ export default function rqfUpdate({dataInfo}) {
                 height: '100vh',
                 columnGap: 5
             }}>
-
+                {/*@ts-ignore*/}
                 <SearchInfoModal type={'agencyList'} info={info} setInfo={setInfo}
                                  open={isModalOpen}
                                  setIsModalOpen={setIsModalOpen}/>

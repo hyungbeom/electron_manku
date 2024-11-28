@@ -67,6 +67,7 @@ export default function SearchAgencyModal({info, setInfo, open, agencyData, setI
                            onKeyDown={handleKeyPress}
                            placeholder={modalList[openCheck]?.placeholder}
                            id={'agencyCode'} value={code}
+                           //@ts-ignore
                            onChange={(e) => setCode(e.target.value)}></Input>
                     <Button onClick={() => searchFunc(openCheck, code)}>조회</Button>
                 </div>
