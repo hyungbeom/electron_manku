@@ -172,6 +172,7 @@ export default function rqfWrite() {
             "limit": -1
         });
 
+        console.log(e.target.id,'e.target.id:')
         const data = resultList?.data?.entity[modalList[e.target.id]?.list];
         const size = data?.length;
 

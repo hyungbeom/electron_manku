@@ -158,14 +158,14 @@ export const makerColumn = [
         key: 'makerName',
         minWidth: 180,
         render: (text) => <div style={{width: 80}} className="ellipsis-cell">{text}</div>,
-        
+
     },
     {
         headerName: 'ITEM',
         field: 'item',
         key: 'item',
         render: (text) => <div style={{width: 80}} className="ellipsis-cell">{text}</div>,
-        
+
     },
     {
         headerName: '홈페이지',
@@ -368,12 +368,12 @@ export const estimateTotalColumns = [
         headerName: '문서번호',
         field: 'documentNumberFull',
         key: 'documentNumberFull',
-        
+
     }, {
         headerName: '대리점코드',
         field: 'agencyCode',
         key: 'agencyCode',
-        
+
     }, {
         headerName: '거래처명',
         field: 'customerName',
@@ -641,14 +641,21 @@ export const tableEstimateWriteColumns = [
         headerName: '단가',
         field: 'unitPrice',
         editable: true,
-        valueFormatter: numberFormat,
+        valueFormatter: (params) => {
+            const result = numberFormat(params);
+            return !isNaN(result) ? result : 0
+        }
+        // valueFormatter: numberFormat,
     },
     {
         headerName: '금액',
         field: 'amount',
         width: 120,
         editable: true,
-        valueFormatter: numberFormat,
+        valueFormatter: (params) => {
+            const result = numberFormat(params);
+            return !isNaN(result) ? result : 0
+        }
     },
     {
         headerName: 'CURR',
@@ -1130,7 +1137,7 @@ export const rfqMailColumns = [
         headerName: '거래처명',
         field: 'agencyName',
         key: 'agencyName',
-        
+
     }, {
         headerName: 'MAKER',
         field: 'maker',
@@ -1146,12 +1153,12 @@ export const rfqMailColumns = [
         field: 'model',
         key: 'model',
         minWidth: 150,
-        
+
     }, {
         headerName: '수량',
         field: 'quantity',
         key: 'quantity',
-        
+
     },
 
     {
@@ -1187,13 +1194,13 @@ export const tableOrderReadColumns = [
         headerName: '작성일자',
         field: 'writtenDate',
         width: 70,
-        pinned:'left',
+        pinned: 'left',
     },
     {
         headerName: '문서번호',
         field: 'documentNumberFull',
         width: 80,
-        pinned:'left',
+        pinned: 'left',
     },
     {
         headerName: '거래처명',
@@ -1202,7 +1209,7 @@ export const tableOrderReadColumns = [
     },
     {
         headerName: '물품',
-        children:[
+        children: [
             {
                 headerName: 'MAKER',
                 field: 'maker',
@@ -1444,13 +1451,13 @@ export const remittanceDomesticColumns = [
         headerName: '운송사',
         field: 'customerName',
         width: 70,
-        pinned:'left',
+        pinned: 'left',
     },
     {
         headerName: '문서번호',
         field: 'documentNumberFull',
         width: 80,
-        pinned:'left',
+        pinned: 'left',
     },
     {
         headerName: '거래처코드',
@@ -1870,7 +1877,7 @@ export const tableCodeDiplomaColumns = [
     },
 ]
 
-export const tableCodeDomesticAgencyWriteColumns=[
+export const tableCodeDomesticAgencyWriteColumns = [
     {
         headerName: '담당자',
         field: 'managerName',
@@ -2046,7 +2053,6 @@ export const tableCodeDomesticPurchaseColumns = [
     },
 
 
-
 ];
 
 export const tableCodeOverseasPurchaseColumns = [
@@ -2157,7 +2163,7 @@ export const tableCodeOverseasPurchaseColumns = [
     },
     {
         headerName: '매입처 담당자',
-        children :[
+        children: [
             {
                 headerName: '담당자',
                 field: 'customerManager',
@@ -2201,7 +2207,6 @@ export const tableCodeOverseasPurchaseColumns = [
         ]
     },
 ];
-
 
 
 export const tableCodeOverseasAgencyWriteColumns = [
@@ -2369,7 +2374,7 @@ export const tableCodeDomesticSalesColumns = [
 ];
 
 
-export const tableCodeDomesticWriteColumn  = [
+export const tableCodeDomesticWriteColumn = [
     {
         headerName: '담당자',
         field: 'managerName',
