@@ -33,9 +33,9 @@ import TableGrid from "@/component/tableGrid";
 import {AgGridReact} from "ag-grid-react";
 import {iconSetMaterial, themeQuartz} from "@ag-grid-community/theming";
 import {tableTheme} from "@/utils/common";
-import SearchAgendaModal from "@/component/SearchAgencyModal";
 import SearchCustomerModal from "@/component/SearchCustomerModal";
 import SearchMakerModal from "@/component/SearchMakerModal";
+import SearchAgencyModal from "@/component/SearchAgencyModal";
 
 export default function rqfUpdate({dataInfo}) {
     const gridRef = useRef(null);
@@ -238,7 +238,7 @@ export default function rqfUpdate({dataInfo}) {
                 columnGap: 5
             }}>
 
-                <SearchAgendaModal info={info} setInfo={setInfo} agencyData={agencyData} isModalOpen={isModalOpen}
+                <SearchAgencyModal info={info} setInfo={setInfo} agencyData={agencyData} isModalOpen={isModalOpen}
                                    setIsModalOpen={setIsModalOpen}/>
 
                 <SearchCustomerModal info={info} customerData={customerData} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}

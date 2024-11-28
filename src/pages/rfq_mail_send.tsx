@@ -68,20 +68,21 @@ export default function rfqRead({dataList}) {
     const handleSendMail = () => {
         const checkedData = getCheckedRowsData();
 
-
         if(!checkedData.length){
             return message.warn('선택된 데이터가 없습니다.')
         }
 
+        console.log(checkedData, 'checkedData~~')
+
         const result = Object.values(
             checkedData.reduce((acc, items) => {
-                const {documentNumberFull, model, quantity, unit, maker, item} = items;
-
+                const {documentNumberFull, model, agencyManagerName, quantity, unit, maker, item} = items;
 
                 // documentNumberFull로 그룹화
                 if (!acc[documentNumberFull]) {
                     acc[documentNumberFull] = {
                         documentNumberFull: documentNumberFull,
+                        agencyManagerName: agencyManagerName,
                         list: [],
                         totalQuantity: 0, // 총 수량 초기화
                     };
@@ -104,13 +105,13 @@ export default function rfqRead({dataList}) {
                 acc[documentNumberFull].totalQuantity += quantity;
                 acc[documentNumberFull].maker = maker;
                 acc[documentNumberFull].item = item;
-
                 return acc;
             }, {})
         );
-        setPreviewData(result)
-        setIsModalOpen(true)
 
+        setPreviewData(result)
+        console.log(result, 'setPreviewData')
+        setIsModalOpen(true)
     };
 
 
@@ -118,14 +119,75 @@ export default function rfqRead({dataList}) {
         emailSendFormat(userInfo, previewData)
     }
 
-
     return <>
         <LayoutComponent>
+            <div style={{width:'800px'}}>
+                {previewData.length>0 &&
+                    <div style={{width:'100%', height:'auto' }}>
+                        [<span style={{fontWeight:550}}>{previewData[0].agencyManagerName}</span>]님 안녕하십니까.<br/>
+                        [<span style={{fontWeight:550}}>만쿠무역 {userInfo.name}</span>]입니다.<br/>
+                        아래 견적 부탁드립니다.
+                    </div>}
+
+                    <div style={{textAlign:'center', lineHeight:2.2, display:'flex', flexDirection:'column', flexFlow:'column'}}>
+
+                    {previewData.map((v, idx) => {
+
+                        return <>
+                            <div style={{width:'100%', height:'35px', fontSize:15, borderTop:'1px solid #121212', borderBottom:'1px solid #A3A3A3', backgroundColor:'#EBF6F7'}}>
+                                {v.documentNumberFull}
+                            </div>
+                            <div style={{width:'100%', height:'35px', borderBottom:'1px solid #A3A3A3', display:'flex'}}>
+                                <div style={{fontSize: '13px', backgroundColor:'#EBF6F7', width:'102px', height:'100%', borderRight:'1px solid #121212'}}>Maker</div>
+                                <div style={{lineHeight:2, paddingLeft: 32}}>{v.maker}</div>
+                            </div>
+                            <div style={{width:'100%', height:35, display:"flex"}}>
+                                <div style={{
+                                    fontSize: '13px',
+                                    backgroundColor: '#EBF6F7',
+                                    width: '102px',
+                                    height: '100%',
+                                    borderRight: '1px solid #121212'
+                                }}>Item
+                                </div>
+                                <div style={{lineHeight:2, paddingLeft:32}}>{v.item}</div>
+                            </div>
+                            <div style={{lineHeight:1.9, width:'100%', height:35, fontSize:18, borderTop:'1px solid #121212',borderBottom:'1px solid #A3A3A3',  backgroundColor:'#EBF6F7'}}>
+                            Model
+                            </div>
+                            {v.list.map(src => {
+                                return <div style={{width:'100%', height:35, borderBottom:'1px solid #A3A3A3',}}>
+                                        <div style={{fontSize:13, letterSpacing:-1, lineHeight:2.5, width:360, height:'100%', borderRight:'1px solid #121212'}}>{src.model}</div>
+                                    <div style={{lineHeight:2, paddingLeft:30,}}><span style={{fontWeight:550}}>{src.quantity}</span> {src.unit}</div>
+                                </div>
+
+                            })}
+                            <div style={{
+                                lineHeight: 2.5,
+                                width: '100%',
+                                height: 35,
+                                fontSize: 18,
+                                borderTop: '1px solid #121212',
+                                backgroundColor: '#EBF6F7'
+                            }}>
+                                총 수량 : {v.totalQuantity}</div>
+
+
+                            <div style={{height: 30}}/>
+                        </>
+                    })}
+                    </div>
+            </div>
+
             <div style={{display: 'grid', gridTemplateRows: '250px 1fr', height: '100vh', gridColumnGap: 5}}>
                 <Card title={'메일전송'} style={{fontSize: 12, border: '1px solid lightGray'}}>
                     <Modal okText={'메일 전송'} cancelText={'취소'} onOk={sendMail}
                            title={<div style={{lineHeight: 2.5, fontWeight: 550}}>메일전송</div>} open={isModalOpen}
                            onCancel={() => setIsModalOpen(false)}>
+
+                        {previewData.length>0 &&
+                        <div style={{}}>안녕하세요. {previewData[0].agencyManagerName}님<br/>
+                        만쿠무역 {userInfo.name}입니다.</div>}
 
                         {previewData.map((v, idx) => {
 
