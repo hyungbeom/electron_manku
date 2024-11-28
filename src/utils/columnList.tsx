@@ -643,6 +643,7 @@ export const tableEstimateWriteColumns = [
         editable: true,
         valueFormatter: (params) => {
             const result = numberFormat(params);
+           // @ts-ignored
             return !isNaN(result) ? result : 0
         }
         // valueFormatter: numberFormat,
@@ -654,6 +655,7 @@ export const tableEstimateWriteColumns = [
         editable: true,
         valueFormatter: (params) => {
             const result = numberFormat(params);
+            // @ts-ignored
             return !isNaN(result) ? result : 0
         }
     },

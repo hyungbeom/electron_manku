@@ -178,10 +178,10 @@ export default function rqfWrite() {
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`, height: '100vh', columnGap: 5}}>
 
-                <SearchAgendaModal info={info} setInfo={setInfo} agencyData={agencyData} isModalOpen={isModalOpen}
-                                   setIsModalOpen={setIsModalOpen}/>
-                <SearchCustomerModal info={info} setInfo={setInfo} customerData={customerData} isModalOpen={isModalOpen}
-                                     setIsModalOpen={setIsModalOpen}/>
+                {/*<SearchAgendaModal info={info} setInfo={setInfo} agencyData={agencyData} isModalOpen={isModalOpen}*/}
+                {/*                   setIsModalOpen={setIsModalOpen}/>*/}
+                {/*<SearchCustomerModal info={info} setInfo={setInfo} customerData={customerData} isModalOpen={isModalOpen}*/}
+                {/*                     setIsModalOpen={setIsModalOpen}/>*/}
 
                 <Card title={<span style={{fontSize: 12,}}>프로젝트 작성</span>} headStyle={{marginTop:-10, height:30}}
                       style={{border: '1px solid lightGray',}} bodyStyle={{padding: '10px 24px'}}>

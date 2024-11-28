@@ -96,6 +96,7 @@ export default function rqfWrite() {
     const datePickerForm = ({title, id, disabled = false}) => {
         return <div>
             <div>{title}</div>
+            {/*@ts-ignored*/}
             <DatePicker value={info[id] ? moment(info[id]) : ''} style={{width: '100%'}}
                         onChange={(date) => onChange({
                             target: {
@@ -327,7 +328,7 @@ export default function rqfWrite() {
             const dataRows = jsonData.slice(1);
 
             // 테이블 데이터 변환
-            const tableData = dataRows.map((row) => {
+            const tableData = dataRows.map((row:any) => {
                 const rowData = {};
                 row?.forEach((cell, cellIndex) => {
                     const header = headers[cellIndex];
@@ -389,7 +390,7 @@ export default function rqfWrite() {
                 height: '100vh',
                 columnGap: 5
             }}>
-                <SearchInfoModal type={'agencyList'} info={info} setInfo={setInfo}
+                <SearchInfoModal info={info} setInfo={setInfo}
                                  open={isModalOpen}
                                  setIsModalOpen={setIsModalOpen}/>
                 <Card size={'small'} title={<div style={{display: 'flex', justifyContent: 'space-between'}}>
@@ -398,7 +399,7 @@ export default function rqfWrite() {
                         <Button type={'primary'} size={'small'} style={{marginRight: 8}}
                                 onClick={saveFunc}
                         ><SaveOutlined/>저장</Button>
-                        {/*    /!*@ts-ignored*!/*/}
+                            {/*@ts-ignored*/}
                         <Button type={'danger'} size={'small'} style={{marginRight: 8}}
                                 onClick={clearAll}><RetweetOutlined/>초기화</Button>
                     </div>
@@ -491,6 +492,7 @@ export default function rqfWrite() {
                     excel={true}
                     type={'write'}
                     funcButtons={<div style={{display : 'grid', gridTemplateColumns : '1fr 0.8fr 0.8fr 0.8fr',alignItems : 'end'}}>
+                       {/*@ts-ignored*/}
                         <Upload {...uploadProps} size={'small'} style={{marginLeft: 5}} showUploadList={false}>
                             <Button  icon={<UploadOutlined />} size={'small'} >엑셀 업로드</Button>
                         </Upload>
