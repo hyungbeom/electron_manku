@@ -297,8 +297,8 @@ export default function rqfUpdate({dataInfo}) {
                 columnGap: 5
             }}>
 
-                <SearchAgencyModal info={info} setInfo={setInfo} agencyData={agencyData} isModalOpen={isModalOpen}
-                                   setIsModalOpen={setIsModalOpen}/>
+                <SearchAgencyModal info={info} setInfo={setInfo} agencyData={agencyData} setIsModalOpen={setIsModalOpen}
+                                   open={isModalOpen}/>
 
                 <SearchCustomerModal info={info} customerData={customerData} isModalOpen={isModalOpen}
                                      setIsModalOpen={setIsModalOpen}
