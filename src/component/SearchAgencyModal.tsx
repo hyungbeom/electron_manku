@@ -8,7 +8,7 @@ import {tableTheme} from "@/utils/common";
 import {ModalInitList, modalList} from "@/utils/initialList";
 import moment from "moment";
 
-export default function SearchAgencyModal({info, setInfo, open, agencyData, setIsModalOpen}) {
+export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen}) {
     const [code, setCode] = useState();
     const [list, setList] = useState([])
     const [openCheck, setOpenCheck] = useState('')
@@ -67,15 +67,13 @@ export default function SearchAgencyModal({info, setInfo, open, agencyData, setI
                            onKeyDown={handleKeyPress}
                            placeholder={modalList[openCheck]?.placeholder}
                            id={'agencyCode'} value={code}
-                           onChange={(e) => setCode(e.target.value)}></Input>
+                           onChange={(e:any) => setCode(e.target.value)}></Input>
                     <Button onClick={() => searchFunc(openCheck, code)}>조회</Button>
                 </div>
 
                 <AgGridReact containerStyle={{height: '93%', width: '100%'}} theme={tableTheme}
                              onCellClicked={(e) => {
-
                                  switch (openCheck) {
-
                                      case 'customerName' :
                                          setInfo(v => {
                                              return {
@@ -84,7 +82,8 @@ export default function SearchAgencyModal({info, setInfo, open, agencyData, setI
                                                      ...e.data,
                                                      phoneNumber: e.data.directTel,
                                                      customerManagerEmail: e.data.email
-                                                 }]
+                                                 }],
+                                                 ...e.data
                                              }
                                          });
                                          break;

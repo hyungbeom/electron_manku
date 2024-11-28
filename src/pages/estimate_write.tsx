@@ -233,8 +233,9 @@ export default function EstimateWrite({dataInfo}) {
         if (result?.data?.code === 1) {
 
             if(result?.data?.entity?.estimateRequestList.length) {
+                console.log(result?.data?.entity?.estimateRequestList,':::')
                 setInfo(v => {
-                        return {...v, ...result?.data?.entity?.estimateRequestList[0], writtenDate : moment()}
+                        return {...v, ...result?.data?.entity?.estimateRequestList[0], writtenDate : moment(), estimateDetailList : result?.data?.entity?.estimateRequestList}
                     }
                 )
             }
@@ -252,12 +253,12 @@ export default function EstimateWrite({dataInfo}) {
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`, height: '100vh', columnGap: 5}}>
 
-                <SearchAgencyModal info={info} setInfo={setInfo} agencyData={agencyData} isModalOpen={isModalOpen}
-                                   setIsModalOpen={setIsModalOpen}/>
-                <SearchCustomerModal info={info} setInfo={setInfo} customerData={customerData} isModalOpen={isModalOpen}
-                                     setIsModalOpen={setIsModalOpen}/>
-                <SearchMakerModal info={info} setInfo={setInfo} makerData={makerData} isModalOpen={isModalOpen}
-                                  setIsModalOpen={setIsModalOpen}/>
+                {/*<SearchAgencyModal info={info} setInfo={setInfo} agencyData={agencyData} isModalOpen={isModalOpen}*/}
+                {/*                   setIsModalOpen={setIsModalOpen}/>*/}
+                {/*<SearchCustomerModal info={info} setInfo={setInfo} customerData={customerData} isModalOpen={isModalOpen}*/}
+                {/*                     setIsModalOpen={setIsModalOpen}/>*/}
+                {/*<SearchMakerModal info={info} setInfo={setInfo} makerData={makerData} isModalOpen={isModalOpen}*/}
+                {/*                  setIsModalOpen={setIsModalOpen}/>*/}
                 <Card title={<div style={{display:'flex', justifyContent:'space-between'}}>
                     <div style={{fontSize:14, fontWeight:550}}>견적서 작성</div> <div>
                     <Button type={'primary'} size={'small'} style={{marginRight: 8}}
