@@ -26,6 +26,7 @@ import TableGrid from "@/component/tableGrid";
 import SearchAgendaModal from "@/component/SearchAgencyModal";
 import SearchCustomerModal from "@/component/SearchCustomerModal";
 import SearchMakerModal from "@/component/SearchMakerModal";
+import SearchAgencyModal from "@/component/SearchAgencyModal";
 
 
 const BoxCard = ({children, title}) => {
@@ -50,8 +51,6 @@ export default function rqfUpdate({dataInfo}) {
     const [customerData, setCustomerData] = useState([]);
     const [makerData, setMakerData] = useState([]);
 
-
-    console.log(dataInfo, 'dataInfo:')
 
     useEffect(() => {
         let copyData: any = {...info}
@@ -298,7 +297,7 @@ export default function rqfUpdate({dataInfo}) {
                 columnGap: 5
             }}>
 
-                <SearchAgendaModal info={info} setInfo={setInfo} agencyData={agencyData} isModalOpen={isModalOpen}
+                <SearchAgencyModal info={info} setInfo={setInfo} agencyData={agencyData} isModalOpen={isModalOpen}
                                    setIsModalOpen={setIsModalOpen}/>
 
                 <SearchCustomerModal info={info} customerData={customerData} isModalOpen={isModalOpen}

@@ -8,7 +8,7 @@ import {tableTheme} from "@/utils/common";
 import {ModalInitList, modalList} from "@/utils/initialList";
 import moment from "moment";
 
-export default function SearchInfoModal({info, setInfo, open, setIsModalOpen}) {
+export default function SearchAgencyModal({info, setInfo, open, agencyData, setIsModalOpen}) {
     const [code, setCode] = useState();
     const [list, setList] = useState([])
     const [openCheck, setOpenCheck] = useState('')
@@ -65,7 +65,7 @@ export default function SearchInfoModal({info, setInfo, open, setIsModalOpen}) {
                 <div style={{display: 'flex', justifyContent: 'space-between', gap: 15, marginBottom: 20}}>
                     <Input style={{width: '100%'}}
                            onKeyDown={handleKeyPress}
-                           placeHolder={modalList[openCheck]?.placeholder}
+                           placeholder={modalList[openCheck]?.placeholder}
                            id={'agencyCode'} value={code}
                            onChange={(e) => setCode(e.target.value)}></Input>
                     <Button onClick={() => searchFunc(openCheck, code)}>조회</Button>
