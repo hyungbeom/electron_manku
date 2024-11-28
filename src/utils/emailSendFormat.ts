@@ -218,5 +218,5 @@ export default function emailSendFormat(userInfo, data) {
 
     }
 
-    sendEmail();
+    // sendEmail();
 }

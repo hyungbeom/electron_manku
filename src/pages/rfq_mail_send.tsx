@@ -83,6 +83,7 @@ export default function rfqRead({dataList}) {
                     acc[documentNumberFull] = {
                         documentNumberFull: documentNumberFull,
                         agencyManagerName: agencyManagerName,
+                        unit:unit,
                         list: [],
                         totalQuantity: 0, // 총 수량 초기화
                     };
@@ -130,7 +131,8 @@ export default function rfqRead({dataList}) {
                         <div style={{width: '100%'}}>
                             {previewData.length > 0 &&
                                 <div style={{width: '100%', height: 'auto'}}>
-                                    [<span style={{fontWeight: 550}}>{previewData[0].agencyManagerName}</span>]님 안녕하십니까.<br/>
+                                    [<span
+                                    style={{fontWeight: 550}}>{previewData[0].agencyManagerName}</span>]님<br/><br/>안녕하십니까.
                                     [<span style={{fontWeight: 550}}>만쿠무역 {userInfo.name}</span>]입니다.<br/>
                                     아래 견적 부탁드립니다.
                                 </div>}
@@ -184,6 +186,7 @@ export default function rfqRead({dataList}) {
                                             </div>
                                             <div style={{lineHeight: 2, paddingLeft: 32}}>{v.item}</div>
                                         </div>
+
                                         <div style={{
                                             lineHeight: 1.9,
                                             width: '100%',
@@ -197,7 +200,7 @@ export default function rfqRead({dataList}) {
                                         </div>
                                         {v.list.map(src => {
                                             return <div
-                                                style={{width: '100%', height: 35, borderBottom: '1px solid #A3A3A3',}}>
+                                                style={{width: '100%', height: 35, borderBottom: '1px solid #A3A3A3', display:'flex'}}>
                                                 <div style={{
                                                     fontSize: 13,
                                                     letterSpacing: -1,
@@ -211,6 +214,7 @@ export default function rfqRead({dataList}) {
                                             </div>
 
                                         })}
+
                                         <div style={{
                                             lineHeight: 2.5,
                                             width: '100%',
@@ -229,7 +233,7 @@ export default function rfqRead({dataList}) {
                                                 Total
                                             </div>
                                             <div style={{lineHeight: 2, paddingLeft: 30}}>
-                                                <span style={{fontWeight: 550}}>{v.totalQuantity}</span> ${v.unit}
+                                                <span style={{fontWeight: 550}}>{v.totalQuantity}</span> {v.unit}
                                             </div>
                                         </div>
 
