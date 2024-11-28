@@ -46,13 +46,14 @@ export default function rqfWrite() {
     const userInfo = useAppSelector((state) => state.user);
 
 
+    console.log(userInfo,'userInfo:')
     const gridRef = useRef(null);
 
 
     const [info, setInfo] = useState<any>({
         ...rfqWriteInitial,
         adminId: userInfo['adminId'],
-        adminName: userInfo['name']
+        adminName: userInfo['adminName']
     })
     const [mini, setMini] = useState(true);
 
@@ -93,10 +94,8 @@ export default function rqfWrite() {
 
 
     const datePickerForm = ({title, id, disabled = false}) => {
-
         return <div>
             <div>{title}</div>
-            {/*@ts-ignore*/}
             <DatePicker value={info[id] ? moment(info[id]) : ''} style={{width: '100%'}}
                         onChange={(date) => onChange({
                             target: {
@@ -134,6 +133,7 @@ export default function rqfWrite() {
         setIsModalOpen(v => {
             return {...v, ...bowl}
         })
+
     }
 
     function onChange(e) {
@@ -151,7 +151,7 @@ export default function rqfWrite() {
                     v['customerInfoList'][0][e.target.id] = e.target.value
                     return {...v}
                 })
-            break;
+                break;
 
             default :
                 setInfo(v => {
@@ -172,9 +172,10 @@ export default function rqfWrite() {
             "limit": -1
         });
 
-        console.log(e.target.id,'e.target.id:')
         const data = resultList?.data?.entity[modalList[e.target.id]?.list];
         const size = data?.length;
+
+
 
         if (size > 1) {
             return openModal(e.target.id);
@@ -328,7 +329,6 @@ export default function rqfWrite() {
             // 테이블 데이터 변환
             const tableData = dataRows.map((row) => {
                 const rowData = {};
-                // @ts-ignore
                 row?.forEach((cell, cellIndex) => {
                     const header = headers[cellIndex];
                     if (header !== undefined) {
@@ -389,7 +389,6 @@ export default function rqfWrite() {
                 height: '100vh',
                 columnGap: 5
             }}>
-                {/*@ts-ignore*/}
                 <SearchInfoModal type={'agencyList'} info={info} setInfo={setInfo}
                                  open={isModalOpen}
                                  setIsModalOpen={setIsModalOpen}/>
@@ -399,7 +398,7 @@ export default function rqfWrite() {
                         <Button type={'primary'} size={'small'} style={{marginRight: 8}}
                                 onClick={saveFunc}
                         ><SaveOutlined/>저장</Button>
-                        {/*@ts-ignored*/}
+                        {/*    /!*@ts-ignored*!/*/}
                         <Button type={'danger'} size={'small'} style={{marginRight: 8}}
                                 onClick={clearAll}><RetweetOutlined/>초기화</Button>
                     </div>
@@ -492,7 +491,6 @@ export default function rqfWrite() {
                     excel={true}
                     type={'write'}
                     funcButtons={<div style={{display : 'grid', gridTemplateColumns : '1fr 0.8fr 0.8fr 0.8fr',alignItems : 'end'}}>
-                        {/*@ts-ignore*/}
                         <Upload {...uploadProps} size={'small'} style={{marginLeft: 5}} showUploadList={false}>
                             <Button  icon={<UploadOutlined />} size={'small'} >엑셀 업로드</Button>
                         </Upload>
@@ -505,7 +503,7 @@ export default function rqfWrite() {
                         </Button>
                         {/*@ts-ignored*/}
                         <Button type={'danger'} size={'small'} style={{ marginLeft: 5,}}
-                            onClick={deleteList}
+                                onClick={deleteList}
                         >
                             <CopyOutlined/>삭제
                         </Button>

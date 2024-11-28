@@ -13,7 +13,7 @@ import {
 } from "@ant-design/icons";
 import {subRfqWriteColumn} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {rfqWriteInitial} from "@/utils/initialList";
+import {modalList, rfqWriteInitial} from "@/utils/initialList";
 import moment from "moment";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
@@ -23,10 +23,7 @@ import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import MyComponent from "@/component/MyComponent";
 import TableGrid from "@/component/tableGrid";
-import SearchAgendaModal from "@/component/SearchAgencyModal";
-import SearchCustomerModal from "@/component/SearchCustomerModal";
-import SearchMakerModal from "@/component/SearchMakerModal";
-import SearchAgencyModal from "@/component/SearchAgencyModal";
+import SearchInfoModal from "@/component/SearchAgencyModal";
 
 
 const BoxCard = ({children, title}) => {
@@ -204,90 +201,68 @@ export default function rqfUpdate({dataInfo}) {
         setInfo(rfqWriteInitial)
     }
 
-    const handleKeyPress = async (e) => {
-        // console.log(e.target.id)
+    function handleKeyPress(e) {
         if (e.key === 'Enter') {
 
-            if (e.target.id === 'agencyCode') {
-                if (!info['agencyCode']) {
-                    return false;
-                }
-                const result = await getData.post('agency/getAgencyListForEstimate', {
-                    "searchText": info['agencyCode'],       // 대리점코드 or 대리점 상호명
-                    "page": 1,
-                    "limit": -1
-                })
-                if (result.data.entity.agencyList.length > 1) {
-                    setAgencyData(result.data.entity.agencyList)
-                    setIsModalOpen({event1: true, event2: false, event3: false,})
-                } else if (!!result.data.entity.agencyList.length) {
-                    const {agencyCode, agencyName} = result.data.entity.agencyList[0]
+            switch (e.target.id) {
+                case 'agencyCode' :
+                case 'customerName' :
+                case 'maker' :
+                    searchFunc(e)
+                    break;
+            }
 
+        }
+    }
+
+    async function searchFunc(e) {
+
+        const resultList = await getData.post(modalList[e.target.id]?.url, {
+            "searchType": "1",
+            "searchText": e.target.value,       // 대리점코드 or 대리점 상호명
+            "page": 1,
+            "limit": -1
+        });
+
+        const data = resultList?.data?.entity[modalList[e.target.id]?.list];
+        const size = data?.length;
+
+
+
+        if (size > 1) {
+            return openModal(e.target.id);
+        } else if (size === 1) {
+            switch (e.target.id) {
+                case 'agencyCode' :
+                    const {agencyId, agencyCode, agencyName} = data[0];
                     setInfo(v => {
-                        return {...v, agencyCode: agencyCode, agencyName: agencyName}
+                        return {...v, agencyId: agencyId, agencyCode: agencyCode, agencyName: agencyName}
                     })
-                }
-            } else if (e.target.id === 'customerName') {
-                // if (!customerInfo['customerName']) {
-                if (!info['customerName']) {
-                    return false
-                }
-                const result = await getData.post('customer/getCustomerListForEstimate', {
-                    // "searchText": customerInfo['customerName'],       // 대리점코드 or 대리점 상호명
-                    "searchText": info['customerName'],       // 대리점코드 or 대리점 상호명
-                    "page": 1,
-                    "limit": -1
-                })
-                if (result?.data?.entity?.customerList?.length > 1) {
-                    setCustomerData(result.data.entity.customerList)
-                    setIsModalOpen({event1: false, event2: true, event3: false,})
-                } else if (!!result?.data?.entity?.customerList?.length) {
-                    const {customerName, managerName, directTel, faxNumber} = result.data.entity.customerList[0]
-
-                    // setInfo(v => {
-                    // setCustomerInfo(v => {
-                    info(v => {
+                    break;
+                case 'customerName' :
+                    const {customerName, managerName, directTel, faxNumber, email} = data[0];
+                    setInfo(v => {
                         return {
                             ...v,
-                            customerName: customerName,
-                            managerName: managerName,
-                            phoneNumber: directTel,
-                            faxNumber: faxNumber
+                            // customerInfoList: [{
+                            //     customerName: customerName,
+                            //     managerName: managerName,
+                            //     phoneNumber: directTel,
+                            //     faxNumber: faxNumber,
+                            //     customerManagerEmail: email
+                            // }]
                         }
                     })
-                }
-            } else {
+                    break;
+
+                case 'maker' :
+                    break;
 
             }
-            if (!info['maker']) {
-                return false
-            }
-            const result = await getData.post('maker/getMakerList', {
-                "searchType": "1",
-                "searchText": info['maker'],       // 대리점코드 or 대리점 상호명
-                "page": 1,
-                "limit": -1
-            })
-            if (result?.data?.entity?.makerList?.length > 1) {
-                setMakerData(result.data.entity.makerList)
-                setIsModalOpen({event1: false, event2: false, event3: true,})
-            } else if (!!result?.data?.entity?.makerList?.length) {
-                const {makerName, item, instructions} = result.data.entity.makerList[0]
-
-
-                setInfo(v => {
-                    return {
-                        ...v,
-                        maker: makerName,
-                        item: item,
-                        instructions: instructions,
-                    }
-                })
-            }
+        } else {
+            message.warn('조회된 데이터가 없습니다.')
         }
-
-    };
-
+    }
 
     return <>
         <LayoutComponent>
@@ -298,16 +273,9 @@ export default function rqfUpdate({dataInfo}) {
                 columnGap: 5
             }}>
 
-                <SearchAgencyModal info={info} setInfo={setInfo} agencyData={agencyData} setIsModalOpen={setIsModalOpen}
-                                   isModalOpen={isModalOpen}/>
-
-                <SearchCustomerModal info={info} customerData={customerData} isModalOpen={isModalOpen}
-                                     setIsModalOpen={setIsModalOpen}
-                    // setInfo={setCustomerInfo}
-                                     setInfo={setInfo}
-                />
-                <SearchMakerModal info={info} setInfo={setInfo} makerData={makerData} isModalOpen={isModalOpen}
-                                  setIsModalOpen={setIsModalOpen}/>
+                <SearchInfoModal type={'agencyList'} info={info} setInfo={setInfo}
+                                 open={isModalOpen}
+                                 setIsModalOpen={setIsModalOpen}/>
 
                 <Card title={<div style={{display: 'flex', justifyContent: 'space-between'}}>
                     <div style={{fontSize: 14, fontWeight: 550}}>견적의뢰 수정</div>

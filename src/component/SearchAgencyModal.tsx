@@ -8,15 +8,15 @@ import {tableTheme} from "@/utils/common";
 import {ModalInitList, modalList} from "@/utils/initialList";
 import moment from "moment";
 
-export default function SearchAgencyModal({info, setInfo, isModalOpen, agencyData, setIsModalOpen}) {
+export default function SearchAgencyModal({info, setInfo, open, agencyData, setIsModalOpen}) {
     const [code, setCode] = useState();
     const [list, setList] = useState([])
     const [openCheck, setOpenCheck] = useState('')
 
 
     useEffect(() => {
-        if (isModalOpen) {
-            const firstTrueKey = Object.keys(isModalOpen).find(key => isModalOpen[key]);
+        if (open) {
+            const firstTrueKey = Object.keys(open).find(key => open[key]);
             setOpenCheck(firstTrueKey);
             if (!firstTrueKey) {
                 setList([]);
@@ -26,7 +26,7 @@ export default function SearchAgencyModal({info, setInfo, isModalOpen, agencyDat
                 setCode(info[firstTrueKey])
             }
         }
-    }, [isModalOpen])
+    }, [open])
 
 
     useEffect(() => {
@@ -67,7 +67,6 @@ export default function SearchAgencyModal({info, setInfo, isModalOpen, agencyDat
                            onKeyDown={handleKeyPress}
                            placeholder={modalList[openCheck]?.placeholder}
                            id={'agencyCode'} value={code}
-                           // @ts-ignore
                            onChange={(e) => setCode(e.target.value)}></Input>
                     <Button onClick={() => searchFunc(openCheck, code)}>조회</Button>
                 </div>
