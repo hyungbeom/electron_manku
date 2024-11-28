@@ -234,7 +234,7 @@ export default function estimate_update({dataInfo}) {
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`, height: '100vh', gridColumnGap: 5}}>
                 <PrintEstimate data={info} isModalOpen={isModalOpen} userInfo={userInfo} setIsModalOpen={setIsModalOpen}/>
-                <SearchAgendaModal info={info} setInfo={setInfo} agencyData={agencyData} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
+                <SearchAgendaModal info={info} setInfo={setInfo} agencyData={agencyData} open={isModalOpen} setIsModalOpen={setIsModalOpen}/>
                 <SearchCustomerModal info={info} setInfo={setInfo} customerData={customerData} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
                 <Card title={<div style={{display:'flex', justifyContent:'space-between'}}>
                     <div style={{fontSize:14, fontWeight:550}}>견적서 수정</div> <div>
