@@ -8,15 +8,15 @@ import {tableTheme} from "@/utils/common";
 import {ModalInitList, modalList} from "@/utils/initialList";
 import moment from "moment";
 
-export default function SearchAgencyModal({info, setInfo, open, agencyData, setIsModalOpen}) {
+export default function SearchAgencyModal({info, setInfo, isModalOpen, agencyData, setIsModalOpen}) {
     const [code, setCode] = useState();
     const [list, setList] = useState([])
     const [openCheck, setOpenCheck] = useState('')
 
 
     useEffect(() => {
-        if (open) {
-            const firstTrueKey = Object.keys(open).find(key => open[key]);
+        if (isModalOpen) {
+            const firstTrueKey = Object.keys(isModalOpen).find(key => isModalOpen[key]);
             setOpenCheck(firstTrueKey);
             if (!firstTrueKey) {
                 setList([]);
@@ -26,7 +26,7 @@ export default function SearchAgencyModal({info, setInfo, open, agencyData, setI
                 setCode(info[firstTrueKey])
             }
         }
-    }, [open])
+    }, [isModalOpen])
 
 
     useEffect(() => {

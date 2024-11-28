@@ -106,6 +106,7 @@ export default function rqfUpdate({dataInfo}) {
     const datePickerForm = ({title, id, disabled = false}) => {
         return <div>
             <div>{title}</div>
+            {/*@ts-ignore*/}
             <DatePicker value={info[id] ? moment(info[id]) : ''} style={{width: '100%'}}
                         onChange={(date) => onChange({
                             target: {
@@ -298,7 +299,7 @@ export default function rqfUpdate({dataInfo}) {
             }}>
 
                 <SearchAgencyModal info={info} setInfo={setInfo} agencyData={agencyData} setIsModalOpen={setIsModalOpen}
-                                   open={isModalOpen}/>
+                                   isModalOpen={isModalOpen}/>
 
                 <SearchCustomerModal info={info} customerData={customerData} isModalOpen={isModalOpen}
                                      setIsModalOpen={setIsModalOpen}
