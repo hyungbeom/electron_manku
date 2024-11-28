@@ -44,6 +44,28 @@ export default function rfqRead({dataList}) {
         })
     }
 
+    function handleKeyPress(e) {
+        if (e.key === 'Enter') {
+            searchInfo();
+        }
+    }
+
+
+    const inputForm = ({title, id, disabled = false, suffix = null}) => {
+        let bowl = info;
+
+        return <div>
+            <div>{title}</div>
+            <Input id={id} value={bowl[id]} disabled={disabled}
+                   onChange={onChange}
+                   size={'small'}
+                   onKeyDown={handleKeyPress}
+                   suffix={suffix}
+
+            />
+        </div>
+    }
+
 
 
     async function searchInfo() {
@@ -165,14 +187,9 @@ export default function rfqRead({dataList}) {
                                 })
                             }
                             }/>
-                            <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>문서번호</div>
-                                <Input id={'searchDocumentNumber'} onChange={onChange} size={'small'}/>
-                            </div>
-                            <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>대리점코드</div>
-                                <Input id={'searchCustomerName'} onChange={onChange} size={'small'}/>
-                            </div>
+                            {inputForm({title: '문서번호', id: 'searchDocumentNumber'})}
+                            {inputForm({title: '대리점코드', id: 'searchCustomerName'})}
+
                         </div>
 
 

@@ -52,7 +52,7 @@ export default function rqfWrite() {
     const [info, setInfo] = useState<any>({
         ...rfqWriteInitial,
         adminId: userInfo['adminId'],
-        adminName: userInfo['adminName']
+        adminName: userInfo['name']
     })
     const [mini, setMini] = useState(true);
 
@@ -414,7 +414,7 @@ export default function rqfWrite() {
                             }}>
                                 {datePickerForm({title: '작성일', id: 'writtenDate', disabled: true})}
                                 {inputForm({title: '만쿠담당자', id: 'adminName', disabled: true})}
-                                {inputForm({title: 'INQUIRY NO.', id: 'documentNumberFull', disabled: true})}
+                                {inputForm({title: 'INQUIRY NO.', id: 'documentNumberFull'})}
                                 {inputForm({title: 'RFQ NO.', id: 'rfqNo'})}
                                 {inputForm({title: '프로젝트 제목', id: 'projectTitle'})}
                             </div>
