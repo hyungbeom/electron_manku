@@ -73,9 +73,7 @@ export default function SearchAgencyModal({info, setInfo, open, agencyData, setI
 
                 <AgGridReact containerStyle={{height: '93%', width: '100%'}} theme={tableTheme}
                              onCellClicked={(e) => {
-
                                  switch (openCheck) {
-
                                      case 'customerName' :
                                          setInfo(v => {
                                              return {
