@@ -9,17 +9,35 @@ import {tableTheme} from "@/utils/common";
 
 export default function SearchCustomerModal({customerData, info, setInfo, isModalOpen, setIsModalOpen}){
 
-    const [data, setData] = useState(customerData)
+    const [data, setData] = useState(info)
+    const [list, setList] = useState([])
     const [customer, setCustomer] = useState(info);
+    const [openCheck, setOpenCheck] = useState('')
 
+    console.log(info, "info")
 
-    useEffect(() => {
-        searchFunc();
-    }, [])
+    // useEffect(() => {
+    //     searchFunc();
+    // }, [])
+    //
+    // useEffect(() => {
+    //     setData(info);
+    // }, [info])
+    //
+    // useEffect(() => {
+    //     if (open) {
+    //         const firstTrueKey = Object.keys(open).find(key => open[key]);
+    //         setOpenCheck(firstTrueKey);
+    //         if (!firstTrueKey) {
+    //             setList([]);
+    //             // setCode('')
+    //         } else {
+    //             searchFunc(firstTrueKey, info[firstTrueKey]);
+    //             setCode(info[firstTrueKey])
+    //         }
+    //     }
+    // }, [open])
 
-    useEffect(() => {
-        setData(customerData);
-    }, [customerData])
 
 
     async function searchFunc() {
@@ -30,6 +48,8 @@ export default function SearchCustomerModal({customerData, info, setInfo, isModa
             "limit": -1
         });
         setData(result?.data?.entity?.customerList)
+
+        console.log(data,'거래처')
     }
 
     function handleKeyPress(e){

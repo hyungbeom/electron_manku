@@ -343,10 +343,10 @@ export default function estimate_update({dataInfo}) {
 
                     </Card>
 
-                    <Card size={'small'} style={{
-                        fontSize: 13,
-                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                    }}>
+                        <Card size={'small'} style={{
+                            fontSize: 13,
+                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                        }}>
 
                             <div>
                                 <div>유효기간</div>
@@ -370,10 +370,14 @@ export default function estimate_update({dataInfo}) {
                                 </Select>
                             </div>
 
-                            <div>
-                                <div style={{marginTop: 8}}>운송조건</div>
-                                <Input id={'shippingTerms'} value={info['shippingTerms']} onChange={onChange}
-                                       size={'small'}/>
+                            <div style={{marginTop: 8}}>
+                                <div style={{paddingBottom: 3}}>운송조건</div>
+                                <Select id={'shippingTerms'} defaultValue={'0'}
+                                        onChange={(src) => onChange({target: {id: 'shippingTerms', value: src}})}
+                                        size={'small'} value={info['shippingTerms']} options={[
+                                    {value: '0', label: '귀사도착도'},
+                                    {value: '1', label: '화물 및 택배비 별도'},
+                                ]} style={{width: '100%',}}/>
                             </div>
                             <div>
                                 <div style={{marginTop: 8}}>환율</div>
@@ -381,19 +385,19 @@ export default function estimate_update({dataInfo}) {
                                        size={'small'}/>
                             </div>
 
-                    </Card>
+                        </Card>
 
-                    <Card size={'small'} style={{
-                        fontSize: 13,
-                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                    }}>
-                        <div style={{marginTop: 8}}>
-                            <div style={{paddingBottom: 3}}>MAKER</div>
-                            <Input id={'maker'} value={info['maker']} onChange={onChange} size={'small'}/>
-                        </div>
-                        <div style={{marginTop: 8}}>
-                            <div style={{paddingBottom: 3}}>ITEM</div>
-                            <Input id={'item'} value={info['item']} onChange={onChange} size={'small'}/>
+                        <Card size={'small'} style={{
+                            fontSize: 13,
+                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                        }}>
+                            <div style={{marginTop: 8}}>
+                                <div style={{paddingBottom: 3}}>MAKER</div>
+                                <Input id={'maker'} value={info['maker']} onChange={onChange} size={'small'}/>
+                            </div>
+                            <div style={{marginTop: 8}}>
+                                <div style={{paddingBottom: 3}}>ITEM</div>
+                                <Input id={'item'} value={info['item']} onChange={onChange} size={'small'}/>
                         </div>
                         <div style={{marginTop: 8}}>
                             <div style={{paddingBottom: 3}}>Delivery</div>

@@ -46,7 +46,7 @@ export default function rqfWrite() {
     const userInfo = useAppSelector((state) => state.user);
 
 
-    console.log(userInfo,'userInfo:')
+    // console.log(userInfo,'userInfo:')
     const gridRef = useRef(null);
 
 
@@ -168,6 +168,10 @@ export default function rqfWrite() {
         });
 
         const data = resultList?.data?.entity[modalList[e.target.id]?.list];
+
+        console.log(data, 'resultList')
+        console.log(e.target.value, 'e.target.value')
+
         const size = data?.length;
 
         if (size > 1) {

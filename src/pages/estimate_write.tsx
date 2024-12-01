@@ -252,6 +252,7 @@ export default function EstimateWrite({dataInfo}) {
 
     function addRow() {
         let copyData = {...info};
+
         copyData['estimateDetailList'].push({
             "model": "",   // MODEL
             "quantity": 0,                  // 수량
