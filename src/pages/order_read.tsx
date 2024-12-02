@@ -1,23 +1,19 @@
 import React, {useEffect, useRef, useState} from "react";
 import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
-import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
 import {CopyOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
 import {tableOrderReadColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {orderReadInitial, tableOrderReadInitial} from "@/utils/initialList";
-import {tableOrderReadInfo} from "@/utils/modalDataList";
+import {orderReadInitial} from "@/utils/initialList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import {getData} from "@/manage/function/api";
 import moment from "moment";
-import {transformData} from "@/utils/common/common";
 import * as XLSX from "xlsx";
 import is from "@sindresorhus/is";
-import set = is.set;
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
 

@@ -11,7 +11,7 @@ const dateFormat = (params) => {
     return moment(params.value).format('YYYY-MM-DD')
 };
 
-const numberFormat = (params) => {
+export const numberFormat = (params) => {
     return Math.floor(params.value).toLocaleString();
 };
 
@@ -347,16 +347,25 @@ export const tableOrderWriteColumn = [
     {
         headerName: '미입고',
         field: 'unreceivedQuantity',
+        valueFormatter: (params) => {
+            const {quantity, receivedQuantity} = params.data;
+            return quantity - receivedQuantity
+        }
     },
     {
         headerName: '단가',
         field: 'unitPrice',
         editable: true,
+        valueFormatter: numberFormat,
     },
     {
         headerName: 'Amount',
         field: 'amount',
         editable: true,
+        valueFormatter: (params) => {
+            const {quantity, unitPrice} = params.data;
+            return  Math.floor(quantity * unitPrice).toLocaleString();
+        }
     },
 ];
 
@@ -1277,14 +1286,14 @@ export const tableOrderReadColumns = [
         headerName: '비용',
         children: [
 
-            {
-                headerName: 'Amount',
-                field: 'amount',
-                key: 'amount',
-                align: 'center',
-                minWidth: 60,
-                valueFormatter: numberFormat,
-            },
+            // {
+            //     headerName: 'Amount',
+            //     field: 'amount',
+            //     key: 'amount',
+            //     align: 'center',
+            //     minWidth: 60,
+            //     valueFormatter: numberFormat,
+            // },
             {
                 headerName: '주문수량',
                 field: 'quantity',

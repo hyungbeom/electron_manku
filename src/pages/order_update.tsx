@@ -2,7 +2,14 @@ import React, {useEffect, useRef, useState} from "react";
 import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
-import {DownCircleFilled, DownloadOutlined, EditOutlined, SaveOutlined, UpCircleFilled} from "@ant-design/icons";
+import {
+    CopyOutlined,
+    DownCircleFilled,
+    DownloadOutlined,
+    EditOutlined,
+    SaveOutlined,
+    UpCircleFilled
+} from "@ant-design/icons";
 import DatePicker from "antd/lib/date-picker";
 import {rfqWriteInitial,} from "@/utils/initialList";
 import moment from "moment";
@@ -17,6 +24,8 @@ import * as XLSX from "xlsx";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {useRouter} from "next/router";
 import {BoxCard} from "@/utils/commonForm";
+import TableGrid from "@/component/tableGrid";
+import {tableOrderWriteColumn} from "@/utils/columnList";
 // import printTransaction from "@/utils/printTransaction";
 
 
@@ -42,7 +51,7 @@ export default function order_update({data}) {
 
     }, [])
 
-    console.log(orderDetail,'orderDetail:')
+console.log(orderDetail,'orderDetail:')
 
     const datePickerForm = ({title, id, disabled = false}) => {
         return <div>
@@ -312,7 +321,7 @@ export default function order_update({data}) {
 
                             <div>
                                 <div style={{paddingBottom: 3}}>Responsibility</div>
-                                <Input id={'managerID'} value={userInfo['name']} onChange={onChange}
+                                <Input id={'managerID'} value={info['managerId']} onChange={onChange}
                                        size={'small'}/>
                             </div>
                             <div>
@@ -381,28 +390,28 @@ export default function order_update({data}) {
                 </Card>
 
 
-                {/*<TableGrid*/}
-                {/*    gridRef={gridRef}*/}
-                {/*    columns={tableOrderWriteColumn}*/}
-                {/*    tableData={info['orderDetailList']}*/}
-                {/*    listType={'orderId'}*/}
-                {/*    listDetailType={'orderDetailList'}*/}
-                {/*    setInfo={setInfo}*/}
-                {/*    excel={true}*/}
-                {/*    type={'write'}*/}
-                {/*    funcButtons={<div>*/}
-                {/*        /!*@ts-ignored*!/*/}
-                {/*        <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}*/}
-                {/*                onClick={addRow}>*/}
-                {/*            <SaveOutlined/>추가*/}
-                {/*        </Button>*/}
-                {/*        /!*@ts-ignored*!/*/}
-                {/*        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}*/}
-                {/*                onClick={deleteList}>*/}
-                {/*            <CopyOutlined/>삭제*/}
-                {/*        </Button>*/}
-                {/*    </div>}*/}
-                {/*/>*/}
+                <TableGrid
+                    gridRef={gridRef}
+                    columns={tableOrderWriteColumn}
+                    tableData={info['orderDetailList']}
+                    listType={'orderId'}
+                    listDetailType={'orderDetailList'}
+                    setInfo={setInfo}
+                    excel={true}
+                    type={'write'}
+                    funcButtons={<div>
+                        {/*@ts-ignored*/}
+                        <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
+                                onClick={addRow}>
+                            <SaveOutlined/>추가
+                        </Button>
+                        {/*@ts-ignored*/}
+                        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
+                                onClick={deleteList}>
+                            <CopyOutlined/>삭제
+                        </Button>
+                    </div>}
+                />
 
             </div>
         </LayoutComponent>
