@@ -14,7 +14,7 @@ import {
 } from "@ant-design/icons";
 import {subRfqWriteColumn} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {ModalInitList, modalList, rfqWriteInitial} from "@/utils/initialList";
+import {ModalInitList, modalList, rfqWriteInitial, subRfqTableInitial} from "@/utils/initialList";
 import moment from "moment";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
@@ -28,6 +28,7 @@ import SearchInfoModal from "@/component/SearchAgencyModal";
 import {getData} from "@/manage/function/api";
 import Upload from "antd/lib/upload";
 import * as XLSX from "xlsx";
+import {useRouter} from "next/router";
 
 
 const BoxCard = ({children, title}) => {
@@ -52,11 +53,16 @@ export default function rqfWrite() {
     const [info, setInfo] = useState<any>({
         ...rfqWriteInitial,
         adminId: userInfo['adminId'],
-        adminName: userInfo['adminName']
+        adminName: userInfo['adminName'],
+        estimateRequestDetailList: Array(5).fill(subRfqTableInitial),
     })
-    const [mini, setMini] = useState(true);
 
+    // console.log(info, 'info~~~~')
+
+
+    const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
+    const router = useRouter();
 
     const inputForm = ({title, id, disabled = false, suffix = null}) => {
         let bowl = info;
@@ -240,8 +246,11 @@ export default function rqfWrite() {
             if (v.data.code === 1) {
                 message.success('저장되었습니다.')
                 // setInfo(rfqWriteInitial);
-
                 window.location.href = '/rfq_read'
+                // router.push(`/rfq_update?estimateRequestId=${e?.data?.estimateRequestId}`)
+
+                // console.log(e)
+
             } else {
                 if(v.data.code === -20001){
                     setInfo(src => {
@@ -280,18 +289,7 @@ export default function rqfWrite() {
 
     function addRow() {
         let copyData = {...info};
-        copyData['estimateRequestDetailList'].push({
-            "model": "",             // MODEL
-            "quantity": 0,           // 수량
-            "unit": "ea",            // 단위
-            "currency": "krw",       // CURR
-            "net": 0,                // NET/P
-            "serialNumber": 0,       // 항목 순서 (1부터 시작)
-            "deliveryDate": "",      // 납기
-            "content": "미회신",       // 내용
-            "replyDate": moment().format('YYYY-MM-DD'),         // 회신일
-            "remarks": ""            // 비고
-        })
+        copyData['estimateRequestDetailList'].push(subRfqTableInitial)
         setInfo(copyData)
     }
 
@@ -409,7 +407,7 @@ export default function rqfWrite() {
                             }}>
                                 {datePickerForm({title: '작성일', id: 'writtenDate', disabled: true})}
                                 {inputForm({title: '만쿠담당자', id: 'adminName', disabled: true})}
-                                {inputForm({title: 'INQUIRY NO.', id: 'documentNumberFull', disabled: true})}
+                                {inputForm({title: 'INQUIRY NO.', id: 'documentNumberFull'})}
                                 {inputForm({title: 'RFQ NO.', id: 'rfqNo'})}
                                 {inputForm({title: '프로젝트 제목', id: 'projectTitle'})}
                             </div>
@@ -509,7 +507,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     const {userInfo} = await initialServerRouter(ctx, store);
     const cookies = nookies.get(ctx)
-    const {display = 'horizon'} = cookies;
+    // const {display = 'horizon'} = cookies;
 
 
     if (!userInfo) {
