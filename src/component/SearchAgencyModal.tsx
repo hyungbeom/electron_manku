@@ -15,7 +15,7 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
     const [list, setList] = useState([])
     const [page, setPage] = useState({x: null, y: null})
     const [openCheck, setOpenCheck] = useState('')
-    const [windowOpenKey, setWindowOpenKey] = useState({id:'', router:'', deleteApi:''})
+    const [windowOpenKey, setWindowOpenKey] = useState({key:'', value:'', router:'', deleteApi:''})
 
     const ref = useRef(null);
 
@@ -64,6 +64,19 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
         }
     }
 
+    async function deleteList(api, key, value) {
+        const response = await getData.post(api, {
+            [key]:value
+        });
+        console.log(response)
+        if (response.data.code===1) {
+            message.success('삭제되었습니다.')
+        } else {
+            message.error('오류가 발생하였습니다. 다시 시도해주세요.')
+        }
+
+    }
+
     const handleCellRightClick = (e) => {
 
         const {pageX, pageY} = e.event;
@@ -75,34 +88,18 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
 
 
         if (e.data.makerId)
-            setWindowOpenKey({id:e.data.makerId, router:`/maker_update?makerName=${e.data.makerName}`, deleteApi:'maker/deleteMaker'})
+            setWindowOpenKey({key:'makerId', value:e.data.makerId, router:`/maker_update?makerName=${e.data.makerName}`, deleteApi:'maker/deleteMaker'})
         else if (e.data.customerId)
-            setWindowOpenKey({id:e.data.customerId, router:`/code_domestic_customer_update?customerCode=${e?.data?.customerCode}`, deleteApi:'customer/deleteCustomer'})
+            setWindowOpenKey({key:'customerId', value:e.data.customerId, router:`/code_domestic_customer_update?customerCode=${e?.data?.customerCode}`, deleteApi:'customer/deleteCustomer'})
         else if (e.data.overseasCustomerId)
-            setWindowOpenKey({id:e.data.overseasCustomerId, router:`/code_overseas_customer_update?customerCode=${e?.data?.customerCode}`, deleteApi:'deleteOverseasCustomer'})
+            setWindowOpenKey({key:'overseasCustomerId', value:e.data.overseasCustomerId, router:`/code_overseas_customer_update?customerCode=${e?.data?.customerCode}`, deleteApi:'deleteOverseasCustomer'})
         else if (e.data.agencyId)
-            setWindowOpenKey({id:e.data.agencyId, router:`/code_domestic_agency_update?agencyCode=${e?.data?.agencyCode}`, deleteApi:'agency/deleteAgency'})
+            setWindowOpenKey({key:'agencyId', value:e.data.agencyId, router:`/code_domestic_agency_update?agencyCode=${e?.data?.agencyCode}`, deleteApi:'agency/deleteAgency'})
         else if (e.data.overseasAgencyId)
-            setWindowOpenKey({id:e.data.overseasAgencyId, router:`/code_overseas_agency_update?agencyCode=${e?.data?.agencyCode}`, deleteApi:'agency/deleteOverseasAgency'})
+            setWindowOpenKey({key:'overseasAgencyId', value:e.data.overseasAgencyId, router:`/code_overseas_agency_update?agencyCode=${e?.data?.agencyCode}`, deleteApi:'agency/deleteOverseasAgency'})
         else
             return null;
     };
-
-    async function deleteList() {
-                const response = await getData.post('estimate/deleteEstimateRequest', {
-                    estimateRequestId:item.estimateRequestId
-                });
-                console.log(response)
-                if (response.data.code===1) {
-                    message.success('삭제되었습니다.')
-                    searchInfo();
-                } else {
-                    message.error('오류가 발생하였습니다. 다시 시도해주세요.')
-                }
-            }
-        }
-    }
-
 
     useEffect(() => {
         const handleContextMenu = (e: any) => {
@@ -142,7 +139,8 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
             }}id={'right'}>수정</div>
             <div style={{marginTop:10}} onClick={()=> {
                 // alert('삭제');
-
+                deleteList(windowOpenKey.deleteApi, windowOpenKey.key, windowOpenKey.value)
+                setList(info)
                 setPage({x : null, y : null})
             }}
                  id={'right'}>삭제</div>
