@@ -20,7 +20,7 @@ const TableGrid = ({
                        funcButtons,
                        listType = 'estimateRequestId',
                        listDetailType = 'estimateRequestDetailList',
-                       type='read',
+                       type = 'read',
                        gridRef,
                    }: any) => {
 
@@ -32,10 +32,9 @@ const TableGrid = ({
     const [pinnedBottomRowData, setPinnedBottomRowData] = useState([]);
 
 
-    useEffect(()=>{
+    useEffect(() => {
         setData(tableData)
-    },[tableData])
-
+    }, [tableData])
 
 
     const defaultColDef = useMemo(() => {
@@ -69,7 +68,7 @@ const TableGrid = ({
 
     const rowSelection = useMemo((e) => {
 
-        return {mode: "multiRow", };
+        return {mode: "multiRow",};
     }, []);
 
     const handleSelectionChange = (e) => {
@@ -94,7 +93,7 @@ const TableGrid = ({
     let isUpdatingSelection = false; // 중복 선택 이벤트 발생 방지 플래그
 
     const handleRowSelected = (event) => {
-        if(type === 'write'){
+        if (type === 'write') {
             return false;
         }
 
@@ -124,7 +123,7 @@ const TableGrid = ({
 
     const handleDoubleClicked = (e) => {
 
-        if (type==='read'){
+        if (type === 'read') {
             if (e.data.estimateRequestId)
                 router.push(`/rfq_update?estimateRequestId=${e?.data?.estimateRequestId}`)
             if (e.data.estimateId)
@@ -147,12 +146,33 @@ const TableGrid = ({
                 router.push(`/code_diploma_update?officialDocumentId=${e?.data?.officialDocumentId}`)
         }
 
-        if (type==='hsCode'){
+        if (type === 'hsCode') {
             console.log(e.data, 'hsCode')
             setInfo(e.data)
         }
     };
 
+
+    function clickRowCheck(api) {
+
+        let checkedData = [];
+
+
+        // 전체 행 반복하면서 선택되지 않은 행만 추출
+        for (let i = 0; i < api.getDisplayedRowCount(); i++) {
+            const rowNode = api.getDisplayedRowAtIndex(i);
+            if (rowNode.isSelected()) {
+                checkedData.push(rowNode.data);
+            }
+        }
+
+        console.log(checkedData, 'checkedData:')
+
+        // let copyData = {...info}
+        // copyData['estimateRequestDetailList'] = uncheckedData;
+        // setInfo(copyData);
+
+    }
 
 
     function dataChange(e) {
@@ -160,14 +180,16 @@ const TableGrid = ({
         const rowIndex = e.node.rowIndex; // 변경된 행의 인덱스
 
         // 수정된 행 업데이트
-        updatedData[rowIndex] = {
-            ...e.data,
-            unreceivedQuantity: parseFloat(e.data.quantity || 0) - parseFloat(e.data.receivedQuantity || 0),
-            amount: parseFloat(e.data.quantity || 0) * parseFloat(e.data.unitPrice || 0),
-        };
+        // updatedData[rowIndex] = {
+        //     ...e.data,
+        //     unreceivedQuantity: parseFloat(e.data.quantity || 0) - parseFloat(e.data.receivedQuantity || 0),
+        //     amount: parseFloat(e.data.quantity || 0) * parseFloat(e.data.unitPrice || 0),
+        // };
 
+        clickRowCheck(e.api);
+        handleSelectionChanged();
         // 데이터 상태 업데이트
-        setData(updatedData);
+        // setData(updatedData);
     }
 
     const handleFile = (file) => {
@@ -175,14 +197,14 @@ const TableGrid = ({
 
         reader.onload = (e) => {
             const binaryStr = e.target.result;
-            const workbook = XLSX.read(binaryStr, { type: 'binary' });
+            const workbook = XLSX.read(binaryStr, {type: 'binary'});
 
             // 첫 번째 시트 읽기
             const worksheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[worksheetName];
 
             // 데이터를 JSON 형식으로 변환 (첫 번째 행을 컬럼 키로 사용)
-            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
 
             // 데이터 첫 번째 행을 컬럼 이름으로 사용
             const headers = jsonData[0];
@@ -246,7 +268,6 @@ const TableGrid = ({
     };
 
 
-
     const handleCellRightClick = (event) => {
         console.log('Right-clicked cell:', event);
         // event.data:
@@ -265,8 +286,10 @@ const TableGrid = ({
 
     return (
         <div className={`ag-theme-quartz ${dragging ? 'dragging' : ''}`}
-             style={{height: '100%', width: '100%', display: 'flex', flexDirection: 'column', overflowX: 'auto',
-                 border: dragging ? '2px dashed #1890ff' : 'none', position:'relative'}}
+             style={{
+                 height: '100%', width: '100%', display: 'flex', flexDirection: 'column', overflowX: 'auto',
+                 border: dragging ? '2px dashed #1890ff' : 'none', position: 'relative'
+             }}
              onDragOver={handleDragOver}
              onDragLeave={handleDragLeave}
              onDrop={handleDrop}
@@ -284,7 +307,7 @@ const TableGrid = ({
                         pointerEvents: 'none', // 오버레이가 이벤트를 방해하지 않도록 설정
                     }}
                 >
-                    <InboxOutlined style={{color:'blue', fontSize:50, margin:'10% 50% 0 45%'}}/><br/>
+                    <InboxOutlined style={{color: 'blue', fontSize: 50, margin: '10% 50% 0 45%'}}/><br/>
                     Drag & drop
                 </div>
             )}
@@ -295,15 +318,16 @@ const TableGrid = ({
             </div>
             {modalComponent}
 
-            <AgGridReact key={data?.length}  theme={tableTheme} ref={gridRef} containerStyle={{width: '100%', height: '78%'}}
-                        //@ts-ignore
+            <AgGridReact key={data?.length} theme={tableTheme} ref={gridRef}
+                         containerStyle={{width: '100%', height: '78%'}}
+                //@ts-ignore
                          onRowDoubleClicked={handleDoubleClicked}
-                        //@ts-ignore
+                //@ts-ignore
                          rowSelection={rowSelection}
                          defaultColDef={defaultColDef}
                          columnDefs={columns}
                          rowData={data}
-                         // rowData={data}
+                // rowData={data}
                          paginationPageSize={1000}
                          paginationPageSizeSelector={[100, 500, 1000]}
                          context={data}
@@ -315,7 +339,7 @@ const TableGrid = ({
                          gridOptions={{
                              loadThemeGoogleFonts: true,
                          }}
-                         // onCellContextMenu={handleCellRightClick}
+                // onCellContextMenu={handleCellRightClick}
             />
         </div>
     );
