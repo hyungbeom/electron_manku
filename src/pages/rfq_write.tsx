@@ -223,13 +223,20 @@ export default function rqfWrite() {
 
 
     async function saveFunc() {
-        if (!info['estimateRequestDetailList'].length) {
-            return message.warn('하위 데이터 1개 이상이여야 합니다')
-        }
+
         if (!info['agencyCode']) {
             return message.warn('매입처 코드가 누락되었습니다.')
         }
 
+        // table의 빈 행 삭제
+        let emptyRows = [];
+        info['estimateRequestDetailList'].forEach((row)=>{
+            if(!row.model){
+                emptyRows.push(row)
+            }
+        })
+        console.log(emptyRows, "emptyRows~~~")
+        deleteList(emptyRows)
 
         const copyData = {...info}
 
@@ -268,16 +275,21 @@ export default function rqfWrite() {
 
     }
 
-    function deleteList() {
+    function deleteList(rows) {
 
         const api = gridRef.current.api;
 
-        // 전체 행 반복하면서 선택되지 않은 행만 추출
-        const uncheckedData = [];
-        for (let i = 0; i < api.getDisplayedRowCount(); i++) {
-            const rowNode = api.getDisplayedRowAtIndex(i);
-            if (!rowNode.isSelected()) {
-                uncheckedData.push(rowNode.data);
+        let uncheckedData = [];
+
+        if (rows) {
+            uncheckedData = rows;
+        } else {
+            // 전체 행 반복하면서 선택되지 않은 행만 추출
+            for (let i = 0; i < api.getDisplayedRowCount(); i++) {
+                const rowNode = api.getDisplayedRowAtIndex(i);
+                if (!rowNode.isSelected()) {
+                    uncheckedData.push(rowNode.data);
+                }
             }
         }
 
