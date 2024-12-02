@@ -77,7 +77,7 @@ export default function PrintIntegratedEstimate({ data, isModalOpen, userInfo, s
             onOk={() => setIsModalOpen(false)}
         >
                 {/* Header */}
-            <div ref={pdfRef} style={{width: "595px", height: "842px", padding: "40px 24px"}}>
+            <div ref={pdfRef} style={{width: "595px", minHeight: "842px", height:'auto', padding: "40px 24px"}}>
                 {/* Header */}
                 <div style={{display: "flex", width: "100%", alignItems: "center"}}>
                     <div style={{display: "flex", float: "left", alignItems: "center", gap: "20px"}}>
