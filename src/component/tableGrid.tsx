@@ -4,13 +4,10 @@ import React, {useEffect, useMemo, useState} from 'react';
 import {AgGridReact} from 'ag-grid-react';
 import {useRouter} from "next/router";
 import {tableTheme} from "@/utils/common";
-import moment from "moment";
 import * as XLSX from "xlsx";
 import message from "antd/lib/message";
 import Upload from "antd/lib/upload";
-import Dragger from "antd/lib/upload/Dragger";
 import {InboxOutlined} from "@ant-design/icons";
-import {numberFormat} from "@/utils/columnList";
 // import 'ag-grid-community/styles/ag-grid.css';
 // import 'ag-grid-community/styles/ag-theme-alpine.css';
 import {commonFunc} from "@/utils/commonManage";
@@ -35,9 +32,9 @@ const TableGrid = ({
     const [pinnedBottomRowData, setPinnedBottomRowData] = useState([]);
 
 
-    // useEffect(()=>{
-    //     setData(tableData)
-    // },[tableData])
+    useEffect(()=>{
+        setData(tableData)
+    },[tableData])
 
 
 
@@ -310,14 +307,14 @@ const TableGrid = ({
             </div>
             {modalComponent}
 
-            <AgGridReact theme={tableTheme} ref={gridRef} containerStyle={{width: '100%', height: '78%'}}
+            <AgGridReact key={data.length}  theme={tableTheme} ref={gridRef} containerStyle={{width: '100%', height: '78%'}}
                         //@ts-ignore
                          onRowDoubleClicked={handleDoubleClicked}
                         //@ts-ignore
                          rowSelection={rowSelection}
                          defaultColDef={defaultColDef}
                          columnDefs={columns}
-                         rowData={[...data]}
+                         rowData={data}
                          // rowData={data}
                          paginationPageSize={1000}
                          paginationPageSizeSelector={[100, 500, 1000]}

@@ -101,7 +101,6 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
 
 
     return <>
-
         {page.x ? <div style={{
             position: 'fixed',
             top: page.y,

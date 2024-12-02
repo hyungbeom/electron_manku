@@ -82,6 +82,7 @@ export default function rfqRead({dataList}) {
 
         const result = await getData.post('estimate/getEstimateRequestList',
             {...copyData,   "page": 1, "limit": -1});
+        console.log(result?.data?.entity?.estimateRequestList,'result?.data?.entity?.estimateRequestList???')
         setTableData(result?.data?.entity?.estimateRequestList);
     }
 

@@ -29,8 +29,6 @@ commonFunc.sumCalc =  function calculateTotals(rowData) {
     rowData.map((row) => {
     const sum = (parseFloat(row.net) || 0) * (parseFloat(row.quantity) || 0);
         amount+=sum;
-        console.log(sum, 'sum')
-        console.log(amount, 'amount~~')
     });
     const totalPrice = rowData.reduce((sum, row) => {
         const calculatedPrice = (parseFloat(row.unitPrice) || 0) * (parseFloat(row.quantity) || 0);
