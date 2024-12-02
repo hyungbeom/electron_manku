@@ -88,6 +88,8 @@ export default function rfqRead({dataList}) {
             copyData['searchStartDate'] = searchDate[0];
             copyData['searchEndDate'] = searchDate[1];
         }
+
+        console.log(info['searchType'], '회신여부~~~')
         const result = await getData.post('estimate/getEstimateRequestList',
             {...copyData,   "page": 1, "limit": -1});
         setTableData(result?.data?.entity?.estimateRequestList);
@@ -173,12 +175,12 @@ export default function rfqRead({dataList}) {
                                 </div>
                                 <div style={{marginTop:8}}>
                                     <div style={{paddingBottom: 3}}>회신 여부</div>
-                                    <Select id={'searchType'}
-                                            onChange={(src) => onChange({target: {id: 'searchType', value: src}})}
-                                            size={'small'} value={info['searchType']} options={[
-                                        {value: '0', label: '전체'},
-                                        {value: '1', label: '회신'},
-                                        {value: '2', label: '미회신'}
+                                    <Select id={'searchReplyStatus'} defaultValue={0}
+                                            onChange={(src) => onChange({target: {id: 'searchReplyStatus', value: src}})}
+                                            size={'small'} value={info['searchReplyStatus']} options={[
+                                        {value: 0, label: '전체'},
+                                        {value: 1, label: '회신'},
+                                        {value: 2, label: '미회신'}
                                     ]} style={{width: '100%',}}/>
                                 </div>
                         </Card>
@@ -248,7 +250,8 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     const result = await getData.post('estimate/getEstimateRequestList', {
         "searchEstimateRequestId": "",      // 견적의뢰 Id
-        "searchType": "",                   // 검색조건 1: 회신, 2: 미회신
+        "searchSentStatus": "",                   // 검색조건 1: 회신, 2: 미회신
+        "searchReplyStatus": "",
         "searchStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),              // 작성일자 시작일
         "searchEndDate": moment().format('YYYY-MM-DD'),                // 작성일자 종료일
         "searchDocumentNumber": "",         // 문서번호
