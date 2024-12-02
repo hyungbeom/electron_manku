@@ -349,7 +349,7 @@ export default function PrintTransactionModal({ data, customerData, isModalOpen,
                                         gridTemplateColumns: "4fr 1.5fr 2.5fr",
                                     }}
                                 >
-                                    <div style={{borderRight: "1px solid #A3A3A3"}}>
+                                    <div style={{borderRight: "1px solid #A3A3A3", lineHeight: 1.1,}}>
                                         {customerData.customerName}
                                     </div>
                                     <div style={{borderRight: "1px solid #A3A3A3"}}>대표자</div>
@@ -594,8 +594,8 @@ export default function PrintTransactionModal({ data, customerData, isModalOpen,
                                             {formattedNumber(model.amount * 0.1)}
                                         </div>
                                         <div style={{
-                                            textAlign: "left",
-                                            padding: "3px 3px",
+                                            textAlign: "center",
+                                            padding: "3px 0",
                                             borderBottom: "1px solid #A3A3A3",
                                             whiteSpace: "pre-wrap",
                                             display: "flex",
