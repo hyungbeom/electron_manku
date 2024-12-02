@@ -89,7 +89,6 @@ export default function rfqRead({dataList}) {
             copyData['searchEndDate'] = searchDate[1];
         }
 
-        console.log(info['searchType'], '회신여부~~~')
         const result = await getData.post('estimate/getEstimateRequestList',
             {...copyData,   "page": 1, "limit": -1});
         setTableData(result?.data?.entity?.estimateRequestList);

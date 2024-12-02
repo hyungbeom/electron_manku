@@ -49,7 +49,7 @@ export default function PrintEstimate({ data, isModalOpen, userInfo, setIsModalO
                     PDF 다운로드
                 </button></div>}
             onCancel={() => setIsModalOpen(false)}
-            open={isModalOpen?.event3}
+            open={isModalOpen}
             width={'640px'}
             footer={null}
             onOk={() => setIsModalOpen(false)}

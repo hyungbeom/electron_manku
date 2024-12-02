@@ -348,7 +348,7 @@ export default function EstimateWrite({dataInfo}) {
                         </div>
                     </BoxCard>
 
-                    <div style={{display: 'grid', gridTemplateColumns: "repeat(4, 1fr)"}}>
+                    <div style={{display: 'grid', gridTemplateColumns: "repeat(4, 1fr)", gap:10, marginTop:10}}>
 
                         <BoxCard title={'매입처 정보'}>
                             {inputForm({
@@ -385,7 +385,7 @@ export default function EstimateWrite({dataInfo}) {
 
                         <BoxCard title={'운송 정보'}>
                             <div>
-                                <div style={{paddingTop: 8}}>유효기간</div>
+                                <div>유효기간</div>
                                 <Select id={'validityPeriod'} defaultValue={'0'}
                                         onChange={(src) => onChange({target: {id: 'validityPeriod', value: src}})}
                                         size={'small'} value={info['validityPeriod']} options={[
@@ -395,7 +395,7 @@ export default function EstimateWrite({dataInfo}) {
                                 </Select>
                             </div>
                             <div>
-                                <div style={{paddingTop: 8}}>결제조건</div>
+                                <div>결제조건</div>
                                 <Select id={'validityPeriod'} defaultValue={'0'}
                                         onChange={(src) => onChange({target: {id: 'paymentTerms', value: src}})}
                                         size={'small'} value={info['paymentTerms']} options={[
@@ -406,7 +406,7 @@ export default function EstimateWrite({dataInfo}) {
                                 </Select>
                             </div>
                             <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>운송조건</div>
+                                <div>운송조건</div>
                                 <Select id={'shippingTerms'} defaultValue={'0'}
                                         onChange={(src) => onChange({target: {id: 'shippingTerms', value: src}})}
                                         size={'small'} value={info['shippingTerms']} options={[

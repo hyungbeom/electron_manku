@@ -12,7 +12,13 @@ import {
 } from "@ant-design/icons";
 import {tableEstimateWriteColumns, tableOrderWriteColumn} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {estimateWriteInitial, orderWriteInitial, rfqWriteInitial, tableOrderWriteInitial} from "@/utils/initialList";
+import {
+    estimateWriteInitial,
+    ModalInitList,
+    orderWriteInitial,
+    rfqWriteInitial,
+    tableOrderWriteInitial
+} from "@/utils/initialList";
 import {subOrderWriteInfo} from "@/utils/modalDataList";
 import moment from "moment";
 import Button from "antd/lib/button";
@@ -29,6 +35,7 @@ import {useRouter} from "next/router";
 import SearchAgendaModal from "@/component/SearchAgencyModal";
 import SearchCustomerModal from "@/component/SearchCustomerModal";
 import PrintEstimate from "@/component/printEstimate";
+import SearchInfoModal from "@/component/SearchAgencyModal";
 
 
 export default function estimate_update({dataInfo}) {
@@ -38,7 +45,8 @@ export default function estimate_update({dataInfo}) {
     const userInfo = useAppSelector((state) => state.user);
     const [info, setInfo] = useState<any>(dataInfo)
     const [mini, setMini] = useState(true);
-    const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false, event3: false});
+    const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
+    const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
     const [agencyData, setAgencyData] = useState([]);
     const [customerData, setCustomerData] = useState([]);
 
@@ -233,9 +241,14 @@ export default function estimate_update({dataInfo}) {
     return <>
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`, height: '100vh', gridColumnGap: 5}}>
-                {/*<PrintEstimate data={info} isModalOpen={isModalOpen} userInfo={userInfo} setIsModalOpen={setIsModalOpen}/>*/}
+                <PrintEstimate data={info} isModalOpen={isPrintModalOpen} userInfo={userInfo} setIsModalOpen={setIsPrintModalOpen}/>
                 {/*<SearchAgendaModal info={info} setInfo={setInfo} agencyData={agencyData} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>*/}
                 {/*<SearchCustomerModal info={info} setInfo={setInfo} customerData={customerData} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>*/}
+
+                <SearchInfoModal info={info} setInfo={setInfo}
+                                 open={isModalOpen}
+                                 setIsModalOpen={setIsModalOpen}/>
+
                 <Card title={<div style={{display:'flex', justifyContent:'space-between'}}>
                     <div style={{fontSize:14, fontWeight:550}}>견적서 수정</div> <div>
                     <Button type={'primary'} size={'small'} style={{marginRight: 8}}
