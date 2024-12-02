@@ -12,7 +12,7 @@ import {
 } from "@ant-design/icons";
 import {tableOrderWriteColumn,} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {orderWriteInitial, rfqWriteInitial} from "@/utils/initialList";
+import {orderWriteInitial} from "@/utils/initialList";
 import moment from "moment";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
@@ -53,8 +53,9 @@ export default function OrderWriter({dataInfo}) {
         return <div>
             <div>{title}</div>
             <Input id={id} value={bowl[id]} disabled={disabled}
-                   placeHolder={placeholder}
+                   placeholder={placeholder}
                    onChange={onChange}
+                   onKeyDown={handleKeyPress}
                    size={'small'}
                    suffix={suffix}
             />
@@ -108,7 +109,7 @@ export default function OrderWriter({dataInfo}) {
             await getData.post('order/addOrder', copyData).then(v => {
                 if(v.data.code === 1){
                     message.success('저장되었습니다')
-                    setInfo(rfqWriteInitial);
+                    setInfo(orderWriteInitial);
                     deleteList()
                     window.location.href = '/order_read'
             } else {
@@ -154,14 +155,13 @@ export default function OrderWriter({dataInfo}) {
         setInfo(copyData)
     }
 
-
     async function findDocument() {
 
         const result = await getData.post('estimate/getEstimateList', {
             "searchType": "",           // 검색조건 1: 주문, 2: 미주문
             "searchStartDate": "",      // 작성일 검색 시작일
             "searchEndDate": "",        // 작성일 검색 종료일
-            "searchDocumentNumber": searchDocumentNumber, // 문서번호
+            "searchDocumentNumber":info['documentNumberFull'], // 문서번호
             "searchCustomerName": "",   // 거래처명
             "searchModel": "",          // MODEL
             "searchMaker": "",          // MAKER
@@ -187,19 +187,36 @@ export default function OrderWriter({dataInfo}) {
 
 
 
-    function handleKeyPressDoc(e) {
+    function handleKeyPress(e) {
         if (e.key === 'Enter') {
             findDocument();
         }
     }
 
+    function clearAll() {
+        setInfo({
+            ...orderWriteInitial,
+            adminId: userInfo['adminId'],
+            adminName: userInfo['adminName']
+        });
+    }
 
 
     return <>
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`,  height: '100vh', columnGap: 5}}>
 
-                <Card title={'발주서 작성'} style={{fontSize: 12, border: '1px solid lightGray'}} extra={<span style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>setMini(v => !v)}> {!mini ? <UpCircleFilled/> : <DownCircleFilled/>}</span>} >
+                <Card title={<div style={{display: 'flex', justifyContent: 'space-between'}}>
+                    <div style={{fontSize: 14, fontWeight: 550}}>발주서 작성</div>
+                    <div>
+                        <Button type={'primary'} size={'small'} style={{marginRight: 8}}
+                                onClick={saveFunc}
+                        ><SaveOutlined/>저장</Button>
+                        {/*@ts-ignored*/}
+                        <Button type={'danger'} size={'small'} style={{marginRight: 8}}
+                                onClick={clearAll}><RetweetOutlined/>초기화</Button>
+                    </div>
+                </div>}  style={{fontSize: 12, border: '1px solid lightGray'}} extra={<span style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>setMini(v => !v)}> {!mini ? <UpCircleFilled/> : <DownCircleFilled/>}</span>} >
 
                     {mini ? <div>
 
@@ -215,7 +232,8 @@ export default function OrderWriter({dataInfo}) {
                                 {inputForm({title: '작성자', id: 'adminName', disabled: true})}
                                 {/*{inputForm({title: '담당자', id: 'managerAdminName'})}*/}
 
-                                {inputForm({title: '연결 PO No.', id: 'documentNumberFull'})}
+                                {inputForm({title: '연결 PO No.', id: 'documentNumberFull', suffix: <DownloadOutlined style={{cursor: 'pointer'}} />
+                                })}
                                 {inputForm({title: '거래처 PO no 제목', id: 'yourPoNo'})}
                             </div>
                         </BoxCard>
@@ -316,16 +334,6 @@ export default function OrderWriter({dataInfo}) {
                             </div>
                         </Card>
 
-                        <div style={{paddingTop: 10,}}>
-
-                            <Button type={'primary'} size={'small'} style={{fontSize: 11,marginRight: 8}}
-                                    onClick={saveFunc}><SaveOutlined/>저장</Button>
-
-                            {/*@ts-ignored*/}
-                            <Button type={'danger'} size={'small'} style={{fontSize: 11,}}
-                                    onClick={() => setInfo(orderWriteInitial)}><RetweetOutlined/>초기화</Button>
-
-                        </div>
                     </div>
                     </div> : null}
                 </Card>

@@ -312,6 +312,11 @@ export const tableOrderWriteColumn = [
         editable: true,
     },
     {
+        headerName: '주문수량',
+        field: 'quantity',
+        editable: true,
+    },
+    {
         headerName: '단위',
         field: 'unit',
         editable: true,
@@ -335,9 +340,13 @@ export const tableOrderWriteColumn = [
         editable: true,
     },
     {
-        headerName: '주문수량',
-        field: 'quantity',
+        headerName: 'Amount',
+        field: 'amount',
         editable: true,
+        valueFormatter: (params) => {
+            const {quantity, net} = params.data;
+            return  Math.floor(quantity * net).toLocaleString();
+        }
     },
     {
         headerName: '입고',
@@ -360,8 +369,8 @@ export const tableOrderWriteColumn = [
 
     },
     {
-        headerName: 'Amount',
-        field: 'amount',
+        headerName: '금액',
+        field: 'totalPrice',
         editable: true,
         valueFormatter: (params) => {
             if (params.node.rowPinned) {
@@ -662,23 +671,24 @@ export const tableEstimateWriteColumns = [
         headerName: '단가',
         field: 'unitPrice',
         editable: true,
-        valueFormatter: (params) => {
-            const result = numberFormat(params);
-            // @ts-ignored
-            return !isNaN(result) ? result : 0
-        }
-        // valueFormatter: numberFormat,
+        // valueFormatter: (params) => {
+        //     const result = numberFormat(params);
+        //     // @ts-ignored
+        //     return !isNaN(result) ? result : 0
+        // }
+        valueFormatter: numberFormat,
     },
     {
         headerName: '금액',
         field: 'amount',
         width: 120,
         editable: true,
-        valueFormatter: (params) => {
-            const result = numberFormat(params);
-            // @ts-ignored
-            return !isNaN(result) ? result : 0
-        }
+        // valueFormatter: (params) => {
+        //     const result = numberFormat(params);
+        //     // @ts-ignored
+        //     return !isNaN(result) ? result : 0,
+        // }
+            valueFormatter: numberFormat,
     },
     {
         headerName: 'CURR',
