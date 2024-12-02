@@ -34,9 +34,6 @@ export default function OrderWriter({dataInfo}) {
     const [mini, setMini] = useState(true);
     const [searchDocumentNumber, setSearchDocumentNumber] =useState('')
 
-    console.log(userInfo,'userInfo')
-
-
     const [info, setInfo] = useState<any>({
         ...orderWriteInitial,
         adminId: userInfo['adminId'],
@@ -148,7 +145,7 @@ export default function OrderWriter({dataInfo}) {
             "unit": "ea",               // 단위
             "currency": "KWD",          // CURR
             "net": 0,            // NET/P
-            "quantity": 1,              // 수량
+            "quantity": 0,              // 수량
             "receivedQuantity": 0,
             "unreceivedQuantity": 0,
             "unitPrice": 0,
