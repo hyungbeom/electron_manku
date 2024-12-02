@@ -80,15 +80,24 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
     };
 
 
-    useEventListener('contextmenu', (e: any) => {
-        e.preventDefault()
-    }, document)
+    useEffect(() => {
+        const handleContextMenu = (e: any) => {
+            e.preventDefault();
+        };
 
-    useEventListener('click', (e: any) => {
+        const handleClick = (e: any) => {
+            setPage({ x: null, y: null });
+        };
 
-           setPage({x : null, y : null})
-    }, document)
+        document.addEventListener('contextmenu', handleContextMenu);
+        document.addEventListener('click', handleClick);
 
+        return () => {
+            // 컴포넌트가 언마운트될 때 이벤트 리스너 제거
+            document.removeEventListener('contextmenu', handleContextMenu);
+            document.removeEventListener('click', handleClick);
+        };
+    }, []);
 
 
     return <>

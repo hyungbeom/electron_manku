@@ -315,6 +315,7 @@ export const tableOrderWriteColumn = [
         headerName: '주문수량',
         field: 'quantity',
         editable: true,
+        // valueFormatter: numberFormat,
     },
     {
         headerName: '단위',
@@ -338,6 +339,7 @@ export const tableOrderWriteColumn = [
         headerName: 'NET/P',
         field: 'net',
         editable: true,
+        // valueFormatter: numberFormat,
     },
     {
         headerName: 'Amount',
@@ -346,9 +348,9 @@ export const tableOrderWriteColumn = [
         valueGetter: (params) => {
             const { quantity, net } = params.data;
             if (quantity && net) {
-                return Math.floor(quantity * net); // 숫자 값 반환
+                return quantity * net
             }
-            return 0;
+            // return 0;
         },
         valueFormatter: numberFormat,
     },
@@ -356,6 +358,7 @@ export const tableOrderWriteColumn = [
         headerName: '입고',
         field: 'receivedQuantity',
         editable: true,
+        valueFormatter: numberFormat,
     },
     {
         headerName: '미입고',

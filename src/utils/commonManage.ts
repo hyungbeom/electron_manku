@@ -25,16 +25,32 @@ commonFunc.sumCalc =  function calculateTotals(rowData) {
     const unitPrice = rowData.reduce((sum, row) =>  sum + (parseFloat(row.unitPrice) || 0), 0);
     const receivedQuantity = rowData.reduce((sum, row) =>  sum + (parseFloat(row.receivedQuantity) || 0), 0);
     const unreceivedQuantity = rowData.reduce((sum, row) =>  sum + (parseFloat(row.unreceivedQuantity) || 0), 0);
-    // const amount = rowData.reduce((sum, row) => sum + (row.amount || 0), 0);
-    const totalPrice = rowData.reduce((sum, row) => sum + (row.totalPrice || 0), 0);
+    let amount = 0
+    rowData.map((row) => {
+    const sum = (parseFloat(row.net) || 0) * (parseFloat(row.quantity) || 0);
+        amount+=sum;
+        console.log(sum, 'sum')
+        console.log(amount, 'amount~~')
+    });
+    const totalPrice = rowData.reduce((sum, row) => {
+        const calculatedPrice = (parseFloat(row.unitPrice) || 0) * (parseFloat(row.quantity) || 0);
+        return sum + calculatedPrice;
+    }, 0);
+    // let totalPrice = 0
+    // rowData.map((row) => {
+    //     const sum = (parseFloat(row.unitPrice) || 0) * (parseFloat(row.quantity) || 0);
+    //     totalPrice+=sum;
+    //     console.log(sum, 'sum')
+    //     console.log(totalPrice, 'totalPrice~~')
+    // });
     const totalQuantity = rowData.reduce((sum, row) => sum + (parseFloat(row.quantity) || 0), 0);
     return {
         model: 'Total',
-        // amount: totalQuantity*,
+        amount:amount,
         quantity: totalQuantity,
         receivedQuantity : receivedQuantity,
         unreceivedQuantity : unreceivedQuantity,
         unitPrice : unitPrice,
-        totalPrice: totalPrice.toLocaleString(),
+        totalPrice: totalPrice
     };
 }
