@@ -10,6 +10,7 @@ import message from "antd/lib/message";
 import Upload from "antd/lib/upload";
 import Dragger from "antd/lib/upload/Dragger";
 import {InboxOutlined} from "@ant-design/icons";
+import {numberFormat} from "@/utils/columnList";
 
 
 const TableGrid = ({
@@ -172,7 +173,7 @@ const TableGrid = ({
 
     function dataChange(e){
         const updatedData = e.data; // 수정된 행의 전체 데이터
-        // const updatedField = e.colDef.field; // 수정된 컬럼의 필드명
+        const updatedField = e.colDef.field; // 수정된 컬럼의 필드명
         const newValue = e.newValue; // 새로운 값
         const oldValue = e.oldValue; // 이전 값
 
@@ -180,39 +181,21 @@ const TableGrid = ({
         // 변경 사항이 있을 때만 처리
         if (newValue !== oldValue) {
 
-            // setData(v=>{
-                // console.log(v, 'setData')
-                let copyData = {...data}
-                copyData[e.node.rowIndex] = updatedData
 
-                console.log(copyData, 'copyData')
+            switch (updatedField) {
+                case 'receivedQuantity' :
+                case 'quantity' :
+                    const {unitPrice, quantity, receivedQuantity} = updatedData;
 
-            if (Object.values(copyData)[0]?.estimateRequestId) {
-                copyData = Object.values(copyData).map((v) => ({
-                    ...v,
-                    replyDate: moment(v.replyDate).format("YYYY-MM-DD"),
-                }));
-                setData(copyData);
+                    const amount = parseFloat(quantity) * parseFloat(unitPrice);
+                    const unreceivedQuantity = parseFloat(quantity) - parseFloat(receivedQuantity);
+
+                    e.api.setValueColumns('unreceivedQuantity', unreceivedQuantity);
+                    e.api.setValueColumns('amount', numberFormat(amount));
+
+                    break;
+
             }
-
-            if (Object.values(copyData)[0]?.estimateId) {
-                copyData = Object.values(copyData).map((v) => ({
-                    ...v,
-                    amount: v.quantity*v.unitPrice
-                }));
-                console.log(Object.values(copyData)[0]?.estimateI, 'Object.values(copyData)[0]?.estimateId)')
-                setData(copyData);
-            }
-
-            if (Object.values(copyData)[0]?.orderId) {
-                copyData = Object.values(copyData).map((v) => ({
-                    ...v,
-                    unreceivedQuantity: v.quantity-v.receivedQuantity
-                }));
-                setData(copyData);
-            }
-
-            console.log("업데이트된 데이터:", updatedData);
         }
     }
 
