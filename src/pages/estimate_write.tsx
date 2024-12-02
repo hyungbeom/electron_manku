@@ -57,7 +57,7 @@ export default function EstimateWrite({dataInfo}) {
                    onChange={onChange}
                    size={'small'}
                    onKeyDown={handleKeyPress}
-                   placeholder={placeholder}
+                   placeHolder={placeholder}
                    suffix={suffix}
             />
         </div>
@@ -372,7 +372,10 @@ export default function EstimateWrite({dataInfo}) {
                             {inputForm({title: '환율', id: 'exchangeRate', placeholder : '직접기입(자동환율연결x)'})}
                         </BoxCard>
 
-                        <BoxCard title={'Maker 정보'}>
+                        <Card size={'small'} style={{
+                            fontSize: 13,
+                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                        }}>
                             {inputForm({
                                 title: 'MAKER',
                                 id: 'maker',
@@ -384,9 +387,9 @@ export default function EstimateWrite({dataInfo}) {
                                 }/>
                             })}
                             {inputForm({title: 'ITEM', id: 'item'})}
-                            {inputForm({title: 'Delivery', id: 'delivery', placeholder : '숫자만 기입(단위 : 주(weeks))'})}
+                            {inputForm({title: 'Delivery', id: 'delivery'})}
                             {textAreaForm({title: '비고란', id: 'remarks'})}
-                        </BoxCard>
+                        </Card>
                     </div>
                 </Card>
 
