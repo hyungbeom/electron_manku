@@ -55,7 +55,7 @@ export default function PrintEstimate({ data, isModalOpen, userInfo, setIsModalO
             onOk={() => setIsModalOpen(false)}
         >
             {/* Header */}
-            <div ref={pdfRef} style={{width: "595px", height: "842px", padding: "40px 24px", position:'relative',}}>
+            <div ref={pdfRef} style={{width: "595px", minHeight: "842px", height:'auto', padding: "40px 24px", position:'relative',}}>
                 {/* Header */}
                 <div style={{display: "flex", width: "100%", alignItems: "center"}}>
                     <div style={{

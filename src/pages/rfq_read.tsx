@@ -149,6 +149,7 @@ export default function rfqRead({dataList}) {
     return <>
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateRows: 'auto 1fr', height: '100vh', columnGap: 5}}>
+
                 <Card title={<div style={{fontSize: 14, fontWeight: 550}}>견적의뢰 조회</div>}
                       headStyle={{marginTop: -10, height: 30}}
                       style={{border: '1px solid lightGray',}} bodyStyle={{padding: '10px 24px'}}>
@@ -183,16 +184,14 @@ export default function rfqRead({dataList}) {
                                     ]} style={{width: '100%',}}/>
                                 </div>
                         </Card>
-                        <BoxCard title={''}>
 
+                        <BoxCard title={''}>
                             {inputForm({title: '문서번호', id: 'searchDocumentNumber'})}
                             {inputForm({title: '등록직원명', id: 'searchCreatedBy'})}
                             {inputForm({title: '거래처명', id: 'searchCustomerName'})}
                         </BoxCard>
 
-
                         <BoxCard title={''}>
-
                             {inputForm({title: 'MAKER', id: 'searchMaker'})}
                             {inputForm({title: 'MODEL', id: 'searchModel'})}
                             {inputForm({title: 'ITEM', id: 'searchItem'})}
