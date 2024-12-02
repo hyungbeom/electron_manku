@@ -26,6 +26,7 @@ const TableGrid = ({
 
 
     const router = useRouter();
+
     const [data, setData] = useState(tableData);
     const [dragging, setDragging] = useState(false);
 

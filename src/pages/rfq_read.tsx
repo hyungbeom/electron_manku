@@ -34,7 +34,7 @@ export default function rfqRead({dataList}) {
 
     const gridRef = useRef(null);
 
-    const {estimateRequestList} = dataList;
+    const {estimateRequestList = []} = dataList;
     const [info, setInfo] = useState(subRfqReadInitial);
     const [tableData, setTableData] = useState(estimateRequestList);
 

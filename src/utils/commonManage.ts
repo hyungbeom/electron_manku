@@ -1,18 +1,18 @@
+export const commonManage: any = {}
 
 
- let commanManage = {
-    formatPrice: undefined
+commonManage.onChange = function (e, setInfo) {
+    let bowl = {}
+    bowl[e.target.id] = e.target.value;
+    setInfo(v => {
+        return {...v, ...bowl}
+    })
 }
 
-
-
-
-
-
-
-commanManage.formatPrice = function(){
-
+commonManage.openModal = function (e, setIsModalOpen) {
+    let bowl = {};
+    bowl[e] = true
+    setIsModalOpen(v => {
+        return {...v, ...bowl}
+    })
 }
-
-
-export default commanManage;

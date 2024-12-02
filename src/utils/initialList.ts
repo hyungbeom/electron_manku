@@ -14,7 +14,7 @@ export const makerRegistInitial = {
     "instructions": ""                          // 지시사항
 }
 export const estimateWriteInitial = {
-    "writtenDate": null,    // 작성일
+    "writtenDate": moment().format('YYYY-MM-DD'),    // 작성일
     "documentNumberFull": "", // INQUIRY No.
     "agencyCode": "",            // 대리점코드
     "customerCode": "",             // CUSTOMER 코드

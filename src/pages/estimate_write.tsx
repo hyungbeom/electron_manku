@@ -1,25 +1,20 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useRef, useState} from "react";
 import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
 import TextArea from "antd/lib/input/TextArea";
 import {
-    CopyOutlined, DownCircleFilled,
-    DownloadOutlined, EditOutlined,
+    CopyOutlined,
+    DownCircleFilled,
+    DownloadOutlined,
     FileSearchOutlined,
     RetweetOutlined,
-    SaveOutlined, UpCircleFilled, UploadOutlined
+    SaveOutlined,
+    UpCircleFilled
 } from "@ant-design/icons";
-import {tableEstimateWriteColumns, tableOrderWriteColumn} from "@/utils/columnList";
+import {tableEstimateWriteColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {
-    estimateWriteInitial,
-    ModalInitList, modalList,
-    orderWriteInitial,
-    rfqWriteInitial,
-    tableOrderWriteInitial
-} from "@/utils/initialList";
-import {subOrderWriteInfo} from "@/utils/modalDataList";
+import {estimateWriteInitial, ModalInitList, modalList, orderWriteInitial, rfqWriteInitial} from "@/utils/initialList";
 import moment from "moment";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
@@ -28,26 +23,13 @@ import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
-import * as XLSX from "xlsx";
 import Select from "antd/lib/select";
 import TableGrid from "@/component/tableGrid";
 import {useRouter} from "next/router";
-import SearchAgendaModal from "@/component/SearchAgencyModal";
-import SearchCustomerModal from "@/component/SearchCustomerModal";
-import SearchAgencyModal from "@/component/SearchAgencyModal";
-import SearchMakerModal from "@/component/SearchMakerModal";
 import SearchInfoModal from "@/component/SearchAgencyModal";
-import Upload from "antd/lib/upload";
+import {commonManage} from "@/utils/commonManage";
+import {BoxCard} from "@/utils/commonForm";
 
-const BoxCard = ({children, title}) => {
-    return <Card size={'small'} title={title}
-                 style={{
-                     fontSize: 13,
-                     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                 }}>
-        {children}
-    </Card>
-}
 
 export default function EstimateWrite({dataInfo}) {
     const gridRef = useRef(null);
@@ -61,15 +43,6 @@ export default function EstimateWrite({dataInfo}) {
 
     const inputForm = ({title, id, disabled = false, suffix = null}) => {
         let bowl = info;
-
-        // switch (id) {
-        //     case 'customerName' :
-        //     case 'managerName' :
-        //     case 'phoneNumber' :
-        //     case 'faxNumber' :
-        //     case 'customerManagerEmail' :
-        //         bowl = bowl['customerInfoList'][0]
-        // }
 
         return <div>
             <div>{title}</div>
@@ -128,38 +101,12 @@ export default function EstimateWrite({dataInfo}) {
 
 
     function openModal(e) {
-        let bowl = {};
-        bowl[e] = true
-        setIsModalOpen(v => {
-            return {...v, ...bowl}
-        })
+        commonManage.openModal(e, setIsModalOpen)
     }
 
 
     function onChange(e) {
-
-        let bowl = {}
-        bowl[e.target.id] = e.target.value;
-
-        switch (e.target.id) {
-            case 'customerName' :
-            case 'managerName' :
-            case 'phoneNumber' :
-            case 'faxNumber' :
-            case 'customerManagerEmail' :
-                setInfo(v => {
-                    v['customerInfoList'][0][e.target.id] = e.target.value
-                    return {...v}
-                })
-                break;
-
-            default :
-                setInfo(v => {
-                    return {...v, ...bowl}
-                })
-
-        }
-
+        commonManage.onChange(e, setInfo)
     }
 
     async function searchFunc(e) {
@@ -331,7 +278,7 @@ export default function EstimateWrite({dataInfo}) {
                             columnGap: 15
                         }}>
                             {datePickerForm({title: '작성일', id: 'writtenDate', disabled: true})}
-                            {inputForm({title: '만쿠담당자', id: 'adminName', disabled: true})}
+                            {inputForm({title: '작성자', id: 'adminName', disabled: true})}
                             {inputForm({
                                 title: '연결 INQUIRY No.',
                                 id: 'documentNumberFull',
