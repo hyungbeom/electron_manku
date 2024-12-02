@@ -62,7 +62,6 @@ export default function rqfWrite() {
 
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
-    const router = useRouter();
 
     const inputForm = ({title, id, disabled = false, suffix = null}) => {
         let bowl = info;
