@@ -2,7 +2,6 @@ import React, {useRef} from "react";
 import Modal from "antd/lib/modal/Modal";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
-import {useReactToPrint} from "react-to-print";
 
 export default function PrintEstimate({ data, isModalOpen, userInfo, setIsModalOpen }) {
     const {estimateDetailList} = data;
@@ -33,11 +32,9 @@ export default function PrintEstimate({ data, isModalOpen, userInfo, setIsModalO
         pdf.save(`${data.documentNumberFull}_견적서.pdf`);
     };
 
-    const handlePrint = useReactToPrint({
-    // @ts-ignore
-        content: () => pdfRef.current,
-    });
-
+    const handlePrint = () => {
+        window.print();
+    };
 
 
     return (
