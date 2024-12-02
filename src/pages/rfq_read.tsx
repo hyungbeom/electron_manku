@@ -142,7 +142,14 @@ export default function rfqRead({dataList}) {
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateRows: 'auto 1fr', height: '100vh', columnGap: 5}}>
 
-                <Card title={<div style={{fontSize: 14, fontWeight: 550}}>견적의뢰 조회</div>}
+                <Card title={<div style={{display: 'flex', justifyContent: 'space-between'}}>
+                    <div style={{fontSize: 14, fontWeight: 550}}>견적의뢰 작성</div>
+                        <div style={{textAlign: 'right'}}>
+                            <Button type={'primary'} size={'small'} onClick={searchInfo}><SearchOutlined/>조회</Button>
+                        </div>
+
+
+                </div>}
                       headStyle={{marginTop: -10, height: 30}}
                       style={{border: '1px solid lightGray',}} bodyStyle={{padding: '10px 24px'}}>
                     <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1.5fr', width: '100%', columnGap: 20}}>
@@ -189,9 +196,6 @@ export default function rfqRead({dataList}) {
                             {inputForm({title: 'ITEM', id: 'searchItem'})}
                         </BoxCard>
 
-                    </div>
-                    <div style={{marginTop: 8, textAlign:'right'}}>
-                        <Button type={'primary'} onClick={searchInfo}><SearchOutlined/>조회</Button>
                     </div>
                 </Card>
 

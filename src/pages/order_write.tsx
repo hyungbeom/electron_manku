@@ -5,7 +5,6 @@ import Card from "antd/lib/card/Card";
 import {
     CopyOutlined,
     DownCircleFilled,
-    DownloadOutlined,
     RetweetOutlined,
     SaveOutlined,
     UpCircleFilled
@@ -53,7 +52,7 @@ export default function OrderWriter({dataInfo}) {
         return <div>
             <div>{title}</div>
             <Input id={id} value={bowl[id]} disabled={disabled}
-                   placeHolder={placeholder}
+                   placeholder={placeholder}
                    onChange={onChange}
                    size={'small'}
                    suffix={suffix}
@@ -200,11 +199,26 @@ export default function OrderWriter({dataInfo}) {
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`,  height: '100vh', columnGap: 5}}>
 
-                <Card title={'발주서 작성'} style={{fontSize: 12, border: '1px solid lightGray'}} extra={<span style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>setMini(v => !v)}> {!mini ? <UpCircleFilled/> : <DownCircleFilled/>}</span>} >
+                <Card title={<div style={{display: 'flex', justifyContent: 'space-between'}}>
+                    <div style={{fontSize: 14, fontWeight: 550}}>발주서 작성</div>
+
+                    <div>
+
+                        <Button type={'primary'} size={'small'} style={{fontSize: 11, marginRight: 8}}
+                                onClick={saveFunc}><SaveOutlined/>저장</Button>
+
+                        {/*@ts-ignored*/}
+                        <Button type={'danger'} size={'small'} style={{fontSize: 11,}}
+                                onClick={() => setInfo(orderWriteInitial)}><RetweetOutlined/>초기화</Button>
+
+                    </div>
+                </div>} style={{fontSize: 12, border: '1px solid lightGray'}}
+                      extra={<span style={{fontSize: 20, cursor: 'pointer'}} onClick={() => setMini(v => !v)}> {!mini ?
+                          <UpCircleFilled/> : <DownCircleFilled/>}</span>}>
 
                     {mini ? <div>
 
-                        <BoxCard title={'기본 정보'}>
+                        <BoxCard title={'INQUIRY & PO no'}>
                             <div style={{
                                 display: 'grid',
                                 gridTemplateColumns: '1fr 0.6fr 1fr 1fr 1fr',
@@ -217,19 +231,13 @@ export default function OrderWriter({dataInfo}) {
                                 {/*{inputForm({title: '담당자', id: 'managerAdminName'})}*/}
 
                                 {inputForm({title: '연결 PO No.', id: 'documentNumberFull'})}
-                                {inputForm({title: '거래처 PO no 제목', id: 'yourPoNo'})}
+                                {inputForm({title: '거래처 PO no', id: 'yourPoNo'})}
                             </div>
                         </BoxCard>
 
-                    <div style={{display: 'grid', gridTemplateColumns: '1fr 1.2fr  1.22fr 1.5fr', columnGap: 10}}>
+                    <div style={{display: 'grid', gridTemplateColumns: '1fr 1.2fr  1.22fr 1.5fr', columnGap: 10, marginTop:10}}>
 
-                        <Card size={'small'} title={'CUSTOMER & SUPPLY'}
-                              style={{
-                                  fontSize: 13,
-                                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                              }}>
-
-
+                        <BoxCard title={'CUSTOMER & SUPPLY'}>
                             <div>
                                 <div style={{paddingBottom: 3}}>Messrs</div>
                                 <Input id={'agencyCode'} value={info['agencyCode']} onChange={onChange} size={'small'}/>
@@ -243,10 +251,10 @@ export default function OrderWriter({dataInfo}) {
                                 <Input id={'customerName'} value={info['customerName']} onChange={onChange}
                                        size={'small'}/>
                             </div>
-                        </Card>
+                        </BoxCard>
 
 
-                        <BoxCard title={'기본 정보'}>
+                        <BoxCard title={'MANAGER IN CHARGE'}>
                             {inputForm({title: 'Responsibility', id: 'managerId'})}
                             {inputForm({title: 'TEL', id: 'managerPhoneNumber'})}
                             {inputForm({title: 'Fax', id: 'managerFaxNumber'})}
@@ -316,17 +324,6 @@ export default function OrderWriter({dataInfo}) {
                                 <Input id={'footer'} value={info['footer']} onChange={onChange} size={'small'}/>
                             </div>
                         </Card>
-
-                        <div style={{paddingTop: 10,}}>
-
-                            <Button type={'primary'} size={'small'} style={{fontSize: 11,marginRight: 8}}
-                                    onClick={saveFunc}><SaveOutlined/>저장</Button>
-
-                            {/*@ts-ignored*/}
-                            <Button type={'danger'} size={'small'} style={{fontSize: 11,}}
-                                    onClick={() => setInfo(orderWriteInitial)}><RetweetOutlined/>초기화</Button>
-
-                        </div>
                     </div>
                     </div> : null}
                 </Card>

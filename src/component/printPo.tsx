@@ -34,27 +34,48 @@ export default function PrintPo({ data, isModalOpen, setIsModalOpen }) {
         pdf.save(`${orderDetail.documentNumberFull}_PO.pdf`);
     };
 
+    const handlePrint = () => {
+        window.print();
+    };
+
+
     return (
         <Modal
-            title={<div style={{width:'100%', display:"flex", justifyContent:'space-between', alignItems:'center'}}>
+            title={<div style={{width: '100%', display: "flex", justifyContent: 'space-between', alignItems: 'center'}}>
                 <div>발주서 출력</div>
-                <button onClick={handleDownloadPDF} style={{
-                    padding: "5px 10px",
-                    backgroundColor: "#1890ff",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "4px",
-                    cursor: "pointer",
-                    fontSize:11,
-                    marginRight:20
-                }}>
-                    PDF 다운로드
-                </button></div>}
-            onCancel={() => setIsModalOpen({event1:false, event2:false})}
+                <div>
+                    <button onClick={handleDownloadPDF} style={{
+                        padding: "5px 10px",
+                        backgroundColor: "#1890ff",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                        fontSize: 11,
+                        marginRight: 10
+                    }}>
+                        PDF
+                    </button>
+                    {/*@ts-ignore*/}
+                    <button onClick={handlePrint} style={{
+                        padding: "5px 10px",
+                        backgroundColor: "gray",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                        fontSize: 11,
+                        marginRight: 20
+                    }}>
+                        인쇄
+                    </button>
+                </div>
+            </div>}
+            onCancel={() => setIsModalOpen({event1: false, event2: false})}
             open={isModalOpen?.event2}
             width={'640px'}
             footer={null}
-            onOk={() => setIsModalOpen({event1:false, event2:false})}
+            onOk={() => setIsModalOpen({event1: false, event2: false})}
         >
             <div ref={pdfRef} style={{position: 'relative', width: "595px", height: "842px", padding: "40px 24px"}}>
                 {/* Header */}

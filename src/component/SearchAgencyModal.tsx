@@ -14,6 +14,7 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
     const [list, setList] = useState([])
     const [page, setPage] = useState({x: null, y: null})
     const [openCheck, setOpenCheck] = useState('')
+    const [modalKey, setModalKey] = useState('')
 
     const ref = useRef(null);
 
@@ -68,15 +69,16 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
         e.event.preventDefault();
 
 
+        console.log(e.data, 'customerId')
         setPage({x: pageX, y: pageY})
-        // console.log('Right-clicked cell:', event);
-        // event.data:
-
-        // 필요한 동작 추가
-        // alert(`You right-clicked on ${event.colDef.field} with value: ${event.value}`);
 
 
-        return <></>
+        if (e.data.makerId)
+            setModalKey(e.data.makerName)
+        else if (e.data.customerId)
+            setModalKey(e.data.customerNamer)
+        else
+            setModalKey(e.data.agencyName)
     };
 
 
@@ -111,15 +113,12 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
             border: '1px solid lightGray'
         }} ref={ref} id={'right'}>
             <div onClick={()=> {
-                alert('상세화명');
-                setPage({x : null, y : null})
-            }} id={'right'}>보기</div>
-            <div onClick={()=> {
-                alert('수정화명');
+                alert('수정');
+                window.open('/maker_update?makerName=Weidmüller')
                 setPage({x : null, y : null})
             }}id={'right'}>수정</div>
             <div onClick={()=> {
-                alert('삭제기능');
+                alert('삭제');
                 setPage({x : null, y : null})
             }}
                  id={'right'}>삭제</div>
