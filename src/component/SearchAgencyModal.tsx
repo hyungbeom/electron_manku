@@ -139,7 +139,7 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
                 setPage({x : null, y : null})
             }}id={'right'}>수정</div>
             <div style={{marginTop:10}} onClick={()=> {
-                // alert('삭제');
+                alert('삭제');
                 deleteList(windowOpenKey.deleteApi, windowOpenKey.key, windowOpenKey.value)
                 searchFunc(openCheck, code);
                 setPage({x : null, y : null})

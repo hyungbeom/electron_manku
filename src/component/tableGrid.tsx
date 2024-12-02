@@ -148,7 +148,7 @@ const TableGrid = ({
 
         if (type === 'hsCode') {
             console.log(e.data, 'hsCode')
-            setInfo(e.data)
+            // setInfo(e.data)
         }
     };
 
