@@ -16,18 +16,9 @@ import moment from "moment";
 import * as XLSX from "xlsx";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
+import {BoxCard} from "@/utils/commonForm";
 
 const {RangePicker} = DatePicker
-
-const BoxCard = ({children, title}) => {
-    return <Card size={'small'} title={title}
-                 style={{
-                     fontSize: 13,
-                     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                 }}>
-        {children}
-    </Card>
-}
 
 
 export default function rfqRead({dataList}) {

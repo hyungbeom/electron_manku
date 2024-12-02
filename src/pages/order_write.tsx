@@ -2,18 +2,17 @@ import React, {useEffect, useRef, useState} from "react";
 import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
-import {CopyOutlined, DownCircleFilled, DownloadOutlined,
+import {
+    CopyOutlined,
+    DownCircleFilled,
+    DownloadOutlined,
     RetweetOutlined,
     SaveOutlined,
-    UpCircleFilled} from "@ant-design/icons";
-import {
-    searchAgencyCodeColumn,
-    searchCustomerColumn,
-    tableOrderWriteColumn,
-} from "@/utils/columnList";
+    UpCircleFilled
+} from "@ant-design/icons";
+import {tableOrderWriteColumn,} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {orderWriteInitial, rfqWriteInitial, subRfqWriteInitial, tableOrderWriteInitial} from "@/utils/initialList";
-import {subOrderWriteInfo, subRfqWriteInfo} from "@/utils/modalDataList";
+import {orderWriteInitial, rfqWriteInitial} from "@/utils/initialList";
 import moment from "moment";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
@@ -22,46 +21,70 @@ import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import Select from "antd/lib/select";
-import * as XLSX from "xlsx";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
-import Modal from "antd/lib/modal/Modal";
-import Table from "antd/lib/table";
-import TableModal from "@/utils/TableModal";
 import {useRouter} from "next/router";
 import TableGrid from "@/component/tableGrid";
-import SearchAgendaModal from "@/component/SearchAgencyModal";
-import SearchCustomerModal from "@/component/SearchCustomerModal";
-import TextArea from "antd/lib/input/TextArea";
+import {BoxCard} from "@/utils/commonForm";
 
 export default function OrderWriter({dataInfo}) {
     const gridRef = useRef(null);
     const router = useRouter();
 
     const userInfo = useAppSelector((state) => state.user);
-    const [info, setInfo] = useState<any>(orderWriteInitial)
     const [mini, setMini] = useState(true);
     const [searchDocumentNumber, setSearchDocumentNumber] =useState('')
 
-
-    useEffect(() => {
-
-        let copyData: any = {...orderWriteInitial}
-
-        if (dataInfo) {
-            copyData = dataInfo;
-            copyData['writtenDate'] = moment(copyData['writtenDate']);
-            // @ts-ignored
-            copyData['delivery'] = moment(copyData['delivery']);
-        } else {
-            // @ts-ignored
-            copyData['writtenDate'] = moment();
-            // @ts-ignored
-            copyData['delivery'] = moment();
-        }
+    console.log(userInfo,'userInfo')
 
 
-        setInfo(copyData);
-    }, [dataInfo, router])
+    const [info, setInfo] = useState<any>({
+        ...orderWriteInitial,
+        adminId: userInfo['adminId'],
+        managerAdminName: userInfo['name'],
+        adminName: userInfo['name'],
+        estimateManager: userInfo['name'],
+        managerPhoneNumber: userInfo['contactNumber'],
+        managerFaxNumber: userInfo['faxNumber'],
+        managerEmail: userInfo['email'],
+    })
+
+    const inputForm = ({title, id, disabled = false, suffix = null, placeholder = ''}) => {
+        let bowl = info;
+
+
+        return <div>
+            <div>{title}</div>
+            <Input id={id} value={bowl[id]} disabled={disabled}
+                   placeHolder={placeholder}
+                   onChange={onChange}
+                   size={'small'}
+                   suffix={suffix}
+            />
+        </div>
+    }
+    const datePickerForm = ({title, id, disabled = false}) => {
+        return <div>
+            <div>{title}</div>
+            {/*@ts-ignore*/}
+            <DatePicker value={info[id] ? moment(info[id]) : ''} style={{width: '100%'}}
+                        disabledDate={disabledDate}
+                        onChange={(date) => onChange({
+                            target: {
+                                id: id,
+                                value: date
+                            }
+                        })
+                        }
+                        disabled={disabled}
+                        id={id} size={'small'}/>
+        </div>
+    }
+
+    const disabledDate = (current) => {
+        // current는 moment 객체입니다.
+        // 오늘 이전 날짜를 비활성화
+        return current && current < moment().startOf('day');
+    };
 
 
 
@@ -182,36 +205,23 @@ export default function OrderWriter({dataInfo}) {
                 <Card title={'발주서 작성'} style={{fontSize: 12, border: '1px solid lightGray'}} extra={<span style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>setMini(v => !v)}> {!mini ? <UpCircleFilled/> : <DownCircleFilled/>}</span>} >
 
                     {mini ? <div>
-                    <Card size={'small'} title={'INQUIRY & PO no'}
-                          style={{ fontSize: 13, marginBottom : 5, boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
-                    }}>
-                        <div style={{display: 'grid', gridTemplateColumns: '0.6fr 1fr 1fr', width: 640, columnGap: 20}}>
-                            <div>
-                                <div style={{paddingBottom: 3}}>작성일</div>
-                                <DatePicker value={info['writtenDate']}
-                                            onChange={(date, dateString) => onChange({
-                                                target: {
-                                                    id: 'writtenDate',
-                                                    value: date
-                                                }
-                                            })
-                                            } id={'writtenDate'} size={'small'}/>
-                            </div>
-                            <div>
-                                <div style={{paddingBottom: 3}}>연결 PO No.</div>
-                                <Input size={'small'} id={'documentNumberFull'} value={info['documentNumberFull']}
-                                       onChange={onChange}
-                                       onKeyDown={handleKeyPressDoc}
-                                       suffix={<DownloadOutlined style={{cursor: 'pointer'}} onClick={findDocument}/>}/>
-                            </div>
-                            <div>
-                                <div style={{paddingBottom: 3}}>거래처 PO no</div>
-                                <Input id={'yourPoNo'} value={info['yourPoNo']} onChange={onChange} size={'small'}/>
-                            </div>
-                        </div>
 
-                    </Card>
+                        <BoxCard title={'기본 정보'}>
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: '1fr 0.6fr 1fr 1fr 1fr',
+                                maxWidth: 900,
+                                minWidth: 600,
+                                columnGap: 15
+                            }}>
+                                {datePickerForm({title: '작성일', id: 'writtenDate', disabled: true})}
+                                {inputForm({title: '작성자', id: 'adminName', disabled: true})}
+                                {/*{inputForm({title: '담당자', id: 'managerAdminName'})}*/}
 
+                                {inputForm({title: '연결 PO No.', id: 'documentNumberFull'})}
+                                {inputForm({title: '거래처 PO no 제목', id: 'yourPoNo'})}
+                            </div>
+                        </BoxCard>
 
                     <div style={{display: 'grid', gridTemplateColumns: '1fr 1.2fr  1.22fr 1.5fr', columnGap: 10}}>
 
@@ -238,34 +248,13 @@ export default function OrderWriter({dataInfo}) {
                         </Card>
 
 
-                        <Card size={'small'} title={'MANAGER IN CHARGE'} style={{
-                            fontSize: 13,
-                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                        }}>
+                        <BoxCard title={'기본 정보'}>
+                            {inputForm({title: 'Responsibility', id: 'estimateManager'})}
+                            {inputForm({title: 'TEL', id: 'managerPhoneNumber'})}
+                            {inputForm({title: 'Fax', id: 'managerFaxNumber'})}
+                            {inputForm({title: 'E-Mail', id: 'managerEmail'})}
 
-
-                            <div>
-                            <div style={{paddingBottom: 3}}>Responsibility</div>
-                                <Input disabled={true} id={'managerID'} value={userInfo['name']} onChange={onChange} size={'small'} />
-                            </div>
-                            <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>TEL</div>
-                                <Input id={'managerPhoneNumber'} value={info['managerPhoneNumber']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-                            <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>Fax</div>
-                                <Input id={'managerFaxNumber'} value={info['managerFaxNumber']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-                            <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>E-Mail</div>
-                                <Input id={'managerEmail'} value={info['managerEmail']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-
-                        </Card>
-
+                        </BoxCard>
                         <Card size={'small'} title={'LOGISTICS'} style={{
                             fontSize: 13,
                             boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'

@@ -292,7 +292,10 @@ export const subRfqWriteColumn = [
             min: '2024-06-01',
             max: '2027-12-31',
         },
-        valueFormatter: dateFormat,
+        valueFormatter: (params) => {
+           return (!params.value || params.value === 'Invalid date') ? '' : dateFormat(params)
+        }
+
     },
     {
         headerName: '비고',

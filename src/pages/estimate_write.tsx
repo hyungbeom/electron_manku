@@ -36,12 +36,19 @@ export default function EstimateWrite({dataInfo}) {
     const router = useRouter();
 
     const userInfo = useAppSelector((state) => state.user);
-    const [info, setInfo] = useState<any>(estimateWriteInitial)
+    const [info, setInfo] = useState<any>({
+        ...estimateWriteInitial,
+        adminId: userInfo['adminId'],
+        adminName: userInfo['name'],
+        managerAdminName: userInfo['name'],
+    })
     const [mini, setMini] = useState(true);
 
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
 
-    const inputForm = ({title, id, disabled = false, suffix = null}) => {
+
+
+    const inputForm = ({title, id, disabled = false, suffix = null, placeholder = ''}) => {
         let bowl = info;
 
         return <div>
@@ -50,6 +57,7 @@ export default function EstimateWrite({dataInfo}) {
                    onChange={onChange}
                    size={'small'}
                    onKeyDown={handleKeyPress}
+                   placeHolder={placeholder}
                    suffix={suffix}
             />
         </div>
@@ -58,9 +66,12 @@ export default function EstimateWrite({dataInfo}) {
     const textAreaForm = ({title, id, rows = 5, disabled = false}) => {
         return <div>
             <div>{title}</div>
-            <TextArea rows={rows} id={id} value={info[id]} disabled={disabled}
+            <TextArea style={{resize : 'none'}} rows={rows} id={id} value={info[id]} disabled={disabled}
                       onChange={onChange}
-                      size={'small'}/>
+                      size={'small'}
+                      showCount
+                      maxLength={1000}
+            />
         </div>
     }
 
@@ -91,7 +102,7 @@ export default function EstimateWrite({dataInfo}) {
                 case 'maker' :
                     searchFunc(e)
                     break;
-                case 'documentNumberFull' :
+                case 'connectDocumentNumberFull' :
                     findDocument(e);
                     break;
             }
@@ -168,7 +179,7 @@ export default function EstimateWrite({dataInfo}) {
                     message.success('저장되었습니다.')
                     setInfo(rfqWriteInitial);
                     deleteList()
-                    window.location.href = '/estimate_read'
+                    // window.location.href = '/estimate_read'
                 } else {
                     message.error('저장에 실패하였습니다.')
                 }
@@ -240,7 +251,7 @@ export default function EstimateWrite({dataInfo}) {
             if(result?.data?.entity?.estimateRequestList.length) {
                 console.log(result?.data?.entity?.estimateRequestList,':::')
                 setInfo(v => {
-                        return {...v, ...result?.data?.entity?.estimateRequestList[0], writtenDate : moment(), estimateDetailList : result?.data?.entity?.estimateRequestList}
+                        return {...v, ...result?.data?.entity?.estimateRequestList[0], adminName: userInfo['name'], writtenDate : moment(), estimateDetailList : result?.data?.entity?.estimateRequestList}
                     }
                 )
             }
@@ -272,22 +283,20 @@ export default function EstimateWrite({dataInfo}) {
                     <BoxCard title={'기본 정보'}>
                         <div style={{
                             display: 'grid',
-                            gridTemplateColumns: '1fr 0.6fr 1fr 1fr 1fr',
+                            gridTemplateColumns: '1fr 0.6fr 0.6fr 1fr 1fr 1fr 1fr',
                             maxWidth: 900,
                             minWidth: 600,
                             columnGap: 15
                         }}>
                             {datePickerForm({title: '작성일', id: 'writtenDate', disabled: true})}
                             {inputForm({title: '작성자', id: 'adminName', disabled: true})}
+                            {inputForm({title: '담당자', id: 'managerAdminName'})}
+                            {inputForm({title: 'INQUIRY NO.', id: 'documentNumberFull', placeholder : '폴더생성 규칙 유의'})}
                             {inputForm({
+                                placeholder : '폴더생성 규칙 유의',
                                 title: '연결 INQUIRY No.',
-                                id: 'documentNumberFull',
-                                suffix: <DownloadOutlined style={{cursor: 'pointer'}} onClick={
-                                    (e) => {
-                                        e.stopPropagation();
-                                        openModal('documentNumberFull');
-                                    }
-                                }/>
+                                id: 'connectDocumentNumberFull',
+                                suffix: <DownloadOutlined style={{cursor: 'pointer'}} />
                             })}
                             {inputForm({title: 'RFQ NO.', id: 'rfqNo'})}
                             {inputForm({title: '프로젝트 제목', id: 'projectTitle'})}
@@ -360,41 +369,26 @@ export default function EstimateWrite({dataInfo}) {
                                     {value: '1', label: '화물 및 택배비 별도'},
                                 ]} style={{width: '100%',}}/>
                             </div>
-                            {inputForm({title: '환율', id: 'exchangeRate'})}
+                            {inputForm({title: '환율', id: 'exchangeRate', placeholder : '직접기입(자동환율연결x)'})}
                         </BoxCard>
 
                         <Card size={'small'} style={{
                             fontSize: 13,
                             boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                         }}>
-                            <div style={{paddingTop: 8}}>
-                                <div style={{paddingBottom: 3}}>MAKER</div>
-                                <Input id={'maker'} value={info['maker']} onChange={onChange}
-                                       size={'small'}
-                                       onKeyDown={handleKeyPress}
-                                       suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
-                                           (e) => {
-                                               e.stopPropagation();
-                                               openModal('maker');
-                                           }
-                                       }/>}/>
-
-                            </div>
-                            <div style={{paddingTop: 8}}>
-                                <div style={{paddingBottom: 3}}>ITEM</div>
-                                <Input id={'item'} value={info['item']} onChange={onChange} size={'small'}/>
-                            </div>
-                            <div style={{paddingTop: 8}}>
-                                <div style={{paddingBottom: 3}}>Delivery</div>
-                                <Input id={'remarks'} value={info['remarks']} onChange={onChange} size={'small'}/>
-                            </div>
-
-                            <div style={{paddingTop: 8}}>
-                                <div style={{paddingBottom: 3}}>비고란</div>
-                                <TextArea id={'instructions'} value={info['instructions']} onChange={onChange}
-                                          size={'small'}/>
-                            </div>
-
+                            {inputForm({
+                                title: 'MAKER',
+                                id: 'maker',
+                                suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
+                                    (e) => {
+                                        e.stopPropagation();
+                                        openModal('maker');
+                                    }
+                                }/>
+                            })}
+                            {inputForm({title: 'ITEM', id: 'item'})}
+                            {inputForm({title: 'Delivery', id: 'delivery'})}
+                            {textAreaForm({title: '비고란', id: 'remarks'})}
                         </Card>
                     </div>
                 </Card>

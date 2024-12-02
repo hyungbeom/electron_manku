@@ -24,17 +24,7 @@ import {setUserInfo} from "@/store/user/userSlice";
 import MyComponent from "@/component/MyComponent";
 import TableGrid from "@/component/tableGrid";
 import SearchInfoModal from "@/component/SearchAgencyModal";
-
-
-const BoxCard = ({children, title}) => {
-    return <Card size={'small'} title={title}
-                 style={{
-                     fontSize: 13,
-                     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                 }}>
-        {children}
-    </Card>
-}
+import {BoxCard} from "@/utils/commonForm";
 
 
 export default function rqfUpdate({dataInfo}) {
@@ -44,9 +34,8 @@ export default function rqfUpdate({dataInfo}) {
     const [info, setInfo] = useState<any>(dataInfo)
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false, event3: false});
-    const [agencyData, setAgencyData] = useState([]);
-    const [customerData, setCustomerData] = useState([]);
-    const [makerData, setMakerData] = useState([]);
+
+    console.log(dataInfo,'dataInfo:')
 
 
     useEffect(() => {
@@ -61,23 +50,12 @@ export default function rqfUpdate({dataInfo}) {
     }, [])
 
     const disabledDate = (current) => {
-        // current는 moment 객체입니다.
-        // 오늘 이전 날짜를 비활성화
         return current && current < moment().startOf('day');
     };
 
 
     const inputForm = ({title, id, disabled = false, suffix = null}) => {
         let bowl = info;
-
-        switch (id) {
-            case 'customerName' :
-            case 'managerName' :
-            case 'phoneNumber' :
-            case 'faxNumber' :
-            case 'customerManagerEmail' :
-                // bowl = bowl['customerInfoList'][0]
-        }
 
         return <div>
             <div>{title}</div>
@@ -141,7 +119,12 @@ export default function rqfUpdate({dataInfo}) {
         } else {
             const copyData = {...info}
             copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
-            copyData['replyDate'] = moment(info['replyDate']).format('YYYY-MM-DD');
+
+            const changeTime = gridRef.current.props.context.map(v=>{
+                return {...v, replyDate : moment(v['replyDate']).format('YYYY-MM-DD')}
+            })
+            copyData['estimateRequestDetailList'] = changeTime
+
             copyData['dueDate'] = moment(info['dueDate']).format('YYYY-MM-DD');
             // copyData['customerInfoList'].push(customerInfo)
 
@@ -151,7 +134,7 @@ export default function rqfUpdate({dataInfo}) {
                     message.success('저장되었습니다.')
                     setInfo(rfqWriteInitial);
                     deleteList()
-                    window.location.href = '/rfq_read'
+                    // window.location.href = '/rfq_read'
                 } else {
                     message.error('저장에 실패하였습니다.')
                 }
@@ -174,7 +157,7 @@ export default function rqfUpdate({dataInfo}) {
 
         let copyData = {...info}
         copyData['estimateRequestDetailList'] = uncheckedData;
-        console.log(copyData, 'copyData::')
+
         setInfo(copyData);
     }
 
@@ -264,6 +247,8 @@ export default function rqfUpdate({dataInfo}) {
         }
     }
 
+
+
     return <>
         <LayoutComponent>
             <div style={{
@@ -293,14 +278,15 @@ export default function rqfUpdate({dataInfo}) {
                         <BoxCard title={'기본 정보'}>
                             <div style={{
                                 display: 'grid',
-                                gridTemplateColumns: '1fr 0.6fr 1fr 1fr 1fr',
+                                gridTemplateColumns: '1fr 1fr 0.6fr 0.6fr 1fr 1fr',
                                 maxWidth: 900,
                                 minWidth: 600,
                                 columnGap: 15
                             }}>
                                 {datePickerForm({title: '작성일', id: 'writtenDate', disabled: true})}
-                                {inputForm({title: '만쿠담당자', id: 'createdBy', disabled: true})}
-                                {inputForm({title: 'INQUIRY NO.', id: 'documentNumberFull'})}
+                                {inputForm({title: 'INQUIRY NO.', id: 'documentNumberFull',disabled: true})}
+                                {inputForm({title: '작성자', id: 'createdBy', disabled: true})}
+                                {inputForm({title: '담당자', id: 'managerAdminName'})}
                                 {inputForm({title: 'RFQ NO.', id: 'rfqNo'})}
                                 {inputForm({title: '프로젝트 제목', id: 'projectTitle'})}
                             </div>
@@ -376,12 +362,12 @@ export default function rqfUpdate({dataInfo}) {
                     type={'write'}
                     funcButtons={<div>
                         {/*@ts-ignored*/}
-                        <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
+                        <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
                                 onClick={addRow}>
                             <SaveOutlined/>추가
                         </Button>
                         {/*@ts-ignored*/}
-                        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
+                        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
                                 onClick={deleteList}>
                             <CopyOutlined/>삭제
                         </Button>

@@ -51,14 +51,6 @@ export const tableEstimateWriteInitial = {
 // ======================================    견적의뢰 작성    ========================================
 
 
-export const customterInfoUnit = {
-    "customerCode": "",  // 거래처코드
-    "customerName": "",  // 거래처명(상호명)
-    "phoneNumber": "",   // 전화번호
-    "faxNumber": "",     // 팩스/이메일
-    "customerManagerEmail" : '',
-    "managerName": ""    // 담당자명
-}
 
 export const estimateRequestDetailUnit = {
     "model": "",             // MODEL
@@ -81,10 +73,15 @@ export const rfqWriteInitial = {
     "agencyCode": "",                // 대리점코드
     "agencyName": "",       // 대리점명
 
-    // 거래처 관리 > 거래처 조회(견적용) API 에서 '상호명' 을 넣고 조회한 목록에서 정보 가져옴.
-    "customerInfoList": [
-        customterInfoUnit
-    ],
+    "customerCode": "",  // 거래처코드
+    "customerName": "",  // 거래처명(상호명)
+    "phoneNumber": "",   // 전화번호
+    "faxNumber": "",     // 팩스/이메일
+    "customerManagerEmail" : '',
+    "managerName": "",    // 담당자명
+
+
+
     // END //
 
 
@@ -104,7 +101,7 @@ export const rfqWriteInitial = {
     "agencyType": "",                // 대리점 타입
 
     "adminId": null,                       // 만쿠 관리자 Id
-    "adminName": '',                       // 만쿠 관리자 Name [프론트용]
+    "managerAdminName": '',                       // 만쿠 관리자 Name [프론트용]
 
     "significant": "",            // 특이사항
 
@@ -266,7 +263,7 @@ export const tableEstimateReadInitial = {
 
 export const orderWriteInitial = {
     "documentNumberFull": "",    // Our PO No
-    "writtenDate": "",            // 작성일
+    "writtenDate": moment().format('YYYY-MM-DD'),    // 작성일
     "yourPoNo": "",                // Your PO No
     "agencyCode": "",  // Messrs
     "customerName": "",          // 거래처명
@@ -279,7 +276,7 @@ export const orderWriteInitial = {
     "deliveryTerms": "",              // Delivery Terms
     "maker": "",                    // MAKER
     "item": "",                       // ITEM
-    "delivery": "",               // Delivery
+    "delivery": moment().format('YYYY-MM-DD'),               // Delivery
     "remarks": "",                      // 비고란
     "orderDetailList": [],
 }

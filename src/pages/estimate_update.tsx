@@ -4,22 +4,17 @@ import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
 import TextArea from "antd/lib/input/TextArea";
 import {
-    CopyOutlined, DownCircleFilled,
-    DownloadOutlined, EditOutlined,
+    CopyOutlined,
+    DownCircleFilled,
+    DownloadOutlined,
+    EditOutlined,
     FileSearchOutlined,
-    RetweetOutlined,
-    SaveOutlined, UpCircleFilled
+    SaveOutlined,
+    UpCircleFilled
 } from "@ant-design/icons";
-import {tableEstimateWriteColumns, tableOrderWriteColumn} from "@/utils/columnList";
+import {tableEstimateWriteColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {
-    estimateWriteInitial,
-    ModalInitList, modalList,
-    orderWriteInitial,
-    rfqWriteInitial,
-    tableOrderWriteInitial
-} from "@/utils/initialList";
-import {subOrderWriteInfo} from "@/utils/modalDataList";
+import {estimateWriteInitial, ModalInitList, modalList} from "@/utils/initialList";
 import moment from "moment";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
@@ -28,24 +23,13 @@ import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
-import * as XLSX from "xlsx";
 import Select from "antd/lib/select";
 import TableGrid from "@/component/tableGrid";
 import {useRouter} from "next/router";
-import SearchAgendaModal from "@/component/SearchAgencyModal";
-import SearchCustomerModal from "@/component/SearchCustomerModal";
-import PrintEstimate from "@/component/printEstimate";
 import SearchInfoModal from "@/component/SearchAgencyModal";
+import PrintEstimate from "@/component/printEstimate";
+import {BoxCard} from "@/utils/commonForm";
 
-const BoxCard = ({children, title}) => {
-    return <Card size={'small'} title={title}
-                 style={{
-                     fontSize: 13,
-                     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                 }}>
-        {children}
-    </Card>
-}
 
 export default function estimate_update({dataInfo}) {
     const gridRef = useRef(null);
@@ -57,6 +41,8 @@ export default function estimate_update({dataInfo}) {
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
     const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
 
+
+    console.log(dataInfo,'dataInfo:')
 
     const inputForm = ({title, id, disabled = false, suffix = null}) => {
         let bowl = info;
@@ -84,7 +70,7 @@ export default function estimate_update({dataInfo}) {
     const textAreaForm = ({title, id, rows = 5, disabled = false}) => {
         return <div>
             <div>{title}</div>
-            <TextArea rows={rows} id={id} value={info[id]} disabled={disabled}
+            <TextArea style={{resize : 'none'}} rows={rows} id={id} value={info[id]} disabled={disabled}
                       onChange={onChange}
                       size={'small'}/>
         </div>

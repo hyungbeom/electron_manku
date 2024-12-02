@@ -21,7 +21,7 @@ const TableGrid = ({
                        listType = 'estimateRequestId',
                        listDetailType = 'estimateRequestDetailList',
                        type='read',
-                       gridRef
+                       gridRef,
                    }: any) => {
 
 

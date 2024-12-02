@@ -23,8 +23,8 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
                 // setCode('')
             } else {
                 if(firstTrueKey==='customerName'&&info.customerInfoList){
-                    searchFunc(firstTrueKey, info.customerInfoList[0][firstTrueKey]);
-                    setCode(info.customerInfoList[0][firstTrueKey])
+                    searchFunc(firstTrueKey, info[firstTrueKey]);
+                    setCode(info[firstTrueKey])
 
                 } else {
                     searchFunc(firstTrueKey, info[firstTrueKey]);
@@ -86,11 +86,8 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
                                          setInfo(v => {
                                              return {
                                                  ...v,
-                                                 customerInfoList: [{
-                                                     ...e.data,
-                                                     phoneNumber: e.data.directTel,
-                                                     customerManagerEmail: e.data.email
-                                                 }],
+                                                 phoneNumber: e.data.directTel,
+                                                 customerManagerEmail: e.data.email,
                                                  ...e.data
                                              }
                                          });

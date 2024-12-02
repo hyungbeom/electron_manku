@@ -38,34 +38,40 @@ export default function order_update({data}) {
     const {orderDetail, customerInfo} = data;
 
     const userInfo = useAppSelector((state) => state.user);
-    const [info, setInfo] = useState<any>(orderWriteInitial)
+    const [info, setInfo] = useState<any>(orderDetail)
     const [mini, setMini] = useState(true);
-    const [customerData, setCustomerData] = useState(printEstimateInitial)
+    // const [customerData, setCustomerData] = useState(printEstimateInitial)
     const [isModalOpen, setIsModalOpen] = useState({event1:false, event2:false});
 
-    useEffect(() => {
 
-        let copyData: any = {...orderWriteInitial}
+    console.log(orderDetail,'orderDetail:')
+    console.log(customerInfo,'customerInfo:')
 
-        if (orderDetail) {
-            copyData = orderDetail;
-            copyData['writtenDate'] = moment(copyData['writtenDate']);
-            // @ts-ignored
-            copyData['delivery'] = moment(copyData['delivery']);
-        } else {
-            // @ts-ignored
-            copyData['writtenDate'] = moment();
-            // @ts-ignored
-            copyData['delivery'] = moment();
-        }
 
-        setInfo(copyData);
 
-    }, [orderDetail, router])
+    const datePickerForm = ({title, id, disabled = false}) => {
+        return <div>
+            <div>{title}</div>
+            {/*@ts-ignore*/}
+            <DatePicker value={info[id] ? moment(info[id]) : ''} style={{width: '100%'}}
+                        disabledDate={disabledDate}
+                        onChange={(date) => onChange({
+                            target: {
+                                id: id,
+                                value: date
+                            }
+                        })
+                        }
+                        disabled={disabled}
+                        id={id} size={'small'}/>
+        </div>
+    }
 
-    useEffect(() => {
-    }, [customerData])
-
+    const disabledDate = (current) => {
+        // current는 moment 객체입니다.
+        // 오늘 이전 날짜를 비활성화
+        return current && current < moment().startOf('day');
+    };
 
 
     function onChange(e) {
@@ -217,8 +223,8 @@ export default function order_update({data}) {
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`, height: '100vh', columnGap: 5}}>
                 {/*@ts-ignore*/}
-                <PrintTransactionModal data={info} customerData={customerData} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
-                <PrintPo data={data} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
+                {/*<PrintTransactionModal data={info} customerData={customerData} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>*/}
+                {/*<PrintPo data={data} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>*/}
                 <Card title={<div style={{display:'flex', justifyContent:'space-between'}}>
                     <div style={{fontSize:14, fontWeight:550}}>발주서 수정</div> <div>
                     <Button type={'primary'} size={'small'} style={{marginRight: 8}}
@@ -246,17 +252,17 @@ export default function order_update({data}) {
                                 width: 640,
                                 columnGap: 20
                             }}>
-                                <div>
-                                    <div style={{paddingBottom: 3}}>작성일</div>
-                                    <DatePicker value={info['writtenDate']}
-                                            onChange={(date, dateString) => onChange({
-                                                target: {
-                                                    id: 'writtenDate',
-                                                    value: date
-                                                }
-                                            })
-                                            } id={'writtenDate'} size={'small'}/>
-                            </div>
+                            {/*    <div>*/}
+                            {/*        <div style={{paddingBottom: 3}}>작성일</div>*/}
+                            {/*        <DatePicker value={info['writtenDate']}*/}
+                            {/*                onChange={(date, dateString) => onChange({*/}
+                            {/*                    target: {*/}
+                            {/*                        id: 'writtenDate',*/}
+                            {/*                        value: date*/}
+                            {/*                    }*/}
+                            {/*                })*/}
+                            {/*                } id={'writtenDate'} size={'small'}/>*/}
+                            {/*</div>*/}
                             <div>
                                 <div style={{paddingBottom: 3}}>연결 PO No.</div>
                                 <Input size={'small'} id={'documentNumberFull'} value={info['documentNumberFull']}
@@ -356,17 +362,17 @@ export default function order_update({data}) {
                                 <div style={{paddingBottom: 3}}>ITEM</div>
                                 <Input id={'item'} value={info['item']} onChange={onChange} size={'small'}/>
                             </div>
-                            <div style={{paddingTop: 8}}>
-                                <div style={{paddingBottom: 3}}>Delivery</div>
-                                <DatePicker value={info['delivery']}
-                                            onChange={(date, dateString) => onChange({
-                                                target: {
-                                                    id: 'delivery',
-                                                    value: date
-                                                }
-                                            })
-                                            } id={'delivery'} size={'small'}/>
-                            </div>
+                            {/*<div style={{paddingTop: 8}}>*/}
+                            {/*    <div style={{paddingBottom: 3}}>Delivery</div>*/}
+                            {/*    <DatePicker value={info['delivery']}*/}
+                            {/*                onChange={(date, dateString) => onChange({*/}
+                            {/*                    target: {*/}
+                            {/*                        id: 'delivery',*/}
+                            {/*                        value: date*/}
+                            {/*                    }*/}
+                            {/*                })*/}
+                            {/*                } id={'delivery'} size={'small'}/>*/}
+                            {/*</div>*/}
 
                         </Card>
 
@@ -398,28 +404,28 @@ export default function order_update({data}) {
                 </Card>
 
 
-                <TableGrid
-                    gridRef={gridRef}
-                    columns={tableOrderWriteColumn}
-                    tableData={info['orderDetailList']}
-                    listType={'orderId'}
-                    listDetailType={'orderDetailList'}
-                    setInfo={setInfo}
-                    excel={true}
-                    type={'write'}
-                    funcButtons={<div>
-                        {/*@ts-ignored*/}
-                        <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
-                                onClick={addRow}>
-                            <SaveOutlined/>추가
-                        </Button>
-                        {/*@ts-ignored*/}
-                        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
-                                onClick={deleteList}>
-                            <CopyOutlined/>삭제
-                        </Button>
-                    </div>}
-                />
+                {/*<TableGrid*/}
+                {/*    gridRef={gridRef}*/}
+                {/*    columns={tableOrderWriteColumn}*/}
+                {/*    tableData={info['orderDetailList']}*/}
+                {/*    listType={'orderId'}*/}
+                {/*    listDetailType={'orderDetailList'}*/}
+                {/*    setInfo={setInfo}*/}
+                {/*    excel={true}*/}
+                {/*    type={'write'}*/}
+                {/*    funcButtons={<div>*/}
+                {/*        /!*@ts-ignored*!/*/}
+                {/*        <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}*/}
+                {/*                onClick={addRow}>*/}
+                {/*            <SaveOutlined/>추가*/}
+                {/*        </Button>*/}
+                {/*        /!*@ts-ignored*!/*/}
+                {/*        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}*/}
+                {/*                onClick={deleteList}>*/}
+                {/*            <CopyOutlined/>삭제*/}
+                {/*        </Button>*/}
+                {/*    </div>}*/}
+                {/*/>*/}
 
             </div>
         </LayoutComponent>

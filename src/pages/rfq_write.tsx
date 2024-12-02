@@ -28,56 +28,35 @@ import SearchInfoModal from "@/component/SearchAgencyModal";
 import {getData} from "@/manage/function/api";
 import Upload from "antd/lib/upload";
 import * as XLSX from "xlsx";
-import {useRouter} from "next/router";
-
-
-const BoxCard = ({children, title}) => {
-    return <Card size={'small'} title={title}
-                 style={{
-                     fontSize: 13,
-                     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                 }}>
-        {children}
-    </Card>
-}
+import {BoxCard} from "@/utils/commonForm";
 
 
 export default function rqfWrite() {
     const userInfo = useAppSelector((state) => state.user);
 
-
-    // console.log(userInfo,'userInfo:')
     const gridRef = useRef(null);
 
+
+    console.log(userInfo,'userInfo:')
 
     const [info, setInfo] = useState<any>({
         ...rfqWriteInitial,
         adminId: userInfo['adminId'],
-        adminName: userInfo['adminName'],
-        estimateRequestDetailList: Array(5).fill(subRfqTableInitial),
+        managerAdminName: userInfo['name'],
+        adminName: userInfo['name'],
     })
-
-    // console.log(info, 'info~~~~')
-
 
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
 
-    const inputForm = ({title, id, disabled = false, suffix = null}) => {
+    const inputForm = ({title, id, disabled = false, suffix = null, placeholder = ''}) => {
         let bowl = info;
 
-        switch (id) {
-            case 'customerName' :
-            case 'managerName' :
-            case 'phoneNumber' :
-            case 'faxNumber' :
-            case 'customerManagerEmail' :
-                bowl = bowl['customerInfoList'][0]
-        }
 
         return <div>
             <div>{title}</div>
             <Input id={id} value={bowl[id]} disabled={disabled}
+                   placeHolder={placeholder}
                    onChange={onChange}
                    size={'small'}
                    onKeyDown={handleKeyPress}
@@ -89,9 +68,12 @@ export default function rqfWrite() {
     const textAreaForm = ({title, id, rows = 5, disabled = false}) => {
         return <div>
             <div>{title}</div>
-            <TextArea rows={rows} id={id} value={info[id]} disabled={disabled}
+            <TextArea style={{resize : 'none'}} rows={rows} id={id} value={info[id]} disabled={disabled}
                       onChange={onChange}
-                      size={'small'}/>
+                      size={'small'}
+                      showCount
+                      maxLength={1000}
+            />
         </div>
     }
 
@@ -101,6 +83,7 @@ export default function rqfWrite() {
             <div>{title}</div>
             {/*@ts-ignore*/}
             <DatePicker value={info[id] ? moment(info[id]) : ''} style={{width: '100%'}}
+                        disabledDate={disabledDate}
                         onChange={(date) => onChange({
                             target: {
                                 id: id,
@@ -136,28 +119,11 @@ export default function rqfWrite() {
     }
 
     function onChange(e) {
-
         let bowl = {}
         bowl[e.target.id] = e.target.value;
-
-        switch (e.target.id) {
-            case 'customerName' :
-            case 'managerName' :
-            case 'phoneNumber' :
-            case 'faxNumber' :
-            case 'customerManagerEmail' :
-                setInfo(v => {
-                    v['customerInfoList'][0][e.target.id] = e.target.value
-                    return {...v}
-                })
-            break;
-
-            default :
-                setInfo(v => {
-                    return {...v, ...bowl}
-                })
-
-        }
+        setInfo(v => {
+            return {...v, ...bowl}
+        })
 
     }
 
@@ -173,8 +139,6 @@ export default function rqfWrite() {
 
         const data = resultList?.data?.entity[modalList[e.target.id]?.list];
 
-        console.log(data, 'resultList')
-        console.log(e.target.value, 'e.target.value')
 
         const size = data?.length;
 
@@ -245,7 +209,7 @@ export default function rqfWrite() {
             if (v.data.code === 1) {
                 message.success('저장되었습니다.')
                 // setInfo(rfqWriteInitial);
-                window.location.href = '/rfq_read'
+                // window.location.href = '/rfq_read'
                 // router.push(`/rfq_update?estimateRequestId=${e?.data?.estimateRequestId}`)
 
                 // console.log(e)
@@ -367,6 +331,8 @@ export default function rqfWrite() {
     };
 
 
+
+
     return <>
         <LayoutComponent>
             <div style={{
@@ -394,24 +360,31 @@ export default function rqfWrite() {
                       extra={<span style={{fontSize: 20, cursor: 'pointer'}}
                                    onClick={() => setMini(v => !v)}> {!mini ?
                           <DownCircleFilled/> : <UpCircleFilled/>}</span>}>
-                    <div>
 
+
+                    {mini ? <div>
                         <BoxCard title={'기본 정보'}>
                             <div style={{
                                 display: 'grid',
-                                gridTemplateColumns: '1fr 0.6fr 1fr 1fr 1fr',
+                                gridTemplateColumns: '1fr 0.6fr 0.6fr 1fr 1fr 1fr',
                                 maxWidth: 900,
                                 minWidth: 600,
                                 columnGap: 15
                             }}>
                                 {datePickerForm({title: '작성일', id: 'writtenDate', disabled: true})}
-                                {inputForm({title: '만쿠담당자', id: 'adminName', disabled: true})}
-                                {inputForm({title: 'INQUIRY NO.', id: 'documentNumberFull'})}
+                                {inputForm({title: '작성자', id: 'adminName', disabled: true})}
+                                {inputForm({title: '담당자', id: 'managerAdminName'})}
+                                {inputForm({
+                                    title: 'INQUIRY NO.',
+                                    id: 'documentNumberFull',
+                                    disabled: true,
+                                    placeholder: '[매입처코드-년도-일련번호]'
+                                })}
                                 {inputForm({title: 'RFQ NO.', id: 'rfqNo'})}
                                 {inputForm({title: '프로젝트 제목', id: 'projectTitle'})}
                             </div>
                         </BoxCard>
-                        <div style={{display: 'grid', gridTemplateColumns: "repeat(4, 1fr)", gap:10, marginTop:10}}>
+                        <div style={{display: 'grid', gridTemplateColumns: "repeat(4, 1fr)", gap: 10, marginTop: 10}}>
                             <BoxCard title={'매입처 정보'}>
 
                                 {inputForm({
@@ -465,7 +438,7 @@ export default function rqfWrite() {
                             </BoxCard>
                         </div>
                     </div>
-
+                     : <></>}
                 </Card>
 
 
