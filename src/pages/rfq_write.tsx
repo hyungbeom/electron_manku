@@ -56,7 +56,7 @@ export default function rqfWrite() {
         return <div>
             <div>{title}</div>
             <Input id={id} value={bowl[id]} disabled={disabled}
-                   placeholder={placeholder}
+                   placeHolder={placeholder}
                    onChange={onChange}
                    size={'small'}
                    onKeyDown={handleKeyPress}

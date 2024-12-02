@@ -35,9 +35,9 @@ const TableGrid = ({
     const [pinnedBottomRowData, setPinnedBottomRowData] = useState([]);
 
 
-    useEffect(()=>{
-        setData(tableData)
-    },[tableData])
+    // useEffect(()=>{
+    //     setData(tableData)
+    // },[tableData])
 
 
 
@@ -269,6 +269,15 @@ const TableGrid = ({
         setPinnedBottomRowData([commonFunc.sumCalc(data)]);
     }, [data]);
 
+
+    const handleCellRightClick = (event) => {
+        console.log('Right-clicked cell:', event);
+        // event.data:
+
+        // 필요한 동작 추가
+        alert(`You right-clicked on ${event.colDef.field} with value: ${event.value}`);
+    };
+
     return (
         <div className={`ag-theme-quartz ${dragging ? 'dragging' : ''}`}
              style={{height: '100%', width: '100%', display: 'flex', flexDirection: 'column', overflowX: 'auto',
@@ -320,8 +329,8 @@ const TableGrid = ({
                          gridOptions={{
                              loadThemeGoogleFonts: true,
                          }}
+                         // onCellContextMenu={handleCellRightClick}
             />
-            <div>adkfjaskl</div>
         </div>
     );
 };

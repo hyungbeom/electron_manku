@@ -2,17 +2,20 @@ import Modal from "antd/lib/modal/Modal";
 import Input from "antd/lib/input/Input";
 import Button from "antd/lib/button";
 import {AgGridReact} from "ag-grid-react";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import {tableTheme} from "@/utils/common";
 import {ModalInitList, modalList} from "@/utils/initialList";
 import moment from "moment";
+import useEventListener from "@/utils/common/function/UseEventListener";
 
 export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen}) {
     const [code, setCode] = useState();
     const [list, setList] = useState([])
+    const [page, setPage] = useState({x: null, y: null})
     const [openCheck, setOpenCheck] = useState('')
 
+    const ref = useRef(null);
 
     useEffect(() => {
         if (open) {
@@ -22,7 +25,7 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
                 setList([]);
                 // setCode('')
             } else {
-                if(firstTrueKey==='customerName'&&info.customerInfoList){
+                if (firstTrueKey === 'customerName' && info.customerInfoList) {
                     searchFunc(firstTrueKey, info[firstTrueKey]);
                     setCode(info[firstTrueKey])
 
@@ -59,7 +62,60 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
         }
     }
 
+    const handleCellRightClick = (e) => {
+
+        const {pageX, pageY} = e.event;
+        e.event.preventDefault();
+
+
+        setPage({x: pageX, y: pageY})
+        // console.log('Right-clicked cell:', event);
+        // event.data:
+
+        // 필요한 동작 추가
+        // alert(`You right-clicked on ${event.colDef.field} with value: ${event.value}`);
+
+
+        return <></>
+    };
+
+
+    useEventListener('contextmenu', (e: any) => {
+        e.preventDefault()
+    }, document)
+
+    useEventListener('click', (e: any) => {
+
+           setPage({x : null, y : null})
+    }, document)
+
+
+
     return <>
+
+        {page.x ? <div style={{
+            position: 'fixed',
+            top: page.y,
+            left: page.x,
+            zIndex: 10000,
+            fontSize: 11,
+            backgroundColor: 'white',
+            border: '1px solid lightGray'
+        }} ref={ref} id={'right'}>
+            <div onClick={()=> {
+                alert('상세화명');
+                setPage({x : null, y : null})
+            }} id={'right'}>보기</div>
+            <div onClick={()=> {
+                alert('수정화명');
+                setPage({x : null, y : null})
+            }}id={'right'}>수정</div>
+            <div onClick={()=> {
+                alert('삭제기능');
+                setPage({x : null, y : null})
+            }}
+                 id={'right'}>삭제</div>
+        </div> : <></>}
         <Modal
             // @ts-ignored
             id={openCheck}
@@ -75,7 +131,7 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
                            onKeyDown={handleKeyPress}
                            placeholder={modalList[openCheck]?.placeholder}
                            id={'agencyCode'} value={code}
-                           onChange={(e:any) => setCode(e.target.value)}></Input>
+                           onChange={(e: any) => setCode(e.target.value)}></Input>
                     <Button onClick={() => searchFunc(openCheck, code)}>조회</Button>
                 </div>
 
@@ -115,6 +171,8 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
                              rowData={list}
                              columnDefs={modalList[openCheck]?.column}
                              pagination={true}
+                             onCellContextMenu={handleCellRightClick}
+                             gridOptions={{suppressContextMenu: true}}
 
                 />
             </div>
