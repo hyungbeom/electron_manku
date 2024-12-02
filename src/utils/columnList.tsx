@@ -293,7 +293,7 @@ export const subRfqWriteColumn = [
             max: '2027-12-31',
         },
         valueFormatter: (params) => {
-           return (!params.value || params.value === 'Invalid date') ? '' : dateFormat(params)
+            return (!params.value || params.value === 'Invalid date') ? '' : dateFormat(params)
         }
 
     },
@@ -542,7 +542,11 @@ export const tableEstimateReadColumns = [
                 headerName: '환율',
                 field: 'exchangeRate',
                 minWidth: 100,
-                cellDataType: 'number'
+                cellDataType: 'number',
+                valueFormatter: (params) => {
+                    return isNaN(params) ? null : parseFloat(params)
+                }
+
             },
         ]
     },
@@ -646,7 +650,7 @@ export const tableEstimateWriteColumns = [
         editable: true,
         valueFormatter: (params) => {
             const result = numberFormat(params);
-           // @ts-ignored
+            // @ts-ignored
             return !isNaN(result) ? result : 0
         }
         // valueFormatter: numberFormat,
@@ -1318,7 +1322,11 @@ export const tableOrderReadColumns = [
                 key: 'totalPrice',
                 align: 'center',
                 minWidth: 60,
-                valueFormatter: numberFormat,
+                valueFormatter: (params) => {
+                    const {quantity, unitPrice} = params.data;
+
+                    return Math.floor(quantity * unitPrice).toLocaleString();
+                }
             },
         ]
     },

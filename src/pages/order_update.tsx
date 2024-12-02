@@ -2,19 +2,9 @@ import React, {useEffect, useRef, useState} from "react";
 import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
-import {
-    CopyOutlined, DownCircleFilled, DownloadOutlined, EditOutlined,
-    SaveOutlined, UpCircleFilled
-} from "@ant-design/icons";
-import {
-    tableOrderWriteColumn,
-} from "@/utils/columnList";
+import {DownCircleFilled, DownloadOutlined, EditOutlined, SaveOutlined, UpCircleFilled} from "@ant-design/icons";
 import DatePicker from "antd/lib/date-picker";
-import {
-    orderWriteInitial,
-    printEstimateInitial,
-    rfqWriteInitial,
-} from "@/utils/initialList";
+import {rfqWriteInitial,} from "@/utils/initialList";
 import moment from "moment";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
@@ -26,9 +16,7 @@ import Select from "antd/lib/select";
 import * as XLSX from "xlsx";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {useRouter} from "next/router";
-import TableGrid from "@/component/tableGrid";
-import PrintTransactionModal from "@/component/printTransaction";
-import PrintPo from "@/component/printPo";
+import {BoxCard} from "@/utils/commonForm";
 // import printTransaction from "@/utils/printTransaction";
 
 
@@ -43,11 +31,18 @@ export default function order_update({data}) {
     // const [customerData, setCustomerData] = useState(printEstimateInitial)
     const [isModalOpen, setIsModalOpen] = useState({event1:false, event2:false});
 
+    useEffect(() => {
+        let copyData: any = {...info}
+        // @ts-ignored
+        copyData['writtenDate'] = moment();
+        copyData['replyDate'] = moment();
+        copyData['dueDate'] = moment();
+
+        setInfo(copyData);
+
+    }, [])
 
     console.log(orderDetail,'orderDetail:')
-    console.log(customerInfo,'customerInfo:')
-
-
 
     const datePickerForm = ({title, id, disabled = false}) => {
         return <div>
@@ -64,6 +59,20 @@ export default function order_update({data}) {
                         }
                         disabled={disabled}
                         id={id} size={'small'}/>
+        </div>
+    }
+    const inputForm = ({title, id, disabled = false, suffix = null}) => {
+        let bowl = info;
+
+        return <div>
+            <div>{title}</div>
+            <Input id={id} value={bowl[id]} disabled={disabled}
+                   onChange={onChange}
+                   size={'small'}
+                   // onKeyDown={handleKeyPress}
+                   suffix={suffix}
+
+            />
         </div>
     }
 
@@ -252,17 +261,8 @@ export default function order_update({data}) {
                                 width: 640,
                                 columnGap: 20
                             }}>
-                            {/*    <div>*/}
-                            {/*        <div style={{paddingBottom: 3}}>작성일</div>*/}
-                            {/*        <DatePicker value={info['writtenDate']}*/}
-                            {/*                onChange={(date, dateString) => onChange({*/}
-                            {/*                    target: {*/}
-                            {/*                        id: 'writtenDate',*/}
-                            {/*                        value: date*/}
-                            {/*                    }*/}
-                            {/*                })*/}
-                            {/*                } id={'writtenDate'} size={'small'}/>*/}
-                            {/*</div>*/}
+
+                                    {datePickerForm({title: '작성일', id: 'writtenDate', disabled: true})}
                             <div>
                                 <div style={{paddingBottom: 3}}>연결 PO No.</div>
                                 <Input size={'small'} id={'documentNumberFull'} value={info['documentNumberFull']}
@@ -312,7 +312,7 @@ export default function order_update({data}) {
 
                             <div>
                                 <div style={{paddingBottom: 3}}>Responsibility</div>
-                                <Input disabled={true} id={'managerID'} value={userInfo['name']} onChange={onChange}
+                                <Input id={'managerID'} value={userInfo['name']} onChange={onChange}
                                        size={'small'}/>
                             </div>
                             <div>
@@ -362,41 +362,18 @@ export default function order_update({data}) {
                                 <div style={{paddingBottom: 3}}>ITEM</div>
                                 <Input id={'item'} value={info['item']} onChange={onChange} size={'small'}/>
                             </div>
-                            {/*<div style={{paddingTop: 8}}>*/}
-                            {/*    <div style={{paddingBottom: 3}}>Delivery</div>*/}
-                            {/*    <DatePicker value={info['delivery']}*/}
-                            {/*                onChange={(date, dateString) => onChange({*/}
-                            {/*                    target: {*/}
-                            {/*                        id: 'delivery',*/}
-                            {/*                        value: date*/}
-                            {/*                    }*/}
-                            {/*                })*/}
-                            {/*                } id={'delivery'} size={'small'}/>*/}
-                            {/*</div>*/}
+
+                            {datePickerForm({title: 'Delivery', id: 'delivery'})}
 
                         </Card>
 
-                        <Card size={'small'} title={'ETC'} style={{
-                            fontSize: 13,
-                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                        }}>
+                        <BoxCard title={'거래처 ETC'}>
 
+                            {inputForm({title: '견적서담당자', id: 'estimateManager'})}
+                            {inputForm({title: '비고란', id: 'remarks'})}
+                            {inputForm({title: '하단태그', id: 'footer'})}
 
-                            <div>
-                                <div style={{paddingBottom: 3}}>견적서담당자</div>
-                                <Input id={'estimateManager'} value={info['estimateManager']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-                            <div style={{paddingTop: 8}}>
-                                <div style={{paddingBottom: 3}}>비고란</div>
-                                <Input id={'remarks'} value={info['remarks']} onChange={onChange} size={'small'}/>
-                            </div>
-                            <div style={{paddingTop: 8}}>
-                                <div style={{paddingBottom: 3}}>하단태그</div>
-                                <Input id={'footer'} value={info['footer']} onChange={onChange} size={'small'}/>
-                            </div>
-
-                        </Card>
+                        </BoxCard>
 
                     </div>
                     </div>:null}

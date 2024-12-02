@@ -42,11 +42,12 @@ export default function OrderWriter({dataInfo}) {
         adminId: userInfo['adminId'],
         managerAdminName: userInfo['name'],
         adminName: userInfo['name'],
-        estimateManager: userInfo['name'],
+        managerId: userInfo['name'],
         managerPhoneNumber: userInfo['contactNumber'],
         managerFaxNumber: userInfo['faxNumber'],
         managerEmail: userInfo['email'],
     })
+
 
     const inputForm = ({title, id, disabled = false, suffix = null, placeholder = ''}) => {
         let bowl = info;
@@ -249,7 +250,7 @@ export default function OrderWriter({dataInfo}) {
 
 
                         <BoxCard title={'기본 정보'}>
-                            {inputForm({title: 'Responsibility', id: 'estimateManager'})}
+                            {inputForm({title: 'Responsibility', id: 'managerId'})}
                             {inputForm({title: 'TEL', id: 'managerPhoneNumber'})}
                             {inputForm({title: 'Fax', id: 'managerFaxNumber'})}
                             {inputForm({title: 'E-Mail', id: 'managerEmail'})}
