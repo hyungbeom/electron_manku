@@ -194,14 +194,14 @@ export default function rqfWrite() {
         }
 
         // table의 빈 행 삭제
-        let emptyRows = [];
-        info['estimateRequestDetailList'].forEach((row)=>{
-            if(!row.model){
-                emptyRows.push(row)
-            }
-        })
-        console.log(emptyRows, "emptyRows~~~")
-        deleteList(emptyRows)
+        // let emptyRows = [];
+        // info['estimateRequestDetailList'].forEach((row)=>{
+        //     if(!row.model){
+        //         emptyRows.push(row)
+        //     }
+        // })
+        // console.log(emptyRows, "emptyRows~~~")
+        // deleteList(emptyRows)
 
         const copyData = {...info}
 
