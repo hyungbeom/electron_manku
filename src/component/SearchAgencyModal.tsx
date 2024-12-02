@@ -134,13 +134,14 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
         }} ref={ref} id={'right'}>
             <div onClick={()=> {
                 // alert('수정');
-                window.open(windowOpenKey.router)
+                const features = 'width=800,height=500,top=300,left=500,resizable=yes,scrollbars=yes';
+                window.open(windowOpenKey.router, '_blank', features)
                 setPage({x : null, y : null})
             }}id={'right'}>수정</div>
             <div style={{marginTop:10}} onClick={()=> {
                 // alert('삭제');
                 deleteList(windowOpenKey.deleteApi, windowOpenKey.key, windowOpenKey.value)
-                setList(info)
+                searchFunc(openCheck, code);
                 setPage({x : null, y : null})
             }}
                  id={'right'}>삭제</div>
