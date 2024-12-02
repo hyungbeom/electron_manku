@@ -132,8 +132,8 @@ export default function rqfUpdate({dataInfo}) {
 
                 if (v.data.code === 1) {
                     message.success('저장되었습니다.')
-                    setInfo(rfqWriteInitial);
-                    deleteList()
+                    // setInfo(rfqWriteInitial);
+                    
                     // window.location.href = '/rfq_read'
                 } else {
                     message.error('저장에 실패하였습니다.')

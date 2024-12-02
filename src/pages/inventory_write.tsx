@@ -1,37 +1,14 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useState} from "react";
 import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
-import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
-import {
-    CopyOutlined,
-    DeleteOutlined, DownloadOutlined,
-    FileExcelOutlined,
-    RetweetOutlined,
-    SaveOutlined,
-    SearchOutlined
-} from "@ant-design/icons";
+import {RetweetOutlined, SaveOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
-import {rfqReadColumns, tableOrderInventory, tableOrderInventoryColumns,} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {
-    inventoryReadInitial,
-    orderWriteInitial, rfqWriteInitial,
-    subRfqReadInitial,
-    tableOrderInventoryInitial,
-} from "@/utils/initialList";
-import {tableOrderInventoryInfo,} from "@/utils/modalDataList";
-import {wrapper} from "@/store/store";
-import initialServerRouter from "@/manage/function/initialServerRouter";
-import {setUserInfo} from "@/store/user/userSlice";
+import {tableOrderInventoryInitial,} from "@/utils/initialList";
 import {getData} from "@/manage/function/api";
 import moment from "moment";
-import {transformData} from "@/utils/common/common";
-import * as XLSX from "xlsx";
-import TableModal from "@/utils/TableModal";
-import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
-import {useRouter} from "next/router";
 import TextArea from "antd/lib/input/TextArea";
 import Select from "antd/lib/select";
 
