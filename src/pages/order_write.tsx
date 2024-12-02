@@ -4,7 +4,7 @@ import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
 import {
     CopyOutlined,
-    DownCircleFilled,
+    DownCircleFilled, DownloadOutlined,
     RetweetOutlined,
     SaveOutlined,
     UpCircleFilled
@@ -229,8 +229,12 @@ export default function OrderWriter({dataInfo}) {
                                 {datePickerForm({title: '작성일', id: 'writtenDate', disabled: true})}
                                 {inputForm({title: '작성자', id: 'adminName', disabled: true})}
                                 {/*{inputForm({title: '담당자', id: 'managerAdminName'})}*/}
-
-                                {inputForm({title: '연결 PO No.', id: 'documentNumberFull'})}
+                                {inputForm({
+                                    placeholder : '폴더생성 규칙 유의',
+                                    title: '연결 PO No',
+                                    id: 'documentNumberFull',
+                                    suffix: <DownloadOutlined style={{cursor: 'pointer'}} />
+                                })}
                                 {inputForm({title: '거래처 PO no', id: 'yourPoNo'})}
                             </div>
                         </BoxCard>
