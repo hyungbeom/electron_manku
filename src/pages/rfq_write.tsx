@@ -153,9 +153,9 @@ export default function rqfWrite() {
         } else if (size === 1) {
             switch (e.target.id) {
                 case 'agencyCode' :
-                    const {agencyId, agencyCode, agencyName} = data[0];
+                    const {agencyId, agencyCode, agencyName, currencyUnit} = data[0];
                     setInfo(v => {
-                        return {...v, agencyId: agencyId, agencyCode: agencyCode, agencyName: agencyName}
+                        return {...v, agencyId: agencyId, agencyCode: agencyCode, agencyName: agencyName, currencyUnit:currencyUnit}
                     })
                     break;
                 case 'customerName' :
@@ -197,16 +197,6 @@ export default function rqfWrite() {
             return message.warn('매입처 코드가 누락되었습니다.')
         }
 
-        // table의 빈 행 삭제
-        // let emptyRows = [];
-        // info['estimateRequestDetailList'].forEach((row)=>{
-        //     if(!row.model){
-        //         emptyRows.push(row)
-        //     }
-        // })
-        // console.log(emptyRows, "emptyRows~~~")
-        // deleteList(emptyRows)
-
         const copyData = {...info}
 
 
@@ -221,10 +211,12 @@ export default function rqfWrite() {
         await getData.post('estimate/addEstimateRequest', copyData).then(v => {
             if (v.data.code === 1) {
                 message.success('저장되었습니다.')
-                router.push(`/rfq_update?estimateRequestId=${v?.data?.entity?.estimateRequestId}`)
-                // setInfo(rfqWriteInitial);
-                // router.push(`/rfq_update?estimateRequestId=${e?.data?.estimateRequestId}`)
-
+                // router.push(`/rfq_update?estimateRequestId=${v?.data?.entity?.estimateRequestId}`)
+                setInfo({
+                    ...rfqWriteInitial,
+                    estimateRequestDetailList: [],
+                })
+                router.push(`/rfq_read`)
                 // console.log(e)
 
             } else {
@@ -274,7 +266,7 @@ export default function rqfWrite() {
             "model": "",             // MODEL
             "quantity": 0,           // 수량
             "unit": "ea",            // 단위
-            "currency": "KRW",       // CURR
+            "currency": info['currencyUnit'],  // CURR
             "net": 0,                // NET/P
             "serialNumber": 0,       // 항목 순서 (1부터 시작)
             "deliveryDate": "",      // 납기

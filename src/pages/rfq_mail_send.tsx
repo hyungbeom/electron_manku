@@ -3,7 +3,14 @@ import Input from "antd/lib/input/Input";
 import Select from "antd/lib/select";
 import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
-import {MailOutlined, RetweetOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
+import {
+    CopyOutlined,
+    FileExcelOutlined,
+    MailOutlined,
+    RetweetOutlined,
+    SaveOutlined,
+    SearchOutlined
+} from "@ant-design/icons";
 import Button from "antd/lib/button";
 import {rfqReadColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
@@ -20,6 +27,7 @@ import Modal from "antd/lib/modal/Modal";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import emailSendFormat from "@/utils/emailSendFormat";
 import GoogleDrive from "@/component/Sample";
+import {BoxCard} from "@/utils/commonForm";
 
 const {RangePicker} = DatePicker
 
@@ -143,9 +151,9 @@ export default function rfqRead({dataList}) {
 
     return <>
         <LayoutComponent>
-            <div style={{display: 'grid', gridTemplateRows: '250px 1fr', height: '100vh', gridColumnGap: 5}}>
+            <div style={{display: 'grid', gridTemplateRows: 'auto 1fr', height: '100vh', gridColumnGap: 5}}>
                 <Card title={<div style={{display: 'flex', justifyContent: 'space-between'}}>
-                    <div style={{fontSize: 14, fontWeight: 550}}>견적의뢰 작성</div>
+                    <div style={{fontSize: 14, fontWeight: 550}}>견적의뢰 메일전송</div>
                     <div>
 
                         <div style={{paddingTop: 30}}>
@@ -154,12 +162,12 @@ export default function rfqRead({dataList}) {
                                     onClick={searchInfo}><SearchOutlined/>조회</Button>
                             {/*@ts-ignore*/}
                             <Button type={'danger'} size={'small'} style={{marginRight: 8, letterSpacing: -1}}
-                                    onClick={handleSendMail}><MailOutlined/>선택 견적서 발송</Button>
+                                    onClick={handleSendMail}><MailOutlined/>선택 견적의뢰 발송</Button>
                         </div>
                     </div>
                 </div>} style={{fontSize: 12, border: '1px solid lightGray'}}>
                     <Modal okText={'메일 전송'} cancelText={'취소'} onOk={sendMail}
-                           title={<div style={{lineHeight: 2.5, fontWeight: 550}}>메일전송</div>} open={isModalOpen}
+                           title={<div style={{lineHeight: 2.5, fontWeight: 550}}>견적의뢰 메일 발송</div>} open={isModalOpen}
                            onCancel={() => setIsModalOpen(false)}>
 
 
@@ -286,61 +294,60 @@ export default function rfqRead({dataList}) {
                     </Modal>
 
 
-                    <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gridColumnGap: 10}}>
-                        <div>
-                            <div style={{paddingBottom: 3}}>작성일자</div>
-                            <RangePicker style={{width: '100%'}}
-                                         value={[moment(info['searchDate'][0]), moment(info['searchDate'][1])]}
-                                         id={'searchDate'} size={'small'} onChange={(date, dateString) => {
-                                onChange({
-                                    target: {
-                                        id: 'searchDate',
-                                        value: date ? [moment(date[0]).format('YYYY-MM-DD'), moment(date[1]).format('YYYY-MM-DD')] : [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
-                                    }
-                                })
-                            }
-                            }/>
-                            {inputForm({title: '문서번호', id: 'searchDocumentNumber'})}
-                            {inputForm({title: '대리점코드', id: 'searchCustomerName'})}
+                    <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1.5fr', width: '100%', columnGap: 20}}>
 
-                        </div>
-
-
-                        <div>
+                        <Card size={'small'} style={{
+                            fontSize: 11,
+                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
+                        }}>
                             <div>
-                                <div style={{paddingBottom: 3}}>발송여부</div>
-                                <Select id={'searchType'}
-                                        onChange={(src) => onChange({target: {id: 'searchType', value: src}})}
-                                        size={'small'} value={info['searchType']} options={[
-                                    {value: '0', label: '전체'},
-                                    {value: '1', label: '발송'},
-                                    {value: '2', label: '미발송'}
-                                ]} style={{width: '100%'}}>
-                                </Select>
+                                <div style={{paddingBottom: 3,}}>작성일자</div>
+                                <RangePicker
+                                    value={[moment(info['searchDate'][0]), moment(info['searchDate'][1])]}
+                                    id={'searchDate'} size={'small'} onChange={(date, dateString) => {
+                                    onChange({
+                                        target: {
+                                            id: 'searchDate',
+                                            value: date ? [moment(date[0]).format('YYYY-MM-DD'), moment(date[1]).format('YYYY-MM-DD')] : [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
+                                        }
+                                    })
+                                }
+                                } style={{width: '100%',}}/>
                             </div>
                             <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>회신여부</div>
-                                <Select id={'searchType'}
-                                        onChange={(src) => onChange({target: {id: 'searchType', value: src}})}
-                                        size={'small'} value={info['searchType']} options={[
-                                    {value: '0', label: '전체'},
-                                    {value: '1', label: '회신'},
-                                    {value: '2', label: '미회신'}
-                                ]} style={{width: '100%'}}>
-                                </Select>
+                                <div style={{paddingBottom: 3}}>회신 여부</div>
+                                <Select id={'searchReplyStatus'} defaultValue={0}
+                                        onChange={(src) => onChange({target: {id: 'searchReplyStatus', value: src}})}
+                                        size={'small'} value={info['searchReplyStatus']} options={[
+                                    {value: 0, label: '전체'},
+                                    {value: 1, label: '회신'},
+                                    {value: 2, label: '미회신'}
+                                ]} style={{width: '100%',}}/>
                             </div>
+                        </Card>
 
-                        </div>
+                        <BoxCard title={''}>
+                            {inputForm({title: '문서번호', id: 'searchDocumentNumber'})}
+                            {inputForm({title: '등록직원명', id: 'searchCreatedBy'})}
+                            {inputForm({title: '거래처명', id: 'searchCustomerName'})}
+                        </BoxCard>
+
+                        <BoxCard title={''}>
+                            {inputForm({title: 'MAKER', id: 'searchMaker'})}
+                            {inputForm({title: 'MODEL', id: 'searchModel'})}
+                            {inputForm({title: 'ITEM', id: 'searchItem'})}
+                        </BoxCard>
+
                     </div>
-
                 </Card>
 
                 <TableGrid
+                    gridRef={gridRef}
                     columns={rfqReadColumns}
                     tableData={tableData}
                     type={'read'}
-                    gridRef={gridRef}
-                    excel={true}/>
+                    excel={true}
+                />
 
             </div>
         </LayoutComponent>

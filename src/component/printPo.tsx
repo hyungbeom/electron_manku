@@ -163,7 +163,7 @@ export default function PrintPo({ data, isModalOpen, setIsModalOpen }) {
                         <span style={{marginRight: 20}}>
                            - Messrs
                         </span>
-                        {orderDetail.messrs}
+                        {orderDetail.agencyCode}
                     </div>
                     <div>
                         <span style={{marginRight: 20}}>
@@ -255,20 +255,20 @@ export default function PrintPo({ data, isModalOpen, setIsModalOpen }) {
                             gridTemplateColumns: '0.7fr 3fr 0.5fr 1fr 1fr',
                             borderBottom: '1px solid #A3A3A3'
                         }}>
-                            <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
+                            <div style={{padding: '3px 0', borderRight: '1px solid #121212', display:'flex', alignItems:'center', justifyContent:'center'}}>
                                 {i+1}
                             </div>
                             <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
                                 {v.model}
                             </div>
-                            <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
+                            <div style={{padding: '3px 0', borderRight: '1px solid #121212', display:'flex', alignItems:'center', justifyContent:'center'}}>
                                 {v.quantity} {formattedNumber(v.unit)}
                             </div>
-                            <div style={{padding: '3px 10px', borderRight: '1px solid #121212', display:'flex', justifyContent: 'space-between'}}>
+                            <div style={{padding: '3px 10px', borderRight: '1px solid #121212', alignItems:'center', display:'flex', justifyContent: 'space-between'}}>
                                 <div>{v.currency}</div>
                                 <div>{formattedNumber(v.unitPrice)}</div>
                             </div>
-                            <div style={{padding: '3px 10px', display: 'flex', justifyContent: 'space-between'}}>
+                            <div style={{padding: '3px 10px', display: 'flex', alignItems:'center', justifyContent: 'space-between'}}>
                                 <div>{v.currency}</div>
                                 <div>{formattedNumber(v.amount)}</div>
                             </div>
