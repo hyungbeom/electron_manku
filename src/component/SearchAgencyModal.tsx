@@ -100,7 +100,7 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
                     message.error('오류가 발생하였습니다. 다시 시도해주세요.')
                 }
             }
-        }
+
     }
 
 
