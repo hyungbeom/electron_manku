@@ -47,7 +47,7 @@ export default function rfqRead({dataList}) {
 
     function handleKeyPress(e) {
         if (e.key === 'Enter') {
-
+console.log('!!!')
             searchInfo()
         }
     }
@@ -244,8 +244,8 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     const result = await getData.post('estimate/getEstimateRequestList', {
         "searchEstimateRequestId": "",      // 견적의뢰 Id
-        "searchSentStatus": "",                   // 검색조건 1: 회신, 2: 미회신
-        "searchReplyStatus": "",
+        "searchSentStatus": 0,                   // 검색조건 1: 회신, 2: 미회신
+        "searchReplyStatus": 0,
         "searchStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),              // 작성일자 시작일
         "searchEndDate": moment().format('YYYY-MM-DD'),                // 작성일자 종료일
         "searchDocumentNumber": "",         // 문서번호

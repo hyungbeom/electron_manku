@@ -195,6 +195,34 @@ export const subRfqReadInitial = {
     "limit": -1
 }
 
+export const subRfqReadMailInitial = {
+
+        "searchDate": [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],   // front 사용
+        "searchStartDate": "",              // 작성일자 시작일
+        "searchEndDate": "",                // 작성일자 종료일
+        "searchDocumentNumber": "",         // 문서번호
+        "searchCustomerName": "",           // 거래처명
+        "searchMaker": "",                  // MAKER
+        "searchModel": "",                  // MODEL
+        "searchItem": "",                   // ITEM
+        "searchCreatedBy": "",              // 등록직원명
+        "searchRfqNo": "",                  // 견적의뢰 RFQ No
+        "searchProjectTitle": "",           // 프로젝트 제목
+        "searchEndUser": "",                // End User
+        "searchStartDueDate": "",           // 마감일 검색 시작일
+        "searchEndDueDate": "",             // 마감일 검색 종료일
+        "searchAgencyManagerName": "",      // 대리점 담당자 이름
+
+        // 메일 전송 목록 검색 필드 추가 2024.11.28
+        "searchSentStatus": 0,              // 전송 여부 1: 전송, 2: 미전송
+        "searchReplyStatus": 0,             // 회신 여부 1: 회신, 2: 미회신
+        "searchAgencyCode": "k10",          // 대리점코드 검색
+
+        "page": 1,
+        "limit": -1
+
+}
+
 export const estimateReadInitial = {
     "searchDate": "",   // front 사용
     "searchType": 0,                   // 검색조건 1: 회신, 2: 미회신

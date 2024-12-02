@@ -7,7 +7,7 @@ import {MailOutlined, RetweetOutlined, SaveOutlined, SearchOutlined} from "@ant-
 import Button from "antd/lib/button";
 import {rfqReadColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {subRfqReadInitial} from "@/utils/initialList";
+import { subRfqReadMailInitial} from "@/utils/initialList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
@@ -28,7 +28,7 @@ export default function rfqRead({dataList}) {
     const gridRef = useRef(null);
     const {estimateRequestList} = dataList;
     const userInfo = useAppSelector((state) => state.user);
-    const [info, setInfo] = useState(subRfqReadInitial);
+    const [info, setInfo] = useState(subRfqReadMailInitial);
     const [tableData, setTableData] = useState(estimateRequestList);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [previewData, setPreviewData] = useState([]);
@@ -145,7 +145,7 @@ export default function rfqRead({dataList}) {
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateRows: '250px 1fr', height: '100vh', gridColumnGap: 5}}>
                 <Card title={<div style={{display: 'flex', justifyContent: 'space-between'}}>
-                    <div style={{fontSize: 14, fontWeight: 550}}>견적의뢰 작성</div>
+                    <div style={{fontSize: 14, fontWeight: 550}}>메일 전송</div>
                     <div>
 
                         <div style={{paddingTop: 30}}>
@@ -301,7 +301,7 @@ export default function rfqRead({dataList}) {
                             }
                             }/>
                             {inputForm({title: '문서번호', id: 'searchDocumentNumber'})}
-                            {inputForm({title: '대리점코드', id: 'searchCustomerName'})}
+                            {inputForm({title: '거래처명', id: 'searchCustomerName'})}
 
                         </div>
 
@@ -310,22 +310,22 @@ export default function rfqRead({dataList}) {
                             <div>
                                 <div style={{paddingBottom: 3}}>발송여부</div>
                                 <Select id={'searchType'}
-                                        onChange={(src) => onChange({target: {id: 'searchType', value: src}})}
-                                        size={'small'} value={info['searchType']} options={[
-                                    {value: '0', label: '전체'},
-                                    {value: '1', label: '발송'},
-                                    {value: '2', label: '미발송'}
+                                        onChange={(src) => onChange({target: {id: 'searchSentStatus', value: src}})}
+                                        size={'small'} value={info['searchSentStatus']} options={[
+                                    {value: 0, label: '전체'},
+                                    {value: 1, label: '발송'},
+                                    {value: 2, label: '미발송'}
                                 ]} style={{width: '100%'}}>
                                 </Select>
                             </div>
                             <div style={{marginTop: 8}}>
                                 <div style={{paddingBottom: 3}}>회신여부</div>
                                 <Select id={'searchType'}
-                                        onChange={(src) => onChange({target: {id: 'searchType', value: src}})}
-                                        size={'small'} value={info['searchType']} options={[
-                                    {value: '0', label: '전체'},
-                                    {value: '1', label: '회신'},
-                                    {value: '2', label: '미회신'}
+                                        onChange={(src) => onChange({target: {id: 'searchReplyStatus', value: src}})}
+                                        size={'small'} value={info['searchReplyStatus']} options={[
+                                    {value: 0, label: '전체'},
+                                    {value: 1, label: '회신'},
+                                    {value: 2, label: '미회신'}
                                 ]} style={{width: '100%'}}>
                                 </Select>
                             </div>
@@ -370,7 +370,8 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     const result = await getData.post('estimate/getEstimateRequestList', {
         "searchEstimateRequestId": "",      // 견적의뢰 Id
-        "searchType": "",                   // 검색조건 1: 회신, 2: 미회신
+        "searchSentStatus": 0,                   // 검색조건 1: 회신, 2: 미회신
+        "searchReplyStatus": 0,
         "searchStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),              // 작성일자 시작일
         "searchEndDate": moment().format('YYYY-MM-DD'),                // 작성일자 종료일
         "searchDocumentNumber": "",         // 문서번호
