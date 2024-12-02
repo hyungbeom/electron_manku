@@ -143,7 +143,7 @@ export default function rfqRead({dataList}) {
             <div style={{display: 'grid', gridTemplateRows: 'auto 1fr', height: '100vh', columnGap: 5}}>
 
                 <Card title={<div style={{display: 'flex', justifyContent: 'space-between'}}>
-                    <div style={{fontSize: 14, fontWeight: 550}}>견적의뢰 작성</div>
+                    <div style={{fontSize: 14, fontWeight: 550}}>견적의뢰 조회</div>
                         <div style={{textAlign: 'right'}}>
                             <Button type={'primary'} size={'small'} onClick={searchInfo}><SearchOutlined/>조회</Button>
                         </div>
