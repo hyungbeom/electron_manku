@@ -270,7 +270,18 @@ export default function rqfWrite() {
 
     function addRow() {
         let copyData = {...info};
-        copyData['estimateRequestDetailList'].push(subRfqTableInitial)
+        copyData['estimateRequestDetailList'].push( {
+            "model": "",             // MODEL
+            "quantity": 0,           // 수량
+            "unit": "ea",            // 단위
+            "currency": "KRW",       // CURR
+            "net": 0,                // NET/P
+            "serialNumber": 0,       // 항목 순서 (1부터 시작)
+            "deliveryDate": "",      // 납기
+            "content": "미회신",       // 내용
+            "replyDate": null,      // 회신일
+            "remarks": ""            // 비고
+        })
         setInfo(copyData)
     }
 
