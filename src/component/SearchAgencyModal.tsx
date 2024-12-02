@@ -22,16 +22,24 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
                 setList([]);
                 // setCode('')
             } else {
-                searchFunc(firstTrueKey, info[firstTrueKey]);
-                setCode(info[firstTrueKey])
+                if(firstTrueKey==='customerName'&&info.customerInfoList){
+                    searchFunc(firstTrueKey, info.customerInfoList[0][firstTrueKey]);
+                    setCode(info.customerInfoList[0][firstTrueKey])
+
+                } else {
+                    searchFunc(firstTrueKey, info[firstTrueKey]);
+                    setCode(info[firstTrueKey])
+                }
             }
         }
-    }, [open])
+    }, [open, info])
 
 
     useEffect(() => {
         setCode(info);
     }, [info])
+
+    // console.log(code, 'modal code~')
 
 
     async function searchFunc(v, text) {

@@ -22,9 +22,9 @@ export const estimateWriteInitial = {
     "managerName": "",      // 담당자
     "phoneNumber": "",  // 전화번호
     "faxNumber": "",                // 팩스번호
-    "validityPeriod": "",    // 유효기간
-    "paymentTerms": "",                // 결제조건
-    "shippingTerms": "",             // 운송조건
+    "validityPeriod": "0",    // 유효기간
+    "paymentTerms": "0",                // 결제조건
+    "shippingTerms": "0",             // 운송조건
     "exchangeRate": "",                  // 환율
     "estimateManager": "",            // 담당자
     "email": "",             // E-MAIL
@@ -77,7 +77,7 @@ export const estimateRequestDetailUnit = {
 export const rfqWriteInitial = {
     "writtenDate": moment().format('YYYY-MM-DD'),        // 작성일
     // "documentNumberFull": `-${moment().format('YY')}`, // INQUIRY No.
-    "documentNumberFull": "k10-24-0001", // INQUIRY No.
+    "documentNumberFull": "", // INQUIRY No.
     "agencyCode": "",                // 대리점코드
     "agencyName": "",       // 대리점명
 
@@ -143,7 +143,7 @@ export const subRfqWriteInitial = {
     "model": "",           // MODEL
     "quantity": 1,              // 수량
     "unit": "ea",               // 단위
-    "currency": "krw",          // CURR
+    "currency": "KRW",          // CURR
     "net": 0,            // NET/P
     "deliveryDate": "",   // 납기
     "content": "",         // 내용
@@ -151,6 +151,20 @@ export const subRfqWriteInitial = {
     "remarks": "",           // 비고
     "serialNumber": 0           // 견적의뢰 내역 순서 (1부터 시작)
 }
+
+export const subRfqTableInitial = {
+    "model": "",             // MODEL
+    "quantity": 0,           // 수량
+    "unit": "ea",            // 단위
+    "currency": "KRW",       // CURR
+    "net": 0,                // NET/P
+    "serialNumber": 0,       // 항목 순서 (1부터 시작)
+    "deliveryDate": "",      // 납기
+    "content": "미회신",       // 내용
+    "replyDate": null,      // 회신일
+    "remarks": ""            // 비고
+}
+
 
 export const tableOrderWriteInitial = {
     "model": "",           // MODEL

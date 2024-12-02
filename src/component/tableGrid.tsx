@@ -150,9 +150,7 @@ const TableGrid = ({
             console.log(e.data, 'hsCode')
             setInfo(e.data)
         }
-
     };
-
 
 
     // 체크된 행의 데이터 가져오기 함수 수정
@@ -162,9 +160,7 @@ const TableGrid = ({
         console.log(selectedData, 'selectedData')
 
         return selectedData;
-
     };
-
 
 
 // 버튼 클릭 시 체크된 데이터 출력
@@ -174,7 +170,51 @@ const TableGrid = ({
     };
 
 
+    function dataChange(e){
+        const updatedData = e.data; // 수정된 행의 전체 데이터
+        // const updatedField = e.colDef.field; // 수정된 컬럼의 필드명
+        const newValue = e.newValue; // 새로운 값
+        const oldValue = e.oldValue; // 이전 값
 
+
+        // 변경 사항이 있을 때만 처리
+        if (newValue !== oldValue) {
+
+            // setData(v=>{
+                // console.log(v, 'setData')
+                let copyData = {...data}
+                copyData[e.node.rowIndex] = updatedData
+
+                console.log(copyData, 'copyData')
+
+            if (Object.values(copyData)[0]?.estimateRequestId) {
+                copyData = Object.values(copyData).map((v) => ({
+                    ...v,
+                    replyDate: moment(v.replyDate).format("YYYY-MM-DD"),
+                }));
+                setData(copyData);
+            }
+
+            if (Object.values(copyData)[0]?.estimateId) {
+                copyData = Object.values(copyData).map((v) => ({
+                    ...v,
+                    amount: v.quantity*v.unitPrice
+                }));
+                console.log(Object.values(copyData)[0]?.estimateI, 'Object.values(copyData)[0]?.estimateId)')
+                setData(copyData);
+            }
+
+            if (Object.values(copyData)[0]?.orderId) {
+                copyData = Object.values(copyData).map((v) => ({
+                    ...v,
+                    unreceivedQuantity: v.quantity-v.receivedQuantity
+                }));
+                setData(copyData);
+            }
+
+            console.log("업데이트된 데이터:", updatedData);
+        }
+    }
 
     const handleFile = (file) => {
         const reader = new FileReader();
@@ -296,6 +336,7 @@ const TableGrid = ({
                          context={data}
                          pagination={true}
                          onRowSelected={handleRowSelected}
+                         onCellValueChanged={dataChange}
                          gridOptions={{
                              loadThemeGoogleFonts: true,
                          }}
