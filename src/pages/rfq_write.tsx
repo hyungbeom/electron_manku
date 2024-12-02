@@ -29,6 +29,7 @@ import {getData} from "@/manage/function/api";
 import Upload from "antd/lib/upload";
 import * as XLSX from "xlsx";
 import {BoxCard} from "@/utils/commonForm";
+import {router} from "next/client";
 
 
 export default function rqfWrite() {
@@ -56,7 +57,7 @@ export default function rqfWrite() {
         return <div>
             <div>{title}</div>
             <Input id={id} value={bowl[id]} disabled={disabled}
-                   placeHolder={placeholder}
+                   placeholder={placeholder}
                    onChange={onChange}
                    size={'small'}
                    onKeyDown={handleKeyPress}
@@ -215,8 +216,8 @@ export default function rqfWrite() {
         await getData.post('estimate/addEstimateRequest', copyData).then(v => {
             if (v.data.code === 1) {
                 message.success('저장되었습니다.')
+                router.push(`/rfq_update?estimateRequestId=${v?.data?.entity?.estimateRequestId}`)
                 // setInfo(rfqWriteInitial);
-                // window.location.href = '/rfq_read'
                 // router.push(`/rfq_update?estimateRequestId=${e?.data?.estimateRequestId}`)
 
                 // console.log(e)

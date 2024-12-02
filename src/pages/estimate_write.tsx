@@ -57,7 +57,7 @@ export default function EstimateWrite({dataInfo}) {
                    onChange={onChange}
                    size={'small'}
                    onKeyDown={handleKeyPress}
-                   placeHolder={placeholder}
+                   placeholder={placeholder}
                    suffix={suffix}
             />
         </div>
