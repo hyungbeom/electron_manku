@@ -56,7 +56,6 @@ export default function EstimateWrite({dataInfo}) {
     const userInfo = useAppSelector((state) => state.user);
     const [info, setInfo] = useState<any>(estimateWriteInitial)
     const [mini, setMini] = useState(true);
-
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
 
     const inputForm = ({title, id, disabled = false, suffix = null}) => {
@@ -140,25 +139,25 @@ export default function EstimateWrite({dataInfo}) {
 
         let bowl = {}
         bowl[e.target.id] = e.target.value;
-
-        switch (e.target.id) {
-            case 'customerName' :
-            case 'managerName' :
-            case 'phoneNumber' :
-            case 'faxNumber' :
-            case 'customerManagerEmail' :
-                setInfo(v => {
-                    v['customerInfoList'][0][e.target.id] = e.target.value
-                    return {...v}
-                })
-                break;
-
-            default :
+        //
+        // switch (e.target.id) {
+        //     case 'customerName' :
+        //     case 'managerName' :
+        //     case 'phoneNumber' :
+        //     case 'faxNumber' :
+        //     case 'customerManagerEmail' :
+        //         setInfo(v => {
+        //             v['customerInfoList'][0][e.target.id] = e.target.value
+        //             return {...v}
+        //         })
+        //         break;
+        //
+        //     default :
                 setInfo(v => {
                     return {...v, ...bowl}
                 })
-
-        }
+        //
+        // }
 
     }
 
@@ -189,13 +188,13 @@ export default function EstimateWrite({dataInfo}) {
                     setInfo(v => {
                         return {
                             ...v,
-                            customerInfoList: [{
+                            // customerInfoList: [{
                                 customerName: customerName,
                                 managerName: managerName,
                                 phoneNumber: directTel,
                                 faxNumber: faxNumber,
                                 customerManagerEmail: email
-                            }]
+                            // }]
                         }
                     })
                     break;
@@ -362,8 +361,8 @@ export default function EstimateWrite({dataInfo}) {
                                 }/>
                             })}
                             {inputForm({title: '매입처명', id: 'agencyName'})}
-                            {inputForm({title: '담당자', id: 'agencyName'})}
-                            {inputForm({title: '연락처', id: 'agencyName'})}
+                            {inputForm({title: '담당자', id: 'agencyManagerName'})}
+                            {inputForm({title: '연락처', id: 'agencyPhoneNumber'})}
                         </BoxCard>
 
                         <BoxCard title={'거래처 정보'}>
@@ -377,7 +376,7 @@ export default function EstimateWrite({dataInfo}) {
                                     }
                                 }/>
                             })}
-                            {inputForm({title: '담당자명', id: 'managerName'})}
+                            {inputForm({title: '담당자', id: 'managerName'})}
                             {inputForm({title: '전화번호', id: 'phoneNumber'})}
                             {inputForm({title: '팩스', id: 'faxNumber'})}
                             {inputForm({title: '이메일', id: 'customerManagerEmail'})}
@@ -414,42 +413,25 @@ export default function EstimateWrite({dataInfo}) {
                                     {value: '1', label: '화물 및 택배비 별도'},
                                 ]} style={{width: '100%',}}/>
                             </div>
+                            {inputForm({title: 'Delivery(weeks)', id: 'delivery'})}
                             {inputForm({title: '환율', id: 'exchangeRate'})}
                         </BoxCard>
+                        <BoxCard title={'Maker 정보'}>
+                            {inputForm({
+                                title: 'MAKER',
+                                id: 'maker',
+                                suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
+                                    (e) => {
+                                        e.stopPropagation();
+                                        openModal('maker');
+                                    }
+                                }/>
+                            })}
+                            {inputForm({title: 'ITEM', id: 'item'})}
+                            {textAreaForm({title: '지시사항', rows: 2, id: 'instructions'})}
+                            {textAreaForm({title: '비고란', rows: 3, id: 'remarks'})}
+                        </BoxCard>
 
-                        <Card size={'small'} style={{
-                            fontSize: 13,
-                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                        }}>
-                            <div style={{paddingTop: 8}}>
-                                <div style={{paddingBottom: 3}}>MAKER</div>
-                                <Input id={'maker'} value={info['maker']} onChange={onChange}
-                                       size={'small'}
-                                       onKeyDown={handleKeyPress}
-                                       suffix={<FileSearchOutlined style={{cursor: 'pointer'}} onClick={
-                                           (e) => {
-                                               e.stopPropagation();
-                                               openModal('maker');
-                                           }
-                                       }/>}/>
-
-                            </div>
-                            <div style={{paddingTop: 8}}>
-                                <div style={{paddingBottom: 3}}>ITEM</div>
-                                <Input id={'item'} value={info['item']} onChange={onChange} size={'small'}/>
-                            </div>
-                            <div style={{paddingTop: 8}}>
-                                <div style={{paddingBottom: 3}}>Delivery</div>
-                                <Input id={'remarks'} value={info['remarks']} onChange={onChange} size={'small'}/>
-                            </div>
-
-                            <div style={{paddingTop: 8}}>
-                                <div style={{paddingBottom: 3}}>비고란</div>
-                                <TextArea id={'instructions'} value={info['instructions']} onChange={onChange}
-                                          size={'small'}/>
-                            </div>
-
-                        </Card>
                     </div>
                 </Card>
 
