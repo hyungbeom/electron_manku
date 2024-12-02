@@ -337,6 +337,21 @@ export default function estimate_update({dataInfo}) {
                         }}>
                             {datePickerForm({title: '작성일', id: 'writtenDate', disabled: true})}
                             {inputForm({title: '만쿠담당자', id: 'adminName', disabled: true})}
+                            {/*{inputForm({*/}
+                            {/*    title: '연결 INQUIRY No.',*/}
+                            {/*    id: 'documentNumberFull',*/}
+                            {/*    suffix: <DownloadOutlined style={{cursor: 'pointer'}} onClick={*/}
+                            {/*        (e) => {*/}
+                            {/*            e.stopPropagation();*/}
+                            {/*            openModal('documentNumberFull');*/}
+                            {/*        }*/}
+                            {/*    }/>*/}
+                            {/*})}*/}
+
+
+
+
+                            {inputForm({title: 'INQUIRY NO.', id: 'documentNumberFull', placeholder : '폴더생성 규칙 유의'})}
                             {inputForm({
                                 title: '연결 INQUIRY No.',
                                 id: 'documentNumberFull',

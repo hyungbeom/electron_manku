@@ -101,7 +101,9 @@ const TableGrid = ({
         const selectedData = selectedNode.data; // 선택된 데이터
         const groupValue = selectedData.documentNumberFull; // 현재 행의 `documentNumberFull` 값
 
-
+        if (groupValue === '') {
+            return; // 묶음 처리하지 않고 단독으로 선택/해제 유지
+        }
         // 현재 선택된 행의 인덱스를 확인
         const rowIndex = selectedNode.rowIndex;
 
