@@ -35,9 +35,9 @@ const TableGrid = ({
     const [pinnedBottomRowData, setPinnedBottomRowData] = useState([]);
 
 
-    useEffect(()=>{
-        setData(tableData)
-    },[tableData])
+    // useEffect(()=>{
+    //     setData(tableData)
+    // },[tableData])
 
 
 
