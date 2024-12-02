@@ -300,7 +300,7 @@ export default function estimate_update({dataInfo}) {
     return <>
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`, height: '100vh', columnGap: 5}}>
-                <PrintEstimate data={info} isModalOpen={isPrintModalOpen} userInfo={userInfo} setIsModalOpen={setIsModalOpen}/>
+                <PrintEstimate data={info} isModalOpen={isPrintModalOpen} userInfo={userInfo} setIsModalOpen={setIsPrintModalOpen}/>
                 {/*@ts-ignore*/}
                 <SearchInfoModal type={'agencyList'} info={info} setInfo={setInfo}
                                  open={isModalOpen}

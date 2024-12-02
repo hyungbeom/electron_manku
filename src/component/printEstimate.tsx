@@ -2,6 +2,7 @@ import React, {useRef} from "react";
 import Modal from "antd/lib/modal/Modal";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
+import {useReactToPrint} from "react-to-print";
 
 export default function PrintEstimate({ data, isModalOpen, userInfo, setIsModalOpen }) {
     const {estimateDetailList} = data;
@@ -32,9 +33,16 @@ export default function PrintEstimate({ data, isModalOpen, userInfo, setIsModalO
         pdf.save(`${data.documentNumberFull}_견적서.pdf`);
     };
 
+    const handlePrint = useReactToPrint({
+    // @ts-ignore
+        content: () => pdfRef.current,
+    });
+
+
+
     return (
         <Modal
-            title={<div style={{width:'100%', display:"flex", justifyContent:'space-between', alignItems:'center'}}>
+            title={<div style={{width: '100%', display: "flex", justifyContent: 'space-between', alignItems: 'center'}}>
                 <div>견적서 출력</div>
                 <button onClick={handleDownloadPDF} style={{
                     padding: "5px 10px",
@@ -43,11 +51,25 @@ export default function PrintEstimate({ data, isModalOpen, userInfo, setIsModalO
                     border: "none",
                     borderRadius: "4px",
                     cursor: "pointer",
-                    fontSize:11,
-                    marginRight:20
+                    fontSize: 11,
+                    marginRight: 20
                 }}>
-                    PDF 다운로드
-                </button></div>}
+                    PDF
+                </button>
+                {/*@ts-ignore*/}
+                <button onClick={handlePrint} style={{
+                    padding: "5px 10px",
+                    backgroundColor: "#1890ff",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                    fontSize: 11,
+                    marginRight: 20
+                }}>
+                    인쇄
+                </button>
+            </div>}
             onCancel={() => setIsModalOpen(false)}
             open={isModalOpen}
             width={'640px'}
@@ -55,7 +77,13 @@ export default function PrintEstimate({ data, isModalOpen, userInfo, setIsModalO
             onOk={() => setIsModalOpen(false)}
         >
             {/* Header */}
-            <div ref={pdfRef} style={{width: "595px", minHeight: "842px", height:'auto', padding: "40px 24px", position:'relative',}}>
+            <div ref={pdfRef} style={{
+                width: "595px",
+                minHeight: "842px",
+                height: 'auto',
+                padding: "40px 24px",
+                position: 'relative',
+            }}>
                 {/* Header */}
                 <div style={{display: "flex", width: "100%", alignItems: "center"}}>
                     <div style={{
@@ -223,7 +251,7 @@ export default function PrintEstimate({ data, isModalOpen, userInfo, setIsModalO
                     <div style={{
                         padding: "6px 0 6px 10px",
                         borderBottom: "1px solid #A3A3A3"
-                    }}>{data.shippingTerms}</div>
+                    }}>{data.shippingTerms==='0'? '귀사도착도': '화물 및 택배비 별도'}</div>
                     <div style={{
                         backgroundColor: "#EBF6F7",
                         padding: "6px 0 6px 20px",
@@ -304,6 +332,9 @@ export default function PrintEstimate({ data, isModalOpen, userInfo, setIsModalO
                                 padding: "6px 0 6px 10px",
                                 boxSizing: "border-box",
                                 whiteSpace: "pre-line",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent:'center',
                             }}
                         >
                             MAKER
