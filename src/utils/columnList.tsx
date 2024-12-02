@@ -648,23 +648,24 @@ export const tableEstimateWriteColumns = [
         headerName: '단가',
         field: 'unitPrice',
         editable: true,
-        valueFormatter: (params) => {
-            const result = numberFormat(params);
-            // @ts-ignored
-            return !isNaN(result) ? result : 0
-        }
-        // valueFormatter: numberFormat,
+        // valueFormatter: (params) => {
+        //     const result = numberFormat(params);
+        //     // @ts-ignored
+        //     return !isNaN(result) ? result : 0
+        // }
+        valueFormatter: numberFormat,
     },
     {
         headerName: '금액',
         field: 'amount',
         width: 120,
         editable: true,
-        valueFormatter: (params) => {
-            const result = numberFormat(params);
-            // @ts-ignored
-            return !isNaN(result) ? result : 0
-        }
+        // valueFormatter: (params) => {
+        //     const result = numberFormat(params);
+        //     // @ts-ignored
+        //     return !isNaN(result) ? result : 0,
+        // }
+            valueFormatter: numberFormat,
     },
     {
         headerName: 'CURR',

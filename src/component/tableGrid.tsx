@@ -35,7 +35,8 @@ const TableGrid = ({
         setData(tableData)
     },[tableData])
 
-
+    useEffect(()=>{
+    },[data])
 
     const defaultColDef = useMemo(() => {
         return {
@@ -200,7 +201,8 @@ const TableGrid = ({
                     ...v,
                     amount: v.quantity*v.unitPrice
                 }));
-                console.log(Object.values(copyData)[0]?.estimateI, 'Object.values(copyData)[0]?.estimateId)')
+                console.log(Object.values(copyData)[0]?.estimateId, 'Object.values(copyData)[0]?.estimateId)')
+                console.log(Object.values(copyData)[0]?.amount, 'amount)')
                 setData(copyData);
             }
 

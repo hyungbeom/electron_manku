@@ -44,17 +44,8 @@ export default function estimate_update({dataInfo}) {
 
     console.log(dataInfo,'dataInfo:')
 
-    const inputForm = ({title, id, disabled = false, suffix = null}) => {
+    const inputForm = ({title, id, disabled = false, suffix = null, placeholder = ''}) => {
         let bowl = info;
-
-        // switch (id) {
-        //     case 'customerName' :
-        //     case 'managerName' :
-        //     case 'phoneNumber' :
-        //     case 'faxNumber' :
-        //     case 'customerManagerEmail' :
-        //         bowl = bowl['customerInfoList'][0]
-        // }
 
         return <div>
             <div>{title}</div>
@@ -62,10 +53,12 @@ export default function estimate_update({dataInfo}) {
                    onChange={onChange}
                    size={'small'}
                    onKeyDown={handleKeyPress}
+                   placeholder={placeholder}
                    suffix={suffix}
             />
         </div>
     }
+
 
     const textAreaForm = ({title, id, rows = 5, disabled = false}) => {
         return <div>
@@ -315,12 +308,12 @@ export default function estimate_update({dataInfo}) {
 
                 <Card title={<div style={{display:'flex', justifyContent:'space-between'}}>
                     <div style={{fontSize:14, fontWeight:550}}>견적서 수정</div><div>
-                    <Button type={'primary'} size={'small'} style={{marginRight: 8}}
+                    <Button type={'dashed'} size={'small'} style={{marginRight: 8}}
                             onClick={printEstimate}><SaveOutlined/>견적서 출력</Button>
                     <Button type={'primary'} size={'small'} style={{marginRight: 8}}
                             onClick={saveFunc}><SaveOutlined/>수정</Button>
                     {/*@ts-ignored*/}
-                    <Button size={'small'}  type={'ghost'} style={{marginRight: 8,}}
+                    <Button size={'small'} type={'danger'} style={{marginRight: 8,}}
                             onClick={() => router?.push('/estimate_write')}><EditOutlined/>신규작성</Button>
 
                 </div></div>} style={{fontSize: 12, border: '1px solid lightGray'}}
@@ -330,29 +323,27 @@ export default function estimate_update({dataInfo}) {
                     <BoxCard title={'기본 정보'}>
                         <div style={{
                             display: 'grid',
-                            gridTemplateColumns: '1fr 0.6fr 1fr 1fr 1fr',
+                            gridTemplateColumns: '1fr 0.6fr 0.6fr 1fr 1fr 1fr 1fr',
                             maxWidth: 900,
                             minWidth: 600,
                             columnGap: 15
                         }}>
                             {datePickerForm({title: '작성일', id: 'writtenDate', disabled: true})}
-                            {inputForm({title: '만쿠담당자', id: 'adminName', disabled: true})}
+                            {inputForm({title: '작성자', id: 'adminName', disabled: true})}
+                            {inputForm({title: '담당자', id: 'managerAdminName'})}
+                            {inputForm({title: 'INQUIRY NO.', id: 'documentNumberFull', placeholder : '폴더생성 규칙 유의'})}
                             {inputForm({
+                                placeholder : '폴더생성 규칙 유의',
                                 title: '연결 INQUIRY No.',
-                                id: 'documentNumberFull',
-                                suffix: <DownloadOutlined style={{cursor: 'pointer'}} onClick={
-                                    (e) => {
-                                        e.stopPropagation();
-                                        openModal('documentNumberFull');
-                                    }
-                                }/>
+                                id: 'connectDocumentNumberFull',
+                                suffix: <DownloadOutlined style={{cursor: 'pointer'}} />
                             })}
                             {inputForm({title: 'RFQ NO.', id: 'rfqNo'})}
                             {inputForm({title: '프로젝트 제목', id: 'projectTitle'})}
                         </div>
                     </BoxCard>
 
-                    <div style={{display: 'grid', gridTemplateColumns: "repeat(4, 1fr)", gap:10, marginTop:10}}>
+                    <div style={{display: 'grid', gridTemplateColumns: "repeat(4, 1fr)"}}>
 
                         <BoxCard title={'매입처 정보'}>
                             {inputForm({
@@ -366,8 +357,8 @@ export default function estimate_update({dataInfo}) {
                                 }/>
                             })}
                             {inputForm({title: '매입처명', id: 'agencyName'})}
-                            {inputForm({title: '담당자', id: 'agencyManagerName'})}
-                            {inputForm({title: '연락처', id: 'agencyPhoneNumber'})}
+                            {inputForm({title: '담당자', id: 'agencyName'})}
+                            {inputForm({title: '연락처', id: 'agencyName'})}
                         </BoxCard>
 
                         <BoxCard title={'거래처 정보'}>
@@ -381,7 +372,7 @@ export default function estimate_update({dataInfo}) {
                                     }
                                 }/>
                             })}
-                            {inputForm({title: '담당자', id: 'managerName'})}
+                            {inputForm({title: '담당자명', id: 'managerName'})}
                             {inputForm({title: '전화번호', id: 'phoneNumber'})}
                             {inputForm({title: '팩스', id: 'faxNumber'})}
                             {inputForm({title: '이메일', id: 'customerManagerEmail'})}
@@ -389,7 +380,7 @@ export default function estimate_update({dataInfo}) {
 
                         <BoxCard title={'운송 정보'}>
                             <div>
-                                <div>유효기간</div>
+                                <div style={{paddingTop: 8}}>유효기간</div>
                                 <Select id={'validityPeriod'} defaultValue={'0'}
                                         onChange={(src) => onChange({target: {id: 'validityPeriod', value: src}})}
                                         size={'small'} value={info['validityPeriod']} options={[
@@ -399,7 +390,7 @@ export default function estimate_update({dataInfo}) {
                                 </Select>
                             </div>
                             <div>
-                                <div>결제조건</div>
+                                <div style={{paddingTop: 8}}>결제조건</div>
                                 <Select id={'validityPeriod'} defaultValue={'0'}
                                         onChange={(src) => onChange({target: {id: 'paymentTerms', value: src}})}
                                         size={'small'} value={info['paymentTerms']} options={[
@@ -410,7 +401,7 @@ export default function estimate_update({dataInfo}) {
                                 </Select>
                             </div>
                             <div style={{marginTop: 8}}>
-                                <div>운송조건</div>
+                                <div style={{paddingBottom: 3}}>운송조건</div>
                                 <Select id={'shippingTerms'} defaultValue={'0'}
                                         onChange={(src) => onChange({target: {id: 'shippingTerms', value: src}})}
                                         size={'small'} value={info['shippingTerms']} options={[
@@ -418,9 +409,9 @@ export default function estimate_update({dataInfo}) {
                                     {value: '1', label: '화물 및 택배비 별도'},
                                 ]} style={{width: '100%',}}/>
                             </div>
-                            {inputForm({title: 'Delivery(weeks)', id: 'delivery'})}
-                            {inputForm({title: '환율', id: 'exchangeRate'})}
+                            {inputForm({title: '환율', id: 'exchangeRate', placeholder : '직접기입(자동환율연결x)'})}
                         </BoxCard>
+
                         <BoxCard title={'Maker 정보'}>
                             {inputForm({
                                 title: 'MAKER',
@@ -433,8 +424,8 @@ export default function estimate_update({dataInfo}) {
                                 }/>
                             })}
                             {inputForm({title: 'ITEM', id: 'item'})}
-                            {textAreaForm({title: '지시사항', rows: 2, id: 'instructions'})}
-                            {textAreaForm({title: '비고란', rows: 3, id: 'remarks'})}
+                            {inputForm({title: 'Delivery', id: 'delivery', placeholder : '숫자만 기입(단위 : 주(weeks))'})}
+                            {textAreaForm({title: '비고란', id: 'remarks'})}
                         </BoxCard>
 
                     </div>

@@ -56,8 +56,9 @@ export default function OrderWriter({dataInfo}) {
         return <div>
             <div>{title}</div>
             <Input id={id} value={bowl[id]} disabled={disabled}
-                   placeHolder={placeholder}
+                   placeholder={placeholder}
                    onChange={onChange}
+                   onKeyDown={handleKeyPress}
                    size={'small'}
                    suffix={suffix}
             />
@@ -158,14 +159,13 @@ export default function OrderWriter({dataInfo}) {
         setInfo(copyData)
     }
 
-
     async function findDocument() {
 
         const result = await getData.post('estimate/getEstimateList', {
             "searchType": "",           // 검색조건 1: 주문, 2: 미주문
             "searchStartDate": "",      // 작성일 검색 시작일
             "searchEndDate": "",        // 작성일 검색 종료일
-            "searchDocumentNumber": searchDocumentNumber, // 문서번호
+            "searchDocumentNumber":info['documentNumberFull'], // 문서번호
             "searchCustomerName": "",   // 거래처명
             "searchModel": "",          // MODEL
             "searchMaker": "",          // MAKER
@@ -191,7 +191,7 @@ export default function OrderWriter({dataInfo}) {
 
 
 
-    function handleKeyPressDoc(e) {
+    function handleKeyPress(e) {
         if (e.key === 'Enter') {
             findDocument();
         }
@@ -219,7 +219,8 @@ export default function OrderWriter({dataInfo}) {
                                 {inputForm({title: '작성자', id: 'adminName', disabled: true})}
                                 {/*{inputForm({title: '담당자', id: 'managerAdminName'})}*/}
 
-                                {inputForm({title: '연결 PO No.', id: 'documentNumberFull'})}
+                                {inputForm({title: '연결 PO No.', id: 'documentNumberFull', suffix: <DownloadOutlined style={{cursor: 'pointer'}} />
+                                })}
                                 {inputForm({title: '거래처 PO no 제목', id: 'yourPoNo'})}
                             </div>
                         </BoxCard>
