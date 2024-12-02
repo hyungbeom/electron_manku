@@ -154,22 +154,6 @@ const TableGrid = ({
     };
 
 
-    // 체크된 행의 데이터 가져오기 함수 수정
-    const getCheckedRowsData = () => {
-        const selectedNodes = gridRef.current.api.getSelectedNodes(); // gridOptions 대신 gridRef 사용
-        const selectedData = selectedNodes.map(node => node.data);
-        console.log(selectedData, 'selectedData')
-
-        return selectedData;
-    };
-
-
-// 버튼 클릭 시 체크된 데이터 출력
-    const handleButtonClick = () => {
-        const checkedData = getCheckedRowsData();
-        console.log("체크된 행의 데이터:", checkedData);
-    };
-
 
     function dataChange(e) {
         const updatedData = [...data]; // 기존 데이터 복사
@@ -262,10 +246,6 @@ const TableGrid = ({
     };
 
 
-    useEffect(() => {
-        setPinnedBottomRowData([commonFunc.sumCalc(data)]);
-    }, [data]);
-
 
     const handleCellRightClick = (event) => {
         console.log('Right-clicked cell:', event);
@@ -273,6 +253,14 @@ const TableGrid = ({
 
         // 필요한 동작 추가
         alert(`You right-clicked on ${event.colDef.field} with value: ${event.value}`);
+    };
+
+
+    const handleSelectionChanged = () => {
+        const selectedRows = gridRef.current.api.getSelectedRows(); // 체크된 행 가져오기
+
+        const totals = commonFunc.sumCalc(selectedRows); // 합계 계산
+        setPinnedBottomRowData([totals]); // 푸터 업데이트
     };
 
     return (
@@ -307,7 +295,7 @@ const TableGrid = ({
             </div>
             {modalComponent}
 
-            <AgGridReact key={data.length}  theme={tableTheme} ref={gridRef} containerStyle={{width: '100%', height: '78%'}}
+            <AgGridReact key={data?.length}  theme={tableTheme} ref={gridRef} containerStyle={{width: '100%', height: '78%'}}
                         //@ts-ignore
                          onRowDoubleClicked={handleDoubleClicked}
                         //@ts-ignore
@@ -323,6 +311,7 @@ const TableGrid = ({
                          onRowSelected={handleRowSelected}
                          onCellValueChanged={dataChange}
                          pinnedBottomRowData={pinnedBottomRowData}
+                         onSelectionChanged={handleSelectionChanged} // 선택된 행 변경 이벤트
                          gridOptions={{
                              loadThemeGoogleFonts: true,
                          }}

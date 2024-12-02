@@ -407,9 +407,9 @@ export const orderCustomerReadInitial = {
     "searchDate": "",
     "searchStartDate": "",      // 조회일자 시작일
     "searchEndDate": "",        // 조회일자 종료일
-    "searchCustomerName": "",   // 거래처명
+    "searchAgencyCode": "",
     "page": 1,
-    "limit": 20
+    "limit": -1
 }
 
 export const orderAgencyReadInitial = {

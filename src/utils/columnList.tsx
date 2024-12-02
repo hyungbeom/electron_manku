@@ -262,6 +262,7 @@ export const subRfqWriteColumn = [
         cellEditor: 'agNumberCellEditor',
         editable: true,
         valueFormatter: numberFormat,
+        cellStyle: { textAlign: 'right' }
     },
     {
         headerName: '납기', //없음
@@ -343,7 +344,7 @@ export const tableOrderWriteColumn = [
     },
     {
         headerName: 'Amount',
-        field: 'amount',
+        field: 'totalAmount',
         editable: true,
         valueFormatter: (params) => {
             if (params.node.rowPinned) {
@@ -678,23 +679,16 @@ export const tableEstimateWriteColumns = [
         headerName: '단가',
         field: 'unitPrice',
         editable: true,
-        valueFormatter: (params) => {
-            const result = numberFormat(params);
-            // @ts-ignored
-            return !isNaN(result) ? result : 0
-        }
-        // valueFormatter: numberFormat,
+        valueFormatter: numberFormat,
+        cellStyle: { textAlign: 'right' }
     },
     {
         headerName: '금액',
         field: 'amount',
         width: 120,
         editable: true,
-        valueFormatter: (params) => {
-            const result = numberFormat(params);
-            // @ts-ignored
-            return !isNaN(result) ? result : 0
-        }
+        valueFormatter: numberFormat,
+        cellStyle: { textAlign: 'right' }
     },
     {
         headerName: 'CURR',
@@ -710,6 +704,7 @@ export const tableEstimateWriteColumns = [
         field: 'net',
         editable: true,
         valueFormatter: numberFormat,
+        cellStyle: { textAlign: 'right' }
     }
 ];
 
@@ -1299,6 +1294,7 @@ export const tableOrderReadColumns = [
                 align: 'center',
                 minWidth: 40,
                 valueFormatter: numberFormat,
+                cellStyle: { textAlign: 'right' }
             },
         ]
     },
@@ -1345,6 +1341,7 @@ export const tableOrderReadColumns = [
                 align: 'center',
                 minWidth: 50,
                 valueFormatter: numberFormat,
+                cellStyle: { textAlign: 'right' }
             },
             {
                 headerName: '금액',
@@ -1355,7 +1352,8 @@ export const tableOrderReadColumns = [
                 valueFormatter: (params) => {
                     const {quantity, unitPrice} = params.data;
                     return Math.floor(quantity * unitPrice).toLocaleString();
-                }
+                },
+                cellStyle: { textAlign: 'right' }
             },
         ]
     },
@@ -1807,11 +1805,34 @@ export const tableOrderCustomerColumns = [
     },
 ];
 
+
+agencyCode
+    :
+    "WIN"
+agencyName
+    :
+    "신규(업체명쓰세요)"
+key
+    :
+    1
+pendingForeignAmount
+    :
+    0
+receivedForeignAmount
+    :
+    1270508
+totalAmountInKrw
+    :
+    15500000
+totalForeignAmount
+    :
+    1270508
+
 export const subAgencyReadColumns = [
     {
         headerName: 'No',
-        field: 'agencyId',
-        key: 'agencyId',
+        field: 'key',
+        key: 'key',
     },
     {
         headerName: '코드',
@@ -1825,23 +1846,31 @@ export const subAgencyReadColumns = [
     },
     {
         headerName: '미입고외화',
-        field: 'unpaidAmount',
-        key: 'unpaidAmount',
+        field: 'pendingForeignAmount',
+        key: 'pendingForeignAmount',
+        valueFormatter: numberFormat,
+        cellStyle: { textAlign: 'right' }
     },
     {
         headerName: '입고외화',
-        field: 'paidAmount',
-        key: 'paidAmount',
+        field: 'receivedForeignAmount',
+        key: 'receivedForeignAmount',
+        valueFormatter: numberFormat,
+        cellStyle: { textAlign: 'right' }
     },
     {
         headerName: '외화합계',
-        field: 'totalAmount',
-        key: 'totalAmount',
+        field: 'totalForeignAmount',
+        key: 'totalForeignAmount',
+        valueFormatter: numberFormat,
+        cellStyle: { textAlign: 'right' }
     },
     {
         headerName: '원화합계',
-        field: 'krwTotalAmount',
-        key: 'krwTotalAmount',
+        field: 'totalAmountInKrw',
+        key: 'totalAmountInKrw',
+        valueFormatter: numberFormat,
+        cellStyle: { textAlign: 'right' }
     },
 ];
 
