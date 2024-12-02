@@ -25,13 +25,13 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
                 if(firstTrueKey==='customerName'){
                     searchFunc(firstTrueKey, info.customerInfoList[0][firstTrueKey]);
                     setCode(info.customerInfoList[0][firstTrueKey])
-                    console.log(info, "madal info~")
-                    console.log(firstTrueKey, "madal firstTrueKey~")
+                    // console.log(info, "madal info~")
+                    // console.log(firstTrueKey, "madal firstTrueKey~")
                 } else {
                     searchFunc(firstTrueKey, info[firstTrueKey]);
                     setCode(info[firstTrueKey])
-                    console.log(info, "madal info~")
-                    console.log(firstTrueKey, "madal firstTrueKey~")
+                    // console.log(info, "madal info~")
+                    // console.log(firstTrueKey, "madal firstTrueKey~")
                 }
             }
         }
