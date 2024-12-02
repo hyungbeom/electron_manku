@@ -133,7 +133,6 @@ export default function OrderWriter({dataInfo}) {
 
         let copyData = {...info}
         copyData['orderDetailList'] = uncheckedData;
-        console.log(copyData, 'copyData::')
         setInfo(copyData);
 
     }
