@@ -312,6 +312,11 @@ export const tableOrderWriteColumn = [
         editable: true,
     },
     {
+        headerName: '주문수량',
+        field: 'quantity',
+        editable: true,
+    },
+    {
         headerName: '단위',
         field: 'unit',
         editable: true,
@@ -335,9 +340,13 @@ export const tableOrderWriteColumn = [
         editable: true,
     },
     {
-        headerName: '주문수량',
-        field: 'quantity',
+        headerName: 'Amount',
+        field: 'amount',
         editable: true,
+        valueFormatter: (params) => {
+            const {quantity, net} = params.data;
+            return  Math.floor(quantity * net).toLocaleString();
+        }
     },
     {
         headerName: '입고',
@@ -359,8 +368,8 @@ export const tableOrderWriteColumn = [
         valueFormatter: numberFormat,
     },
     {
-        headerName: 'Amount',
-        field: 'amount',
+        headerName: '금액',
+        field: 'totalPrice',
         editable: true,
         valueFormatter: (params) => {
             const {quantity, unitPrice} = params.data;
