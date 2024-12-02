@@ -827,7 +827,7 @@ export const rfqReadColumns = [
                 maxWidth: 120,
             },
             {
-                headerName: '거래처명',
+                headerName: '연락처',
                 field: 'phoneNumber',
                 minWidth: 100,
                 maxWidth: 120,

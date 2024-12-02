@@ -6,12 +6,12 @@ import {
     CopyOutlined,
     DownCircleFilled,
     DownloadOutlined,
-    EditOutlined,
+    EditOutlined, RetweetOutlined,
     SaveOutlined,
     UpCircleFilled
 } from "@ant-design/icons";
 import DatePicker from "antd/lib/date-picker";
-import {rfqWriteInitial,} from "@/utils/initialList";
+import {orderWriteInitial, printEstimateInitial, rfqWriteInitial,} from "@/utils/initialList";
 import moment from "moment";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
@@ -26,18 +26,19 @@ import {useRouter} from "next/router";
 import {BoxCard} from "@/utils/commonForm";
 import TableGrid from "@/component/tableGrid";
 import {tableOrderWriteColumn} from "@/utils/columnList";
-// import printTransaction from "@/utils/printTransaction";
+import PrintPo from "@/component/printPo";
+import PrintTransactionModal from "@/component/printTransaction";
 
 
 export default function order_update({data}) {
     const gridRef = useRef(null);
     const router = useRouter();
-    const {orderDetail, customerInfo} = data;
+    const {orderDetail} = data;
 
     const userInfo = useAppSelector((state) => state.user);
     const [info, setInfo] = useState<any>(orderDetail)
     const [mini, setMini] = useState(true);
-    // const [customerData, setCustomerData] = useState(printEstimateInitial)
+    const [customerData, setCustomerData] = useState(printEstimateInitial)
     const [isModalOpen, setIsModalOpen] = useState({event1:false, event2:false});
 
     useEffect(() => {
@@ -239,154 +240,147 @@ console.log(orderDetail,'orderDetail:')
 
     return <>
         <LayoutComponent>
-            <div style={{display: 'grid', gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`, height: '100vh', columnGap: 5}}>
+            <div style={{
+                display: 'grid',
+                gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`,
+                height: '100vh',
+                columnGap: 5
+            }}>
                 {/*@ts-ignore*/}
-                {/*<PrintTransactionModal data={info} customerData={customerData} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>*/}
-                {/*<PrintPo data={data} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>*/}
-                <Card title={<div style={{display:'flex', justifyContent:'space-between'}}>
-                    <div style={{fontSize:14, fontWeight:550}}>발주서 수정</div> <div>
-                    <Button type={'primary'} size={'small'} style={{marginRight: 8}}
-                            onClick={printTransactionStatement}><SaveOutlined/>거래명세표 출력</Button>
-                    <Button type={'primary'} size={'small'} style={{marginRight: 8}}
-                            onClick={saveFunc}><SaveOutlined/>수정</Button>
-                    {/*@ts-ignored*/}
-                    <Button size={'small'} type={'ghost'} style={{marginRight: 8,}}
-                            onClick={() => router?.push('/order_write')}><EditOutlined/>신규작성</Button>
-                    <Button type={'primary'} size={'small'} style={{marginRight: 8}}
-                            onClick={printPo}><SaveOutlined/>발주서 출력</Button>
-                </div></div>} style={{fontSize: 12, border: '1px solid lightGray'}}
+                <PrintTransactionModal data={info} customerData={customerData} isModalOpen={isModalOpen}
+                                       setIsModalOpen={setIsModalOpen}/>
+                <PrintPo data={data} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
+                <Card title={<div style={{display: 'flex', justifyContent: 'space-between'}}>
+                    <div style={{fontSize: 14, fontWeight: 550}}>발주서 수정</div>
+                    <div>
+                        <Button type={'default'} size={'small'} style={{fontSize: 11, marginRight: 8}}
+                                onClick={printTransactionStatement}><SaveOutlined/>거래명세표 출력</Button>
+                        <Button type={'primary'} size={'small'} style={{fontSize: 11, marginRight: 8}}
+                                onClick={saveFunc}><SaveOutlined/>수정</Button>
+                        {/*@ts-ignored*/}
+                        <Button size={'small'} type={'danger'} style={{fontSize: 11, marginRight: 8,}}
+                                onClick={() => router?.push('/order_write')}><EditOutlined/>신규작성</Button>
+                        <Button type={'default'} size={'small'} style={{fontSize: 11, marginRight: 8}}
+                                onClick={printPo}><SaveOutlined/>발주서 출력</Button>
+                    </div>
+                </div>} style={{fontSize: 12, border: '1px solid lightGray'}}
                       extra={<span style={{fontSize: 20, cursor: 'pointer'}} onClick={() => setMini(v => !v)}> {!mini ?
                           <DownCircleFilled/> : <UpCircleFilled/>}</span>}>
                     {mini ? <div>
-                        <Card size={'small'} title={'INQUIRY & PO no'}
-                              style={{
-                                  fontSize: 13,
-                                  marginBottom: 5,
-                                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
-                              }}>
+
+                        <BoxCard title={'INQUIRY & PO no'}>
                             <div style={{
                                 display: 'grid',
-                                gridTemplateColumns: '0.6fr 1fr 1fr',
-                                width: 640,
-                                columnGap: 20
+                                gridTemplateColumns: '1fr 0.6fr 1fr 1fr 1fr',
+                                maxWidth: 900,
+                                minWidth: 600,
+                                columnGap: 15
                             }}>
+                                {datePickerForm({title: '작성일', id: 'writtenDate', disabled: true})}
+                                {inputForm({title: '작성자', id: 'adminName', disabled: true})}
+                                {/*{inputForm({title: '담당자', id: 'managerAdminName'})}*/}
 
-                                    {datePickerForm({title: '작성일', id: 'writtenDate', disabled: true})}
-                            <div>
-                                <div style={{paddingBottom: 3}}>연결 PO No.</div>
-                                <Input size={'small'} id={'documentNumberFull'} value={info['documentNumberFull']}
-                                       onChange={onChange}
-                                       onKeyDown={handleKeyPressDoc}
-                                       suffix={<DownloadOutlined style={{cursor: 'pointer'}} onClick={findDocument}/>}/>
+                                {inputForm({title: '연결 PO No.', id: 'documentNumberFull'})}
+                                {inputForm({title: '거래처 PO no', id: 'yourPoNo'})}
                             </div>
-                            <div>
-                                <div style={{paddingBottom: 3}}>거래처 PO no</div>
-                                <Input id={'yourPoNo'} value={info['yourPoNo']} onChange={onChange} size={'small'}/>
-                            </div>
-                        </div>
-
-                    </Card>
-
-
-                    <div style={{display: 'grid', gridTemplateColumns: '1fr 1.2fr  1.22fr 1.5fr', columnGap: 10}}>
-
-                        <Card size={'small'} title={'CUSTOMER & SUPPLY'}
-                              style={{
-                                  fontSize: 13,
-                                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                              }}>
-
-
-                            <div>
-                                <div style={{paddingBottom: 3}}>Messrs</div>
-                                <Input id={'agencyCode'} value={info['agencyCode']} onChange={onChange} size={'small'}/>
-                            </div>
-                            <div>
-                                <div style={{paddingBottom: 3}}>Attn To</div>
-                                <Input id={'attnTo'} value={info['attnTo']} onChange={onChange} size={'small'}/>
-                            </div>
-                            <div>
-                                <div style={{paddingBottom: 3}}>거래처명</div>
-                                <Input id={'customerName'} value={info['customerName']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-                        </Card>
-
-
-                        <Card size={'small'} title={'MANAGER IN CHARGE'} style={{
-                            fontSize: 13,
-                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                        }}>
-
-
-                            <div>
-                                <div style={{paddingBottom: 3}}>Responsibility</div>
-                                <Input id={'managerID'} value={info['managerId']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-                            <div>
-                                <div style={{paddingBottom: 3}}>TEL</div>
-                                <Input id={'managerPhoneNumber'} value={info['managerPhoneNumber']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-
-                            <div>
-                                <div style={{paddingBottom: 3}}>Fax</div>
-                                <Input id={'managerFaxNumber'} value={info['managerFaxNumber']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-                            <div>
-                                <div style={{paddingBottom: 3}}>E-Mail</div>
-                                <Input id={'managerEmail'} value={info['managerEmail']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-
-                        </Card>
-
-                        <Card size={'small'} title={'LOGISTICS'} style={{
-                            fontSize: 13,
-                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                        }}>
-                            <div>
-                                <div style={{paddingBottom: 3}}>Payment Terms</div>
-                                <Select id={'paymentTerms'} size={'small'} defaultValue={'0'} options={[
-                                    {value: '0', label: 'By in advance T/T'},
-                                    {value: '1', label: 'Credit Card'},
-                                    {value: '2', label: 'L/C'},
-                                    {value: '3', label: 'Order 30% Before Shipping 70%'},
-                                    {value: '4', label: 'Order 50% Before Shipping 50%'},
-                                ]} style={{width: '100%'}}>
-                                </Select>
-                            </div>
-                            <div style={{paddingTop: 8}}>
-                                <div style={{paddingBottom: 3}}>Delivery Terms</div>
-                                <Input id={'deliveryTerms'} value={info['deliveryTerms']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-                            <div style={{paddingTop: 8}}>
-                                <div style={{paddingBottom: 3}}>MAKER</div>
-                                <Input id={'maker'} value={info['maker']} onChange={onChange} size={'small'}/>
-                            </div>
-                            <div style={{paddingTop: 8}}>
-                                <div style={{paddingBottom: 3}}>ITEM</div>
-                                <Input id={'item'} value={info['item']} onChange={onChange} size={'small'}/>
-                            </div>
-
-                            {datePickerForm({title: 'Delivery', id: 'delivery'})}
-
-                        </Card>
-
-                        <BoxCard title={'거래처 ETC'}>
-
-                            {inputForm({title: '견적서담당자', id: 'estimateManager'})}
-                            {inputForm({title: '비고란', id: 'remarks'})}
-                            {inputForm({title: '하단태그', id: 'footer'})}
-
                         </BoxCard>
 
-                    </div>
-                    </div>:null}
+                        <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: '1fr 1.2fr  1.22fr 1.5fr',
+                            columnGap: 10,
+                            marginTop: 10
+                        }}>
 
+                            <BoxCard title={'CUSTOMER & SUPPLY'}>
+                                <div>
+                                    <div style={{paddingBottom: 3}}>Messrs</div>
+                                    <Input id={'agencyCode'} value={info['agencyCode']} onChange={onChange}
+                                           size={'small'}/>
+                                </div>
+                                <div style={{marginTop: 8}}>
+                                    <div style={{paddingBottom: 3}}>Attn To</div>
+                                    <Input id={'attnTo'} value={info['attnTo']} onChange={onChange} size={'small'}/>
+                                </div>
+                                <div style={{marginTop: 8}}>
+                                    <div style={{paddingBottom: 3}}>거래처명</div>
+                                    <Input id={'customerName'} value={info['customerName']} onChange={onChange}
+                                           size={'small'}/>
+                                </div>
+                            </BoxCard>
+
+
+                            <BoxCard title={'MANAGER IN CHARGE'}>
+                                {inputForm({title: 'Responsibility', id: 'managerId'})}
+                                {inputForm({title: 'TEL', id: 'managerPhoneNumber'})}
+                                {inputForm({title: 'Fax', id: 'managerFaxNumber'})}
+                                {inputForm({title: 'E-Mail', id: 'managerEmail'})}
+
+                            </BoxCard>
+                            <Card size={'small'} title={'LOGISTICS'} style={{
+                                fontSize: 13,
+                                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                            }}>
+                                <div>
+                                    <div style={{paddingBottom: 3}}>Payment Terms</div>
+                                    <Select id={'paymentTerms'} size={'small'} defaultValue={'0'}
+                                            onChange={(src) => onChange({target: {id: 'searchType', value: src}})}
+                                            options={[
+                                                {value: '0', label: 'By in advance T/T'},
+                                                {value: '1', label: 'Credit Card'},
+                                                {value: '2', label: 'L/C'},
+                                                {value: '3', label: 'Order 30% Before Shipping 70%'},
+                                                {value: '4', label: 'Order 50% Before Shipping 50%'},
+                                            ]} style={{width: '100%'}}>
+                                    </Select>
+                                </div>
+                                <div style={{paddingTop: 8}}>
+                                    <div style={{paddingBottom: 3}}>Delivery Terms</div>
+                                    <Input id={'deliveryTerms'} value={info['deliveryTerms']} onChange={onChange}
+                                           size={'small'}/>
+                                </div>
+                                <div style={{paddingTop: 8}}>
+                                    <div style={{paddingBottom: 3}}>MAKER</div>
+                                    <Input id={'maker'} value={info['maker']} onChange={onChange} size={'small'}/>
+                                </div>
+                                <div style={{paddingTop: 8}}>
+                                    <div style={{paddingBottom: 3}}>ITEM</div>
+                                    <Input id={'item'} value={info['item']} onChange={onChange} size={'small'}/>
+                                </div>
+                                <div style={{paddingTop: 8}}>
+                                    <div style={{paddingBottom: 3}}>Delivery</div>
+                                    <DatePicker value={moment(info['delivery'])}
+                                                onChange={(date, dateString) => onChange({
+                                                    target: {
+                                                        id: 'delivery',
+                                                        value: date
+                                                    }
+                                                })
+                                                } id={'delivery'} size={'small'}/>
+                                </div>
+
+                            </Card>
+
+                            <Card size={'small'} title={'ETC'} style={{
+                                fontSize: 13,
+                                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                            }}>
+                                <div>
+                                    <div style={{paddingBottom: 3}}>견적서담당자</div>
+                                    <Input id={'estimateManager'} value={info['estimateManager']} onChange={onChange}
+                                           size={'small'}/>
+                                </div>
+                                <div style={{paddingTop: 8}}>
+                                    <div style={{paddingBottom: 3}}>비고란</div>
+                                    <Input id={'remarks'} value={info['remarks']} onChange={onChange} size={'small'}/>
+                                </div>
+                                <div style={{paddingTop: 8}}>
+                                    <div style={{paddingBottom: 3}}>하단태그</div>
+                                    <Input id={'footer'} value={info['footer']} onChange={onChange} size={'small'}/>
+                                </div>
+                            </Card>
+                        </div>
+                    </div> : null}
                 </Card>
 
 
@@ -440,7 +434,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
 
     const result = await getData.post('order/getOrderDetail', {
-        orderId:orderId
+        orderId: orderId
     });
 
 

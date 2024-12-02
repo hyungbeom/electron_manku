@@ -30,13 +30,14 @@ import Upload from "antd/lib/upload";
 import * as XLSX from "xlsx";
 import {BoxCard} from "@/utils/commonForm";
 import {router} from "next/client";
+import {useRouter} from "next/router";
 
 
 export default function rqfWrite() {
     const userInfo = useAppSelector((state) => state.user);
 
     const gridRef = useRef(null);
-
+    const router = useRouter();
 
     console.log(userInfo,'userInfo:')
 

@@ -3,7 +3,7 @@ import Input from "antd/lib/input/Input";
 import Select from "antd/lib/select";
 import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
-import {MailOutlined, SearchOutlined} from "@ant-design/icons";
+import {MailOutlined, RetweetOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
 import {rfqReadColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
@@ -144,129 +144,147 @@ export default function rfqRead({dataList}) {
     return <>
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateRows: '250px 1fr', height: '100vh', gridColumnGap: 5}}>
-                <Card title={'메일전송'} style={{fontSize: 12, border: '1px solid lightGray'}}>
+                <Card title={<div style={{display: 'flex', justifyContent: 'space-between'}}>
+                    <div style={{fontSize: 14, fontWeight: 550}}>견적의뢰 작성</div>
+                    <div>
+
+                        <div style={{paddingTop: 30}}>
+
+                            <Button type={'primary'} size={'small'} style={{marginRight: 8}}
+                                    onClick={searchInfo}><SearchOutlined/>조회</Button>
+                            {/*@ts-ignore*/}
+                            <Button type={'danger'} size={'small'} style={{marginRight: 8, letterSpacing: -1}}
+                                    onClick={handleSendMail}><MailOutlined/>선택 견적서 발송</Button>
+                        </div>
+                    </div>
+                </div>} style={{fontSize: 12, border: '1px solid lightGray'}}>
                     <Modal okText={'메일 전송'} cancelText={'취소'} onOk={sendMail}
                            title={<div style={{lineHeight: 2.5, fontWeight: 550}}>메일전송</div>} open={isModalOpen}
                            onCancel={() => setIsModalOpen(false)}>
 
 
+                        {previewData.map((v, idx) => {
 
-                                {previewData.map((v, idx) => {
 
+                            return <>
 
-                                    return <>
+                                <div style={{width: '100%', height: 'auto', paddingTop: 20}}>
+                                    [<span
+                                    // style={{fontWeight: 550}}>{v.agencyManagerName}</span>]님<br/><br/>안녕하십니까.
+                                    style={{fontWeight: 550}}>{v.managerName}</span>]님<br/><br/>안녕하십니까.
+                                    [<span style={{fontWeight: 550}}>만쿠무역 {userInfo.name}</span>]입니다.<br/>
+                                    아래 견적 부탁드립니다.
+                                </div>
 
-                        <div style={{width: '100%', height: 'auto', paddingTop: 20}}>
-                            [<span
-                            // style={{fontWeight: 550}}>{v.agencyManagerName}</span>]님<br/><br/>안녕하십니까.
-                            style={{fontWeight: 550}}>{v.managerName}</span>]님<br/><br/>안녕하십니까.
-                            [<span style={{fontWeight: 550}}>만쿠무역 {userInfo.name}</span>]입니다.<br/>
-                            아래 견적 부탁드립니다.
-                        </div>
-
-                        <div style={{
-                            textAlign: 'center',
-                            lineHeight: 2.2,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            flexFlow: 'column'
-                        }}>
+                                <div style={{
+                                    textAlign: 'center',
+                                    lineHeight: 2.2,
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    flexFlow: 'column'
+                                }}>
+                                    <div style={{
+                                        marginTop: 20,
+                                        width: '100%',
+                                        height: '35px',
+                                        fontSize: 15,
+                                        borderTop: '1px solid #121212',
+                                        borderBottom: '1px solid #A3A3A3',
+                                        backgroundColor: '#EBF6F7'
+                                    }}>
+                                        {v.documentNumberFull}
+                                    </div>
+                                    <div style={{
+                                        width: '100%',
+                                        height: '35px',
+                                        borderBottom: '1px solid #A3A3A3',
+                                        display: 'flex'
+                                    }}>
                                         <div style={{
-                                            marginTop: 20,
-                                            width: '100%',
-                                            height: '35px',
-                                            fontSize: 15,
-                                            borderTop: '1px solid #121212',
-                                            borderBottom: '1px solid #A3A3A3',
-                                            backgroundColor: '#EBF6F7'
-                                        }}>
-                                            {v.documentNumberFull}
+                                            fontSize: '13px',
+                                            backgroundColor: '#EBF6F7',
+                                            width: '102px',
+                                            height: '100%',
+                                            borderRight: '1px solid #121212'
+                                        }}>Maker
                                         </div>
+                                        <div style={{lineHeight: 2, paddingLeft: 32}}>{v.maker}</div>
+                                    </div>
+                                    <div style={{width: '100%', height: 35, display: "flex"}}>
                                         <div style={{
-                                            width: '100%',
-                                            height: '35px',
-                                            borderBottom: '1px solid #A3A3A3',
-                                            display: 'flex'
-                                        }}>
-                                            <div style={{
-                                                fontSize: '13px',
-                                                backgroundColor: '#EBF6F7',
-                                                width: '102px',
-                                                height: '100%',
-                                                borderRight: '1px solid #121212'
-                                            }}>Maker
-                                            </div>
-                                            <div style={{lineHeight: 2, paddingLeft: 32}}>{v.maker}</div>
+                                            fontSize: '13px',
+                                            backgroundColor: '#EBF6F7',
+                                            width: '102px',
+                                            height: '100%',
+                                            borderRight: '1px solid #121212'
+                                        }}>Item
                                         </div>
-                                        <div style={{width: '100%', height: 35, display: "flex"}}>
-                                            <div style={{
-                                                fontSize: '13px',
-                                                backgroundColor: '#EBF6F7',
-                                                width: '102px',
-                                                height: '100%',
-                                                borderRight: '1px solid #121212'
-                                            }}>Item
-                                            </div>
-                                            <div style={{lineHeight: 2, paddingLeft: 32}}>{v.item}</div>
-                                        </div>
+                                        <div style={{lineHeight: 2, paddingLeft: 32}}>{v.item}</div>
+                                    </div>
 
-                                        <div style={{
-                                            lineHeight: 1.9,
-                                            width: '100%',
-                                            height: 35,
-                                            fontSize: 18,
-                                            borderTop: '1px solid #121212',
-                                            borderBottom: '1px solid #A3A3A3',
-                                            backgroundColor: '#EBF6F7'
-                                        }}>
-                                            Model
-                                        </div>
-                                        {v.list.map(src => {
-                                            return <div
-                                                style={{width: '100%', height: 35, borderBottom: '1px solid #A3A3A3', display:'flex'}}>
-                                                <div style={{
-                                                    fontSize: 13,
-                                                    letterSpacing: -1,
-                                                    lineHeight: 2.5,
-                                                    width: 360,
-                                                    height: '100%',
-                                                    borderRight: '1px solid #121212'
-                                                }}>{src.model}</div>
-                                                <div style={{lineHeight: 2, paddingLeft: 30,}}><span
-                                                    style={{fontWeight: 550}}>{src.quantity}</span> {src.unit}</div>
-                                            </div>
-
-                                        })}
-
-                                        <div style={{
-                                            lineHeight: 2.5,
-                                            width: '100%',
-                                            height: 35,
-                                            fontSize: 18,
-                                            display:'flex',
-                                            borderBottom: '1px solid #121212',
-                                            backgroundColor: '#EBF6F7'
-                                        }}>
+                                    <div style={{
+                                        lineHeight: 1.9,
+                                        width: '100%',
+                                        height: 35,
+                                        fontSize: 18,
+                                        borderTop: '1px solid #121212',
+                                        borderBottom: '1px solid #A3A3A3',
+                                        backgroundColor: '#EBF6F7'
+                                    }}>
+                                        Model
+                                    </div>
+                                    {v.list.map(src => {
+                                        return <div
+                                            style={{
+                                                width: '100%',
+                                                height: 35,
+                                                borderBottom: '1px solid #A3A3A3',
+                                                display: 'flex'
+                                            }}>
                                             <div style={{
                                                 fontSize: 13,
+                                                letterSpacing: -1,
+                                                lineHeight: 2.5,
                                                 width: 360,
                                                 height: '100%',
                                                 borderRight: '1px solid #121212'
-                                            }}>
-                                                Total
-                                            </div>
-                                            <div style={{lineHeight: 2, paddingLeft: 30}}>
-                                                <span style={{fontWeight: 550}}>{v.totalQuantity}</span> {v.unit}
-                                            </div>
+                                            }}>{src.model}</div>
+                                            <div style={{lineHeight: 2, paddingLeft: 30,}}><span
+                                                style={{fontWeight: 550}}>{src.quantity}</span> {src.unit}</div>
                                         </div>
-                        </div>
 
-                                    </>
+                                    })}
+
+                                    <div style={{
+                                        lineHeight: 2.5,
+                                        width: '100%',
+                                        height: 35,
+                                        fontSize: 18,
+                                        display: 'flex',
+                                        borderBottom: '1px solid #121212',
+                                        backgroundColor: '#EBF6F7'
+                                    }}>
+                                        <div style={{
+                                            fontSize: 13,
+                                            width: 360,
+                                            height: '100%',
+                                            borderRight: '1px solid #121212'
+                                        }}>
+                                            Total
+                                        </div>
+                                        <div style={{lineHeight: 2, paddingLeft: 30}}>
+                                            <span style={{fontWeight: 550}}>{v.totalQuantity}</span> {v.unit}
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </>
 
 
-                                })}
+                        })}
 
                     </Modal>
+
 
                     <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gridColumnGap: 10}}>
                         <div>
@@ -311,14 +329,7 @@ export default function rfqRead({dataList}) {
                                 ]} style={{width: '100%'}}>
                                 </Select>
                             </div>
-                            <div style={{paddingTop: 30}}>
 
-                                <Button type={'primary'} size={'small'} style={{marginRight: 8}}
-                                        onClick={searchInfo}><SearchOutlined/>조회</Button>
-                                {/*@ts-ignore*/}
-                                <Button type={'danger'} size={'small'} style={{marginRight: 8, letterSpacing: -1}}
-                                        onClick={handleSendMail}><MailOutlined/>선택 견적서 발송</Button>
-                            </div>
                         </div>
                     </div>
 
