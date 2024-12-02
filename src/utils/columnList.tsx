@@ -343,10 +343,14 @@ export const tableOrderWriteColumn = [
         headerName: 'Amount',
         field: 'amount',
         editable: true,
-        valueFormatter: (params) => {
-            const {quantity, net} = params.data;
-            return  Math.floor(quantity * net).toLocaleString();
-        }
+        valueGetter: (params) => {
+            const { quantity, net } = params.data;
+            if (quantity && net) {
+                return Math.floor(quantity * net); // 숫자 값 반환
+            }
+            return 0;
+        },
+        valueFormatter: numberFormat,
     },
     {
         headerName: '입고',
@@ -372,14 +376,18 @@ export const tableOrderWriteColumn = [
         headerName: '금액',
         field: 'totalPrice',
         editable: true,
-        valueFormatter: (params) => {
-            if (params.node.rowPinned) {
-                // 고정 행 (푸터)에서는 원래 값을 그대로 반환
-                return params.value !== undefined ? params.value.toLocaleString() : '0';
-            }
+        valueGetter: (params) => {
+            // if (params.node.rowPinned) {
+            //     // 고정 행 (푸터)에서는 원래 값을 그대로 반환
+            //     return params.value !== undefined ? params.value : '0';
+            // }
             const {quantity, unitPrice} = params.data;
-            return Math.floor(quantity * unitPrice).toLocaleString();
+            if (quantity && unitPrice) {
+            return Math.floor(quantity * unitPrice)
         }
+        return 0;
+        },
+        valueFormatter: numberFormat,
     }
 ];
 

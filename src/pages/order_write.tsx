@@ -343,6 +343,7 @@ export default function OrderWriter({dataInfo}) {
                     columns={tableOrderWriteColumn}
                     tableData={info['orderDetailList']}
                     listType={'orderId'}
+                    type={'write'}
                     listDetailType={'orderDetailList'}
                     setInfo={setInfo}
                     excel={true}
