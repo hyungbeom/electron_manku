@@ -51,7 +51,7 @@ export default function makerRead({data}) {
                 message.success('저장되었습니다')
                 setInfo(makerWriteInitial);
 
-                window.location.href = '/getMakerList'
+                window.location.href = '/maker_read'
             } else {
                 message.error('저장에 실패하였습니다.')
             }
@@ -105,7 +105,7 @@ export default function makerRead({data}) {
                             </div>
                             <div style={{marginTop: 8}}>
                                 <div style={{paddingBottom: 3}}>원산지</div>
-                                <Input id={'currencyUnit'} value={info['currencyUnit']} onChange={onChange}
+                                <Input id={'origin'} value={info['origin']} onChange={onChange}
                                        size={'small'}/>
                             </div>
                             <div style={{marginTop: 8}}>

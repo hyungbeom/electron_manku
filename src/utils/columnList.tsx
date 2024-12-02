@@ -2068,6 +2068,10 @@ export const tableCodeDomesticPurchaseColumns = [
         headerName: '등록일자',
         field: 'createdDate',
         key: 'createdDate',
+        valueFormatter: (params) => {
+            return (!params.value || params.value === 'Invalid date') ? '' : dateFormat(params)
+        }
+
     },
     {
         headerName: '수정자',
@@ -2078,6 +2082,10 @@ export const tableCodeDomesticPurchaseColumns = [
         headerName: '수정일자',
         field: 'modifiedDate',
         key: 'modifiedDate',
+        valueFormatter: (params) => {
+            return (!params.value || params.value === 'Invalid date') ? '' : dateFormat(params)
+        }
+
     },
     {
         headerName: '매입처 담당자',

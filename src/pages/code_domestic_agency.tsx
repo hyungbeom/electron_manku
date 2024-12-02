@@ -23,9 +23,10 @@ import {useRouter} from "next/router";
 
 export default function codeDomesticPurchase({dataList}) {
     const gridRef = useRef(null);
-    const router=useRouter();
+    const router = useRouter();
 
     const {agencyList} = dataList;
+    console.log(dataList,'dataList:')
     const [info, setInfo] = useState(codeDomesticPurchaseInitial);
     const [tableData, setTableData] = useState(agencyList);
 
