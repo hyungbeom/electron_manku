@@ -1,19 +1,16 @@
 import React, {useEffect, useRef, useState} from "react";
 import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
-import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
-import {rfqReadColumns, tableEstimateReadColumns} from "@/utils/columnList";
+import {tableEstimateReadColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {estimateReadInitial, tableEstimateReadInitial, tableOrderReadInitial} from "@/utils/initialList";
-import {tableEstimateReadInfo, tableOrderReadInfo} from "@/utils/modalDataList";
+import {estimateReadInitial} from "@/utils/initialList";
 import Select from "antd/lib/select";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {getData} from "@/manage/function/api";
 import {setUserInfo} from "@/store/user/userSlice";
 import moment from "moment/moment";
-import {transformData} from "@/utils/common/common";
 import * as XLSX from "xlsx";
 import Button from "antd/lib/button";
 import {CopyOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
@@ -29,7 +26,6 @@ export default function EstimateRead({data}) {
 
     const [info, setInfo] = useState(estimateReadInitial)
     const [tableData, setTableData] = useState(data)
-
 
     function onChange(e) {
 
