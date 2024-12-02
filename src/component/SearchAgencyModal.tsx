@@ -8,13 +8,14 @@ import {tableTheme} from "@/utils/common";
 import {ModalInitList, modalList} from "@/utils/initialList";
 import moment from "moment";
 import useEventListener from "@/utils/common/function/UseEventListener";
+import message from "antd/lib/message";
 
 export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen}) {
     const [code, setCode] = useState();
     const [list, setList] = useState([])
     const [page, setPage] = useState({x: null, y: null})
     const [openCheck, setOpenCheck] = useState('')
-    const [modalKey, setModalKey] = useState('')
+    const [windowOpenKey, setWindowOpenKey] = useState({id:'', router:'', deleteApi:''})
 
     const ref = useRef(null);
 
@@ -74,12 +75,33 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
 
 
         if (e.data.makerId)
-            setModalKey(e.data.makerName)
+            setWindowOpenKey({id:e.data.makerId, router:`/maker_update?makerName=${e.data.makerName}`, deleteApi:'maker/deleteMaker'})
         else if (e.data.customerId)
-            setModalKey(e.data.customerNamer)
+            setWindowOpenKey({id:e.data.customerId, router:`/code_domestic_customer_update?customerCode=${e?.data?.customerCode}`, deleteApi:'customer/deleteCustomer'})
+        else if (e.data.overseasCustomerId)
+            setWindowOpenKey({id:e.data.overseasCustomerId, router:`/code_overseas_customer_update?customerCode=${e?.data?.customerCode}`, deleteApi:'deleteOverseasCustomer'})
+        else if (e.data.agencyId)
+            setWindowOpenKey({id:e.data.agencyId, router:`/code_domestic_agency_update?agencyCode=${e?.data?.agencyCode}`, deleteApi:'agency/deleteAgency'})
+        else if (e.data.overseasAgencyId)
+            setWindowOpenKey({id:e.data.overseasAgencyId, router:`/code_overseas_agency_update?agencyCode=${e?.data?.agencyCode}`, deleteApi:'agency/deleteOverseasAgency'})
         else
-            setModalKey(e.data.agencyName)
+            return null;
     };
+
+    async function deleteList() {
+                const response = await getData.post('estimate/deleteEstimateRequest', {
+                    estimateRequestId:item.estimateRequestId
+                });
+                console.log(response)
+                if (response.data.code===1) {
+                    message.success('삭제되었습니다.')
+                    searchInfo();
+                } else {
+                    message.error('오류가 발생하였습니다. 다시 시도해주세요.')
+                }
+            }
+        }
+    }
 
 
     useEffect(() => {
@@ -110,15 +132,17 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
             zIndex: 10000,
             fontSize: 11,
             backgroundColor: 'white',
-            border: '1px solid lightGray'
+            border: '1px solid lightGray',
+            padding:10,
         }} ref={ref} id={'right'}>
             <div onClick={()=> {
-                alert('수정');
-                window.open('/maker_update?makerName=Weidmüller')
+                // alert('수정');
+                window.open(windowOpenKey.router)
                 setPage({x : null, y : null})
             }}id={'right'}>수정</div>
-            <div onClick={()=> {
-                alert('삭제');
+            <div style={{marginTop:10}} onClick={()=> {
+                // alert('삭제');
+
                 setPage({x : null, y : null})
             }}
                  id={'right'}>삭제</div>
