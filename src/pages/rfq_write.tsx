@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
@@ -47,6 +47,10 @@ export default function rqfWrite() {
         managerAdminName: userInfo['name'],
         adminName: userInfo['name'],
     })
+
+    useEffect(()=>{
+
+    },[])
 
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
