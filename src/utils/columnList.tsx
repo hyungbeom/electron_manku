@@ -626,6 +626,7 @@ export const tableEstimateReadColumns = [
                 minWidth: 70,
                 cellDataType: 'number',
                 valueFormatter: numberFormat,
+                cellStyle: { textAlign: 'right' }
             },
             {
                 headerName: '합계',
@@ -633,6 +634,7 @@ export const tableEstimateReadColumns = [
                 minWidth: 70,
                 cellDataType: 'number',
                 valueFormatter: numberFormat,
+                cellStyle: { textAlign: 'right' }
             },
         ]
     },
