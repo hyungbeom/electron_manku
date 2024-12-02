@@ -178,7 +178,7 @@ console.log(orderDetail,'orderDetail:')
             "unit": "ea",               // 단위
             "currency": "KWD",          // CURR
             "net": 0,            // NET/P
-            "quantity": 1,              // 수량
+            "quantity": 0,              // 수량
             "receivedQuantity": 0,
             "unreceivedQuantity": 0,
             "unitPrice": 0,

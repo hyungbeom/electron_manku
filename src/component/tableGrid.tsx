@@ -11,7 +11,9 @@ import Upload from "antd/lib/upload";
 import Dragger from "antd/lib/upload/Dragger";
 import {InboxOutlined} from "@ant-design/icons";
 import {numberFormat} from "@/utils/columnList";
-
+// import 'ag-grid-community/styles/ag-grid.css';
+// import 'ag-grid-community/styles/ag-theme-alpine.css';
+import {commonFunc} from "@/utils/commonManage";
 
 const TableGrid = ({
                        columns, tableData,
@@ -30,6 +32,7 @@ const TableGrid = ({
 
     const [data, setData] = useState(tableData);
     const [dragging, setDragging] = useState(false);
+    const [pinnedBottomRowData, setPinnedBottomRowData] = useState([]);
 
 
     useEffect(()=>{
@@ -171,32 +174,19 @@ const TableGrid = ({
     };
 
 
-    function dataChange(e){
-        const updatedData = e.data; // 수정된 행의 전체 데이터
-        const updatedField = e.colDef.field; // 수정된 컬럼의 필드명
-        const newValue = e.newValue; // 새로운 값
-        const oldValue = e.oldValue; // 이전 값
+    function dataChange(e) {
+        const updatedData = [...data]; // 기존 데이터 복사
+        const rowIndex = e.node.rowIndex; // 변경된 행의 인덱스
 
+        // 수정된 행 업데이트
+        updatedData[rowIndex] = {
+            ...e.data,
+            unreceivedQuantity: parseFloat(e.data.quantity || 0) - parseFloat(e.data.receivedQuantity || 0),
+            amount: parseFloat(e.data.quantity || 0) * parseFloat(e.data.unitPrice || 0),
+        };
 
-        // 변경 사항이 있을 때만 처리
-        if (newValue !== oldValue) {
-
-
-            switch (updatedField) {
-                case 'receivedQuantity' :
-                case 'quantity' :
-                    const {unitPrice, quantity, receivedQuantity} = updatedData;
-
-                    const amount = parseFloat(quantity) * parseFloat(unitPrice);
-                    const unreceivedQuantity = parseFloat(quantity) - parseFloat(receivedQuantity);
-
-                    e.api.setValueColumns('unreceivedQuantity', unreceivedQuantity);
-                    e.api.setValueColumns('amount', numberFormat(amount));
-
-                    break;
-
-            }
-        }
+        // 데이터 상태 업데이트
+        setData(updatedData);
     }
 
     const handleFile = (file) => {
@@ -275,6 +265,10 @@ const TableGrid = ({
     };
 
 
+    useEffect(() => {
+        setPinnedBottomRowData([commonFunc.sumCalc(data)]);
+    }, [data]);
+
     return (
         <div className={`ag-theme-quartz ${dragging ? 'dragging' : ''}`}
              style={{height: '100%', width: '100%', display: 'flex', flexDirection: 'column', overflowX: 'auto',
@@ -322,10 +316,12 @@ const TableGrid = ({
                          pagination={true}
                          onRowSelected={handleRowSelected}
                          onCellValueChanged={dataChange}
+                         pinnedBottomRowData={pinnedBottomRowData}
                          gridOptions={{
                              loadThemeGoogleFonts: true,
                          }}
             />
+            <div>adkfjaskl</div>
         </div>
     );
 };
