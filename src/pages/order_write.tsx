@@ -141,14 +141,15 @@ export default function OrderWriter({dataInfo}) {
         } else {
             const copyData = {...info}
             copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
+            // copyData['delivery'] = moment(info['delivery']).format('YYYY-MM-DD');
 
-            console.log(copyData,'copyData:')
+            // console.log(copyData, 'copyData~~~~~~~~~~~')
             await getData.post('order/addOrder', copyData).then(v => {
                 if(v.data.code === 1){
                     message.success('저장되었습니다')
                     setInfo(rfqWriteInitial);
                     deleteList()
-                    // window.location.href = '/order_read'
+                    window.location.href = '/order_read'
             } else {
                 message.error('저장에 실패하였습니다.')
             }
@@ -181,7 +182,7 @@ export default function OrderWriter({dataInfo}) {
         copyData['orderDetailList'].push({
             "model": "",           // MODEL
             "unit": "ea",               // 단위
-            "currency": "KWD",          // CURR
+            "currency": info['currencyUnit'],          // CURR
             "net": 0,            // NET/P
             "quantity": 0,              // 수량
             "receivedQuantity": 0,
@@ -238,6 +239,7 @@ export default function OrderWriter({dataInfo}) {
                                 {inputForm({title: '거래처 PO no', id: 'yourPoNo'})}
                             </div>
                         </BoxCard>
+
                     <div style={{display: 'grid', gridTemplateColumns: '1fr 1.2fr  1.22fr 1.5fr', columnGap: 10, marginTop:10}}>
 
                         <BoxCard title={'CUSTOMER & SUPPLY'}>

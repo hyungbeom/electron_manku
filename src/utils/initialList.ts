@@ -34,6 +34,7 @@ export const estimateWriteInitial = {
     "item": "",      // ITEM
     "delivery": null,    // Delivery
     "remarks": "",          // 비고란
+    "currencyUnit": "",          // 비고란
     "estimateDetailList": []
 }
 
@@ -307,6 +308,7 @@ export const orderWriteInitial = {
     "item": "",                       // ITEM
     "delivery": '',               // Delivery
     "remarks": "",                      // 비고란
+    "currencyUnit": "",                      // 비고란
     "orderDetailList": [],
 }
 
