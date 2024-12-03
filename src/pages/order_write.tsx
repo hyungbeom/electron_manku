@@ -91,9 +91,16 @@ export default function OrderWriter({dataInfo}) {
                 console.log(result?.data?.entity?.estimateDetail,'result?.data?.entity?.estimateDetail?.estimateDetailList:')
 
                 setInfo(v => {
-                        return {...v, ...result?.data?.entity?.estimateDetail, documentNumberOriginFull : e.target.value, adminName: userInfo['name'], writtenDate : moment(), orderDetailList : result?.data?.entity?.estimateDetail?.estimateDetailList}
+                        return {...v, ...result?.data?.entity?.estimateDetail,
+                            documentNumberOriginFull : e.target.value, adminName: userInfo['name'],
+                            writtenDate : moment(),
+                            orderDetailList : result?.data?.entity?.estimateDetail?.estimateDetailList,
+                            currencyUnit:result?.data?.entity?.estimateDetail?.estimateDetailList?.[0]?.currency,
+                        }
                     }
                 )
+
+                console.log(info['currencyUnit'], 'currencyUnit~~~')
             }
         }
     }
@@ -181,7 +188,7 @@ export default function OrderWriter({dataInfo}) {
         copyData['orderDetailList'].push({
             "model": "",           // MODEL
             "unit": "ea",               // 단위
-            "currency": "KWD",          // CURR
+            "currency": info['currencyUnit'],          // CURR
             "net": 0,            // NET/P
             "quantity": 0,              // 수량
             "receivedQuantity": 0,

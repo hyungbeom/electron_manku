@@ -118,7 +118,7 @@ export default function PrintEstimate({ data, isModalOpen, userInfo, setIsModalO
             onOk={() => setIsModalOpen(false)}
         >
             {/* Header */}
-            <div ref={pdfRef} style={{
+            <div ref={pdfRef} className="printable-content" style={{
                 width: "595px",
                 minHeight: "842px",
                 height: 'auto',

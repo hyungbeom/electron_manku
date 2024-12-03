@@ -130,6 +130,8 @@ export default function EstimateWrite({dataInfo}) {
         });
 
         const data = resultList?.data?.entity[modalList[e.target.id]?.list];
+
+
         const size = data?.length;
 
         if (size > 1) {
@@ -137,28 +139,38 @@ export default function EstimateWrite({dataInfo}) {
         } else if (size === 1) {
             switch (e.target.id) {
                 case 'agencyCode' :
-                    const {agencyId, agencyCode, agencyName} = data[0];
+                    const {agencyId, agencyCode, agencyName, currencyUnit} = data[0];
                     setInfo(v => {
-                        return {...v, agencyId: agencyId, agencyCode: agencyCode, agencyName: agencyName}
+                        return {...v, agencyId: agencyId, agencyCode: agencyCode, agencyName: agencyName, currencyUnit:currencyUnit}
                     })
                     break;
                 case 'customerName' :
                     const {customerName, managerName, directTel, faxNumber, email} = data[0];
+                    // console.log(data[0], 'customerName~~~~')
                     setInfo(v => {
                         return {
                             ...v,
-                            customerInfoList: [{
-                                customerName: customerName,
-                                managerName: managerName,
-                                phoneNumber: directTel,
-                                faxNumber: faxNumber,
-                                customerManagerEmail: email
-                            }]
+                            customerName: customerName,
+                            managerName: managerName,
+                            phoneNumber: directTel,
+                            faxNumber: faxNumber,
+                            customerManagerEmail: email
+
                         }
                     })
                     break;
 
                 case 'maker' :
+                    const {makerName, item, instructions} = data[0];
+                    console.log(data[0], 'customerName~~~~')
+                    setInfo(v => {
+                        return {
+                            ...v,
+                            maker: makerName,
+                            item: item,
+                            instructions: instructions,
+                        }
+                    })
                     break;
 
             }
@@ -214,7 +226,7 @@ export default function EstimateWrite({dataInfo}) {
             "model": "",   // MODEL
             "quantity": 0,                  // 수량
             "unit": "EA",                   // 단위
-            "currency": "USD",              // CURR
+            "currency": info['currency'],          // CURR
             "net": 0,                 // NET/P
             "unitPrice": 0,           // 단가
             "amount": 0,               // 금액

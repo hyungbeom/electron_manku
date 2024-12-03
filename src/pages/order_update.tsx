@@ -80,7 +80,7 @@ console.log(orderDetail,'orderDetail:')
             <Input id={id} value={bowl[id]} disabled={disabled}
                    onChange={onChange}
                    size={'small'}
-                   // onKeyDown={handleKeyPress}
+                   onKeyDown={handleKeyPress}
                    suffix={suffix}
 
             />
@@ -178,7 +178,7 @@ console.log(orderDetail,'orderDetail:')
         copyData['orderDetailList'].push({
             "model": "",           // MODEL
             "unit": "ea",               // 단위
-            "currency": "KWD",          // CURR
+            "currency": info['currencyUnit'],            // CURR
             "net": 0,            // NET/P
             "quantity": 0,              // 수량
             "receivedQuantity": 0,
@@ -203,40 +203,50 @@ console.log(orderDetail,'orderDetail:')
     };
 
 
-    async function findDocument() {
+    async function findDocument(e) {
 
-        const result = await getData.post('order/getOrderList', {
-            "searchDocumentNumber": info['documentNumberFull'],     // 문서번호
-            "searchCustomerName": "",       // 거래처명
-            "searchMaker": "",              // MAKER
-            "searchModel": "",              // MODEL
-            "searchItem": "",               // ITEM
-            "searchEstimateManager": "",    // 견적서담당자명
-            "page": 1,
-            "limit": -1,
+        const result = await getData.post('estimate/getEstimateDetail', {
+            "estimateId": null,
+            "documentNumberFull": e.target.value
         });
+
+        // console.log(result)
 
         if (result?.data?.code === 1) {
 
-            if(result?.data?.entity?.orderList.length) {
+
+            if(result?.data?.entity?.estimateDetail?.estimateDetailList.length) {
+
+                console.log(result?.data?.entity?.estimateDetail,'result?.data?.entity?.estimateDetail?.estimateDetailList:')
+
                 setInfo(v => {
-                        return {...v, ...result?.data?.entity?.orderList[0], writtenDate : moment(result?.data?.entity?.orderList[0].writtenDate),
-                            delivery : moment(result?.data?.entity?.orderList[0].delivery)
+                        return {...v, ...result?.data?.entity?.estimateDetail,
+                            documentNumberOriginFull : e.target.value, adminName: userInfo['name'],
+                            writtenDate : moment(),
+                            orderDetailList : result?.data?.entity?.estimateDetail?.estimateDetailList,
+                            currencyUnit:result?.data?.entity?.estimateDetail?.estimateDetailList?.[0]?.currency,
                         }
                     }
                 )
+
+                console.log(info['currencyUnit'], 'currencyUnit~~~')
             }
         }
     }
 
 
 
-    function handleKeyPressDoc(e) {
+    function handleKeyPress(e) {
         if (e.key === 'Enter') {
-            findDocument();
+
+            switch (e.target.id) {
+                case 'documentNumberFull' :
+                    findDocument(e);
+                    break;
+            }
+
         }
     }
-
 
 
     return <>
