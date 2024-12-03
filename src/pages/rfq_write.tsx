@@ -173,12 +173,12 @@ export default function rqfWrite() {
                     break;
 
                 case 'maker' :
-                    const {maker, item, instructions} = data[0];
-                    // console.log(data[0], 'customerName~~~~')
+                    const {makerName, item, instructions} = data[0];
+                    console.log(data[0], 'customerName~~~~')
                     setInfo(v => {
                         return {
                             ...v,
-                            maker: maker,
+                            maker: makerName,
                             item: item,
                             instructions: instructions,
                         }
