@@ -110,7 +110,7 @@ console.log(orderDetail,'orderDetail:')
         } else {
             const copyData = {...info}
             copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
-            copyData['delivery'] = moment(info['delivery']).format('YYYY-MM-DD');
+            // copyData['delivery'] = moment(info['delivery']).format('YYYY-MM-DD');
 
             // console.log(copyData, 'copyData~~~~~~~~~~~')
             await getData.post('order/updateOrder', copyData).then(v => {
@@ -358,17 +358,19 @@ console.log(orderDetail,'orderDetail:')
                                     <div style={{paddingBottom: 3}}>ITEM</div>
                                     <Input id={'item'} value={info['item']} onChange={onChange} size={'small'}/>
                                 </div>
-                                <div style={{paddingTop: 8}}>
-                                    <div style={{paddingBottom: 3}}>Delivery</div>
-                                    <DatePicker value={moment(info['delivery'])}
-                                                onChange={(date, dateString) => onChange({
-                                                    target: {
-                                                        id: 'delivery',
-                                                        value: date
-                                                    }
-                                                })
-                                                } id={'delivery'} size={'small'}/>
-                                </div>
+                                {inputForm({title: 'Delivery(weeks)', id: 'delivery'})}
+
+                                {/*<div style={{paddingTop: 8}}>*/}
+                                {/*    <div style={{paddingBottom: 3}}>Delivery</div>*/}
+                                {/*    <DatePicker value={moment(info['delivery'])}*/}
+                                {/*                onChange={(date, dateString) => onChange({*/}
+                                {/*                    target: {*/}
+                                {/*                        id: 'delivery',*/}
+                                {/*                        value: date*/}
+                                {/*                    }*/}
+                                {/*                })*/}
+                                {/*                } id={'delivery'} size={'small'}/>*/}
+                                {/*</div>*/}
 
                             </Card>
 

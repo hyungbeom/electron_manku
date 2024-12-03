@@ -380,6 +380,7 @@ export default function EstimateWrite({dataInfo}) {
                                     {value: '1', label: '화물 및 택배비 별도'},
                                 ]} style={{width: '100%',}}/>
                             </div>
+                            {inputForm({title: 'Delivery(weeks)', id: 'delivery'})}
                             {inputForm({title: '환율', id: 'exchangeRate', placeholder : '직접기입(자동환율연결x)'})}
                         </BoxCard>
 
