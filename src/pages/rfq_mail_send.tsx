@@ -313,9 +313,36 @@ export default function rfqRead({dataList}) {
                                     })
                                 }
                                 } style={{width: '100%',}}/>
+                                {inputForm({title: '문서번호', id: 'searchDocumentNumber'})}
+
                             </div>
-                            <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>회신 여부</div>
+                        </Card>
+
+                        <Card size={'small'} style={{
+                            fontSize: 11,
+                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
+                        }}>
+                            {inputForm({title: '대리점코드', id: 'searchAgencyCode'})}
+                            {inputForm({title: '거래처명', id: 'searchCustomerName'})}
+                        </Card>
+
+                        <Card size={'small'} style={{
+                            fontSize: 11,
+                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
+                        }}>
+                            <div>
+                                <div>발송 여부</div>
+                                <Select id={'searchType'}
+                                        onChange={(src) => onChange({target: {id: 'searchType', value: src}})}
+                                        size={'small'} value={info['searchType']} options={[
+                                    {value: '0', label: '전체'},
+                                    {value: '1', label: '발송'},
+                                    {value: '2', label: '미발송'}
+                                ]} style={{width: '100%'}}>
+                                </Select>
+                            </div>
+                            <div>
+                                <div>회신 여부</div>
                                 <Select id={'searchReplyStatus'} defaultValue={0}
                                         onChange={(src) => onChange({target: {id: 'searchReplyStatus', value: src}})}
                                         size={'small'} value={info['searchReplyStatus']} options={[
@@ -326,17 +353,6 @@ export default function rfqRead({dataList}) {
                             </div>
                         </Card>
 
-                        <BoxCard title={''}>
-                            {inputForm({title: '문서번호', id: 'searchDocumentNumber'})}
-                            {inputForm({title: '등록직원명', id: 'searchCreatedBy'})}
-                            {inputForm({title: '거래처명', id: 'searchCustomerName'})}
-                        </BoxCard>
-
-                        <BoxCard title={''}>
-                            {inputForm({title: 'MAKER', id: 'searchMaker'})}
-                            {inputForm({title: 'MODEL', id: 'searchModel'})}
-                            {inputForm({title: 'ITEM', id: 'searchItem'})}
-                        </BoxCard>
 
                     </div>
                 </Card>
