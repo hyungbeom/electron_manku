@@ -36,6 +36,7 @@ export default function order_update({data}) {
     const {orderDetail} = data;
 
     const userInfo = useAppSelector((state) => state.user);
+    console.log(orderDetail,'::')
     const [info, setInfo] = useState<any>(orderDetail)
     const [mini, setMini] = useState(true);
     const [customerData, setCustomerData] = useState(printEstimateInitial)

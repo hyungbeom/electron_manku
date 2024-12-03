@@ -503,7 +503,8 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
 
     const result = await getData.post('estimate/getEstimateDetail', {
-        estimateId:estimateId
+        estimateId:estimateId,
+        documentNumberFull: ""
     });
 
 

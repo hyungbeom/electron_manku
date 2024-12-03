@@ -76,32 +76,22 @@ export default function OrderWriter({dataInfo}) {
 
     async function findDocument(e) {
 
-        const result = await getData.post('estimate/getEstimateRequestList', {
-            "searchEstimateRequestId": "",      // 견적의뢰 Id
-            "searchType": "",                   // 검색조건 1: 회신, 2: 미회신
-            "searchStartDate": "",              // 작성일자 시작일
-            "searchEndDate": "",                // 작성일자 종료일
-            "searchDocumentNumber": e.target.value,         // 문서번호
-            "searchCustomerName": "",           // 거래처명
-            "searchMaker": "",                  // MAKER
-            "searchModel": "",                  // MODEL
-            "searchItem": "",                   // ITEM
-            "searchCreatedBy": "",              // 등록직원명
-            "searchManagerName": "",            // 담당자명
-            "searchMobileNumber": "",           // 담당자 연락처
-            "searchBiddingNumber": "",          // 입찰번호(미완성)
-            "page": 1,
-            "limit": -1
+        const result = await getData.post('estimate/getEstimateDetail', {
+            "estimateId": null,
+            "documentNumberFull": e.target.value
         });
 
         // console.log(result)
 
         if (result?.data?.code === 1) {
 
-            if(result?.data?.entity?.estimateRequestList.length) {
-                console.log(result?.data?.entity?.estimateRequestList,':::')
+
+            if(result?.data?.entity?.estimateDetail?.estimateDetailList.length) {
+
+                console.log(result?.data?.entity?.estimateDetail,'result?.data?.entity?.estimateDetail?.estimateDetailList:')
+
                 setInfo(v => {
-                        return {...v, ...result?.data?.entity?.estimateRequestList[0], adminName: userInfo['name'], writtenDate : moment(), estimateDetailList : result?.data?.entity?.estimateRequestList}
+                        return {...v, ...result?.data?.entity?.estimateDetail, documentNumberOriginFull : e.target.value, adminName: userInfo['name'], writtenDate : moment(), orderDetailList : result?.data?.entity?.estimateDetail?.estimateDetailList}
                     }
                 )
             }
@@ -150,7 +140,7 @@ export default function OrderWriter({dataInfo}) {
         } else {
             const copyData = {...info}
             copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
-            copyData['delivery'] = moment(info['delivery']).format('YYYY-MM-DD');
+            // copyData['delivery'] = moment(info['delivery']).format('YYYY-MM-DD');
 
             // console.log(copyData, 'copyData~~~~~~~~~~~')
             await getData.post('order/addOrder', copyData).then(v => {
@@ -229,7 +219,7 @@ export default function OrderWriter({dataInfo}) {
                         <BoxCard title={'INQUIRY & PO no'}>
                             <div style={{
                                 display: 'grid',
-                                gridTemplateColumns: '1fr 0.6fr 1fr 1fr 1fr',
+                                gridTemplateColumns: '1fr 0.6fr 1fr 1fr 1fr 1fr',
                                 maxWidth: 900,
                                 minWidth: 600,
                                 columnGap: 15
@@ -238,7 +228,7 @@ export default function OrderWriter({dataInfo}) {
                                 {inputForm({title: '작성자', id: 'adminName', disabled: true})}
                                 {/*{inputForm({title: '담당자', id: 'managerAdminName'})}*/}
 
-
+                                {inputForm({title: '발주서 PO no', id: 'documentNumberOriginFull'})}
                                 {inputForm({
                                     placeholder : '폴더생성 규칙 유의',
                                     title: '연결 INQUIRY No.',
@@ -291,30 +281,10 @@ export default function OrderWriter({dataInfo}) {
                                 ]} style={{width: '100%'}}>
                                 </Select>
                             </div>
-                            <div style={{paddingTop: 8}}>
-                                <div style={{paddingBottom: 3}}>Delivery Terms</div>
-                                <Input id={'deliveryTerms'} value={info['deliveryTerms']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-                            <div style={{paddingTop: 8}}>
-                                <div style={{paddingBottom: 3}}>MAKER</div>
-                                <Input id={'maker'} value={info['maker']} onChange={onChange} size={'small'}/>
-                            </div>
-                            <div style={{paddingTop: 8}}>
-                                <div style={{paddingBottom: 3}}>ITEM</div>
-                                <Input id={'item'} value={info['item']} onChange={onChange} size={'small'}/>
-                            </div>
-                            <div style={{paddingTop: 8}}>
-                                <div style={{paddingBottom: 3}}>Delivery</div>
-                                <DatePicker value={moment(info['delivery'])}
-                                            onChange={(date, dateString) => onChange({
-                                                target: {
-                                                    id: 'delivery',
-                                                    value: date
-                                                }
-                                            })
-                                            } id={'delivery'} size={'small'}/>
-                            </div>
+                            {inputForm({title: 'Delivery Terms', id: 'deliveryTerms'})}
+                            {inputForm({title: 'MAKER', id: 'maker'})}
+                            {inputForm({title: 'ITEM', id: 'item'})}
+                            {inputForm({title: 'Delivery', id: 'delivery'})}
 
                         </Card>
 
