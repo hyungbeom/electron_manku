@@ -124,6 +124,7 @@ const TableGrid = ({
     };
 
     const handleDoubleClicked = (e) => {
+        console.log(e.data, 'e.data')
 
         if (type === 'read') {
             if (e.data.estimateRequestId)
@@ -132,7 +133,7 @@ const TableGrid = ({
                 router.push(`/estimate_update?estimateId=${e?.data?.estimateId}`)
             if (e.data.orderId)
                 router.push(`/order_update?orderId=${e?.data?.orderId}`)
-            if (e.data.inventoryId)
+            if (e.data.remainingQuantity)
                 router.push(`/inventory_update?maker=${e?.data?.maker}&model=${e?.data?.model}`)
             if (e.data.makerId)
                 router.push(`/maker_update?makerName=${e?.data?.makerName}`)
@@ -149,7 +150,6 @@ const TableGrid = ({
         }
 
         if (type === 'hsCode') {
-            console.log(e.data, 'hsCode')
             // setInfo(e.data)
         }
     };

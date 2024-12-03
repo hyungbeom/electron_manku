@@ -356,7 +356,7 @@ export const tableOrderWriteColumn = [
         }
     },
     {
-        headerName: '주문수량',
+        headerName: '수량',
         field: 'quantity',
         editable: true,
         valueFormatter: numberFormat,

@@ -50,6 +50,19 @@ export default function OrderInventoryWrite() {
             />
         </div>
     }
+
+    const textAreaForm = ({title, id, rows = 5, disabled = false}) => {
+        return <div>
+            <div>{title}</div>
+            <TextArea style={{resize : 'none'}} rows={rows} id={id} value={info[id]} disabled={disabled}
+                      onChange={onChange}
+                      size={'small'}
+                      showCount
+                      maxLength={1000}
+            />
+        </div>
+    }
+
     const disabledDate = (current) => {
         // current는 moment 객체입니다.
         // 오늘 이전 날짜를 비활성화
@@ -109,7 +122,7 @@ export default function OrderInventoryWrite() {
                         </BoxCard>
 
                         <BoxCard>
-                            {datePickerForm({title: '수입단가', id: 'importUnitPrice'})}
+                            {inputForm({title: '수입단가', id: 'importUnitPrice'})}
                             <div>
                                 <div style={{paddingTop: 8}}>화폐단위</div>
                                 <Select id={'currencyUnit'}
@@ -122,28 +135,34 @@ export default function OrderInventoryWrite() {
                                     {value: '4', label: 'GBP'},
                                 ]} style={{width: '100%',}}/>
                             </div>
-                            {inputForm({title: '입고수량', id: 'receivedQuantity'})}
-                            {inputForm({title: '단위', id: 'unit'})}
+                            <div style={{display:'grid', gridTemplateColumns:'1fr 70px', columnGap:15}}>
+
+                                {inputForm({title: '입고수량', id: 'receivedQuantity'})}
+                                <div>
+                                    <div>&nbsp;</div>
+                                    <Select id={'currencyUnit'}
+                                            onChange={(src) => onChange({target: {id: 'currencyUnit', value: src}})}
+                                            size={'small'} value={info['currencyUnit']} options={[
+                                        {value: '0', label: 'ea'},
+                                        {value: '1', label: 'set'},
+                                        {value: '2', label: 'm'},
+                                        {value: '3', label: 'feet'},
+                                        {value: '4', label: 'roll'},
+                                        {value: '5', label: 'box'},
+                                        {value: '6', label: 'g'},
+                                        {value: '7', label: 'kg'},
+                                        {value: '8', label: 'Pack'},
+                                        {value: '9', label: 'Inch'},
+                                        {value: '10', label: 'MOQ'},
+                                    ]} style={{width: '100%',}}/>
+                                </div>
+                            </div>
                         </BoxCard>
 
-                        <Card size={'small'} style={{
-                            fontSize: 11,
-                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
-                        }}>
-                            <div>
-                                <div style={{paddingBottom: 3}}>위치</div>
-                                <Input id={'location'} value={info['location']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-                            <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>비고</div>
-                                <TextArea id={'remarks'} value={info['remarks']} onChange={onChange}
-                                          size={'small'}/>
-                            </div>
-
-
-                        </Card>
-
+                        <BoxCard>
+                            {inputForm({title: '위치', id: 'location'})}
+                            {textAreaForm({title: '비고란', rows: 3, id: 'remarks'})}
+                        </BoxCard>
 
                     </div>
 

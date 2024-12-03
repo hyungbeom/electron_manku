@@ -106,7 +106,7 @@ export default function rfqRead({dataList}) {
 
         const result = Object.values(
             checkedData.reduce((acc, items) => {
-                const {documentNumberFull, model, agencyManagerName, managerName, quantity, unit, maker, item} = items;
+                const {documentNumberFull, model, agencyManagerName, managerName, quantity, unit, maker, item, endUser} = items;
 
                 // documentNumberFull로 그룹화
                 if (!acc[documentNumberFull]) {
@@ -137,6 +137,7 @@ export default function rfqRead({dataList}) {
                 acc[documentNumberFull].totalQuantity += quantity;
                 acc[documentNumberFull].maker = maker;
                 acc[documentNumberFull].item = item;
+                acc[documentNumberFull].endUser = endUser;
                 return acc;
             }, {})
         );
@@ -172,6 +173,8 @@ export default function rfqRead({dataList}) {
 
 
                         {previewData.map((v, idx) => {
+
+                            console.log(v.endUser, "endUser~~~")
 
 
                             return <>
@@ -372,7 +375,7 @@ export default function rfqRead({dataList}) {
                     gridRef={gridRef}
                     columns={rfqReadColumns}
                     tableData={tableData}
-                    type={'read'}
+                    type={'write'}
                     excel={true}
                 />
 
