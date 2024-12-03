@@ -1,11 +1,10 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
 import {
     CopyOutlined,
-    DownCircleFilled,
-    DownloadOutlined,
+    DownCircleFilled, DownloadOutlined,
     RetweetOutlined,
     SaveOutlined,
     UpCircleFilled
@@ -55,60 +54,11 @@ export default function OrderWriter({dataInfo}) {
             <Input id={id} value={bowl[id]} disabled={disabled}
                    placeholder={placeholder}
                    onChange={onChange}
-                   onKeyDown={handleKeyPress}
                    size={'small'}
                    suffix={suffix}
             />
         </div>
     }
-
-    function handleKeyPress(e) {
-        if (e.key === 'Enter') {
-
-            switch (e.target.id) {
-                case 'documentNumberFull' :
-                    findDocument(e);
-                    break;
-            }
-
-        }
-    }
-
-
-    async function findDocument(e) {
-
-        const result = await getData.post('estimate/getEstimateRequestList', {
-            "searchEstimateRequestId": "",      // 견적의뢰 Id
-            "searchType": "",                   // 검색조건 1: 회신, 2: 미회신
-            "searchStartDate": "",              // 작성일자 시작일
-            "searchEndDate": "",                // 작성일자 종료일
-            "searchDocumentNumber": e.target.value,         // 문서번호
-            "searchCustomerName": "",           // 거래처명
-            "searchMaker": "",                  // MAKER
-            "searchModel": "",                  // MODEL
-            "searchItem": "",                   // ITEM
-            "searchCreatedBy": "",              // 등록직원명
-            "searchManagerName": "",            // 담당자명
-            "searchMobileNumber": "",           // 담당자 연락처
-            "searchBiddingNumber": "",          // 입찰번호(미완성)
-            "page": 1,
-            "limit": -1
-        });
-
-        // console.log(result)
-
-        if (result?.data?.code === 1) {
-
-            if(result?.data?.entity?.estimateRequestList.length) {
-                console.log(result?.data?.entity?.estimateRequestList,':::')
-                setInfo(v => {
-                        return {...v, ...result?.data?.entity?.estimateRequestList[0], adminName: userInfo['name'], writtenDate : moment(), estimateDetailList : result?.data?.entity?.estimateRequestList}
-                    }
-                )
-            }
-        }
-    }
-
     const datePickerForm = ({title, id, disabled = false}) => {
         return <div>
             <div>{title}</div>
@@ -223,16 +173,15 @@ export default function OrderWriter({dataInfo}) {
 
         if (result?.data?.code === 1) {
 
-            console.log(result?.data?.entity?.estimateList,'result?.data?.entity?.estimateList:')
-            // if(result?.data?.entity?.estimateList.length) {
-            //     setInfo(v => {
-            //             return {...v, ...result?.data?.entity?.estimateList[0],
-            //                 writtenDate : moment(),
-            //                 delivery : moment()
-            //             }
-            //         }
-            //     )
-            // }
+            if(result?.data?.entity?.estimateList.length) {
+                setInfo(v => {
+                        return {...v, ...result?.data?.entity?.estimateList[0],
+                            writtenDate : moment(),
+                            delivery : moment()
+                        }
+                    }
+                )
+            }
         }
     }
 
@@ -280,11 +229,9 @@ export default function OrderWriter({dataInfo}) {
                                 {datePickerForm({title: '작성일', id: 'writtenDate', disabled: true})}
                                 {inputForm({title: '작성자', id: 'adminName', disabled: true})}
                                 {/*{inputForm({title: '담당자', id: 'managerAdminName'})}*/}
-
-
                                 {inputForm({
                                     placeholder : '폴더생성 규칙 유의',
-                                    title: '연결 INQUIRY No.',
+                                    title: '연결 PO No',
                                     id: 'documentNumberFull',
                                     suffix: <DownloadOutlined style={{cursor: 'pointer'}} />
                                 })}
