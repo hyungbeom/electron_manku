@@ -176,7 +176,7 @@ export default function rfqRead({dataList}) {
 
                             return <>
 
-                                <div style={{width: '100%', height: 'auto', paddingTop: 20}}>
+                                <div key={idx} style={{width: '100%', height: 'auto', paddingTop: 20}}>
                                     [<span
                                     // style={{fontWeight: 550}}>{v.agencyManagerName}</span>]님<br/><br/>안녕하십니까.
                                     style={{fontWeight: 550}}>{v.managerName}</span>]님<br/><br/>안녕하십니까.
@@ -218,7 +218,7 @@ export default function rfqRead({dataList}) {
                                         </div>
                                         <div style={{lineHeight: 2, paddingLeft: 32}}>{v.maker}</div>
                                     </div>
-                                    <div style={{width: '100%', height: 35, display: "flex"}}>
+                                    <div style={{width: '100%', height: 35, display: "flex", borderBottom: '1px solid #A3A3A3',}}>
                                         <div style={{
                                             fontSize: '13px',
                                             backgroundColor: '#EBF6F7',
@@ -228,6 +228,17 @@ export default function rfqRead({dataList}) {
                                         }}>Item
                                         </div>
                                         <div style={{lineHeight: 2, paddingLeft: 32}}>{v.item}</div>
+                                    </div>
+                                    <div style={{width: '100%', height: 35, display: "flex"}}>
+                                        <div style={{
+                                            fontSize: '13px',
+                                            backgroundColor: '#EBF6F7',
+                                            width: '102px',
+                                            height: '100%',
+                                            borderRight: '1px solid #121212'
+                                        }}>End user
+                                        </div>
+                                        <div style={{lineHeight: 2, paddingLeft: 32}}>{v.endUser}</div>
                                     </div>
 
                                     <div style={{

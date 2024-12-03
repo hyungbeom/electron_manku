@@ -1,7 +1,7 @@
 import Card from "antd/lib/card/Card";
 import React from "react";
 
-export function BoxCard({children, title}) {
+export function BoxCard({children, title=''}) {
 
     return <Card size={'small'} title={title}
                  style={{

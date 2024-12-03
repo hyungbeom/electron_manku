@@ -316,7 +316,7 @@ export const tableOrderWriteColumn = [
         headerName: '주문수량',
         field: 'quantity',
         editable: true,
-        // valueFormatter: numberFormat,
+        valueFormatter: numberFormat,
     },
     {
         headerName: '단위',
@@ -330,7 +330,7 @@ export const tableOrderWriteColumn = [
     {
         headerName: 'CURR',
         field: 'currency',
-        key: 'currency',
+        editable: true,
         cellEditor: 'agSelectCellEditor',
         cellEditorParams: {
             values: ['KRW', 'EUR', 'JPY', 'USD', 'GBP',],
@@ -340,7 +340,7 @@ export const tableOrderWriteColumn = [
         headerName: 'NET/P',
         field: 'net',
         editable: true,
-        // valueFormatter: numberFormat,
+        valueFormatter: numberFormat,
     },
     {
         headerName: 'Amount',
@@ -354,6 +354,12 @@ export const tableOrderWriteColumn = [
             const {quantity, net} = params.data;
             return Math.floor(quantity * net).toLocaleString();
         }
+    },
+    {
+        headerName: '주문수량',
+        field: 'quantity',
+        editable: true,
+        valueFormatter: numberFormat,
     },
     {
         headerName: '입고',
@@ -688,7 +694,7 @@ export const tableEstimateWriteColumns = [
         headerName: '금액',
         field: 'amount',
         width: 120,
-        editable: true,
+        // editable: true,
         valueFormatter: numberFormat,
         cellStyle: { textAlign: 'right' }
     },

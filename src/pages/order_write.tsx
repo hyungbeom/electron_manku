@@ -203,48 +203,6 @@ export default function OrderWriter({dataInfo}) {
         setInfo(copyData)
     }
 
-
-    // async function findDocument() {
-    //
-    //     const result = await getData.post('estimate/getEstimateList', {
-    //         "searchType": "",           // 검색조건 1: 주문, 2: 미주문
-    //         "searchStartDate": "",      // 작성일 검색 시작일
-    //         "searchEndDate": "",        // 작성일 검색 종료일
-    //         "searchDocumentNumber": searchDocumentNumber, // 문서번호
-    //         "searchCustomerName": "",   // 거래처명
-    //         "searchModel": "",          // MODEL
-    //         "searchMaker": "",          // MAKER
-    //         "searchItem": "",           // ITEM
-    //         "searchCreatedBy": "",      // 등록 관리자 이름
-    //         "page": 1,
-    //         "limit": 1
-    //     });
-    //
-    //     if (result?.data?.code === 1) {
-    //
-    //         console.log(result?.data?.entity?.estimateList,'result?.data?.entity?.estimateList:')
-    //         // if(result?.data?.entity?.estimateList.length) {
-    //         //     setInfo(v => {
-    //         //             return {...v, ...result?.data?.entity?.estimateList[0],
-    //         //                 writtenDate : moment(),
-    //         //                 delivery : moment()
-    //         //             }
-    //         //         }
-    //         //     )
-    //         // }
-    //     }
-    // }
-
-
-
-    // function handleKeyPressDoc(e) {
-    //     if (e.key === 'Enter') {
-    //         findDocument();
-    //     }
-    // }
-
-
-
     return <>
         <LayoutComponent>
             <div style={{display: 'grid', gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`,  height: '100vh', columnGap: 5}}>

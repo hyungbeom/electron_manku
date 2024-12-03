@@ -19,19 +19,61 @@ export default function PrintTransactionModal({ data, customerData, isModalOpen,
 
     const handleDownloadPDF = async () => {
         const element = pdfRef.current;
-        const canvas = await html2canvas(element, { scale: 2 });
-        const imgData = canvas.toDataURL("image/png");
 
         const pdf = new jsPDF("portrait", "px", "a4");
         const pdfWidth = pdf.internal.pageSize.getWidth();
         const pdfHeight = pdf.internal.pageSize.getHeight();
+        const bottomMargin = 20; // 하단 여백 (단위: px)
 
-        pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-        pdf.save(`${data.documentNumberFull}_거래명세표.pdf`);
+        const canvas = await html2canvas(element, { scale: 2 });
+        const imgData = canvas.toDataURL("image/png");
+
+        // Calculate image dimensions and split pages
+        const imgProps = pdf.getImageProperties(imgData);
+        const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        let heightLeft = imgHeight;
+        let position = 0;
+
+        // Add first page
+        pdf.addImage(imgData, "PNG", 0, position, pdfWidth, imgHeight);
+        heightLeft -= (pdfHeight - bottomMargin);
+
+        // Add additional pages if necessary
+        while (heightLeft > 0) {
+            position -= (pdfHeight - bottomMargin);
+            pdf.addPage();
+            pdf.addImage(imgData, "PNG", 0, position, pdfWidth, imgHeight);
+            heightLeft -= (pdfHeight - bottomMargin);
+        }
+
+        pdf.save(`${data.documentNumberFull}_견적서.pdf`);
     };
 
+
     const handlePrint = () => {
+        const printStyles = `
+            @media print {
+                @page {
+                    size: A4;
+                    margin: 20mm;
+                }
+                .page-break {
+                    break-before: always;
+                }
+                .printable-content {
+                    page-break-inside: avoid;
+                }
+            }
+        `;
+
+        const styleSheet = document.createElement("style");
+        styleSheet.type = "text/css";
+        styleSheet.innerText = printStyles;
+        document.head.appendChild(styleSheet);
+
         window.print();
+
+        document.head.removeChild(styleSheet);
     };
 
 
@@ -74,7 +116,7 @@ export default function PrintTransactionModal({ data, customerData, isModalOpen,
                 footer={null}
                 onOk={() => setIsModalOpen({event1: false, event2: false})}
                 >
-                <div ref={pdfRef} style={{width: "595px", height: "842px", padding: "40px 24px"}}>
+                <div ref={pdfRef} style={{width: "595px", height: "auto", padding: "40px 24px"}}>
                     {/* Header */}
                     <div style={{fontSize: "24px", textAlign: "center"}}>
                         거 래 명 세 표
@@ -539,7 +581,7 @@ export default function PrintTransactionModal({ data, customerData, isModalOpen,
                                             padding: "3px 3px",
                                             display: "flex",
                                             alignItems: "center",
-                                            whiteSpace: "pre-wrap"
+                                            whiteSpace: "pre-line"
                                         }}>
                                             {model.model}
                                         </div>

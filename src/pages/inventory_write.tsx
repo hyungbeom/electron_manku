@@ -11,11 +11,51 @@ import moment from "moment";
 import message from "antd/lib/message";
 import TextArea from "antd/lib/input/TextArea";
 import Select from "antd/lib/select";
+import {BoxCard} from "@/utils/commonForm";
 
 
 export default function OrderInventoryWrite() {
 
     const [info, setInfo] = useState(tableOrderInventoryInitial)
+
+
+    const datePickerForm = ({title, id, disabled = false}) => {
+        return <div>
+            <div>{title}</div>
+            {/*@ts-ignore*/}
+            <DatePicker value={info[id] ? moment(info[id]) : ''} style={{width: '100%'}}
+                        disabledDate={disabledDate}
+                        onChange={(date) => onChange({
+                            target: {
+                                id: id,
+                                value: date
+                            }
+                        })
+                        }
+                        disabled={disabled}
+                        id={id} size={'small'}/>
+        </div>
+    }
+    const inputForm = ({title, id, disabled = false, suffix = null}) => {
+        let bowl = info;
+
+        return <div>
+            <div>{title}</div>
+            <Input id={id} value={bowl[id]} disabled={disabled}
+                   onChange={onChange}
+                   size={'small'}
+                // onKeyDown={handleKeyPress}
+                   suffix={suffix}
+
+            />
+        </div>
+    }
+    const disabledDate = (current) => {
+        // current는 moment 객체입니다.
+        // 오늘 이전 날짜를 비활성화
+        return current && current < moment().startOf('day');
+    };
+
 
 
     function onChange(e) {
@@ -61,50 +101,15 @@ export default function OrderInventoryWrite() {
 
                     <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', width: '100%', columnGap: 20}}>
 
-                        <Card size={'small'} style={{
-                            fontSize: 11,
-                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
-                        }}>
-                            <div>
-                                <div style={{paddingBottom: 3}}>입고일자</div>
-                                {/*@ts-ignore*/}
-                                <DatePicker value={info['receiptDate']}
-                                            onChange={(date, dateString) => onChange({
-                                                target: {
-                                                    id: 'receiptDate',
-                                                    value: date
-                                                }
-                                            })
-                                            } id={'receiptDate'} size={'small'}/>
-                            </div>
-                            <div style={{marginTop:8}}>
-                                <div style={{paddingBottom: 3}}>문서번호</div>
-                                <Input size={'small'} id={'documentNumber'} value={info['documentNumber']}
-                                       onChange={onChange}/>
-                            </div>
-                            <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>MAKER</div>
-                                <Input id={'maker'} value={info['maker']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-                            <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>MODEL</div>
-                                <Input id={'model'} value={info['model']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
+                        <BoxCard>
+                            {datePickerForm({title: '입고일자', id: 'receiptDate'})}
+                            {inputForm({title: '문서번호', id: 'documentNumber'})}
+                            {inputForm({title: 'Maker', id: 'maker'})}
+                            {inputForm({title: 'Model', id: 'model'})}
+                        </BoxCard>
 
-
-                        </Card>
-
-                        <Card size={'small'} style={{
-                            fontSize: 11,
-                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
-                        }}>
-                            <div>
-                                <div style={{paddingBottom: 3}}>수입단가</div>
-                                <Input id={'importUnitPrice'} value={info['importUnitPrice']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
+                        <BoxCard>
+                            {datePickerForm({title: '수입단가', id: 'importUnitPrice'})}
                             <div>
                                 <div style={{paddingTop: 8}}>화폐단위</div>
                                 <Select id={'currencyUnit'}
@@ -117,19 +122,9 @@ export default function OrderInventoryWrite() {
                                     {value: '4', label: 'GBP'},
                                 ]} style={{width: '100%',}}/>
                             </div>
-                            <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>입고수량</div>
-                                <Input id={'receivedQuantity'} value={info['receivedQuantity']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-                            <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>단위</div>
-                                <Input id={'unit'} value={info['unit']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-
-
-                        </Card>
+                            {inputForm({title: '입고수량', id: 'receivedQuantity'})}
+                            {inputForm({title: '단위', id: 'unit'})}
+                        </BoxCard>
 
                         <Card size={'small'} style={{
                             fontSize: 11,
