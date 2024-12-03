@@ -316,12 +316,12 @@ export default function estimate_update({dataInfo}) {
 
                 <Card title={<div style={{display:'flex', justifyContent:'space-between'}}>
                     <div style={{fontSize:14, fontWeight:550}}>견적서 수정</div><div>
-                    <Button type={'primary'} size={'small'} style={{marginRight: 8}}
+                    <Button type={'default'} size={'small'} style={{marginRight: 8}}
                             onClick={printEstimate}><SaveOutlined/>견적서 출력</Button>
                     <Button type={'primary'} size={'small'} style={{marginRight: 8}}
                             onClick={saveFunc}><SaveOutlined/>수정</Button>
                     {/*@ts-ignored*/}
-                    <Button size={'small'}  type={'ghost'} style={{marginRight: 8,}}
+                    <Button size={'small'}  type={'danger'} style={{marginRight: 8,}}
                             onClick={() => router?.push('/estimate_write')}><EditOutlined/>신규작성</Button>
 
                 </div></div>} style={{fontSize: 12, border: '1px solid lightGray'}}

@@ -16,7 +16,7 @@ export default function PrintEstimate({ data, isModalOpen, userInfo, setIsModalO
     const formattedDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
 
     function formattedNumber(number) {
-        return number.toLocaleString();
+        return number?.toLocaleString();
     }
 
     const handleDownloadPDF = async () => {
@@ -248,7 +248,7 @@ export default function PrintEstimate({ data, isModalOpen, userInfo, setIsModalO
                     <div style={{
                         padding: "6px 0 6px 10px",
                         borderBottom: "1px solid #A3A3A3"
-                    }}>{data.validityPeriod}</div>
+                    }}>{data.validityPeriod==='0'?'견적 발행 후 10일간':'견적 발행 후 30일간'}</div>
                     <div style={{
                         backgroundColor: "#EBF6F7",
                         padding: "6px 0 6px 20px",
@@ -265,7 +265,8 @@ export default function PrintEstimate({ data, isModalOpen, userInfo, setIsModalO
                         결제조건
                     </div>
                     <div
-                        style={{padding: "6px 0 6px 10px", borderBottom: "1px solid #A3A3A3"}}>{data.paymentTerms}</div>
+                        style={{padding: "6px 0 6px 10px", borderBottom: "1px solid #A3A3A3"}}>
+                        {data.paymentTerms==='0'?'발주시 50% / 납품시 50%':data.paymentTerms==='1'?'납품시 현금결제':'정기결제'}</div>
                     <div style={{
                         backgroundColor: "#EBF6F7",
                         padding: "6px 0 6px 20px",
