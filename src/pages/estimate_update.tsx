@@ -44,7 +44,7 @@ export default function estimate_update({dataInfo}) {
 
     console.log(dataInfo,'dataInfo:')
 
-    const inputForm = ({title, id, disabled = false, suffix = null}) => {
+    const inputForm = ({placeholder='',title, id, disabled = false, suffix = null}) => {
         let bowl = info;
 
         // switch (id) {
@@ -59,9 +59,10 @@ export default function estimate_update({dataInfo}) {
         return <div>
             <div>{title}</div>
             <Input id={id} value={bowl[id]} disabled={disabled}
+                   placeholder={placeholder}
                    onChange={onChange}
-                   size={'small'}
                    onKeyDown={handleKeyPress}
+                   size={'small'}
                    suffix={suffix}
             />
         </div>
