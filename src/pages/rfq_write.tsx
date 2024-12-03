@@ -160,21 +160,31 @@ export default function rqfWrite() {
                     break;
                 case 'customerName' :
                     const {customerName, managerName, directTel, faxNumber, email} = data[0];
+                    // console.log(data[0], 'customerName~~~~')
                     setInfo(v => {
                         return {
                             ...v,
-                            customerInfoList: [{
                                 customerName: customerName,
                                 managerName: managerName,
                                 phoneNumber: directTel,
                                 faxNumber: faxNumber,
                                 customerManagerEmail: email
-                            }]
+
                         }
                     })
                     break;
 
                 case 'maker' :
+                    const {maker, item, instructions} = data[0];
+                    // console.log(data[0], 'customerName~~~~')
+                    setInfo(v => {
+                        return {
+                            ...v,
+                            maker: maker,
+                            item: item,
+                            instructions: instructions,
+                        }
+                    })
                     break;
 
             }
