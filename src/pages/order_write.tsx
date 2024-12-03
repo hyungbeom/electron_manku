@@ -65,7 +65,7 @@ export default function OrderWriter({dataInfo}) {
         if (e.key === 'Enter') {
 
             switch (e.target.id) {
-                case 'documentNumberFull' :
+                case 'ourPoNo' :
                     findDocument(e);
                     break;
             }
@@ -88,10 +88,11 @@ export default function OrderWriter({dataInfo}) {
 
             if(result?.data?.entity?.estimateDetail?.estimateDetailList.length) {
 
-                console.log(result?.data?.entity?.estimateDetail,'result?.data?.entity?.estimateDetail?.estimateDetailList:')
+
+                // console.log(result?.data?.entity?.estimateDetail,'result?.data?.entity?.estimateDetail?.estimateDetailList:')
 
                 setInfo(v => {
-                        return {...v, ...result?.data?.entity?.estimateDetail, documentNumberOriginFull : e.target.value, adminName: userInfo['name'], writtenDate : moment(), orderDetailList : result?.data?.entity?.estimateDetail?.estimateDetailList}
+                        return {...v, ...result?.data?.entity?.estimateDetail, documentNumberFull : e.target.value, adminName: userInfo['name'], writtenDate : moment(), orderDetailList : result?.data?.entity?.estimateDetail?.estimateDetailList}
                     }
                 )
             }
@@ -140,15 +141,14 @@ export default function OrderWriter({dataInfo}) {
         } else {
             const copyData = {...info}
             copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
-            // copyData['delivery'] = moment(info['delivery']).format('YYYY-MM-DD');
 
-            // console.log(copyData, 'copyData~~~~~~~~~~~')
+            console.log(copyData,'copyData:')
             await getData.post('order/addOrder', copyData).then(v => {
                 if(v.data.code === 1){
                     message.success('저장되었습니다')
                     setInfo(rfqWriteInitial);
                     deleteList()
-                    window.location.href = '/order_read'
+                    // window.location.href = '/order_read'
             } else {
                 message.error('저장에 실패하였습니다.')
             }
@@ -228,17 +228,16 @@ export default function OrderWriter({dataInfo}) {
                                 {inputForm({title: '작성자', id: 'adminName', disabled: true})}
                                 {/*{inputForm({title: '담당자', id: 'managerAdminName'})}*/}
 
-                                {inputForm({title: '발주서 PO no', id: 'documentNumberOriginFull'})}
+                                {inputForm({title: '발주서 PO no', id: 'documentNumberFull'})}
                                 {inputForm({
                                     placeholder : '폴더생성 규칙 유의',
                                     title: '연결 INQUIRY No.',
-                                    id: 'documentNumberFull',
+                                    id: 'ourPoNo',
                                     suffix: <DownloadOutlined style={{cursor: 'pointer'}} />
                                 })}
                                 {inputForm({title: '거래처 PO no', id: 'yourPoNo'})}
                             </div>
                         </BoxCard>
-
                     <div style={{display: 'grid', gridTemplateColumns: '1fr 1.2fr  1.22fr 1.5fr', columnGap: 10, marginTop:10}}>
 
                         <BoxCard title={'CUSTOMER & SUPPLY'}>

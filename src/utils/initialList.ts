@@ -290,7 +290,7 @@ export const tableEstimateReadInitial = {
 
 
 export const orderWriteInitial = {
-    "documentNumberOriginFull": "",    //  PO No
+    "ourPoNo": "",    //  PO No
     "documentNumberFull": "",    // Our PO No
     "writtenDate": moment().format('YYYY-MM-DD'),    // 작성일
     "yourPoNo": "",                // Your PO No

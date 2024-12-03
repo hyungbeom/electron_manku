@@ -249,7 +249,6 @@ export default function EstimateWrite({dataInfo}) {
         if (result?.data?.code === 1) {
 
             if(result?.data?.entity?.estimateRequestList.length) {
-                console.log(result?.data?.entity?.estimateRequestList,':::')
                 setInfo(v => {
                         return {...v, ...result?.data?.entity?.estimateRequestList[0], adminName: userInfo['name'], writtenDate : moment(), estimateDetailList : result?.data?.entity?.estimateRequestList}
                     }
