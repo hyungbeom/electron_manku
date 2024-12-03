@@ -922,6 +922,12 @@ export const rfqReadColumns = [
         }
     },
     {
+        headerName: 'End User',
+        field: 'endUser',
+        minWidth: 100,
+        maxWidth: 120,
+    },
+    {
         headerName: '비고',
         field: 'remarks',
         minWidth: 100,
