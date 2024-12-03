@@ -1,10 +1,11 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useRef, useState} from "react";
 import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
 import {
     CopyOutlined,
-    DownCircleFilled, DownloadOutlined,
+    DownCircleFilled,
+    DownloadOutlined,
     RetweetOutlined,
     SaveOutlined,
     UpCircleFilled

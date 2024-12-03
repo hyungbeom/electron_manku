@@ -54,7 +54,10 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
             "searchText": text,       // 대리점코드 or 대리점 상호명
             "page": 1,
             "limit": -1
-        });
+        },err=>console.log(err,'::::'));
+
+        console.log(resultList?.data?.entity,'11')
+        console.log(modalList,'22')
         setList(resultList?.data?.entity[modalList[v]?.list])
     }
 
