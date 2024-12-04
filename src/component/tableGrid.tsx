@@ -52,8 +52,6 @@ const TableGrid = ({
                 if (!!params.node.rowIndex && type === 'read') { // 첫 번째 행이 아닌 경우에만 이전 행 참조
                     const previousRowData = params.context?.[params.node.rowIndex - 1];
 
-                    // console.log(previousRowData[listType] && previousRowData[listType],'!!!!')
-                    console.log(params.context?.data,'@@@')
 
                     if (previousRowData && params.data[listType] === previousRowData[listType]) {
 

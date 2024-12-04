@@ -187,6 +187,8 @@ export default function EstimateWrite({dataInfo}) {
 
             await getData.post('estimate/addEstimate', copyData).then(v => {
                 if (v.data.code === 1) {
+
+                    console.log(v.data,'::::')
                     message.success('저장되었습니다.')
                     setInfo(rfqWriteInitial);
                     deleteList()
