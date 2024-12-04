@@ -327,7 +327,7 @@ export default function estimate_update({dataInfo}) {
                         </div>
                     </BoxCard>
 
-                    <div style={{display: 'grid', gridTemplateColumns: "repeat(4, 1fr)", gap:10, marginTop:10}}>
+                    <div style={{display: 'grid', gridTemplateColumns: "150px 200px 200px 180px 1fr"}}>
 
                         <BoxCard title={'매입처 정보'}>
                             {inputForm({
@@ -408,6 +408,10 @@ export default function estimate_update({dataInfo}) {
                                 }/>
                             })}
                             {inputForm({title: 'ITEM', id: 'item'})}
+
+                        </BoxCard>
+                        <BoxCard title={'ETC'}>
+
                             {textAreaForm({title: '지시사항', rows: 2, id: 'instructions'})}
                             {textAreaForm({title: '비고란', rows: 3, id: 'remarks'})}
                         </BoxCard>

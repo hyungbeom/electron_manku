@@ -29,6 +29,7 @@ import {tableOrderWriteColumn} from "@/utils/columnList";
 import PrintPo from "@/component/printPo";
 import PrintTransactionModal from "@/component/printTransaction";
 import {commonManage} from "@/utils/commonManage";
+import TextArea from "antd/lib/input/TextArea";
 
 
 export default function order_update({data}) {
@@ -54,6 +55,35 @@ export default function order_update({data}) {
 
     }, [])
 
+// =============================================================================================================
+    const inputForm = ({title, id, disabled = false, suffix = null, placeholder = ''}) => {
+
+        let bowl = info;
+
+        return <div>
+            <div>{title}</div>
+            <Input id={id} value={bowl[id]} disabled={disabled}
+                   placeholder={placeholder}
+                   onChange={onChange}
+                   size={'small'}
+                   onKeyDown={handleKeyPress}
+                   suffix={suffix}
+            />
+        </div>
+    }
+
+    const textAreaForm = ({title, id, rows = 5, disabled = false}) => {
+        return <div>
+            <div>{title}</div>
+            <TextArea style={{resize: 'none'}} rows={rows} id={id} value={info[id]} disabled={disabled}
+                      onChange={onChange}
+                      size={'small'}
+                      showCount
+                      maxLength={1000}
+            />
+        </div>
+    }
+
 
     const datePickerForm = ({title, id, disabled = false}) => {
         return <div>
@@ -72,21 +102,9 @@ export default function order_update({data}) {
                         id={id} size={'small'}/>
         </div>
     }
-    const inputForm = ({title, id, disabled = false, suffix = null}) => {
-        let bowl = info;
 
-        return <div>
-            <div>{title}</div>
-            <Input id={id} value={bowl[id]} disabled={disabled}
-                   onChange={onChange}
-                   size={'small'}
-                   onKeyDown={handleKeyPress}
-                   suffix={suffix}
 
-            />
-        </div>
-    }
-
+    // ======================================================================================================
     const disabledDate = (current) => {
         // current는 moment 객체입니다.
         // 오늘 이전 날짜를 비활성화
@@ -298,7 +316,7 @@ export default function order_update({data}) {
 
                         <div style={{
                             display: 'grid',
-                            gridTemplateColumns: '1fr 1.2fr  1.22fr 1.5fr',
+                            gridTemplateColumns: '150px 200px 200px 1fr',
                             columnGap: 10,
                             marginTop: 10
                         }}>
@@ -383,14 +401,8 @@ export default function order_update({data}) {
                                     <Input id={'estimateManager'} value={info['estimateManager']} onChange={onChange}
                                            size={'small'}/>
                                 </div>
-                                <div style={{paddingTop: 8}}>
-                                    <div style={{paddingBottom: 3}}>비고란</div>
-                                    <Input id={'remarks'} value={info['remarks']} onChange={onChange} size={'small'}/>
-                                </div>
-                                <div style={{paddingTop: 8}}>
-                                    <div style={{paddingBottom: 3}}>하단태그</div>
-                                    <Input id={'footer'} value={info['footer']} onChange={onChange} size={'small'}/>
-                                </div>
+                                {textAreaForm({title: '비고란', rows: 4, id: 'remarks'})}
+                                {textAreaForm({title: '하단태그', rows: 3, id: 'footer'})}
                             </Card>
                         </div>
                     </div> : null}

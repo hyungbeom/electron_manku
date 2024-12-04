@@ -300,7 +300,7 @@ export default function rqfUpdate({dataInfo}) {
                                 {inputForm({title: '프로젝트 제목', id: 'projectTitle'})}
                             </div>
                         </BoxCard>
-                        <div style={{display: 'grid', gridTemplateColumns: '1fr 1.2fr  1.5fr 1.22fr', columnGap: 10}}>
+                        <div style={{display: 'grid', gridTemplateColumns: "150px 200px 1fr 1fr ", gap: 10, marginTop: 10}}>
 
                             <BoxCard title={'매입처 정보'}>
 

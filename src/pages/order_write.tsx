@@ -25,6 +25,7 @@ import {useRouter} from "next/router";
 import TableGrid from "@/component/tableGrid";
 import {BoxCard} from "@/utils/commonForm";
 import {commonManage} from "@/utils/commonManage";
+import TextArea from "antd/lib/input/TextArea";
 
 export default function OrderWriter({dataInfo}) {
     const gridRef = useRef(null);
@@ -45,23 +46,38 @@ export default function OrderWriter({dataInfo}) {
         managerEmail: userInfo['email'],
     })
 
-
+// =============================================================================================================
     const inputForm = ({title, id, disabled = false, suffix = null, placeholder = ''}) => {
-        let bowl = info;
 
+        let bowl = info;
 
         return <div>
             <div>{title}</div>
             <Input id={id} value={bowl[id]} disabled={disabled}
                    placeholder={placeholder}
                    onChange={onChange}
-                   onKeyDown={handleKeyPress}
                    size={'small'}
+                   onKeyDown={handleKeyPress}
                    suffix={suffix}
             />
         </div>
     }
 
+    const textAreaForm = ({title, id, rows = 5, disabled = false}) => {
+        return <div>
+            <div>{title}</div>
+            <TextArea style={{resize: 'none'}} rows={rows} id={id} value={info[id]} disabled={disabled}
+                      onChange={onChange}
+                      size={'small'}
+                      showCount
+                      maxLength={1000}
+            />
+        </div>
+    }
+
+
+
+    // ======================================================================================================
     function handleKeyPress(e) {
         if (e.key === 'Enter') {
 
@@ -241,7 +257,7 @@ export default function OrderWriter({dataInfo}) {
                             </div>
                         </BoxCard>
 
-                    <div style={{display: 'grid', gridTemplateColumns: '1fr 1.2fr  1.22fr 1.5fr', columnGap: 10, marginTop:10}}>
+                    <div style={{display: 'grid', gridTemplateColumns: '150px 200px 200px 1fr', columnGap: 10, marginTop:10}}>
 
                         <BoxCard title={'CUSTOMER & SUPPLY'}>
                             <div>
@@ -301,14 +317,8 @@ export default function OrderWriter({dataInfo}) {
                                 <Input id={'estimateManager'} value={info['estimateManager']} onChange={onChange}
                                        size={'small'}/>
                             </div>
-                            <div style={{paddingTop: 8}}>
-                                <div style={{paddingBottom: 3}}>비고란</div>
-                                <Input id={'remarks'} value={info['remarks']} onChange={onChange} size={'small'}/>
-                            </div>
-                            <div style={{paddingTop: 8}}>
-                                <div style={{paddingBottom: 3}}>하단태그</div>
-                                <Input id={'footer'} value={info['footer']} onChange={onChange} size={'small'}/>
-                            </div>
+                            {textAreaForm({title: '비고란', rows: 3, id: 'remarks'})}
+                            {textAreaForm({title: '하단태그', rows: 3, id: 'footer'})}
                         </Card>
                     </div>
                     </div> : null}
