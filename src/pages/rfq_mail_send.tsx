@@ -375,7 +375,7 @@ export default function rfqRead({dataList}) {
                     gridRef={gridRef}
                     columns={rfqReadColumns}
                     tableData={tableData}
-                    type={'write'}
+                    type={'read'}
                     excel={true}
                 />
 
