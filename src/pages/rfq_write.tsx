@@ -32,6 +32,7 @@ import {BoxCard} from "@/utils/commonForm";
 import {router} from "next/client";
 import {useRouter} from "next/router";
 import {commonManage} from "@/utils/commonManage";
+import _ from "lodash";
 
 
 export default function rqfWrite() {
@@ -40,23 +41,27 @@ export default function rqfWrite() {
     const gridRef = useRef(null);
     const router = useRouter();
 
-    const [info, setInfo] = useState<any>({
-        ...rfqWriteInitial,
+    const copyInit = _.cloneDeep(rfqWriteInitial)
+    const infoInit = {
+        ...copyInit,
         adminId: userInfo['adminId'],
         managerAdminName: userInfo['name'],
         adminName: userInfo['name'],
-    })
+    }
 
-    useEffect(()=>{
 
-    },[])
+    const [info, setInfo] = useState<any>(infoInit)
+
 
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
 
-    const inputForm = ({title, id, disabled = false, suffix = null, placeholder = ''}) => {
-        let bowl = info;
 
+
+    // =============================================================================================================
+    const inputForm = ({title, id, disabled = false, suffix = null, placeholder = ''}) => {
+
+        let bowl = info;
 
         return <div>
             <div>{title}</div>
@@ -73,7 +78,7 @@ export default function rqfWrite() {
     const textAreaForm = ({title, id, rows = 5, disabled = false}) => {
         return <div>
             <div>{title}</div>
-            <TextArea style={{resize : 'none'}} rows={rows} id={id} value={info[id]} disabled={disabled}
+            <TextArea style={{resize: 'none'}} rows={rows} id={id} value={info[id]} disabled={disabled}
                       onChange={onChange}
                       size={'small'}
                       showCount
@@ -101,6 +106,8 @@ export default function rqfWrite() {
         </div>
     }
 
+
+    // ======================================================================================================
     function handleKeyPress(e) {
         if (e.key === 'Enter') {
 
@@ -114,6 +121,8 @@ export default function rqfWrite() {
 
         }
     }
+
+
 
     function openModal(e) {
         let bowl = {};
@@ -154,7 +163,13 @@ export default function rqfWrite() {
                 case 'agencyCode' :
                     const {agencyId, agencyCode, agencyName, currencyUnit} = data[0];
                     setInfo(v => {
-                        return {...v, agencyId: agencyId, agencyCode: agencyCode, agencyName: agencyName, currencyUnit:currencyUnit}
+                        return {
+                            ...v,
+                            agencyId: agencyId,
+                            agencyCode: agencyCode,
+                            agencyName: agencyName,
+                            currencyUnit: currencyUnit
+                        }
                     })
                     break;
                 case 'customerName' :
@@ -163,11 +178,11 @@ export default function rqfWrite() {
                     setInfo(v => {
                         return {
                             ...v,
-                                customerName: customerName,
-                                managerName: managerName,
-                                phoneNumber: directTel,
-                                faxNumber: faxNumber,
-                                customerManagerEmail: email
+                            customerName: customerName,
+                            managerName: managerName,
+                            phoneNumber: directTel,
+                            faxNumber: faxNumber,
+                            customerManagerEmail: email
 
                         }
                     })
@@ -175,7 +190,6 @@ export default function rqfWrite() {
 
                 case 'maker' :
                     const {makerName, item, instructions} = data[0];
-                    console.log(data[0], 'customerName~~~~')
                     setInfo(v => {
                         return {
                             ...v,
@@ -210,8 +224,8 @@ export default function rqfWrite() {
 
 
         // todo : 테이블에서 업데이트 될때 내용이 자동으로 text로 변형되게 나중엔 변경 하여야함
-        const changeTime = gridRef.current.props.context.map(v=>{
-            return {...v, replyDate : moment(v['replyDate']).format('YYYY-MM-DD')}
+        const changeTime = gridRef.current.props.context.map(v => {
+            return {...v, replyDate: moment(v['replyDate']).format('YYYY-MM-DD')}
         })
 
         copyData['estimateRequestDetailList'] = changeTime
@@ -229,11 +243,11 @@ export default function rqfWrite() {
                 // console.log(e)
 
             } else {
-                if(v.data.code === -20001){
+                if (v.data.code === -20001) {
                     setInfo(src => {
                         return {
                             ...src,
-                            documentNumberFull : v.data.entity
+                            documentNumberFull: v.data.entity
                         }
                     })
                     message.error('문서번호가 중복되었습니다.');
@@ -271,7 +285,7 @@ export default function rqfWrite() {
 
     function addRow() {
         let copyData = {...info};
-        copyData['estimateRequestDetailList'].push( {
+        copyData['estimateRequestDetailList'].push({
             "model": "",             // MODEL
             "quantity": 0,           // 수량
             "unit": "ea",            // 단위
@@ -300,14 +314,14 @@ export default function rqfWrite() {
 
         reader.onload = (e) => {
             const binaryStr = e.target.result;
-            const workbook = XLSX.read(binaryStr, { type: 'binary' });
+            const workbook = XLSX.read(binaryStr, {type: 'binary'});
 
             // 첫 번째 시트 읽기
             const worksheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[worksheetName];
 
             // 데이터를 JSON 형식으로 변환 (첫 번째 행을 컬럼 키로 사용)
-            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
 
             // 데이터 첫 번째 행을 컬럼 이름으로 사용
             const headers = jsonData[0];
@@ -361,8 +375,6 @@ export default function rqfWrite() {
     };
 
 
-
-
     return <>
         <LayoutComponent>
             <div style={{
@@ -393,82 +405,82 @@ export default function rqfWrite() {
 
 
                     {mini ? <div>
-                        <BoxCard title={'기본 정보'}>
-                            <div style={{
-                                display: 'grid',
-                                gridTemplateColumns: '1fr 0.6fr 0.6fr 1fr 1fr 1fr',
-                                maxWidth: 900,
-                                minWidth: 600,
-                                columnGap: 15
-                            }}>
-                                {datePickerForm({title: '작성일', id: 'writtenDate', disabled: true})}
-                                {inputForm({title: '작성자', id: 'adminName', disabled: true})}
-                                {inputForm({title: '담당자', id: 'managerAdminName'})}
-                                {inputForm({
-                                    title: 'INQUIRY NO.',
-                                    id: 'documentNumberFull',
-                                    disabled: true,
-                                    placeholder: '[매입처코드-년도-일련번호]'
-                                })}
-                                {inputForm({title: 'RFQ NO.', id: 'rfqNo'})}
-                                {inputForm({title: '프로젝트 제목', id: 'projectTitle'})}
+                            <BoxCard title={'기본 정보'}>
+                                <div style={{
+                                    display: 'grid',
+                                    gridTemplateColumns: '1fr 0.6fr 0.6fr 1fr 1fr 1fr',
+                                    maxWidth: 900,
+                                    minWidth: 600,
+                                    columnGap: 15
+                                }}>
+                                    {datePickerForm({title: '작성일', id: 'writtenDate', disabled: true})}
+                                    {inputForm({title: '작성자', id: 'adminName', disabled: true})}
+                                    {inputForm({title: '담당자', id: 'managerAdminName'})}
+                                    {inputForm({
+                                        title: 'INQUIRY NO.',
+                                        id: 'documentNumberFull',
+                                        disabled: true,
+                                        placeholder: '[매입처코드-년도-일련번호]'
+                                    })}
+                                    {inputForm({title: 'RFQ NO.', id: 'rfqNo'})}
+                                    {inputForm({title: '프로젝트 제목', id: 'projectTitle'})}
+                                </div>
+                            </BoxCard>
+                            <div style={{display: 'grid', gridTemplateColumns: "repeat(4, 1fr)", gap: 10, marginTop: 10}}>
+                                <BoxCard title={'매입처 정보'}>
+
+                                    {inputForm({
+                                        title: '매입처코드',
+                                        id: 'agencyCode',
+                                        suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
+                                            (e) => {
+                                                e.stopPropagation();
+                                                openModal('agencyCode');
+                                            }
+                                        }/>
+                                    })}
+                                    {inputForm({title: '매입처명', id: 'agencyName'})}
+                                    {datePickerForm({title: '마감일자(예상)', id: 'dueDate'})}
+                                </BoxCard>
+                                <BoxCard title={'거래처 정보'}>
+                                    {inputForm({
+                                        title: '거래처명',
+                                        id: 'customerName',
+                                        suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
+                                            (e) => {
+                                                e.stopPropagation();
+                                                openModal('customerName');
+                                            }
+                                        }/>
+                                    })}
+                                    {inputForm({title: '담당자명', id: 'managerName'})}
+                                    {inputForm({title: '전화번호', id: 'phoneNumber'})}
+                                    {inputForm({title: '팩스', id: 'faxNumber'})}
+                                    {inputForm({title: '이메일', id: 'customerManagerEmail'})}
+                                </BoxCard>
+
+                                <BoxCard title={'Maker 정보'}>
+                                    {inputForm({
+                                        title: 'MAKER',
+                                        id: 'maker',
+                                        suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
+                                            (e) => {
+                                                e.stopPropagation();
+                                                openModal('maker');
+                                            }
+                                        }/>
+                                    })}
+                                    {inputForm({title: 'ITEM', id: 'item'})}
+                                    {textAreaForm({title: '지시사항', id: 'instructions'})}
+
+                                </BoxCard>
+                                <BoxCard title={'ETC'}>
+                                    {inputForm({title: 'End User', id: 'endUser'})}
+                                    {textAreaForm({title: '비고란', rows: 7, id: 'remarks'})}
+                                </BoxCard>
                             </div>
-                        </BoxCard>
-                        <div style={{display: 'grid', gridTemplateColumns: "repeat(4, 1fr)", gap: 10, marginTop: 10}}>
-                            <BoxCard title={'매입처 정보'}>
-
-                                {inputForm({
-                                    title: '매입처코드',
-                                    id: 'agencyCode',
-                                    suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
-                                        (e) => {
-                                            e.stopPropagation();
-                                            openModal('agencyCode');
-                                        }
-                                    }/>
-                                })}
-                                {inputForm({title: '매입처명', id: 'agencyName'})}
-                                {datePickerForm({title: '마감일자(예상)', id: 'dueDate'})}
-                            </BoxCard>
-                            <BoxCard title={'거래처 정보'}>
-                                {inputForm({
-                                    title: '거래처명',
-                                    id: 'customerName',
-                                    suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
-                                        (e) => {
-                                            e.stopPropagation();
-                                            openModal('customerName');
-                                        }
-                                    }/>
-                                })}
-                                {inputForm({title: '담당자명', id: 'managerName'})}
-                                {inputForm({title: '전화번호', id: 'phoneNumber'})}
-                                {inputForm({title: '팩스', id: 'faxNumber'})}
-                                {inputForm({title: '이메일', id: 'customerManagerEmail'})}
-                            </BoxCard>
-
-                            <BoxCard title={'Maker 정보'}>
-                                {inputForm({
-                                    title: 'MAKER',
-                                    id: 'maker',
-                                    suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
-                                        (e) => {
-                                            e.stopPropagation();
-                                            openModal('maker');
-                                        }
-                                    }/>
-                                })}
-                                {inputForm({title: 'ITEM', id: 'item'})}
-                                {textAreaForm({title: '지시사항', id: 'instructions'})}
-
-                            </BoxCard>
-                            <BoxCard title={'ETC'}>
-                                {inputForm({title: 'End User', id: 'endUser'})}
-                                {textAreaForm({title: '비고란', rows: 7, id: 'remarks'})}
-                            </BoxCard>
                         </div>
-                    </div>
-                     : <></>}
+                        : <></>}
                 </Card>
 
 
@@ -481,17 +493,17 @@ export default function rqfWrite() {
                     setInfo={setInfo}
                     excel={true}
                     type={'write'}
-                    funcButtons={<div style={{display : 'flex', alignItems : 'end'}}>
+                    funcButtons={<div style={{display: 'flex', alignItems: 'end'}}>
                         {/*@ts-ignore*/}
                         <Upload {...uploadProps} size={'small'} style={{marginLeft: 5}} showUploadList={false}>
-                            <Button  icon={<UploadOutlined />} size={'small'} >엑셀 업로드</Button>
+                            <Button icon={<UploadOutlined/>} size={'small'}>엑셀 업로드</Button>
                         </Upload>
                         <Button type={'primary'} size={'small'} style={{marginLeft: 5}}
                                 onClick={addRow}>
                             <SaveOutlined/>추가
                         </Button>
                         {/*@ts-ignored*/}
-                        <Button type={'danger'} size={'small'} style={{ marginLeft: 5,}} onClick={deleteList}>
+                        <Button type={'danger'} size={'small'} style={{marginLeft: 5,}} onClick={deleteList}>
                             <CopyOutlined/>삭제
                         </Button>
                     </div>}
@@ -507,12 +519,11 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     let param = {}
 
-    const {userInfo} = await initialServerRouter(ctx, store);
+    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
     const cookies = nookies.get(ctx)
     // const {display = 'horizon'} = cookies;
 
-
-    if (!userInfo) {
+    if (codeInfo === -90009) {
         return {
             redirect: {
                 destination: '/',

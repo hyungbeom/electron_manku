@@ -22,6 +22,7 @@ const TableGrid = ({
                        listDetailType = 'estimateRequestDetailList',
                        type = 'read',
                        gridRef,
+                       onGridReady
                    }: any) => {
 
 
@@ -387,7 +388,6 @@ const TableGrid = ({
                              onCellValueChanged={dataChange}
                              pinnedBottomRowData={pinnedBottomRowData}
                              onSelectionChanged={handleSelectionChanged} // 선택된 행 변경 이벤트
-
                              gridOptions={{
                                  loadThemeGoogleFonts: true,
                              }}
