@@ -15,14 +15,12 @@ import useEventListener from "@/utils/common/function/UseEventListener";
 const TableGrid = ({
                        columns, tableData,
                        setSelectedRows,
-                       setInfo,
+
                        modalComponent,
                        funcButtons,
                        listType = 'estimateRequestId',
-                       listDetailType = 'estimateRequestDetailList',
                        type = 'read',
-                       gridRef,
-                       onGridReady
+                       gridRef
                    }: any) => {
 
 

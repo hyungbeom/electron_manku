@@ -1,5 +1,6 @@
 import moment from "moment/moment";
 import {searchAgencyCodeColumn, searchCustomerColumn, searchMakerColumn} from "@/utils/columnList";
+import {commonManage} from "@/utils/commonManage";
 
 export const makerRegistInitial = {
     "makerName": "",                   // MAKER
@@ -12,6 +13,18 @@ export const makerRegistInitial = {
     "directConfirm": "",                        // 직접확인
     "ftaNumber": "",                            // FTA-No
     "instructions": ""                          // 지시사항
+}
+
+
+export const estimateDetailUnit = {
+    "model": "",   // MODEL
+    "quantity": 0,                  // 수량
+    "unit": "EA",                   // 단위
+    "currency": null,          // CURR
+    "net": 0,                 // NET/P
+    "unitPrice": 0,           // 단가
+    "amount": 0,               // 금액
+    "serialNumber": 1           // 견적의뢰 내역 순서 (1부터 시작)
 }
 export const estimateWriteInitial = {
     "writtenDate": moment().format('YYYY-MM-DD'),    // 작성일
@@ -52,7 +65,6 @@ export const tableEstimateWriteInitial = {
 // ======================================    견적의뢰 작성    ========================================
 
 
-
 export const estimateRequestDetailUnit = {
     "model": "",             // MODEL
     "quantity": 0,           // 수량
@@ -62,7 +74,7 @@ export const estimateRequestDetailUnit = {
     "serialNumber": 0,       // 항목 순서 (1부터 시작)
     "deliveryDate": "",      // 납기
     "content": "미회신",       // 내용
-    "replyDate": moment().format('YYYY-MM-DD'),         // 회신일
+    "replyDate": null,         // 회신일
     "remarks": ""            // 비고
 }
 
@@ -78,9 +90,8 @@ export const rfqWriteInitial = {
     "customerName": "",  // 고객사명(상호명)
     "phoneNumber": "",   // 전화번호
     "faxNumber": "",     // 팩스/이메일
-    "customerManagerEmail" : '',
+    "customerManagerEmail": '',
     "managerName": "",    // 담당자명
-
 
 
     // END //
@@ -198,29 +209,29 @@ export const subRfqReadInitial = {
 
 export const subRfqReadMailInitial = {
 
-        "searchDate": [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],   // front 사용
-        "searchStartDate": "",              // 작성일자 시작일
-        "searchEndDate": "",                // 작성일자 종료일
-        "searchDocumentNumber": "",         // 문서번호
-        "searchCustomerName": "",           // 고객사명
-        "searchMaker": "",                  // MAKER
-        "searchModel": "",                  // MODEL
-        "searchItem": "",                   // ITEM
-        "searchCreatedBy": "",              // 등록직원명
-        "searchRfqNo": "",                  // 견적의뢰 RFQ No
-        "searchProjectTitle": "",           // 프로젝트 제목
-        "searchEndUser": "",                // End User
-        "searchStartDueDate": "",           // 마감일 검색 시작일
-        "searchEndDueDate": "",             // 마감일 검색 종료일
-        "searchAgencyManagerName": "",      // 대리점 담당자 이름
+    "searchDate": [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],   // front 사용
+    "searchStartDate": "",              // 작성일자 시작일
+    "searchEndDate": "",                // 작성일자 종료일
+    "searchDocumentNumber": "",         // 문서번호
+    "searchCustomerName": "",           // 고객사명
+    "searchMaker": "",                  // MAKER
+    "searchModel": "",                  // MODEL
+    "searchItem": "",                   // ITEM
+    "searchCreatedBy": "",              // 등록직원명
+    "searchRfqNo": "",                  // 견적의뢰 RFQ No
+    "searchProjectTitle": "",           // 프로젝트 제목
+    "searchEndUser": "",                // End User
+    "searchStartDueDate": "",           // 마감일 검색 시작일
+    "searchEndDueDate": "",             // 마감일 검색 종료일
+    "searchAgencyManagerName": "",      // 대리점 담당자 이름
 
-        // 메일 전송 목록 검색 필드 추가 2024.11.28
-        "searchSentStatus": 0,              // 전송 여부 1: 전송, 2: 미전송
-        "searchReplyStatus": 0,             // 회신 여부 1: 회신, 2: 미회신
-        "searchAgencyCode": "k10",          // 대리점코드 검색
+    // 메일 전송 목록 검색 필드 추가 2024.11.28
+    "searchSentStatus": 0,              // 전송 여부 1: 전송, 2: 미전송
+    "searchReplyStatus": 0,             // 회신 여부 1: 회신, 2: 미회신
+    "searchAgencyCode": "k10",          // 대리점코드 검색
 
-        "page": 1,
-        "limit": -1
+    "page": 1,
+    "limit": -1
 
 }
 
@@ -289,11 +300,21 @@ export const tableEstimateReadInitial = {
     ]
 }
 
-
+export const orderDetailUnit = {
+    "model": "",           // MODEL
+    "unit": "ea",               // 단위
+    "currency": null,
+    "net": 0,            // NET/P
+    "quantity": 0,              // 수량
+    "receivedQuantity": 0,
+    "unreceivedQuantity": 0,
+    "unitPrice": 0,
+    "amount": 0,
+}
 export const orderWriteInitial = {
     "ourPoNo": "",    //  PO No
     "documentNumberFull": "",    // Our PO No
-    "writtenDate": moment().format('YYYY-MM-DD'),    // 작성일
+    "writtenDate": moment().format('YYYY-MM-DD'),
     "yourPoNo": "",                // Your PO No
     "agencyCode": "",  // Messrs
     "customerName": "",          // 고객사명
@@ -738,21 +759,21 @@ export const modalList = {
         title: '대리점 코드 조회',
         column: searchAgencyCodeColumn,
         list: 'agencyList',
-        placeholder : '코드 또는 상호를 입력하세요'
+        placeholder: '코드 또는 상호를 입력하세요'
     },
     customerName: {
         url: 'customer/getCustomerListForEstimate',
         title: '거래처 상호명 조회',
         column: searchCustomerColumn,
         list: 'customerList',
-        placeholder : '상호명 또는 담당자명 입력하세요'
+        placeholder: '상호명 또는 담당자명 입력하세요'
     },
     maker: {
         url: 'maker/getMakerList',
         title: 'maker 조회',
         column: searchMakerColumn,
         list: 'makerList',
-        placeholder : 'Maker 또는 Area 또는 Item 입력하세요'
+        placeholder: 'Maker 또는 Area 또는 Item 입력하세요'
     },
 }
 

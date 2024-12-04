@@ -1,6 +1,71 @@
+import moment from "moment";
+import * as XLSX from "xlsx";
+
 export const commonManage: any = {}
 export const commonFunc: any = {}
 export const commonCalc: any = {}
+
+
+/**
+ * @param file 업로드 파일입니다.
+ * @description 업로드한 파일을 json으로 풀어서 컬럼에 맞게 데이터 재출력을 하기위한 함수
+ */
+commonManage.excelFileRead = function (file){
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const binaryStr = e.target.result;
+                const workbook = XLSX.read(binaryStr, { type: 'binary' });
+
+                // 첫 번째 시트 읽기
+                const worksheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[worksheetName];
+
+                // 데이터를 JSON 형식으로 변환 (첫 번째 행을 컬럼 키로 사용)
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+                // 데이터 첫 번째 행을 컬럼 이름으로 사용
+                const headers = jsonData[0];
+                const dataRows = jsonData.slice(1);
+
+                const tableData = dataRows
+                    .filter((row) => row.some((cell) => cell !== null && cell !== undefined && cell !== ''))
+                    .map((row) => {
+                        const rowData = {};
+                        row?.forEach((cell, cellIndex) => {
+                            const header = commonManage.changeColumn[headers[cellIndex]];
+                            rowData[header] = cell ?? ''; // 값이 없으면 기본값으로 빈 문자열 설정
+                        });
+                        return rowData;
+                    });
+
+
+                // 성공적으로 데이터를 반환
+                resolve(tableData);
+            } catch (error) {
+                // 에러 발생 시 Promise 거부
+                reject(error);
+            }
+        };
+
+        reader.onerror = (error) => {
+            // 파일 읽기 에러 처리
+            reject(error);
+        };
+
+        reader.readAsBinaryString(file);
+    });
+};
+
+/**
+ * @param date date
+ * @description datePicker에서 오늘날짜 이전의 날짜들을 제한하기 위한 함수
+ */
+commonManage.disabledDate = function (date) {
+    return date && date < moment().startOf('day');
+}
+
 
 
 commonManage.calcFloat = function (params, numb) {
@@ -9,8 +74,21 @@ commonManage.calcFloat = function (params, numb) {
             return ''; // 값이 없으면 빈 문자열 반환
         }
         return parseFloat(params.value).toFixed(numb); // 소수점 두 자리로 제한
-
 }
+
+commonManage.getUnCheckList = function (api) {
+
+    const uncheckedData = [];
+    for (let i = 0; i < api.getDisplayedRowCount(); i++) {
+        const rowNode = api.getDisplayedRowAtIndex(i);
+        if (!rowNode.isSelected()) {
+            uncheckedData.push(rowNode.data);
+        }
+    }
+
+    return uncheckedData
+}
+
 commonManage.onChange = function (e, setInfo) {
     let bowl = {}
     bowl[e.target.id] = e.target.value;
@@ -28,6 +106,17 @@ commonManage.openModal = function (e, setIsModalOpen) {
 }
 
 
+commonManage.changeColumn = {
+    'Model' : 'model',
+    '수량' : 'quantity',
+    '단위' : 'unit',
+    'CURR' : 'currency',
+    'NET/P' : 'net',
+    '납기' : 'deliveryDate',
+    '회신여부' : 'content',
+    '회신일' : 'replyDate',
+    '비고' : 'remarks',
+}
 commonManage.changeCurr = function (value) {
     switch (value) {
         case "ATI":

@@ -14,11 +14,10 @@ import {
 } from "@ant-design/icons";
 import {tableEstimateWriteColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {estimateWriteInitial, ModalInitList, modalList, orderWriteInitial} from "@/utils/initialList";
+import {estimateDetailUnit, estimateWriteInitial, ModalInitList, orderWriteInitial} from "@/utils/initialList";
 import moment from "moment";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
-import {getData} from "@/manage/function/api";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
@@ -30,26 +29,31 @@ import SearchInfoModal from "@/component/SearchAgencyModal";
 import {commonManage} from "@/utils/commonManage";
 import {BoxCard} from "@/utils/commonForm";
 import _ from "lodash";
+import {findCodeInfo, findDocumentInfo} from "@/utils/api/commonApi";
+import {saveEstimate} from "@/utils/api/mainApi";
 
 
 export default function EstimateWrite() {
     const gridRef = useRef(null);
     const router = useRouter();
 
+    const copyInit = _.cloneDeep(estimateWriteInitial)
+    const copyUnitInit = _.cloneDeep(estimateDetailUnit)
+
     const userInfo = useAppSelector((state) => state.user);
 
-    const copyInit = _.cloneDeep(estimateWriteInitial)
-    const [info, setInfo] = useState<any>({
+    const infoInit = {
         ...copyInit,
         adminId: userInfo['adminId'],
         adminName: userInfo['name'],
         managerAdminName: userInfo['name'],
-    })
-    const [mini, setMini] = useState(true);
+    }
 
+    const [info, setInfo] = useState<any>(infoInit)
+    const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
 
-
+    // =============================================================================================================
 
     const inputForm = ({title, id, disabled = false, suffix = null, placeholder = ''}) => {
         let bowl = info;
@@ -96,17 +100,17 @@ export default function EstimateWrite() {
         </div>
     }
 
-    function handleKeyPress(e) {
+    async function handleKeyPress(e) {
         if (e.key === 'Enter') {
 
             switch (e.target.id) {
                 case 'agencyCode' :
                 case 'customerName' :
                 case 'maker' :
-                    searchFunc(e)
+                    await findCodeInfo(e, setInfo, openModal)
                     break;
                 case 'connectDocumentNumberFull' :
-                    findDocument(e);
+                    await findDocumentInfo(e, setInfo)
                     break;
             }
 
@@ -118,67 +122,8 @@ export default function EstimateWrite() {
         commonManage.openModal(e, setIsModalOpen)
     }
 
-
     function onChange(e) {
         commonManage.onChange(e, setInfo)
-    }
-
-    async function searchFunc(e) {
-
-        const resultList = await getData.post(modalList[e.target.id]?.url, {
-            "searchType": "1",
-            "searchText": e.target.value,       // 대리점코드 or 대리점 상호명
-            "page": 1,
-            "limit": -1
-        });
-
-        const data = resultList?.data?.entity[modalList[e.target.id]?.list];
-
-
-        const size = data?.length;
-
-        if (size > 1) {
-            return openModal(e.target.id);
-        } else if (size === 1) {
-            switch (e.target.id) {
-                case 'agencyCode' :
-                    const {agencyId, agencyCode, agencyName, currencyUnit} = data[0];
-                    setInfo(v => {
-                        return {...v, agencyId: agencyId, agencyCode: agencyCode, agencyName: agencyName, currencyUnit:currencyUnit}
-                    })
-                    break;
-                case 'customerName' :
-                    const {customerName, managerName, directTel, faxNumber, email} = data[0];
-                    // console.log(data[0], 'customerName~~~~')
-                    setInfo(v => {
-                        return {
-                            ...v,
-                            customerName: customerName,
-                            managerName: managerName,
-                            phoneNumber: directTel,
-                            faxNumber: faxNumber,
-                            customerManagerEmail: email
-
-                        }
-                    })
-                    break;
-
-                case 'maker' :
-                    const {makerName, item, instructions} = data[0];
-                    setInfo(v => {
-                        return {
-                            ...v,
-                            maker: makerName,
-                            item: item,
-                            instructions: instructions,
-                        }
-                    })
-                    break;
-
-            }
-        } else {
-            message.warn('조회된 데이터가 없습니다.')
-        }
     }
 
     async function saveFunc() {
@@ -187,34 +132,14 @@ export default function EstimateWrite() {
         } else {
             const copyData = {...info}
             copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
-
-            await getData.post('estimate/addEstimate', copyData).then(v => {
-                if (v.data.code === 1) {
-                    message.success('저장되었습니다.')
-                    router.push(`/estimate_update?estimateId=${v.data.entity.estimateId}`)
-                } else {
-                    message.error('저장에 실패하였습니다.')
-                }
-            });
+            await saveEstimate({data: copyData, router: router})
         }
     }
 
 
     function deleteList() {
-
-        const api = gridRef.current.api;
-
-        // 전체 행 반복하면서 선택되지 않은 행만 추출
-        const uncheckedData = [];
-        for (let i = 0; i < api.getDisplayedRowCount(); i++) {
-            const rowNode = api.getDisplayedRowAtIndex(i);
-            if (!rowNode.isSelected()) {
-                uncheckedData.push(rowNode.data);
-            }
-        }
-
         let copyData = {...info}
-        copyData['estimateDetailList'] = uncheckedData;
+        copyData['estimateDetailList'] = commonManage.getUnCheckList(gridRef.current.api);;
         setInfo(copyData);
 
     }
@@ -222,41 +147,29 @@ export default function EstimateWrite() {
     function addRow() {
         let copyData = {...info};
         copyData['estimateDetailList'].push({
-            "model": "",   // MODEL
-            "quantity": 0,                  // 수량
-            "unit": "EA",                   // 단위
-            "currency":   commonManage.changeCurr(info['agencyCode']),          // CURR
-            "net": 0,                 // NET/P
-            "unitPrice": 0,           // 단가
-            "amount": 0,               // 금액
-            "serialNumber": 1           // 견적의뢰 내역 순서 (1부터 시작)
-        })
-
+            ...copyUnitInit,
+            "currency":   commonManage.changeCurr(info['agencyCode'])}
+        )
         setInfo(copyData)
     }
 
-    async function findDocument(e) {
-
-        const result = await getData.post('estimate/getEstimateRequestDetail', {
-            "estimateId": null,
-            "documentNumberFull": e.target.value
-        });
-
-        // console.log(result)
-
-        if (result?.data?.code === 1) {
-
-
-            if(result?.data?.entity?.estimateRequestDetail) {
-
-                setInfo(v => {
-                        return {...v, ...result?.data?.entity?.estimateRequestDetail,estimateDetailList : result?.data?.entity?.estimateRequestDetail?.estimateRequestDetailList,writtenDate : moment()}
-                    }
-                )
-            }
-        }
+    function clearAll() {
+        setInfo({...infoInit});
     }
 
+    /**
+     * @description 테이블 우측상단 관련 기본 유틸버튼
+     */
+    const subTableUtil = <div style={{display : 'flex', alignItems : 'end'}}>
+        <Button type={'primary'} size={'small'} style={{marginLeft: 5}}
+                onClick={addRow}>
+            <SaveOutlined/>추가
+        </Button>
+        {/*@ts-ignored*/}
+        <Button type={'danger'} size={'small'} style={{ marginLeft: 5,}} onClick={deleteList}>
+            <CopyOutlined/>삭제
+        </Button>
+    </div>
 
     return <>
         <LayoutComponent>
@@ -273,7 +186,7 @@ export default function EstimateWrite() {
                                 onClick={saveFunc}><SaveOutlined/>저장</Button>
                         {/*@ts-ignored*/}
                         <Button type={'danger'} size={'small'} style={{marginRight: 8}}
-                                onClick={() => setInfo(orderWriteInitial)}><RetweetOutlined/>초기화</Button>
+                                onClick={clearAll}><RetweetOutlined/>초기화</Button>
                     </div>
                 </div>} style={{fontSize: 12, border: '1px solid lightGray'}}
                       extra={<span style={{fontSize: 20, cursor: 'pointer'}} onClick={() => setMini(v => !v)}> {!mini ?
@@ -398,20 +311,8 @@ export default function EstimateWrite() {
                     columns={tableEstimateWriteColumns}
                     tableData={info['estimateDetailList']}
                     listType={'estimateId'}
-                    listDetailType={'estimateDetailList'}
-                    setInfo={setInfo}
-                    excel={true}
                     type={'write'}
-                    funcButtons={<div style={{display : 'flex', alignItems : 'end'}}>
-                        <Button type={'primary'} size={'small'} style={{marginLeft: 5}}
-                                onClick={addRow}>
-                            <SaveOutlined/>추가
-                        </Button>
-                        {/*@ts-ignored*/}
-                        <Button type={'danger'} size={'small'} style={{ marginLeft: 5,}} onClick={deleteList}>
-                            <CopyOutlined/>삭제
-                        </Button>
-                    </div>}
+                    funcButtons={subTableUtil}
                 />
             </div>
         </LayoutComponent>
@@ -420,22 +321,17 @@ export default function EstimateWrite() {
 // @ts-ignore
 export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
 
-    let param = {}
+    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
-    const {userInfo} = await initialServerRouter(ctx, store);
-
-    if (!userInfo) {
+    if (codeInfo === -90009) {
         return {
             redirect: {
-                destination: '/', // 리다이렉트할 경로
-                permanent: false, // true면 301 리다이렉트, false면 302 리다이렉트
+                destination: '/',
+                permanent: false,
             },
         };
     }
 
     store.dispatch(setUserInfo(userInfo));
 
-
-
-    // return {props: {dataInfo: estimateId ? result?.data?.entity?.estimateDetail : null}}
 })

@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useRef, useState} from "react";
 import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
@@ -14,34 +14,34 @@ import {
 } from "@ant-design/icons";
 import {subRfqWriteColumn} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {ModalInitList, modalList, rfqWriteInitial, subRfqTableInitial} from "@/utils/initialList";
+import {estimateRequestDetailUnit, ModalInitList, rfqWriteInitial} from "@/utils/initialList";
 import moment from "moment";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
-import nookies from "nookies";
 import TableGrid from "@/component/tableGrid";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import SearchInfoModal from "@/component/SearchAgencyModal";
-import {getData} from "@/manage/function/api";
 import Upload from "antd/lib/upload";
-import * as XLSX from "xlsx";
-import {BoxCard} from "@/utils/commonForm";
-import {router} from "next/client";
+import {BoxCard, TopBoxCard} from "@/utils/commonForm";
 import {useRouter} from "next/router";
 import {commonManage} from "@/utils/commonManage";
 import _ from "lodash";
+import {saveRfq} from "@/utils/api/mainApi";
+import {findCodeInfo} from "@/utils/api/commonApi";
 
 
 export default function rqfWrite() {
-    const userInfo = useAppSelector((state) => state.user);
-
     const gridRef = useRef(null);
     const router = useRouter();
 
     const copyInit = _.cloneDeep(rfqWriteInitial)
+    const copyUnitInit = _.cloneDeep(estimateRequestDetailUnit)
+
+    const userInfo = useAppSelector((state) => state.user);
+
     const infoInit = {
         ...copyInit,
         adminId: userInfo['adminId'],
@@ -49,13 +49,9 @@ export default function rqfWrite() {
         adminName: userInfo['name'],
     }
 
-
     const [info, setInfo] = useState<any>(infoInit)
-
-
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
-
 
 
     // =============================================================================================================
@@ -93,7 +89,7 @@ export default function rqfWrite() {
             <div>{title}</div>
             {/*@ts-ignore*/}
             <DatePicker value={info[id] ? moment(info[id]) : ''} style={{width: '100%'}}
-                        disabledDate={disabledDate}
+                        disabledDate={commonManage.disabledDate}
                         onChange={(date) => onChange({
                             target: {
                                 id: id,
@@ -108,245 +104,69 @@ export default function rqfWrite() {
 
 
     // ======================================================================================================
-    function handleKeyPress(e) {
+    async function handleKeyPress(e) {
         if (e.key === 'Enter') {
 
             switch (e.target.id) {
                 case 'agencyCode' :
                 case 'customerName' :
                 case 'maker' :
-                    searchFunc(e)
+                    await findCodeInfo(e, setInfo, openModal)
                     break;
             }
 
         }
     }
 
-
-
     function openModal(e) {
-        let bowl = {};
-        bowl[e] = true
-        setIsModalOpen(v => {
-            return {...v, ...bowl}
-        })
+        commonManage.openModal(e, setIsModalOpen)
     }
 
     function onChange(e) {
-        let bowl = {}
-        bowl[e.target.id] = e.target.value;
-        setInfo(v => {
-            return {...v, ...bowl}
-        })
-
+        commonManage.onChange(e, setInfo)
     }
-
-
-    async function searchFunc(e) {
-
-        const resultList = await getData.post(modalList[e.target.id]?.url, {
-            "searchType": "1",
-            "searchText": e.target.value,       // 대리점코드 or 대리점 상호명
-            "page": 1,
-            "limit": -1
-        });
-
-        const data = resultList?.data?.entity[modalList[e.target.id]?.list];
-
-
-        const size = data?.length;
-
-        if (size > 1) {
-            return openModal(e.target.id);
-        } else if (size === 1) {
-            switch (e.target.id) {
-                case 'agencyCode' :
-                    const {agencyId, agencyCode, agencyName, currencyUnit} = data[0];
-                    setInfo(v => {
-                        return {
-                            ...v,
-                            agencyId: agencyId,
-                            agencyCode: agencyCode,
-                            agencyName: agencyName,
-                            currencyUnit: currencyUnit
-                        }
-                    })
-                    break;
-                case 'customerName' :
-                    const {customerName, managerName, directTel, faxNumber, email} = data[0];
-                    // console.log(data[0], 'customerName~~~~')
-                    setInfo(v => {
-                        return {
-                            ...v,
-                            customerName: customerName,
-                            managerName: managerName,
-                            phoneNumber: directTel,
-                            faxNumber: faxNumber,
-                            customerManagerEmail: email
-
-                        }
-                    })
-                    break;
-
-                case 'maker' :
-                    const {makerName, item, instructions} = data[0];
-                    setInfo(v => {
-                        return {
-                            ...v,
-                            maker: makerName,
-                            item: item,
-                            instructions: instructions,
-                        }
-                    })
-                    break;
-
-            }
-        } else {
-            message.warn('조회된 데이터가 없습니다.')
-        }
-    }
-
-
-    const disabledDate = (current) => {
-        // current는 moment 객체입니다.
-        // 오늘 이전 날짜를 비활성화
-        return current && current < moment().startOf('day');
-    };
-
 
     async function saveFunc() {
-
         if (!info['agencyCode']) {
             return message.warn('매입처 코드가 누락되었습니다.')
         }
 
         const copyData = {...info}
 
-
-        // todo : 테이블에서 업데이트 될때 내용이 자동으로 text로 변형되게 나중엔 변경 하여야함
         const changeTime = gridRef.current.props.context.map(v => {
             return {...v, replyDate: moment(v['replyDate']).format('YYYY-MM-DD')}
         })
 
         copyData['estimateRequestDetailList'] = changeTime
+        await saveRfq({data: copyData, router: router})
 
-
-        await getData.post('estimate/addEstimateRequest', copyData).then(v => {
-            if (v.data.code === 1) {
-                message.success('저장되었습니다.');
-                router.push(`/rfq_update?estimateRequestId=${v?.data?.entity?.estimateRequestId}`)
-
-                // router.push(`/rfq_read`)
-                // console.log(e)
-
-            } else {
-                if (v.data.code === -20001) {
-                    setInfo(src => {
-                        return {
-                            ...src,
-                            documentNumberFull: v.data.entity
-                        }
-                    })
-                    message.error('문서번호가 중복되었습니다.');
-
-                }
-
-            }
-        });
 
     }
 
-    function deleteList(rows) {
-
-        const api = gridRef.current.api;
-
-        let uncheckedData = [];
-
-        if (rows) {
-            uncheckedData = rows;
-        } else {
-            // 전체 행 반복하면서 선택되지 않은 행만 추출
-            for (let i = 0; i < api.getDisplayedRowCount(); i++) {
-                const rowNode = api.getDisplayedRowAtIndex(i);
-                if (!rowNode.isSelected()) {
-                    uncheckedData.push(rowNode.data);
-                }
-            }
-        }
-
+    function deleteList() {
         let copyData = {...info}
-        copyData['estimateRequestDetailList'] = uncheckedData;
+        copyData['estimateRequestDetailList'] = commonManage.getUnCheckList(gridRef.current.api);
         setInfo(copyData);
-
     }
 
     function addRow() {
         let copyData = {...info};
         copyData['estimateRequestDetailList'].push({
-            "model": "",             // MODEL
-            "quantity": 0,           // 수량
-            "unit": "ea",            // 단위
-            "currency": commonManage.changeCurr(info['agencyCode']),
-            "net": 0,                // NET/P
-            "serialNumber": 0,       // 항목 순서 (1부터 시작)
-            "deliveryDate": "",      // 납기
-            "content": "미회신",       // 내용
-            "replyDate": null,      // 회신일
-            "remarks": ""            // 비고
+            ...copyUnitInit,
+            "currency": commonManage.changeCurr(info['agencyCode'])
         })
         setInfo(copyData)
     }
 
 
     function clearAll() {
-        setInfo({
-            ...rfqWriteInitial,
-            adminId: userInfo['adminId'],
-            adminName: userInfo['adminName']
-        });
+        setInfo({...infoInit});
     }
 
-    const handleFile = (file) => {
-        const reader = new FileReader();
 
-        reader.onload = (e) => {
-            const binaryStr = e.target.result;
-            const workbook = XLSX.read(binaryStr, {type: 'binary'});
-
-            // 첫 번째 시트 읽기
-            const worksheetName = workbook.SheetNames[0];
-            const worksheet = workbook.Sheets[worksheetName];
-
-            // 데이터를 JSON 형식으로 변환 (첫 번째 행을 컬럼 키로 사용)
-            const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
-
-            // 데이터 첫 번째 행을 컬럼 이름으로 사용
-            const headers = jsonData[0];
-            const dataRows = jsonData.slice(1);
-
-            // 테이블 데이터 변환
-            const tableData = dataRows.map((row) => {
-                const rowData = {};
-                // @ts-ignore
-                row?.forEach((cell, cellIndex) => {
-                    const header = headers[cellIndex];
-                    if (header !== undefined) {
-                        rowData[header] = cell ?? ''; // 값이 없으면 기본값으로 빈 문자열 설정
-                    }
-                });
-                return rowData;
-            });
-
-
-            let copyData = {...info}
-            copyData['estimateRequestDetailList'] = tableData;
-            setInfo(copyData);
-
-        };
-
-        reader.readAsBinaryString(file);
-    };
-
+    /**
+     * @description 업로드 속성설정 property 세팅
+     */
     const uploadProps = {
         name: 'file',
         accept: '.xlsx, .xls',
@@ -363,14 +183,33 @@ export default function rqfWrite() {
                 return Upload.LIST_IGNORE;
             }
 
-            // 파일 읽기
-            handleFile(file);
-
-            // false를 반환하여 업로드 방지 (자동 업로드 차단)
+            commonManage.excelFileRead(file).then(v => {
+                let copyData = {...info}
+                copyData['estimateRequestDetailList'] = v;
+                setInfo(copyData);
+            })
             return false;
         },
     };
 
+
+    /**
+     * @description 테이블 우측상단 관련 기본 유틸버튼
+     */
+    const subTableUtil = <div style={{display: 'flex', alignItems: 'end'}}>
+        {/*@ts-ignore*/}
+        <Upload {...uploadProps} size={'small'} style={{marginLeft: 5}} showUploadList={false}>
+            <Button icon={<UploadOutlined/>} size={'small'}>엑셀 업로드</Button>
+        </Upload>
+        <Button type={'primary'} size={'small'} style={{marginLeft: 5}}
+                onClick={addRow}>
+            <SaveOutlined/>추가
+        </Button>
+        {/*@ts-ignored*/}
+        <Button type={'danger'} size={'small'} style={{marginLeft: 5,}} onClick={deleteList}>
+            <CopyOutlined/>삭제
+        </Button>
+    </div>
 
     return <>
         <LayoutComponent>
@@ -402,30 +241,26 @@ export default function rqfWrite() {
 
 
                     {mini ? <div>
-                            <BoxCard title={'기본 정보'}>
-                                <div style={{
-                                    display: 'grid',
-                                    gridTemplateColumns: '1fr 0.6fr 0.6fr 1fr 1fr 1fr',
-                                    maxWidth: 900,
-                                    minWidth: 600,
-                                    columnGap: 15
-                                }}>
-                                    {datePickerForm({title: '작성일', id: 'writtenDate', disabled: true})}
-                                    {inputForm({title: '작성자', id: 'adminName', disabled: true})}
-                                    {inputForm({title: '담당자', id: 'managerAdminName'})}
-                                    {inputForm({
-                                        title: 'INQUIRY NO.',
-                                        id: 'documentNumberFull',
-                                        disabled: true,
-                                        placeholder: '[매입처코드-년도-일련번호]'
-                                    })}
-                                    {inputForm({title: 'RFQ NO.', id: 'rfqNo'})}
-                                    {inputForm({title: '프로젝트 제목', id: 'projectTitle'})}
-                                </div>
-                            </BoxCard>
-                            <div style={{display: 'grid', gridTemplateColumns: "150px 200px 1fr 1fr ", gap: 10, marginTop: 10}}>
+                            <TopBoxCard title={'기본 정보'} grid={'1fr 0.6fr 0.6fr 1fr 1fr 1fr'}>
+                                {datePickerForm({title: '작성일', id: 'writtenDate', disabled: true})}
+                                {inputForm({title: '작성자', id: 'adminName', disabled: true})}
+                                {inputForm({title: '담당자', id: 'managerAdminName'})}
+                                {inputForm({
+                                    title: 'INQUIRY NO.',
+                                    id: 'documentNumberFull',
+                                    disabled: true,
+                                    placeholder: '[매입처코드-년도-일련번호]'
+                                })}
+                                {inputForm({title: 'RFQ NO.', id: 'rfqNo'})}
+                                {inputForm({title: '프로젝트 제목', id: 'projectTitle'})}
+                            </TopBoxCard>
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: "150px 200px 1fr 1fr ",
+                                gap: 10,
+                                marginTop: 10
+                            }}>
                                 <BoxCard title={'매입처 정보'}>
-
                                     {inputForm({
                                         title: '매입처코드',
                                         id: 'agencyCode',
@@ -480,30 +315,13 @@ export default function rqfWrite() {
                         : <></>}
                 </Card>
 
-
                 <TableGrid
                     gridRef={gridRef}
                     columns={subRfqWriteColumn}
                     tableData={info['estimateRequestDetailList']}
                     listType={'estimateRequestId'}
-                    listDetailType={'estimateRequestDetailList'}
-                    setInfo={setInfo}
-                    excel={true}
                     type={'write'}
-                    funcButtons={<div style={{display: 'flex', alignItems: 'end'}}>
-                        {/*@ts-ignore*/}
-                        <Upload {...uploadProps} size={'small'} style={{marginLeft: 5}} showUploadList={false}>
-                            <Button icon={<UploadOutlined/>} size={'small'}>엑셀 업로드</Button>
-                        </Upload>
-                        <Button type={'primary'} size={'small'} style={{marginLeft: 5}}
-                                onClick={addRow}>
-                            <SaveOutlined/>추가
-                        </Button>
-                        {/*@ts-ignored*/}
-                        <Button type={'danger'} size={'small'} style={{marginLeft: 5,}} onClick={deleteList}>
-                            <CopyOutlined/>삭제
-                        </Button>
-                    </div>}
+                    funcButtons={subTableUtil}
                 />
             </div>
         </LayoutComponent>
@@ -513,12 +331,7 @@ export default function rqfWrite() {
 // @ts-ignored
 export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
 
-
-    let param = {}
-
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
-    const cookies = nookies.get(ctx)
-    // const {display = 'horizon'} = cookies;
 
     if (codeInfo === -90009) {
         return {
@@ -529,11 +342,6 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
         };
     }
 
-
     store.dispatch(setUserInfo(userInfo));
 
-
-    return {
-        props: {}
-    }
 })
