@@ -174,9 +174,6 @@ export default function rfqRead({dataList}) {
 
                         {previewData.map((v, idx) => {
 
-                            console.log(v.endUser, "endUser~~~")
-
-
                             return <>
 
                                 <div key={idx} style={{width: '100%', height: 'auto', paddingTop: 20}}>
@@ -201,7 +198,9 @@ export default function rfqRead({dataList}) {
                                         fontSize: 15,
                                         borderTop: '1px solid #121212',
                                         borderBottom: '1px solid #A3A3A3',
-                                        backgroundColor: '#EBF6F7'
+                                        textAlign : 'left',
+                                        paddingLeft : 10,
+                                        fontWeight : 700
                                     }}>
                                         {v.documentNumberFull}
                                     </div>
@@ -232,17 +231,7 @@ export default function rfqRead({dataList}) {
                                         </div>
                                         <div style={{lineHeight: 2, paddingLeft: 32}}>{v.item}</div>
                                     </div>
-                                    <div style={{width: '100%', height: 35, display: "flex"}}>
-                                        <div style={{
-                                            fontSize: '13px',
-                                            backgroundColor: '#EBF6F7',
-                                            width: '102px',
-                                            height: '100%',
-                                            borderRight: '1px solid #121212'
-                                        }}>End user
-                                        </div>
-                                        <div style={{lineHeight: 2, paddingLeft: 32}}>{v.endUser}</div>
-                                    </div>
+
 
                                     <div style={{
                                         lineHeight: 1.9,
@@ -255,7 +244,7 @@ export default function rfqRead({dataList}) {
                                     }}>
                                         Model
                                     </div>
-                                    {v.list.map(src => {
+                                    {v.list.map((src, idx) => {
                                         return <div
                                             style={{
                                                 width: '100%',
@@ -263,13 +252,16 @@ export default function rfqRead({dataList}) {
                                                 borderBottom: '1px solid #A3A3A3',
                                                 display: 'flex'
                                             }}>
+                                            <div style={{lineHeight: 2, textAlign : 'center', padding : '0px 10px'}}><span
+                                                style={{fontWeight: 550}}>{idx + 1}</span> </div>
                                             <div style={{
                                                 fontSize: 13,
                                                 letterSpacing: -1,
                                                 lineHeight: 2.5,
-                                                width: 360,
+                                                width: 340,
                                                 height: '100%',
-                                                borderRight: '1px solid #121212'
+                                                borderRight: '1px solid #121212',
+                                                borderLeft: '1px solid #121212'
                                             }}>{src.model}</div>
                                             <div style={{lineHeight: 2, paddingLeft: 30,}}><span
                                                 style={{fontWeight: 550}}>{src.quantity}</span> {src.unit}</div>
@@ -277,27 +269,7 @@ export default function rfqRead({dataList}) {
 
                                     })}
 
-                                    <div style={{
-                                        lineHeight: 2.5,
-                                        width: '100%',
-                                        height: 35,
-                                        fontSize: 18,
-                                        display: 'flex',
-                                        borderBottom: '1px solid #121212',
-                                        backgroundColor: '#EBF6F7'
-                                    }}>
-                                        <div style={{
-                                            fontSize: 13,
-                                            width: 360,
-                                            height: '100%',
-                                            borderRight: '1px solid #121212'
-                                        }}>
-                                            Total
-                                        </div>
-                                        <div style={{lineHeight: 2, paddingLeft: 30}}>
-                                            <span style={{fontWeight: 550}}>{v.totalQuantity}</span> {v.unit}
-                                        </div>
-                                    </div>
+
                                 </div>
 
                             </>

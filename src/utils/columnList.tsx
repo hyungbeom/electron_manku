@@ -358,14 +358,14 @@ export const tableOrderWriteColumn = [
         headerName: '입고',
         field: 'receivedQuantity',
         editable: true,
-        valueFormatter: numberFormat,
+        valueFormatter: params => commonManage.calcFloat(params, 0),
     },
     {
         headerName: '미입고',
         field: 'unreceivedQuantity',
         valueFormatter: (params) => {
             const {quantity, receivedQuantity} = params.data;
-            return quantity - receivedQuantity
+            return !isNaN(quantity - receivedQuantity) ? quantity - receivedQuantity : ''
         }
     },
     {
