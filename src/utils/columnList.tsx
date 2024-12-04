@@ -1,4 +1,5 @@
 import moment from "moment";
+import {commonManage} from "@/utils/commonManage";
 
 const makeAbsoluteUrl = (url) => {
     if (!/^https?:\/\//i.test(url)) {
@@ -14,6 +15,7 @@ const dateFormat = (params) => {
 export const numberFormat = (params) => {
     return Math.floor(params.value).toLocaleString();
 };
+
 
 
 export const searchCustomerColumn = [
@@ -261,7 +263,7 @@ export const subRfqWriteColumn = [
         field: 'net',
         cellEditor: 'agNumberCellEditor',
         editable: true,
-        valueFormatter: numberFormat,
+        valueFormatter: params => commonManage.calcFloat(params, 2),
         cellStyle: { textAlign: 'right' }
     },
     {
@@ -331,7 +333,7 @@ export const tableOrderWriteColumn = [
         headerName: 'NET/P',
         field: 'net',
         editable: true,
-        valueFormatter: numberFormat,
+        valueFormatter: params => commonManage.calcFloat(params, 2),
     },
     {
         headerName: 'Amount',
@@ -709,7 +711,7 @@ export const tableEstimateWriteColumns = [
         headerName: 'NET/P',
         field: 'net',
         editable: true,
-        valueFormatter: numberFormat,
+        valueFormatter: params => commonManage.calcFloat(params, 2),
         cellStyle: { textAlign: 'right' }
     }
 ];
@@ -884,7 +886,7 @@ export const rfqReadColumns = [
                 field: 'net',
                 minWidth: 60,
                 maxWidth: 120,
-                valueFormatter: numberFormat,
+                valueFormatter: params => commonManage.calcFloat(params, 2),
             },
             {
                 headerName: '납기',
@@ -1088,7 +1090,7 @@ export const projectColumns = [
                 key: 'net',
                 minWidth: 60,
                 maxWidth: 120,
-                valueFormatter: numberFormat,
+                valueFormatter: params => commonManage.calcFloat(params, 2),
             },
             {
                 headerName: '납기',

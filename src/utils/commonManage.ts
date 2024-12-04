@@ -3,6 +3,14 @@ export const commonFunc: any = {}
 export const commonCalc: any = {}
 
 
+commonManage.calcFloat = function (params, numb) {
+
+        if (params.value == null || params.value === '') {
+            return ''; // 값이 없으면 빈 문자열 반환
+        }
+        return parseFloat(params.value).toFixed(numb); // 소수점 두 자리로 제한
+
+}
 commonManage.onChange = function (e, setInfo) {
     let bowl = {}
     bowl[e.target.id] = e.target.value;
