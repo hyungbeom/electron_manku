@@ -268,7 +268,6 @@ export default function estimate_update({dataInfo}) {
         if (result?.data?.code === 1) {
 
             if(result?.data?.entity?.estimateDetail) {
-                console.log(result?.data?.entity?.estimateRequestList,':::')
                 setInfo(v => {
                         return {...v, ...result?.data?.entity?.estimateDetail, writtenDate : moment()}
                     }
