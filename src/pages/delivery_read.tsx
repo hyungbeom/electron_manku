@@ -139,7 +139,7 @@ export default function OrderRead({data}) {
                             </div>
 
                             <div style={{marginTop: 8}}>
-                                <div style={{marginBottom: 3}}>거래처명</div>
+                                <div style={{marginBottom: 3}}>고객사명</div>
                                 <Input id={'searchCustomerName'} value={info['searchCustomerName']}
                                        onChange={onChange}
                                        size={'small'}/>
@@ -226,7 +226,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
         "searchStartDate": "",          // 발주일자 검색 시작일
         "searchEndDate": "",            // 발주일자 검색 종료일
         "searchDocumentNumber": "",     // 문서번호
-        "searchCustomerName": "",       // 거래처명
+        "searchCustomerName": "",       // 고객사명
         "searchMaker": "",              // MAKER
         "searchModel": "",              // MODEL
         "searchItem": "",               // ITEM

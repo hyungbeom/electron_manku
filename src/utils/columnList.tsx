@@ -408,7 +408,7 @@ export const estimateTotalColumns = [
         key: 'agencyCode',
 
     }, {
-        headerName: '거래처명',
+        headerName: '고객사명',
         field: 'customerName',
         key: 'customerName',
     },
@@ -502,7 +502,7 @@ export const tableEstimateReadColumns = [
                 minWidth: 70,
             },
             {
-                headerName: '거래처명',
+                headerName: '고객사명',
                 field: 'customerName',
                 minWidth: 100,
             },
@@ -815,7 +815,7 @@ export const rfqReadColumns = [
         headerName: '거래처',
         children: [
             {
-                headerName: '거래처명',
+                headerName: '고객사명',
                 field: 'customerName',
                 minWidth: 100,
                 maxWidth: 120,
@@ -988,7 +988,7 @@ export const projectColumns = [
         headerName: '거래처',
         children: [
             {
-                headerName: '거래처명',
+                headerName: '고객사명',
                 field: 'customerName',
                 minWidth: 100,
                 maxWidth: 120,
@@ -1183,7 +1183,7 @@ export const rfqMailColumns = [
         key: 'documentNumber',
     },
     {
-        headerName: '거래처명',
+        headerName: '고객사명',
         field: 'agencyName',
         key: 'agencyName',
 
@@ -1252,7 +1252,7 @@ export const tableOrderReadColumns = [
         pinned: 'left',
     },
     {
-        headerName: '거래처명',
+        headerName: '고객사명',
         field: 'customerName',
         minWidth: 150,
     },
@@ -1520,7 +1520,7 @@ export const remittanceDomesticColumns = [
         width: 70,
     },
     {
-        headerName: '거래처명',
+        headerName: '고객사명',
         field: 'customerName',
         minWidth: 120,
     },
@@ -1799,7 +1799,7 @@ export const tableOrderCustomerColumns = [
         key: 'key',
     },
     {
-        headerName: '거래처명',
+        headerName: '고객사명',
         field: 'customerName',
         key: 'customerName',
     },

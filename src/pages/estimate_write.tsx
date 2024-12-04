@@ -301,7 +301,7 @@ export default function EstimateWrite({dataInfo}) {
                         </div>
                     </BoxCard>
 
-                    <div style={{display: 'grid', gridTemplateColumns: "200px 1fr 1fr 1.5fr"}}>
+                    <div style={{display: 'grid', gridTemplateColumns: "150px 200px 200px 180px 1fr"}}>
 
                         <BoxCard title={'매입처 정보'}>
                             {inputForm({
@@ -319,9 +319,9 @@ export default function EstimateWrite({dataInfo}) {
                             {inputForm({title: '연락처', id: 'agencyName'})}
                         </BoxCard>
 
-                        <BoxCard title={'거래처 정보'}>
+                        <BoxCard title={'고객사 정보'}>
                             {inputForm({
-                                title: '거래처명',
+                                title: '고객사명',
                                 id: 'customerName',
                                 suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
                                     (e) => {
@@ -383,8 +383,11 @@ export default function EstimateWrite({dataInfo}) {
                                 }/>
                             })}
                             {inputForm({title: 'ITEM', id: 'item'})}
-                            {textAreaForm({title: '지시사항', rows: 2, id: 'instructions'})}
-                            {textAreaForm({title: '비고란', rows: 3, id: 'remarks'})}
+                        </BoxCard>
+                        <BoxCard title={'ETC'}>
+
+                            {textAreaForm({title: '지시사항', rows: 4, id: 'instructions'})}
+                            {textAreaForm({title: '비고란', rows: 4, id: 'remarks'})}
                         </BoxCard>
                     </div>
                 </Card>

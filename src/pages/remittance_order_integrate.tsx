@@ -199,7 +199,7 @@ export default function remittance_order_integrate({data}) {
                             boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                         }}>
                             <div style={{marginTop: 8}}>
-                                <div style={{marginBottom: 3}}>거래처명</div>
+                                <div style={{marginBottom: 3}}>고객사명</div>
                                 <Input id={'searchText'} value={info['searchText']}
                                        onChange={onChange}
                                        size={'small'}/>

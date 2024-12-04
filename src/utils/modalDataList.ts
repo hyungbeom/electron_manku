@@ -17,7 +17,7 @@ export const subRfqReadInfo = {
     "searchStartDate": {title : '시작일'},              // 작성일자 시작일
     "searchEndDate": {title : '종료일'},              // 작성일자 종료일
     "searchDocumentNumber": {title : '문서번호'},         // 문서번호
-    "searchCustomerName": {title : '거래처명'},           // 거래처명
+    "searchCustomerName": {title : '고객사명'},           // 고객사명
     "searchMaker": {title : 'MAKER'},                  // MAKER
     "searchModel": {title : 'MODEL'},                  // MODEL
     "searchItem": {title : 'ITEM'},                   // ITEM
@@ -28,10 +28,10 @@ export const tableEstimateReadInfo = {
     "writtenDate" : {title : '작성일자'},
     "documentNumber":{title : '문서번호'},
     "agencyCode": {title : '코드'},                   // 검색조건 1: 회신, 2: 미회신
-    "customerName": {title : '거래처명'},               // 작성일자 시작일
+    "customerName": {title : '고객사명'},               // 작성일자 시작일
     "maker": {title : 'MAKER'},                // 작성일자 종료일
     "item": {title : 'ITEM'},        // 문서번호
-    "model": {title : 'MODEL'},            // 거래처명
+    "model": {title : 'MODEL'},            // 고객사명
     "quantity": {title : '수량'},                   // MAKER
     "unit": {title : '단위'},                 // MODEL
     "deliveryDate": {title : '납기'},                     // ITEM
@@ -43,7 +43,7 @@ export const tableEstimateReadInfo = {
 }
 
 export const tableEstimateWriteInfo = {
-    "model": {title : 'MODEL'},            // 거래처명
+    "model": {title : 'MODEL'},            // 고객사명
     "quantity": {title : '수량'},                   // MAKER
     "unit": {title : '단위'},                 // MODEL
     "currency" : {title : 'CURR'},
@@ -70,8 +70,8 @@ export const tableOrderReadInfo = {
     "orderId": {title : 'No'},                   // 검색조건 1: 회신, 2: 미회신
     "writtenDate": {title : '작성일자'},              // 작성일자 시작일
     "documentNumberFull": {title : '문서번호'},              // 작성일자 종료일
-    "customerName": {title : '거래처명'},         // 문서번호
-    "item": {title : 'ITEM'},           // 거래처명
+    "customerName": {title : '고객사명'},         // 문서번호
+    "item": {title : 'ITEM'},           // 고객사명
     "maker": {title : 'MAKER'},                  // MAKER
     "model": {title : 'MODEL'},                  // MODEL
     "unit": {title : '단위'},                   // ITEM
@@ -111,7 +111,7 @@ export const tableOrderInventoryInfo = {
 
 export const tableOrderCustomerInfo = {
     "key": {title : 'No'},                  // MAKER
-    "customerName": {title : '거래처명'},                  // MAKER
+    "customerName": {title : '고객사명'},                  // MAKER
     "unpaidAmount": {title : '미입고금액'},                  // MAKER
     "paidAmount": {title : '입고금액'},                  // MODEL
     "totalAmount": {title : '합계'},                   // ITEM

@@ -134,7 +134,7 @@ export default function EstimateMerge({dataList}) {
                                        onChange={onChange}/>
                             </div>
                             <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>거래처명</div>
+                                <div style={{paddingBottom: 3}}>고객사명</div>
                                 <Input id={'searchCustomerName'} value={info['searchCustomerName']} size={'small'}
                                        onChange={onChange}/>
                             </div>
@@ -199,7 +199,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
         "searchStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),              // 작성일자 시작일
         "searchEndDate": moment().format('YYYY-MM-DD'),                // 작성일자 종료일
         "searchDocumentNumber": "",         // 문서번호
-        "searchCustomerName": "",           // 거래처명
+        "searchCustomerName": "",           // 고객사명
         "searchMaker": "",                  // MAKER
         "searchModel": "",                  // MODEL
         "searchItem": "",                   // ITEM

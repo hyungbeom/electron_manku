@@ -176,7 +176,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
         "searchStartDate": "",              // 작성일자 시작일
         "searchEndDate": "",                // 작성일자 종료일
         "searchDocumentNumber": "",         // 문서번호
-        "searchCustomerName": "",           // 거래처명
+        "searchCustomerName": "",           // 고객사명
         "searchMaker": "",                  // MAKER
         "searchModel": "",                  // MODEL
         "searchItem": "",                   // ITEM

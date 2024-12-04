@@ -187,7 +187,7 @@ console.log('!!!')
                         <BoxCard title={''}>
                             {inputForm({title: '문서번호', id: 'searchDocumentNumber'})}
                             {inputForm({title: '등록직원명', id: 'searchCreatedBy'})}
-                            {inputForm({title: '거래처명', id: 'searchCustomerName'})}
+                            {inputForm({title: '고객사명', id: 'searchCustomerName'})}
                         </BoxCard>
 
                         <BoxCard title={''}>
@@ -249,7 +249,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
         "searchStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),              // 작성일자 시작일
         "searchEndDate": moment().format('YYYY-MM-DD'),                // 작성일자 종료일
         "searchDocumentNumber": "",         // 문서번호
-        "searchCustomerName": "",           // 거래처명
+        "searchCustomerName": "",           // 고객사명
         "searchMaker": "",                  // MAKER
         "searchModel": "",                  // MODEL
         "searchItem": "",                   // ITEM

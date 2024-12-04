@@ -71,7 +71,7 @@ export const estimateReadColumns = [
         render: (text) => {text},
     },
     {
-        title: '거래처명',
+        title: '고객사명',
         dataIndex: 'customerName',
         key: 'customerName',
         render: (text) => {text},
@@ -164,7 +164,7 @@ export const estimateTotalColumns = [
         render: (text) => {text},
     },
     {
-        title: '거래처명',
+        title: '고객사명',
         dataIndex: 'customerName',
         key: 'customerName',
         render: (text) => {text},

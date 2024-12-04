@@ -75,7 +75,7 @@ export const rfqWriteInitial = {
     "agencyName": "",       // 대리점명
 
     "customerCode": "",  // 거래처코드
-    "customerName": "",  // 거래처명(상호명)
+    "customerName": "",  // 고객사명(상호명)
     "phoneNumber": "",   // 전화번호
     "faxNumber": "",     // 팩스/이메일
     "customerManagerEmail" : '',
@@ -116,7 +116,7 @@ export const rfqWriteInitial = {
 
 export const customerInitial = {
     "customerCode": "",                // 거래처코드
-    "customerName": "",  // 거래처명(상호명)
+    "customerName": "",  // 고객사명(상호명)
     "phoneNumber": "",              // 전화번호
     "faxNumber": "",       // 팩스
     "customerManagerEmail": "",       // 이메일
@@ -184,7 +184,7 @@ export const subRfqReadInitial = {
     "searchStartDate": "",              // 작성일자 시작일
     "searchEndDate": "",                // 작성일자 종료일
     "searchDocumentNumber": "",         // 문서번호
-    "searchCustomerName": "",           // 거래처명
+    "searchCustomerName": "",           // 고객사명
     "searchMaker": "",                  // MAKER
     "searchModel": "",                  // MODEL
     "searchItem": "",                   // ITEM
@@ -202,7 +202,7 @@ export const subRfqReadMailInitial = {
         "searchStartDate": "",              // 작성일자 시작일
         "searchEndDate": "",                // 작성일자 종료일
         "searchDocumentNumber": "",         // 문서번호
-        "searchCustomerName": "",           // 거래처명
+        "searchCustomerName": "",           // 고객사명
         "searchMaker": "",                  // MAKER
         "searchModel": "",                  // MODEL
         "searchItem": "",                   // ITEM
@@ -230,7 +230,7 @@ export const estimateReadInitial = {
     "searchStartDate": "",              // 작성일자 시작일
     "searchEndDate": "",                // 작성일자 종료일
     "searchDocumentNumber": "",         // 문서번호
-    "searchCustomerName": "",           // 거래처명
+    "searchCustomerName": "",           // 고객사명
     "searchMaker": "",                  // MAKER
     "searchModel": "",                  // MODEL
     "searchItem": "",                   // ITEM
@@ -296,7 +296,7 @@ export const orderWriteInitial = {
     "writtenDate": moment().format('YYYY-MM-DD'),    // 작성일
     "yourPoNo": "",                // Your PO No
     "agencyCode": "",  // Messrs
-    "customerName": "",          // 거래처명
+    "customerName": "",          // 고객사명
     "estimateManager": "",            // 견적서담당자
     "managerID": "",                 // Responsibility
     "managerPhoneNumber": "",  // Tel
@@ -398,7 +398,7 @@ export const orderReadInitial = {
     "searchStartDate": "",              // 작성일자 시작일
     "searchEndDate": "",              // 작성일자 시작일
     "searchDocumentNumber": "",         // 문서번호
-    "searchCustomerName": "",           // 거래처명
+    "searchCustomerName": "",           // 고객사명
     "searchMaker": "",                  // MAKER
     "searchModel": "",                  // MODEL
     "searchItem": "",                   // ITEM
@@ -462,7 +462,7 @@ export const tableOrderCustomerInitial = {
 export const subCodeExchangeInitial = {
     "searchDate": "",              // 작성일자 시작일
     "searchDocumentNumber": "",         // 문서번호
-    "searchCustomerName": "",           // 거래처명
+    "searchCustomerName": "",           // 고객사명
     "searchMaker": "",                  // MAKER
     "searchModel": "",                  // MODEL
     "searchItem": "",                   // ITEM

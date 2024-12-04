@@ -318,9 +318,9 @@ export default function rqfUpdate({dataInfo}) {
                                 {datePickerForm({title: '마감일자(예상)', id: 'dueDate'})}
                             </BoxCard>
 
-                            <BoxCard title={'거래처 정보'}>
+                            <BoxCard title={'고객사 정보'}>
                                 {inputForm({
-                                    title: '거래처명',
+                                    title: '고객사명',
                                     id: 'customerName',
                                     suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
                                         (e) => {

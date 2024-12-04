@@ -16,7 +16,7 @@ export const TagTypeList = {
     "searchStartDate": {type : 'date'},  // 작성일자 시작일
     "searchEndDate": {type : 'date'},  // 작성일자 종료일
     "searchDocumentNumber": {type : 'input'},  // 문서번호
-    "searchCustomerName": {type : 'input'},  // 거래처명
+    "searchCustomerName": {type : 'input'},  // 고객사명
     "searchMaker": {type : 'input'},                // MAKER
     "searchModel": {type : 'input'},                  // MODEL
     "searchItem": {type : 'input'},              // ITEM
@@ -197,7 +197,7 @@ export const estimateReadInfo = {
     searchDocumentNumber : {type : 'input', title : '문서번호', size : 50},
     searchDate : {type : 'datePicker', title : '작성일자', size : 50},
     searchType : {type : 'selectBox', title : '검색조건',boxList : ['전체','주문','미주문'], size : 50},
-    searchCustomerName : {type : 'input', title : '거래처명', size : 50},
+    searchCustomerName : {type : 'input', title : '고객사명', size : 50},
     searchMaker : {type : 'input', title : 'MAKER', size : 50},
     searchModel : {type : 'input', title : 'MODEL', size : 50},
     searchItem : {type : 'input', title : 'ITEM', size : 50},
@@ -220,7 +220,7 @@ export const estimateTotalWriteInfo = {
     searchDocumentNumber : {type : 'input', title : '문서번호', size : 50},
     searchDate : {type : 'datePicker', title : '작성일자', size : 50},
     searchType : {type : 'selectBox', title : '검색조건',boxList : ['전체','주문','미주문'], size : 50},
-    searchCustomerName : {type : 'input', title : '거래처명', size : 50},
+    searchCustomerName : {type : 'input', title : '고객사명', size : 50},
     searchMaker : {type : 'input', title : 'MAKER', size : 50},
     storeCode : {type : 'input', title : '대리점코드', size : 50},
     searchModel : {type : 'input', title : 'MODEL', size : 50},
@@ -247,7 +247,7 @@ export const estimateTotalWriteColumn = [
         key: 'agencyCode',
     },
     {
-        title: '거래처명',
+        title: '고객사명',
         dataIndex: 'searchCustomerName',
         key: 'searchCustomerName',
     },

@@ -141,7 +141,7 @@ export default function OrderWriter({dataInfo}) {
             "searchStartDate": "",      // 작성일 검색 시작일
             "searchEndDate": "",        // 작성일 검색 종료일
             "searchDocumentNumber": info['documentNumberFull'], // 문서번호
-            "searchCustomerName": "",   // 거래처명
+            "searchCustomerName": "",   // 고객사명
             "searchModel": "",          // MODEL
             "searchMaker": "",          // MAKER
             "searchItem": "",           // ITEM
@@ -230,7 +230,7 @@ export default function OrderWriter({dataInfo}) {
                                     <Input id={'attnTo'} value={info['attnTo']} onChange={onChange} size={'small'}/>
                                 </div>
                                 <div style={{marginTop: 8}}>
-                                    <div style={{paddingBottom: 3}}>거래처명</div>
+                                    <div style={{paddingBottom: 3}}>고객사명</div>
                                     <Input id={'customerName'} value={info['customerName']} onChange={onChange}
                                            size={'small'}/>
                                 </div>

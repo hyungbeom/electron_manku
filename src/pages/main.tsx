@@ -20,10 +20,10 @@ const noticeList=[
     {title:'안녕하실까', content:"안녕하세요", category:'회신', to:'김민국'},
     {title:'안녕하시죠', content:"안녕하세요", category:'회신', to:'김민국'},
     {title:'안녕하십니까', content:"안녕하세요", category:'회신', to:'김민국'},
-    //공지 : [카테고리] 인쿼리, 거래처명(판매처), 담당자, 제목 - 클릭시 견적의뢰 문서로...
-    //송금 : 인쿼리넘버, 거래처명(판매처), 담당자
-    //택배 : [택배종류] 인쿼리넘버, 거래처명(판매처), 지불방법, 담당자
-    //계산서 : [상태] 인쿼리넘버, 거래처명, 금액, 담당자.
+    //공지 : [카테고리] 인쿼리, 고객사명(판매처), 담당자, 제목 - 클릭시 견적의뢰 문서로...
+    //송금 : 인쿼리넘버, 고객사명(판매처), 담당자
+    //택배 : [택배종류] 인쿼리넘버, 고객사명(판매처), 지불방법, 담당자
+    //계산서 : [상태] 인쿼리넘버, 고객사명, 금액, 담당자.
 ]
 
 export default function Main({dataList=[], date}) {
@@ -90,7 +90,7 @@ export default function Main({dataList=[], date}) {
             "month": info['month'],       // 조회월
 
             "searchDocumentNumber": info['searchDocumentNumber'],     // 문서번호 검색
-            "searchCustomerName": info['searchCustomerName']        // 거래처명 검색
+            "searchCustomerName": info['searchCustomerName']        // 고객사명 검색
         })
 
         setDatas(result.data.entity?.ordersCalendar)
@@ -203,7 +203,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
         "month": '10',       // 조회월
 
         "searchDocumentNumber": "",     // 문서번호 검색
-        "searchCustomerName": ""        // 거래처명 검색
+        "searchCustomerName": ""        // 고객사명 검색
     })
 
 

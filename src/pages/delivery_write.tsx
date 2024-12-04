@@ -125,7 +125,7 @@ export default function delivery_write() {
                                             } id={'receiptDate'} size={'small'}/>
                             </div>
                             <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>거래처명</div>
+                                <div style={{paddingBottom: 3}}>고객사명</div>
                                 <Input size={'small'} id={'documentNumber'} value={info['documentNumber']}
                                        onChange={onChange}/>
                             </div>

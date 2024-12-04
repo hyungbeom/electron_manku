@@ -253,7 +253,7 @@ export default function OrderWriter({dataInfo}) {
                                 <Input id={'attnTo'} value={info['attnTo']} onChange={onChange} size={'small'}/>
                             </div>
                             <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>거래처명</div>
+                                <div style={{paddingBottom: 3}}>고객사명</div>
                                 <Input id={'customerName'} value={info['customerName']} onChange={onChange}
                                        size={'small'}/>
                             </div>

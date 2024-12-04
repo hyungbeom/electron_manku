@@ -337,7 +337,7 @@ export default function rfqRead({dataList}) {
                             boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
                         }}>
                             {inputForm({title: '대리점코드', id: 'searchAgencyCode'})}
-                            {inputForm({title: '거래처명', id: 'searchCustomerName'})}
+                            {inputForm({title: '고객사명', id: 'searchCustomerName'})}
                         </Card>
 
                         <Card size={'small'} style={{
@@ -412,7 +412,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
         "searchStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),              // 작성일자 시작일
         "searchEndDate": moment().format('YYYY-MM-DD'),                // 작성일자 종료일
         "searchDocumentNumber": "",         // 문서번호
-        "searchCustomerName": "",           // 거래처명
+        "searchCustomerName": "",           // 고객사명
         "searchMaker": "",                  // MAKER
         "searchModel": "",                  // MODEL
         "searchItem": "",                   // ITEM
