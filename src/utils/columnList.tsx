@@ -680,7 +680,7 @@ export const tableEstimateWriteColumns = [
         headerName: '단가',
         field: 'unitPrice',
         editable: true,
-        valueFormatter: numberFormat,
+        valueFormatter: params => commonManage.calcFloat(params, 0),
         cellStyle: { textAlign: 'right' }
     },
     {
@@ -694,7 +694,7 @@ export const tableEstimateWriteColumns = [
                 return params.value !== undefined ? params.value.toLocaleString() : '0';
             }
             const {quantity, unitPrice} = params.data;
-            return Math.floor(quantity * unitPrice).toLocaleString();
+            return  (!quantity || !unitPrice) ? null : Math.floor(quantity * unitPrice).toLocaleString();
         },
         cellStyle: { textAlign: 'right' }
     },

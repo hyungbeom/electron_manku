@@ -260,21 +260,26 @@ export default function estimate_update({dataInfo}) {
 
     async function findDocument(e) {
 
-        const result = await getData.post('estimate/getEstimateDetail', {
+        const result = await getData.post('estimate/getEstimateRequestDetail', {
             "estimateId": null,
             "documentNumberFull": e.target.value
         });
 
+        // console.log(result)
+
         if (result?.data?.code === 1) {
 
-            if(result?.data?.entity?.estimateDetail) {
+
+            if(result?.data?.entity?.estimateRequestDetail) {
+
                 setInfo(v => {
-                        return {...v, ...result?.data?.entity?.estimateDetail, writtenDate : moment()}
+                        return {...v, ...result?.data?.entity?.estimateRequestDetail,estimateDetailList : result?.data?.entity?.estimateRequestDetail?.estimateRequestDetailList,writtenDate : moment()}
                     }
                 )
             }
         }
     }
+
 
     return <>
         <LayoutComponent>
