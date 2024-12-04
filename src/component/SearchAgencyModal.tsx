@@ -151,15 +151,22 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
         };
     }, []);
 
-    useEventListener('contextmenu', (e: any) => {
-        e.preventDefault()
-    })
 
-    useEventListener('click', (e: any) => {
+    useEventListener(
+        "contextmenu",
+        (e: MouseEvent) => {
+            e.preventDefault();
+        },
+        window
+    );
 
-        setPage({x : null, y : null})
-    })
-
+    useEventListener(
+        "click",
+        () => {
+            setPage({ x: null, y: null });
+        },
+        window
+    );
 
 
     return <>
