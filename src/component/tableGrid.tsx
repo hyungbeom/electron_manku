@@ -1,6 +1,6 @@
 // @ts-nocheck
 
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {AgGridReact} from 'ag-grid-react';
 import {useRouter} from "next/router";
 import {tableTheme} from "@/utils/common";
@@ -8,9 +8,9 @@ import * as XLSX from "xlsx";
 import message from "antd/lib/message";
 import Upload from "antd/lib/upload";
 import {InboxOutlined} from "@ant-design/icons";
-// import 'ag-grid-community/styles/ag-grid.css';
-// import 'ag-grid-community/styles/ag-theme-alpine.css';
+
 import {commonFunc} from "@/utils/commonManage";
+import useEventListener from "@/utils/common/function/UseEventListener";
 
 const TableGrid = ({
                        columns, tableData,
@@ -30,7 +30,8 @@ const TableGrid = ({
     const [data, setData] = useState(tableData);
     const [dragging, setDragging] = useState(false);
     const [pinnedBottomRowData, setPinnedBottomRowData] = useState([]);
-
+    const [page, setPage] = useState({x: null, y: null})
+    const ref = useRef(null);
 
     useEffect(() => {
         setData(tableData)
@@ -270,28 +271,26 @@ const TableGrid = ({
     };
 
 
-    const handleCellRightClick = (event) => {
-        console.log('Right-clicked cell:', event);
-        // event.data:
+    const handleCellRightClick = (e) => {
 
-        // 필요한 동작 추가
-        alert(`You right-clicked on ${event.colDef.field} with value: ${event.value}`);
-    };
+        const {clientX, clientY} = e.event;
+        e.event.preventDefault();
+        setPage({x: clientX, y: clientY})
+    }
 
 
     const handleSelectionChanged = () => {
         const selectedRows = gridRef.current.api.getSelectedRows(); // 체크된 행 가져오기
 
-        const totals = commonFunc.sumCalc(selectedRows); // 합계 계산
-        setPinnedBottomRowData([totals]); // 푸터 업데이트
+        const totals = commonFunc.sumCalc(selectedRows);
+        setPinnedBottomRowData([totals]);
     };
-
 
 
     const getSelectedCellInfo = () => {
         const focusedCell = gridRef?.current?.api.getFocusedCell();
         if (focusedCell) {
-            const { rowIndex, column } = focusedCell;
+            const {rowIndex, column} = focusedCell;
             console.log("Row Index:", rowIndex);
             console.log("Column Field:", column.getColId());
         } else {
@@ -301,65 +300,101 @@ const TableGrid = ({
 
     getSelectedCellInfo();
 
+
+
+    useEventListener('contextmenu', (e: any) => {
+        e.preventDefault()
+    },typeof window !== 'undefined' ? document : null)
+
+    useEventListener('click', (e: any) => {
+
+        setPage({x : null, y : null})
+    },typeof window !== 'undefined' ? document : null )
+
     return (
-        <div className={`ag-theme-quartz ${dragging ? 'dragging' : ''}`}
-             style={{
-                 height: '100%', width: '100%', display: 'flex', flexDirection: 'column', overflowX: 'auto',
-                 border: dragging ? '2px dashed #1890ff' : 'none', position: 'relative'
-             }}
-             onDragOver={handleDragOver}
-             onDragLeave={handleDragLeave}
-             onDrop={handleDrop}
-        >
-            {dragging && (
-                <div
-                    style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '100%',
-                        backgroundColor: 'rgba(255, 255, 255, 0.7)', // 반투명 흰색 배경
-                        zIndex: 10,
-                        pointerEvents: 'none', // 오버레이가 이벤트를 방해하지 않도록 설정
-                    }}
-                >
-                    <InboxOutlined style={{color: 'blue', fontSize: 50, margin: '10% 50% 0 45%'}}/><br/>
-                    Drag & drop
+        <>
+            {page.x ? <div style={{
+                position: 'fixed',
+                top: page.y,
+                left: page.x,
+                zIndex: 10000,
+                fontSize: 11,
+                backgroundColor: 'white',
+                border: '1px solid lightGray',
+                padding: 10,
+            }} ref={ref} id={'right'}>
+                <div onClick={() => {
+                    setPage({x: null, y: null})
+                }} id={'right'}>통합
                 </div>
-            )}
+                <div style={{marginTop: 10}} onClick={() => {
 
-            <div style={{width: '100%', display: 'flex', justifyContent: 'space-between', margin: '10px 0'}}>
-                <div>LIST</div>
-                {funcButtons}
+                    setPage({x: null, y: null})
+                }}
+                     id={'right'}>삭제
+                </div>
+            </div> : <></>}
+
+            <div className={`ag-theme-quartz ${dragging ? 'dragging' : ''}`}
+                 style={{
+                     height: '100%', width: '100%', display: 'flex', flexDirection: 'column', overflowX: 'auto',
+                     border: dragging ? '2px dashed #1890ff' : 'none', position: 'relative'
+                 }}
+                 onDragOver={handleDragOver}
+                 onDragLeave={handleDragLeave}
+                 onDrop={handleDrop}
+            >
+                {dragging && (
+                    <div
+                        style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            width: '100%',
+                            height: '100%',
+                            backgroundColor: 'rgba(255, 255, 255, 0.7)', // 반투명 흰색 배경
+                            zIndex: 10,
+                            pointerEvents: 'none', // 오버레이가 이벤트를 방해하지 않도록 설정
+                        }}
+                    >
+                        <InboxOutlined style={{color: 'blue', fontSize: 50, margin: '10% 50% 0 45%'}}/><br/>
+                        Drag & drop
+                    </div>
+                )}
+
+                <div style={{width: '100%', display: 'flex', justifyContent: 'space-between', margin: '10px 0'}}>
+                    <div>LIST</div>
+                    {funcButtons}
+                </div>
+                {modalComponent}
+
+                <AgGridReact key={data?.length} theme={tableTheme} ref={gridRef}
+                             containerStyle={{width: '100%', height: '78%'}}
+                    //@ts-ignore
+                             onRowDoubleClicked={handleDoubleClicked}
+                    //@ts-ignore
+                             rowSelection={rowSelection}
+
+                             defaultColDef={defaultColDef}
+                             columnDefs={columns}
+                             rowData={data}
+                             onCellContextMenu={handleCellRightClick}
+                             paginationPageSize={1000}
+                             paginationPageSizeSelector={[100, 500, 1000]}
+                             context={data}
+                             pagination={true}
+                             onRowSelected={handleRowSelected}
+                             onCellValueChanged={dataChange}
+                             pinnedBottomRowData={pinnedBottomRowData}
+                             onSelectionChanged={handleSelectionChanged} // 선택된 행 변경 이벤트
+
+                             gridOptions={{
+                                 loadThemeGoogleFonts: true,
+                             }}
+                    // onCellContextMenu={handleCellRightClick}
+                />
             </div>
-            {modalComponent}
-
-            <AgGridReact key={data?.length} theme={tableTheme} ref={gridRef}
-                         containerStyle={{width: '100%', height: '78%'}}
-                //@ts-ignore
-                         onRowDoubleClicked={handleDoubleClicked}
-                //@ts-ignore
-                         rowSelection={rowSelection}
-
-                         defaultColDef={defaultColDef}
-                         columnDefs={columns}
-                         rowData={data}
-
-                         paginationPageSize={1000}
-                         paginationPageSizeSelector={[100, 500, 1000]}
-                         context={data}
-                         pagination={true}
-                         onRowSelected={handleRowSelected}
-                         onCellValueChanged={dataChange}
-                         pinnedBottomRowData={pinnedBottomRowData}
-                         onSelectionChanged={handleSelectionChanged} // 선택된 행 변경 이벤트
-                         gridOptions={{
-                             loadThemeGoogleFonts: true,
-                         }}
-                // onCellContextMenu={handleCellRightClick}
-            />
-        </div>
+        </>
     );
 };
 export default TableGrid;

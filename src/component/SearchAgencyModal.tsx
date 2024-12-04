@@ -15,7 +15,7 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
     const [list, setList] = useState([])
     const [page, setPage] = useState({x: null, y: null})
     const [openCheck, setOpenCheck] = useState('')
-    const [windowOpenKey, setWindowOpenKey] = useState({key:'', value:'', router:'', deleteApi:''})
+    const [windowOpenKey, setWindowOpenKey] = useState({key: '', value: '', router: '', deleteApi: ''})
 
     const ref = useRef(null);
 
@@ -72,10 +72,10 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
 
     async function deleteList(api, key, value) {
         const response = await getData.post(api, {
-            [key]:value
+            [key]: value
         });
         console.log(response)
-        if (response.data.code===1) {
+        if (response.data.code === 1) {
             message.success('삭제되었습니다.')
         } else {
             message.error('오류가 발생하였습니다. 다시 시도해주세요.')
@@ -85,24 +85,49 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
 
     const handleCellRightClick = (e) => {
 
-        const {pageX, pageY} = e.event;
+        const {clientX, clientY} = e.event;
         e.event.preventDefault();
 
 
         console.log(e.data, 'customerId')
-        setPage({x: pageX, y: pageY})
+        setPage({x: clientX, y: clientY})
 
 
         if (e.data.makerId)
-            setWindowOpenKey({key:'makerId', value:e.data.makerId, router:`/maker_update?makerName=${e.data.makerName}`, deleteApi:'maker/deleteMaker'})
+            setWindowOpenKey({
+                key: 'makerId',
+                value: e.data.makerId,
+                router: `/maker_update?makerName=${e.data.makerName}`,
+                deleteApi: 'maker/deleteMaker'
+            })
         else if (e.data.customerId)
-            setWindowOpenKey({key:'customerId', value:e.data.customerId, router:`/code_domestic_customer_update?customerCode=${e?.data?.customerCode}`, deleteApi:'customer/deleteCustomer'})
+            setWindowOpenKey({
+                key: 'customerId',
+                value: e.data.customerId,
+                router: `/code_domestic_customer_update?customerCode=${e?.data?.customerCode}`,
+                deleteApi: 'customer/deleteCustomer'
+            })
         else if (e.data.overseasCustomerId)
-            setWindowOpenKey({key:'overseasCustomerId', value:e.data.overseasCustomerId, router:`/code_overseas_customer_update?customerCode=${e?.data?.customerCode}`, deleteApi:'deleteOverseasCustomer'})
+            setWindowOpenKey({
+                key: 'overseasCustomerId',
+                value: e.data.overseasCustomerId,
+                router: `/code_overseas_customer_update?customerCode=${e?.data?.customerCode}`,
+                deleteApi: 'deleteOverseasCustomer'
+            })
         else if (e.data.agencyId)
-            setWindowOpenKey({key:'agencyId', value:e.data.agencyId, router:`/code_domestic_agency_update?agencyCode=${e?.data?.agencyCode}`, deleteApi:'agency/deleteAgency'})
+            setWindowOpenKey({
+                key: 'agencyId',
+                value: e.data.agencyId,
+                router: `/code_domestic_agency_update?agencyCode=${e?.data?.agencyCode}`,
+                deleteApi: 'agency/deleteAgency'
+            })
         else if (e.data.overseasAgencyId)
-            setWindowOpenKey({key:'overseasAgencyId', value:e.data.overseasAgencyId, router:`/code_overseas_agency_update?agencyCode=${e?.data?.agencyCode}`, deleteApi:'agency/deleteOverseasAgency'})
+            setWindowOpenKey({
+                key: 'overseasAgencyId',
+                value: e.data.overseasAgencyId,
+                router: `/code_overseas_agency_update?agencyCode=${e?.data?.agencyCode}`,
+                deleteApi: 'agency/deleteOverseasAgency'
+            })
         else
             return null;
     };
@@ -113,7 +138,7 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
         };
 
         const handleClick = (e: any) => {
-            setPage({ x: null, y: null });
+            setPage({x: null, y: null});
         };
 
         document.addEventListener('contextmenu', handleContextMenu);
@@ -126,6 +151,16 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
         };
     }, []);
 
+    useEventListener('contextmenu', (e: any) => {
+        e.preventDefault()
+    })
+
+    useEventListener('click', (e: any) => {
+
+        setPage({x : null, y : null})
+    })
+
+
 
     return <>
         {page.x ? <div style={{
@@ -136,21 +171,23 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
             fontSize: 11,
             backgroundColor: 'white',
             border: '1px solid lightGray',
-            padding:10,
+            padding: 10,
         }} ref={ref} id={'right'}>
-            <div onClick={()=> {
+            <div onClick={() => {
                 // alert('수정');
                 const features = 'width=800,height=500,top=300,left=500,resizable=yes,scrollbars=yes';
                 window.open(windowOpenKey.router, '_blank', features)
-                setPage({x : null, y : null})
-            }}id={'right'}>수정</div>
-            <div style={{marginTop:10}} onClick={()=> {
+                setPage({x: null, y: null})
+            }} id={'right'}>수정
+            </div>
+            <div style={{marginTop: 10}} onClick={() => {
                 alert('삭제');
                 deleteList(windowOpenKey.deleteApi, windowOpenKey.key, windowOpenKey.value)
                 searchFunc(openCheck, code);
-                setPage({x : null, y : null})
+                setPage({x: null, y: null})
             }}
-                 id={'right'}>삭제</div>
+                 id={'right'}>삭제
+            </div>
         </div> : <></>}
         <Modal
             // @ts-ignored
@@ -194,9 +231,7 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
                                      default :
                                          setInfo(v => {
                                              return {
-
                                                  ...v,
-                                                 // documentNumberFull: `${e.data.agencyCode}-${moment().format('YY')}-${'일련번호 from back'}`,
                                                  ...e.data
                                              }
                                          })

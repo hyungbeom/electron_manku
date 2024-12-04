@@ -289,10 +289,6 @@ export const subRfqWriteColumn = [
         field: 'replyDate',
         editable: true,
         cellEditor: 'agDateCellEditor',
-        cellEditorParams: {
-            min: '2024-06-01',
-            max: '2027-12-31',
-        },
         valueFormatter: (params) => {
             return (!params.value || params.value === 'Invalid date') ? '' : dateFormat(params)
         }
