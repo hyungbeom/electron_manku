@@ -28,6 +28,7 @@ import TableGrid from "@/component/tableGrid";
 import {tableOrderWriteColumn} from "@/utils/columnList";
 import PrintPo from "@/component/printPo";
 import PrintTransactionModal from "@/component/printTransaction";
+import {commonManage} from "@/utils/commonManage";
 
 
 export default function order_update({data}) {
@@ -53,7 +54,6 @@ export default function order_update({data}) {
 
     }, [])
 
-console.log(orderDetail,'orderDetail:')
 
     const datePickerForm = ({title, id, disabled = false}) => {
         return <div>
@@ -178,7 +178,7 @@ console.log(orderDetail,'orderDetail:')
         copyData['orderDetailList'].push({
             "model": "",           // MODEL
             "unit": "ea",               // 단위
-            "currency": info['currencyUnit'],            // CURR
+            "currency":   commonManage.changeCurr(info['agencyCode']),
             "net": 0,            // NET/P
             "quantity": 0,              // 수량
             "receivedQuantity": 0,

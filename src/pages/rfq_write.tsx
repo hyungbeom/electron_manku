@@ -31,6 +31,7 @@ import * as XLSX from "xlsx";
 import {BoxCard} from "@/utils/commonForm";
 import {router} from "next/client";
 import {useRouter} from "next/router";
+import {commonManage} from "@/utils/commonManage";
 
 
 export default function rqfWrite() {
@@ -274,7 +275,7 @@ export default function rqfWrite() {
             "model": "",             // MODEL
             "quantity": 0,           // 수량
             "unit": "ea",            // 단위
-            "currency": info['currencyUnit'],  // CURR
+            "currency": commonManage.changeCurr(info['agencyCode']),
             "net": 0,                // NET/P
             "serialNumber": 0,       // 항목 순서 (1부터 시작)
             "deliveryDate": "",      // 납기

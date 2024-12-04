@@ -24,6 +24,7 @@ import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {useRouter} from "next/router";
 import TableGrid from "@/component/tableGrid";
 import {BoxCard} from "@/utils/commonForm";
+import {commonManage} from "@/utils/commonManage";
 
 export default function OrderWriter({dataInfo}) {
     const gridRef = useRef(null);
@@ -182,7 +183,7 @@ export default function OrderWriter({dataInfo}) {
         copyData['orderDetailList'].push({
             "model": "",           // MODEL
             "unit": "ea",               // 단위
-            "currency": info['currencyUnit'],          // CURR
+            "currency":   commonManage.changeCurr(info['agencyCode']),
             "net": 0,            // NET/P
             "quantity": 0,              // 수량
             "receivedQuantity": 0,

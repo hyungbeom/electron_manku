@@ -162,7 +162,6 @@ export default function EstimateWrite({dataInfo}) {
 
                 case 'maker' :
                     const {makerName, item, instructions} = data[0];
-                    console.log(data[0], 'customerName~~~~')
                     setInfo(v => {
                         return {
                             ...v,
@@ -215,7 +214,6 @@ export default function EstimateWrite({dataInfo}) {
 
         let copyData = {...info}
         copyData['estimateDetailList'] = uncheckedData;
-        console.log(copyData, 'copyData::')
         setInfo(copyData);
 
     }
@@ -226,7 +224,7 @@ export default function EstimateWrite({dataInfo}) {
             "model": "",   // MODEL
             "quantity": 0,                  // 수량
             "unit": "EA",                   // 단위
-            "currency": info['currency'],          // CURR
+            "currency":   commonManage.changeCurr(info['agencyCode']),          // CURR
             "net": 0,                 // NET/P
             "unitPrice": 0,           // 단가
             "amount": 0,               // 금액

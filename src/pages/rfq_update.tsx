@@ -25,6 +25,7 @@ import MyComponent from "@/component/MyComponent";
 import TableGrid from "@/component/tableGrid";
 import SearchInfoModal from "@/component/SearchAgencyModal";
 import {BoxCard} from "@/utils/commonForm";
+import {commonManage} from "@/utils/commonManage";
 
 
 export default function rqfUpdate({dataInfo}) {
@@ -35,7 +36,6 @@ export default function rqfUpdate({dataInfo}) {
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false, event3: false});
 
-    console.log(dataInfo,'dataInfo:')
 
 
     useEffect(() => {
@@ -168,11 +168,11 @@ export default function rqfUpdate({dataInfo}) {
             "model": "",           // MODEL
             "quantity": 1,              // 수량
             "unit": "ea",               // 단위
-            "currency": info['currencyUnit'],         // CURR
+            "currency": commonManage.changeCurr(info['agencyCode']),         // CURR
             "net": 0,            // NET/P
-            "deliveryDate": 0,   // 납기
+            "deliveryDate": null,   // 납기
             "content": "미회신",         // 내용
-            "replyDate": moment().format("YYYY-MM-DD"),  // 회신일
+            "replyDate": null,  // 회신일
             "remarks": "",           // 비고
             "serialNumber": 1           // 견적의뢰 내역 순서 (1부터 시작)
         })

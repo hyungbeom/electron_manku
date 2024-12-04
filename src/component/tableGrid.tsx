@@ -286,6 +286,21 @@ const TableGrid = ({
         setPinnedBottomRowData([totals]); // 푸터 업데이트
     };
 
+
+
+    const getSelectedCellInfo = () => {
+        const focusedCell = gridRef?.current?.api.getFocusedCell();
+        if (focusedCell) {
+            const { rowIndex, column } = focusedCell;
+            console.log("Row Index:", rowIndex);
+            console.log("Column Field:", column.getColId());
+        } else {
+            console.log("No cell is focused.");
+        }
+    };
+
+    getSelectedCellInfo();
+
     return (
         <div className={`ag-theme-quartz ${dragging ? 'dragging' : ''}`}
              style={{
@@ -326,10 +341,11 @@ const TableGrid = ({
                          onRowDoubleClicked={handleDoubleClicked}
                 //@ts-ignore
                          rowSelection={rowSelection}
+
                          defaultColDef={defaultColDef}
                          columnDefs={columns}
                          rowData={data}
-                // rowData={data}
+
                          paginationPageSize={1000}
                          paginationPageSizeSelector={[100, 500, 1000]}
                          context={data}

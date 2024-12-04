@@ -312,12 +312,7 @@ export const tableOrderWriteColumn = [
         minWidth: 150,
         editable: true,
     },
-    {
-        headerName: '주문수량',
-        field: 'quantity',
-        editable: true,
-        valueFormatter: numberFormat,
-    },
+
     {
         headerName: '단위',
         field: 'unit',
@@ -695,7 +690,14 @@ export const tableEstimateWriteColumns = [
         field: 'amount',
         width: 120,
         // editable: true,
-        valueFormatter: numberFormat,
+        // valueFormatter: numberFormat,
+        valueFormatter: (params) => {
+            if (params.node.rowPinned) {
+                return params.value !== undefined ? params.value.toLocaleString() : '0';
+            }
+            const {quantity, unitPrice} = params.data;
+            return Math.floor(quantity * unitPrice).toLocaleString();
+        },
         cellStyle: { textAlign: 'right' }
     },
     {
@@ -1820,27 +1822,6 @@ export const tableOrderCustomerColumns = [
 ];
 
 
-agencyCode
-    :
-    "WIN"
-agencyName
-    :
-    "신규(업체명쓰세요)"
-key
-    :
-    1
-pendingForeignAmount
-    :
-    0
-receivedForeignAmount
-    :
-    1270508
-totalAmountInKrw
-    :
-    15500000
-totalForeignAmount
-    :
-    1270508
 
 export const subAgencyReadColumns = [
     {

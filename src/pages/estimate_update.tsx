@@ -29,6 +29,7 @@ import {useRouter} from "next/router";
 import SearchInfoModal from "@/component/SearchAgencyModal";
 import PrintEstimate from "@/component/printEstimate";
 import {BoxCard} from "@/utils/commonForm";
+import {commonManage} from "@/utils/commonManage";
 
 
 export default function estimate_update({dataInfo}) {
@@ -253,7 +254,7 @@ export default function estimate_update({dataInfo}) {
             "model": "",   // MODEL
             "quantity": 1,                  // 수량
             "unit": "ea",                   // 단위
-            "currency": info['currency'],              // CURR
+            "currency":   commonManage.changeCurr(info['agencyCode']),         // CURR
             "net": 0,                 // NET/P
             "unitPrice": 0,           // 단가
             "amount": 0,               // 금액
@@ -328,13 +329,15 @@ export default function estimate_update({dataInfo}) {
                     <BoxCard title={'기본 정보'}>
                         <div style={{
                             display: 'grid',
-                            gridTemplateColumns: '1fr 0.6fr 1fr 1fr 1fr',
+                            gridTemplateColumns: '1fr 0.6fr 0.6fr 1fr 1fr 1fr 1fr',
                             maxWidth: 900,
                             minWidth: 600,
                             columnGap: 15
                         }}>
                             {datePickerForm({title: '작성일', id: 'writtenDate', disabled: true})}
-                            {inputForm({title: '만쿠담당자', id: 'adminName', disabled: true})}
+                            {inputForm({title: '작성자', id: 'createdBy', disabled: true})}
+
+                            {inputForm({title: '담당자', id: 'managerAdminName'})}
                             {/*{inputForm({*/}
                             {/*    title: '연결 INQUIRY No.',*/}
                             {/*    id: 'documentNumberFull',*/}
