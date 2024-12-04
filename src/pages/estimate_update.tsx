@@ -43,19 +43,8 @@ export default function estimate_update({dataInfo}) {
     const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
 
 
-    console.log(dataInfo,'dataInfo:')
-
     const inputForm = ({placeholder='',title, id, disabled = false, suffix = null}) => {
         let bowl = info;
-
-        // switch (id) {
-        //     case 'customerName' :
-        //     case 'managerName' :
-        //     case 'phoneNumber' :
-        //     case 'faxNumber' :
-        //     case 'customerManagerEmail' :
-        //         bowl = bowl['customerInfoList'][0]
-        // }
 
         return <div>
             <div>{title}</div>
@@ -105,7 +94,7 @@ export default function estimate_update({dataInfo}) {
                 case 'maker' :
                     searchFunc(e)
                     break;
-                case 'documentNumberFull' :
+                case 'connectDocumentNumberFull' :
                     findDocument(e);
                     break;
             }
@@ -271,32 +260,17 @@ export default function estimate_update({dataInfo}) {
 
     async function findDocument(e) {
 
-        const result = await getData.post('estimate/getEstimateRequestList', {
-            "searchEstimateRequestId": "",      // 견적의뢰 Id
-            "searchType": "",                   // 검색조건 1: 회신, 2: 미회신
-            "searchStartDate": "",              // 작성일자 시작일
-            "searchEndDate": "",                // 작성일자 종료일
-            "searchDocumentNumber": e.target.value,         // 문서번호
-            "searchCustomerName": "",           // 거래처명
-            "searchMaker": "",                  // MAKER
-            "searchModel": "",                  // MODEL
-            "searchItem": "",                   // ITEM
-            "searchCreatedBy": "",              // 등록직원명
-            "searchManagerName": "",            // 담당자명
-            "searchMobileNumber": "",           // 담당자 연락처
-            "searchBiddingNumber": "",          // 입찰번호(미완성)
-            "page": 1,
-            "limit": -1
+        const result = await getData.post('estimate/getEstimateDetail', {
+            "estimateId": null,
+            "documentNumberFull": e.target.value
         });
-
-        console.log(result?.data?.entity?.estimateRequestList[0], "문서검색")
 
         if (result?.data?.code === 1) {
 
-            if(result?.data?.entity?.estimateRequestList.length) {
+            if(result?.data?.entity?.estimateDetail) {
                 console.log(result?.data?.entity?.estimateRequestList,':::')
                 setInfo(v => {
-                        return {...v, ...result?.data?.entity?.estimateRequestList[0], writtenDate : moment(), estimateDetailList : result?.data?.entity?.estimateRequestList}
+                        return {...v, ...result?.data?.entity?.estimateDetail, writtenDate : moment()}
                     }
                 )
             }
@@ -336,32 +310,13 @@ export default function estimate_update({dataInfo}) {
                         }}>
                             {datePickerForm({title: '작성일', id: 'writtenDate', disabled: true})}
                             {inputForm({title: '작성자', id: 'createdBy', disabled: true})}
-
                             {inputForm({title: '담당자', id: 'managerAdminName'})}
-                            {/*{inputForm({*/}
-                            {/*    title: '연결 INQUIRY No.',*/}
-                            {/*    id: 'documentNumberFull',*/}
-                            {/*    suffix: <DownloadOutlined style={{cursor: 'pointer'}} onClick={*/}
-                            {/*        (e) => {*/}
-                            {/*            e.stopPropagation();*/}
-                            {/*            openModal('documentNumberFull');*/}
-                            {/*        }*/}
-                            {/*    }/>*/}
-                            {/*})}*/}
-
-
-
-
                             {inputForm({title: 'INQUIRY NO.', id: 'documentNumberFull', placeholder : '폴더생성 규칙 유의'})}
                             {inputForm({
+                                placeholder : '폴더생성 규칙 유의',
                                 title: '연결 INQUIRY No.',
-                                id: 'documentNumberFull',
-                                suffix: <DownloadOutlined style={{cursor: 'pointer'}} onClick={
-                                    (e) => {
-                                        e.stopPropagation();
-                                        openModal('documentNumberFull');
-                                    }
-                                }/>
+                                id: 'connectDocumentNumberFull',
+                                suffix: <DownloadOutlined style={{cursor: 'pointer'}} />
                             })}
                             {inputForm({title: 'RFQ NO.', id: 'rfqNo'})}
                             {inputForm({title: '프로젝트 제목', id: 'projectTitle'})}
@@ -452,7 +407,6 @@ export default function estimate_update({dataInfo}) {
                             {textAreaForm({title: '지시사항', rows: 2, id: 'instructions'})}
                             {textAreaForm({title: '비고란', rows: 3, id: 'remarks'})}
                         </BoxCard>
-
                     </div>
                 </Card>
 
