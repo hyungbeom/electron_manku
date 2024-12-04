@@ -2,16 +2,9 @@ import React, {useEffect, useRef, useState} from "react";
 import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
-import {
-    CopyOutlined,
-    DownCircleFilled,
-    DownloadOutlined,
-    EditOutlined, RetweetOutlined,
-    SaveOutlined,
-    UpCircleFilled
-} from "@ant-design/icons";
+import {CopyOutlined, DownCircleFilled, EditOutlined, SaveOutlined, UpCircleFilled} from "@ant-design/icons";
 import DatePicker from "antd/lib/date-picker";
-import {orderWriteInitial, printEstimateInitial, rfqWriteInitial,} from "@/utils/initialList";
+import {printEstimateInitial, rfqWriteInitial,} from "@/utils/initialList";
 import moment from "moment";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";

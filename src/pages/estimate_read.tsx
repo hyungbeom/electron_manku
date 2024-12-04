@@ -27,6 +27,8 @@ export default function EstimateRead({data}) {
     const [info, setInfo] = useState(estimateReadInitial)
     const [tableData, setTableData] = useState(data)
 
+    console.log(data,'data:')
+
     function onChange(e) {
 
         let bowl = {}
