@@ -301,7 +301,7 @@ export default function EstimateWrite({dataInfo}) {
                         </div>
                     </BoxCard>
 
-                    <div style={{display: 'grid', gridTemplateColumns: "repeat(4, 1fr)"}}>
+                    <div style={{display: 'grid', gridTemplateColumns: "200px 1fr 1fr 1.5fr"}}>
 
                         <BoxCard title={'매입처 정보'}>
                             {inputForm({

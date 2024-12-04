@@ -660,6 +660,7 @@ export const tableEstimateWriteColumns = [
         headerName: 'Model',
         field: 'model',
         editable: true,
+        width: 1320,
     },
     {
         headerName: '수량',
