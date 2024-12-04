@@ -48,17 +48,20 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
 
 
     async function searchFunc(v, text) {
+        try {
+            const resultList = await getData.post(modalList[v]?.url, {
+                searchType: "",
+                searchText: text, // 대리점코드 or 대리점 상호명
+                page: 1,
+                limit: -1
+            });
 
-        const resultList = await getData.post(modalList[v]?.url, {
-            "searchType": "",
-            "searchText": text,       // 대리점코드 or 대리점 상호명
-            "page": 1,
-            "limit": -1
-        },err=>console.log(err,'::::'));
-
-        console.log(resultList?.data?.entity,'11')
-        console.log(modalList,'22')
-        setList(resultList?.data?.entity[modalList[v]?.list])
+            console.log(resultList?.data?.entity, '11');
+            console.log(modalList, '22');
+            setList(resultList?.data?.entity[modalList[v]?.list]);
+        } catch (err) {
+            console.error(err, '::::');
+        }
     }
 
     function handleKeyPress(e) {
