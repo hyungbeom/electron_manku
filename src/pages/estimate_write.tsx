@@ -14,7 +14,7 @@ import {
 } from "@ant-design/icons";
 import {tableEstimateWriteColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {estimateWriteInitial, ModalInitList, modalList, orderWriteInitial, rfqWriteInitial} from "@/utils/initialList";
+import {estimateWriteInitial, ModalInitList, modalList, orderWriteInitial} from "@/utils/initialList";
 import moment from "moment";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
@@ -29,15 +29,18 @@ import {useRouter} from "next/router";
 import SearchInfoModal from "@/component/SearchAgencyModal";
 import {commonManage} from "@/utils/commonManage";
 import {BoxCard} from "@/utils/commonForm";
+import _ from "lodash";
 
 
-export default function EstimateWrite({dataInfo}) {
+export default function EstimateWrite() {
     const gridRef = useRef(null);
     const router = useRouter();
 
     const userInfo = useAppSelector((state) => state.user);
+
+    const copyInit = _.cloneDeep(estimateWriteInitial)
     const [info, setInfo] = useState<any>({
-        ...estimateWriteInitial,
+        ...copyInit,
         adminId: userInfo['adminId'],
         adminName: userInfo['name'],
         managerAdminName: userInfo['name'],
@@ -187,12 +190,8 @@ export default function EstimateWrite({dataInfo}) {
 
             await getData.post('estimate/addEstimate', copyData).then(v => {
                 if (v.data.code === 1) {
-
-                    console.log(v.data,'::::')
                     message.success('저장되었습니다.')
-                    setInfo(rfqWriteInitial);
-                    deleteList()
-                    // window.location.href = '/estimate_read'
+                    router.push(`/estimate_update?estimateId=${v.data.entity.estimateId}`)
                 } else {
                     message.error('저장에 실패하였습니다.')
                 }
@@ -436,12 +435,6 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     store.dispatch(setUserInfo(userInfo));
 
-    // const {estimateId} = ctx.query;
-
-    //
-    // const result = await getData.post('estimate/getEstimateDetail', {
-    //     estimateId:estimateId
-    // });
 
 
     // return {props: {dataInfo: estimateId ? result?.data?.entity?.estimateDetail : null}}

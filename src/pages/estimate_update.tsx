@@ -43,6 +43,8 @@ export default function estimate_update({dataInfo}) {
     const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
 
 
+    console.log(dataInfo,'dataInfo:')
+
     const inputForm = ({placeholder='',title, id, disabled = false, suffix = null}) => {
         let bowl = info;
 

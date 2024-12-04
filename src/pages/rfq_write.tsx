@@ -233,13 +233,10 @@ export default function rqfWrite() {
 
         await getData.post('estimate/addEstimateRequest', copyData).then(v => {
             if (v.data.code === 1) {
-                message.success('저장되었습니다.')
-                // router.push(`/rfq_update?estimateRequestId=${v?.data?.entity?.estimateRequestId}`)
-                setInfo({
-                    ...rfqWriteInitial,
-                    estimateRequestDetailList: [],
-                })
-                router.push(`/rfq_read`)
+                message.success('저장되었습니다.');
+                router.push(`/rfq_update?estimateRequestId=${v?.data?.entity?.estimateRequestId}`)
+
+                // router.push(`/rfq_read`)
                 // console.log(e)
 
             } else {

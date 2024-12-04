@@ -164,9 +164,12 @@ export default function OrderWriter({dataInfo}) {
             await getData.post('order/addOrder', copyData).then(v => {
                 if(v.data.code === 1){
                     message.success('저장되었습니다')
-                    setInfo(rfqWriteInitial);
-                    deleteList()
-                    window.location.href = '/order_read'
+                    router.push(`/order_update?orderId=${v.data.entity.orderId}`)
+                    console.log(v.data.entity)
+                    // setInfo(rfqWriteInitial);
+                    // orderId":4181
+                    // deleteList()
+                    // window.location.href = '/order_read'
             } else {
                 message.error('저장에 실패하였습니다.')
             }

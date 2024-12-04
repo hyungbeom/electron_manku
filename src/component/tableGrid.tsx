@@ -291,18 +291,6 @@ const TableGrid = ({
     };
 
 
-    // const getSelectedCellInfo = () => {
-    //     const focusedCell = gridRef?.current?.api.getFocusedCell();
-    //     if (focusedCell) {
-    //         const {rowIndex, column} = focusedCell;
-    //         console.log("Row Index:", rowIndex);
-    //         console.log("Column Field:", column.getColId());
-    //     } else {
-    //         console.log("No cell is focused.");
-    //     }
-    // };
-
-    // getSelectedCellInfo();
 
 
 
