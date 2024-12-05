@@ -9,13 +9,13 @@ import message from "antd/lib/message";
 import Upload from "antd/lib/upload";
 import {InboxOutlined} from "@ant-design/icons";
 
-import {commonFunc} from "@/utils/commonManage";
+import {commonFunc, commonManage} from "@/utils/commonManage";
 import useEventListener from "@/utils/common/function/UseEventListener";
 
 const TableGrid = ({
                        columns, tableData,
                        setSelectedRows,
-
+                       list='',
                        modalComponent,
                        funcButtons,
                        listType = 'estimateRequestId',
@@ -42,36 +42,12 @@ const TableGrid = ({
             flex: 1,
             minWidth: 80,
             filter: true,
-            floatingFilter: true,
-            valueGetter: (params) => {
-
-                let sendData = params.data[params.column.colId];
-
-                if (!!params.node.rowIndex && type === 'read') { // 첫 번째 행이 아닌 경우에만 이전 행 참조
-                    const previousRowData = params.context?.[params.node.rowIndex - 1];
-
-
-                    if (previousRowData && params.data[listType] === previousRowData[listType]) {
-
-                        if (params.column.colId === 'documentNumberFull') {
-                            sendData = '';
-                        }
-                    }
-                }else{
-                    console.log('check')
-                }
-
-
-                return sendData;
-            },
+            floatingFilter: true
         };
     }, []);
 
-    let selectedRows = []
-
 
     const rowSelection = useMemo((e) => {
-
         return {mode: "multiRow",};
     }, []);
 
@@ -79,20 +55,6 @@ const TableGrid = ({
         setSelectedRows(e.api.getSelectedRows())
 
     }
-
-    const handleRowValueChange = (e) => {
-        console.log(e.api)
-        console.log(e.api.getEdit)
-    }
-
-
-    let estimate = {
-        documentNumberFull: "",
-        maker: "",
-        item: "",
-        models: []
-    };
-
 
     let isUpdatingSelection = false; // 중복 선택 이벤트 발생 방지 플래그
 
@@ -128,7 +90,6 @@ const TableGrid = ({
     };
 
     const handleDoubleClicked = (e) => {
-        console.log(e.data, 'e.data')
 
         if (type === 'read') {
             if (e.data.estimateRequestId)
@@ -171,12 +132,6 @@ const TableGrid = ({
                 checkedData.push(rowNode.data);
             }
         }
-
-
-        // let copyData = {...info}
-        // copyData['estimateRequestDetailList'] = uncheckedData;
-        // setInfo(copyData);
-
     }
 
 
@@ -268,7 +223,13 @@ const TableGrid = ({
                 return Upload.LIST_IGNORE;
             }
 
-            handleFile(file);
+            commonManage.excelFileRead(file).then(v => {
+
+                gridRef.current.api.applyTransaction({ add: v });
+
+            })
+
+            // handleFile(file);
         }
     };
 
@@ -289,17 +250,13 @@ const TableGrid = ({
     };
 
 
-
-
-
     useEventListener('contextmenu', (e: any) => {
         e.preventDefault()
-    },typeof window !== 'undefined' ? document : null)
+    }, typeof window !== 'undefined' ? document : null)
 
     useEventListener('click', (e: any) => {
-
-        setPage({x : null, y : null})
-    },typeof window !== 'undefined' ? document : null )
+        setPage({x: null, y: null})
+    }, typeof window !== 'undefined' ? document : null)
 
     return (
         <>

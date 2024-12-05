@@ -143,6 +143,7 @@ export default function rqfWrite() {
 
     }
 
+
     function deleteList() {
         let copyData = {...info}
         copyData['estimateRequestDetailList'] = commonManage.getUnCheckList(gridRef.current.api);
@@ -316,6 +317,7 @@ export default function rqfWrite() {
                 </Card>
 
                 <TableGrid
+                    list={'estimateRequestDetailList'}
                     gridRef={gridRef}
                     columns={subRfqWriteColumn}
                     tableData={info['estimateRequestDetailList']}

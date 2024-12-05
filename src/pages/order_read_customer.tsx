@@ -5,26 +5,22 @@ import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
-import {tableOrderCustomerColumns,
-} from "@/utils/columnList";
-import {orderCustomerReadInitial,
-} from "@/utils/initialList";
-import Radio from "antd/lib/radio";
+import {tableOrderCustomerColumns,} from "@/utils/columnList";
+import {orderCustomerReadInitial,} from "@/utils/initialList";
 import TableGrid from "@/component/tableGrid";
-import Search from "antd/lib/input/Search";
 import moment from "moment/moment";
 import * as XLSX from "xlsx";
 import Input from "antd/lib/input/Input";
 import DatePicker from "antd/lib/date-picker";
 import Button from "antd/lib/button";
-import {CopyOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
+import {FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
 
 const {RangePicker} = DatePicker
 
 export default function orderReadCustomer({dataList}) {
     const gridRef = useRef(null);
 
-    const {orderList, pageInfo} = dataList;
+    const {orderList} = dataList;
     const [info, setInfo] = useState(orderCustomerReadInitial);
     const [tableData, setTableData] = useState(orderList);
 

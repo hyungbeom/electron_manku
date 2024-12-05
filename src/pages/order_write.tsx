@@ -126,6 +126,9 @@ export default function OrderWriter() {
             message.warn('하위 데이터 1개 이상이여야 합니다')
         } else {
             const copyData = {...info}
+            const changeTime = gridRef.current.props.context.map(v => {
+                return {...v, replyDate: moment(v['replyDate']).format('YYYY-MM-DD')}
+            })
             copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
 
             await saveOrder({data : copyData, router : router})

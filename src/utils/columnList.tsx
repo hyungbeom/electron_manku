@@ -239,6 +239,7 @@ export const subRfqWriteColumn = [
         editable: true,
         cellEditor: 'agNumberCellEditor',
         valueFormatter: numberFormat,
+
     },
     {
         headerName: '단위',
@@ -1137,6 +1138,22 @@ export const tableOrderReadColumns = [
         field: 'documentNumberFull',
         width: 80,
         pinned: 'left',
+        valueGetter: (params) => {
+            const currentRowIndex = params.node.rowIndex;
+            const currentValue = params.data.documentNumberFull;
+            const previousRowNode = params.api.getDisplayedRowAtIndex(currentRowIndex - 1);
+
+            // 이전 행의 데이터가 없거나 값이 다르면 현재 값을 유지
+            if (!previousRowNode || previousRowNode.data.documentNumberFull !== currentValue) {
+                return currentValue;
+            }
+            // 중복되면 null 반환
+            return null;
+        },
+        cellRenderer: (params) => {
+            // valueGetter에서 null로 설정된 값은 빈칸으로 표시
+            return params.value !== null ? params.value : '';
+        },
     },
     {
         headerName: '고객사명',
