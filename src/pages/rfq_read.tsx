@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useRef, useState} from "react";
 import Input from "antd/lib/input/Input";
 import Select from "antd/lib/select";
 import LayoutComponent from "@/component/LayoutComponent";
@@ -7,7 +7,7 @@ import {CopyOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons
 import Button from "antd/lib/button";
 import {rfqReadColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {rfqWriteInitial, subRfqReadInitial} from "@/utils/initialList";
+import {subRfqReadInitial} from "@/utils/initialList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
@@ -18,6 +18,8 @@ import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
 import {BoxCard} from "@/utils/commonForm";
 import _ from "lodash";
+import {deleteRfq, searchRfq} from "@/utils/api/mainApi";
+import {commonManage} from "@/utils/commonManage";
 
 const {RangePicker} = DatePicker
 
@@ -25,6 +27,7 @@ const {RangePicker} = DatePicker
 export default function rfqRead({dataList}) {
 
     const gridRef = useRef(null);
+
 
     const {estimateRequestList = []} = dataList;
     const copyInit = _.cloneDeep(subRfqReadInitial)
@@ -52,20 +55,12 @@ export default function rfqRead({dataList}) {
 
     function handleKeyPress(e) {
         if (e.key === 'Enter') {
-            console.log('!!!')
             searchInfo()
         }
     }
 
-
     function onChange(e) {
-
-        let bowl = {}
-        bowl[e.target.id] = e.target.value;
-
-        setInfo(v => {
-            return {...v, ...bowl}
-        })
+        commonManage.onChange(e, setInfo)
     }
 
 
@@ -75,65 +70,61 @@ export default function rfqRead({dataList}) {
     async function searchInfo() {
         const copyData: any = {...info}
         const {searchDate}: any = copyData;
-        if (searchDate) {
-            copyData['searchStartDate'] = searchDate[0];
-            copyData['searchEndDate'] = searchDate[1];
-        }
-        const result = await getData.post('estimate/getEstimateRequestList', {...copyData, "page": 1, "limit": -1});
-        setTableData(result?.data?.entity?.estimateRequestList);
+
+        const result = await searchRfq({
+            data: {
+                ...copyData,
+                searchStartDate: searchDate[0],
+                searchEndDate: searchDate[1]
+            }
+        });
+
+        setTableData(result?.estimateRequestList);
     }
 
 
     async function deleteList() {
         const api = gridRef.current.api;
 
+        let bowl = {
+            deleteList: []
+        }
+
         if (api.getSelectedRows().length < 1) {
-            message.error('삭제할 데이터를 선택해주세요.')
+            message.error('삭제할 데이터를 선택해주세요?.')
         } else {
             for (const item of api.getSelectedRows()) {
-                const response = await getData.post('estimate/deleteEstimateRequest', {
-                    estimateRequestId: item.estimateRequestId
-                });
-                console.log(response)
-                if (response.data.code === 1) {
-                    message.success('삭제되었습니다.')
-                    searchInfo();
-                } else {
-                    message.error('오류가 발생하였습니다. 다시 시도해주세요.')
-                }
+                const {estimateRequestId, estimateRequestDetailId} = item;
+                bowl['deleteList'].push({
+                    "estimateRequestId": estimateRequestId,
+                    "estimateRequestDetailId": estimateRequestDetailId
+                })
             }
+            await deleteRfq({data: bowl, returnFunc: searchInfo});
         }
     }
 
-
     const downloadExcel = () => {
-
-        const headers = [];
-        const fields = [];
-
-        const extractHeaders = (columns) => {
-            columns.forEach((col) => {
-                if (col.children) {
-                    extractHeaders(col.children); // 자식 컬럼 재귀적으로 처리
-                } else {
-                    headers.push(col.headerName); // headerName 추출
-                    fields.push(col.field); // field 추출
-                }
-            });
-        };
-
-        extractHeaders(rfqReadColumns);
-
-        const worksheetData = tableData.map((row) =>
-            fields.map((field) => row[field] || "") // field에 해당하는 데이터 추출
-        );
-
-        const worksheet = XLSX.utils.aoa_to_sheet([headers, ...worksheetData]);
-
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-        XLSX.writeFile(workbook, "rfq_list.xlsx");
+        commonManage.excelDownload(tableData)
     };
+
+
+    /**
+     * @description 테이블 우측상단 관련 기본 유틸버튼
+     */
+    const subTableUtil = <div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
+        <CopyOutlined/>복사
+    </Button>
+        {/*@ts-ignored*/}
+        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
+                onClick={deleteList}>
+            <CopyOutlined/>삭제
+        </Button>
+        <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
+                onClick={downloadExcel}>
+            <FileExcelOutlined/>출력
+        </Button></div>
+
 
     return <>
         <LayoutComponent>
@@ -151,10 +142,7 @@ export default function rfqRead({dataList}) {
                       style={{border: '1px solid lightGray',}} bodyStyle={{padding: '10px 24px'}}>
                     <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1.5fr', width: '100%', columnGap: 20}}>
 
-                        <Card size={'small'} style={{
-                            fontSize: 11,
-                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
-                        }}>
+                        <BoxCard title={''}>
                             <div>
                                 <div style={{paddingBottom: 3,}}>작성일자</div>
                                 <RangePicker
@@ -179,7 +167,7 @@ export default function rfqRead({dataList}) {
                                     {value: 2, label: '미회신'}
                                 ]} style={{width: '100%',}}/>
                             </div>
-                        </Card>
+                        </BoxCard>
 
                         <BoxCard title={''}>
                             {inputForm({title: '문서번호', id: 'searchDocumentNumber'})}
@@ -201,19 +189,7 @@ export default function rfqRead({dataList}) {
                     columns={rfqReadColumns}
                     tableData={tableData}
                     type={'read'}
-                    excel={true}
-                    funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
-                        <CopyOutlined/>복사
-                    </Button>
-                        {/*@ts-ignored*/}
-                        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
-                                onClick={deleteList}>
-                            <CopyOutlined/>삭제
-                        </Button>
-                        <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
-                                onClick={downloadExcel}>
-                            <FileExcelOutlined/>출력
-                        </Button></div>}
+                    funcButtons={subTableUtil}
                 />
 
             </div>
@@ -221,47 +197,25 @@ export default function rfqRead({dataList}) {
     </>
 }
 
+export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
 
-// @ts-ignore
-export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
+    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
-
-    let param = {}
-
-    const {userInfo} = await initialServerRouter(ctx, store);
-
-    if (!userInfo) {
+    if (codeInfo === -90009) {
         return {
             redirect: {
-                destination: '/', // 리다이렉트할 경로
-                permanent: false, // true면 301 리다이렉트, false면 302 리다이렉트
+                destination: '/',
+                permanent: false,
             },
         };
+    } else {
+        store.dispatch(setUserInfo(userInfo));
+
+        const result = await searchRfq({data: {}});
+
+        return {
+            props: {dataList: result}
+        }
     }
 
-    store.dispatch(setUserInfo(userInfo));
-
-    const result = await getData.post('estimate/getEstimateRequestList', {
-        "searchEstimateRequestId": "",      // 견적의뢰 Id
-        "searchSentStatus": 0,                   // 검색조건 1: 회신, 2: 미회신
-        "searchReplyStatus": 0,
-        "searchStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),              // 작성일자 시작일
-        "searchEndDate": moment().format('YYYY-MM-DD'),                // 작성일자 종료일
-        "searchDocumentNumber": "",         // 문서번호
-        "searchCustomerName": "",           // 고객사명
-        "searchMaker": "",                  // MAKER
-        "searchModel": "",                  // MODEL
-        "searchItem": "",                   // ITEM
-        "searchCreatedBy": "",              // 등록직원명
-        "searchManagerName": "",            // 담당자명
-        "searchMobileNumber": "",           // 담당자 연락처
-        "searchBiddingNumber": "",          // 입찰번호(미완성)
-        "page": 1,
-        "limit": -1
-    });
-
-
-    return {
-        props: {dataList: result?.data?.entity}
-    }
 })

@@ -27,21 +27,24 @@ import {BoxCard, TopBoxCard} from "@/utils/commonForm";
 import {commonManage} from "@/utils/commonManage";
 import {findCodeInfo} from "@/utils/api/commonApi";
 import {updateRfq} from "@/utils/api/mainApi";
+import {estimateRequestDetailUnit} from "@/utils/initialList";
+import _ from "lodash";
 
 
 const listType = 'estimateRequestDetailList'
 export default function rqfUpdate({dataInfo}) {
     const gridRef = useRef(null);
 
-    const infoInit = {
-        ...dataInfo,
-        dueDate: moment(),
-    }
+    const copyUnitInit = _.cloneDeep(estimateRequestDetailUnit)
+
+    const infoInit = dataInfo
 
 
     const [info, setInfo] = useState<any>(infoInit)
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false, event3: false});
+
+
 
 
     // =============================================================================================

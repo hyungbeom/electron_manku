@@ -1,37 +1,75 @@
 import moment from "moment";
 import * as XLSX from "xlsx";
+import {rfqReadColumns} from "@/utils/columnList";
 
 export const commonManage: any = {}
 export const commonFunc: any = {}
 export const commonCalc: any = {}
 
+commonManage.getSelectRows = function (gridRef) {
+    const selectedNodes = gridRef.current.api.getSelectedNodes(); // gridOptions 대신 gridRef 사용
+    const selectedData = selectedNodes.map(node => node.data);
+    return selectedData;
+}
+/**
+ * @param file 업로드 파일입니다.
+ * @description 업로드한 파일을 json으로 풀어서 컬럼에 맞게 데이터 재출력을 하기위한 함수
+ */
+commonManage.excelDownload = function (data) {
+    const headers = [];
+    const fields = [];
+
+    const extractHeaders = (columns) => {
+        columns.forEach((col) => {
+            if (col.children) {
+                extractHeaders(col.children); // 자식 컬럼 재귀적으로 처리
+            } else {
+                headers.push(col.headerName); // headerName 추출
+                fields.push(col.field); // field 추출
+            }
+        });
+    };
+
+    extractHeaders(rfqReadColumns);
+
+    const worksheetData = data.map((row) =>
+        fields.map((field) => row[field] || "") // field에 해당하는 데이터 추출
+    );
+
+    const worksheet = XLSX.utils.aoa_to_sheet([headers, ...worksheetData]);
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+    XLSX.writeFile(workbook, "rfq_list.xlsx");
+
+};
 
 /**
  * @param file 업로드 파일입니다.
  * @description 업로드한 파일을 json으로 풀어서 컬럼에 맞게 데이터 재출력을 하기위한 함수
  */
-commonManage.excelFileRead = function (file){
+commonManage.excelFileRead = function (file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = (e) => {
             try {
                 const binaryStr = e.target.result;
-                const workbook = XLSX.read(binaryStr, { type: 'binary' });
+                const workbook = XLSX.read(binaryStr, {type: 'binary'});
 
                 // 첫 번째 시트 읽기
                 const worksheetName = workbook.SheetNames[0];
                 const worksheet = workbook.Sheets[worksheetName];
 
                 // 데이터를 JSON 형식으로 변환 (첫 번째 행을 컬럼 키로 사용)
-                const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
 
                 // 데이터 첫 번째 행을 컬럼 이름으로 사용
                 const headers = jsonData[0];
                 const dataRows = jsonData.slice(1);
 
                 const tableData = dataRows
-                    .filter((row:any) => row.some((cell) => cell !== null && cell !== undefined && cell !== ''))
-                    .map((row:any) => {
+                    .filter((row: any) => row.some((cell) => cell !== null && cell !== undefined && cell !== ''))
+                    .map((row: any) => {
                         const rowData = {};
                         row?.forEach((cell, cellIndex) => {
                             const header = commonManage.changeColumn[headers[cellIndex]];
@@ -67,13 +105,12 @@ commonManage.disabledDate = function (date) {
 }
 
 
-
 commonManage.calcFloat = function (params, numb) {
 
-        if (params.value == null || params.value === '') {
-            return ''; // 값이 없으면 빈 문자열 반환
-        }
-        return parseFloat(params.value).toFixed(numb); // 소수점 두 자리로 제한
+    if (params.value == null || params.value === '') {
+        return ''; // 값이 없으면 빈 문자열 반환
+    }
+    return parseFloat(params.value).toFixed(numb); // 소수점 두 자리로 제한
 }
 
 commonManage.getUnCheckList = function (api) {
@@ -107,15 +144,15 @@ commonManage.openModal = function (e, setIsModalOpen) {
 
 
 commonManage.changeColumn = {
-    'Model' : 'model',
-    '수량' : 'quantity',
-    '단위' : 'unit',
-    'CURR' : 'currency',
-    'NET/P' : 'net',
-    '납기' : 'deliveryDate',
-    '회신여부' : 'content',
-    '회신일' : 'replyDate',
-    '비고' : 'remarks',
+    'Model': 'model',
+    '수량': 'quantity',
+    '단위': 'unit',
+    'CURR': 'currency',
+    'NET/P': 'net',
+    '납기': 'deliveryDate',
+    '회신여부': 'content',
+    '회신일': 'replyDate',
+    '비고': 'remarks',
 }
 commonManage.changeCurr = function (value) {
     switch (value) {

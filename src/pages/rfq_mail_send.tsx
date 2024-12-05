@@ -1,33 +1,25 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useRef, useState} from "react";
 import Input from "antd/lib/input/Input";
 import Select from "antd/lib/select";
 import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
-import {
-    CopyOutlined,
-    FileExcelOutlined,
-    MailOutlined,
-    RetweetOutlined,
-    SaveOutlined,
-    SearchOutlined
-} from "@ant-design/icons";
+import {MailOutlined, SearchOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
 import {rfqReadColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import { subRfqReadMailInitial} from "@/utils/initialList";
+import {subRfqReadMailInitial} from "@/utils/initialList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
-import {getData} from "@/manage/function/api";
 import moment from "moment";
-import * as XLSX from "xlsx";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
-import Modal from "antd/lib/modal/Modal";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
-import emailSendFormat from "@/utils/emailSendFormat";
-import GoogleDrive from "@/component/Sample";
 import {BoxCard} from "@/utils/commonForm";
+import {searchRfq} from "@/utils/api/mainApi";
+import PreviewMailModal from "@/component/PreviewMailModal";
+import _ from "lodash";
+import {commonManage} from "@/utils/commonManage";
 
 const {RangePicker} = DatePicker
 
@@ -35,21 +27,22 @@ const {RangePicker} = DatePicker
 export default function rfqRead({dataList}) {
     const gridRef = useRef(null);
     const {estimateRequestList} = dataList;
+
+    const copyInit = _.cloneDeep(subRfqReadMailInitial)
+
     const userInfo = useAppSelector((state) => state.user);
-    const [info, setInfo] = useState(subRfqReadMailInitial);
+
+    const infoInit = copyInit
+
+    const [info, setInfo] = useState(infoInit);
+
     const [tableData, setTableData] = useState(estimateRequestList);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [previewData, setPreviewData] = useState([]);
 
 
     function onChange(e) {
-
-        let bowl = {}
-        bowl[e.target.id] = e.target.value;
-
-        setInfo(v => {
-            return {...v, ...bowl}
-        })
+        commonManage.onChange(e, setInfo)
     }
 
     function handleKeyPress(e) {
@@ -75,46 +68,50 @@ export default function rfqRead({dataList}) {
     }
 
 
-
     async function searchInfo() {
         const copyData: any = {...info}
         const {searchDate}: any = copyData;
-        if (searchDate) {
-            copyData['searchStartDate'] = searchDate[0];
-            copyData['searchEndDate'] = searchDate[1];
-        }
-        const result = await getData.post('estimate/getEstimateRequestList', copyData);
-        // setTableInfo(transformData(result?.data?.entity?.estimateRequestList, 'estimateRequestId', 'estimateRequestDetailList'));
-        setTableData(result?.data?.entity?.estimateRequestList);
+
+        const result = await searchRfq({
+            data: {
+                ...copyData,
+                searchStartDate: searchDate[0],
+                searchEndDate: searchDate[1]
+            }
+        });
+
+        setTableData(result?.estimateRequestList);
     }
 
 
-    const getCheckedRowsData = () => {
-        const selectedNodes = gridRef.current.api.getSelectedNodes(); // gridOptions 대신 gridRef 사용
-        const selectedData = selectedNodes.map(node => node.data);
-        return selectedData;
-    };
 
     const handleSendMail = () => {
-        const checkedData = getCheckedRowsData();
-
-        if(!checkedData.length){
+        const checkedData = commonManage.getSelectRows(gridRef);
+        if (!checkedData.length) {
             return message.warn('선택된 데이터가 없습니다.')
         }
 
-        console.log(checkedData, 'checkedData~~')
-
         const result = Object.values(
             checkedData.reduce((acc, items) => {
-                const {documentNumberFull, model, agencyManagerName, managerName, quantity, unit, maker, item, endUser} = items;
+                const {
+                    documentNumberFull,
+                    model,
+                    agencyManagerName,
+                    managerName,
+                    quantity,
+                    unit,
+                    maker,
+                    item,
+                    endUser
+                } = items;
 
                 // documentNumberFull로 그룹화
                 if (!acc[documentNumberFull]) {
                     acc[documentNumberFull] = {
                         documentNumberFull: documentNumberFull,
                         agencyManagerName: agencyManagerName,
-                        managerName:managerName,
-                        unit:unit,
+                        managerName: managerName,
+                        unit: unit,
                         list: [],
                         totalQuantity: 0, // 총 수량 초기화
                     };
@@ -146,9 +143,7 @@ export default function rfqRead({dataList}) {
         setIsModalOpen(true)
     };
 
-    function sendMail() {
-        emailSendFormat(userInfo, previewData)
-    }
+
 
     return <>
         <LayoutComponent>
@@ -167,158 +162,38 @@ export default function rfqRead({dataList}) {
                         </div>
                     </div>
                 </div>} style={{fontSize: 12, border: '1px solid lightGray'}}>
-                    <Modal okText={'메일 전송'} cancelText={'취소'} onOk={sendMail}
-                           title={<div style={{lineHeight: 2.5, fontWeight: 550}}>견적의뢰 메일 발송</div>} open={isModalOpen}
-                           onCancel={() => setIsModalOpen(false)}>
-
-
-                        {previewData.map((v, idx) => {
-
-                            return <>
-
-                                <div key={idx} style={{width: '100%', height: 'auto', paddingTop: 20}}>
-                                    [<span
-                                    // style={{fontWeight: 550}}>{v.agencyManagerName}</span>]님<br/><br/>안녕하십니까.
-                                    style={{fontWeight: 550}}>{v.managerName}</span>]님<br/><br/>안녕하십니까.
-                                    [<span style={{fontWeight: 550}}>만쿠무역 {userInfo.name}</span>]입니다.<br/>
-                                    아래 견적 부탁드립니다.
-                                </div>
-
-                                <div style={{
-                                    textAlign: 'center',
-                                    lineHeight: 2.2,
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    flexFlow: 'column'
-                                }}>
-                                    <div style={{
-                                        marginTop: 20,
-                                        width: '100%',
-                                        height: '35px',
-                                        fontSize: 15,
-                                        borderTop: '1px solid #121212',
-                                        borderBottom: '1px solid #A3A3A3',
-                                        textAlign : 'left',
-                                        paddingLeft : 10,
-                                        fontWeight : 700
-                                    }}>
-                                        {v.documentNumberFull}
-                                    </div>
-                                    <div style={{
-                                        width: '100%',
-                                        height: '35px',
-                                        borderBottom: '1px solid #A3A3A3',
-                                        display: 'flex'
-                                    }}>
-                                        <div style={{
-                                            fontSize: '13px',
-                                            backgroundColor: '#EBF6F7',
-                                            width: '102px',
-                                            height: '100%',
-                                            borderRight: '1px solid #121212'
-                                        }}>Maker
-                                        </div>
-                                        <div style={{lineHeight: 2, paddingLeft: 32}}>{v.maker}</div>
-                                    </div>
-                                    <div style={{width: '100%', height: 35, display: "flex", borderBottom: '1px solid #A3A3A3',}}>
-                                        <div style={{
-                                            fontSize: '13px',
-                                            backgroundColor: '#EBF6F7',
-                                            width: '102px',
-                                            height: '100%',
-                                            borderRight: '1px solid #121212'
-                                        }}>Item
-                                        </div>
-                                        <div style={{lineHeight: 2, paddingLeft: 32}}>{v.item}</div>
-                                    </div>
-
-
-                                    <div style={{
-                                        lineHeight: 1.9,
-                                        width: '100%',
-                                        height: 35,
-                                        fontSize: 18,
-                                        borderTop: '1px solid #121212',
-                                        borderBottom: '1px solid #A3A3A3',
-                                        backgroundColor: '#EBF6F7'
-                                    }}>
-                                        Model
-                                    </div>
-                                    {v.list.map((src, idx) => {
-                                        return <div
-                                            style={{
-                                                width: '100%',
-                                                height: 35,
-                                                borderBottom: '1px solid #A3A3A3',
-                                                display: 'flex'
-                                            }}>
-                                            <div style={{lineHeight: 2, textAlign : 'center', padding : '0px 10px'}}><span
-                                                style={{fontWeight: 550}}>{idx + 1}</span> </div>
-                                            <div style={{
-                                                fontSize: 13,
-                                                letterSpacing: -1,
-                                                lineHeight: 2.5,
-                                                width: 340,
-                                                height: '100%',
-                                                borderRight: '1px solid #121212',
-                                                borderLeft: '1px solid #121212'
-                                            }}>{src.model}</div>
-                                            <div style={{lineHeight: 2, paddingLeft: 30,}}><span
-                                                style={{fontWeight: 550}}>{src.quantity}</span> {src.unit}</div>
-                                        </div>
-
-                                    })}
-
-
-                                </div>
-
-                            </>
-
-
-                        })}
-
-                    </Modal>
+                    <PreviewMailModal data={previewData} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
 
 
                     <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1.5fr', width: '100%', columnGap: 20}}>
 
-                        <Card size={'small'} style={{
-                            fontSize: 11,
-                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
-                        }}>
-                            <div>
-                                <div style={{paddingBottom: 3,}}>작성일자</div>
-                                <RangePicker
-                                    value={[moment(info['searchDate'][0]), moment(info['searchDate'][1])]}
-                                    id={'searchDate'} size={'small'} onChange={(date, dateString) => {
-                                    onChange({
-                                        target: {
-                                            id: 'searchDate',
-                                            value: date ? [moment(date[0]).format('YYYY-MM-DD'), moment(date[1]).format('YYYY-MM-DD')] : [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
-                                        }
-                                    })
-                                }
-                                } style={{width: '100%',}}/>
-                                {inputForm({title: '문서번호', id: 'searchDocumentNumber'})}
+                        <BoxCard title={''}>
+                            <div style={{paddingBottom: 3,}}>작성일자</div>
+                            <RangePicker
+                                value={[moment(info['searchDate'][0]), moment(info['searchDate'][1])]}
+                                id={'searchDate'} size={'small'} onChange={(date, dateString) => {
+                                onChange({
+                                    target: {
+                                        id: 'searchDate',
+                                        value: date ? [moment(date[0]).format('YYYY-MM-DD'), moment(date[1]).format('YYYY-MM-DD')] : [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
+                                    }
+                                })
+                            }
+                            } style={{width: '100%',}}/>
+                            {inputForm({title: '문서번호', id: 'searchDocumentNumber'})}
 
-                            </div>
-                        </Card>
+                        </BoxCard>
 
-                        <Card size={'small'} style={{
-                            fontSize: 11,
-                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
-                        }}>
+                        <BoxCard title={''}>
                             {inputForm({title: '대리점코드', id: 'searchAgencyCode'})}
                             {inputForm({title: '고객사명', id: 'searchCustomerName'})}
-                        </Card>
+                        </BoxCard>
 
-                        <Card size={'small'} style={{
-                            fontSize: 11,
-                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
-                        }}>
+                        <BoxCard title={''}>
                             <div>
                                 <div>발송 여부</div>
                                 <Select id={'searchType'}
+                                        defaultValue={'원드라이브-메일 연동후 자동화 예정'}
                                         onChange={(src) => onChange({target: {id: 'searchType', value: src}})}
                                         size={'small'} value={info['searchType']} options={[
                                     {value: '0', label: '전체'},
@@ -337,7 +212,7 @@ export default function rfqRead({dataList}) {
                                     {value: 2, label: '미회신'}
                                 ]} style={{width: '100%',}}/>
                             </div>
-                        </Card>
+                        </BoxCard>
 
 
                     </div>
@@ -357,47 +232,25 @@ export default function rfqRead({dataList}) {
 }
 
 
-// @ts-ignore
-export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
+export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
 
+    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
-    let param = {}
-
-    const {userInfo} = await initialServerRouter(ctx, store);
-
-    if (!userInfo) {
+    if (codeInfo === -90009) {
         return {
             redirect: {
-                destination: '/', // 리다이렉트할 경로
-                permanent: false, // true면 301 리다이렉트, false면 302 리다이렉트
+                destination: '/',
+                permanent: false,
             },
         };
+    } else {
+        store.dispatch(setUserInfo(userInfo));
+
+        const result = await searchRfq({data: {}});
+
+        return {
+            props: {dataList: result}
+        }
     }
 
-    store.dispatch(setUserInfo(userInfo));
-
-
-    const result = await getData.post('estimate/getEstimateRequestList', {
-        "searchEstimateRequestId": "",      // 견적의뢰 Id
-        "searchSentStatus": 0,                   // 검색조건 1: 회신, 2: 미회신
-        "searchReplyStatus": 0,
-        "searchStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),              // 작성일자 시작일
-        "searchEndDate": moment().format('YYYY-MM-DD'),                // 작성일자 종료일
-        "searchDocumentNumber": "",         // 문서번호
-        "searchCustomerName": "",           // 고객사명
-        "searchMaker": "",                  // MAKER
-        "searchModel": "",                  // MODEL
-        "searchItem": "",                   // ITEM
-        "searchCreatedBy": "",              // 등록직원명
-        "searchManagerName": "",            // 담당자명
-        "searchMobileNumber": "",           // 담당자 연락처
-        "searchBiddingNumber": "",          // 입찰번호(미완성)
-        "page": 1,
-        "limit": -1
-    });
-
-
-    return {
-        props: {dataList: result?.data?.entity}
-    }
 })
