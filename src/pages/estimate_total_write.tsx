@@ -2,61 +2,73 @@ import React, {useEffect, useRef, useState} from "react";
 import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
-import {
-    FileExcelOutlined,
-    SearchOutlined
-} from "@ant-design/icons";
-import {
-    estimateTotalColumns,
-} from "@/utils/columnList";
+import {CopyOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
+import {estimateTotalColumns,} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {
-    estimateReadInitial,
-} from "@/utils/initialList";
+import {estimateReadInitial,} from "@/utils/initialList";
 import moment from "moment";
 import Button from "antd/lib/button";
 import {getData} from "@/manage/function/api";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
-import * as XLSX from "xlsx";
-import Select from "antd/lib/select";
 import TableGrid from "@/component/tableGrid";
-import message from "antd/lib/message";
-import PrintEstimate from "@/component/printEstimate";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
-import printIntegratedEstimate from "@/component/printIntegratedEstimate";
 import PrintIntegratedEstimate from "@/component/printIntegratedEstimate";
+import {searchEstimate} from "@/utils/api/mainApi";
+import _ from "lodash";
+import {commonManage} from "@/utils/commonManage";
+import {BoxCard} from "@/utils/commonForm";
 
 const {RangePicker} = DatePicker
 
 
-export default function EstimateMerge({dataList}) {
-
+export default function EstimateMerge({estimateList}) {
     const gridRef = useRef(null);
 
     const userInfo = useAppSelector((state) => state.user);
-    const {estimateList} = dataList;
-    const [info, setInfo] = useState(estimateReadInitial)
+
+    console.log(estimateList,'estimateList:')
+    const copyInit = _.cloneDeep(estimateReadInitial)
+    const infoInit = {
+        ...copyInit,
+        searchDate: [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
+    }
+
+    const [info, setInfo] = useState(infoInit)
     const [tableData, setTableData] = useState(estimateList)
+
     const [selectedRow, setSelectedRow] = useState([])
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    function onChange(e) {
 
-        let bowl = {}
-        bowl[e.target.id] = e.target.value;
+    // =============================================================================
 
-        setInfo(v => {
-            return {...v, ...bowl}
-        })
+    const inputForm = ({title, id, disabled = false, suffix = null}) => {
+        let bowl = info;
+
+
+        return <div>
+            <div>{title}</div>
+            <Input id={id} value={bowl[id]} disabled={disabled}
+                   onChange={onChange}
+                   size={'small'}
+                   onKeyDown={handleKeyPress}
+                   suffix={suffix}
+            />
+        </div>
     }
 
-    useEffect(() => {
-        const copyData: any = {...info}
-        copyData['searchDate'] = [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
-        setInfo(copyData);
-    }, [])
+    function handleKeyPress(e) {
+        if (e.key === 'Enter') {
+            searchInfo()
+        }
+    }
+
+    function onChange(e) {
+        commonManage.onChange(e, setInfo)
+    }
+
 
     async function searchInfo() {
         const copyData: any = {...info}
@@ -66,11 +78,11 @@ export default function EstimateMerge({dataList}) {
             copyData['searchEndDate'] = searchDate[1];
         }
         const result = await getData.post('estimate/getEstimateList',
-            {...copyData,   "page": 1, "limit": -1});
+            {...copyData, "page": 1, "limit": -1});
         setTableData(result?.data?.entity?.estimateList)
     }
 
-    async function printEstimate () {
+    async function printEstimate() {
 
         const api = gridRef.current.api;
         const checkedData = api.getSelectedRows();
@@ -81,21 +93,29 @@ export default function EstimateMerge({dataList}) {
     }
 
 
+    /**
+     * @description 테이블 우측상단 관련 기본 유틸버튼
+     */
+    const subTableUtil = <div>
+        <Button type={'primary'} size={'small'}
+                style={{backgroundColor: 'green', border: 'none', fontSize: 11, marginLeft: 5,}}
+                onClick={printEstimate}>
+            <FileExcelOutlined/>통합 견적서 발행
+        </Button></div>
+
+
     return <>
         <LayoutComponent>
             {selectedRow.length > 0 &&
-            <PrintIntegratedEstimate data={selectedRow} isModalOpen={isModalOpen} userInfo={userInfo} setIsModalOpen={setIsModalOpen}/>
+                <PrintIntegratedEstimate data={selectedRow} isModalOpen={isModalOpen} userInfo={userInfo}
+                                         setIsModalOpen={setIsModalOpen}/>
             }
-            <div style={{display: 'grid', gridTemplateRows: 'auto 1fr',  height: '100vh', columnGap: 5}}>
+            <div style={{display: 'grid', gridTemplateRows: 'auto 1fr', height: '100vh', columnGap: 5}}>
                 <Card title={<span style={{fontSize: 12,}}>통합견적서 발행</span>} headStyle={{marginTop: -10, height: 30}}
-                      style={{fontSize: 12, border: '1px solid lightGray'}} bodyStyle={{padding: '10px 24px'}}>
+                         style={{fontSize: 12, border: '1px solid lightGray'}} bodyStyle={{padding: '10px 24px'}}>
                     <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1.5fr', width: '100%', columnGap: 20}}>
 
-                        <Card size={'small'} style={{
-                            fontSize: 11,
-                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                        }}>
-
+                        <BoxCard title={''}>
                             <div>
                                 <div style={{paddingBottom: 3}}>작성일자</div>
                                 <RangePicker
@@ -110,60 +130,25 @@ export default function EstimateMerge({dataList}) {
                                 }
                                 } style={{width: '100%',}}/>
                             </div>
+                            {inputForm({title: '문서번호', id: 'searchDocumentNumber'})}
 
-                            <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>문서번호</div>
-                                <Input id={'searchDocumentNumber'} value={info['searchDocumentNumber']}
-                                       size={'small'}
-                                       onChange={onChange}/>
-                            </div>
+                        </BoxCard>
+                        <BoxCard title={''}>
+                            {inputForm({title: '등록직원명', id: 'searchCreatedBy'})}
+                            {inputForm({title: '대리점코드', id: 'searchAgencyCode'})}
+                            {inputForm({title: '고객사명', id: 'searchCustomerName'})}
+                        </BoxCard>
+                        <BoxCard title={''}>
+                            {inputForm({title: 'MAKER', id: 'searchMaker'})}
+                            {inputForm({title: 'MODEL', id: 'searchModel'})}
+                            {inputForm({title: 'ITEM', id: 'searchItem'})}
 
-                        </Card>
-                        <Card size={'small'} style={{
-                            fontSize: 11,
-                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                        }}>
-                            <div>
-                                <div style={{paddingBottom: 3}}>등록직원명</div>
-                                <Input id={'searchCreatedBy'} value={info['searchCreatedBy']} size={'small'}
-                                       onChange={onChange}/>
-                            </div>
-                            <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>대리점코드</div>
-                                <Input id={'searchAgencyCode'} value={info['searchAgencyCode']} size={'small'}
-                                       onChange={onChange}/>
-                            </div>
-                            <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>고객사명</div>
-                                <Input id={'searchCustomerName'} value={info['searchCustomerName']} size={'small'}
-                                       onChange={onChange}/>
-                            </div>
-                        </Card>
-                        <Card size={'small'} style={{
-                            fontSize: 11,
-                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                        }}>
-                            <div>
-                                <div style={{paddingBottom: 3}}>MAKER</div>
-                                <Input id={'searchMaker'} value={info['searchMaker']} size={'small'}
-                                       onChange={onChange}/>
-                            </div>
-                            <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>MODEL</div>
-                                <Input id={'searchModel'} value={info['searchModel']} size={'small'}
-                                       onChange={onChange}/>
-                            </div>
-                            <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>ITEM</div>
-                                <Input id={'searchItem'} value={info['searchItem']} size={'small'} onChange={onChange}/>
-                            </div>
-
-                        </Card>
+                        </BoxCard>
                     </div>
                     <div style={{marginTop: 8, textAlign: 'right'}}>
-                        <Button size={'small'}  style={{fontSize: 11}} onClick={searchInfo} type={'primary'}><SearchOutlined/>조회</Button>
+                        <Button size={'small'} style={{fontSize: 11}} onClick={searchInfo}
+                                type={'primary'}><SearchOutlined/>조회</Button>
                     </div>
-
 
 
                 </Card>
@@ -175,10 +160,7 @@ export default function EstimateMerge({dataList}) {
                     tableData={tableData}
                     type={'read'}
                     excel={true}
-                    funcButtons={<div>
-                        <Button type={'primary'} size={'small'} style={{backgroundColor:'green', border:'none', fontSize: 11, marginLeft:5,}} onClick={printEstimate}>
-                            <FileExcelOutlined/>통합 견적서 발행
-                        </Button></div>}
+                    funcButtons={subTableUtil}
                 />
 
 
@@ -186,45 +168,25 @@ export default function EstimateMerge({dataList}) {
         </LayoutComponent>
     </>
 }
-// @ts-ignored
-export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
 
 
-    let param = {}
+export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
+
 
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
-    const result = await getData.post('estimate/getEstimateList', {
-        "searchType": "",                   // 검색조건 1: 회신, 2: 미회신
-        "searchStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),              // 작성일자 시작일
-        "searchEndDate": moment().format('YYYY-MM-DD'),                // 작성일자 종료일
-        "searchDocumentNumber": "",         // 문서번호
-        "searchCustomerName": "",           // 고객사명
-        "searchMaker": "",                  // MAKER
-        "searchModel": "",                  // MODEL
-        "searchItem": "",                   // ITEM
-        "searchCreatedBy": "",              // 등록직원명
-        "page": 1,
-        "limit": -1
-    });
-
-
-    if (userInfo) {
-        store.dispatch(setUserInfo(userInfo));
-    }
-    if (codeInfo !== 1) {
-        param = {
+    if (codeInfo === -90009) {
+        return {
             redirect: {
-                destination: '/', // 리다이렉트할 대상 페이지
-                permanent: false, // true로 설정하면 301 영구 리다이렉트, false면 302 임시 리다이렉트
+                destination: '/',
+                permanent: false,
             },
         };
     } else {
-        param = {
-            props: {dataList: result?.data?.entity}
+        store.dispatch(setUserInfo(userInfo));
+        let copyData = await searchEstimate({data: {}});
+        return {
+            props: {estimateList: copyData}
         }
     }
-
-
-    return param
 })

@@ -4,7 +4,7 @@ import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
 import {CopyOutlined, DownCircleFilled, EditOutlined, SaveOutlined, UpCircleFilled} from "@ant-design/icons";
 import DatePicker from "antd/lib/date-picker";
-import {printEstimateInitial, rfqWriteInitial,} from "@/utils/initialList";
+import {estimateDetailUnit, orderDetailUnit, printEstimateInitial, rfqWriteInitial,} from "@/utils/initialList";
 import moment from "moment";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
@@ -23,30 +23,27 @@ import PrintPo from "@/component/printPo";
 import PrintTransactionModal from "@/component/printTransaction";
 import {commonManage} from "@/utils/commonManage";
 import TextArea from "antd/lib/input/TextArea";
+import {updateOrder} from "@/utils/api/mainApi";
+import _ from "lodash";
+import {findEstDocumentInfo} from "@/utils/api/commonApi";
 
-
+const listType = 'orderDetailList'
 export default function order_update({data}) {
     const gridRef = useRef(null);
     const router = useRouter();
+
     const {orderDetail} = data;
+    const copyUnitInit = _.cloneDeep(orderDetailUnit)
 
     const userInfo = useAppSelector((state) => state.user);
-    console.log(orderDetail,'::')
+
+
     const [info, setInfo] = useState<any>(orderDetail)
+
     const [mini, setMini] = useState(true);
     const [customerData, setCustomerData] = useState(printEstimateInitial)
-    const [isModalOpen, setIsModalOpen] = useState({event1:false, event2:false});
+    const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
 
-    useEffect(() => {
-        let copyData: any = {...info}
-        // @ts-ignored
-        copyData['writtenDate'] = moment();
-        copyData['replyDate'] = moment();
-        copyData['dueDate'] = moment();
-
-        setInfo(copyData);
-
-    }, [])
 
 // =============================================================================================================
     const inputForm = ({title, id, disabled = false, suffix = null, placeholder = ''}) => {
@@ -78,75 +75,32 @@ export default function order_update({data}) {
     }
 
 
-    const datePickerForm = ({title, id, disabled = false}) => {
-        return <div>
-            <div>{title}</div>
-            {/*@ts-ignore*/}
-            <DatePicker value={info[id] ? moment(info[id]) : ''} style={{width: '100%'}}
-                        disabledDate={disabledDate}
-                        onChange={(date) => onChange({
-                            target: {
-                                id: id,
-                                value: date
-                            }
-                        })
-                        }
-                        disabled={disabled}
-                        id={id} size={'small'}/>
-        </div>
-    }
-
-
-    // ======================================================================================================
-    const disabledDate = (current) => {
-        // current는 moment 객체입니다.
-        // 오늘 이전 날짜를 비활성화
-        return current && current < moment().startOf('day');
-    };
 
 
     function onChange(e) {
-
-        let bowl = {}
-        bowl[e.target.id] = e.target.value;
-
-        setInfo(v => {
-            return {...v, ...bowl}
-        })
+        commonManage.onChange(e, setInfo)
     }
 
     async function saveFunc() {
-        if (!info['orderDetailList'].length) {
+        if (!info[listType].length) {
             message.warn('하위 데이터 1개 이상이여야 합니다')
         } else {
-            const copyData = {...info}
-            copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
-            // copyData['delivery'] = moment(info['delivery']).format('YYYY-MM-DD');
 
-            // console.log(copyData, 'copyData~~~~~~~~~~~')
-            await getData.post('order/updateOrder', copyData).then(v => {
-                if(v.data.code === 1){
-                    message.success('저장되었습니다')
-                    setInfo(rfqWriteInitial);
-                    deleteList()
-                    window.location.href = '/order_read'
-            } else {
-                message.error('저장에 실패하였습니다.')
-            }
-        });
+            await updateOrder({data : info})
+
+        }
     }
-}
 
-    async function printTransactionStatement () {
+    async function printTransactionStatement() {
         await searchCustomer();
-        setIsModalOpen({event1:true, event2:false});
+        setIsModalOpen({event1: true, event2: false});
     }
 
-    function printPo () {
-        setIsModalOpen({event1:false, event2:true});
+    function printPo() {
+        setIsModalOpen({event1: false, event2: true});
     }
 
-    async function searchCustomer () {
+    async function searchCustomer() {
 
         const result = await getData.post('customer/getCustomerListForOrder', {
             customerName: info['customerName']
@@ -156,7 +110,7 @@ export default function order_update({data}) {
 
         if (result?.data?.code === 1) {
 
-            if(result?.data?.entity?.customerList.length) {
+            if (result?.data?.entity?.customerList.length) {
                 setCustomerData(result?.data?.entity?.customerList?.[0])
             }
         }
@@ -178,87 +132,51 @@ export default function order_update({data}) {
         }
 
         let copyData = {...info}
-        copyData['orderDetailList'] = uncheckedData;
-        console.log(copyData, 'copyData::')
+        copyData[listType] = uncheckedData;
+
         setInfo(copyData);
 
     }
 
     function addRow() {
         let copyData = {...info};
-        copyData['orderDetailList'].push({
-            "model": "",           // MODEL
-            "unit": "ea",               // 단위
-            "currency":   commonManage.changeCurr(info['agencyCode']),
-            "net": 0,            // NET/P
-            "quantity": 0,              // 수량
-            "receivedQuantity": 0,
-            "unreceivedQuantity": 0,
-            "unitPrice": 0,
-            "amount": 0,
+        copyData[listType].push({
+            ...copyUnitInit,
+            "currency": commonManage.changeCurr(info['agencyCode'])
         })
-
         setInfo(copyData)
     }
 
-    const downloadExcel = () => {
-
-        if(!info['orderDetailList'].length){
-            return message.warn('출력할 데이터가 존재하지 않습니다.')
-        }
-
-        const worksheet = XLSX.utils.json_to_sheet(info['orderDetailList']);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-        XLSX.writeFile(workbook, "example.xlsx");
-    };
 
 
-    async function findDocument(e) {
-
-        const result = await getData.post('estimate/getEstimateDetail', {
-            "estimateId": null,
-            "documentNumberFull": e.target.value
-        });
-
-        // console.log(result)
-
-        if (result?.data?.code === 1) {
-
-
-            if(result?.data?.entity?.estimateDetail?.estimateDetailList.length) {
-
-                console.log(result?.data?.entity?.estimateDetail,'result?.data?.entity?.estimateDetail?.estimateDetailList:')
-
-                setInfo(v => {
-                        return {...v, ...result?.data?.entity?.estimateDetail,
-                            documentNumberOriginFull : e.target.value, adminName: userInfo['name'],
-                            writtenDate : moment(),
-                            orderDetailList : result?.data?.entity?.estimateDetail?.estimateDetailList,
-                            currencyUnit:result?.data?.entity?.estimateDetail?.estimateDetailList?.[0]?.currency,
-                        }
-                    }
-                )
-
-                console.log(info['currencyUnit'], 'currencyUnit~~~')
-            }
-        }
-    }
-
-
-
-    function handleKeyPress(e) {
+    async function handleKeyPress(e) {
         if (e.key === 'Enter') {
 
             switch (e.target.id) {
                 case 'documentNumberFull' :
-                    findDocument(e);
+                    await findEstDocumentInfo(e, setInfo)
                     break;
             }
 
         }
     }
 
+
+    /**
+     * @description 테이블 우측상단 관련 기본 유틸버튼
+     */
+    const subTableUtil = <div>
+        {/*@ts-ignored*/}
+        <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
+                onClick={addRow}>
+            <SaveOutlined/>추가
+        </Button>
+        {/*@ts-ignored*/}
+        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
+                onClick={deleteList}>
+            <CopyOutlined/>삭제
+        </Button>
+    </div>
 
     return <>
         <LayoutComponent>
@@ -298,8 +216,9 @@ export default function order_update({data}) {
                                 minWidth: 600,
                                 columnGap: 15
                             }}>
-                                {datePickerForm({title: '작성일', id: 'writtenDate', disabled: true})}
-                                {inputForm({title: '작성자', id: 'adminName', disabled: true})}
+
+                                {inputForm({title: '작성일', id: 'writtenDate', disabled: true})}
+                                {inputForm({title: '작성자', id: 'createdBy', disabled: true})}
                                 {/*{inputForm({title: '담당자', id: 'managerAdminName'})}*/}
 
                                 {inputForm({title: '연결 PO No.', id: 'documentNumberFull'})}
@@ -370,19 +289,6 @@ export default function order_update({data}) {
                                     <Input id={'item'} value={info['item']} onChange={onChange} size={'small'}/>
                                 </div>
                                 {inputForm({title: 'Delivery(weeks)', id: 'delivery'})}
-
-                                {/*<div style={{paddingTop: 8}}>*/}
-                                {/*    <div style={{paddingBottom: 3}}>Delivery</div>*/}
-                                {/*    <DatePicker value={moment(info['delivery'])}*/}
-                                {/*                onChange={(date, dateString) => onChange({*/}
-                                {/*                    target: {*/}
-                                {/*                        id: 'delivery',*/}
-                                {/*                        value: date*/}
-                                {/*                    }*/}
-                                {/*                })*/}
-                                {/*                } id={'delivery'} size={'small'}/>*/}
-                                {/*</div>*/}
-
                             </Card>
 
                             <Card size={'small'} title={'ETC'} style={{
@@ -405,24 +311,13 @@ export default function order_update({data}) {
                 <TableGrid
                     gridRef={gridRef}
                     columns={tableOrderWriteColumn}
-                    tableData={info['orderDetailList']}
+                    tableData={info[listType]}
                     listType={'orderId'}
-                    listDetailType={'orderDetailList'}
+                    listDetailType={listType}
                     setInfo={setInfo}
                     excel={true}
                     type={'write'}
-                    funcButtons={<div>
-                        {/*@ts-ignored*/}
-                        <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
-                                onClick={addRow}>
-                            <SaveOutlined/>추가
-                        </Button>
-                        {/*@ts-ignored*/}
-                        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
-                                onClick={deleteList}>
-                            <CopyOutlined/>삭제
-                        </Button>
-                    </div>}
+                    funcButtons={subTableUtil}
                 />
 
             </div>
@@ -430,31 +325,23 @@ export default function order_update({data}) {
     </>
 }
 
-// @ts-ignored
-export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
-
-    let param = {}
-
-    const {userInfo} = await initialServerRouter(ctx, store);
-
-    if (!userInfo) {
-        return {
-            redirect: {
-                destination: '/', // 리다이렉트할 경로
-                permanent: false, // true면 301 리다이렉트, false면 302 리다이렉트
-            },
-        };
-    }
-
-    store.dispatch(setUserInfo(userInfo));
-
+export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
     const {orderId} = ctx.query;
 
+    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
-    const result = await getData.post('order/getOrderDetail', {
-        orderId: orderId
-    });
-
-
-    return {props: {data: orderId ? result?.data?.entity : null}}
+    if (codeInfo === -90009) {
+        return {
+            redirect: {
+                destination: '/',
+                permanent: false,
+            },
+        };
+    } else {
+        store.dispatch(setUserInfo(userInfo));
+        const result = await getData.post('order/getOrderDetail', {
+            orderId: orderId
+        });
+        return {props: {data: orderId ? result?.data?.entity : null}}
+    }
 })

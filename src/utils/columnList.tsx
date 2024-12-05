@@ -632,8 +632,20 @@ export const tableEstimateReadColumns = [
                 headerName: '합계',
                 field: 'amount',
                 minWidth: 70,
-                cellDataType: 'number',
-                valueFormatter: numberFormat,
+                cellDataType: 'number'
+            },
+            {
+                headerName: 'Amount',
+                field: 'totalAmount',
+                editable: true,
+                valueFormatter: (params) => {
+                    if (params.node.rowPinned) {
+                        // 고정 행 (푸터)에서는 원래 값을 그대로 반환
+                        return params.value !== undefined ? params.value.toLocaleString() : '0';
+                    }
+                    const {quantity, unitPrice} = params.data;
+                    return Math.floor(quantity * unitPrice).toLocaleString();
+                },
                 cellStyle: { textAlign: 'right' }
             },
         ]
@@ -1132,122 +1144,96 @@ export const tableOrderReadColumns = [
         minWidth: 150,
     },
     {
-        headerName: '물품',
-        children: [
-            {
-                headerName: 'MAKER',
-                field: 'maker',
-                align: 'center',
-                minWidth: 180,
-            },
-            {
-                headerName: 'ITEM',
-                field: 'item',
-                align: 'center',
-                minWidth: 100,
-
-            },
-            {
-                headerName: 'MODEL',
-                field: 'model',
-                minWidth: 150,
-            },
-            // {
-            //     headerName: '수량',
-            //     field: 'quantity',
-            //     key: 'quantity',
-            //     minWidth: 70,
-            // },
-            {
-                headerName: '단위',
-                field: 'unit',
-                align: 'center',
-                minWidth: 70,
-                cellEditor: 'agSelectCellEditor',
-                cellEditorParams: {
-                    values: ['ea', 'set', 'm', 'feet', 'roll', 'box', 'g', 'kg', 'Pack', 'Inch', 'MOQ'],
-                }
-            },
-            {
-                headerName: 'CURR',
-                field: 'currency',
-                align: 'center',
-                minWidth: 50,
-                cellEditor: 'agSelectCellEditor',
-                cellEditorParams: {
-                    values: ['KRW', 'EUR', 'JPY', 'USD', 'GBP',],
-                }
-            },
-            {
-                headerName: 'NET',
-                field: 'net',
-                align: 'center',
-                minWidth: 40,
-                valueFormatter: numberFormat,
-                cellStyle: { textAlign: 'right' }
-            },
-        ]
+        headerName: 'MAKER',
+        field: 'maker',
+        align: 'center',
+        minWidth: 180,
     },
     {
-        headerName: '비용',
-        children: [
+        headerName: 'ITEM',
+        field: 'item',
+        align: 'center',
+        minWidth: 100,
 
-            // {
-            //     headerName: 'Amount',
-            //     field: 'amount',
-            //     key: 'amount',
-            //     align: 'center',
-            //     minWidth: 60,
-            //     valueFormatter: numberFormat,
-            // },
-            {
-                headerName: '주문수량',
-                field: 'quantity',
-                key: 'quantity',
-                align: 'center',
-                minWidth: 70,
-                valueFormatter: numberFormat,
-            },
-            {
-                headerName: '입고수량',
-                field: 'receivedQuantity',
-                key: 'receivedQuantity',
-                align: 'center',
-                minWidth: 70,
-                valueFormatter: numberFormat,
-            },
-            {
-                headerName: '미입고수량',
-                field: 'unreceivedQuantity',
-                key: 'unreceivedQuantity',
-                align: 'center',
-                minWidth: 70,
-                valueFormatter: numberFormat,
-            },
-            {
-                headerName: '단가',
-                field: 'unitPrice',
-                key: 'unitPrice',
-                align: 'center',
-                minWidth: 50,
-                valueFormatter: numberFormat,
-                cellStyle: { textAlign: 'right' }
-            },
-            {
-                headerName: '금액',
-                field: 'totalPrice',
-                key: 'totalPrice',
-                align: 'center',
-                minWidth: 60,
-                valueFormatter: (params) => {
-                    const {quantity, unitPrice} = params.data;
-                    return Math.floor(quantity * unitPrice).toLocaleString();
-                },
-                cellStyle: { textAlign: 'right' }
-            },
-        ]
     },
-
+    {
+        headerName: 'MODEL',
+        field: 'model',
+        minWidth: 150,
+    },
+    {
+        headerName: '단위',
+        field: 'unit',
+        align: 'center',
+        minWidth: 70,
+        cellEditor: 'agSelectCellEditor',
+        cellEditorParams: {
+            values: ['ea', 'set', 'm', 'feet', 'roll', 'box', 'g', 'kg', 'Pack', 'Inch', 'MOQ'],
+        }
+    },
+    {
+        headerName: 'CURR',
+        field: 'currency',
+        align: 'center',
+        minWidth: 50,
+        cellEditor: 'agSelectCellEditor',
+        cellEditorParams: {
+            values: ['KRW', 'EUR', 'JPY', 'USD', 'GBP',],
+        }
+    },
+    {
+        headerName: 'NET',
+        field: 'net',
+        align: 'center',
+        minWidth: 40,
+        valueFormatter: numberFormat,
+        cellStyle: { textAlign: 'right' }
+    },
+    {
+        headerName: '주문수량',
+        field: 'quantity',
+        key: 'quantity',
+        align: 'center',
+        minWidth: 70,
+        valueFormatter: numberFormat,
+    },
+    {
+        headerName: '입고수량',
+        field: 'receivedQuantity',
+        key: 'receivedQuantity',
+        align: 'center',
+        minWidth: 70,
+        valueFormatter: numberFormat,
+    },
+    {
+        headerName: '미입고수량',
+        field: 'unreceivedQuantity',
+        key: 'unreceivedQuantity',
+        align: 'center',
+        minWidth: 70,
+        valueFormatter: numberFormat,
+    },
+    {
+        headerName: '단가',
+        field: 'unitPrice',
+        key: 'unitPrice',
+        align: 'center',
+        minWidth: 50,
+        valueFormatter: numberFormat,
+        cellStyle: { textAlign: 'right' }
+    },
+    {
+        headerName: '금액',
+        field: 'totalPrice',
+        key: 'totalPrice',
+        align: 'center',
+        minWidth: 60,
+        valueFormatter: (params) => {
+            const {quantity, unitPrice} = params.data;
+            return Math.floor(quantity * unitPrice).toLocaleString();
+        },
+        cellStyle: { textAlign: 'right' }
+    },
     {
         headerName: '예상납기',
         field: 'delivery',

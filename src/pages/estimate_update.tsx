@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useRef, useState} from "react";
 import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
@@ -14,7 +14,7 @@ import {
 } from "@ant-design/icons";
 import {tableEstimateWriteColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {estimateWriteInitial, ModalInitList, modalList} from "@/utils/initialList";
+import {estimateDetailUnit, ModalInitList} from "@/utils/initialList";
 import moment from "moment";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
@@ -28,24 +28,32 @@ import TableGrid from "@/component/tableGrid";
 import {useRouter} from "next/router";
 import SearchInfoModal from "@/component/SearchAgencyModal";
 import PrintEstimate from "@/component/printEstimate";
-import {BoxCard} from "@/utils/commonForm";
+import {BoxCard, TopBoxCard} from "@/utils/commonForm";
 import {commonManage} from "@/utils/commonManage";
+import {findCodeInfo, findDocumentInfo} from "@/utils/api/commonApi";
+import {updateEstimate} from "@/utils/api/mainApi";
+import _ from "lodash";
 
 
+const listType = 'estimateDetailList'
 export default function estimate_update({dataInfo}) {
     const gridRef = useRef(null);
     const router = useRouter();
 
+
+    const copyUnitInit = _.cloneDeep(estimateDetailUnit)
+
     const userInfo = useAppSelector((state) => state.user);
-    const [info, setInfo] = useState<any>(dataInfo)
+
+    const [info, setInfo] = useState<any>({
+        ...dataInfo,
+        writtenDate: moment(dataInfo['writtenDate'])
+    })
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
     const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
 
-
-    console.log(dataInfo,'dataInfo:')
-
-    const inputForm = ({placeholder='',title, id, disabled = false, suffix = null}) => {
+    const inputForm = ({placeholder = '', title, id, disabled = false, suffix = null}) => {
         let bowl = info;
 
         return <div>
@@ -63,7 +71,7 @@ export default function estimate_update({dataInfo}) {
     const textAreaForm = ({title, id, rows = 5, disabled = false}) => {
         return <div>
             <div>{title}</div>
-            <TextArea style={{resize : 'none'}} rows={rows} id={id} value={info[id]} disabled={disabled}
+            <TextArea style={{resize: 'none'}} rows={rows} id={id} value={info[id]} disabled={disabled}
                       onChange={onChange}
                       size={'small'}/>
         </div>
@@ -87,247 +95,133 @@ export default function estimate_update({dataInfo}) {
         </div>
     }
 
-    function handleKeyPress(e) {
+    const selectBoxForm = ({title, id, option}) => {
+        return <div>
+            <div>{title}</div>
+            <Select id={'shippingTerms'} defaultValue={'0'}
+                    onChange={(src) => onChange({target: {id: 'shippingTerms', value: src}})}
+                    size={'small'} value={info[id]} options={option} style={{width: '100%',}}/>
+        </div>
+    }
+
+    async function handleKeyPress(e) {
         if (e.key === 'Enter') {
 
             switch (e.target.id) {
                 case 'agencyCode' :
                 case 'customerName' :
                 case 'maker' :
-                    searchFunc(e)
+                    await findCodeInfo(e, setInfo, openModal)
                     break;
                 case 'connectDocumentNumberFull' :
-                    findDocument(e);
+                    await findDocumentInfo(e, setInfo)
                     break;
             }
 
         }
     }
 
-
     function openModal(e) {
-        let bowl = {};
-        bowl[e] = true
-        setIsModalOpen(v => {
-            return {...v, ...bowl}
-        })
+        commonManage.openModal(e, setIsModalOpen)
     }
 
     function onChange(e) {
-
-        let bowl = {}
-        bowl[e.target.id] = e.target.value;
-
-        setInfo(v => {
-            return {...v, ...bowl}
-        })
-
+        commonManage.onChange(e, setInfo)
     }
 
-    async function searchFunc(e) {
-
-        const resultList = await getData.post(modalList[e.target.id]?.url, {
-            "searchType": "1",
-            "searchText": e.target.value,       // 대리점코드 or 대리점 상호명
-            "page": 1,
-            "limit": -1
-        });
-
-        const data = resultList?.data?.entity[modalList[e.target.id]?.list];
-
-
-        const size = data?.length;
-
-        if (size > 1) {
-            return openModal(e.target.id);
-        } else if (size === 1) {
-            switch (e.target.id) {
-                case 'agencyCode' :
-                    const {agencyId, agencyCode, agencyName, currencyUnit} = data[0];
-                    setInfo(v => {
-                        return {...v, agencyId: agencyId, agencyCode: agencyCode, agencyName: agencyName, currencyUnit:currencyUnit}
-                    })
-                    break;
-                case 'customerName' :
-                    const {customerName, managerName, directTel, faxNumber, email} = data[0];
-                    // console.log(data[0], 'customerName~~~~')
-                    setInfo(v => {
-                        return {
-                            ...v,
-                            customerName: customerName,
-                            managerName: managerName,
-                            phoneNumber: directTel,
-                            faxNumber: faxNumber,
-                            customerManagerEmail: email
-
-                        }
-                    })
-                    break;
-
-                case 'maker' :
-                    const {makerName, item, instructions} = data[0];
-                    console.log(data[0], 'customerName~~~~')
-                    setInfo(v => {
-                        return {
-                            ...v,
-                            maker: makerName,
-                            item: item,
-                            instructions: instructions,
-                        }
-                    })
-                    break;
-
-            }
-        } else {
-            message.warn('조회된 데이터가 없습니다.')
-        }
-    }
-
-    useEffect(() => {
-
-        let copyData = {...dataInfo}
-
-        if (dataInfo) {
-            copyData = dataInfo;
-            copyData['writtenDate'] = moment(copyData['writtenDate']);
-        } else {
-            // @ts-ignored
-            copyData['writtenDate'] = moment();
-        }
-
-        setInfo(copyData);
-    }, [dataInfo, router])
 
     async function saveFunc() {
-        if (!info['estimateDetailList'].length) {
+        if (!info[listType].length) {
             message.warn('하위 데이터 1개 이상이여야 합니다')
         } else {
             const copyData = {...info}
             copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
-
-            await getData.post('estimate/updateEstimate', copyData).then(v => {
-                if (v.data.code === 1) {
-                    message.success('저장되었습니다.')
-                    // setInfo(estimateWriteInitial);
-                    // deleteList()
-                    // window.location.href = '/estimate_read'
-                } else {
-                    message.error('저장에 실패하였습니다.')
-                }
-            });
+            await updateEstimate({data: copyData})
         }
     }
 
 
     function deleteList() {
-
-        const api = gridRef.current.api;
-
-        // 전체 행 반복하면서 선택되지 않은 행만 추출
-        const uncheckedData = [];
-        for (let i = 0; i < api.getDisplayedRowCount(); i++) {
-            const rowNode = api.getDisplayedRowAtIndex(i);
-            if (!rowNode.isSelected()) {
-                uncheckedData.push(rowNode.data);
-            }
-        }
-
         let copyData = {...info}
-        copyData['estimateDetailList'] = uncheckedData;
-        console.log(copyData, 'copyData::')
+        copyData[listType] = copyData[listType] = commonManage.getUnCheckList(gridRef.current.api);
         setInfo(copyData);
-
     }
 
     function addRow() {
         let copyData = {...info};
-        copyData['estimateDetailList'].push({
-            "model": "",   // MODEL
-            "quantity": 1,                  // 수량
-            "unit": "ea",                   // 단위
-            "currency":   commonManage.changeCurr(info['agencyCode']),         // CURR
-            "net": 0,                 // NET/P
-            "unitPrice": 0,           // 단가
-            "amount": 0,               // 금액
-            "serialNumber": 1           // 견적의뢰 내역 순서 (1부터 시작)
+        copyData[listType].push({
+            ...copyUnitInit,
+            "currency": commonManage.changeCurr(info['agencyCode'])
         })
-
         setInfo(copyData)
     }
 
 
-    async function printEstimate () {
+    async function printEstimate() {
         setIsPrintModalOpen(true)
     }
 
-    async function findDocument(e) {
 
-        const result = await getData.post('estimate/getEstimateRequestDetail', {
-            "estimateId": null,
-            "documentNumberFull": e.target.value
-        });
-
-        // console.log(result)
-
-        if (result?.data?.code === 1) {
-
-
-            if(result?.data?.entity?.estimateRequestDetail) {
-
-                setInfo(v => {
-                        return {...v, ...result?.data?.entity?.estimateRequestDetail,estimateDetailList : result?.data?.entity?.estimateRequestDetail?.estimateRequestDetailList,writtenDate : moment()}
-                    }
-                )
-            }
-        }
-    }
+    /**
+     * @description 테이블 우측상단 관련 기본 유틸버튼
+     */
+    const subTableUtil = <div style={{display: 'flex', alignItems: 'end'}}>
+        <Button type={'primary'} size={'small'} style={{marginLeft: 5}}
+                onClick={addRow}>
+            <SaveOutlined/>추가
+        </Button>
+        {/*@ts-ignored*/}
+        <Button type={'danger'} size={'small'} style={{marginLeft: 5,}} onClick={deleteList}>
+            <CopyOutlined/>삭제
+        </Button>
+    </div>
 
 
     return <>
         <LayoutComponent>
-            <div style={{display: 'grid', gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`, height: '100vh', columnGap: 5}}>
-                <PrintEstimate data={info} isModalOpen={isPrintModalOpen} userInfo={userInfo} setIsModalOpen={setIsPrintModalOpen}/>
+            <div style={{
+                display: 'grid',
+                gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`,
+                height: '100vh',
+                columnGap: 5
+            }}>
+                <PrintEstimate data={info} isModalOpen={isPrintModalOpen} userInfo={userInfo}
+                               setIsModalOpen={setIsPrintModalOpen}/>
                 {/*@ts-ignore*/}
                 <SearchInfoModal type={'agencyList'} info={info} setInfo={setInfo}
                                  open={isModalOpen}
                                  setIsModalOpen={setIsModalOpen}/>
 
-                <Card title={<div style={{display:'flex', justifyContent:'space-between'}}>
-                    <div style={{fontSize:14, fontWeight:550}}>견적서 수정</div><div>
-                    <Button type={'default'} size={'small'} style={{marginRight: 8}}
-                            onClick={printEstimate}><SaveOutlined/>견적서 출력</Button>
-                    <Button type={'primary'} size={'small'} style={{marginRight: 8}}
-                            onClick={saveFunc}><SaveOutlined/>수정</Button>
-                    {/*@ts-ignored*/}
-                    <Button size={'small'}  type={'danger'} style={{marginRight: 8,}}
-                            onClick={() => router?.push('/estimate_write')}><EditOutlined/>신규작성</Button>
+                <Card title={<div style={{display: 'flex', justifyContent: 'space-between'}}>
+                    <div style={{fontSize: 14, fontWeight: 550}}>견적서 수정</div>
+                    <div>
+                        <Button type={'default'} size={'small'} style={{marginRight: 8}}
+                                onClick={printEstimate}><SaveOutlined/>견적서 출력</Button>
+                        <Button type={'primary'} size={'small'} style={{marginRight: 8}}
+                                onClick={saveFunc}><SaveOutlined/>수정</Button>
+                        {/*@ts-ignored*/}
+                        <Button size={'small'} type={'danger'} style={{marginRight: 8,}}
+                                onClick={() => router?.push('/estimate_write')}><EditOutlined/>신규작성</Button>
 
-                </div></div>} style={{fontSize: 12, border: '1px solid lightGray'}}
+                    </div>
+                </div>} style={{fontSize: 12, border: '1px solid lightGray'}}
                       extra={<span style={{fontSize: 20, cursor: 'pointer'}} onClick={() => setMini(v => !v)}> {!mini ?
                           <DownCircleFilled/> : <UpCircleFilled/>}</span>}>
 
-                    <BoxCard title={'기본 정보'}>
-                        <div style={{
-                            display: 'grid',
-                            gridTemplateColumns: '1fr 0.6fr 0.6fr 1fr 1fr 1fr 1fr',
-                            maxWidth: 900,
-                            minWidth: 600,
-                            columnGap: 15
-                        }}>
-                            {datePickerForm({title: '작성일', id: 'writtenDate', disabled: true})}
-                            {inputForm({title: '작성자', id: 'createdBy', disabled: true})}
-                            {inputForm({title: '담당자', id: 'managerAdminName'})}
-                            {inputForm({title: 'INQUIRY NO.', id: 'documentNumberFull', placeholder : '폴더생성 규칙 유의'})}
-                            {inputForm({
-                                placeholder : '폴더생성 규칙 유의',
-                                title: '연결 INQUIRY No.',
-                                id: 'connectDocumentNumberFull',
-                                suffix: <DownloadOutlined style={{cursor: 'pointer'}} />
-                            })}
-                            {inputForm({title: 'RFQ NO.', id: 'rfqNo'})}
-                            {inputForm({title: '프로젝트 제목', id: 'projectTitle'})}
-                        </div>
-                    </BoxCard>
+                    <TopBoxCard title={'기본 정보'} grid={'1fr 0.6fr 0.6fr 1fr 1fr 1fr 1fr'}>
+                        {datePickerForm({title: '작성일', id: 'writtenDate', disabled: true})}
+                        {inputForm({title: '작성자', id: 'createdBy', disabled: true})}
+                        {inputForm({title: '담당자', id: 'managerAdminName'})}
+                        {inputForm({title: 'INQUIRY NO.', id: 'documentNumberFull', placeholder: '폴더생성 규칙 유의'})}
+                        {inputForm({
+                            placeholder: '폴더생성 규칙 유의',
+                            title: '연결 INQUIRY No.',
+                            id: 'connectDocumentNumberFull',
+                            suffix: <DownloadOutlined style={{cursor: 'pointer'}}/>
+                        })}
+                        {inputForm({title: 'RFQ NO.', id: 'rfqNo'})}
+                        {inputForm({title: '프로젝트 제목', id: 'projectTitle'})}
+                    </TopBoxCard>
 
                     <div style={{display: 'grid', gridTemplateColumns: "150px 200px 200px 180px 1fr"}}>
 
@@ -344,7 +238,7 @@ export default function estimate_update({dataInfo}) {
                             })}
                             {inputForm({title: '매입처명', id: 'agencyName'})}
                             {inputForm({title: '담당자', id: 'agencyManagerName'})}
-                            {inputForm({title: '연락처', id: 'agencyPhoneNumber'})}
+                            {inputForm({title: '연락처', id: 'agencyManagerPhoneNumber'})}
                         </BoxCard>
 
                         <BoxCard title={'고객사 정보'}>
@@ -365,36 +259,25 @@ export default function estimate_update({dataInfo}) {
                         </BoxCard>
 
                         <BoxCard title={'운송 정보'}>
-                            <div>
-                                <div>유효기간</div>
-                                <Select id={'validityPeriod'} defaultValue={'0'}
-                                        onChange={(src) => onChange({target: {id: 'validityPeriod', value: src}})}
-                                        size={'small'} value={info['validityPeriod']} options={[
+                            {selectBoxForm({
+                                title: '유효기간', id: 'validityPeriod', option: [
                                     {value: '0', label: '견적 발행 후 10일간'},
                                     {value: '1', label: '견적 발행 후 30일간'},
-                                ]} style={{width: '100%'}}>
-                                </Select>
-                            </div>
-                            <div>
-                                <div>결제조건</div>
-                                <Select id={'validityPeriod'} defaultValue={'0'}
-                                        onChange={(src) => onChange({target: {id: 'paymentTerms', value: src}})}
-                                        size={'small'} value={info['paymentTerms']} options={[
+                                ]
+                            })}
+                            {selectBoxForm({
+                                title: '결제조건', id: 'paymentTerms', option: [
                                     {value: '0', label: '발주시 50% / 납품시 50%'},
                                     {value: '1', label: '납품시 현금결제'},
                                     {value: '2', label: '정기결제'},
-                                ]} style={{width: '100%'}}>
-                                </Select>
-                            </div>
-                            <div style={{marginTop: 8}}>
-                                <div>운송조건</div>
-                                <Select id={'shippingTerms'} defaultValue={'0'}
-                                        onChange={(src) => onChange({target: {id: 'shippingTerms', value: src}})}
-                                        size={'small'} value={info['shippingTerms']} options={[
+                                ]
+                            })}
+                            {selectBoxForm({
+                                title: '운송조건', id: 'shippingTerms', option: [
                                     {value: '0', label: '귀사도착도'},
                                     {value: '1', label: '화물 및 택배비 별도'},
-                                ]} style={{width: '100%',}}/>
-                            </div>
+                                ]
+                            })}
                             {inputForm({title: 'Delivery(weeks)', id: 'delivery'})}
                             {inputForm({title: '환율', id: 'exchangeRate'})}
                         </BoxCard>
@@ -410,10 +293,8 @@ export default function estimate_update({dataInfo}) {
                                 }/>
                             })}
                             {inputForm({title: 'ITEM', id: 'item'})}
-
                         </BoxCard>
                         <BoxCard title={'ETC'}>
-
                             {textAreaForm({title: '지시사항', rows: 2, id: 'instructions'})}
                             {textAreaForm({title: '비고란', rows: 3, id: 'remarks'})}
                         </BoxCard>
@@ -423,54 +304,37 @@ export default function estimate_update({dataInfo}) {
                 <TableGrid
                     gridRef={gridRef}
                     columns={tableEstimateWriteColumns}
-                    tableData={info['estimateDetailList']}
+                    tableData={info[listType]}
                     listType={'estimateId'}
-                    listDetailType={'estimateDetailList'}
-                    setInfo={setInfo}
-                    excel={true}
                     type={'write'}
-                    funcButtons={<div style={{display : 'flex', alignItems : 'end'}}>
-                        <Button type={'primary'} size={'small'} style={{marginLeft: 5}}
-                                onClick={addRow}>
-                            <SaveOutlined/>추가
-                        </Button>
-                        {/*@ts-ignored*/}
-                        <Button type={'danger'} size={'small'} style={{ marginLeft: 5,}} onClick={deleteList}>
-                            <CopyOutlined/>삭제
-                        </Button>
-                    </div>}
+                    funcButtons={subTableUtil}
                 />
             </div>
         </LayoutComponent>
     </>
 }
 
-// @ts-ignore
-export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
-
-    let param = {}
-
-    const {userInfo} = await initialServerRouter(ctx, store);
-
-    if (!userInfo) {
-        return {
-            redirect: {
-                destination: '/', // 리다이렉트할 경로
-                permanent: false, // true면 301 리다이렉트, false면 302 리다이렉트
-            },
-        };
-    }
-
-    store.dispatch(setUserInfo(userInfo));
+export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
 
     const {estimateId} = ctx.query;
 
+    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
-    const result = await getData.post('estimate/getEstimateDetail', {
-        estimateId:estimateId,
-        documentNumberFull: ""
-    });
+    if (codeInfo === -90009) {
+        return {
+            redirect: {
+                destination: '/',
+                permanent: false,
+            },
+        };
+    } else {
+        store.dispatch(setUserInfo(userInfo));
 
+        const result = await getData.post('estimate/getEstimateDetail', {
+            estimateId: estimateId,
+            documentNumberFull: ""
+        });
 
-    return {props: {dataInfo: estimateId ? result?.data?.entity?.estimateDetail : null}}
+        return {props: {dataInfo: estimateId ? result?.data?.entity?.estimateDetail : null}}
+    }
 })

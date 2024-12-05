@@ -6,7 +6,7 @@ import {CopyOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons
 import Button from "antd/lib/button";
 import {tableOrderReadColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {orderReadInitial} from "@/utils/initialList";
+import {orderDetailUnit, orderReadInitial} from "@/utils/initialList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
@@ -16,6 +16,9 @@ import * as XLSX from "xlsx";
 import is from "@sindresorhus/is";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
+import {searchOrder} from "@/utils/api/mainApi";
+import {commonManage} from "@/utils/commonManage";
+import _ from "lodash";
 
 const {RangePicker} = DatePicker
 
@@ -23,28 +26,20 @@ const {RangePicker} = DatePicker
 export default function OrderRead({data}) {
 
     const gridRef = useRef(null);
+    const copyInit = _.cloneDeep(orderReadInitial)
 
-    // const {orderList} = dataList;
-    const [info, setInfo] = useState(orderReadInitial)
+    // copyInit = copyUnitInit;
+
+    const [info, setInfo] = useState({
+        ...copyInit,
+        searchDate: [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
+    })
     const [tableData, setTableData] = useState(data)
 
 
     function onChange(e) {
-
-        let bowl = {}
-        bowl[e.target.id] = e.target.value;
-
-        setInfo(v => {
-            return {...v, ...bowl}
-        })
+        commonManage.onChange(e, setInfo)
     }
-
-    useEffect(() => {
-        const copyData: any = {...info}
-        copyData['searchDate'] = [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
-        setInfo(copyData);
-    }, [])
-
 
 
     async function searchInfo() {
@@ -55,23 +50,23 @@ export default function OrderRead({data}) {
             copyData['searchEndDate'] = searchDate[1];
         }
         const result = await getData.post('order/getOrderList',
-            {...copyData,   "page": 1, "limit": -1});
+            {...copyData, "page": 1, "limit": -1});
         setTableData(result?.data?.entity?.orderList)
     }
 
     async function deleteList() {
         const api = gridRef.current.api;
-        console.log(api.getSelectedRows(),':::')
+        console.log(api.getSelectedRows(), ':::')
 
-        if (api.getSelectedRows().length<1) {
+        if (api.getSelectedRows().length < 1) {
             message.error('삭제할 데이터를 선택해주세요.')
         } else {
             for (const item of api.getSelectedRows()) {
                 const response = await getData.post('order/deleteOrder', {
-                    estimateId:item.estimateId
+                    estimateId: item.estimateId
                 });
                 console.log(response)
-                if (response.data.code===1) {
+                if (response.data.code === 1) {
                     message.success('삭제되었습니다.')
                     window.location.reload();
                 } else {
@@ -82,11 +77,7 @@ export default function OrderRead({data}) {
     }
 
     const downloadExcel = () => {
-
-        const worksheet = XLSX.utils.json_to_sheet(tableData);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-        XLSX.writeFile(workbook, "example.xlsx");
+        commonManage.excelDownload(tableData)
     };
 
 
@@ -101,26 +92,26 @@ export default function OrderRead({data}) {
                             fontSize: 11,
                             boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                         }}>
-                                <div>
-                                    <div style={{marginBottom: 3}}>발주일자</div>
-                                    <RangePicker style={{width: '100%'}}
-                                                 value={[moment(info['searchDate'][0]), moment(info['searchDate'][1])]}
-                                                 id={'searchDate'} size={'small'} onChange={(date, dateString) => {
-                                        onChange({
-                                            target: {
-                                                id: 'searchDate',
-                                                value: date ? [moment(date[0]).format('YYYY-MM-DD'), moment(date[1]).format('YYYY-MM-DD')] : [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
-                                            }
-                                        })
-                                    }
-                                    }/>
-                                </div>
-                                <div style={{marginTop: 8}}>
-                                    <div style={{marginBottom: 3}}>문서번호</div>
-                                    <Input id={'searchDocumentNumber'} value={info['searchDocumentNumber']}
-                                           onChange={onChange}
-                                           size={'small'}/>
-                                </div>
+                            <div>
+                                <div style={{marginBottom: 3}}>발주일자</div>
+                                <RangePicker style={{width: '100%'}}
+                                             value={[moment(info['searchDate'][0]), moment(info['searchDate'][1])]}
+                                             id={'searchDate'} size={'small'} onChange={(date, dateString) => {
+                                    onChange({
+                                        target: {
+                                            id: 'searchDate',
+                                            value: date ? [moment(date[0]).format('YYYY-MM-DD'), moment(date[1]).format('YYYY-MM-DD')] : [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
+                                        }
+                                    })
+                                }
+                                }/>
+                            </div>
+                            <div style={{marginTop: 8}}>
+                                <div style={{marginBottom: 3}}>문서번호</div>
+                                <Input id={'searchDocumentNumber'} value={info['searchDocumentNumber']}
+                                       onChange={onChange}
+                                       size={'small'}/>
+                            </div>
                         </Card>
                         <Card size={'small'} style={{
                             fontSize: 11,
@@ -147,43 +138,45 @@ export default function OrderRead({data}) {
                             <div>
                                 <div style={{marginBottom: 3}}>MAKER</div>
                                 <Input id={'searchMaker'} value={info['searchMaker']} onChange={onChange}
-                                           size={'small'}/>
-                                </div>
-                                <div style={{marginTop: 8}}>
-                                    <div style={{marginBottom: 3}}>MODEL</div>
-                                    <Input id={'searchModel'} value={info['searchModel']} onChange={onChange}
-                                           size={'small'}/>
-                                </div>
-                                <div style={{marginTop: 8}}>
-                                    <div style={{marginBottom: 3}}>ITEM</div>
-                                    <Input id={'searchItem'} value={info['searchItem']} onChange={onChange}
-                                           size={'small'}/>
-                                </div>
+                                       size={'small'}/>
+                            </div>
+                            <div style={{marginTop: 8}}>
+                                <div style={{marginBottom: 3}}>MODEL</div>
+                                <Input id={'searchModel'} value={info['searchModel']} onChange={onChange}
+                                       size={'small'}/>
+                            </div>
+                            <div style={{marginTop: 8}}>
+                                <div style={{marginBottom: 3}}>ITEM</div>
+                                <Input id={'searchItem'} value={info['searchItem']} onChange={onChange}
+                                       size={'small'}/>
+                            </div>
 
-                            </Card>
+                        </Card>
 
                     </div>
 
-                <div style={{paddingTop: 8, textAlign: 'right'}}>
-                    <Button type={'primary'} onClick={searchInfo}><SearchOutlined/>조회</Button>
-                </div>
-            </Card>
+                    <div style={{paddingTop: 8, textAlign: 'right'}}>
+                        <Button type={'primary'} onClick={searchInfo}><SearchOutlined/>조회</Button>
+                    </div>
+                </Card>
 
-            <TableGrid
-                gridRef={gridRef}
-                listType={'orderId'}
-                columns={tableOrderReadColumns}
-                tableData={tableData}
-                type={'read'}
-                excel={true}
-                funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
+                <TableGrid
+                    gridRef={gridRef}
+                    listType={'orderId'}
+                    columns={tableOrderReadColumns}
+                    tableData={tableData}
+                    type={'read'}
+                    excel={true}
+                    funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
                         <CopyOutlined/>복사
                     </Button>
                         {/*@ts-ignored*/}
-                        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={deleteList}>
+                        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
+                                onClick={deleteList}>
                             <CopyOutlined/>삭제
                         </Button>
-                        <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={downloadExcel}>
+                        <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
+                                onClick={downloadExcel}>
                             <FileExcelOutlined/>출력
                         </Button></div>}
                 />
@@ -194,44 +187,22 @@ export default function OrderRead({data}) {
 }
 
 
-// @ts-ignore
-export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
+export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
 
+    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
-    const {userInfo} = await initialServerRouter(ctx, store);
-
-    if (!userInfo) {
+    if (codeInfo === -90009) {
         return {
             redirect: {
-                destination: '/', // 리다이렉트할 경로
-                permanent: false, // true면 301 리다이렉트, false면 302 리다이렉트
+                destination: '/',
+                permanent: false,
             },
         };
-    }
-
-    store.dispatch(setUserInfo(userInfo));
-
-    const result = await getData.post('order/getOrderList', {
-        "searchStartDate": "",          // 발주일자 검색 시작일
-        "searchEndDate": "",            // 발주일자 검색 종료일
-        "searchDocumentNumber": "",     // 문서번호
-        "searchCustomerName": "",       // 고객사명
-        "searchMaker": "",              // MAKER
-        "searchModel": "",              // MODEL
-        "searchItem": "",               // ITEM
-        "searchEstimateManager": "",    // 견적서담당자명
-        "page": 1,
-        "limit": -1
-    });
-
-    let copyData = result?.data?.entity?.orderList
-    copyData.forEach((v)=>{
-        v.unreceivedQuantity=v.quantity-v.receivedQuantity
-        // console.log(v.amount, 'v.amount')
-    })
-
-
-    return {
-        props: {data:copyData}
+    } else {
+        store.dispatch(setUserInfo(userInfo));
+        const data = await searchOrder({data: {}})
+        return {
+            props: {data: data}
+        }
     }
 })

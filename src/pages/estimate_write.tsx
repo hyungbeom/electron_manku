@@ -229,8 +229,8 @@ export default function EstimateWrite() {
                                 }/>
                             })}
                             {inputForm({title: '매입처명', id: 'agencyName'})}
-                            {inputForm({title: '담당자', id: 'agencyName'})}
-                            {inputForm({title: '연락처', id: 'agencyName'})}
+                            {inputForm({title: '담당자', id: 'agencyManagerName'})}
+                            {inputForm({title: '연락처', id: 'agencyManagerPhoneNumber'})}
                         </BoxCard>
 
                         <BoxCard title={'고객사 정보'}>

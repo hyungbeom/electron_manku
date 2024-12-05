@@ -210,7 +210,7 @@ export default function rfqRead({dataList}) {
                                     {value: 0, label: '전체'},
                                     {value: 1, label: '회신'},
                                     {value: 2, label: '미회신'}
-                                ]} style={{width: '100%',}}/>
+                                ]} style={{width: '100%'}}/>
                             </div>
                         </BoxCard>
 

@@ -1,6 +1,7 @@
 import {getData} from "@/manage/function/api";
 import message from "antd/lib/message";
 import moment from "moment/moment";
+import {rfqWriteInitial} from "@/utils/initialList";
 
 export const saveRfq = async ({data, router}) => {
     await getData.post('estimate/addEstimateRequest', data).then(v => {
@@ -53,7 +54,10 @@ export const searchRfq = async ({data}) => {
 };
 
 
-export const deleteRfq = async ({data, returnFunc = function(){}}) => {
+export const deleteRfq = async ({
+                                    data, returnFunc = function () {
+    }
+                                }) => {
 
     await getData.post('estimate/deleteEstimateRequestDetails', data).then(v => {
         if (v.data.code === 1) {
@@ -64,8 +68,6 @@ export const deleteRfq = async ({data, returnFunc = function(){}}) => {
         }
     }, err => message.error(err))
 };
-
-
 
 
 // =================================================================================================
@@ -80,6 +82,42 @@ export const saveEstimate = async ({data, router}) => {
     });
 };
 
+
+export const updateEstimate = async ({data}) => {
+    await getData.post('estimate/updateEstimate', data).then(v => {
+        if (v.data.code === 1) {
+            message.success('수정되었습니다.')
+        } else {
+            message.error('수정에 실패하였습니다.')
+        }
+    });
+};
+
+export const searchEstimate = async ({data}) => {
+
+    const defaultParam = {
+        "searchType": "",                   // 검색조건 1: 회신, 2: 미회신
+        "searchStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),              // 작성일자 시작일
+        "searchEndDate": moment().format('YYYY-MM-DD'),                // 작성일자 종료일
+        "searchDocumentNumber": "",         // 문서번호
+        "searchCustomerName": "",           // 고객사명
+        "searchMaker": "",                  // MAKER
+        "searchModel": "",                  // MODEL
+        "searchItem": "",                   // ITEM
+        "searchCreatedBy": "",              // 등록직원명
+        "page": 1,
+        "limit": -1,
+    }
+
+    const result = await getData.post('estimate/getEstimateList', {...defaultParam, ...data});
+    return result?.data?.entity?.estimateList
+};
+
+
+
+
+// ==================================================================================================================
+
 export const saveOrder = async ({data, router}) => {
     await getData.post('order/addOrder', data).then(v => {
         if (v.data.code === 1) {
@@ -92,5 +130,32 @@ export const saveOrder = async ({data, router}) => {
 };
 
 
+export const updateOrder = async ({data}) => {
+    await getData.post('order/updateOrder', data).then(v => {
+        if (v.data.code === 1) {
+            message.success('수정되었습니다')
+        } else {
+            message.error('수정에 실패하였습니다.')
+        }
+    });
+};
 
 
+export const searchOrder = async ({data}) => {
+
+    const defaultParam = {
+        "searchStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),              // 작성일자 시작일
+        "searchEndDate": moment().format('YYYY-MM-DD'),                // 작성일자 종료일
+        "searchDocumentNumber": "",     // 문서번호
+        "searchCustomerName": "",       // 고객사명
+        "searchMaker": "",              // MAKER
+        "searchModel": "",              // MODEL
+        "searchItem": "",               // ITEM
+        "searchEstimateManager": "",    // 견적서담당자명
+        "page": 1,
+        "limit": -1
+    }
+
+    const result = await getData.post('order/getOrderList', {...defaultParam, ...data});
+    return result?.data?.entity?.orderList
+};

@@ -30,6 +30,8 @@ export const estimateWriteInitial = {
     "writtenDate": moment().format('YYYY-MM-DD'),    // 작성일
     "documentNumberFull": "", // INQUIRY No.
     "agencyCode": "",            // 대리점코드
+    "agencyManagerName" : "",
+    "agencyManagerPhoneNumber" : "",
     "customerCode": "",             // CUSTOMER 코드
     "customerName": "",    // 상호명
     "managerName": "",      // 담당자
@@ -245,8 +247,7 @@ export const estimateReadInitial = {
     "searchMaker": "",                  // MAKER
     "searchModel": "",                  // MODEL
     "searchItem": "",                   // ITEM
-    "page": 1,
-    "limit": 10
+    "searchCreatedBy": "",      // 등록 관리자 이름
 }
 
 

@@ -133,13 +133,13 @@ export default function rqfUpdate({dataInfo}) {
 
     function deleteList() {
         let copyData = {...info}
-        copyData['estimateRequestDetailList'] = commonManage.getUnCheckList(gridRef.current.api);
+        copyData[listType] = commonManage.getUnCheckList(gridRef.current.api);
         setInfo(copyData);
     }
 
     function addRow() {
         let copyData = {...info};
-        copyData['estimateRequestDetailList'].push({
+        copyData[listType].push({
             ...copyUnitInit,
             "currency": commonManage.changeCurr(info['agencyCode'])
         })

@@ -230,10 +230,15 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
                                          })
                                          break;
                                      default :
+                                         console.log(e.data,'e.data:')
                                          setInfo(v => {
                                              return {
                                                  ...v,
-                                                 ...e.data
+                                                 agencyManagerId : e.data.agencyId,
+                                                 agencyCode : e.data.agencyCode,
+                                                 agencyName : e.data.agencyName,
+                                                 agencyManagerName : e.data.managerName,
+                                                 agencyManagerPhoneNumber : e.data.phoneNumber
                                              }
                                          })
                                          break;
