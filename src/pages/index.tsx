@@ -122,27 +122,16 @@ export default function Home(props) {
 }
 
 
-// @ts-ignore
-export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
+export const getServerSideProps:any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
+    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
-
-    let param = {}
-
-    const {userInfo} = await initialServerRouter(ctx, store);
-    const cookies = nookies.get(ctx)
-    const {display = 'horizon'} = cookies;
-    setCookies(ctx, 'display', display)
-    // if (userInfo?.email) {
-    //     return {
-    //         redirect: {
-    //             destination: '/main', // 리다이렉트할 경로
-    //             permanent: false, // true면 301 리다이렉트, false면 302 리다이렉트
-    //         },
-    //     };
-    // }
-
-
-    return {
-        props: {}
+    if (!(codeInfo < 0)) {
+        return {
+            redirect: {
+                destination: '/main',
+                permanent: false,
+            },
+        };
     }
+    store.dispatch(setUserInfo(userInfo));
 })

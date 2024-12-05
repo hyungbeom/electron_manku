@@ -291,7 +291,7 @@ commonFunc.sumCalc = function calculateTotals(rowData) {
         amount: totalPrice,
         quantity: totalQuantity,
         receivedQuantity: receivedQuantity,
-        unreceivedQuantity: unreceivedQuantity,
+        unreceivedQuantity: totalQuantity -  receivedQuantity,
         totalAmount: amount,
         unitPrice: unitPrice,
         net: net,

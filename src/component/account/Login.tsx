@@ -25,17 +25,17 @@ export default function Login() {
 
     function getLogin() {
 
-        if(!info['adminName']){
+        if (!info['adminName']) {
             return message.warn('아이디를 입력해주세요')
-        }else if(!info['password']){
+        } else if (!info['password']) {
             return message.warn('비밀번호를 입력해주세요')
         }
 
-        getData.post('account/login',info).then(v=>{
-            if(v.data.code === 1){
+        getData.post('account/login', info).then(v => {
+            if (v.data.code === 1) {
                 const {accessToken} = v?.data?.entity;
                 setCookies(null, 'token', accessToken)
-               return router.push('/main')
+                return router.push('/main')
             }
 
             message.warn(v.data.message)
@@ -51,7 +51,8 @@ export default function Login() {
     return <>
         <Input id={'adminName'} value={info['adminName']} onChange={infoChange} style={{borderRadius: 5}}
                placeholder={'input your id'}/>
-        <Password id={'password'} value={info['password']} onKeyDown={handleKeyPressDoc} onChange={infoChange} style={{borderRadius: 5}}
+        <Password id={'password'} value={info['password']} onKeyDown={handleKeyPressDoc} onChange={infoChange}
+                  style={{borderRadius: 5}}
                   placeholder={'input your password'}/>
         <div style={{textAlign: 'left'}}>
             <Checkbox style={{color: 'gray'}}>아이디저장</Checkbox>

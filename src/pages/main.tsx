@@ -178,20 +178,17 @@ export default function Main({dataList=[], date}) {
 // @ts-ignore
 export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
 
-    let param = {}
+    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
-    const {userInfo} = await initialServerRouter(ctx, store);
-
-    if (!userInfo) {
+    if (codeInfo < 0) {
         return {
             redirect: {
-                destination: '/', // 리다이렉트할 경로
-                permanent: false, // true면 301 리다이렉트, false면 302 리다이렉트
+                destination: '/',
+                permanent: false,
             },
         };
     }
 
-    store.dispatch(setUserInfo(userInfo));
 
     const today = new Date();
     const year = today.getFullYear(); // 오늘의 연도

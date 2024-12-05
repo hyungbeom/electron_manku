@@ -276,11 +276,10 @@ export default function OrderWriter() {
     </>
 }
 
-// @ts-ignored
-export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
+export const getServerSideProps:any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
-    if (codeInfo === -90009) {
+    if (codeInfo < 0) {
         return {
             redirect: {
                 destination: '/',

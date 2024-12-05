@@ -320,7 +320,7 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
 
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
-    if (codeInfo === -90009) {
+    if (codeInfo < 0) {
         return {
             redirect: {
                 destination: '/',
