@@ -11,6 +11,25 @@ export const saveRfq = async ({data, router}) => {
 };
 
 
+
+export const updateRfq = async ({data}) => {
+        await getData.post('estimate/updateEstimateRequest', data).then(v => {
+            if (v.data.code === 1) {
+                message.success('저장되었습니다.')
+                // setInfo(rfqWriteInitial);
+
+                // window.location.href = '/rfq_read'
+            } else {
+                message.error('저장에 실패하였습니다.')
+            }
+    },err=> message.error(err))
+};
+
+
+
+
+
+// =================================================================================================
 export const saveEstimate = async ({data, router}) => {
     await getData.post('estimate/addEstimate', data).then(v => {
         if (v.data.code === 1) {
@@ -32,5 +51,7 @@ export const saveOrder = async ({data, router}) => {
         }
     });
 };
+
+
 
 

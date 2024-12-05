@@ -5,9 +5,9 @@ import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
 import {CopyOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
-import {projectColumns, rfqReadColumns} from "@/utils/columnList";
+import {rfqReadColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {subRfqReadInitial} from "@/utils/initialList";
+import {rfqWriteInitial, subRfqReadInitial} from "@/utils/initialList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
@@ -17,6 +17,7 @@ import * as XLSX from "xlsx";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
 import {BoxCard} from "@/utils/commonForm";
+import _ from "lodash";
 
 const {RangePicker} = DatePicker
 
@@ -26,9 +27,13 @@ export default function rfqRead({dataList}) {
     const gridRef = useRef(null);
 
     const {estimateRequestList = []} = dataList;
-    const [info, setInfo] = useState(subRfqReadInitial);
+    const copyInit = _.cloneDeep(subRfqReadInitial)
+    const infoInit = {
+        ...copyInit,
+        searchDate: [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
+    }
+    const [info, setInfo] = useState(infoInit);
     const [tableData, setTableData] = useState(estimateRequestList);
-
 
     const inputForm = ({title, id, disabled = false, suffix = null}) => {
         let bowl = info;
@@ -47,11 +52,10 @@ export default function rfqRead({dataList}) {
 
     function handleKeyPress(e) {
         if (e.key === 'Enter') {
-console.log('!!!')
+            console.log('!!!')
             searchInfo()
         }
     }
-
 
 
     function onChange(e) {
@@ -64,14 +68,10 @@ console.log('!!!')
         })
     }
 
-    useEffect(() => {
-        const copyData: any = {...info}
-        copyData['searchDate'] = [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
-        setInfo(copyData);
-    }, [])
 
-
-
+    /**
+     * @description 검색조건에 의해서 검색 조회 api
+     */
     async function searchInfo() {
         const copyData: any = {...info}
         const {searchDate}: any = copyData;
@@ -79,26 +79,23 @@ console.log('!!!')
             copyData['searchStartDate'] = searchDate[0];
             copyData['searchEndDate'] = searchDate[1];
         }
-
-        const result = await getData.post('estimate/getEstimateRequestList',
-            {...copyData,   "page": 1, "limit": -1});
-        console.log(result?.data?.entity?.estimateRequestList,'result?.data?.entity?.estimateRequestList???')
+        const result = await getData.post('estimate/getEstimateRequestList', {...copyData, "page": 1, "limit": -1});
         setTableData(result?.data?.entity?.estimateRequestList);
     }
 
-    // 부모요소 단위로 삭제됨
+
     async function deleteList() {
         const api = gridRef.current.api;
 
-        if (api.getSelectedRows().length<1) {
+        if (api.getSelectedRows().length < 1) {
             message.error('삭제할 데이터를 선택해주세요.')
         } else {
             for (const item of api.getSelectedRows()) {
                 const response = await getData.post('estimate/deleteEstimateRequest', {
-                    estimateRequestId:item.estimateRequestId
+                    estimateRequestId: item.estimateRequestId
                 });
                 console.log(response)
-                if (response.data.code===1) {
+                if (response.data.code === 1) {
                     message.success('삭제되었습니다.')
                     searchInfo();
                 } else {
@@ -144,9 +141,9 @@ console.log('!!!')
 
                 <Card title={<div style={{display: 'flex', justifyContent: 'space-between'}}>
                     <div style={{fontSize: 14, fontWeight: 550}}>견적의뢰 조회</div>
-                        <div style={{textAlign: 'right'}}>
-                            <Button type={'primary'} size={'small'} onClick={searchInfo}><SearchOutlined/>조회</Button>
-                        </div>
+                    <div style={{textAlign: 'right'}}>
+                        <Button type={'primary'} size={'small'} onClick={searchInfo}><SearchOutlined/>조회</Button>
+                    </div>
 
 
                 </div>}
@@ -158,30 +155,30 @@ console.log('!!!')
                             fontSize: 11,
                             boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
                         }}>
-                                <div>
-                                    <div style={{paddingBottom: 3,}}>작성일자</div>
-                                    <RangePicker
-                                        value={[moment(info['searchDate'][0]), moment(info['searchDate'][1])]}
-                                        id={'searchDate'} size={'small'} onChange={(date, dateString) => {
-                                        onChange({
-                                            target: {
-                                                id: 'searchDate',
-                                                value: date ? [moment(date[0]).format('YYYY-MM-DD'), moment(date[1]).format('YYYY-MM-DD')] : [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
-                                            }
-                                        })
-                                    }
-                                    } style={{width: '100%',}}/>
-                                </div>
-                                <div style={{marginTop:8}}>
-                                    <div style={{paddingBottom: 3}}>회신 여부</div>
-                                    <Select id={'searchReplyStatus'} defaultValue={0}
-                                            onChange={(src) => onChange({target: {id: 'searchReplyStatus', value: src}})}
-                                            size={'small'} value={info['searchReplyStatus']} options={[
-                                        {value: 0, label: '전체'},
-                                        {value: 1, label: '회신'},
-                                        {value: 2, label: '미회신'}
-                                    ]} style={{width: '100%',}}/>
-                                </div>
+                            <div>
+                                <div style={{paddingBottom: 3,}}>작성일자</div>
+                                <RangePicker
+                                    value={[moment(info['searchDate'][0]), moment(info['searchDate'][1])]}
+                                    id={'searchDate'} size={'small'} onChange={(date, dateString) => {
+                                    onChange({
+                                        target: {
+                                            id: 'searchDate',
+                                            value: date ? [moment(date[0]).format('YYYY-MM-DD'), moment(date[1]).format('YYYY-MM-DD')] : [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
+                                        }
+                                    })
+                                }
+                                } style={{width: '100%',}}/>
+                            </div>
+                            <div style={{marginTop: 8}}>
+                                <div style={{paddingBottom: 3}}>회신 여부</div>
+                                <Select id={'searchReplyStatus'} defaultValue={0}
+                                        onChange={(src) => onChange({target: {id: 'searchReplyStatus', value: src}})}
+                                        size={'small'} value={info['searchReplyStatus']} options={[
+                                    {value: 0, label: '전체'},
+                                    {value: 1, label: '회신'},
+                                    {value: 2, label: '미회신'}
+                                ]} style={{width: '100%',}}/>
+                            </div>
                         </Card>
 
                         <BoxCard title={''}>
@@ -209,10 +206,12 @@ console.log('!!!')
                         <CopyOutlined/>복사
                     </Button>
                         {/*@ts-ignored*/}
-                        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={deleteList}>
+                        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
+                                onClick={deleteList}>
                             <CopyOutlined/>삭제
                         </Button>
-                        <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={downloadExcel}>
+                        <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
+                                onClick={downloadExcel}>
                             <FileExcelOutlined/>출력
                         </Button></div>}
                 />

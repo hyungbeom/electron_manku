@@ -30,8 +30,8 @@ commonManage.excelFileRead = function (file){
                 const dataRows = jsonData.slice(1);
 
                 const tableData = dataRows
-                    .filter((row) => row.some((cell) => cell !== null && cell !== undefined && cell !== ''))
-                    .map((row) => {
+                    .filter((row:any) => row.some((cell) => cell !== null && cell !== undefined && cell !== ''))
+                    .map((row:any) => {
                         const rowData = {};
                         row?.forEach((cell, cellIndex) => {
                             const header = commonManage.changeColumn[headers[cellIndex]];

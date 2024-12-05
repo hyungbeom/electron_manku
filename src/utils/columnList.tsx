@@ -334,6 +334,7 @@ export const tableOrderWriteColumn = [
         field: 'net',
         editable: true,
         valueFormatter: params => commonManage.calcFloat(params, 2),
+        cellStyle: { textAlign: 'right' }
     },
     {
         headerName: 'Amount',
@@ -718,67 +719,6 @@ export const tableEstimateWriteColumns = [
 ];
 
 
-export const rfqWriteColumns = [
-    {
-        headerName: 'MODEL',
-        field: 'model',
-        key: 'model',
-        minWidth: 150,
-    },
-    {
-        headerName: '수량',
-        field: 'quantity',
-        key: 'quantity',
-    },
-    {
-        headerName: '단위',
-        field: 'unit',
-        key: 'unit',
-        cellEditor: 'agSelectCellEditor',
-        cellEditorParams: {
-            values: ['ea', 'set', 'm', 'feet', 'roll', 'box', 'g', 'kg', 'Pack', 'Inch', 'MOQ'],
-        }
-    },
-    {
-        headerName: 'CURR',
-        field: 'currency',
-        key: 'currency',
-        cellEditor: 'agSelectCellEditor',
-        cellEditorParams: {
-            values: ['KRW', 'EUR', 'JPY', 'USD', 'GBP',],
-        }
-    },
-    {
-        headerName: 'NET/P',
-        field: 'net',
-        key: 'net',
-    },
-    {
-        headerName: '납기',
-        field: 'deliveryDate',
-        key: 'deliveryDate',
-        cellDataType: 'date'
-    },
-    {
-        headerName: '회신여부',
-        field: 'content',
-        key: 'content',
-
-    },
-    {
-        headerName: '회신일',
-        field: 'replyDate',
-        key: 'replyDate',
-
-    },
-    {
-        headerName: '비고',
-        field: 'remarks',
-        key: 'remarks',
-
-    }
-];
-
 
 export const rfqReadColumns = [
     {
@@ -888,6 +828,7 @@ export const rfqReadColumns = [
                 minWidth: 60,
                 maxWidth: 120,
                 valueFormatter: params => commonManage.calcFloat(params, 2),
+                cellStyle: { textAlign: 'right' }
             },
             {
                 headerName: '납기',
@@ -1092,6 +1033,7 @@ export const projectColumns = [
                 minWidth: 60,
                 maxWidth: 120,
                 valueFormatter: params => commonManage.calcFloat(params, 2),
+                cellStyle: { textAlign: 'right' }
             },
             {
                 headerName: '납기',
@@ -1169,73 +1111,6 @@ export const projectColumns = [
 
 ];
 
-export const rfqMailColumns = [
-    {
-        headerName: '작성일자',
-        field: 'writtenDate',
-        key: 'writtenDate',
-        minWidth: 70,
-        editable: false,
-
-    }, {
-        headerName: '문서번호',
-        field: 'documentNumber',
-        key: 'documentNumber',
-    },
-    {
-        headerName: '고객사명',
-        field: 'agencyName',
-        key: 'agencyName',
-
-    }, {
-        headerName: 'MAKER',
-        field: 'maker',
-        key: 'maker',
-        minWidth: 180,
-    },
-    {
-        headerName: 'ITEM',
-        field: 'item',
-        key: 'item',
-    }, {
-        headerName: 'MODEL',
-        field: 'model',
-        key: 'model',
-        minWidth: 150,
-
-    }, {
-        headerName: '수량',
-        field: 'quantity',
-        key: 'quantity',
-
-    },
-
-    {
-        headerName: '단위',
-        field: 'unit',
-        key: 'unit',
-    }, {
-        headerName: '전송여부',
-        field: 'sentStatus',
-        key: 'sentStatus',
-    }, {
-        headerName: '첨부파일',
-        field: 'add',
-        key: 'add',
-    },
-
-    {
-        headerName: '등록자',
-        field: 'managerName',
-        key: 'managerName',
-    },
-    {
-        headerName: '비고',
-        field: 'modifiedDate',
-        key: 'modifiedDate',
-
-    }
-];
 
 
 export const tableOrderReadColumns = [
@@ -1652,111 +1527,6 @@ export const remittanceDomesticColumns = [
 ];
 
 
-//
-// export const tableOrderInventoryColumns = [
-//     {
-//         headerName: 'No.',
-//         field: 'key',
-//         key: 'key',
-//
-//         render: (text) => <div style={{width: 15}} className="ellipsis-cell">{text}</div>,
-//         align: 'center',
-//     },
-//     {
-//         headerName: 'MAKER',
-//         field: 'maker',
-//         key: 'maker',
-//
-//         render: (text) => <div style={{width: 100}} className="ellipsis-cell">{text}</div>,
-//         align: 'center',
-//         minWidth: 180,
-//     },
-//     {
-//         headerName: 'MODEL',
-//         field: 'model',
-//         key: 'model',
-//         minWidth: 150,
-//
-//         render: (text) => <div style={{width: 120}} className="ellipsis-cell">{text}</div>,
-//         align: 'center',
-//     },
-//     {
-//         headerName: '위치',
-//         field: 'location',
-//         key: 'location',
-//
-//         render: (text) => <div style={{width: 80}} className="ellipsis-cell">{text}</div>,
-//         align: 'center',
-//     },
-//     {
-//         headerName: '잔량',
-//         field: 'remainingQuantity',
-//         key: 'remainingQuantity',
-//
-//         render: (text) => <div style={{width: 50}} className="ellipsis-cell">{text}</div>,
-//         align: 'center',
-//     },
-//     {
-//         headerName: '출고량',
-//         field: 'usageQuantity',
-//         key: 'usageQuantity',
-//
-//         render: (text) => <div style={{width: 50}} className="ellipsis-cell">{text}</div>,
-//         align: 'center',
-//     },
-//     {
-//         headerName: '입고량',
-//         field: 'receivedQuantity',
-//         key: 'receivedQuantity',
-//         render: (text) => <div style={{width: 50}} className="ellipsis-cell">{text}</div>,
-//         align: 'center',
-//     },
-//     {
-//         headerName: '입고일자',
-//         field: 'receiptDate',
-//         key: 'receiptDate',
-//         render: (text) => <div className="ellipsis-cell" style={{width: 70}}>{moment(text).format('YYYY-MM-DD')}</div>,
-//         align: 'center',
-//     },
-//     {
-//         headerName: '문서번호',
-//         field: 'documentNumber',
-//         key: 'documentNumber',
-//         render: (text) => <div style={{width: 80}} className="ellipsis-cell">{text}</div>,
-//         align: 'center',
-//     },
-//     {
-//         headerName: '수입단가',
-//         field: 'importUnitPrice',
-//         key: 'importUnitPrice',
-//         render: (text) => <div style={{width: 58}} className="ellipsis-cell">{text}</div>,
-//         align: 'center',
-//     },
-//     {
-//         headerName: '화폐단위',
-//         field: 'currencyUnit',
-//         key: 'currencyUnit',
-//         render: (text) => <div style={{width: 58}} className="ellipsis-cell">{text}</div>,
-//         align: 'center',
-//     },
-//     {
-//         headerName: '단위',
-//         field: 'unit',
-//         key: 'unit',
-//         render: (text) => <div style={{width: 50}} className="ellipsis-cell">{text}</div>,
-//         align: 'center',
-//     },
-//     {
-//         headerName: '비고',
-//         field: 'remarks',
-//         key: 'remarks',
-//
-//         render: (text) => <div style={{width: 120}} className="ellipsis-cell">{text}</div>,
-//         align: 'center',
-//     },
-// ];
-
-
 export const tableOrderInventory = [
     {
         headerName: 'MAKER',
@@ -1869,78 +1639,6 @@ export const subAgencyReadColumns = [
 ];
 
 
-export const tableCodeDiplomaColumns = [
-    {
-        headerName: '문서번호',
-        field: 'documentNumber',
-        key: 'documentNumber',
-        render: (text) => <div style={{width: 80}} className="ellipsis-cell">{text}</div>,
-        editable: true,
-    },
-    {
-        headerName: '문서제목',
-        field: 'headerName',
-        key: 'headerName',
-        render: (text) => <div style={{width: 80}} className="ellipsis-cell">{text}</div>,
-        editable: true,
-    },
-    {
-        headerName: '수신',
-        field: 'to',
-        key: 'to',
-        render: (text) => <div style={{width: 80}} className="ellipsis-cell">{text}</div>,
-        editable: true,
-    },
-    {
-        headerName: '참조',
-        field: 'reference',
-        key: 'reference',
-        render: (text) => <div style={{width: 80}} className="ellipsis-cell">{text}</div>,
-        editable: true,
-    },
-    {
-        headerName: '소제목',
-        field: 'subheaderName',
-        key: 'subheaderName',
-        render: (text) => <div style={{width: 80}} className="ellipsis-cell">{text}</div>,
-        editable: true,
-    },
-    {
-        headerName: '내용',
-        field: 'content',
-        key: 'content',
-        render: (text) => <div style={{width: 80}} className="ellipsis-cell">{text}</div>,
-        editable: true,
-    },
-    {
-        headerName: '등록자',
-        field: 'registerer',
-        key: 'registerer',
-        render: (text) => <div style={{width: 80}} className="ellipsis-cell">{text}</div>,
-        editable: true,
-    },
-    {
-        headerName: '등록일자',
-        field: 'registerDate',
-        key: 'registerDate',
-        render: (text) => <div style={{width: 80}} className="ellipsis-cell">{text}</div>,
-        editable: true,
-    },
-    {
-        headerName: '수정자',
-        field: 'modifier',
-        key: 'modifier',
-        render: (text) => <div style={{width: 80}} className="ellipsis-cell">{text}</div>,
-        editable: true,
-    },
-    {
-        headerName: '수정일자',
-        field: 'modifyDate',
-        key: 'modifyDate',
-        render: (text) => <div style={{width: 80}} className="ellipsis-cell">{text}</div>,
-        editable: false,
-    },
-]
 
 export const tableCodeDomesticAgencyWriteColumns = [
     {
