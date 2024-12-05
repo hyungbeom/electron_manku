@@ -16,7 +16,7 @@ import Button from "antd/lib/button";
 import {CopyOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
-import {searchEstimate} from "@/utils/api/mainApi";
+import {deleteEstimate, deleteRfq, searchEstimate} from "@/utils/api/mainApi";
 import _ from "lodash";
 import {commonManage} from "@/utils/commonManage";
 import {BoxCard} from "@/utils/commonForm";
@@ -89,17 +89,14 @@ export default function EstimateRead({data}) {
             message.error('삭제할 데이터를 선택해주세요.')
         } else {
             for (const item of api.getSelectedRows()) {
-                const response = await getData.post('estimate/deleteEstimate', {
-                    estimateId: item.estimateId
-                });
-                console.log(response)
-                if (response.data.code === 1) {
-                    message.success('삭제되었습니다.')
-                    window.location.reload();
-                } else {
-                    message.error('오류가 발생하였습니다. 다시 시도해주세요.')
-                }
+                const {estimateId, estimateDetailId} = item;
+                console.log(item,'item:')
+                bowl['deleteList'].push({
+                    "estimateId": estimateId,
+                    "estimateDetailId": estimateDetailId
+                })
             }
+            await deleteEstimate({data: bowl, returnFunc: searchInfo});
         }
     }
 

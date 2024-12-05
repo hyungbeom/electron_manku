@@ -113,7 +113,20 @@ export const searchEstimate = async ({data}) => {
     return result?.data?.entity?.estimateList
 };
 
+export const deleteEstimate = async ({
+                                    data, returnFunc = function () {
+    }
+                                }) => {
 
+    await getData.post('estimate/deleteEstimateDetails', data).then(v => {
+        if (v.data.code === 1) {
+            returnFunc();
+            message.success('삭제되었습니다.')
+        } else {
+            message.error('오류가 발생하였습니다. 다시 시도해주세요.')
+        }
+    }, err => message.error(err))
+};
 
 
 // ==================================================================================================================
@@ -158,4 +171,19 @@ export const searchOrder = async ({data}) => {
 
     const result = await getData.post('order/getOrderList', {...defaultParam, ...data});
     return result?.data?.entity?.orderList
+};
+
+export const deleteOrder = async ({
+                                         data, returnFunc = function () {
+    }
+                                     }) => {
+
+    await getData.post('order/deleteOrderDetails', data).then(v => {
+        if (v.data.code === 1) {
+            returnFunc();
+            message.success('삭제되었습니다.')
+        } else {
+            message.error('오류가 발생하였습니다. 다시 시도해주세요.')
+        }
+    }, err => message.error(err))
 };
