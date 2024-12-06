@@ -1,5 +1,6 @@
 import moment from "moment";
 import {commonManage} from "@/utils/commonManage";
+import message from "antd/lib/message";
 
 const makeAbsoluteUrl = (url) => {
     if (!/^https?:\/\//i.test(url)) {
@@ -271,10 +272,27 @@ export const subRfqWriteColumn = [
         headerName: '납기', //없음
         field: 'deliveryDate',
         editable: true,
-        cellEditor: 'agNumberCellEditor',
-        cellEditorParams: {
-            min: 0,
-            max: 100
+        cellEditor: "agTextCellEditor", // 기본 텍스트 입력
+        valueSetter: (params) => {
+            const newValue = params.newValue?.toString().trim(); // 문자열 변환 후 trim 사용
+            const numericValue = parseFloat(newValue); // 숫자로 변환
+
+
+            if(numericValue > 100){
+               return message.warn('100주 이하로 설정이 가능합니다.')
+            }
+
+            // 숫자 여부 확인
+            if (!isNaN(newValue) && newValue.trim() !== "" ) {
+                params.data[params.colDef.field] = parseFloat(newValue);
+                return true;
+            }
+            return false; // 숫자가 아니면 값 설정 안 함
+        },
+        valueParser: (params) => {
+            // 입력 값을 숫자로 변환
+            const value = params.newValue;
+            return isNaN(value) ? undefined : parseFloat(value);
         }
     },
     {

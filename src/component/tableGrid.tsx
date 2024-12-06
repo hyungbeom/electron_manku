@@ -15,7 +15,7 @@ import useEventListener from "@/utils/common/function/UseEventListener";
 const TableGrid = ({
                        columns, tableData,
                        setSelectedRows,
-                       list='',
+                       list = '',
                        modalComponent,
                        funcButtons,
                        listType = 'estimateRequestId',
@@ -68,22 +68,22 @@ const TableGrid = ({
         const groupValue = selectedData.documentNumberFull; // 현재 행의 `documentNumberFull` 값
 
         if (groupValue === '') {
-            return; // 묶음 처리하지 않고 단독으로 선택/해제 유지
+            return;
         }
-        // 현재 선택된 행의 인덱스를 확인
+
         const rowIndex = selectedNode.rowIndex;
 
-        // 같은 그룹의 첫 번째 행인지 확인
+
         const previousData = event.api.getDisplayedRowAtIndex(rowIndex - 1)?.data?.documentNumberFull;
 
-        // 첫 번째 행인 경우 그룹 체크 동작 수행
-        if (!previousData || previousData !== groupValue) {
-            const isSelected = selectedNode.isSelected(); // 현재 행의 선택 상태
 
-            // 동일한 `documentNumberFull` 값을 가진 모든 노드를 순회하며 선택 상태 변경
+        if (!previousData || previousData !== groupValue) {
+            const isSelected = selectedNode.isSelected();
+
+
             event.api.forEachNode((node) => {
                 if (node.data.documentNumberFull === groupValue) {
-                    node.setSelected(isSelected); // 같은 그룹을 선택/해제
+                    node.setSelected(isSelected);
                 }
             });
         }
@@ -124,8 +124,6 @@ const TableGrid = ({
 
         let checkedData = [];
 
-
-        // 전체 행 반복하면서 선택되지 않은 행만 추출
         for (let i = 0; i < api.getDisplayedRowCount(); i++) {
             const rowNode = api.getDisplayedRowAtIndex(i);
             if (rowNode.isSelected()) {
@@ -136,20 +134,10 @@ const TableGrid = ({
 
 
     function dataChange(e) {
-        const updatedData = [...data]; // 기존 데이터 복사
-        const rowIndex = e.node.rowIndex; // 변경된 행의 인덱스
-
-        // 수정된 행 업데이트
-        // updatedData[rowIndex] = {
-        //     ...e.data,
-        //     unreceivedQuantity: parseFloat(e.data.quantity || 0) - parseFloat(e.data.receivedQuantity || 0),
-        //     amount: parseFloat(e.data.quantity || 0) * parseFloat(e.data.unitPrice || 0),
-        // };
-
+        const updatedData = [...data];
+        const rowIndex = e.node.rowIndex;
         clickRowCheck(e.api);
         handleSelectionChanged();
-        // 데이터 상태 업데이트
-        // setData(updatedData);
     }
 
     const handleFile = (file) => {
@@ -159,18 +147,14 @@ const TableGrid = ({
             const binaryStr = e.target.result;
             const workbook = XLSX.read(binaryStr, {type: 'binary'});
 
-            // 첫 번째 시트 읽기
             const worksheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[worksheetName];
 
-            // 데이터를 JSON 형식으로 변환 (첫 번째 행을 컬럼 키로 사용)
             const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
 
-            // 데이터 첫 번째 행을 컬럼 이름으로 사용
             const headers = jsonData[0];
             const dataRows = jsonData.slice(1);
 
-            // 테이블 데이터 변환
             const tableData = dataRows.map((row) => {
                 const rowData = {};
                 row?.forEach((cell, cellIndex) => {
@@ -182,14 +166,7 @@ const TableGrid = ({
                 return rowData;
             });
 
-            // console.log(tableData, 'tableData~~~')
             setData(tableData);
-            // setData((v) => {
-            //     const copyData = { ...v };
-            //     copyData[listType] = Array.isArray(tableData) ? tableData : []; // 배열인지 확인 후 설정
-            //     return copyData;
-            // });
-
         };
 
         reader.readAsBinaryString(file);
@@ -225,7 +202,7 @@ const TableGrid = ({
 
             commonManage.excelFileRead(file).then(v => {
 
-                gridRef.current.api.applyTransaction({ add: v });
+                gridRef.current.api.applyTransaction({add: v});
 
             })
 
