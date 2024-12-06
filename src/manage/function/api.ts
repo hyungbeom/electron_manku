@@ -20,7 +20,7 @@ export const getData = axios.create({
 });
 
 getData.interceptors.request.use((config) => {
-    // 최신 쿠키 값으로 헤더 설정
+
     const token = getCookie(null, 'token');
     if (token) {
         config.headers.authorization = `Bearer ${token}`;

@@ -28,6 +28,7 @@ export default function rfqRead({dataList}) {
     const gridRef = useRef(null);
     const {estimateRequestList} = dataList;
 
+
     const copyInit = _.cloneDeep(subRfqReadMailInitial)
 
     const userInfo = useAppSelector((state) => state.user);

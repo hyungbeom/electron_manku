@@ -694,6 +694,7 @@ export const tableEstimateWriteColumns = [
         field: 'quantity',
         editable: true,
         valueFormatter: numberFormat,
+        cellStyle: { textAlign: 'right' }
     },
     {
         headerName: '단위',
@@ -708,9 +709,10 @@ export const tableEstimateWriteColumns = [
         headerName: '단가',
         field: 'unitPrice',
         editable: true,
-        valueFormatter: params => commonManage.calcFloat(params, 0),
+        valueFormatter: params => !isNaN(params?.value) ?  params?.value?.toLocaleString() : 0,
         cellStyle: { textAlign: 'right' }
     },
+
     {
         headerName: '금액',
         field: 'amount',
@@ -877,6 +879,13 @@ export const rfqReadColumns = [
         ]
     },
 
+
+    {
+        headerName: '발송',
+        field: 'sentStatus',
+        minWidth: 60,
+        maxWidth: 120,
+    },
 
     {
         headerName: '등록자',
