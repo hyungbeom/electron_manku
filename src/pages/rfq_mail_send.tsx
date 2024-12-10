@@ -97,7 +97,6 @@ export default function rfqRead({dataList}) {
                 const {
                     documentNumberFull,
                     model,
-                    agencyManagerName,
                     managerName,
                     quantity,
                     unit,
@@ -110,7 +109,6 @@ export default function rfqRead({dataList}) {
                 if (!acc[documentNumberFull]) {
                     acc[documentNumberFull] = {
                         documentNumberFull: documentNumberFull,
-                        agencyManagerName: agencyManagerName,
                         managerName: managerName,
                         unit: unit,
                         list: [],

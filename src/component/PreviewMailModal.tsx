@@ -18,9 +18,7 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen}) {
             {data.map((v, idx) => {
                 return <>
                     <div key={idx} style={{width: '100%', height: 'auto', paddingTop: 20}}>
-                        [<span
-                        // style={{fontWeight: 550}}>{v.agencyManagerName}</span>]님<br/><br/>안녕하십니까.
-                        style={{fontWeight: 550}}>{v.managerName}</span>]님<br/><br/>안녕하십니까.
+                        담당자님<br/><br/>안녕하십니까.
                         [<span style={{fontWeight: 550}}>만쿠무역 {userInfo.name}</span>]입니다.<br/>
                         아래 견적 부탁드립니다.
                     </div>
