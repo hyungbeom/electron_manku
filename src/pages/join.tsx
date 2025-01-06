@@ -33,10 +33,13 @@ export default function joint(){
 
 
     async function loginTest(code) {
+        const stepParam = apiManage.generateCodeVerifier();
+
+
         const result = await getData.post('account/microsoftLogin',
             {
                 "authorizationCode": code,
-                "codeVerifier": apiManage.generateCodeVerifier()
+                "codeVerifier": await apiManage.generateCodeChallenge(stepParam)
             });
         console.log(result, ':::')
 
