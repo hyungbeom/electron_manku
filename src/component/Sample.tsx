@@ -38,6 +38,7 @@ function LoginButton() {
         const codeVerifier = generateCodeVerifier();
         const codeChallenge = await generateCodeChallenge(codeVerifier);
 
+        console.log(codeVerifier,'codeVerifier:')
         // code_verifier를 localStorage에 저장
         localStorage.setItem("code_verifier", codeVerifier);
 

@@ -24,21 +24,20 @@ export default function Home(props) {
         const {code, redirect_to} = query; // 로그인 요청 시 전달받은 redirect_to 사용
 
         if (code) {
-            console.log(code, 'code:??')
-            console.log(apiManage.generateCodeVerifier(), '??')
-
+            const codeVerifier = localStorage.getItem("code_verifier");
             const result = await getData.post('account/microsoftLogin',
                 {
                     "authorizationCode": code,
-                    "codeVerifier": apiManage.generateCodeVerifier()
+                    "codeVerifier": codeVerifier,
+                    redirectUri : 'http://localhost:3000'
                 });
-            console.log(result,':::')
 
+            console.log(result,'result:')
 
         } else {
 
         }
-    },[])
+    },[query])
 
     const pageChange = (e) => {
         setPage(e)

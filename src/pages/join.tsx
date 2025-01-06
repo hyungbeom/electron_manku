@@ -10,6 +10,7 @@ import {apiManage} from "@/utils/commonManage";
 export default function joint(){
     const router = useRouter();
     const { query } = router;
+    const [microsoftId , setMicrosoftId] = useState('');
     const [info , setInfo] = useState({adminName : '', password : '', passwordConfirm : '', name : '', position : '', email : '', contactNumber : '', faxNumber : ''});
 
     function infoChange(e){
@@ -22,7 +23,7 @@ export default function joint(){
 
 
     useEffect( () => {
-        console.log(query,'???')
+
         const {code, redirect_to} = query; // 로그인 요청 시 전달받은 redirect_to 사용
 
         if (code) {
@@ -32,20 +33,30 @@ export default function joint(){
     },[query])
 
 
-    async function loginTest(code) {
-        const stepParam = apiManage.generateCodeVerifier();
-        const stepParam2 = await apiManage.generateCodeChallenge(stepParam)
+    async function loginTest(authorizationCode) {
 
-        console.log(stepParam,'step 1')
-        console.log(stepParam2,'step 2')
+        console.log(localStorage.getItem("code_verifier"),'??');
 
+        const codeVerifier = localStorage.getItem("code_verifier");
         const result = await getData.post('account/microsoftLogin',
             {
-                "authorizationCode": code,
-                "codeVerifier": await apiManage.generateCodeChallenge(stepParam)
+                authorizationCode: authorizationCode,
+                codeVerifier: codeVerifier,
+                redirectUri : 'http://localhost:3000/join'
             });
-        console.log(result, ':::')
 
+        console.log(result,'result?.data?.code:')
+        console.log(result?.data?.code,'result?.data?.code:')
+
+        const {code, entity} = result?.data
+        if(code === -10007){
+            setMicrosoftId(entity)
+        }else if(code === 1){
+            alert('이미 등록된 계정입니다.');
+            window.location.href = '/'
+        }else{
+            window.location.href = '/'
+        }
     }
 
     async function getSignUp() {
@@ -65,12 +76,13 @@ export default function joint(){
         if (code) {
             console.log(apiManage.generateCodeVerifier(), '??')
 
-            const result = await getData.post('account/microsoftLogin',
-                {
-                    "authorizationCode": code,
-                    "codeVerifier": apiManage.generateCodeVerifier()
-                });
-            console.log(result, ':::')
+            const result = await getData.post('account/microsoftJoin',
+                {...info, microsoftId : microsoftId});
+
+            if(result?.data?.code === 1){
+                alert('가입성공');
+                window.location.href = '/'
+            }
         } else {
             getData.post('account/join', info).then(v => {
                 if (v.data.code === 1) {
@@ -93,7 +105,7 @@ export default function joint(){
         <Input id={'contactNumber'} value={info['contactNumber']} onChange={infoChange} style={{borderRadius: 5}} placeholder={'input your manager phone number'}/>
         <Input id={'faxNumber'} value={info['faxNumber']} onChange={infoChange} style={{borderRadius: 5}} placeholder={'input your fax number'}/>
 
-            <Button>
+            <Button onClick={getSignUp}>
                 Regist
             </Button>
         </div>

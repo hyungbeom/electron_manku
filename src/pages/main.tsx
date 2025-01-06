@@ -54,11 +54,6 @@ export default function Main({dataList=[], date}) {
         month: date['month']
     })
 
-    useEffect(()=>{
-        self.onmessage = function (e) {
-            console.log(e,'::::::')
-        }
-    },[])
 
     const dateCellRender = (value) => {
 
