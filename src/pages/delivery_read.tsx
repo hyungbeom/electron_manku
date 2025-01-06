@@ -1,54 +1,87 @@
 import React, {useEffect, useRef, useState} from "react";
 import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
-import CustomTable from "@/component/CustomTable";
 import Card from "antd/lib/card/Card";
-import {CopyOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
-import Button from "antd/lib/button";
-import {tableOrderReadColumns} from "@/utils/columnList";
+import {tableEstimateReadColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {orderReadInitial, tableOrderReadInitial} from "@/utils/initialList";
-import {tableOrderReadInfo} from "@/utils/modalDataList";
+import {estimateReadInitial, subRfqReadInitial} from "@/utils/initialList";
+import Select from "antd/lib/select";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
-import {setUserInfo} from "@/store/user/userSlice";
 import {getData} from "@/manage/function/api";
-import moment from "moment";
-import {transformData} from "@/utils/common/common";
+import {setUserInfo} from "@/store/user/userSlice";
+import moment from "moment/moment";
 import * as XLSX from "xlsx";
-import is from "@sindresorhus/is";
-import set = is.set;
+import Button from "antd/lib/button";
+import {CopyOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
+import {deleteEstimate, deleteRfq, searchEstimate} from "@/utils/api/mainApi";
+import _ from "lodash";
+import {commonManage} from "@/utils/commonManage";
+import {BoxCard, TopBoxCard} from "@/utils/commonForm";
 
 const {RangePicker} = DatePicker
 
 
-export default function OrderRead({data}) {
+export default function delivery_read({data}) {
 
     const gridRef = useRef(null);
 
-    // const {orderList} = dataList;
-    const [info, setInfo] = useState(orderReadInitial)
+    const copyInit = _.cloneDeep(estimateReadInitial)
+    const infoInit = {
+        ...copyInit,
+        searchDate: [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
+    }
+    const [info, setInfo] = useState(infoInit)
     const [tableData, setTableData] = useState(data)
 
 
-    function onChange(e) {
+    // =============================================================================
 
-        let bowl = {}
-        bowl[e.target.id] = e.target.value;
+    const inputForm = ({title, id, disabled = false, suffix = null}) => {
+        let bowl = info;
 
-        setInfo(v => {
-            return {...v, ...bowl}
-        })
+
+        return <div>
+            <div>{title}</div>
+            <Input id={id} value={bowl[id]} disabled={disabled}
+                   onChange={onChange}
+                   size={'small'}
+                   onKeyDown={handleKeyPress}
+                   suffix={suffix}
+            />
+        </div>
     }
 
-    useEffect(() => {
-        const copyData: any = {...info}
-        copyData['searchDate'] = [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
-        setInfo(copyData);
-    }, [])
+    const datePickerForm = ({title, id, disabled = false}) => {
+        return <div>
+            <div>{title}</div>
+            {/*@ts-ignore*/}
+            <DatePicker value={info[id] ? moment(info[id]) : ''} style={{width: '100%'}}
+                        disabledDate={commonManage.disabledDate}
+                        onChange={(date) => onChange({
+                            target: {
+                                id: id,
+                                value: date
+                            }
+                        })
+                        }
+                        disabled={disabled}
+                        id={id} size={'small'}/>
+        </div>
+    }
 
+
+    function handleKeyPress(e) {
+        if (e.key === 'Enter') {
+            searchInfo()
+        }
+    }
+
+    function onChange(e) {
+        commonManage.onChange(e, setInfo)
+    }
 
 
     async function searchInfo() {
@@ -58,145 +91,176 @@ export default function OrderRead({data}) {
             copyData['searchStartDate'] = searchDate[0];
             copyData['searchEndDate'] = searchDate[1];
         }
-        const result = await getData.post('order/getOrderList',
-            {...copyData,   "page": 1, "limit": -1});
-        setTableData(result?.data?.entity?.orderList)
+        const result = await getData.post('estimate/getEstimateList',
+            {...copyData, "page": 1, "limit": -1});
+        setTableData(result?.data?.entity?.estimateList)
     }
 
     async function deleteList() {
         const api = gridRef.current.api;
-        console.log(api.getSelectedRows(),':::')
 
-        if (api.getSelectedRows().length<1) {
+        let bowl = {
+            deleteList: []
+        }
+
+        if (api.getSelectedRows().length < 1) {
             message.error('삭제할 데이터를 선택해주세요.')
         } else {
             for (const item of api.getSelectedRows()) {
-                const response = await getData.post('order/deleteOrder', {
-                    estimateId:item.estimateId
-                });
-                console.log(response)
-                if (response.data.code===1) {
-                    message.success('삭제되었습니다.')
-                    window.location.reload();
-                } else {
-                    message.error('오류가 발생하였습니다. 다시 시도해주세요.')
-                }
+                const {estimateId, estimateDetailId} = item;
+                console.log(item, 'item:')
+                bowl['deleteList'].push({
+                    "estimateId": estimateId,
+                    "estimateDetailId": estimateDetailId
+                })
             }
+            await deleteEstimate({data: bowl, returnFunc: searchInfo});
         }
     }
 
     const downloadExcel = () => {
-
-        const worksheet = XLSX.utils.json_to_sheet(tableData);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-        XLSX.writeFile(workbook, "example.xlsx");
+        commonManage.excelDownload(tableData)
     };
 
 
+    /**
+     * @description 테이블 우측상단 관련 기본 유틸버튼
+     */
+    const subTableUtil = <div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
+        <CopyOutlined/>복사
+    </Button>
+        {/*@ts-ignored*/}
+        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}} onClick={deleteList}>
+            <CopyOutlined/>삭제
+        </Button>
+        <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft: 5,}} onClick={downloadExcel}>
+            <FileExcelOutlined/>출력
+        </Button></div>
+
     return <>
         <LayoutComponent>
-            <div style={{display: 'grid', gridTemplateRows: 'auto 1fr', height: '100vh', columnGap: 5}}>
-                <Card title={<span style={{fontSize: 12,}}>배송 조회</span>} headStyle={{marginTop: -10, height: 30}}
-                      style={{fontSize: 12, border: '1px solid lightGray'}} bodyStyle={{padding: '10px 24px'}}>
-                    <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1.5fr', width: '100%', columnGap: 20}}>
+            <div style={{display: 'grid', gridTemplateRows: 'auto auto 1fr', height: '100vh', columnGap: 5}}>
 
-                        <Card size={'small'} style={{
-                            fontSize: 11,
-                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                        }}>
-                            <div>
-                                <div style={{marginBottom: 3}}>집하일자</div>
-                                <RangePicker style={{width: '100%'}}
-                                             value={[moment(info['searchDate'][0]), moment(info['searchDate'][1])]}
-                                             id={'searchDate'} size={'small'} onChange={(date, dateString) => {
-                                    onChange({
-                                        target: {
-                                            id: 'searchDate',
-                                            value: date ? [moment(date[0]).format('YYYY-MM-DD'), moment(date[1]).format('YYYY-MM-DD')] : [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
-                                        }
-                                    })
+                <TopBoxCard title={'기본 정보'} grid={'1fr 0.6fr 0.6fr 1fr 1fr 1fr'}>
+                    <div>
+                        <div style={{paddingBottom: 3}}>출고일자</div>
+                        <RangePicker
+                            value={[moment(info['searchDate'][0]), moment(info['searchDate'][1])]}
+                            id={'searchDate'} size={'small'} onChange={(date, dateString) => {
+                            onChange({
+                                target: {
+                                    id: 'searchDate',
+                                    value: date ? [moment(date[0]).format('YYYY-MM-DD'), moment(date[1]).format('YYYY-MM-DD')] : [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
                                 }
-                                }/>
-                            </div>
-                            <div style={{marginTop: 8}}>
-                                <div style={{marginBottom: 3}}>인쿼리넘버</div>
-                                <Input id={'searchDocumentNumber'} value={info['searchDocumentNumber']}
-                                       onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-                        </Card>
-
-                        <Card size={'small'} style={{
-                            fontSize: 11,
-                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                        }}>
-
-                            <div>
-                                <div style={{marginBottom: 3}}>만쿠담당자</div>
-                                <Input id={'searchEstimateManager'} value={info['searchEstimateManager']}
-                                       onChange={onChange} size={'small'}/>
-                            </div>
-
-                            <div style={{marginTop: 8}}>
-                                <div style={{marginBottom: 3}}>고객사명</div>
-                                <Input id={'searchCustomerName'} value={info['searchCustomerName']}
-                                       onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-                            <div style={{marginTop: 8}}>
-                                <div style={{marginBottom: 3}}>받는 사람(거래처 담당자)</div>
-                                <Input id={'searchCustomerName'} value={info['searchCustomerName']}
-                                       onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-                        </Card>
-                        {/*<Card size={'small'} style={{*/}
-                        {/*    fontSize: 11,*/}
-                        {/*    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'*/}
-                        {/*}}>*/}
-                        {/*    <div>*/}
-                        {/*        <div style={{marginBottom: 3}}>MAKER</div>*/}
-                        {/*        <Input id={'searchMaker'} value={info['searchMaker']} onChange={onChange}*/}
-                        {/*                   size={'small'}/>*/}
-                        {/*        </div>*/}
-                        {/*        <div style={{marginTop: 8}}>*/}
-                        {/*            <div style={{marginBottom: 3}}>MODEL</div>*/}
-                        {/*            <Input id={'searchModel'} value={info['searchModel']} onChange={onChange}*/}
-                        {/*                   size={'small'}/>*/}
-                        {/*        </div>*/}
-                        {/*        <div style={{marginTop: 8}}>*/}
-                        {/*            <div style={{marginBottom: 3}}>ITEM</div>*/}
-                        {/*            <Input id={'searchItem'} value={info['searchItem']} onChange={onChange}*/}
-                        {/*                   size={'small'}/>*/}
-                        {/*        </div>*/}
-
-                        {/*    </Card>*/}
-
+                            })
+                        }
+                        } style={{width: '100%',}}/>
                     </div>
 
-                <div style={{paddingTop: 8, textAlign: 'right'}}>
-                    <Button type={'primary'} onClick={searchInfo}><SearchOutlined/>조회</Button>
-                </div>
-            </Card>
+                    {inputForm({title: 'INQUIRY NO.', id: 'adminName'})}
+                    {inputForm({title: '거래처명', id: 'managerAdminName'})}
 
-            <TableGrid
-                gridRef={gridRef}
-                listType={'orderId'}
-                columns={tableOrderReadColumns}
-                tableData={tableData}
-                type={'read'}
-                excel={true}
-                funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
-                        <CopyOutlined/>복사
-                    </Button>
-                        {/*@ts-ignored*/}
-                        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={deleteList}>
-                            <CopyOutlined/>삭제
-                        </Button>
-                        <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={downloadExcel}>
-                            <FileExcelOutlined/>출력
-                        </Button></div>}
+                </TopBoxCard>
+
+                <div style={{marginTop: 8, textAlign: 'right'}}>
+                    <Button onClick={searchInfo} type={'primary'}><SearchOutlined/>조회</Button>
+                </div>
+
+                <TableGrid
+                    gridRef={gridRef}
+                    listType={'estimateId'}
+                    columns={[{
+                        headerName: '출고일짜',
+                        field: '출고일짜',
+                        width: 70,
+                        pinned: 'left'
+                    },
+                        {
+                            headerName: '운송타입',
+                            field: '운송타입',
+                            width: 70,
+                            pinned: 'left'
+                        },{
+                            headerName: '연결 INQUIRY NO.',
+                            field: '연결 INQUIRY NO.',
+                            width: 70,
+                            pinned: 'left'
+                        },
+                        {
+                            headerName: '받는분 정보',
+                            children: [
+                                {
+                                    headerName: '성명',
+                                    field: '성명',
+                                    minWidth: 70,
+                                }, {
+                                    headerName: '전화번호',
+                                    field: '전화번호',
+                                    minWidth: 70,
+                                }, {
+                                    headerName: '기타전화번호',
+                                    field: '기타전화번호',
+                                    minWidth: 70,
+                                }, {
+                                    headerName: '우편번호',
+                                    field: '우편번호',
+                                    minWidth: 70,
+                                }, {
+                                    headerName: '주소',
+                                    field: '주소',
+                                    minWidth: 70,
+                                }, {
+                                    headerName: '도착지',
+                                    field: '도착지',
+                                    minWidth: 70,
+                                }
+                            ]
+                        },
+                        {
+                            headerName: '화물정보',
+                            children: [
+                                {
+                                    headerName: '품목명',
+                                    field: '품목명',
+                                    minWidth: 70,
+                                }, {
+                                    headerName: '수량',
+                                    field: '수량',
+                                    minWidth: 70,
+                                }, {
+                                    headerName: '포장',
+                                    field: '포장',
+                                    minWidth: 70,
+                                }, {
+                                    headerName: '택배화물',
+                                    field: '택배화물',
+                                    minWidth: 70,
+                                }, {
+                                    headerName: '결재방식',
+                                    field: '결재방식',
+                                    minWidth: 70,
+                                }, {
+                                    headerName: '구분',
+                                    field: '구분',
+                                    minWidth: 70,
+                                }, {
+                                    headerName: '운송장번호',
+                                    field: '운송장번호',
+                                    minWidth: 70,
+                                }, {
+                                    headerName: '고객주문번호',
+                                    field: '고객주문번호',
+                                    minWidth: 70,
+                                }, {
+                                    headerName: '확인여부',
+                                    field: '확인여부',
+                                    minWidth: 70,
+                                }
+                            ]
+                        },
+                        ...tableEstimateReadColumns]}
+                    tableData={tableData}
+                    funcButtons={subTableUtil}
                 />
 
             </div>
@@ -205,44 +269,23 @@ export default function OrderRead({data}) {
 }
 
 
-// @ts-ignore
-export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
+export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
 
 
-    const {userInfo} = await initialServerRouter(ctx, store);
+    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
-    if (!userInfo) {
+    if (codeInfo < 0) {
         return {
             redirect: {
-                destination: '/', // 리다이렉트할 경로
-                permanent: false, // true면 301 리다이렉트, false면 302 리다이렉트
+                destination: '/',
+                permanent: false,
             },
         };
-    }
-
-    store.dispatch(setUserInfo(userInfo));
-
-    const result = await getData.post('order/getOrderList', {
-        "searchStartDate": "",          // 발주일자 검색 시작일
-        "searchEndDate": "",            // 발주일자 검색 종료일
-        "searchDocumentNumber": "",     // 문서번호
-        "searchCustomerName": "",       // 고객사명
-        "searchMaker": "",              // MAKER
-        "searchModel": "",              // MODEL
-        "searchItem": "",               // ITEM
-        "searchEstimateManager": "",    // 견적서담당자명
-        "page": 1,
-        "limit": -1
-    });
-
-    let copyData = result?.data?.entity?.orderList
-    copyData.forEach((v)=>{
-        v.unreceivedQuantity=v.quantity-v.receivedQuantity
-        // console.log(v.amount, 'v.amount')
-    })
-
-
-    return {
-        props: {data:copyData}
+    } else {
+        store.dispatch(setUserInfo(userInfo));
+        let copyData = await searchEstimate({data: {}});
+        return {
+            props: {data: copyData}
+        }
     }
 })

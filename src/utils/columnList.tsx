@@ -313,7 +313,6 @@ export const subRfqWriteColumn = [
         valueFormatter: (params) => {
             return (!params.value || params.value === 'Invalid date') ? '' : dateFormat(params)
         }
-
     },
     {
         headerName: '비고',
@@ -771,7 +770,8 @@ export const rfqReadColumns = [
         headerName: '작성일자',
         field: 'writtenDate',
         width: 70,
-        pinned: 'left'
+        pinned: 'left',
+        rowDrag: true
     },
     {
         // headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
@@ -2491,4 +2491,177 @@ export const modalCodeDiplomaColumn = [
         field: 'content',
     },
 
+];
+
+
+
+export const projectWriteColumn = [
+    {
+        headerName: '연결 Inquiry No.',
+        field: 'model',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: 'Maker',
+        field: 'model',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: 'Item',
+        field: 'model',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '규격',
+        field: 'model',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '수량',
+        field: 'model',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '단위가격',
+        field: 'model',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '총액',
+        field: 'model',
+        minWidth: 150,
+        editable: true,
+    },
+    {
+        headerName: '화폐단위',
+        field: 'net',
+        cellEditor: 'agNumberCellEditor',
+        editable: true,
+        valueFormatter: params => commonManage.calcFloat(params, 2),
+        cellStyle: { textAlign: 'right' }
+    }, {
+        headerName: '납기',
+        field: 'model',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '매입처명',
+        field: 'model',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '매입처 담당자명',
+        field: 'model',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '매입처 전화번호',
+        field: 'model',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '매입처 이메일',
+        field: 'model',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '관련링크',
+        field: 'model',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '납기요청일',
+        field: 'model',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '비고',
+        field: 'model',
+        minWidth: 150,
+        editable: true,
+    }
+];
+
+
+
+export const projectReadColumn = [
+    {
+        headerName: 'PROJECT No.',
+        field: 'model',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '프로젝트 제목',
+        field: 'model',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '거래처명',
+        field: 'model',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '거래처 담당자명',
+        field: 'model',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '마감 일자',
+        field: 'model',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '담당자',
+        field: 'model',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '연결 Inquiry No',
+        field: 'model',
+        minWidth: 150,
+        editable: true,
+    },
+    {
+        headerName: 'Maker',
+        field: 'net',
+        cellEditor: 'agNumberCellEditor',
+        editable: true,
+        valueFormatter: params => commonManage.calcFloat(params, 2),
+        cellStyle: { textAlign: 'right' }
+    }, {
+        headerName: 'Item',
+        field: 'model',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '규격',
+        field: 'model',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '수량',
+        field: 'model',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '단위 가격',
+        field: 'model',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '총액',
+        field: 'model',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '화폐단위',
+        field: 'model',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '납기',
+        field: 'model',
+        minWidth: 150,
+        editable: true,
+    }
 ];

@@ -3,8 +3,39 @@ import * as XLSX from "xlsx";
 import {rfqReadColumns} from "@/utils/columnList";
 
 export const commonManage: any = {}
+export const apiManage: any = {}
 export const commonFunc: any = {}
 export const commonCalc: any = {}
+
+
+// ===============================================
+
+
+apiManage.generateCodeVerifier = function () {
+    const array = new Uint32Array(56 / 2);
+    window.crypto.getRandomValues(array);
+    return Array.from(array, dec => ('0' + dec.toString(16)).substr(-2)).join('');
+}
+
+
+
+apiManage.generateCodeChallenge = async function (codeVerifier) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(codeVerifier);
+    const digest = await window.crypto.subtle.digest("SHA-256", data);
+    // @ts-ignore
+    return btoa(String.fromCharCode(...new Uint8Array(digest)))
+        .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+
+
+
+// ===============================================
+
+
+
+
 
 commonManage.getSelectRows = function (gridRef) {
     const selectedNodes = gridRef.current.api.getSelectedNodes(); // gridOptions 대신 gridRef 사용

@@ -123,6 +123,8 @@ export default function rqfWrite() {
     }
 
     function onChange(e) {
+        let bowl = {};
+        bowl[e.target.id] = e.target.value;
         commonManage.onChange(e, setInfo)
     }
 
@@ -273,7 +275,7 @@ export default function rqfWrite() {
                                         }/>
                                     })}
                                     {inputForm({title: '매입처명', id: 'agencyName'})}
-                                    {inputForm({title: '매입처담당자', id: '매입처담당자', placeholder : '매입처 당담자 입력 필요'})}
+                                    {inputForm({title: '매입처담당자', id: '매입처담당자', placeholder: '매입처 당담자 입력 필요'})}
                                     {datePickerForm({title: '마감일자(예상)', id: 'dueDate'})}
                                 </BoxCard>
                                 <BoxCard title={'고객사 정보'}>

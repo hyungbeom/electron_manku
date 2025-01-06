@@ -314,6 +314,8 @@ const TableGrid = ({
                              gridOptions={{
                                  loadThemeGoogleFonts: true,
                              }}
+                             rowDragManaged={true}
+                             rowDragMultiRow={true}
                     // onCellContextMenu={handleCellRightClick}
                 />
             </div>

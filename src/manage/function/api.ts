@@ -19,6 +19,7 @@ export const getData = axios.create({
     }
 });
 
+
 getData.interceptors.request.use((config) => {
 
     const token = getCookie(null, 'token');

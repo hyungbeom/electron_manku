@@ -25,7 +25,7 @@ const menuList = {
     project: {
         title: '프로젝트',
         icon: <FolderOpenOutlined />,
-        list: [{title: '프로젝트 작성', key: 'project_write'}, {title: '프로젝트 조회', key: 'project'},]
+        list: [{title: '프로젝트 작성', key: 'project_write'}, {title: '프로젝트 조회', key: 'project_read'},]
     },
     rfq: {
         title: '견적의뢰',

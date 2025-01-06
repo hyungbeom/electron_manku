@@ -21,6 +21,7 @@ import set = is.set;
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
 import Select from "antd/lib/select";
+import {TopBoxCard} from "@/utils/commonForm";
 
 const {RangePicker} = DatePicker
 
@@ -103,7 +104,28 @@ export default function remittance_domestic({data}) {
             <div style={{display: 'grid', gridTemplateRows: 'auto 1fr', height: '100vh', columnGap: 5}}>
                 <Card title={<span style={{fontSize: 12,}}>국내 송금 관리</span>} headStyle={{marginTop: -10, height: 30}}
                       style={{fontSize: 12, border: '1px solid lightGray'}} bodyStyle={{padding: '10px 24px'}}>
-                    <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1.5fr', width: '100%', columnGap: 20}}>
+                    <TopBoxCard title={'기본 정보'} grid={'1fr 1fr 1fr'}>
+                        <div style={{marginTop: 8}}>
+                            <div style={{marginBottom: 3}}>담당자</div>
+                            <Input id={'searchAdminId'} value={info['searchAdminId']}
+                                   onChange={onChange}
+                                   size={'small'}/>
+                        </div>
+                        <div style={{marginTop: 8}}>
+                            <div style={{marginBottom: 3}}>INQUIRY NO.</div>
+                            <Input id={'searchText'} value={info['searchText']}
+                                   onChange={onChange}
+                                   size={'small'}/>
+                        </div>
+                        <div style={{marginTop: 8}}>
+                            <div style={{marginBottom: 3}}>RFQ NO.</div>
+                            <Input id={'searchText'} value={info['searchText']}
+                                   onChange={onChange}
+                                   size={'small'}/>
+                        </div>
+                    </TopBoxCard>
+                    <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', width: '100%', columnGap: 20}}>
+
 
                         <Card size={'small'} style={{
                             fontSize: 11,
@@ -137,18 +159,20 @@ export default function remittance_domestic({data}) {
                                 }
                                 }/>
                             </div>
+
                             <div style={{marginTop: 8}}>
-                                <div style={{marginBottom: 3}}>담당자, 인쿼리, 판매처, 구매처 검색</div>
+                                <div style={{marginBottom: 3}}>판매처</div>
                                 <Input id={'searchText'} value={info['searchText']}
                                        onChange={onChange}
                                        size={'small'}/>
                             </div>
                             <div style={{marginTop: 8}}>
-                                <div style={{marginBottom: 3}}>담당자</div>
-                                <Input id={'searchAdminId'} value={info['searchAdminId']}
+                                <div style={{marginBottom: 3}}>구매처</div>
+                                <Input id={'searchText'} value={info['searchText']}
                                        onChange={onChange}
                                        size={'small'}/>
                             </div>
+
                         </Card>
                         <Card size={'small'} style={{
                             fontSize: 11,
@@ -175,27 +199,6 @@ export default function remittance_domestic({data}) {
                                         ]} style={{width: '100%'}}>
                                 </Select>
                             </div>
-                        </Card>
-                        <Card size={'small'} style={{
-                            fontSize: 11,
-                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                        }}>
-                            <div>
-                                <div style={{marginBottom: 3}}>MAKER</div>
-                                <Input id={'searchMaker'} value={info['searchMaker']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-                            <div style={{marginTop: 8}}>
-                                <div style={{marginBottom: 3}}>MODEL</div>
-                                <Input id={'searchModel'} value={info['searchModel']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-                            <div style={{marginTop: 8}}>
-                                <div style={{marginBottom: 3}}>ITEM</div>
-                                <Input id={'searchItem'} value={info['searchItem']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-
                         </Card>
 
                     </div>

@@ -278,6 +278,6 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
 
     return {
-        props: {data: result?.data?.entity?.agencyList?.[0]}
+        props: {data: result?.data?.entity?.agencyList}
     }
 })

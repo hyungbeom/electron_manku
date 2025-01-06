@@ -10,6 +10,7 @@ import {getData} from "@/manage/function/api";
 import nookies from "nookies";
 import {setCookies} from "@/manage/function/cookie";
 import LoginButton from "@/component/Sample";
+import {apiManage} from "@/utils/commonManage";
 
 export default function Home(props) {
 
@@ -17,6 +18,27 @@ export default function Home(props) {
 
     const [page, setPage] = useState('login');
 
+    const { query } = router;
+
+    useEffect(async () => {
+        const {code, redirect_to} = query; // 로그인 요청 시 전달받은 redirect_to 사용
+
+        if (code) {
+            console.log(code, 'code:??')
+            console.log(apiManage.generateCodeVerifier(), '??')
+
+            const result = await getData.post('account/microsoftLogin',
+                {
+                    "authorizationCode": code,
+                    "codeVerifier": apiManage.generateCodeVerifier()
+                });
+            console.log(result,':::')
+
+
+        } else {
+
+        }
+    },[])
 
     const pageChange = (e) => {
         setPage(e)
@@ -27,18 +49,18 @@ export default function Home(props) {
         const urlParams = new URLSearchParams(window.location.search);
         const authorizationCode = urlParams.get("code");
 
-        console.log(authorizationCode,'   authorizationCode:')
+        console.log(authorizationCode, '   authorizationCode:')
         if (authorizationCode) {
             // code_verifier 가져오기
             const codeVerifier = localStorage.getItem("code_verifier");
 
-            console.log(codeVerifier,'   codeVerifier:')
+            console.log(codeVerifier, '   codeVerifier:')
 
             // Authorization Code와 code_verifier를 백엔드로 전송
             fetch("/api/exchange-code", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ code: authorizationCode, code_verifier: codeVerifier }),
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({code: authorizationCode, code_verifier: codeVerifier}),
             })
                 .then(response => response.json())
                 .then(data => {
@@ -49,6 +71,10 @@ export default function Home(props) {
                 });
         }
     }, []);
+
+    function moveClick(){
+        router.push('/join')
+    }
 
     return (
 
@@ -89,8 +115,7 @@ export default function Home(props) {
 
                     {page === 'login' ? <Login/> : <SignUp/>}
 
-                    <div style={{textAlign : 'center'}}>or</div>
-                    <LoginButton/>
+
                 </div>
 
 
@@ -122,7 +147,7 @@ export default function Home(props) {
 }
 
 
-export const getServerSideProps:any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
+export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
     if (!(codeInfo < 0)) {
@@ -134,4 +159,5 @@ export const getServerSideProps:any = wrapper.getStaticProps((store: any) => asy
         };
     }
     store.dispatch(setUserInfo(userInfo));
+
 })

@@ -7,6 +7,7 @@ import {useRouter} from "next/router";
 import {getData} from "@/manage/function/api";
 import {setCookies} from "@/manage/function/cookie";
 import message from "antd/lib/message";
+import LoginButton from "@/component/Sample";
 
 export default function Login() {
     const router = useRouter();
@@ -59,5 +60,7 @@ export default function Login() {
         </div>
 
         <Button type={'primary'} style={{height: '100%', borderRadius: 5}} onClick={getLogin}>LOGIN</Button>
+        <div style={{textAlign: 'center'}}>or</div>
+        <LoginButton/>
     </>
 }

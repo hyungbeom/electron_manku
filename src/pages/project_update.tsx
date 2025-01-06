@@ -12,7 +12,7 @@ import {
     UpCircleFilled,
     UploadOutlined
 } from "@ant-design/icons";
-import {projectWriteColumn, subRfqWriteColumn} from "@/utils/columnList";
+import {subRfqWriteColumn} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
 import {estimateRequestDetailUnit, ModalInitList, rfqWriteInitial} from "@/utils/initialList";
 import moment from "moment";
@@ -24,7 +24,7 @@ import {setUserInfo} from "@/store/user/userSlice";
 import TableGrid from "@/component/tableGrid";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import SearchInfoModal from "@/component/SearchAgencyModal";
-import Upload, {UploadProps} from "antd/lib/upload";
+import Upload from "antd/lib/upload";
 import {BoxCard, TopBoxCard} from "@/utils/commonForm";
 import {useRouter} from "next/router";
 import {commonManage} from "@/utils/commonManage";
@@ -33,7 +33,7 @@ import {saveRfq} from "@/utils/api/mainApi";
 import {findCodeInfo} from "@/utils/api/commonApi";
 
 
-export default function projectWrite() {
+export default function projectUpdate() {
     const gridRef = useRef(null);
     const router = useRouter();
 
@@ -196,25 +196,6 @@ export default function projectWrite() {
     };
 
 
-    const props: UploadProps = {
-        name: 'file',
-        action: 'https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload',
-        headers: {
-            authorization: 'authorization-text',
-        },
-        onChange(info) {
-            if (info.file.status !== 'uploading') {
-                console.log(info.file, info.fileList);
-            }
-            if (info.file.status === 'done') {
-                message.success(`${info.file.name} file uploaded successfully`);
-            } else if (info.file.status === 'error') {
-                message.error(`${info.file.name} file upload failed.`);
-            }
-        },
-    };
-
-
     /**
      * @description 테이블 우측상단 관련 기본 유틸버튼
      */
@@ -247,7 +228,7 @@ export default function projectWrite() {
                                  setIsModalOpen={setIsModalOpen}/>
 
                 <Card size={'small'} title={<div style={{display: 'flex', justifyContent: 'space-between'}}>
-                    <div style={{fontSize: 14, fontWeight: 550}}>프로젝트 등록</div>
+                    <div style={{fontSize: 14, fontWeight: 550}}>견적의뢰 작성</div>
                     <div>
                         <Button type={'primary'} size={'small'} style={{marginRight: 8}}
                                 onClick={saveFunc}
@@ -267,7 +248,7 @@ export default function projectWrite() {
 
                                 {inputForm({title: '작성자', id: 'adminName', disabled: true})}
                                 {inputForm({title: '담당자', id: 'managerAdminName'})}
-                                {datePickerForm({title: '등록일자', id: 'writtenDate'})}
+                                {datePickerForm({title: '등록일자', id: 'writtenDate', disabled: true})}
 
                             </TopBoxCard>
                             <div style={{
@@ -276,12 +257,22 @@ export default function projectWrite() {
                                 gap: 10,
                                 marginTop: 10
                             }}>
-                                <BoxCard title={'프로젝트 정보'}>
-                                    {inputForm({title: 'PROJECT NO.', id: 'agencyName'})}
-                                    {inputForm({title: '프로젝트 제목', id: '매입처담당자', placeholder: '매입처 당담자 입력 필요'})}
-                                    {datePickerForm({title: '마감일자', id: 'writtenDate'})}
+                                <BoxCard title={'매입처 정보'}>
+                                    {inputForm({
+                                        title: '매입처코드',
+                                        id: 'agencyCode',
+                                        suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
+                                            (e) => {
+                                                e.stopPropagation();
+                                                openModal('agencyCode');
+                                            }
+                                        }/>
+                                    })}
+                                    {inputForm({title: '매입처명', id: 'agencyName'})}
+                                    {inputForm({title: '매입처담당자', id: '매입처담당자', placeholder: '매입처 당담자 입력 필요'})}
+                                    {datePickerForm({title: '마감일자(예상)', id: 'dueDate'})}
                                 </BoxCard>
-                                <BoxCard title={'거래처 정보'}>
+                                <BoxCard title={'고객사 정보'}>
                                     {inputForm({
                                         title: '고객사명',
                                         id: 'customerName',
@@ -292,23 +283,30 @@ export default function projectWrite() {
                                             }
                                         }/>
                                     })}
-                                    {inputForm({title: '거래처명', id: 'managerName'})}
-                                    {inputForm({title: '거래처 담당자명', id: 'phoneNumber'})}
-                                    {inputForm({title: '담당자 전화번호', id: 'faxNumber'})}
-                                    {inputForm({title: '담당자 이메일', id: 'customerManagerEmail'})}
+                                    {inputForm({title: '담당자명', id: 'managerName'})}
+                                    {inputForm({title: '전화번호', id: 'phoneNumber'})}
+                                    {inputForm({title: '팩스', id: 'faxNumber'})}
+                                    {inputForm({title: '이메일', id: 'customerManagerEmail'})}
                                 </BoxCard>
 
-                                <BoxCard title={'기타 정보'}>
-
-                                    {textAreaForm({title: '비고란', rows: 7, id: 'remarks'})}
+                                <BoxCard title={'Maker 정보'}>
+                                    {inputForm({
+                                        title: 'MAKER',
+                                        id: 'maker',
+                                        suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
+                                            (e) => {
+                                                e.stopPropagation();
+                                                openModal('maker');
+                                            }
+                                        }/>
+                                    })}
+                                    {inputForm({title: 'ITEM', id: 'item'})}
                                     {textAreaForm({title: '지시사항', id: 'instructions'})}
 
                                 </BoxCard>
-                                <BoxCard title={'기타 정보2'}>
-                                    {textAreaForm({title: '특이사항', rows: 7, id: 'remarks'})}
-                                    <Upload {...props}>
-                                        <Button icon={<UploadOutlined />}>파일 업로드</Button>
-                                    </Upload>
+                                <BoxCard title={'ETC'}>
+                                    {inputForm({title: 'End User', id: 'endUser'})}
+                                    {textAreaForm({title: '비고란', rows: 7, id: 'remarks'})}
                                 </BoxCard>
                             </div>
                         </div>
@@ -318,7 +316,7 @@ export default function projectWrite() {
                 <TableGrid
                     list={'estimateRequestDetailList'}
                     gridRef={gridRef}
-                    columns={projectWriteColumn}
+                    columns={subRfqWriteColumn}
                     tableData={info['estimateRequestDetailList']}
                     listType={'estimateRequestId'}
                     type={'write'}
