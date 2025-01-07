@@ -7,10 +7,8 @@ import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import {getData} from "@/manage/function/api";
-import nookies from "nookies";
-import {setCookies} from "@/manage/function/cookie";
-import LoginButton from "@/component/Sample";
-import {apiManage} from "@/utils/commonManage";
+import {getCookie, setCookies} from "@/manage/function/cookie";
+import {setCookie} from "nookies";
 
 export default function Home(props) {
 
@@ -18,60 +16,41 @@ export default function Home(props) {
 
     const [page, setPage] = useState('login');
 
-    const { query } = router;
+    const {query} = router;
 
-    useEffect(async () => {
-        const {code, redirect_to} = query; // 로그인 요청 시 전달받은 redirect_to 사용
+    // useEffect(() => {
+    //     const login = async () => {
+    //         const {code, redirect_to} = query; // 로그인 요청 시 전달받은 redirect_to 사용
+    //
+    //         if (code) {
+    //             const codeVerifier = localStorage.getItem("code_verifier");
+    //             const v = await getData.post('account/microsoftLogin',
+    //                 {
+    //                     "authorizationCode": code,
+    //                     "codeVerifier": codeVerifier,
+    //                     redirectUri: 'http://localhost:3000'
+    //                 });
+    //
+    //             if (v?.data?.code === 1) {
+    //                 const {accessToken} = v?.data?.entity;
+    //                 console.log(accessToken, '::111:')
+    //                 setCookies(null, 'token', accessToken)
+    //                 alert('로그인 성공');
+    //                 //
+    //             }
+    //         }
+    //     };
+    //
+    //     login();
+    // }, [query]);
 
-        if (code) {
-            const codeVerifier = localStorage.getItem("code_verifier");
-            const result = await getData.post('account/microsoftLogin',
-                {
-                    "authorizationCode": code,
-                    "codeVerifier": codeVerifier,
-                    redirectUri : 'http://localhost:3000'
-                });
-
-            console.log(result,'result:')
-
-        } else {
-
-        }
-    },[query])
 
     const pageChange = (e) => {
         setPage(e)
     };
 
 
-    useEffect(() => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const authorizationCode = urlParams.get("code");
-
-        console.log(authorizationCode, '   authorizationCode:')
-        if (authorizationCode) {
-            // code_verifier 가져오기
-            const codeVerifier = localStorage.getItem("code_verifier");
-
-            console.log(codeVerifier, '   codeVerifier:')
-
-            // Authorization Code와 code_verifier를 백엔드로 전송
-            fetch("/api/exchange-code", {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({code: authorizationCode, code_verifier: codeVerifier}),
-            })
-                .then(response => response.json())
-                .then(data => {
-                    console.log("Access Token:", data.access_token);
-                })
-                .catch(error => {
-                    console.error("Token exchange error:", error);
-                });
-        }
-    }, []);
-
-    function moveClick(){
+    function moveClick() {
         router.push('/join')
     }
 
@@ -148,8 +127,49 @@ export default function Home(props) {
 
 export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
+    const {query} = ctx; // URL 쿼리 파라미터
+    const {code, redirect_to} = query;
 
-    if (!(codeInfo < 0)) {
+    console.log(userInfo, 'userInfo:')
+
+    if (code) {
+        const codeVerifier = getCookie(ctx, "code_verifier");
+
+
+        try {
+            const v = await getData.post('account/microsoftLogin', {
+                authorizationCode: code,
+                codeVerifier: codeVerifier,
+                redirectUri: 'http://localhost:3000',
+            });
+
+            if (v?.data?.code === 1) {
+                const {accessToken} = v?.data?.entity;
+                if (accessToken) {
+                    setCookies(ctx, 'token', accessToken);
+                    getData.defaults.headers["authorization"] = `Bearer ${accessToken}`;
+                    await getData.post("admin/getMyAccount").then((res) => {
+
+                        console.log(res,'::::')
+                        const {entity, code} = res?.data;
+                        store.dispatch(setUserInfo(entity));
+                    })
+                    // return {
+                    //     redirect: {
+                    //         destination: '/main',
+                    //     },
+                    // };
+                }
+
+                // setCookies(ctx, 'token', accessToken)
+            }
+        } catch (error) {
+            console.error("Microsoft Login failed:", error);
+            // 필요시 로그인 실패 처리를 할 수 있습니다.
+        }
+    }
+
+    if (codeInfo >= 0) {  // 조건을 좀 더 직관적으로 변경
         return {
             redirect: {
                 destination: '/main',
@@ -157,6 +177,10 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
             },
         };
     }
+
     store.dispatch(setUserInfo(userInfo));
 
-})
+    return {
+        props: {},
+    };
+});

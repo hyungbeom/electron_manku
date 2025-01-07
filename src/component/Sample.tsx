@@ -4,6 +4,7 @@ import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import axios from "axios";
+import {setCookies} from "@/manage/function/cookie";
 
 //test
 function LoginButton() {
@@ -38,9 +39,8 @@ function LoginButton() {
         const codeVerifier = generateCodeVerifier();
         const codeChallenge = await generateCodeChallenge(codeVerifier);
 
-        console.log(codeVerifier,'codeVerifier:')
         // code_verifier를 localStorage에 저장
-        localStorage.setItem("code_verifier", codeVerifier);
+        setCookies(null,"code_verifier", codeVerifier);
 
         const authUrl = `${authority}?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&response_mode=query&scope=${scopes.join(" ")}&code_challenge=${codeChallenge}&code_challenge_method=S256`;
 

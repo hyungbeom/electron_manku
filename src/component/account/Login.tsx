@@ -38,7 +38,6 @@ export default function Login() {
                 setCookies(null, 'token', accessToken)
                 return router.push('/main')
             }
-
             message.warn(v.data.message)
         })
     }
