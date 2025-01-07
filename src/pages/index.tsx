@@ -18,32 +18,6 @@ export default function Home(props) {
 
     const {query} = router;
 
-    // useEffect(() => {
-    //     const login = async () => {
-    //         const {code, redirect_to} = query; // 로그인 요청 시 전달받은 redirect_to 사용
-    //
-    //         if (code) {
-    //             const codeVerifier = localStorage.getItem("code_verifier");
-    //             const v = await getData.post('account/microsoftLogin',
-    //                 {
-    //                     "authorizationCode": code,
-    //                     "codeVerifier": codeVerifier,
-    //                     redirectUri: 'http://localhost:3000'
-    //                 });
-    //
-    //             if (v?.data?.code === 1) {
-    //                 const {accessToken} = v?.data?.entity;
-    //                 console.log(accessToken, '::111:')
-    //                 setCookies(null, 'token', accessToken)
-    //                 alert('로그인 성공');
-    //                 //
-    //             }
-    //         }
-    //     };
-    //
-    //     login();
-    // }, [query]);
-
 
     const pageChange = (e) => {
         setPage(e)
@@ -127,10 +101,20 @@ export default function Home(props) {
 
 export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
+    if (codeInfo >= 0) {  // 조건을 좀 더 직관적으로 변경
+        return {
+            redirect: {
+                destination: '/main',
+                permanent: false,
+            },
+        };
+    }
+
+    store.dispatch(setUserInfo(userInfo));
+
+
     const {query} = ctx; // URL 쿼리 파라미터
     const {code, redirect_to} = query;
-
-    console.log(userInfo, 'userInfo:')
 
     if (code) {
         const codeVerifier = getCookie(ctx, "code_verifier");
@@ -147,18 +131,14 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
                 const {accessToken} = v?.data?.entity;
                 if (accessToken) {
                     setCookies(ctx, 'token', accessToken);
-                    getData.defaults.headers["authorization"] = `Bearer ${accessToken}`;
-                    await getData.post("admin/getMyAccount").then((res) => {
-
-                        console.log(res,'::::')
-                        const {entity, code} = res?.data;
-                        store.dispatch(setUserInfo(entity));
-                    })
-                    // return {
-                    //     redirect: {
-                    //         destination: '/main',
-                    //     },
-                    // };
+                    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
+                    console.log(userInfo,'???')
+                    store.dispatch(setUserInfo(userInfo));
+                    return {
+                        redirect: {
+                            destination: '/main',
+                        },
+                    };
                 }
 
                 // setCookies(ctx, 'token', accessToken)
@@ -169,16 +149,6 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
         }
     }
 
-    if (codeInfo >= 0) {  // 조건을 좀 더 직관적으로 변경
-        return {
-            redirect: {
-                destination: '/main',
-                permanent: false,
-            },
-        };
-    }
-
-    store.dispatch(setUserInfo(userInfo));
 
     return {
         props: {},
