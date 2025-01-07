@@ -131,14 +131,14 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
                 const {accessToken} = v?.data?.entity;
                 if (accessToken) {
                     setCookies(ctx, 'token', accessToken);
-                    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
-                    console.log(userInfo,'???')
-                    store.dispatch(setUserInfo(userInfo));
-                    return {
-                        redirect: {
-                            destination: '/main',
-                        },
-                    };
+                    // const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
+                    // console.log(userInfo,'???')
+                    // store.dispatch(setUserInfo(userInfo));
+                    // return {
+                    //     redirect: {
+                    //         destination: '/main',
+                    //     },
+                    // };
                 }
 
                 // setCookies(ctx, 'token', accessToken)
