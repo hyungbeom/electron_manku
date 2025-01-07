@@ -6,6 +6,7 @@ import {getData} from "@/manage/function/api";
 import Button from "antd/lib/button";
 import {useRouter} from "next/router";
 import {apiManage} from "@/utils/commonManage";
+import {getCookie} from "@/manage/function/cookie";
 
 export default function joint(){
     const router = useRouter();
@@ -35,9 +36,9 @@ export default function joint(){
 
     async function loginTest(authorizationCode) {
 
-        console.log(localStorage.getItem("code_verifier"),'??');
 
-        const codeVerifier = localStorage.getItem("code_verifier");
+
+        const codeVerifier =  getCookie(null, 'code_verifier');
         const result = await getData.post('account/microsoftLogin',
             {
                 authorizationCode: authorizationCode,
@@ -45,16 +46,14 @@ export default function joint(){
                 redirectUri : 'http://localhost:3000/join'
             });
 
-        console.log(result,'result?.data?.code:')
-        console.log(result?.data?.code,'result?.data?.code:')
-
         const {code, entity} = result?.data
         if(code === -10007){
+            // 가입 가능
             setMicrosoftId(entity)
         }else if(code === 1){
             alert('이미 등록된 계정입니다.');
             window.location.href = '/'
-        }else{
+        } else{
             window.location.href = '/'
         }
     }
@@ -74,11 +73,12 @@ export default function joint(){
         const {code, redirect_to} = query; // 로그인 요청 시 전달받은 redirect_to 사용
 
         if (code) {
-            console.log(apiManage.generateCodeVerifier(), '??')
+
 
             const result = await getData.post('account/microsoftJoin',
                 {...info, microsoftId : microsoftId});
 
+            console.log(result,'??')
             if(result?.data?.code === 1){
                 alert('가입성공');
                 window.location.href = '/'

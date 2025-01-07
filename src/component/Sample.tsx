@@ -1,16 +1,12 @@
-import React, {useEffect} from "react";
+import React from "react";
 import {useRouter} from "next/router";
-import {wrapper} from "@/store/store";
-import initialServerRouter from "@/manage/function/initialServerRouter";
-import {setUserInfo} from "@/store/user/userSlice";
-import axios from "axios";
 import {setCookies} from "@/manage/function/cookie";
 
 //test
 function LoginButton() {
 
     const router = useRouter();
-    const { query } = router;
+    const {query} = router;
 
 
     // code_verifier 생성 함수
@@ -40,17 +36,18 @@ function LoginButton() {
         const codeChallenge = await generateCodeChallenge(codeVerifier);
 
         // code_verifier를 localStorage에 저장
-        setCookies(null,"code_verifier", codeVerifier);
+        setCookies(null, "code_verifier", codeVerifier);
 
-        const authUrl = `${authority}?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&response_mode=query&scope=${scopes.join(" ")}&code_challenge=${codeChallenge}&code_challenge_method=S256`;
-
+        const authUrl = `${authority}?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&response_mode=query&scope=${scopes.join(" ")}&code_challenge=${codeChallenge}&code_challenge_method=S256&prompt=consent`;
 
         // Azure AD 로그인 페이지로 리디렉션
         window.location.href = authUrl;
     };
 
-    return <div style={{textAlign : 'center', cursor : 'pointer'}} onClick={handleLogin}>
-        <img  src={'https://learn.microsoft.com/ko-kr/entra/identity-platform/media/howto-add-branding-in-apps/ms-symbollockup_signin_dark.svg'} alt=""/>
+    return <div style={{textAlign: 'center', cursor: 'pointer'}} onClick={handleLogin}>
+        <img
+            src={'https://learn.microsoft.com/ko-kr/entra/identity-platform/media/howto-add-branding-in-apps/ms-symbollockup_signin_dark.svg'}
+            alt=""/>
     </div>
 }
 

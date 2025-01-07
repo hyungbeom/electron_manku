@@ -65,7 +65,7 @@ function SignUpButton() {
         // code_verifier를 localStorage에 저장
         setCookies(null,"code_verifier", codeVerifier);
 
-        const authUrl = `${authority}?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&response_mode=query&scope=${scopes.join(" ")}&code_challenge=${codeChallenge}&code_challenge_method=S256`;
+        const authUrl = `${authority}?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&response_mode=query&scope=${scopes.join(" ")}&code_challenge=${codeChallenge}&code_challenge_method=S256&prompt=consent`;
 
 
         // Azure AD 로그인 페이지로 리디렉션

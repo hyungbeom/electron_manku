@@ -134,11 +134,11 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
                     // const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
                     // console.log(userInfo,'???')
                     // store.dispatch(setUserInfo(userInfo));
-                    // return {
-                    //     redirect: {
-                    //         destination: '/main',
-                    //     },
-                    // };
+                    return {
+                        redirect: {
+                            destination: '/main',
+                        },
+                    };
                 }
 
                 // setCookies(ctx, 'token', accessToken)
