@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
@@ -34,6 +34,7 @@ import {findCodeInfo} from "@/utils/api/commonApi";
 
 
 export default function rqfWrite() {
+    const fileRef = useRef(null);
     const gridRef = useRef(null);
     const router = useRouter();
 
@@ -83,6 +84,9 @@ export default function rqfWrite() {
         </div>
     }
 
+    useEffect(()=>{
+        console.log(fileRef,'fileRef:')
+    },[fileRef])
 
     const datePickerForm = ({title, id, disabled = false}) => {
         return <div>
@@ -139,8 +143,10 @@ export default function rqfWrite() {
             return {...v, replyDate: moment(v['replyDate']).format('YYYY-MM-DD')}
         })
 
-        copyData['estimateRequestDetailList'] = changeTime
-        await saveRfq({data: copyData, router: router})
+        copyData['estimateRequestDetailList'] = changeTime;
+
+        console.log(copyData,'::::')
+        // await saveRfq({data: copyData, router: router})
 
 
     }
@@ -214,6 +220,10 @@ export default function rqfWrite() {
         </Button>
     </div>
 
+    function fileChange(e){
+        console.log(e,':::')
+    }
+
     return <>
         <LayoutComponent>
             <div style={{
@@ -259,7 +269,7 @@ export default function rqfWrite() {
                             </TopBoxCard>
                             <div style={{
                                 display: 'grid',
-                                gridTemplateColumns: "150px 200px 1fr 1fr ",
+                                gridTemplateColumns: "150px 200px 1fr 1fr 300px",
                                 gap: 10,
                                 marginTop: 10
                             }}>
@@ -308,11 +318,19 @@ export default function rqfWrite() {
                                     })}
                                     {inputForm({title: 'ITEM', id: 'item'})}
                                     {textAreaForm({title: '지시사항', id: 'instructions'})}
-
                                 </BoxCard>
                                 <BoxCard title={'ETC'}>
                                     {inputForm({title: 'End User', id: 'endUser'})}
                                     {textAreaForm({title: '비고란', rows: 7, id: 'remarks'})}
+                                </BoxCard>
+                                <BoxCard title={'드라이브 목록'}>
+
+                                    <div style={{overFlowY : "auto", maxHeight : 300}}>
+                                    <Upload ref={fileRef} onChange={fileChange} style={{overFlowY : "auto"}}  maxCount={13}
+                                            multiple>
+                                        <Button icon={<UploadOutlined />}>Upload</Button>
+                                    </Upload>
+                                    </div>
                                 </BoxCard>
                             </div>
                         </div>

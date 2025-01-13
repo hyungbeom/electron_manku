@@ -30,8 +30,8 @@ export const estimateWriteInitial = {
     "writtenDate": moment().format('YYYY-MM-DD'),    // 작성일
     "documentNumberFull": "", // INQUIRY No.
     "agencyCode": "",            // 대리점코드
-    "agencyManagerName" : "",
-    "agencyManagerPhoneNumber" : "",
+    "agencyManagerName": "",
+    "agencyManagerPhoneNumber": "",
     "customerCode": "",             // CUSTOMER 코드
     "customerName": "",    // 상호명
     "managerName": "",      // 담당자
@@ -82,42 +82,40 @@ export const estimateRequestDetailUnit = {
 
 
 export const rfqWriteInitial = {
-    "writtenDate": moment().format('YYYY-MM-DD'),        // 작성일
-    // "documentNumberFull": `-${moment().format('YY')}`, // INQUIRY No.
-    "documentNumberFull": "", // INQUIRY No.
-    "agencyCode": "",                // 대리점코드
-    "agencyName": "",       // 대리점명
+    writtenDate: '2024-09-11',
+    managerAdminId: 0,           // 작성자 대용
+    managerAdminName: '담당자명',
+    documentNumberFull: 'CWT-24-01061',   // ====== api 통해서 가져와야 함?
+    rfqNo: 1,
+    projectTitle: 2,
+// ====================================
 
-    "customerCode": "",  // 거래처코드
-    "customerName": "",  // 고객사명(상호명)
-    "phoneNumber": "",   // 전화번호
-    "faxNumber": "",     // 팩스/이메일
-    "customerManagerEmail": '',
-    "managerName": "",    // 담당자명
+    agencyCode: 'K10',
+    agencyName: '인텍오토메이션',
+    agencyManagerName : '',
+    agencyManagerId: 1,
+    dueDate: 4,
+    agencyType: '국내',
+    // ======================
+    customerCode: 1, //없어도 되는것
+    customerName: '(주)발해에프유테크',
+    managerName: '석인수 책임님',
+    phoneNumber: 'test',
+    faxNumber: '033-921984109',
+    customerManagerEmail: 'test@test.com',
+
+    // ======================
+    maker: 'maker',
+    item: 'item',
+    instructions:'',
+
+// =============================
 
 
-    // END //
+    remarks: 'note',
+    endUser: 3,
 
-
-    "maker": "",                   // MAKER
-    "item": "",                     // ITEM
-    "remarks": "",                  // 비고란
-    "footerTag": "",                    // 하단 태그란
-    "attachment": "",                   // 첨부파일 여부 (있으면 "V", 없으면 "")
-    "instructions": "",                 // 지시사항
-
-    "rfqNo": "",                        // RFQ NO.
-    "projectTitle": "",                 // 프로젝트 제목
-    "endUser": "",                      // End User
-    "dueDate": moment().format('YYYY-MM-DD'),                      // 마감일자
-
-    "agencyManagerId": 1,               // 대리점 담당자 Id (메일 전송용)
-    "agencyType": "",                // 대리점 타입
-
-    "adminId": null,                       // 만쿠 관리자 Id
-    "managerAdminName": '',                       // 만쿠 관리자 Name [프론트용]
-
-    "significant": "",            // 특이사항
+// ===========================
 
     "estimateRequestDetailList": [
         // estimateRequestDetailUnit
