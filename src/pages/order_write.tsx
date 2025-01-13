@@ -23,14 +23,18 @@ import Select from "antd/lib/select";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {useRouter} from "next/router";
 import TableGrid from "@/component/tableGrid";
-import {BoxCard, TopBoxCard} from "@/utils/commonForm";
+import {BoxCard, MainCard, TopBoxCard} from "@/utils/commonForm";
 import {commonManage} from "@/utils/commonManage";
 import TextArea from "antd/lib/input/TextArea";
 import _ from "lodash";
 import {findEstDocumentInfo} from "@/utils/api/commonApi";
 import {saveOrder} from "@/utils/api/mainApi";
+import {DriveUploadComp} from "@/component/common/SharePointComp";
 
+
+const listType = 'orderDetailList'
 export default function OrderWriter() {
+    const fileRef = useRef(null);
     const gridRef = useRef(null);
     const router = useRouter();
 
@@ -43,7 +47,7 @@ export default function OrderWriter() {
 
     const infoInit = {
         ...copyInit,
-        adminId: userInfo['adminId'],
+        managerAdminId: userInfo['adminId'],
         managerAdminName: userInfo['name'],
         adminName: userInfo['name'],
         managerId: userInfo['name'],
@@ -90,12 +94,12 @@ export default function OrderWriter() {
         return <div>
             <div>{title}</div>
             {/*@ts-ignore*/}
-            <DatePicker value={info[id] ? moment(info[id]) : ''} style={{width: '100%'}}
+            <DatePicker value={moment(info[id]).isValid() ? moment(info[id]) : ''} style={{width: '100%'}}
                         disabledDate={commonManage.disabledDate}
                         onChange={(date) => onChange({
                             target: {
                                 id: id,
-                                value: date
+                                value: moment(date).format('YYYY-MM-DD')
                             }
                         })
                         }
@@ -122,28 +126,50 @@ export default function OrderWriter() {
 
 
     async function saveFunc() {
-        if (!info['orderDetailList'].length) {
-            message.warn('하위 데이터 1개 이상이여야 합니다')
-        } else {
-            const copyData = {...info}
-            const changeTime = gridRef.current.props.context.map(v => {
-                return {...v, replyDate: moment(v['replyDate']).format('YYYY-MM-DD')}
-            })
-            copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
-
-            await saveOrder({data : copyData, router : router})
+        if (!info[listType].length) {
+           return message.warn('하위 데이터 1개 이상이여야 합니다')
         }
+        const formData: any = new FormData();
+
+        const handleIteration = () => {
+            for (const {key, value} of commonManage.commonCalc(info)) {
+                if (key !== listType) {
+                    formData.append(key, value);
+                }
+            }
+        };
+
+        handleIteration();
+
+        const copyData = {...info}
+
+
+        if (copyData[listType].length) {
+            copyData[listType].forEach((detail, index) => {
+                Object.keys(detail).forEach((key) => {
+                    formData.append(`${listType}[${index}].${key}`, detail[key]);
+                });
+            });
+        }
+
+        const filesToSave = fileRef.current.fileList.map((item) => item.originFileObj).filter((file) => file instanceof File);
+        filesToSave.forEach((file, index) => {
+            formData.append(`attachmentFileList[${index}].attachmentFile`, file);
+            formData.append(`attachmentFileList[${index}].fileName`, file.name.replace(/\s+/g, ""));
+        });
+
+        await saveOrder({data : formData, router : router})
     }
 
     function deleteList() {
         let copyData = {...info}
-        copyData['orderDetailList'] = commonManage.getUnCheckList(gridRef.current.api);
+        copyData[listType] = commonManage.getUnCheckList(gridRef.current.api);
         setInfo(copyData);
     }
 
     function addRow() {
         let copyData = {...info};
-        copyData['orderDetailList'].push({
+        copyData[listType].push({
             ...copyUnitInit,
             "currency": commonManage.changeCurr(info['agencyCode'])
         })
@@ -161,7 +187,7 @@ export default function OrderWriter() {
      */
     const subTableUtil = <div>
         {/*@ts-ignored*/}
-        <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
+        <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
                 onClick={addRow}>
             <SaveOutlined/>추가
         </Button>
@@ -180,20 +206,11 @@ export default function OrderWriter() {
                 height: '100vh',
                 columnGap: 5
             }}>
+                <MainCard title={'발주서 작성'} list={[
+                    {name: '저장', func: saveFunc, type: 'primary'},
+                    {name: '초기화', func: clearAll, type: 'danger'}
+                ]} mini={mini} setMini={setMini}>
 
-                <Card title={<div style={{display: 'flex', justifyContent: 'space-between'}}>
-                    <div style={{fontSize: 14, fontWeight: 550}}>발주서 작성</div>
-                    <div>
-                        <Button type={'primary'} size={'small'} style={{fontSize: 11, marginRight: 8}}
-                                onClick={saveFunc}><SaveOutlined/>저장</Button>
-
-                        {/*@ts-ignored*/}
-                        <Button type={'danger'} size={'small'} style={{fontSize: 11,}}
-                                onClick={clearAll}><RetweetOutlined/>초기화</Button>
-                    </div>
-                </div>} style={{fontSize: 12, border: '1px solid lightGray'}}
-                      extra={<span style={{fontSize: 20, cursor: 'pointer'}} onClick={() => setMini(v => !v)}> {!mini ?
-                          <UpCircleFilled/> : <DownCircleFilled/>}</span>}>
 
                     {mini ? <div>
 
@@ -214,7 +231,7 @@ export default function OrderWriter() {
 
                         <div style={{
                             display: 'grid',
-                            gridTemplateColumns: '150px 200px 200px 1fr',
+                            gridTemplateColumns: '180px 200px 200px 1fr 300px',
                             columnGap: 10,
                             marginTop: 10
                         }}>
@@ -258,14 +275,19 @@ export default function OrderWriter() {
                                 {textAreaForm({title: '비고란', rows: 3, id: 'remarks'})}
                                 {textAreaForm({title: '하단태그', rows: 3, id: 'footer'})}
                             </BoxCard>
+                            <BoxCard title={'드라이브 목록'}>
+                                <div style={{overFlowY: "auto", maxHeight: 300}}>
+                                    <DriveUploadComp infoFileInit={[]} fileRef={fileRef}/>
+                                </div>
+                            </BoxCard>
                         </div>
                     </div> : null}
-                </Card>
+                </MainCard>
 
                 <TableGrid
                     gridRef={gridRef}
                     columns={tableOrderWriteColumn}
-                    tableData={info['orderDetailList']}
+                    tableData={info[listType]}
                     listType={'orderId'}
                     type={'write'}
                     funcButtons={subTableUtil}

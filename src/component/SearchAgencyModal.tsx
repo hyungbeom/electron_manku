@@ -9,6 +9,7 @@ import {ModalInitList, modalList} from "@/utils/initialList";
 import moment from "moment";
 import useEventListener from "@/utils/common/function/UseEventListener";
 import message from "antd/lib/message";
+import {checkInquiryNo} from "@/utils/api/mainApi";
 
 export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen}) {
     const [code, setCode] = useState();
@@ -210,7 +211,7 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
                 </div>
 
                 <AgGridReact containerStyle={{height: '93%', width: '100%'}} theme={tableTheme}
-                             onCellClicked={(e) => {
+                             onCellClicked={async (e) => {
                                  switch (openCheck) {
                                      case 'customerName' :
                                          setInfo(v => {
@@ -218,6 +219,7 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
                                                  ...v,
                                                  phoneNumber: e.data.directTel,
                                                  customerManagerEmail: e.data.email,
+                                                 customerCode: e.data.customerCode,
                                                  ...e.data
                                              }
                                          });
@@ -230,10 +232,11 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
                                          })
                                          break;
                                      default :
-                                         console.log(e.data,'e.data:')
+                                         const returnDocumentNumb = await checkInquiryNo({data: {agencyCode: info['agencyCode']}})
                                          setInfo(v => {
                                              return {
                                                  ...v,
+                                                 documentNumberFull : returnDocumentNumb,
                                                  agencyManagerId : e.data.agencyId,
                                                  agencyCode : e.data.agencyCode,
                                                  agencyName : e.data.agencyName,

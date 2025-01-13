@@ -2,12 +2,12 @@ import React, {useState} from "react";
 import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
 import DatePicker from "antd/lib/date-picker";
-import {ModalInitList, tableOrderInventoryInitial,} from "@/utils/initialList";
+import {deliveryDaehanInitial, ModalInitList, tableOrderInventoryInitial,} from "@/utils/initialList";
 import {getData} from "@/manage/function/api";
 import moment from "moment";
 import message from "antd/lib/message";
 import TextArea from "antd/lib/input/TextArea";
-import {BoxCard, TopBoxCard} from "@/utils/commonForm";
+import {BoxCard, MainCard, TopBoxCard} from "@/utils/commonForm";
 import {commonManage} from "@/utils/commonManage";
 import {findCodeInfo} from "@/utils/api/commonApi";
 import {DownCircleFilled, FileSearchOutlined, RetweetOutlined, SaveOutlined, UpCircleFilled} from "@ant-design/icons";
@@ -24,31 +24,53 @@ import {saveRfq} from "@/utils/api/mainApi";
 
 export default function delivery_write() {
 
-    const [mini, setMini] = useState(true);
+    const [tabNumb, setTabNumb] = useState('CJ')
+    const [cjInfo, setCjInfo] = useState({...deliveryDaehanInitial, deliveryType : 'CJ'})
+    const [daesinInfo, setDaesinInfo] = useState({...deliveryDaehanInitial, deliveryType : 'DAESIN'})
+    const [quickInfo, setQuickInfo] = useState({...deliveryDaehanInitial, deliveryType : 'QUICK'})
+
     const onChange = (key: string) => {
-        console.log(key);
+        setTabNumb(key);
     };
 
     const items: TabsProps['items'] = [
         {
-            key: '1',
+            key: 'CJ',
             label: '대한통운',
-            children: <Deahan/>,
+            children: <Deahan info={cjInfo} setInfo={setCjInfo}/>,
         },
         {
-            key: '2',
+            key: 'DAESIN',
             label: '대신택배',
-            children: <Deasin/>,
+            children: <Deasin info={daesinInfo} setInfo={setDaesinInfo}/>,
         },
         {
-            key: '3',
+            key: 'QUICK',
             label: '퀵/직납/대리점 출고',
-            children: <ETC/>,
+            children: <ETC info={quickInfo} setInfo={setQuickInfo}/>,
         },
     ];
 
-    function saveFunc() {
+    async function saveFunc() {
 
+        let sendParam = null
+        switch (tabNumb) {
+            case 'CJ' :
+                sendParam = cjInfo;
+                break;
+            case 'DAESIN' :
+                sendParam = daesinInfo;
+                break;
+            case 'QUICK' :
+                sendParam = quickInfo;
+                break;
+        }
+
+        if(sendParam){
+           await getData.post('delivery/addDelivery', sendParam).then(v=>{
+               console.log(v,':::::::')
+           },err=>console.log(err,'::::'))
+        }
     }
 
     function clearAll() {
@@ -58,25 +80,14 @@ export default function delivery_write() {
 
     return <>
         <LayoutComponent>
-            <Card size={'small'} title={<div style={{display: 'flex', justifyContent: 'space-between'}}>
-                <div style={{fontSize: 14, fontWeight: 550}}>프로젝트 등록</div>
-                <div>
-                    <Button type={'primary'} size={'small'} style={{marginRight: 8}}
-                            onClick={saveFunc}
-                    ><SaveOutlined/>저장</Button>
-                    {/*@ts-ignored*/}
-                    <Button type={'danger'} size={'small'} style={{marginRight: 8}}
-                            onClick={clearAll}><RetweetOutlined/>초기화</Button>
-                </div>
-            </div>} style={{fontSize: 12, border: '1px solid lightGray'}}
-                  extra={<span style={{fontSize: 20, cursor: 'pointer'}}
-                               onClick={() => setMini(v => !v)}> {!mini ?
-                      <DownCircleFilled/> : <UpCircleFilled/>}</span>}>
 
+            <MainCard title={'배송 등록'} list={[
+                {name: '저장', func: saveFunc, type: 'primary'},
+                {name: '초기화', func: clearAll, type: 'danger'}
+            ]}>
+                <Tabs activeKey={tabNumb} items={items} onChange={onChange}/>
+            </MainCard>
 
-                <Tabs defaultActiveKey="1" items={items} onChange={onChange}/>
-
-            </Card>
         </LayoutComponent>
     </>
 }

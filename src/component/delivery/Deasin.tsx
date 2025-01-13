@@ -11,8 +11,8 @@ import {getData} from "@/manage/function/api";
 import message from "antd/lib/message";
 import {findCodeInfo} from "@/utils/api/commonApi";
 
-export default function Deasin(){
-    const [info, setInfo] = useState(tableOrderInventoryInitial)
+export default function Deasin({info, setInfo}){
+
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
     const inputForm = ({title, id, disabled = false, suffix = null, placeholder = ''}) => {
@@ -113,8 +113,8 @@ export default function Deasin(){
                          setIsModalOpen={setIsModalOpen}/>
 
         <TopBoxCard title={'기본 정보'} grid={'1fr 1fr 0.6fr 1fr 1fr 1fr'}>
-            {datePickerForm({title: '출고일자', id: 'writtenDate'})}
-            {inputForm({title: '연결 INQUIRY NO.', id: 'adminName'})}
+            {datePickerForm({title: '출고일자', id: 'deliveryDate'})}
+            {inputForm({title: '연결 INQUIRY NO.', id: 'connectInquiryNo'})}
             {inputForm({title: '고객사명', id: 'customerName'})}
         </TopBoxCard>
 
@@ -125,18 +125,18 @@ export default function Deasin(){
             marginTop: 10
         }}>
             <BoxCard title={'받는분 정보'}>
-                {inputForm({title: '성명', id: 'agencyName', placeholder : '거래처의 정보 default'})}
-                {inputForm({title: '연락처', id: '매입처담당자', placeholder: '거래처의 정보 default'})}
-                {inputForm({title: '주소', id: '매입처담당자', placeholder: '거래처의 정보 default'})}
-                {inputForm({title: '도착지', id: '매입처담당자', placeholder: '거래처의 정보 default'})}
+                {inputForm({title: '성명', id: 'recipientName', placeholder : '거래처의 정보 default'})}
+                {inputForm({title: '연락처', id: 'recipientPhone', placeholder: '거래처의 정보 default'})}
+                {inputForm({title: '주소', id: 'recipientAddress', placeholder: '거래처의 정보 default'})}
+                {inputForm({title: '도착지', id: 'destination', placeholder: '거래처의 정보 default'})}
             </BoxCard>
             <BoxCard title={'화물정보'}>
-                {inputForm({title: '품목명', id: 'managerName'})}
-                {inputForm({title: '수량', id: 'phoneNumber', placeholder : '숫자만 입력 가능하게'})}
-                {inputForm({title: '포장', id: 'faxNumber', placeholder : 'B or P'})}
-                {inputForm({title: '택배/화물', id: 'customerManagerEmail', placeholder : 'option : 택배 or 화물'})}
-                {inputForm({title: '결제방식', id: 'managerName', placeholder : 'option : 현불 or 착불'})}
-                {inputForm({title: '확인여부', id: 'managerName', placeholder : ''})}
+                {inputForm({title: '품목명', id: 'productName'})}
+                {inputForm({title: '수량', id: 'quantity', placeholder : '숫자만 입력 가능하게'})}
+                {inputForm({title: '포장', id: '', placeholder : 'B or P'})}
+                {inputForm({title: '택배/화물', id: 'customerManagerEmail', placeholder : '백엔드 체크 필요'})}
+                {inputForm({title: '결제방식', id: 'paymentMethod', placeholder : 'option : 현불 or 착불'})}
+                {inputForm({title: '확인여부', id: 'isConfirm', placeholder : '백엔드 체크 필요'})}
             </BoxCard>
         </div>
     </div>

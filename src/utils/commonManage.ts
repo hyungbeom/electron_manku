@@ -174,6 +174,7 @@ commonManage.openModal = function (e, setIsModalOpen) {
 }
 
 
+
 commonManage.changeColumn = {
     'Model': 'model',
     '수량': 'quantity',
@@ -330,3 +331,18 @@ commonFunc.sumCalc = function calculateTotals(rowData) {
     };
 }
 
+
+// ====================================================================================
+
+commonManage.commonCalc = function (info) {
+    const iterableObj = {
+        ...info,
+        [Symbol.iterator]: function* () {
+            for (const [key, value] of Object.entries(this)) {
+                yield { key, value };
+            }
+        },
+    };
+
+    return iterableObj
+}

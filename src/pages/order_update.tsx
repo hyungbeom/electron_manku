@@ -1,11 +1,9 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useRef, useState} from "react";
 import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
 import {CopyOutlined, DownCircleFilled, EditOutlined, SaveOutlined, UpCircleFilled} from "@ant-design/icons";
-import DatePicker from "antd/lib/date-picker";
-import {estimateDetailUnit, orderDetailUnit, printEstimateInitial, rfqWriteInitial,} from "@/utils/initialList";
-import moment from "moment";
+import {orderDetailUnit, printEstimateInitial,} from "@/utils/initialList";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
 import {getData} from "@/manage/function/api";
@@ -13,10 +11,8 @@ import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import Select from "antd/lib/select";
-import * as XLSX from "xlsx";
-import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {useRouter} from "next/router";
-import {BoxCard} from "@/utils/commonForm";
+import {BoxCard, MainCard} from "@/utils/commonForm";
 import TableGrid from "@/component/tableGrid";
 import {tableOrderWriteColumn} from "@/utils/columnList";
 import PrintPo from "@/component/printPo";
@@ -26,25 +22,29 @@ import TextArea from "antd/lib/input/TextArea";
 import {updateOrder} from "@/utils/api/mainApi";
 import _ from "lodash";
 import {findEstDocumentInfo} from "@/utils/api/commonApi";
+import {DriveUploadComp} from "@/component/common/SharePointComp";
 
 const listType = 'orderDetailList'
-export default function order_update({data}) {
+export default function order_update({dataInfo}) {
+    const fileRef = useRef(null);
     const gridRef = useRef(null);
     const router = useRouter();
 
-    const {orderDetail} = data;
+
     const copyUnitInit = _.cloneDeep(orderDetailUnit)
 
-    const userInfo = useAppSelector((state) => state.user);
+    const infoInit = dataInfo?.orderDetail
+    const infoFileInit = dataInfo?.attachmentFileList
 
-
-    const [info, setInfo] = useState<any>(orderDetail)
+    console.log(infoInit,'infoInit')
+    const [info, setInfo] = useState<any>(infoInit)
 
     const [mini, setMini] = useState(true);
     const [customerData, setCustomerData] = useState(printEstimateInitial)
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
 
 
+    console.log(info,'info:')
 // =============================================================================================================
     const inputForm = ({title, id, disabled = false, suffix = null, placeholder = ''}) => {
 
@@ -75,20 +75,59 @@ export default function order_update({data}) {
     }
 
 
-
-
     function onChange(e) {
         commonManage.onChange(e, setInfo)
     }
 
     async function saveFunc() {
         if (!info[listType].length) {
-            message.warn('하위 데이터 1개 이상이여야 합니다')
-        } else {
-
-            await updateOrder({data : info})
-
+          return  message.warn('하위 데이터 1개 이상이여야 합니다')
         }
+            const formData = new FormData();
+
+            const handleIteration = () => {
+                for (const {key, value} of commonManage.commonCalc(info)) {
+                    if (key !== listType) {
+                        formData.append(key, value);
+                    }
+                }
+            };
+
+            handleIteration();
+
+            const copyData = {...info}
+
+
+            if (copyData[listType].length) {
+                copyData[listType].forEach((detail, index) => {
+                    Object.keys(detail).forEach((key) => {
+                            formData.append(`${listType}[${index}].${key}`, detail[key]);
+                    });
+                });
+            }
+
+            const filesToSave = fileRef.current.fileList.map((item) => item.originFileObj).filter((file) => file instanceof File);
+
+            //새로 추가되는 파일
+            filesToSave.forEach((file, index) => {
+                formData.append(`attachmentFileList[${index}].attachmentFile`, file);
+                formData.append(`attachmentFileList[${index}].fileName`, file.name.replace(/\s+/g, ""));
+            });
+
+            //기존 기준 사라진 파일
+            const result = infoFileInit.filter(itemA => !fileRef.current.fileList.some(itemB => itemA.id === itemB.id));
+            result.map((v, idx) => {
+                formData.append(`deleteAttachementIdList[${idx}]`, v.id);
+            })
+
+            for (const [key, value] of formData.entries()) {
+                console.log(`Key: ${key}, Value: ${value}:::::::::`);
+            }
+
+
+
+
+       await updateOrder({data: formData})
     }
 
     async function printTransactionStatement() {
@@ -148,7 +187,6 @@ export default function order_update({data}) {
     }
 
 
-
     async function handleKeyPress(e) {
         if (e.key === 'Enter') {
 
@@ -178,6 +216,12 @@ export default function order_update({data}) {
         </Button>
     </div>
 
+
+    function moveWrite() {
+        router?.push('/order_write')
+    }
+
+
     return <>
         <LayoutComponent>
             <div style={{
@@ -189,23 +233,17 @@ export default function order_update({data}) {
                 {/*@ts-ignore*/}
                 <PrintTransactionModal data={info} customerData={customerData} isModalOpen={isModalOpen}
                                        setIsModalOpen={setIsModalOpen}/>
-                <PrintPo data={data} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
-                <Card title={<div style={{display: 'flex', justifyContent: 'space-between'}}>
-                    <div style={{fontSize: 14, fontWeight: 550}}>발주서 수정</div>
-                    <div>
-                        <Button type={'default'} size={'small'} style={{fontSize: 11, marginRight: 8}}
-                                onClick={printTransactionStatement}><SaveOutlined/>거래명세표 출력</Button>
-                        <Button type={'primary'} size={'small'} style={{fontSize: 11, marginRight: 8}}
-                                onClick={saveFunc}><SaveOutlined/>수정</Button>
-                        {/*@ts-ignored*/}
-                        <Button size={'small'} type={'danger'} style={{fontSize: 11, marginRight: 8,}}
-                                onClick={() => router?.push('/order_write')}><EditOutlined/>신규작성</Button>
-                        <Button type={'default'} size={'small'} style={{fontSize: 11, marginRight: 8}}
-                                onClick={printPo}><SaveOutlined/>발주서 출력</Button>
-                    </div>
-                </div>} style={{fontSize: 12, border: '1px solid lightGray'}}
-                      extra={<span style={{fontSize: 20, cursor: 'pointer'}} onClick={() => setMini(v => !v)}> {!mini ?
-                          <DownCircleFilled/> : <UpCircleFilled/>}</span>}>
+                <PrintPo data={dataInfo} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
+
+                <MainCard title={'견적서 수정'} list={[
+                    {name: '거래명세표 출력', func: printTransactionStatement, type: 'default'},
+                    {name: '수정', func: saveFunc, type: 'primary'},
+                    {name: '신규작성', func: moveWrite, type: 'danger'},
+                    {name: '발주서 출력', func: printPo, type: 'default'}
+                ]} mini={mini} setMini={setMini}>
+
+
+
                     {mini ? <div>
 
                         <BoxCard title={'INQUIRY & PO no'}>
@@ -228,7 +266,7 @@ export default function order_update({data}) {
 
                         <div style={{
                             display: 'grid',
-                            gridTemplateColumns: '150px 200px 200px 1fr',
+                            gridTemplateColumns: '150px 200px 200px 1fr 300px',
                             columnGap: 10,
                             marginTop: 10
                         }}>
@@ -258,64 +296,45 @@ export default function order_update({data}) {
                                 {inputForm({title: 'E-Mail', id: 'managerEmail'})}
 
                             </BoxCard>
-                            <Card size={'small'} title={'LOGISTICS'} style={{
-                                fontSize: 13,
-                                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                            }}>
-                                <div>
-                                    <div style={{paddingBottom: 3}}>Payment Terms</div>
-                                    <Select id={'paymentTerms'} size={'small'} defaultValue={'0'}
-                                            onChange={(src) => onChange({target: {id: 'searchType', value: src}})}
-                                            options={[
-                                                {value: '0', label: 'By in advance T/T'},
-                                                {value: '1', label: 'Credit Card'},
-                                                {value: '2', label: 'L/C'},
-                                                {value: '3', label: 'Order 30% Before Shipping 70%'},
-                                                {value: '4', label: 'Order 50% Before Shipping 50%'},
-                                            ]} style={{width: '100%'}}>
-                                    </Select>
-                                </div>
-                                <div style={{paddingTop: 8}}>
-                                    <div style={{paddingBottom: 3}}>Delivery Terms</div>
-                                    <Input id={'deliveryTerms'} value={info['deliveryTerms']} onChange={onChange}
-                                           size={'small'}/>
-                                </div>
-                                <div style={{paddingTop: 8}}>
-                                    <div style={{paddingBottom: 3}}>MAKER</div>
-                                    <Input id={'maker'} value={info['maker']} onChange={onChange} size={'small'}/>
-                                </div>
-                                <div style={{paddingTop: 8}}>
-                                    <div style={{paddingBottom: 3}}>ITEM</div>
-                                    <Input id={'item'} value={info['item']} onChange={onChange} size={'small'}/>
-                                </div>
+                            <BoxCard title={'LOGISTICS'}>
+                                <div style={{paddingBottom: 3}}>Payment Terms</div>
+                                <Select id={'paymentTerms'} size={'small'} defaultValue={'0'}
+                                        onChange={(src) => onChange({target: {id: 'searchType', value: src}})}
+                                        options={[
+                                            {value: '0', label: 'By in advance T/T'},
+                                            {value: '1', label: 'Credit Card'},
+                                            {value: '2', label: 'L/C'},
+                                            {value: '3', label: 'Order 30% Before Shipping 70%'},
+                                            {value: '4', label: 'Order 50% Before Shipping 50%'},
+                                        ]} style={{width: '100%'}}>
+                                </Select>
+                                {inputForm({title: 'Delivery Terms', id: 'deliveryTerms'})}
+                                {inputForm({title: 'MAKER', id: 'maker'})}
+                                {inputForm({title: 'ITEM', id: 'item'})}
                                 {inputForm({title: 'Delivery(weeks)', id: 'delivery'})}
-                            </Card>
+                            </BoxCard>
 
-                            <Card size={'small'} title={'ETC'} style={{
-                                fontSize: 13,
-                                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                            }}>
-                                <div>
-                                    <div style={{paddingBottom: 3}}>견적서담당자</div>
-                                    <Input id={'estimateManager'} value={info['estimateManager']} onChange={onChange}
-                                           size={'small'}/>
-                                </div>
+                            <BoxCard title={'ETC'}>
+                                {inputForm({title: '견적서담당자', id: 'estimateManager'})}
                                 {textAreaForm({title: '비고란', rows: 4, id: 'remarks'})}
                                 {textAreaForm({title: '하단태그', rows: 3, id: 'footer'})}
-                            </Card>
+                            </BoxCard>
+
+
+                            <BoxCard title={'드라이브 목록'}>
+                                <div style={{overFlowY: "auto", maxHeight: 300}}>
+                                    <DriveUploadComp infoFileInit={infoFileInit} fileRef={fileRef}/>
+                                </div>
+                            </BoxCard>
                         </div>
                     </div> : null}
-                </Card>
+                </MainCard>
 
 
                 <TableGrid
                     gridRef={gridRef}
                     columns={tableOrderWriteColumn}
                     tableData={info[listType]}
-                    listType={'orderId'}
-                    listDetailType={listType}
-                    setInfo={setInfo}
-                    excel={true}
                     type={'write'}
                     funcButtons={subTableUtil}
                 />
@@ -342,6 +361,10 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
         const result = await getData.post('order/getOrderDetail', {
             orderId: orderId
         });
-        return {props: {data: orderId ? result?.data?.entity : null}}
+
+        return {
+            props: {dataInfo: result?.data?.entity}
+        }
+
     }
 })

@@ -1,17 +1,8 @@
 import React, {useEffect, useRef, useState} from "react";
 import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
-import Card from "antd/lib/card/Card";
 import TextArea from "antd/lib/input/TextArea";
-import {
-    CopyOutlined,
-    DownCircleFilled,
-    FileSearchOutlined,
-    RetweetOutlined,
-    SaveOutlined,
-    UpCircleFilled,
-    UploadOutlined
-} from "@ant-design/icons";
+import {CopyOutlined, FileSearchOutlined, SaveOutlined, UploadOutlined} from "@ant-design/icons";
 import {subRfqWriteColumn} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
 import {estimateRequestDetailUnit, ModalInitList, rfqWriteInitial} from "@/utils/initialList";
@@ -25,27 +16,30 @@ import TableGrid from "@/component/tableGrid";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import SearchInfoModal from "@/component/SearchAgencyModal";
 import Upload from "antd/lib/upload";
-import {BoxCard, TopBoxCard} from "@/utils/commonForm";
+import {BoxCard, MainCard, TopBoxCard} from "@/utils/commonForm";
 import {useRouter} from "next/router";
 import {commonManage} from "@/utils/commonManage";
 import _ from "lodash";
-import {saveRfq} from "@/utils/api/mainApi";
 import {findCodeInfo} from "@/utils/api/commonApi";
+import {saveRfq} from "@/utils/api/mainApi";
+import {DriveUploadComp} from "@/component/common/SharePointComp";
 
-
+const listType = 'estimateRequestDetailList'
 export default function rqfWrite() {
     const fileRef = useRef(null);
     const gridRef = useRef(null);
+    const [fileList, setFileList] = useState([]);
     const router = useRouter();
 
     const copyInit = _.cloneDeep(rfqWriteInitial)
     const copyUnitInit = _.cloneDeep(estimateRequestDetailUnit)
 
+
     const userInfo = useAppSelector((state) => state.user);
 
     const infoInit = {
         ...copyInit,
-        adminId: userInfo['adminId'],
+        managerAdminId: userInfo['adminId'],
         managerAdminName: userInfo['name'],
         adminName: userInfo['name'],
     }
@@ -84,20 +78,17 @@ export default function rqfWrite() {
         </div>
     }
 
-    useEffect(()=>{
-        console.log(fileRef,'fileRef:')
-    },[fileRef])
 
     const datePickerForm = ({title, id, disabled = false}) => {
         return <div>
             <div>{title}</div>
             {/*@ts-ignore*/}
-            <DatePicker value={info[id] ? moment(info[id]) : ''} style={{width: '100%'}}
+            <DatePicker value={moment(info[id]).isValid() ? moment(info[id]) : ''} style={{width: '100%'}}
                         disabledDate={commonManage.disabledDate}
                         onChange={(date) => onChange({
                             target: {
                                 id: id,
-                                value: date
+                                value: moment(date).format('YYYY-MM-DD')
                             }
                         })
                         }
@@ -136,31 +127,62 @@ export default function rqfWrite() {
         if (!info['agencyCode']) {
             return message.warn('매입처 코드가 누락되었습니다.')
         }
+        if (!info[listType].length) {
+            return message.warn('하위 데이터 1개 이상이여야 합니다');
+        }
+
+        const formData:any = new FormData();
+
+        const handleIteration = () => {
+            for (const {key, value} of commonManage.commonCalc(info)) {
+                if (key !== listType) {
+                    if(key === 'dueDate'){
+                        formData.append(key, moment(value).format('YYYY-MM-DD'));
+                    }else{
+                        formData.append(key, value);
+                    }
+                }
+            }
+        };
+
+        handleIteration();
+
 
         const copyData = {...info}
 
-        const changeTime = gridRef.current.props.context.map(v => {
-            return {...v, replyDate: moment(v['replyDate']).format('YYYY-MM-DD')}
-        })
 
-        copyData['estimateRequestDetailList'] = changeTime;
+        if (copyData[listType].length) {
+            copyData[listType].forEach((detail, index) => {
+                Object.keys(detail).forEach((key) => {
+                    if(key === 'replyDate'){
+                        formData.append(`${listType}[${index}].${key}`, moment(detail[key]).format('YYYY-MM-DD'));
+                    }else{
+                        formData.append(`${listType}[${index}].${key}`, detail[key]);
+                    }
+                });
+            });
+        }
 
-        console.log(copyData,'::::')
-        // await saveRfq({data: copyData, router: router})
+        const filesToSave = fileRef.current.fileList.map((item) => item.originFileObj).filter((file) => file instanceof File);
+        filesToSave.forEach((file, index) => {
+            formData.append(`attachmentFileList[${index}].attachmentFile`, file);
+            formData.append(`attachmentFileList[${index}].fileName`, file.name.replace(/\s+/g, ""));
+        });
 
+        await saveRfq({data: formData, router: router})
 
     }
 
 
     function deleteList() {
         let copyData = {...info}
-        copyData['estimateRequestDetailList'] = commonManage.getUnCheckList(gridRef.current.api);
+        copyData[listType] = commonManage.getUnCheckList(gridRef.current.api);
         setInfo(copyData);
     }
 
     function addRow() {
         let copyData = {...info};
-        copyData['estimateRequestDetailList'].push({
+        copyData[listType].push({
             ...copyUnitInit,
             "currency": commonManage.changeCurr(info['agencyCode'])
         })
@@ -194,7 +216,7 @@ export default function rqfWrite() {
 
             commonManage.excelFileRead(file).then(v => {
                 let copyData = {...info}
-                copyData['estimateRequestDetailList'] = v;
+                copyData[listType] = v;
                 setInfo(copyData);
             })
             return false;
@@ -220,9 +242,7 @@ export default function rqfWrite() {
         </Button>
     </div>
 
-    function fileChange(e){
-        console.log(e,':::')
-    }
+
 
     return <>
         <LayoutComponent>
@@ -237,20 +257,12 @@ export default function rqfWrite() {
                                  open={isModalOpen}
                                  setIsModalOpen={setIsModalOpen}/>
 
-                <Card size={'small'} title={<div style={{display: 'flex', justifyContent: 'space-between'}}>
-                    <div style={{fontSize: 14, fontWeight: 550}}>견적의뢰 작성</div>
-                    <div>
-                        <Button type={'primary'} size={'small'} style={{marginRight: 8}}
-                                onClick={saveFunc}
-                        ><SaveOutlined/>저장</Button>
-                        {/*@ts-ignored*/}
-                        <Button type={'danger'} size={'small'} style={{marginRight: 8}}
-                                onClick={clearAll}><RetweetOutlined/>초기화</Button>
-                    </div>
-                </div>} style={{fontSize: 12, border: '1px solid lightGray'}}
-                      extra={<span style={{fontSize: 20, cursor: 'pointer'}}
-                                   onClick={() => setMini(v => !v)}> {!mini ?
-                          <DownCircleFilled/> : <UpCircleFilled/>}</span>}>
+                <MainCard title={'견적의뢰 작성'} list={[
+                    {name: '저장', func: saveFunc, type: 'primary'},
+                    {name: '초기화', func: clearAll, type: 'danger'}
+                ]} mini={mini} setMini={setMini}>
+
+
 
 
                     {mini ? <div>
@@ -262,7 +274,7 @@ export default function rqfWrite() {
                                     title: 'INQUIRY NO.',
                                     id: 'documentNumberFull',
                                     disabled: true,
-                                    placeholder: '[매입처코드-년도-일련번호]'
+                                    placeholder: ''
                                 })}
                                 {inputForm({title: 'RFQ NO.', id: 'rfqNo'})}
                                 {inputForm({title: '프로젝트 제목', id: 'projectTitle'})}
@@ -284,8 +296,8 @@ export default function rqfWrite() {
                                             }
                                         }/>
                                     })}
-                                    {inputForm({title: '매입처명', id: 'agencyName'})}
-                                    {inputForm({title: '매입처담당자', id: '매입처담당자', placeholder: '매입처 당담자 입력 필요'})}
+                                    {inputForm({title: '매입처명', id: 'agencyName', disabled : true})}
+                                    {inputForm({title: '매입처담당자', id: 'agencyManagerName', disabled : true})}
                                     {datePickerForm({title: '마감일자(예상)', id: 'dueDate'})}
                                 </BoxCard>
                                 <BoxCard title={'고객사 정보'}>
@@ -325,24 +337,19 @@ export default function rqfWrite() {
                                 </BoxCard>
                                 <BoxCard title={'드라이브 목록'}>
 
-                                    <div style={{overFlowY : "auto", maxHeight : 300}}>
-                                    <Upload ref={fileRef} onChange={fileChange} style={{overFlowY : "auto"}}  maxCount={13}
-                                            multiple>
-                                        <Button icon={<UploadOutlined />}>Upload</Button>
-                                    </Upload>
+                                    <div style={{overFlowY: "auto", maxHeight: 300}}>
+                                        <DriveUploadComp infoFileInit={[]} fileRef={fileRef}/>
                                     </div>
                                 </BoxCard>
                             </div>
                         </div>
                         : <></>}
-                </Card>
+                </MainCard>
 
                 <TableGrid
-                    list={'estimateRequestDetailList'}
                     gridRef={gridRef}
                     columns={subRfqWriteColumn}
-                    tableData={info['estimateRequestDetailList']}
-                    listType={'estimateRequestId'}
+                    tableData={info[listType]}
                     type={'write'}
                     funcButtons={subTableUtil}
                 />

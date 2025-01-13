@@ -1,10 +1,21 @@
-import {getData} from "@/manage/function/api";
+import {getData, getFormData} from "@/manage/function/api";
 import message from "antd/lib/message";
 import moment from "moment/moment";
 import {rfqWriteInitial} from "@/utils/initialList";
 
+
+export const checkInquiryNo = async ({data}) => {
+   return await getData.post('estimate/getNewDocumentNumberFull', data).then(v => {
+        if (v.data.code === 1) {
+           return v.data.entity.newDocumentNumberFull
+        }
+    }, err => message.error(err))
+};
+
+
 export const saveRfq = async ({data, router}) => {
-    await getData.post('estimate/addEstimateRequest', data).then(v => {
+    await getFormData.post('estimate/addEstimateRequest', data).then(v => {
+        console.log(v,'::::')
         if (v.data.code === 1) {
             message.success('저장되었습니다.');
             router.push(`/rfq_update?estimateRequestId=${v?.data?.entity?.estimateRequestId}`)
@@ -13,12 +24,12 @@ export const saveRfq = async ({data, router}) => {
 };
 
 
-export const updateRfq = async ({data}) => {
-    await getData.post('estimate/updateEstimateRequest', data).then(v => {
+export const updateRfq = async ({data, router}) => {
+    await getFormData.post('estimate/updateEstimateRequest', data).then(v => {
         if (v.data.code === 1) {
             message.success('저장되었습니다.')
             // setInfo(rfqWriteInitial);
-
+            router.push('/rfq_read')
             // window.location.href = '/rfq_read'
         } else {
             message.error('저장에 실패하였습니다.')
@@ -72,7 +83,7 @@ export const deleteRfq = async ({
 
 // =================================================================================================
 export const saveEstimate = async ({data, router}) => {
-    await getData.post('estimate/addEstimate', data).then(v => {
+    await getFormData.post('estimate/addEstimate', data).then(v => {
         if (v.data.code === 1) {
             message.success('저장되었습니다.')
             router.push(`/estimate_update?estimateId=${v.data.entity.estimateId}`)
@@ -84,13 +95,13 @@ export const saveEstimate = async ({data, router}) => {
 
 
 export const updateEstimate = async ({data}) => {
-    await getData.post('estimate/updateEstimate', data).then(v => {
+    await getFormData.post('estimate/updateEstimate', data).then(v => {
         if (v.data.code === 1) {
             message.success('수정되었습니다.')
         } else {
             message.error('수정에 실패하였습니다.')
         }
-    });
+    },err=>console.log(err,'::::'));
 };
 
 export const searchEstimate = async ({data}) => {
@@ -132,11 +143,11 @@ export const deleteEstimate = async ({
 // ==================================================================================================================
 
 export const saveOrder = async ({data, router}) => {
-    await getData.post('order/addOrder', data).then(v => {
+    await getFormData.post('order/addOrder', data).then(v => {
         if (v.data.code === 1) {
             message.success('저장되었습니다')
             router.push(`/order_update?orderId=${v.data.entity.orderId}`)
-        } else {
+        } else {``
             message.error('저장에 실패하였습니다.')
         }
     });
@@ -144,7 +155,7 @@ export const saveOrder = async ({data, router}) => {
 
 
 export const updateOrder = async ({data}) => {
-    await getData.post('order/updateOrder', data).then(v => {
+    await getFormData.post('order/updateOrder', data).then(v => {
         if (v.data.code === 1) {
             message.success('수정되었습니다')
         } else {

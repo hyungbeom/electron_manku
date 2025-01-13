@@ -82,38 +82,37 @@ export const estimateRequestDetailUnit = {
 
 
 export const rfqWriteInitial = {
-    writtenDate: '2024-09-11',
+    writtenDate: moment().format('YYYY-MM-DD'),
     managerAdminId: 0,           // 작성자 대용
-    managerAdminName: '담당자명',
-    documentNumberFull: 'CWT-24-01061',   // ====== api 통해서 가져와야 함?
-    rfqNo: 1,
-    projectTitle: 2,
+    managerAdminName: '',
+    documentNumberFull: '',   // ====== api 통해서 가져와야 함?
+    rfqNo: '',
+    projectTitle: '',
 // ====================================
-
-    agencyCode: 'K10',
-    agencyName: '인텍오토메이션',
+    agencyCode: '',
+    agencyName: '',
     agencyManagerName : '',
-    agencyManagerId: 1,
-    dueDate: 4,
-    agencyType: '국내',
+    agencyManagerId: null,
+    dueDate: null,
+    agencyType: '',
     // ======================
-    customerCode: 1, //없어도 되는것
-    customerName: '(주)발해에프유테크',
-    managerName: '석인수 책임님',
-    phoneNumber: 'test',
-    faxNumber: '033-921984109',
-    customerManagerEmail: 'test@test.com',
+    customerCode: null, //없어도 되는것
+    customerName: '',
+    managerName: '',
+    phoneNumber: '',
+    faxNumber: '',
+    customerManagerEmail: '',
 
     // ======================
-    maker: 'maker',
-    item: 'item',
+    maker: '',
+    item: '',
     instructions:'',
 
 // =============================
 
 
     remarks: 'note',
-    endUser: 3,
+    endUser: '',
 
 // ===========================
 
@@ -355,19 +354,26 @@ export const tableOrderInventoryInitial = {
 }
 
 
-export const subOrderWriteInitial = {
-    "model": '',           // MODEL
-    "quantity": 0,              // 수량
-    "unit": 'EA',               // 단위
-    "currency": 'USD',          // CURR
-    "net": 0,            // NET/P
-    "amount": 0,            // NET/P
-    "orderQuantity": 0,   // 납기
-    "receivedQuantity": 0,   // 납기
-    "unreceivedQuantity": 0,   // 납기
-    "unitPrice": 0,         // 내용
-    "price": 0,  // 회신일
+export const deliveryDaehanInitial = {
+    "deliveryType": "CJ",                          // 배송 유형 (CJ: 대한통운, DAESIN: 대신택배, QUICK: 퀵/직납/대리점)
+    "deliveryDate": moment().format('YYYY-MM-DD'),                  // 출고일자
+    "customerName": "",                // 고객사명
+    "recipientName": "",                     // 받는 분 성명
+    "recipientPhone": "",             // 받는 분 전화번호
+    "recipientAltPhone": "",          // 받는 분 기타 연락처
+    "recipientPostalCode": "",                // 받는 분 우편번호
+    "recipientAddress": "",        // 받는 분 주소
+    "trackingNumber": "",               // 운송장 번호 (CJ 전용)
+    "customerOrderNo": "",                 // 고객 주문 번호 (CJ 전용)
+    "destination": "",                       // 도착지 (DAESIN 전용)
+    "productName": "",                       // 품목명
+    "quantity": 0,                                 // 수량
+    "paymentMethod": "",                       // 결제 방식 (착불, 후불) (DAESIN/QUICK 전용)
+    "classification": "",                     // 구분 (용달, 대리점 등 QUICK 전용)
+    "connectInquiryNo": "",                // 연결된 문의 번호
+    "isConfirm": ""                // 이게 확인여부?
 }
+
 
 export const tableOrderReadInitial = {
     "orderId": 4114,

@@ -311,7 +311,7 @@ export const subRfqWriteColumn = [
         editable: true,
         cellEditor: 'agDateCellEditor',
         valueFormatter: (params) => {
-            return (!params.value || params.value === 'Invalid date') ? '' : dateFormat(params)
+            return moment(params.value).isValid() ?  dateFormat(params) : ''
         }
     },
     {
@@ -1820,7 +1820,7 @@ export const tableCodeDomesticPurchaseColumns = [
         field: 'createdDate',
         key: 'createdDate',
         valueFormatter: (params) => {
-            return (!params.value || params.value === 'Invalid date') ? '' : dateFormat(params)
+            return moment(params.value).isValid() ?  dateFormat(params) : ''
         }
 
     },
@@ -1834,7 +1834,7 @@ export const tableCodeDomesticPurchaseColumns = [
         field: 'modifiedDate',
         key: 'modifiedDate',
         valueFormatter: (params) => {
-            return (!params.value || params.value === 'Invalid date') ? '' : dateFormat(params)
+            return moment(params.value).isValid() ?  dateFormat(params) : ''
         }
 
     },

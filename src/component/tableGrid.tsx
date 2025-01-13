@@ -15,10 +15,8 @@ import useEventListener from "@/utils/common/function/UseEventListener";
 const TableGrid = ({
                        columns, tableData,
                        setSelectedRows,
-                       list = '',
                        modalComponent,
                        funcButtons,
-                       listType = 'estimateRequestId',
                        type = 'read',
                        gridRef
                    }: any) => {
