@@ -90,17 +90,12 @@ export default function ETC({info, setInfo}){
         }
     }
 
-    return <div style={{
-        display: 'grid',
-        gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`,
-        height: '100vh',
-        columnGap: 5
-    }}>
+    return <>
         <SearchInfoModal type={'agencyList'} info={info} setInfo={setInfo}
                          open={isModalOpen}
                          setIsModalOpen={setIsModalOpen}/>
 
-        <TopBoxCard title={'기본 정보'} grid={'1fr 1fr 0.6fr 1fr 1fr 1fr'}>
+        <TopBoxCard title={'기본 정보'} grid={'1fr 1fr 1fr 1fr 1fr 1fr'}>
             {datePickerForm({title: '출고일자', id: 'deliveryDate'})}
             {inputForm({title: '연결 INQUIRY NO.', id: 'connectInquiryNo'})}
             {inputForm({title: '고객사명', id: 'customerName'})}
@@ -108,7 +103,7 @@ export default function ETC({info, setInfo}){
 
         <div style={{
             display: 'grid',
-            gridTemplateColumns: "1fr 1fr ",
+            gridTemplateColumns: "300px 300px",
             gap: 10,
             marginTop: 10
         }}>
@@ -125,5 +120,5 @@ export default function ETC({info, setInfo}){
             </BoxCard>
 
         </div>
-    </div>
+    </>
 }

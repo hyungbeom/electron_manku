@@ -102,12 +102,7 @@ export default function Deasin({info, setInfo}){
         }
     }
 
-    return <div style={{
-        display: 'grid',
-        gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`,
-        height: '100vh',
-        columnGap: 5
-    }}>
+    return <>
         <SearchInfoModal type={'agencyList'} info={info} setInfo={setInfo}
                          open={isModalOpen}
                          setIsModalOpen={setIsModalOpen}/>
@@ -120,7 +115,8 @@ export default function Deasin({info, setInfo}){
 
         <div style={{
             display: 'grid',
-            gridTemplateColumns: "1fr 1fr ",
+            gridTemplateColumns: "250px 300px",
+            gridTemplateRows: "auto",
             gap: 10,
             marginTop: 10
         }}>
@@ -139,5 +135,5 @@ export default function Deasin({info, setInfo}){
                 {inputForm({title: '확인여부', id: 'isConfirm', placeholder : '백엔드 체크 필요'})}
             </BoxCard>
         </div>
-    </div>
+    </>
 }

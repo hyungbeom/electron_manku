@@ -89,7 +89,8 @@ export default function Deahan({info, setInfo}){
 
         <div style={{
             display: 'grid',
-            gridTemplateColumns: "1fr 1fr ",
+            gridTemplateColumns: "250px 300px ",
+            gridTemplateRows: "auto",
             gap: 10,
             marginTop: 10
         }}>
