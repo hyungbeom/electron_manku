@@ -3,7 +3,7 @@ import Button from "antd/lib/button";
 import {UploadOutlined} from "@ant-design/icons";
 import React from "react";
 
-export function DriveUploadComp({infoFileInit, fileRef}){
+export function DriveUploadComp({infoFileInit, fileRef}) {
 
     function handleClick(file, e) {
         if (e.target.className === 'ant-upload-list-item-name') {
@@ -19,7 +19,7 @@ export function DriveUploadComp({infoFileInit, fileRef}){
     }
 
 
-    return  <Upload
+    return <Upload
         defaultFileList={
             infoFileInit.map((v, idx) => {
                 return {
@@ -40,7 +40,6 @@ export function DriveUploadComp({infoFileInit, fileRef}){
         }}
         ref={fileRef}
         beforeUpload={() => false}
-        style={{overFlowY: "auto"}}
         maxCount={13}
         multiple>
         <Button icon={<UploadOutlined/>}>Upload</Button>

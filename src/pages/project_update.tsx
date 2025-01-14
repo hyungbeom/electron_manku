@@ -223,7 +223,7 @@ export default function projectUpdate() {
                 columnGap: 5
             }}>
                 {/*@ts-ignore*/}
-                <SearchInfoModal type={'agencyList'} info={info} setInfo={setInfo}
+                <SearchInfoModal info={info} setInfo={setInfo}
                                  open={isModalOpen}
                                  setIsModalOpen={setIsModalOpen}/>
 

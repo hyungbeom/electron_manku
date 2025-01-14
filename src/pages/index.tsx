@@ -99,7 +99,10 @@ export default function Home(props) {
 }
 
 
+// @ts-ignore
 export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
+
+
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
     if (codeInfo >= 0) {  // 조건을 좀 더 직관적으로 변경
         return {
@@ -131,9 +134,6 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
                 const {accessToken} = v?.data?.entity;
                 if (accessToken) {
                     setCookies(ctx, 'token', accessToken);
-                    // const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
-                    // console.log(userInfo,'???')
-                    // store.dispatch(setUserInfo(userInfo));
                     return {
                         redirect: {
                             destination: '/main',
@@ -153,4 +153,6 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
     return {
         props: {},
     };
+
+
 });

@@ -116,7 +116,7 @@ export default function rqfUpdate({dataInfo}) {
             return message.warn('하위 데이터 1개 이상이여야 합니다');
         }
 
-        const formData = new FormData();
+        const formData:any = new FormData();
 
         const handleIteration = () => {
             for (const {key, value} of commonManage.commonCalc(info)) {
@@ -292,6 +292,7 @@ export default function rqfUpdate({dataInfo}) {
                                 {textAreaForm({title: '비고란', rows: 7, id: 'remarks'})}
                             </BoxCard>
                             <BoxCard title={'드라이브 목록'}>
+                                   {/*@ts-ignored*/}
                                 <div style={{overFlowY: "auto", maxHeight: 300}}>
                                     <DriveUploadComp infoFileInit={infoFileInit} fileRef={fileRef}/>
                                 </div>

@@ -5,18 +5,17 @@ import DatePicker from "antd/lib/date-picker";
 import {searchOrderInitial} from "@/utils/initialList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
-import {getData} from "@/manage/function/api";
 import {setUserInfo} from "@/store/user/userSlice";
 import moment from "moment/moment";
 import Button from "antd/lib/button";
 import {CopyOutlined, FileExcelOutlined} from "@ant-design/icons";
 import message from "antd/lib/message";
-import {deleteEstimate, getDeliveryList, searchEstimate} from "@/utils/api/mainApi";
+import {deleteEstimate, getDeliveryList} from "@/utils/api/mainApi";
 import _ from "lodash";
 import {commonManage} from "@/utils/commonManage";
 import {BoxCard, MainCard, TopBoxCard} from "@/utils/commonForm";
 import TableGrid from "@/component/tableGrid";
-import {delilveryReadColumn, rfqReadColumns, tableEstimateReadColumns} from "@/utils/columnList";
+import {delilveryReadColumn} from "@/utils/columnList";
 
 const {RangePicker} = DatePicker
 
@@ -90,7 +89,7 @@ export default function delivery_read({data}) {
         }
         let result = await getDeliveryList({data: copyData});
 
-        console.log(result,'result')
+        console.log(result, 'result')
         setTableData(result)
     }
 

@@ -1,8 +1,7 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
 import DatePicker from "antd/lib/date-picker";
-import {remittanceDomesticInitial} from "@/utils/initialList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
@@ -12,30 +11,33 @@ import message from "antd/lib/message";
 import {BoxCard, MainCard, TopBoxCard} from "@/utils/commonForm";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import Radio from "antd/lib/radio";
-import _ from "lodash";
-import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import InputNumber from "antd/lib/input-number";
 import {commonManage} from "@/utils/commonManage";
-import {saveRemittance} from "@/utils/api/mainApi";
+import {saveRemittance, updateRemittance} from "@/utils/api/mainApi";
 import {useRouter} from "next/router";
 
-export default function remittance_domestic() {
-    const fileRef = useRef(null);
-    const copyInit = _.cloneDeep(remittanceDomesticInitial)
+export default function remittance_domestic({dataInfo}) {
 
+
+    const infoInit = dataInfo?.remittanceDetail
+    const infoFileInit = dataInfo?.attachmentFileList
+
+    const fileRef = useRef(null);
     const router = useRouter();
 
-    const userInfo = useAppSelector((state) => state.user);
-
-    const infoInit = {
-        ...copyInit,
-        managerAdminId: userInfo['adminId'],
-        managerAdminName: userInfo['name'],
-        adminName: userInfo['name'],
-    }
 
     const [info, setInfo] = useState(infoInit)
 
+    useEffect(()=>{
+        setInfo(v=>{
+            return {
+                ...v,
+                surtax: Math.round(v.supplyAmount * 0.1),
+                total: v.supplyAmount + Math.round(v.supplyAmount * 0.1)
+            }
+        })
+    },[infoInit])
+    console.log(info,'info:')
 
     const inputForm = ({title, id, disabled = false, suffix = null, placeholder = ''}) => {
         let bowl = info;
@@ -62,6 +64,10 @@ export default function remittance_domestic() {
             <InputNumber id={id} value={bowl[id]} disabled={disabled}
                          style={{width: '100%'}}
                          onBlur={() => console.log('!!!')}
+                         formatter={(value) =>
+                             `₩ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                         }
+                         parser={(value) => value.replace(/₩\s?|(,*)/g, '')}
                          onChange={value => {
 
                              setInfo(v => {
@@ -79,6 +85,21 @@ export default function remittance_domestic() {
         </div>
     }
 
+    const radioForm = ({title, id, disabled = false}) => {
+        let bowl = info;
+
+        return <>
+            <div>{title}</div>
+            <Radio.Group id={id} value={info[id]} disabled={disabled}
+                         onChange={e => {
+                             e.target['id'] = id
+                             onChange(e);
+                         }}>
+                <Radio value={'O'}>O</Radio>
+                <Radio value={'X'}>X</Radio>
+            </Radio.Group>
+        </>
+    }
 
     const datePickerForm = ({title, id, disabled = false}) => {
         return <div>
@@ -109,21 +130,32 @@ export default function remittance_domestic() {
 
         const handleIteration = () => {
             for (const {key, value} of commonManage.commonCalc(info)) {
+                if(!(key === 'modifiedId' || key === 'modifiedDate'))
                 formData.append(key, value);
             }
         };
 
         handleIteration();
+
         const filesToSave = fileRef.current.fileList.map((item) => item.originFileObj).filter((file) => file instanceof File);
+
+        //새로 추가되는 파일
         filesToSave.forEach((file, index) => {
             formData.append(`attachmentFileList[${index}].attachmentFile`, file);
             formData.append(`attachmentFileList[${index}].fileName`, file.name.replace(/\s+/g, ""));
         });
 
+        //기존 기준 사라진 파일
+        const result = infoFileInit.filter(itemA => !fileRef.current.fileList.some(itemB => itemA.id === itemB.id));
+        result.map((v, idx) => {
+            formData.append(`deleteAttachementIdList[${idx}]`, v.id);
+        })
+
         for (const [key, value] of formData.entries()) {
-            console.log(`${key}: ${value}`);
+            console.log(`Key: ${key}, Value: ${value}:::::::::`);
         }
-        await saveRemittance({data: formData, router: router})
+
+        await updateRemittance({data: formData, router: router})
 
     }
 
@@ -138,8 +170,8 @@ export default function remittance_domestic() {
     return <>
         <LayoutComponent>
 
-            <MainCard title={'국내 송금 등록'} list={[
-                {name: '저장', func: saveFunc, type: 'primary'},
+            <MainCard title={'국내 송금 수정'} list={[
+                {name: '수정', func: saveFunc, type: 'primary'},
                 {name: '복사', func: copyFunc, type: 'default'},
                 {name: '초기화', func: clearAll, type: 'danger'}
             ]}>
@@ -152,7 +184,7 @@ export default function remittance_domestic() {
                     {inputForm({title: '담당자', id: 'managerAdminName', disabled: true})}
                 </TopBoxCard>
 
-                <div style={{display: 'grid', gridTemplateColumns: "1fr 1fr 1fr 1fr"}}>
+                <div style={{display: 'grid', gridTemplateColumns: "250px 250px 250px 350px"}}>
 
                     <BoxCard title={'송금정보'}>
                         {datePickerForm({title: '송금요청일자', id: 'requestDate'})}
@@ -160,29 +192,20 @@ export default function remittance_domestic() {
                     </BoxCard>
 
                     <BoxCard title={'확인정보'}>
-                        <div>송금여부</div>
-                        <Radio.Group id={'isSend'} defaultValue={'X'} disabled={true}>
-                            <Radio value={'O'}>O</Radio>
-                            <Radio value={'X'}>X</Radio>
-                        </Radio.Group>
-                        <div>계산서 발행여부</div>
-                        <Radio.Group id={'isInvoice'} defaultValue={'X'} disabled={true}>
-                            <Radio value={'O'}>O</Radio>
-                            <Radio value={'X'}>X</Radio>
-                        </Radio.Group>
+                        {radioForm({title: '송금여부', id: 'isSend'})}
+                        {radioForm({title: '계산서 발행여부', id: 'isInvoice'})}
                     </BoxCard>
 
                     <BoxCard title={'금액정보'}>
-
                         {inputNumberForm({title: '공급가액', id: 'supplyAmount'})}
-                        {inputForm({title: '부가세', id: 'surtax', disabled: true})}
-                        {inputForm({title: '합계', id: 'total', disabled: true})}
+                        {inputNumberForm({title: '부가세', id: 'surtax', disabled: true})}
+                        {inputNumberForm({title: '합계', id: 'total', disabled: true})}
                     </BoxCard>
 
                     <BoxCard title={'드라이브 목록'}>
                         {/*@ts-ignored*/}
                         <div style={{overFlowY: "auto", maxHeight: 300}}>
-                            <DriveUploadComp infoFileInit={[]} fileRef={fileRef}/>
+                            <DriveUploadComp infoFileInit={infoFileInit} fileRef={fileRef}/>
                         </div>
                     </BoxCard>
                 </div>
@@ -195,6 +218,9 @@ export default function remittance_domestic() {
 // @ts-ignore
 export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
 
+    const {query} = ctx;
+
+    const {remittanceId} = query;
 
     const {userInfo} = await initialServerRouter(ctx, store);
 
@@ -209,22 +235,11 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     store.dispatch(setUserInfo(userInfo));
 
-    const result = await getData.post('etc/getRemittanceRequestList', {
-        "searchText": "",                   // 검색어: 담당자, 인쿼리, 판매처 업체명, 구매처 업체명
-        "searchStartRequestDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),       // 송금 요청일자 시작일
-        "searchEndRequestDate": moment().format('YYYY-MM-DD'),          // 송금 요청일자 종료일
-        "searchStartScheduledDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),    // 송금 지정일자 시작일
-        "searchEndScheduledDate": moment().format('YYYY-MM-DD'),       // 송금 지정일자 종료일
-        "searchStartDate": "",              // 등록일자 시작일
-        "searchEndDate": "",                // 등록일자 종료일
-        "searchIsTransferred": null,        // 송금여부(true, false)
-        "searchIsRead": null,               // 읽음 여부
-        "searchAdminId": null,              // 담당자 Id
-        "page": 1,
-        "limit": -1
+    const result = await getData.post('remittance/getRemittanceDetail', {
+        remittanceId: remittanceId
     });
 
     return {
-        props: {data: result?.data?.entity?.remittanceRequestList}
+        props: {dataInfo: result.data.entity}
     }
 })

@@ -253,7 +253,7 @@ export default function rqfWrite() {
                 columnGap: 5
             }}>
                 {/*@ts-ignore*/}
-                <SearchInfoModal type={'agencyList'} info={info} setInfo={setInfo}
+                <SearchInfoModal info={info} setInfo={setInfo}
                                  open={isModalOpen}
                                  setIsModalOpen={setIsModalOpen}/>
 
@@ -336,7 +336,7 @@ export default function rqfWrite() {
                                     {textAreaForm({title: '비고란', rows: 7, id: 'remarks'})}
                                 </BoxCard>
                                 <BoxCard title={'드라이브 목록'}>
-
+   {/*@ts-ignored*/}
                                     <div style={{overFlowY: "auto", maxHeight: 300}}>
                                         <DriveUploadComp infoFileInit={[]} fileRef={fileRef}/>
                                     </div>

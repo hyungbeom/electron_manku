@@ -103,7 +103,7 @@ export default function Deasin({info, setInfo}){
     }
 
     return <>
-        <SearchInfoModal type={'agencyList'} info={info} setInfo={setInfo}
+        <SearchInfoModal info={info} setInfo={setInfo}
                          open={isModalOpen}
                          setIsModalOpen={setIsModalOpen}/>
 

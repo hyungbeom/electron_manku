@@ -2673,38 +2673,31 @@ export const delilveryReadColumn = [
     {
         headerName: '출고일자.',
         field: 'deliveryDate',
-        minWidth: 150,
-        editable: true,
+        minWidth: 150
     }, {
         headerName: '운송유형',
         field: 'deliveryType',
-        minWidth: 150,
-        editable: true,
+        minWidth: 150
     }, {
         headerName: 'Inquiry No.',
         field: 'connectInquiryNo',
-        minWidth: 150,
-        editable: true,
+        minWidth: 150
     }, {
         headerName: '받는분 성명',
         field: 'recipientName',
-        minWidth: 150,
-        editable: true,
+        minWidth: 150
     }, {
         headerName: '받는분 전화번호',
         field: 'recipientPhone',
-        minWidth: 150,
-        editable: true,
+        minWidth: 150
     }, {
         headerName: '받는분 주소',
         field: 'recipientAddress',
-        minWidth: 150,
-        editable: true,
+        minWidth: 150
     }, {
         headerName: '수량',
         field: 'quantity',
-        minWidth: 150,
-        editable: true,
+        minWidth: 150
     },
     {
         headerName: '포장',
@@ -2716,22 +2709,84 @@ export const delilveryReadColumn = [
     }, {
         headerName: '택배/화물',
         field: 'model',
-        minWidth: 150,
-        editable: true,
+        minWidth: 150
     }, {
         headerName: '결제방식',
         field: 'paymentMethod',
-        minWidth: 150,
-        editable: true,
+        minWidth: 150
     }, {
         headerName: '운송장번호',
         field: 'trackingNumber',
+        minWidth: 150
+    }, {
+        headerName: '고객사명',
+        field: 'customerName',
+        minWidth: 150
+    }
+];
+
+
+export const remittanceReadColumn = [
+    {
+        headerName: 'Inquiry No..',
+        field: 'connectInquiryNo',
         minWidth: 150,
-        editable: true,
+
+    }, {
+        headerName: '담당자',
+        field: 'managerAdminName',
+        minWidth: 150,
+
+    }, {
+        headerName: '송금요청일자',
+        field: 'requestDate',
+        minWidth: 150,
+
+    }, {
+        headerName: '송금지정일자',
+        field: 'assignedDate',
+        minWidth: 150,
+
+    }, {
+        headerName: '거래처명',
+        field: 'customerName',
+        minWidth: 150,
+
+    }, {
+        headerName: '매입처명',
+        field: 'agencyName',
+        minWidth: 150,
+
+    }, {
+        headerName: '공급가액',
+        field: 'supplyAmount',
+        minWidth: 150,
+        valueFormatter: params => params.data.supplyAmount?.toLocaleString(),
+
+    },
+    {
+        headerName: '부가세',
+        field: 'net',
+        valueFormatter: params => Math.round(params.data.supplyAmount / 10)?.toLocaleString(),
+        cellEditor: 'agNumberCellEditor',
+
+    }, {
+        headerName: '합계',
+        field: 'total',
+        valueFormatter: params => (params.data.supplyAmount + Math.round(params.data.supplyAmount / 10))?.toLocaleString(),
+        minWidth: 150,
+    }
+    , {
+        headerName: '송금여부',
+        field: 'isSend',
+        minWidth: 150,
+    }, {
+        headerName: '계산서 발행 여부',
+        field: 'isInvoice',
+        minWidth: 150,
     }, {
         headerName: '고객사명',
         field: 'customerName',
         minWidth: 150,
-        editable: true,
     }
 ];

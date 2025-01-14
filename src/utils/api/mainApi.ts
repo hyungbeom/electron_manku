@@ -15,7 +15,6 @@ export const checkInquiryNo = async ({data}) => {
 
 export const saveRfq = async ({data, router}) => {
     await getFormData.post('estimate/addEstimateRequest', data).then(v => {
-        console.log(v, '::::')
         if (v.data.code === 1) {
             message.success('저장되었습니다.');
             router.push(`/rfq_update?estimateRequestId=${v?.data?.entity?.estimateRequestId}`)
@@ -93,6 +92,26 @@ export const saveEstimate = async ({data, router}) => {
     });
 };
 
+export const saveRemittance = async ({data, router}) => {
+    await getFormData.post('remittance/addRemittance', data).then(v => {
+        if (v.data.code === 1) {
+            message.success('저장되었습니다.')
+            router.push(`/remittance_domestic_update?remittanceId=${v.data.entity.remittanceId}`)
+        } else {
+            message.error('저장에 실패하였습니다.')
+        }
+    });
+};
+
+export const updateRemittance = async ({data, router}) => {
+    await getFormData.post('remittance/updateRemittance', data).then(v => {
+        if (v.data.code === 1) {
+            message.success('저장되었습니다.')
+        } else {
+            message.error('저장에 실패하였습니다.')
+        }
+    });
+};
 
 export const updateEstimate = async ({data}) => {
     await getFormData.post('estimate/updateEstimate', data).then(v => {

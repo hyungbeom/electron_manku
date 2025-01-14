@@ -91,7 +91,7 @@ export const rfqWriteInitial = {
 // ====================================
     agencyCode: '',
     agencyName: '',
-    agencyManagerName : '',
+    agencyManagerName: '',
     agencyManagerId: null,
     dueDate: null,
     agencyType: '',
@@ -106,7 +106,7 @@ export const rfqWriteInitial = {
     // ======================
     maker: '',
     item: '',
-    instructions:'',
+    instructions: '',
 
 // =============================
 
@@ -433,18 +433,29 @@ export const orderReadInitial = {
 }
 
 export const remittanceDomesticInitial = {
-    "searchText": "",
-    "searchRequestDate": "",// 검색어: 담당자, 인쿼리, 판매처 업체명, 구매처 업체명
-    "searchStartRequestDate": "",       // 송금 요청일자 시작일
-    "searchEndRequestDate": "",
-    "searchScheduledDate": "",// 송금 요청일자 종료일
-    "searchStartScheduledDate": "",     // 송금 지정일자 시작일
-    "searchEndScheduledDate": "",       // 송금 지정일자 종료일
-    "searchStartDate": "",              // 등록일자 시작일
-    "searchEndDate": "",                // 등록일자 종료일
-    "searchIsTransferred": null,        // 송금여부(true, false)
-    "searchIsRead": null,               // 읽음 여부
-    "searchAdminId": null,              // 담당자 Id
+    connectInquiryNo: '',
+    customerName: '',
+    agencyName: '',
+    requestDate: moment().format('YYYY-MM-DD'),
+    assignedDate: moment().format('YYYY-MM-DD'),
+    isSend: 'X',
+    isInvoice: 'X',
+    supplyAmount: 0,
+    managerAdminId: null,
+    managerAdminName: '',
+    surtax : 0,
+    total : 0,
+}
+export const remittanceDomesticSearchInitial = {
+    "searchDate" : [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
+    "searchConnectInquiryNo": "",   // InquiryNo
+    "searchCustomerName": "",       // 거래처명
+    "searchAgencyName": "",         // 매입처명
+    "searchManagerAdminName": "",   // 담당자
+    "searchRequestStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),   // 송금요청일자 검색 시작일
+    "searchRequestEndDate":  moment().format('YYYY-MM-DD'),     // 송금요청일자 검색 종료일
+    "searchIsSend": "X",             // 송금여부 O, X
+    "searchIsInvoice": "X",          // 계산서 발행여부 O, X
     "page": 1,
     "limit": -1
 }
@@ -784,9 +795,9 @@ export const modalList = {
 
 export const searchOrderInitial = {
     searchConnectInquiryNo: "",
-    searchDate:  [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
-    searchStartDate:  moment().subtract(1, 'years').format('YYYY-MM-DD'),
-    searchEndDate:  moment().format('YYYY-MM-DD'),
+    searchDate: [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
+    searchStartDate: moment().subtract(1, 'years').format('YYYY-MM-DD'),
+    searchEndDate: moment().format('YYYY-MM-DD'),
     searchCustomerName: "",
     searchRecipientPhone: "",
     searchIsConfirm: "",

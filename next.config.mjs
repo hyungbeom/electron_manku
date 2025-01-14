@@ -21,6 +21,5 @@ const nextConfig = {
 export default withTM([
   'antd',
   'rc-util',         // rc-util을 포함하여 트랜스파일
-  'xlsx',
-    'onedrive-api'
+  'xlsx'
 ])(nextConfig);

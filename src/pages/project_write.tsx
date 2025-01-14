@@ -241,8 +241,8 @@ export default function projectWrite() {
                 height: '100vh',
                 columnGap: 5
             }}>
-                {/*@ts-ignore*/}
-                <SearchInfoModal type={'agencyList'} info={info} setInfo={setInfo}
+
+                <SearchInfoModal info={info} setInfo={setInfo}
                                  open={isModalOpen}
                                  setIsModalOpen={setIsModalOpen}/>
 
@@ -278,7 +278,7 @@ export default function projectWrite() {
                             }}>
                                 <BoxCard title={'프로젝트 정보'}>
                                     {inputForm({title: 'PROJECT NO.', id: 'agencyName'})}
-                                    {inputForm({title: '프로젝트 제목', id: '매입처담당자', placeholder: '매입처 당담자 입력 필요'})}
+                                    {/*{inputForm({title: '프로젝트 제목', id: '매입처담당자', placeholder: '매입처 당담자 입력 필요'})}*/}
                                     {datePickerForm({title: '마감일자', id: 'writtenDate'})}
                                 </BoxCard>
                                 <BoxCard title={'거래처 정보'}>

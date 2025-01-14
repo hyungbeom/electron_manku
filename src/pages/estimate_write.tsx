@@ -174,7 +174,7 @@ export default function EstimateWrite() {
     function deleteList() {
         let copyData = {...info}
         copyData[listType] = commonManage.getUnCheckList(gridRef.current.api);
-        ;
+
         setInfo(copyData);
 
     }
@@ -210,7 +210,7 @@ export default function EstimateWrite() {
 
     return <>
 
-        <SearchInfoModal type={'agencyList'} info={info} setInfo={setInfo}
+        <SearchInfoModal info={info} setInfo={setInfo}
                          open={isModalOpen}
                          setIsModalOpen={setIsModalOpen}/>
 
@@ -330,7 +330,7 @@ export default function EstimateWrite() {
                                     {textAreaForm({title: '비고란', rows: 4, id: 'remarks'})}
                                 </BoxCard>
                                 <BoxCard title={'드라이브 목록'}>
-
+   {/*@ts-ignored*/}
                                     <div style={{overFlowY: "auto", maxHeight: 300}}>
                                         <DriveUploadComp infoFileInit={[]} fileRef={fileRef}/>
                                     </div>

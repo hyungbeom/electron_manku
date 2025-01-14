@@ -143,7 +143,7 @@ export default function estimate_update({dataInfo}) {
         }
 
 
-        const formData = new FormData();
+        const formData:any = new FormData();
 
         const handleIteration = () => {
             for (const {key, value} of commonManage.commonCalc(info)) {
@@ -230,7 +230,7 @@ export default function estimate_update({dataInfo}) {
 
     return <>
         {/*@ts-ignore*/}
-        <SearchInfoModal type={'agencyList'} info={info} setInfo={setInfo}
+        <SearchInfoModal  info={info} setInfo={setInfo}
                          open={isModalOpen}
                          setIsModalOpen={setIsModalOpen}/>
         <PrintEstimate data={info} isModalOpen={isPrintModalOpen} userInfo={userInfo}
@@ -341,6 +341,7 @@ export default function estimate_update({dataInfo}) {
                                 {textAreaForm({title: '비고란', rows: 3, id: 'remarks'})}
                             </BoxCard>
                             <BoxCard title={'드라이브 목록'}>
+                                   {/*@ts-ignored*/}
                                 <div style={{overFlowY: "auto", maxHeight: 300}}>
                                     <DriveUploadComp infoFileInit={infoFileInit} fileRef={fileRef}/>
                                 </div>

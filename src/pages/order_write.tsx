@@ -276,6 +276,7 @@ export default function OrderWriter() {
                                 {textAreaForm({title: '하단태그', rows: 3, id: 'footer'})}
                             </BoxCard>
                             <BoxCard title={'드라이브 목록'}>
+                                   {/*@ts-ignored*/}
                                 <div style={{overFlowY: "auto", maxHeight: 300}}>
                                     <DriveUploadComp infoFileInit={[]} fileRef={fileRef}/>
                                 </div>

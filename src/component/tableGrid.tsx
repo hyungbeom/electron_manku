@@ -90,6 +90,10 @@ const TableGrid = ({
     const handleDoubleClicked = (e) => {
 
         if (type === 'read') {
+            if (e.data.deliveryId)
+                router.push(`/delivery_update?deliveryId=${e?.data?.deliveryId}`)
+            if (e.data.remittanceId)
+                router.push(`/remittance_domestic_update?remittanceId=${e?.data?.remittanceId}`)
             if (e.data.estimateRequestId)
                 router.push(`/rfq_update?estimateRequestId=${e?.data?.estimateRequestId}`)
             if (e.data.estimateId)
