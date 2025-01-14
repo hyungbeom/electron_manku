@@ -25,7 +25,7 @@ import TableGrid from "@/component/tableGrid";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import SearchInfoModal from "@/component/SearchAgencyModal";
 import Upload, {UploadProps} from "antd/lib/upload";
-import {BoxCard, TopBoxCard} from "@/utils/commonForm";
+import {BoxCard, MainCard, TopBoxCard} from "@/utils/commonForm";
 import {useRouter} from "next/router";
 import {commonManage} from "@/utils/commonManage";
 import _ from "lodash";
@@ -234,6 +234,9 @@ export default function projectWrite() {
     </div>
 
     return <>
+        <SearchInfoModal info={info} setInfo={setInfo}
+                         open={isModalOpen}
+                         setIsModalOpen={setIsModalOpen}/>
         <LayoutComponent>
             <div style={{
                 display: 'grid',
@@ -242,25 +245,12 @@ export default function projectWrite() {
                 columnGap: 5
             }}>
 
-                <SearchInfoModal info={info} setInfo={setInfo}
-                                 open={isModalOpen}
-                                 setIsModalOpen={setIsModalOpen}/>
 
-                <Card size={'small'} title={<div style={{display: 'flex', justifyContent: 'space-between'}}>
-                    <div style={{fontSize: 14, fontWeight: 550}}>프로젝트 등록</div>
-                    <div>
-                        <Button type={'primary'} size={'small'} style={{marginRight: 8}}
-                                onClick={saveFunc}
-                        ><SaveOutlined/>저장</Button>
-                        {/*@ts-ignored*/}
-                        <Button type={'danger'} size={'small'} style={{marginRight: 8}}
-                                onClick={clearAll}><RetweetOutlined/>초기화</Button>
-                    </div>
-                </div>} style={{fontSize: 12, border: '1px solid lightGray'}}
-                      extra={<span style={{fontSize: 20, cursor: 'pointer'}}
-                                   onClick={() => setMini(v => !v)}> {!mini ?
-                          <DownCircleFilled/> : <UpCircleFilled/>}</span>}>
 
+                <MainCard title={'프로젝트 등록'} list={[
+                    {name: '저장', func: saveFunc, type: 'primary'},
+                    {name: '초기화', func: clearAll, type: 'danger'}
+                ]} mini={mini} setMini={setMini}>
 
                     {mini ? <div>
                             <TopBoxCard title={'기본 정보'} grid={'1fr 1fr 1fr'}>
@@ -313,7 +303,7 @@ export default function projectWrite() {
                             </div>
                         </div>
                         : <></>}
-                </Card>
+                </MainCard>
 
                 <TableGrid
                     list={'estimateRequestDetailList'}

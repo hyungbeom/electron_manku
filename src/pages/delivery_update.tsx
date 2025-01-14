@@ -8,15 +8,21 @@ import Deasin from "@/component/delivery/Deasin";
 import {TabsProps} from "antd";
 import Tabs from "antd/lib/tabs";
 import ETC from "@/component/delivery/ETC";
+import {setUserInfo} from "@/store/user/userSlice";
+import initialServerRouter from "@/manage/function/initialServerRouter";
+import {wrapper} from "@/store/store";
+import message from "antd/lib/message";
 
 
-export default function delivery_update() {
+export default function delivery_update({dataInfo}) {
 
-    const [tabNumb, setTabNumb] = useState('CJ')
-    const [cjInfo, setCjInfo] = useState({...deliveryDaehanInitial, deliveryType: 'CJ'})
-    const [daesinInfo, setDaesinInfo] = useState({...deliveryDaehanInitial, deliveryType: 'DAESIN'})
-    const [quickInfo, setQuickInfo] = useState({...deliveryDaehanInitial, deliveryType: 'QUICK'})
+    const [tabNumb, setTabNumb] = useState(dataInfo['deliveryType'])
+    const [cjInfo, setCjInfo] = useState({...dataInfo, deliveryType: 'CJ'})
+    const [daesinInfo, setDaesinInfo] = useState({...dataInfo, deliveryType: 'DAESIN'})
+    const [quickInfo, setQuickInfo] = useState({...dataInfo, deliveryType: 'QUICK'})
 
+
+    console.log(dataInfo, 'dataInfo::')
     const onChange = (key: string) => {
         setTabNumb(key);
     };
@@ -55,8 +61,10 @@ export default function delivery_update() {
         }
 
         if (sendParam) {
-            await getData.post('delivery/addDelivery', sendParam).then(v => {
-                console.log(v, ':::::::')
+            await getData.post('delivery/updateDelivery', sendParam).then(v => {
+                if (v.data.code === 1) {
+                    return message.success('저장되었습니다.')
+                }
             }, err => console.log(err, '::::'))
         }
     }
@@ -70,7 +78,7 @@ export default function delivery_update() {
         <LayoutComponent>
 
             <MainCard title={'배송 수정'} list={[
-                {name: '저장', func: saveFunc, type: 'primary'},
+                {name: '수정', func: saveFunc, type: 'primary'},
                 {name: '초기화', func: clearAll, type: 'danger'}
             ]}>
                 <Tabs activeKey={tabNumb} items={items} onChange={onChange}/>
@@ -79,43 +87,41 @@ export default function delivery_update() {
         </LayoutComponent>
     </>
 }
-//
-//
-// // @ts-ignore
-// export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
-//
-//
-//     let param = {}
-//
-//     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
-//
-//     const result = await getData.post('inventory/getInventoryList', {
-//         "searchInventoryId": "",
-//         "searchMaker": "",          // MAKER 검색
-//         "searchModel": "",          // MODEL 검색
-//         "searchLocation": "",       // 위치 검색
-//         "page": 1,
-//         "limit": -1,
-//     });
-//
-//
-//     if (userInfo) {
-//         store.dispatch(setUserInfo(userInfo));
-//     }
-//     if (codeInfo !== 1) {
-//         param = {
-//             redirect: {
-//                 destination: '/', // 리다이렉트할 대상 페이지
-//                 permanent: false, // true로 설정하면 301 영구 리다이렉트, false면 302 임시 리다이렉트
-//             },
-//         };
-//     } else {
-//         // result?.data?.entity?.estimateRequestList
-//         param = {
-//             props: {dataList: result?.data?.entity}
-//         }
-//     }
-//
-//
-//     return param
-// })
+
+
+// @ts-ignore
+export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
+
+    const {query} = ctx;
+
+    const {deliveryId} = query;
+
+
+    let param = {}
+
+    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
+
+
+    if (userInfo) {
+        store.dispatch(setUserInfo(userInfo));
+    }
+    if (codeInfo !== 1) {
+        param = {
+            redirect: {
+                destination: '/', // 리다이렉트할 대상 페이지
+                permanent: false, // true로 설정하면 301 영구 리다이렉트, false면 302 임시 리다이렉트
+            },
+        };
+    } else {
+        const result = await getData.post('delivery/getDeliveryDetail', {deliveryId: deliveryId});
+
+
+        // result?.data?.entity?.estimateRequestList
+        param = {
+            props: {dataInfo: result?.data?.entity?.deliveryDetail}
+        }
+    }
+
+
+    return param
+})
