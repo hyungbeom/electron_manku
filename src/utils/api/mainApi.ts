@@ -5,9 +5,9 @@ import {rfqWriteInitial} from "@/utils/initialList";
 
 
 export const checkInquiryNo = async ({data}) => {
-   return await getData.post('estimate/getNewDocumentNumberFull', data).then(v => {
+    return await getData.post('estimate/getNewDocumentNumberFull', data).then(v => {
         if (v.data.code === 1) {
-           return v.data.entity.newDocumentNumberFull
+            return v.data.entity.newDocumentNumberFull
         }
     }, err => message.error(err))
 };
@@ -15,7 +15,7 @@ export const checkInquiryNo = async ({data}) => {
 
 export const saveRfq = async ({data, router}) => {
     await getFormData.post('estimate/addEstimateRequest', data).then(v => {
-        console.log(v,'::::')
+        console.log(v, '::::')
         if (v.data.code === 1) {
             message.success('저장되었습니다.');
             router.push(`/rfq_update?estimateRequestId=${v?.data?.entity?.estimateRequestId}`)
@@ -101,7 +101,7 @@ export const updateEstimate = async ({data}) => {
         } else {
             message.error('수정에 실패하였습니다.')
         }
-    },err=>console.log(err,'::::'));
+    }, err => console.log(err, '::::'));
 };
 
 export const searchEstimate = async ({data}) => {
@@ -125,9 +125,9 @@ export const searchEstimate = async ({data}) => {
 };
 
 export const deleteEstimate = async ({
-                                    data, returnFunc = function () {
+                                         data, returnFunc = function () {
     }
-                                }) => {
+                                     }) => {
 
     await getData.post('estimate/deleteEstimateDetails', data).then(v => {
         if (v.data.code === 1) {
@@ -147,7 +147,8 @@ export const saveOrder = async ({data, router}) => {
         if (v.data.code === 1) {
             message.success('저장되었습니다')
             router.push(`/order_update?orderId=${v.data.entity.orderId}`)
-        } else {``
+        } else {
+            ``
             message.error('저장에 실패하였습니다.')
         }
     });
@@ -185,9 +186,9 @@ export const searchOrder = async ({data}) => {
 };
 
 export const deleteOrder = async ({
-                                         data, returnFunc = function () {
+                                      data, returnFunc = function () {
     }
-                                     }) => {
+                                  }) => {
 
     await getData.post('order/deleteOrderDetails', data).then(v => {
         if (v.data.code === 1) {
@@ -197,4 +198,19 @@ export const deleteOrder = async ({
             message.error('오류가 발생하였습니다. 다시 시도해주세요.')
         }
     }, err => message.error(err))
+};
+
+
+export const getDeliveryList = async ({data}) => {
+
+    console.log(data,'data')
+    const v = await getData.post('delivery/getDeliveryList', {
+        ...data, page: 1,
+        limit: -1
+    })
+    if (v.data.code === 1) {
+        return v.data.entity.deliveryList
+    } else {
+        message.error('오류가 발생하였습니다. 다시 시도해주세요.')
+    }
 };

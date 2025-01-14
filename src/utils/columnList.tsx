@@ -2665,3 +2665,73 @@ export const projectReadColumn = [
         editable: true,
     }
 ];
+
+
+
+
+export const delilveryReadColumn = [
+    {
+        headerName: '출고일자.',
+        field: 'deliveryDate',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '운송유형',
+        field: 'deliveryType',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: 'Inquiry No.',
+        field: 'connectInquiryNo',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '받는분 성명',
+        field: 'recipientName',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '받는분 전화번호',
+        field: 'recipientPhone',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '받는분 주소',
+        field: 'recipientAddress',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '수량',
+        field: 'quantity',
+        minWidth: 150,
+        editable: true,
+    },
+    {
+        headerName: '포장',
+        field: 'net',
+        cellEditor: 'agNumberCellEditor',
+        editable: true,
+        valueFormatter: params => commonManage.calcFloat(params, 2),
+        cellStyle: { textAlign: 'right' }
+    }, {
+        headerName: '택배/화물',
+        field: 'model',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '결제방식',
+        field: 'paymentMethod',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '운송장번호',
+        field: 'trackingNumber',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '고객사명',
+        field: 'customerName',
+        minWidth: 150,
+        editable: true,
+    }
+];

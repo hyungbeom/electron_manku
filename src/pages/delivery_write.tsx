@@ -1,33 +1,21 @@
 import React, {useState} from "react";
-import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
-import DatePicker from "antd/lib/date-picker";
-import {deliveryDaehanInitial, ModalInitList, tableOrderInventoryInitial,} from "@/utils/initialList";
+import {deliveryDaehanInitial,} from "@/utils/initialList";
 import {getData} from "@/manage/function/api";
-import moment from "moment";
-import message from "antd/lib/message";
-import TextArea from "antd/lib/input/TextArea";
-import {BoxCard, MainCard, TopBoxCard} from "@/utils/commonForm";
-import {commonManage} from "@/utils/commonManage";
-import {findCodeInfo} from "@/utils/api/commonApi";
-import {DownCircleFilled, FileSearchOutlined, RetweetOutlined, SaveOutlined, UpCircleFilled} from "@ant-design/icons";
-import SearchInfoModal from "@/component/SearchAgencyModal";
+import {MainCard} from "@/utils/commonForm";
 import Deahan from "@/component/delivery/Deahan";
 import Deasin from "@/component/delivery/Deasin";
 import {TabsProps} from "antd";
 import Tabs from "antd/lib/tabs";
 import ETC from "@/component/delivery/ETC";
-import Button from "antd/lib/button";
-import Card from "antd/lib/card/Card";
-import {saveRfq} from "@/utils/api/mainApi";
 
 
 export default function delivery_write() {
 
     const [tabNumb, setTabNumb] = useState('CJ')
-    const [cjInfo, setCjInfo] = useState({...deliveryDaehanInitial, deliveryType : 'CJ'})
-    const [daesinInfo, setDaesinInfo] = useState({...deliveryDaehanInitial, deliveryType : 'DAESIN'})
-    const [quickInfo, setQuickInfo] = useState({...deliveryDaehanInitial, deliveryType : 'QUICK'})
+    const [cjInfo, setCjInfo] = useState({...deliveryDaehanInitial, deliveryType: 'CJ'})
+    const [daesinInfo, setDaesinInfo] = useState({...deliveryDaehanInitial, deliveryType: 'DAESIN'})
+    const [quickInfo, setQuickInfo] = useState({...deliveryDaehanInitial, deliveryType: 'QUICK'})
 
     const onChange = (key: string) => {
         setTabNumb(key);
@@ -51,8 +39,8 @@ export default function delivery_write() {
         },
     ];
 
-    async function saveFunc() {
 
+    async function saveFunc() {
         let sendParam = null
         switch (tabNumb) {
             case 'CJ' :
@@ -66,10 +54,10 @@ export default function delivery_write() {
                 break;
         }
 
-        if(sendParam){
-           await getData.post('delivery/addDelivery', sendParam).then(v=>{
-               console.log(v,':::::::')
-           },err=>console.log(err,'::::'))
+        if (sendParam) {
+            await getData.post('delivery/addDelivery', sendParam).then(v => {
+                console.log(v, ':::::::')
+            }, err => console.log(err, '::::'))
         }
     }
 

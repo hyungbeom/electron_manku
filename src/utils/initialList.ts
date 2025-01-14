@@ -370,8 +370,7 @@ export const deliveryDaehanInitial = {
     "quantity": 0,                                 // 수량
     "paymentMethod": "",                       // 결제 방식 (착불, 후불) (DAESIN/QUICK 전용)
     "classification": "",                     // 구분 (용달, 대리점 등 QUICK 전용)
-    "connectInquiryNo": "",                // 연결된 문의 번호
-    "isConfirm": ""                // 이게 확인여부?
+    "connectInquiryNo": ""                // 연결된 문의 번호
 }
 
 
@@ -783,3 +782,13 @@ export const modalList = {
 }
 
 
+export const searchOrderInitial = {
+    searchConnectInquiryNo: "",
+    searchDate:  [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
+    searchStartDate:  moment().subtract(1, 'years').format('YYYY-MM-DD'),
+    searchEndDate:  moment().format('YYYY-MM-DD'),
+    searchCustomerName: "",
+    searchRecipientPhone: "",
+    searchIsConfirm: "",
+    searchTrackingNumber: "",
+}
