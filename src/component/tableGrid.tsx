@@ -11,6 +11,7 @@ import {InboxOutlined} from "@ant-design/icons";
 
 import {commonFunc, commonManage} from "@/utils/commonManage";
 import useEventListener from "@/utils/common/function/UseEventListener";
+import {searchEstimate} from "@/utils/api/mainApi";
 
 const TableGrid = ({
                        columns, tableData,
@@ -90,6 +91,8 @@ const TableGrid = ({
     const handleDoubleClicked = (e) => {
 
         if (type === 'read') {
+            if (e.data.projectId)
+                router.push(`/project_update?projectId=${e?.data?.projectId}`)
             if (e.data.deliveryId)
                 router.push(`/delivery_update?deliveryId=${e?.data?.deliveryId}`)
             if (e.data.remittanceId)
@@ -237,6 +240,46 @@ const TableGrid = ({
         setPage({x: null, y: null})
     }, typeof window !== 'undefined' ? document : null)
 
+    async function getEstimateInfo(v) {
+        let copyData = await searchEstimate({data: {searchDocumentNumber: v}});
+        return copyData;
+
+    }
+
+    async function getProjectDetail(e) {
+        if (e.column.colId === 'connectInquiryNo') { // 특정 칼럼 조건
+            console.log('Editing stopped in Name column:', e.value);
+            const result = await getEstimateInfo(e.value)
+
+            const rowNode = e.node;
+            const updatedData = {};
+
+            if (result.length && !!e.value) {
+                const updatedData = result.map((item) => {
+                    const {a, c, ...rest} = item; // 기존 키를 구조 분해
+                    return {
+                        ...rest,      // 나머지 키를 유지
+                        // aa: a,        // a를 aa로 변경
+                        connectInquiryNo: item['documentNumberFull']
+                    };
+                });
+
+                rowNode.setData(updatedData[0]);
+
+                if (result.length > 1) {
+                    updatedData.shift();
+
+
+                    gridRef.current.api.applyTransaction({
+                        add: updatedData, // 결과 배열의 각 객체가 새로운 행으로 추가됨
+                    });
+
+                }
+            }
+
+        }
+    }
+
     return (
         <>
             {page.x ? <div style={{
@@ -300,7 +343,7 @@ const TableGrid = ({
                              onRowDoubleClicked={handleDoubleClicked}
                     //@ts-ignore
                              rowSelection={rowSelection}
-
+                             onCellEditingStopped={getProjectDetail}
                              defaultColDef={defaultColDef}
                              columnDefs={columns}
                              rowData={data}

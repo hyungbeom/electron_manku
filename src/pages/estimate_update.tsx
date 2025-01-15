@@ -48,7 +48,6 @@ export default function estimate_update({dataInfo}) {
     const infoInit = dataInfo?.estimateDetail
     const infoFileInit = dataInfo?.attachmentFileList
 
-    console.log(infoInit,'infoInit:')
 
     const userInfo = useAppSelector((state) => state.user);
 

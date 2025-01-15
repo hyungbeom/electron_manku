@@ -103,6 +103,18 @@ export const saveRemittance = async ({data, router}) => {
     });
 };
 
+export const saveProject = async ({data, router}) => {
+    await getFormData.post('project/addProject', data).then(v => {
+        if (v.data.code === 1) {
+            message.success('저장되었습니다.')
+            router.push(`/project_update?projectId=${v.data.entity.projectId}`)
+        } else {
+            message.error('저장에 실패하였습니다.')
+        }
+    });
+};
+
+
 export const updateRemittance = async ({data, router}) => {
     await getFormData.post('remittance/updateRemittance', data).then(v => {
         if (v.data.code === 1) {
@@ -112,6 +124,17 @@ export const updateRemittance = async ({data, router}) => {
         }
     });
 };
+
+export const updateProject = async ({data, router}) => {
+    await getFormData.post('project/updateProject', data).then(v => {
+        if (v.data.code === 1) {
+            message.success('저장되었습니다.')
+        } else {
+            message.error('저장에 실패하였습니다.')
+        }
+    });
+};
+
 
 export const updateEstimate = async ({data}) => {
     await getFormData.post('estimate/updateEstimate', data).then(v => {
@@ -142,6 +165,34 @@ export const searchEstimate = async ({data}) => {
     const result = await getData.post('estimate/getEstimateList', {...defaultParam, ...data});
     return result?.data?.entity?.estimateList
 };
+
+
+export const searchProject = async ({data}) => {
+
+    const defaultParam = {
+        "searchManagerAdminName": "",
+        "searchStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),              // 작성일자 시작일
+        "searchEndDate": moment().format('YYYY-MM-DD'),                // 작성일자 종료일
+        "searchCreatedBy": "",
+        "searchDocumentNumberFull": "",
+        "searchProjectTitle": "",
+        "searchConnectInquiryNo": "",
+        "searchCustomerName": "",
+        "searchCustomerManagerName": "",
+        "searchCustomerPhone": "",
+        "searchCustomerEmail": "",
+        "searchAgencyName": "",
+        "searchAgencyManagerName": "",
+        "searchAgencyManagerPhone": "",
+        "searchAgencyManagerEmail": "",
+        "page": 1,
+        "limit": -1
+    }
+
+    const result = await getData.post('project/getProjectList', {...defaultParam, ...data});
+    return result?.data?.entity?.projectList
+};
+
 
 export const deleteEstimate = async ({
                                          data, returnFunc = function () {

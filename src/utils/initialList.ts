@@ -247,6 +247,24 @@ export const estimateReadInitial = {
     "searchCreatedBy": "",      // 등록 관리자 이름
 }
 
+export const projectReadInitial = {
+    "searchManagerAdminName": "",
+    "searchStartDate": "",
+    "searchEndDate": "",
+    "searchCreatedBy": "",
+    "searchDocumentNumberFull": "",
+    "searchProjectTitle": "",
+    "searchConnectInquiryNo": "",
+    "searchCustomerName": "",
+    "searchCustomerManagerName": "",
+    "searchCustomerPhone": "",
+    "searchCustomerEmail": "",
+    "searchAgencyName": "",
+    "searchAgencyManagerName": "",
+    "searchAgencyManagerPhone": "",
+    "searchAgencyManagerEmail": "",
+}
+
 
 export const tableEstimateReadInitial = {
     "estimateId": 0,
@@ -443,17 +461,17 @@ export const remittanceDomesticInitial = {
     supplyAmount: 0,
     managerAdminId: null,
     managerAdminName: '',
-    surtax : 0,
-    total : 0,
+    surtax: 0,
+    total: 0,
 }
 export const remittanceDomesticSearchInitial = {
-    "searchDate" : [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
+    "searchDate": [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
     "searchConnectInquiryNo": "",   // InquiryNo
     "searchCustomerName": "",       // 거래처명
     "searchAgencyName": "",         // 매입처명
     "searchManagerAdminName": "",   // 담당자
     "searchRequestStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),   // 송금요청일자 검색 시작일
-    "searchRequestEndDate":  moment().format('YYYY-MM-DD'),     // 송금요청일자 검색 종료일
+    "searchRequestEndDate": moment().format('YYYY-MM-DD'),     // 송금요청일자 검색 종료일
     "searchIsSend": "X",             // 송금여부 O, X
     "searchIsInvoice": "X",          // 계산서 발행여부 O, X
     "page": 1,
@@ -802,4 +820,72 @@ export const searchOrderInitial = {
     searchRecipientPhone: "",
     searchIsConfirm: "",
     searchTrackingNumber: "",
+}
+
+
+export const projectWriteInitial = {
+    managerAdminName: '',
+    managerAdminId: null,
+    writtenDate: moment().format('YYYY-MM-DD'),
+    documentNumberFull: '',
+    projectTitle: '',
+    dueDate: '',
+    customerName: '',
+    customerManagerName: '',
+    customerManagerPhone: '',
+    customerManagerEmail: '',
+    remarks: '',
+    instructions: '',
+    specialNotes: '',
+    projectDetailList: []
+}
+
+export const storeWriteInitial = {
+    blNo: "",              // BL No.
+    carrierName: "",        // 운수사명
+    arrivalDate: '',    // 입고일자
+    commissionFee: null,          // 수수료
+    vatAmount: null,              // 부가세
+    shippingFee: null,            // 운임비
+    orderStatusDetailList: []
+}
+export const storeDetailUni = {
+    "orderDocumentNumberFull": "K10-24-0001",           // 발주서 Inquiry No
+    "itemDetailNo": "전체",                              // 세부 항목 번호
+    "customerName": "거래처명",                           // 거래처명
+    "agencyName": "매입처명",                             // 매입처명
+    "orderDate": "2025-01-13",                          // 발주일자
+    "remittanceDate": "2025-01-13",                     // 송금일자
+    "amount": 112000,                                   // 금액
+    "currencyUnit": "KRW",                              // 화폐 단위
+    "salesAmount": 112000,                              // 판매금액
+    "deliveryDate": "2025-01-13",                       // 출고일자
+    "exchangeRate": 1500,                               // 환율
+    "charge": 1000,                                     // 수수료
+    "receiptDate": "2025-01-13",                        // 입고일자
+    "paymentStatus": "미완료",                            // 결제여부
+    "advancePayment": 1000,                             // 선수금
+    "remarks": "비고"
+}
+
+
+
+
+
+export const projectDetailUnit = {
+    connectInquiryNo: '',
+    maker: '',
+    item: '',
+    spec: '',
+    quantity: null,
+    unitPrice: '',
+    currencyUnit: '',
+    deliveryDate: '',
+    agencyName: '',
+    agencyManagerName: '',
+    agencyManagerPhone: '',
+    agencyManagerEmail: '',
+    relatedLink: '',
+    requestDeliveryDate: '',
+    remarks: ''
 }

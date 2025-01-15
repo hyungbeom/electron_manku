@@ -214,11 +214,14 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
                              onCellClicked={async (e) => {
                                  switch (openCheck) {
                                      case 'customerName' :
+                                         console.log(e.data,'e.data::')
                                          setInfo(v => {
                                              return {
                                                  ...v,
                                                  phoneNumber: e.data.directTel,
                                                  customerManagerEmail: e.data.email,
+                                                 customerManagerName: e.data.managerName,
+                                                 customerManagerPhone: e.data.directTel,
                                                  customerCode: e.data.customerCode,
                                                  ...e.data
                                              }

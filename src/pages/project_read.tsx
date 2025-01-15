@@ -1,44 +1,48 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Input from "antd/lib/input/Input";
-import Select from "antd/lib/select";
 import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
-import {CopyOutlined, FileExcelOutlined, FileSearchOutlined, SearchOutlined} from "@ant-design/icons";
-import Button from "antd/lib/button";
-import {projectReadColumn, rfqReadColumns} from "@/utils/columnList";
+import {projectReadColumn, tableEstimateReadColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {subRfqReadInitial} from "@/utils/initialList";
+import {estimateReadInitial, projectReadInitial, subRfqReadInitial} from "@/utils/initialList";
+import Select from "antd/lib/select";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
+import {getData} from "@/manage/function/api";
 import {setUserInfo} from "@/store/user/userSlice";
-import moment from "moment";
+import moment from "moment/moment";
+import * as XLSX from "xlsx";
+import Button from "antd/lib/button";
+import {CopyOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
-import {BoxCard, TopBoxCard} from "@/utils/commonForm";
+import {deleteEstimate, deleteRfq, searchEstimate, searchProject} from "@/utils/api/mainApi";
 import _ from "lodash";
-import {deleteRfq, searchRfq} from "@/utils/api/mainApi";
 import {commonManage} from "@/utils/commonManage";
+import {BoxCard, MainCard, TopBoxCard} from "@/utils/commonForm";
+import {DriveUploadComp} from "@/component/common/SharePointComp";
+import {useRouter} from "next/router";
 
 const {RangePicker} = DatePicker
 
 
-export default function projectRead({dataList}) {
+export default function ProjectRead({dataInfo}) {
 
+    const router = useRouter();
     const gridRef = useRef(null);
-
-
-    const {estimateRequestList = []} = dataList;
-    const copyInit = _.cloneDeep(subRfqReadInitial)
+    const [mini, setMini] = useState(true);
+    const copyInit = _.cloneDeep(projectReadInitial)
     const infoInit = {
         ...copyInit,
         searchDate: [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
     }
-    const [info, setInfo] = useState(infoInit);
-    const [tableData, setTableData] = useState(estimateRequestList);
+    const [info, setInfo] = useState(infoInit)
+    const [tableData, setTableData] = useState(dataInfo)
+
+    // =============================================================================
 
     const inputForm = ({title, id, disabled = false, suffix = null}) => {
         let bowl = info;
-
 
         return <div>
             <div>{title}</div>
@@ -51,6 +55,7 @@ export default function projectRead({dataList}) {
         </div>
     }
 
+
     const datePickerForm = ({title, id, disabled = false}) => {
         return <div>
             <div>{title}</div>
@@ -60,7 +65,7 @@ export default function projectRead({dataList}) {
                         onChange={(date) => onChange({
                             target: {
                                 id: id,
-                                value: date
+                                value: moment(date).format('YYYY-MM-DD')
                             }
                         })
                         }
@@ -68,6 +73,7 @@ export default function projectRead({dataList}) {
                         id={id} size={'small'}/>
         </div>
     }
+
 
     function handleKeyPress(e) {
         if (e.key === 'Enter') {
@@ -80,24 +86,17 @@ export default function projectRead({dataList}) {
     }
 
 
-    /**
-     * @description 검색조건에 의해서 검색 조회 api
-     */
     async function searchInfo() {
         const copyData: any = {...info}
         const {searchDate}: any = copyData;
-
-        const result = await searchRfq({
-            data: {
-                ...copyData,
-                searchStartDate: searchDate[0],
-                searchEndDate: searchDate[1]
-            }
-        });
-
-        setTableData(result?.estimateRequestList);
+        if (searchDate) {
+            copyData['searchStartDate'] = searchDate[0];
+            copyData['searchEndDate'] = searchDate[1];
+        }
+        const result = await getData.post('estimate/getEstimateList',
+            {...copyData, "page": 1, "limit": -1});
+        setTableData(result?.data?.entity?.estimateList)
     }
-
 
     async function deleteList() {
         const api = gridRef.current.api;
@@ -107,16 +106,17 @@ export default function projectRead({dataList}) {
         }
 
         if (api.getSelectedRows().length < 1) {
-            message.error('삭제할 데이터를 선택해주세요?.')
+            message.error('삭제할 데이터를 선택해주세요.')
         } else {
             for (const item of api.getSelectedRows()) {
-                const {estimateRequestId, estimateRequestDetailId} = item;
+                const {estimateId, estimateDetailId} = item;
+                console.log(item, 'item:')
                 bowl['deleteList'].push({
-                    "estimateRequestId": estimateRequestId,
-                    "estimateRequestDetailId": estimateRequestDetailId
+                    "estimateId": estimateId,
+                    "estimateDetailId": estimateDetailId
                 })
             }
-            await deleteRfq({data: bowl, returnFunc: searchInfo});
+            await deleteEstimate({data: bowl, returnFunc: searchInfo});
         }
     }
 
@@ -132,67 +132,83 @@ export default function projectRead({dataList}) {
         <CopyOutlined/>복사
     </Button>
         {/*@ts-ignored*/}
-        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
-                onClick={deleteList}>
+        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}} onClick={deleteList}>
             <CopyOutlined/>삭제
         </Button>
-        <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
-                onClick={downloadExcel}>
+        <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft: 5}} onClick={downloadExcel}>
             <FileExcelOutlined/>출력
         </Button></div>
 
 
+    async function saveFunc() {
+        let copyData = await searchProject({data: info});
+        setTableData(copyData)
+    }
+
+    function clearAll() {
+        setInfo(infoInit)
+    }
+
+    function moveRegist() {
+        router.push('/project_write')
+    }
+
     return <>
         <LayoutComponent>
-            <div style={{display: 'grid', gridTemplateRows: 'auto 1fr', height: '100vh', columnGap: 5}}>
+            <div style={{
+                display: 'grid',
+                gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`,
+                height: '100vh',
+                columnGap: 5
+            }}>
 
-                <Card title={<div style={{display: 'flex', justifyContent: 'space-between'}}>
-                    <div style={{fontSize: 14, fontWeight: 550}}>프로젝트 조회</div>
-                    <div style={{textAlign: 'right'}}>
-                        <Button type={'primary'} size={'small'} onClick={searchInfo}><SearchOutlined/>조회</Button>
-                    </div>
+                <MainCard title={'프로젝트 조회'} list={[
+                    {name: '조회', func: saveFunc, type: 'primary'},
+                    {name: '초기화', func: clearAll, type: 'danger'},
+                    {name: '신규작성', func: moveRegist, type: 'default'}
+                ]} mini={mini} setMini={setMini}>
 
+                    {mini ? <div>
+                            <TopBoxCard title={'기본 정보'} grid={'1fr 1fr 1fr 1fr'}>
 
-                </div>}
-                      headStyle={{marginTop: -10, height: 30}}
-                      style={{border: '1px solid lightGray',}} bodyStyle={{padding: '10px 24px'}}>
-                    <TopBoxCard title={'기본 정보'} grid={'1fr 1fr 1fr'}>
+                                {inputForm({title: '작성자', id: 'searchManagerAdminName'})}
+                                {datePickerForm({title: '작성일자', id: 'writtenDate'})}
+                                {inputForm({title: '담당자', id: 'searchManagerAdminName'})}
 
-                        {inputForm({title: '작성자', id: 'adminName', disabled: true})}
-                        {inputForm({title: '담당자', id: 'managerAdminName'})}
-                        {datePickerForm({title: '작성일자', id: 'writtenDate'})}
+                            </TopBoxCard>
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: "200px 250px 1fr 300px ",
+                                gap: 10,
+                                marginTop: 10
+                            }}>
+                                <BoxCard title={'프로젝트 정보'}>
+                                    {inputForm({title: 'PROJECT NO.', id: 'searchDocumentNumberFull'})}
+                                    {inputForm({title: '프로젝트 제목', id: 'searchProjectTitle'})}
+                                    {datePickerForm({title: 'Inquiry No.', id: 'searchConnectInquiryNo'})}
+                                </BoxCard>
+                                <BoxCard title={'매입처'}>
 
-                    </TopBoxCard>
-                    <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1.5fr', width: '100%', columnGap: 20, marginTop : 10}}>
-
-                        <BoxCard title={'프로젝트 정보'}>
-                            {inputForm({title: 'PROJECT NO.', id: 'agencyName'})}
-                            {/*{inputForm({title: '프로젝트 제목', id: '매입처담당자', placeholder: '매입처 당담자 입력 필요'})}*/}
-                            {datePickerForm({title: '마감일자', id: 'writtenDate'})}
-                        </BoxCard>
-
-                        <BoxCard title={'거래처 정보'}>
-                            {inputForm({title: '거래처명', id: 'managerName'})}
-                            {inputForm({title: '거래처 담당자명', id: 'phoneNumber'})}
-                            {inputForm({title: '담당자 전화번호', id: 'faxNumber'})}
-                            {inputForm({title: '담당자 이메일', id: 'customerManagerEmail'})}
-                        </BoxCard>
-
-                        <BoxCard title={'매입처 정보'}>
-                            {inputForm({title: '매입처명', id: 'managerName'})}
-                            {inputForm({title: '매입처 담당자명', id: 'phoneNumber'})}
-                            {inputForm({title: '매입처 전화번호', id: 'faxNumber'})}
-                            {inputForm({title: '매입처 이메일', id: 'customerManagerEmail'})}
-                        </BoxCard>
-
-                    </div>
-                </Card>
+                                    {inputForm({title: '매입처명', id: 'searchAgencyName'})}
+                                    {inputForm({title: '매입처 담당자명', id: 'searchAgencyManagerName'})}
+                                    {inputForm({title: '담당자 전화번호', id: 'searchAgencyManagerPhone'})}
+                                    {inputForm({title: '담당자 이메일', id: 'searchAgencyManagerEmail'})}
+                                </BoxCard>
+                                <BoxCard title={'거래처 정보'}>
+                                    {inputForm({title: '거래처명', id: 'searchCustomerName'})}
+                                    {inputForm({title: '거래처 담당자명', id: 'searchCustomerManagerName'})}
+                                    {inputForm({title: '담당자 전화번호', id: 'searchCustomerPhone'})}
+                                    {inputForm({title: '담당자 이메일', id: 'searchCustomerEmail'})}
+                                </BoxCard>
+                            </div>
+                        </div>
+                        : <></>}
+                </MainCard>
 
                 <TableGrid
                     gridRef={gridRef}
                     columns={projectReadColumn}
                     tableData={tableData}
-                    type={'read'}
                     funcButtons={subTableUtil}
                 />
 
@@ -201,11 +217,12 @@ export default function projectRead({dataList}) {
     </>
 }
 
+
 export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
+
 
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
-    console.log(codeInfo,'codeInfo:')
     if (codeInfo < 0) {
         return {
             redirect: {
@@ -215,12 +232,9 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
         };
     } else {
         store.dispatch(setUserInfo(userInfo));
-
-        const result = await searchRfq({data: {}});
-
+        let copyData = await searchProject({data: {}});
         return {
-            props: {dataList: result}
+            props: {dataInfo: copyData}
         }
     }
-
 })

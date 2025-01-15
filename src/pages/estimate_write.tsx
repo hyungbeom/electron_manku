@@ -1,20 +1,11 @@
 import React, {useRef, useState} from "react";
 import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
-import Card from "antd/lib/card/Card";
 import TextArea from "antd/lib/input/TextArea";
-import {
-    CopyOutlined,
-    DownCircleFilled,
-    DownloadOutlined,
-    FileSearchOutlined,
-    RetweetOutlined,
-    SaveOutlined,
-    UpCircleFilled
-} from "@ant-design/icons";
+import {CopyOutlined, DownloadOutlined, FileSearchOutlined, SaveOutlined} from "@ant-design/icons";
 import {tableEstimateWriteColumns} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {estimateDetailUnit, estimateWriteInitial, ModalInitList, orderWriteInitial} from "@/utils/initialList";
+import {estimateDetailUnit, estimateWriteInitial, ModalInitList} from "@/utils/initialList";
 import moment from "moment";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
@@ -155,7 +146,7 @@ export default function EstimateWrite() {
         if (copyData[listType].length) {
             copyData[listType].forEach((detail, index) => {
                 Object.keys(detail).forEach((key) => {
-                        formData.append(`${listType}[${index}].${key}`, detail[key]);
+                    formData.append(`${listType}[${index}].${key}`, detail[key]);
                 });
             });
         }
@@ -330,7 +321,7 @@ export default function EstimateWrite() {
                                     {textAreaForm({title: '비고란', rows: 4, id: 'remarks'})}
                                 </BoxCard>
                                 <BoxCard title={'드라이브 목록'}>
-   {/*@ts-ignored*/}
+                                    {/*@ts-ignored*/}
                                     <div style={{overFlowY: "auto", maxHeight: 300}}>
                                         <DriveUploadComp infoFileInit={[]} fileRef={fileRef}/>
                                     </div>

@@ -2498,85 +2498,88 @@ export const modalCodeDiplomaColumn = [
 export const projectWriteColumn = [
     {
         headerName: '연결 Inquiry No.',
-        field: 'model',
+        field: 'connectInquiryNo',
         minWidth: 150,
         editable: true,
     }, {
         headerName: 'Maker',
-        field: 'model',
+        field: 'maker',
         minWidth: 150,
         editable: true,
     }, {
         headerName: 'Item',
-        field: 'model',
+        field: 'item',
         minWidth: 150,
         editable: true,
     }, {
         headerName: '규격',
-        field: 'model',
+        field: 'spec',
         minWidth: 150,
         editable: true,
     }, {
         headerName: '수량',
-        field: 'model',
+        field: 'quantity',
         minWidth: 150,
         editable: true,
     }, {
         headerName: '단위가격',
-        field: 'model',
+        field: 'quantity',
         minWidth: 150,
         editable: true,
     }, {
         headerName: '총액',
-        field: 'model',
+        field: 'total',
         minWidth: 150,
         editable: true,
     },
     {
         headerName: '화폐단위',
-        field: 'net',
-        cellEditor: 'agNumberCellEditor',
+        field: 'currencyUnit',
         editable: true,
-        valueFormatter: params => commonManage.calcFloat(params, 2),
-        cellStyle: { textAlign: 'right' }
+        cellEditor: 'agSelectCellEditor',
+        cellEditorParams: {
+            values: ['KRW', 'EUR', 'JPY', 'USD', 'GBP',],
+        }
     }, {
         headerName: '납기',
-        field: 'model',
+        field: 'deliveryDate',
+        cellEditor: 'agDateCellEditor',
         minWidth: 150,
         editable: true,
     }, {
         headerName: '매입처명',
-        field: 'model',
+        field: 'agencyName',
         minWidth: 150,
         editable: true,
     }, {
         headerName: '매입처 담당자명',
-        field: 'model',
+        field: 'agencyManagerName',
         minWidth: 150,
         editable: true,
     }, {
         headerName: '매입처 전화번호',
-        field: 'model',
+        field: 'agencyManagerPhone',
         minWidth: 150,
         editable: true,
     }, {
         headerName: '매입처 이메일',
-        field: 'model',
+        field: 'agencyManagerEmail',
         minWidth: 150,
         editable: true,
     }, {
         headerName: '관련링크',
-        field: 'model',
+        field: 'relatedLink',
         minWidth: 150,
         editable: true,
     }, {
         headerName: '납기요청일',
-        field: 'model',
+        field: 'requestDeliveryDate',
         minWidth: 150,
+        cellEditor: 'agDateCellEditor',
         editable: true,
     }, {
         headerName: '비고',
-        field: 'model',
+        field: 'remarks',
         minWidth: 150,
         editable: true,
     }
@@ -2587,82 +2590,65 @@ export const projectWriteColumn = [
 export const projectReadColumn = [
     {
         headerName: 'PROJECT No.',
-        field: 'model',
+        field: 'documentNumberFull',
         minWidth: 150,
-        editable: true,
     }, {
         headerName: '프로젝트 제목',
-        field: 'model',
+        field: 'projectTitle',
         minWidth: 150,
-        editable: true,
     }, {
         headerName: '거래처명',
-        field: 'model',
+        field: 'customerName',
         minWidth: 150,
-        editable: true,
     }, {
         headerName: '거래처 담당자명',
-        field: 'model',
+        field: 'customerName',
         minWidth: 150,
-        editable: true,
     }, {
         headerName: '마감 일자',
-        field: 'model',
+        field: 'dueDate',
         minWidth: 150,
-        editable: true,
     }, {
         headerName: '담당자',
-        field: 'model',
+        field: 'managerAdminName',
         minWidth: 150,
-        editable: true,
     }, {
         headerName: '연결 Inquiry No',
-        field: 'model',
+        field: 'connectInquiryNo',
         minWidth: 150,
-        editable: true,
     },
     {
         headerName: 'Maker',
-        field: 'net',
-        cellEditor: 'agNumberCellEditor',
-        editable: true,
-        valueFormatter: params => commonManage.calcFloat(params, 2),
-        cellStyle: { textAlign: 'right' }
+        field: 'maker',
+
     }, {
         headerName: 'Item',
-        field: 'model',
+        field: 'item',
         minWidth: 150,
-        editable: true,
     }, {
         headerName: '규격',
-        field: 'model',
+        field: 'spec',
         minWidth: 150,
-        editable: true,
     }, {
         headerName: '수량',
-        field: 'model',
+        field: 'quantity',
         minWidth: 150,
-        editable: true,
     }, {
         headerName: '단위 가격',
-        field: 'model',
+        field: 'unitPrice',
         minWidth: 150,
-        editable: true,
     }, {
         headerName: '총액',
-        field: 'model',
+        field: 'total',
         minWidth: 150,
-        editable: true,
     }, {
         headerName: '화폐단위',
-        field: 'model',
+        field: 'currencyUnit',
         minWidth: 150,
-        editable: true,
     }, {
         headerName: '납기',
-        field: 'model',
+        field: '??',
         minWidth: 150,
-        editable: true,
     }
 ];
 

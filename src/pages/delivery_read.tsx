@@ -59,7 +59,7 @@ export default function delivery_read({data}) {
                         onChange={(date) => onChange({
                             target: {
                                 id: id,
-                                value: date
+                                value: moment(date).format('YYYY-MM-DD')
                             }
                         })
                         }

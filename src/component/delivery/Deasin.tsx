@@ -52,7 +52,7 @@ export default function Deasin({info, setInfo}){
                         onChange={(date) => onChange({
                             target: {
                                 id: id,
-                                value: date
+                                value: moment(date).format('YYYY-MM-DD')
                             }
                         })
                         }

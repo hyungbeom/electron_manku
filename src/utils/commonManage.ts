@@ -6,8 +6,35 @@ export const commonManage: any = {}
 export const apiManage: any = {}
 export const commonFunc: any = {}
 export const commonCalc: any = {}
+export const gridManage: any = {}
 
 
+
+
+gridManage.getAllData = function(gridRef){
+    const allData = [];
+    const nodesToRemove = [];
+
+    // 모든 노드를 순회
+    gridRef.current.api.forEachNode((node) => {
+        const row = node.data;
+
+        // 행이 빈 행인지 확인
+        const isEmptyRow = Object.values(row).every(value => value === null || value === undefined || value === '');
+        if (isEmptyRow) {
+            nodesToRemove.push(node); // 빈 행은 삭제 대상으로 추가
+        } else {
+            allData.push(row); // 유효한 행만 배열에 추가
+        }
+    });
+
+    // 빈 행 제거
+    if (nodesToRemove.length > 0) {
+        gridRef.current.api.applyTransaction({ remove: nodesToRemove.map(node => node.data) });
+    }
+
+    return allData; // 빈 행이 제거된 데이터를 반환
+}
 // ===============================================
 
 

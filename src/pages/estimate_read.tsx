@@ -178,7 +178,6 @@ export default function EstimateRead({data}) {
 
                 <TableGrid
                     gridRef={gridRef}
-                    listType={'estimateId'}
                     columns={tableEstimateReadColumns}
                     tableData={tableData}
                     funcButtons={subTableUtil}
