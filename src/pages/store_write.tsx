@@ -28,7 +28,7 @@ import {useRouter} from "next/router";
 
 const listType = 'orderStatusDetailList'
 
-export default function storeWrite() {
+export default function storeWrite({dataInfo}) {
     const router = useRouter();
 
     const gridRef = useRef(null);
@@ -40,11 +40,12 @@ export default function storeWrite() {
     const infoInit = {
         ...copyInit,
         managerAdminId: userInfo['adminId'],
-        managerAdminName: userInfo['name']
+        managerAdminName: userInfo['name'],
     }
 
+
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [info, setInfo] = useState<any>(infoInit)
+    const [info, setInfo] = useState<any>({...infoInit, ...dataInfo})
     const [mini, setMini] = useState(true);
 
 
@@ -54,10 +55,11 @@ export default function storeWrite() {
      */
     const onGridReady = (params) => {
         gridRef.current = params.api;
-        params.api.applyTransaction({add: []});
+        const result = dataInfo?.orderStatusDetailList;
+        params.api.applyTransaction({add: result ? result : []});
     };
 
-    function getTotalTableValue(){
+    function getTotalTableValue() {
         const totalList = gridManage.getAllData(gridRef)
 
         const totals = totalList.reduce(
@@ -86,7 +88,7 @@ export default function storeWrite() {
         return totals;
     }
 
-    function onCellEditingStopped(){
+    function onCellEditingStopped() {
         updateMainInput()
     }
 
@@ -109,23 +111,30 @@ export default function storeWrite() {
         let copyInfo = _.cloneDeep(info)
         copyInfo[listType] = totalList
 
-        copyInfo[listType].forEach(v =>{
-            v.itemDetailNo = v.itemDetailNo.join(',')
+        copyInfo[listType].forEach((v,idx) => {
+
+            const processedItemDetailNo = Array.isArray(v.itemDetailNo)
+                ? v.itemDetailNo.join(',') // 배열을 쉼표로 구분된 문자열로 변환
+                : v.itemDetailNo; // 배열이 아니면 그대로 사용
+
+            console.log(processedItemDetailNo,'processedItemDetailNo:')
+
+            copyInfo[listType][idx]['itemDetailNo'] = processedItemDetailNo;
+
         })
-
-        console.log(copyInfo[listType],'::::')
-
+        console.log(copyInfo[listType])
         await saveStore({data: copyInfo, router: router})
     }
 
     async function deleteList() {
-        // const deleteIdList = gridManage.getFieldValue(gridRef, 'deliveryId')
-        // await deleteDelivery({data: {deleteIdList: deleteIdList}});
+        const list = commonManage.getUnCheckList(gridRef);
+        gridManage.resetData(gridRef, list);
     }
 
 
     function clearAll() {
         setInfo({...infoInit});
+        gridManage.deleteAll(gridRef)
     }
 
 
@@ -133,19 +142,19 @@ export default function storeWrite() {
         setIsModalOpen(true);
     };
 
-function updateMainInput(){
-    const {commissionFeeTotal, returnAmountTotal, salesAmountTotal, salesAmountVatTotal} = getTotalTableValue();
-    setInfo(v=>{
-        return {
-            ...v,
-            total : returnAmountTotal + commissionFeeTotal + v.tariff + v.shippingFee,
-            totalVat : returnAmountTotal + commissionFeeTotal + v.tariff + v.shippingFee + v.vatAmount,
-            saleTotal : salesAmountTotal,
-            saleVatTotal : salesAmountVatTotal,
-            operationIncome : salesAmountTotal + (returnAmountTotal + commissionFeeTotal + v.tariff + v.shippingFee),
-        }
-    })
-}
+    function updateMainInput() {
+        const {commissionFeeTotal, returnAmountTotal, salesAmountTotal, salesAmountVatTotal} = getTotalTableValue();
+        setInfo(v => {
+            return {
+                ...v,
+                total: returnAmountTotal + commissionFeeTotal + v.tariff + v.shippingFee,
+                totalVat: returnAmountTotal + commissionFeeTotal + v.tariff + v.shippingFee + v.vatAmount,
+                saleTotal: salesAmountTotal,
+                saleVatTotal: salesAmountVatTotal,
+                operationIncome: salesAmountTotal + (returnAmountTotal + commissionFeeTotal + v.tariff + v.shippingFee),
+            }
+        })
+    }
 
     function getSelectedRows(ref) {
         if (ref.current) {
@@ -350,6 +359,7 @@ function updateMainInput(){
 
 // @ts-ignored
 export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
+    const {query} = ctx;
 
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
@@ -364,4 +374,8 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     store.dispatch(setUserInfo(userInfo));
 
+    if (query?.data) {
+        const data = JSON.parse(decodeURIComponent(query.data));
+        return {props: {dataInfo: data}}
+    }
 })

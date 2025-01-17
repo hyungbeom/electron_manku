@@ -56,7 +56,8 @@ export default function storeUpdate({dataInfo}) {
      */
     const onGridReady = (params) => {
         gridRef.current = params.api;
-        params.api.applyTransaction({add: dataInfo[listType]});
+        console.log(dataInfo,'dataInfo:')
+        // params.api.applyTransaction({add: dataInfo[listType]});
         updateMainInput()
     };
 
@@ -116,7 +117,15 @@ export default function storeUpdate({dataInfo}) {
         let copyInfo = _.cloneDeep(info)
         copyInfo[listType] = totalList
 
+        copyInfo[listType].forEach((v,idx) => {
 
+            const processedItemDetailNo = Array.isArray(v.itemDetailNo)
+                ? v.itemDetailNo.join(',') // 배열을 쉼표로 구분된 문자열로 변환
+                : v.itemDetailNo; // 배열이 아니면 그대로 사용
+
+            copyInfo[listType][idx]['itemDetailNo'] = processedItemDetailNo;
+
+        })
         await saveStore({data: copyInfo, router: router})
     }
 
@@ -127,6 +136,7 @@ export default function storeUpdate({dataInfo}) {
 
     function clearAll() {
         setInfo(storeWriteInitial);
+        gridManage.deleteAll(gridRef)
     }
 
 
@@ -212,6 +222,15 @@ export default function storeUpdate({dataInfo}) {
     }
 
 
+    function copyPage(){
+        const totalList = gridManage.getAllData(gridRef)
+        let copyInfo = _.cloneDeep(info)
+        copyInfo[listType] = totalList
+
+        const query = `data=${encodeURIComponent(JSON.stringify(copyInfo))}`;
+        router.push(`/store_write?${query}`)
+    }
+
     /**
      * @description 테이블 우측상단 관련 기본 유틸버튼
      */
@@ -237,7 +256,8 @@ export default function storeUpdate({dataInfo}) {
 
                 <MainCard title={'입고 수정'} list={[
                     {name: '저장', func: saveFunc, type: 'primary'},
-                    {name: '초기화', func: clearAll, type: 'danger'}
+                    {name: '초기화', func: clearAll, type: 'danger'},
+                    {name: '복제', func: copyPage, type: 'default'},
                 ]} mini={mini} setMini={setMini}>
 
                     {mini ? <div>
@@ -372,10 +392,12 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     const result = await getData.post('order/getOrderStatusDetail', {orderStatusId: orderStatusId});
 
+    console.log(result?.data,'result?.data?.entity:')
 
+    const dataInfo = result?.data?.entity[listType]
     // result?.data?.entity?.estimateRequestList
     return {
-        props: {dataInfo: result?.data?.entity?.orderStatusDetail}
+        props: {dataInfo: dataInfo ? dataInfo : null}
     }
 
 })

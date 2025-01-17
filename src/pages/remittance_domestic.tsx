@@ -26,7 +26,7 @@ import SearchInfoModal from "@/component/SearchAgencyModal";
 import {FileSearchOutlined} from "@ant-design/icons";
 
 
-export default function remittance_domestic() {
+export default function remittance_domestic({dataInfo}) {
     const fileRef = useRef(null);
     const copyInit = _.cloneDeep(remittanceDomesticInitial)
 
@@ -42,7 +42,7 @@ export default function remittance_domestic() {
         adminName: userInfo['name'],
     }
 
-    const [info, setInfo] = useState(infoInit)
+    const [info, setInfo] = useState<any>({...infoInit, ...dataInfo})
 
 
     function onChange(e) {
@@ -148,7 +148,7 @@ export default function remittance_domestic() {
 
 // @ts-ignore
 export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
-
+    const {query} = ctx;
     const {userInfo} = await initialServerRouter(ctx, store);
 
     if (!userInfo) {
@@ -160,4 +160,9 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
         };
     }
     store.dispatch(setUserInfo(userInfo));
+
+    if (query?.data) {
+        const data = JSON.parse(decodeURIComponent(query.data));
+        return {props: {dataInfo: data}}
+    }
 })

@@ -23,7 +23,7 @@ import Select from "antd/lib/select";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {useRouter} from "next/router";
 import TableGrid from "@/component/tableGrid";
-import {BoxCard, MainCard, TopBoxCard} from "@/utils/commonForm";
+import {BoxCard, inputForm, MainCard, TopBoxCard} from "@/utils/commonForm";
 import {commonManage} from "@/utils/commonManage";
 import TextArea from "antd/lib/input/TextArea";
 import _ from "lodash";
@@ -59,22 +59,6 @@ export default function OrderWriter() {
     const [info, setInfo] = useState<any>(infoInit)
 
 
-// =============================================================================================================
-    const inputForm = ({title, id, disabled = false, suffix = null, placeholder = ''}) => {
-
-        let bowl = info;
-
-        return <div>
-            <div>{title}</div>
-            <Input id={id} value={bowl[id]} disabled={disabled}
-                   placeholder={placeholder}
-                   onChange={onChange}
-                   size={'small'}
-                   onKeyDown={handleKeyPress}
-                   suffix={suffix}
-            />
-        </div>
-    }
 
     const textAreaForm = ({title, id, rows = 5, disabled = false}) => {
         return <div>
@@ -216,17 +200,18 @@ export default function OrderWriter() {
 
                         <TopBoxCard title={'INQUIRY & PO no'} grid={'1fr 0.6fr 0.6fr 1fr 1fr 1fr'}>
                             {datePickerForm({title: '작성일', id: 'writtenDate', disabled: true})}
-                            {inputForm({title: '작성자', id: 'adminName', disabled: true})}
-                            {inputForm({title: '담당자', id: 'managerAdminName'})}
+                            {inputForm({title: '작성자', id: 'adminName', disabled: true, onChange : onChange,  data : info})}
+                            {inputForm({title: '담당자', id: 'managerAdminName', onChange : onChange,  data : info})}
 
-                            {inputForm({title: '발주서 PO no', id: 'documentNumberFull'})}
+                            {inputForm({title: '발주서 PO no', id: 'documentNumberFull', onChange : onChange,  data : info})}
                             {inputForm({
                                 placeholder: '폴더생성 규칙 유의',
                                 title: '연결 INQUIRY No.',
                                 id: 'ourPoNo',
-                                suffix: <DownloadOutlined style={{cursor: 'pointer'}}/>
+                                suffix: <DownloadOutlined style={{cursor: 'pointer'}}/>,
+                                 onChange : onChange,  data : info
                             })}
-                            {inputForm({title: '거래처 PO no', id: 'yourPoNo'})}
+                            {inputForm({title: '거래처 PO no', id: 'yourPoNo', onChange : onChange,  data : info})}
                         </TopBoxCard>
 
                         <div style={{
@@ -237,16 +222,16 @@ export default function OrderWriter() {
                         }}>
 
                             <BoxCard title={'CUSTOMER & SUPPLY'}>
-                                {inputForm({title: 'Messrs', id: 'agencyCode'})}
-                                {inputForm({title: 'Attn To', id: 'attnTo'})}
-                                {inputForm({title: '고객사명', id: 'agencyName'})}
+                                {inputForm({title: 'Messrs', id: 'agencyCode', onChange : onChange,  data : info})}
+                                {inputForm({title: 'Attn To', id: 'attnTo', onChange : onChange,  data : info})}
+                                {inputForm({title: '고객사명', id: 'agencyName', onChange : onChange,  data : info})}
                             </BoxCard>
 
                             <BoxCard title={'MANAGER IN CHARGE'}>
-                                {inputForm({title: 'Responsibility', id: 'managerId'})}
-                                {inputForm({title: 'TEL', id: 'managerPhoneNumber'})}
-                                {inputForm({title: 'Fax', id: 'managerFaxNumber'})}
-                                {inputForm({title: 'E-Mail', id: 'managerEmail'})}
+                                {inputForm({title: 'Responsibility', id: 'managerId', onChange : onChange,  data : info})}
+                                {inputForm({title: 'TEL', id: 'managerPhoneNumber', onChange : onChange,  data : info})}
+                                {inputForm({title: 'Fax', id: 'managerFaxNumber', onChange : onChange,  data : info})}
+                                {inputForm({title: 'E-Mail', id: 'managerEmail', onChange : onChange,  data : info})}
 
                             </BoxCard>
                             <BoxCard title={'LOGISTICS'}>
@@ -263,14 +248,14 @@ export default function OrderWriter() {
                                             ]} style={{width: '100%'}}>
                                     </Select>
                                 </div>
-                                {inputForm({title: 'Delivery Terms', id: 'deliveryTerms'})}
-                                {inputForm({title: 'MAKER', id: 'maker'})}
-                                {inputForm({title: 'ITEM', id: 'item'})}
-                                {inputForm({title: 'Delivery', id: 'delivery'})}
+                                {inputForm({title: 'Delivery Terms', id: 'deliveryTerms', onChange : onChange,  data : info})}
+                                {inputForm({title: 'MAKER', id: 'maker', onChange : onChange,  data : info})}
+                                {inputForm({title: 'ITEM', id: 'item', onChange : onChange,  data : info})}
+                                {inputForm({title: 'Delivery', id: 'delivery', onChange : onChange,  data : info})}
                             </BoxCard>
 
                             <BoxCard title={'ETC'}>
-                                {inputForm({title: '견적서담당자', id: 'estimateManager'})}
+                                {inputForm({title: '견적서담당자', id: 'estimateManager', onChange : onChange,  data : info})}
                                 {textAreaForm({title: '비고란', rows: 3, id: 'remarks'})}
                                 {textAreaForm({title: '하단태그', rows: 3, id: 'footer'})}
                             </BoxCard>

@@ -12,9 +12,10 @@ import {BoxCard, MainCard, TopBoxCard} from "@/utils/commonForm";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import Radio from "antd/lib/radio";
 import InputNumber from "antd/lib/input-number";
-import {commonManage} from "@/utils/commonManage";
+import {commonManage, gridManage} from "@/utils/commonManage";
 import {saveRemittance, updateRemittance} from "@/utils/api/mainApi";
 import {useRouter} from "next/router";
+import _ from "lodash";
 
 export default function remittance_domestic({dataInfo}) {
 
@@ -163,17 +164,18 @@ export default function remittance_domestic({dataInfo}) {
 
     }
 
-    function copyFunc() {
-
+    function copyPage(){
+        let copyInfo = _.cloneDeep(info)
+        const query = `data=${encodeURIComponent(JSON.stringify(copyInfo))}`;
+        router.push(`/remittance_domestic?${query}`)
     }
-
     return <>
         <LayoutComponent>
 
             <MainCard title={'국내 송금 수정'} list={[
                 {name: '수정', func: saveFunc, type: 'primary'},
-                {name: '복사', func: copyFunc, type: 'default'},
-                {name: '초기화', func: clearAll, type: 'danger'}
+                {name: '초기화', func: clearAll, type: 'danger'},
+                {name: '복제', func: copyPage, type: 'default'}
             ]}>
 
 
