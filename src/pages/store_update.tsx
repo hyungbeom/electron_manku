@@ -1,7 +1,7 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
 import {CopyOutlined, SaveOutlined} from "@ant-design/icons";
-import {storeWriteColumn} from "@/utils/columnList";
+import {storeReadColumn, storeWriteColumn} from "@/utils/columnList";
 import {storeDetailUnit, storeWriteInitial} from "@/utils/initialList";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
@@ -23,19 +23,21 @@ import {
 import {commonManage, gridManage} from "@/utils/commonManage";
 import _ from "lodash";
 import OrderListModal from "@/component/OrderListModal";
-import {saveProject, saveStore} from "@/utils/api/mainApi";
+import {saveStore} from "@/utils/api/mainApi";
 import {useRouter} from "next/router";
+import {getData} from "@/manage/function/api";
 
 const listType = 'orderStatusDetailList'
 
-export default function storeWrite() {
+export default function storeUpdate({dataInfo}) {
     const router = useRouter();
 
     const gridRef = useRef(null);
 
-    const copyInit = _.cloneDeep(storeWriteInitial)
+    const copyInit = _.cloneDeep(dataInfo)
 
     const userInfo = useAppSelector((state) => state.user);
+
 
     const infoInit = {
         ...copyInit,
@@ -54,10 +56,12 @@ export default function storeWrite() {
      */
     const onGridReady = (params) => {
         gridRef.current = params.api;
-        params.api.applyTransaction({add: []});
+        params.api.applyTransaction({add: dataInfo[listType]});
+        updateMainInput()
     };
 
-    function getTotalTableValue(){
+
+    function getTotalTableValue() {
         const totalList = gridManage.getAllData(gridRef)
 
         const totals = totalList.reduce(
@@ -86,14 +90,17 @@ export default function storeWrite() {
         return totals;
     }
 
-    function onCellEditingStopped(){
+
+    function onCellEditingStopped() {
         updateMainInput()
     }
+
 
     function onChange(e) {
         updateMainInput()
         commonManage.onChange(e, setInfo)
     }
+
 
     async function saveFunc() {
         if (!info['blNo']) {
@@ -109,23 +116,17 @@ export default function storeWrite() {
         let copyInfo = _.cloneDeep(info)
         copyInfo[listType] = totalList
 
-        copyInfo[listType].forEach(v =>{
-            v.itemDetailNo = v.itemDetailNo.join(',')
-        })
-
-        console.log(copyInfo[listType],'::::')
 
         await saveStore({data: copyInfo, router: router})
     }
 
     async function deleteList() {
-        // const deleteIdList = gridManage.getFieldValue(gridRef, 'deliveryId')
-        // await deleteDelivery({data: {deleteIdList: deleteIdList}});
+        const list = commonManage.getUnCheckList(gridRef);
+        gridManage.resetData(gridRef, list);
     }
 
-
     function clearAll() {
-        setInfo({...infoInit});
+        setInfo(storeWriteInitial);
     }
 
 
@@ -133,19 +134,19 @@ export default function storeWrite() {
         setIsModalOpen(true);
     };
 
-function updateMainInput(){
-    const {commissionFeeTotal, returnAmountTotal, salesAmountTotal, salesAmountVatTotal} = getTotalTableValue();
-    setInfo(v=>{
-        return {
-            ...v,
-            total : returnAmountTotal + commissionFeeTotal + v.tariff + v.shippingFee,
-            totalVat : returnAmountTotal + commissionFeeTotal + v.tariff + v.shippingFee + v.vatAmount,
-            saleTotal : salesAmountTotal,
-            saleVatTotal : salesAmountVatTotal,
-            operationIncome : salesAmountTotal + (returnAmountTotal + commissionFeeTotal + v.tariff + v.shippingFee),
-        }
-    })
-}
+    function updateMainInput() {
+        const {commissionFeeTotal, returnAmountTotal, salesAmountTotal, salesAmountVatTotal} = getTotalTableValue();
+        setInfo(v => {
+            return {
+                ...v,
+                total: returnAmountTotal + commissionFeeTotal + v.tariff + v.shippingFee,
+                totalVat: returnAmountTotal + commissionFeeTotal + v.tariff + v.shippingFee + v.vatAmount,
+                saleTotal: salesAmountTotal,
+                saleVatTotal: salesAmountVatTotal,
+                operationIncome: salesAmountTotal + (returnAmountTotal + commissionFeeTotal + v.tariff + v.shippingFee),
+            }
+        })
+    }
 
     function getSelectedRows(ref) {
         if (ref.current) {
@@ -210,6 +211,7 @@ function updateMainInput(){
         }
     }
 
+
     /**
      * @description 테이블 우측상단 관련 기본 유틸버튼
      */
@@ -233,7 +235,7 @@ function updateMainInput(){
                 columnGap: 5
             }}>
 
-                <MainCard title={'입고 등록'} list={[
+                <MainCard title={'입고 수정'} list={[
                     {name: '저장', func: saveFunc, type: 'primary'},
                     {name: '초기화', func: clearAll, type: 'danger'}
                 ]} mini={mini} setMini={setMini}>
@@ -351,6 +353,10 @@ function updateMainInput(){
 // @ts-ignored
 export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
 
+    const {query} = ctx;
+
+    const {orderStatusId} = query;
+
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
     if (codeInfo < 0) {
@@ -361,7 +367,15 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
             },
         };
     }
-
     store.dispatch(setUserInfo(userInfo));
+
+
+    const result = await getData.post('order/getOrderStatusDetail', {orderStatusId: orderStatusId});
+
+
+    // result?.data?.entity?.estimateRequestList
+    return {
+        props: {dataInfo: result?.data?.entity?.orderStatusDetail}
+    }
 
 })

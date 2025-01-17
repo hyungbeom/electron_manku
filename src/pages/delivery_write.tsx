@@ -8,14 +8,20 @@ import Deasin from "@/component/delivery/Deasin";
 import {TabsProps} from "antd";
 import Tabs from "antd/lib/tabs";
 import ETC from "@/component/delivery/ETC";
-
+import {useRouter} from "next/router";
+import message from "antd/lib/message";
+import initialServerRouter from "@/manage/function/initialServerRouter";
+import {wrapper} from "@/store/store";
 
 export default function delivery_write() {
+
+    const router = useRouter();
 
     const [tabNumb, setTabNumb] = useState('CJ')
     const [cjInfo, setCjInfo] = useState({...deliveryDaehanInitial, deliveryType: 'CJ'})
     const [daesinInfo, setDaesinInfo] = useState({...deliveryDaehanInitial, deliveryType: 'DAESIN'})
     const [quickInfo, setQuickInfo] = useState({...deliveryDaehanInitial, deliveryType: 'QUICK'})
+
 
     const onChange = (key: string) => {
         setTabNumb(key);
@@ -56,13 +62,21 @@ export default function delivery_write() {
 
         if (sendParam) {
             await getData.post('delivery/addDelivery', sendParam).then(v => {
-                console.log(v, ':::::::')
+                if (v.data.code === 1) {
+                    message.success('저장에 성공하였습니다.')
+                    router.push(`/delivery_update?deliveryId=${v.data.entity.deliveryId}`)
+                } else {
+                    message.error('저장에 실패하였습니다..')
+
+                }
             }, err => console.log(err, '::::'))
         }
     }
 
     function clearAll() {
-
+        setCjInfo({...deliveryDaehanInitial, deliveryType: 'CJ'})
+        setDaesinInfo({...deliveryDaehanInitial, deliveryType: 'DAESIN'})
+        setQuickInfo({...deliveryDaehanInitial, deliveryType: 'QUICK'})
     }
 
 
@@ -79,43 +93,18 @@ export default function delivery_write() {
         </LayoutComponent>
     </>
 }
-//
-//
-// // @ts-ignore
-// export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
-//
-//
-//     let param = {}
-//
-//     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
-//
-//     const result = await getData.post('inventory/getInventoryList', {
-//         "searchInventoryId": "",
-//         "searchMaker": "",          // MAKER 검색
-//         "searchModel": "",          // MODEL 검색
-//         "searchLocation": "",       // 위치 검색
-//         "page": 1,
-//         "limit": -1,
-//     });
-//
-//
-//     if (userInfo) {
-//         store.dispatch(setUserInfo(userInfo));
-//     }
-//     if (codeInfo !== 1) {
-//         param = {
-//             redirect: {
-//                 destination: '/', // 리다이렉트할 대상 페이지
-//                 permanent: false, // true로 설정하면 301 영구 리다이렉트, false면 302 임시 리다이렉트
-//             },
-//         };
-//     } else {
-//         // result?.data?.entity?.estimateRequestList
-//         param = {
-//             props: {dataList: result?.data?.entity}
-//         }
-//     }
-//
-//
-//     return param
-// })
+
+
+// @ts-ignore
+export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
+    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
+
+    if (codeInfo < 0) {
+        return {
+            redirect: {
+                destination: '/',
+                permanent: false,
+            },
+        };
+    }
+})

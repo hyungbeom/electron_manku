@@ -239,9 +239,8 @@ export default function OrderWriter() {
                             <BoxCard title={'CUSTOMER & SUPPLY'}>
                                 {inputForm({title: 'Messrs', id: 'agencyCode'})}
                                 {inputForm({title: 'Attn To', id: 'attnTo'})}
-                                {inputForm({title: '고객사명', id: 'customerName'})}
+                                {inputForm({title: '고객사명', id: 'agencyName'})}
                             </BoxCard>
-
 
                             <BoxCard title={'MANAGER IN CHARGE'}>
                                 {inputForm({title: 'Responsibility', id: 'managerId'})}

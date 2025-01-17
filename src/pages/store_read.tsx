@@ -1,17 +1,23 @@
 import React, {useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
-import {searchOrderInitial} from "@/utils/initialList";
+import {searchOrderInitial, storeRealInitial} from "@/utils/initialList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import Button from "antd/lib/button";
 import {CopyOutlined, FileExcelOutlined} from "@ant-design/icons";
-import {deleteDelivery, getDeliveryList} from "@/utils/api/mainApi";
+import {
+    deleteDelivery,
+    deleteOrderStatusDetails,
+    getDeliveryList,
+    getOrderStatusList,
+    getRemittanceList
+} from "@/utils/api/mainApi";
 import _ from "lodash";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import {BoxCard, inputForm, MainCard, rangePickerForm, TopBoxCard} from "@/utils/commonForm";
 import TableGrid from "@/component/tableGrid";
-import {delilveryReadColumn} from "@/utils/columnList";
+import {delilveryReadColumn, storeReadColumn} from "@/utils/columnList";
 import {useRouter} from "next/router";
 
 export default function delivery_read({dataInfo}) {
@@ -19,11 +25,13 @@ export default function delivery_read({dataInfo}) {
 
     const gridRef = useRef(null);
 
-    const copyInit = _.cloneDeep(searchOrderInitial)
+    const copyInit = _.cloneDeep(storeRealInitial)
 
     const [info, setInfo] = useState(copyInit)
     const [mini, setMini] = useState(true);
 
+
+    console.log(dataInfo,'dataInfo:')
 
     /**
      * @description ag-grid 테이블 초기 rowData 요소 '[]' 초기화 설정
@@ -35,11 +43,11 @@ export default function delivery_read({dataInfo}) {
     };
 
 
+
     function handleKeyPress(e) {
         if (e.key === 'Enter') {
             // 체크된 행 데이터 가져오기
             const selectedRows = gridRef.current.getSelectedRows();
-            console.log(selectedRows,'selectedRows:')
             searchInfo()
         }
     }
@@ -61,7 +69,7 @@ export default function delivery_read({dataInfo}) {
      */
     async function searchInfo() {
         const copyData: any = {...info}
-        let result = await getDeliveryList({data: copyData});
+        let result = await getOrderStatusList({data: copyData});
         gridManage.resetData(gridRef, result)
     }
 
@@ -69,15 +77,20 @@ export default function delivery_read({dataInfo}) {
      * @description selectRows(~ deliveryList)를 삭제하는 함수입니다.
      */
     async function deleteList() {
-        const deleteIdList = gridManage.getFieldValue(gridRef, 'deliveryId')
-        await deleteDelivery({data: {deleteIdList: deleteIdList}});
+        const fieldMappings = {
+            orderStatusId: "orderStatusId",
+            orderStatusDetailId: "orderStatusDetailId",
+        };
+
+        const deleteList = gridManage.getFieldDeleteList(gridRef, fieldMappings);
+        deleteOrderStatusDetails({data : {deleteList :deleteList}, returnFunc : searchInfo})
     }
 
     /**
      * @description 출력시 해당 Excel 현 테이블 기준으로 선택된 row만 출력
      */
     const downloadExcel = async () => {
-       gridManage.exportSelectedRowsToExcel(gridRef, '배송_조회리스트')
+        gridManage.exportSelectedRowsToExcel(gridRef, '발주현황표')
     };
 
 
@@ -101,64 +114,48 @@ export default function delivery_read({dataInfo}) {
                 gridTemplateRows: `${mini ? '380px' : '65px'} calc(100vh - ${mini ? 435 : 120}px)`,
                 columnGap: 5
             }}>
-                <MainCard title={'배송조회'}
+                <MainCard title={'통합조회'}
                           list={[{name: '조회', func: searchInfo, type: 'primary'}, {name: '신규생성', func: moveRouter}]}
                           mini={mini} setMini={setMini}>
                     {mini ? <div>
                             <TopBoxCard title={'기본 정보'} grid={'1.5fr 1fr 1fr'}>
-                                {rangePickerForm({title: '출고일자', id: 'searchDate', onChange: onChange, data: info})}
                                 {inputForm({
-                                    title: 'Inquiry No.',
-                                    id: 'searchConnectInquiryNo',
+                                    title: 'B/L No.',
+                                    id: 'searchBlNo',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: '결제여부',
+                                    id: 'searchPaymentStatus',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                                {rangePickerForm({title: '입고일자', id: 'searchArrivalDate', onChange: onChange, data: info})}
+                                {inputForm({
+                                    title: 'inquiry No.',
+                                    id: 'searchOrderDocumentNumberFull',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: '거래처명',
+                                    id: 'searchCustomerName',
                                     onChange: onChange,
                                     handleKeyPress: handleKeyPress,
                                     data: info
                                 })}
                             </TopBoxCard>
-
-
-                            <div style={{display: 'grid', gridTemplateColumns: "350px 350px"}}>
-                                <BoxCard title={'받는분 정보'}>
-                                    {inputForm({
-                                        title: '고객사명',
-                                        id: 'searchCustomerName',
-                                        onChange: onChange,
-                                        handleKeyPress: handleKeyPress,
-                                        data: info
-                                    })}
-                                    {inputForm({
-                                        title: '받는분 전화번호',
-                                        id: 'searchRecipientPhone',
-                                        onChange: onChange,
-                                        handleKeyPress: handleKeyPress,
-                                        data: info
-                                    })}
-                                </BoxCard>
-
-                                <BoxCard title={'기타 정보'}>
-                                    {inputForm({
-                                        title: '확인여부',
-                                        id: 'searchIsConfirm',
-                                        onChange: onChange,
-                                        handleKeyPress: handleKeyPress,
-                                        data: info
-                                    })}
-                                    {inputForm({
-                                        title: '운송장번호',
-                                        id: 'searchTrackingNumber',
-                                        onChange: onChange,
-                                        handleKeyPress: handleKeyPress,
-                                        data: info
-                                    })}
-                                </BoxCard>
-                            </div>
                         </div>
                         : <></>}
                 </MainCard>
 
                 <TableGrid
                     gridRef={gridRef}
-                    columns={delilveryReadColumn}
+                    columns={storeReadColumn}
                     onGridReady={onGridReady}
                     type={'read'}
                     funcButtons={subTableUtil}
@@ -184,7 +181,7 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
     } else {
         store.dispatch(setUserInfo(userInfo));
 
-        let result = await getDeliveryList({data: searchOrderInitial});
+        let result = await getOrderStatusList({data: storeRealInitial});
 
         return {
             props: {dataInfo: result ? result : null}

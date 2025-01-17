@@ -113,6 +113,27 @@ export const saveProject = async ({data, router}) => {
         }
     });
 };
+export const saveStore = async ({data, router}) => {
+    await getData.post('order/addOrderStatus', data).then(v => {
+        if (v.data.code === 1) {
+            message.success('저장되었습니다.')
+            router.push(`/store_update?orderStatusId=${v.data.entity.orderStatusId}`)
+        } else {
+            message.error('저장에 실패하였습니다.')
+        }
+    });
+};
+
+
+export const updateStore = async ({data, router}) => {
+    await getData.post('order/updateOrderStatus', data).then(v => {
+        if (v.data.code === 1) {
+            message.success('수정되었습니다.')
+        } else {
+            message.error('수정에 실패하였습니다.')
+        }
+    });
+};
 
 
 export const updateRemittance = async ({data, router}) => {
@@ -209,6 +230,37 @@ export const deleteEstimate = async ({
     }, err => message.error(err))
 };
 
+export const deleteDelivery = async ({
+                                         data, returnFunc = function () {
+    }
+                                     }) => {
+
+    await getData.post('delivery/deleteDeliveries', data).then(v => {
+        if (v.data.code === 1) {
+            message.success('삭제되었습니다.')
+        } else {
+            message.error('오류가 발생하였습니다. 다시 시도해주세요.')
+        }
+    }, err => message.error(err))
+};
+
+
+
+export const deleteOrderStatusDetails = async ({
+                                         data, returnFunc = function () {
+    }
+                                     }) => {
+
+    await getData.post('order/deleteOrderStatusDetails', data).then(v => {
+        if (v.data.code === 1) {
+            message.success('삭제되었습니다.')
+            returnFunc()
+        } else {
+            message.error('오류가 발생하였습니다. 다시 시도해주세요.')
+        }
+    }, err => message.error(err))
+};
+
 
 // ==================================================================================================================
 
@@ -272,14 +324,36 @@ export const deleteOrder = async ({
 
 
 export const getDeliveryList = async ({data}) => {
-
-    console.log(data,'data')
     const v = await getData.post('delivery/getDeliveryList', {
         ...data, page: 1,
         limit: -1
     })
     if (v.data.code === 1) {
         return v.data.entity.deliveryList
+    } else {
+        message.error('오류가 발생하였습니다. 다시 시도해주세요.')
+    }
+};
+export const getOrderStatusList = async ({data}) => {
+    const v = await getData.post('order/getOrderStatusList', {
+        ...data, page: 1,
+        limit: -1
+    })
+    if (v.data.code === 1) {
+        console.log(v,'v:')
+        return v.data.entity.orderStatusList
+    } else {
+        message.error('오류가 발생하였습니다. 다시 시도해주세요.')
+    }
+};
+
+export const getRemittanceList = async ({data}) => {
+    const v = await getData.post('remittance/getRemittanceList', {
+        ...data, page: 1,
+        limit: -1
+    })
+    if (v.data.code === 1) {
+        return v.data.entity.remittanceList
     } else {
         message.error('오류가 발생하였습니다. 다시 시도해주세요.')
     }

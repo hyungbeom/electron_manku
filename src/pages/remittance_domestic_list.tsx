@@ -1,5 +1,4 @@
 import React, {useRef, useState} from "react";
-import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
 import DatePicker from "antd/lib/date-picker";
 import {remittanceDomesticSearchInitial} from "@/utils/initialList";
@@ -8,18 +7,14 @@ import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import {getData} from "@/manage/function/api";
 import moment from "moment";
-import {BoxCard, MainCard, TopBoxCard} from "@/utils/commonForm";
+import {BoxCard, inputForm, MainCard, radioForm, TopBoxCard} from "@/utils/commonForm";
 import _ from "lodash";
-import {useAppSelector} from "@/utils/common/function/reduxHooks";
-import InputNumber from "antd/lib/input-number";
-import {commonManage} from "@/utils/commonManage";
-import Radio from "antd/lib/radio";
+import {commonManage, gridManage} from "@/utils/commonManage";
 import TableGrid from "@/component/tableGrid";
 import {remittanceReadColumn} from "@/utils/columnList";
 import Button from "antd/lib/button";
 import {CopyOutlined, FileExcelOutlined} from "@ant-design/icons";
-import {Simulate} from "react-dom/test-utils";
-import change = Simulate.change;
+import {getDeliveryList, getRemittanceList} from "@/utils/api/mainApi";
 
 const {RangePicker} = DatePicker
 export default function remittance_domestic({dataInfo}) {
@@ -29,59 +24,32 @@ export default function remittance_domestic({dataInfo}) {
 
     const [mini, setMini] = useState(true);
 
-    const userInfo = useAppSelector((state) => state.user);
 
-    const [tableData, setTableData] = useState(dataInfo);
-
-    const infoInit = {
-        ...copyInit,
-        managerAdminId: userInfo['adminId'],
-        managerAdminName: userInfo['name'],
-        adminName: userInfo['name'],
-    }
-
-    const [info, setInfo] = useState(infoInit)
+    const [info, setInfo] = useState(copyInit)
 
 
-    const inputForm = ({title, id, disabled = false, suffix = null, placeholder = ''}) => {
-        let bowl = info;
-
-        return <div>
-            <div>{title}</div>
-            <Input id={id} value={bowl[id]} disabled={disabled}
-                   onChange={onChange}
-                   size={'small'}
-                // onKeyDown={handleKeyPress}
-                   placeholder={placeholder}
-                   suffix={suffix}
-            />
-        </div>
-    }
-    const radioForm = ({title, id, disabled = false}) => {
-        let bowl = info;
-
-        return <>
-            <div>{title}</div>
-            <Radio.Group id={id} value={info[id]} disabled={disabled}
-                         onChange={e => {
-                             e.target['id'] = id
-                             onChange(e);
-                         }}
-            >
-                <Radio value={'O'}>O</Radio>
-                <Radio value={'X'}>X</Radio>
-            </Radio.Group>
-        </>
-    }
-
+    /**
+     * @description ag-grid 테이블 초기 rowData 요소 '[]' 초기화 설정
+     * @param params ag-grid 제공 event 파라미터
+     */
+    const onGridReady = (params) => {
+        gridRef.current = params.api;
+        params.api.applyTransaction({add: dataInfo});
+    };
 
     function onChange(e) {
         commonManage.onChange(e, setInfo)
     }
 
+    function handleKeyPress(e) {
+        if (e.key === 'Enter') {
+            searchFunc()
+        }
+    }
+
     async function searchFunc() {
-        const result = await getData.post('remittance/getRemittanceList', info);
-        setTableData(result.data.entity.remittanceList)
+        let result = await getRemittanceList({data: info});
+        gridManage.resetData(gridRef, result)
     }
 
 
@@ -91,7 +59,7 @@ export default function remittance_domestic({dataInfo}) {
 
 
     async function downloadExcel() {
-
+        gridManage.exportSelectedRowsToExcel(gridRef, '국내송금_조회리스트')
     }
 
 
@@ -127,10 +95,16 @@ export default function remittance_domestic({dataInfo}) {
                     {mini ? <div>
                         <TopBoxCard title={'기본 정보'} grid={'250px 200px 200px 200px'}>
 
-                            {inputForm({title: 'Inquiry No.', id: 'searchConnectInquiryNo'})}
-                            {inputForm({title: '거래처명', id: 'searchCustomerName'})}
-                            {inputForm({title: '매입처명', id: 'searchAgencyName'})}
-                            {inputForm({title: '담당자', id: 'searchManagerAdminName'})}
+                            {inputForm({
+                                title: 'Inquiry No.',
+                                id: 'searchConnectInquiryNo',
+                                onChange: onChange,
+                                handleKeyPress: handleKeyPress,
+                                data: info
+                            })}
+                            {inputForm({title: '거래처명', id: 'searchCustomerName', onChange: onChange,handleKeyPress: handleKeyPress, data: info})}
+                            {inputForm({title: '매입처명', id: 'searchAgencyName', onChange: onChange,handleKeyPress: handleKeyPress, data: info})}
+                            {inputForm({title: '담당자', id: 'searchManagerAdminName', onChange: onChange,handleKeyPress: handleKeyPress, data: info})}
                         </TopBoxCard>
 
                         <div style={{display: 'grid', gridTemplateColumns: "1fr 1fr 1fr 1fr"}}>
@@ -153,8 +127,20 @@ export default function remittance_domestic({dataInfo}) {
                             </BoxCard>
 
                             <BoxCard title={'확인정보'}>
-                                {radioForm({title: '송금여부', id: 'searchIsSend'})}
-                                {radioForm({title: '계산서 발행여부', id: 'searchIsInvoice'})}
+                                {radioForm({
+                                    title: '송금여부',
+                                    id: 'searchIsSend',
+                                    onChange: onChange,
+                                    data: info,
+                                    list: [{value: 'O', title: 'O'}, {value: 'X', title: 'X'}]
+                                })}
+                                {radioForm({
+                                    title: '계산서 발행여부',
+                                    id: 'searchIsInvoice',
+                                    onChange: onChange,
+                                    data: info,
+                                    list: [{value: 'O', title: 'O'}, {value: 'X', title: 'X'}]
+                                })}
                             </BoxCard>
                         </div>
                     </div> : <></>}
@@ -162,7 +148,7 @@ export default function remittance_domestic({dataInfo}) {
                 <TableGrid
                     gridRef={gridRef}
                     columns={remittanceReadColumn}
-                    tableData={tableData}
+                    onGridReady={onGridReady}
                     funcButtons={subTableUtil}
                 />
             </div>
@@ -190,7 +176,8 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     const result = await getData.post('remittance/getRemittanceList', remittanceDomesticSearchInitial);
 
+    const returnValue = result?.data?.entity?.remittanceList;
     return {
-        props: {dataInfo: result?.data?.entity?.remittanceList}
+        props: {dataInfo: returnValue ? returnValue : null}
     }
 })

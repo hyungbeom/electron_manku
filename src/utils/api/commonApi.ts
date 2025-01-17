@@ -115,5 +115,32 @@ export const findEstDocumentInfo = async (event, setInfo) => {
 
 
 
+export const findOrderDocumentInfo = async (event, setInfo) => {
+
+    const result = await getData.post('estimate/getEstimateDetail', {
+        "estimateId": null,
+        "documentNumberFull": event.target.value
+    });
+    if (result?.data?.code === 1) {
+
+
+        if (result?.data?.entity?.estimateDetail?.estimateDetailList.length) {
+
+            setInfo(v => {
+                    return {
+                        ...v, ...result?.data?.entity?.estimateDetail,
+                        documentNumberFull: event.target.value,
+                        writtenDate: moment(),
+                        orderDetailList: result?.data?.entity?.estimateDetail?.estimateDetailList
+                    }
+                }
+            )
+        }
+    }
+};
+
+
+
+
 
 

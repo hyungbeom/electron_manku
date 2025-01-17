@@ -78,6 +78,7 @@ const menuList = {
             {title: '해외 송금 관리', key: 'remittance_overseas'},
             {title: '발주/송금 통합 관리', key: 'remittance_order_integrate'},
             {title: '입고 등록', key: 'store_write'},
+            {title: '입고 목록', key: 'store_read'},
         ]
     },
     delivery: {

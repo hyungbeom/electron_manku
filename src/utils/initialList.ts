@@ -1,5 +1,10 @@
 import moment from "moment/moment";
-import {searchAgencyCodeColumn, searchCustomerColumn, searchMakerColumn} from "@/utils/columnList";
+import {
+    searchAgencyCodeColumn,
+    searchCustomerColumn,
+    searchMakerColumn,
+    tableOrderReadColumns
+} from "@/utils/columnList";
 import {commonManage} from "@/utils/commonManage";
 
 export const makerRegistInitial = {
@@ -386,9 +391,14 @@ export const deliveryDaehanInitial = {
     "destination": "",                       // 도착지 (DAESIN 전용)
     "productName": "",                       // 품목명
     "quantity": 0,                                 // 수량
+
+    "packagingType": 0,                                 // 포장유형 (B or P)
+    "shippingType": 0,                                 // 배송방식(택배 or 화물)
+
     "paymentMethod": "",                       // 결제 방식 (착불, 후불) (DAESIN/QUICK 전용)
     "classification": "",                     // 구분 (용달, 대리점 등 QUICK 전용)
-    "connectInquiryNo": ""                // 연결된 문의 번호
+    "connectInquiryNo": "",                // 연결된 문의 번호
+    "isConfirm": "X"
 }
 
 
@@ -784,7 +794,7 @@ export const printEstimateInitial = {
 }
 
 
-export const ModalInitList = {agencyCode: false, customerName: false, maker: false}
+export const ModalInitList = {agencyCode: false, customerName: false, maker: false, orderList: false}
 
 export const modalList = {
     agencyCode: {
@@ -807,6 +817,13 @@ export const modalList = {
         column: searchMakerColumn,
         list: 'makerList',
         placeholder: 'Maker 또는 Area 또는 Item 입력하세요'
+    },
+    orderList: {
+        url: 'order/getOrderList',
+        title: '발주서 조회',
+        column: tableOrderReadColumns,
+        list: 'orderList',
+        placeholder: '문서번호 또는 거래처명을 입력하세요'
     },
 }
 
@@ -844,32 +861,47 @@ export const storeWriteInitial = {
     blNo: "",              // BL No.
     carrierName: "",        // 운수사명
     arrivalDate: '',    // 입고일자
-    commissionFee: null,          // 수수료
+    tariff: null,          // 관세
     vatAmount: null,              // 부가세
     shippingFee: null,            // 운임비
+    total : null,
+    totalVat : null,
+    saleTotal : null,
+    saleVatTotal : null,
+    operationIncome : null,
     orderStatusDetailList: []
 }
-export const storeDetailUni = {
-    "orderDocumentNumberFull": "K10-24-0001",           // 발주서 Inquiry No
-    "itemDetailNo": "전체",                              // 세부 항목 번호
-    "customerName": "거래처명",                           // 거래처명
-    "agencyName": "매입처명",                             // 매입처명
-    "orderDate": "2025-01-13",                          // 발주일자
-    "remittanceDate": "2025-01-13",                     // 송금일자
-    "amount": 112000,                                   // 금액
-    "currencyUnit": "KRW",                              // 화폐 단위
-    "salesAmount": 112000,                              // 판매금액
-    "deliveryDate": "2025-01-13",                       // 출고일자
-    "exchangeRate": 1500,                               // 환율
-    "charge": 1000,                                     // 수수료
-    "receiptDate": "2025-01-13",                        // 입고일자
-    "paymentStatus": "미완료",                            // 결제여부
-    "advancePayment": 1000,                             // 선수금
-    "remarks": "비고"
+
+export const storeDetailUnit = {
+    orderDocumentNumberFull: "",           // 발주서 Inquiry No
+    itemDetailNo: '',                              // 세부 항목 번호
+    customerName: '',                           // 거래처명
+    agencyName: '',                             // 매입처명
+    orderDate: '',                          // 발주일자
+    remittanceDate: '',                     // 송금일자
+    amount: 0,                                   // 금액
+    currencyUnit: "",                              // 화폐 단위
+    salesAmount: 0,                              // 판매금액
+    deliveryDate: "",                       // 출고일자
+    exchangeRate: 1,                               // 환율
+    commissionFee: 0,                                     // 수수료
+    receiptDate: "",                        // 입고일자
+    paymentStatus: "",                            // 결제여부
+    advancePayment: 0,                             // 선수금
+    returnAmount: 0,                             // 원화환산금액
+    remarks: "",
+    invoiceDate: ""                         // 계산서 발행일
 }
 
-
-
+export const storeRealInitial = {
+    "searchBlNo": "",                           // B/L No.
+    "searchPaymentStatus": "",                  // 결제 여부
+    "searchArrivalDate": [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],               // 입고일자 시작-종료
+    "searchStartArrivalDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),               // 입고일자 시작
+    "searchEndArrivalDate": moment().format('YYYY-MM-DD'),                 // 입고일자 종료
+    "searchOrderDocumentNumberFull": "",        // 발주 Inquirty No
+    "searchCustomerName": "",                   // 거래처명
+}
 
 
 export const projectDetailUnit = {

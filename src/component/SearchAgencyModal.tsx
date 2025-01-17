@@ -20,6 +20,7 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
 
     const ref = useRef(null);
 
+
     useEffect(() => {
         if (open) {
             const firstTrueKey = Object.keys(open).find(key => open[key]);
@@ -57,8 +58,6 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
                 limit: -1
             });
 
-            console.log(resultList?.data?.entity, '11');
-            console.log(modalList, '22');
             setList(resultList?.data?.entity[modalList[v]?.list]);
         } catch (err) {
             console.error(err, '::::');
@@ -214,7 +213,6 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
                              onCellClicked={async (e) => {
                                  switch (openCheck) {
                                      case 'customerName' :
-                                         console.log(e.data,'e.data::')
                                          setInfo(v => {
                                              return {
                                                  ...v,
@@ -229,8 +227,17 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
                                          break;
                                      case 'maker' :
                                          setInfo(v => {
+
                                              return {
                                                  ...v, ...e.data, maker: e.data.makerName
+                                             }
+                                         })
+                                         break;
+                                     case 'orderList' :
+
+                                         setInfo(v => {
+                                             return {
+                                                 ...v, ...e.data, maker: e.data.makerName ,connectInquiryNo: e.data.documentNumberFull,
                                              }
                                          })
                                          break;

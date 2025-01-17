@@ -1,29 +1,37 @@
 import React, {useRef, useState} from "react";
-import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
-import DatePicker from "antd/lib/date-picker";
-import {remittanceDomesticInitial} from "@/utils/initialList";
+import {ModalInitList, remittanceDomesticInitial} from "@/utils/initialList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
-import {getData} from "@/manage/function/api";
-import moment from "moment";
 import message from "antd/lib/message";
-import {BoxCard, MainCard, TopBoxCard} from "@/utils/commonForm";
+import {
+    BoxCard,
+    datePickerForm,
+    inputForm,
+    inputNumberForm,
+    MainCard,
+    numbFormatter,
+    numbParser,
+    TopBoxCard
+} from "@/utils/commonForm";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import Radio from "antd/lib/radio";
 import _ from "lodash";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
-import InputNumber from "antd/lib/input-number";
 import {commonManage} from "@/utils/commonManage";
 import {saveRemittance} from "@/utils/api/mainApi";
 import {useRouter} from "next/router";
+import SearchInfoModal from "@/component/SearchAgencyModal";
+import {FileSearchOutlined} from "@ant-design/icons";
+
 
 export default function remittance_domestic() {
     const fileRef = useRef(null);
     const copyInit = _.cloneDeep(remittanceDomesticInitial)
 
     const router = useRouter();
+    const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
 
     const userInfo = useAppSelector((state) => state.user);
 
@@ -36,66 +44,6 @@ export default function remittance_domestic() {
 
     const [info, setInfo] = useState(infoInit)
 
-
-    const inputForm = ({title, id, disabled = false, suffix = null, placeholder = ''}) => {
-        let bowl = info;
-
-        return <div>
-            <div>{title}</div>
-            <Input id={id} value={bowl[id]} disabled={disabled}
-                   onChange={onChange}
-                   size={'small'}
-                // onKeyDown={handleKeyPress}
-                   placeholder={placeholder}
-                   suffix={suffix}
-            />
-        </div>
-    }
-
-
-    const inputNumberForm = ({title, id, disabled = false, placeholder = ''}) => {
-        let bowl = info;
-
-
-        return <div>
-            <div>{title}</div>
-            <InputNumber id={id} value={bowl[id]} disabled={disabled}
-                         style={{width: '100%'}}
-                         onBlur={() => console.log('!!!')}
-                         onChange={value => {
-
-                             setInfo(v => {
-                                 return {
-                                     ...v,
-                                     supplyAmount: value,
-                                     surtax: Math.round(value * 0.1),
-                                     total: value + Math.round(value * 0.1)
-                                 }
-                             })
-                         }}
-                         size={'small'}
-                         placeholder={placeholder}
-            />
-        </div>
-    }
-
-
-    const datePickerForm = ({title, id, disabled = false}) => {
-        return <div>
-            <div>{title}</div>
-            {/*@ts-ignore*/}
-            <DatePicker value={moment(info[id]).isValid() ? moment(info[id]) : ''} style={{width: '100%'}}
-                        onChange={(date) => onChange({
-                            target: {
-                                id: id,
-                                value: moment(date).format('YYYY-MM-DD')
-                            }
-                        })
-                        }
-                        disabled={disabled}
-                        id={id} size={'small'}/>
-        </div>
-    }
 
     function onChange(e) {
         commonManage.onChange(e, setInfo)
@@ -124,39 +72,45 @@ export default function remittance_domestic() {
             console.log(`${key}: ${value}`);
         }
         await saveRemittance({data: formData, router: router})
-
     }
 
     function clearAll() {
-
+        setInfo(infoInit)
     }
 
-    function copyFunc() {
-
+    function openModal(e) {
+        commonManage.openModal(e, setIsModalOpen)
     }
 
     return <>
         <LayoutComponent>
+            <SearchInfoModal info={info} setInfo={setInfo}
+                             open={isModalOpen}
+                             setIsModalOpen={setIsModalOpen}/>
 
             <MainCard title={'국내 송금 등록'} list={[
                 {name: '저장', func: saveFunc, type: 'primary'},
-                {name: '복사', func: copyFunc, type: 'default'},
                 {name: '초기화', func: clearAll, type: 'danger'}
             ]}>
 
 
                 <TopBoxCard title={'기본 정보'} grid={'250px 200px 200px 200px'}>
-                    {inputForm({title: 'Inquiry No.', id: 'connectInquiryNo'})}
-                    {inputForm({title: '거래처명', id: 'customerName'})}
-                    {inputForm({title: '매입처명', id: 'agencyName'})}
-                    {inputForm({title: '담당자', id: 'managerAdminName', disabled: true})}
+                    {inputForm({title: 'Inquiry No.', id: 'connectInquiryNo', onChange: onChange, data: info,  disabled:true,  suffix: <FileSearchOutlined style={{cursor: 'pointer', color : 'black'}} onClick={
+                            (e) => {
+                                e.stopPropagation();
+                                openModal('orderList');
+                            }
+                        }/> })}
+                    {inputForm({title: '거래처명', id: 'customerName', onChange: onChange, data: info})}
+                    {inputForm({title: '매입처명', id: 'agencyName', onChange: onChange, data: info})}
+                    {inputForm({title: '담당자', id: 'managerAdminName', onChange: onChange, data: info, disabled: true})}
                 </TopBoxCard>
 
                 <div style={{display: 'grid', gridTemplateColumns: "1fr 1fr 1fr 1fr"}}>
 
                     <BoxCard title={'송금정보'}>
-                        {datePickerForm({title: '송금요청일자', id: 'requestDate'})}
-                        {datePickerForm({title: '송금지정일자', id: 'assignedDate'})}
+                        {datePickerForm({title: '송금요청일자', id: 'requestDate', onChange: onChange, data: info})}
+                        {datePickerForm({title: '송금지정일자', id: 'assignedDate', onChange: onChange, data: info})}
                     </BoxCard>
 
                     <BoxCard title={'확인정보'}>
@@ -172,11 +126,11 @@ export default function remittance_domestic() {
                         </Radio.Group>
                     </BoxCard>
 
-                    <BoxCard title={'금액정보'}>
 
-                        {inputNumberForm({title: '공급가액', id: 'supplyAmount'})}
-                        {inputForm({title: '부가세', id: 'surtax', disabled: true})}
-                        {inputForm({title: '합계', id: 'total', disabled: true})}
+                    <BoxCard title={'금액정보'}>
+                        {inputNumberForm({title: '공급가액', id: 'supplyAmount', onChange: onChange, data: info, formatter : numbFormatter, parser:numbParser})}
+                        {inputNumberForm({title: '부가세', id: 'surtax', disabled: true, onChange: onChange, data: info, formatter : numbFormatter, parser:numbParser})}
+                        {inputNumberForm({title: '합계', id: 'total', disabled: true, onChange: onChange, data: info, formatter : numbFormatter, parser:numbParser})}
                     </BoxCard>
 
                     <BoxCard title={'드라이브 목록'}>
@@ -195,7 +149,6 @@ export default function remittance_domestic() {
 // @ts-ignore
 export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
 
-
     const {userInfo} = await initialServerRouter(ctx, store);
 
     if (!userInfo) {
@@ -206,25 +159,5 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
             },
         };
     }
-
     store.dispatch(setUserInfo(userInfo));
-
-    const result = await getData.post('etc/getRemittanceRequestList', {
-        "searchText": "",                   // 검색어: 담당자, 인쿼리, 판매처 업체명, 구매처 업체명
-        "searchStartRequestDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),       // 송금 요청일자 시작일
-        "searchEndRequestDate": moment().format('YYYY-MM-DD'),          // 송금 요청일자 종료일
-        "searchStartScheduledDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),    // 송금 지정일자 시작일
-        "searchEndScheduledDate": moment().format('YYYY-MM-DD'),       // 송금 지정일자 종료일
-        "searchStartDate": "",              // 등록일자 시작일
-        "searchEndDate": "",                // 등록일자 종료일
-        "searchIsTransferred": null,        // 송금여부(true, false)
-        "searchIsRead": null,               // 읽음 여부
-        "searchAdminId": null,              // 담당자 Id
-        "page": 1,
-        "limit": -1
-    });
-
-    return {
-        props: {data: result?.data?.entity?.remittanceRequestList}
-    }
 })
