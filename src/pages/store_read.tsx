@@ -1,23 +1,17 @@
 import React, {useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
-import {searchOrderInitial, storeRealInitial} from "@/utils/initialList";
+import {storeRealInitial} from "@/utils/initialList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import Button from "antd/lib/button";
 import {CopyOutlined, FileExcelOutlined} from "@ant-design/icons";
-import {
-    deleteDelivery,
-    deleteOrderStatusDetails,
-    getDeliveryList,
-    getOrderStatusList,
-    getRemittanceList
-} from "@/utils/api/mainApi";
+import {deleteOrderStatusDetails, getOrderStatusList} from "@/utils/api/mainApi";
 import _ from "lodash";
 import {commonManage, gridManage} from "@/utils/commonManage";
-import {BoxCard, inputForm, MainCard, rangePickerForm, TopBoxCard} from "@/utils/commonForm";
+import {inputForm, MainCard, rangePickerForm, TopBoxCard} from "@/utils/commonForm";
 import TableGrid from "@/component/tableGrid";
-import {delilveryReadColumn, storeReadColumn} from "@/utils/columnList";
+import {storeReadColumn} from "@/utils/columnList";
 import {useRouter} from "next/router";
 
 export default function delivery_read({dataInfo}) {
@@ -30,9 +24,6 @@ export default function delivery_read({dataInfo}) {
     const [info, setInfo] = useState(copyInit)
     const [mini, setMini] = useState(true);
 
-
-    console.log(dataInfo,'dataInfo:')
-
     /**
      * @description ag-grid 테이블 초기 rowData 요소 '[]' 초기화 설정
      * @param params ag-grid 제공 event 파라미터
@@ -41,7 +32,6 @@ export default function delivery_read({dataInfo}) {
         gridRef.current = params.api;
         params.api.applyTransaction({add: dataInfo});
     };
-
 
 
     function handleKeyPress(e) {
@@ -83,7 +73,7 @@ export default function delivery_read({dataInfo}) {
         };
 
         const deleteList = gridManage.getFieldDeleteList(gridRef, fieldMappings);
-        deleteOrderStatusDetails({data : {deleteList :deleteList}, returnFunc : searchInfo})
+        deleteOrderStatusDetails({data: {deleteList: deleteList}, returnFunc: searchInfo})
     }
 
     /**
@@ -94,13 +84,12 @@ export default function delivery_read({dataInfo}) {
     };
 
 
-
     /**
      * @description 테이블 우측상단 관련 기본 유틸버튼
      */
     const subTableUtil = <div>
         {/*@ts-ignore*/}
-        <Button type= {'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}} onClick={deleteList}>
+        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}} onClick={deleteList}>
             <CopyOutlined/>삭제
         </Button>
         <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft: 5}} onClick={downloadExcel}>
