@@ -10,7 +10,7 @@ import moment from "moment";
 import useEventListener from "@/utils/common/function/UseEventListener";
 import message from "antd/lib/message";
 
-export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen}) {
+export default function SearchInfoModal({info, setInfo, open, setIsModalOpen}) {
     const [code, setCode] = useState();
     const [list, setList] = useState([])
     const [page, setPage] = useState({x: null, y: null})
