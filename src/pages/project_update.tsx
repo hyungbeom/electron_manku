@@ -1,26 +1,11 @@
 import React, {useRef, useState} from "react";
 import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
-import Card from "antd/lib/card/Card";
 import TextArea from "antd/lib/input/TextArea";
-import {
-    CopyOutlined,
-    DownCircleFilled,
-    FileSearchOutlined,
-    RetweetOutlined,
-    SaveOutlined,
-    UpCircleFilled,
-    UploadOutlined
-} from "@ant-design/icons";
-import {projectWriteColumn, subRfqWriteColumn} from "@/utils/columnList";
+import {CopyOutlined, FileSearchOutlined, SaveOutlined, UploadOutlined} from "@ant-design/icons";
+import {projectWriteColumn} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {
-    estimateDetailUnit,
-    estimateRequestDetailUnit,
-    estimateWriteInitial,
-    ModalInitList, projectDetailUnit, projectWriteInitial,
-    rfqWriteInitial
-} from "@/utils/initialList";
+import {ModalInitList, projectDetailUnit} from "@/utils/initialList";
 import moment from "moment";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
@@ -31,19 +16,18 @@ import TableGrid from "@/component/tableGrid";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import SearchInfoModal from "@/component/SearchAgencyModal";
 import Upload, {UploadProps} from "antd/lib/upload";
-import {BoxCard, MainCard, TopBoxCard} from "@/utils/commonForm";
+import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, TopBoxCard} from "@/utils/commonForm";
 import {useRouter} from "next/router";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import _ from "lodash";
-import {saveEstimate, saveProject, saveRfq, updateProject} from "@/utils/api/mainApi";
+import {updateProject} from "@/utils/api/mainApi";
 import {findCodeInfo} from "@/utils/api/commonApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
-import {list} from "postcss";
 import {getData} from "@/manage/function/api";
 
 const listType = 'projectDetailList'
 export default function projectUpdate({dataInfo}) {
- console.log(dataInfo,'dataInfo:')
+    console.log(dataInfo, 'dataInfo:')
     const fileRef = useRef(null);
     const gridRef = useRef(null);
     const router = useRouter();
@@ -53,62 +37,14 @@ export default function projectUpdate({dataInfo}) {
     const infoInit = dataInfo?.projectDetail
     const infoFileInit = dataInfo?.attachmentFileList
 
-
-    const userInfo = useAppSelector((state) => state.user);
-
-
     const [info, setInfo] = useState<any>(infoInit)
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
 
-
-    // =============================================================================================================
-    const inputForm = ({title, id, disabled = false, suffix = null, placeholder = ''}) => {
-
-        let bowl = info;
-
-        return <div>
-            <div>{title}</div>
-            <Input id={id} value={bowl[id]} disabled={disabled}
-                   placeholder={placeholder}
-                   onChange={onChange}
-                   size={'small'}
-                   onKeyDown={handleKeyPress}
-                   suffix={suffix}
-            />
-        </div>
-    }
-
-    const textAreaForm = ({title, id, rows = 5, disabled = false}) => {
-        return <div>
-            <div>{title}</div>
-            <TextArea style={{resize: 'none'}} rows={rows} id={id} value={info[id]} disabled={disabled}
-                      onChange={onChange}
-                      size={'small'}
-                      showCount
-                      maxLength={1000}
-            />
-        </div>
-    }
-
-
-    const datePickerForm = ({title, id, disabled = false}) => {
-        return <div>
-            <div>{title}</div>
-            {/*@ts-ignore*/}
-            <DatePicker value={info[id] ? moment(info[id]) : ''} style={{width: '100%'}}
-                        disabledDate={commonManage.disabledDate}
-                        onChange={(date) => onChange({
-                            target: {
-                                id: id,
-                                value: moment(date).format('YYYY-MM-DD')
-                            }
-                        })
-                        }
-                        disabled={disabled}
-                        id={id} size={'small'}/>
-        </div>
-    }
+    const onGridReady = (params) => {
+        gridRef.current = params.api;
+        params.api.applyTransaction({add: dataInfo?.projectDetail[listType]});
+    };
 
 
     // ======================================================================================================
@@ -289,9 +225,9 @@ export default function projectUpdate({dataInfo}) {
                     {mini ? <div>
                             <TopBoxCard title={'기본 정보'} grid={'1fr 1fr 1fr 1fr'}>
 
-                                {inputForm({title: '작성자', id: 'managerAdminName', disabled: true})}
-                                {datePickerForm({title: '작성일자', id: 'writtenDate', disabled: true})}
-                                {inputForm({title: '담당자', id: 'managerAdminName'})}
+                                {inputForm({title: '작성자', id: 'managerAdminName', disabled: true, onChange: onChange, data: info})}
+                                {datePickerForm({title: '작성일자', id: 'writtenDate', disabled: true, onChange: onChange, data: info})}
+                                {inputForm({title: '담당자', id: 'managerAdminName', onChange: onChange, data: info})}
 
                             </TopBoxCard>
                             <div style={{
@@ -301,9 +237,9 @@ export default function projectUpdate({dataInfo}) {
                                 marginTop: 10
                             }}>
                                 <BoxCard title={'프로젝트 정보'}>
-                                    {inputForm({title: 'PROJECT NO.', id: 'documentNumberFull'})}
-                                    {inputForm({title: '프로젝트 제목', id: 'projectTitle', placeholder: '매입처 당담자 입력 필요'})}
-                                    {datePickerForm({title: '마감일자', id: 'dueDate'})}
+                                    {inputForm({title: 'PROJECT NO.', id: 'documentNumberFull', onChange: onChange, data: info})}
+                                    {inputForm({title: '프로젝트 제목', id: 'projectTitle', placeholder: '매입처 당담자 입력 필요', onChange: onChange, data: info})}
+                                    {datePickerForm({title: '마감일자', id: 'dueDate', onChange: onChange, data: info})}
                                 </BoxCard>
                                 <BoxCard title={'거래처 정보'}>
                                     {inputForm({
@@ -314,18 +250,18 @@ export default function projectUpdate({dataInfo}) {
                                                 e.stopPropagation();
                                                 openModal('customerName');
                                             }
-                                        }/>
+                                        }/>, onChange: onChange, data: info
                                     })}
-                                    {inputForm({title: '거래처 담당자명', id: 'customerManagerName', disabled: true})}
-                                    {inputForm({title: '담당자 전화번호', id: 'customerManagerPhone', disabled: true})}
-                                    {inputForm({title: '담당자 이메일', id: 'customerManagerEmail', disabled: true})}
+                                    {inputForm({title: '거래처 담당자명', id: 'customerManagerName', disabled: true, onChange: onChange, data: info})}
+                                    {inputForm({title: '담당자 전화번호', id: 'customerManagerPhone', disabled: true, onChange: onChange, data: info})}
+                                    {inputForm({title: '담당자 이메일', id: 'customerManagerEmail', disabled: true, onChange: onChange, data: info})}
                                 </BoxCard>
 
                                 <BoxCard title={'기타 정보'}>
 
-                                    {textAreaForm({title: '비고란', rows: 3, id: 'remarks'})}
-                                    {textAreaForm({title: '지시사항', rows: 3, id: 'instructions'})}
-                                    {textAreaForm({title: '특이사항', rows: 3, id: 'specialNotes'})}
+                                    {textAreaForm({title: '비고란', rows: 3, id: 'remarks', onChange: onChange, data: info})}
+                                    {textAreaForm({title: '지시사항', rows: 3, id: 'instructions', onChange: onChange, data: info})}
+                                    {textAreaForm({title: '특이사항', rows: 3, id: 'specialNotes', onChange: onChange, data: info})}
                                 </BoxCard>
                                 <BoxCard title={'드라이브 목록'}>
                                     {/*@ts-ignored*/}
@@ -340,8 +276,8 @@ export default function projectUpdate({dataInfo}) {
 
                 <TableGrid
                     gridRef={gridRef}
+                    onGridReady={onGridReady}
                     columns={projectWriteColumn}
-                    tableData={info[listType]}
                     type={'write'}
                     funcButtons={subTableUtil}
                 />
@@ -351,8 +287,8 @@ export default function projectUpdate({dataInfo}) {
 }
 
 // @ts-ignored
-export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
 
+export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
     const {projectId} = ctx.query;
 
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
@@ -364,21 +300,16 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
                 permanent: false,
             },
         };
+    } else {
+        store.dispatch(setUserInfo(userInfo));
+        const result = await getData.post('project/getProjectDetail', {
+            "projectId": projectId,
+            "documentNumberFull": ""
+        });
+
+        const dataInfo = result?.data?.entity;
+        return {
+            props: {dataInfo: dataInfo ? dataInfo : null}
+        }
     }
-
-    store.dispatch(setUserInfo(userInfo));
-
-    const result = await getData.post('project/getProjectDetail', {
-        "projectId": projectId,
-        "documentNumberFull": ""
-    });
-
-
-    return {
-        props: {dataInfo: result?.data?.entity}
-    }
-
-
-    store.dispatch(setUserInfo(userInfo));
-
 })

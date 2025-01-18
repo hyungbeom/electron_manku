@@ -1,29 +1,19 @@
-import React, {useEffect, useRef, useState} from "react";
-import Input from "antd/lib/input/Input";
+import React, {useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
-import Card from "antd/lib/card/Card";
-import {projectReadColumn, tableEstimateReadColumns} from "@/utils/columnList";
-import DatePicker from "antd/lib/date-picker";
-import {estimateReadInitial, projectReadInitial, subRfqReadInitial} from "@/utils/initialList";
-import Select from "antd/lib/select";
+import {projectReadColumn} from "@/utils/columnList";
+import {projectReadInitial} from "@/utils/initialList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
-import {getData} from "@/manage/function/api";
 import {setUserInfo} from "@/store/user/userSlice";
-import moment from "moment/moment";
-import * as XLSX from "xlsx";
 import Button from "antd/lib/button";
-import {CopyOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
+import {CopyOutlined, FileExcelOutlined} from "@ant-design/icons";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
-import {deleteEstimate, deleteProjectList, deleteRfq, searchEstimate, searchProject} from "@/utils/api/mainApi";
+import {deleteProjectList, searchProject} from "@/utils/api/mainApi";
 import _ from "lodash";
 import {commonManage, gridManage} from "@/utils/commonManage";
-import {BoxCard, datePickerForm, inputForm, MainCard, rangePickerForm, TopBoxCard} from "@/utils/commonForm";
-import {DriveUploadComp} from "@/component/common/SharePointComp";
+import {BoxCard, inputForm, MainCard, rangePickerForm, TopBoxCard} from "@/utils/commonForm";
 import {useRouter} from "next/router";
-
-const {RangePicker} = DatePicker
 
 
 export default function ProjectRead({dataInfo}) {
@@ -68,8 +58,7 @@ export default function ProjectRead({dataInfo}) {
         };
 
         const deleteList = gridManage.getFieldDeleteList(gridRef, fieldMappings);
-        console.log(deleteList,'deleteList:')
-        // await deleteProjectList({data: {deleteList: deleteList}, returnFunc: searchInfo});
+        await deleteProjectList({data: {deleteList: deleteList}, returnFunc: searchInfo});
 
     }
 
