@@ -127,7 +127,7 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
             const v = await getData.post('account/microsoftLogin', {
                 authorizationCode: code,
                 codeVerifier: codeVerifier,
-                redirectUri: 'http://localhost:3000',
+                redirectUri: 'https://manku.progist.co.kr/',
             });
 
             if (v?.data?.code === 1) {
