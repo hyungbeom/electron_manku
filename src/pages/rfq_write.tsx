@@ -16,7 +16,7 @@ import TableGrid from "@/component/tableGrid";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import SearchInfoModal from "@/component/SearchAgencyModal";
 import Upload from "antd/lib/upload";
-import {BoxCard, MainCard, TopBoxCard} from "@/utils/commonForm";
+import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, TopBoxCard} from "@/utils/commonForm";
 import {useRouter} from "next/router";
 import {commonManage} from "@/utils/commonManage";
 import _ from "lodash";
@@ -25,10 +25,9 @@ import {saveRfq} from "@/utils/api/mainApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 
 const listType = 'estimateRequestDetailList'
-export default function rqfWrite() {
+export default function rqfWrite({dataInfo}) {
     const fileRef = useRef(null);
     const gridRef = useRef(null);
-    const [fileList, setFileList] = useState([]);
     const router = useRouter();
 
     const copyInit = _.cloneDeep(rfqWriteInitial)
@@ -37,66 +36,27 @@ export default function rqfWrite() {
 
     const userInfo = useAppSelector((state) => state.user);
 
-    const infoInit = {
-        ...copyInit,
+
+    const adminParams = {
         managerAdminId: userInfo['adminId'],
         managerAdminName: userInfo['name'],
         adminName: userInfo['name'],
     }
 
-    const [info, setInfo] = useState<any>(infoInit)
+    const infoInit = {
+        ...copyInit,
+        ...adminParams
+    }
+
+    const [info, setInfo] = useState<any>({...copyInit, ...dataInfo, ...adminParams})
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
 
-
-    // =============================================================================================================
-    const inputForm = ({title, id, disabled = false, suffix = null, placeholder = ''}) => {
-
-        let bowl = info;
-
-        return <div>
-            <div>{title}</div>
-            <Input id={id} value={bowl[id]} disabled={disabled}
-                   placeholder={placeholder}
-                   onChange={onChange}
-                   size={'small'}
-                   onKeyDown={handleKeyPress}
-                   suffix={suffix}
-            />
-        </div>
-    }
-
-    const textAreaForm = ({title, id, rows = 5, disabled = false}) => {
-        return <div>
-            <div>{title}</div>
-            <TextArea style={{resize: 'none'}} rows={rows} id={id} value={info[id]} disabled={disabled}
-                      onChange={onChange}
-                      size={'small'}
-                      showCount
-                      maxLength={1000}
-            />
-        </div>
-    }
-
-
-    const datePickerForm = ({title, id, disabled = false}) => {
-        return <div>
-            <div>{title}</div>
-            {/*@ts-ignore*/}
-            <DatePicker value={moment(info[id]).isValid() ? moment(info[id]) : ''} style={{width: '100%'}}
-                        disabledDate={commonManage.disabledDate}
-                        onChange={(date) => onChange({
-                            target: {
-                                id: id,
-                                value: moment(date).format('YYYY-MM-DD')
-                            }
-                        })
-                        }
-                        disabled={disabled}
-                        id={id} size={'small'}/>
-        </div>
-    }
-
+    const onGridReady = (params) => {
+        gridRef.current = params.api;
+        const result = dataInfo?.estimateRequestDetailList;
+        params.api.applyTransaction({add: result ? result : []});
+    };
 
     // ======================================================================================================
     async function handleKeyPress(e) {
@@ -131,14 +91,14 @@ export default function rqfWrite() {
             return message.warn('하위 데이터 1개 이상이여야 합니다');
         }
 
-        const formData:any = new FormData();
+        const formData: any = new FormData();
 
         const handleIteration = () => {
             for (const {key, value} of commonManage.commonCalc(info)) {
                 if (key !== listType) {
-                    if(key === 'dueDate'){
+                    if (key === 'dueDate') {
                         formData.append(key, moment(value).format('YYYY-MM-DD'));
-                    }else{
+                    } else {
                         formData.append(key, value);
                     }
                 }
@@ -154,9 +114,9 @@ export default function rqfWrite() {
         if (copyData[listType].length) {
             copyData[listType].forEach((detail, index) => {
                 Object.keys(detail).forEach((key) => {
-                    if(key === 'replyDate'){
+                    if (key === 'replyDate') {
                         formData.append(`${listType}[${index}].${key}`, moment(detail[key]).format('YYYY-MM-DD'));
-                    }else{
+                    } else {
                         formData.append(`${listType}[${index}].${key}`, detail[key]);
                     }
                 });
@@ -243,7 +203,6 @@ export default function rqfWrite() {
     </div>
 
 
-
     return <>
         <LayoutComponent>
             <div style={{
@@ -263,21 +222,20 @@ export default function rqfWrite() {
                 ]} mini={mini} setMini={setMini}>
 
 
-
-
                     {mini ? <div>
                             <TopBoxCard title={'기본 정보'} grid={'1fr 0.6fr 0.6fr 1fr 1fr 1fr'}>
-                                {datePickerForm({title: '작성일', id: 'writtenDate', disabled: true})}
-                                {inputForm({title: '작성자', id: 'adminName', disabled: true})}
-                                {inputForm({title: '담당자', id: 'managerAdminName'})}
+                                {datePickerForm({title: '작성일', id: 'writtenDate', disabled: true, onChange : onChange, data : info})}
+                                {inputForm({title: '작성자', id: 'adminName', disabled: true, onChange : onChange, data : info})}
+                                {inputForm({title: '담당자', id: 'managerAdminName', onChange : onChange, data : info})}
                                 {inputForm({
                                     title: 'INQUIRY NO.',
                                     id: 'documentNumberFull',
                                     disabled: true,
                                     placeholder: ''
+                                    , onChange : onChange, data : info
                                 })}
-                                {inputForm({title: 'RFQ NO.', id: 'rfqNo'})}
-                                {inputForm({title: '프로젝트 제목', id: 'projectTitle'})}
+                                {inputForm({title: 'RFQ NO.', id: 'rfqNo', onChange : onChange, data : info})}
+                                {inputForm({title: '프로젝트 제목', id: 'projectTitle', onChange : onChange, data : info})}
                             </TopBoxCard>
                             <div style={{
                                 display: 'grid',
@@ -294,11 +252,11 @@ export default function rqfWrite() {
                                                 e.stopPropagation();
                                                 openModal('agencyCode');
                                             }
-                                        }/>
+                                        }/>, onChange : onChange, data : info
                                     })}
-                                    {inputForm({title: '매입처명', id: 'agencyName', disabled : true})}
-                                    {inputForm({title: '매입처담당자', id: 'agencyManagerName', disabled : true})}
-                                    {datePickerForm({title: '마감일자(예상)', id: 'dueDate'})}
+                                    {inputForm({title: '매입처명', id: 'agencyName', disabled: true, onChange : onChange, data : info})}
+                                    {inputForm({title: '매입처담당자', id: 'agencyManagerName', disabled: true, onChange : onChange, data : info})}
+                                    {datePickerForm({title: '마감일자(예상)', id: 'dueDate', onChange : onChange, data : info})}
                                 </BoxCard>
                                 <BoxCard title={'고객사 정보'}>
                                     {inputForm({
@@ -309,12 +267,12 @@ export default function rqfWrite() {
                                                 e.stopPropagation();
                                                 openModal('customerName');
                                             }
-                                        }/>
+                                        }/>, onChange : onChange, data : info
                                     })}
-                                    {inputForm({title: '담당자명', id: 'managerName'})}
-                                    {inputForm({title: '전화번호', id: 'phoneNumber'})}
-                                    {inputForm({title: '팩스', id: 'faxNumber'})}
-                                    {inputForm({title: '이메일', id: 'customerManagerEmail'})}
+                                    {inputForm({title: '담당자명', id: 'managerName', onChange : onChange, data : info})}
+                                    {inputForm({title: '전화번호', id: 'phoneNumber', onChange : onChange, data : info})}
+                                    {inputForm({title: '팩스', id: 'faxNumber', onChange : onChange, data : info})}
+                                    {inputForm({title: '이메일', id: 'customerManagerEmail', onChange : onChange, data : info})}
                                 </BoxCard>
 
                                 <BoxCard title={'Maker 정보'}>
@@ -326,17 +284,17 @@ export default function rqfWrite() {
                                                 e.stopPropagation();
                                                 openModal('maker');
                                             }
-                                        }/>
+                                        }/>, onChange : onChange, data : info
                                     })}
-                                    {inputForm({title: 'ITEM', id: 'item'})}
-                                    {textAreaForm({title: '지시사항', id: 'instructions'})}
+                                    {inputForm({title: 'ITEM', id: 'item', onChange : onChange, data : info})}
+                                    {textAreaForm({title: '지시사항', id: 'instructions', onChange : onChange, data : info})}
                                 </BoxCard>
                                 <BoxCard title={'ETC'}>
-                                    {inputForm({title: 'End User', id: 'endUser'})}
-                                    {textAreaForm({title: '비고란', rows: 7, id: 'remarks'})}
+                                    {inputForm({title: 'End User', id: 'endUser', onChange : onChange, data : info})}
+                                    {textAreaForm({title: '비고란', rows: 7, id: 'remarks', onChange : onChange, data : info})}
                                 </BoxCard>
                                 <BoxCard title={'드라이브 목록'}>
-   {/*@ts-ignored*/}
+                                    {/*@ts-ignored*/}
                                     <div style={{overFlowY: "auto", maxHeight: 300}}>
                                         <DriveUploadComp infoFileInit={[]} fileRef={fileRef}/>
                                     </div>
@@ -349,7 +307,7 @@ export default function rqfWrite() {
                 <TableGrid
                     gridRef={gridRef}
                     columns={subRfqWriteColumn}
-                    tableData={info[listType]}
+                    onGridReady={onGridReady}
                     type={'write'}
                     funcButtons={subTableUtil}
                 />
@@ -360,7 +318,7 @@ export default function rqfWrite() {
 
 // @ts-ignored
 export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
-
+    const {query} = ctx;
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
     if (codeInfo < 0) {
@@ -373,5 +331,8 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     }
 
     store.dispatch(setUserInfo(userInfo));
-
+    if (query?.data) {
+        const data = JSON.parse(decodeURIComponent(query.data));
+        return {props: {dataInfo: data}}
+    }
 })

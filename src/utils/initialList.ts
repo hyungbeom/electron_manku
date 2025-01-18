@@ -338,7 +338,9 @@ export const orderWriteInitial = {
     "writtenDate": moment().format('YYYY-MM-DD'),
     "yourPoNo": "",                // Your PO No
     "agencyCode": "",  // Messrs
+    "agencyName": "",  // Messrs
     "customerName": "",          // 고객사명
+    "customerId": 0,          // 고객사명
     "estimateManager": "",            // 견적서담당자
     "managerID": "",                 // Responsibility
     "managerPhoneNumber": "",  // Tel
@@ -447,9 +449,9 @@ export const tableOrderReadInitial = {
 }
 
 export const orderReadInitial = {
-    "searchDate": "",              // 작성일자 시작일
-    "searchStartDate": "",              // 작성일자 시작일
-    "searchEndDate": "",              // 작성일자 시작일
+    "searchDate": [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],              // 작성일자 시작일
+    searchStartDate: moment().subtract(1, 'years').format('YYYY-MM-DD'),
+    searchEndDate: moment().format('YYYY-MM-DD'),
     "searchDocumentNumber": "",         // 문서번호
     "searchCustomerName": "",           // 고객사명
     "searchMaker": "",                  // MAKER

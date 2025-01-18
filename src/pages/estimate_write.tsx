@@ -18,14 +18,22 @@ import TableGrid from "@/component/tableGrid";
 import {useRouter} from "next/router";
 import SearchInfoModal from "@/component/SearchAgencyModal";
 import {commonManage} from "@/utils/commonManage";
-import {BoxCard, MainCard, TopBoxCard} from "@/utils/commonForm";
+import {
+    BoxCard,
+    datePickerForm,
+    inputForm,
+    MainCard,
+    selectBoxForm,
+    textAreaForm,
+    TopBoxCard
+} from "@/utils/commonForm";
 import _ from "lodash";
 import {findCodeInfo, findDocumentInfo} from "@/utils/api/commonApi";
 import {saveEstimate} from "@/utils/api/mainApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 
 const listType = 'estimateDetailList'
-export default function EstimateWrite() {
+export default function EstimateWrite({dataInfo}) {
     const fileRef = useRef(null);
     const gridRef = useRef(null);
     const router = useRouter();
@@ -46,52 +54,14 @@ export default function EstimateWrite() {
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
 
-    // =============================================================================================================
-
-    const inputForm = ({title, id, disabled = false, suffix = null, placeholder = ''}) => {
-        let bowl = info;
-
-        return <div>
-            <div>{title}</div>
-            <Input id={id} value={bowl[id]} disabled={disabled}
-                   onChange={onChange}
-                   size={'small'}
-                   onKeyDown={handleKeyPress}
-                   placeholder={placeholder}
-                   suffix={suffix}
-            />
-        </div>
-    }
-
-    const textAreaForm = ({title, id, rows = 5, disabled = false}) => {
-        return <div>
-            <div>{title}</div>
-            <TextArea style={{resize: 'none'}} rows={rows} id={id} value={info[id]} disabled={disabled}
-                      onChange={onChange}
-                      size={'small'}
-                      showCount
-                      maxLength={1000}
-            />
-        </div>
-    }
 
 
-    const datePickerForm = ({title, id, disabled = false}) => {
-        return <div>
-            <div>{title}</div>
-            {/*@ts-ignore*/}
-            <DatePicker value={moment(info[id]).isValid() ? moment(info[id]) : ''} style={{width: '100%'}}
-                        onChange={(date) => onChange({
-                            target: {
-                                id: id,
-                                value: moment(date).format('YYYY-MM-DD')
-                            }
-                        })
-                        }
-                        disabled={disabled}
-                        id={id} size={'small'}/>
-        </div>
-    }
+    const onGridReady = (params) => {
+        gridRef.current = params.api;
+        const result = dataInfo?.estimateDetailLis;
+        params.api.applyTransaction({add: result ? result : []});
+    };
+
 
     async function handleKeyPress(e) {
         if (e.key === 'Enter') {
@@ -218,18 +188,19 @@ export default function EstimateWrite() {
                 ]} mini={mini} setMini={setMini}>
                     {mini ? <div>
                             <TopBoxCard title={'기본 정보'} grid={'1fr 0.6fr 0.6fr 1fr 1fr 1fr 1fr '}>
-                                {datePickerForm({title: '작성일', id: 'writtenDate', disabled: true})}
-                                {inputForm({title: '작성자', id: 'adminName', disabled: true})}
-                                {inputForm({title: '담당자', id: 'managerAdminName'})}
-                                {inputForm({title: 'INQUIRY NO.', id: 'documentNumberFull', placeholder: '폴더생성 규칙 유의'})}
+                                {datePickerForm({title: '작성일', id: 'writtenDate', disabled: true, onChange : onChange, data : info})}
+                                {inputForm({title: '작성자', id: 'adminName', disabled: true, onChange : onChange, data : info})}
+                                {inputForm({title: '담당자', id: 'managerAdminName', onChange : onChange, data : info})}
+                                {inputForm({title: 'INQUIRY NO.', id: 'documentNumberFull', placeholder: '폴더생성 규칙 유의', onChange : onChange, data : info})}
                                 {inputForm({
                                     placeholder: '폴더생성 규칙 유의',
                                     title: '연결 INQUIRY No.',
                                     id: 'connectDocumentNumberFull',
                                     suffix: <DownloadOutlined style={{cursor: 'pointer'}}/>
+                                    , onChange : onChange, data : info
                                 })}
-                                {inputForm({title: 'RFQ NO.', id: 'rfqNo'})}
-                                {inputForm({title: '프로젝트 제목', id: 'projectTitle'})}
+                                {inputForm({title: 'RFQ NO.', id: 'rfqNo', onChange : onChange, data : info})}
+                                {inputForm({title: '프로젝트 제목', id: 'projectTitle', onChange : onChange, data : info})}
                             </TopBoxCard>
 
 
@@ -244,11 +215,11 @@ export default function EstimateWrite() {
                                                 e.stopPropagation();
                                                 openModal('agencyCode');
                                             }
-                                        }/>
+                                        }/>, onChange : onChange, data : info
                                     })}
-                                    {inputForm({title: '매입처명', id: 'agencyName'})}
-                                    {inputForm({title: '담당자', id: 'agencyManagerName'})}
-                                    {inputForm({title: '연락처', id: 'agencyManagerPhoneNumber'})}
+                                    {inputForm({title: '매입처명', id: 'agencyName', onChange : onChange, data : info})}
+                                    {inputForm({title: '담당자', id: 'agencyManagerName', onChange : onChange, data : info})}
+                                    {inputForm({title: '연락처', id: 'agencyManagerPhoneNumber', onChange : onChange, data : info})}
                                 </BoxCard>
 
                                 <BoxCard title={'고객사 정보'}>
@@ -260,47 +231,37 @@ export default function EstimateWrite() {
                                                 e.stopPropagation();
                                                 openModal('customerName');
                                             }
-                                        }/>
+                                        }/>, onChange : onChange, data : info
                                     })}
-                                    {inputForm({title: '담당자명', id: 'managerName'})}
-                                    {inputForm({title: '전화번호', id: 'phoneNumber'})}
-                                    {inputForm({title: '팩스', id: 'faxNumber'})}
-                                    {inputForm({title: '이메일', id: 'customerManagerEmail'})}
+                                    {inputForm({title: '담당자명', id: 'managerName', onChange : onChange, data : info})}
+                                    {inputForm({title: '전화번호', id: 'phoneNumber', onChange : onChange, data : info})}
+                                    {inputForm({title: '팩스', id: 'faxNumber', onChange : onChange, data : info})}
+                                    {inputForm({title: '이메일', id: 'customerManagerEmail', onChange : onChange, data : info})}
                                 </BoxCard>
 
                                 <BoxCard title={'운송 정보'}>
-                                    <div>
-                                        <div style={{paddingTop: 8}}>유효기간</div>
-                                        <Select id={'validityPeriod'} defaultValue={'0'}
-                                                onChange={(src) => onChange({target: {id: 'validityPeriod', value: src}})}
-                                                size={'small'} value={info['validityPeriod']} options={[
+                                    {selectBoxForm({
+                                        title: '유효기간', id: 'validityPeriod', list:[
                                             {value: '0', label: '견적 발행 후 10일간'},
                                             {value: '1', label: '견적 발행 후 30일간'},
-                                        ]} style={{width: '100%'}}>
-                                        </Select>
-                                    </div>
-                                    <div>
-                                        <div style={{paddingTop: 8}}>결제조건</div>
-                                        <Select id={'validityPeriod'} defaultValue={'0'}
-                                                onChange={(src) => onChange({target: {id: 'paymentTerms', value: src}})}
-                                                size={'small'} value={info['paymentTerms']} options={[
+                                        ], onChange: onChange, data: info
+                                    })}
+                                    {selectBoxForm({
+                                        title: '결제조건', id: 'validityPeriod', list:[
                                             {value: '0', label: '발주시 50% / 납품시 50%'},
                                             {value: '1', label: '납품시 현금결제'},
                                             {value: '2', label: '정기결제'},
-                                        ]} style={{width: '100%'}}>
-                                        </Select>
-                                    </div>
-                                    <div style={{marginTop: 8}}>
-                                        <div style={{paddingBottom: 3}}>운송조건</div>
-                                        <Select id={'shippingTerms'} defaultValue={'0'}
-                                                onChange={(src) => onChange({target: {id: 'shippingTerms', value: src}})}
-                                                size={'small'} value={info['shippingTerms']} options={[
+                                        ], onChange: onChange, data: info
+                                    })}
+
+                                    {selectBoxForm({
+                                        title: '운송조건', id: 'shippingTerms', list:[
                                             {value: '0', label: '귀사도착도'},
                                             {value: '1', label: '화물 및 택배비 별도'},
-                                        ]} style={{width: '100%',}}/>
-                                    </div>
-                                    {inputForm({title: 'Delivery(weeks)', id: 'delivery'})}
-                                    {inputForm({title: '환율', id: 'exchangeRate', placeholder: '직접기입(자동환율연결x)'})}
+                                        ], onChange: onChange, data: info
+                                    })}
+                                    {inputForm({title: 'Delivery(weeks)', id: 'delivery', onChange : onChange, data : info})}
+                                    {inputForm({title: '환율', id: 'exchangeRate', placeholder: '직접기입(자동환율연결x)', onChange : onChange, data : info})}
                                 </BoxCard>
 
                                 <BoxCard title={'Maker 정보'}>
@@ -312,13 +273,14 @@ export default function EstimateWrite() {
                                                 e.stopPropagation();
                                                 openModal('maker');
                                             }
-                                        }/>
+                                        }/>, onChange : onChange, data : info
                                     })}
-                                    {inputForm({title: 'ITEM', id: 'item'})}
+                                    {inputForm({title: 'ITEM', id: 'item', onChange : onChange, data : info})}
                                 </BoxCard>
+
                                 <BoxCard title={'ETC'}>
-                                    {textAreaForm({title: '지시사항', rows: 4, id: 'instructions'})}
-                                    {textAreaForm({title: '비고란', rows: 4, id: 'remarks'})}
+                                    {textAreaForm({title: '지시사항', rows: 4, id: 'instructions', onChange : onChange, data : info})}
+                                    {textAreaForm({title: '비고란', rows: 4, id: 'remarks', onChange : onChange, data : info})}
                                 </BoxCard>
                                 <BoxCard title={'드라이브 목록'}>
                                     {/*@ts-ignored*/}
@@ -333,8 +295,8 @@ export default function EstimateWrite() {
                 <TableGrid
                     gridRef={gridRef}
                     columns={tableEstimateWriteColumns}
-                    tableData={info[listType]}
                     type={'write'}
+                    onGridReady={onGridReady}
                     funcButtons={subTableUtil}
                 />
             </div>
@@ -343,7 +305,7 @@ export default function EstimateWrite() {
 }
 // @ts-ignore
 export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
-
+    const {query} = ctx;
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
     if (codeInfo < 0) {
@@ -356,5 +318,8 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     }
 
     store.dispatch(setUserInfo(userInfo));
-
+    if (query?.data) {
+        const data = JSON.parse(decodeURIComponent(query.data));
+        return {props: {dataInfo: data}}
+    }
 })

@@ -8,6 +8,8 @@ import moment from "moment";
 import InputNumber from "antd/lib/input-number";
 import {commonManage} from "@/utils/commonManage";
 import Radio from "antd/lib/radio";
+import TextArea from "antd/lib/input/TextArea";
+import Select from "antd/lib/select";
 
 const {RangePicker} = DatePicker
 
@@ -151,6 +153,7 @@ export const inputNumberForm = ({
         />
     </div>
 }
+
 export const radioForm = ({title, id, disabled = false, data, onChange, list}) => {
     let bowl = data;
 
@@ -166,4 +169,27 @@ export const radioForm = ({title, id, disabled = false, data, onChange, list}) =
             })}
         </Radio.Group>
     </>
+}
+
+export const selectBoxForm = ({title, id, disabled = false, data, onChange, list}) => {
+
+    return <>
+        <div>{title}</div>
+        <Select id={id} size={'small'} value={data[id]}
+                onChange={(src) => onChange({target: {id: id, value: src}})}
+                options={list} style={{width: '100%'}}>
+        </Select>
+    </>
+}
+
+export const textAreaForm = ({title, id, rows = 5, disabled = false, onChange, data}) => {
+    return <div>
+        <div>{title}</div>
+        <TextArea style={{resize: 'none'}} rows={rows} id={id} value={data[id]} disabled={disabled}
+                  onChange={onChange}
+                  size={'small'}
+                  showCount
+                  maxLength={1000}
+        />
+    </div>
 }

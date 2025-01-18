@@ -10,6 +10,7 @@ export default function OrderListModal({isModalOpen, setIsModalOpen, getRows}) {
     const gridRef = useRef(null);
 
     /**
+     *
      * @description ag-grid 테이블 초기 rowData 요소 '[]' 초기화 설정
      * @param params ag-grid 제공 event 파라미터
      */

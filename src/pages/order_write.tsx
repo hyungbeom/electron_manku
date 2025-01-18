@@ -1,19 +1,8 @@
 import React, {useRef, useState} from "react";
-import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
-import Card from "antd/lib/card/Card";
-import {
-    CopyOutlined,
-    DownCircleFilled,
-    DownloadOutlined,
-    RetweetOutlined,
-    SaveOutlined,
-    UpCircleFilled
-} from "@ant-design/icons";
+import {CopyOutlined, DownloadOutlined, SaveOutlined} from "@ant-design/icons";
 import {tableOrderWriteColumn,} from "@/utils/columnList";
-import DatePicker from "antd/lib/date-picker";
 import {orderDetailUnit, orderWriteInitial} from "@/utils/initialList";
-import moment from "moment";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
 import {wrapper} from "@/store/store";
@@ -23,8 +12,8 @@ import Select from "antd/lib/select";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {useRouter} from "next/router";
 import TableGrid from "@/component/tableGrid";
-import {BoxCard, inputForm, MainCard, TopBoxCard} from "@/utils/commonForm";
-import {commonManage} from "@/utils/commonManage";
+import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, TopBoxCard} from "@/utils/commonForm";
+import {commonManage, gridManage} from "@/utils/commonManage";
 import TextArea from "antd/lib/input/TextArea";
 import _ from "lodash";
 import {findEstDocumentInfo} from "@/utils/api/commonApi";
@@ -33,10 +22,12 @@ import {DriveUploadComp} from "@/component/common/SharePointComp";
 
 
 const listType = 'orderDetailList'
-export default function OrderWriter() {
+export default function OrderWriter({dataInfo}) {
     const fileRef = useRef(null);
     const gridRef = useRef(null);
     const router = useRouter();
+
+
 
     const copyInit = _.cloneDeep(orderWriteInitial)
     const copyUnitInit = _.cloneDeep(orderDetailUnit)
@@ -45,8 +36,7 @@ export default function OrderWriter() {
 
     const [mini, setMini] = useState(true);
 
-    const infoInit = {
-        ...copyInit,
+    const adminParams = {
         managerAdminId: userInfo['adminId'],
         managerAdminName: userInfo['name'],
         adminName: userInfo['name'],
@@ -54,45 +44,24 @@ export default function OrderWriter() {
         managerPhoneNumber: userInfo['contactNumber'],
         managerFaxNumber: userInfo['faxNumber'],
         managerEmail: userInfo['email'],
+        createdId: 0,
+        customerId: 0
+    }
+    const infoInit = {
+        ...copyInit,
+        ...adminParams
     }
 
-    const [info, setInfo] = useState<any>(infoInit)
+    const [info, setInfo] = useState<any>({...copyInit, ...dataInfo, ...adminParams})
 
 
-
-    const textAreaForm = ({title, id, rows = 5, disabled = false}) => {
-        return <div>
-            <div>{title}</div>
-            <TextArea style={{resize: 'none'}} rows={rows} id={id} value={info[id]} disabled={disabled}
-                      onChange={onChange}
-                      size={'small'}
-                      showCount
-                      maxLength={1000}
-            />
-        </div>
-    }
-
-    const datePickerForm = ({title, id, disabled = false}) => {
+    const onGridReady = (params) => {
+        gridRef.current = params.api;
+        const result = dataInfo?.orderDetailList;
+        params.api.applyTransaction({add: result ? result : []});
+    };
 
 
-        return <div>
-            <div>{title}</div>
-            {/*@ts-ignore*/}
-            <DatePicker value={moment(info[id]).isValid() ? moment(info[id]) : ''} style={{width: '100%'}}
-                        disabledDate={commonManage.disabledDate}
-                        onChange={(date) => onChange({
-                            target: {
-                                id: id,
-                                value: moment(date).format('YYYY-MM-DD')
-                            }
-                        })
-                        }
-                        disabled={disabled}
-                        id={id} size={'small'}/>
-        </div>
-    }
-
-    // ======================================================================================================
     async function handleKeyPress(e) {
         if (e.key === 'Enter') {
             switch (e.target.id) {
@@ -103,14 +72,14 @@ export default function OrderWriter() {
         }
     }
 
-
     function onChange(e) {
         commonManage.onChange(e, setInfo)
     }
 
 
     async function saveFunc() {
-        if (!info[listType].length) {
+        const list = gridManage.getAllData(gridRef)
+        if (!list.length) {
            return message.warn('하위 데이터 1개 이상이여야 합니다')
         }
         const formData: any = new FormData();
@@ -125,11 +94,9 @@ export default function OrderWriter() {
 
         handleIteration();
 
-        const copyData = {...info}
 
-
-        if (copyData[listType].length) {
-            copyData[listType].forEach((detail, index) => {
+        if (list.length) {
+            list.forEach((detail, index) => {
                 Object.keys(detail).forEach((key) => {
                     formData.append(`${listType}[${index}].${key}`, detail[key]);
                 });
@@ -141,30 +108,23 @@ export default function OrderWriter() {
             formData.append(`attachmentFileList[${index}].attachmentFile`, file);
             formData.append(`attachmentFileList[${index}].fileName`, file.name.replace(/\s+/g, ""));
         });
-
         await saveOrder({data : formData, router : router})
     }
 
     function deleteList() {
-        let copyData = {...info}
-        copyData[listType] = commonManage.getUnCheckList(gridRef.current.api);
-        setInfo(copyData);
+        const list = commonManage.getUnCheckList(gridRef);
+        gridManage.resetData(gridRef, list);
     }
 
     function addRow() {
-        let copyData = {...info};
-        copyData[listType].push({
-            ...copyUnitInit,
-            "currency": commonManage.changeCurr(info['agencyCode'])
-        })
-
-        setInfo(copyData)
+        const newRow = {...copyUnitInit, "currency": commonManage.changeCurr(info['agencyCode'])};
+        gridRef.current.applyTransaction({add: [newRow]});
     }
 
     function clearAll() {
         setInfo({...infoInit});
+        gridManage.deleteAll(gridRef);
     }
-
 
     /**
      * @description 테이블 우측상단 관련 기본 유틸버튼
@@ -199,7 +159,7 @@ export default function OrderWriter() {
                     {mini ? <div>
 
                         <TopBoxCard title={'INQUIRY & PO no'} grid={'1fr 0.6fr 0.6fr 1fr 1fr 1fr'}>
-                            {datePickerForm({title: '작성일', id: 'writtenDate', disabled: true})}
+                            {datePickerForm({title: '작성일', id: 'writtenDate', disabled: true, onChange : onChange,  data : info})}
                             {inputForm({title: '작성자', id: 'adminName', disabled: true, onChange : onChange,  data : info})}
                             {inputForm({title: '담당자', id: 'managerAdminName', onChange : onChange,  data : info})}
 
@@ -224,7 +184,7 @@ export default function OrderWriter() {
                             <BoxCard title={'CUSTOMER & SUPPLY'}>
                                 {inputForm({title: 'Messrs', id: 'agencyCode', onChange : onChange,  data : info})}
                                 {inputForm({title: 'Attn To', id: 'attnTo', onChange : onChange,  data : info})}
-                                {inputForm({title: '고객사명', id: 'agencyName', onChange : onChange,  data : info})}
+                                {inputForm({title: '매입처명', id: 'agencyName', onChange : onChange,  data : info})}
                             </BoxCard>
 
                             <BoxCard title={'MANAGER IN CHARGE'}>
@@ -256,8 +216,7 @@ export default function OrderWriter() {
 
                             <BoxCard title={'ETC'}>
                                 {inputForm({title: '견적서담당자', id: 'estimateManager', onChange : onChange,  data : info})}
-                                {textAreaForm({title: '비고란', rows: 3, id: 'remarks'})}
-                                {textAreaForm({title: '하단태그', rows: 3, id: 'footer'})}
+                                {textAreaForm({title: '비고란', rows: 6, id: 'remarks', onChange : onChange,  data : info})}
                             </BoxCard>
                             <BoxCard title={'드라이브 목록'}>
                                    {/*@ts-ignored*/}
@@ -272,8 +231,7 @@ export default function OrderWriter() {
                 <TableGrid
                     gridRef={gridRef}
                     columns={tableOrderWriteColumn}
-                    tableData={info[listType]}
-                    listType={'orderId'}
+                    onGridReady={onGridReady}
                     type={'write'}
                     funcButtons={subTableUtil}
                 />
@@ -284,6 +242,8 @@ export default function OrderWriter() {
 }
 
 export const getServerSideProps:any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
+    const {query} = ctx;
+
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
     if (codeInfo < 0) {
@@ -295,4 +255,10 @@ export const getServerSideProps:any = wrapper.getStaticProps((store: any) => asy
         };
     }
     store.dispatch(setUserInfo(userInfo));
+    if (query?.data) {
+        const data = JSON.parse(decodeURIComponent(query.data));
+        return {props: {dataInfo: data}}
+    }
+
+
 })

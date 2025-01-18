@@ -13,6 +13,7 @@ import {inputForm, MainCard, rangePickerForm, TopBoxCard} from "@/utils/commonFo
 import TableGrid from "@/component/tableGrid";
 import {storeReadColumn} from "@/utils/columnList";
 import {useRouter} from "next/router";
+import message from "antd/lib/message";
 
 export default function delivery_read({dataInfo}) {
     const router = useRouter();
@@ -24,10 +25,6 @@ export default function delivery_read({dataInfo}) {
     const [info, setInfo] = useState(copyInit)
     const [mini, setMini] = useState(true);
 
-    /**
-     * @description ag-grid 테이블 초기 rowData 요소 '[]' 초기화 설정
-     * @param params ag-grid 제공 event 파라미터
-     */
     const onGridReady = (params) => {
         gridRef.current = params.api;
         params.api.applyTransaction({add: dataInfo});
@@ -67,6 +64,9 @@ export default function delivery_read({dataInfo}) {
      * @description selectRows(~ deliveryList)를 삭제하는 함수입니다.
      */
     async function deleteList() {
+        if (gridRef.current.getSelectedRows().length < 1) {
+            return message.error('삭제할 데이터를 선택해주세요.')
+        }
         const fieldMappings = {
             orderStatusId: "orderStatusId",
             orderStatusDetailId: "orderStatusDetailId",
@@ -146,7 +146,6 @@ export default function delivery_read({dataInfo}) {
                     gridRef={gridRef}
                     columns={storeReadColumn}
                     onGridReady={onGridReady}
-                    type={'read'}
                     funcButtons={subTableUtil}
                 />
             </div>

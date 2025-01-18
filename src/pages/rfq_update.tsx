@@ -1,10 +1,7 @@
 import React, {useRef, useState} from "react";
-import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
-import TextArea from "antd/lib/input/TextArea";
 import {CopyOutlined, FileSearchOutlined, SaveOutlined} from "@ant-design/icons";
 import {subRfqWriteColumn} from "@/utils/columnList";
-import DatePicker from "antd/lib/date-picker";
 import moment from "moment";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
@@ -15,11 +12,11 @@ import {setUserInfo} from "@/store/user/userSlice";
 import MyComponent from "@/component/MyComponent";
 import TableGrid from "@/component/tableGrid";
 import SearchInfoModal from "@/component/SearchAgencyModal";
-import {BoxCard, MainCard, TopBoxCard} from "@/utils/commonForm";
-import {commonManage} from "@/utils/commonManage";
+import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, TopBoxCard} from "@/utils/commonForm";
+import {commonManage, gridManage} from "@/utils/commonManage";
 import {findCodeInfo} from "@/utils/api/commonApi";
 import {updateRfq} from "@/utils/api/mainApi";
-import {estimateRequestDetailUnit} from "@/utils/initialList";
+import {estimateRequestDetailUnit, storeWriteInitial} from "@/utils/initialList";
 import _ from "lodash";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {useRouter} from "next/router";
@@ -40,52 +37,11 @@ export default function rqfUpdate({dataInfo}) {
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false, event3: false});
 
-    // =============================================================================================
+    const onGridReady = (params) => {
+        gridRef.current = params.api;
+        params.api.applyTransaction({add: dataInfo?.estimateRequestDetail[listType]});
+    };
 
-    const inputForm = ({title, id, disabled = false, suffix = null}) => {
-        let bowl = info;
-
-        return <div>
-            <div>{title}</div>
-            <Input id={id} value={bowl[id]} disabled={disabled}
-                   onChange={onChange}
-                   size={'small'}
-                   onKeyDown={handleKeyPress}
-                   suffix={suffix}
-
-            />
-        </div>
-    }
-
-    const textAreaForm = ({title, id, rows = 5, disabled = false}) => {
-        return <div>
-            <div>{title}</div>
-            <TextArea rows={rows} id={id} value={info[id]} disabled={disabled}
-                      onChange={onChange}
-                      size={'small'}/>
-        </div>
-    }
-
-    const datePickerForm = ({title, id, disabled = false}) => {
-
-        return <div>
-            <div>{title}</div>
-            {/*@ts-ignore*/}
-            <DatePicker value={moment(info[id]).isValid() ? moment(info[id]) : ''} style={{width: '100%'}}
-                        onChange={(date) => onChange({
-                            target: {
-                                id: id,
-                                value: moment(date).format('YYYY-MM-DD')
-                            }
-                        })
-                        }
-                        disabled={disabled}
-                        disabledDate={commonManage.disabledDate}
-                        id={id} size={'small'}/>
-        </div>
-    }
-
-    // =========================================================================
 
     function openModal(e) {
         commonManage.openModal(e, setIsModalOpen)
@@ -112,11 +68,12 @@ export default function rqfUpdate({dataInfo}) {
         if (!info['agencyCode']) {
             return message.warn('매입처 코드가 누락되었습니다.')
         }
-        if (!info[listType].length) {
-            return message.warn('하위 데이터 1개 이상이여야 합니다');
+        const list = gridManage.getAllData(gridRef)
+        if (!list.length) {
+            return message.warn('하위 데이터 1개 이상이여야 합니다')
         }
 
-        const formData:any = new FormData();
+        const formData: any = new FormData();
 
         const handleIteration = () => {
             for (const {key, value} of commonManage.commonCalc(info)) {
@@ -135,8 +92,8 @@ export default function rqfUpdate({dataInfo}) {
         const copyData = {...info}
 
 
-        if (copyData[listType].length) {
-            copyData[listType].forEach((detail, index) => {
+        if (list.length) {
+            list.forEach((detail, index) => {
                 Object.keys(detail).forEach((key) => {
                     if (key === 'replyDate') {
                         formData.append(`${listType}[${index}].${key}`, moment(detail[key]).format('YYYY-MM-DD'));
@@ -161,31 +118,31 @@ export default function rqfUpdate({dataInfo}) {
             formData.append(`deleteAttachementIdList[${idx}]`, v.id);
         })
 
-
-        for (const [key, value] of formData.entries()) {
-            console.log(`Key: ${key}, Value: ${value}:::::::::`);
-        }
-
         await updateRfq({data: formData, router: router})
     }
 
     function deleteList() {
-        let copyData = {...info}
-        copyData[listType] = commonManage.getUnCheckList(gridRef.current.api);
-        setInfo(copyData);
+        const list = commonManage.getUnCheckList(gridRef);
+        gridManage.resetData(gridRef, list);
     }
 
     function addRow() {
-        let copyData = {...info};
-        copyData[listType].push({
-            ...copyUnitInit,
-            "currency": commonManage.changeCurr(info['agencyCode'])
-        })
-        setInfo(copyData)
+        const newRow = {...copyUnitInit, "currency": commonManage.changeCurr(info['agencyCode'])};
+        gridRef.current.applyTransaction({add: [newRow]});
     }
 
     function clearAll() {
-        setInfo({...infoInit});
+        setInfo(estimateRequestDetailUnit);
+        gridManage.deleteAll(gridRef)
+    }
+
+    function copyPage(){
+        const totalList = gridManage.getAllData(gridRef)
+        let copyInfo = _.cloneDeep(info)
+        copyInfo[listType] = totalList
+
+        const query = `data=${encodeURIComponent(JSON.stringify(copyInfo))}`;
+        router.push(`/rfq_write?${query}`)
     }
 
 
@@ -221,17 +178,30 @@ export default function rqfUpdate({dataInfo}) {
             }}>
                 <MainCard title={'견적의뢰 수정'} list={[
                     {name: '수정', func: saveFunc, type: 'primary'},
-                    {name: '초기화', func: clearAll, type: 'danger'}
+                    {name: '초기화', func: clearAll, type: 'danger'},
+                    {name: '복제', func: copyPage, type: 'default'},
                 ]} mini={mini} setMini={setMini}>
 
                     {mini ? <div>
                         <TopBoxCard title={'기본 정보'} grid={'1fr 1fr 0.6fr 0.6fr 1fr 1fr'}>
-                            {datePickerForm({title: '작성일', id: 'writtenDate', disabled: true})}
-                            {inputForm({title: 'INQUIRY NO.', id: 'documentNumberFull', disabled: true})}
-                            {inputForm({title: '작성자', id: 'createdBy', disabled: true})}
-                            {inputForm({title: '담당자', id: 'managerAdminName'})}
-                            {inputForm({title: 'RFQ NO.', id: 'rfqNo'})}
-                            {inputForm({title: '프로젝트 제목', id: 'projectTitle'})}
+                            {datePickerForm({
+                                title: '작성일',
+                                id: 'writtenDate',
+                                disabled: true,
+                                onChange: onChange,
+                                data: info
+                            })}
+                            {inputForm({
+                                title: 'INQUIRY NO.',
+                                id: 'documentNumberFull',
+                                disabled: true,
+                                onChange: onChange,
+                                data: info
+                            })}
+                            {inputForm({title: '작성자', id: 'createdBy', disabled: true, onChange: onChange, data: info})}
+                            {inputForm({title: '담당자', id: 'managerAdminName', onChange: onChange, data: info})}
+                            {inputForm({title: 'RFQ NO.', id: 'rfqNo', onChange: onChange, data: info})}
+                            {inputForm({title: '프로젝트 제목', id: 'projectTitle', onChange: onChange, data: info})}
                         </TopBoxCard>
                         <div style={{
                             display: 'grid',
@@ -247,11 +217,23 @@ export default function rqfUpdate({dataInfo}) {
                                             e.stopPropagation();
                                             openModal('agencyCode');
                                         }
-                                    }/>
+                                    }/>, onChange: onChange, data: info
                                 })}
-                                {inputForm({title: '매입처명', id: 'agencyName', disabled : true})}
-                                {inputForm({title: '매입처담당자', id: 'agencyManagerName', disabled : true})}
-                                {datePickerForm({title: '마감일자(예상)', id: 'dueDate'})}
+                                {inputForm({
+                                    title: '매입처명',
+                                    id: 'agencyName',
+                                    disabled: true,
+                                    onChange: onChange,
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: '매입처담당자',
+                                    id: 'agencyManagerName',
+                                    disabled: true,
+                                    onChange: onChange,
+                                    data: info
+                                })}
+                                {datePickerForm({title: '마감일자(예상)', id: 'dueDate', onChange: onChange, data: info})}
                             </BoxCard>
 
                             <BoxCard title={'고객사 정보'}>
@@ -263,12 +245,12 @@ export default function rqfUpdate({dataInfo}) {
                                             e.stopPropagation();
                                             openModal('customerName');
                                         }
-                                    }/>
+                                    }/>, onChange: onChange, data: info
                                 })}
-                                {inputForm({title: '담당자명', id: 'managerName'})}
-                                {inputForm({title: '전화번호', id: 'phoneNumber'})}
-                                {inputForm({title: '팩스', id: 'faxNumber'})}
-                                {inputForm({title: '이메일', id: 'customerManagerEmail'})}
+                                {inputForm({title: '담당자명', id: 'managerName', onChange: onChange, data: info})}
+                                {inputForm({title: '전화번호', id: 'phoneNumber', onChange: onChange, data: info})}
+                                {inputForm({title: '팩스', id: 'faxNumber', onChange: onChange, data: info})}
+                                {inputForm({title: '이메일', id: 'customerManagerEmail', onChange: onChange, data: info})}
                             </BoxCard>
 
 
@@ -281,18 +263,18 @@ export default function rqfUpdate({dataInfo}) {
                                             e.stopPropagation();
                                             openModal('maker');
                                         }
-                                    }/>
+                                    }/>, onChange: onChange, data: info
                                 })}
-                                {inputForm({title: 'ITEM', id: 'item'})}
-                                {textAreaForm({title: '지시사항', id: 'instructions'})}
+                                {inputForm({title: 'ITEM', id: 'item', onChange: onChange, data: info})}
+                                {textAreaForm({title: '지시사항', id: 'instructions', onChange: onChange, data: info})}
 
                             </BoxCard>
                             <BoxCard title={'ETC'}>
-                                {inputForm({title: 'End User', id: 'endUser'})}
-                                {textAreaForm({title: '비고란', rows: 7, id: 'remarks'})}
+                                {inputForm({title: 'End User', id: 'endUser', onChange: onChange, data: info})}
+                                {textAreaForm({title: '비고란', rows: 7, id: 'remarks', onChange: onChange, data: info})}
                             </BoxCard>
                             <BoxCard title={'드라이브 목록'}>
-                                   {/*@ts-ignored*/}
+                                {/*@ts-ignored*/}
                                 <div style={{overFlowY: "auto", maxHeight: 300}}>
                                     <DriveUploadComp infoFileInit={infoFileInit} fileRef={fileRef}/>
                                 </div>
@@ -305,7 +287,7 @@ export default function rqfUpdate({dataInfo}) {
                 <TableGrid
                     gridRef={gridRef}
                     columns={subRfqWriteColumn}
-                    tableData={info[listType]}
+                    onGridReady={onGridReady}
                     type={'write'}
                     funcButtons={subTableUtil}
                 />
@@ -337,9 +319,9 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
         const result = await getData.post('estimate/getEstimateRequestDetail', {
             "estimateRequestId": estimateRequestId
         });
-
+        const dataInfo = result?.data?.entity;
         return {
-            props: {dataInfo: result?.data?.entity}
+            props: {dataInfo: dataInfo ? dataInfo : null}
         }
     }
 })

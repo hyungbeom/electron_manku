@@ -49,10 +49,7 @@ export default function storeWrite({dataInfo}) {
     const [mini, setMini] = useState(true);
 
 
-    /**
-     * @description ag-grid 테이블 초기 rowData 요소 '[]' 초기화 설정
-     * @param params ag-grid 제공 event 파라미터
-     */
+
     const onGridReady = (params) => {
         gridRef.current = params.api;
         const result = dataInfo?.orderStatusDetailList;
@@ -117,12 +114,9 @@ export default function storeWrite({dataInfo}) {
                 ? v.itemDetailNo.join(',') // 배열을 쉼표로 구분된 문자열로 변환
                 : v.itemDetailNo; // 배열이 아니면 그대로 사용
 
-            console.log(processedItemDetailNo,'processedItemDetailNo:')
-
             copyInfo[listType][idx]['itemDetailNo'] = processedItemDetailNo;
 
         })
-        console.log(copyInfo[listType])
         await saveStore({data: copyInfo, router: router})
     }
 

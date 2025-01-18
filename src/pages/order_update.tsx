@@ -1,8 +1,6 @@
 import React, {useRef, useState} from "react";
-import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
-import Card from "antd/lib/card/Card";
-import {CopyOutlined, DownCircleFilled, EditOutlined, SaveOutlined, UpCircleFilled} from "@ant-design/icons";
+import {CopyOutlined, SaveOutlined} from "@ant-design/icons";
 import {orderDetailUnit, printEstimateInitial,} from "@/utils/initialList";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
@@ -10,15 +8,13 @@ import {getData} from "@/manage/function/api";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
-import Select from "antd/lib/select";
 import {useRouter} from "next/router";
-import {BoxCard, MainCard} from "@/utils/commonForm";
+import {BoxCard, inputForm, MainCard, selectBoxForm, textAreaForm} from "@/utils/commonForm";
 import TableGrid from "@/component/tableGrid";
 import {tableOrderWriteColumn} from "@/utils/columnList";
 import PrintPo from "@/component/printPo";
 import PrintTransactionModal from "@/component/printTransaction";
-import {commonManage} from "@/utils/commonManage";
-import TextArea from "antd/lib/input/TextArea";
+import {commonManage, gridManage} from "@/utils/commonManage";
 import {updateOrder} from "@/utils/api/mainApi";
 import _ from "lodash";
 import {findEstDocumentInfo} from "@/utils/api/commonApi";
@@ -36,7 +32,6 @@ export default function order_update({dataInfo}) {
     const infoInit = dataInfo?.orderDetail
     const infoFileInit = dataInfo?.attachmentFileList
 
-    console.log(infoInit,'infoInit')
     const [info, setInfo] = useState<any>(infoInit)
 
     const [mini, setMini] = useState(true);
@@ -44,35 +39,10 @@ export default function order_update({dataInfo}) {
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
 
 
-    console.log(info,'info:')
-// =============================================================================================================
-    const inputForm = ({title, id, disabled = false, suffix = null, placeholder = ''}) => {
-
-        let bowl = info;
-
-        return <div>
-            <div>{title}</div>
-            <Input id={id} value={bowl[id]} disabled={disabled}
-                   placeholder={placeholder}
-                   onChange={onChange}
-                   size={'small'}
-                   onKeyDown={handleKeyPress}
-                   suffix={suffix}
-            />
-        </div>
-    }
-
-    const textAreaForm = ({title, id, rows = 5, disabled = false}) => {
-        return <div>
-            <div>{title}</div>
-            <TextArea style={{resize: 'none'}} rows={rows} id={id} value={info[id]} disabled={disabled}
-                      onChange={onChange}
-                      size={'small'}
-                      showCount
-                      maxLength={1000}
-            />
-        </div>
-    }
+    const onGridReady = (params) => {
+        gridRef.current = params.api;
+        params.api.applyTransaction({add: dataInfo?.orderDetail[listType]});
+    };
 
 
     function onChange(e) {
@@ -80,54 +50,48 @@ export default function order_update({dataInfo}) {
     }
 
     async function saveFunc() {
-        if (!info[listType].length) {
-          return  message.warn('하위 데이터 1개 이상이여야 합니다')
+        const list = gridManage.getAllData(gridRef)
+        if (!list.length) {
+            return message.warn('하위 데이터 1개 이상이여야 합니다')
         }
-            const formData:any = new FormData();
+        const formData: any = new FormData();
 
-            const handleIteration = () => {
-                for (const {key, value} of commonManage.commonCalc(info)) {
-                    if (key !== listType) {
-                        formData.append(key, value);
-                    }
+        const handleIteration = () => {
+            for (const {key, value} of commonManage.commonCalc(info)) {
+                if (key !== listType) {
+                    formData.append(key, value);
                 }
-            };
+            }
+        };
 
-            handleIteration();
+        handleIteration();
 
-            const copyData = {...info}
+        const copyData = {...info}
 
 
-            if (copyData[listType].length) {
-                copyData[listType].forEach((detail, index) => {
-                    Object.keys(detail).forEach((key) => {
-                            formData.append(`${listType}[${index}].${key}`, detail[key]);
-                    });
+        if (list.length) {
+            list.forEach((detail, index) => {
+                Object.keys(detail).forEach((key) => {
+                    formData.append(`${listType}[${index}].${key}`, detail[key]);
                 });
-            }
-
-            const filesToSave = fileRef.current.fileList.map((item) => item.originFileObj).filter((file) => file instanceof File);
-
-            //새로 추가되는 파일
-            filesToSave.forEach((file, index) => {
-                formData.append(`attachmentFileList[${index}].attachmentFile`, file);
-                formData.append(`attachmentFileList[${index}].fileName`, file.name.replace(/\s+/g, ""));
             });
+        }
 
-            //기존 기준 사라진 파일
-            const result = infoFileInit.filter(itemA => !fileRef.current.fileList.some(itemB => itemA.id === itemB.id));
-            result.map((v, idx) => {
-                formData.append(`deleteAttachementIdList[${idx}]`, v.id);
-            })
+        const filesToSave = fileRef.current.fileList.map((item) => item.originFileObj).filter((file) => file instanceof File);
 
-            for (const [key, value] of formData.entries()) {
-                console.log(`Key: ${key}, Value: ${value}:::::::::`);
-            }
+        //새로 추가되는 파일
+        filesToSave.forEach((file, index) => {
+            formData.append(`attachmentFileList[${index}].attachmentFile`, file);
+            formData.append(`attachmentFileList[${index}].fileName`, file.name.replace(/\s+/g, ""));
+        });
 
+        //기존 기준 사라진 파일
+        const result = infoFileInit.filter(itemA => !fileRef.current.fileList.some(itemB => itemA.id === itemB.id));
+        result.map((v, idx) => {
+            formData.append(`deleteAttachementIdList[${idx}]`, v.id);
+        })
 
-
-
-       await updateOrder({data: formData})
+        await updateOrder({data: formData})
     }
 
     async function printTransactionStatement() {
@@ -145,8 +109,6 @@ export default function order_update({dataInfo}) {
             customerName: info['customerName']
         })
 
-        // console.log(result?.data?.entity?.customerList?.[0], 'result')
-
         if (result?.data?.code === 1) {
 
             if (result?.data?.entity?.customerList.length) {
@@ -158,32 +120,13 @@ export default function order_update({dataInfo}) {
 
 
     function deleteList() {
-
-        const api = gridRef.current.api;
-
-        // 전체 행 반복하면서 선택되지 않은 행만 추출
-        const uncheckedData = [];
-        for (let i = 0; i < api.getDisplayedRowCount(); i++) {
-            const rowNode = api.getDisplayedRowAtIndex(i);
-            if (!rowNode.isSelected()) {
-                uncheckedData.push(rowNode.data);
-            }
-        }
-
-        let copyData = {...info}
-        copyData[listType] = uncheckedData;
-
-        setInfo(copyData);
-
+        const list = commonManage.getUnCheckList(gridRef);
+        gridManage.resetData(gridRef, list);
     }
 
     function addRow() {
-        let copyData = {...info};
-        copyData[listType].push({
-            ...copyUnitInit,
-            "currency": commonManage.changeCurr(info['agencyCode'])
-        })
-        setInfo(copyData)
+        const newRow = {...copyUnitInit, "currency": commonManage.changeCurr(info['agencyCode'])};
+        gridRef.current.applyTransaction({add: [newRow]});
     }
 
 
@@ -195,7 +138,6 @@ export default function order_update({dataInfo}) {
                     await findEstDocumentInfo(e, setInfo)
                     break;
             }
-
         }
     }
 
@@ -217,10 +159,14 @@ export default function order_update({dataInfo}) {
     </div>
 
 
-    function moveWrite() {
-        router?.push('/order_write')
-    }
+    function copyPage() {
+        const totalList = gridManage.getAllData(gridRef)
+        let copyInfo = _.cloneDeep(info)
+        copyInfo[listType] = totalList
 
+        const query = `data=${encodeURIComponent(JSON.stringify(copyInfo))}`;
+        router.push(`/order_write?${query}`)
+    }
 
     return <>
         <LayoutComponent>
@@ -235,13 +181,12 @@ export default function order_update({dataInfo}) {
                                        setIsModalOpen={setIsModalOpen}/>
                 <PrintPo data={dataInfo} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
 
-                <MainCard title={'견적서 수정'} list={[
+                <MainCard title={'발주서 수정'} list={[
                     {name: '거래명세표 출력', func: printTransactionStatement, type: 'default'},
                     {name: '수정', func: saveFunc, type: 'primary'},
-                    {name: '신규작성', func: moveWrite, type: 'danger'},
+                    {name: '복제', func: copyPage, type: 'default'},
                     {name: '발주서 출력', func: printPo, type: 'default'}
                 ]} mini={mini} setMini={setMini}>
-
 
 
                     {mini ? <div>
@@ -255,12 +200,29 @@ export default function order_update({dataInfo}) {
                                 columnGap: 15
                             }}>
 
-                                {inputForm({title: '작성일', id: 'writtenDate', disabled: true})}
-                                {inputForm({title: '작성자', id: 'createdBy', disabled: true})}
+                                {inputForm({
+                                    title: '작성일',
+                                    id: 'writtenDate',
+                                    disabled: true,
+                                    onChange: onChange,
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: '작성자',
+                                    id: 'createdBy',
+                                    disabled: true,
+                                    onChange: onChange,
+                                    data: info
+                                })}
                                 {/*{inputForm({title: '담당자', id: 'managerAdminName'})}*/}
 
-                                {inputForm({title: '연결 PO No.', id: 'documentNumberFull'})}
-                                {inputForm({title: '거래처 PO no', id: 'yourPoNo'})}
+                                {inputForm({
+                                    title: '연결 PO No.',
+                                    id: 'documentNumberFull',
+                                    onChange: onChange,
+                                    data: info
+                                })}
+                                {inputForm({title: '거래처 PO no', id: 'yourPoNo', onChange: onChange, data: info})}
                             </div>
                         </BoxCard>
 
@@ -272,57 +234,49 @@ export default function order_update({dataInfo}) {
                         }}>
 
                             <BoxCard title={'CUSTOMER & SUPPLY'}>
-                                <div>
-                                    <div style={{paddingBottom: 3}}>Messrs</div>
-                                    <Input id={'agencyCode'} value={info['agencyCode']} onChange={onChange}
-                                           size={'small'}/>
-                                </div>
-                                <div style={{marginTop: 8}}>
-                                    <div style={{paddingBottom: 3}}>Attn To</div>
-                                    <Input id={'attnTo'} value={info['attnTo']} onChange={onChange} size={'small'}/>
-                                </div>
-                                <div style={{marginTop: 8}}>
-                                    <div style={{paddingBottom: 3}}>고객사명</div>
-                                    <Input id={'customerName'} value={info['customerName']} onChange={onChange}
-                                           size={'small'}/>
-                                </div>
+                                {inputForm({title: 'Messrs', id: 'agencyCode', onChange: onChange, data: info})}
+                                {inputForm({title: 'Attn To', id: 'attnTo', onChange: onChange, data: info})}
+                                {inputForm({title: '고객사명', id: 'agencyName', onChange: onChange, data: info})}
                             </BoxCard>
 
 
                             <BoxCard title={'MANAGER IN CHARGE'}>
-                                {inputForm({title: 'Responsibility', id: 'managerId'})}
-                                {inputForm({title: 'TEL', id: 'managerPhoneNumber'})}
-                                {inputForm({title: 'Fax', id: 'managerFaxNumber'})}
-                                {inputForm({title: 'E-Mail', id: 'managerEmail'})}
+                                {inputForm({title: 'Responsibility', id: 'managerId', onChange: onChange, data: info})}
+                                {inputForm({title: 'TEL', id: 'managerPhoneNumber', onChange: onChange, data: info})}
+                                {inputForm({title: 'Fax', id: 'managerFaxNumber', onChange: onChange, data: info})}
+                                {inputForm({title: 'E-Mail', id: 'managerEmail', onChange: onChange, data: info})}
 
                             </BoxCard>
                             <BoxCard title={'LOGISTICS'}>
-                                <div style={{paddingBottom: 3}}>Payment Terms</div>
-                                <Select id={'paymentTerms'} size={'small'} defaultValue={'0'}
-                                        onChange={(src) => onChange({target: {id: 'searchType', value: src}})}
-                                        options={[
-                                            {value: '0', label: 'By in advance T/T'},
-                                            {value: '1', label: 'Credit Card'},
-                                            {value: '2', label: 'L/C'},
-                                            {value: '3', label: 'Order 30% Before Shipping 70%'},
-                                            {value: '4', label: 'Order 50% Before Shipping 50%'},
-                                        ]} style={{width: '100%'}}>
-                                </Select>
-                                {inputForm({title: 'Delivery Terms', id: 'deliveryTerms'})}
-                                {inputForm({title: 'MAKER', id: 'maker'})}
-                                {inputForm({title: 'ITEM', id: 'item'})}
-                                {inputForm({title: 'Delivery(weeks)', id: 'delivery'})}
+                                {selectBoxForm({
+                                    title: 'Payment Terms', id: 'paymentTerms', onChange: onChange, data: info, list: [
+                                        {value: '0', label: 'By in advance T/T'},
+                                        {value: '1', label: 'Credit Card'},
+                                        {value: '2', label: 'L/C'},
+                                        {value: '3', label: 'Order 30% Before Shipping 70%'},
+                                        {value: '4', label: 'Order 50% Before Shipping 50%'},
+                                    ]
+                                })}
+                                {inputForm({
+                                    title: 'Delivery Terms',
+                                    id: 'deliveryTerms',
+                                    onChange: onChange,
+                                    data: info
+                                })}
+                                {inputForm({title: 'MAKER', id: 'maker', onChange: onChange, data: info})}
+                                {inputForm({title: 'ITEM', id: 'item', onChange: onChange, data: info})}
+                                {inputForm({title: 'Delivery(weeks)', id: 'delivery', onChange: onChange, data: info})}
                             </BoxCard>
 
                             <BoxCard title={'ETC'}>
-                                {inputForm({title: '견적서담당자', id: 'estimateManager'})}
-                                {textAreaForm({title: '비고란', rows: 4, id: 'remarks'})}
-                                {textAreaForm({title: '하단태그', rows: 3, id: 'footer'})}
+                                {inputForm({title: '견적서담당자', id: 'estimateManager', onChange: onChange, data: info})}
+                                {textAreaForm({title: '비고란', rows: 4, id: 'remarks', onChange: onChange, data: info})}
+                                {textAreaForm({title: '하단태그', rows: 3, id: 'footer', onChange: onChange, data: info})}
                             </BoxCard>
 
 
                             <BoxCard title={'드라이브 목록'}>
-                                   {/*@ts-ignored*/}
+                                {/*@ts-ignored*/}
                                 <div style={{overFlowY: "auto", maxHeight: 300}}>
                                     <DriveUploadComp infoFileInit={infoFileInit} fileRef={fileRef}/>
                                 </div>
@@ -334,8 +288,8 @@ export default function order_update({dataInfo}) {
 
                 <TableGrid
                     gridRef={gridRef}
+                    onGridReady={onGridReady}
                     columns={tableOrderWriteColumn}
-                    tableData={info[listType]}
                     type={'write'}
                     funcButtons={subTableUtil}
                 />
@@ -362,9 +316,9 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
         const result = await getData.post('order/getOrderDetail', {
             orderId: orderId
         });
-
+        const dataInfo = result?.data?.entity;
         return {
-            props: {dataInfo: result?.data?.entity}
+            props: {dataInfo: dataInfo ? dataInfo : null}
         }
 
     }
