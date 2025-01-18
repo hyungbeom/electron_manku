@@ -1,21 +1,16 @@
 import React, {useRef, useState} from "react";
-import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
-import TextArea from "antd/lib/input/TextArea";
 import {CopyOutlined, FileSearchOutlined, SaveOutlined, UploadOutlined} from "@ant-design/icons";
 import {projectWriteColumn} from "@/utils/columnList";
-import DatePicker from "antd/lib/date-picker";
 import {ModalInitList, projectDetailUnit} from "@/utils/initialList";
-import moment from "moment";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import TableGrid from "@/component/tableGrid";
-import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import SearchInfoModal from "@/component/SearchAgencyModal";
-import Upload, {UploadProps} from "antd/lib/upload";
+import Upload from "antd/lib/upload";
 import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, TopBoxCard} from "@/utils/commonForm";
 import {useRouter} from "next/router";
 import {commonManage, gridManage} from "@/utils/commonManage";
@@ -119,16 +114,12 @@ export default function projectUpdate({dataInfo}) {
 
 
     function deleteList() {
-        let copyData = {...info}
-        copyData[listType] = commonManage.getUnCheckList(gridRef.current.api);
-        setInfo(copyData);
+        const list = commonManage.getUnCheckList(gridRef);
+        gridManage.resetData(gridRef, list);
     }
 
     function addRow() {
-        // 새로운 행 데이터 생성
         const newRow = {...copyUnitInit};
-
-        // ag-Grid API를 사용하여 데이터 추가
         gridRef.current.api.applyTransaction({add: [newRow]});
 
     }
@@ -136,6 +127,7 @@ export default function projectUpdate({dataInfo}) {
 
     function clearAll() {
         setInfo({...infoInit});
+        gridManage.deleteAll(gridRef)
     }
 
 
@@ -167,24 +159,14 @@ export default function projectUpdate({dataInfo}) {
         },
     };
 
+    function copyPage() {
+        const totalList = gridManage.getAllData(gridRef)
+        let copyInfo = _.cloneDeep(info)
+        copyInfo[listType] = totalList
 
-    const props: UploadProps = {
-        name: 'file',
-        action: 'https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload',
-        headers: {
-            authorization: 'authorization-text',
-        },
-        onChange(info) {
-            if (info.file.status !== 'uploading') {
-                console.log(info.file, info.fileList);
-            }
-            if (info.file.status === 'done') {
-                message.success(`${info.file.name} file uploaded successfully`);
-            } else if (info.file.status === 'error') {
-                message.error(`${info.file.name} file upload failed.`);
-            }
-        },
-    };
+        const query = `data=${encodeURIComponent(JSON.stringify(copyInfo))}`;
+        router.push(`/project_write?${query}`)
+    }
 
 
     /**
@@ -219,14 +201,26 @@ export default function projectUpdate({dataInfo}) {
 
                 <MainCard title={'프로젝트 수정'} list={[
                     {name: '수정', func: saveFunc, type: 'primary'},
-                    {name: '초기화', func: clearAll, type: 'danger'}
+                    {name: '복제', func: copyPage, type: 'default'},
                 ]} mini={mini} setMini={setMini}>
 
                     {mini ? <div>
                             <TopBoxCard title={'기본 정보'} grid={'1fr 1fr 1fr 1fr'}>
 
-                                {inputForm({title: '작성자', id: 'managerAdminName', disabled: true, onChange: onChange, data: info})}
-                                {datePickerForm({title: '작성일자', id: 'writtenDate', disabled: true, onChange: onChange, data: info})}
+                                {inputForm({
+                                    title: '작성자',
+                                    id: 'managerAdminName',
+                                    disabled: true,
+                                    onChange: onChange,
+                                    data: info
+                                })}
+                                {datePickerForm({
+                                    title: '작성일자',
+                                    id: 'writtenDate',
+                                    disabled: true,
+                                    onChange: onChange,
+                                    data: info
+                                })}
                                 {inputForm({title: '담당자', id: 'managerAdminName', onChange: onChange, data: info})}
 
                             </TopBoxCard>
@@ -237,8 +231,19 @@ export default function projectUpdate({dataInfo}) {
                                 marginTop: 10
                             }}>
                                 <BoxCard title={'프로젝트 정보'}>
-                                    {inputForm({title: 'PROJECT NO.', id: 'documentNumberFull', onChange: onChange, data: info})}
-                                    {inputForm({title: '프로젝트 제목', id: 'projectTitle', placeholder: '매입처 당담자 입력 필요', onChange: onChange, data: info})}
+                                    {inputForm({
+                                        title: 'PROJECT NO.',
+                                        id: 'documentNumberFull',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: '프로젝트 제목',
+                                        id: 'projectTitle',
+                                        placeholder: '매입처 당담자 입력 필요',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
                                     {datePickerForm({title: '마감일자', id: 'dueDate', onChange: onChange, data: info})}
                                 </BoxCard>
                                 <BoxCard title={'거래처 정보'}>
@@ -252,16 +257,46 @@ export default function projectUpdate({dataInfo}) {
                                             }
                                         }/>, onChange: onChange, data: info
                                     })}
-                                    {inputForm({title: '거래처 담당자명', id: 'customerManagerName', disabled: true, onChange: onChange, data: info})}
-                                    {inputForm({title: '담당자 전화번호', id: 'customerManagerPhone', disabled: true, onChange: onChange, data: info})}
-                                    {inputForm({title: '담당자 이메일', id: 'customerManagerEmail', disabled: true, onChange: onChange, data: info})}
+                                    {inputForm({
+                                        title: '거래처 담당자명',
+                                        id: 'customerManagerName',
+                                        disabled: true,
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: '담당자 전화번호',
+                                        id: 'customerManagerPhone',
+                                        disabled: true,
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: '담당자 이메일',
+                                        id: 'customerManagerEmail',
+                                        disabled: true,
+                                        onChange: onChange,
+                                        data: info
+                                    })}
                                 </BoxCard>
 
                                 <BoxCard title={'기타 정보'}>
 
                                     {textAreaForm({title: '비고란', rows: 3, id: 'remarks', onChange: onChange, data: info})}
-                                    {textAreaForm({title: '지시사항', rows: 3, id: 'instructions', onChange: onChange, data: info})}
-                                    {textAreaForm({title: '특이사항', rows: 3, id: 'specialNotes', onChange: onChange, data: info})}
+                                    {textAreaForm({
+                                        title: '지시사항',
+                                        rows: 3,
+                                        id: 'instructions',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                    {textAreaForm({
+                                        title: '특이사항',
+                                        rows: 3,
+                                        id: 'specialNotes',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
                                 </BoxCard>
                                 <BoxCard title={'드라이브 목록'}>
                                     {/*@ts-ignored*/}

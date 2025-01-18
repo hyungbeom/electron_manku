@@ -57,14 +57,19 @@ export default function projectWrite({dataInfo}) {
         managerAdminName: userInfo['name']
     }
 
-    const [info, setInfo] = useState<any>(infoInit)
+    const [info, setInfo] = useState<any>({...copyInit, ...dataInfo})
+
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
 
 
     const onGridReady = (params) => {
         gridRef.current = params.api;
-        const result = dataInfo?.orderDetailList;
+        const copyData = _.cloneDeep(dataInfo);
+        delete copyData?.createdDate;
+        delete copyData?.modifiedDate;
+        const result = copyData?.projectDetailList;
+        setInfo(copyData);
         params.api.applyTransaction({add: result ? result : commonFunc.repeatObject(projectDetailUnit,30)});
     };
 

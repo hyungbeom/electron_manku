@@ -2544,18 +2544,14 @@ export const projectWriteColumn = [
         headerName: '납기',
         field: 'deliveryDate',
         cellEditor: 'agDateCellEditor',
-        cellEditorParams: {
-            useFormatter: true,
-            dateFormat: 'yyyy-MM-dd',
-        },
         valueFormatter: (params) => {
             if (!params.value) return ''; // 값이 없는 경우 처리
             return moment(params.value).isValid() ? moment(params.value).format('YYYY-MM-DD') : '';
         },
-        valueParser: (params) => {
-            const value = params.newValue;
-            return moment(value, 'YYYY-MM-DD', true).isValid() ? value : null;
-        },
+        // valueParser: (params) => {
+        //     const value = params.newValue;
+        //     return moment(value, 'YYYY-MM-DD', true).isValid() ? value : null;
+        // },
         minWidth: 150,
         editable: true,
     }, {
@@ -2588,10 +2584,7 @@ export const projectWriteColumn = [
         field: 'requestDeliveryDate',
         minWidth: 150,
         cellEditor: 'agDateCellEditor',
-        cellEditorParams: {
-            useFormatter: true,
-            dateFormat: 'yyyy-MM-dd',
-        },
+
         valueFormatter: (params) => {
             if (!params.value) return ''; // 값이 없는 경우 처리
             return moment(params.value).isValid() ? moment(params.value).format('YYYY-MM-DD') : '';
