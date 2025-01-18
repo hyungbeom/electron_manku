@@ -19,7 +19,7 @@ import message from "antd/lib/message";
 import {deleteEstimate, deleteProjectList, deleteRfq, searchEstimate, searchProject} from "@/utils/api/mainApi";
 import _ from "lodash";
 import {commonManage, gridManage} from "@/utils/commonManage";
-import {BoxCard, datePickerForm, inputForm, MainCard, TopBoxCard} from "@/utils/commonForm";
+import {BoxCard, datePickerForm, inputForm, MainCard, rangePickerForm, TopBoxCard} from "@/utils/commonForm";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {useRouter} from "next/router";
 
@@ -125,7 +125,7 @@ export default function ProjectRead({dataInfo}) {
                                     handleKeyPress: handleKeyPress,
                                     data: info
                                 })}
-                                {datePickerForm({title: '작성일자', id: 'writtenDate', onChange: onChange, data: info,})}
+                                {rangePickerForm({title: '작성일자', id: 'searchDate', onChange: onChange, data: info,})}
                                 {inputForm({
                                     title: '담당자',
                                     id: 'searchManagerAdminName',
