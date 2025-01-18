@@ -24,7 +24,6 @@ import {commonManage, gridManage} from "@/utils/commonManage";
 
 export default function rfqRead({dataInfo}) {
 
-    console.log(dataInfo,':::')
     const gridRef = useRef(null);
 
     const copyInit = _.cloneDeep(subRfqReadInitial)
@@ -188,8 +187,6 @@ export default function rfqRead({dataInfo}) {
 export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
 
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
-
-    console.log(codeInfo, 'codeInfo:')
     if (codeInfo < 0) {
         return {
             redirect: {

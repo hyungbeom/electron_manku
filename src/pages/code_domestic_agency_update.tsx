@@ -32,8 +32,6 @@ export default function code_domestic_agency_write({data}) {
     // const {agencyList} = data;
     const [mini, setMini] = useState(true);
     const [info, setInfo] = useState<any>(data)
-    console.log(data, 'data')
-
 
     function onChange(e) {
 

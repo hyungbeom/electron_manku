@@ -46,9 +46,6 @@ export default function CodeRead({dataList}) {
     const [tableInfo, setTableInfo] = useState(estimateRequestList);
     const [paginationInfo, setPaginationInfo] = useState(pageInfo);
 
-    // console.log(pageInfo,'pageInfo:')
-    // console.log(saveInfo,'saveInfo:')
-
 
     function onChange(e) {
 
@@ -131,7 +128,6 @@ export default function CodeRead({dataList}) {
             copyData['writtenDate'] = moment(saveInfo['writtenDate']).format('YYYY-MM-DD');
 
             await getData.post('estimate/addEstimateRequest', copyData).then(v => {
-                console.log(v, ':::::')
             });
         }
 

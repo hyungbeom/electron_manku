@@ -76,15 +76,10 @@ export default function Main({dataList=[], date}) {
         return null;
     };
     const onPanelChange = (value) => {
-        console.log(value, 'valuevalue:')
-        console.log(value.year(), 'value.year():')
-        console.log(value.month() + 1, 'value.year():')
     };
 
     async function searchInfo() {
 
-        console.log(info['year'], 'info[\'year\']:')
-        console.log(info['month'], 'info[\'year\']:')
         const result = await getData.post('order/getOrderListByMonth', {
             "year": info['year'],     // 조회년도
             "month": info['month'],       // 조회월
@@ -203,8 +198,6 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
         "searchCustomerName": ""        // 고객사명 검색
     })
 
-
-    console.log(result,'result:')
 
     return {
         props: {

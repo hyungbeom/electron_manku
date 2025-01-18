@@ -163,7 +163,6 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
         "limit": -1
     });
 
-    console.log(result?.data?.entity,'result?.data?.entity:')
 
     if (userInfo) {
         store.dispatch(setUserInfo(userInfo));

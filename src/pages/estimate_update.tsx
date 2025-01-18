@@ -46,7 +46,6 @@ import {DriveUploadComp} from "@/component/common/SharePointComp";
 
 const listType = 'estimateDetailList'
 export default function estimate_update({dataInfo}) {
-    console.log(dataInfo,'dataInfo:')
     const fileRef = useRef(null);
     const gridRef = useRef(null);
     const router = useRouter();

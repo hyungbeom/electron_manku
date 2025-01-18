@@ -40,8 +40,6 @@ export default function codeOverseasPurchase({dataList}) {
 
     async function onSearch() {
         const result = await getData.post('customer/getCustomerList', info);
-        console.log(info,'info:')
-        console.log(result?.data?.entity?.customerList,'result:')
         if(result?.data?.code === 1){
             setTableData(result?.data?.entity?.customerList)
         }

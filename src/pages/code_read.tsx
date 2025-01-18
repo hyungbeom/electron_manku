@@ -65,15 +65,12 @@ export default function codeRead({dataList}) {
 
     async function onSearch() {
         const result = await getData.post('hsCode/getHsCodeList', searchData);
-        console.log(result?.data?.entity?.hsCodeList,'result:')
         if(result?.data?.code === 1){
             setTableData(result?.data?.entity?.hsCodeList)
         }
     }
 
     async function saveFunc() {
-
-        console.log(saveData['hsCodeId'], 'hsCodeId')
 
         let api = '';
 

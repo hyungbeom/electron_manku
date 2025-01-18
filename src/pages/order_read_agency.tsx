@@ -25,7 +25,7 @@ const {RangePicker} = DatePicker
 export default function orderReadAgency({dataList}) {
     const gridRef = useRef(null);
 
-    console.log(dataList,'dataList???')
+
     const {orderList, pageInfo} = dataList;
     const [info, setInfo] = useState(orderCustomerReadInitial);
     const [tableData, setTableData] = useState(orderList);

@@ -1,8 +1,15 @@
 // next.config.js
 import withTM from 'next-transpile-modules';
+import { config } from 'dotenv';
+
+config();
+
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  env : {
+    NEXT_PUBLIC_MICRO_REDIRECT_URI: process.env.NEXT_PUBLIC_MICRO_REDIRECT_URI,
+  },
   reactStrictMode: false,
   experimental: {
     reactRefresh: false,

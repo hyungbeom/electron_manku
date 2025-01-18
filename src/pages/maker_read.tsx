@@ -46,17 +46,15 @@ export default function makerRead({dataList}) {
 
     async function onSearch() {
         const result = await getData.post('maker/getMakerList', info);
-        console.log(info,'info:')
-        console.log(result?.data?.entity?.makerList,'result:')
+
         if(result?.data?.code === 1){
             setTableData(result?.data?.entity?.makerList)
         }
-        console.log(info['searchType'], 'searchType')
+
     }
 
     async function deleteList() {
         const api = gridRef.current.api;
-        console.log(api.getSelectedRows(),':::')
 
         if (api.getSelectedRows().length<1) {
             message.error('삭제할 데이터를 선택해주세요.')

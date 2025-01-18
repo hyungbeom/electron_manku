@@ -73,7 +73,6 @@ export default function code_domestic_agency_write({data}) {
 
         let copyData = {...info}
         copyData['customerManagerList'] = uncheckedData;
-        console.log(copyData, 'copyData::')
         setInfo(copyData);
 
     }

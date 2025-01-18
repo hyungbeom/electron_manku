@@ -122,7 +122,7 @@ const CodeErpUserManage = ({dataList}) => {
             copyData['writtenDate'] = moment(saveInfo['writtenDate']).format('YYYY-MM-DD');
 
             await getData.post('estimate/addEstimateRequest', copyData).then(v => {
-                console.log(v, ':::::')
+
             });
         }
 

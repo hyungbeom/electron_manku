@@ -85,7 +85,7 @@ export default function code_domestic_agency_write() {
 
         let copyData = {...info}
         copyData['overseasAgencyManagerList'] = uncheckedData;
-        console.log(copyData, 'copyData::')
+
         setInfo(copyData);
 
     }

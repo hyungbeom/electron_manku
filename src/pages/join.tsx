@@ -43,7 +43,8 @@ export default function joint(){
             {
                 authorizationCode: authorizationCode,
                 codeVerifier: codeVerifier,
-                redirectUri : 'https://manku.progist.co.kr/join'
+                redirectUri : (process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://manku.progist.co.kr') + '/join'
+
             });
 
         const {code, entity} = result?.data

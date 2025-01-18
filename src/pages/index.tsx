@@ -28,6 +28,10 @@ export default function Home(props) {
         router.push('/join')
     }
 
+    useEffect(()=>{
+
+        console.log(process.env.NODE_ENV,'process.env.MICRO_REDIRECT_URI:')
+    },[])
     return (
 
         <div className={'container'}>
@@ -127,7 +131,7 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
             const v = await getData.post('account/microsoftLogin', {
                 authorizationCode: code,
                 codeVerifier: codeVerifier,
-                redirectUri: 'https://manku.progist.co.kr/',
+                redirectUri : process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://manku.progist.co.kr'
             });
 
 

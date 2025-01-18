@@ -28,7 +28,7 @@ export default function EstimateMerge({estimateList}) {
 
     const userInfo = useAppSelector((state) => state.user);
 
-    console.log(estimateList,'estimateList:')
+
     const copyInit = _.cloneDeep(estimateReadInitial)
     const infoInit = {
         ...copyInit,

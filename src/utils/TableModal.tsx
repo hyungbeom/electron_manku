@@ -55,7 +55,6 @@ export default function TableModal({title, initialData, dataInfo, setInfoList, l
                 copyData2[listType][idx]['key']  = idx + 1;
             })
 
-            console.log(copyData2, 'copyData2')
             return copyData2;
         })
         setIsModalOpen(false);

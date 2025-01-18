@@ -13,6 +13,7 @@ import {BoxCard, inputForm, MainCard, rangePickerForm, TopBoxCard} from "@/utils
 import TableGrid from "@/component/tableGrid";
 import {delilveryReadColumn} from "@/utils/columnList";
 import {useRouter} from "next/router";
+import message from "antd/lib/message";
 
 export default function delivery_read({dataInfo}) {
     const router = useRouter();
@@ -69,6 +70,9 @@ export default function delivery_read({dataInfo}) {
      * @description selectRows(~ deliveryList)를 삭제하는 함수입니다.
      */
     async function deleteList() {
+        if (gridRef.current.getSelectedRows().length < 1) {
+            return message.error('삭제할 데이터를 선택해주세요.')
+        }
         const deleteIdList = gridManage.getFieldValue(gridRef, 'deliveryId')
         await deleteDelivery({data: {deleteIdList: deleteIdList}});
     }
@@ -77,9 +81,8 @@ export default function delivery_read({dataInfo}) {
      * @description 출력시 해당 Excel 현 테이블 기준으로 선택된 row만 출력
      */
     const downloadExcel = async () => {
-       gridManage.exportSelectedRowsToExcel(gridRef, '배송_조회리스트')
+       gridManage.exportSelectedRowsToExcel(gridRef, '배송_조회리스트');
     };
-
 
 
     /**
