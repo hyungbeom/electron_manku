@@ -100,59 +100,59 @@ export default function Home(props) {
 
 
 // @ts-ignore
-// export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
-//
-//
-//     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
-//     if (codeInfo >= 0) {  // 조건을 좀 더 직관적으로 변경
-//         return {
-//             redirect: {
-//                 destination: '/main',
-//                 permanent: false,
-//             },
-//         };
-//     }
-//
-//     store.dispatch(setUserInfo(userInfo));
-//
-//
-//     const {query} = ctx; // URL 쿼리 파라미터
-//     const {code, redirect_to} = query;
-//
-//     if (code) {
-//         const codeVerifier = getCookie(ctx, "code_verifier");
-//
-//
-//         try {
-//             const v = await getData.post('account/microsoftLogin', {
-//                 authorizationCode: code,
-//                 codeVerifier: codeVerifier,
-//                 redirectUri: 'https://manku.progist.co.kr/',
-//             });
-//
-//             if (v?.data?.code === 1) {
-//                 const {accessToken} = v?.data?.entity;
-//                 if (accessToken) {
-//                     setCookies(ctx, 'token', accessToken);
-//                     return {
-//                         redirect: {
-//                             destination: '/main',
-//                         },
-//                     };
-//                 }
-//
-//                 // setCookies(ctx, 'token', accessToken)
-//             }
-//         } catch (error) {
-//             console.error("Microsoft Login failed:", error);
-//             // 필요시 로그인 실패 처리를 할 수 있습니다.
-//         }
-//     }
-//
-//
-//     return {
-//         props: {},
-//     };
-//
-//
-// });
+export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
+
+
+    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
+    if (codeInfo >= 0) {  // 조건을 좀 더 직관적으로 변경
+        return {
+            redirect: {
+                destination: '/main',
+                permanent: false,
+            },
+        };
+    }
+
+    store.dispatch(setUserInfo(userInfo));
+
+
+    const {query} = ctx; // URL 쿼리 파라미터
+    const {code, redirect_to} = query;
+
+    if (code) {
+        const codeVerifier = getCookie(ctx, "code_verifier");
+
+
+        try {
+            const v = await getData.post('account/microsoftLogin', {
+                authorizationCode: code,
+                codeVerifier: codeVerifier,
+                redirectUri: 'https://manku.progist.co.kr/',
+            });
+
+
+            if (v?.data?.code === 1) {
+                const {accessToken} = v?.data?.entity;
+                if (accessToken) {
+                    setCookies(ctx, 'token', accessToken);
+                    return {
+                        redirect: {
+                            destination: '/main',
+                        },
+                    };
+                }
+
+            }
+        } catch (error) {
+            console.error("Microsoft Login failed:", error);
+            // 필요시 로그인 실패 처리를 할 수 있습니다.
+        }
+    }
+
+
+    return {
+        props: {},
+    };
+
+
+});
