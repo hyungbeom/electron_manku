@@ -11,30 +11,26 @@ import {InboxOutlined} from "@ant-design/icons";
 
 import {commonFunc, commonManage} from "@/utils/commonManage";
 import useEventListener from "@/utils/common/function/UseEventListener";
+import {searchEstimate} from "@/utils/api/mainApi";
 
 const TableGrid = ({
-                       columns, tableData,
-                       setSelectedRows,
-                       list = '',
-                       modalComponent,
-                       funcButtons,
-                       listType = 'estimateRequestId',
+                       gridRef,
+                       columns,
+                       onGridReady = function(){},
                        type = 'read',
-                       gridRef
+                       funcButtons,
+                       onCellEditingStopped = null
+
                    }: any) => {
 
 
     const router = useRouter();
 
-    const [data, setData] = useState(tableData);
     const [dragging, setDragging] = useState(false);
     const [pinnedBottomRowData, setPinnedBottomRowData] = useState([]);
     const [page, setPage] = useState({x: null, y: null})
     const ref = useRef(null);
 
-    useEffect(() => {
-        setData(tableData)
-    }, [tableData])
 
 
     const defaultColDef = useMemo(() => {
@@ -56,42 +52,54 @@ const TableGrid = ({
 
     }
 
-    let isUpdatingSelection = false; // 중복 선택 이벤트 발생 방지 플래그
 
+    /**
+     * @description row를 선택할때 documentNumberFull 을 기준으로 같은 문서번호 row들은 동시 체크되게 하는 로직
+     * @param event
+     */
     const handleRowSelected = (event) => {
         if (type === 'write') {
-            return false;
+            return false; // 'write' 타입일 경우 아무 작업도 하지 않음
         }
 
         const selectedNode = event.node; // 현재 선택된 노드
         const selectedData = selectedNode.data; // 선택된 데이터
-        const groupValue = selectedData.documentNumberFull; // 현재 행의 `documentNumberFull` 값
 
-        if (groupValue === '') {
+        // documentNumberFull 필드가 없거나 값이 없으면 아무 작업도 하지 않음
+        if (!selectedData?.documentNumberFull) {
             return;
         }
 
+        const groupValue = selectedData.documentNumberFull; // 현재 행의 `documentNumberFull` 값
         const rowIndex = selectedNode.rowIndex;
-
-
         const previousData = event.api.getDisplayedRowAtIndex(rowIndex - 1)?.data?.documentNumberFull;
 
-
+        // 이전 데이터와 그룹 값이 다를 때만 처리
         if (!previousData || previousData !== groupValue) {
             const isSelected = selectedNode.isSelected();
 
-
+            // 동일한 groupValue를 가진 행들만 선택 상태 변경
             event.api.forEachNode((node) => {
-                if (node.data.documentNumberFull === groupValue) {
+                if (node.data?.documentNumberFull === groupValue) {
                     node.setSelected(isSelected);
                 }
             });
         }
     };
 
+
+
     const handleDoubleClicked = (e) => {
 
         if (type === 'read') {
+            if (e.data.orderStatusId)
+                router.push(`/store_update?orderStatusId=${e?.data?.orderStatusId}`)
+            if (e.data.projectId)
+                router.push(`/project_update?projectId=${e?.data?.projectId}`)
+            if (e.data.deliveryId)
+                router.push(`/delivery_update?deliveryId=${e?.data?.deliveryId}`)
+            if (e.data.remittanceId)
+                router.push(`/remittance_domestic_update?remittanceId=${e?.data?.remittanceId}`)
             if (e.data.estimateRequestId)
                 router.push(`/rfq_update?estimateRequestId=${e?.data?.estimateRequestId}`)
             if (e.data.estimateId)
@@ -134,43 +142,12 @@ const TableGrid = ({
 
 
     function dataChange(e) {
-        const updatedData = [...data];
-        const rowIndex = e.node.rowIndex;
+        // const updatedData = [...data];
+        // const rowIndex = e.node.rowIndex;
         clickRowCheck(e.api);
         handleSelectionChanged();
     }
 
-    const handleFile = (file) => {
-        const reader = new FileReader();
-
-        reader.onload = (e) => {
-            const binaryStr = e.target.result;
-            const workbook = XLSX.read(binaryStr, {type: 'binary'});
-
-            const worksheetName = workbook.SheetNames[0];
-            const worksheet = workbook.Sheets[worksheetName];
-
-            const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
-
-            const headers = jsonData[0];
-            const dataRows = jsonData.slice(1);
-
-            const tableData = dataRows.map((row) => {
-                const rowData = {};
-                row?.forEach((cell, cellIndex) => {
-                    const header = headers[cellIndex];
-                    if (header !== undefined) {
-                        rowData[header] = cell ?? ''; // 값이 없으면 기본값으로 빈 문자열 설정
-                    }
-                });
-                return rowData;
-            });
-
-            setData(tableData);
-        };
-
-        reader.readAsBinaryString(file);
-    };
 
     const handleDragOver = (e) => {
         e.preventDefault();
@@ -202,7 +179,7 @@ const TableGrid = ({
 
             commonManage.excelFileRead(file).then(v => {
 
-                gridRef.current.api.applyTransaction({add: v});
+                gridRef.current.applyTransaction({add: v});
 
             })
 
@@ -220,7 +197,7 @@ const TableGrid = ({
 
 
     const handleSelectionChanged = () => {
-        const selectedRows = gridRef.current.api.getSelectedRows(); // 체크된 행 가져오기
+        const selectedRows = gridRef.current.getSelectedRows(); // 체크된 행 가져오기
 
         const totals = commonFunc.sumCalc(selectedRows);
         setPinnedBottomRowData([totals]);
@@ -234,6 +211,46 @@ const TableGrid = ({
     useEventListener('click', (e: any) => {
         setPage({x: null, y: null})
     }, typeof window !== 'undefined' ? document : null)
+
+    async function getEstimateInfo(v) {
+        let copyData = await searchEstimate({data: {searchDocumentNumber: v}});
+        return copyData;
+
+    }
+
+    // async function getProjectDetail(e) {
+    //     if (e.column.colId === 'connectInquiryNo') { // 특정 칼럼 조건
+    //         console.log('Editing stopped in Name column:', e.value);
+    //         const result = await getEstimateInfo(e.value)
+    //
+    //         const rowNode = e.node;
+    //         const updatedData = {};
+    //
+    //         if (result.length && !!e.value) {
+    //             const updatedData = result.map((item) => {
+    //                 const {a, c, ...rest} = item; // 기존 키를 구조 분해
+    //                 return {
+    //                     ...rest,      // 나머지 키를 유지
+    //                     // aa: a,        // a를 aa로 변경
+    //                     connectInquiryNo: item['documentNumberFull']
+    //                 };
+    //             });
+    //
+    //             rowNode.setData(updatedData[0]);
+    //
+    //             if (result.length > 1) {
+    //                 updatedData.shift();
+    //
+    //
+    //                 gridRef.current.applyTransaction({
+    //                     add: updatedData, // 결과 배열의 각 객체가 새로운 행으로 추가됨
+    //                 });
+    //
+    //             }
+    //         }
+    //
+    //     }
+    // }
 
     return (
         <>
@@ -290,34 +307,35 @@ const TableGrid = ({
                     <div>LIST</div>
                     {funcButtons}
                 </div>
-                {modalComponent}
 
-                <AgGridReact key={data?.length} theme={tableTheme} ref={gridRef}
-                             containerStyle={{width: '100%', height: '78%'}}
+                <AgGridReact
+                    onGridReady={onGridReady}
+                    theme={tableTheme} ref={gridRef}
+                    // containerStyle={{width: '100%', height: '100%'}}
                     //@ts-ignore
-                             onRowDoubleClicked={handleDoubleClicked}
+                    onRowDoubleClicked={handleDoubleClicked}
                     //@ts-ignore
-                             rowSelection={rowSelection}
+                    rowSelection={rowSelection}
+                    onCellEditingStopped={onCellEditingStopped}
+                    defaultColDef={defaultColDef}
+                    columnDefs={columns}
+                    onCellContextMenu={handleCellRightClick}
+                    paginationPageSize={1000}
+                    paginationPageSizeSelector={[100, 500, 1000]}
+                    pagination={true}
+                    onRowSelected={handleRowSelected}
+                    onCellValueChanged={dataChange}
+                    pinnedBottomRowData={pinnedBottomRowData}
+                    onSelectionChanged={handleSelectionChanged} // 선택된 행 변경 이벤트
+                    gridOptions={{
+                        loadThemeGoogleFonts: true,
+                    }}
+                    rowDragManaged={true}
+                    rowDragMultiRow={true}
 
-                             defaultColDef={defaultColDef}
-                             columnDefs={columns}
-                             rowData={data}
-                             onCellContextMenu={handleCellRightClick}
-                             paginationPageSize={1000}
-                             paginationPageSizeSelector={[100, 500, 1000]}
-                             context={data}
-                             pagination={true}
-                             onRowSelected={handleRowSelected}
-                             onCellValueChanged={dataChange}
-                             pinnedBottomRowData={pinnedBottomRowData}
-                             onSelectionChanged={handleSelectionChanged} // 선택된 행 변경 이벤트
-                             gridOptions={{
-                                 loadThemeGoogleFonts: true,
-                             }}
-                    // onCellContextMenu={handleCellRightClick}
                 />
             </div>
         </>
     );
 };
-export default TableGrid;
+export default React.memo(TableGrid);

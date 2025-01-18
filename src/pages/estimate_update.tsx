@@ -28,81 +28,49 @@ import TableGrid from "@/component/tableGrid";
 import {useRouter} from "next/router";
 import SearchInfoModal from "@/component/SearchAgencyModal";
 import PrintEstimate from "@/component/printEstimate";
-import {BoxCard, TopBoxCard} from "@/utils/commonForm";
-import {commonManage} from "@/utils/commonManage";
+import {
+    BoxCard,
+    datePickerForm,
+    inputForm,
+    MainCard,
+    selectBoxForm,
+    textAreaForm,
+    TopBoxCard
+} from "@/utils/commonForm";
+import {commonManage, gridManage} from "@/utils/commonManage";
 import {findCodeInfo, findDocumentInfo} from "@/utils/api/commonApi";
 import {updateEstimate} from "@/utils/api/mainApi";
 import _ from "lodash";
+import {DriveUploadComp} from "@/component/common/SharePointComp";
 
 
 const listType = 'estimateDetailList'
 export default function estimate_update({dataInfo}) {
+    console.log(dataInfo,'dataInfo:')
+    const fileRef = useRef(null);
     const gridRef = useRef(null);
     const router = useRouter();
 
 
     const copyUnitInit = _.cloneDeep(estimateDetailUnit)
 
+    const infoInit = dataInfo?.estimateDetail
+    const infoFileInit = dataInfo?.attachmentFileList
+
+
     const userInfo = useAppSelector((state) => state.user);
 
-    const [info, setInfo] = useState<any>({
-        ...dataInfo,
-        writtenDate: moment(dataInfo['writtenDate'])
-    })
+    const [info, setInfo] = useState<any>(infoInit)
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
     const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
 
-    const inputForm = ({placeholder = '', title, id, disabled = false, suffix = null}) => {
-        let bowl = info;
-
-        return <div>
-            <div>{title}</div>
-            <Input id={id} value={bowl[id]} disabled={disabled}
-                   placeholder={placeholder}
-                   onChange={onChange}
-                   onKeyDown={handleKeyPress}
-                   size={'small'}
-                   suffix={suffix}
-            />
-        </div>
-    }
-
-    const textAreaForm = ({title, id, rows = 5, disabled = false}) => {
-        return <div>
-            <div>{title}</div>
-            <TextArea style={{resize: 'none'}} rows={rows} id={id} value={info[id]} disabled={disabled}
-                      onChange={onChange}
-                      size={'small'}/>
-        </div>
-    }
 
 
-    const datePickerForm = ({title, id, disabled = false}) => {
-        return <div>
-            <div>{title}</div>
-            {/*@ts-ignore*/}
-            <DatePicker value={info[id] ? moment(info[id]) : ''} style={{width: '100%'}}
-                        onChange={(date) => onChange({
-                            target: {
-                                id: id,
-                                value: date
-                            }
-                        })
-                        }
-                        disabled={disabled}
-                        id={id} size={'small'}/>
-        </div>
-    }
-
-    const selectBoxForm = ({title, id, option}) => {
-        return <div>
-            <div>{title}</div>
-            <Select id={'shippingTerms'} defaultValue={'0'}
-                    onChange={(src) => onChange({target: {id: 'shippingTerms', value: src}})}
-                    size={'small'} value={info[id]} options={option} style={{width: '100%',}}/>
-        </div>
-    }
+    const onGridReady = (params) => {
+        gridRef.current = params.api;
+        params.api.applyTransaction({add: dataInfo?.estimateDetail[listType]});
+    };
 
     async function handleKeyPress(e) {
         if (e.key === 'Enter') {
@@ -131,29 +99,75 @@ export default function estimate_update({dataInfo}) {
 
 
     async function saveFunc() {
-        if (!info[listType].length) {
-            message.warn('하위 데이터 1개 이상이여야 합니다')
-        } else {
-            const copyData = {...info}
-            copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
-            await updateEstimate({data: copyData})
+        const list = gridManage.getAllData(gridRef)
+        if (!list.length) {
+            return message.warn('하위 데이터 1개 이상이여야 합니다')
         }
+        if (!info['agencyCode']) {
+            return message.warn('매입처 코드가 누락되었습니다.')
+        }
+
+
+
+        const formData:any = new FormData();
+
+        const handleIteration = () => {
+            for (const {key, value} of commonManage.commonCalc(info)) {
+                if (key !== listType) {
+                        formData.append(key, value);
+                }
+            }
+        };
+
+        handleIteration();
+
+        const copyData = {...info}
+
+
+        if (list.length) {
+            list.forEach((detail, index) => {
+                Object.keys(detail).forEach((key) => {
+                    if(!(key == 'orderDate' || key === 'orderProcessing'|| key === 'order') )
+                        formData.append(`${listType}[${index}].${key}`, detail[key]);
+                });
+            });
+        }
+
+        const filesToSave = fileRef.current.fileList.map((item) => item.originFileObj).filter((file) => file instanceof File);
+
+        //새로 추가되는 파일
+        filesToSave.forEach((file, index) => {
+            formData.append(`attachmentFileList[${index}].attachmentFile`, file);
+            formData.append(`attachmentFileList[${index}].fileName`, file.name.replace(/\s+/g, ""));
+        });
+
+        //기존 기준 사라진 파일
+        const result = infoFileInit.filter(itemA => !fileRef.current.fileList.some(itemB => itemA.id === itemB.id));
+        result.map((v, idx) => {
+            formData.append(`deleteAttachementIdList[${idx}]`, v.id);
+        })
+
+        await updateEstimate({data: formData})
+    }
+
+    function copyPage() {
+        const totalList = gridManage.getAllData(gridRef)
+        let copyInfo = _.cloneDeep(info)
+        copyInfo[listType] = totalList
+
+        const query = `data=${encodeURIComponent(JSON.stringify(copyInfo))}`;
+        router.push(`/estimate_write?${query}`)
     }
 
 
     function deleteList() {
-        let copyData = {...info}
-        copyData[listType] = copyData[listType] = commonManage.getUnCheckList(gridRef.current.api);
-        setInfo(copyData);
+        const list = commonManage.getUnCheckList(gridRef);
+        gridManage.resetData(gridRef, list);
     }
 
     function addRow() {
-        let copyData = {...info};
-        copyData[listType].push({
-            ...copyUnitInit,
-            "currency": commonManage.changeCurr(info['agencyCode'])
-        })
-        setInfo(copyData)
+        const newRow = {...copyUnitInit, "currency": commonManage.changeCurr(info['agencyCode'])};
+        gridRef.current.applyTransaction({add: [newRow]});
     }
 
 
@@ -178,134 +192,155 @@ export default function estimate_update({dataInfo}) {
 
 
     return <>
+        {/*@ts-ignore*/}
+        <SearchInfoModal  info={info} setInfo={setInfo}
+                         open={isModalOpen}
+                         setIsModalOpen={setIsModalOpen}/>
+        <PrintEstimate data={info} isModalOpen={isPrintModalOpen} userInfo={userInfo}
+                       setIsModalOpen={setIsPrintModalOpen}/>
         <LayoutComponent>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`,
-                height: '100vh',
+                gridTemplateRows: `${mini ? '500px' : '65px'} calc(100vh - ${mini ? 555 : 120}px)`,
                 columnGap: 5
             }}>
-                <PrintEstimate data={info} isModalOpen={isPrintModalOpen} userInfo={userInfo}
-                               setIsModalOpen={setIsPrintModalOpen}/>
-                {/*@ts-ignore*/}
-                <SearchInfoModal type={'agencyList'} info={info} setInfo={setInfo}
-                                 open={isModalOpen}
-                                 setIsModalOpen={setIsModalOpen}/>
 
-                <Card title={<div style={{display: 'flex', justifyContent: 'space-between'}}>
-                    <div style={{fontSize: 14, fontWeight: 550}}>견적서 수정</div>
-                    <div>
-                        <Button type={'default'} size={'small'} style={{marginRight: 8}}
-                                onClick={printEstimate}><SaveOutlined/>견적서 출력</Button>
-                        <Button type={'primary'} size={'small'} style={{marginRight: 8}}
-                                onClick={saveFunc}><SaveOutlined/>수정</Button>
-                        {/*@ts-ignored*/}
-                        <Button size={'small'} type={'danger'} style={{marginRight: 8,}}
-                                onClick={() => router?.push('/estimate_write')}><EditOutlined/>신규작성</Button>
+                <MainCard title={'견적서 수정'} list={[
+                    {name: '견적서 출력', func: printEstimate, type: 'default'},
+                    {name: '수정', func: saveFunc, type: 'primary'},
+                    {name: '복제', func: copyPage, type: 'default'},
+                ]} mini={mini} setMini={setMini}>
 
-                    </div>
-                </div>} style={{fontSize: 12, border: '1px solid lightGray'}}
-                      extra={<span style={{fontSize: 20, cursor: 'pointer'}} onClick={() => setMini(v => !v)}> {!mini ?
-                          <DownCircleFilled/> : <UpCircleFilled/>}</span>}>
-
-                    <TopBoxCard title={'기본 정보'} grid={'1fr 0.6fr 0.6fr 1fr 1fr 1fr 1fr'}>
-                        {datePickerForm({title: '작성일', id: 'writtenDate', disabled: true})}
-                        {inputForm({title: '작성자', id: 'createdBy', disabled: true})}
-                        {inputForm({title: '담당자', id: 'managerAdminName'})}
-                        {inputForm({title: 'INQUIRY NO.', id: 'documentNumberFull', placeholder: '폴더생성 규칙 유의'})}
-                        {inputForm({
-                            placeholder: '폴더생성 규칙 유의',
-                            title: '연결 INQUIRY No.',
-                            id: 'connectDocumentNumberFull',
-                            suffix: <DownloadOutlined style={{cursor: 'pointer'}}/>
-                        })}
-                        {inputForm({title: 'RFQ NO.', id: 'rfqNo'})}
-                        {inputForm({title: '프로젝트 제목', id: 'projectTitle'})}
-                    </TopBoxCard>
-
-                    <div style={{display: 'grid', gridTemplateColumns: "150px 200px 200px 180px 1fr"}}>
-
-                        <BoxCard title={'매입처 정보'}>
+                    {mini ? <div>
+                        <TopBoxCard title={'기본 정보'} grid={'1fr 0.6fr 0.6fr 1fr 1fr 1fr 1fr'}>
+                            {datePickerForm({
+                                title: '작성일',
+                                id: 'writtenDate',
+                                disabled: true,
+                                onChange: onChange,
+                                data: info
+                            })}
+                            {inputForm({title: '작성자', id: 'createdBy', disabled: true, onChange: onChange, data: info})}
+                            {inputForm({title: '담당자', id: 'managerAdminName', onChange: onChange, data: info})}
                             {inputForm({
-                                title: '매입처코드',
-                                id: 'agencyCode',
-                                suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
-                                    (e) => {
-                                        e.stopPropagation();
-                                        openModal('agencyCode');
-                                    }
-                                }/>
+                                title: 'INQUIRY NO.',
+                                id: 'documentNumberFull',
+                                placeholder: '폴더생성 규칙 유의',
+                                onChange: onChange,
+                                data: info
                             })}
-                            {inputForm({title: '매입처명', id: 'agencyName'})}
-                            {inputForm({title: '담당자', id: 'agencyManagerName'})}
-                            {inputForm({title: '연락처', id: 'agencyManagerPhoneNumber'})}
-                        </BoxCard>
-
-                        <BoxCard title={'고객사 정보'}>
                             {inputForm({
-                                title: '고객사명',
-                                id: 'customerName',
-                                suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
-                                    (e) => {
-                                        e.stopPropagation();
-                                        openModal('customerName');
-                                    }
-                                }/>
+                                placeholder: '폴더생성 규칙 유의',
+                                title: '연결 INQUIRY No.',
+                                id: 'connectDocumentNumberFull',
+                                suffix: <DownloadOutlined style={{cursor: 'pointer'}}/>,
+                                onChange: onChange, data: info
                             })}
-                            {inputForm({title: '담당자', id: 'managerName'})}
-                            {inputForm({title: '전화번호', id: 'phoneNumber'})}
-                            {inputForm({title: '팩스', id: 'faxNumber'})}
-                            {inputForm({title: '이메일', id: 'customerManagerEmail'})}
-                        </BoxCard>
+                            {inputForm({title: 'RFQ NO.', id: 'rfqNo', onChange: onChange, data: info})}
+                            {inputForm({title: '프로젝트 제목', id: 'projectTitle', onChange: onChange, data: info})}
+                        </TopBoxCard>
 
-                        <BoxCard title={'운송 정보'}>
-                            {selectBoxForm({
-                                title: '유효기간', id: 'validityPeriod', option: [
-                                    {value: '0', label: '견적 발행 후 10일간'},
-                                    {value: '1', label: '견적 발행 후 30일간'},
-                                ]
-                            })}
-                            {selectBoxForm({
-                                title: '결제조건', id: 'paymentTerms', option: [
-                                    {value: '0', label: '발주시 50% / 납품시 50%'},
-                                    {value: '1', label: '납품시 현금결제'},
-                                    {value: '2', label: '정기결제'},
-                                ]
-                            })}
-                            {selectBoxForm({
-                                title: '운송조건', id: 'shippingTerms', option: [
-                                    {value: '0', label: '귀사도착도'},
-                                    {value: '1', label: '화물 및 택배비 별도'},
-                                ]
-                            })}
-                            {inputForm({title: 'Delivery(weeks)', id: 'delivery'})}
-                            {inputForm({title: '환율', id: 'exchangeRate'})}
-                        </BoxCard>
-                        <BoxCard title={'Maker 정보'}>
-                            {inputForm({
-                                title: 'MAKER',
-                                id: 'maker',
-                                suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
-                                    (e) => {
-                                        e.stopPropagation();
-                                        openModal('maker');
-                                    }
-                                }/>
-                            })}
-                            {inputForm({title: 'ITEM', id: 'item'})}
-                        </BoxCard>
-                        <BoxCard title={'ETC'}>
-                            {textAreaForm({title: '지시사항', rows: 2, id: 'instructions'})}
-                            {textAreaForm({title: '비고란', rows: 3, id: 'remarks'})}
-                        </BoxCard>
-                    </div>
-                </Card>
+                        <div style={{display: 'grid', gridTemplateColumns: "150px 200px 200px 180px 1fr 300px"}}>
+
+                            <BoxCard title={'매입처 정보'}>
+                                {inputForm({
+                                    title: '매입처코드',
+                                    id: 'agencyCode',
+                                    suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
+                                        (e) => {
+                                            e.stopPropagation();
+                                            openModal('agencyCode');
+                                        }
+                                    }/>, onChange: onChange, data: info
+                                })}
+                                {inputForm({title: '매입처명', id: 'agencyName', onChange: onChange, data: info})}
+                                {inputForm({title: '담당자', id: 'agencyManagerName', onChange: onChange, data: info})}
+                                {inputForm({
+                                    title: '연락처',
+                                    id: 'agencyManagerPhoneNumber',
+                                    onChange: onChange,
+                                    data: info
+                                })}
+                            </BoxCard>
+
+                            <BoxCard title={'고객사 정보'}>
+                                {inputForm({
+                                    title: '고객사명',
+                                    id: 'customerName',
+                                    suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
+                                        (e) => {
+                                            e.stopPropagation();
+                                            openModal('customerName');
+                                        }
+                                    }/>, onChange: onChange, data: info
+                                })}
+                                {inputForm({title: '담당자', id: 'managerName', onChange: onChange, data: info})}
+                                {inputForm({title: '전화번호', id: 'phoneNumber', onChange: onChange, data: info})}
+                                {inputForm({title: '팩스', id: 'faxNumber', onChange: onChange, data: info})}
+                                {inputForm({title: '이메일', id: 'customerManagerEmail', onChange: onChange, data: info})}
+                            </BoxCard>
+
+                            <BoxCard title={'운송 정보'}>
+                                {selectBoxForm({
+                                    title: '유효기간', id: 'validityPeriod', list: [
+                                        {value: '0', label: '견적 발행 후 10일간'},
+                                        {value: '1', label: '견적 발행 후 30일간'},
+                                    ], onChange: onChange, data: info
+                                })}
+                                {selectBoxForm({
+                                    title: '결제조건', id: 'paymentTerms', list: [
+                                        {value: '0', label: '발주시 50% / 납품시 50%'},
+                                        {value: '1', label: '납품시 현금결제'},
+                                        {value: '2', label: '정기결제'},
+                                    ], onChange: onChange, data: info
+                                })}
+                                {selectBoxForm({
+                                    title: '운송조건', id: 'shippingTerms', list: [
+                                        {value: '0', label: '귀사도착도'},
+                                        {value: '1', label: '화물 및 택배비 별도'},
+                                    ], onChange: onChange, data: info
+                                })}
+                                {inputForm({title: 'Delivery(weeks)', id: 'delivery', onChange: onChange, data: info})}
+                                {inputForm({title: '환율', id: 'exchangeRate', onChange: onChange, data: info})}
+                            </BoxCard>
+                            <BoxCard title={'Maker 정보'}>
+                                {inputForm({
+                                    title: 'MAKER',
+                                    id: 'maker',
+                                    suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
+                                        (e) => {
+                                            e.stopPropagation();
+                                            openModal('maker');
+                                        }
+                                    }/>
+                                    , onChange: onChange, data: info
+                                })}
+                                {inputForm({title: 'ITEM', id: 'item', onChange: onChange, data: info})}
+                            </BoxCard>
+                            <BoxCard title={'ETC'}>
+                                {textAreaForm({
+                                    title: '지시사항',
+                                    rows: 2,
+                                    id: 'instructions',
+                                    onChange: onChange,
+                                    data: info
+                                })}
+                                {textAreaForm({title: '비고란', rows: 3, id: 'remarks', onChange: onChange, data: info})}
+                            </BoxCard>
+                            <BoxCard title={'드라이브 목록'}>
+                                {/*@ts-ignored*/}
+                                <div style={{overFlowY: "auto", maxHeight: 300}}>
+                                    <DriveUploadComp infoFileInit={infoFileInit} fileRef={fileRef}/>
+                                </div>
+                            </BoxCard>
+                        </div>
+                    </div> : <></>}
+                </MainCard>
 
                 <TableGrid
                     gridRef={gridRef}
+                    onGridReady={onGridReady}
                     columns={tableEstimateWriteColumns}
-                    tableData={info[listType]}
-                    listType={'estimateId'}
                     type={'write'}
                     funcButtons={subTableUtil}
                 />
@@ -335,6 +370,9 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
             documentNumberFull: ""
         });
 
-        return {props: {dataInfo: estimateId ? result?.data?.entity?.estimateDetail : null}}
+        const dataInfo = result?.data?.entity;
+        return {
+            props: {dataInfo: dataInfo ? dataInfo : null}
+        }
     }
 })

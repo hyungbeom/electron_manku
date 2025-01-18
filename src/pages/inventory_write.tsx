@@ -28,7 +28,7 @@ export default function OrderInventoryWrite() {
                         onChange={(date) => onChange({
                             target: {
                                 id: id,
-                                value: date
+                                value: moment(date).format('YYYY-MM-DD')
                             }
                         })
                         }

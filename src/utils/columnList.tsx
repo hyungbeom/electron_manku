@@ -311,9 +311,8 @@ export const subRfqWriteColumn = [
         editable: true,
         cellEditor: 'agDateCellEditor',
         valueFormatter: (params) => {
-            return (!params.value || params.value === 'Invalid date') ? '' : dateFormat(params)
+            return moment(params.value).isValid() ?  dateFormat(params) : ''
         }
-
     },
     {
         headerName: '비고',
@@ -771,7 +770,8 @@ export const rfqReadColumns = [
         headerName: '작성일자',
         field: 'writtenDate',
         width: 70,
-        pinned: 'left'
+        pinned: 'left',
+        rowDrag: true
     },
     {
         // headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
@@ -1820,7 +1820,7 @@ export const tableCodeDomesticPurchaseColumns = [
         field: 'createdDate',
         key: 'createdDate',
         valueFormatter: (params) => {
-            return (!params.value || params.value === 'Invalid date') ? '' : dateFormat(params)
+            return moment(params.value).isValid() ?  dateFormat(params) : ''
         }
 
     },
@@ -1834,7 +1834,7 @@ export const tableCodeDomesticPurchaseColumns = [
         field: 'modifiedDate',
         key: 'modifiedDate',
         valueFormatter: (params) => {
-            return (!params.value || params.value === 'Invalid date') ? '' : dateFormat(params)
+            return moment(params.value).isValid() ?  dateFormat(params) : ''
         }
 
     },
@@ -2491,4 +2491,562 @@ export const modalCodeDiplomaColumn = [
         field: 'content',
     },
 
+];
+
+
+
+export const projectWriteColumn = [
+    {
+        headerName: '연결 Inquiry No.',
+        field: 'connectInquiryNo',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: 'Maker',
+        field: 'maker',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: 'Item',
+        field: 'item',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '규격',
+        field: 'spec',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '수량',
+        field: 'quantity',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '단위가격',
+        field: 'quantity',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '총액',
+        field: 'total',
+        minWidth: 150,
+        editable: true,
+    },
+    {
+        headerName: '화폐단위',
+        field: 'currencyUnit',
+        editable: true,
+        cellEditor: 'agSelectCellEditor',
+        cellEditorParams: {
+            values: ['KRW', 'EUR', 'JPY', 'USD', 'GBP',],
+        }
+    }, {
+        headerName: '납기',
+        field: 'deliveryDate',
+        cellEditor: 'agDateCellEditor',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '매입처명',
+        field: 'agencyName',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '매입처 담당자명',
+        field: 'agencyManagerName',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '매입처 전화번호',
+        field: 'agencyManagerPhone',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '매입처 이메일',
+        field: 'agencyManagerEmail',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '관련링크',
+        field: 'relatedLink',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '납기요청일',
+        field: 'requestDeliveryDate',
+        minWidth: 150,
+        cellEditor: 'agDateCellEditor',
+        editable: true,
+    }, {
+        headerName: '비고',
+        field: 'remarks',
+        minWidth: 150,
+        editable: true,
+    }
+];
+
+
+
+export const projectReadColumn = [
+    {
+        headerName: 'PROJECT No.',
+        field: 'documentNumberFull',
+        minWidth: 150,
+    }, {
+        headerName: '프로젝트 제목',
+        field: 'projectTitle',
+        minWidth: 150,
+    }, {
+        headerName: '거래처명',
+        field: 'customerName',
+        minWidth: 150,
+    }, {
+        headerName: '거래처 담당자명',
+        field: 'customerName',
+        minWidth: 150,
+    }, {
+        headerName: '마감 일자',
+        field: 'dueDate',
+        minWidth: 150,
+    }, {
+        headerName: '담당자',
+        field: 'managerAdminName',
+        minWidth: 150,
+    }, {
+        headerName: '연결 Inquiry No',
+        field: 'connectInquiryNo',
+        minWidth: 150,
+    },
+    {
+        headerName: 'Maker',
+        field: 'maker',
+
+    }, {
+        headerName: 'Item',
+        field: 'item',
+        minWidth: 150,
+    }, {
+        headerName: '규격',
+        field: 'spec',
+        minWidth: 150,
+    }, {
+        headerName: '수량',
+        field: 'quantity',
+        minWidth: 150,
+    }, {
+        headerName: '단위 가격',
+        field: 'unitPrice',
+        minWidth: 150,
+    }, {
+        headerName: '총액',
+        field: 'total',
+        minWidth: 150,
+    }, {
+        headerName: '화폐단위',
+        field: 'currencyUnit',
+        minWidth: 150,
+    }, {
+        headerName: '납기',
+        field: '??',
+        minWidth: 150,
+    }
+];
+
+
+
+
+export const delilveryReadColumn = [
+    {
+        headerName: '출고일자.',
+        field: 'deliveryDate',
+        minWidth: 150
+    }, {
+        headerName: '운송유형',
+        field: 'deliveryType',
+        minWidth: 80
+    }, {
+        headerName: 'Inquiry No.',
+        field: 'connectInquiryNo',
+        minWidth: 150
+    }, {
+        headerName: '받는분 성명',
+        field: 'recipientName',
+        minWidth: 80
+    }, {
+        headerName: '받는분 전화번호',
+        field: 'recipientPhone',
+        minWidth: 100
+    }, {
+        headerName: '받는분 주소',
+        field: 'recipientAddress',
+        minWidth: 300
+    }, {
+        headerName: '수량',
+        field: 'quantity',
+        minWidth: 50
+    },
+    {
+        headerName: '포장',
+        field: 'packagingType',
+        cellEditor: 'agNumberCellEditor',
+        editable: true,
+        valueFormatter: params => commonManage.calcFloat(params, 2),
+        cellStyle: { textAlign: 'right' }
+    }, {
+        headerName: '배송방식',
+        field: 'shippingType',
+        minWidth: 150
+    }, {
+        headerName: '결제방식',
+        field: 'paymentMethod',
+        minWidth: 150
+    }, {
+        headerName: '운송장번호',
+        field: 'trackingNumber',
+        minWidth: 150
+    }, {
+        headerName: '고객사명',
+        field: 'customerName',
+        minWidth: 150
+    }, {
+        headerName: 'model',
+        field: 'model',
+        minWidth: 150,
+    }, {
+        headerName: 'maker',
+        field: 'maker',
+        minWidth: 150,
+    }, {
+        headerName: 'item',
+        field: 'item',
+        minWidth: 150,
+    }, {
+        headerName: '확인 여부',
+        field: 'isConfirm',
+        minWidth: 150,
+    }
+];
+
+
+export const remittanceReadColumn = [
+    {
+        headerName: 'Inquiry No..',
+        field: 'connectInquiryNo',
+        minWidth: 150,
+
+    }, {
+        headerName: '담당자',
+        field: 'managerAdminName',
+        minWidth: 150,
+
+    }, {
+        headerName: '송금요청일자',
+        field: 'requestDate',
+        minWidth: 150,
+
+    }, {
+        headerName: '송금지정일자',
+        field: 'assignedDate',
+        minWidth: 150,
+
+    }, {
+        headerName: '거래처명',
+        field: 'customerName',
+        minWidth: 150,
+
+    }, {
+        headerName: '매입처명',
+        field: 'agencyName',
+        minWidth: 150,
+
+    }, {
+        headerName: '공급가액',
+        field: 'supplyAmount',
+        minWidth: 150,
+        valueFormatter: params => params.data.supplyAmount?.toLocaleString(),
+
+    },
+    {
+        headerName: '부가세',
+        field: 'net',
+        valueFormatter: params => Math.round(params.data.supplyAmount / 10)?.toLocaleString(),
+        cellEditor: 'agNumberCellEditor',
+
+    }, {
+        headerName: '합계',
+        field: 'total',
+        valueFormatter: params => (params.data.supplyAmount + Math.round(params.data.supplyAmount / 10))?.toLocaleString(),
+        minWidth: 150,
+    }
+    , {
+        headerName: '송금여부',
+        field: 'isSend',
+        minWidth: 150,
+    }, {
+        headerName: '계산서 발행 여부',
+        field: 'isInvoice',
+        minWidth: 150,
+    }, {
+        headerName: '고객사명',
+        field: 'customerName',
+        minWidth: 150,
+    }
+];
+
+
+
+export const storeWriteColumn = [
+    {
+        headerName: 'Inquiry No.',
+        field: 'orderDocumentNumberFull',
+        minWidth: 150,
+    }, {
+        headerName: '세부항목 번호',
+        field: 'itemDetailNo',
+        minWidth: 150,
+    }, {
+        headerName: '매입처명',
+        field: 'agencyName',
+        minWidth: 150,
+    }, {
+        headerName: '거래처명',
+        field: 'customerName',
+        minWidth: 150,
+    }, {
+        headerName: '환율',
+        field: 'exchangeRate',
+        minWidth: 150,
+        editable: true,
+        valueFormatter: (params) => {
+            // 소수점 두 자리로 포맷팅
+            if (params.value === undefined || params.value === null) return '';
+            return parseFloat(params.value).toFixed(2);
+        },
+        valueParser: (params) => {
+            // 숫자만 입력 가능하도록 파싱
+            const value = parseFloat(params.newValue);
+            return isNaN(value) ? null : Math.round(value * 100) / 100; // 소수점 두 자리로 제한
+        },
+        cellEditor: 'agTextCellEditor', // 텍스트 입력기 사용
+    }, {
+        headerName: '발주일자',
+        field: 'orderDate',
+        minWidth: 150
+    }, {
+        headerName: '송금일자',
+        field: 'remittanceDate',
+        minWidth: 150,
+    },
+    {
+        headerName: '금액',
+        field: 'amount',
+        valueFormatter: (params) => {
+            // 소수점 두 자리로 포맷팅
+            if (params.value === undefined || params.value === null) return '';
+            return parseFloat(params.value).toFixed(2);
+        },
+        valueParser: (params) => {
+            // 숫자만 입력 가능하도록 파싱
+            const value = parseFloat(params.newValue);
+            return isNaN(value) ? null : Math.round(value * 100) / 100; // 소수점 두 자리로 제한
+        },
+        cellEditor: 'agTextCellEditor', // 텍스트 입력기 사용
+    }, {
+        headerName: '환폐단위',
+        field: 'currencyUnit',
+        cellEditor: 'agDateCellEditor',
+        minWidth: 150,
+        editable: true,
+    }, {
+        headerName: '원화환산금액',
+        field: 'returnAmount',
+        minWidth: 150,
+        valueGetter: (params) => {
+            // 원화 금액 계산 후 반환
+            if (!params.data) return '₩ 0';
+            const calculatedValue = Math.round(params.data.amount * params.data.exchangeRate);
+            return `₩ ${calculatedValue.toLocaleString()}`;
+        },
+        valueSetter: (params) => {
+            // 사용자가 입력한 값을 저장
+            const newValue = parseFloat(params.newValue.replace(/[₩,]/g, '')); // ₩와 , 제거
+            if (isNaN(newValue)) return false;
+
+            params.data.amount = newValue / params.data.exchangeRate; // 환율 반영
+            return true; // 데이터 변경이 반영되었음을 알림
+        }
+    }, {
+        headerName: '수수료',
+        field: 'commissionFee',
+        minWidth: 150,
+        editable: true,
+        valueFormatter: numberFormat,
+    }, {
+        headerName: '판매금액',
+        field: 'salesAmount',
+        minWidth: 150,
+        valueFormatter: numberFormat,
+    }, {
+        headerName: '판매금액(VAT 포함)',
+        field: 'salesAmountVat',
+        minWidth: 150,
+        valueFormatter: numberFormat,
+    }, {
+        headerName: '입고일자',
+        field: 'receiptDate',
+        minWidth: 150,
+        editable: true,
+        cellEditor: 'agDateCellEditor',
+        valueFormatter: (params) => {
+            return moment(params.value).isValid() ?  dateFormat(params) : ''
+        }
+    }, {
+        headerName: '출고일자',
+        field: 'deliveryDate',
+        minWidth: 150,
+        cellEditor: 'agDateCellEditor',
+
+    }, {
+        headerName: '계산서 발행일자',
+        field: '',
+        minWidth: 150,
+        editable: true,
+    },{
+        headerName: '결제 여부',
+        field: 'paymentStatus',
+        minWidth: 150,
+        editable: true,
+        cellEditor: 'agSelectCellEditor',
+        cellEditorParams: {
+            values: ['완료', '부분완료', '미완료'],
+        }
+    },{
+        headerName: '선수금',
+        field: 'advancePayment',
+        minWidth: 150,
+        editable: true
+    },{
+        headerName: '비고',
+        field: 'remarks',
+        minWidth: 150,
+        editable: true,
+    }
+];
+
+
+export const storeReadColumn = [
+    {
+        headerName: '운수사명',
+        field: 'carrierName',
+        minWidth: 100,
+    }, {
+        headerName: 'B/L No.',
+        field: 'blNo',
+        minWidth: 120,
+    }, {
+        headerName: 'Inquiry No.',
+        field: 'orderDocumentNumberFull',
+        minWidth: 120,
+    }, {
+        headerName: '세부항목 번호',
+        field: 'itemDetailNo',
+        minWidth: 150,
+    }, {
+        headerName: '거래처명',
+        field: 'customerName',
+        minWidth: 100,
+    }, {
+        headerName: '매입처명',
+        field: 'agencyName',
+        minWidth: 100
+    }, {
+        headerName: '환율',
+        field: 'exchangeRate',
+        minWidth: 80,
+    },
+    {
+        headerName: '발주일자',
+        field: 'amount',
+        cellEditor: 'agDateCellEditor',
+        minWidth: 100
+    }, {
+        headerName: '송금일자',
+        field: 'currencyUnit',
+        cellEditor: 'agDateCellEditor',
+        minWidth: 100,
+    }, {
+        headerName: '금액',
+        field: 'amount',
+        minWidth: 120
+    }, {
+        headerName: '화폐단위',
+        field: 'currencyUnit',
+        minWidth: 80
+    }, {
+        headerName: '원화환산금액',
+        field: 'salesAmount',
+        minWidth: 120,
+        valueFormatter: numberFormat,
+    }, {
+        headerName: '수수료',
+        field: 'commissionFee',
+        minWidth: 120,
+        valueFormatter: numberFormat,
+    }, {
+        headerName: '부가세',
+        field: 'vatAmount',
+        minWidth: 120,
+        editable: true
+    }, {
+        headerName: '관세',
+        field: 'tariff',
+        minWidth: 150,
+        cellEditor: 'agDateCellEditor',
+
+    }, {
+        headerName: '운임비',
+        field: 'shippingFee',
+        minWidth: 120,
+    },{
+        headerName: '합계',
+        field: 'paymentStatus',
+        minWidth: 150
+    },{
+        headerName: '합계(VAT 포함)',
+        field: 'advancePayment',
+        minWidth: 150
+    },{
+        headerName: '판매금액',
+        field: 'remarks',
+        minWidth: 150
+    },{
+        headerName: '판매금액 (VAT 포함)',
+        field: 'remarks',
+        minWidth: 150
+    },{
+        headerName: '영업이익금',
+        field: 'remarks',
+        minWidth: 150
+    },{
+        headerName: '입고일자',
+        field: 'receiptDate',
+        minWidth: 150
+    },{
+        headerName: '출고일자',
+        field: 'remarks',
+        minWidth: 150
+    },{
+        headerName: '계산서 발행일자',
+        field: 'invoiceDate',
+        minWidth: 150
+    },{
+        headerName: '결제여부',
+        field: 'paymentStatus',
+        minWidth: 150
+    },{
+
+        headerName: '선수금',
+        field: 'remarks',
+        minWidth: 150
+    }
 ];

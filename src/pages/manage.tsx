@@ -59,7 +59,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
         "limit": 20
     });
 
-    console.log(result,'result::')
+
     if (userInfo) {
         store.dispatch(setUserInfo(userInfo));
     }

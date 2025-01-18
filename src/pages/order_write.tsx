@@ -1,19 +1,8 @@
 import React, {useRef, useState} from "react";
-import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
-import Card from "antd/lib/card/Card";
-import {
-    CopyOutlined,
-    DownCircleFilled,
-    DownloadOutlined,
-    RetweetOutlined,
-    SaveOutlined,
-    UpCircleFilled
-} from "@ant-design/icons";
+import {CopyOutlined, DownloadOutlined, SaveOutlined} from "@ant-design/icons";
 import {tableOrderWriteColumn,} from "@/utils/columnList";
-import DatePicker from "antd/lib/date-picker";
 import {orderDetailUnit, orderWriteInitial} from "@/utils/initialList";
-import moment from "moment";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
 import {wrapper} from "@/store/store";
@@ -23,16 +12,22 @@ import Select from "antd/lib/select";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {useRouter} from "next/router";
 import TableGrid from "@/component/tableGrid";
-import {BoxCard, TopBoxCard} from "@/utils/commonForm";
-import {commonManage} from "@/utils/commonManage";
+import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, TopBoxCard} from "@/utils/commonForm";
+import {commonManage, gridManage} from "@/utils/commonManage";
 import TextArea from "antd/lib/input/TextArea";
 import _ from "lodash";
 import {findEstDocumentInfo} from "@/utils/api/commonApi";
 import {saveOrder} from "@/utils/api/mainApi";
+import {DriveUploadComp} from "@/component/common/SharePointComp";
 
-export default function OrderWriter() {
+
+const listType = 'orderDetailList'
+export default function OrderWriter({dataInfo}) {
+    const fileRef = useRef(null);
     const gridRef = useRef(null);
     const router = useRouter();
+
+
 
     const copyInit = _.cloneDeep(orderWriteInitial)
     const copyUnitInit = _.cloneDeep(orderDetailUnit)
@@ -41,70 +36,32 @@ export default function OrderWriter() {
 
     const [mini, setMini] = useState(true);
 
-    const infoInit = {
-        ...copyInit,
-        adminId: userInfo['adminId'],
+    const adminParams = {
+        managerAdminId: userInfo['adminId'],
         managerAdminName: userInfo['name'],
         adminName: userInfo['name'],
         managerId: userInfo['name'],
         managerPhoneNumber: userInfo['contactNumber'],
         managerFaxNumber: userInfo['faxNumber'],
         managerEmail: userInfo['email'],
+        createdId: 0,
+        customerId: 0
+    }
+    const infoInit = {
+        ...copyInit,
+        ...adminParams
     }
 
-    const [info, setInfo] = useState<any>(infoInit)
+    const [info, setInfo] = useState<any>({...copyInit, ...dataInfo, ...adminParams})
 
 
-// =============================================================================================================
-    const inputForm = ({title, id, disabled = false, suffix = null, placeholder = ''}) => {
-
-        let bowl = info;
-
-        return <div>
-            <div>{title}</div>
-            <Input id={id} value={bowl[id]} disabled={disabled}
-                   placeholder={placeholder}
-                   onChange={onChange}
-                   size={'small'}
-                   onKeyDown={handleKeyPress}
-                   suffix={suffix}
-            />
-        </div>
-    }
-
-    const textAreaForm = ({title, id, rows = 5, disabled = false}) => {
-        return <div>
-            <div>{title}</div>
-            <TextArea style={{resize: 'none'}} rows={rows} id={id} value={info[id]} disabled={disabled}
-                      onChange={onChange}
-                      size={'small'}
-                      showCount
-                      maxLength={1000}
-            />
-        </div>
-    }
-
-    const datePickerForm = ({title, id, disabled = false}) => {
+    const onGridReady = (params) => {
+        gridRef.current = params.api;
+        const result = dataInfo?.orderDetailList;
+        params.api.applyTransaction({add: result ? result : []});
+    };
 
 
-        return <div>
-            <div>{title}</div>
-            {/*@ts-ignore*/}
-            <DatePicker value={info[id] ? moment(info[id]) : ''} style={{width: '100%'}}
-                        disabledDate={commonManage.disabledDate}
-                        onChange={(date) => onChange({
-                            target: {
-                                id: id,
-                                value: date
-                            }
-                        })
-                        }
-                        disabled={disabled}
-                        id={id} size={'small'}/>
-        </div>
-    }
-
-    // ======================================================================================================
     async function handleKeyPress(e) {
         if (e.key === 'Enter') {
             switch (e.target.id) {
@@ -115,53 +72,66 @@ export default function OrderWriter() {
         }
     }
 
-
     function onChange(e) {
         commonManage.onChange(e, setInfo)
     }
 
 
     async function saveFunc() {
-        if (!info['orderDetailList'].length) {
-            message.warn('하위 데이터 1개 이상이여야 합니다')
-        } else {
-            const copyData = {...info}
-            const changeTime = gridRef.current.props.context.map(v => {
-                return {...v, replyDate: moment(v['replyDate']).format('YYYY-MM-DD')}
-            })
-            copyData['writtenDate'] = moment(info['writtenDate']).format('YYYY-MM-DD');
-
-            await saveOrder({data : copyData, router : router})
+        const list = gridManage.getAllData(gridRef)
+        if (!list.length) {
+           return message.warn('하위 데이터 1개 이상이여야 합니다')
         }
+        const formData: any = new FormData();
+
+        const handleIteration = () => {
+            for (const {key, value} of commonManage.commonCalc(info)) {
+                if (key !== listType) {
+                    formData.append(key, value);
+                }
+            }
+        };
+
+        handleIteration();
+
+
+        if (list.length) {
+            list.forEach((detail, index) => {
+                Object.keys(detail).forEach((key) => {
+                    formData.append(`${listType}[${index}].${key}`, detail[key]);
+                });
+            });
+        }
+
+        const filesToSave = fileRef.current.fileList.map((item) => item.originFileObj).filter((file) => file instanceof File);
+        filesToSave.forEach((file, index) => {
+            formData.append(`attachmentFileList[${index}].attachmentFile`, file);
+            formData.append(`attachmentFileList[${index}].fileName`, file.name.replace(/\s+/g, ""));
+        });
+        await saveOrder({data : formData, router : router})
     }
 
     function deleteList() {
-        let copyData = {...info}
-        copyData['orderDetailList'] = commonManage.getUnCheckList(gridRef.current.api);
-        setInfo(copyData);
+        const list = commonManage.getUnCheckList(gridRef);
+        gridManage.resetData(gridRef, list);
     }
 
     function addRow() {
-        let copyData = {...info};
-        copyData['orderDetailList'].push({
-            ...copyUnitInit,
-            "currency": commonManage.changeCurr(info['agencyCode'])
-        })
-
-        setInfo(copyData)
+        const newRow = {...copyUnitInit, "currency": commonManage.changeCurr(info['agencyCode'])};
+        gridRef.current.applyTransaction({add: [newRow]});
     }
 
     function clearAll() {
         setInfo({...infoInit});
+        gridManage.deleteAll(gridRef);
     }
-
 
     /**
      * @description 테이블 우측상단 관련 기본 유틸버튼
      */
     const subTableUtil = <div>
         {/*@ts-ignored*/}
-        <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
+        <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
                 onClick={addRow}>
             <SaveOutlined/>추가
         </Button>
@@ -180,57 +150,48 @@ export default function OrderWriter() {
                 height: '100vh',
                 columnGap: 5
             }}>
+                <MainCard title={'발주서 작성'} list={[
+                    {name: '저장', func: saveFunc, type: 'primary'},
+                    {name: '초기화', func: clearAll, type: 'danger'}
+                ]} mini={mini} setMini={setMini}>
 
-                <Card title={<div style={{display: 'flex', justifyContent: 'space-between'}}>
-                    <div style={{fontSize: 14, fontWeight: 550}}>발주서 작성</div>
-                    <div>
-                        <Button type={'primary'} size={'small'} style={{fontSize: 11, marginRight: 8}}
-                                onClick={saveFunc}><SaveOutlined/>저장</Button>
-
-                        {/*@ts-ignored*/}
-                        <Button type={'danger'} size={'small'} style={{fontSize: 11,}}
-                                onClick={clearAll}><RetweetOutlined/>초기화</Button>
-                    </div>
-                </div>} style={{fontSize: 12, border: '1px solid lightGray'}}
-                      extra={<span style={{fontSize: 20, cursor: 'pointer'}} onClick={() => setMini(v => !v)}> {!mini ?
-                          <UpCircleFilled/> : <DownCircleFilled/>}</span>}>
 
                     {mini ? <div>
 
                         <TopBoxCard title={'INQUIRY & PO no'} grid={'1fr 0.6fr 0.6fr 1fr 1fr 1fr'}>
-                            {datePickerForm({title: '작성일', id: 'writtenDate', disabled: true})}
-                            {inputForm({title: '작성자', id: 'adminName', disabled: true})}
-                            {inputForm({title: '담당자', id: 'managerAdminName'})}
+                            {datePickerForm({title: '작성일', id: 'writtenDate', disabled: true, onChange : onChange,  data : info})}
+                            {inputForm({title: '작성자', id: 'adminName', disabled: true, onChange : onChange,  data : info})}
+                            {inputForm({title: '담당자', id: 'managerAdminName', onChange : onChange,  data : info})}
 
-                            {inputForm({title: '발주서 PO no', id: 'documentNumberFull'})}
+                            {inputForm({title: '발주서 PO no', id: 'documentNumberFull', onChange : onChange,  data : info})}
                             {inputForm({
                                 placeholder: '폴더생성 규칙 유의',
                                 title: '연결 INQUIRY No.',
                                 id: 'ourPoNo',
-                                suffix: <DownloadOutlined style={{cursor: 'pointer'}}/>
+                                suffix: <DownloadOutlined style={{cursor: 'pointer'}}/>,
+                                 onChange : onChange,  data : info
                             })}
-                            {inputForm({title: '거래처 PO no', id: 'yourPoNo'})}
+                            {inputForm({title: '거래처 PO no', id: 'yourPoNo', onChange : onChange,  data : info})}
                         </TopBoxCard>
 
                         <div style={{
                             display: 'grid',
-                            gridTemplateColumns: '150px 200px 200px 1fr',
+                            gridTemplateColumns: '180px 200px 200px 1fr 300px',
                             columnGap: 10,
                             marginTop: 10
                         }}>
 
                             <BoxCard title={'CUSTOMER & SUPPLY'}>
-                                {inputForm({title: 'Messrs', id: 'agencyCode'})}
-                                {inputForm({title: 'Attn To', id: 'attnTo'})}
-                                {inputForm({title: '고객사명', id: 'customerName'})}
+                                {inputForm({title: 'Messrs', id: 'agencyCode', onChange : onChange,  data : info})}
+                                {inputForm({title: 'Attn To', id: 'attnTo', onChange : onChange,  data : info})}
+                                {inputForm({title: '매입처명', id: 'agencyName', onChange : onChange,  data : info})}
                             </BoxCard>
 
-
                             <BoxCard title={'MANAGER IN CHARGE'}>
-                                {inputForm({title: 'Responsibility', id: 'managerId'})}
-                                {inputForm({title: 'TEL', id: 'managerPhoneNumber'})}
-                                {inputForm({title: 'Fax', id: 'managerFaxNumber'})}
-                                {inputForm({title: 'E-Mail', id: 'managerEmail'})}
+                                {inputForm({title: 'Responsibility', id: 'managerId', onChange : onChange,  data : info})}
+                                {inputForm({title: 'TEL', id: 'managerPhoneNumber', onChange : onChange,  data : info})}
+                                {inputForm({title: 'Fax', id: 'managerFaxNumber', onChange : onChange,  data : info})}
+                                {inputForm({title: 'E-Mail', id: 'managerEmail', onChange : onChange,  data : info})}
 
                             </BoxCard>
                             <BoxCard title={'LOGISTICS'}>
@@ -247,26 +208,30 @@ export default function OrderWriter() {
                                             ]} style={{width: '100%'}}>
                                     </Select>
                                 </div>
-                                {inputForm({title: 'Delivery Terms', id: 'deliveryTerms'})}
-                                {inputForm({title: 'MAKER', id: 'maker'})}
-                                {inputForm({title: 'ITEM', id: 'item'})}
-                                {inputForm({title: 'Delivery', id: 'delivery'})}
+                                {inputForm({title: 'Delivery Terms', id: 'deliveryTerms', onChange : onChange,  data : info})}
+                                {inputForm({title: 'MAKER', id: 'maker', onChange : onChange,  data : info})}
+                                {inputForm({title: 'ITEM', id: 'item', onChange : onChange,  data : info})}
+                                {inputForm({title: 'Delivery', id: 'delivery', onChange : onChange,  data : info})}
                             </BoxCard>
 
                             <BoxCard title={'ETC'}>
-                                {inputForm({title: '견적서담당자', id: 'estimateManager'})}
-                                {textAreaForm({title: '비고란', rows: 3, id: 'remarks'})}
-                                {textAreaForm({title: '하단태그', rows: 3, id: 'footer'})}
+                                {inputForm({title: '견적서담당자', id: 'estimateManager', onChange : onChange,  data : info})}
+                                {textAreaForm({title: '비고란', rows: 6, id: 'remarks', onChange : onChange,  data : info})}
+                            </BoxCard>
+                            <BoxCard title={'드라이브 목록'}>
+                                   {/*@ts-ignored*/}
+                                <div style={{overFlowY: "auto", maxHeight: 300}}>
+                                    <DriveUploadComp infoFileInit={[]} fileRef={fileRef}/>
+                                </div>
                             </BoxCard>
                         </div>
                     </div> : null}
-                </Card>
+                </MainCard>
 
                 <TableGrid
                     gridRef={gridRef}
                     columns={tableOrderWriteColumn}
-                    tableData={info['orderDetailList']}
-                    listType={'orderId'}
+                    onGridReady={onGridReady}
                     type={'write'}
                     funcButtons={subTableUtil}
                 />
@@ -277,6 +242,8 @@ export default function OrderWriter() {
 }
 
 export const getServerSideProps:any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
+    const {query} = ctx;
+
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
     if (codeInfo < 0) {
@@ -288,4 +255,10 @@ export const getServerSideProps:any = wrapper.getStaticProps((store: any) => asy
         };
     }
     store.dispatch(setUserInfo(userInfo));
+    if (query?.data) {
+        const data = JSON.parse(decodeURIComponent(query.data));
+        return {props: {dataInfo: data}}
+    }
+
+
 })

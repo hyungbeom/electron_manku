@@ -8,21 +8,21 @@ import Deasin from "@/component/delivery/Deasin";
 import {TabsProps} from "antd";
 import Tabs from "antd/lib/tabs";
 import ETC from "@/component/delivery/ETC";
-import {useRouter} from "next/router";
-import message from "antd/lib/message";
+import {setUserInfo} from "@/store/user/userSlice";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {wrapper} from "@/store/store";
-
-export default function delivery_write() {
-
-    const router = useRouter();
-
-    const [tabNumb, setTabNumb] = useState('CJ')
-    const [cjInfo, setCjInfo] = useState({...deliveryDaehanInitial, deliveryType: 'CJ'})
-    const [daesinInfo, setDaesinInfo] = useState({...deliveryDaehanInitial, deliveryType: 'DAESIN'})
-    const [quickInfo, setQuickInfo] = useState({...deliveryDaehanInitial, deliveryType: 'QUICK'})
+import message from "antd/lib/message";
 
 
+export default function delivery_update({dataInfo}) {
+
+    const [tabNumb, setTabNumb] = useState(dataInfo['deliveryType'])
+    const [cjInfo, setCjInfo] = useState({...dataInfo, deliveryType: 'CJ'})
+    const [daesinInfo, setDaesinInfo] = useState({...dataInfo, deliveryType: 'DAESIN'})
+    const [quickInfo, setQuickInfo] = useState({...dataInfo, deliveryType: 'QUICK'})
+
+
+    console.log(dataInfo, 'dataInfo::')
     const onChange = (key: string) => {
         setTabNumb(key);
     };
@@ -61,30 +61,24 @@ export default function delivery_write() {
         }
 
         if (sendParam) {
-            await getData.post('delivery/addDelivery', sendParam).then(v => {
+            await getData.post('delivery/updateDelivery', sendParam).then(v => {
                 if (v.data.code === 1) {
-                    message.success('저장에 성공하였습니다.')
-                    router.push(`/delivery_update?deliveryId=${v.data.entity.deliveryId}`)
-                } else {
-                    message.error('저장에 실패하였습니다..')
-
+                    return message.success('저장되었습니다.')
                 }
             }, err => console.log(err, '::::'))
         }
     }
 
     function clearAll() {
-        setCjInfo({...deliveryDaehanInitial, deliveryType: 'CJ'})
-        setDaesinInfo({...deliveryDaehanInitial, deliveryType: 'DAESIN'})
-        setQuickInfo({...deliveryDaehanInitial, deliveryType: 'QUICK'})
+
     }
 
 
     return <>
         <LayoutComponent>
 
-            <MainCard title={'배송 등록'} list={[
-                {name: '저장', func: saveFunc, type: 'primary'},
+            <MainCard title={'배송 수정'} list={[
+                {name: '수정', func: saveFunc, type: 'primary'},
                 {name: '초기화', func: clearAll, type: 'danger'}
             ]}>
                 <Tabs activeKey={tabNumb} items={items} onChange={onChange}/>
@@ -97,14 +91,37 @@ export default function delivery_write() {
 
 // @ts-ignore
 export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
+
+    const {query} = ctx;
+
+    const {deliveryId} = query;
+
+
+    let param = {}
+
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
-    if (codeInfo < 0) {
-        return {
+
+    if (userInfo) {
+        store.dispatch(setUserInfo(userInfo));
+    }
+    if (codeInfo !== 1) {
+        param = {
             redirect: {
-                destination: '/',
-                permanent: false,
+                destination: '/', // 리다이렉트할 대상 페이지
+                permanent: false, // true로 설정하면 301 영구 리다이렉트, false면 302 임시 리다이렉트
             },
         };
+    } else {
+        const result = await getData.post('delivery/getDeliveryDetail', {deliveryId: deliveryId});
+
+
+        // result?.data?.entity?.estimateRequestList
+        param = {
+            props: {dataInfo: result?.data?.entity?.deliveryDetail}
+        }
     }
+
+
+    return param
 })

@@ -16,43 +16,29 @@ import Button from "antd/lib/button";
 import {CopyOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
-import {deleteEstimate, deleteRfq, searchEstimate} from "@/utils/api/mainApi";
+import {deleteEstimate, deleteOrder, deleteRfq, searchEstimate} from "@/utils/api/mainApi";
 import _ from "lodash";
-import {commonManage} from "@/utils/commonManage";
-import {BoxCard} from "@/utils/commonForm";
+import {commonManage, gridManage} from "@/utils/commonManage";
+import {BoxCard, inputForm, MainCard, rangePickerForm, selectBoxForm} from "@/utils/commonForm";
+import {useRouter} from "next/router";
 
 const {RangePicker} = DatePicker
 
 
-export default function EstimateRead({data}) {
+export default function EstimateRead({dataInfo}) {
+    const router = useRouter();
 
     const gridRef = useRef(null);
 
     const copyInit = _.cloneDeep(estimateReadInitial)
-    const infoInit = {
-        ...copyInit,
-        searchDate: [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
-    }
-    const [info, setInfo] = useState(infoInit)
-    const [tableData, setTableData] = useState(data)
+    const [info, setInfo] = useState(copyInit)
+    const [mini, setMini] = useState(true);
 
 
-    // =============================================================================
-
-    const inputForm = ({title, id, disabled = false, suffix = null}) => {
-        let bowl = info;
-
-
-        return <div>
-            <div>{title}</div>
-            <Input id={id} value={bowl[id]} disabled={disabled}
-                   onChange={onChange}
-                   size={'small'}
-                   onKeyDown={handleKeyPress}
-                   suffix={suffix}
-            />
-        </div>
-    }
+    const onGridReady = (params) => {
+        gridRef.current = params.api;
+        params.api.applyTransaction({add: dataInfo});
+    };
 
 
     function handleKeyPress(e) {
@@ -68,46 +54,42 @@ export default function EstimateRead({data}) {
 
     async function searchInfo() {
         const copyData: any = {...info}
-        const {searchDate}: any = copyData;
-        if (searchDate) {
-            copyData['searchStartDate'] = searchDate[0];
-            copyData['searchEndDate'] = searchDate[1];
-        }
-        const result = await getData.post('estimate/getEstimateList',
+
+
+        const result = await getData.post('order/getOrderList',
             {...copyData, "page": 1, "limit": -1});
-        setTableData(result?.data?.entity?.estimateList)
+
+        gridManage.resetData(gridRef, result?.data?.entity?.orderList);
+
     }
+
+    async function moveRouter() {
+        router.push('/estimate_write')
+    }
+
 
     async function deleteList() {
-        const api = gridRef.current.api;
-
-        let bowl = {
-            deleteList: []
+        if (gridRef.current.getSelectedRows().length < 1) {
+            return message.error('삭제할 데이터를 선택해주세요.')
         }
 
-        if (api.getSelectedRows().length < 1) {
-            message.error('삭제할 데이터를 선택해주세요.')
-        } else {
-            for (const item of api.getSelectedRows()) {
-                const {estimateId, estimateDetailId} = item;
-                console.log(item,'item:')
-                bowl['deleteList'].push({
-                    "estimateId": estimateId,
-                    "estimateDetailId": estimateDetailId
-                })
-            }
-            await deleteEstimate({data: bowl, returnFunc: searchInfo});
-        }
+        const fieldMappings = {
+            estimateId: 'estimateId',
+            estimateDetailIdList: 'estimateDetailIdList'
+        };
+
+        const deleteList = gridManage.getFieldDeleteList(gridRef, fieldMappings);
+
+        await deleteOrder({data: {deleteList: deleteList}, returnFunc: searchInfo});
+
     }
 
-    const downloadExcel = () => {
-        commonManage.excelDownload(tableData)
+
+    const downloadExcel = async () => {
+        gridManage.exportSelectedRowsToExcel(gridRef, '견적서_목록')
     };
 
 
-    /**
-     * @description 테이블 우측상단 관련 기본 유틸버튼
-     */
     const subTableUtil = <div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
         <CopyOutlined/>복사
     </Button>
@@ -121,66 +103,78 @@ export default function EstimateRead({data}) {
 
     return <>
         <LayoutComponent>
-            <div style={{display: 'grid', gridTemplateRows: 'auto 1fr', height: '100vh', columnGap: 5}}>
-                <Card title={<span style={{fontSize: 12,}}>견적서 조회</span>} headStyle={{marginTop: -10, height: 30}}
-                      style={{fontSize: 12, border: '1px solid lightGray'}} bodyStyle={{padding: '10px 24px'}}>
-                    <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1.5fr', width: '100%', columnGap: 20}}>
+            <div style={{
+                display: 'grid',
+                gridTemplateRows: `${mini ? '260px' : '65px'} calc(100vh - ${mini ? 320 : 120}px)`,
+                columnGap: 5
+            }}>
+                <MainCard title={'견적서 조회'}
+                          list={[{name: '조회', func: searchInfo, type: 'primary'}, {name: '신규생성', func: moveRouter}]}
+                          mini={mini} setMini={setMini}>
+                    {mini ? <div
+                            style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1.5fr', width: '100%', columnGap: 20}}>
+                            <BoxCard title={''}>
+                                {rangePickerForm({title: '작성일자', id: 'searchDate', onChange: onChange, data: info})}
+                                {selectBoxForm({
+                                    title: '주문 여부', id: 'searchType', onChange: onChange, data: info, list: [
+                                        {value: 0, label: '전체'},
+                                        {value: 1, label: '주문'},
+                                        {value: 2, label: '미주문'}
+                                    ]
+                                })}
 
-                        <BoxCard title={''}>
-                            <div>
-                                <div style={{paddingBottom: 3}}>작성일자</div>
-                                <RangePicker
-                                    value={[moment(info['searchDate'][0]), moment(info['searchDate'][1])]}
-                                    id={'searchDate'} size={'small'} onChange={(date, dateString) => {
-                                    onChange({
-                                        target: {
-                                            id: 'searchDate',
-                                            value: date ? [moment(date[0]).format('YYYY-MM-DD'), moment(date[1]).format('YYYY-MM-DD')] : [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
-                                        }
-                                    })
-                                }
-                                } style={{width: '100%',}}/>
-                            </div>
+                            </BoxCard>
+                            <BoxCard title={''}>
 
-                            <div>
-                                <div style={{paddingBottom: 3}}>주문 여부</div>
-                                <Select onChange={(src) => onChange({target: {id: 'searchType', value: src}})}
-                                        id={'searchType'} size={'small'} value={info['searchType']} defaultValue={0}
-                                        options={[
-                                            {value: 0, label: '전체'},
-                                            {value: 1, label: '주문'},
-                                            {value: 2, label: '미주문'}
-                                        ]} style={{width: '100%'}}>
-                                </Select>
-                            </div>
+                                {inputForm({
+                                    title: '문서번호', id: 'searchDocumentNumber',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: '등록직원명', id: 'searchCreatedBy',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: '고객사명', id: 'searchCustomerName',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
 
+                            </BoxCard>
+                            <BoxCard title={''}>
 
-                        </BoxCard>
-                        <BoxCard title={''}>
+                                {inputForm({
+                                    title: 'MAKER', id: 'searchMaker',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: 'MODEL', id: 'searchModel',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: 'ITEM', id: 'searchItem',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
 
-                            {inputForm({title: '문서번호', id: 'searchDocumentNumber'})}
-                            {inputForm({title: '등록직원명', id: 'searchCreatedBy'})}
-                            {inputForm({title: '고객사명', id: 'searchCustomerName'})}
-
-                        </BoxCard>
-                        <BoxCard title={''}>
-
-                            {inputForm({title: 'MAKER', id: 'searchMaker'})}
-                            {inputForm({title: 'MODEL', id: 'searchModel'})}
-                            {inputForm({title: 'ITEM', id: 'searchItem'})}
-
-                        </BoxCard>
-                    </div>
-                    <div style={{marginTop: 8, textAlign: 'right'}}>
-                        <Button onClick={searchInfo} type={'primary'}><SearchOutlined/>조회</Button>
-                    </div>
-                </Card>
-
+                            </BoxCard>
+                        </div>
+                        : <></>}
+                </MainCard>
                 <TableGrid
                     gridRef={gridRef}
-                    listType={'estimateId'}
+                    onGridReady={onGridReady}
                     columns={tableEstimateReadColumns}
-                    tableData={tableData}
                     funcButtons={subTableUtil}
                 />
 
@@ -202,11 +196,11 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
                 permanent: false,
             },
         };
-    } else {
-        store.dispatch(setUserInfo(userInfo));
-        let copyData = await searchEstimate({data: {}});
-        return {
-            props: {data: copyData}
-        }
     }
+    store.dispatch(setUserInfo(userInfo));
+    let result = await searchEstimate({data: estimateReadInitial});
+    return {
+        props: {dataInfo: result ? result : null}
+    }
+
 })

@@ -1,13 +1,40 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {useRouter} from "next/router";
+import {wrapper} from "@/store/store";
+import initialServerRouter from "@/manage/function/initialServerRouter";
+import {setUserInfo} from "@/store/user/userSlice";
+import axios from "axios";
 import {setCookies} from "@/manage/function/cookie";
 
 //test
-function LoginButton() {
+function SignUpButton() {
 
     const router = useRouter();
-    const {query} = router;
+    const { query } = router;
 
+    useEffect(() => {
+        const { code } = query;
+
+        if (code) {
+            console.log('성공?!')
+            // 백엔드 API Route로 인증 코드 전달
+            // sendCodeToBackend(code);
+        }
+    }, [query]);
+
+    const sendCodeToBackend = async (code) => {
+        try {
+            const response = await axios.post("/api/auth/callback", { code });
+            console.log("Response from backend:", response.data);
+
+            // 성공 시 사용자 페이지로 리디렉션
+            router.push("/dashboard");
+        } catch (error) {
+            console.error("Error sending code to backend:", error);
+            // 에러 페이지로 리디렉션
+            router.push("/error");
+        }
+    };
 
     // code_verifier 생성 함수
     function generateCodeVerifier() {
@@ -28,7 +55,7 @@ function LoginButton() {
 
     const handleLogin = async () => {
         const clientId = "045c4017-c001-4d09-b0e2-a1bb0c222b3f";
-        const redirectUri = "http://manku.progist.co.kr";
+        const redirectUri = "https://manku.progist.co.kr/join";
         const authority = "https://login.microsoftonline.com/a4f5fe9e-ff2c-4466-b78a-af1ef5748673/oauth2/v2.0/authorize";
         const scopes = ["User.Read", "offline_access", "Files.Read"];
 
@@ -36,19 +63,18 @@ function LoginButton() {
         const codeChallenge = await generateCodeChallenge(codeVerifier);
 
         // code_verifier를 localStorage에 저장
-        setCookies(null, "code_verifier", codeVerifier);
+        setCookies(null,"code_verifier", codeVerifier);
 
         const authUrl = `${authority}?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&response_mode=query&scope=${scopes.join(" ")}&code_challenge=${codeChallenge}&code_challenge_method=S256&prompt=consent`;
+
 
         // Azure AD 로그인 페이지로 리디렉션
         window.location.href = authUrl;
     };
 
-    return <div style={{textAlign: 'center', cursor: 'pointer'}} onClick={handleLogin}>
-        <img
-            src={'https://learn.microsoft.com/ko-kr/entra/identity-platform/media/howto-add-branding-in-apps/ms-symbollockup_signin_dark.svg'}
-            alt=""/>
+    return <div style={{textAlign : 'center', cursor : 'pointer'}} onClick={handleLogin}>
+        <img  src={'https://learn.microsoft.com/ko-kr/entra/identity-platform/media/howto-add-branding-in-apps/ms-symbollockup_signin_dark.svg'} alt=""/>
     </div>
 }
 
-export default LoginButton;
+export default SignUpButton;

@@ -35,27 +35,27 @@ import {BoxCard, MainCard, TopBoxCard} from "@/utils/commonForm";
 import {useRouter} from "next/router";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import _ from "lodash";
-import {saveEstimate, saveProject, saveRfq} from "@/utils/api/mainApi";
+import {saveEstimate, saveProject, saveRfq, updateProject} from "@/utils/api/mainApi";
 import {findCodeInfo} from "@/utils/api/commonApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {list} from "postcss";
+import {getData} from "@/manage/function/api";
 
 const listType = 'projectDetailList'
-export default function projectWrite() {
+export default function projectUpdate({dataInfo}) {
+ console.log(dataInfo,'dataInfo:')
     const fileRef = useRef(null);
     const gridRef = useRef(null);
     const router = useRouter();
 
-    const copyInit = _.cloneDeep(projectWriteInitial)
     const copyUnitInit = _.cloneDeep(projectDetailUnit)
+
+    const infoInit = dataInfo?.projectDetail
+    const infoFileInit = dataInfo?.attachmentFileList
+
 
     const userInfo = useAppSelector((state) => state.user);
 
-    const infoInit = {
-        ...copyInit,
-        managerAdminId: userInfo['adminId'],
-        managerAdminName: userInfo['name']
-    }
 
     const [info, setInfo] = useState<any>(infoInit)
     const [mini, setMini] = useState(true);
@@ -158,7 +158,6 @@ export default function projectWrite() {
 
         handleIteration();
         tableList.forEach((detail, index) => {
-            console.log(detail, 'detail:::::')
             Object.keys(detail).forEach((key) => {
                 formData.append(`${listType}[${index}].${key}`, detail[key]);
             });
@@ -170,10 +169,16 @@ export default function projectWrite() {
             formData.append(`attachmentFileList[${index}].fileName`, file.name.replace(/\s+/g, ""));
         });
 
+        //기존 기준 사라진 파일
+        const result = infoFileInit.filter(itemA => !fileRef.current.fileList.some(itemB => itemA.id === itemB.id));
+        result.map((v, idx) => {
+            formData.append(`deleteAttachmentIdList[${idx}]`, v.id);
+        })
         for (const [key, value] of formData.entries()) {
             console.log(`${key}: ${value}`);
         }
-        await saveProject({data: formData, router: router})
+
+        await updateProject({data: formData, router: router})
     }
 
 
@@ -276,8 +281,8 @@ export default function projectWrite() {
                 columnGap: 5
             }}>
 
-                <MainCard title={'프로젝트 등록'} list={[
-                    {name: '저장', func: saveFunc, type: 'primary'},
+                <MainCard title={'프로젝트 수정'} list={[
+                    {name: '수정', func: saveFunc, type: 'primary'},
                     {name: '초기화', func: clearAll, type: 'danger'}
                 ]} mini={mini} setMini={setMini}>
 
@@ -325,7 +330,7 @@ export default function projectWrite() {
                                 <BoxCard title={'드라이브 목록'}>
                                     {/*@ts-ignored*/}
                                     <div style={{overFlowY: "auto", maxHeight: 300}}>
-                                        <DriveUploadComp infoFileInit={[]} fileRef={fileRef}/>
+                                        <DriveUploadComp infoFileInit={infoFileInit} fileRef={fileRef}/>
                                     </div>
                                 </BoxCard>
                             </div>
@@ -348,6 +353,8 @@ export default function projectWrite() {
 // @ts-ignored
 export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
 
+    const {projectId} = ctx.query;
+
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
     if (codeInfo < 0) {
@@ -358,6 +365,19 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
             },
         };
     }
+
+    store.dispatch(setUserInfo(userInfo));
+
+    const result = await getData.post('project/getProjectDetail', {
+        "projectId": projectId,
+        "documentNumberFull": ""
+    });
+
+
+    return {
+        props: {dataInfo: result?.data?.entity}
+    }
+
 
     store.dispatch(setUserInfo(userInfo));
 

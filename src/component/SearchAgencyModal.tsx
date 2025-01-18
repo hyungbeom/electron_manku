@@ -9,6 +9,7 @@ import {ModalInitList, modalList} from "@/utils/initialList";
 import moment from "moment";
 import useEventListener from "@/utils/common/function/UseEventListener";
 import message from "antd/lib/message";
+import {checkInquiryNo} from "@/utils/api/mainApi";
 
 export default function SearchInfoModal({info, setInfo, open, setIsModalOpen}) {
     const [code, setCode] = useState();
@@ -18,6 +19,7 @@ export default function SearchInfoModal({info, setInfo, open, setIsModalOpen}) {
     const [windowOpenKey, setWindowOpenKey] = useState({key: '', value: '', router: '', deleteApi: ''})
 
     const ref = useRef(null);
+
 
     useEffect(() => {
         if (open) {
@@ -56,8 +58,6 @@ export default function SearchInfoModal({info, setInfo, open, setIsModalOpen}) {
                 limit: -1
             });
 
-            console.log(resultList?.data?.entity, '11');
-            console.log(modalList, '22');
             setList(resultList?.data?.entity[modalList[v]?.list]);
         } catch (err) {
             console.error(err, '::::');
@@ -210,7 +210,7 @@ export default function SearchInfoModal({info, setInfo, open, setIsModalOpen}) {
                 </div>
 
                 <AgGridReact containerStyle={{height: '93%', width: '100%'}} theme={tableTheme}
-                             onCellClicked={(e) => {
+                             onCellClicked={async (e) => {
                                  switch (openCheck) {
                                      case 'customerName' :
                                          setInfo(v => {
@@ -218,22 +218,35 @@ export default function SearchInfoModal({info, setInfo, open, setIsModalOpen}) {
                                                  ...v,
                                                  phoneNumber: e.data.directTel,
                                                  customerManagerEmail: e.data.email,
+                                                 customerManagerName: e.data.managerName,
+                                                 customerManagerPhone: e.data.directTel,
+                                                 customerCode: e.data.customerCode,
                                                  ...e.data
                                              }
                                          });
                                          break;
                                      case 'maker' :
                                          setInfo(v => {
+
                                              return {
                                                  ...v, ...e.data, maker: e.data.makerName
                                              }
                                          })
                                          break;
+                                     case 'orderList' :
+
+                                         setInfo(v => {
+                                             return {
+                                                 ...v, ...e.data, maker: e.data.makerName ,connectInquiryNo: e.data.documentNumberFull,
+                                             }
+                                         })
+                                         break;
                                      default :
-                                         console.log(e.data,'e.data:')
+                                         const returnDocumentNumb = await checkInquiryNo({data: {agencyCode: info['agencyCode']}})
                                          setInfo(v => {
                                              return {
                                                  ...v,
+                                                 documentNumberFull : returnDocumentNumb,
                                                  agencyManagerId : e.data.agencyId,
                                                  agencyCode : e.data.agencyCode,
                                                  agencyName : e.data.agencyName,
