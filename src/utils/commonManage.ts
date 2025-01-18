@@ -92,6 +92,7 @@ gridManage.deleteAll = function (gridRef) {
     gridRef.current.forEachNode((node) => {
         allData.push(node.data);
     });
+
     gridRef.current.applyTransaction({remove: allData});
 };
 
@@ -468,6 +469,9 @@ commonManage.changeCurr = function (value) {
     }
 }
 
+commonFunc.repeatObject = function(item, numb){
+    return Array.from({ length: numb }, () => ({ ...item }));
+}
 
 commonFunc.sumCalc = function calculateTotals(rowData) {
 

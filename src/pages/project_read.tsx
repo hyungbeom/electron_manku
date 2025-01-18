@@ -19,7 +19,7 @@ import message from "antd/lib/message";
 import {deleteEstimate, deleteRfq, searchEstimate, searchProject} from "@/utils/api/mainApi";
 import _ from "lodash";
 import {commonManage} from "@/utils/commonManage";
-import {BoxCard, MainCard, TopBoxCard} from "@/utils/commonForm";
+import {BoxCard, datePickerForm, inputForm, MainCard, TopBoxCard} from "@/utils/commonForm";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {useRouter} from "next/router";
 
@@ -41,38 +41,7 @@ export default function ProjectRead({dataInfo}) {
 
     // =============================================================================
 
-    const inputForm = ({title, id, disabled = false, suffix = null}) => {
-        let bowl = info;
 
-        return <div>
-            <div>{title}</div>
-            <Input id={id} value={bowl[id]} disabled={disabled}
-                   onChange={onChange}
-                   size={'small'}
-                   onKeyDown={handleKeyPress}
-                   suffix={suffix}
-            />
-        </div>
-    }
-
-
-    const datePickerForm = ({title, id, disabled = false}) => {
-        return <div>
-            <div>{title}</div>
-            {/*@ts-ignore*/}
-            <DatePicker value={info[id] ? moment(info[id]) : ''} style={{width: '100%'}}
-                        disabledDate={commonManage.disabledDate}
-                        onChange={(date) => onChange({
-                            target: {
-                                id: id,
-                                value: moment(date).format('YYYY-MM-DD')
-                            }
-                        })
-                        }
-                        disabled={disabled}
-                        id={id} size={'small'}/>
-        </div>
-    }
 
 
     function handleKeyPress(e) {
@@ -171,9 +140,9 @@ export default function ProjectRead({dataInfo}) {
                     {mini ? <div>
                             <TopBoxCard title={'기본 정보'} grid={'1fr 1fr 1fr 1fr'}>
 
-                                {inputForm({title: '작성자', id: 'searchManagerAdminName'})}
-                                {datePickerForm({title: '작성일자', id: 'writtenDate'})}
-                                {inputForm({title: '담당자', id: 'searchManagerAdminName'})}
+                                {inputForm({title: '작성자', id: 'searchManagerAdminName', onChange : onChange, data : info})}
+                                {datePickerForm({title: '작성일자', id: 'writtenDate', onChange : onChange, data : info, })}
+                                {inputForm({title: '담당자', id: 'searchManagerAdminName', onChange : onChange, data : info})}
 
                             </TopBoxCard>
                             <div style={{
@@ -183,22 +152,22 @@ export default function ProjectRead({dataInfo}) {
                                 marginTop: 10
                             }}>
                                 <BoxCard title={'프로젝트 정보'}>
-                                    {inputForm({title: 'PROJECT NO.', id: 'searchDocumentNumberFull'})}
-                                    {inputForm({title: '프로젝트 제목', id: 'searchProjectTitle'})}
-                                    {datePickerForm({title: 'Inquiry No.', id: 'searchConnectInquiryNo'})}
+                                    {inputForm({title: 'PROJECT NO.', id: 'searchDocumentNumberFull', onChange : onChange, data : info})}
+                                    {inputForm({title: '프로젝트 제목', id: 'searchProjectTitle', onChange : onChange, data : info})}
+                                    {datePickerForm({title: 'Inquiry No.', id: 'searchConnectInquiryNo', onChange : onChange, data : info})}
                                 </BoxCard>
                                 <BoxCard title={'매입처'}>
 
                                     {inputForm({title: '매입처명', id: 'searchAgencyName'})}
-                                    {inputForm({title: '매입처 담당자명', id: 'searchAgencyManagerName'})}
-                                    {inputForm({title: '담당자 전화번호', id: 'searchAgencyManagerPhone'})}
-                                    {inputForm({title: '담당자 이메일', id: 'searchAgencyManagerEmail'})}
+                                    {inputForm({title: '매입처 담당자명', id: 'searchAgencyManagerName', onChange : onChange, data : info})}
+                                    {inputForm({title: '담당자 전화번호', id: 'searchAgencyManagerPhone', onChange : onChange, data : info})}
+                                    {inputForm({title: '담당자 이메일', id: 'searchAgencyManagerEmail', onChange : onChange, data : info})}
                                 </BoxCard>
                                 <BoxCard title={'거래처 정보'}>
-                                    {inputForm({title: '거래처명', id: 'searchCustomerName'})}
-                                    {inputForm({title: '거래처 담당자명', id: 'searchCustomerManagerName'})}
-                                    {inputForm({title: '담당자 전화번호', id: 'searchCustomerPhone'})}
-                                    {inputForm({title: '담당자 이메일', id: 'searchCustomerEmail'})}
+                                    {inputForm({title: '거래처명', id: 'searchCustomerName', onChange : onChange, data : info})}
+                                    {inputForm({title: '거래처 담당자명', id: 'searchCustomerManagerName', onChange : onChange, data : info})}
+                                    {inputForm({title: '담당자 전화번호', id: 'searchCustomerPhone', onChange : onChange, data : info})}
+                                    {inputForm({title: '담당자 이메일', id: 'searchCustomerEmail', onChange : onChange, data : info})}
                                 </BoxCard>
                             </div>
                         </div>

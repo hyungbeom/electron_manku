@@ -174,10 +174,6 @@ export default function estimate_update({dataInfo}) {
         setIsPrintModalOpen(true)
     }
 
-
-    /**
-     * @description 테이블 우측상단 관련 기본 유틸버튼
-     */
     const subTableUtil = <div style={{display: 'flex', alignItems: 'end'}}>
         <Button type={'primary'} size={'small'} style={{marginLeft: 5}}
                 onClick={addRow}>

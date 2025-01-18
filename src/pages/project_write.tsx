@@ -31,9 +31,9 @@ import TableGrid from "@/component/tableGrid";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import SearchInfoModal from "@/component/SearchAgencyModal";
 import Upload, {UploadProps} from "antd/lib/upload";
-import {BoxCard, MainCard, TopBoxCard} from "@/utils/commonForm";
+import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, TopBoxCard} from "@/utils/commonForm";
 import {useRouter} from "next/router";
-import {commonManage, gridManage} from "@/utils/commonManage";
+import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
 import _ from "lodash";
 import {saveEstimate, saveProject, saveRfq} from "@/utils/api/mainApi";
 import {findCodeInfo} from "@/utils/api/commonApi";
@@ -41,7 +41,7 @@ import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {list} from "postcss";
 
 const listType = 'projectDetailList'
-export default function projectWrite() {
+export default function projectWrite({dataInfo}) {
     const fileRef = useRef(null);
     const gridRef = useRef(null);
     const router = useRouter();
@@ -62,56 +62,12 @@ export default function projectWrite() {
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
 
 
-    // =============================================================================================================
-    const inputForm = ({title, id, disabled = false, suffix = null, placeholder = ''}) => {
+    const onGridReady = (params) => {
+        gridRef.current = params.api;
+        const result = dataInfo?.orderDetailList;
+        params.api.applyTransaction({add: result ? result : commonFunc.repeatObject(projectDetailUnit,30)});
+    };
 
-        let bowl = info;
-
-        return <div>
-            <div>{title}</div>
-            <Input id={id} value={bowl[id]} disabled={disabled}
-                   placeholder={placeholder}
-                   onChange={onChange}
-                   size={'small'}
-                   onKeyDown={handleKeyPress}
-                   suffix={suffix}
-            />
-        </div>
-    }
-
-    const textAreaForm = ({title, id, rows = 5, disabled = false}) => {
-        return <div>
-            <div>{title}</div>
-            <TextArea style={{resize: 'none'}} rows={rows} id={id} value={info[id]} disabled={disabled}
-                      onChange={onChange}
-                      size={'small'}
-                      showCount
-                      maxLength={1000}
-            />
-        </div>
-    }
-
-
-    const datePickerForm = ({title, id, disabled = false}) => {
-        return <div>
-            <div>{title}</div>
-            {/*@ts-ignore*/}
-            <DatePicker value={info[id] ? moment(info[id]) : ''} style={{width: '100%'}}
-                        disabledDate={commonManage.disabledDate}
-                        onChange={(date) => onChange({
-                            target: {
-                                id: id,
-                                value: moment(date).format('YYYY-MM-DD')
-                            }
-                        })
-                        }
-                        disabled={disabled}
-                        id={id} size={'small'}/>
-        </div>
-    }
-
-
-    // ======================================================================================================
     async function handleKeyPress(e) {
         if (e.key === 'Enter') {
 
@@ -158,7 +114,6 @@ export default function projectWrite() {
 
         handleIteration();
         tableList.forEach((detail, index) => {
-            console.log(detail, 'detail:::::')
             Object.keys(detail).forEach((key) => {
                 formData.append(`${listType}[${index}].${key}`, detail[key]);
             });
@@ -170,31 +125,25 @@ export default function projectWrite() {
             formData.append(`attachmentFileList[${index}].fileName`, file.name.replace(/\s+/g, ""));
         });
 
-        for (const [key, value] of formData.entries()) {
-            console.log(`${key}: ${value}`);
-        }
         await saveProject({data: formData, router: router})
     }
 
 
     function deleteList() {
         let copyData = {...info}
-        copyData[listType] = commonManage.getUnCheckList(gridRef.current.api);
+        copyData[listType] = commonManage.getUnCheckList(gridRef.current);
         setInfo(copyData);
     }
 
     function addRow() {
-        // 새로운 행 데이터 생성
         const newRow = {...copyUnitInit};
-
-        // ag-Grid API를 사용하여 데이터 추가
-        gridRef.current.api.applyTransaction({add: [newRow]});
-
+        gridRef.current.applyTransaction({add: [newRow]});
     }
 
 
     function clearAll() {
         setInfo({...infoInit});
+        gridManage.deleteAll(gridRef);
     }
 
 
@@ -271,11 +220,9 @@ export default function projectWrite() {
         <LayoutComponent>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`,
-                height: '100vh',
+                gridTemplateRows: `${mini ? '500px' : '65px'} calc(100vh - ${mini ? 555 : 120}px)`,
                 columnGap: 5
             }}>
-
                 <MainCard title={'프로젝트 등록'} list={[
                     {name: '저장', func: saveFunc, type: 'primary'},
                     {name: '초기화', func: clearAll, type: 'danger'}
@@ -284,9 +231,21 @@ export default function projectWrite() {
                     {mini ? <div>
                             <TopBoxCard title={'기본 정보'} grid={'1fr 1fr 1fr 1fr'}>
 
-                                {inputForm({title: '작성자', id: 'managerAdminName', disabled: true})}
-                                {datePickerForm({title: '작성일자', id: 'writtenDate', disabled: true})}
-                                {inputForm({title: '담당자', id: 'managerAdminName'})}
+                                {inputForm({
+                                    title: '작성자',
+                                    id: 'managerAdminName',
+                                    disabled: true,
+                                    onChange: onChange,
+                                    data: info
+                                })}
+                                {datePickerForm({
+                                    title: '작성일자',
+                                    id: 'writtenDate',
+                                    disabled: true,
+                                    onChange: onChange,
+                                    data: info
+                                })}
+                                {inputForm({title: '담당자', id: 'managerAdminName', onChange: onChange, data: info})}
 
                             </TopBoxCard>
                             <div style={{
@@ -296,9 +255,20 @@ export default function projectWrite() {
                                 marginTop: 10
                             }}>
                                 <BoxCard title={'프로젝트 정보'}>
-                                    {inputForm({title: 'PROJECT NO.', id: 'documentNumberFull'})}
-                                    {inputForm({title: '프로젝트 제목', id: 'projectTitle', placeholder: '매입처 당담자 입력 필요'})}
-                                    {datePickerForm({title: '마감일자', id: 'dueDate'})}
+                                    {inputForm({
+                                        title: 'PROJECT NO.',
+                                        id: 'documentNumberFull',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: '프로젝트 제목',
+                                        id: 'projectTitle',
+                                        placeholder: '매입처 당담자 입력 필요',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                    {datePickerForm({title: '마감일자', id: 'dueDate', onChange: onChange, data: info})}
                                 </BoxCard>
                                 <BoxCard title={'거래처 정보'}>
                                     {inputForm({
@@ -309,18 +279,47 @@ export default function projectWrite() {
                                                 e.stopPropagation();
                                                 openModal('customerName');
                                             }
-                                        }/>
+                                        }/>, onChange: onChange, data: info, handleKeyPress: handleKeyPress
                                     })}
-                                    {inputForm({title: '거래처 담당자명', id: 'customerManagerName', disabled: true})}
-                                    {inputForm({title: '담당자 전화번호', id: 'customerManagerPhone', disabled: true})}
-                                    {inputForm({title: '담당자 이메일', id: 'customerManagerEmail', disabled: true})}
+                                    {inputForm({
+                                        title: '거래처 담당자명',
+                                        id: 'customerManagerName',
+                                        disabled: true,
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: '담당자 전화번호',
+                                        id: 'customerManagerPhone',
+                                        disabled: true,
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: '담당자 이메일',
+                                        id: 'customerManagerEmail',
+                                        disabled: true,
+                                        onChange: onChange,
+                                        data: info
+                                    })}
                                 </BoxCard>
 
                                 <BoxCard title={'기타 정보'}>
-
-                                    {textAreaForm({title: '비고란', rows: 3, id: 'remarks'})}
-                                    {textAreaForm({title: '지시사항', rows: 3, id: 'instructions'})}
-                                    {textAreaForm({title: '특이사항', rows: 3, id: 'specialNotes'})}
+                                    {textAreaForm({title: '비고란', rows: 2, id: 'remarks', onChange: onChange, data: info})}
+                                    {textAreaForm({
+                                        title: '지시사항',
+                                        rows: 2,
+                                        id: 'instructions',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                    {textAreaForm({
+                                        title: '특이사항',
+                                        rows: 2,
+                                        id: 'specialNotes',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
                                 </BoxCard>
                                 <BoxCard title={'드라이브 목록'}>
                                     {/*@ts-ignored*/}
@@ -336,7 +335,7 @@ export default function projectWrite() {
                 <TableGrid
                     gridRef={gridRef}
                     columns={projectWriteColumn}
-                    tableData={info[listType]}
+                    onGridReady={onGridReady}
                     type={'write'}
                     funcButtons={subTableUtil}
                 />
@@ -346,7 +345,8 @@ export default function projectWrite() {
 }
 
 // @ts-ignored
-export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
+export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
+    const {query} = ctx;
 
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
@@ -358,7 +358,9 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
             },
         };
     }
-
     store.dispatch(setUserInfo(userInfo));
-
+    if (query?.data) {
+        const data = JSON.parse(decodeURIComponent(query.data));
+        return {props: {dataInfo: data}}
+    }
 })
