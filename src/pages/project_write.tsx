@@ -130,9 +130,8 @@ export default function projectWrite({dataInfo}) {
 
 
     function deleteList() {
-        let copyData = {...info}
-        copyData[listType] = commonManage.getUnCheckList(gridRef.current);
-        setInfo(copyData);
+        const list = commonManage.getUnCheckList(gridRef);
+        gridManage.resetData(gridRef, list);
     }
 
     function addRow() {
