@@ -16,9 +16,9 @@ import Button from "antd/lib/button";
 import {CopyOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
-import {deleteEstimate, deleteRfq, searchEstimate, searchProject} from "@/utils/api/mainApi";
+import {deleteEstimate, deleteProjectList, deleteRfq, searchEstimate, searchProject} from "@/utils/api/mainApi";
 import _ from "lodash";
-import {commonManage} from "@/utils/commonManage";
+import {commonManage, gridManage} from "@/utils/commonManage";
 import {BoxCard, datePickerForm, inputForm, MainCard, TopBoxCard} from "@/utils/commonForm";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {useRouter} from "next/router";
@@ -28,21 +28,18 @@ const {RangePicker} = DatePicker
 
 export default function ProjectRead({dataInfo}) {
 
+    console.log(dataInfo, 'dataInfo:')
     const router = useRouter();
     const gridRef = useRef(null);
     const [mini, setMini] = useState(true);
     const copyInit = _.cloneDeep(projectReadInitial)
-    const infoInit = {
-        ...copyInit,
-        searchDate: [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
-    }
-    const [info, setInfo] = useState(infoInit)
-    const [tableData, setTableData] = useState(dataInfo)
 
-    // =============================================================================
+    const [info, setInfo] = useState(copyInit)
 
-
-
+    const onGridReady = (params) => {
+        gridRef.current = params.api;
+        params.api.applyTransaction({add: dataInfo ? dataInfo : []});
+    };
 
     function handleKeyPress(e) {
         if (e.key === 'Enter') {
@@ -56,41 +53,28 @@ export default function ProjectRead({dataInfo}) {
 
 
     async function searchInfo() {
-        const copyData: any = {...info}
-        const {searchDate}: any = copyData;
-        if (searchDate) {
-            copyData['searchStartDate'] = searchDate[0];
-            copyData['searchEndDate'] = searchDate[1];
-        }
-        const result = await getData.post('estimate/getEstimateList',
-            {...copyData, "page": 1, "limit": -1});
-        setTableData(result?.data?.entity?.estimateList)
+        let copyData = await searchProject({data: info});
+        gridManage.resetData(gridRef, copyData);
     }
 
     async function deleteList() {
-        const api = gridRef.current.api;
-
-        let bowl = {
-            deleteList: []
+        if (gridRef.current.getSelectedRows().length < 1) {
+            return message.error('삭제할 데이터를 선택해주세요.')
         }
 
-        if (api.getSelectedRows().length < 1) {
-            message.error('삭제할 데이터를 선택해주세요.')
-        } else {
-            for (const item of api.getSelectedRows()) {
-                const {estimateId, estimateDetailId} = item;
-                console.log(item, 'item:')
-                bowl['deleteList'].push({
-                    "estimateId": estimateId,
-                    "estimateDetailId": estimateDetailId
-                })
-            }
-            await deleteEstimate({data: bowl, returnFunc: searchInfo});
-        }
+        const fieldMappings = {
+            projectId: 'projectId',
+            projectDetailId: 'projectDetailId'
+        };
+
+        const deleteList = gridManage.getFieldDeleteList(gridRef, fieldMappings);
+        console.log(deleteList,'deleteList:')
+        // await deleteProjectList({data: {deleteList: deleteList}, returnFunc: searchInfo});
+
     }
 
-    const downloadExcel = () => {
-        commonManage.excelDownload(tableData)
+    const downloadExcel = async () => {
+        gridManage.exportSelectedRowsToExcel(gridRef, '프로젝트_목록')
     };
 
 
@@ -109,13 +93,8 @@ export default function ProjectRead({dataInfo}) {
         </Button></div>
 
 
-    async function saveFunc() {
-        let copyData = await searchProject({data: info});
-        setTableData(copyData)
-    }
-
     function clearAll() {
-        setInfo(infoInit)
+        setInfo(copyInit)
     }
 
     function moveRegist() {
@@ -126,48 +105,124 @@ export default function ProjectRead({dataInfo}) {
         <LayoutComponent>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`,
-                height: '100vh',
+                gridTemplateRows: `${mini ? '420px' : '65px'} calc(100vh - ${mini ? 475 : 120}px)`,
                 columnGap: 5
             }}>
 
                 <MainCard title={'프로젝트 조회'} list={[
-                    {name: '조회', func: saveFunc, type: 'primary'},
+                    {name: '조회', func: searchInfo, type: 'primary'},
                     {name: '초기화', func: clearAll, type: 'danger'},
                     {name: '신규작성', func: moveRegist, type: 'default'}
                 ]} mini={mini} setMini={setMini}>
 
                     {mini ? <div>
-                            <TopBoxCard title={'기본 정보'} grid={'1fr 1fr 1fr 1fr'}>
+                            <TopBoxCard title={''} grid={'1fr 1fr 1fr 1fr'}>
 
-                                {inputForm({title: '작성자', id: 'searchManagerAdminName', onChange : onChange, data : info})}
-                                {datePickerForm({title: '작성일자', id: 'writtenDate', onChange : onChange, data : info, })}
-                                {inputForm({title: '담당자', id: 'searchManagerAdminName', onChange : onChange, data : info})}
+                                {inputForm({
+                                    title: '작성자',
+                                    id: 'searchManagerAdminName',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                                {datePickerForm({title: '작성일자', id: 'writtenDate', onChange: onChange, data: info,})}
+                                {inputForm({
+                                    title: '담당자',
+                                    id: 'searchManagerAdminName',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
 
                             </TopBoxCard>
                             <div style={{
                                 display: 'grid',
-                                gridTemplateColumns: "200px 250px 1fr 300px ",
+                                gridTemplateColumns: "200px 250px 300px ",
                                 gap: 10,
                                 marginTop: 10
                             }}>
                                 <BoxCard title={'프로젝트 정보'}>
-                                    {inputForm({title: 'PROJECT NO.', id: 'searchDocumentNumberFull', onChange : onChange, data : info})}
-                                    {inputForm({title: '프로젝트 제목', id: 'searchProjectTitle', onChange : onChange, data : info})}
-                                    {datePickerForm({title: 'Inquiry No.', id: 'searchConnectInquiryNo', onChange : onChange, data : info})}
+                                    {inputForm({
+                                        title: 'PROJECT NO.',
+                                        id: 'searchDocumentNumberFull',
+                                        onChange: onChange,
+                                        handleKeyPress: handleKeyPress,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: '프로젝트 제목',
+                                        id: 'searchProjectTitle',
+                                        onChange: onChange,
+                                        handleKeyPress: handleKeyPress,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: 'Inquiry No.',
+                                        id: 'searchConnectInquiryNo',
+                                        onChange: onChange,
+                                        handleKeyPress: handleKeyPress,
+                                        data: info
+                                    })}
                                 </BoxCard>
                                 <BoxCard title={'매입처'}>
-
-                                    {inputForm({title: '매입처명', id: 'searchAgencyName'})}
-                                    {inputForm({title: '매입처 담당자명', id: 'searchAgencyManagerName', onChange : onChange, data : info})}
-                                    {inputForm({title: '담당자 전화번호', id: 'searchAgencyManagerPhone', onChange : onChange, data : info})}
-                                    {inputForm({title: '담당자 이메일', id: 'searchAgencyManagerEmail', onChange : onChange, data : info})}
+                                    {inputForm({
+                                        title: '매입처명',
+                                        id: 'searchAgencyName',
+                                        onChange: onChange,
+                                        handleKeyPress: handleKeyPress,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: '매입처 담당자명',
+                                        id: 'searchAgencyManagerName',
+                                        onChange: onChange,
+                                        handleKeyPress: handleKeyPress,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: '담당자 전화번호',
+                                        id: 'searchAgencyManagerPhone',
+                                        onChange: onChange,
+                                        handleKeyPress: handleKeyPress,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: '담당자 이메일',
+                                        id: 'searchAgencyManagerEmail',
+                                        onChange: onChange,
+                                        handleKeyPress: handleKeyPress,
+                                        data: info
+                                    })}
                                 </BoxCard>
                                 <BoxCard title={'거래처 정보'}>
-                                    {inputForm({title: '거래처명', id: 'searchCustomerName', onChange : onChange, data : info})}
-                                    {inputForm({title: '거래처 담당자명', id: 'searchCustomerManagerName', onChange : onChange, data : info})}
-                                    {inputForm({title: '담당자 전화번호', id: 'searchCustomerPhone', onChange : onChange, data : info})}
-                                    {inputForm({title: '담당자 이메일', id: 'searchCustomerEmail', onChange : onChange, data : info})}
+                                    {inputForm({
+                                        title: '거래처명',
+                                        id: 'searchCustomerName',
+                                        onChange: onChange,
+                                        handleKeyPress: handleKeyPress,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: '거래처 담당자명',
+                                        id: 'searchCustomerManagerName',
+                                        onChange: onChange,
+                                        handleKeyPress: handleKeyPress,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: '담당자 전화번호',
+                                        id: 'searchCustomerPhone',
+                                        onChange: onChange,
+                                        handleKeyPress: handleKeyPress,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: '담당자 이메일',
+                                        id: 'searchCustomerEmail',
+                                        onChange: onChange,
+                                        handleKeyPress: handleKeyPress,
+                                        data: info
+                                    })}
                                 </BoxCard>
                             </div>
                         </div>
@@ -176,8 +231,8 @@ export default function ProjectRead({dataInfo}) {
 
                 <TableGrid
                     gridRef={gridRef}
+                    onGridReady={onGridReady}
                     columns={projectReadColumn}
-                    tableData={tableData}
                     funcButtons={subTableUtil}
                 />
 
@@ -201,9 +256,9 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
         };
     } else {
         store.dispatch(setUserInfo(userInfo));
-        let copyData = await searchProject({data: {}});
+        let result = await searchProject({data: projectReadInitial});
         return {
-            props: {dataInfo: copyData}
+            props: {dataInfo: result ? result : null}
         }
     }
 })

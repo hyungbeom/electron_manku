@@ -253,21 +253,24 @@ export const estimateReadInitial = {
 }
 
 export const projectReadInitial = {
-    "searchManagerAdminName": "",
-    "searchStartDate": "",
-    "searchEndDate": "",
-    "searchCreatedBy": "",
-    "searchDocumentNumberFull": "",
-    "searchProjectTitle": "",
-    "searchConnectInquiryNo": "",
-    "searchCustomerName": "",
-    "searchCustomerManagerName": "",
-    "searchCustomerPhone": "",
-    "searchCustomerEmail": "",
-    "searchAgencyName": "",
-    "searchAgencyManagerName": "",
-    "searchAgencyManagerPhone": "",
-    "searchAgencyManagerEmail": "",
+    searchManagerAdminName: "",
+    searchDate: [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
+    searchStartDate: moment().subtract(1, 'years').format('YYYY-MM-DD'),              // 작성일자 시작일
+    searchEndDate: moment().format('YYYY-MM-DD'),                // 작성일자 종료일
+    searchCreatedBy: "",
+    searchDocumentNumberFull: "",
+    searchProjectTitle: "",
+    searchConnectInquiryNo: "",
+    searchCustomerName: "",
+    searchCustomerManagerName: "",
+    searchCustomerPhone: "",
+    searchCustomerEmail: "",
+    searchAgencyName: "",
+    searchAgencyManagerName: "",
+    searchAgencyManagerPhone: "",
+    searchAgencyManagerEmail: "",
+    page: 1,
+    limit: -1
 }
 
 

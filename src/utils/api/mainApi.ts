@@ -163,28 +163,24 @@ export const searchEstimate = async ({data}) => {
 
 export const searchProject = async ({data}) => {
 
-    const defaultParam = {
-        "searchManagerAdminName": "",
-        "searchStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),              // 작성일자 시작일
-        "searchEndDate": moment().format('YYYY-MM-DD'),                // 작성일자 종료일
-        "searchCreatedBy": "",
-        "searchDocumentNumberFull": "",
-        "searchProjectTitle": "",
-        "searchConnectInquiryNo": "",
-        "searchCustomerName": "",
-        "searchCustomerManagerName": "",
-        "searchCustomerPhone": "",
-        "searchCustomerEmail": "",
-        "searchAgencyName": "",
-        "searchAgencyManagerName": "",
-        "searchAgencyManagerPhone": "",
-        "searchAgencyManagerEmail": "",
-        "page": 1,
-        "limit": -1
-    }
-
-    const result = await getData.post('project/getProjectList', {...defaultParam, ...data});
+    const result = await getData.post('project/getProjectList', data);
+    console.log(result,'resultresult')
     return result?.data?.entity?.projectList
+};
+
+export const deleteProjectList = async ({
+                                         data, returnFunc = function () {
+    }
+                                     }) => {
+
+    await getData.post('project/deleteProjectDetails', data).then(v => {
+        if (v.data.code === 1) {
+            message.success('삭제되었습니다.')
+            returnFunc();
+        } else {
+            message.error('오류가 발생하였습니다. 다시 시도해주세요.')
+        }
+    }, err => message.error(err))
 };
 
 
