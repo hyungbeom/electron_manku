@@ -1,7 +1,7 @@
 import {getData, getFormData} from "@/manage/function/api";
 import message from "antd/lib/message";
 import moment from "moment/moment";
-import {rfqWriteInitial} from "@/utils/initialList";
+import {rfqWriteInitial, subRfqReadInitial} from "@/utils/initialList";
 
 
 export const checkInquiryNo = async ({data}) => {
@@ -39,27 +39,10 @@ export const updateRfq = async ({data, router}) => {
 
 export const searchRfq = async ({data}) => {
 
-    const defaultParam = {
-        "searchEstimateRequestId": "",      // 견적의뢰 Id
-        "searchSentStatus": 0,                   // 검색조건 1: 회신, 2: 미회신
-        "searchReplyStatus": 0,
-        "searchStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),              // 작성일자 시작일
-        "searchEndDate": moment().format('YYYY-MM-DD'),                // 작성일자 종료일
-        "searchDocumentNumber": "",         // 문서번호
-        "searchCustomerName": "",           // 고객사명
-        "searchMaker": "",                  // MAKER
-        "searchModel": "",                  // MODEL
-        "searchItem": "",                   // ITEM
-        "searchCreatedBy": "",              // 등록직원명
-        "searchManagerName": "",            // 담당자명
-        "searchMobileNumber": "",           // 담당자 연락처
-        "searchBiddingNumber": "",          // 입찰번호(미완성)
-        "page": 1,
-        "limit": -1
-    }
 
-    const result = await getData.post('estimate/getEstimateRequestList', {...defaultParam, ...data});
-    return result?.data?.entity
+    const result = await getData.post('estimate/getEstimateRequestList',data);
+    console.log(result,'result:')
+    return result?.data?.entity?.estimateRequestList
 
 };
 
@@ -169,21 +152,11 @@ export const updateEstimate = async ({data}) => {
 
 export const searchEstimate = async ({data}) => {
 
-    const defaultParam = {
-        "searchType": "",                   // 검색조건 1: 회신, 2: 미회신
-        "searchStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),              // 작성일자 시작일
-        "searchEndDate": moment().format('YYYY-MM-DD'),                // 작성일자 종료일
-        "searchDocumentNumber": "",         // 문서번호
-        "searchCustomerName": "",           // 고객사명
-        "searchMaker": "",                  // MAKER
-        "searchModel": "",                  // MODEL
-        "searchItem": "",                   // ITEM
-        "searchCreatedBy": "",              // 등록직원명
-        "page": 1,
-        "limit": -1,
-    }
+    const result = await getData.post('estimate/getEstimateList', {
+        ...data, page: 1,
+        limit: -1
+    });
 
-    const result = await getData.post('estimate/getEstimateList', {...defaultParam, ...data});
     return result?.data?.entity?.estimateList
 };
 
@@ -284,26 +257,17 @@ export const updateOrder = async ({data}) => {
         } else {
             message.error('수정에 실패하였습니다.')
         }
+        console.log(v,':::')
     });
 };
 
 
 export const searchOrder = async ({data}) => {
 
-    const defaultParam = {
-        "searchStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),              // 작성일자 시작일
-        "searchEndDate": moment().format('YYYY-MM-DD'),                // 작성일자 종료일
-        "searchDocumentNumber": "",     // 문서번호
-        "searchCustomerName": "",       // 고객사명
-        "searchMaker": "",              // MAKER
-        "searchModel": "",              // MODEL
-        "searchItem": "",               // ITEM
-        "searchEstimateManager": "",    // 견적서담당자명
-        "page": 1,
-        "limit": -1
-    }
-
-    const result = await getData.post('order/getOrderList', {...defaultParam, ...data});
+    const result = await getData.post('order/getOrderList',{
+        ...data, page: 1,
+        limit: -1
+    });
     return result?.data?.entity?.orderList
 };
 

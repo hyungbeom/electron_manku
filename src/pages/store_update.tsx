@@ -50,14 +50,10 @@ export default function storeUpdate({dataInfo}) {
     const [mini, setMini] = useState(true);
 
 
-    /**
-     * @description ag-grid 테이블 초기 rowData 요소 '[]' 초기화 설정
-     * @param params ag-grid 제공 event 파라미터
-     */
+
     const onGridReady = (params) => {
         gridRef.current = params.api;
-        console.log(dataInfo,'dataInfo:')
-        // params.api.applyTransaction({add: dataInfo[listType]});
+        params.api.applyTransaction({add: dataInfo[listType]});
         updateMainInput()
     };
 
@@ -392,9 +388,8 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     const result = await getData.post('order/getOrderStatusDetail', {orderStatusId: orderStatusId});
 
-    console.log(result?.data,'result?.data?.entity:')
 
-    const dataInfo = result?.data?.entity[listType]
+    const dataInfo = result?.data?.entity?.orderStatusDetail
     // result?.data?.entity?.estimateRequestList
     return {
         props: {dataInfo: dataInfo ? dataInfo : null}

@@ -14,42 +14,28 @@ import {setUserInfo} from "@/store/user/userSlice";
 import moment from "moment";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
-import {BoxCard} from "@/utils/commonForm";
+import {BoxCard, inputForm, rangePickerForm, selectBoxForm} from "@/utils/commonForm";
 import _ from "lodash";
-import {deleteRfq, searchRfq} from "@/utils/api/mainApi";
-import {commonManage} from "@/utils/commonManage";
-
-const {RangePicker} = DatePicker
+import {deleteOrder, deleteRfq, searchRfq} from "@/utils/api/mainApi";
+import {commonManage, gridManage} from "@/utils/commonManage";
 
 
-export default function rfqRead({dataList}) {
 
+
+export default function rfqRead({dataInfo}) {
+
+    console.log(dataInfo,':::')
     const gridRef = useRef(null);
 
-
-    const {estimateRequestList = []} = dataList;
     const copyInit = _.cloneDeep(subRfqReadInitial)
-    const infoInit = {
-        ...copyInit,
-        searchDate: [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
-    }
-    const [info, setInfo] = useState(infoInit);
-    const [tableData, setTableData] = useState(estimateRequestList);
 
-    const inputForm = ({title, id, disabled = false, suffix = null}) => {
-        let bowl = info;
+    const [info, setInfo] = useState(copyInit);
 
+    const onGridReady = (params) => {
+        gridRef.current = params.api;
+        params.api.applyTransaction({add: dataInfo ? dataInfo : []});
 
-        return <div>
-            <div>{title}</div>
-            <Input id={id} value={bowl[id]} disabled={disabled}
-                   onChange={onChange}
-                   size={'small'}
-                   onKeyDown={handleKeyPress}
-                   suffix={suffix}
-            />
-        </div>
-    }
+    };
 
     function handleKeyPress(e) {
         if (e.key === 'Enter') {
@@ -67,43 +53,32 @@ export default function rfqRead({dataList}) {
      */
     async function searchInfo() {
         const copyData: any = {...info}
-        const {searchDate}: any = copyData;
 
         const result = await searchRfq({
-            data: {
-                ...copyData,
-                searchStartDate: searchDate[0],
-                searchEndDate: searchDate[1]
-            }
+            data: copyData
         });
-
-        setTableData(result?.estimateRequestList);
+        gridManage.resetData(gridRef, result);
     }
+
 
 
     async function deleteList() {
-        const api = gridRef.current.api;
-
-        let bowl = {
-            deleteList: []
+        if (gridRef.current.getSelectedRows().length < 1) {
+            return message.error('삭제할 데이터를 선택해주세요.')
         }
 
-        if (api.getSelectedRows().length < 1) {
-            message.error('삭제할 데이터를 선택해주세요?.')
-        } else {
-            for (const item of api.getSelectedRows()) {
-                const {estimateRequestId, estimateRequestDetailId} = item;
-                bowl['deleteList'].push({
-                    "estimateRequestId": estimateRequestId,
-                    "estimateRequestDetailId": estimateRequestDetailId
-                })
-            }
-            await deleteRfq({data: bowl, returnFunc: searchInfo});
-        }
+        const fieldMappings = {
+            estimateRequestId: 'estimateRequestId',
+            estimateRequestDetailId: 'estimateRequestDetailId'
+        };
+
+        const deleteList = gridManage.getFieldDeleteList(gridRef, fieldMappings);
+        await deleteRfq({data: {deleteList: deleteList}, returnFunc: searchInfo});
+
     }
 
-    const downloadExcel = () => {
-        commonManage.excelDownload(tableData)
+    const downloadExcel = async () => {
+        gridManage.exportSelectedRowsToExcel(gridRef, '견적의뢰_목록')
     };
 
 
@@ -141,42 +116,57 @@ export default function rfqRead({dataList}) {
                     <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1.5fr', width: '100%', columnGap: 20}}>
 
                         <BoxCard title={''}>
-                            <div>
-                                <div style={{paddingBottom: 3,}}>작성일자</div>
-                                <RangePicker
-                                    value={[moment(info['searchDate'][0]), moment(info['searchDate'][1])]}
-                                    id={'searchDate'} size={'small'} onChange={(date, dateString) => {
-                                    onChange({
-                                        target: {
-                                            id: 'searchDate',
-                                            value: date ? [moment(date[0]).format('YYYY-MM-DD'), moment(date[1]).format('YYYY-MM-DD')] : [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
-                                        }
-                                    })
-                                }
-                                } style={{width: '100%',}}/>
-                            </div>
-                            <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>회신 여부</div>
-                                <Select id={'searchReplyStatus'} defaultValue={0}
-                                        onChange={(src) => onChange({target: {id: 'searchReplyStatus', value: src}})}
-                                        size={'small'} value={info['searchReplyStatus']} options={[
+
+                            {rangePickerForm({title: '작성일자', id: 'searchDate', onChange: onChange, data: info})}
+                            {selectBoxForm({
+                                title: '회신 여부', id: 'searchReplyStatus', list: [
                                     {value: 0, label: '전체'},
                                     {value: 1, label: '회신'},
                                     {value: 2, label: '미회신'}
-                                ]} style={{width: '100%',}}/>
-                            </div>
+                                ], onChange: onChange, data: info
+                            })}
                         </BoxCard>
 
                         <BoxCard title={''}>
-                            {inputForm({title: '문서번호', id: 'searchDocumentNumber'})}
-                            {inputForm({title: '등록직원명', id: 'searchCreatedBy'})}
-                            {inputForm({title: '고객사명', id: 'searchCustomerName'})}
+                            {inputForm({
+                                title: '문서번호', id: 'searchDocumentNumber',
+                                onChange: onChange,
+                                handleKeyPress: handleKeyPress,
+                                data: info
+                            })}
+                            {inputForm({
+                                title: '등록직원명', id: 'searchCreatedBy',
+                                onChange: onChange,
+                                handleKeyPress: handleKeyPress,
+                                data: info
+                            })}
+                            {inputForm({
+                                title: '고객사명', id: 'searchCustomerName',
+                                onChange: onChange,
+                                handleKeyPress: handleKeyPress,
+                                data: info
+                            })}
                         </BoxCard>
 
                         <BoxCard title={''}>
-                            {inputForm({title: 'MAKER', id: 'searchMaker'})}
-                            {inputForm({title: 'MODEL', id: 'searchModel'})}
-                            {inputForm({title: 'ITEM', id: 'searchItem'})}
+                            {inputForm({
+                                title: 'MAKER', id: 'searchMaker',
+                                onChange: onChange,
+                                handleKeyPress: handleKeyPress,
+                                data: info
+                            })}
+                            {inputForm({
+                                title: 'MODEL', id: 'searchModel',
+                                onChange: onChange,
+                                handleKeyPress: handleKeyPress,
+                                data: info
+                            })}
+                            {inputForm({
+                                title: 'ITEM', id: 'searchItem',
+                                onChange: onChange,
+                                handleKeyPress: handleKeyPress,
+                                data: info
+                            })}
                         </BoxCard>
 
                     </div>
@@ -185,7 +175,7 @@ export default function rfqRead({dataList}) {
                 <TableGrid
                     gridRef={gridRef}
                     columns={rfqReadColumns}
-                    tableData={tableData}
+                    onGridReady={onGridReady}
                     type={'read'}
                     funcButtons={subTableUtil}
                 />
@@ -199,7 +189,7 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
 
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
-    console.log(codeInfo,'codeInfo:')
+    console.log(codeInfo, 'codeInfo:')
     if (codeInfo < 0) {
         return {
             redirect: {
@@ -210,10 +200,9 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
     } else {
         store.dispatch(setUserInfo(userInfo));
 
-        const result = await searchRfq({data: {}});
-
+        const result = await searchRfq({data: subRfqReadInitial});
         return {
-            props: {dataList: result}
+            props: {dataInfo: result ? result : null}
         }
     }
 

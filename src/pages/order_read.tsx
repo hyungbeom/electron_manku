@@ -1,55 +1,36 @@
 import React, {useRef, useState} from "react";
-import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
 import {CopyOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
 import {tableOrderReadColumns} from "@/utils/columnList";
-import DatePicker from "antd/lib/date-picker";
 import {orderReadInitial} from "@/utils/initialList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import {getData} from "@/manage/function/api";
-import moment from "moment";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
 import {deleteOrder, searchOrder} from "@/utils/api/mainApi";
-import {commonManage} from "@/utils/commonManage";
+import {commonManage, gridManage} from "@/utils/commonManage";
 import _ from "lodash";
-import {BoxCard} from "@/utils/commonForm";
+import {BoxCard, inputForm, MainCard, rangePickerForm} from "@/utils/commonForm";
+import {useRouter} from "next/router";
 
-const {RangePicker} = DatePicker
 
-
-export default function OrderRead({data}) {
+export default function OrderRead({dataInfo}) {
+    const router = useRouter();
 
     const gridRef = useRef(null);
     const copyInit = _.cloneDeep(orderReadInitial)
 
-    // copyInit = copyUnitInit;
+    const [info, setInfo] = useState(copyInit);
+    const [mini, setMini] = useState(true);
 
-    const [info, setInfo] = useState({
-        ...copyInit,
-        searchDate: [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
-    })
-    const [tableData, setTableData] = useState(data)
-
-
-    const inputForm = ({title, id, disabled = false, suffix = null}) => {
-        let bowl = info;
-
-
-        return <div>
-            <div>{title}</div>
-            <Input id={id} value={bowl[id]} disabled={disabled}
-                   onChange={onChange}
-                   size={'small'}
-                   onKeyDown={handleKeyPress}
-                   suffix={suffix}
-            />
-        </div>
-    }
+    const onGridReady = (params) => {
+        gridRef.current = params.api;
+        params.api.applyTransaction({add: dataInfo ? dataInfo : []});
+    };
 
 
     function handleKeyPress(e) {
@@ -65,40 +46,34 @@ export default function OrderRead({data}) {
 
     async function searchInfo() {
         const copyData: any = {...info}
-        const {searchDate}: any = copyData;
-        if (searchDate) {
-            copyData['searchStartDate'] = searchDate[0];
-            copyData['searchEndDate'] = searchDate[1];
-        }
+
         const result = await getData.post('order/getOrderList',
             {...copyData, "page": 1, "limit": -1});
-        setTableData(result?.data?.entity?.orderList)
+        gridManage.resetData(gridRef, result?.data?.entity?.orderList);
     }
 
     async function deleteList() {
-        const api = gridRef.current.api;
+        if (gridRef.current.getSelectedRows().length < 1) {
+            return message.error('삭제할 데이터를 선택해주세요.')
+        }
 
-        let bowl = {
-            deleteList: []
-        }
-        if (api.getSelectedRows().length < 1) {
-            message.error('삭제할 데이터를 선택해주세요.')
-        } else {
-            for (const item of api.getSelectedRows()) {
-                const {orderId, orderDetailId} = item;
-                bowl['deleteList'].push({
-                    "orderId": orderId,
-                    "orderDetailId": orderDetailId
-                })
-            }
-            await deleteOrder({data: bowl, returnFunc: searchInfo});
-        }
+        const fieldMappings = {
+            orderId: 'orderId',
+            orderDetailId: 'orderDetailId'
+        };
+
+        const deleteList = gridManage.getFieldDeleteList(gridRef, fieldMappings);
+        await deleteOrder({data: {deleteList: deleteList}, returnFunc: searchInfo});
+
     }
 
-    const downloadExcel = () => {
-        commonManage.excelDownload(tableData)
+    const downloadExcel = async () => {
+        gridManage.exportSelectedRowsToExcel(gridRef, '발주서_목록')
     };
 
+    async function moveRouter() {
+        router.push('/order_write')
+    }
 
     /**
      * @description 테이블 우측상단 관련 기본 유틸버튼
@@ -118,52 +93,77 @@ export default function OrderRead({data}) {
 
     return <>
         <LayoutComponent>
-            <div style={{display: 'grid', gridTemplateRows: 'auto 1fr', height: '100vh', columnGap: 5}}>
-                <Card title={<span style={{fontSize: 12,}}>발주 조회</span>} headStyle={{marginTop: -10, height: 30}}
-                      style={{fontSize: 12, border: '1px solid lightGray'}} bodyStyle={{padding: '10px 24px'}}>
-                    <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1.5fr', width: '100%', columnGap: 20}}>
+            <div style={{
+                display: 'grid',
+                gridTemplateRows: `${mini ? '380px' : '65px'} calc(100vh - ${mini ? 435 : 120}px)`,
+                columnGap: 5
+            }}>
+                <MainCard title={'통합조회'}
+                          list={[{name: '조회', func: searchInfo, type: 'primary'}, {name: '신규생성', func: moveRouter}]}
+                          mini={mini} setMini={setMini}>
 
-                        <BoxCard title={''}>
-                            <div>
-                                <div style={{marginBottom: 3}}>발주일자</div>
-                                <RangePicker style={{width: '100%'}}
-                                             value={[moment(info['searchDate'][0]), moment(info['searchDate'][1])]}
-                                             id={'searchDate'} size={'small'} onChange={(date, dateString) => {
-                                    onChange({
-                                        target: {
-                                            id: 'searchDate',
-                                            value: date ? [moment(date[0]).format('YYYY-MM-DD'), moment(date[1]).format('YYYY-MM-DD')] : [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
-                                        }
-                                    })
-                                }
-                                }/>
-                            </div>
-                            {inputForm({title: '문서번호', id: 'searchDocumentNumber'})}
-                        </BoxCard>
-                        <BoxCard title={''}>
-                            {inputForm({title: '견적서 담당자', id: 'searchEstimateManager'})}
-                            {inputForm({title: '고객사명', id: 'searchCustomerName'})}
-                        </BoxCard>
-                        <BoxCard title={''}>
+                    {mini ? <div
+                            style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1.5fr', width: '100%', columnGap: 20}}>
+
+                            <BoxCard title={''}>
+                                {rangePickerForm({title: '발주일자', id: 'searchDate', onChange: onChange, data: info})}
+                                {inputForm({
+                                    title: '문서번호',
+                                    id: 'searchDocumentNumber',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                            </BoxCard>
+                            <BoxCard title={''}>
+                                {inputForm({
+                                    title: '견적서 담당자',
+                                    id: 'searchEstimateManager',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: '고객사명',
+                                    id: 'searchCustomerName',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                            </BoxCard>
+                            <BoxCard title={''}>
 
 
-                            {inputForm({title: 'MAKER', id: 'searchMaker'})}
-                            {inputForm({title: 'MODEL', id: 'searchModel'})}
-                            {inputForm({title: 'ITEM', id: 'searchItem'})}
-                        </BoxCard>
+                                {inputForm({
+                                    title: 'MAKER',
+                                    id: 'searchMaker',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: 'MODEL',
+                                    id: 'searchModel',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: 'ITEM',
+                                    id: 'searchItem',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                            </BoxCard>
 
-                    </div>
-
-                    <div style={{paddingTop: 8, textAlign: 'right'}}>
-                        <Button type={'primary'} onClick={searchInfo}><SearchOutlined/>조회</Button>
-                    </div>
-                </Card>
-
+                        </div>
+                        : <></>}
+                </MainCard>
                 <TableGrid
                     gridRef={gridRef}
-                    listType={'orderId'}
+                    onGridReady={onGridReady}
                     columns={tableOrderReadColumns}
-                    tableData={tableData}
                     funcButtons={subTableUtil}
                 />
 
@@ -186,9 +186,9 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
         };
     } else {
         store.dispatch(setUserInfo(userInfo));
-        const data = await searchOrder({data: {}})
+        const result = await searchOrder({data: orderReadInitial})
         return {
-            props: {data: data}
+            props: {dataInfo: result ? result : null}
         }
     }
 })
