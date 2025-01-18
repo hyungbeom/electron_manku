@@ -27,6 +27,7 @@ export default function rqfUpdate({dataInfo}) {
     const gridRef = useRef(null);
     const router = useRouter();
 
+    console.log(dataInfo,'dataInfo:')
     const copyUnitInit = _.cloneDeep(estimateRequestDetailUnit)
 
     const infoInit = dataInfo?.estimateRequestDetail

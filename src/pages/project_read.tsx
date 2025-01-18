@@ -18,7 +18,6 @@ import {useRouter} from "next/router";
 
 export default function ProjectRead({dataInfo}) {
 
-    console.log(dataInfo, 'dataInfo:')
     const router = useRouter();
     const gridRef = useRef(null);
     const [mini, setMini] = useState(true);

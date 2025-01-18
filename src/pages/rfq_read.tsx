@@ -14,20 +14,20 @@ import {setUserInfo} from "@/store/user/userSlice";
 import moment from "moment";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
-import {BoxCard, inputForm, rangePickerForm, selectBoxForm} from "@/utils/commonForm";
+import {BoxCard, inputForm, MainCard, rangePickerForm, selectBoxForm} from "@/utils/commonForm";
 import _ from "lodash";
 import {deleteOrder, deleteRfq, searchRfq} from "@/utils/api/mainApi";
 import {commonManage, gridManage} from "@/utils/commonManage";
-
-
+import {useRouter} from "next/router";
 
 
 export default function rfqRead({dataInfo}) {
 
+    const router = useRouter();
     const gridRef = useRef(null);
 
     const copyInit = _.cloneDeep(subRfqReadInitial)
-
+    const [mini, setMini] = useState(true);
     const [info, setInfo] = useState(copyInit);
 
     const onGridReady = (params) => {
@@ -60,7 +60,6 @@ export default function rfqRead({dataInfo}) {
     }
 
 
-
     async function deleteList() {
         if (gridRef.current.getSelectedRows().length < 1) {
             return message.error('삭제할 데이터를 선택해주세요.')
@@ -81,9 +80,14 @@ export default function rfqRead({dataInfo}) {
     };
 
 
-    /**
-     * @description 테이블 우측상단 관련 기본 유틸버튼
-     */
+    function clearAll() {
+        setInfo(copyInit)
+    }
+
+    function moveRegist() {
+        router.push('/rfq_write')
+    }
+
     const subTableUtil = <div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
         <CopyOutlined/>복사
     </Button>
@@ -100,20 +104,22 @@ export default function rfqRead({dataInfo}) {
 
     return <>
         <LayoutComponent>
-            <div style={{display: 'grid', gridTemplateRows: 'auto 1fr', height: '100vh', columnGap: 5}}>
-
-                <Card title={<div style={{display: 'flex', justifyContent: 'space-between'}}>
-                    <div style={{fontSize: 14, fontWeight: 550}}>견적의뢰 조회</div>
-                    <div style={{textAlign: 'right'}}>
-                        <Button type={'primary'} size={'small'} onClick={searchInfo}><SearchOutlined/>조회</Button>
-                    </div>
-
-
-                </div>}
-                      headStyle={{marginTop: -10, height: 30}}
-                      style={{border: '1px solid lightGray',}} bodyStyle={{padding: '10px 24px'}}>
-                    <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1.5fr', width: '100%', columnGap: 20}}>
-
+            <div style={{
+                display: 'grid',
+                gridTemplateRows: `${mini ? '280px' : '65px'} calc(100vh - ${mini ? 335 : 120}px)`,
+                columnGap: 5
+            }}>
+                <MainCard title={'견적의뢰 조회'} list={[
+                    {name: '조회', func: searchInfo, type: 'primary'},
+                    {name: '초기화', func: clearAll, type: 'danger'},
+                    {name: '신규작성', func: moveRegist, type: 'default'}
+                ]} mini={mini} setMini={setMini}>
+                    {mini ?  <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: "200px 250px 300px ",
+                        gap: 10,
+                        marginTop: 10
+                    }}>
                         <BoxCard title={''}>
 
                             {rangePickerForm({title: '작성일자', id: 'searchDate', onChange: onChange, data: info})}
@@ -168,8 +174,8 @@ export default function rfqRead({dataInfo}) {
                             })}
                         </BoxCard>
 
-                    </div>
-                </Card>
+                    </div>  : <></>}
+                </MainCard>
 
                 <TableGrid
                     gridRef={gridRef}

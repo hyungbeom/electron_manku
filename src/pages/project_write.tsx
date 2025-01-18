@@ -105,9 +105,9 @@ export default function projectWrite({dataInfo}) {
         if (!info['documentNumberFull']) {
             return message.warn('프로젝트 번호가 누락되었습니다.')
         }
-        const tableList = gridManage.getAllData(gridRef);
+        const list = gridManage.getAllData(gridRef);
 
-        if (!tableList.length) {
+        if (!list.length) {
             return message.warn('하위 데이터 1개 이상이여야 합니다');
         }
 
@@ -122,7 +122,7 @@ export default function projectWrite({dataInfo}) {
         };
 
         handleIteration();
-        tableList.forEach((detail, index) => {
+        list.forEach((detail, index) => {
             Object.keys(detail).forEach((key) => {
                 formData.append(`${listType}[${index}].${key}`, detail[key]);
             });
