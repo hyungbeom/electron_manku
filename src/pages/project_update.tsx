@@ -38,6 +38,10 @@ export default function projectUpdate({dataInfo}) {
 
     const onGridReady = (params) => {
         gridRef.current = params.api;
+        const copyData = _.cloneDeep(dataInfo?.projectDetail);
+        delete copyData?.createdDate;
+        delete copyData?.modifiedDate;
+        setInfo(copyData);
         params.api.applyTransaction({add: dataInfo?.projectDetail[listType]});
     };
 
