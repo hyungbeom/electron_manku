@@ -914,7 +914,7 @@ export const projectDetailUnit = {
     maker: '',
     item: '',
     spec: '',
-    quantity: null,
+    quantity: 0,
     unitPrice: '',
     currencyUnit: '',
     deliveryDate: '',

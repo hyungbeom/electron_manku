@@ -51,13 +51,17 @@ export default function projectWrite({dataInfo}) {
 
     const userInfo = useAppSelector((state) => state.user);
 
-    const infoInit = {
-        ...copyInit,
+    const adminParams = {
         managerAdminId: userInfo['adminId'],
         managerAdminName: userInfo['name']
     }
 
-    const [info, setInfo] = useState<any>({...copyInit, ...dataInfo})
+    const infoInit = {
+        ...copyInit,
+        ...adminParams
+    }
+
+    const [info, setInfo] = useState<any>({...copyInit, ...dataInfo, ...adminParams})
 
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
@@ -65,7 +69,7 @@ export default function projectWrite({dataInfo}) {
 
     const onGridReady = (params) => {
         gridRef.current = params.api;
-        const copyData = _.cloneDeep(dataInfo);
+        const copyData = _.cloneDeep(info);
         delete copyData?.createdDate;
         delete copyData?.modifiedDate;
         const result = copyData?.projectDetailList;

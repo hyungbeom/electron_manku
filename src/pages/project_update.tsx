@@ -19,6 +19,7 @@ import {updateProject} from "@/utils/api/mainApi";
 import {findCodeInfo} from "@/utils/api/commonApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {getData} from "@/manage/function/api";
+import moment from "moment";
 
 const listType = 'projectDetailList'
 export default function projectUpdate({dataInfo}) {
@@ -167,6 +168,7 @@ export default function projectUpdate({dataInfo}) {
         const totalList = gridManage.getAllData(gridRef)
         let copyInfo = _.cloneDeep(info)
         copyInfo[listType] = totalList
+        copyInfo['writtenDate'] = moment().format('YYYY-MM-DD')
 
         const query = `data=${encodeURIComponent(JSON.stringify(copyInfo))}`;
         router.push(`/project_write?${query}`)
@@ -198,8 +200,7 @@ export default function projectUpdate({dataInfo}) {
         <LayoutComponent>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`,
-                height: '100vh',
+                gridTemplateRows: `${mini ? '500px' : '65px'} calc(100vh - ${mini ? 555 : 120}px)`,
                 columnGap: 5
             }}>
 
@@ -259,7 +260,7 @@ export default function projectUpdate({dataInfo}) {
                                                 e.stopPropagation();
                                                 openModal('customerName');
                                             }
-                                        }/>, onChange: onChange, data: info
+                                        }/>, onChange: onChange, data: info, handleKeyPress: handleKeyPress
                                     })}
                                     {inputForm({
                                         title: '거래처 담당자명',
