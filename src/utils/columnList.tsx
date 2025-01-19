@@ -2531,8 +2531,8 @@ export const projectWriteColumn = [
         editable: true,
         cellEditor: 'agSelectCellEditor',
         cellEditorParams: {
-            values: ['KRW', 'EUR', 'JPY', 'USD', 'GBP',],
-        }
+            values: ['ea', 'set', 'm', 'feet', 'roll', 'box', 'g', 'kg', 'Pack', 'Inch', 'MOQ'],
+        },
     }, {
         headerName: '수량',
         field: 'quantity',

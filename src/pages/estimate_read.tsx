@@ -55,11 +55,9 @@ export default function EstimateRead({dataInfo}) {
     async function searchInfo() {
         const copyData: any = {...info}
 
+        let result = await searchEstimate({data: copyData});
 
-        const result = await getData.post('order/getOrderList',
-            {...copyData, "page": 1, "limit": -1});
-
-        gridManage.resetData(gridRef, result?.data?.entity?.orderList);
+        gridManage.resetData(gridRef, result);
 
     }
 
