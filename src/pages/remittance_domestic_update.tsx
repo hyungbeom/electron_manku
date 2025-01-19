@@ -17,7 +17,7 @@ import {saveRemittance, updateRemittance} from "@/utils/api/mainApi";
 import {useRouter} from "next/router";
 import _ from "lodash";
 
-export default function remittance_domestic({dataInfo, remittanceId}) {
+export default function remittance_domestic({dataInfo}) {
 
 
     const infoInit = dataInfo?.remittanceDetail
@@ -28,8 +28,6 @@ export default function remittance_domestic({dataInfo, remittanceId}) {
 
 
     const [info, setInfo] = useState(infoInit)
-    const [fileData, setFileData] = useState(infoFileInit)
-
 
     useEffect(()=>{
         setInfo(v=>{
@@ -40,9 +38,7 @@ export default function remittance_domestic({dataInfo, remittanceId}) {
             }
         })
     },[infoInit])
-    useEffect(()=>{
-        console.log(fileData,'fileData:')
-    },[fileData])
+    console.log(info,'info:')
 
     const inputForm = ({title, id, disabled = false, suffix = null, placeholder = ''}) => {
         let bowl = info;
@@ -127,15 +123,6 @@ export default function remittance_domestic({dataInfo, remittanceId}) {
         commonManage.onChange(e, setInfo)
     }
 
-    async function returnFunc(){
-        const result = await getData.post('remittance/getRemittanceDetail', {
-            remittanceId: remittanceId
-        });
-        if(result.data.code === 1){
-            setFileData(result.data.entity.attachmentFileList)
-        }
-    }
-
     async function saveFunc() {
         if (!info['connectInquiryNo']) {
             return message.warn('Inquiry No. 가 누락되었습니다.')
@@ -167,7 +154,7 @@ export default function remittance_domestic({dataInfo, remittanceId}) {
 
         }
         //기존 기준 사라진 파일
-        const result = fileData.filter(itemA => !fileRef.current.fileList.some(itemB => itemA.id === itemB.id));
+        const result = infoFileInit.filter(itemA => !fileRef.current.fileList.some(itemB => itemA.id === itemB.id));
         result.map((v, idx) => {
             formData.append(`deleteAttachmentIdList[${idx}]`, v.id);
         })
@@ -175,7 +162,8 @@ export default function remittance_domestic({dataInfo, remittanceId}) {
         formData.delete('createdDate')
         formData.delete('modifiedDate')
 
-        await updateRemittance({data: formData, returnFunc:returnFunc})
+        await updateRemittance({data: formData, router: router})
+
     }
 
     function clearAll() {
@@ -225,7 +213,7 @@ export default function remittance_domestic({dataInfo, remittanceId}) {
                     <BoxCard title={'드라이브 목록'}>
                         {/*@ts-ignored*/}
                         <div style={{overFlowY: "auto", maxHeight: 300}}>
-                            <DriveUploadComp infoFileInit={fileData} fileRef={fileRef}/>
+                            <DriveUploadComp infoFileInit={infoFileInit} fileRef={fileRef}/>
                         </div>
                     </BoxCard>
                 </div>

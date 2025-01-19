@@ -128,11 +128,11 @@ export const updateStore = async ({data, router}) => {
 };
 
 
-export const updateRemittance = async ({data, returnFunc}) => {
+export const updateRemittance = async ({data, router}) => {
     await getFormData.post('remittance/updateRemittance', data).then(v => {
         if (v.data.code === 1) {
-            message.success('수정되었습니다.')
-            returnFunc();
+            message.success('수정되었습니다.');
+            window.location.reload();
         } else {
             message.error('저장에 실패하였습니다.')
         }
