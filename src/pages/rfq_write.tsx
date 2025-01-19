@@ -284,10 +284,10 @@ export default function rqfWrite({dataInfo}) {
                                             }
                                         }/>, onChange: onChange, handleKeyPress : handleKeyPress, data: info
                                     })}
-                                    {inputForm({title: '담당자명', id: 'managerName', onChange: onChange, data: info})}
-                                    {inputForm({title: '전화번호', id: 'phoneNumber', onChange: onChange, data: info})}
-                                    {inputForm({title: '팩스', id: 'faxNumber', onChange: onChange, data: info})}
-                                    {inputForm({title: '이메일', id: 'customerManagerEmail', onChange: onChange, data: info})}
+                                    {inputForm({title: '담당자명', id: 'managerName', onChange: onChange, data: info, disabled : true})}
+                                    {inputForm({title: '전화번호', id: 'phoneNumber', onChange: onChange, data: info, disabled : true})}
+                                    {inputForm({title: '팩스', id: 'faxNumber', onChange: onChange, data: info, disabled : true})}
+                                    {inputForm({title: '이메일', id: 'customerManagerEmail', onChange: onChange, data: info, disabled : true})}
                                 </BoxCard>
 
                                 <BoxCard title={'Maker 정보'}>

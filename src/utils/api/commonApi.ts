@@ -72,21 +72,12 @@ export const findCodeInfo = async (event, setInfo, openModal) => {
 
 export const findDocumentInfo = async (event, setInfo) => {
 
-  const result =  await getData.post('estimate/getEstimateRequestDetail', {
-        "estimateId": null,
-        "documentNumberFull": event.target.value
+    const result = await getData.post('estimate/getEstimateRequestDetail', {
+        "documentNumberFull": event.target.value,
+        "page": 1,
+        "limit": -1
     })
-    if (result?.data?.code === 1) {
-
-
-        if(result?.data?.entity?.estimateRequestDetail) {
-
-            setInfo(v => {
-                    return {...v, ...result?.data?.entity?.estimateRequestDetail,estimateDetailList : result?.data?.entity?.estimateRequestDetail?.estimateRequestDetailList,writtenDate : moment()}
-                }
-            )
-        }
-    }
+    return result?.data?.entity?.estimateRequestDetail
 };
 
 export const findEstDocumentInfo = async (event, setInfo) => {
@@ -112,7 +103,6 @@ export const findEstDocumentInfo = async (event, setInfo) => {
         }
     }
 };
-
 
 
 export const findOrderDocumentInfo = async (event, setInfo) => {

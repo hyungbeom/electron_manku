@@ -1,23 +1,18 @@
 import React, {useRef, useState} from "react";
-import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
-import TextArea from "antd/lib/input/TextArea";
 import {CopyOutlined, DownloadOutlined, FileSearchOutlined, SaveOutlined} from "@ant-design/icons";
 import {tableEstimateWriteColumns} from "@/utils/columnList";
-import DatePicker from "antd/lib/date-picker";
 import {estimateDetailUnit, estimateWriteInitial, ModalInitList} from "@/utils/initialList";
-import moment from "moment";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
-import Select from "antd/lib/select";
 import TableGrid from "@/component/tableGrid";
 import {useRouter} from "next/router";
 import SearchInfoModal from "@/component/SearchAgencyModal";
-import {commonManage} from "@/utils/commonManage";
+import {commonManage, gridManage} from "@/utils/commonManage";
 import {
     BoxCard,
     datePickerForm,
@@ -55,7 +50,6 @@ export default function EstimateWrite({dataInfo}) {
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
 
 
-
     const onGridReady = (params) => {
         gridRef.current = params.api;
         const result = dataInfo?.estimateDetailLis;
@@ -64,6 +58,7 @@ export default function EstimateWrite({dataInfo}) {
 
 
     async function handleKeyPress(e) {
+
         if (e.key === 'Enter') {
 
             switch (e.target.id) {
@@ -73,7 +68,9 @@ export default function EstimateWrite({dataInfo}) {
                     await findCodeInfo(e, setInfo, openModal)
                     break;
                 case 'connectDocumentNumberFull' :
-                    await findDocumentInfo(e, setInfo)
+                    const result = await findDocumentInfo(e, setInfo);
+                    setInfo({...result, connectDocumentNumberFull : info.connectDocumentNumberFull});
+                    gridManage.resetData(gridRef, result?.estimateRequestDetailList);
                     break;
             }
 
@@ -90,10 +87,12 @@ export default function EstimateWrite({dataInfo}) {
     }
 
     async function saveFunc() {
+        const list = gridManage.getAllData(gridRef);
+
         if (!info['agencyCode']) {
             return message.warn('매입처 코드가 누락되었습니다.')
         }
-        if (!info[listType].length) {
+        if (!list.length) {
             return message.warn('하위 데이터 1개 이상이여야 합니다');
         }
 
@@ -110,11 +109,10 @@ export default function EstimateWrite({dataInfo}) {
 
         handleIteration();
 
-        const copyData = {...info}
 
 
-        if (copyData[listType].length) {
-            copyData[listType].forEach((detail, index) => {
+        if (list.length) {
+            list.forEach((detail, index) => {
                 Object.keys(detail).forEach((key) => {
                     formData.append(`${listType}[${index}].${key}`, detail[key]);
                 });
@@ -133,25 +131,18 @@ export default function EstimateWrite({dataInfo}) {
 
 
     function deleteList() {
-        let copyData = {...info}
-        copyData[listType] = commonManage.getUnCheckList(gridRef.current.api);
-
-        setInfo(copyData);
-
+        const list = commonManage.getUnCheckList(gridRef);
+        gridManage.resetData(gridRef, list);
     }
 
     function addRow() {
-        let copyData = {...info};
-        copyData[listType].push({
-                ...copyUnitInit,
-                "currency": commonManage.changeCurr(info['agencyCode'])
-            }
-        )
-        setInfo(copyData)
+        const newRow = {...copyUnitInit, "currency": commonManage.changeCurr(info['agencyCode'])};
+        gridRef.current.applyTransaction({add: [newRow]});
     }
 
     function clearAll() {
         setInfo({...infoInit});
+        gridManage.deleteAll(gridRef);
     }
 
     /**
@@ -188,19 +179,31 @@ export default function EstimateWrite({dataInfo}) {
                 ]} mini={mini} setMini={setMini}>
                     {mini ? <div>
                             <TopBoxCard title={'기본 정보'} grid={'1fr 0.6fr 0.6fr 1fr 1fr 1fr 1fr '}>
-                                {datePickerForm({title: '작성일', id: 'writtenDate', disabled: true, onChange : onChange, data : info})}
-                                {inputForm({title: '작성자', id: 'adminName', disabled: true, onChange : onChange, data : info})}
-                                {inputForm({title: '담당자', id: 'managerAdminName', onChange : onChange, data : info})}
-                                {inputForm({title: 'INQUIRY NO.', id: 'documentNumberFull', placeholder: '폴더생성 규칙 유의', onChange : onChange, data : info})}
+                                {datePickerForm({
+                                    title: '작성일',
+                                    id: 'writtenDate',
+                                    disabled: true,
+                                    onChange: onChange,
+                                    data: info
+                                })}
+                                {inputForm({title: '작성자', id: 'adminName', disabled: true, onChange: onChange, data: info})}
+                                {inputForm({title: '담당자', id: 'managerAdminName', onChange: onChange, data: info})}
+                                {inputForm({
+                                    title: 'INQUIRY NO.',
+                                    id: 'documentNumberFull',
+                                    placeholder: '폴더생성 규칙 유의',
+                                    onChange: onChange,
+                                    data: info
+                                })}
                                 {inputForm({
                                     placeholder: '폴더생성 규칙 유의',
                                     title: '연결 INQUIRY No.',
                                     id: 'connectDocumentNumberFull',
                                     suffix: <DownloadOutlined style={{cursor: 'pointer'}}/>
-                                    , onChange : onChange, data : info
+                                    , onChange: onChange, data: info, handleKeyPress: handleKeyPress
                                 })}
-                                {inputForm({title: 'RFQ NO.', id: 'rfqNo', onChange : onChange, data : info})}
-                                {inputForm({title: '프로젝트 제목', id: 'projectTitle', onChange : onChange, data : info})}
+                                {inputForm({title: 'RFQ NO.', id: 'rfqNo', onChange: onChange, data: info})}
+                                {inputForm({title: '프로젝트 제목', id: 'projectTitle', onChange: onChange, data: info})}
                             </TopBoxCard>
 
 
@@ -215,11 +218,16 @@ export default function EstimateWrite({dataInfo}) {
                                                 e.stopPropagation();
                                                 openModal('agencyCode');
                                             }
-                                        }/>, onChange : onChange, data : info
+                                        }/>, onChange: onChange, handleKeyPress:handleKeyPress, data: info
                                     })}
-                                    {inputForm({title: '매입처명', id: 'agencyName', onChange : onChange, data : info})}
-                                    {inputForm({title: '담당자', id: 'agencyManagerName', onChange : onChange, data : info})}
-                                    {inputForm({title: '연락처', id: 'agencyManagerPhoneNumber', onChange : onChange, data : info})}
+                                    {inputForm({title: '매입처명', id: 'agencyName', onChange: onChange, data: info, disabled : true})}
+                                    {inputForm({title: '담당자', id: 'agencyManagerName', onChange: onChange, data: info, disabled : true})}
+                                    {inputForm({
+                                        title: '연락처',
+                                        id: 'agencyManagerPhoneNumber',
+                                        onChange: onChange,
+                                        data: info, disabled : true
+                                    })}
                                 </BoxCard>
 
                                 <BoxCard title={'고객사 정보'}>
@@ -231,23 +239,23 @@ export default function EstimateWrite({dataInfo}) {
                                                 e.stopPropagation();
                                                 openModal('customerName');
                                             }
-                                        }/>, onChange : onChange, data : info
+                                        }/>, onChange: onChange,handleKeyPress:handleKeyPress, data: info
                                     })}
-                                    {inputForm({title: '담당자명', id: 'managerName', onChange : onChange, data : info})}
-                                    {inputForm({title: '전화번호', id: 'phoneNumber', onChange : onChange, data : info})}
-                                    {inputForm({title: '팩스', id: 'faxNumber', onChange : onChange, data : info})}
-                                    {inputForm({title: '이메일', id: 'customerManagerEmail', onChange : onChange, data : info})}
+                                    {inputForm({title: '담당자명', id: 'managerName', onChange: onChange, data: info, disabled : true})}
+                                    {inputForm({title: '전화번호', id: 'phoneNumber', onChange: onChange, data: info, disabled : true})}
+                                    {inputForm({title: '팩스', id: 'faxNumber', onChange: onChange, data: info, disabled : true})}
+                                    {inputForm({title: '이메일', id: 'customerManagerEmail', onChange: onChange, data: info, disabled : true})}
                                 </BoxCard>
 
                                 <BoxCard title={'운송 정보'}>
                                     {selectBoxForm({
-                                        title: '유효기간', id: 'validityPeriod', list:[
+                                        title: '유효기간', id: 'validityPeriod', list: [
                                             {value: '0', label: '견적 발행 후 10일간'},
                                             {value: '1', label: '견적 발행 후 30일간'},
                                         ], onChange: onChange, data: info
                                     })}
                                     {selectBoxForm({
-                                        title: '결제조건', id: 'validityPeriod', list:[
+                                        title: '결제조건', id: 'validityPeriod', list: [
                                             {value: '0', label: '발주시 50% / 납품시 50%'},
                                             {value: '1', label: '납품시 현금결제'},
                                             {value: '2', label: '정기결제'},
@@ -255,13 +263,19 @@ export default function EstimateWrite({dataInfo}) {
                                     })}
 
                                     {selectBoxForm({
-                                        title: '운송조건', id: 'shippingTerms', list:[
+                                        title: '운송조건', id: 'shippingTerms', list: [
                                             {value: '0', label: '귀사도착도'},
                                             {value: '1', label: '화물 및 택배비 별도'},
                                         ], onChange: onChange, data: info
                                     })}
-                                    {inputForm({title: 'Delivery(weeks)', id: 'delivery', onChange : onChange, data : info})}
-                                    {inputForm({title: '환율', id: 'exchangeRate', placeholder: '직접기입(자동환율연결x)', onChange : onChange, data : info})}
+                                    {inputForm({title: 'Delivery(weeks)', id: 'delivery', onChange: onChange, data: info})}
+                                    {inputForm({
+                                        title: '환율',
+                                        id: 'exchangeRate',
+                                        placeholder: '직접기입(자동환율연결x)',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
                                 </BoxCard>
 
                                 <BoxCard title={'Maker 정보'}>
@@ -273,14 +287,20 @@ export default function EstimateWrite({dataInfo}) {
                                                 e.stopPropagation();
                                                 openModal('maker');
                                             }
-                                        }/>, onChange : onChange, data : info
+                                        }/>, onChange: onChange, handleKeyPress:handleKeyPress,data: info
                                     })}
-                                    {inputForm({title: 'ITEM', id: 'item', onChange : onChange, data : info})}
+                                    {inputForm({title: 'ITEM', id: 'item', onChange: onChange, data: info})}
                                 </BoxCard>
 
                                 <BoxCard title={'ETC'}>
-                                    {textAreaForm({title: '지시사항', rows: 4, id: 'instructions', onChange : onChange, data : info})}
-                                    {textAreaForm({title: '비고란', rows: 4, id: 'remarks', onChange : onChange, data : info})}
+                                    {textAreaForm({
+                                        title: '지시사항',
+                                        rows: 4,
+                                        id: 'instructions',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                    {textAreaForm({title: '비고란', rows: 4, id: 'remarks', onChange: onChange, data: info})}
                                 </BoxCard>
                                 <BoxCard title={'드라이브 목록'}>
                                     {/*@ts-ignored*/}
