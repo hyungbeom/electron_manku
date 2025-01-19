@@ -214,8 +214,8 @@ export const subRfqReadInitial = {
 export const subRfqReadMailInitial = {
 
     "searchDate": [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],   // front 사용
-    "searchStartDate": "",              // 작성일자 시작일
-    "searchEndDate": "",                // 작성일자 종료일
+    "searchStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),              // 작성일자 시작일
+    "searchEndDate": moment().format('YYYY-MM-DD'),                // 작성일자 종료일
     "searchDocumentNumber": "",         // 문서번호
     "searchCustomerName": "",           // 고객사명
     "searchMaker": "",                  // MAKER
@@ -232,7 +232,7 @@ export const subRfqReadMailInitial = {
     // 메일 전송 목록 검색 필드 추가 2024.11.28
     "searchSentStatus": 0,              // 전송 여부 1: 전송, 2: 미전송
     "searchReplyStatus": 0,             // 회신 여부 1: 회신, 2: 미회신
-    "searchAgencyCode": "k10",          // 대리점코드 검색
+    "searchAgencyCode": "",          // 대리점코드 검색
 
     "page": 1,
     "limit": -1

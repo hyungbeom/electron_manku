@@ -41,7 +41,6 @@ export const searchRfq = async ({data}) => {
 
 
     const result = await getData.post('estimate/getEstimateRequestList',data);
-    console.log(result,'result:')
     return result?.data?.entity?.estimateRequestList
 
 };

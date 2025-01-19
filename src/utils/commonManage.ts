@@ -10,6 +10,12 @@ export const commonCalc: any = {}
 export const gridManage: any = {}
 
 
+gridManage.getSelectRows = function (gridRef) {
+    const selectedNodes = gridRef.current.getSelectedNodes(); // gridOptions 대신 gridRef 사용
+    const selectedData = selectedNodes.map(node => node.data);
+    return selectedData;
+}
+
 gridManage.exportSelectedRowsToExcel = function (gridRef, title ) {
     if (gridRef.current ) {
         // 체크된 행 데이터 가져오기
@@ -189,11 +195,7 @@ apiManage.generateCodeChallenge = async function (codeVerifier) {
 // ===============================================
 
 
-commonManage.getSelectRows = function (gridRef) {
-    const selectedNodes = gridRef.current.api.getSelectedNodes(); // gridOptions 대신 gridRef 사용
-    const selectedData = selectedNodes.map(node => node.data);
-    return selectedData;
-}
+
 /**
  * @param file 업로드 파일입니다.
  * @description 업로드한 파일을 json으로 풀어서 컬럼에 맞게 데이터 재출력을 하기위한 함수
