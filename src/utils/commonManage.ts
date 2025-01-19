@@ -174,6 +174,21 @@ gridManage.getAllData = function (gridRef) {
 }
 
 
+gridManage.uploadExcelData = function (data, list) {
+// 데이터 변환 로직
+    const transformedData = data.map(obj => {
+        const newObj = {};
+        Object.keys(list).forEach(key => {
+            if (obj[key] !== undefined) {
+                newObj[list[key]] = obj[key];
+            }
+        });
+        return newObj;
+    });
+    return transformedData
+}
+
+
 // ===============================================
 
 

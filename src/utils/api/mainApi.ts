@@ -28,9 +28,6 @@ export const updateRfq = async ({data, router}) => {
     await getFormData.post('estimate/updateEstimateRequest', data).then(v => {
         if (v.data.code === 1) {
             message.success('저장되었습니다.')
-            // setInfo(rfqWriteInitial);
-            router.push('/rfq_read')
-            // window.location.href = '/rfq_read'
         } else {
             message.error('저장에 실패하였습니다.')
         }

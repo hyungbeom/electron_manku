@@ -161,7 +161,7 @@ export default function projectWrite({dataInfo}) {
                 ]} mini={mini} setMini={setMini}>
 
                     {mini ? <div>
-                            <TopBoxCard title={'기본 정보'} grid={'1fr 1fr 1fr 1fr'}>
+                            <TopBoxCard title={''} grid={'1fr 1fr 1fr 1fr'}>
 
                                 {inputForm({
                                     title: '작성자',

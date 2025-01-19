@@ -20,7 +20,7 @@ export const numbFormatter = (value) => `₩ ${value}`.replace(/\B(?=(\d{3})+(?!
 export const numbParser = (value) => value.replace(/₩\s?|(,*)/g, '')
 
 
-export function TopBoxCard({children, title = '', grid='1fr 1fr 1fr 1fr'}) {
+export function TopBoxCard({children, title = '', grid = '1fr 1fr 1fr 1fr'}) {
 
     return <Card size={'small'} title={title}
                  style={{
@@ -56,15 +56,16 @@ export function MainCard({children, title, list, mini = null, setMini = Function
 
     return <Card title={
         <div style={{display: 'flex', justifyContent: 'space-between'}}>
-            <div style={{fontSize: 14, fontWeight: 550}}>{title}</div>
+            <div style={{fontSize: 13, fontWeight: 550}}>{title}</div>
             <div style={{
                 display: 'grid',
                 gridTemplateColumns: `${'1fr '.repeat(list.length)}auto`.trim(),
                 columnGap: 8
             }}>
 
-                {list.map(v => <Tooltip title={v.title} placement={v.place} color={'cyan'} key={'cyan'}><Button type={v.type} style={{fontSize : 11}} size={'small'}
-                                                                                                     onClick={v.func}><SaveOutlined/>{v.name}</Button></Tooltip>)}
+                {list.map(v => <Tooltip title={v.title} placement={v.place} color={'cyan'} key={'cyan'}><Button
+                    type={v.type} style={{fontSize: 11}} size={'small'}
+                    onClick={v.func}><SaveOutlined/>{v.name}</Button></Tooltip>)}
 
                 {mini !== null ? <span style={{fontSize: 20, cursor: 'pointer', marginTop: -5}}
                                        onClick={() => setMini(v => !v)}> {!mini ?
@@ -77,14 +78,17 @@ export function MainCard({children, title, list, mini = null, setMini = Function
 }
 
 export const inputForm = ({
-                              title, id, disabled = false, suffix = null, onChange = function () {
+                              title, id, disabled = false, placeHolder = '', suffix = null, onChange = function () {
     }, handleKeyPress = function () {
     }, data
                           }: any) => {
     let bowl = data;
-    return <div>
+    return <div style={{fontSize : 12, paddingBottom : 10}}>
         <div>{title}</div>
-        <Input id={id} value={bowl[id]} disabled={disabled}
+        {/*@ts-ignored*/}
+        <Input placeHolder={placeHolder}
+               id={id}
+               value={bowl[id]} disabled={disabled}
                onChange={onChange}
                size={'small'}
                onKeyDown={handleKeyPress}
@@ -98,7 +102,7 @@ export const rangePickerForm = ({
     }, data
                                 }: any) => {
     let bowl = data;
-    return <div>
+    return <div style={{fontSize: 12, paddingBottom: 10}}>
         <div style={{paddingBottom: 3,}}>{title}</div>
         <RangePicker value={[moment(bowl[id][0]), moment(bowl[id][1])]} id={id} size={'small'} disabled={disabled}
                      onChange={(e, d) => onChange({target: {id: id, value: d}})} style={{width: '100%',}}/>
@@ -110,7 +114,7 @@ export const rangePickerForm = ({
 
 export const datePickerForm = ({title, id, disabled = false, onChange, data}) => {
     let bowl = data;
-    return <div>
+    return <div style={{fontSize: 12, paddingBottom: 10}}>
         <div>{title}</div>
         {/*@ts-ignore*/}
         <DatePicker value={bowl[id] ? moment(bowl[id]) : ''} style={{width: '100%'}}
@@ -141,7 +145,7 @@ export const inputNumberForm = ({
     let bowl = data;
 
 
-    return <div>
+    return <div style={{fontSize: 12, paddingBottom: 10}}>
         <div>{title}</div>
         <InputNumber id={id} value={bowl[id]} disabled={disabled}
                      style={{width: '100%'}}
@@ -157,7 +161,7 @@ export const inputNumberForm = ({
 export const radioForm = ({title, id, disabled = false, data, onChange, list}) => {
     let bowl = data;
 
-    return <>
+    return <div style={{fontSize: 12, paddingBottom: 10}}>
         <div>{title}</div>
         <Radio.Group id={id} value={bowl[id]} disabled={disabled}
                      onChange={e => {
@@ -168,28 +172,29 @@ export const radioForm = ({title, id, disabled = false, data, onChange, list}) =
                 return <Radio value={v.value}>{v.title}</Radio>
             })}
         </Radio.Group>
-    </>
+    </div>
 }
 
-export const selectBoxForm = ({title, id, disabled = false, data, onChange, list, size='small'}) => {
+export const selectBoxForm = ({title, id, disabled = false, data, onChange, list, size = 'small'}) => {
 
 
-    return <>
+    return <div style={{fontSize: 12, paddingBottom: 10}}>
         <div>{title}</div>
         {/*@ts-ignore*/}
         <Select id={id} size={size} value={data[id]}
                 onChange={(src) => onChange({target: {id: id, value: src}})}
                 options={list} style={{width: '100%'}}>
         </Select>
-    </>
+    </div>
 }
 
-export const textAreaForm = ({title, id, rows = 5, disabled = false, onChange, data}) => {
-    return <div>
+export const textAreaForm = ({title, id, rows = 5, disabled = false, onChange, data, placeHolder=''}) => {
+    return <div style={{fontSize: 12, paddingBottom: 10}}>
         <div>{title}</div>
         <TextArea style={{resize: 'none'}} rows={rows} id={id} value={data[id]} disabled={disabled}
                   onChange={onChange}
                   size={'small'}
+                  placeholder={placeHolder}
                   showCount
                   maxLength={1000}
         />

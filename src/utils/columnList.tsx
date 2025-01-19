@@ -242,7 +242,7 @@ export const makerColumn = [
 
 export const subRfqWriteColumn = [
     {
-        headerName: 'Model',
+        headerName: 'MODEL',
         field: 'model',
         minWidth: 150,
         editable: true,

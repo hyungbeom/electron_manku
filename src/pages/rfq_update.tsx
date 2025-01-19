@@ -28,21 +28,28 @@ import {estimateRequestDetailUnit, storeWriteInitial} from "@/utils/initialList"
 import _ from "lodash";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {useRouter} from "next/router";
+import Select from "antd/lib/select";
 
 const listType = 'estimateRequestDetailList'
-export default function rqfUpdate({dataInfo}) {
+export default function rqfUpdate({dataInfo, managerList}) {
+    console.log(managerList,'managerList:')
+    const options = managerList.map((item) => ({
+        ...item,
+        value: item.name,
+        label: item.name,
+    }));
+
     const fileRef = useRef(null);
     const gridRef = useRef(null);
     const router = useRouter();
 
-    console.log(dataInfo,'dataInfo:')
+
     const copyUnitInit = _.cloneDeep(estimateRequestDetailUnit)
 
     const infoInit = dataInfo?.estimateRequestDetail
     const infoFileInit = dataInfo?.attachmentFileList
 
-
-    const [info, setInfo] = useState<any>({...infoInit, uploadType : 0})
+    const [info, setInfo] = useState<any>({...infoInit, uploadType: 0})
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false, event3: false});
 
@@ -51,6 +58,11 @@ export default function rqfUpdate({dataInfo}) {
         params.api.applyTransaction({add: dataInfo?.estimateRequestDetail[listType]});
     };
 
+    const onCChange = (value: string, e:any) => {
+        setInfo(v=> {
+            return {...v, managerAdminId: e.adminId, managerAdminName: e.name}
+        })
+    };
 
     function openModal(e) {
         commonManage.openModal(e, setIsModalOpen)
@@ -99,7 +111,6 @@ export default function rqfUpdate({dataInfo}) {
         handleIteration();
 
 
-
         if (list.length) {
             list.forEach((detail, index) => {
                 Object.keys(detail).forEach((key) => {
@@ -119,11 +130,11 @@ export default function rqfUpdate({dataInfo}) {
 
         if (uploadContainer) {
             const fileNodes = uploadContainer.querySelectorAll(".ant-upload-list-item-name");
-            const fileNames = Array.from(fileNodes).map((node:any) => node.textContent.trim());
+            const fileNames = Array.from(fileNodes).map((node: any) => node.textContent.trim());
 
             let count = 0
             fileRef.current.fileList.forEach((item, index) => {
-                if(item?.originFileObj){
+                if (item?.originFileObj) {
                     formData.append(`attachmentFileList[${count}].attachmentFile`, item.originFileObj);
                     formData.append(`attachmentFileList[${count}].fileName`, fileNames[index].replace(/\s+/g, ""));
                     count += 1;
@@ -155,7 +166,7 @@ export default function rqfUpdate({dataInfo}) {
         gridManage.deleteAll(gridRef)
     }
 
-    function copyPage(){
+    function copyPage() {
         const totalList = gridManage.getAllData(gridRef)
         let copyInfo = _.cloneDeep(info)
         copyInfo[listType] = totalList
@@ -164,10 +175,6 @@ export default function rqfUpdate({dataInfo}) {
         router.push(`/rfq_write?${query}`)
     }
 
-
-    /**
-     * @description 테이블 우측상단 관련 기본 유틸버튼
-     */
     const subTableUtil = <div>
         {/*@ts-ignored*/}
         <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
@@ -218,7 +225,17 @@ export default function rqfUpdate({dataInfo}) {
                                 data: info
                             })}
                             {inputForm({title: '작성자', id: 'createdBy', disabled: true, onChange: onChange, data: info})}
-                            {inputForm({title: '담당자', id: 'managerAdminName', onChange: onChange, data: info})}
+                            <div>
+                                <div>담당자</div>
+                                <Select style={{width: '100%'}} size={'small'}
+                                        showSearch
+                                        value={info['managerAdminName']}
+                                        placeholder="Select a person"
+                                        optionFilterProp="label"
+                                        onChange={onCChange}
+                                        options={options}
+                                />
+                            </div>
                             {inputForm({title: 'RFQ NO.', id: 'rfqNo', onChange: onChange, data: info})}
                             {inputForm({title: '프로젝트 제목', id: 'projectTitle', onChange: onChange, data: info})}
                         </TopBoxCard>
@@ -304,7 +321,8 @@ export default function rqfUpdate({dataInfo}) {
                                             ]
                                         })}
                                     </div>
-                                    <DriveUploadComp infoFileInit={infoFileInit} fileRef={fileRef} numb={info['uploadType']}/>
+                                    <DriveUploadComp infoFileInit={infoFileInit} fileRef={fileRef}
+                                                     numb={info['uploadType']}/>
                                 </div>
                             </BoxCard>
                         </div>
@@ -341,15 +359,22 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
                 permanent: false,
             },
         };
-    } else {
-        store.dispatch(setUserInfo(userInfo));
-
-        const result = await getData.post('estimate/getEstimateRequestDetail', {
-            "estimateRequestId": estimateRequestId
-        });
-        const dataInfo = result?.data?.entity;
-        return {
-            props: {dataInfo: dataInfo ? dataInfo : null}
-        }
     }
+    store.dispatch(setUserInfo(userInfo));
+
+    const managerData = await getData.post('admin/getAdminList', {
+        "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
+        "searchAuthority": null,    // 1: 일반, 0: 관리자
+        "page": 1,
+        "limit": -1
+    });
+    const list = managerData?.data?.entity?.adminList;
+    const result = await getData.post('estimate/getEstimateRequestDetail', {
+        "estimateRequestId": estimateRequestId
+    });
+    const dataInfo = result?.data?.entity;
+    return {
+        props: {dataInfo: dataInfo ? dataInfo : null, managerList : list}
+    }
+
 })

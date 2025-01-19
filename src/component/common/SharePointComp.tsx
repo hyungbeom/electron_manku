@@ -130,7 +130,7 @@ export function DriveUploadComp({infoFileInit, fileRef, numb=0}) {
         }
     }
     return (
-        <Tooltip placement={'leftTop'} title="SHARE_POINT에 업로드합니다." color={'cyan'} key={'cyan'}>
+
         <Upload
 
             fileList={fileList} // 상태 기반의 파일 리스트
@@ -175,8 +175,10 @@ export function DriveUploadComp({infoFileInit, fileRef, numb=0}) {
             beforeUpload={() => false}
             maxCount={13}
         >
-            <Button size={'small'} icon={<UploadOutlined/>}>Upload</Button>
+            <Tooltip placement={'leftTop'} title="SHARE_POINT에 업로드합니다." color={'cyan'} key={'cyan'}>
+            <Button style={{fontSize : 11}} size={'small'} icon={<UploadOutlined/>}>Upload</Button>
+            </Tooltip>
         </Upload>
-        </Tooltip>
+
     );
 }
