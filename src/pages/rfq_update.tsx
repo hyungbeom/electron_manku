@@ -131,9 +131,8 @@ export default function rqfUpdate({dataInfo}) {
             });
 
         }
-
         result.map((v, idx) => {
-            formData.append(`deleteAttachmentIdList[${idx}]`, v.id);
+            formData.append(`deleteAttachementIdList[${idx}]`, v.id);
         })
         formData.delete('createdDate')
         formData.delete('modifiedDate')

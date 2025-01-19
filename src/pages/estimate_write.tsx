@@ -125,11 +125,22 @@ export default function EstimateWrite({dataInfo}) {
             });
         }
 
-        const filesToSave = fileRef.current.fileList.map((item) => item.originFileObj).filter((file) => file instanceof File);
-        filesToSave.forEach((file, index) => {
-            formData.append(`attachmentFileList[${index}].attachmentFile`, file);
-            formData.append(`attachmentFileList[${index}].fileName`, file.name.replace(/\s+/g, ""));
-        });
+        const uploadContainer = document.querySelector(".ant-upload-list"); // 업로드 리스트 컨테이너
+
+        if (uploadContainer) {
+            const fileNodes = uploadContainer.querySelectorAll(".ant-upload-list-item-name");
+            const fileNames = Array.from(fileNodes).map((node:any) => node.textContent.trim());
+
+            const filesToSave = fileRef.current.fileList.map((item) => item.originFileObj).filter((file) => file instanceof File);
+
+            filesToSave.forEach((file, index) => {
+                formData.append(`attachmentFileList[${index}].attachmentFile`, file);
+                formData.append(`attachmentFileList[${index}].fileName`, fileNames[index].replace(/\s+/g, ""));
+            });
+        }
+
+        formData.delete('createdDate')
+        formData.delete('modifiedDate')
 
         await saveEstimate({data: formData, router: router})
 
@@ -346,7 +357,7 @@ export default function EstimateWrite({dataInfo}) {
                                 <BoxCard title={'드라이브 목록'}>
                                     {/*@ts-ignored*/}
                                     <div style={{overFlowY: "auto", maxHeight: 300}}>
-                                        <DriveUploadComp infoFileInit={[]} fileRef={fileRef}/>
+                                        <DriveUploadComp infoFileInit={[]} fileRef={fileRef} numb={3}/>
                                     </div>
                                 </BoxCard>
                             </div>

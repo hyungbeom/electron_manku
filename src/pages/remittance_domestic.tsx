@@ -62,15 +62,22 @@ export default function remittance_domestic({dataInfo}) {
         };
 
         handleIteration();
-        const filesToSave = fileRef.current.fileList.map((item) => item.originFileObj).filter((file) => file instanceof File);
-        filesToSave.forEach((file, index) => {
-            formData.append(`attachmentFileList[${index}].attachmentFile`, file);
-            formData.append(`attachmentFileList[${index}].fileName`, file.name.replace(/\s+/g, ""));
-        });
+        const uploadContainer = document.querySelector(".ant-upload-list"); // 업로드 리스트 컨테이너
 
-        for (const [key, value] of formData.entries()) {
-            console.log(`${key}: ${value}`);
+        if (uploadContainer) {
+            const fileNodes = uploadContainer.querySelectorAll(".ant-upload-list-item-name");
+            const fileNames = Array.from(fileNodes).map((node:any) => node.textContent.trim());
+
+            const filesToSave = fileRef.current.fileList.map((item) => item.originFileObj).filter((file) => file instanceof File);
+
+            filesToSave.forEach((file, index) => {
+                formData.append(`attachmentFileList[${index}].attachmentFile`, file);
+                formData.append(`attachmentFileList[${index}].fileName`, fileNames[index].replace(/\s+/g, ""));
+            });
         }
+
+        formData.delete('createdDate')
+        formData.delete('modifiedDate')
         await saveRemittance({data: formData, router: router})
     }
 

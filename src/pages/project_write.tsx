@@ -114,7 +114,6 @@ export default function projectWrite({dataInfo}) {
         if (uploadContainer) {
             const fileNodes = uploadContainer.querySelectorAll(".ant-upload-list-item-name");
             const fileNames = Array.from(fileNodes).map((node:any) => node.textContent.trim());
-            console.log(fileRef.current.fileList,'fileNames::')
 
             const filesToSave = fileRef.current.fileList.map((item) => item.originFileObj).filter((file) => file instanceof File);
 
@@ -124,7 +123,8 @@ export default function projectWrite({dataInfo}) {
             });
         }
 
-
+        formData.delete('createdDate')
+        formData.delete('modifiedDate')
 
         await saveProject({data: formData, router: router})
     }

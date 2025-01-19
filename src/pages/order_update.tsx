@@ -80,11 +80,22 @@ export default function order_update({dataInfo}) {
 
         const filesToSave = fileRef.current.fileList.map((item) => item.originFileObj).filter((file) => file instanceof File);
 
-        //새로 추가되는 파일
-        filesToSave.forEach((file, index) => {
-            formData.append(`attachmentFileList[${index}].attachmentFile`, file);
-            formData.append(`attachmentFileList[${index}].fileName`, file.name.replace(/\s+/g, ""));
-        });
+        const uploadContainer = document.querySelector(".ant-upload-list"); // 업로드 리스트 컨테이너
+
+        if (uploadContainer) {
+            const fileNodes = uploadContainer.querySelectorAll(".ant-upload-list-item-name");
+            const fileNames = Array.from(fileNodes).map((node:any) => node.textContent.trim());
+
+            let count = 0
+            fileRef.current.fileList.forEach((item, index) => {
+                if(item?.originFileObj){
+                    formData.append(`attachmentFileList[${count}].attachmentFile`, item.originFileObj);
+                    formData.append(`attachmentFileList[${count}].fileName`, fileNames[index].replace(/\s+/g, ""));
+                    count += 1;
+                }
+            });
+
+        }
 
 
         //기존 기준 사라진 파일
@@ -290,7 +301,7 @@ export default function order_update({dataInfo}) {
                             <BoxCard title={'드라이브 목록'}>
                                 {/*@ts-ignored*/}
                                 <div style={{overFlowY: "auto", maxHeight: 300}}>
-                                    <DriveUploadComp infoFileInit={infoFileInit} fileRef={fileRef}/>
+                                    <DriveUploadComp infoFileInit={infoFileInit} fileRef={fileRef} numb={4}/>
                                 </div>
                             </BoxCard>
                         </div>
