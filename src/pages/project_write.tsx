@@ -110,12 +110,14 @@ export default function projectWrite({dataInfo}) {
         });
 
         const uploadContainer = document.querySelector(".ant-upload-list"); // 업로드 리스트 컨테이너
+        console.log(uploadContainer,'uploadContainer::')
         if (uploadContainer) {
             const fileNodes = uploadContainer.querySelectorAll(".ant-upload-list-item-name");
             const fileNames = Array.from(fileNodes).map((node:any) => node.textContent.trim());
-
+            console.log(fileRef.current.fileList,'fileNames::')
 
             const filesToSave = fileRef.current.fileList.map((item) => item.originFileObj).filter((file) => file instanceof File);
+
             filesToSave.forEach((file, index) => {
                 formData.append(`attachmentFileList[${index}].attachmentFile`, file);
                 formData.append(`attachmentFileList[${index}].fileName`, fileNames[index].replace(/\s+/g, ""));

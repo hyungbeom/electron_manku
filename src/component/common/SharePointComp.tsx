@@ -54,15 +54,17 @@ export function DriveUploadComp({infoFileInit, fileRef, numb=0}) {
             }
         } else {
             if (e.target.className === "ant-upload-list-item-name") {
-                setEditingFileId(file.uid); // 수정 중인 파일 ID 설정
+                if (file?.originFileObj) {
+                    setEditingFileId(file.uid); // 수정 중인 파일 ID 설정
 
-                // 파일 이름과 확장자를 분리
-                const dotIndex = file.name.lastIndexOf(".");
-                const namePart = dotIndex > 0 ? file.name.slice(0, dotIndex) : file.name;
-                const extensionPart = dotIndex > 0 ? file.name.slice(dotIndex) : "";
+                    // 파일 이름과 확장자를 분리
+                    const dotIndex = file.name.lastIndexOf(".");
+                    const namePart = dotIndex > 0 ? file.name.slice(0, dotIndex) : file.name;
+                    const extensionPart = dotIndex > 0 ? file.name.slice(dotIndex) : "";
 
-                setTempFileName(namePart); // 파일 이름 저장
-                setFileExtension(extensionPart); // 확장자 저장
+                    setTempFileName(namePart); // 파일 이름 저장
+                    setFileExtension(extensionPart); // 확장자 저장
+                }
             }
         }
     };
@@ -74,45 +76,51 @@ export function DriveUploadComp({infoFileInit, fileRef, numb=0}) {
         if (!isDuplicate) {
             // 중복이 없으면 리스트 업데이트
             setFileList(fileList);
+            if (fileRef.current) {
+                fileRef.current.fileList = fileList; // ref 상태 동기화
+            }
             return;
         }
 
         // 중복 파일 처리
-        const duplicateFile = fileList.find(v => v?.uid === file?.uid);
+        const updatedFileList = fileList.map(f => {
+            if (f.uid === file.uid) {
+                // 파일 이름에서 기존 번호 추출
+                const existingNumbers = fileList
+                    .map(file => {
+                        const match = file.name.match(/^0\d+\.(\d+)/);
+                        return match ? parseInt(match[1], 10) : null;
+                    })
+                    .filter(num => num !== null) // 유효한 숫자만 필터링
+                    .sort((a, b) => a - b); // 숫자 정렬
 
-        if (duplicateFile) {
-            // 파일 이름에서 기존 번호 추출
-            const existingNumbers = fileList
-                .map(f => {
-                    const match = f.name.match(/^0\d+\.(\d+)/);
-                    return match ? parseInt(match[1], 10) : null;
-                })
-                .filter(num => num !== null) // 유효한 숫자만 필터링
-                .sort((a, b) => a - b); // 숫자 정렬
-
-            // 첫 번째 빈 번호 찾기
-            let newNumber = 1;
-            for (let i = 0; i < existingNumbers.length; i++) {
-                if (existingNumbers[i] !== i + 1) {
-                    newNumber = i + 1;
-                    break;
-                } else {
-                    newNumber = existingNumbers.length + 1;
+                // 첫 번째 빈 번호 찾기
+                let newNumber = 1;
+                for (let i = 0; i < existingNumbers.length; i++) {
+                    if (existingNumbers[i] !== i + 1) {
+                        newNumber = i + 1;
+                        break;
+                    } else {
+                        newNumber = existingNumbers.length + 1;
+                    }
                 }
+
+                // 이름 수정된 파일 반환 (originFileObj 유지)
+                return {
+                    ...f,
+                    name: `0${numb}.${newNumber} ${f.name}`,
+                    originFileObj: f.originFileObj, // 기존 originFileObj 유지
+                };
             }
+            return f; // 다른 파일은 그대로 유지
+        });
 
-            // 새로운 파일 생성
-            const newFile = {
-                ...duplicateFile,
-                name: `0${numb}.${newNumber} ${duplicateFile.name}`,
-                originFileObj: {
-                    ...duplicateFile.originFileObj,
-                    name: `0${numb}.${newNumber} ${duplicateFile.name}`,
-                },
-            };
+        // 파일 리스트 업데이트
+        setFileList(updatedFileList);
 
-            // 파일 리스트 업데이트
-            setFileList(prevList => [...prevList, newFile]);
+        // ref 상태 동기화
+        if (fileRef.current) {
+            fileRef.current.fileList = updatedFileList;
         }
     }
     return (
@@ -120,10 +128,21 @@ export function DriveUploadComp({infoFileInit, fileRef, numb=0}) {
             fileList={fileList} // 상태 기반의 파일 리스트
             onChange={fileChange} // 파일 리스트 업데이트
             // onChange={({ fileList }) => setFileList(fileList)} // 파일 리스트 업데이트
-            itemRender={(originNode, file) => {
+            itemRender={(originNode, file:any) => {
+                const linkType = file?.webUrl || file.type.startsWith("image");
+
+
+                console.log(file,'::::')
+                // 동적 스타일 적용
+                const style = {
+                    color: linkType ? "blue" : "black",
+                    cursor: linkType ? "pointer" : "default",
+                };
+
+
                 return (
                     <div
-                        style={{cursor: "pointer"}}
+                        style={style}
                         onClick={(e) => handleClick(file, e)} // 기존 클릭 이벤트
                     >
                         {editingFileId === file.uid ? (
