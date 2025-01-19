@@ -41,7 +41,7 @@ export const updateRfq = async ({data, router}) => {
 export const searchRfq = async ({data}) => {
 
 
-    const result = await getData.post('estimate/getEstimateRequestList',data);
+    const result = await getData.post('estimate/getEstimateRequestList', data);
     return result?.data?.entity?.estimateRequestList
 
 };
@@ -69,7 +69,7 @@ export const saveEstimate = async ({data, router}) => {
         if (v.data.code === 1) {
             message.success('저장되었습니다.')
             router.push(`/estimate_update?estimateId=${v.data.entity.estimateId}`)
-        }else if (v.data.code === -20001) {
+        } else if (v.data.code === -20001) {
             const inputElement = document.getElementById("documentNumberFull");
             if (inputElement) {
                 inputElement.style.border = "1px solid red"; // 빨간색 테두리
@@ -100,6 +100,8 @@ export const saveProject = async ({data, router}) => {
         if (v.data.code === 1) {
             message.success('저장되었습니다.')
             router.push(`/project_update?projectId=${v.data.entity.projectId}`)
+        } else if (v.data.code === -20001) {
+            message.error('문서번호가 중복되었습니다.')
         } else {
             message.error('저장에 실패하였습니다.')
         }
@@ -132,7 +134,6 @@ export const updateRemittance = async ({data, router}) => {
     await getFormData.post('remittance/updateRemittance', data).then(v => {
         if (v.data.code === 1) {
             message.success('수정되었습니다.');
-            window.location.reload();
         } else {
             message.error('저장에 실패하였습니다.')
         }
@@ -174,14 +175,14 @@ export const searchEstimate = async ({data}) => {
 export const searchProject = async ({data}) => {
 
     const result = await getData.post('project/getProjectList', data);
-    console.log(result,'resultresult')
+    console.log(result, 'resultresult')
     return result?.data?.entity?.projectList
 };
 
 export const deleteProjectList = async ({
-                                         data, returnFunc = function () {
+                                            data, returnFunc = function () {
     }
-                                     }) => {
+                                        }) => {
 
     await getData.post('project/deleteProjectDetails', data).then(v => {
         if (v.data.code === 1) {
@@ -194,9 +195,9 @@ export const deleteProjectList = async ({
 };
 
 export const deleteRemittanceList = async ({
-                                            data, returnFunc = function () {
+                                               data, returnFunc = function () {
     }
-                                        }) => {
+                                           }) => {
 
     await getData.post('remittance/deleteRemittances', data).then(v => {
         if (v.data.code === 1) {
@@ -207,8 +208,6 @@ export const deleteRemittanceList = async ({
         }
     }, err => message.error(err))
 };
-
-
 
 
 export const deleteEstimate = async ({
@@ -242,11 +241,10 @@ export const deleteDelivery = async ({
 };
 
 
-
 export const deleteOrderStatusDetails = async ({
-                                         data, returnFunc = function () {
+                                                   data, returnFunc = function () {
     }
-                                     }) => {
+                                               }) => {
 
     await getData.post('order/deleteOrderStatusDetails', data).then(v => {
         if (v.data.code === 1) {
@@ -281,14 +279,14 @@ export const updateOrder = async ({data}) => {
         } else {
             message.error('수정에 실패하였습니다.')
         }
-        console.log(v,':::')
+        console.log(v, ':::')
     });
 };
 
 
 export const searchOrder = async ({data}) => {
 
-    const result = await getData.post('order/getOrderList',{
+    const result = await getData.post('order/getOrderList', {
         ...data, page: 1,
         limit: -1
     });
@@ -328,7 +326,7 @@ export const getOrderStatusList = async ({data}) => {
         limit: -1
     })
     if (v.data.code === 1) {
-        console.log(v,'v:')
+        console.log(v, 'v:')
         return v.data.entity.orderStatusList
     } else {
         message.error('오류가 발생하였습니다. 다시 시도해주세요.')
