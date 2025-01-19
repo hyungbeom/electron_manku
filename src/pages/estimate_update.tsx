@@ -222,7 +222,7 @@ export default function estimate_update({dataInfo}) {
                                 id: 'documentNumberFull',
                                 placeholder: '폴더생성 규칙 유의',
                                 onChange: onChange,
-                                data: info
+                                data: info, disabled:true
                             })}
                             {inputForm({
                                 placeholder: '폴더생성 규칙 유의',
@@ -248,13 +248,13 @@ export default function estimate_update({dataInfo}) {
                                         }
                                     }/>, onChange: onChange, data: info
                                 })}
-                                {inputForm({title: '매입처명', id: 'agencyName', onChange: onChange, data: info})}
-                                {inputForm({title: '담당자', id: 'agencyManagerName', onChange: onChange, data: info})}
+                                {inputForm({title: '매입처명', id: 'agencyName', onChange: onChange, data: info,  disabled: true})}
+                                {inputForm({title: '담당자', id: 'agencyManagerName', onChange: onChange, data: info,  disabled: true})}
                                 {inputForm({
                                     title: '연락처',
                                     id: 'agencyManagerPhoneNumber',
                                     onChange: onChange,
-                                    data: info
+                                    data: info,  disabled: true
                                 })}
                             </BoxCard>
 
@@ -269,10 +269,10 @@ export default function estimate_update({dataInfo}) {
                                         }
                                     }/>, onChange: onChange, data: info
                                 })}
-                                {inputForm({title: '담당자', id: 'managerName', onChange: onChange, data: info})}
-                                {inputForm({title: '전화번호', id: 'phoneNumber', onChange: onChange, data: info})}
-                                {inputForm({title: '팩스', id: 'faxNumber', onChange: onChange, data: info})}
-                                {inputForm({title: '이메일', id: 'customerManagerEmail', onChange: onChange, data: info})}
+                                {inputForm({title: '담당자', id: 'managerName', onChange: onChange, data: info,  disabled: true})}
+                                {inputForm({title: '전화번호', id: 'phoneNumber', onChange: onChange, data: info,  disabled: true})}
+                                {inputForm({title: '팩스', id: 'faxNumber', onChange: onChange, data: info,  disabled: true})}
+                                {inputForm({title: '이메일', id: 'customerManagerEmail', onChange: onChange, data: info,  disabled: true})}
                             </BoxCard>
 
                             <BoxCard title={'운송 정보'}>
