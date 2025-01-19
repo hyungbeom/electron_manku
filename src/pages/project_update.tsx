@@ -96,6 +96,7 @@ export default function projectUpdate({dataInfo}) {
         });
 
         const filesToSave = fileRef.current.fileList.map((item) => item.originFileObj).filter((file) => file instanceof File);
+
         filesToSave.forEach((file, index) => {
             formData.append(`attachmentFileList[${index}].attachmentFile`, file);
             formData.append(`attachmentFileList[${index}].fileName`, file.name.replace(/\s+/g, ""));
@@ -109,7 +110,7 @@ export default function projectUpdate({dataInfo}) {
         formData.delete('createdDate')
         formData.delete('modifiedDate')
 
-        await updateProject({data: formData, router: router})
+        // await updateProject({data: formData, router: router})
     }
 
 
@@ -205,8 +206,7 @@ export default function projectUpdate({dataInfo}) {
                 ]} mini={mini} setMini={setMini}>
 
                     {mini ? <div>
-                            <TopBoxCard title={'기본 정보'} grid={'1fr 1fr 1fr 1fr'}>
-
+                            <TopBoxCard>
                                 {inputForm({
                                     title: '작성자',
                                     id: 'createdBy',
@@ -282,17 +282,17 @@ export default function projectUpdate({dataInfo}) {
 
                                 <BoxCard title={'기타 정보'}>
 
-                                    {textAreaForm({title: '비고란', rows: 3, id: 'remarks', onChange: onChange, data: info})}
+                                    {textAreaForm({title: '비고란', rows: 2, id: 'remarks', onChange: onChange, data: info})}
                                     {textAreaForm({
                                         title: '지시사항',
-                                        rows: 3,
+                                        rows: 2,
                                         id: 'instructions',
                                         onChange: onChange,
                                         data: info
                                     })}
                                     {textAreaForm({
                                         title: '특이사항',
-                                        rows: 3,
+                                        rows: 2,
                                         id: 'specialNotes',
                                         onChange: onChange,
                                         data: info

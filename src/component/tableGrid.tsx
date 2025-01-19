@@ -20,7 +20,8 @@ import EstimateListModal from "@/component/EstimateListModal";
 const TableGrid = ({
                        gridRef,
                        columns,
-                       onGridReady = function(){},
+                       onGridReady = function () {
+                       },
                        type = 'read',
                        funcButtons,
                        onCellEditingStopped = null
@@ -32,10 +33,9 @@ const TableGrid = ({
 
     const [dragging, setDragging] = useState(false);
     const [pinnedBottomRowData, setPinnedBottomRowData] = useState([]);
-    const [page, setPage] = useState({x: null, y: null, field : null, event : null})
+    const [page, setPage] = useState({x: null, y: null, field: null, event: null})
     const [isModalOpen, setIsModalOpen] = useState(false);
     const ref = useRef(null);
-
 
 
     const defaultColDef = useMemo(() => {
@@ -93,7 +93,6 @@ const TableGrid = ({
     };
 
 
-
     const handleDoubleClicked = (e) => {
 
         if (type === 'read') {
@@ -149,7 +148,7 @@ const TableGrid = ({
     function dataChange(e) {
         // const updatedData = [...data];
         // const rowIndex = e.node.rowIndex;
-        console.log(e,'???')
+        console.log(e, '???')
         clickRowCheck(e.api);
         handleSelectionChanged();
     }
@@ -206,10 +205,9 @@ const TableGrid = ({
         // }
 
 
-
         const {clientX, clientY} = e.event;
         e.event.preventDefault();
-        setPage({x: clientX, y: clientY, field: e.column.getId(), event : e})
+        setPage({x: clientX, y: clientY, field: e.column.getId(), event: e})
     }
 
 
@@ -226,11 +224,10 @@ const TableGrid = ({
     }, typeof window !== 'undefined' ? document : null)
 
     useEventListener('click', (e: any) => {
-        setPage(v=> {
+        setPage(v => {
             return {...v, x: null, y: null}
         });
     }, typeof window !== 'undefined' ? document : null)
-
 
 
     // async function getProjectDetail(e) {
@@ -268,9 +265,6 @@ const TableGrid = ({
     // }
 
 
-
-
-
     function getSelectedRows(ref) {
         if (ref.current) {
             const selectedRows = ref.current.getSelectedRows();
@@ -278,10 +272,11 @@ const TableGrid = ({
             // connectInquiryNo
 
 
+            console.log(selectedRows, 'selectedRows:')
 
-            if(selectedRows.length){
-                const list = selectedRows.map(v =>{
-                   return {...v, connectInquiryNo : v.documentNumberFull, currencyUnit :  v.currency}
+            if (selectedRows.length) {
+                const list = selectedRows.map(v => {
+                    return {...v, connectInquiryNo: v.documentNumberFull, currencyUnit: v.currency, spec: v.unit}
                 })
                 gridRef.current.applyTransaction({
                     remove: [page.event.node.data], // 삭제할 데이터
@@ -309,29 +304,33 @@ const TableGrid = ({
                 fontSize: 11,
                 backgroundColor: 'white',
                 border: '1px solid lightGray',
-                width : 90,
-                cursor : 'pointer'
+                width: 90,
+                cursor: 'pointer'
             }} ref={ref} id={'right'}>
-                { page.field === 'connectInquiryNo' ?<div onClick={() => {
-                    setPage(v=> {
+                {page.field === 'connectInquiryNo' ? <div onClick={() => {
+                    setPage(v => {
                         return {...v, x: null, y: null}
                     });
                     showModal();
-                }} id={'right'} style={{backgroundColor : 'lightgray', padding : 3}} >견적 Inquiry조회
+                }} id={'right'} style={{backgroundColor: 'lightgray', padding: 3}}>견적 Inquiry조회
                 </div> : <></>}
-                <div style={{paddingTop: 6, padding : 3}} onClick={() => {
-                    setPage(v=> {
+                <div style={{paddingTop: 6, padding: 3}} onClick={() => {
+                    setPage(v => {
                         return {...v, x: null, y: null}
                     });
                 }} id={'right'}>통합
                 </div>
-                <div style={{padding: 3,backgroundColor : 'lightgray'}} onClick={() => {
+                <div style={{padding: 3, backgroundColor: 'lightgray'}} onClick={() => {
 
-                    setPage(v=> {
+                    setPage(v => {
                         return {...v, x: null, y: null}
                     });
                 }}
-                     id={'right'}>삭제
+                     id={'right'}
+                     onClick={() => {
+                         gridRef.current.applyTransaction({remove: [page.event.node.data]});
+                     }}
+                >삭제
                 </div>
             </div> : <></>}
 

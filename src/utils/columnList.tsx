@@ -2529,11 +2529,16 @@ export const projectWriteColumn = [
         field: 'spec',
         minWidth: 150,
         editable: true,
+        cellEditor: 'agSelectCellEditor',
+        cellEditorParams: {
+            values: ['KRW', 'EUR', 'JPY', 'USD', 'GBP',],
+        }
     }, {
         headerName: '수량',
         field: 'quantity',
         minWidth: 150,
         editable: true,
+        filter: 'agNumberColumnFilter',
         valueFormatter: amountFormat,
         valueParser: amountFormatParser,
     }, {
@@ -2541,13 +2546,23 @@ export const projectWriteColumn = [
         field: 'unitPrice',
         minWidth: 150,
         editable: true,
+        filter: 'agNumberColumnFilter',
         valueFormatter: amountFormat,
         valueParser: amountFormatParser,
     }, {
         headerName: '총액',
         field: 'total',
         minWidth: 150,
-        editable: true,
+        filter: 'agNumberColumnFilter',
+        valueFormatter: params => {
+            const value = params.data.quantity * params.data.unitPrice;
+            if (isNaN(value)) {
+                return "";
+            }
+            // 숫자를 3자리마다 쉼표로 포맷
+            return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
     },
     {
         headerName: '화폐단위',
@@ -2560,15 +2575,14 @@ export const projectWriteColumn = [
     }, {
         headerName: '납기',
         field: 'deliveryDate',
+        filter: "agDateColumnFilter",
         cellEditor: 'agDateCellEditor',
         valueFormatter: (params) => {
             if (!params.value) return ''; // 값이 없는 경우 처리
             return moment(params.value).isValid() ? moment(params.value).format('YYYY-MM-DD') : '';
+
+            return moment(params.value).isValid() ?  dateFormat(params) : ''
         },
-        // valueParser: (params) => {
-        //     const value = params.newValue;
-        //     return moment(value, 'YYYY-MM-DD', true).isValid() ? value : null;
-        // },
         minWidth: 150,
         editable: true,
     }, {
@@ -2600,15 +2614,15 @@ export const projectWriteColumn = [
         headerName: '납기요청일',
         field: 'requestDeliveryDate',
         minWidth: 150,
+        filter: "agDateColumnFilter",
         cellEditor: 'agDateCellEditor',
-
         valueFormatter: (params) => {
             if (!params.value) return ''; // 값이 없는 경우 처리
             return moment(params.value).isValid() ? moment(params.value).format('YYYY-MM-DD') : '';
         },
         valueParser: (params) => {
             const value = params.newValue;
-            return moment(value, 'YYYY-MM-DD', true).isValid() ? value : null;
+            return moment(params.value).isValid() ?  dateFormat(params) : ''
         },
         editable: true,
     }, {

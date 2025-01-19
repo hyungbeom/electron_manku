@@ -19,7 +19,7 @@ export const numbFormatter = (value) => `₩ ${value}`.replace(/\B(?=(\d{3})+(?!
 export const numbParser = (value) => value.replace(/₩\s?|(,*)/g, '')
 
 
-export function TopBoxCard({children, title = '', grid}) {
+export function TopBoxCard({children, title = '', grid='1fr 1fr 1fr 1fr'}) {
 
     return <Card size={'small'} title={title}
                  style={{
