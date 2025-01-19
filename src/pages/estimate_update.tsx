@@ -171,6 +171,10 @@ export default function estimate_update({dataInfo}) {
 
 
     async function printEstimate() {
+        const list = gridManage.getAllData(gridRef)
+        if (!list.length) {
+            return message.warn('하위 데이터 1개 이상이여야 합니다')
+        }
         setIsPrintModalOpen(true)
     }
 
@@ -192,7 +196,7 @@ export default function estimate_update({dataInfo}) {
                          open={isModalOpen}
                          setIsModalOpen={setIsModalOpen}/>
         <PrintEstimate data={info} isModalOpen={isPrintModalOpen} userInfo={userInfo}
-                       setIsModalOpen={setIsPrintModalOpen}/>
+                       setIsModalOpen={setIsPrintModalOpen} gridRef={gridRef}/>
         <LayoutComponent>
             <div style={{
                 display: 'grid',
@@ -224,13 +228,7 @@ export default function estimate_update({dataInfo}) {
                                 onChange: onChange,
                                 data: info, disabled:true
                             })}
-                            {inputForm({
-                                placeholder: '폴더생성 규칙 유의',
-                                title: '연결 INQUIRY No.',
-                                id: 'connectDocumentNumberFull',
-                                suffix: <DownloadOutlined style={{cursor: 'pointer'}}/>,
-                                onChange: onChange, data: info
-                            })}
+
                             {inputForm({title: 'RFQ NO.', id: 'rfqNo', onChange: onChange, data: info})}
                             {inputForm({title: '프로젝트 제목', id: 'projectTitle', onChange: onChange, data: info})}
                         </TopBoxCard>

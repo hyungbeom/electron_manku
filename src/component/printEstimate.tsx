@@ -2,13 +2,13 @@ import React, {useRef} from "react";
 import Modal from "antd/lib/modal/Modal";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
+import {gridManage} from "@/utils/commonManage";
 
-export default function PrintEstimate({ data, isModalOpen, userInfo, setIsModalOpen }) {
+export default function PrintEstimate({ data, isModalOpen, userInfo, setIsModalOpen, gridRef }) {
     const {estimateDetailList} = data;
     const pdfRef = useRef();
 
-    console.log(userInfo, 'userInfo')
-
+    const list = gridManage.getAllData(gridRef)
     let totalAmount = 0;
     let totalQuantity = 0;
 
@@ -437,7 +437,7 @@ export default function PrintEstimate({ data, isModalOpen, userInfo, setIsModalO
                         >
                         </div>
                     </div>
-                    {estimateDetailList.map((model, i) => {
+                    {list?.map((model, i) => {
                         totalQuantity += model.quantity;
                         totalAmount += model.quantity*model.unitPrice;
                         return (
