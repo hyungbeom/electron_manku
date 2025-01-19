@@ -110,7 +110,7 @@ export default function projectUpdate({dataInfo}) {
         formData.delete('createdDate')
         formData.delete('modifiedDate')
 
-        // await updateProject({data: formData, router: router})
+        await updateProject({data: formData, router: router})
     }
 
 

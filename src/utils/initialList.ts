@@ -112,6 +112,7 @@ export const rfqWriteInitial = {
     maker: '',
     item: '',
     instructions: '',
+    uploadType: 0,
 
 // =============================
 

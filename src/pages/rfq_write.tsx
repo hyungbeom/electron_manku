@@ -13,7 +13,15 @@ import TableGrid from "@/component/tableGrid";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import SearchInfoModal from "@/component/SearchAgencyModal";
 import Upload from "antd/lib/upload";
-import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, TopBoxCard} from "@/utils/commonForm";
+import {
+    BoxCard,
+    datePickerForm,
+    inputForm,
+    MainCard,
+    selectBoxForm,
+    textAreaForm,
+    TopBoxCard
+} from "@/utils/commonForm";
 import {useRouter} from "next/router";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import _ from "lodash";
@@ -312,7 +320,16 @@ export default function rqfWrite({dataInfo}) {
                                 <BoxCard title={'드라이브 목록'}>
                                     {/*@ts-ignored*/}
                                     <div style={{overFlowY: "auto", maxHeight: 300}}>
-                                        <DriveUploadComp infoFileInit={[]} fileRef={fileRef}/>
+                                        <div style={{width : 100, float : 'right'}}>
+                                            {selectBoxForm({
+                                                title: '', id: 'uploadType', onChange: onChange, data: info, list: [
+                                                    {value: 0, label: '요청자료'},
+                                                    {value: 1, label: '첨부파일'},
+                                                    {value: 2, label: '업체회신자료'}
+                                                ]
+                                            })}
+                                        </div>
+                                        <DriveUploadComp infoFileInit={[]} fileRef={fileRef} numb={info['uploadType']}/>
                                     </div>
                                 </BoxCard>
                             </div>

@@ -85,14 +85,15 @@ export function DriveUploadComp({infoFileInit, fileRef, numb=0}) {
         // 중복 파일 처리
         const updatedFileList = fileList.map(f => {
             if (f.uid === file.uid) {
-                // 파일 이름에서 기존 번호 추출
+                // 현재 numb 그룹 내의 파일 이름에서 번호 추출
                 const existingNumbers = fileList
+                    .filter(file => file.name.startsWith(`0${numb}.`)) // 현재 numb 그룹만 필터링
                     .map(file => {
-                        const match = file.name.match(/^0\d+\.(\d+)/);
+                        const match = file.name.match(/^0\d+\.(\d+)/); // 번호 추출
                         return match ? parseInt(match[1], 10) : null;
                     })
-                    .filter(num => num !== null) // 유효한 숫자만 필터링
-                    .sort((a, b) => a - b); // 숫자 정렬
+                    .filter(num => num !== null) // 유효한 번호만 필터링
+                    .sort((a, b) => a - b); // 번호 정렬
 
                 // 첫 번째 빈 번호 찾기
                 let newNumber = 1;
@@ -105,10 +106,14 @@ export function DriveUploadComp({infoFileInit, fileRef, numb=0}) {
                     }
                 }
 
+                // 기존 이름의 나머지 부분 추출
+                const match = f.name.match(/^0\d+\.\d+\s(.+)$/); // 규칙 이후의 이름 추출
+                const originalName = match ? match[1] : f.name; // 기존 이름 유지
+
                 // 이름 수정된 파일 반환 (originFileObj 유지)
                 return {
                     ...f,
-                    name: `0${numb}.${newNumber} ${f.name}`,
+                    name: `0${numb}.${newNumber} ${originalName}`,
                     originFileObj: f.originFileObj, // 기존 originFileObj 유지
                 };
             }
@@ -125,6 +130,7 @@ export function DriveUploadComp({infoFileInit, fileRef, numb=0}) {
     }
     return (
         <Upload
+
             fileList={fileList} // 상태 기반의 파일 리스트
             onChange={fileChange} // 파일 리스트 업데이트
             // onChange={({ fileList }) => setFileList(fileList)} // 파일 리스트 업데이트
@@ -132,7 +138,6 @@ export function DriveUploadComp({infoFileInit, fileRef, numb=0}) {
                 const linkType = file?.webUrl || file.type.startsWith("image");
 
 
-                console.log(file,'::::')
                 // 동적 스타일 적용
                 const style = {
                     color: linkType ? "blue" : "black",
