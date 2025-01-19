@@ -12,7 +12,15 @@ import {setUserInfo} from "@/store/user/userSlice";
 import MyComponent from "@/component/MyComponent";
 import TableGrid from "@/component/tableGrid";
 import SearchInfoModal from "@/component/SearchAgencyModal";
-import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, TopBoxCard} from "@/utils/commonForm";
+import {
+    BoxCard,
+    datePickerForm,
+    inputForm,
+    MainCard,
+    selectBoxForm,
+    textAreaForm,
+    TopBoxCard
+} from "@/utils/commonForm";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import {findCodeInfo} from "@/utils/api/commonApi";
 import {updateRfq} from "@/utils/api/mainApi";
@@ -34,7 +42,7 @@ export default function rqfUpdate({dataInfo}) {
     const infoFileInit = dataInfo?.attachmentFileList
 
 
-    const [info, setInfo] = useState<any>(infoInit)
+    const [info, setInfo] = useState<any>({...infoInit, uploadType : 0})
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false, event3: false});
 
@@ -90,7 +98,6 @@ export default function rqfUpdate({dataInfo}) {
 
         handleIteration();
 
-        const copyData = {...info}
 
 
         if (list.length) {
@@ -105,19 +112,31 @@ export default function rqfUpdate({dataInfo}) {
             });
         }
 
-        const filesToSave = fileRef.current.fileList.map((item) => item.originFileObj).filter((file) => file instanceof File);
-
-        //새로 추가되는 파일
-        filesToSave.forEach((file, index) => {
-            formData.append(`attachmentFileList[${index}].attachmentFile`, file);
-            formData.append(`attachmentFileList[${index}].fileName`, file.name.replace(/\s+/g, ""));
-        });
-
         //기존 기준 사라진 파일
         const result = infoFileInit.filter(itemA => !fileRef.current.fileList.some(itemB => itemA.id === itemB.id));
+
+        const uploadContainer = document.querySelector(".ant-upload-list"); // 업로드 리스트 컨테이너
+
+        if (uploadContainer) {
+            const fileNodes = uploadContainer.querySelectorAll(".ant-upload-list-item-name");
+            const fileNames = Array.from(fileNodes).map((node:any) => node.textContent.trim());
+
+            let count = 0
+            fileRef.current.fileList.forEach((item, index) => {
+                if(item?.originFileObj){
+                    formData.append(`attachmentFileList[${count}].attachmentFile`, item.originFileObj);
+                    formData.append(`attachmentFileList[${count}].fileName`, fileNames[index].replace(/\s+/g, ""));
+                    count += 1;
+                }
+            });
+
+        }
+
         result.map((v, idx) => {
-            formData.append(`deleteAttachementIdList[${idx}]`, v.id);
+            formData.append(`deleteAttachmentIdList[${idx}]`, v.id);
         })
+        formData.delete('createdDate')
+        formData.delete('modifiedDate')
 
         await updateRfq({data: formData, router: router})
     }
@@ -277,7 +296,16 @@ export default function rqfUpdate({dataInfo}) {
                             <BoxCard title={'드라이브 목록'}>
                                 {/*@ts-ignored*/}
                                 <div style={{overFlowY: "auto", maxHeight: 300}}>
-                                    <DriveUploadComp infoFileInit={infoFileInit} fileRef={fileRef}/>
+                                    <div style={{width: 100, float: 'right'}}>
+                                        {selectBoxForm({
+                                            title: '', id: 'uploadType', onChange: onChange, data: info, list: [
+                                                {value: 0, label: '요청자료'},
+                                                {value: 1, label: '첨부파일'},
+                                                {value: 2, label: '업체회신자료'}
+                                            ]
+                                        })}
+                                    </div>
+                                    <DriveUploadComp infoFileInit={infoFileInit} fileRef={fileRef} numb={info['uploadType']}/>
                                 </div>
                             </BoxCard>
                         </div>

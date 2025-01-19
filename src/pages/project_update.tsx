@@ -103,7 +103,6 @@ export default function projectUpdate({dataInfo}) {
         if (uploadContainer) {
             const fileNodes = uploadContainer.querySelectorAll(".ant-upload-list-item-name");
             const fileNames = Array.from(fileNodes).map((node:any) => node.textContent.trim());
-            console.log(fileRef.current.fileList,'fileNames::')
 
             let count = 0
             fileRef.current.fileList.forEach((item, index) => {
