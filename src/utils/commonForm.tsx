@@ -172,8 +172,10 @@ export const radioForm = ({title, id, disabled = false, data, onChange, list}) =
 
 export const selectBoxForm = ({title, id, disabled = false, data, onChange, list, size='small'}) => {
 
+
     return <>
         <div>{title}</div>
+        {/*@ts-ignore*/}
         <Select id={id} size={size} value={data[id]}
                 onChange={(src) => onChange({target: {id: id, value: src}})}
                 options={list} style={{width: '100%'}}>
