@@ -554,3 +554,30 @@ commonManage.commonCalc = function (info) {
 
 
 // ----------------------------------------------------------------------------------------
+
+commonManage.setInfoFormData = function (info , formData, listType) {
+    for (const {key, value} of commonManage.commonCalc(info)) {
+        if (key !== listType) {
+            formData.append(key, value);
+        }
+    }
+
+
+}
+
+
+commonManage.getUploadList = function (fileRef, formData) {
+    const uploadContainer = document.querySelector(".ant-upload-list"); // 업로드 리스트 컨테이너
+    const fileNodes = uploadContainer.querySelectorAll(".ant-upload-list-item-name");
+    const fileNames = Array.from(fileNodes).map((node: any) => node.textContent.trim());
+
+    let count = 0
+    fileRef.current.fileList.forEach((item, index) => {
+        if (item?.originFileObj) {
+            formData.append(`attachmentFileList[${count}].attachmentFile`, item.originFileObj);
+            formData.append(`attachmentFileList[${count}].fileName`, fileNames[index].replace(/\s+/g, ""));
+            count += 1;
+        }
+    });
+
+}

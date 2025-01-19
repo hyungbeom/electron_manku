@@ -91,9 +91,7 @@ export default function EstimateRead({dataInfo}) {
     };
 
 
-    const subTableUtil = <div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
-        <CopyOutlined/>복사
-    </Button>
+    const subTableUtil = <div>
         {/*@ts-ignored*/}
         <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}} onClick={deleteList}>
             <CopyOutlined/>삭제

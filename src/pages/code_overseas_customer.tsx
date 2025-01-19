@@ -121,9 +121,7 @@ export default function codeOverseasPurchase({dataList}) {
                 tableData={tableData}
                 type={'read'}
                 excel={true}
-                funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
-                    <CopyOutlined/>복사
-                </Button>
+                funcButtons={<div>
                     {/*@ts-ignored*/}
                     <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={deleteList}>
                         <CopyOutlined/>삭제

@@ -14,6 +14,7 @@ import _ from "lodash";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import {BoxCard, inputForm, MainCard, rangePickerForm, TopBoxCard} from "@/utils/commonForm";
 import {useRouter} from "next/router";
+import moment from "moment/moment";
 
 
 export default function ProjectRead({dataInfo}) {
@@ -66,11 +67,19 @@ export default function ProjectRead({dataInfo}) {
     };
 
 
-    /**
-     * @description 테이블 우측상단 관련 기본 유틸버튼
-     */
+    function copyPage() {
+        const totalList = gridManage.getAllData(gridRef)
+        let copyInfo = _.cloneDeep(info)
+        // copyInfo[listType] = totalList
+        copyInfo['writtenDate'] = moment().format('YYYY-MM-DD')
+
+        const query = `data=${encodeURIComponent(JSON.stringify(copyInfo))}`;
+        router.push(`/project_write?${query}`)
+    }
+
+
     const subTableUtil = <div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
-        <CopyOutlined/>복사
+        <CopyOutlined onClick={copyPage}/>복사
     </Button>
         {/*@ts-ignored*/}
         <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}} onClick={deleteList}>

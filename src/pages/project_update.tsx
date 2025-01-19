@@ -78,42 +78,19 @@ export default function projectUpdate({dataInfo}) {
             return message.warn('하위 데이터 1개 이상이여야 합니다');
         }
 
-        const formData: any = new FormData();
-
-        const handleIteration = () => {
-            for (const {key, value} of commonManage.commonCalc(info)) {
-                if (key !== listType) {
-                    formData.append(key, value);
-                }
-            }
-        };
-
-        handleIteration();
         list.forEach((detail, index) => {
             Object.keys(detail).forEach((key) => {
                 formData.append(`${listType}[${index}].${key}`, detail[key]);
             });
         });
 
-        //기존 기준 사라진 파일
+
+        const formData: any = new FormData();
+
+        commonManage.setInfoFormData(info, formData, listType)
+        commonManage.getUploadList(fileRef, formData)
+
         const result = infoFileInit.filter(itemA => !fileRef.current.fileList.some(itemB => itemA.id === itemB.id));
-
-        const uploadContainer = document.querySelector(".ant-upload-list"); // 업로드 리스트 컨테이너
-
-        if (uploadContainer) {
-            const fileNodes = uploadContainer.querySelectorAll(".ant-upload-list-item-name");
-            const fileNames = Array.from(fileNodes).map((node:any) => node.textContent.trim());
-
-            let count = 0
-            fileRef.current.fileList.forEach((item, index) => {
-                if(item?.originFileObj){
-                    formData.append(`attachmentFileList[${count}].attachmentFile`, item.originFileObj);
-                    formData.append(`attachmentFileList[${count}].fileName`, fileNames[index].replace(/\s+/g, ""));
-                    count += 1;
-                }
-            });
-
-        }
 
         result.map((v, idx) => {
             formData.append(`deleteAttachmentIdList[${idx}]`, v.id);
@@ -246,7 +223,8 @@ export default function projectUpdate({dataInfo}) {
                                         title: 'PROJECT NO.',
                                         id: 'documentNumberFull',
                                         onChange: onChange,
-                                        data: info
+                                        data: info,
+                                        disabled : true
                                     })}
                                     {inputForm({
                                         title: '프로젝트 제목',

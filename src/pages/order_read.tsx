@@ -78,9 +78,7 @@ export default function OrderRead({dataInfo}) {
     /**
      * @description 테이블 우측상단 관련 기본 유틸버튼
      */
-    const subTableUtil = <div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
-        <CopyOutlined/>복사
-    </Button>
+    const subTableUtil = <div>
         {/*@ts-ignored*/}
         <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
                 onClick={deleteList}>
