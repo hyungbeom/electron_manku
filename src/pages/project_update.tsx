@@ -39,10 +39,6 @@ export default function projectUpdate({dataInfo}) {
 
     const onGridReady = (params) => {
         gridRef.current = params.api;
-        const copyData = _.cloneDeep(dataInfo?.projectDetail);
-        delete copyData?.createdDate;
-        delete copyData?.modifiedDate;
-        setInfo(copyData);
         params.api.applyTransaction({add: dataInfo?.projectDetail[listType]});
     };
 
@@ -110,9 +106,8 @@ export default function projectUpdate({dataInfo}) {
         result.map((v, idx) => {
             formData.append(`deleteAttachmentIdList[${idx}]`, v.id);
         })
-        for (const [key, value] of formData.entries()) {
-            console.log(`${key}: ${value}`);
-        }
+        formData.delete('createdDate')
+        formData.delete('modifiedDate')
 
         await updateProject({data: formData, router: router})
     }
@@ -125,7 +120,7 @@ export default function projectUpdate({dataInfo}) {
 
     function addRow() {
         const newRow = {...copyUnitInit};
-        gridRef.current.api.applyTransaction({add: [newRow]});
+        gridRef.current.applyTransaction({add: [newRow]});
 
     }
 
@@ -214,7 +209,7 @@ export default function projectUpdate({dataInfo}) {
 
                                 {inputForm({
                                     title: '작성자',
-                                    id: 'managerAdminName',
+                                    id: 'createdBy',
                                     disabled: true,
                                     onChange: onChange,
                                     data: info

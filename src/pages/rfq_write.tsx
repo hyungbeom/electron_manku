@@ -38,7 +38,7 @@ export default function rqfWrite({dataInfo}) {
     const adminParams = {
         managerAdminId: userInfo['adminId'],
         managerAdminName: userInfo['name'],
-        adminName: userInfo['name'],
+        createBy: userInfo['name'],
     }
 
     const infoInit = {
@@ -49,6 +49,7 @@ export default function rqfWrite({dataInfo}) {
     const [info, setInfo] = useState<any>({...copyInit, ...dataInfo, ...adminParams})
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
+
 
     const onGridReady = (params) => {
         gridRef.current = params.api;
@@ -228,7 +229,7 @@ export default function rqfWrite({dataInfo}) {
                                     onChange: onChange,
                                     data: info
                                 })}
-                                {inputForm({title: '작성자', id: 'adminName', disabled: true, onChange: onChange, data: info})}
+                                {inputForm({title: '작성자', id: 'createBy', disabled: true, onChange: onChange, data: info})}
                                 {inputForm({title: '담당자', id: 'managerAdminName', onChange: onChange, data: info})}
                                 {inputForm({
                                     title: 'INQUIRY NO.',

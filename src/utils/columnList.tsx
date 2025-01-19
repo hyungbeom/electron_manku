@@ -17,6 +17,19 @@ export const numberFormat = (params) => {
     return Math.floor(params.value).toLocaleString();
 };
 
+export const amountFormat = (params) => {
+    if (params.value === null || params.value === undefined) {
+        return "";
+    }
+    // 숫자를 3자리마다 쉼표로 포맷
+    return params.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
+export const amountFormatParser = (params) => {
+    // 쉼표 제거 후 숫자로 변환하여 저장
+    const parsedValue = parseFloat(params.newValue.replace(/,/g, ""));
+    return isNaN(parsedValue) ? params.oldValue : parsedValue;
+}
 
 
 export const searchCustomerColumn = [
@@ -2521,11 +2534,15 @@ export const projectWriteColumn = [
         field: 'quantity',
         minWidth: 150,
         editable: true,
+        valueFormatter: amountFormat,
+        valueParser: amountFormatParser,
     }, {
         headerName: '단위가격',
-        field: 'quantity',
+        field: 'unitPrice',
         minWidth: 150,
         editable: true,
+        valueFormatter: amountFormat,
+        valueParser: amountFormatParser,
     }, {
         headerName: '총액',
         field: 'total',

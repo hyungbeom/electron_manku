@@ -53,6 +53,7 @@ export default function projectWrite({dataInfo}) {
 
     const adminParams = {
         managerAdminId: userInfo['adminId'],
+        createBy: userInfo['name'],
         managerAdminName: userInfo['name']
     }
 
@@ -241,7 +242,7 @@ export default function projectWrite({dataInfo}) {
 
                                 {inputForm({
                                     title: '작성자',
-                                    id: 'managerAdminName',
+                                    id: 'createBy',
                                     disabled: true,
                                     onChange: onChange,
                                     data: info

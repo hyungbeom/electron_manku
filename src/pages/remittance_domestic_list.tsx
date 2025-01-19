@@ -14,7 +14,8 @@ import TableGrid from "@/component/tableGrid";
 import {remittanceReadColumn} from "@/utils/columnList";
 import Button from "antd/lib/button";
 import {CopyOutlined, FileExcelOutlined} from "@ant-design/icons";
-import {getDeliveryList, getRemittanceList} from "@/utils/api/mainApi";
+import {deleteProjectList, deleteRemittanceList, getDeliveryList, getRemittanceList} from "@/utils/api/mainApi";
+import message from "antd/lib/message";
 
 const {RangePicker} = DatePicker
 export default function remittance_domestic({dataInfo}) {
@@ -54,7 +55,12 @@ export default function remittance_domestic({dataInfo}) {
 
 
     async function deleteList() {
+        if (gridRef.current.getSelectedRows().length < 1) {
+            return message.error('삭제할 데이터를 선택해주세요.')
+        }
 
+        const result = gridManage.getFieldValue(gridRef, 'remittanceId')
+        await deleteRemittanceList({data: {deleteRemittanceIdList: result}, returnFunc: searchFunc});
     }
 
 
@@ -102,9 +108,27 @@ export default function remittance_domestic({dataInfo}) {
                                 handleKeyPress: handleKeyPress,
                                 data: info
                             })}
-                            {inputForm({title: '거래처명', id: 'searchCustomerName', onChange: onChange,handleKeyPress: handleKeyPress, data: info})}
-                            {inputForm({title: '매입처명', id: 'searchAgencyName', onChange: onChange,handleKeyPress: handleKeyPress, data: info})}
-                            {inputForm({title: '담당자', id: 'searchManagerAdminName', onChange: onChange,handleKeyPress: handleKeyPress, data: info})}
+                            {inputForm({
+                                title: '거래처명',
+                                id: 'searchCustomerName',
+                                onChange: onChange,
+                                handleKeyPress: handleKeyPress,
+                                data: info
+                            })}
+                            {inputForm({
+                                title: '매입처명',
+                                id: 'searchAgencyName',
+                                onChange: onChange,
+                                handleKeyPress: handleKeyPress,
+                                data: info
+                            })}
+                            {inputForm({
+                                title: '담당자',
+                                id: 'searchManagerAdminName',
+                                onChange: onChange,
+                                handleKeyPress: handleKeyPress,
+                                data: info
+                            })}
                         </TopBoxCard>
 
                         <div style={{display: 'grid', gridTemplateColumns: "1fr 1fr 1fr 1fr"}}>

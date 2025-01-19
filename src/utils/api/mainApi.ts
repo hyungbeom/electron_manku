@@ -2,6 +2,7 @@ import {getData, getFormData} from "@/manage/function/api";
 import message from "antd/lib/message";
 import moment from "moment/moment";
 import {rfqWriteInitial, subRfqReadInitial} from "@/utils/initialList";
+import {commonFunc} from "@/utils/commonManage";
 
 
 export const checkInquiryNo = async ({data}) => {
@@ -68,6 +69,15 @@ export const saveEstimate = async ({data, router}) => {
         if (v.data.code === 1) {
             message.success('저장되었습니다.')
             router.push(`/estimate_update?estimateId=${v.data.entity.estimateId}`)
+        }else if (v.data.code === -20001) {
+            const inputElement = document.getElementById("documentNumberFull");
+            if (inputElement) {
+                inputElement.style.border = "1px solid red"; // 빨간색 테두리
+                inputElement.style.boxShadow = "none"; // 그림자 제거
+                inputElement.focus();
+            }
+            commonFunc.validateInput('documentNumberFull')
+            message.error('문서번호가 중복되었습니다.')
         } else {
             message.error('저장에 실패하였습니다.')
         }
@@ -182,6 +192,23 @@ export const deleteProjectList = async ({
     }, err => message.error(err))
 };
 
+export const deleteRemittanceList = async ({
+                                            data, returnFunc = function () {
+    }
+                                        }) => {
+
+    await getData.post('remittance/deleteRemittances', data).then(v => {
+        if (v.data.code === 1) {
+            message.success('삭제되었습니다.')
+            returnFunc();
+        } else {
+            message.error('오류가 발생하였습니다. 다시 시도해주세요.')
+        }
+    }, err => message.error(err))
+};
+
+
+
 
 export const deleteEstimate = async ({
                                          data, returnFunc = function () {
@@ -205,6 +232,7 @@ export const deleteDelivery = async ({
 
     await getData.post('delivery/deleteDeliveries', data).then(v => {
         if (v.data.code === 1) {
+            returnFunc()
             message.success('삭제되었습니다.')
         } else {
             message.error('오류가 발생하였습니다. 다시 시도해주세요.')

@@ -38,21 +38,27 @@ export default function EstimateWrite({dataInfo}) {
 
     const userInfo = useAppSelector((state) => state.user);
 
+    const adminParams = {
+        managerAdminId: userInfo['adminId'],
+        createBy: userInfo['name'],
+        managerAdminName: userInfo['name']
+    }
     const infoInit = {
         ...copyInit,
-        managerAdminId: userInfo['adminId'],
-        managerAdminName: userInfo['name'],
-        adminName: userInfo['name'],
     }
 
-    const [info, setInfo] = useState<any>(infoInit)
+    const [info, setInfo] = useState<any>({...copyInit, ...dataInfo, ...adminParams})
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
 
 
     const onGridReady = (params) => {
         gridRef.current = params.api;
-        const result = dataInfo?.estimateDetailLis;
+        const copyData = _.cloneDeep(info);
+        delete copyData?.createdDate;
+        delete copyData?.modifiedDate;
+        const result = dataInfo?.estimateDetailList;
+        setInfo(copyData);
         params.api.applyTransaction({add: result ? result : []});
     };
 
@@ -169,8 +175,7 @@ export default function EstimateWrite({dataInfo}) {
         <LayoutComponent>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`,
-                height: '100vh',
+                gridTemplateRows: `${mini ? '510px' : '65px'} calc(100vh - ${mini ? 565 : 120}px)`,
                 columnGap: 5
             }}>
                 <MainCard title={'견적서 작성'} list={[
@@ -186,7 +191,7 @@ export default function EstimateWrite({dataInfo}) {
                                     onChange: onChange,
                                     data: info
                                 })}
-                                {inputForm({title: '작성자', id: 'adminName', disabled: true, onChange: onChange, data: info})}
+                                {inputForm({title: '작성자', id: 'createBy', disabled: true, onChange: onChange, data: info})}
                                 {inputForm({title: '담당자', id: 'managerAdminName', onChange: onChange, data: info})}
                                 {inputForm({
                                     title: 'INQUIRY NO.',
@@ -218,15 +223,27 @@ export default function EstimateWrite({dataInfo}) {
                                                 e.stopPropagation();
                                                 openModal('agencyCode');
                                             }
-                                        }/>, onChange: onChange, handleKeyPress:handleKeyPress, data: info
+                                        }/>, onChange: onChange, handleKeyPress: handleKeyPress, data: info
                                     })}
-                                    {inputForm({title: '매입처명', id: 'agencyName', onChange: onChange, data: info, disabled : true})}
-                                    {inputForm({title: '담당자', id: 'agencyManagerName', onChange: onChange, data: info, disabled : true})}
+                                    {inputForm({
+                                        title: '매입처명',
+                                        id: 'agencyName',
+                                        onChange: onChange,
+                                        data: info,
+                                        disabled: true
+                                    })}
+                                    {inputForm({
+                                        title: '담당자',
+                                        id: 'agencyManagerName',
+                                        onChange: onChange,
+                                        data: info,
+                                        disabled: true
+                                    })}
                                     {inputForm({
                                         title: '연락처',
                                         id: 'agencyManagerPhoneNumber',
                                         onChange: onChange,
-                                        data: info, disabled : true
+                                        data: info, disabled: true
                                     })}
                                 </BoxCard>
 
@@ -239,12 +256,36 @@ export default function EstimateWrite({dataInfo}) {
                                                 e.stopPropagation();
                                                 openModal('customerName');
                                             }
-                                        }/>, onChange: onChange,handleKeyPress:handleKeyPress, data: info
+                                        }/>, onChange: onChange, handleKeyPress: handleKeyPress, data: info
                                     })}
-                                    {inputForm({title: '담당자명', id: 'managerName', onChange: onChange, data: info, disabled : true})}
-                                    {inputForm({title: '전화번호', id: 'phoneNumber', onChange: onChange, data: info, disabled : true})}
-                                    {inputForm({title: '팩스', id: 'faxNumber', onChange: onChange, data: info, disabled : true})}
-                                    {inputForm({title: '이메일', id: 'customerManagerEmail', onChange: onChange, data: info, disabled : true})}
+                                    {inputForm({
+                                        title: '담당자명',
+                                        id: 'managerName',
+                                        onChange: onChange,
+                                        data: info,
+                                        disabled: true
+                                    })}
+                                    {inputForm({
+                                        title: '전화번호',
+                                        id: 'phoneNumber',
+                                        onChange: onChange,
+                                        data: info,
+                                        disabled: true
+                                    })}
+                                    {inputForm({
+                                        title: '팩스',
+                                        id: 'faxNumber',
+                                        onChange: onChange,
+                                        data: info,
+                                        disabled: true
+                                    })}
+                                    {inputForm({
+                                        title: '이메일',
+                                        id: 'customerManagerEmail',
+                                        onChange: onChange,
+                                        data: info,
+                                        disabled: true
+                                    })}
                                 </BoxCard>
 
                                 <BoxCard title={'운송 정보'}>
@@ -287,7 +328,7 @@ export default function EstimateWrite({dataInfo}) {
                                                 e.stopPropagation();
                                                 openModal('maker');
                                             }
-                                        }/>, onChange: onChange, handleKeyPress:handleKeyPress,data: info
+                                        }/>, onChange: onChange, handleKeyPress: handleKeyPress, data: info
                                     })}
                                     {inputForm({title: 'ITEM', id: 'item', onChange: onChange, data: info})}
                                 </BoxCard>

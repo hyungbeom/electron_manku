@@ -74,7 +74,7 @@ export default function delivery_read({dataInfo}) {
             return message.error('삭제할 데이터를 선택해주세요.')
         }
         const deleteIdList = gridManage.getFieldValue(gridRef, 'deliveryId')
-        await deleteDelivery({data: {deleteIdList: deleteIdList}});
+        await deleteDelivery({data: {deleteIdList: deleteIdList}, returnFunc: searchInfo});
     }
 
     /**

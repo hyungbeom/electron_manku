@@ -26,6 +26,7 @@ export default function order_update({dataInfo}) {
     const gridRef = useRef(null);
     const router = useRouter();
 
+    console.log(dataInfo, 'dataInfo:::')
 
     const copyUnitInit = _.cloneDeep(orderDetailUnit)
 
@@ -85,11 +86,16 @@ export default function order_update({dataInfo}) {
             formData.append(`attachmentFileList[${index}].fileName`, file.name.replace(/\s+/g, ""));
         });
 
+
         //기존 기준 사라진 파일
         const result = infoFileInit.filter(itemA => !fileRef.current.fileList.some(itemB => itemA.id === itemB.id));
         result.map((v, idx) => {
             formData.append(`deleteAttachementIdList[${idx}]`, v.id);
         })
+
+        formData.delete('createdDate')
+        formData.delete('modifiedDate')
+
 
         await updateOrder({data: formData})
     }
@@ -211,6 +217,12 @@ export default function order_update({dataInfo}) {
                                     title: '작성자',
                                     id: 'createdBy',
                                     disabled: true,
+                                    onChange: onChange,
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: '담당자',
+                                    id: 'estimateManager',
                                     onChange: onChange,
                                     data: info
                                 })}

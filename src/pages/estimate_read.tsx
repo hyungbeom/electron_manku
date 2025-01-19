@@ -72,15 +72,16 @@ export default function EstimateRead({dataInfo}) {
         if (gridRef.current.getSelectedRows().length < 1) {
             return message.error('삭제할 데이터를 선택해주세요.')
         }
+        console.log(gridRef.current.getSelectedRows(),'??')
 
         const fieldMappings = {
             estimateId: 'estimateId',
-            estimateDetailIdList: 'estimateDetailIdList'
+            estimateDetailIdList: 'estimateDetailId'
         };
 
         const deleteList = gridManage.getFieldDeleteList(gridRef, fieldMappings);
 
-        await deleteOrder({data: {deleteList: deleteList}, returnFunc: searchInfo});
+        await deleteEstimate({data: {deleteList: deleteList}, returnFunc: searchInfo});
 
     }
 

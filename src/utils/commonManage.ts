@@ -80,7 +80,7 @@ gridManage.getFieldDeleteList = function (gridRef, fieldMappings) {
                 // @ts-ignore
                 if (row[field] !== undefined) {
                     // @ts-ignore
-                    mappedObject[key] = row[field];
+                    mappedObject[key] = parseFloat(row[field]);
                 }
             }
             return mappedObject;
@@ -327,6 +327,11 @@ commonManage.getCheckList = function (gridRef) {
 
 
 commonManage.onChange = function (e, setInfo) {
+    if(e.target.id === 'documentNumberFull'){
+        commonFunc.unValidateInput('documentNumberFull')
+
+
+    }
     let bowl = {}
     bowl[e.target.id] = e.target.value;
     setInfo(v => {
@@ -476,6 +481,22 @@ commonManage.changeCurr = function (value) {
 commonFunc.repeatObject = function(item, numb){
     return Array.from({ length: numb }, () => ({ ...item }));
 }
+commonFunc.validateInput = function(id){
+    const inputElement = document.getElementById(id);
+    if (inputElement) {
+        inputElement.style.border = "1px solid red"; // 빨간색 테두리
+        inputElement.style.boxShadow = "none"; // 그림자 제거
+        inputElement.focus();
+    }
+}
+commonFunc.unValidateInput = function(id){
+    const inputElement = document.getElementById(id);
+    if (inputElement) {
+        inputElement.style.border = ""; // 빨간색 테두리
+        inputElement.style.boxShadow = ""; // 그림자 제거
+    }
+}
+
 
 commonFunc.sumCalc = function calculateTotals(rowData) {
 

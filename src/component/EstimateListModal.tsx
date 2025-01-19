@@ -1,12 +1,12 @@
 import TableGrid from "@/component/tableGrid";
-import {tableOrderReadColumns} from "@/utils/columnList";
+import {tableEstimateReadColumns, tableOrderReadColumns} from "@/utils/columnList";
 import Modal from "antd/lib/modal/Modal";
 import React, {useEffect, useRef, useState} from "react";
 import {searchOrder} from "@/utils/api/mainApi";
 import moment from "moment";
 import Button from "antd/lib/button";
 
-export default function OrderListModal({isModalOpen, setIsModalOpen, getRows}) {
+export default function EstimateListModal({isModalOpen, setIsModalOpen, getRows}) {
     const gridRef = useRef(null);
 
     /**
@@ -35,13 +35,8 @@ export default function OrderListModal({isModalOpen, setIsModalOpen, getRows}) {
             <TableGrid
                 gridRef={gridRef}
                 onGridReady={onGridReady}
-                columns={[...tableOrderReadColumns, {
-                    headerName: '실입고수량',
-                    field: '--',
-                    minWidth: 80,
-                    editable: true
-                }]}
-                // type={'write'}
+                columns={tableEstimateReadColumns}
+                type={'write'}
                 funcButtons={null}
             />
         </div>

@@ -12,6 +12,10 @@ import {InboxOutlined} from "@ant-design/icons";
 import {commonFunc, commonManage} from "@/utils/commonManage";
 import useEventListener from "@/utils/common/function/UseEventListener";
 import {searchEstimate} from "@/utils/api/mainApi";
+import OrderListModal from "@/component/OrderListModal";
+import _ from "lodash";
+import {storeDetailUnit} from "@/utils/initialList";
+import EstimateListModal from "@/component/EstimateListModal";
 
 const TableGrid = ({
                        gridRef,
@@ -28,7 +32,8 @@ const TableGrid = ({
 
     const [dragging, setDragging] = useState(false);
     const [pinnedBottomRowData, setPinnedBottomRowData] = useState([]);
-    const [page, setPage] = useState({x: null, y: null})
+    const [page, setPage] = useState({x: null, y: null, field : null, event : null})
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const ref = useRef(null);
 
 
@@ -144,6 +149,7 @@ const TableGrid = ({
     function dataChange(e) {
         // const updatedData = [...data];
         // const rowIndex = e.node.rowIndex;
+        console.log(e,'???')
         clickRowCheck(e.api);
         handleSelectionChanged();
     }
@@ -189,10 +195,21 @@ const TableGrid = ({
 
 
     const handleCellRightClick = (e) => {
+        if (e.event) {
+            e.event.preventDefault(); // 기본 컨텍스트 메뉴 막기
+        }
+
+
+        // if(e.column.getId() === 'connectInquiryNo'){
+        //     const rowNode = gridRef.current.getDisplayedRowAtIndex(e.node.rowIndex);
+        //     rowNode.setDataValue(e.column.getId(), "11114");
+        // }
+
+
 
         const {clientX, clientY} = e.event;
         e.event.preventDefault();
-        setPage({x: clientX, y: clientY})
+        setPage({x: clientX, y: clientY, field: e.column.getId(), event : e})
     }
 
 
@@ -209,14 +226,12 @@ const TableGrid = ({
     }, typeof window !== 'undefined' ? document : null)
 
     useEventListener('click', (e: any) => {
-        setPage({x: null, y: null})
+        setPage(v=> {
+            return {...v, x: null, y: null}
+        });
     }, typeof window !== 'undefined' ? document : null)
 
-    async function getEstimateInfo(v) {
-        let copyData = await searchEstimate({data: {searchDocumentNumber: v}});
-        return copyData;
 
-    }
 
     // async function getProjectDetail(e) {
     //     if (e.column.colId === 'connectInquiryNo') { // 특정 칼럼 조건
@@ -252,8 +267,40 @@ const TableGrid = ({
     //     }
     // }
 
+
+
+
+
+    function getSelectedRows(ref) {
+        if (ref.current) {
+            const selectedRows = ref.current.getSelectedRows();
+
+            // connectInquiryNo
+
+
+
+            if(selectedRows.length){
+                const list = selectedRows.map(v =>{
+                   return {...v, connectInquiryNo : v.documentNumberFull, currencyUnit :  v.currency}
+                })
+                gridRef.current.applyTransaction({
+                    remove: [page.event.node.data], // 삭제할 데이터
+                    add: list
+                });
+            }
+        } else {
+            console.warn('Grid API is not available.');
+            return [];
+        }
+    }
+
+    const showModal = () => {
+        setIsModalOpen(true);
+    };
+
     return (
         <>
+            <EstimateListModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} getRows={getSelectedRows}/>
             {page.x ? <div style={{
                 position: 'fixed',
                 top: page.y,
@@ -262,15 +309,27 @@ const TableGrid = ({
                 fontSize: 11,
                 backgroundColor: 'white',
                 border: '1px solid lightGray',
-                padding: 10,
+                width : 90,
+                cursor : 'pointer'
             }} ref={ref} id={'right'}>
-                <div onClick={() => {
-                    setPage({x: null, y: null})
+                { page.field === 'connectInquiryNo' ?<div onClick={() => {
+                    setPage(v=> {
+                        return {...v, x: null, y: null}
+                    });
+                    showModal();
+                }} id={'right'} style={{backgroundColor : 'lightgray', padding : 3}} >견적 Inquiry조회
+                </div> : <></>}
+                <div style={{paddingTop: 6, padding : 3}} onClick={() => {
+                    setPage(v=> {
+                        return {...v, x: null, y: null}
+                    });
                 }} id={'right'}>통합
                 </div>
-                <div style={{marginTop: 10}} onClick={() => {
+                <div style={{padding: 3,backgroundColor : 'lightgray'}} onClick={() => {
 
-                    setPage({x: null, y: null})
+                    setPage(v=> {
+                        return {...v, x: null, y: null}
+                    });
                 }}
                      id={'right'}>삭제
                 </div>

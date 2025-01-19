@@ -39,7 +39,7 @@ export default function OrderWriter({dataInfo}) {
     const adminParams = {
         managerAdminId: userInfo['adminId'],
         managerAdminName: userInfo['name'],
-        adminName: userInfo['name'],
+        createdBy: userInfo['name'],
         managerId: userInfo['name'],
         managerPhoneNumber: userInfo['contactNumber'],
         managerFaxNumber: userInfo['faxNumber'],
@@ -160,7 +160,7 @@ export default function OrderWriter({dataInfo}) {
 
                         <TopBoxCard title={'INQUIRY & PO no'} grid={'1fr 0.6fr 0.6fr 1fr 1fr 1fr'}>
                             {datePickerForm({title: '작성일', id: 'writtenDate', disabled: true, onChange : onChange,  data : info})}
-                            {inputForm({title: '작성자', id: 'adminName', disabled: true, onChange : onChange,  data : info})}
+                            {inputForm({title: '작성자', id: 'createdBy', disabled: true, onChange : onChange,  data : info})}
                             {inputForm({title: '담당자', id: 'managerAdminName', onChange : onChange,  data : info})}
 
                             {inputForm({title: '발주서 PO no', id: 'documentNumberFull', onChange : onChange,  data : info})}

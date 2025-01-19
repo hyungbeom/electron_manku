@@ -190,13 +190,6 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     const month = today.getMonth() + 1; // 오늘의 월 (0부터 시작하므로 +1)
 
 
-    const result = await getData.post('order/getOrderListByMonth', {
-        "year": '2024',     // 조회년도
-        "month": '10',       // 조회월
-
-        "searchDocumentNumber": "",     // 문서번호 검색
-        "searchCustomerName": ""        // 고객사명 검색
-    })
 
 
     return {

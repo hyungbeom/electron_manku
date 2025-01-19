@@ -51,6 +51,7 @@ export default function estimate_update({dataInfo}) {
     const router = useRouter();
 
 
+
     const copyUnitInit = _.cloneDeep(estimateDetailUnit)
 
     const infoInit = dataInfo?.estimateDetail
@@ -244,7 +245,7 @@ export default function estimate_update({dataInfo}) {
                                             e.stopPropagation();
                                             openModal('agencyCode');
                                         }
-                                    }/>, onChange: onChange, data: info
+                                    }/>, onChange: onChange, data: info, handleKeyPress : handleKeyPress
                                 })}
                                 {inputForm({title: '매입처명', id: 'agencyName', onChange: onChange, data: info,  disabled: true})}
                                 {inputForm({title: '담당자', id: 'agencyManagerName', onChange: onChange, data: info,  disabled: true})}
@@ -265,7 +266,7 @@ export default function estimate_update({dataInfo}) {
                                             e.stopPropagation();
                                             openModal('customerName');
                                         }
-                                    }/>, onChange: onChange, data: info
+                                    }/>, onChange: onChange, data: info, handleKeyPress : handleKeyPress
                                 })}
                                 {inputForm({title: '담당자', id: 'managerName', onChange: onChange, data: info,  disabled: true})}
                                 {inputForm({title: '전화번호', id: 'phoneNumber', onChange: onChange, data: info,  disabled: true})}
@@ -306,7 +307,7 @@ export default function estimate_update({dataInfo}) {
                                             openModal('maker');
                                         }
                                     }/>
-                                    , onChange: onChange, data: info
+                                    , onChange: onChange, data: info, handleKeyPress : handleKeyPress
                                 })}
                                 {inputForm({title: 'ITEM', id: 'item', onChange: onChange, data: info})}
                             </BoxCard>
