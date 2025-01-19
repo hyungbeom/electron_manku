@@ -154,8 +154,7 @@ export default function OrderWriter({dataInfo}) {
         <LayoutComponent>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`,
-                height: '100vh',
+                gridTemplateRows: `${mini ? '520px' : '65px'} calc(100vh - ${mini ? 575 : 120}px)`,
                 columnGap: 5
             }}>
                 <MainCard title={'발주서 작성'} list={[
@@ -167,19 +166,25 @@ export default function OrderWriter({dataInfo}) {
                     {mini ? <div>
 
                         <TopBoxCard title={'INQUIRY & PO no'} grid={'1fr 0.6fr 0.6fr 1fr 1fr 1fr'}>
-                            {datePickerForm({title: '작성일', id: 'writtenDate', disabled: true, onChange : onChange,  data : info})}
-                            {inputForm({title: '작성자', id: 'createdBy', disabled: true, onChange : onChange,  data : info})}
-                            {inputForm({title: '담당자', id: 'managerAdminName', onChange : onChange,  data : info})}
+                            {datePickerForm({
+                                title: '작성일',
+                                id: 'writtenDate',
+                                disabled: true,
+                                onChange: onChange,
+                                data: info
+                            })}
+                            {inputForm({title: '작성자', id: 'createdBy', disabled: true, onChange: onChange, data: info})}
+                            {inputForm({title: '담당자', id: 'managerAdminName', onChange: onChange, data: info})}
 
-                            {inputForm({title: '발주서 PO no', id: 'documentNumberFull', onChange : onChange,  data : info})}
+                            {inputForm({title: '발주서 PO no', id: 'documentNumberFull', onChange: onChange, data: info})}
                             {inputForm({
                                 placeholder: '폴더생성 규칙 유의',
                                 title: '연결 INQUIRY No.',
                                 id: 'ourPoNo',
                                 suffix: <DownloadOutlined style={{cursor: 'pointer'}}/>,
-                                 onChange : onChange,  data : info
+                                onChange: onChange, data: info
                             })}
-                            {inputForm({title: '거래처 PO no', id: 'yourPoNo', onChange : onChange,  data : info})}
+                            {inputForm({title: '거래처 PO no', id: 'yourPoNo', onChange: onChange, data: info})}
                         </TopBoxCard>
 
                         <div style={{
@@ -190,16 +195,16 @@ export default function OrderWriter({dataInfo}) {
                         }}>
 
                             <BoxCard title={'CUSTOMER & SUPPLY'}>
-                                {inputForm({title: 'Messrs', id: 'agencyCode', onChange : onChange,  data : info})}
-                                {inputForm({title: 'Attn To', id: 'attnTo', onChange : onChange,  data : info})}
-                                {inputForm({title: '매입처명', id: 'agencyName', onChange : onChange,  data : info})}
+                                {inputForm({title: 'Messrs', id: 'agencyCode', onChange: onChange, data: info})}
+                                {inputForm({title: 'Attn To', id: 'attnTo', onChange: onChange, data: info})}
+                                {inputForm({title: '매입처명', id: 'agencyName', onChange: onChange, data: info})}
                             </BoxCard>
 
                             <BoxCard title={'MANAGER IN CHARGE'}>
-                                {inputForm({title: 'Responsibility', id: 'managerId', onChange : onChange,  data : info})}
-                                {inputForm({title: 'TEL', id: 'managerPhoneNumber', onChange : onChange,  data : info})}
-                                {inputForm({title: 'Fax', id: 'managerFaxNumber', onChange : onChange,  data : info})}
-                                {inputForm({title: 'E-Mail', id: 'managerEmail', onChange : onChange,  data : info})}
+                                {inputForm({title: 'Responsibility', id: 'managerId', onChange: onChange, data: info})}
+                                {inputForm({title: 'TEL', id: 'managerPhoneNumber', onChange: onChange, data: info})}
+                                {inputForm({title: 'Fax', id: 'managerFaxNumber', onChange: onChange, data: info})}
+                                {inputForm({title: 'E-Mail', id: 'managerEmail', onChange: onChange, data: info})}
 
                             </BoxCard>
                             <BoxCard title={'LOGISTICS'}>
@@ -216,18 +221,23 @@ export default function OrderWriter({dataInfo}) {
                                             ]} style={{width: '100%'}}>
                                     </Select>
                                 </div>
-                                {inputForm({title: 'Delivery Terms', id: 'deliveryTerms', onChange : onChange,  data : info})}
-                                {inputForm({title: 'MAKER', id: 'maker', onChange : onChange,  data : info})}
-                                {inputForm({title: 'ITEM', id: 'item', onChange : onChange,  data : info})}
-                                {inputForm({title: 'Delivery', id: 'delivery', onChange : onChange,  data : info})}
+                                {inputForm({
+                                    title: 'Delivery Terms',
+                                    id: 'deliveryTerms',
+                                    onChange: onChange,
+                                    data: info
+                                })}
+                                {inputForm({title: 'MAKER', id: 'maker', onChange: onChange, data: info})}
+                                {inputForm({title: 'ITEM', id: 'item', onChange: onChange, data: info})}
+                                {inputForm({title: 'Delivery', id: 'delivery', onChange: onChange, data: info})}
                             </BoxCard>
 
                             <BoxCard title={'ETC'}>
-                                {inputForm({title: '견적서담당자', id: 'estimateManager', onChange : onChange,  data : info})}
-                                {textAreaForm({title: '비고란', rows: 6, id: 'remarks', onChange : onChange,  data : info})}
+                                {inputForm({title: '견적서담당자', id: 'estimateManager', onChange: onChange, data: info})}
+                                {textAreaForm({title: '비고란', rows: 6, id: 'remarks', onChange: onChange, data: info})}
                             </BoxCard>
                             <BoxCard title={'드라이브 목록'}>
-                                   {/*@ts-ignored*/}
+                                {/*@ts-ignored*/}
                                 <div style={{overFlowY: "auto", maxHeight: 300}}>
                                     <DriveUploadComp infoFileInit={[]} fileRef={fileRef} numb={4}/>
                                 </div>
@@ -249,7 +259,7 @@ export default function OrderWriter({dataInfo}) {
     </>
 }
 
-export const getServerSideProps:any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
+export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
     const {query} = ctx;
 
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);

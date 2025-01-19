@@ -555,15 +555,30 @@ commonManage.commonCalc = function (info) {
 
 // ----------------------------------------------------------------------------------------
 
-commonManage.setInfoFormData = function (info , formData, listType) {
+commonManage.setInfoFormData = function (info , formData, listType, list?) {
     for (const {key, value} of commonManage.commonCalc(info)) {
         if (key !== listType) {
             formData.append(key, value);
         }
     }
-
-
+    this.setInfoDetailFormData(formData, listType, list)
 }
+commonManage.setInfoDetailFormData = function (formData, listType, list?) {
+    list.forEach((detail, index) => {
+        Object.keys(detail).forEach((key) => {
+            formData.append(`${listType}[${index}].${key}`, detail[key]);
+        });
+    });
+}
+
+commonManage.setInfoDetailFormData = function (formData, listType, list?) {
+    list.forEach((detail, index) => {
+        Object.keys(detail).forEach((key) => {
+            formData.append(`${listType}[${index}].${key}`, detail[key]);
+        });
+    });
+}
+
 
 
 commonManage.getUploadList = function (fileRef, formData) {

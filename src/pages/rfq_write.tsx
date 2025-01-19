@@ -197,9 +197,7 @@ export default function rqfWrite({dataInfo}) {
      */
     const subTableUtil = <div style={{display: 'flex', alignItems: 'end'}}>
         {/*@ts-ignore*/}
-        <Upload {...uploadProps} size={'small'} style={{marginLeft: 5}} showUploadList={false}>
-            <Button icon={<UploadOutlined/>} size={'small'}>엑셀 업로드</Button>
-        </Upload>
+        
         <Button type={'primary'} size={'small'} style={{marginLeft: 5}}
                 onClick={addRow}>
             <SaveOutlined/>추가
@@ -320,9 +318,9 @@ export default function rqfWrite({dataInfo}) {
                                 <BoxCard title={'드라이브 목록'}>
                                     {/*@ts-ignored*/}
                                     <div style={{overFlowY: "auto", maxHeight: 300}}>
-                                        <div style={{width : 100, float : 'right'}}>
+                                        <div style={{width : 150, height : 80, float : 'right' }}>
                                             {selectBoxForm({
-                                                title: '', id: 'uploadType', onChange: onChange, data: info, list: [
+                                                title: '', id: 'uploadType', onChange: onChange, size : 'middle',data: info, list: [
                                                     {value: 0, label: '요청자료'},
                                                     {value: 1, label: '첨부파일'},
                                                     {value: 2, label: '업체회신자료'}

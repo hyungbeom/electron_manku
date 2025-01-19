@@ -78,20 +78,15 @@ export default function projectUpdate({dataInfo}) {
             return message.warn('하위 데이터 1개 이상이여야 합니다');
         }
 
-        list.forEach((detail, index) => {
-            Object.keys(detail).forEach((key) => {
-                formData.append(`${listType}[${index}].${key}`, detail[key]);
-            });
-        });
-
 
         const formData: any = new FormData();
 
-        commonManage.setInfoFormData(info, formData, listType)
+        commonManage.setInfoFormData(info, formData, listType, list)
         commonManage.getUploadList(fileRef, formData)
 
-        const result = infoFileInit.filter(itemA => !fileRef.current.fileList.some(itemB => itemA.id === itemB.id));
 
+
+        const result = infoFileInit.filter(itemA => !fileRef.current.fileList.some(itemB => itemA.id === itemB.id));
         result.map((v, idx) => {
             formData.append(`deleteAttachmentIdList[${idx}]`, v.id);
         })
@@ -113,41 +108,6 @@ export default function projectUpdate({dataInfo}) {
 
     }
 
-
-    function clearAll() {
-        setInfo({...infoInit});
-        gridManage.deleteAll(gridRef)
-    }
-
-
-    /**
-     * @description 업로드 속성설정 property 세팅
-     */
-    const uploadProps = {
-        name: 'file',
-        accept: '.xlsx, .xls',
-        multiple: false,
-        showUploadList: false,
-        beforeUpload: (file) => {
-            const isExcel = file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
-                file.type === 'application/vnd.ms-excel' ||
-                file.name.toLowerCase().endsWith('.xlsx') ||
-                file.name.toLowerCase().endsWith('.xls');
-
-            if (!isExcel) {
-                message.error('엑셀 파일만 업로드 가능합니다.');
-                return Upload.LIST_IGNORE;
-            }
-
-            commonManage.excelFileRead(file).then(v => {
-                let copyData = {...info}
-                copyData[listType] = v;
-                setInfo(copyData);
-            })
-            return false;
-        },
-    };
-
     function copyPage() {
         const totalList = gridManage.getAllData(gridRef)
         let copyInfo = _.cloneDeep(info)
@@ -158,15 +118,7 @@ export default function projectUpdate({dataInfo}) {
         router.push(`/project_write?${query}`)
     }
 
-
-    /**
-     * @description 테이블 우측상단 관련 기본 유틸버튼
-     */
     const subTableUtil = <div style={{display: 'flex', alignItems: 'end'}}>
-        {/*@ts-ignore*/}
-        <Upload {...uploadProps} size={'small'} style={{marginLeft: 5}} showUploadList={false}>
-            <Button icon={<UploadOutlined/>} size={'small'}>엑셀 업로드</Button>
-        </Upload>
         <Button type={'primary'} size={'small'} style={{marginLeft: 5}}
                 onClick={addRow}>
             <SaveOutlined/>추가

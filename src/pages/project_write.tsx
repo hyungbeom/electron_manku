@@ -109,19 +109,7 @@ export default function projectWrite({dataInfo}) {
             });
         });
 
-        const uploadContainer = document.querySelector(".ant-upload-list"); // 업로드 리스트 컨테이너
-
-        if (uploadContainer) {
-            const fileNodes = uploadContainer.querySelectorAll(".ant-upload-list-item-name");
-            const fileNames = Array.from(fileNodes).map((node:any) => node.textContent.trim());
-
-            const filesToSave = fileRef.current.fileList.map((item) => item.originFileObj).filter((file) => file instanceof File);
-
-            filesToSave.forEach((file, index) => {
-                formData.append(`attachmentFileList[${index}].attachmentFile`, file);
-                formData.append(`attachmentFileList[${index}].fileName`, fileNames[index].replace(/\s+/g, ""));
-            });
-        }
+        commonManage.getUploadList(fileRef, formData)
 
         formData.delete('createdDate')
         formData.delete('modifiedDate')
@@ -146,63 +134,7 @@ export default function projectWrite({dataInfo}) {
         gridManage.deleteAll(gridRef);
     }
 
-
-    /**
-     * @description 업로드 속성설정 property 세팅
-     */
-    const uploadProps = {
-        name: 'file',
-        accept: '.xlsx, .xls',
-        multiple: false,
-        showUploadList: false,
-        beforeUpload: (file) => {
-            const isExcel = file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
-                file.type === 'application/vnd.ms-excel' ||
-                file.name.toLowerCase().endsWith('.xlsx') ||
-                file.name.toLowerCase().endsWith('.xls');
-
-            if (!isExcel) {
-                message.error('엑셀 파일만 업로드 가능합니다.');
-                return Upload.LIST_IGNORE;
-            }
-
-            commonManage.excelFileRead(file).then(v => {
-                let copyData = {...info}
-                copyData[listType] = v;
-                setInfo(copyData);
-            })
-            return false;
-        },
-    };
-
-
-    const props: UploadProps = {
-        name: 'file',
-        action: 'https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload',
-        headers: {
-            authorization: 'authorization-text',
-        },
-        onChange(info) {
-            if (info.file.status !== 'uploading') {
-                console.log(info.file, info.fileList);
-            }
-            if (info.file.status === 'done') {
-                message.success(`${info.file.name} file uploaded successfully`);
-            } else if (info.file.status === 'error') {
-                message.error(`${info.file.name} file upload failed.`);
-            }
-        },
-    };
-
-
-    /**
-     * @description 테이블 우측상단 관련 기본 유틸버튼
-     */
     const subTableUtil = <div style={{display: 'flex', alignItems: 'end'}}>
-        {/*@ts-ignore*/}
-        <Upload {...uploadProps} size={'small'} style={{marginLeft: 5}} showUploadList={false}>
-            <Button icon={<UploadOutlined/>} size={'small'}>엑셀 업로드</Button>
-        </Upload>
         <Button type={'primary'} size={'small'} style={{marginLeft: 5}}
                 onClick={addRow}>
             <SaveOutlined/>추가

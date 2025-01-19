@@ -62,14 +62,13 @@ export function MainCard({children, title, list, mini = null, setMini = Function
                 columnGap: 8
             }}>
 
-                {list.map(v => <Button type={v.type} size={'small'}
+                {list.map(v => <Button type={v.type} style={{fontSize : 11}} size={'small'}
                                        onClick={v.func}><SaveOutlined/>{v.name}</Button>)}
 
                 {mini !== null ? <span style={{fontSize: 20, cursor: 'pointer', marginTop: -5}}
                                        onClick={() => setMini(v => !v)}> {!mini ?
                     <DownCircleFilled/> : <UpCircleFilled/>}</span> : <></>}
             </div>
-
         </div>
     }>
         {children}
@@ -171,11 +170,11 @@ export const radioForm = ({title, id, disabled = false, data, onChange, list}) =
     </>
 }
 
-export const selectBoxForm = ({title, id, disabled = false, data, onChange, list}) => {
+export const selectBoxForm = ({title, id, disabled = false, data, onChange, list, size='small'}) => {
 
     return <>
         <div>{title}</div>
-        <Select id={id} size={'small'} value={data[id]}
+        <Select id={id} size={size} value={data[id]}
                 onChange={(src) => onChange({target: {id: id, value: src}})}
                 options={list} style={{width: '100%'}}>
         </Select>
