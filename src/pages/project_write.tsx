@@ -1,27 +1,8 @@
 import React, {useRef, useState} from "react";
-import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
-import Card from "antd/lib/card/Card";
-import TextArea from "antd/lib/input/TextArea";
-import {
-    CopyOutlined,
-    DownCircleFilled,
-    FileSearchOutlined,
-    RetweetOutlined,
-    SaveOutlined,
-    UpCircleFilled,
-    UploadOutlined
-} from "@ant-design/icons";
-import {projectWriteColumn, subRfqWriteColumn} from "@/utils/columnList";
-import DatePicker from "antd/lib/date-picker";
-import {
-    estimateDetailUnit,
-    estimateRequestDetailUnit,
-    estimateWriteInitial,
-    ModalInitList, projectDetailUnit, projectWriteInitial,
-    rfqWriteInitial
-} from "@/utils/initialList";
-import moment from "moment";
+import {CopyOutlined, FileSearchOutlined, SaveOutlined, UploadOutlined} from "@ant-design/icons";
+import {projectWriteColumn} from "@/utils/columnList";
+import {ModalInitList, projectDetailUnit, projectWriteInitial} from "@/utils/initialList";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
 import {wrapper} from "@/store/store";
@@ -35,10 +16,9 @@ import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, TopBoxCard} 
 import {useRouter} from "next/router";
 import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
 import _ from "lodash";
-import {saveEstimate, saveProject, saveRfq} from "@/utils/api/mainApi";
+import {saveProject} from "@/utils/api/mainApi";
 import {findCodeInfo} from "@/utils/api/commonApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
-import {list} from "postcss";
 
 const listType = 'projectDetailList'
 export default function projectWrite({dataInfo}) {
@@ -129,11 +109,20 @@ export default function projectWrite({dataInfo}) {
             });
         });
 
-        const filesToSave = fileRef.current.fileList.map((item) => item.originFileObj).filter((file) => file instanceof File);
-        filesToSave.forEach((file, index) => {
-            formData.append(`attachmentFileList[${index}].attachmentFile`, file);
-            formData.append(`attachmentFileList[${index}].fileName`, file.name.replace(/\s+/g, ""));
-        });
+        const uploadContainer = document.querySelector(".ant-upload-list"); // 업로드 리스트 컨테이너
+        if (uploadContainer) {
+            const fileNodes = uploadContainer.querySelectorAll(".ant-upload-list-item-name");
+            const fileNames = Array.from(fileNodes).map((node:any) => node.textContent.trim());
+
+
+            const filesToSave = fileRef.current.fileList.map((item) => item.originFileObj).filter((file) => file instanceof File);
+            filesToSave.forEach((file, index) => {
+                formData.append(`attachmentFileList[${index}].attachmentFile`, file);
+                formData.append(`attachmentFileList[${index}].fileName`, fileNames[index].replace(/\s+/g, ""));
+            });
+        }
+
+
 
         await saveProject({data: formData, router: router})
     }
@@ -333,7 +322,7 @@ export default function projectWrite({dataInfo}) {
                                 <BoxCard title={'드라이브 목록'}>
                                     {/*@ts-ignored*/}
                                     <div style={{overFlowY: "auto", maxHeight: 300}}>
-                                        <DriveUploadComp infoFileInit={[]} fileRef={fileRef}/>
+                                        <DriveUploadComp infoFileInit={[]} fileRef={fileRef} numb={5}/>
                                     </div>
                                 </BoxCard>
                             </div>

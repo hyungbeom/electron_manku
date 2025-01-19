@@ -1,10 +1,11 @@
 import Upload from "antd/lib/upload";
 import Button from "antd/lib/button";
 import Input from "antd/lib/input";
-import { UploadOutlined } from "@ant-design/icons";
-import React, { useState } from "react";
+import {UploadOutlined} from "@ant-design/icons";
+import React, {useState} from "react";
+import _ from "lodash";
 
-export function DriveUploadComp({ infoFileInit, fileRef }) {
+export function DriveUploadComp({infoFileInit, fileRef, numb=0}) {
     const [fileList, setFileList] = useState(
         infoFileInit.map((v) => ({
             ...v,
@@ -15,13 +16,8 @@ export function DriveUploadComp({ infoFileInit, fileRef }) {
     );
     const [editingFileId, setEditingFileId] = useState(null); // 수정 중인 파일 ID
     const [tempFileName, setTempFileName] = useState(""); // 임시 파일 이름 저장
+    const [fileExtension, setFileExtension] = useState(""); // 파일 확장자 저장
 
-
-    // 파일 이름 수정 시작
-    const handleDoubleClick = (file) => {
-        setEditingFileId(file.uid); // 수정 중인 파일 ID 설정
-        setTempFileName(file.name); // 기존 이름을 임시 저장
-    };
 
     // 파일 이름 수정 중
     const handleInputChange = (e) => {
@@ -32,7 +28,9 @@ export function DriveUploadComp({ infoFileInit, fileRef }) {
     const handleInputBlur = (file) => {
         setFileList((prevList) =>
             prevList.map((item) =>
-                item.uid === file.uid ? { ...item, name: tempFileName } : item
+                item.uid === file.uid
+                    ? {...item, name: `${tempFileName}${fileExtension}`}
+                    : item
             )
         );
         setEditingFileId(null); // 수정 상태 종료
@@ -54,35 +52,93 @@ export function DriveUploadComp({ infoFileInit, fileRef }) {
                     }
                 }
             }
-        }else{
+        } else {
             if (e.target.className === "ant-upload-list-item-name") {
                 setEditingFileId(file.uid); // 수정 중인 파일 ID 설정
-                setTempFileName(file.name); // 기존 이름을 임시 저장
+
+                // 파일 이름과 확장자를 분리
+                const dotIndex = file.name.lastIndexOf(".");
+                const namePart = dotIndex > 0 ? file.name.slice(0, dotIndex) : file.name;
+                const extensionPart = dotIndex > 0 ? file.name.slice(dotIndex) : "";
+
+                setTempFileName(namePart); // 파일 이름 저장
+                setFileExtension(extensionPart); // 확장자 저장
             }
         }
     };
 
+    function fileChange({ file, fileList }) {
+        // 중복 파일 확인
+        const isDuplicate = fileList.some(v => v?.uid === file?.uid);
+
+        if (!isDuplicate) {
+            // 중복이 없으면 리스트 업데이트
+            setFileList(fileList);
+            return;
+        }
+
+        // 중복 파일 처리
+        const duplicateFile = fileList.find(v => v?.uid === file?.uid);
+
+        if (duplicateFile) {
+            // 파일 이름에서 기존 번호 추출
+            const existingNumbers = fileList
+                .map(f => {
+                    const match = f.name.match(/^0\d+\.(\d+)/);
+                    return match ? parseInt(match[1], 10) : null;
+                })
+                .filter(num => num !== null) // 유효한 숫자만 필터링
+                .sort((a, b) => a - b); // 숫자 정렬
+
+            // 첫 번째 빈 번호 찾기
+            let newNumber = 1;
+            for (let i = 0; i < existingNumbers.length; i++) {
+                if (existingNumbers[i] !== i + 1) {
+                    newNumber = i + 1;
+                    break;
+                } else {
+                    newNumber = existingNumbers.length + 1;
+                }
+            }
+
+            // 새로운 파일 생성
+            const newFile = {
+                ...duplicateFile,
+                name: `0${numb}.${newNumber} ${duplicateFile.name}`,
+                originFileObj: {
+                    ...duplicateFile.originFileObj,
+                    name: `0${numb}.${newNumber} ${duplicateFile.name}`,
+                },
+            };
+
+            // 파일 리스트 업데이트
+            setFileList(prevList => [...prevList, newFile]);
+        }
+    }
     return (
         <Upload
             fileList={fileList} // 상태 기반의 파일 리스트
-            onChange={({ fileList }) => setFileList(fileList)} // 파일 리스트 업데이트
+            onChange={fileChange} // 파일 리스트 업데이트
+            // onChange={({ fileList }) => setFileList(fileList)} // 파일 리스트 업데이트
             itemRender={(originNode, file) => {
                 return (
                     <div
-                        style={{ cursor: "pointer" }}
-                        onDoubleClick={() => handleDoubleClick(file)} // 더블 클릭 이벤트
+                        style={{cursor: "pointer"}}
                         onClick={(e) => handleClick(file, e)} // 기존 클릭 이벤트
                     >
                         {editingFileId === file.uid ? (
-                            <Input
-                                style={{paddingLeft : 20}}
-                                size={'small'}
-                                value={tempFileName}
-                                autoFocus
-                                onChange={handleInputChange}
-                                onBlur={() => handleInputBlur(file)} // 수정 완료
-                                onPressEnter={() => handleInputBlur(file)} // Enter 키로 수정 완료
-                            />
+                            <div style={{display: "flex", alignItems: "center"}}>
+                                <Input
+                                    style={{paddingLeft: 20, flex: 1}}
+                                    size="small"
+                                    value={tempFileName}
+                                    autoFocus
+                                    onChange={handleInputChange}
+                                    onBlur={() => handleInputBlur(file)} // 수정 완료
+                                    onPressEnter={() => handleInputBlur(file)} // Enter 키로 수정 완료
+                                />
+                                <span style={{marginLeft: 5}}>{fileExtension}</span>
+                            </div>
                         ) : (
                             originNode
                         )}
@@ -92,9 +148,8 @@ export function DriveUploadComp({ infoFileInit, fileRef }) {
             ref={fileRef}
             beforeUpload={() => false}
             maxCount={13}
-            multiple
         >
-            <Button icon={<UploadOutlined />}>Upload</Button>
+            <Button icon={<UploadOutlined/>}>Upload</Button>
         </Upload>
     );
 }
