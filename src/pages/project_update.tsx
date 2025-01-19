@@ -72,9 +72,9 @@ export default function projectUpdate({dataInfo}) {
         if (!info['documentNumberFull']) {
             return message.warn('프로젝트 번호가 누락되었습니다.')
         }
-        const tableList = gridManage.getAllData(gridRef);
+        const list = gridManage.getAllData(gridRef);
 
-        if (!tableList.length) {
+        if (!list.length) {
             return message.warn('하위 데이터 1개 이상이여야 합니다');
         }
 
@@ -89,21 +89,33 @@ export default function projectUpdate({dataInfo}) {
         };
 
         handleIteration();
-        tableList.forEach((detail, index) => {
+        list.forEach((detail, index) => {
             Object.keys(detail).forEach((key) => {
                 formData.append(`${listType}[${index}].${key}`, detail[key]);
             });
         });
 
-        const filesToSave = fileRef.current.fileList.map((item) => item.originFileObj).filter((file) => file instanceof File);
-
-        filesToSave.forEach((file, index) => {
-            formData.append(`attachmentFileList[${index}].attachmentFile`, file);
-            formData.append(`attachmentFileList[${index}].fileName`, file.name.replace(/\s+/g, ""));
-        });
-
         //기존 기준 사라진 파일
         const result = infoFileInit.filter(itemA => !fileRef.current.fileList.some(itemB => itemA.id === itemB.id));
+
+        const uploadContainer = document.querySelector(".ant-upload-list"); // 업로드 리스트 컨테이너
+
+        if (uploadContainer) {
+            const fileNodes = uploadContainer.querySelectorAll(".ant-upload-list-item-name");
+            const fileNames = Array.from(fileNodes).map((node:any) => node.textContent.trim());
+            console.log(fileRef.current.fileList,'fileNames::')
+
+            let count = 0
+            fileRef.current.fileList.forEach((item, index) => {
+                if(item?.originFileObj){
+                    formData.append(`attachmentFileList[${count}].attachmentFile`, item.originFileObj);
+                    formData.append(`attachmentFileList[${count}].fileName`, fileNames[index].replace(/\s+/g, ""));
+                    count += 1;
+                }
+            });
+
+        }
+
         result.map((v, idx) => {
             formData.append(`deleteAttachmentIdList[${idx}]`, v.id);
         })
@@ -301,7 +313,7 @@ export default function projectUpdate({dataInfo}) {
                                 <BoxCard title={'드라이브 목록'}>
                                     {/*@ts-ignored*/}
                                     <div style={{overFlowY: "auto", maxHeight: 300}}>
-                                        <DriveUploadComp infoFileInit={infoFileInit} fileRef={fileRef}/>
+                                        <DriveUploadComp infoFileInit={infoFileInit} fileRef={fileRef} numb={5}/>
                                     </div>
                                 </BoxCard>
                             </div>

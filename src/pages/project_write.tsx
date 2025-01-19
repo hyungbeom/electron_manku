@@ -110,7 +110,7 @@ export default function projectWrite({dataInfo}) {
         });
 
         const uploadContainer = document.querySelector(".ant-upload-list"); // 업로드 리스트 컨테이너
-        console.log(uploadContainer,'uploadContainer::')
+
         if (uploadContainer) {
             const fileNodes = uploadContainer.querySelectorAll(".ant-upload-list-item-name");
             const fileNames = Array.from(fileNodes).map((node:any) => node.textContent.trim());

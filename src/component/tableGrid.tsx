@@ -269,14 +269,9 @@ const TableGrid = ({
         if (ref.current) {
             const selectedRows = ref.current.getSelectedRows();
 
-            // connectInquiryNo
-
-
-            console.log(selectedRows, 'selectedRows:')
-
             if (selectedRows.length) {
                 const list = selectedRows.map(v => {
-                    return {...v, connectInquiryNo: v.documentNumberFull, currencyUnit: v.currency, spec: v.unit}
+                    return {...v, connectInquiryNo: v.documentNumberFull, currencyUnit: v.currency, spec: v.unit, agencyManagerPhone : v.agencyManagerPhoneNumber}
                 })
                 gridRef.current.applyTransaction({
                     remove: [page.event.node.data], // 삭제할 데이터

@@ -2,7 +2,7 @@ import TableGrid from "@/component/tableGrid";
 import {tableEstimateReadColumns, tableOrderReadColumns} from "@/utils/columnList";
 import Modal from "antd/lib/modal/Modal";
 import React, {useEffect, useRef, useState} from "react";
-import {searchOrder} from "@/utils/api/mainApi";
+import {searchEstimate, searchOrder} from "@/utils/api/mainApi";
 import moment from "moment";
 import Button from "antd/lib/button";
 
@@ -16,7 +16,7 @@ export default function EstimateListModal({isModalOpen, setIsModalOpen, getRows}
      */
     const onGridReady = async (params) => {
         gridRef.current = params.api;
-        const data = await searchOrder({data: {"searchStartDate": '', "searchEndDate": ''}});
+        const data = await searchEstimate({data: {"searchStartDate": '', "searchEndDate": ''}});
         gridRef.current.applyTransaction({add: data});
     };
 
