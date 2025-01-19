@@ -117,7 +117,7 @@ export const rfqWriteInitial = {
 // =============================
 
 
-    remarks: 'note',
+    remarks: '',
     endUser: '',
 
 // ===========================

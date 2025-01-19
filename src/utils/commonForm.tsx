@@ -10,6 +10,7 @@ import {commonManage} from "@/utils/commonManage";
 import Radio from "antd/lib/radio";
 import TextArea from "antd/lib/input/TextArea";
 import Select from "antd/lib/select";
+import Tooltip from "antd/lib/tooltip";
 
 const {RangePicker} = DatePicker
 
@@ -62,8 +63,8 @@ export function MainCard({children, title, list, mini = null, setMini = Function
                 columnGap: 8
             }}>
 
-                {list.map(v => <Button type={v.type} style={{fontSize : 11}} size={'small'}
-                                       onClick={v.func}><SaveOutlined/>{v.name}</Button>)}
+                {list.map(v => <Tooltip title={v.title} placement={v.place} color={'cyan'} key={'cyan'}><Button type={v.type} style={{fontSize : 11}} size={'small'}
+                                                                                                     onClick={v.func}><SaveOutlined/>{v.name}</Button></Tooltip>)}
 
                 {mini !== null ? <span style={{fontSize: 20, cursor: 'pointer', marginTop: -5}}
                                        onClick={() => setMini(v => !v)}> {!mini ?

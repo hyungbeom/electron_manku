@@ -4,6 +4,7 @@ import Input from "antd/lib/input";
 import {UploadOutlined} from "@ant-design/icons";
 import React, {useState} from "react";
 import _ from "lodash";
+import Tooltip from "antd/lib/tooltip";
 
 export function DriveUploadComp({infoFileInit, fileRef, numb=0}) {
     const [fileList, setFileList] = useState(
@@ -129,6 +130,7 @@ export function DriveUploadComp({infoFileInit, fileRef, numb=0}) {
         }
     }
     return (
+        <Tooltip placement={'leftTop'} title="SHARE_POINT에 업로드합니다." color={'cyan'} key={'cyan'}>
         <Upload
 
             fileList={fileList} // 상태 기반의 파일 리스트
@@ -173,7 +175,8 @@ export function DriveUploadComp({infoFileInit, fileRef, numb=0}) {
             beforeUpload={() => false}
             maxCount={13}
         >
-            <Button icon={<UploadOutlined/>}>Upload</Button>
+            <Button size={'small'} icon={<UploadOutlined/>}>Upload</Button>
         </Upload>
+        </Tooltip>
     );
 }
