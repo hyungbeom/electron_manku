@@ -109,7 +109,7 @@ export default function rfqRead({dataInfo}) {
                 ]} mini={mini} setMini={setMini}>
                     {mini ?  <div style={{
                         display: 'grid',
-                        gridTemplateColumns: "200px 250px 1fr 1fr",
+                        gridTemplateColumns: "200px 250px 300px 1fr",
                     }}>
                         <BoxCard>
 
@@ -164,7 +164,6 @@ export default function rfqRead({dataInfo}) {
                                 data: info
                             })}
                         </BoxCard>
-
                     </div>  : <></>}
                 </MainCard>
 
