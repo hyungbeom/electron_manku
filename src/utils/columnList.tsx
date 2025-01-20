@@ -802,8 +802,8 @@ export const rfqReadColumns = [
         headerName: '작성일자',
         field: 'writtenDate',
         width: 130,
-        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
-        checkboxSelection: true, // 각 행에 체크박스 추가
+        headerCheckboxSelection: true,
+        checkboxSelection: true,
         pinned : 'left'
     },
 
@@ -2660,11 +2660,15 @@ export const projectReadColumn = [
     {
         headerName: 'PROJECT No.',
         field: 'documentNumberFull',
-        minWidth: 150,
+        maxWidth: 120,
+        headerCheckboxSelection: true,
+        checkboxSelection: true,
+        pinned : 'left'
     }, {
         headerName: '프로젝트 제목',
         field: 'projectTitle',
-        minWidth: 150,
+        maxWidth: 130,
+        pinned : 'left'
     }, {
         headerName: '거래처명',
         field: 'customerName',
@@ -2710,6 +2714,7 @@ export const projectReadColumn = [
         headerName: '총액',
         field: 'total',
         minWidth: 150,
+        pinned : 'right'
     }, {
         headerName: '화폐단위',
         field: 'currencyUnit',

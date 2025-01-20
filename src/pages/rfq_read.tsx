@@ -152,7 +152,7 @@ export default function rfqRead({dataInfo}) {
                     columns={rfqReadColumns}
                     onGridReady={onGridReady}
                     type={'read'}
-                    funcButtons={['listDelete', 'print']}
+                    funcButtons={['print']}
 
 
                 />

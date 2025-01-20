@@ -22,7 +22,7 @@ const TableGrid = ({
                        onGridReady = function () {
                        },
                        type = 'read',
-                       funcButtons,
+                       funcButtons = [],
                        onCellEditingStopped = null,
                        deleteComp = <></>
                    }: any) => {
@@ -364,7 +364,7 @@ const TableGrid = ({
 
                     <div style={{display: 'flex', alignItems: 'end', gap: 7}}>
                         {deleteComp}
-                        {funcButtons.map(v => tableButtonList(v, gridRef))}
+                        {funcButtons?.map(v => tableButtonList(v, gridRef))}
                     </div>
 
                 </div>
@@ -391,7 +391,7 @@ const TableGrid = ({
                         getRowStyle: (params) => {
                             // 짝수 행에만 스타일 적용
                             if (params.node.rowIndex % 2 === 1) {
-                                return { backgroundColor: "#e3f2fd" }; // 옅은 갈색
+                                return { backgroundColor: "#f5f5f5" }; // 옅은 갈색
                             }
                             return null; // 기본 스타일 유지
                         },

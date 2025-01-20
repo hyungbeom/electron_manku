@@ -6,7 +6,7 @@ import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import Button from "antd/lib/button";
-import {CopyOutlined, FileExcelOutlined} from "@ant-design/icons";
+import {CopyOutlined} from "@ant-design/icons";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
 import {deleteProjectList, searchProject} from "@/utils/api/mainApi";
@@ -14,7 +14,7 @@ import _ from "lodash";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import {BoxCard, inputForm, MainCard, rangePickerForm, TopBoxCard} from "@/utils/commonForm";
 import {useRouter} from "next/router";
-import moment from "moment/moment";
+import Spin from "antd/lib/spin";
 
 
 export default function ProjectRead({dataInfo}) {
@@ -25,6 +25,8 @@ export default function ProjectRead({dataInfo}) {
     const copyInit = _.cloneDeep(projectReadInitial)
 
     const [info, setInfo] = useState(copyInit)
+
+    const [loading, setLoading] = useState(false);
 
     const onGridReady = (params) => {
         gridRef.current = params.api;
@@ -43,8 +45,12 @@ export default function ProjectRead({dataInfo}) {
 
 
     async function searchInfo() {
-        let copyData = await searchProject({data: info});
-        gridManage.resetData(gridRef, copyData);
+        setLoading(true)
+        await searchProject({data: info}).then(v => {
+            gridManage.resetData(gridRef, v);
+            setLoading(false)
+        })
+
     }
 
     async function deleteList() {
@@ -62,33 +68,6 @@ export default function ProjectRead({dataInfo}) {
 
     }
 
-    const downloadExcel = async () => {
-        gridManage.exportSelectedRowsToExcel(gridRef, '프로젝트_목록')
-    };
-
-
-    function copyPage() {
-        const totalList = gridManage.getAllData(gridRef)
-        let copyInfo = _.cloneDeep(info)
-        // copyInfo[listType] = totalList
-        copyInfo['writtenDate'] = moment().format('YYYY-MM-DD')
-
-        const query = `data=${encodeURIComponent(JSON.stringify(copyInfo))}`;
-        router.push(`/project_write?${query}`)
-    }
-
-
-    const subTableUtil = <div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
-        <CopyOutlined onClick={copyPage}/>복사
-    </Button>
-        {/*@ts-ignored*/}
-        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}} onClick={deleteList}>
-            <CopyOutlined/>삭제
-        </Button>
-        <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft: 5}} onClick={downloadExcel}>
-            <FileExcelOutlined/>출력
-        </Button></div>
-
 
     function clearAll() {
         setInfo(copyInit)
@@ -99,7 +78,7 @@ export default function ProjectRead({dataInfo}) {
         router.push('/project_write')
     }
 
-    return <>
+    return <Spin spinning={loading} tip={'프로젝트 조회중...'}>
         <LayoutComponent>
             <div style={{
                 display: 'grid',
@@ -118,7 +97,7 @@ export default function ProjectRead({dataInfo}) {
 
                                 {inputForm({
                                     title: '작성자',
-                                    id: 'searchManagerAdminName',
+                                    id: 'searchCreatedBy',
                                     onChange: onChange,
                                     handleKeyPress: handleKeyPress,
                                     data: info
@@ -227,16 +206,21 @@ export default function ProjectRead({dataInfo}) {
                         : <></>}
                 </MainCard>
 
-                <TableGrid
-                    gridRef={gridRef}
-                    onGridReady={onGridReady}
-                    columns={projectReadColumn}
-                    funcButtons={subTableUtil}
+                {/*@ts-ignored*/}
+                <TableGrid deleteComp={<Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
+                                               onClick={deleteList}>
+                    <CopyOutlined/>삭제
+                </Button>}
+                           gridRef={gridRef}
+                           onGridReady={onGridReady}
+                           columns={projectReadColumn}
+                           funcButtons={['print']}
+
                 />
 
             </div>
         </LayoutComponent>
-    </>
+    </Spin>
 }
 
 
