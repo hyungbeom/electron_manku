@@ -38,9 +38,9 @@ export function TopBoxCard({children, title = '', grid = '1fr 1fr 1fr 1fr'}) {
     </Card>
 }
 
-export function BoxCard({children, title = ''}) {
+export function BoxCard({children, title = null}) {
 
-    return <Card size={'small'} title={<div style={{fontSize : 12}}>{title}</div>}
+    return <Card size={'small'} title={title ? <div style={{fontSize : 12}}>{title}</div> : null}
                  style={{
                      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
 

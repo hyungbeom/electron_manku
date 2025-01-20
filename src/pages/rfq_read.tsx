@@ -76,7 +76,7 @@ export default function rfqRead({dataInfo}) {
 
     function clearAll() {
         setInfo(copyInit);
-        gridRef.current.deselectAll()
+        gridRef.current.deselectAll();
     }
 
     function moveRegist() {
@@ -99,7 +99,7 @@ export default function rfqRead({dataInfo}) {
         <LayoutComponent>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '290px' : '65px'} calc(100vh - ${mini ? 345 : 120}px)`,
+                gridTemplateRows: `${mini ? 255 : 65}px calc(100vh - ${mini ? 310 : 120}px)`,
                 columnGap: 5
             }}>
                 <MainCard title={'견적의뢰 조회'} list={[
@@ -109,11 +109,9 @@ export default function rfqRead({dataInfo}) {
                 ]} mini={mini} setMini={setMini}>
                     {mini ?  <div style={{
                         display: 'grid',
-                        gridTemplateColumns: "200px 250px 300px ",
-                        gap: 10,
-                        marginTop: 10
+                        gridTemplateColumns: "200px 250px 1fr 1fr",
                     }}>
-                        <BoxCard title={''}>
+                        <BoxCard>
 
                             {rangePickerForm({title: '작성일자', id: 'searchDate', onChange: onChange, data: info})}
                             {selectBoxForm({
@@ -125,7 +123,7 @@ export default function rfqRead({dataInfo}) {
                             })}
                         </BoxCard>
 
-                        <BoxCard title={''}>
+                        <BoxCard>
                             {inputForm({
                                 title: '문서번호', id: 'searchDocumentNumber',
                                 onChange: onChange,
@@ -146,7 +144,7 @@ export default function rfqRead({dataInfo}) {
                             })}
                         </BoxCard>
 
-                        <BoxCard title={''}>
+                        <BoxCard>
                             {inputForm({
                                 title: 'MAKER', id: 'searchMaker',
                                 onChange: onChange,
