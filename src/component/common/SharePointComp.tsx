@@ -6,15 +6,8 @@ import React, {useState} from "react";
 import _ from "lodash";
 import Tooltip from "antd/lib/tooltip";
 
-export function DriveUploadComp({infoFileInit, fileRef, numb=0}) {
-    const [fileList, setFileList] = useState(
-        infoFileInit.map((v) => ({
-            ...v,
-            uid: v.uid || Math.random().toString(36).substr(2, 9), // 고유 UID 생성
-            name: v.fileName,
-            status: "done",
-        }))
-    );
+export function DriveUploadComp({fileList, setFileList, fileRef, numb=0}) {
+
     const [editingFileId, setEditingFileId] = useState(null); // 수정 중인 파일 ID
     const [tempFileName, setTempFileName] = useState(""); // 임시 파일 이름 저장
     const [fileExtension, setFileExtension] = useState(""); // 파일 확장자 저장

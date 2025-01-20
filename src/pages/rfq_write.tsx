@@ -36,6 +36,7 @@ import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {ExcelUpload} from "@/component/common/ExcelUpload";
 import Select from "antd/lib/select";
 import {getData} from "@/manage/function/api";
+import moment from "moment";
 
 const listType = 'estimateRequestDetailList'
 export default function rqfWrite({dataInfo, managerList}) {
@@ -60,6 +61,7 @@ export default function rqfWrite({dataInfo, managerList}) {
         managerAdminId: userInfo['adminId'],
         managerAdminName: userInfo['name'],
         createBy: userInfo['name'],
+
     }
 
     const infoInit = {
@@ -67,8 +69,8 @@ export default function rqfWrite({dataInfo, managerList}) {
         ...adminParams
     }
 
-    const [info, setInfo] = useState<any>({...copyInit, ...dataInfo, ...adminParams})
-    const [validate, setValidate] = useState({agencyCode : !!dataInfo, documentNumberFull : !!dataInfo});
+    const [info, setInfo] = useState<any>({...copyInit, ...dataInfo, ...adminParams, writtenDate: moment().format('YYYY-MM-DD')})
+    const [validate, setValidate] = useState({agencyCode: !!dataInfo, documentNumberFull: !!dataInfo});
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
 
@@ -79,11 +81,17 @@ export default function rqfWrite({dataInfo, managerList}) {
         params.api.applyTransaction({add: result ? result : []});
     };
 
-
     useEffect(() => {
-
-
+        initCopyLoadInquiry()
     }, []);
+
+    async function initCopyLoadInquiry() {
+        if (dataInfo) {
+            await checkInquiryNo({data: {agencyCode: dataInfo['agencyCode'], type: ''}}).then(data => {
+                onChange({target: {id: 'documentNumberFull', value: data}})
+            })
+        }
+    }
 
     async function handleKeyPress(e) {
         if (e.key === 'Enter') {
@@ -92,7 +100,7 @@ export default function rqfWrite({dataInfo, managerList}) {
                 case 'agencyCode' :
                 case 'customerName' :
                 case 'maker' :
-                    await findCodeInfo(e, setInfo, openModal, '',setValidate)
+                    await findCodeInfo(e, setInfo, openModal, '', setValidate)
                     break;
             }
         }
@@ -104,8 +112,8 @@ export default function rqfWrite({dataInfo, managerList}) {
 
     function onChange(e) {
         if (e.target.id === 'agencyCode') {
-            setValidate(v=> {
-                return {...v, agencyCode: false, documentNumberFull : false}
+            setValidate(v => {
+                return {...v, agencyCode: false, documentNumberFull: false}
             })
         }
         commonManage.onChange(e, setInfo)
@@ -127,7 +135,7 @@ export default function rqfWrite({dataInfo, managerList}) {
         }
 
         const formData: any = new FormData();
-
+        // serialNumbe
         commonManage.setInfoFormData(info, formData, listType, list)
         commonManage.getUploadList(fileRef, formData)
 
@@ -201,8 +209,20 @@ export default function rqfWrite({dataInfo, managerList}) {
             }}>
 
                 <MainCard title={'견적의뢰 작성'} list={[
-                    {name: '저장', func: saveFunc, type: 'primary', title: '입력한 견적의뢰 내용을 저장합니다.', prefix : <SaveOutlined/>},
-                    {name: '초기화', func: clearAll, type: 'danger', title: '필드에 입력한 모든 정보들을 초기화 합니다.', prefix : <ClearOutlined />}
+                    {
+                        name: '저장',
+                        func: saveFunc,
+                        type: 'primary',
+                        title: '입력한 견적의뢰 내용을 저장합니다.',
+                        prefix: <SaveOutlined/>
+                    },
+                    {
+                        name: '초기화',
+                        func: clearAll,
+                        type: 'danger',
+                        title: '필드에 입력한 모든 정보들을 초기화 합니다.',
+                        prefix: <ClearOutlined/>
+                    }
                 ]} mini={mini} setMini={setMini}>
 
 
@@ -239,13 +259,18 @@ export default function rqfWrite({dataInfo, managerList}) {
                                                 if (!info['agencyCode']) {
                                                     return message.warn('매입처코드를 선택해주세요')
                                                 }
-                                                const returnDocumentNumb = await checkInquiryNo({data: {agencyCode: info['agencyCode'], type : ''}})
+                                                const returnDocumentNumb = await checkInquiryNo({
+                                                    data: {
+                                                        agencyCode: info['agencyCode'],
+                                                        type: ''
+                                                    }
+                                                })
                                                 onChange({target: {id: 'documentNumberFull', value: returnDocumentNumb}})
                                             }
                                         }/>,
                                     data: info,
-                                    disabled : true,
-                                    validate : validate['documentNumberFull']
+                                    disabled: true,
+                                    validate: validate['documentNumberFull']
                                 })}
                                 {inputForm({
                                     title: 'RFQ NO.',
@@ -280,7 +305,7 @@ export default function rqfWrite({dataInfo, managerList}) {
                                         onChange: onChange,
                                         handleKeyPress: handleKeyPress,
                                         data: info,
-                                        validate : validate['agencyCode']
+                                        validate: validate['agencyCode']
                                     })}
                                     {inputForm({
                                         title: '매입처명',

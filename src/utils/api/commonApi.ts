@@ -28,7 +28,7 @@ export const findCodeInfo = async (event, setInfo, openModal, type? , setValidat
                     setInfo(v => {
                         return {
                             ...v,
-                            documentNumberFull : returnDocumentNumb,
+                            documentNumberFull : type === 'ESTIMATE' ? v.documentNumberFull : returnDocumentNumb,
                             agencyId: agencyId,
                             agencyCode: agencyCode,
                             agencyName: agencyName,

@@ -21,9 +21,9 @@ import {
     textAreaForm,
     TopBoxCard
 } from "@/utils/commonForm";
-import {commonManage, gridManage} from "@/utils/commonManage";
+import {commonManage, fileManage, gridManage} from "@/utils/commonManage";
 import {findCodeInfo} from "@/utils/api/commonApi";
-import {updateRfq} from "@/utils/api/mainApi";
+import {getAttachmentFileList, updateRfq} from "@/utils/api/mainApi";
 import {estimateRequestDetailUnit, reqWriteList, storeWriteInitial} from "@/utils/initialList";
 import _ from "lodash";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
@@ -46,10 +46,13 @@ export default function rqfUpdate({dataInfo, managerList}) {
     const copyUnitInit = _.cloneDeep(estimateRequestDetailUnit)
 
     const infoInit = dataInfo?.estimateRequestDetail
-    const infoFileInit = dataInfo?.attachmentFileList
+
 
     const [info, setInfo] = useState<any>({...infoInit, uploadType: 0})
+    const [validate, setValidate] = useState({agencyCode: true, documentNumberFull: true});
     const [mini, setMini] = useState(true);
+
+    const [fileList, setFileList] = useState(fileManage.getFormatFiles(dataInfo?.attachmentFileList));
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false, event3: false});
 
     const onGridReady = (params) => {
@@ -57,8 +60,9 @@ export default function rqfUpdate({dataInfo, managerList}) {
         params.api.applyTransaction({add: dataInfo?.estimateRequestDetail[listType]});
     };
 
-    const onCChange = (value: string, e:any) => {
-        setInfo(v=> {
+
+    const onCChange = (value: string, e: any) => {
+        setInfo(v => {
             return {...v, managerAdminId: e.adminId, managerAdminName: e.name}
         })
     };
@@ -68,7 +72,11 @@ export default function rqfUpdate({dataInfo, managerList}) {
     }
 
     function onChange(e) {
-
+        if (e.target.id === 'agencyCode') {
+            setValidate(v => {
+                return {...v, agencyCode: false}
+            })
+        }
         commonManage.onChange(e, setInfo)
     }
 
@@ -79,13 +87,16 @@ export default function rqfUpdate({dataInfo, managerList}) {
                 case 'agencyCode' :
                 case 'customerName' :
                 case 'maker' :
-                    await findCodeInfo(e, setInfo, openModal,'ESTIMATE')
+                    await findCodeInfo(e, setInfo, openModal, 'ESTIMATE', setValidate)
                     break;
             }
         }
     }
 
     async function saveFunc() {
+        if (!validate['agencyCode']) {
+            return message.warn('올바른 경로를 통한 매입처코드를 입력해주세요.')
+        }
         if (!info['agencyCode']) {
             return message.warn('매입처 코드가 누락되었습니다.')
         }
@@ -96,36 +107,11 @@ export default function rqfUpdate({dataInfo, managerList}) {
 
         const formData: any = new FormData();
 
-        const handleIteration = () => {
-            for (const {key, value} of commonManage.commonCalc(info)) {
-                if (key !== listType) {
-                    if (key === 'dueDate') {
-                        formData.append(key, moment(value).format('YYYY-MM-DD'));
-                    } else {
-                        formData.append(key, value);
-                    }
-                }
-            }
-        };
-
-        handleIteration();
-
-
-        if (list.length) {
-            list.forEach((detail, index) => {
-                Object.keys(detail).forEach((key) => {
-                    if (key === 'replyDate') {
-                        formData.append(`${listType}[${index}].${key}`, moment(detail[key]).format('YYYY-MM-DD'));
-                    } else {
-                        formData.append(`${listType}[${index}].${key}`, detail[key]);
-                    }
-                });
-                formData.delete(`${listType}[${index}].serialNumber`);
-            });
-        }
+        commonManage.setInfoFormData(info, formData, listType, list)
+        commonManage.getUploadList(fileRef, formData)
 
         //기존 기준 사라진 파일
-        const result = infoFileInit.filter(itemA => !fileRef.current.fileList.some(itemB => itemA.id === itemB.id));
+        const result = dataInfo?.attachmentFileList.filter(itemA => !fileRef.current.fileList.some(itemB => itemA.id === itemB.id));
 
         const uploadContainer = document.querySelector(".ant-upload-list"); // 업로드 리스트 컨테이너
 
@@ -150,7 +136,17 @@ export default function rqfUpdate({dataInfo, managerList}) {
 
         // estimateRequestDetailList[0].serialNumber
 
-        await updateRfq({data: formData, router: router})
+        await updateRfq({data: formData, returnFunc: returnFunc})
+    }
+
+    async function returnFunc() {
+        const result = await getAttachmentFileList({
+            data: {
+                "relatedType": "ESTIMATE_REQUEST",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
+                "relatedId": infoInit['estimateRequestId']
+            }
+        });
+        setFileList(fileManage.getFormatFiles(result))
     }
 
     function deleteList() {
@@ -161,7 +157,7 @@ export default function rqfUpdate({dataInfo, managerList}) {
     function addRow() {
         const newRow = {...copyUnitInit};
         newRow['currency'] = commonManage.changeCurr(info['agencyCode'])
-        console.log(newRow,'newRow:')
+        console.log(newRow, 'newRow:')
         gridRef.current.applyTransaction({add: [newRow]});
     }
 
@@ -170,7 +166,7 @@ export default function rqfUpdate({dataInfo, managerList}) {
         gridManage.deleteAll(gridRef)
     }
 
-    function copyPage(){
+    function copyPage() {
         const totalList = gridManage.getAllData(gridRef)
         let copyInfo = _.cloneDeep(info)
         copyInfo[listType] = totalList
@@ -205,6 +201,9 @@ export default function rqfUpdate({dataInfo, managerList}) {
 
         <SearchInfoModal info={info} setInfo={setInfo}
                          open={isModalOpen}
+                         type={'ESTIMATE'}
+                         gridRef={gridRef}
+                         setValidate={setValidate}
                          setIsModalOpen={setIsModalOpen}/>
 
         <LayoutComponent>
@@ -233,7 +232,8 @@ export default function rqfUpdate({dataInfo, managerList}) {
                                 id: 'documentNumberFull',
                                 disabled: true,
                                 onChange: onChange,
-                                data: info
+                                data: info,
+                                validate: validate['documentNumberFull']
                             })}
                             {inputForm({title: '작성자', id: 'createdBy', disabled: true, onChange: onChange, data: info})}
                             <div>
@@ -263,7 +263,11 @@ export default function rqfUpdate({dataInfo, managerList}) {
                                             e.stopPropagation();
                                             openModal('agencyCode');
                                         }
-                                    }/>, onChange: onChange, data: info
+                                    }/>,
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info,
+                                    validate: validate['agencyCode']
                                 })}
                                 {inputForm({
                                     title: '매입처명',
@@ -291,7 +295,7 @@ export default function rqfUpdate({dataInfo, managerList}) {
                                             e.stopPropagation();
                                             openModal('customerName');
                                         }
-                                    }/>, onChange: onChange, data: info
+                                    }/>, onChange: onChange, handleKeyPress: handleKeyPress, data: info
                                 })}
                                 {inputForm({title: '담당자명', id: 'managerName', onChange: onChange, data: info})}
                                 {inputForm({title: '전화번호', id: 'phoneNumber', onChange: onChange, data: info})}
@@ -309,7 +313,7 @@ export default function rqfUpdate({dataInfo, managerList}) {
                                             e.stopPropagation();
                                             openModal('maker');
                                         }
-                                    }/>, onChange: onChange, data: info
+                                    }/>, onChange: onChange, handleKeyPress: handleKeyPress, data: info
                                 })}
                                 {inputForm({title: 'ITEM', id: 'item', onChange: onChange, data: info})}
                                 {textAreaForm({title: '지시사항', id: 'instructions', onChange: onChange, data: info})}
@@ -331,7 +335,7 @@ export default function rqfUpdate({dataInfo, managerList}) {
                                             ]
                                         })}
                                     </div>
-                                    <DriveUploadComp infoFileInit={infoFileInit} fileRef={fileRef}
+                                    <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
                                                      numb={info['uploadType']}/>
                                 </div>
                             </BoxCard>
@@ -384,7 +388,7 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
     });
     const dataInfo = result?.data?.entity;
     return {
-        props: {dataInfo: dataInfo ? dataInfo : null, managerList : list}
+        props: {dataInfo: dataInfo ? dataInfo : null, managerList: list}
     }
 
 })

@@ -19,11 +19,23 @@ export const saveRfq = async ({data, router}) => {
     }, err => message.error(err))
 };
 
-export const updateRfq = async ({data, router}) => {
+export const updateRfq = async ({data, returnFunc}) => {
     await getFormData.post('estimate/updateEstimateRequest', data).then(v => {
         const code = v.data.code;
         if (code === 1) {
+            returnFunc();
             message.success('저장되었습니다.')
+        } else {
+            message.error('저장에 실패하였습니다.')
+        }
+    }, err => message.error(err))
+};
+
+export const getAttachmentFileList = async ({data}) => {
+   return await getFormData.post('common/getAttachmentFileList', data).then(v => {
+        const code = v.data.code;
+        if (code === 1) {
+            return v.data.entity;
         } else {
             message.error('저장에 실패하였습니다.')
         }

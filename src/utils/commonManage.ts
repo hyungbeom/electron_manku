@@ -8,6 +8,7 @@ export const apiManage: any = {}
 export const commonFunc: any = {}
 export const commonCalc: any = {}
 export const gridManage: any = {}
+export const fileManage: any = {}
 
 
 gridManage.getSelectRows = function (gridRef) {
@@ -153,7 +154,18 @@ gridManage.getAllData = function (gridRef) {
 
         // 모든 노드를 순회
         gridRef.current.forEachNode((node) => {
-            const row = node.data;
+            // 데이터를 수정하여 null을 0으로 변환
+            const row = { ...node.data };
+            Object.keys(row).forEach((key) => {
+                if (row[key] === null) {
+                    if(key === 'net'){
+                        row[key] = 0;
+                    }
+                    if(key === 'currency'){
+                        row[key] = '';
+                    }
+                }
+            });
 
             // 행이 빈 행인지 확인
             const isEmptyRow = Object.values(row).every(value => value === null || value === undefined || value === '');
@@ -187,6 +199,15 @@ gridManage.uploadExcelData = function (data, list) {
     });
     return transformedData
 }
+
+gridManage.updateAllFields = function (gridRef, fieldName, newValue) {
+    if (gridRef.current) {
+        gridRef.current.forEachNode((node) => {
+            // 특정 필드의 값을 변경
+            node.setDataValue(fieldName, newValue);
+        });
+    }
+};
 
 
 // ===============================================
@@ -573,7 +594,11 @@ commonManage.commonCalc = function (info) {
 commonManage.setInfoFormData = function (info , formData, listType, list?) {
     for (const {key, value} of commonManage.commonCalc(info)) {
         if (key !== listType) {
-            formData.append(key, value);
+            if (key === 'dueDate') {
+                formData.append(key, moment(value).format('YYYY-MM-DD'));
+            } else {
+                formData.append(key, value);
+            }
         }
     }
     this.setInfoDetailFormData(formData, listType, list)
@@ -582,13 +607,14 @@ commonManage.setInfoDetailFormData = function (formData, listType, list?) {
 
     list.forEach((detail, index) => {
         Object.keys(detail).forEach((key) => {
+
            if(key.includes('Date')){
-               console.log(moment(detail[key]).isValid() ?  dateFormat(detail[key]) : '',':::::')
                formData.append(`${listType}[${index}].${key}`, moment(detail[key]).isValid() ?  dateFormat(detail[key]) : '');
            }else{
                formData.append(`${listType}[${index}].${key}`, detail[key]);
            }
         });
+        formData.delete(`${listType}[${index}].serialNumber`);
     });
 }
 
@@ -609,5 +635,16 @@ commonManage.getUploadList = function (fileRef, formData) {
             count += 1;
         }
     });
+
+}
+
+
+fileManage.getFormatFiles = function (list) {
+    return list?.map((v) => ({
+        ...v,
+        uid: v.uid || Math.random().toString(36).substr(2, 9), // 고유 UID 생성
+        name: v.fileName,
+        status: "done",
+    }))
 
 }

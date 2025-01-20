@@ -290,8 +290,9 @@ export const subRfqWriteColumn = [
         field: 'net',
         cellEditor: 'agNumberCellEditor',
         editable: true,
-        valueFormatter: params => commonManage.calcFloat(params, 2),
-        cellRenderer: (e)=> e.value ? e.value : '',
+        valueFormatter: params => params.data.test ?? 0,
+        // cellRenderer: (e)=> e.value ? e.value : '',
+        // valueGetter: (e)=> e.value ? e.value : 0,
         cellStyle: { textAlign: 'right' }
     },
     {
