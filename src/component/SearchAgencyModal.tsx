@@ -10,14 +10,15 @@ import useEventListener from "@/utils/common/function/UseEventListener";
 import message from "antd/lib/message";
 import {checkInquiryNo} from "@/utils/api/mainApi";
 import Drawer from "antd/lib/drawer";
+import {useRouter} from "next/router";
 
 export default function SearchInfoModal({info, setInfo, open, setIsModalOpen, setValidate}) {
+    const router = useRouter()
     const [code, setCode] = useState();
     const [list, setList] = useState([])
-    const [page, setPage] = useState({x: null, y: null})
-    const [openCheck, setOpenCheck] = useState('')
-    const [windowOpenKey, setWindowOpenKey] = useState({key: '', value: '', router: '', deleteApi: ''})
-
+    const [page, setPage] = useState({x: null, y: null});
+    const [openCheck, setOpenCheck] = useState('');
+    const [windowOpenKey, setWindowOpenKey] = useState({key: '', value: '', router: '', deleteApi: ''});
     const [opens, setOpen] = useState(false);
 
     const ref = useRef(null);
@@ -43,13 +44,9 @@ export default function SearchInfoModal({info, setInfo, open, setIsModalOpen, se
         }
     }, [open, info])
 
-
     useEffect(() => {
         setCode(info);
     }, [info])
-
-    // console.log(code, 'modal code~')
-
 
     async function searchFunc(v, text) {
         try {
@@ -109,6 +106,7 @@ export default function SearchInfoModal({info, setInfo, open, setIsModalOpen, se
                 router: `/code_domestic_customer_update?customerCode=${e?.data?.customerCode}`,
                 deleteApi: 'customer/deleteCustomer'
             })
+
         else if (e.data.overseasCustomerId)
             setWindowOpenKey({
                 key: 'overseasCustomerId',
@@ -116,6 +114,7 @@ export default function SearchInfoModal({info, setInfo, open, setIsModalOpen, se
                 router: `/code_overseas_customer_update?customerCode=${e?.data?.customerCode}`,
                 deleteApi: 'deleteOverseasCustomer'
             })
+
         else if (e.data.agencyId)
             setWindowOpenKey({
                 key: 'agencyId',
@@ -123,6 +122,7 @@ export default function SearchInfoModal({info, setInfo, open, setIsModalOpen, se
                 router: `/code_domestic_agency_update?agencyCode=${e?.data?.agencyCode}`,
                 deleteApi: 'agency/deleteAgency'
             })
+
         else if (e.data.overseasAgencyId)
             setWindowOpenKey({
                 key: 'overseasAgencyId',
@@ -159,7 +159,6 @@ export default function SearchInfoModal({info, setInfo, open, setIsModalOpen, se
     }, typeof window !== 'undefined' ? document : null)
 
     useEventListener('click', (e: any) => {
-
         setPage({x: null, y: null})
     }, typeof window !== 'undefined' ? document : null)
 
@@ -171,6 +170,20 @@ export default function SearchInfoModal({info, setInfo, open, setIsModalOpen, se
     const onClose = () => {
         setOpen(false);
     };
+
+    function moveRouter(param) {
+
+        switch (param) {
+            case '국내' :
+                router.push('/code_domestic_agency_write')
+                break;
+            case '해외' :
+                router.push('/code_overseas_agency_write')
+                break;
+        }
+        // router.push()
+    }
+
     return <>
         {page.x ? <div style={{
             position: 'fixed',
@@ -205,7 +218,10 @@ export default function SearchInfoModal({info, setInfo, open, setIsModalOpen, se
                 <span>
                 {modalList[openCheck]?.title}
             </span>
-                <Button style={{marginRight: 50}} type={'primary'}>신규생성</Button>
+                <div>
+                    <Button style={{marginRight: 5}} onClick={() => moveRouter('국내')} id={'국내'}>국내생성</Button>
+                    <Button style={{marginRight: 50}} onClick={() => moveRouter('해외')} id={'해외'}>해외생성</Button>
+                </div>
             </div>}
             onCancel={() => setIsModalOpen(ModalInitList)}
             open={!!openCheck}
