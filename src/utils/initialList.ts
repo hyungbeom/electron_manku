@@ -79,7 +79,7 @@ export const estimateRequestDetailUnit = {
     "currency": "krw",       // CURR
     "net": 0,                // NET/P
     "serialNumber": 0,       // 항목 순서 (1부터 시작)
-    "deliveryDate": "",      // 납기
+    "deliveryDate": 0,      // 납기
     "content": "미회신",       // 내용
     "replyDate": null,         // 회신일
     "remarks": ""            // 비고

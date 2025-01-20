@@ -231,7 +231,7 @@ export default function rqfWrite({dataInfo, managerList}) {
                                                 if (!info['agencyCode']) {
                                                     return message.warn('매입처코드를 선택해주세요')
                                                 }
-                                                const returnDocumentNumb = await checkInquiryNo({data: {agencyCode: info['agencyCode']}})
+                                                const returnDocumentNumb = await checkInquiryNo({data: {agencyCode: info['agencyCode'], type : ''}})
                                                 onChange({target: {id: 'documentNumberFull', value: returnDocumentNumb}})
                                             }
                                         }/>,

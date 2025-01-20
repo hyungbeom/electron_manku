@@ -262,7 +262,7 @@ export const subRfqWriteColumn = [
         editable: true,
         cellEditor: 'agNumberCellEditor',
         valueFormatter: numberFormat,
-
+        cellRenderer: (e)=> e.value ? e.value : ''
     },
     {
         headerName: '단위',
@@ -288,6 +288,7 @@ export const subRfqWriteColumn = [
         cellEditor: 'agNumberCellEditor',
         editable: true,
         valueFormatter: params => commonManage.calcFloat(params, 2),
+        cellRenderer: (e)=> e.value ? e.value : '',
         cellStyle: { textAlign: 'right' }
     },
     {
@@ -334,10 +335,11 @@ export const subRfqWriteColumn = [
         editable: true,
         cellEditor: 'agDateCellEditor',
         valueFormatter: (params) => {
-            console.log(params,'params:!!')
             return moment(params.value).isValid() ?  dateFormat(params) : ''
         },
-        cellRenderer: (e)=>console.log(e,'::')
+        valueGetter: (params) => {
+            return params.data.replyDate
+        },
     },
     {
         headerName: '비고',

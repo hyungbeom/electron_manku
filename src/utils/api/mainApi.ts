@@ -1,9 +1,6 @@
 import {getData, getFormData} from "@/manage/function/api";
 import message from "antd/lib/message";
-import moment from "moment/moment";
-import {rfqWriteInitial, subRfqReadInitial} from "@/utils/initialList";
 import {commonFunc} from "@/utils/commonManage";
-
 
 export const checkInquiryNo = async ({data}) => {
     return await getData.post('estimate/getNewDocumentNumberFull', data).then(v => {
@@ -13,7 +10,6 @@ export const checkInquiryNo = async ({data}) => {
     }, err => message.error(err))
 };
 
-
 export const saveRfq = async ({data, router}) => {
     await getFormData.post('estimate/addEstimateRequest', data).then(v => {
         if (v.data.code === 1) {
@@ -22,7 +18,6 @@ export const saveRfq = async ({data, router}) => {
         }
     }, err => message.error(err))
 };
-
 
 export const updateRfq = async ({data, router}) => {
     await getFormData.post('estimate/updateEstimateRequest', data).then(v => {
@@ -36,11 +31,8 @@ export const updateRfq = async ({data, router}) => {
 
 
 export const searchRfq = async ({data}) => {
-
-
     const result = await getData.post('estimate/getEstimateRequestList', data);
     return result?.data?.entity?.estimateRequestList
-
 };
 
 

@@ -1,6 +1,6 @@
 import React, {useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
-import {CopyOutlined, DownloadOutlined, FileSearchOutlined, SaveOutlined} from "@ant-design/icons";
+import {CopyOutlined, DownloadOutlined, FileSearchOutlined, PlusSquareOutlined, SaveOutlined} from "@ant-design/icons";
 import {tableEstimateWriteColumns} from "@/utils/columnList";
 import {estimateDetailUnit, estimateWriteInitial, ModalInitList} from "@/utils/initialList";
 import Button from "antd/lib/button";
@@ -24,7 +24,7 @@ import {
 } from "@/utils/commonForm";
 import _ from "lodash";
 import {findCodeInfo, findDocumentInfo} from "@/utils/api/commonApi";
-import {saveEstimate} from "@/utils/api/mainApi";
+import {checkInquiryNo, saveEstimate} from "@/utils/api/mainApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 
 const listType = 'estimateDetailList'
@@ -49,6 +49,7 @@ export default function EstimateWrite({dataInfo}) {
 
     const [info, setInfo] = useState<any>({...copyInit, ...dataInfo, ...adminParams})
     const [mini, setMini] = useState(true);
+    const [validate, setValidate] = useState({agencyCode : false});
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
 
 
@@ -71,15 +72,19 @@ export default function EstimateWrite({dataInfo}) {
                 case 'agencyCode' :
                 case 'customerName' :
                 case 'maker' :
-                    await findCodeInfo(e, setInfo, openModal)
+                    await findCodeInfo(e, setInfo, openModal, setValidate)
                     break;
                 case 'connectDocumentNumberFull' :
                     const result = await findDocumentInfo(e, setInfo);
-                    setInfo({...result, connectDocumentNumberFull : info.connectDocumentNumberFull});
+                    setInfo(v=>{
+                        return {...result, connectDocumentNumberFull: info.connectDocumentNumberFull, documentNumberFull :v.documentNumberFull }
+                    })
+                    if(result['agencyCode']){
+                     setValidate(v=>{return {agencyCode: true }})
+                    }
                     gridManage.resetData(gridRef, result?.estimateRequestDetailList);
                     break;
             }
-
         }
     }
 
@@ -89,6 +94,9 @@ export default function EstimateWrite({dataInfo}) {
     }
 
     function onChange(e) {
+        setValidate(v=> {
+            return {...v, agencyCode: e.target.id === 'agencyCode' ? false : v.agencyCode}
+        })
         commonManage.onChange(e, setInfo)
     }
 
@@ -105,42 +113,13 @@ export default function EstimateWrite({dataInfo}) {
 
         const formData: any = new FormData();
 
-        const handleIteration = () => {
-            for (const {key, value} of commonManage.commonCalc(info)) {
-                if (key !== listType) {
-                    formData.append(key, value);
-                }
-            }
-        };
-
-        handleIteration();
-
-
-
-        if (list.length) {
-            list.forEach((detail, index) => {
-                Object.keys(detail).forEach((key) => {
-                    formData.append(`${listType}[${index}].${key}`, detail[key]);
-                });
-            });
-        }
-
-        const uploadContainer = document.querySelector(".ant-upload-list"); // 업로드 리스트 컨테이너
-
-        if (uploadContainer) {
-            const fileNodes = uploadContainer.querySelectorAll(".ant-upload-list-item-name");
-            const fileNames = Array.from(fileNodes).map((node:any) => node.textContent.trim());
-
-            const filesToSave = fileRef.current.fileList.map((item) => item.originFileObj).filter((file) => file instanceof File);
-
-            filesToSave.forEach((file, index) => {
-                formData.append(`attachmentFileList[${index}].attachmentFile`, file);
-                formData.append(`attachmentFileList[${index}].fileName`, fileNames[index].replace(/\s+/g, ""));
-            });
-        }
+        commonManage.setInfoFormData(info, formData, listType, list)
+        commonManage.getUploadList(fileRef, formData)
 
         formData.delete('createdDate')
         formData.delete('modifiedDate')
+
+
 
         await saveEstimate({data: formData, router: router})
 
@@ -181,11 +160,13 @@ export default function EstimateWrite({dataInfo}) {
 
         <SearchInfoModal info={info} setInfo={setInfo}
                          open={isModalOpen}
-                         setIsModalOpen={setIsModalOpen}/>
+                         setValidate={setValidate}
+                         setIsModalOpen={setIsModalOpen} type={'ESTIMATE'}/>
 
         <LayoutComponent>
             <div style={{
                 display: 'grid',
+
                 gridTemplateRows: `${mini ? '510px' : '65px'} calc(100vh - ${mini ? 565 : 120}px)`,
                 columnGap: 5
             }}>
@@ -209,7 +190,18 @@ export default function EstimateWrite({dataInfo}) {
                                     id: 'documentNumberFull',
                                     placeholder: '폴더생성 규칙 유의',
                                     onChange: onChange,
-                                    data: info
+                                    data: info,
+                                    suffix:
+                                        <PlusSquareOutlined style={{cursor: 'pointer'}} onClick={
+                                            async (e) => {
+                                                e.stopPropagation();
+                                                if (!info['agencyCode']) {
+                                                    return message.warn('매입처코드를 선택해주세요')
+                                                }
+                                                const returnDocumentNumb = await checkInquiryNo({data: {agencyCode: info['agencyCode'], type : 'ESTIMATE'}})
+                                                onChange({target: {id: 'documentNumberFull', value: returnDocumentNumb}})
+                                            }
+                                        }/>
                                 })}
                                 {inputForm({
                                     placeholder: '폴더생성 규칙 유의',
@@ -234,14 +226,15 @@ export default function EstimateWrite({dataInfo}) {
                                                 e.stopPropagation();
                                                 openModal('agencyCode');
                                             }
-                                        }/>, onChange: onChange, handleKeyPress: handleKeyPress, data: info
+                                        }/>, onChange: onChange, handleKeyPress: handleKeyPress, data: info,   validate : validate['agencyCode']
                                     })}
                                     {inputForm({
                                         title: '매입처명',
                                         id: 'agencyName',
                                         onChange: onChange,
                                         data: info,
-                                        disabled: true
+                                        disabled: true,
+
                                     })}
                                     {inputForm({
                                         title: '담당자',

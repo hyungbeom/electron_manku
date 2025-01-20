@@ -25,10 +25,10 @@ export default function rfqRead({dataInfo}) {
     const [mini, setMini] = useState(true);
     const [info, setInfo] = useState(copyInit);
 
+    console.log(dataInfo,'dataInfo:')
     const onGridReady = (params) => {
         gridRef.current = params.api;
         params.api.applyTransaction({add: dataInfo ? dataInfo : []});
-
     };
 
     function handleKeyPress(e) {

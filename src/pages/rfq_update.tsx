@@ -43,7 +43,6 @@ export default function rqfUpdate({dataInfo, managerList}) {
     const gridRef = useRef(null);
     const router = useRouter();
 
-
     const copyUnitInit = _.cloneDeep(estimateRequestDetailUnit)
 
     const infoInit = dataInfo?.estimateRequestDetail
@@ -69,11 +68,7 @@ export default function rqfUpdate({dataInfo, managerList}) {
     }
 
     function onChange(e) {
-        if (e.target.id === 'agencyCode') {
-            setValidate(v=> {
-                return {...v, agencyCode: false, documentNumberFull : false}
-            })
-        }
+
         commonManage.onChange(e, setInfo)
     }
 
@@ -125,6 +120,7 @@ export default function rqfUpdate({dataInfo, managerList}) {
                         formData.append(`${listType}[${index}].${key}`, detail[key]);
                     }
                 });
+                formData.delete(`${listType}[${index}].serialNumber`);
             });
         }
 
@@ -152,6 +148,8 @@ export default function rqfUpdate({dataInfo, managerList}) {
         formData.delete('createdDate');
         formData.delete('modifiedDate');
 
+        // estimateRequestDetailList[0].serialNumber
+
         await updateRfq({data: formData, router: router})
     }
 
@@ -161,7 +159,9 @@ export default function rqfUpdate({dataInfo, managerList}) {
     }
 
     function addRow() {
-        const newRow = {...copyUnitInit, "currency": commonManage.changeCurr(info['agencyCode'])};
+        const newRow = {...copyUnitInit};
+        newRow['currency'] = commonManage.changeCurr(info['agencyCode'])
+        console.log(newRow,'newRow:')
         gridRef.current.applyTransaction({add: [newRow]});
     }
 

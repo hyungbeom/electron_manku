@@ -13,7 +13,7 @@ import Drawer from "antd/lib/drawer";
 import {useRouter} from "next/router";
 
 
-export default function SearchInfoModal({info, setInfo, open, setIsModalOpen, setValidate}) {
+export default function SearchInfoModal({info, setInfo, open, setIsModalOpen, setValidate = null, type=''}) {
     const router = useRouter()
     const [code, setCode] = useState();
     const [list, setList] = useState([])
@@ -275,7 +275,7 @@ export default function SearchInfoModal({info, setInfo, open, setIsModalOpen, se
                                          break;
                                      default :
 
-                                         await checkInquiryNo({data: {agencyCode: e.data.agencyCode}}).then(data => {
+                                         await checkInquiryNo({data: {agencyCode: e.data.agencyCode, type : type}}).then(data => {
 
                                              setInfo(v => {
                                                  return {

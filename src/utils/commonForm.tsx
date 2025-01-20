@@ -82,6 +82,7 @@ export const inputForm = ({
     }, handleKeyPress = function () {
     }, data
                           ,validate = true}: any) => {
+
     let bowl = data;
     return <div style={{fontSize : 12, paddingBottom : 10}}>
         <div>{title}</div>
