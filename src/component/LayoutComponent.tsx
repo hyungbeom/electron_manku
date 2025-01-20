@@ -98,7 +98,7 @@ export default function LayoutComponent({children, userInfo = null}) {
 
     const router = useRouter();
 
-    const [collapsed, setCollapsed] = useState(false);
+    const [state, setState] = useState(false);
 
     const [openKeys, setOpenKeys] = useState([]);
 
@@ -108,7 +108,10 @@ export default function LayoutComponent({children, userInfo = null}) {
         // setOpenKeys([router.pathname.split(/[/_]/)[1]])
 
 
+
     }, [router.pathname]); // pathname이 변경될 때마다 실행
+
+    console.log(router.pathname.includes('_read'),'router.pathname:')
 
 
     const onOpenChange = (keys) => {
@@ -131,67 +134,70 @@ export default function LayoutComponent({children, userInfo = null}) {
     }
 
     return <>
-        <div style={{
+        {router.pathname.includes('_read') || router.pathname === '/main' ? <div style={{
             backgroundColor: '#f5f5f5',
             width: '100%',
             borderBottom: '1px solid lightGray',
-            display:'flex'
+            display: 'flex'
         }}>
 
-            <CaretLeftFilled style={{fontSize: 20, cursor: "pointer", marginTop:3}} onClick={() => router.back()}/>
-            <CaretRightFilled style={{fontSize: 20, cursor: 'pointer', marginTop:3}} onClick={() => router.back()}/>
-                <Menu
-                    theme="light"
-                    // mode="inline"
-                    openKeys={openKeys}  // 열려 있는 서브메뉴를 제어하는 키
-                    onOpenChange={onOpenChange}
-                    style={{display:'flex', fontSize:12, marginTop:2}}
-                >
+            <CaretLeftFilled style={{fontSize: 20, cursor: "pointer", marginTop: 3}} onClick={() => router.back()}/>
+            <CaretRightFilled style={{fontSize: 20, cursor: 'pointer', marginTop: 3}} onClick={() => router.back()}/>
+            <Menu
+                theme="light"
+                // mode="inline"
+                openKeys={openKeys}  // 열려 있는 서브메뉴를 제어하는 키
+                onOpenChange={onOpenChange}
+                style={{display: 'flex', fontSize: 12, marginTop: 2}}
+            >
 
-                    <Menu.Item style={{width:'auto', padding:'0 5px', height:38, margin:0 }} onClick={() => router.push('/main')}><HomeOutlined/> HOME</Menu.Item>
+                <Menu.Item style={{width: 'auto', padding: '0 5px', height: 38, margin: 0}}
+                           onClick={() => router.push('/main')}><HomeOutlined/> HOME</Menu.Item>
 
-                    {Object.keys(menuList).map(v => {
+                {Object.keys(menuList).map(v => {
 
 
-                        if(v === 'manage' && userInfo?.authority !== 0){
-                            return null;
-                        }
-                        return (
-                            <SubMenu key={v} icon={menuList[v].icon} style={{width:'auto', padding:-10}} title={menuList[v].title}>
-                                {menuList[v].list.map((src) => {
-                                    if (src.subList) {
-                                        // 3-depth가 있는 경우
-                                        return (
-                                            <SubMenu key={src.key} title={src.title}>
-                                                {src.subList.map((subSrc) => (
-                                                    <Menu.Item style={{width:'auto', padding:-30}}
-                                                               onClick={() => handleMenuClick(subSrc.key)}
-                                                        key={subSrc.key}
-                                                    >
-                                                        {subSrc.title}
-                                                    </Menu.Item>
-                                                ))}
-                                            </SubMenu>
-                                        );
-                                    }
-                                    // 2-depth 메뉴 항목
+                    if (v === 'manage' && userInfo?.authority !== 0) {
+                        return null;
+                    }
+                    return (
+                        <SubMenu key={v} icon={menuList[v].icon} style={{width: 'auto', padding: -10}}
+                                 title={menuList[v].title}>
+                            {menuList[v].list.map((src) => {
+                                if (src.subList) {
+                                    // 3-depth가 있는 경우
                                     return (
-                                        <Menu.Item
-                                            onClick={() => handleMenuClick(src.key)}
-                                            key={src.key}
-                                            style={{fontSize:12}}
-                                        >
-                                            {src.title}
-                                        </Menu.Item>
+                                        <SubMenu key={src.key} title={src.title}>
+                                            {src.subList.map((subSrc) => (
+                                                <Menu.Item style={{width: 'auto', padding: -30}}
+                                                           onClick={() => handleMenuClick(subSrc.key)}
+                                                           key={subSrc.key}
+                                                >
+                                                    {subSrc.title}
+                                                </Menu.Item>
+                                            ))}
+                                        </SubMenu>
                                     );
-                                })}
-                            </SubMenu>
-                        )
-                    })}
-                    {/* Home 메뉴 */}
-                    <Menu.Item style={{width:'auto', padding:'0 5px', height:38, margin:0 }} onClick={() => router.push('/notice')}><EditOutlined/> 공지사항</Menu.Item>
-                </Menu>
-        </div>
+                                }
+                                // 2-depth 메뉴 항목
+                                return (
+                                    <Menu.Item
+                                        onClick={() => handleMenuClick(src.key)}
+                                        key={src.key}
+                                        style={{fontSize: 12}}
+                                    >
+                                        {src.title}
+                                    </Menu.Item>
+                                );
+                            })}
+                        </SubMenu>
+                    )
+                })}
+                {/* Home 메뉴 */}
+                <Menu.Item style={{width: 'auto', padding: '0 5px', height: 38, margin: 0}}
+                           onClick={() => router.push('/notice')}><EditOutlined/> 공지사항</Menu.Item>
+            </Menu>
+        </div> : <></>}
 
                 <Content style={{padding: 5}}>
 

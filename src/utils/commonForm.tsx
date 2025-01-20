@@ -13,6 +13,7 @@ import Select from "antd/lib/select";
 import Tooltip from "antd/lib/tooltip";
 
 const {RangePicker} = DatePicker
+const {Option} = Select
 
 
 export const numbFormatter = (value) => `₩ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
@@ -30,8 +31,6 @@ export function TopBoxCard({children, title = '', grid = '1fr 1fr 1fr 1fr'}) {
         <div style={{
             display: 'grid',
             gridTemplateColumns: grid,
-            maxWidth: 900,
-            minWidth: 600,
             columnGap: 15
         }}>
             {children}
@@ -41,9 +40,8 @@ export function TopBoxCard({children, title = '', grid = '1fr 1fr 1fr 1fr'}) {
 
 export function BoxCard({children, title = ''}) {
 
-    return <Card size={'small'} title={title}
+    return <Card size={'small'} title={<div style={{fontSize : 12}}>{title}</div>}
                  style={{
-                     fontSize: 13,
                      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
 
                  }}>
@@ -54,7 +52,7 @@ export function BoxCard({children, title = ''}) {
 
 export function MainCard({children, title, list, mini = null, setMini = Function()}) {
 
-    return <Card title={
+    return <Card size={'small'} title={
         <div style={{display: 'flex', justifyContent: 'space-between'}}>
             <div style={{fontSize: 13, fontWeight: 550}}>{title}</div>
             <div style={{
@@ -65,7 +63,7 @@ export function MainCard({children, title, list, mini = null, setMini = Function
 
                 {list.map(v => <Tooltip title={v.title} placement={v.place} color={'cyan'} key={'cyan'}><Button
                     type={v.type} style={{fontSize: 11}} size={'small'}
-                    onClick={v.func}><SaveOutlined/>{v.name}</Button></Tooltip>)}
+                    onClick={v.func}>{v?.prefix}{v.name}</Button></Tooltip>)}
 
                 {mini !== null ? <span style={{fontSize: 20, cursor: 'pointer', marginTop: -5}}
                                        onClick={() => setMini(v => !v)}> {!mini ?
@@ -180,12 +178,17 @@ export const radioForm = ({title, id, disabled = false, data, onChange, list}) =
 export const selectBoxForm = ({title, id, disabled = false, data, onChange, list, size = 'small'}) => {
 
 
-    return <div style={{fontSize: 12, paddingBottom: 10}}>
+    return <div style={{
+
+    }}>
         <div>{title}</div>
         {/*@ts-ignore*/}
         <Select id={id} size={size} value={data[id]}
                 onChange={(src) => onChange({target: {id: id, value: src}})}
-                options={list} style={{width: '100%'}}>
+                 style={{width: '100%',fontSize : 11}}>
+            {list.map(v=>{
+                return <Option style={{fontSize : 11}} value={v.value}>{v.label}</Option>
+            })}
         </Select>
     </div>
 }

@@ -104,7 +104,8 @@ const TableGrid = ({
             if (e.data.remittanceId)
                 router.push(`/remittance_domestic_update?remittanceId=${e?.data?.remittanceId}`)
             if (e.data.estimateRequestId)
-                router.push(`/rfq_update?estimateRequestId=${e?.data?.estimateRequestId}`)
+                window.open(`/rfq_update?estimateRequestId=${e?.data?.estimateRequestId}`, '_blank', 'width=1000,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
+                // router.push(`/rfq_update?estimateRequestId=${e?.data?.estimateRequestId}`)
             if (e.data.estimateId)
                 router.push(`/estimate_update?estimateId=${e?.data?.estimateId}`)
             if (e.data.orderId)
@@ -288,7 +289,7 @@ const TableGrid = ({
     };
 
     return (
-        <>
+        <div>
             <EstimateListModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} getRows={getSelectedRows}/>
             {page.x ? <div style={{
                 position: 'fixed',
@@ -386,7 +387,7 @@ const TableGrid = ({
                     suppressRowClickSelection={true}
                 />
             </div>
-        </>
+        </div>
     );
 };
 export default React.memo(TableGrid);

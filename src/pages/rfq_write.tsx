@@ -1,6 +1,13 @@
 import React, {useEffect, useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
-import {CopyOutlined, FileExcelOutlined, FileSearchOutlined, PlusSquareOutlined, SaveOutlined} from "@ant-design/icons";
+import {
+    ClearOutlined,
+    CopyOutlined,
+    FileExcelOutlined,
+    FileSearchOutlined,
+    PlusSquareOutlined,
+    SaveOutlined
+} from "@ant-design/icons";
 import {subRfqWriteColumn} from "@/utils/columnList";
 import {estimateRequestDetailUnit, ModalInitList, reqWriteList, rfqWriteInitial} from "@/utils/initialList";
 import Button from "antd/lib/button";
@@ -146,6 +153,7 @@ export default function rqfWrite({dataInfo, managerList}) {
 
     function clearAll() {
         setInfo({...infoInit});
+        gridManage.deleteAll(gridRef)
     }
 
     const downloadExcel = async () => {
@@ -188,13 +196,13 @@ export default function rqfWrite({dataInfo, managerList}) {
         <LayoutComponent>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '520px' : '65px'} calc(100vh - ${mini ? 575 : 120}px)`,
+                gridTemplateRows: `${mini ? 470 : 65}px calc(100vh - ${mini ? 480 : 75}px)`,
                 columnGap: 5
             }}>
 
                 <MainCard title={'견적의뢰 작성'} list={[
-                    {name: '저장', func: saveFunc, type: 'primary', title: '입력한 견적의뢰 내용을 저장합니다.'},
-                    {name: '초기화', func: clearAll, type: 'danger', title: '필드에 입력한 모든 정보들을 초기화 합니다.'}
+                    {name: '저장', func: saveFunc, type: 'primary', title: '입력한 견적의뢰 내용을 저장합니다.', prefix : <SaveOutlined/>},
+                    {name: '초기화', func: clearAll, type: 'danger', title: '필드에 입력한 모든 정보들을 초기화 합니다.', prefix : <ClearOutlined />}
                 ]} mini={mini} setMini={setMini}>
 
 
@@ -256,9 +264,7 @@ export default function rqfWrite({dataInfo, managerList}) {
                             </TopBoxCard>
                             <div style={{
                                 display: 'grid',
-                                gridTemplateColumns: "150px 200px 300px 300px 300px",
-                                gap: 10,
-                                marginTop: 10
+                                gridTemplateColumns: "150px 160px 1fr 1fr 220px",
                             }}>
                                 <BoxCard title={'매입처 정보'}>
                                     {inputForm({
@@ -383,22 +389,15 @@ export default function rqfWrite({dataInfo, managerList}) {
                                 <BoxCard title={'드라이브 목록'}>
                                     {/*@ts-ignored*/}
                                     <div style={{overFlowY: "auto", maxHeight: 300}}>
-                                        <div style={{width: 150, height: 30, float: 'right'}}>
+                                        <div style={{width: 100, float: 'right'}}>
                                             {selectBoxForm({
-                                                title: '',
-                                                id: 'uploadType',
-                                                onChange: onChange,
-                                                size: 'small',
-                                                data: info,
-                                                list: [
+                                                title: '', id: 'uploadType', onChange: onChange, data: info, list: [
                                                     {value: 0, label: '요청자료'},
                                                     {value: 1, label: '첨부파일'},
                                                     {value: 2, label: '업체회신자료'}
                                                 ]
                                             })}
-
                                         </div>
-
                                         <DriveUploadComp infoFileInit={[]} fileRef={fileRef} numb={info['uploadType']}/>
                                     </div>
                                 </BoxCard>

@@ -210,8 +210,7 @@ export default function rqfUpdate({dataInfo, managerList}) {
         <LayoutComponent>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`,
-                height: '100vh',
+                gridTemplateRows: `${mini ? 470 : 65}px calc(100vh - ${mini ? 480 : 75}px)`,
                 columnGap: 5
             }}>
                 <MainCard title={'견적의뢰 수정'} list={[
@@ -221,7 +220,7 @@ export default function rqfUpdate({dataInfo, managerList}) {
                 ]} mini={mini} setMini={setMini}>
 
                     {mini ? <div>
-                        <TopBoxCard title={'기본 정보'} grid={'1fr 1fr 0.6fr 0.6fr 1fr 1fr'}>
+                        <TopBoxCard title={''} grid={'1fr 1fr 0.6fr 0.6fr 1fr 1fr'}>
                             {datePickerForm({
                                 title: '작성일',
                                 id: 'writtenDate',
@@ -253,8 +252,7 @@ export default function rqfUpdate({dataInfo, managerList}) {
                         </TopBoxCard>
                         <div style={{
                             display: 'grid',
-                            gridTemplateColumns: "150px 200px 1fr 1fr 300px",
-                            columnGap: 10
+                            gridTemplateColumns: "150px 160px 1fr 1fr 220px",
                         }}>
                             <BoxCard title={'매입처 정보'}>
                                 {inputForm({
