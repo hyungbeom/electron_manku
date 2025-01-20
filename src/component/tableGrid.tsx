@@ -1,20 +1,15 @@
 // @ts-nocheck
 
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import React, {useMemo, useRef, useState} from 'react';
 import {AgGridReact} from 'ag-grid-react';
 import {useRouter} from "next/router";
 import {tableTheme} from "@/utils/common";
-import * as XLSX from "xlsx";
 import message from "antd/lib/message";
 import Upload from "antd/lib/upload";
 import {InboxOutlined} from "@ant-design/icons";
 
 import {commonFunc, commonManage} from "@/utils/commonManage";
 import useEventListener from "@/utils/common/function/UseEventListener";
-import {searchEstimate} from "@/utils/api/mainApi";
-import OrderListModal from "@/component/OrderListModal";
-import _ from "lodash";
-import {storeDetailUnit} from "@/utils/initialList";
 import EstimateListModal from "@/component/EstimateListModal";
 
 const TableGrid = ({
@@ -357,7 +352,7 @@ const TableGrid = ({
                 )}
 
                 <div style={{width: '100%', display: 'flex', justifyContent: 'space-between', margin: '10px 0'}}>
-                    <div>LIST</div>
+                    <div style={{fontWeight : 500}}>LIST</div>
                     {funcButtons}
                 </div>
 
