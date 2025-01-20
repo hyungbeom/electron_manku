@@ -2,35 +2,41 @@ import {getData} from "@/manage/function/api";
 import message from "antd/lib/message";
 import {modalList} from "@/utils/initialList";
 import moment from "moment/moment";
+import {checkInquiryNo} from "@/utils/api/mainApi";
 
 
-export const findCodeInfo = async (event, setInfo, openModal) => {
+export const findCodeInfo = async (event, setInfo, openModal, setValidate?) => {
     getData.post(modalList[event.target.id]?.url, {
         "searchType": "1",
         "searchText": event.target.value,       // 대리점코드 or 대리점 상호명
         "page": 1,
         "limit": -1
-    }).then(v => {
+    }).then(async v => {
 
         const data = v?.data?.entity[modalList[event.target.id]?.list];
 
         const size = data?.length;
 
         if (size > 1) {
+
             return openModal(event.target.id);
         } else if (size === 1) {
             switch (event.target.id) {
                 case 'agencyCode' :
                     const {agencyId, agencyCode, agencyName, currencyUnit} = data[0];
+                    const returnDocumentNumb = await checkInquiryNo({data: {agencyCode: agencyCode}})
                     setInfo(v => {
                         return {
                             ...v,
+                            documentNumberFull : returnDocumentNumb,
                             agencyId: agencyId,
                             agencyCode: agencyCode,
                             agencyName: agencyName,
                             currencyUnit: currencyUnit
                         }
-                    })
+                    });
+                    setValidate(v=>{return{...v, agencyCode :true, documentNumberFull : true}})
+
                     break;
                 case 'customerName' :
                     const {customerName, managerName, directTel, faxNumber, email} = data[0];

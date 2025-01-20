@@ -6,17 +6,19 @@ import React, {useEffect, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import {tableTheme} from "@/utils/common";
 import {ModalInitList, modalList} from "@/utils/initialList";
-import moment from "moment";
 import useEventListener from "@/utils/common/function/UseEventListener";
 import message from "antd/lib/message";
 import {checkInquiryNo} from "@/utils/api/mainApi";
+import Drawer from "antd/lib/drawer";
 
-export default function SearchInfoModal({info, setInfo, open, setIsModalOpen}) {
+export default function SearchInfoModal({info, setInfo, open, setIsModalOpen, setValidate}) {
     const [code, setCode] = useState();
     const [list, setList] = useState([])
     const [page, setPage] = useState({x: null, y: null})
     const [openCheck, setOpenCheck] = useState('')
     const [windowOpenKey, setWindowOpenKey] = useState({key: '', value: '', router: '', deleteApi: ''})
+
+    const [opens, setOpen] = useState(false);
 
     const ref = useRef(null);
 
@@ -154,15 +156,21 @@ export default function SearchInfoModal({info, setInfo, open, setIsModalOpen}) {
 
     useEventListener('contextmenu', (e: any) => {
         e.preventDefault()
-    },typeof window !== 'undefined' ? document : null)
+    }, typeof window !== 'undefined' ? document : null)
 
     useEventListener('click', (e: any) => {
 
-        setPage({x : null, y : null})
-    },typeof window !== 'undefined' ? document : null )
+        setPage({x: null, y: null})
+    }, typeof window !== 'undefined' ? document : null)
 
 
+    const showDrawer = () => {
+        setOpen(true);
+    };
 
+    const onClose = () => {
+        setOpen(false);
+    };
     return <>
         {page.x ? <div style={{
             position: 'fixed',
@@ -193,7 +201,12 @@ export default function SearchInfoModal({info, setInfo, open, setIsModalOpen}) {
         <Modal
             // @ts-ignored
             id={openCheck}
-            title={modalList[openCheck]?.title}
+            title={<div style={{display: 'flex', justifyContent: 'space-between'}}>
+                <span>
+                {modalList[openCheck]?.title}
+            </span>
+                <Button style={{marginRight: 50}} type={'primary'}>신규생성</Button>
+            </div>}
             onCancel={() => setIsModalOpen(ModalInitList)}
             open={!!openCheck}
             width={'60vw'}
@@ -237,23 +250,32 @@ export default function SearchInfoModal({info, setInfo, open, setIsModalOpen}) {
 
                                          setInfo(v => {
                                              return {
-                                                 ...v, ...e.data, maker: e.data.makerName ,connectInquiryNo: e.data.documentNumberFull,
+                                                 ...v, ...e.data,
+                                                 maker: e.data.makerName,
+                                                 connectInquiryNo: e.data.documentNumberFull,
                                              }
                                          })
                                          break;
                                      default :
-                                         const returnDocumentNumb = await checkInquiryNo({data: {agencyCode: info['agencyCode']}})
-                                         setInfo(v => {
-                                             return {
-                                                 ...v,
-                                                 documentNumberFull : returnDocumentNumb,
-                                                 agencyManagerId : e.data.agencyId,
-                                                 agencyCode : e.data.agencyCode,
-                                                 agencyName : e.data.agencyName,
-                                                 agencyManagerName : e.data.managerName,
-                                                 agencyManagerPhoneNumber : e.data.phoneNumber
-                                             }
+
+                                         await checkInquiryNo({data: {agencyCode: e.data.agencyCode}}).then(data => {
+
+                                             setInfo(v => {
+                                                 return {
+                                                     ...v,
+                                                     documentNumberFull: data,
+                                                     agencyManagerId: e.data.agencyId,
+                                                     agencyCode: e.data.agencyCode,
+                                                     agencyName: e.data.agencyName,
+                                                     agencyManagerName: e.data.managerName,
+                                                     agencyManagerPhoneNumber: e.data.phoneNumber
+                                                 }
+                                             });
+                                             setValidate(v => {
+                                                 return {...v, agencyCode: true, documentNumberFull: true}
+                                             })
                                          })
+
                                          break;
                                  }
                                  setIsModalOpen(ModalInitList);
@@ -267,5 +289,16 @@ export default function SearchInfoModal({info, setInfo, open, setIsModalOpen}) {
                 />
             </div>
         </Modal>
+        <Drawer
+            title="Basic Drawer"
+            placement={'top'}
+            closable={false}
+            onClose={onClose}
+            open={opens}
+        >
+            <p>Some contents...</p>
+            <p>Some contents...</p>
+            <p>Some contents...</p>
+        </Drawer>
     </>
 }

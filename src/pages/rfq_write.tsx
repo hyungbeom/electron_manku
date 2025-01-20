@@ -3,7 +3,6 @@ import LayoutComponent from "@/component/LayoutComponent";
 import {CopyOutlined, FileExcelOutlined, FileSearchOutlined, PlusSquareOutlined, SaveOutlined} from "@ant-design/icons";
 import {subRfqWriteColumn} from "@/utils/columnList";
 import {estimateRequestDetailUnit, ModalInitList, reqWriteList, rfqWriteInitial} from "@/utils/initialList";
-import moment from "moment";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
 import {wrapper} from "@/store/store";
@@ -12,7 +11,6 @@ import {setUserInfo} from "@/store/user/userSlice";
 import TableGrid from "@/component/tableGrid";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import SearchInfoModal from "@/component/SearchAgencyModal";
-import Upload from "antd/lib/upload";
 import {
     BoxCard,
     datePickerForm,
@@ -28,7 +26,6 @@ import _ from "lodash";
 import {findCodeInfo} from "@/utils/api/commonApi";
 import {checkInquiryNo, saveRfq} from "@/utils/api/mainApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
-import Tooltip from "antd/lib/tooltip";
 import {ExcelUpload} from "@/component/common/ExcelUpload";
 import Select from "antd/lib/select";
 import {getData} from "@/manage/function/api";
@@ -41,6 +38,7 @@ export default function rqfWrite({dataInfo, managerList}) {
         value: item.adminId,
         label: item.name,
     }));
+
 
     const fileRef = useRef(null);
     const gridRef = useRef(null);
@@ -64,7 +62,7 @@ export default function rqfWrite({dataInfo, managerList}) {
     }
 
     const [info, setInfo] = useState<any>({...copyInit, ...dataInfo, ...adminParams})
-    const [usrlist, setUsrList] = useState([]);
+    const [validate, setValidate] = useState({agencyCode : false, documentNumberFull : false});
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
 
@@ -88,10 +86,9 @@ export default function rqfWrite({dataInfo, managerList}) {
                 case 'agencyCode' :
                 case 'customerName' :
                 case 'maker' :
-                    await findCodeInfo(e, setInfo, openModal)
+                    await findCodeInfo(e, setInfo, openModal, setValidate)
                     break;
             }
-
         }
     }
 
@@ -100,8 +97,11 @@ export default function rqfWrite({dataInfo, managerList}) {
     }
 
     function onChange(e) {
-        let bowl = {};
-        bowl[e.target.id] = e.target.value;
+        if (e.target.id === 'agencyCode') {
+            setValidate(v=> {
+                return {...v, agencyCode: false, documentNumberFull : false}
+            })
+        }
         commonManage.onChange(e, setInfo)
     }
 
@@ -149,38 +149,6 @@ export default function rqfWrite({dataInfo, managerList}) {
         setInfo({...infoInit});
     }
 
-    function print() {
-
-    }
-
-    /**
-     * @description 업로드 속성설정 property 세팅
-     */
-    const uploadProps = {
-        name: 'file',
-        accept: '.xlsx, .xls',
-        multiple: false,
-        showUploadList: false,
-        beforeUpload: (file) => {
-            const isExcel = file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
-                file.type === 'application/vnd.ms-excel' ||
-                file.name.toLowerCase().endsWith('.xlsx') ||
-                file.name.toLowerCase().endsWith('.xls');
-
-            if (!isExcel) {
-                message.error('엑셀 파일만 업로드 가능합니다.');
-                return Upload.LIST_IGNORE;
-            }
-
-            commonManage.excelFileRead(file).then(v => {
-                let copyData = {...info}
-                copyData[listType] = v;
-                setInfo(copyData);
-            })
-            return false;
-        },
-    };
-
     const downloadExcel = async () => {
         gridManage.exportSelectedRowsToExcel(gridRef, '견적의뢰_Detail_List')
     };
@@ -188,23 +156,22 @@ export default function rqfWrite({dataInfo, managerList}) {
 
     const subTableUtil = <div style={{display: 'flex', alignItems: 'end', gap: 7}}>
         <ExcelUpload gridRef={gridRef} list={reqWriteList}/>
-        <Tooltip title="하단 테이블의 row 데이터 추가." color={'cyan'} key={'cyan'}><Button type={'primary'} size={'small'}
-                                                                                 style={{fontSize: 11}}
-                                                                                 onClick={addRow}>
+        <Button type={'primary'} size={'small'}
+                style={{fontSize: 11}}
+                onClick={addRow}>
             <SaveOutlined/>추가
         </Button>
-        </Tooltip>
         {/*@ts-ignored*/}
-        <Tooltip title="체크한 row의 데이터 열을 삭제." placement={'topLeft'} color={'cyan'} key={'cyan'}><Button type={'danger'}
-                                                                                                       size={'small'}
-                                                                                                       style={{fontSize: 11}}
-                                                                                                       onClick={deleteList}>
+        <Button type={'danger'}
+                size={'small'}
+                style={{fontSize: 11}}
+                onClick={deleteList}>
             <CopyOutlined/>삭제
-        </Button></Tooltip>
-        <Tooltip title="체크한 row의 데이터 Excel다운로드." placement={'topLeft'} color={'cyan'} key={'cyan'}><Button
+        </Button>
+        <Button
             size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>
             <FileExcelOutlined/>출력
-        </Button></Tooltip>
+        </Button>
     </div>
 
     const onCChange = (value: string, e: any) => {
@@ -217,6 +184,7 @@ export default function rqfWrite({dataInfo, managerList}) {
     return <>
         <SearchInfoModal info={info} setInfo={setInfo}
                          open={isModalOpen}
+                         setValidate={setValidate}
                          setIsModalOpen={setIsModalOpen}/>
         <LayoutComponent>
             <div style={{
@@ -226,8 +194,8 @@ export default function rqfWrite({dataInfo, managerList}) {
             }}>
 
                 <MainCard title={'견적의뢰 작성'} list={[
-                    {name: '저장', func: saveFunc, type: 'primary', title: '입력한 견적의뢰 내용을 저장합니다.', place: 'topLeft'},
-                    {name: '초기화', func: clearAll, type: 'danger', title: '필드에 입력한 모든 정보들을 초기화 합니다.', place: 'topLeft'}
+                    {name: '저장', func: saveFunc, type: 'primary', title: '입력한 견적의뢰 내용을 저장합니다.'},
+                    {name: '초기화', func: clearAll, type: 'danger', title: '필드에 입력한 모든 정보들을 초기화 합니다.'}
                 ]} mini={mini} setMini={setMini}>
 
 
@@ -256,9 +224,8 @@ export default function rqfWrite({dataInfo, managerList}) {
                                 {inputForm({
                                     title: 'INQUIRY NO.',
                                     id: 'documentNumberFull',
-                                    placeHolder: '매입처 코드를 먼저 입력해주세요',
                                     onChange: onChange,
-                                    suffix: <Tooltip title="inquiry no를 생성합니다." color={'cyan'} key={'cyan'}>
+                                    suffix:
                                         <PlusSquareOutlined style={{cursor: 'pointer'}} onClick={
                                             async (e) => {
                                                 e.stopPropagation();
@@ -268,22 +235,24 @@ export default function rqfWrite({dataInfo, managerList}) {
                                                 const returnDocumentNumb = await checkInquiryNo({data: {agencyCode: info['agencyCode']}})
                                                 onChange({target: {id: 'documentNumberFull', value: returnDocumentNumb}})
                                             }
-                                        }/> </Tooltip>,
-                                    data: info
+                                        }/>,
+                                    data: info,
+                                    disabled : true,
+                                    validate : validate['documentNumberFull']
                                 })}
                                 {inputForm({
                                     title: 'RFQ NO.',
                                     id: 'rfqNo',
                                     onChange: onChange,
-                                    data: info,
-                                    placeHolder: 'REF_No.을 입력해주세요,'
+                                    data: info
+
                                 })}
                                 {inputForm({
                                     title: 'PROJECT NAME',
                                     id: 'projectTitle',
                                     onChange: onChange,
-                                    data: info,
-                                    placeHolder: '프로젝트 제목을 입력해주세요,'
+                                    data: info
+
                                 })}
                             </TopBoxCard>
                             <div style={{
@@ -296,23 +265,21 @@ export default function rqfWrite({dataInfo, managerList}) {
                                     {inputForm({
                                         title: '매입처코드',
                                         id: 'agencyCode',
-                                        placeHolder: 'ex) K73',
-                                        suffix: <Tooltip title="매입처 정보를 검색합니다." color={'cyan'}
-                                                         key={'cyan'}><FileSearchOutlined style={{cursor: 'pointer'}}
-                                                                                          onClick={
-                                                                                              (e) => {
-                                                                                                  e.stopPropagation();
-                                                                                                  openModal('agencyCode');
-                                                                                              }
-                                                                                          }/></Tooltip>,
+                                        suffix: <FileSearchOutlined style={{cursor: 'pointer'}}
+                                                                    onClick={
+                                                                        (e) => {
+                                                                            e.stopPropagation();
+                                                                            openModal('agencyCode');
+                                                                        }
+                                                                    }/>,
                                         onChange: onChange,
                                         handleKeyPress: handleKeyPress,
-                                        data: info
+                                        data: info,
+                                        validate : validate['agencyCode']
                                     })}
                                     {inputForm({
                                         title: '매입처명',
                                         id: 'agencyName',
-                                        placeHolder: 'ex) 한국에머슨',
                                         disabled: true,
                                         onChange: onChange,
                                         data: info
@@ -320,7 +287,6 @@ export default function rqfWrite({dataInfo, managerList}) {
                                     {inputForm({
                                         title: '매입처담당자',
                                         id: 'agencyManagerName',
-                                        placeHolder: 'ex) 김호철 책임님',
                                         disabled: true,
                                         onChange: onChange,
                                         data: info
@@ -331,15 +297,13 @@ export default function rqfWrite({dataInfo, managerList}) {
                                     {inputForm({
                                         title: '고객사명',
                                         id: 'customerName',
-                                        placeHolder: 'ex) 김천에너지서비스',
-                                        suffix: <Tooltip title="고객사 정보를 검색합니다." color={'cyan'}
-                                                         key={'cyan'}><FileSearchOutlined style={{cursor: 'pointer'}}
-                                                                                          onClick={
-                                                                                              (e) => {
-                                                                                                  e.stopPropagation();
-                                                                                                  openModal('customerName');
-                                                                                              }
-                                                                                          }/></Tooltip>,
+                                        suffix: <FileSearchOutlined style={{cursor: 'pointer'}}
+                                                                    onClick={
+                                                                        (e) => {
+                                                                            e.stopPropagation();
+                                                                            openModal('customerName');
+                                                                        }
+                                                                    }/>,
                                         onChange: onChange,
                                         handleKeyPress: handleKeyPress,
                                         data: info
@@ -347,7 +311,6 @@ export default function rqfWrite({dataInfo, managerList}) {
                                     {inputForm({
                                         title: '담당자명',
                                         id: 'managerName',
-                                        placeHolder: 'ex) 장진호 매니저님',
                                         onChange: onChange,
                                         data: info,
                                         disabled: true
@@ -355,7 +318,6 @@ export default function rqfWrite({dataInfo, managerList}) {
                                     {inputForm({
                                         title: '전화번호',
                                         id: 'phoneNumber',
-                                        placeHolder: 'ex) 010-1577-1577',
                                         onChange: onChange,
                                         data: info,
                                         disabled: true
@@ -363,7 +325,6 @@ export default function rqfWrite({dataInfo, managerList}) {
                                     {inputForm({
                                         title: '팩스',
                                         id: 'faxNumber',
-                                        placeHolder: 'ex) 02-341-2574~7',
                                         onChange: onChange,
                                         data: info,
                                         disabled: true
@@ -371,7 +332,6 @@ export default function rqfWrite({dataInfo, managerList}) {
                                     {inputForm({
                                         title: '이메일',
                                         id: 'customerManagerEmail',
-                                        placeHolder: 'ex) kimchun@test.co.kr',
                                         onChange: onChange,
                                         data: info,
                                         disabled: true
@@ -382,15 +342,13 @@ export default function rqfWrite({dataInfo, managerList}) {
                                     {inputForm({
                                         title: 'MAKER',
                                         id: 'maker',
-                                        placeHolder: 'ex) Pneumax S.P.A',
-                                        suffix: <Tooltip title="MAKER 정보를 검색합니다." color={'cyan'}
-                                                         key={'cyan'}><FileSearchOutlined style={{cursor: 'pointer'}}
-                                                                                          onClick={
-                                                                                              (e) => {
-                                                                                                  e.stopPropagation();
-                                                                                                  openModal('maker');
-                                                                                              }
-                                                                                          }/></Tooltip>,
+                                        suffix: <FileSearchOutlined style={{cursor: 'pointer'}}
+                                                                    onClick={
+                                                                        (e) => {
+                                                                            e.stopPropagation();
+                                                                            openModal('maker');
+                                                                        }
+                                                                    }/>,
                                         onChange: onChange,
                                         handleKeyPress: handleKeyPress,
                                         data: info
@@ -399,15 +357,13 @@ export default function rqfWrite({dataInfo, managerList}) {
                                         title: 'ITEM',
                                         id: 'item',
                                         onChange: onChange,
-                                        data: info,
-                                        placeHolder: 'ex) Bearing',
+                                        data: info
                                     })}
                                     {textAreaForm({
                                         title: '지시사항',
                                         id: 'instructions',
                                         onChange: onChange,
-                                        data: info,
-                                        placeHolder: 'ex) AAA 보다 BBB가 저렴합니다.',
+                                        data: info
                                     })}
                                 </BoxCard>
                                 <BoxCard title={'ETC'}>
@@ -415,43 +371,33 @@ export default function rqfWrite({dataInfo, managerList}) {
                                         title: 'End User',
                                         id: 'endUser',
                                         onChange: onChange,
-                                        data: info,
-                                        placeHolder: 'ex) End User',
+                                        data: info
                                     })}
                                     {textAreaForm({
                                         title: '비고란',
                                         rows: 7,
                                         id: 'remarks',
                                         onChange: onChange,
-                                        data: info,
-                                        placeHolder: '비고란 내용을 입력해주세요.'
+                                        data: info
                                     })}
                                 </BoxCard>
                                 <BoxCard title={'드라이브 목록'}>
                                     {/*@ts-ignored*/}
                                     <div style={{overFlowY: "auto", maxHeight: 300}}>
                                         <div style={{width: 150, height: 30, float: 'right'}}>
-                                            <Tooltip placement={'leftTop'} title={<div>
-                                                <div>00 요청자료(메일, 견적요청서 PDF 등등)</div>
-                                                <div>00.1 추가요청</div>
-                                                <div>01 첨부파일(견적의뢰시 첨부파일)</div>
-                                                <div>01.1 추가 첨부</div>
-                                                <div>02 업체회신자료(견적 or 추가 요청자료)</div>
-                                                <div>02.1 이후 소통 내용(견적불가 등)</div>
-                                            </div>} color={'cyan'} key={'cyan'}>
-                                                {selectBoxForm({
-                                                    title: '',
-                                                    id: 'uploadType',
-                                                    onChange: onChange,
-                                                    size: 'small',
-                                                    data: info,
-                                                    list: [
-                                                        {value: 0, label: '요청자료'},
-                                                        {value: 1, label: '첨부파일'},
-                                                        {value: 2, label: '업체회신자료'}
-                                                    ]
-                                                })}
-                                            </Tooltip>
+                                            {selectBoxForm({
+                                                title: '',
+                                                id: 'uploadType',
+                                                onChange: onChange,
+                                                size: 'small',
+                                                data: info,
+                                                list: [
+                                                    {value: 0, label: '요청자료'},
+                                                    {value: 1, label: '첨부파일'},
+                                                    {value: 2, label: '업체회신자료'}
+                                                ]
+                                            })}
+
                                         </div>
 
                                         <DriveUploadComp infoFileInit={[]} fileRef={fileRef} numb={info['uploadType']}/>

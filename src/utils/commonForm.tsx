@@ -81,7 +81,7 @@ export const inputForm = ({
                               title, id, disabled = false, placeHolder = '', suffix = null, onChange = function () {
     }, handleKeyPress = function () {
     }, data
-                          }: any) => {
+                          ,validate = true}: any) => {
     let bowl = data;
     return <div style={{fontSize : 12, paddingBottom : 10}}>
         <div>{title}</div>
@@ -93,6 +93,7 @@ export const inputForm = ({
                size={'small'}
                onKeyDown={handleKeyPress}
                suffix={suffix}
+               style={{borderColor : validate ? '' : 'red'}}
         />
     </div>
 }

@@ -30,6 +30,15 @@ export const amountFormatParser = (params) => {
     const parsedValue = parseFloat(params.newValue.replace(/,/g, ""));
     return isNaN(parsedValue) ? params.oldValue : parsedValue;
 }
+export const columnPlaceHolder = (params, title) => {
+
+        return params.value ? (
+            params.value
+        ) : (
+            <span style={{color : 'lightGray'}} className="ag-cell-placeholder">{title}</span>
+        );
+
+}
 
 
 export const searchCustomerColumn = [
@@ -306,7 +315,8 @@ export const subRfqWriteColumn = [
             // 입력 값을 숫자로 변환
             const value = params.newValue;
             return isNaN(value) ? undefined : parseFloat(value);
-        }
+        },
+        cellRenderer: (e)=>columnPlaceHolder(e, 'week')
     },
     {
         headerName: '회신여부',
