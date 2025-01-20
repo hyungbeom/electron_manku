@@ -92,6 +92,7 @@ export default function ProjectRead({dataInfo}) {
 
     function clearAll() {
         setInfo(copyInit)
+        gridRef.current.deselectAll()
     }
 
     function moveRegist() {

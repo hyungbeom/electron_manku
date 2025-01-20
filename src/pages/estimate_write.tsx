@@ -49,7 +49,7 @@ export default function EstimateWrite({dataInfo}) {
 
     const [info, setInfo] = useState<any>({...copyInit, ...dataInfo, ...adminParams})
     const [mini, setMini] = useState(true);
-    const [validate, setValidate] = useState({agencyCode : false});
+    const [validate, setValidate] = useState({agencyCode : !!dataInfo});
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
 
 

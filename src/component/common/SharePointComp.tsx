@@ -176,7 +176,7 @@ export function DriveUploadComp({infoFileInit, fileRef, numb=0}) {
             maxCount={13}
         >
             <Tooltip placement={'leftTop'} title="SHARE_POINT에 업로드합니다." color={'cyan'} key={'cyan'}>
-            <Button style={{fontSize : 11}} size={'small'} icon={<UploadOutlined/>}>Upload</Button>
+            <Button style={{fontSize : 11}} size={'small'} icon={<UploadOutlined/>} type={'primary'}>Upload</Button>
             </Tooltip>
         </Upload>
 

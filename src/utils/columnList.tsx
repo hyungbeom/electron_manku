@@ -255,6 +255,9 @@ export const subRfqWriteColumn = [
         field: 'model',
         minWidth: 150,
         editable: true,
+        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
+        checkboxSelection: true, // 각 행에 체크박스 추가
+        pinned : 'left'
     },
     {
         headerName: '수량',
@@ -793,18 +796,25 @@ export const tableEstimateWriteColumns = [
 
 
 export const rfqReadColumns = [
+
     {
         headerName: '작성일자',
         field: 'writtenDate',
-        width: 70,
-        pinned: 'left',
-        rowDrag: true
+        width: 130,
+        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
+        checkboxSelection: true, // 각 행에 체크박스 추가
+        pinned : 'left'
     },
+
     {
-        // headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
-        // checkboxSelection: true, // 각 행에 체크박스 추가
-        headerName: 'Document Number',
+        headerCheckboxSelection: false, // 헤더 체크박스 추가 (전체 선택/해제)
+        checkboxSelection: false, // 각 행에 체크박스 추가
+        headerName: 'Inquiry No.',
         field: 'documentNumberFull',
+        width: 100,
+        pinned : 'left',
+
+        // rowDrag: true
         cellRenderer: (params) => {
             const rowIndex = params.node.rowIndex;
             const currentData = params.value;
@@ -817,12 +827,12 @@ export const rfqReadColumns = [
             return currentData; // 첫 번째 값만 출력
         },
     },
-
     {
         headerName: '대리점명',
         field: 'agencyName',
         minWidth: 100,
         maxWidth: 120,
+        pinned: 'right'
     },
     {
         headerName: '거래처',
@@ -854,7 +864,7 @@ export const rfqReadColumns = [
             {
                 headerName: 'MAKER',
                 field: 'maker',
-                minWidth: 180,
+                minWidth: 200,
             },
             {
                 headerName: 'ITEM',
@@ -974,13 +984,7 @@ export const rfqReadColumns = [
         field: 'instructions',
         minWidth: 180,
         maxWidth: 120,
-    },
-    {
-        headerName: '하단 태그란',
-        field: 'footerTag',
-        minWidth: 200,
-        maxWidth: 120,
-    },
+    }
 
 
 ];

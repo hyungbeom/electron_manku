@@ -21,7 +21,8 @@ export const saveRfq = async ({data, router}) => {
 
 export const updateRfq = async ({data, router}) => {
     await getFormData.post('estimate/updateEstimateRequest', data).then(v => {
-        if (v.data.code === 1) {
+        const code = v.data.code;
+        if (code === 1) {
             message.success('저장되었습니다.')
         } else {
             message.error('저장에 실패하였습니다.')

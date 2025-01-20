@@ -1,28 +1,19 @@
-import React, {useEffect, useRef, useState} from "react";
-import Input from "antd/lib/input/Input";
+import React, {useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
-import Card from "antd/lib/card/Card";
 import {tableEstimateReadColumns} from "@/utils/columnList";
-import DatePicker from "antd/lib/date-picker";
-import {estimateReadInitial, subRfqReadInitial} from "@/utils/initialList";
-import Select from "antd/lib/select";
+import {estimateReadInitial} from "@/utils/initialList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
-import {getData} from "@/manage/function/api";
 import {setUserInfo} from "@/store/user/userSlice";
-import moment from "moment/moment";
-import * as XLSX from "xlsx";
 import Button from "antd/lib/button";
-import {CopyOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
+import {CopyOutlined, FileExcelOutlined} from "@ant-design/icons";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
-import {deleteEstimate, deleteOrder, deleteRfq, searchEstimate} from "@/utils/api/mainApi";
+import {deleteEstimate, searchEstimate} from "@/utils/api/mainApi";
 import _ from "lodash";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import {BoxCard, inputForm, MainCard, rangePickerForm, selectBoxForm} from "@/utils/commonForm";
 import {useRouter} from "next/router";
-
-const {RangePicker} = DatePicker
 
 
 export default function EstimateRead({dataInfo}) {
@@ -70,7 +61,7 @@ export default function EstimateRead({dataInfo}) {
         if (gridRef.current.getSelectedRows().length < 1) {
             return message.error('삭제할 데이터를 선택해주세요.')
         }
-        console.log(gridRef.current.getSelectedRows(),'??')
+        console.log(gridRef.current.getSelectedRows(), '??')
 
         const fieldMappings = {
             estimateId: 'estimateId',

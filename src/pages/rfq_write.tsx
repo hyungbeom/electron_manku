@@ -61,7 +61,7 @@ export default function rqfWrite({dataInfo, managerList}) {
     }
 
     const [info, setInfo] = useState<any>({...copyInit, ...dataInfo, ...adminParams})
-    const [validate, setValidate] = useState({agencyCode : false, documentNumberFull : false});
+    const [validate, setValidate] = useState({agencyCode : !!dataInfo, documentNumberFull : !!dataInfo});
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
 
@@ -85,7 +85,7 @@ export default function rqfWrite({dataInfo, managerList}) {
                 case 'agencyCode' :
                 case 'customerName' :
                 case 'maker' :
-                    await findCodeInfo(e, setInfo, openModal, setValidate)
+                    await findCodeInfo(e, setInfo, openModal, '',setValidate)
                     break;
             }
         }

@@ -43,14 +43,13 @@ const TableGrid = ({
             flex: 1,
             minWidth: 80,
             filter: true,
-            floatingFilter: true
+            floatingFilter: true,
+            checkboxSelection: false, // 기본적으로 체크박스 비활성화
         };
     }, []);
 
 
-    const rowSelection = useMemo((e) => {
-        return {mode: "multiRow",};
-    }, []);
+
 
     const handleSelectionChange = (e) => {
         setSelectedRows(e.api.getSelectedRows())
@@ -367,8 +366,7 @@ const TableGrid = ({
                     // containerStyle={{width: '100%', height: '100%'}}
                     //@ts-ignore
                     onRowDoubleClicked={handleDoubleClicked}
-                    //@ts-ignore
-                    rowSelection={rowSelection}
+                    rowSelection="multiple"
                     onCellEditingStopped={onCellEditingStopped}
                     defaultColDef={defaultColDef}
                     columnDefs={columns}
@@ -385,7 +383,7 @@ const TableGrid = ({
                     }}
                     rowDragManaged={true}
                     rowDragMultiRow={true}
-
+                    suppressRowClickSelection={true}
                 />
             </div>
         </>

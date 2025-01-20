@@ -5,7 +5,7 @@ import moment from "moment/moment";
 import {checkInquiryNo} from "@/utils/api/mainApi";
 
 
-export const findCodeInfo = async (event, setInfo, openModal, setValidate?) => {
+export const findCodeInfo = async (event, setInfo, openModal, type? , setValidate?) => {
     getData.post(modalList[event.target.id]?.url, {
         "searchType": "1",
         "searchText": event.target.value,       // 대리점코드 or 대리점 상호명
@@ -24,7 +24,7 @@ export const findCodeInfo = async (event, setInfo, openModal, setValidate?) => {
             switch (event.target.id) {
                 case 'agencyCode' :
                     const {agencyId, agencyCode, agencyName, currencyUnit} = data[0];
-                    const returnDocumentNumb = await checkInquiryNo({data: {agencyCode: agencyCode}})
+                    const returnDocumentNumb = await checkInquiryNo({data: {agencyCode: agencyCode, type : type}})
                     setInfo(v => {
                         return {
                             ...v,

@@ -115,6 +115,7 @@ export default function rfqRead({dataInfo}) {
 
     function clearAll() {
         setInfo(copyInit)
+        gridRef.current.deselectAll()
     }
 
     const downloadExcel = async () => {

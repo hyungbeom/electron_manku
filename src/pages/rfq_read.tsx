@@ -25,7 +25,6 @@ export default function rfqRead({dataInfo}) {
     const [mini, setMini] = useState(true);
     const [info, setInfo] = useState(copyInit);
 
-    console.log(dataInfo,'dataInfo:')
     const onGridReady = (params) => {
         gridRef.current = params.api;
         params.api.applyTransaction({add: dataInfo ? dataInfo : []});
@@ -76,7 +75,8 @@ export default function rfqRead({dataInfo}) {
 
 
     function clearAll() {
-        setInfo(copyInit)
+        setInfo(copyInit);
+        gridRef.current.deselectAll()
     }
 
     function moveRegist() {
@@ -99,7 +99,7 @@ export default function rfqRead({dataInfo}) {
         <LayoutComponent>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '280px' : '65px'} calc(100vh - ${mini ? 335 : 120}px)`,
+                gridTemplateRows: `${mini ? '290px' : '65px'} calc(100vh - ${mini ? 345 : 120}px)`,
                 columnGap: 5
             }}>
                 <MainCard title={'견적의뢰 조회'} list={[
