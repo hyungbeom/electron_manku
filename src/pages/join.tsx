@@ -5,8 +5,9 @@ import message from "antd/lib/message";
 import {getData} from "@/manage/function/api";
 import Button from "antd/lib/button";
 import {useRouter} from "next/router";
-import {apiManage} from "@/utils/commonManage";
+import {apiManage, commonManage} from "@/utils/commonManage";
 import {getCookie} from "@/manage/function/cookie";
+import {inputForm} from "@/utils/commonForm";
 
 export default function joint(){
     const router = useRouter();
@@ -95,19 +96,26 @@ export default function joint(){
         }
     }
 
+
+    function onChange(e) {
+        commonManage.onChange(e, setInfo)
+    }
+
+
     return <>
         <div style={{maxWidth : 800, margin : '100px auto'}}>
-        <Input id={'adminName'} value={info['adminName']} onChange={infoChange} style={{borderRadius: 5}} placeholder={'input your id'}/>
-        <Password id={'password'} value={info['password']} onChange={infoChange} style={{borderRadius: 5}} placeholder={'input your password'}/>
-        <Password id={'passwordConfirm'} value={info['passwordConfirm']} onChange={infoChange} style={{borderRadius: 5}} placeholder={'input your confirm password'}/>
-        <Input id={'name'} value={info['name']} onChange={infoChange} style={{borderRadius: 5}} placeholder={'input your name'}/>
-        <Input id={'position'} value={info['position']} onChange={infoChange} style={{borderRadius: 5}} placeholder={'input your part'}/>
-        <Input id={'email'} value={info['email']} onChange={infoChange} style={{borderRadius: 5}} placeholder={'input your email'}/>
-        <Input id={'contactNumber'} value={info['contactNumber']} onChange={infoChange} style={{borderRadius: 5}} placeholder={'input your manager phone number'}/>
-        <Input id={'faxNumber'} value={info['faxNumber']} onChange={infoChange} style={{borderRadius: 5}} placeholder={'input your fax number'}/>
+            {inputForm({title: 'ID', id: 'adminName', onChange: onChange, data: info, placeHolder : '아이디를 입력해 주세요'})}
+            {inputForm({title: 'PASSWORD', id: 'password', onChange: onChange, data: info, placeHolder : '비밀번호를 입력해 주세요'})}
+            {inputForm({title: 'PASSWORD CONFIRM', id: 'passwordConfirm', onChange: onChange, data: info, placeHolder : '비밀번호를 한번더 입력해 주세요'})}
+            {inputForm({title: 'NAME', id: 'name', onChange: onChange, data: info, placeHolder : '이름를 입력해 주세요'})}
+            {inputForm({title: 'POSITION', id: 'position', onChange: onChange, data: info, placeHolder : '부서를를 입력해 주세요'})}
+            {inputForm({title: 'EMAIL', id: 'email', onChange: onChange, data: info, placeHolder : '이메일을 입력해 주세요'})}
+            {inputForm({title: 'CONTACT NUMBER', id: 'contactNumber', onChange: onChange, data: info, placeHolder : '전화번호 입력해 주세요'})}
+            {inputForm({title: 'FAX', id: 'faxNumber', onChange: onChange, data: info, placeHolder : '팩스번호를 입력해 주세요'})}
 
-            <Button onClick={getSignUp}>
-                Regist
+
+            <Button type={'primary'} size={'large'} style={{margin : '20px auto',width : 200}} onClick={getSignUp}>
+                SIGN UP
             </Button>
         </div>
 

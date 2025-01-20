@@ -64,6 +64,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
         store.dispatch(setUserInfo(userInfo));
     }
 
+    const data = result?.data?.entity?.adminList;
 
-    return {props : {memberList : result?.data?.entity?.adminList}}
+    return {props : {memberList : data ? data : []}}
 })

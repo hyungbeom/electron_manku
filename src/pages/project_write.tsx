@@ -162,7 +162,6 @@ export default function projectWrite({dataInfo}) {
 
                     {mini ? <div>
                             <TopBoxCard title={''} grid={'1fr 1fr 1fr 1fr'}>
-
                                 {inputForm({
                                     title: '작성자',
                                     id: 'createBy',

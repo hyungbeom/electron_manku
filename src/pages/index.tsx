@@ -9,9 +9,11 @@ import {setUserInfo} from "@/store/user/userSlice";
 import {getData} from "@/manage/function/api";
 import {getCookie, setCookies} from "@/manage/function/cookie";
 import {setCookie} from "nookies";
+import message from "antd/lib/message";
 
 export default function Home(props) {
 
+    console.log(props,'::')
     const router = useRouter();
 
     const [page, setPage] = useState('login');
@@ -28,10 +30,12 @@ export default function Home(props) {
         router.push('/join')
     }
 
-    useEffect(()=>{
+    useEffect(() => {
+        if (props?.message) {
+            return message.error(props?.message)
+        }
 
-        console.log(process.env.NODE_ENV,'process.env.MICRO_REDIRECT_URI:')
-    },[])
+    }, [])
     return (
 
         <div className={'container'}>
@@ -106,6 +110,7 @@ export default function Home(props) {
 // @ts-ignore
 export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
 
+    let message = ''
 
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
     if (codeInfo >= 0) {  // 조건을 좀 더 직관적으로 변경
@@ -131,11 +136,12 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
             const v = await getData.post('account/microsoftLogin', {
                 authorizationCode: code,
                 codeVerifier: codeVerifier,
-                redirectUri : process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://manku.progist.co.kr'
+                redirectUri: process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://manku.progist.co.kr'
             });
 
-
-            if (v?.data?.code === 1) {
+            const codeCheck = v?.data?.code
+            console.log(v,'vvvv')
+            if (codeCheck === 1) {
                 const {accessToken} = v?.data?.entity;
                 if (accessToken) {
                     setCookies(ctx, 'token', accessToken);
@@ -146,7 +152,12 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
                     };
                 }
 
+            } else if (codeCheck === -10007) {
+                message = v.data.message;
+            } else if (codeCheck === -10005) {
+                message = v.data.message;
             }
+
         } catch (error) {
             console.error("Microsoft Login failed:", error);
             // 필요시 로그인 실패 처리를 할 수 있습니다.
@@ -155,7 +166,7 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
 
 
     return {
-        props: {},
+        props: {message: message},
     };
 
 
