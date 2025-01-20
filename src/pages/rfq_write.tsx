@@ -32,7 +32,6 @@ import {getData} from "@/manage/function/api";
 
 const listType = 'estimateRequestDetailList'
 export default function rqfWrite({dataInfo, managerList}) {
-
     const options = managerList.map((item) => ({
         ...item,
         value: item.adminId,

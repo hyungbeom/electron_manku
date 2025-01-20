@@ -1,6 +1,6 @@
 import moment from "moment";
 import * as XLSX from "xlsx";
-import {rfqReadColumns} from "@/utils/columnList";
+import {dateFormat, rfqReadColumns} from "@/utils/columnList";
 import message from "antd/lib/message";
 
 export const commonManage: any = {}
@@ -579,20 +579,20 @@ commonManage.setInfoFormData = function (info , formData, listType, list?) {
     this.setInfoDetailFormData(formData, listType, list)
 }
 commonManage.setInfoDetailFormData = function (formData, listType, list?) {
+
     list.forEach((detail, index) => {
         Object.keys(detail).forEach((key) => {
-            formData.append(`${listType}[${index}].${key}`, detail[key]);
+           if(key.includes('Date')){
+               console.log(moment(detail[key]).isValid() ?  dateFormat(detail[key]) : '',':::::')
+               formData.append(`${listType}[${index}].${key}`, moment(detail[key]).isValid() ?  dateFormat(detail[key]) : '');
+           }else{
+               formData.append(`${listType}[${index}].${key}`, detail[key]);
+           }
         });
     });
 }
 
-commonManage.setInfoDetailFormData = function (formData, listType, list?) {
-    list.forEach((detail, index) => {
-        Object.keys(detail).forEach((key) => {
-            formData.append(`${listType}[${index}].${key}`, detail[key]);
-        });
-    });
-}
+
 
 
 

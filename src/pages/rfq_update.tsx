@@ -1,6 +1,6 @@
 import React, {useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
-import {CopyOutlined, FileSearchOutlined, SaveOutlined} from "@ant-design/icons";
+import {CopyOutlined, FileExcelOutlined, FileSearchOutlined, SaveOutlined} from "@ant-design/icons";
 import {subRfqWriteColumn} from "@/utils/columnList";
 import moment from "moment";
 import Button from "antd/lib/button";
@@ -24,15 +24,15 @@ import {
 import {commonManage, gridManage} from "@/utils/commonManage";
 import {findCodeInfo} from "@/utils/api/commonApi";
 import {updateRfq} from "@/utils/api/mainApi";
-import {estimateRequestDetailUnit, storeWriteInitial} from "@/utils/initialList";
+import {estimateRequestDetailUnit, reqWriteList, storeWriteInitial} from "@/utils/initialList";
 import _ from "lodash";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {useRouter} from "next/router";
 import Select from "antd/lib/select";
+import {ExcelUpload} from "@/component/common/ExcelUpload";
 
 const listType = 'estimateRequestDetailList'
 export default function rqfUpdate({dataInfo, managerList}) {
-    console.log(managerList,'managerList:')
     const options = managerList.map((item) => ({
         ...item,
         value: item.name,
@@ -69,6 +69,11 @@ export default function rqfUpdate({dataInfo, managerList}) {
     }
 
     function onChange(e) {
+        if (e.target.id === 'agencyCode') {
+            setValidate(v=> {
+                return {...v, agencyCode: false, documentNumberFull : false}
+            })
+        }
         commonManage.onChange(e, setInfo)
     }
 
@@ -140,13 +145,12 @@ export default function rqfUpdate({dataInfo, managerList}) {
                     count += 1;
                 }
             });
-
         }
         result.map((v, idx) => {
             formData.append(`deleteAttachementIdList[${idx}]`, v.id);
         })
-        formData.delete('createdDate')
-        formData.delete('modifiedDate')
+        formData.delete('createdDate');
+        formData.delete('modifiedDate');
 
         await updateRfq({data: formData, router: router})
     }
@@ -166,7 +170,7 @@ export default function rqfUpdate({dataInfo, managerList}) {
         gridManage.deleteAll(gridRef)
     }
 
-    function copyPage() {
+    function copyPage(){
         const totalList = gridManage.getAllData(gridRef)
         let copyInfo = _.cloneDeep(info)
         copyInfo[listType] = totalList
@@ -175,8 +179,12 @@ export default function rqfUpdate({dataInfo, managerList}) {
         router.push(`/rfq_write?${query}`)
     }
 
-    const subTableUtil = <div>
-        {/*@ts-ignored*/}
+    const downloadExcel = async () => {
+        gridManage.exportSelectedRowsToExcel(gridRef, '견적의뢰_Detail_List')
+    };
+
+    const subTableUtil = <div style={{display: 'flex', alignItems: 'end', gap: 7}}>
+        <ExcelUpload gridRef={gridRef} list={reqWriteList}/>
         <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
                 onClick={addRow}>
             <SaveOutlined/>추가
@@ -185,6 +193,10 @@ export default function rqfUpdate({dataInfo, managerList}) {
         <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
                 onClick={deleteList}>
             <CopyOutlined/>삭제
+        </Button>
+        <Button
+            size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>
+            <FileExcelOutlined/>출력
         </Button>
     </div>
 

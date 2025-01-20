@@ -1,22 +1,17 @@
 import React, {useRef, useState} from "react";
-import Input from "antd/lib/input/Input";
-import Select from "antd/lib/select";
 import LayoutComponent from "@/component/LayoutComponent";
-import Card from "antd/lib/card/Card";
-import {CopyOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
+import {CopyOutlined, FileExcelOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
 import {rfqReadColumns} from "@/utils/columnList";
-import DatePicker from "antd/lib/date-picker";
 import {subRfqReadInitial} from "@/utils/initialList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
-import moment from "moment";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
 import {BoxCard, inputForm, MainCard, rangePickerForm, selectBoxForm} from "@/utils/commonForm";
 import _ from "lodash";
-import {deleteOrder, deleteRfq, searchRfq} from "@/utils/api/mainApi";
+import {deleteRfq, searchRfq} from "@/utils/api/mainApi";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import {useRouter} from "next/router";
 
@@ -190,6 +185,7 @@ export default function rfqRead({dataInfo}) {
 
 export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
 
+
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
     if (codeInfo < 0) {
         return {
@@ -201,7 +197,11 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
     } else {
         store.dispatch(setUserInfo(userInfo));
 
+        const start = Date.now();
+
         const result = await searchRfq({data: subRfqReadInitial});
+
+        console.log("API 호출 시간:", Date.now() - start);
         return {
             props: {dataInfo: result ? result : null}
         }

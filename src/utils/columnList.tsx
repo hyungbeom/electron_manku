@@ -9,7 +9,7 @@ const makeAbsoluteUrl = (url) => {
     return url;
 };
 
-const dateFormat = (params) => {
+export const dateFormat = (params) => {
     return moment(params.value).format('YYYY-MM-DD')
 };
 
@@ -334,8 +334,10 @@ export const subRfqWriteColumn = [
         editable: true,
         cellEditor: 'agDateCellEditor',
         valueFormatter: (params) => {
+            console.log(params,'params:!!')
             return moment(params.value).isValid() ?  dateFormat(params) : ''
-        }
+        },
+        cellRenderer: (e)=>console.log(e,'::')
     },
     {
         headerName: '비고',

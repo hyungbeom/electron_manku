@@ -12,6 +12,7 @@ import {checkInquiryNo} from "@/utils/api/mainApi";
 import Drawer from "antd/lib/drawer";
 import {useRouter} from "next/router";
 
+
 export default function SearchInfoModal({info, setInfo, open, setIsModalOpen, setValidate}) {
     const router = useRouter()
     const [code, setCode] = useState();
