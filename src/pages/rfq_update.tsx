@@ -1,9 +1,7 @@
 import React, {useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
-import {CopyOutlined, FileExcelOutlined, FileSearchOutlined, SaveOutlined} from "@ant-design/icons";
+import {FileSearchOutlined} from "@ant-design/icons";
 import {subRfqWriteColumn} from "@/utils/columnList";
-import moment from "moment";
-import Button from "antd/lib/button";
 import message from "antd/lib/message";
 import {getData} from "@/manage/function/api";
 import {wrapper} from "@/store/store";
@@ -19,17 +17,18 @@ import {
     MainCard,
     selectBoxForm,
     textAreaForm,
+    tooltipInfo,
     TopBoxCard
 } from "@/utils/commonForm";
 import {commonManage, fileManage, gridManage} from "@/utils/commonManage";
 import {findCodeInfo} from "@/utils/api/commonApi";
 import {getAttachmentFileList, updateRfq} from "@/utils/api/mainApi";
-import {estimateRequestDetailUnit, reqWriteList, storeWriteInitial} from "@/utils/initialList";
+import {estimateRequestDetailUnit, rfqWriteInitial} from "@/utils/initialList";
 import _ from "lodash";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {useRouter} from "next/router";
 import Select from "antd/lib/select";
-import {ExcelUpload} from "@/component/common/ExcelUpload";
+import Spin from "antd/lib/spin";
 
 const listType = 'estimateRequestDetailList'
 export default function rqfUpdate({dataInfo, managerList}) {
@@ -43,17 +42,19 @@ export default function rqfUpdate({dataInfo, managerList}) {
     const gridRef = useRef(null);
     const router = useRouter();
 
-    const copyUnitInit = _.cloneDeep(estimateRequestDetailUnit)
-
     const infoInit = dataInfo?.estimateRequestDetail
+    let infoInitFile = dataInfo?.attachmentFileList
 
 
     const [info, setInfo] = useState<any>({...infoInit, uploadType: 0})
     const [validate, setValidate] = useState({agencyCode: true, documentNumberFull: true});
     const [mini, setMini] = useState(true);
 
-    const [fileList, setFileList] = useState(fileManage.getFormatFiles(dataInfo?.attachmentFileList));
+    const [fileList, setFileList] = useState(fileManage.getFormatFiles(infoInitFile));
+    const [originFileList, setOriginFileList] = useState(infoInitFile);
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false, event3: false});
+
+    const [loading, setLoading] = useState(false);
 
     const onGridReady = (params) => {
         gridRef.current = params.api;
@@ -95,74 +96,62 @@ export default function rqfUpdate({dataInfo, managerList}) {
 
     async function saveFunc() {
         if (!validate['agencyCode']) {
-            return message.warn('올바른 경로를 통한 매입처코드를 입력해주세요.')
+             message.warn('올바른 경로를 통한 매입처코드를 입력해주세요.');
+            return;
         }
         if (!info['agencyCode']) {
-            return message.warn('매입처 코드가 누락되었습니다.')
+             message.warn('매입처 코드가 누락되었습니다.');
+            return;
         }
         const list = gridManage.getAllData(gridRef)
         if (!list.length) {
-            return message.warn('하위 데이터 1개 이상이여야 합니다')
+             message.warn('하위 데이터 1개 이상이여야 합니다');
+            return;
         }
 
+        setLoading(true)
         const formData: any = new FormData();
 
         commonManage.setInfoFormData(info, formData, listType, list)
-        commonManage.getUploadList(fileRef, formData)
-
-        //기존 기준 사라진 파일
-        const result = dataInfo?.attachmentFileList.filter(itemA => !fileRef.current.fileList.some(itemB => itemA.id === itemB.id));
-
-        const uploadContainer = document.querySelector(".ant-upload-list"); // 업로드 리스트 컨테이너
-
-        if (uploadContainer) {
-            const fileNodes = uploadContainer.querySelectorAll(".ant-upload-list-item-name");
-            const fileNames = Array.from(fileNodes).map((node: any) => node.textContent.trim());
-
-            let count = 0
-            fileRef.current.fileList.forEach((item, index) => {
-                if (item?.originFileObj) {
-                    formData.append(`attachmentFileList[${count}].attachmentFile`, item.originFileObj);
-                    formData.append(`attachmentFileList[${count}].fileName`, fileNames[index].replace(/\s+/g, ""));
-                    count += 1;
-                }
-            });
-        }
-        result.map((v, idx) => {
-            formData.append(`deleteAttachementIdList[${idx}]`, v.id);
-        })
+        commonManage.getUploadList(fileRef, formData);
+        commonManage.deleteUploadList(fileRef, formData, originFileList)
         formData.delete('createdDate');
         formData.delete('modifiedDate');
-
-        // estimateRequestDetailList[0].serialNumber
-
         await updateRfq({data: formData, returnFunc: returnFunc})
     }
 
-    async function returnFunc() {
-        const result = await getAttachmentFileList({
-            data: {
-                "relatedType": "ESTIMATE_REQUEST",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
-                "relatedId": infoInit['estimateRequestId']
-            }
-        });
-        setFileList(fileManage.getFormatFiles(result))
-    }
-
-    function deleteList() {
-        const list = commonManage.getUnCheckList(gridRef);
-        gridManage.resetData(gridRef, list);
-    }
-
-    function addRow() {
-        const newRow = {...copyUnitInit};
-        newRow['currency'] = commonManage.changeCurr(info['agencyCode'])
-        console.log(newRow, 'newRow:')
-        gridRef.current.applyTransaction({add: [newRow]});
+    async function returnFunc(e) {
+        if (e) {
+            await getAttachmentFileList({
+                data: {
+                    "relatedType": "ESTIMATE_REQUEST",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
+                    "relatedId": infoInit['estimateRequestId']
+                }
+            }).then(v => {
+                const list = fileManage.getFormatFiles(v);
+                setFileList(list)
+                setOriginFileList(list)
+                setLoading(false)
+            })
+        } else {
+            setLoading(false)
+        }
     }
 
     function clearAll() {
-        setInfo(estimateRequestDetailUnit);
+        setInfo(v => {
+            return {
+                ...rfqWriteInitial,
+                documentNumberFull: v.documentNumberFull,
+                writtenDate: v.writtenDate,
+                createdBy: v.createdBy,
+                managerAdminName: v.managerAdminName,
+                managerAdminId: v?.managerAdminId ? v?.managerAdminId : 0
+            }
+        });
+        setValidate(v => {
+            return {...v, agencyCode: false}
+        })
         gridManage.deleteAll(gridRef)
     }
 
@@ -175,30 +164,8 @@ export default function rqfUpdate({dataInfo, managerList}) {
         router.push(`/rfq_write?${query}`)
     }
 
-    const downloadExcel = async () => {
-        gridManage.exportSelectedRowsToExcel(gridRef, '견적의뢰_Detail_List')
-    };
 
-    const subTableUtil = <div style={{display: 'flex', alignItems: 'end', gap: 7}}>
-        <ExcelUpload gridRef={gridRef} list={reqWriteList}/>
-        <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
-                onClick={addRow}>
-            <SaveOutlined/>추가
-        </Button>
-        {/*@ts-ignored*/}
-        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
-                onClick={deleteList}>
-            <CopyOutlined/>삭제
-        </Button>
-        <Button
-            size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>
-            <FileExcelOutlined/>출력
-        </Button>
-    </div>
-
-
-    return <>
-
+    return <Spin spinning={loading} tip={'견적의뢰 수정중...'}>
         <SearchInfoModal info={info} setInfo={setInfo}
                          open={isModalOpen}
                          type={'ESTIMATE'}
@@ -237,10 +204,11 @@ export default function rqfUpdate({dataInfo, managerList}) {
                             })}
                             {inputForm({title: '작성자', id: 'createdBy', disabled: true, onChange: onChange, data: info})}
                             <div>
-                                <div>담당자</div>
+                                <div style={{fontSize: 12}}>담당자</div>
                                 <Select style={{width: '100%'}} size={'small'}
                                         showSearch
                                         value={info['managerAdminName']}
+                                        className="custom-select"
                                         placeholder="Select a person"
                                         optionFilterProp="label"
                                         onChange={onCChange}
@@ -254,7 +222,7 @@ export default function rqfUpdate({dataInfo, managerList}) {
                             display: 'grid',
                             gridTemplateColumns: "150px 160px 1fr 1fr 220px",
                         }}>
-                            <BoxCard title={'매입처 정보'}>
+                            <BoxCard title={'매입처 정보'} tooltip={tooltipInfo('agency')}>
                                 {inputForm({
                                     title: '매입처코드',
                                     id: 'agencyCode',
@@ -286,7 +254,7 @@ export default function rqfUpdate({dataInfo, managerList}) {
                                 {datePickerForm({title: '마감일자(예상)', id: 'dueDate', onChange: onChange, data: info})}
                             </BoxCard>
 
-                            <BoxCard title={'고객사 정보'}>
+                            <BoxCard title={'고객사 정보'} tooltip={tooltipInfo('customer')}>
                                 {inputForm({
                                     title: '고객사명',
                                     id: 'customerName',
@@ -304,7 +272,7 @@ export default function rqfUpdate({dataInfo, managerList}) {
                             </BoxCard>
 
 
-                            <BoxCard title={'Maker 정보'}>
+                            <BoxCard title={'Maker 정보'} tooltip={tooltipInfo('etc')}>
                                 {inputForm({
                                     title: 'MAKER',
                                     id: 'maker',
@@ -319,11 +287,11 @@ export default function rqfUpdate({dataInfo, managerList}) {
                                 {textAreaForm({title: '지시사항', id: 'instructions', onChange: onChange, data: info})}
 
                             </BoxCard>
-                            <BoxCard title={'ETC'}>
+                            <BoxCard title={'ETC'} tooltip={tooltipInfo('etc')}>
                                 {inputForm({title: 'End User', id: 'endUser', onChange: onChange, data: info})}
                                 {textAreaForm({title: '비고란', rows: 7, id: 'remarks', onChange: onChange, data: info})}
                             </BoxCard>
-                            <BoxCard title={'드라이브 목록'}>
+                            <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}>
                                 {/*@ts-ignored*/}
                                 <div style={{overFlowY: "auto", maxHeight: 300}}>
                                     <div style={{width: 100, float: 'right'}}>
@@ -349,13 +317,14 @@ export default function rqfUpdate({dataInfo, managerList}) {
                     columns={subRfqWriteColumn}
                     onGridReady={onGridReady}
                     type={'write'}
-                    funcButtons={subTableUtil}
+                    funcButtons={['upload', 'add', 'delete', 'print']}
+
                 />
 
             </div>
             <MyComponent/>
         </LayoutComponent>
-    </>
+    </Spin>
 }
 
 export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {

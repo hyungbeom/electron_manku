@@ -157,7 +157,8 @@ gridManage.getAllData = function (gridRef) {
             // 데이터를 수정하여 null을 0으로 변환
             const row = { ...node.data };
             Object.keys(row).forEach((key) => {
-                if (row[key] === null) {
+
+                if (row[key] === null || row[key] === undefined) {
                     if(key === 'net'){
                         row[key] = 0;
                     }
@@ -635,8 +636,19 @@ commonManage.getUploadList = function (fileRef, formData) {
             count += 1;
         }
     });
-
 }
+
+commonManage.deleteUploadList = function (fileRef, formData,originFileList) {
+
+    //기존 기준 사라진 파일
+    const result = originFileList?.filter(itemA => !fileRef.current.fileList.some(itemB => itemA.id === itemB.id));
+
+    result.map((v, idx) => {
+        formData.append(`deleteAttachementIdList[${idx}]`, v.id);
+    })
+}
+
+
 
 
 fileManage.getFormatFiles = function (list) {

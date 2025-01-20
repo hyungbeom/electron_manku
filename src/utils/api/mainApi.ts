@@ -10,24 +10,29 @@ export const checkInquiryNo = async ({data}) => {
     }, err => message.error(err))
 };
 
-export const saveRfq = async ({data, router}) => {
+export const saveRfq = async ({data, router, setLoading}) => {
     await getFormData.post('estimate/addEstimateRequest', data).then(v => {
         if (v.data.code === 1) {
             message.success('저장되었습니다.');
             router.push(`/rfq_update?estimateRequestId=${v?.data?.entity?.estimateRequestId}`)
+        }else{
+            setLoading(false);
         }
-    }, err => message.error(err))
+    }, err => {
+        setLoading(false);
+        message.error(err);
+    })
 };
 
 export const updateRfq = async ({data, returnFunc}) => {
     await getFormData.post('estimate/updateEstimateRequest', data).then(v => {
         const code = v.data.code;
         if (code === 1) {
-            returnFunc();
             message.success('저장되었습니다.')
         } else {
             message.error('저장에 실패하였습니다.')
         }
+        returnFunc(code === 1);
     }, err => message.error(err))
 };
 
@@ -50,17 +55,17 @@ export const searchRfq = async ({data}) => {
 
 
 export const deleteRfq = async ({
-                                    data, returnFunc = function () {
+                                    data, returnFunc = function (e) {
     }
                                 }) => {
 
     await getData.post('estimate/deleteEstimateRequestDetails', data).then(v => {
         if (v.data.code === 1) {
-            returnFunc();
-            message.success('삭제되었습니다.')
+            message.success('삭제되었습니다.');
         } else {
             message.error('오류가 발생하였습니다. 다시 시도해주세요.')
         }
+        returnFunc(v.data.code === 1);
     }, err => message.error(err))
 };
 

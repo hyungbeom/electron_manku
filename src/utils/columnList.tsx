@@ -290,7 +290,7 @@ export const subRfqWriteColumn = [
         field: 'net',
         cellEditor: 'agNumberCellEditor',
         editable: true,
-        valueFormatter: params => params.data.test ?? 0,
+        valueFormatter: params => params.data.net ?? 0,
         // cellRenderer: (e)=> e.value ? e.value : '',
         // valueGetter: (e)=> e.value ? e.value : 0,
         cellStyle: { textAlign: 'right' }
@@ -833,7 +833,7 @@ export const rfqReadColumns = [
         field: 'agencyName',
         minWidth: 100,
         maxWidth: 120,
-        pinned: 'right'
+        pinned: 'right',
     },
     {
         headerName: '거래처',
@@ -843,6 +843,7 @@ export const rfqReadColumns = [
                 field: 'customerName',
                 minWidth: 100,
                 maxWidth: 120,
+                // cellStyle: { backgroundColor: "#f4e7d5" }
             },
             {
                 headerName: '담당자',
@@ -931,6 +932,7 @@ export const rfqReadColumns = [
                 field: 'content',
                 minWidth: 120,
                 maxWidth: 120,
+                // cellStyle: { backgroundColor: "#f4e7d5" }
             },
         ]
     },
@@ -940,7 +942,7 @@ export const rfqReadColumns = [
         headerName: '발송',
         field: 'sentStatus',
         minWidth: 60,
-        maxWidth: 120,
+        maxWidth: 120
     },
 
     {

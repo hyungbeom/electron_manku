@@ -111,8 +111,6 @@ export default function LayoutComponent({children, userInfo = null}) {
 
     }, [router.pathname]); // pathname이 변경될 때마다 실행
 
-    console.log(router.pathname.includes('_read'),'router.pathname:')
-
 
     const onOpenChange = (keys) => {
         setOpenKeys(keys);
@@ -134,7 +132,7 @@ export default function LayoutComponent({children, userInfo = null}) {
     }
 
     return <>
-        {router.pathname.includes('_read') || router.pathname === '/main' ? <div style={{
+        {router.pathname.includes('_read') || router.pathname === '/main' || router.pathname === '/rfq_mail_send' ? <div style={{
             backgroundColor: '#f5f5f5',
             width: '100%',
             borderBottom: '1px solid lightGray',

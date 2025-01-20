@@ -168,9 +168,9 @@ export function DriveUploadComp({fileList, setFileList, fileRef, numb=0}) {
             beforeUpload={() => false}
             maxCount={13}
         >
-            <Tooltip placement={'leftTop'} title="SHARE_POINT에 업로드합니다." color={'cyan'} key={'cyan'}>
+
             <Button style={{fontSize : 11}} size={'small'} icon={<UploadOutlined/>} type={'primary'}>Upload</Button>
-            </Tooltip>
+
         </Upload>
 
     );

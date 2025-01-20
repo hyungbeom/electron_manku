@@ -156,3 +156,31 @@ html, body {
     border: 1px solid #ddd; /* 테두리 추가 */
     padding: 5px;
 }
+
+.custom-textarea .ant-input {
+    font-size: 12px !important;
+}
+
+.custom-datepicker .ant-picker-input > input {
+    font-size: 12px; /* 입력 필드의 글씨 크기 */
+}
+
+.custom-select .ant-select-selector {
+    font-size: 11px; /* 글씨 크기 */
+    /*display: flex;*/
+    /*align-items: center;*/
+    height: 8px;    /* 셀렉터 높이 */
+}
+
+.custom-select .ant-select-item {
+    font-size: 8px; /* 드롭다운 항목 글씨 크기 */
+}
+
+.custom-rangepicker .ant-picker {
+    font-size: 12px; /* 글씨 크기 */
+    height: 32px;    /* 입력 필드 높이 */
+}
+
+.custom-rangepicker .ant-picker-input > input {
+    font-size: 12px; /* 입력 텍스트 크기 */
+}

@@ -118,15 +118,6 @@ export default function rfqRead({dataInfo}) {
         gridRef.current.deselectAll()
     }
 
-    const downloadExcel = async () => {
-        gridManage.exportSelectedRowsToExcel(gridRef, '메일전송_목록')
-    };
-
-
-    const subTableUtil =
-        <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft: 5}} onClick={downloadExcel}>
-            <FileExcelOutlined/>출력
-        </Button>
 
 
     return <>
@@ -187,7 +178,7 @@ export default function rfqRead({dataInfo}) {
                     gridRef={gridRef}
                     onGridReady={onGridReady}
                     columns={rfqReadColumns}
-                    funcButtons={subTableUtil}
+                    funcButtons={['print']}
 
                 />
 

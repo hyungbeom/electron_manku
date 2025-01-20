@@ -14,6 +14,7 @@ import _ from "lodash";
 import {deleteRfq, searchRfq} from "@/utils/api/mainApi";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import {useRouter} from "next/router";
+import Spin from "antd/lib/spin";
 
 
 export default function rfqRead({dataInfo}) {
@@ -24,6 +25,8 @@ export default function rfqRead({dataInfo}) {
     const copyInit = _.cloneDeep(subRfqReadInitial)
     const [mini, setMini] = useState(true);
     const [info, setInfo] = useState(copyInit);
+
+    const [loading, setLoading] = useState(false);
 
     const onGridReady = (params) => {
         gridRef.current = params.api;
@@ -40,17 +43,16 @@ export default function rfqRead({dataInfo}) {
         commonManage.onChange(e, setInfo)
     }
 
-
-    /**
-     * @description 검색조건에 의해서 검색 조회 api
-     */
     async function searchInfo() {
         const copyData: any = {...info}
-
-        const result = await searchRfq({
+        setLoading(true)
+        await searchRfq({
             data: copyData
-        });
-        gridManage.resetData(gridRef, result);
+        }).then(v=>{
+            gridManage.resetData(gridRef, v);
+            setLoading(false)
+        })
+
     }
 
 
@@ -59,19 +61,13 @@ export default function rfqRead({dataInfo}) {
             return message.error('삭제할 데이터를 선택해주세요.')
         }
 
-        const fieldMappings = {
+        const deleteList = gridManage.getFieldDeleteList(gridRef, {
             estimateRequestId: 'estimateRequestId',
             estimateRequestDetailId: 'estimateRequestDetailId'
-        };
-
-        const deleteList = gridManage.getFieldDeleteList(gridRef, fieldMappings);
+        });
         await deleteRfq({data: {deleteList: deleteList}, returnFunc: searchInfo});
 
     }
-
-    const downloadExcel = async () => {
-        gridManage.exportSelectedRowsToExcel(gridRef, '견적의뢰_목록')
-    };
 
 
     function clearAll() {
@@ -80,22 +76,11 @@ export default function rfqRead({dataInfo}) {
     }
 
     function moveRegist() {
-        router.push('/rfq_write')
+        window.open(`/rfq_write`, '_blank', 'width=1000,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
     }
 
-    const subTableUtil = <div>
-        {/*@ts-ignored*/}
-        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
-                onClick={deleteList}>
-            <CopyOutlined/>삭제
-        </Button>
-        <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
-                onClick={downloadExcel}>
-            <FileExcelOutlined/>출력
-        </Button></div>
 
-
-    return <>
+    return <Spin spinning={loading} tip={'견적의뢰 조회중...'}>
         <LayoutComponent>
             <div style={{
                 display: 'grid',
@@ -112,15 +97,7 @@ export default function rfqRead({dataInfo}) {
                         gridTemplateColumns: "200px 250px 300px 1fr",
                     }}>
                         <BoxCard>
-
                             {rangePickerForm({title: '작성일자', id: 'searchDate', onChange: onChange, data: info})}
-                            {selectBoxForm({
-                                title: '회신 여부', id: 'searchReplyStatus', list: [
-                                    {value: 0, label: '전체'},
-                                    {value: 1, label: '회신'},
-                                    {value: 2, label: '미회신'}
-                                ], onChange: onChange, data: info
-                            })}
                         </BoxCard>
 
                         <BoxCard>
@@ -167,17 +144,22 @@ export default function rfqRead({dataInfo}) {
                     </div>  : <></>}
                 </MainCard>
 
-                <TableGrid
+                {/*@ts-ignored*/}
+                <TableGrid deleteComp={<Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}} onClick={deleteList}>
+                    <CopyOutlined/>삭제
+                </Button>}
                     gridRef={gridRef}
                     columns={rfqReadColumns}
                     onGridReady={onGridReady}
                     type={'read'}
-                    funcButtons={subTableUtil}
+                    funcButtons={['listDelete', 'print']}
+
+
                 />
 
             </div>
         </LayoutComponent>
-    </>
+    </Spin>
 }
 
 export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {

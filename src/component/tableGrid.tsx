@@ -6,11 +6,15 @@ import {useRouter} from "next/router";
 import {tableTheme} from "@/utils/common";
 import message from "antd/lib/message";
 import Upload from "antd/lib/upload";
-import {InboxOutlined} from "@ant-design/icons";
+import {CopyOutlined, FileExcelOutlined, InboxOutlined, SaveOutlined} from "@ant-design/icons";
 
 import {commonFunc, commonManage} from "@/utils/commonManage";
 import useEventListener from "@/utils/common/function/UseEventListener";
 import EstimateListModal from "@/component/EstimateListModal";
+import {ExcelUpload} from "@/component/common/ExcelUpload";
+import {reqWriteList} from "@/utils/initialList";
+import Button from "antd/lib/button";
+import {tableButtonList} from "@/utils/commonForm";
 
 const TableGrid = ({
                        gridRef,
@@ -19,8 +23,8 @@ const TableGrid = ({
                        },
                        type = 'read',
                        funcButtons,
-                       onCellEditingStopped = null
-
+                       onCellEditingStopped = null,
+                       deleteComp = <></>
                    }: any) => {
 
 
@@ -42,8 +46,6 @@ const TableGrid = ({
             checkboxSelection: false, // 기본적으로 체크박스 비활성화
         };
     }, []);
-
-
 
 
     const handleSelectionChange = (e) => {
@@ -100,7 +102,7 @@ const TableGrid = ({
                 router.push(`/remittance_domestic_update?remittanceId=${e?.data?.remittanceId}`)
             if (e.data.estimateRequestId)
                 window.open(`/rfq_update?estimateRequestId=${e?.data?.estimateRequestId}`, '_blank', 'width=1000,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
-                // router.push(`/rfq_update?estimateRequestId=${e?.data?.estimateRequestId}`)
+            // router.push(`/rfq_update?estimateRequestId=${e?.data?.estimateRequestId}`)
             if (e.data.estimateId)
                 router.push(`/estimate_update?estimateId=${e?.data?.estimateId}`)
             if (e.data.orderId)
@@ -266,7 +268,13 @@ const TableGrid = ({
 
             if (selectedRows.length) {
                 const list = selectedRows.map(v => {
-                    return {...v, connectInquiryNo: v.documentNumberFull, currencyUnit: v.currency, spec: v.unit, agencyManagerPhone : v.agencyManagerPhoneNumber}
+                    return {
+                        ...v,
+                        connectInquiryNo: v.documentNumberFull,
+                        currencyUnit: v.currency,
+                        spec: v.unit,
+                        agencyManagerPhone: v.agencyManagerPhoneNumber
+                    }
                 })
                 gridRef.current.applyTransaction({
                     remove: [page.event.node.data], // 삭제할 데이터
@@ -352,14 +360,18 @@ const TableGrid = ({
                 )}
 
                 <div style={{width: '100%', display: 'flex', justifyContent: 'space-between', margin: '10px 0'}}>
-                    <div style={{fontWeight : 500}}>LIST</div>
-                    {funcButtons}
+                    <div style={{fontWeight: 500}}>LIST</div>
+
+                    <div style={{display: 'flex', alignItems: 'end', gap: 7}}>
+                        {deleteComp}
+                        {funcButtons.map(v => tableButtonList(v, gridRef))}
+                    </div>
+
                 </div>
 
                 <AgGridReact
                     onGridReady={onGridReady}
                     theme={tableTheme} ref={gridRef}
-                    // containerStyle={{width: '100%', height: '100%'}}
                     //@ts-ignore
                     onRowDoubleClicked={handleDoubleClicked}
                     rowSelection="multiple"
@@ -376,6 +388,13 @@ const TableGrid = ({
                     onSelectionChanged={handleSelectionChanged} // 선택된 행 변경 이벤트
                     gridOptions={{
                         loadThemeGoogleFonts: true,
+                        getRowStyle: (params) => {
+                            // 짝수 행에만 스타일 적용
+                            if (params.node.rowIndex % 2 === 1) {
+                                return { backgroundColor: "#e3f2fd" }; // 옅은 갈색
+                            }
+                            return null; // 기본 스타일 유지
+                        },
                     }}
                     rowDragManaged={true}
                     rowDragMultiRow={true}

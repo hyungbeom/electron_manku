@@ -24,11 +24,11 @@ import {
     inputForm,
     MainCard,
     selectBoxForm,
-    textAreaForm,
+    textAreaForm, tooltipInfo,
     TopBoxCard
 } from "@/utils/commonForm";
 import {useRouter} from "next/router";
-import {commonManage, gridManage} from "@/utils/commonManage";
+import {commonManage, fileManage, gridManage} from "@/utils/commonManage";
 import _ from "lodash";
 import {findCodeInfo} from "@/utils/api/commonApi";
 import {checkInquiryNo, saveRfq} from "@/utils/api/mainApi";
@@ -37,6 +37,7 @@ import {ExcelUpload} from "@/component/common/ExcelUpload";
 import Select from "antd/lib/select";
 import {getData} from "@/manage/function/api";
 import moment from "moment";
+import Spin from "antd/lib/spin";
 
 const listType = 'estimateRequestDetailList'
 export default function rqfWrite({dataInfo, managerList}) {
@@ -74,6 +75,9 @@ export default function rqfWrite({dataInfo, managerList}) {
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
 
+    const [fileList, setFileList] = useState([]);
+
+    const [loading, setLoading] = useState(false);
 
     const onGridReady = (params) => {
         gridRef.current = params.api;
@@ -134,6 +138,8 @@ export default function rqfWrite({dataInfo, managerList}) {
             return message.warn('하위 데이터 1개 이상이여야 합니다');
         }
 
+        setLoading(true)
+
         const formData: any = new FormData();
         // serialNumbe
         commonManage.setInfoFormData(info, formData, listType, list)
@@ -142,9 +148,11 @@ export default function rqfWrite({dataInfo, managerList}) {
         formData.delete('createdDate');
         formData.delete('modifiedDate');
 
-        await saveRfq({data: formData, router: router})
+        await saveRfq({data: formData, router: router, setLoading})
 
     }
+
+
 
 
     function deleteList() {
@@ -164,30 +172,6 @@ export default function rqfWrite({dataInfo, managerList}) {
         gridManage.deleteAll(gridRef)
     }
 
-    const downloadExcel = async () => {
-        gridManage.exportSelectedRowsToExcel(gridRef, '견적의뢰_Detail_List')
-    };
-
-
-    const subTableUtil = <div style={{display: 'flex', alignItems: 'end', gap: 7}}>
-        <ExcelUpload gridRef={gridRef} list={reqWriteList}/>
-        <Button type={'primary'} size={'small'}
-                style={{fontSize: 11}}
-                onClick={addRow}>
-            <SaveOutlined/>추가
-        </Button>
-        {/*@ts-ignored*/}
-        <Button type={'danger'}
-                size={'small'}
-                style={{fontSize: 11}}
-                onClick={deleteList}>
-            <CopyOutlined/>삭제
-        </Button>
-        <Button
-            size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>
-            <FileExcelOutlined/>출력
-        </Button>
-    </div>
 
     const onCChange = (value: string, e: any) => {
         setInfo(v => {
@@ -196,9 +180,10 @@ export default function rqfWrite({dataInfo, managerList}) {
     };
 
 
-    return <>
+    return <Spin spinning={loading} tip={'견적의뢰 등록중...'}>
         <SearchInfoModal info={info} setInfo={setInfo}
                          open={isModalOpen}
+                         gridRef={gridRef}
                          setValidate={setValidate}
                          setIsModalOpen={setIsModalOpen}/>
         <LayoutComponent>
@@ -291,7 +276,7 @@ export default function rqfWrite({dataInfo, managerList}) {
                                 display: 'grid',
                                 gridTemplateColumns: "150px 160px 1fr 1fr 220px",
                             }}>
-                                <BoxCard title={'매입처 정보'}>
+                                <BoxCard title={'매입처 정보'} tooltip={tooltipInfo('agency')}>
                                     {inputForm({
                                         title: '매입처코드',
                                         id: 'agencyCode',
@@ -323,7 +308,7 @@ export default function rqfWrite({dataInfo, managerList}) {
                                     })}
                                     {datePickerForm({title: '마감일자(예상)', id: 'dueDate', onChange: onChange, data: info})}
                                 </BoxCard>
-                                <BoxCard title={'고객사 정보'}>
+                                <BoxCard title={'고객사 정보'} tooltip={tooltipInfo('customer')}>
                                     {inputForm({
                                         title: '고객사명',
                                         id: 'customerName',
@@ -368,7 +353,7 @@ export default function rqfWrite({dataInfo, managerList}) {
                                     })}
                                 </BoxCard>
 
-                                <BoxCard title={'Maker 정보'}>
+                                <BoxCard title={'Maker 정보'} tooltip={tooltipInfo('maker')}>
                                     {inputForm({
                                         title: 'MAKER',
                                         id: 'maker',
@@ -396,7 +381,7 @@ export default function rqfWrite({dataInfo, managerList}) {
                                         data: info
                                     })}
                                 </BoxCard>
-                                <BoxCard title={'ETC'}>
+                                <BoxCard title={'ETC'} tooltip={tooltipInfo('etc')}>
                                     {inputForm({
                                         title: 'End User',
                                         id: 'endUser',
@@ -411,7 +396,7 @@ export default function rqfWrite({dataInfo, managerList}) {
                                         data: info
                                     })}
                                 </BoxCard>
-                                <BoxCard title={'드라이브 목록'}>
+                                <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}>
                                     {/*@ts-ignored*/}
                                     <div style={{overFlowY: "auto", maxHeight: 300}}>
                                         <div style={{width: 100, float: 'right'}}>
@@ -423,7 +408,7 @@ export default function rqfWrite({dataInfo, managerList}) {
                                                 ]
                                             })}
                                         </div>
-                                        <DriveUploadComp infoFileInit={[]} fileRef={fileRef} numb={info['uploadType']}/>
+                                        <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef} numb={info['uploadType']}/>
                                     </div>
                                 </BoxCard>
                             </div>
@@ -436,11 +421,11 @@ export default function rqfWrite({dataInfo, managerList}) {
                     columns={subRfqWriteColumn}
                     onGridReady={onGridReady}
                     type={'write'}
-                    funcButtons={subTableUtil}
+                    funcButtons={['add', 'delete', 'print']}
                 />
             </div>
         </LayoutComponent>
-    </>
+    </Spin>
 }
 
 // @ts-ignored
@@ -468,7 +453,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     const list = result?.data?.entity?.adminList;
     if (query?.data) {
         const data = JSON.parse(decodeURIComponent(query.data));
-        return {props: {dataInfo: data, managerList: list}}
+        return {props: {dataInfo: data ?? {}, managerList: list ?? []}}
     }
 
     return {props: {managerList: list}}
