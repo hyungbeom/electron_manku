@@ -12,7 +12,7 @@ import {BoxCard, MainCard, TopBoxCard} from "@/utils/commonForm";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import Radio from "antd/lib/radio";
 import InputNumber from "antd/lib/input-number";
-import {commonManage, gridManage} from "@/utils/commonManage";
+import {commonManage, fileManage, gridManage} from "@/utils/commonManage";
 import {saveRemittance, updateRemittance} from "@/utils/api/mainApi";
 import {useRouter} from "next/router";
 import _ from "lodash";
@@ -28,7 +28,11 @@ export default function remittance_domestic({dataInfo}) {
 
 
     const [info, setInfo] = useState(infoInit)
+    const [mini, setMini] = useState(true);
 
+    const [fileList, setFileList] = useState(fileManage.getFormatFiles(infoFileInit));
+    const [originFileList, setOriginFileList] = useState(infoFileInit);
+    const [loading, setLoading] = useState(false);
     useEffect(()=>{
         setInfo(v=>{
             return {
@@ -213,7 +217,7 @@ export default function remittance_domestic({dataInfo}) {
                     <BoxCard title={'드라이브 목록'}>
                         {/*@ts-ignored*/}
                         <div style={{overFlowY: "auto", maxHeight: 300}}>
-                            <DriveUploadComp infoFileInit={infoFileInit} fileRef={fileRef}/>
+                            <DriveUploadComp  fileList={fileList} setFileList={setFileList} fileRef={fileRef}/>
                         </div>
                     </BoxCard>
                 </div>
