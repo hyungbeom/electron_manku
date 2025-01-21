@@ -101,7 +101,7 @@ export default function delivery_read({dataInfo}) {
         <LayoutComponent>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '380px' : '65px'} calc(100vh - ${mini ? 435 : 120}px)`,
+                gridTemplateRows: `${mini ? '345px' : '65px'} calc(100vh - ${mini ? 435 : 155}px)`,
                 columnGap: 5
             }}>
                 <MainCard title={'배송조회'}
