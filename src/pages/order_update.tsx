@@ -14,7 +14,7 @@ import TableGrid from "@/component/tableGrid";
 import {tableOrderWriteColumn} from "@/utils/columnList";
 import PrintPo from "@/component/printPo";
 import PrintTransactionModal from "@/component/printTransaction";
-import {commonManage, gridManage} from "@/utils/commonManage";
+import {commonManage, fileManage, gridManage} from "@/utils/commonManage";
 import {updateOrder} from "@/utils/api/mainApi";
 import _ from "lodash";
 import {findEstDocumentInfo} from "@/utils/api/commonApi";
@@ -26,19 +26,20 @@ export default function order_update({dataInfo}) {
     const gridRef = useRef(null);
     const router = useRouter();
 
-    console.log(dataInfo, 'dataInfo:::')
-
     const copyUnitInit = _.cloneDeep(orderDetailUnit)
 
     const infoInit = dataInfo?.orderDetail
-    const infoFileInit = dataInfo?.attachmentFileList
+    const infoInitFile = dataInfo?.attachmentFileList
 
     const [info, setInfo] = useState<any>(infoInit)
 
     const [mini, setMini] = useState(true);
     const [customerData, setCustomerData] = useState(printEstimateInitial)
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
-
+    const [validate, setValidate] = useState({agencyCode: true});
+    const [fileList, setFileList] = useState(fileManage.getFormatFiles(infoInitFile));
+    const [originFileList, setOriginFileList] = useState(infoInitFile);
+    const [loading, setLoading] = useState(false);
 
     const onGridReady = (params) => {
         gridRef.current = params.api;
@@ -158,22 +159,6 @@ export default function order_update({dataInfo}) {
         }
     }
 
-
-    /**
-     * @description 테이블 우측상단 관련 기본 유틸버튼
-     */
-    const subTableUtil = <div>
-        {/*@ts-ignored*/}
-        <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
-                onClick={addRow}>
-            <SaveOutlined/>추가
-        </Button>
-        {/*@ts-ignored*/}
-        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
-                onClick={deleteList}>
-            <CopyOutlined/>삭제
-        </Button>
-    </div>
 
 
     function copyPage() {
@@ -301,7 +286,8 @@ export default function order_update({dataInfo}) {
                             <BoxCard title={'드라이브 목록'}>
                                 {/*@ts-ignored*/}
                                 <div style={{overFlowY: "auto", maxHeight: 300}}>
-                                    <DriveUploadComp infoFileInit={infoFileInit} fileRef={fileRef} numb={4}/>
+                                    <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
+                                                     numb={4}/>
                                 </div>
                             </BoxCard>
                         </div>
@@ -314,7 +300,7 @@ export default function order_update({dataInfo}) {
                     onGridReady={onGridReady}
                     columns={tableOrderWriteColumn}
                     type={'write'}
-                    funcButtons={subTableUtil}
+                    funcButtons={['orderUpload', 'orderAdd', 'delete', 'print']}
                 />
 
             </div>

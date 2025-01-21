@@ -1,9 +1,8 @@
 import React, {useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
-import {CopyOutlined, DownloadOutlined, FileSearchOutlined, PlusSquareOutlined, SaveOutlined} from "@ant-design/icons";
+import {DownloadOutlined, FileSearchOutlined, PlusSquareOutlined} from "@ant-design/icons";
 import {tableEstimateWriteColumns} from "@/utils/columnList";
 import {estimateDetailUnit, estimateWriteInitial, ModalInitList} from "@/utils/initialList";
-import Button from "antd/lib/button";
 import message from "antd/lib/message";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
@@ -50,7 +49,7 @@ export default function EstimateWrite({dataInfo}) {
 
     const [info, setInfo] = useState<any>({...copyInit, ...dataInfo, ...adminParams})
     const [mini, setMini] = useState(true);
-    const [validate, setValidate] = useState({agencyCode : !!dataInfo});
+    const [validate, setValidate] = useState({agencyCode: !!dataInfo});
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
 
     const [fileList, setFileList] = useState([]);
@@ -72,16 +71,22 @@ export default function EstimateWrite({dataInfo}) {
                 case 'agencyCode' :
                 case 'customerName' :
                 case 'maker' :
-                    await findCodeInfo(e, setInfo, openModal, 'ESTIMATE',setValidate)
+                    await findCodeInfo(e, setInfo, openModal, 'ESTIMATE', setValidate)
                     break;
                 case 'connectDocumentNumberFull' :
                     const result = await findDocumentInfo(e, setInfo);
-                    console.log(result,'result:')
-                    setInfo(v=>{
-                        return {...result, connectDocumentNumberFull: info.connectDocumentNumberFull, documentNumberFull :v.documentNumberFull }
+                    console.log(result, 'result:')
+                    setInfo(v => {
+                        return {
+                            ...result,
+                            connectDocumentNumberFull: info.connectDocumentNumberFull,
+                            documentNumberFull: v.documentNumberFull
+                        }
                     })
-                    if(result?.agencyCode){
-                     setValidate(v=>{return {agencyCode: true }})
+                    if (result?.agencyCode) {
+                        setValidate(v => {
+                            return {agencyCode: true}
+                        })
                     }
                     gridManage.resetData(gridRef, result?.estimateRequestDetailList);
                     break;
@@ -95,7 +100,7 @@ export default function EstimateWrite({dataInfo}) {
     }
 
     function onChange(e) {
-        setValidate(v=> {
+        setValidate(v => {
             return {...v, agencyCode: e.target.id === 'agencyCode' ? false : v.agencyCode}
         })
         commonManage.onChange(e, setInfo)
@@ -119,7 +124,6 @@ export default function EstimateWrite({dataInfo}) {
 
         formData.delete('createdDate')
         formData.delete('modifiedDate')
-
 
 
         await saveEstimate({data: formData, router: router})
@@ -176,7 +180,12 @@ export default function EstimateWrite({dataInfo}) {
                                                 if (!info['agencyCode']) {
                                                     return message.warn('매입처코드를 선택해주세요')
                                                 }
-                                                const returnDocumentNumb = await checkInquiryNo({data: {agencyCode: info['agencyCode'], type : 'ESTIMATE'}})
+                                                const returnDocumentNumb = await checkInquiryNo({
+                                                    data: {
+                                                        agencyCode: info['agencyCode'],
+                                                        type: 'ESTIMATE'
+                                                    }
+                                                })
                                                 onChange({target: {id: 'documentNumberFull', value: returnDocumentNumb}})
                                             }
                                         }/>
@@ -204,7 +213,11 @@ export default function EstimateWrite({dataInfo}) {
                                                 e.stopPropagation();
                                                 openModal('agencyCode');
                                             }
-                                        }/>, onChange: onChange, handleKeyPress: handleKeyPress, data: info,   validate : validate['agencyCode']
+                                        }/>,
+                                        onChange: onChange,
+                                        handleKeyPress: handleKeyPress,
+                                        data: info,
+                                        validate: validate['agencyCode']
                                     })}
                                     {inputForm({
                                         title: '매입처명',
@@ -328,7 +341,8 @@ export default function EstimateWrite({dataInfo}) {
                                 <BoxCard title={'드라이브 목록'}>
                                     {/*@ts-ignored*/}
                                     <div style={{overFlowY: "auto", maxHeight: 300}}>
-                                        <DriveUploadComp fileList={fileList} setFileList={setFileList}  fileRef={fileRef} numb={3}/>
+                                        <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
+                                                         numb={3}/>
                                     </div>
                                 </BoxCard>
                             </div>

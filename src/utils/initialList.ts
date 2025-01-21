@@ -971,7 +971,20 @@ export const estimateWriteList = {
     금액: 'amount',
     CURR: 'currency',
     "NET/P": 'net',
-
-
 }
+
+export const orderWriteList = {
+    MODEL: 'model',
+    단위: 'unit',
+    CURR: 'currency',
+    "NET/P": 'net',
+    totalAmount: 'amount',
+    수량: 'quantity',
+    입고: 'receivedQuantity',
+    미입고: 'unreceivedQuantity',
+    단가: 'unitPrice',
+    금액: 'totalPrice'
+}
+
+
 

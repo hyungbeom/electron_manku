@@ -354,7 +354,7 @@ export const subRfqWriteColumn = [
 
 export const tableOrderWriteColumn = [
     {
-        headerName: 'Model',
+        headerName: 'MODEL',
         field: 'model',
         minWidth: 150,
         editable: true,

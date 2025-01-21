@@ -20,7 +20,7 @@ import Select from "antd/lib/select";
 import Tooltip from "antd/lib/tooltip";
 import {
     estimateDetailUnit,
-    estimateRequestDetailUnit, estimateWriteList,
+    estimateRequestDetailUnit, estimateWriteList, orderDetailUnit, orderWriteList,
     projectDetailUnit,
     projectWriteList,
     reqWriteList
@@ -282,6 +282,11 @@ export const tableButtonList = (type:any, gridRef?:any) => {
         newRow['currency'] = commonManage.changeCurr(agencyCode.value)
         gridRef.current.applyTransaction({add: [newRow]});
     }
+
+    function addOrderRow() {
+        const newRow = {...orderDetailUnit};
+        gridRef.current.applyTransaction({add: [newRow]});
+    }
     function addProjectRow() {
         const newRow = {...projectDetailUnit};
         gridRef.current.applyTransaction({add: [newRow]});
@@ -301,7 +306,14 @@ export const tableButtonList = (type:any, gridRef?:any) => {
 
 
         // =======================================================
-
+        case 'orderUpload' :
+            return <ExcelUpload gridRef={gridRef} list={orderWriteList}/>
+        case 'orderAdd' :
+            return  <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
+                            onClick={addOrderRow}>
+                <SaveOutlined/>추가
+            </Button>
+        // =======================================================
         case 'projectUpload' :
             return <ExcelUpload gridRef={gridRef} list={projectWriteList}/>
         case 'upload' :

@@ -28,6 +28,7 @@ import {findCodeInfo, findDocumentInfo} from "@/utils/api/commonApi";
 import {getAttachmentFileList, updateEstimate} from "@/utils/api/mainApi";
 import _ from "lodash";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
+import Spin from "antd/lib/spin";
 
 
 const listType = 'estimateDetailList'
@@ -178,7 +179,7 @@ export default function estimate_update({dataInfo}) {
     </div>
 
 
-    return <>
+    return  <Spin spinning={loading} tip={'견적의뢰 수정중...'}>
         {/*@ts-ignore*/}
         <SearchInfoModal info={info} setInfo={setInfo}
                          open={isModalOpen}
@@ -367,7 +368,7 @@ export default function estimate_update({dataInfo}) {
                 />
             </div>
         </LayoutComponent>
-    </>
+    </Spin>
 }
 
 export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {

@@ -2,7 +2,7 @@ import React, {useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
 import {CopyOutlined, DownloadOutlined, SaveOutlined} from "@ant-design/icons";
 import {tableOrderWriteColumn,} from "@/utils/columnList";
-import {orderDetailUnit, orderWriteInitial} from "@/utils/initialList";
+import {ModalInitList, orderDetailUnit, orderWriteInitial} from "@/utils/initialList";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
 import {wrapper} from "@/store/store";
@@ -14,7 +14,6 @@ import {useRouter} from "next/router";
 import TableGrid from "@/component/tableGrid";
 import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, TopBoxCard} from "@/utils/commonForm";
 import {commonManage, gridManage} from "@/utils/commonManage";
-import TextArea from "antd/lib/input/TextArea";
 import _ from "lodash";
 import {findEstDocumentInfo} from "@/utils/api/commonApi";
 import {saveOrder} from "@/utils/api/mainApi";
@@ -28,13 +27,16 @@ export default function OrderWriter({dataInfo}) {
     const router = useRouter();
 
 
-
     const copyInit = _.cloneDeep(orderWriteInitial)
     const copyUnitInit = _.cloneDeep(orderDetailUnit)
 
     const userInfo = useAppSelector((state) => state.user);
 
     const [mini, setMini] = useState(true);
+
+    const [fileList, setFileList] = useState([]);
+
+    const [loading, setLoading] = useState(false);
 
     const adminParams = {
         managerAdminId: userInfo['adminId'],
@@ -53,6 +55,9 @@ export default function OrderWriter({dataInfo}) {
     }
 
     const [info, setInfo] = useState<any>({...copyInit, ...dataInfo, ...adminParams})
+
+
+
 
 
     const onGridReady = (params) => {
@@ -80,75 +85,21 @@ export default function OrderWriter({dataInfo}) {
     async function saveFunc() {
         const list = gridManage.getAllData(gridRef)
         if (!list.length) {
-           return message.warn('하위 데이터 1개 이상이여야 합니다')
+            return message.warn('하위 데이터 1개 이상이여야 합니다')
         }
+
+        setLoading(true)
         const formData: any = new FormData();
 
-        const handleIteration = () => {
-            for (const {key, value} of commonManage.commonCalc(info)) {
-                if (key !== listType) {
-                    formData.append(key, value);
-                }
-            }
-        };
-
-        handleIteration();
-
-
-        if (list.length) {
-            list.forEach((detail, index) => {
-                Object.keys(detail).forEach((key) => {
-                    formData.append(`${listType}[${index}].${key}`, detail[key]);
-                });
-            });
-        }
-
-        const uploadContainer = document.querySelector(".ant-upload-list"); // 업로드 리스트 컨테이너
-
-        if (uploadContainer) {
-            const fileNodes = uploadContainer.querySelectorAll(".ant-upload-list-item-name");
-            const fileNames = Array.from(fileNodes).map((node:any) => node.textContent.trim());
-
-            const filesToSave = fileRef.current.fileList.map((item) => item.originFileObj).filter((file) => file instanceof File);
-
-            filesToSave.forEach((file, index) => {
-                formData.append(`attachmentFileList[${index}].attachmentFile`, file);
-                formData.append(`attachmentFileList[${index}].fileName`, fileNames[index].replace(/\s+/g, ""));
-            });
-        }
-        await saveOrder({data : formData, router : router})
-    }
-
-    function deleteList() {
-        const list = commonManage.getUnCheckList(gridRef);
-        gridManage.resetData(gridRef, list);
-    }
-
-    function addRow() {
-        const newRow = {...copyUnitInit, "currency": commonManage.changeCurr(info['agencyCode'])};
-        gridRef.current.applyTransaction({add: [newRow]});
+        commonManage.setInfoFormData(info, formData, listType, list)
+        commonManage.getUploadList(fileRef, formData)
+        await saveOrder({data: formData, router: router})
     }
 
     function clearAll() {
         setInfo({...infoInit});
         gridManage.deleteAll(gridRef);
     }
-
-    /**
-     * @description 테이블 우측상단 관련 기본 유틸버튼
-     */
-    const subTableUtil = <div>
-        {/*@ts-ignored*/}
-        <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
-                onClick={addRow}>
-            <SaveOutlined/>추가
-        </Button>
-        {/*@ts-ignored*/}
-        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
-                onClick={deleteList}>
-            <CopyOutlined/>삭제
-        </Button>
-    </div>
 
     return <>
         <LayoutComponent>
@@ -239,7 +190,8 @@ export default function OrderWriter({dataInfo}) {
                             <BoxCard title={'드라이브 목록'}>
                                 {/*@ts-ignored*/}
                                 <div style={{overFlowY: "auto", maxHeight: 300}}>
-                                    <DriveUploadComp infoFileInit={[]} fileRef={fileRef} numb={4}/>
+                                    <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
+                                                     numb={4}/>
                                 </div>
                             </BoxCard>
                         </div>
@@ -251,7 +203,7 @@ export default function OrderWriter({dataInfo}) {
                     columns={tableOrderWriteColumn}
                     onGridReady={onGridReady}
                     type={'write'}
-                    funcButtons={subTableUtil}
+                    funcButtons={['orderUpload', 'orderAdd', 'delete', 'print']}
                 />
 
             </div>
