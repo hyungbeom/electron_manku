@@ -15,7 +15,7 @@ import {tableOrderWriteColumn} from "@/utils/columnList";
 import PrintPo from "@/component/printPo";
 import PrintTransactionModal from "@/component/printTransaction";
 import {commonManage, fileManage, gridManage} from "@/utils/commonManage";
-import {updateOrder} from "@/utils/api/mainApi";
+import {getAttachmentFileList, updateOrder} from "@/utils/api/mainApi";
 import _ from "lodash";
 import {findEstDocumentInfo} from "@/utils/api/commonApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
@@ -29,7 +29,7 @@ export default function order_update({dataInfo}) {
     const copyUnitInit = _.cloneDeep(orderDetailUnit)
 
     const infoInit = dataInfo?.orderDetail
-    const infoInitFile = dataInfo?.attachmentFileList
+    let infoInitFile = dataInfo?.attachmentFileList
 
     const [info, setInfo] = useState<any>(infoInit)
 
@@ -56,60 +56,35 @@ export default function order_update({dataInfo}) {
         if (!list.length) {
             return message.warn('하위 데이터 1개 이상이여야 합니다')
         }
+        setLoading(true)
         const formData: any = new FormData();
-
-        const handleIteration = () => {
-            for (const {key, value} of commonManage.commonCalc(info)) {
-                if (key !== listType) {
-                    formData.append(key, value);
-                }
-            }
-        };
-
-        handleIteration();
-
-        const copyData = {...info}
-
-
-        if (list.length) {
-            list.forEach((detail, index) => {
-                Object.keys(detail).forEach((key) => {
-                    formData.append(`${listType}[${index}].${key}`, detail[key]);
-                });
-            });
-        }
-
-        const filesToSave = fileRef.current.fileList.map((item) => item.originFileObj).filter((file) => file instanceof File);
-
-        const uploadContainer = document.querySelector(".ant-upload-list"); // 업로드 리스트 컨테이너
-
-        if (uploadContainer) {
-            const fileNodes = uploadContainer.querySelectorAll(".ant-upload-list-item-name");
-            const fileNames = Array.from(fileNodes).map((node:any) => node.textContent.trim());
-
-            let count = 0
-            fileRef.current.fileList.forEach((item, index) => {
-                if(item?.originFileObj){
-                    formData.append(`attachmentFileList[${count}].attachmentFile`, item.originFileObj);
-                    formData.append(`attachmentFileList[${count}].fileName`, fileNames[index].replace(/\s+/g, ""));
-                    count += 1;
-                }
-            });
-
-        }
-
-
-        //기존 기준 사라진 파일
-        const result = infoFileInit.filter(itemA => !fileRef.current.fileList.some(itemB => itemA.id === itemB.id));
-        result.map((v, idx) => {
-            formData.append(`deleteAttachementIdList[${idx}]`, v.id);
-        })
+        commonManage.setInfoFormData(info, formData, listType, list)
+        commonManage.getUploadList(fileRef, formData);
+        commonManage.deleteUploadList(fileRef, formData, originFileList)
 
         formData.delete('createdDate')
         formData.delete('modifiedDate')
 
 
-        await updateOrder({data: formData})
+        await updateOrder({data: formData, returnFunc: returnFunc})
+    }
+
+    async function returnFunc(e) {
+        if (e) {
+            await getAttachmentFileList({
+                data: {
+                    "relatedType": "ORDER",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
+                    "relatedId": infoInit['orderId']
+                }
+            }).then(v => {
+                const list = fileManage.getFormatFiles(v);
+                setFileList(list)
+                setOriginFileList(list)
+                setLoading(false)
+            })
+        } else {
+            setLoading(false)
+        }
     }
 
     async function printTransactionStatement() {

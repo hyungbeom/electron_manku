@@ -287,14 +287,15 @@ export const saveOrder = async ({data, router}) => {
 };
 
 
-export const updateOrder = async ({data}) => {
+export const updateOrder = async ({data, returnFunc}) => {
     await getFormData.post('order/updateOrder', data).then(v => {
-        if (v.data.code === 1) {
+        const code = v.data.code;
+        if (code === 1) {
             message.success('수정되었습니다')
         } else {
             message.error('수정에 실패하였습니다.')
         }
-        console.log(v, ':::')
+        returnFunc(code === 1);
     });
 };
 
