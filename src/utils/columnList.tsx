@@ -745,7 +745,7 @@ export const tableEstimateWriteColumns = [
         headerName: 'MODEL',
         field: 'model',
         editable: true,
-        width: 1320,
+        width: 120,
         pinned : 'left'
     },
     {

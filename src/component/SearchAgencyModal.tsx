@@ -280,7 +280,7 @@ export default function SearchInfoModal({info, setInfo, open, setIsModalOpen, se
                                              setInfo(v => {
                                                  return {
                                                      ...v,
-                                                     documentNumberFull: type === 'ESTIMATE' ? v.documentNumberFull :  data,
+                                                     documentNumberFull:  data,
                                                      agencyManagerId: e.data.agencyId,
                                                      agencyCode: e.data.agencyCode,
                                                      agencyName: e.data.agencyName,

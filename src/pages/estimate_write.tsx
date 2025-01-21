@@ -40,11 +40,12 @@ export default function EstimateWrite({dataInfo}) {
 
     const adminParams = {
         managerAdminId: userInfo['adminId'],
-        createBy: userInfo['name'],
+        createdBy: userInfo['name'],
         managerAdminName: userInfo['name']
     }
     const infoInit = {
         ...copyInit,
+        ...adminParams
     }
 
     const [info, setInfo] = useState<any>({...copyInit, ...dataInfo, ...adminParams})
@@ -52,14 +53,13 @@ export default function EstimateWrite({dataInfo}) {
     const [validate, setValidate] = useState({agencyCode : !!dataInfo});
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
 
+    const [fileList, setFileList] = useState([]);
+
+    const [loading, setLoading] = useState(false);
 
     const onGridReady = (params) => {
         gridRef.current = params.api;
-        const copyData = _.cloneDeep(info);
-        delete copyData?.createdDate;
-        delete copyData?.modifiedDate;
         const result = dataInfo?.estimateDetailList;
-        setInfo(copyData);
         params.api.applyTransaction({add: result ? result : []});
     };
 
@@ -72,14 +72,15 @@ export default function EstimateWrite({dataInfo}) {
                 case 'agencyCode' :
                 case 'customerName' :
                 case 'maker' :
-                    await findCodeInfo(e, setInfo, openModal, setValidate)
+                    await findCodeInfo(e, setInfo, openModal, 'ESTIMATE',setValidate)
                     break;
                 case 'connectDocumentNumberFull' :
                     const result = await findDocumentInfo(e, setInfo);
+                    console.log(result,'result:')
                     setInfo(v=>{
                         return {...result, connectDocumentNumberFull: info.connectDocumentNumberFull, documentNumberFull :v.documentNumberFull }
                     })
-                    if(result['agencyCode']){
+                    if(result?.agencyCode){
                      setValidate(v=>{return {agencyCode: true }})
                     }
                     gridManage.resetData(gridRef, result?.estimateRequestDetailList);
@@ -126,40 +127,17 @@ export default function EstimateWrite({dataInfo}) {
     }
 
 
-    function deleteList() {
-        const list = commonManage.getUnCheckList(gridRef);
-        gridManage.resetData(gridRef, list);
-    }
-
-    function addRow() {
-        const newRow = {...copyUnitInit, "currency": commonManage.changeCurr(info['agencyCode'])};
-        gridRef.current.applyTransaction({add: [newRow]});
-    }
-
     function clearAll() {
         setInfo({...infoInit});
         gridManage.deleteAll(gridRef);
     }
-
-    /**
-     * @description 테이블 우측상단 관련 기본 유틸버튼
-     */
-    const subTableUtil = <div style={{display: 'flex', alignItems: 'end'}}>
-        <Button type={'primary'} size={'small'} style={{marginLeft: 5}}
-                onClick={addRow}>
-            <SaveOutlined/>추가
-        </Button>
-        {/*@ts-ignored*/}
-        <Button type={'danger'} size={'small'} style={{marginLeft: 5,}} onClick={deleteList}>
-            <CopyOutlined/>삭제
-        </Button>
-    </div>
 
 
     return <>
 
         <SearchInfoModal info={info} setInfo={setInfo}
                          open={isModalOpen}
+                         gridRef={gridRef}
                          setValidate={setValidate}
                          setIsModalOpen={setIsModalOpen} type={'ESTIMATE'}/>
 
@@ -183,7 +161,7 @@ export default function EstimateWrite({dataInfo}) {
                                     onChange: onChange,
                                     data: info
                                 })}
-                                {inputForm({title: '작성자', id: 'createBy', disabled: true, onChange: onChange, data: info})}
+                                {inputForm({title: '작성자', id: 'createdBy', disabled: true, onChange: onChange, data: info})}
                                 {inputForm({title: '담당자', id: 'managerAdminName', onChange: onChange, data: info})}
                                 {inputForm({
                                     title: 'INQUIRY NO.',
@@ -350,7 +328,7 @@ export default function EstimateWrite({dataInfo}) {
                                 <BoxCard title={'드라이브 목록'}>
                                     {/*@ts-ignored*/}
                                     <div style={{overFlowY: "auto", maxHeight: 300}}>
-                                        <DriveUploadComp infoFileInit={[]} fileRef={fileRef} numb={3}/>
+                                        <DriveUploadComp fileList={fileList} setFileList={setFileList}  fileRef={fileRef} numb={3}/>
                                     </div>
                                 </BoxCard>
                             </div>
@@ -362,7 +340,7 @@ export default function EstimateWrite({dataInfo}) {
                     columns={tableEstimateWriteColumns}
                     type={'write'}
                     onGridReady={onGridReady}
-                    funcButtons={subTableUtil}
+                    funcButtons={['estimateUpload', 'estimateAdd', 'delete', 'print']}
                 />
             </div>
         </LayoutComponent>
