@@ -76,34 +76,20 @@ export default function delivery_read({dataInfo}) {
         deleteOrderStatusDetails({data: {deleteList: deleteList}, returnFunc: searchInfo})
     }
 
-    /**
-     * @description 출력시 해당 Excel 현 테이블 기준으로 선택된 row만 출력
-     */
+
     const downloadExcel = async () => {
         gridManage.exportSelectedRowsToExcel(gridRef, '발주현황표')
     };
 
 
-    /**
-     * @description 테이블 우측상단 관련 기본 유틸버튼
-     */
-    const subTableUtil = <div>
-        {/*@ts-ignore*/}
-        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}} onClick={deleteList}>
-            <CopyOutlined/>삭제
-        </Button>
-        <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft: 5}} onClick={downloadExcel}>
-            <FileExcelOutlined/>출력
-        </Button></div>
-
     return <>
         <LayoutComponent>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '380px' : '65px'} calc(100vh - ${mini ? 435 : 120}px)`,
+                gridTemplateRows: `${mini ? '230px' : '65px'} calc(100vh - ${mini ? 325 : 160}px)`,
                 columnGap: 5
             }}>
-                <MainCard title={'통합조회'}
+                <MainCard title={'입고조회'}
                           list={[{name: '조회', func: searchInfo, type: 'primary'}, {name: '신규생성', func: moveRouter}]}
                           mini={mini} setMini={setMini}>
                     {mini ? <div>
@@ -141,12 +127,15 @@ export default function delivery_read({dataInfo}) {
                         </div>
                         : <></>}
                 </MainCard>
-
-                <TableGrid
-                    gridRef={gridRef}
-                    columns={storeReadColumn}
-                    onGridReady={onGridReady}
-                    funcButtons={subTableUtil}
+                {/*@ts-ignored*/}
+                <TableGrid deleteComp={<Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
+                                               onClick={deleteList}>
+                    <CopyOutlined/>삭제
+                </Button>}
+                           gridRef={gridRef}
+                           columns={storeReadColumn}
+                           onGridReady={onGridReady}
+                           funcButtons={['print']}
                 />
             </div>
         </LayoutComponent>

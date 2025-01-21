@@ -2614,15 +2614,17 @@ export const delilveryReadColumn = [
 
 export const remittanceReadColumn = [
     {
-        headerName: 'Inquiry No..',
+        headerName: 'Inquiry No.',
         field: 'connectInquiryNo',
         minWidth: 150,
-
+        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
+        checkboxSelection: true, // 각 행에 체크박스 추가
+        pinned : 'left'
     }, {
         headerName: '담당자',
         field: 'managerAdminName',
         minWidth: 150,
-
+        pinned : 'right'
     }, {
         headerName: '송금요청일자',
         field: 'requestDate',
@@ -2822,15 +2824,19 @@ export const storeReadColumn = [
     {
         headerName: '운수사명',
         field: 'carrierName',
-        minWidth: 100,
+        minWidth: 80,
     }, {
         headerName: 'B/L No.',
         field: 'blNo',
-        minWidth: 120,
+        maxWidth: 100,
+        pinned : 'left'
     }, {
         headerName: 'Inquiry No.',
         field: 'orderDocumentNumberFull',
-        minWidth: 120,
+        maxWidth: 120,
+        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
+        checkboxSelection: true, // 각 행에 체크박스 추가
+        pinned : 'left'
     }, {
         headerName: '세부항목 번호',
         field: 'itemDetailNo',
