@@ -170,7 +170,7 @@ export default function rqfWrite({dataInfo, managerList}) {
         <LayoutComponent>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? 470 : 65}px calc(100vh - ${mini ? 480 : 75}px)`,
+                gridTemplateRows: `${mini ? 460 : 65}px calc(100vh - ${mini ? 515 : 120}px)`,
                 columnGap: 5
             }}>
 

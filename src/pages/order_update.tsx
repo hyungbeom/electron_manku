@@ -174,8 +174,7 @@ export default function order_update({dataInfo}) {
         <LayoutComponent>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`,
-                height: '100vh',
+                gridTemplateRows: `${mini ? '500px' : '65px'} calc(100vh - ${mini ? 555 : 120}px)`,
                 columnGap: 5
             }}>
                 {/*@ts-ignore*/}

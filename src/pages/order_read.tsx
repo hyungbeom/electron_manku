@@ -93,10 +93,10 @@ export default function OrderRead({dataInfo}) {
         <LayoutComponent>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '380px' : '65px'} calc(100vh - ${mini ? 435 : 120}px)`,
+                gridTemplateRows: `${mini ? '250px' : '65px'} calc(100vh - ${mini ? 345 : 160}px)`,
                 columnGap: 5
             }}>
-                <MainCard title={'통합조회'}
+                <MainCard title={'발주서 조회'}
                           list={[{name: '조회', func: searchInfo, type: 'primary'}, {name: '신규생성', func: moveRouter}]}
                           mini={mini} setMini={setMini}>
 
@@ -158,11 +158,14 @@ export default function OrderRead({dataInfo}) {
                         </div>
                         : <></>}
                 </MainCard>
-                <TableGrid
+                {/*@ts-ignored*/}
+                <TableGrid deleteComp={<Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}} onClick={deleteList}>
+                    <CopyOutlined/>삭제
+                </Button>}
                     gridRef={gridRef}
                     onGridReady={onGridReady}
                     columns={tableOrderReadColumns}
-                    funcButtons={subTableUtil}
+                    funcButtons={['print']}
                 />
 
             </div>

@@ -99,11 +99,10 @@ const TableGrid = ({
                 window.open(`/remittance_domestic_update?remittanceId=${e?.data?.remittanceId}`, openType, option);
             if (e.data.estimateRequestId)
                 window.open(`/rfq_update?estimateRequestId=${e?.data?.estimateRequestId}`, openType, option);
-            // router.push(`/rfq_update?estimateRequestId=${e?.data?.estimateRequestId}`)
             if (e.data.estimateId)
                 window.open(`/estimate_update?estimateId=${e?.data?.estimateId}`, openType, option);
             if (e.data.orderId)
-                window.open(`/order_update?orderId=${e?.data?.orderId}`, openType, option);
+                window.open(`/order_update?orderId=${e?.data?.orderId}`, openType, 'width=1200,height=900,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
             if (e.data.remainingQuantity)
                 window.open(`/inventory_update?maker=${e?.data?.maker}&model=${e?.data?.model}`, openType, option);
             if (e.data.makerId)
