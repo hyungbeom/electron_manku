@@ -45,37 +45,21 @@ export default function remittance_domestic_write({dataInfo}) {
     const [info, setInfo] = useState<any>({...infoInit, ...dataInfo})
     const [fileList, setFileList] = useState([]);
 
+    const [loading, setLoading] = useState(false);
     function onChange(e) {
         commonManage.onChange(e, setInfo)
     }
 
     async function saveFunc() {
+
         if (!info['connectInquiryNo']) {
             return message.warn('Inquiry No. 가 누락되었습니다.')
         }
         const formData: any = new FormData();
 
-        const handleIteration = () => {
-            for (const {key, value} of commonManage.commonCalc(info)) {
-                formData.append(key, value);
-            }
-        };
-
-        handleIteration();
-        const uploadContainer = document.querySelector(".ant-upload-list"); // 업로드 리스트 컨테이너
-
-        if (uploadContainer) {
-            const fileNodes = uploadContainer.querySelectorAll(".ant-upload-list-item-name");
-            const fileNames = Array.from(fileNodes).map((node:any) => node.textContent.trim());
-
-            const filesToSave = fileRef.current.fileList.map((item) => item.originFileObj).filter((file) => file instanceof File);
-
-            filesToSave.forEach((file, index) => {
-                formData.append(`attachmentFileList[${index}].attachmentFile`, file);
-                formData.append(`attachmentFileList[${index}].fileName`, fileNames[index].replace(/\s+/g, ""));
-            });
-        }
-
+        setLoading(true)
+        commonManage.setInfoFormData(info, formData, [], [])
+        commonManage.getUploadList(fileRef, formData)
         formData.delete('createdDate')
         formData.delete('modifiedDate')
         await saveRemittance({data: formData, router: router})

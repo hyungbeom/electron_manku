@@ -253,10 +253,10 @@ export default function LayoutComponent({children, userInfo = null}) {
 
         switch (e.key) {
             case 'write' :
-                if(e.keyPath[1] === 'remittance_domestic'){
-                  return  window.open(root, '_blank', 'width=1000,height=430,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
-
-                }
+                // if(e.keyPath[1] === 'remittance_domestic'){
+                //   return  window.open(root, '_blank', 'width=1000,height=630,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
+                //
+                // }
                 window.open(root, '_blank', 'width=1000,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
                 break;
             case 'read' :

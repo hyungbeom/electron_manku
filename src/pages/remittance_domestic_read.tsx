@@ -167,11 +167,14 @@ export default function remittance_domestic({dataInfo}) {
                         </div>
                     </div> : <></>}
                 </MainCard>
-                <TableGrid
+                {/*@ts-ignored*/}
+                <TableGrid deleteComp={<Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}} onClick={deleteList}>
+                    <CopyOutlined/>삭제
+                </Button>}
                     gridRef={gridRef}
                     columns={remittanceReadColumn}
                     onGridReady={onGridReady}
-                    funcButtons={subTableUtil}
+                           funcButtons={['print']}
                 />
             </div>
         </LayoutComponent>
