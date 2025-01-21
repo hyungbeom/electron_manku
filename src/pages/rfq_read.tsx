@@ -152,10 +152,7 @@ export default function rfqRead({dataInfo}) {
                     columns={rfqReadColumns}
                     onGridReady={onGridReady}
                     type={'read'}
-                    funcButtons={['print']}
-
-
-                />
+                    funcButtons={['print']}/>
 
             </div>
         </LayoutComponent>

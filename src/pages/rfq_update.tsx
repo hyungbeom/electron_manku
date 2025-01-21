@@ -168,7 +168,7 @@ export default function rqfUpdate({dataInfo, managerList}) {
     return <Spin spinning={loading} tip={'견적의뢰 수정중...'}>
         <SearchInfoModal info={info} setInfo={setInfo}
                          open={isModalOpen}
-                         type={'ESTIMATE'}
+                         type={''}
                          gridRef={gridRef}
                          setValidate={setValidate}
                          setIsModalOpen={setIsModalOpen}/>

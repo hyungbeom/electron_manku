@@ -292,7 +292,7 @@ const TableGrid = ({
     };
 
     return (
-        <div>
+        <>
             <EstimateListModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} getRows={getSelectedRows}/>
             {page.x ? <div style={{
                 position: 'fixed',
@@ -401,7 +401,7 @@ const TableGrid = ({
                     suppressRowClickSelection={true}
                 />
             </div>
-        </div>
+        </>
     );
 };
 export default React.memo(TableGrid);

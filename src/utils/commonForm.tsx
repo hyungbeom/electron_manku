@@ -18,7 +18,7 @@ import Radio from "antd/lib/radio";
 import TextArea from "antd/lib/input/TextArea";
 import Select from "antd/lib/select";
 import Tooltip from "antd/lib/tooltip";
-import {estimateRequestDetailUnit, reqWriteList} from "@/utils/initialList";
+import {estimateRequestDetailUnit, projectDetailUnit, reqWriteList} from "@/utils/initialList";
 import {ExcelUpload} from "@/component/common/ExcelUpload";
 
 const {RangePicker} = DatePicker
@@ -223,6 +223,12 @@ export const textAreaForm = ({title, id, rows = 5, disabled = false, onChange, d
 export const tooltipInfo = (type:any) => {
 
     switch (type) {
+        case 'readProject' :
+            return '프로젝트 타이틀에 해당하는 기본정보란 입니다.'
+        case 'readAgency' :
+            return '매입처 연락관련 정보란 입니다.'
+        case 'readCustomer' :
+            return '고객사 연락관련 정보란 입니다.'
         case 'agency' :
             return '매입처 정보는 Enter 또는 우측 아이콘클릭 이후 검색을 통한 선택만 사용을 하여야합니다.'
         case 'customer' :
@@ -262,12 +268,23 @@ export const tableButtonList = (type:any, gridRef?:any) => {
         newRow['currency'] = commonManage.changeCurr(agencyCode.value)
         gridRef.current.applyTransaction({add: [newRow]});
     }
+
+    function addProjectRow() {
+        const newRow = {...projectDetailUnit};
+        gridRef.current.applyTransaction({add: [newRow]});
+    }
+
     switch (type) {
         case 'upload' :
             return <ExcelUpload gridRef={gridRef} list={reqWriteList}/>
         case 'add' :
             return  <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
                             onClick={addRow}>
+                <SaveOutlined/>추가
+            </Button>
+        case 'addProjectRow' :
+            return  <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
+                            onClick={addProjectRow}>
                 <SaveOutlined/>추가
             </Button>
         case 'delete' :

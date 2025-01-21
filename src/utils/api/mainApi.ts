@@ -147,24 +147,28 @@ export const updateRemittance = async ({data, router}) => {
     });
 };
 
-export const updateProject = async ({data, router}) => {
+export const updateProject = async ({data, router, returnFunc}) => {
     await getFormData.post('project/updateProject', data).then(v => {
-        if (v.data.code === 1) {
+        const code = v.data.code;
+        if (code) {
             message.success('저장되었습니다.')
         } else {
             message.error('저장에 실패하였습니다.')
         }
+        returnFunc(code === 1);
     });
 };
 
 
-export const updateEstimate = async ({data}) => {
+export const updateEstimate = async ({data, returnFunc}) => {
     await getFormData.post('estimate/updateEstimate', data).then(v => {
-        if (v.data.code === 1) {
+        const code = v.data.code;
+        if (code) {
             message.success('수정되었습니다.')
         } else {
             message.error('수정에 실패하였습니다.')
         }
+        returnFunc(code === 1);
     }, err => console.log(err, '::::'));
 };
 
@@ -187,17 +191,17 @@ export const searchProject = async ({data}) => {
 };
 
 export const deleteProjectList = async ({
-                                            data, returnFunc = function () {
+                                            data, returnFunc = function (e) {
     }
                                         }) => {
 
     await getData.post('project/deleteProjectDetails', data).then(v => {
         if (v.data.code === 1) {
             message.success('삭제되었습니다.')
-            returnFunc();
         } else {
             message.error('오류가 발생하였습니다. 다시 시도해주세요.')
         }
+        returnFunc(v.data.code === 1);
     }, err => message.error(err))
 };
 

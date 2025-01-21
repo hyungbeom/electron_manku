@@ -11,11 +11,11 @@ import {setUserInfo} from "@/store/user/userSlice";
 import TableGrid from "@/component/tableGrid";
 import SearchInfoModal from "@/component/SearchAgencyModal";
 import Upload from "antd/lib/upload";
-import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, TopBoxCard} from "@/utils/commonForm";
+import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, tooltipInfo, TopBoxCard} from "@/utils/commonForm";
 import {useRouter} from "next/router";
-import {commonManage, gridManage} from "@/utils/commonManage";
+import {commonManage, fileManage, gridManage} from "@/utils/commonManage";
 import _ from "lodash";
-import {updateProject} from "@/utils/api/mainApi";
+import {getAttachmentFileList, updateProject} from "@/utils/api/mainApi";
 import {findCodeInfo} from "@/utils/api/commonApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {getData} from "@/manage/function/api";
@@ -28,14 +28,16 @@ export default function projectUpdate({dataInfo}) {
     const gridRef = useRef(null);
     const router = useRouter();
 
-    const copyUnitInit = _.cloneDeep(projectDetailUnit)
-
+    const [validate, setValidate] = useState({agencyCode: true, documentNumberFull: true});
     const infoInit = dataInfo?.projectDetail
-    const infoFileInit = dataInfo?.attachmentFileList
+    const infoInitFile = dataInfo?.attachmentFileList
 
     const [info, setInfo] = useState<any>(infoInit)
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
+    const [fileList, setFileList] = useState(fileManage.getFormatFiles(infoInitFile));
+    const [originFileList, setOriginFileList] = useState(infoInitFile);
+    const [loading, setLoading] = useState(false);
 
     const onGridReady = (params) => {
         gridRef.current = params.api;
@@ -83,29 +85,29 @@ export default function projectUpdate({dataInfo}) {
 
         commonManage.setInfoFormData(info, formData, listType, list)
         commonManage.getUploadList(fileRef, formData)
-
-
-
-        const result = infoFileInit.filter(itemA => !fileRef.current.fileList.some(itemB => itemA.id === itemB.id));
-        result.map((v, idx) => {
-            formData.append(`deleteAttachmentIdList[${idx}]`, v.id);
-        })
+        commonManage.deleteUploadList(fileRef, formData, originFileList)
         formData.delete('createdDate')
         formData.delete('modifiedDate')
 
-        await updateProject({data: formData, router: router})
+        await updateProject({data: formData, router: router, returnFunc:returnFunc})
     }
 
-
-    function deleteList() {
-        const list = commonManage.getUnCheckList(gridRef);
-        gridManage.resetData(gridRef, list);
-    }
-
-    function addRow() {
-        const newRow = {...copyUnitInit};
-        gridRef.current.applyTransaction({add: [newRow]});
-
+    async function returnFunc(e) {
+        if (e) {
+            await getAttachmentFileList({
+                data: {
+                    "relatedType": "PROJECT",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
+                    "relatedId": infoInit['projectId']
+                }
+            }).then(v => {
+                const list = fileManage.getFormatFiles(v);
+                setFileList(list)
+                setOriginFileList(list)
+                setLoading(false)
+            })
+        } else {
+            setLoading(false)
+        }
     }
 
     function copyPage() {
@@ -118,20 +120,12 @@ export default function projectUpdate({dataInfo}) {
         router.push(`/project_write?${query}`)
     }
 
-    const subTableUtil = <div style={{display: 'flex', alignItems: 'end'}}>
-        <Button type={'primary'} size={'small'} style={{marginLeft: 5}}
-                onClick={addRow}>
-            <SaveOutlined/>추가
-        </Button>
-        {/*@ts-ignored*/}
-        <Button type={'danger'} size={'small'} style={{marginLeft: 5,}} onClick={deleteList}>
-            <CopyOutlined/>삭제
-        </Button>
-    </div>
 
     return <>
         <SearchInfoModal info={info} setInfo={setInfo}
                          open={isModalOpen}
+                         gridRef={gridRef}
+                         setValidate={setValidate}
                          setIsModalOpen={setIsModalOpen}/>
         <LayoutComponent>
             <div style={{
@@ -170,7 +164,7 @@ export default function projectUpdate({dataInfo}) {
                                 gap: 10,
                                 marginTop: 10
                             }}>
-                                <BoxCard title={'프로젝트 정보'}>
+                                <BoxCard title={'프로젝트 정보'}  tooltip={tooltipInfo('readProejct')}>
                                     {inputForm({
                                         title: 'PROJECT NO.',
                                         id: 'documentNumberFull',
@@ -187,7 +181,7 @@ export default function projectUpdate({dataInfo}) {
                                     })}
                                     {datePickerForm({title: '마감일자', id: 'dueDate', onChange: onChange, data: info})}
                                 </BoxCard>
-                                <BoxCard title={'거래처 정보'}>
+                                <BoxCard title={'고객사 정보'} tooltip={tooltipInfo('customer')}>
                                     {inputForm({
                                         title: '거래처명',
                                         id: 'customerName',
@@ -221,7 +215,7 @@ export default function projectUpdate({dataInfo}) {
                                     })}
                                 </BoxCard>
 
-                                <BoxCard title={'기타 정보'}>
+                                <BoxCard title={'ETC'} tooltip={tooltipInfo('etc')}>
 
                                     {textAreaForm({title: '비고란', rows: 2, id: 'remarks', onChange: onChange, data: info})}
                                     {textAreaForm({
@@ -239,10 +233,10 @@ export default function projectUpdate({dataInfo}) {
                                         data: info
                                     })}
                                 </BoxCard>
-                                <BoxCard title={'드라이브 목록'}>
+                                <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}>
                                     {/*@ts-ignored*/}
                                     <div style={{overFlowY: "auto", maxHeight: 300}}>
-                                        <DriveUploadComp infoFileInit={infoFileInit} fileRef={fileRef} numb={5}/>
+                                        <DriveUploadComp fileList={fileList} setFileList={setFileList}  fileRef={fileRef} numb={5}/>
                                     </div>
                                 </BoxCard>
                             </div>
@@ -255,7 +249,7 @@ export default function projectUpdate({dataInfo}) {
                     onGridReady={onGridReady}
                     columns={projectWriteColumn}
                     type={'write'}
-                    funcButtons={subTableUtil}
+                    funcButtons={['add', 'delete', 'print']}
                 />
             </div>
         </LayoutComponent>

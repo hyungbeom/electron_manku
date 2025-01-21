@@ -12,7 +12,7 @@ import message from "antd/lib/message";
 import {deleteProjectList, searchProject} from "@/utils/api/mainApi";
 import _ from "lodash";
 import {commonManage, gridManage} from "@/utils/commonManage";
-import {BoxCard, inputForm, MainCard, rangePickerForm, TopBoxCard} from "@/utils/commonForm";
+import {BoxCard, inputForm, MainCard, rangePickerForm, tooltipInfo, TopBoxCard} from "@/utils/commonForm";
 import {useRouter} from "next/router";
 import Spin from "antd/lib/spin";
 
@@ -35,7 +35,7 @@ export default function ProjectRead({dataInfo}) {
 
     function handleKeyPress(e) {
         if (e.key === 'Enter') {
-            searchInfo()
+            searchInfo(e)
         }
     }
 
@@ -44,12 +44,12 @@ export default function ProjectRead({dataInfo}) {
     }
 
 
-    async function searchInfo() {
-        setLoading(true)
+    async function searchInfo(e) {
+        setLoading(e)
         await searchProject({data: info}).then(v => {
             gridManage.resetData(gridRef, v);
             setLoading(false)
-        })
+        }, e => setLoading(false))
 
     }
 
@@ -57,13 +57,11 @@ export default function ProjectRead({dataInfo}) {
         if (gridRef.current.getSelectedRows().length < 1) {
             return message.error('삭제할 데이터를 선택해주세요.')
         }
-
-        const fieldMappings = {
+        setLoading(true)
+        const deleteList = gridManage.getFieldDeleteList(gridRef, {
             projectId: 'projectId',
             projectDetailId: 'projectDetailId'
-        };
-
-        const deleteList = gridManage.getFieldDeleteList(gridRef, fieldMappings);
+        });
         await deleteProjectList({data: {deleteList: deleteList}, returnFunc: searchInfo});
 
     }
@@ -93,7 +91,7 @@ export default function ProjectRead({dataInfo}) {
                 ]} mini={mini} setMini={setMini}>
 
                     {mini ? <div>
-                            <TopBoxCard title={''} grid={'1fr 1fr 1fr 1fr'}>
+                            <TopBoxCard title={''} grid={"150px 250px 150px 1fr"}>
 
                                 {inputForm({
                                     title: '작성자',
@@ -118,7 +116,7 @@ export default function ProjectRead({dataInfo}) {
                                 gap: 10,
                                 marginTop: 10
                             }}>
-                                <BoxCard title={'프로젝트 정보'}>
+                                <BoxCard title={'프로젝트 정보'} tooltip={tooltipInfo('readProject')}>
                                     {inputForm({
                                         title: 'PROJECT NO.',
                                         id: 'searchDocumentNumberFull',
@@ -141,7 +139,7 @@ export default function ProjectRead({dataInfo}) {
                                         data: info
                                     })}
                                 </BoxCard>
-                                <BoxCard title={'매입처'}>
+                                <BoxCard title={'매입처 정보'} tooltip={tooltipInfo('readAgency')}>
                                     {inputForm({
                                         title: '매입처명',
                                         id: 'searchAgencyName',
@@ -171,16 +169,16 @@ export default function ProjectRead({dataInfo}) {
                                         data: info
                                     })}
                                 </BoxCard>
-                                <BoxCard title={'거래처 정보'}>
+                                <BoxCard title={'고객사 정보'} tooltip={tooltipInfo('readCustomer')}>
                                     {inputForm({
-                                        title: '거래처명',
+                                        title: '고객사명',
                                         id: 'searchCustomerName',
                                         onChange: onChange,
                                         handleKeyPress: handleKeyPress,
                                         data: info
                                     })}
                                     {inputForm({
-                                        title: '거래처 담당자명',
+                                        title: '고객사 담당자명',
                                         id: 'searchCustomerManagerName',
                                         onChange: onChange,
                                         handleKeyPress: handleKeyPress,

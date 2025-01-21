@@ -31,7 +31,8 @@ export default function EstimateListModal({isModalOpen, setIsModalOpen, getRows}
 
 
     return <Modal title="견적서 조회" width={1000} footer={null} open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
-        <div style={{height: 600}}>
+
+        <div style={{height : 600}}>
             <TableGrid
                 gridRef={gridRef}
                 onGridReady={onGridReady}
@@ -40,11 +41,12 @@ export default function EstimateListModal({isModalOpen, setIsModalOpen, getRows}
                 funcButtons={null}
             />
         </div>
-        <div style={{textAlign: 'right'}}>
-            <Button type={'primary'} onClick={() => {
-                getRows(gridRef);
-                handleCancel();
-            }}>선택하기</Button>
-        </div>
+            <div style={{textAlign: 'right', marginTop : 20}}>
+                <Button type={'primary'} onClick={() => {
+                    getRows(gridRef);
+                    handleCancel();
+                }}>선택하기</Button>
+            </div>
+
     </Modal>
 }

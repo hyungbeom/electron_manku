@@ -12,13 +12,14 @@ import TableGrid from "@/component/tableGrid";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import SearchInfoModal from "@/component/SearchAgencyModal";
 import Upload, {UploadProps} from "antd/lib/upload";
-import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, TopBoxCard} from "@/utils/commonForm";
+import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, tooltipInfo, TopBoxCard} from "@/utils/commonForm";
 import {useRouter} from "next/router";
 import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
 import _ from "lodash";
 import {saveProject} from "@/utils/api/mainApi";
 import {findCodeInfo} from "@/utils/api/commonApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
+import Spin from "antd/lib/spin";
 
 const listType = 'projectDetailList'
 export default function projectWrite({dataInfo}) {
@@ -43,10 +44,13 @@ export default function projectWrite({dataInfo}) {
     }
 
     const [info, setInfo] = useState<any>({...copyInit, ...dataInfo, ...adminParams})
+    const [validate, setValidate] = useState({agencyCode: !!dataInfo, documentNumberFull: !!dataInfo});
 
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
 
+    const [fileList, setFileList] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     const onGridReady = (params) => {
         gridRef.current = params.api;
@@ -118,36 +122,16 @@ export default function projectWrite({dataInfo}) {
     }
 
 
-    function deleteList() {
-        const list = commonManage.getUnCheckList(gridRef);
-        gridManage.resetData(gridRef, list);
-    }
-
-    function addRow() {
-        const newRow = {...copyUnitInit};
-        gridRef.current.applyTransaction({add: [newRow]});
-    }
-
-
     function clearAll() {
         setInfo({...infoInit});
         gridManage.deleteAll(gridRef);
     }
 
-    const subTableUtil = <div style={{display: 'flex', alignItems: 'end'}}>
-        <Button type={'primary'} size={'small'} style={{marginLeft: 5}}
-                onClick={addRow}>
-            <SaveOutlined/>추가
-        </Button>
-        {/*@ts-ignored*/}
-        <Button type={'danger'} size={'small'} style={{marginLeft: 5,}} onClick={deleteList}>
-            <CopyOutlined/>삭제
-        </Button>
-    </div>
-
-    return <>
+    return <Spin spinning={loading} tip={'프로젝트 등록중...'}>
         <SearchInfoModal info={info} setInfo={setInfo}
                          open={isModalOpen}
+                         gridRef={gridRef}
+                         setValidate={setValidate}
                          setIsModalOpen={setIsModalOpen}/>
         <LayoutComponent>
             <div style={{
@@ -185,7 +169,7 @@ export default function projectWrite({dataInfo}) {
                                 gap: 10,
                                 marginTop: 10
                             }}>
-                                <BoxCard title={'프로젝트 정보'}>
+                                <BoxCard title={'프로젝트 정보'} tooltip={tooltipInfo('readProject')}>
                                     {inputForm({
                                         title: 'PROJECT NO.',
                                         id: 'documentNumberFull',
@@ -201,9 +185,9 @@ export default function projectWrite({dataInfo}) {
                                     })}
                                     {datePickerForm({title: '마감일자', id: 'dueDate', onChange: onChange, data: info})}
                                 </BoxCard>
-                                <BoxCard title={'거래처 정보'}>
+                                <BoxCard title={'고객사 정보'} tooltip={tooltipInfo('customer')}>
                                     {inputForm({
-                                        title: '거래처명',
+                                        title: '고객사명',
                                         id: 'customerName',
                                         suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
                                             (e) => {
@@ -213,7 +197,7 @@ export default function projectWrite({dataInfo}) {
                                         }/>, onChange: onChange, data: info, handleKeyPress: handleKeyPress
                                     })}
                                     {inputForm({
-                                        title: '거래처 담당자명',
+                                        title: '고객사 담당자명',
                                         id: 'customerManagerName',
                                         disabled: true,
                                         onChange: onChange,
@@ -235,7 +219,7 @@ export default function projectWrite({dataInfo}) {
                                     })}
                                 </BoxCard>
 
-                                <BoxCard title={'기타 정보'}>
+                                <BoxCard title={'기타 정보'} tooltip={tooltipInfo('etc')}>
                                     {textAreaForm({title: '비고란', rows: 2, id: 'remarks', onChange: onChange, data: info})}
                                     {textAreaForm({
                                         title: '지시사항',
@@ -252,10 +236,10 @@ export default function projectWrite({dataInfo}) {
                                         data: info
                                     })}
                                 </BoxCard>
-                                <BoxCard title={'드라이브 목록'}>
+                                <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}>
                                     {/*@ts-ignored*/}
                                     <div style={{overFlowY: "auto", maxHeight: 300}}>
-                                        <DriveUploadComp infoFileInit={[]} fileRef={fileRef} numb={5}/>
+                                        <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef} numb={5}/>
                                     </div>
                                 </BoxCard>
                             </div>
@@ -268,11 +252,11 @@ export default function projectWrite({dataInfo}) {
                     columns={projectWriteColumn}
                     onGridReady={onGridReady}
                     type={'write'}
-                    funcButtons={subTableUtil}
+                    funcButtons={['addProjectRow', 'delete', 'print']}
                 />
             </div>
         </LayoutComponent>
-    </>
+    </Spin>
 }
 
 // @ts-ignored

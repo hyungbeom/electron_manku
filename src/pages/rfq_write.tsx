@@ -153,20 +153,6 @@ export default function rqfWrite({dataInfo, managerList}) {
     }
 
 
-
-
-    function deleteList() {
-        const list = commonManage.getUnCheckList(gridRef);
-        gridManage.resetData(gridRef, list);
-    }
-
-    function addRow() {
-        const newRow = {...copyUnitInit};
-        newRow['currency'] = commonManage.changeCurr(info['agencyCode'])
-        gridRef.current.applyTransaction({add: [newRow]});
-    }
-
-
     function clearAll() {
         setInfo({...infoInit});
         gridManage.deleteAll(gridRef)
