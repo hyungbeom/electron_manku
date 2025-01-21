@@ -26,7 +26,7 @@ import SearchInfoModal from "@/component/SearchAgencyModal";
 import {FileSearchOutlined} from "@ant-design/icons";
 
 
-export default function remittance_domestic({dataInfo}) {
+export default function remittance_domestic_write({dataInfo}) {
     const fileRef = useRef(null);
     const copyInit = _.cloneDeep(remittanceDomesticInitial)
 
@@ -43,7 +43,7 @@ export default function remittance_domestic({dataInfo}) {
     }
 
     const [info, setInfo] = useState<any>({...infoInit, ...dataInfo})
-
+    const [fileList, setFileList] = useState([]);
 
     function onChange(e) {
         commonManage.onChange(e, setInfo)
@@ -143,7 +143,8 @@ export default function remittance_domestic({dataInfo}) {
                     <BoxCard title={'드라이브 목록'}>
                         {/*@ts-ignored*/}
                         <div style={{overFlowY: "auto", maxHeight: 300}}>
-                            <DriveUploadComp infoFileInit={[]} fileRef={fileRef}/>
+                            <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
+                                             numb={4}/>
                         </div>
                     </BoxCard>
                 </div>

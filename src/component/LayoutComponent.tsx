@@ -77,7 +77,7 @@ const menuList = {
         icon: <MoneyCollectOutlined/>,
         list: [
             // {title: '해외 송금 요청', key: 'remittance_request'},
-            {title: '국내 송금 등록', key: 'remittance_domestic'},
+            {title: '국내 송금 등록', key: 'remittance_domestic_write'},
             {title: '국내 송금 목록', key: 'remittance_domestic_list'},
             {title: '해외 송금 관리', key: 'remittance_overseas'},
             {title: '발주/송금 통합 관리', key: 'remittance_order_integrate'},
@@ -207,14 +207,14 @@ export default function LayoutComponent({children, userInfo = null}) {
             ],
         }, {
             label: '송금',
-            key: 'transfer',
+            key: 'remittance_domestic',
             icon: <SendOutlined/>,
             style: {margin: ' 0px -20px'},
             children: [
-                {label: <span style={{fontSize: '12px'}}>국내 송금 등록</span>, key: 'rfq_write'},
-                {label: <span style={{fontSize: '12px'}}>국내 송금 목록</span>, key: 'rfq_read'},
-                {label: <span style={{fontSize: '12px'}}>해외 송금 관리</span>, key: 'rfq_mail_send'},
-                {label: <span style={{fontSize: '12px'}}>발주/송금 통합 관리</span>, key: 'rfq_mail_send'},
+                {label: <span style={{fontSize: '12px'}}>국내 송금 등록</span>, key: 'write'},
+                {label: <span style={{fontSize: '12px'}}>국내 송금 목록</span>, key: 'read'},
+                {label: <span style={{fontSize: '12px'}}>해외 송금 관리</span>, key: '*'},
+                {label: <span style={{fontSize: '12px'}}>발주/송금 통합 관리</span>, key: '*'},
             ],
         }, {
             label: '입고관리',
@@ -222,8 +222,8 @@ export default function LayoutComponent({children, userInfo = null}) {
             icon: <DropboxOutlined/>,
             style: {margin: ' 0px -20px'},
             children: [
-                {label: <span style={{fontSize: '12px'}}>입고 등록</span>, key: 'rfq_mail_send'},
-                {label: <span style={{fontSize: '12px'}}>입고 조회</span>, key: 'rfq_mail_send'}
+                {label: <span style={{fontSize: '12px'}}>입고 등록</span>, key: 'write'},
+                {label: <span style={{fontSize: '12px'}}>입고 조회</span>, key: 'read'}
             ]
         }, {
             label: '배송',
@@ -253,6 +253,10 @@ export default function LayoutComponent({children, userInfo = null}) {
 
         switch (e.key) {
             case 'write' :
+                if(e.keyPath[1] === 'remittance_domestic'){
+                  return  window.open(root, '_blank', 'width=1000,height=430,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
+
+                }
                 window.open(root, '_blank', 'width=1000,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
                 break;
             case 'read' :
