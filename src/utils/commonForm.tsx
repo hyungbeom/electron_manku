@@ -18,7 +18,13 @@ import Radio from "antd/lib/radio";
 import TextArea from "antd/lib/input/TextArea";
 import Select from "antd/lib/select";
 import Tooltip from "antd/lib/tooltip";
-import {estimateRequestDetailUnit, projectDetailUnit, projectWriteList, reqWriteList} from "@/utils/initialList";
+import {
+    estimateDetailUnit,
+    estimateRequestDetailUnit, estimateWriteList,
+    projectDetailUnit,
+    projectWriteList,
+    reqWriteList
+} from "@/utils/initialList";
 import {ExcelUpload} from "@/component/common/ExcelUpload";
 import Upload from "antd/lib/upload";
 
@@ -269,13 +275,33 @@ export const tableButtonList = (type:any, gridRef?:any) => {
         newRow['currency'] = commonManage.changeCurr(agencyCode.value)
         gridRef.current.applyTransaction({add: [newRow]});
     }
+    function addEstimateRow() {
+        const agencyCode:any = document.getElementById('agencyCode')
 
+        const newRow = {...estimateDetailUnit};
+        newRow['currency'] = commonManage.changeCurr(agencyCode.value)
+        gridRef.current.applyTransaction({add: [newRow]});
+    }
     function addProjectRow() {
         const newRow = {...projectDetailUnit};
         gridRef.current.applyTransaction({add: [newRow]});
     }
 
     switch (type) {
+
+        case 'estimateUpload' :
+            return <ExcelUpload gridRef={gridRef} list={estimateWriteList}/>
+        case 'estimateAdd' :
+            return  <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
+                            onClick={addEstimateRow}>
+                <SaveOutlined/>추가
+            </Button>
+
+
+
+
+        // =======================================================
+
         case 'projectUpload' :
             return <ExcelUpload gridRef={gridRef} list={projectWriteList}/>
         case 'upload' :

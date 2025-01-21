@@ -225,17 +225,18 @@ export const deleteRemittanceList = async ({
 
 
 export const deleteEstimate = async ({
-                                         data, returnFunc = function () {
+                                         data, returnFunc = function (e) {
     }
                                      }) => {
 
     await getData.post('estimate/deleteEstimateDetails', data).then(v => {
-        if (v.data.code === 1) {
-            returnFunc();
+        const code = v.data.code;
+        if (code === 1) {
             message.success('삭제되었습니다.')
         } else {
             message.error('오류가 발생하였습니다. 다시 시도해주세요.')
         }
+        returnFunc(code === 1);
     }, err => message.error(err))
 };
 

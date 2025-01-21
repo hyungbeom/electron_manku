@@ -1,21 +1,8 @@
 import React, {useRef, useState} from "react";
-import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
-import Card from "antd/lib/card/Card";
-import TextArea from "antd/lib/input/TextArea";
-import {
-    CopyOutlined,
-    DownCircleFilled,
-    DownloadOutlined,
-    EditOutlined,
-    FileSearchOutlined,
-    SaveOutlined,
-    UpCircleFilled
-} from "@ant-design/icons";
+import {CopyOutlined, FileSearchOutlined, SaveOutlined} from "@ant-design/icons";
 import {tableEstimateWriteColumns} from "@/utils/columnList";
-import DatePicker from "antd/lib/date-picker";
 import {estimateDetailUnit, ModalInitList} from "@/utils/initialList";
-import moment from "moment";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
 import {getData} from "@/manage/function/api";
@@ -23,7 +10,6 @@ import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
-import Select from "antd/lib/select";
 import TableGrid from "@/component/tableGrid";
 import {useRouter} from "next/router";
 import SearchInfoModal from "@/component/SearchAgencyModal";
@@ -37,9 +23,9 @@ import {
     textAreaForm,
     TopBoxCard
 } from "@/utils/commonForm";
-import {commonManage, gridManage} from "@/utils/commonManage";
+import {commonManage, fileManage, gridManage} from "@/utils/commonManage";
 import {findCodeInfo, findDocumentInfo} from "@/utils/api/commonApi";
-import {updateEstimate} from "@/utils/api/mainApi";
+import {getAttachmentFileList, updateEstimate} from "@/utils/api/mainApi";
 import _ from "lodash";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 
@@ -51,11 +37,10 @@ export default function estimate_update({dataInfo}) {
     const router = useRouter();
 
 
-
     const copyUnitInit = _.cloneDeep(estimateDetailUnit)
 
     const infoInit = dataInfo?.estimateDetail
-    const infoFileInit = dataInfo?.attachmentFileList
+    const infoInitFile = dataInfo?.attachmentFileList
 
 
     const userInfo = useAppSelector((state) => state.user);
@@ -64,9 +49,10 @@ export default function estimate_update({dataInfo}) {
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
     const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
-
-
-
+    const [validate, setValidate] = useState({agencyCode: true});
+    const [fileList, setFileList] = useState(fileManage.getFormatFiles(infoInitFile));
+    const [originFileList, setOriginFileList] = useState(infoInitFile);
+    const [loading, setLoading] = useState(false);
     const onGridReady = (params) => {
         gridRef.current = params.api;
         params.api.applyTransaction({add: dataInfo?.estimateDetail[listType]});
@@ -79,7 +65,7 @@ export default function estimate_update({dataInfo}) {
                 case 'agencyCode' :
                 case 'customerName' :
                 case 'maker' :
-                    await findCodeInfo(e, setInfo, openModal)
+                    await findCodeInfo(e, setInfo, openModal, 'ESTIMATE', setValidate)
                     break;
                 case 'connectDocumentNumberFull' :
                     await findDocumentInfo(e, setInfo)
@@ -94,6 +80,11 @@ export default function estimate_update({dataInfo}) {
     }
 
     function onChange(e) {
+        if (e.target.id === 'agencyCode') {
+            setValidate(v => {
+                return {...v, agencyCode: false}
+            })
+        }
         commonManage.onChange(e, setInfo)
     }
 
@@ -107,52 +98,43 @@ export default function estimate_update({dataInfo}) {
             return message.warn('매입처 코드가 누락되었습니다.')
         }
 
-
-
-        const formData:any = new FormData();
+        setLoading(true)
+        const formData: any = new FormData();
 
         const handleIteration = () => {
             for (const {key, value} of commonManage.commonCalc(info)) {
                 if (key !== listType) {
-                        formData.append(key, value);
+                    formData.append(key, value);
                 }
             }
         };
 
         handleIteration();
 
-        if (list.length) {
-            list.forEach((detail, index) => {
-                Object.keys(detail).forEach((key) => {
-                    if(!(key == 'orderDate' || key === 'orderProcessing'|| key === 'order') )
-                        formData.append(`${listType}[${index}].${key}`, detail[key]);
-                });
-            });
-        }
+        commonManage.setInfoFormData(info, formData, listType, list)
+        commonManage.getUploadList(fileRef, formData);
+        commonManage.deleteUploadList(fileRef, formData, originFileList)
 
-        const uploadContainer = document.querySelector(".ant-upload-list"); // 업로드 리스트 컨테이너
+        await updateEstimate({data: formData, returnFunc:returnFunc})
+    }
 
-        if (uploadContainer) {
-            const fileNodes = uploadContainer.querySelectorAll(".ant-upload-list-item-name");
-            const fileNames = Array.from(fileNodes).map((node:any) => node.textContent.trim());
-
-            let count = 0
-            fileRef.current.fileList.forEach((item, index) => {
-                if(item?.originFileObj){
-                    formData.append(`attachmentFileList[${count}].attachmentFile`, item.originFileObj);
-                    formData.append(`attachmentFileList[${count}].fileName`, fileNames[index].replace(/\s+/g, ""));
-                    count += 1;
+    async function returnFunc(e) {
+        console.log(e,'e:')
+        if (e) {
+            await getAttachmentFileList({
+                data: {
+                    "relatedType": "ESTIMATE",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
+                    "relatedId": infoInit['estimateId']
                 }
-            });
-
+            }).then(v => {
+                const list = fileManage.getFormatFiles(v);
+                setFileList(list)
+                setOriginFileList(list)
+                setLoading(false)
+            })
+        } else {
+            setLoading(false)
         }
-        //기존 기준 사라진 파일
-        const result = infoFileInit.filter(itemA => !fileRef.current.fileList.some(itemB => itemA.id === itemB.id));
-        result.map((v, idx) => {
-            formData.append(`deleteAttachementIdList[${idx}]`, v.id);
-        })
-
-        await updateEstimate({data: formData})
     }
 
     function copyPage() {
@@ -198,8 +180,11 @@ export default function estimate_update({dataInfo}) {
 
     return <>
         {/*@ts-ignore*/}
-        <SearchInfoModal  info={info} setInfo={setInfo}
+        <SearchInfoModal info={info} setInfo={setInfo}
                          open={isModalOpen}
+                         type={'ESTIMATE'}
+                         gridRef={gridRef}
+                         setValidate={setValidate}
                          setIsModalOpen={setIsModalOpen}/>
         <PrintEstimate data={info} isModalOpen={isPrintModalOpen} userInfo={userInfo}
                        setIsModalOpen={setIsPrintModalOpen} gridRef={gridRef}/>
@@ -232,7 +217,7 @@ export default function estimate_update({dataInfo}) {
                                 id: 'documentNumberFull',
                                 placeholder: '폴더생성 규칙 유의',
                                 onChange: onChange,
-                                data: info, disabled:true
+                                data: info, disabled: true
                             })}
 
                             {inputForm({title: 'RFQ NO.', id: 'rfqNo', onChange: onChange, data: info})}
@@ -250,15 +235,27 @@ export default function estimate_update({dataInfo}) {
                                             e.stopPropagation();
                                             openModal('agencyCode');
                                         }
-                                    }/>, onChange: onChange, data: info, handleKeyPress : handleKeyPress
+                                    }/>, onChange: onChange, data: info, handleKeyPress: handleKeyPress, validate : validate['agencyCode']
                                 })}
-                                {inputForm({title: '매입처명', id: 'agencyName', onChange: onChange, data: info,  disabled: true})}
-                                {inputForm({title: '담당자', id: 'agencyManagerName', onChange: onChange, data: info,  disabled: true})}
+                                {inputForm({
+                                    title: '매입처명',
+                                    id: 'agencyName',
+                                    onChange: onChange,
+                                    data: info,
+                                    disabled: true
+                                })}
+                                {inputForm({
+                                    title: '담당자',
+                                    id: 'agencyManagerName',
+                                    onChange: onChange,
+                                    data: info,
+                                    disabled: true
+                                })}
                                 {inputForm({
                                     title: '연락처',
                                     id: 'agencyManagerPhoneNumber',
                                     onChange: onChange,
-                                    data: info,  disabled: true
+                                    data: info, disabled: true
                                 })}
                             </BoxCard>
 
@@ -271,12 +268,36 @@ export default function estimate_update({dataInfo}) {
                                             e.stopPropagation();
                                             openModal('customerName');
                                         }
-                                    }/>, onChange: onChange, data: info, handleKeyPress : handleKeyPress
+                                    }/>, onChange: onChange, data: info, handleKeyPress: handleKeyPress
                                 })}
-                                {inputForm({title: '담당자', id: 'managerName', onChange: onChange, data: info,  disabled: true})}
-                                {inputForm({title: '전화번호', id: 'phoneNumber', onChange: onChange, data: info,  disabled: true})}
-                                {inputForm({title: '팩스', id: 'faxNumber', onChange: onChange, data: info,  disabled: true})}
-                                {inputForm({title: '이메일', id: 'customerManagerEmail', onChange: onChange, data: info,  disabled: true})}
+                                {inputForm({
+                                    title: '담당자',
+                                    id: 'managerName',
+                                    onChange: onChange,
+                                    data: info,
+                                    disabled: true
+                                })}
+                                {inputForm({
+                                    title: '전화번호',
+                                    id: 'phoneNumber',
+                                    onChange: onChange,
+                                    data: info,
+                                    disabled: true
+                                })}
+                                {inputForm({
+                                    title: '팩스',
+                                    id: 'faxNumber',
+                                    onChange: onChange,
+                                    data: info,
+                                    disabled: true
+                                })}
+                                {inputForm({
+                                    title: '이메일',
+                                    id: 'customerManagerEmail',
+                                    onChange: onChange,
+                                    data: info,
+                                    disabled: true
+                                })}
                             </BoxCard>
 
                             <BoxCard title={'운송 정보'}>
@@ -312,7 +333,7 @@ export default function estimate_update({dataInfo}) {
                                             openModal('maker');
                                         }
                                     }/>
-                                    , onChange: onChange, data: info, handleKeyPress : handleKeyPress
+                                    , onChange: onChange, data: info, handleKeyPress: handleKeyPress
                                 })}
                                 {inputForm({title: 'ITEM', id: 'item', onChange: onChange, data: info})}
                             </BoxCard>
@@ -329,7 +350,8 @@ export default function estimate_update({dataInfo}) {
                             <BoxCard title={'드라이브 목록'}>
                                 {/*@ts-ignored*/}
                                 <div style={{overFlowY: "auto", maxHeight: 300}}>
-                                    <DriveUploadComp infoFileInit={infoFileInit} fileRef={fileRef} numb={3}/>
+                                    <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
+                                                     numb={3}/>
                                 </div>
                             </BoxCard>
                         </div>
@@ -341,7 +363,7 @@ export default function estimate_update({dataInfo}) {
                     onGridReady={onGridReady}
                     columns={tableEstimateWriteColumns}
                     type={'write'}
-                    funcButtons={subTableUtil}
+                    funcButtons={['estimateUpload', 'estimateAdd', 'delete', 'print']}
                 />
             </div>
         </LayoutComponent>

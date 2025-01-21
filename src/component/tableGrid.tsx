@@ -83,38 +83,42 @@ const TableGrid = ({
     };
 
 
+    const option = 'width=1000,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no'
+    const openType = '_blank'
     const handleDoubleClicked = (e) => {
 
         if (type === 'read') {
             if (e.data.orderStatusId)
-                router.push(`/store_update?orderStatusId=${e?.data?.orderStatusId}`)
+
+            window.open(`/store_update?orderStatusId=${e?.data?.orderStatusId}`, openType, option);
             if (e.data.projectId)
-                window.open(`/project_update?projectId=${e?.data?.projectId}`, '_blank', 'width=1000,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
+                window.open(`/project_update?projectId=${e?.data?.projectId}`, openType, option);
             if (e.data.deliveryId)
-                router.push(`/delivery_update?deliveryId=${e?.data?.deliveryId}`)
+                window.open(`/delivery_update?deliveryId=${e?.data?.deliveryId}`, openType, option);
             if (e.data.remittanceId)
-                router.push(`/remittance_domestic_update?remittanceId=${e?.data?.remittanceId}`)
+                window.open(`/remittance_domestic_update?remittanceId=${e?.data?.remittanceId}`, openType, option);
             if (e.data.estimateRequestId)
-                window.open(`/rfq_update?estimateRequestId=${e?.data?.estimateRequestId}`, '_blank', 'width=1000,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
+                window.open(`/rfq_update?estimateRequestId=${e?.data?.estimateRequestId}`, openType, option);
             // router.push(`/rfq_update?estimateRequestId=${e?.data?.estimateRequestId}`)
             if (e.data.estimateId)
-                router.push(`/estimate_update?estimateId=${e?.data?.estimateId}`)
+                window.open(`/estimate_update?estimateId=${e?.data?.estimateId}`, openType, option);
             if (e.data.orderId)
-                router.push(`/order_update?orderId=${e?.data?.orderId}`)
+                window.open(`/order_update?orderId=${e?.data?.orderId}`, openType, option);
             if (e.data.remainingQuantity)
-                router.push(`/inventory_update?maker=${e?.data?.maker}&model=${e?.data?.model}`)
+                window.open(`/inventory_update?maker=${e?.data?.maker}&model=${e?.data?.model}`, openType, option);
             if (e.data.makerId)
-                router.push(`/maker_update?makerName=${e?.data?.makerName}`)
+                window.open(`/maker_update?makerName=${e?.data?.makerName}`, openType, option);
             if (e.data.agencyId)
-                router.push(`/code_domestic_agency_update?agencyCode=${e?.data?.agencyCode}`)
+                window.open(`/code_domestic_agency_update?agencyCode=${e?.data?.agencyCode}`, openType, option);
             if (e.data.overseasAgencyId)
-                router.push(`/code_overseas_agency_update?agencyCode=${e?.data?.agencyCode}`)
+                window.open(`/code_overseas_agency_update?agencyCode=${e?.data?.agencyCode}`, openType, option);
             if (e.data.customerId)
-                router.push(`/code_domestic_customer_update?customerCode=${e?.data?.customerCode}`)
+                window.open(`/code_domestic_customer_update?customerCode=${e?.data?.customerCode}`, openType, option);
             if (e.data.overseasCustomerId)
-                router.push(`/code_overseas_customer_update?customerCode=${e?.data?.customerCode}`)
+                window.open(`/code_overseas_customer_update?customerCode=${e?.data?.customerCode}`, openType, option);
             if (e.data.officialDocumentId)
-                router.push(`/code_diploma_update?officialDocumentId=${e?.data?.officialDocumentId}`)
+
+                window.open(`/code_diploma_update?officialDocumentId=${e?.data?.officialDocumentId}`, openType, option);
         }
 
         if (type === 'hsCode') {
@@ -275,7 +279,7 @@ const TableGrid = ({
                         getRowStyle: (params) => {
                             // 짝수 행에만 스타일 적용
                             if (params.node.rowIndex % 2 === 1) {
-                                return { backgroundColor: "#f5f5f5" }; // 옅은 갈색
+                                return {backgroundColor: "#f5f5f5"}; // 옅은 갈색
                             }
                             return null; // 기본 스타일 유지
                         },

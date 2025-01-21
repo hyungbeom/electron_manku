@@ -529,10 +529,9 @@ export const tableEstimateReadColumns = [
     {
         headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
         checkboxSelection: true, // 각 행에 체크박스 추가
-        headerName: 'Document Number',
         headerName: '작성일자',
         field: 'writtenDate',
-        width: 70,
+        width: 130,
         pinned: 'left'
     },
     {
@@ -652,21 +651,6 @@ export const tableEstimateReadColumns = [
         headerName: '물품',
         children: [
             {
-                headerName: 'MAKER',
-                field: 'maker',
-                minWidth: 80,
-            },
-            {
-                headerName: 'ITEM',
-                field: 'item',
-                minWidth: 80,
-            },
-            {
-                headerName: 'MODEL',
-                field: 'model',
-                minWidth: 150,
-            },
-            {
                 headerName: '수량',
                 field: 'quantity',
                 minWidth: 40,
@@ -733,15 +717,36 @@ export const tableEstimateReadColumns = [
         field: 'createdBy',
         width: 80,
     },
+    {
+        headerName: 'MAKER',
+        field: 'maker',
+        maxWidth: 100,
+        pinned: 'right'
+    },
+    {
+        headerName: 'ITEM',
+        field: 'item',
+        maxWidth: 100,
+        pinned: 'right'
+    },
+    {
+        headerName: 'MODEL',
+        field: 'model',
+        maxWidth: 120,
+        pinned: 'right'
+    },
 
 ];
 
 export const tableEstimateWriteColumns = [
     {
-        headerName: 'Model',
+        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
+        checkboxSelection: true, // 각 행에 체크박스 추가
+        headerName: 'MODEL',
         field: 'model',
         editable: true,
         width: 1320,
+        pinned : 'left'
     },
     {
         headerName: '수량',

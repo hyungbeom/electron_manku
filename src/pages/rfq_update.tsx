@@ -88,7 +88,7 @@ export default function rqfUpdate({dataInfo, managerList}) {
                 case 'agencyCode' :
                 case 'customerName' :
                 case 'maker' :
-                    await findCodeInfo(e, setInfo, openModal, 'ESTIMATE', setValidate)
+                    await findCodeInfo(e, setInfo, openModal, '', setValidate)
                     break;
             }
         }

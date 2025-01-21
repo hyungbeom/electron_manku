@@ -184,3 +184,9 @@ html, body {
 .custom-rangepicker .ant-picker-input > input {
     font-size: 12px; /* 입력 텍스트 크기 */
 }
+
+
+.custom-menu .ant-menu-overflow-item .ant-menu-submenu .ant-menu-submenu-horizontal{
+    padding: 0 5px !important; /* 좌우 패딩을 10px로 설정 */
+}
+

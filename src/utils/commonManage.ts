@@ -17,8 +17,8 @@ gridManage.getSelectRows = function (gridRef) {
     return selectedData;
 }
 
-gridManage.exportSelectedRowsToExcel = function (gridRef, title ) {
-    if (gridRef.current ) {
+gridManage.exportSelectedRowsToExcel = function (gridRef, title) {
+    if (gridRef.current) {
         // 체크된 행 데이터 가져오기
         const selectedRows = gridRef.current.getSelectedRows();
 
@@ -46,7 +46,7 @@ gridManage.exportSelectedRowsToExcel = function (gridRef, title ) {
         // 컬럼 너비 설정
         const columnWidths = columns.map((col) => {
             const width = col.getActualWidth(); // Ag-Grid의 실제 너비
-            return { wpx: width }; // 너비를 픽셀 단위로 설정
+            return {wpx: width}; // 너비를 픽셀 단위로 설정
         });
         worksheet['!cols'] = columnWidths;
 
@@ -75,7 +75,7 @@ gridManage.getFieldDeleteList = function (gridRef, fieldMappings) {
         const selectedRows = gridRef.current.getSelectedRows();
 
         // fieldMappings으로 원하는 필드 조합 생성
-        const fieldValues = selectedRows.map((row:any) => {
+        const fieldValues = selectedRows.map((row: any) => {
             const mappedObject = {};
             for (const [key, field] of Object.entries(fieldMappings)) {
                 // @ts-ignore
@@ -148,21 +148,21 @@ gridManage.getColumnsSums = function (gridRef, keyPairs) {
 
 
 gridManage.getAllData = function (gridRef) {
-    if(gridRef.current) {
+    if (gridRef.current) {
         const allData = [];
         const nodesToRemove = [];
 
         // 모든 노드를 순회
         gridRef.current.forEachNode((node) => {
             // 데이터를 수정하여 null을 0으로 변환
-            const row = { ...node.data };
+            const row = {...node.data};
             Object.keys(row).forEach((key) => {
 
                 if (row[key] === null || row[key] === undefined) {
-                    if(key === 'net'){
+                    if (key === 'net') {
                         row[key] = 0;
                     }
-                    if(key === 'currency'){
+                    if (key === 'currency') {
                         row[key] = '';
                     }
                 }
@@ -232,7 +232,6 @@ apiManage.generateCodeChallenge = async function (codeVerifier) {
 
 
 // ===============================================
-
 
 
 /**
@@ -364,7 +363,7 @@ commonManage.getCheckList = function (gridRef) {
 
 
 commonManage.onChange = function (e, setInfo) {
-    if(e.target.id === 'documentNumberFull'){
+    if (e.target.id === 'documentNumberFull') {
         commonFunc.unValidateInput('documentNumberFull')
     }
     let bowl = {}
@@ -379,7 +378,7 @@ commonManage.onChange = function (e, setInfo) {
             addDate['searchStartArrivalDate'] = e.target.value[0];
             addDate['searchEndArrivalDate'] = e.target.value[1];
         }
-        if(e.target.id === 'supplyAmount'){
+        if (e.target.id === 'supplyAmount') {
             addDate['surtax'] = Math.round(e.target.value * 0.1)
             addDate['total'] = e.target.value + Math.round(e.target.value * 0.1)
         }
@@ -513,10 +512,10 @@ commonManage.changeCurr = function (value) {
     }
 }
 
-commonFunc.repeatObject = function(item, numb){
-    return Array.from({ length: numb }, () => ({ ...item }));
+commonFunc.repeatObject = function (item, numb) {
+    return Array.from({length: numb}, () => ({...item}));
 }
-commonFunc.validateInput = function(id){
+commonFunc.validateInput = function (id) {
     const inputElement = document.getElementById(id);
     if (inputElement) {
         inputElement.style.border = "1px solid red"; // 빨간색 테두리
@@ -524,7 +523,7 @@ commonFunc.validateInput = function(id){
         inputElement.focus();
     }
 }
-commonFunc.unValidateInput = function(id){
+commonFunc.unValidateInput = function (id) {
     const inputElement = document.getElementById(id);
     if (inputElement) {
         inputElement.style.border = ""; // 빨간색 테두리
@@ -590,7 +589,7 @@ commonManage.commonCalc = function (info) {
 
 // ----------------------------------------------------------------------------------------
 
-commonManage.setInfoFormData = function (info , formData, listType, list?) {
+commonManage.setInfoFormData = function (info, formData, listType, list?) {
     for (const {key, value} of commonManage.commonCalc(info)) {
         if (key !== listType) {
             if (key === 'dueDate') {
@@ -606,19 +605,17 @@ commonManage.setInfoDetailFormData = function (formData, listType, list?) {
 
     list.forEach((detail, index) => {
         Object.keys(detail).forEach((key) => {
-
-           if(key.includes('Date')){
-               formData.append(`${listType}[${index}].${key}`, moment(detail[key]).isValid() ?  dateFormat(detail[key]) : '');
-           }else{
-               formData.append(`${listType}[${index}].${key}`, detail[key]);
-           }
+            if (!(key == 'orderDate' || key === 'orderProcessing' || key === 'order')) {
+                if (key.includes('Date')) {
+                    formData.append(`${listType}[${index}].${key}`, moment(detail[key]).isValid() ? dateFormat(detail[key]) : '');
+                } else {
+                    formData.append(`${listType}[${index}].${key}`, detail[key]);
+                }
+            }
         });
         formData.delete(`${listType}[${index}].serialNumber`);
     });
 }
-
-
-
 
 
 commonManage.getUploadList = function (fileRef, formData) {
@@ -636,7 +633,7 @@ commonManage.getUploadList = function (fileRef, formData) {
     });
 }
 
-commonManage.deleteUploadList = function (fileRef, formData,originFileList) {
+commonManage.deleteUploadList = function (fileRef, formData, originFileList) {
 
     //기존 기준 사라진 파일
     const result = originFileList?.filter(itemA => !fileRef.current.fileList.some(itemB => itemA.id === itemB.id));
@@ -645,8 +642,6 @@ commonManage.deleteUploadList = function (fileRef, formData,originFileList) {
         formData.append(`deleteAttachementIdList[${idx}]`, v.id);
     })
 }
-
-
 
 
 fileManage.getFormatFiles = function (list) {
