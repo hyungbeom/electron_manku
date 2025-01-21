@@ -14,7 +14,7 @@ import {useRouter} from "next/router";
 import {commonManage, gridManage} from "@/utils/commonManage";
 
 
-export default function SearchInfoModal({info, setInfo, open, setIsModalOpen, setValidate = null, type='', gridRef}:aNY) {
+export default function SearchInfoModal({info, setInfo, open, setIsModalOpen, setValidate = null, type='', gridRef}:any) {
     const router = useRouter()
     const [code, setCode] = useState();
     const [list, setList] = useState([])
