@@ -251,6 +251,7 @@ export default function LayoutComponent({children, userInfo = null}) {
     const onClick = (e) => {
         const root = `/${e.keyPath[1]}_${e.keyPath[0]}`
 
+        console.log(e.key,'e.key::')
         switch (e.key) {
             case 'write' :
                 if (e.keyPath[1] === 'estimate_write') {
@@ -261,6 +262,9 @@ export default function LayoutComponent({children, userInfo = null}) {
                 break;
             case 'read' :
                 router.push(`${root}`)
+                break;
+            case 'notice' :
+                router.push(`/erp_rule`)
                 break;
         }
     };
