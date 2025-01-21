@@ -100,7 +100,7 @@ const TableGrid = ({
             if (e.data.estimateRequestId)
                 window.open(`/rfq_update?estimateRequestId=${e?.data?.estimateRequestId}`, openType, option);
             if (e.data.estimateId)
-                window.open(`/estimate_update?estimateId=${e?.data?.estimateId}`, openType, option);
+                window.open(`/estimate_update?estimateId=${e?.data?.estimateId}`, openType, 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
             if (e.data.orderId)
                 window.open(`/order_update?orderId=${e?.data?.orderId}`, openType, 'width=1200,height=900,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
             if (e.data.remainingQuantity)

@@ -58,7 +58,7 @@ export default function EstimateRead({dataInfo}) {
     }
 
     async function moveRouter() {
-        window.open(`/estimate_write`, '_blank', 'width=1000,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
+        window.open(`/estimate_write`, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
     }
 
 
