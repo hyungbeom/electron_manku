@@ -2,7 +2,7 @@ import React, {useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
 import {CopyOutlined, FileSearchOutlined, SaveOutlined, UploadOutlined} from "@ant-design/icons";
 import {projectWriteColumn} from "@/utils/columnList";
-import {ModalInitList, projectDetailUnit} from "@/utils/initialList";
+import {ModalInitList, projectDetailUnit, projectWriteInitial, rfqWriteInitial} from "@/utils/initialList";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
 import {wrapper} from "@/store/store";
@@ -121,6 +121,19 @@ export default function projectUpdate({dataInfo}) {
         router.push(`/project_write?${query}`)
     }
 
+    function clearAll() {
+        setInfo(v => {
+            return {
+                ...projectWriteInitial,
+                documentNumberFull: v.documentNumberFull,
+                writtenDate: v.writtenDate,
+                createdBy: v.createdBy,
+                managerAdminName: v.managerAdminName,
+                managerAdminId: v?.managerAdminId ? v?.managerAdminId : 0
+            }
+        });
+        gridManage.deleteAll(gridRef)
+    }
 
     return <Spin spinning={loading} tip={'프로젝트 수정중...'}>
         <SearchInfoModal info={info} setInfo={setInfo}
@@ -137,6 +150,7 @@ export default function projectUpdate({dataInfo}) {
 
                 <MainCard title={'프로젝트 수정'} list={[
                     {name: '수정', func: saveFunc, type: 'primary'},
+                    {name: '초기화', func: clearAll, type: 'danger'},
                     {name: '복제', func: copyPage, type: 'default'},
                 ]} mini={mini} setMini={setMini}>
 
