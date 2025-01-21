@@ -4,16 +4,10 @@ import React, {useMemo, useRef, useState} from 'react';
 import {AgGridReact} from 'ag-grid-react';
 import {useRouter} from "next/router";
 import {tableTheme} from "@/utils/common";
-import message from "antd/lib/message";
-import Upload from "antd/lib/upload";
-import {CopyOutlined, FileExcelOutlined, InboxOutlined, SaveOutlined} from "@ant-design/icons";
 
-import {commonFunc, commonManage} from "@/utils/commonManage";
+import {commonFunc} from "@/utils/commonManage";
 import useEventListener from "@/utils/common/function/UseEventListener";
 import EstimateListModal from "@/component/EstimateListModal";
-import {ExcelUpload} from "@/component/common/ExcelUpload";
-import {reqWriteList} from "@/utils/initialList";
-import Button from "antd/lib/button";
 import {tableButtonList} from "@/utils/commonForm";
 
 const TableGrid = ({
@@ -95,7 +89,7 @@ const TableGrid = ({
             if (e.data.orderStatusId)
                 router.push(`/store_update?orderStatusId=${e?.data?.orderStatusId}`)
             if (e.data.projectId)
-                router.push(`/project_update?projectId=${e?.data?.projectId}`)
+                window.open(`/project_update?projectId=${e?.data?.projectId}`, '_blank', 'width=1000,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
             if (e.data.deliveryId)
                 router.push(`/delivery_update?deliveryId=${e?.data?.deliveryId}`)
             if (e.data.remittanceId)
@@ -143,64 +137,15 @@ const TableGrid = ({
 
 
     function dataChange(e) {
-        // const updatedData = [...data];
-        // const rowIndex = e.node.rowIndex;
-        console.log(e, '???')
         clickRowCheck(e.api);
         handleSelectionChanged();
     }
-
-
-    const handleDragOver = (e) => {
-        e.preventDefault();
-        setDragging(true);
-    };
-
-    const handleDragLeave = () => {
-        setDragging(false);
-    };
-
-    const handleDrop = (e) => {
-        e.preventDefault();
-        setDragging(false);
-
-        const files = e.dataTransfer.files;
-        if (files.length > 0) {
-            const file = files[0];
-
-            const isExcel =
-                file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
-                file.type === 'application/vnd.ms-excel' ||
-                file.name.toLowerCase().endsWith('.xlsx') ||
-                file.name.toLowerCase().endsWith('.xls');
-
-            if (!isExcel) {
-                message.error('엑셀 파일만 업로드 가능합니다.');
-                return Upload.LIST_IGNORE;
-            }
-
-            commonManage.excelFileRead(file).then(v => {
-
-                gridRef.current.applyTransaction({add: v});
-
-            })
-
-            // handleFile(file);
-        }
-    };
 
 
     const handleCellRightClick = (e) => {
         if (e.event) {
             e.event.preventDefault(); // 기본 컨텍스트 메뉴 막기
         }
-
-
-        // if(e.column.getId() === 'connectInquiryNo'){
-        //     const rowNode = gridRef.current.getDisplayedRowAtIndex(e.node.rowIndex);
-        //     rowNode.setDataValue(e.column.getId(), "11114");
-        // }
-
 
         const {clientX, clientY} = e.event;
         e.event.preventDefault();
@@ -225,41 +170,6 @@ const TableGrid = ({
             return {...v, x: null, y: null}
         });
     }, typeof window !== 'undefined' ? document : null)
-
-
-    // async function getProjectDetail(e) {
-    //     if (e.column.colId === 'connectInquiryNo') { // 특정 칼럼 조건
-    //         console.log('Editing stopped in Name column:', e.value);
-    //         const result = await getEstimateInfo(e.value)
-    //
-    //         const rowNode = e.node;
-    //         const updatedData = {};
-    //
-    //         if (result.length && !!e.value) {
-    //             const updatedData = result.map((item) => {
-    //                 const {a, c, ...rest} = item; // 기존 키를 구조 분해
-    //                 return {
-    //                     ...rest,      // 나머지 키를 유지
-    //                     // aa: a,        // a를 aa로 변경
-    //                     connectInquiryNo: item['documentNumberFull']
-    //                 };
-    //             });
-    //
-    //             rowNode.setData(updatedData[0]);
-    //
-    //             if (result.length > 1) {
-    //                 updatedData.shift();
-    //
-    //
-    //                 gridRef.current.applyTransaction({
-    //                     add: updatedData, // 결과 배열의 각 객체가 새로운 행으로 추가됨
-    //                 });
-    //
-    //             }
-    //         }
-    //
-    //     }
-    // }
 
 
     function getSelectedRows(ref) {
@@ -332,33 +242,7 @@ const TableGrid = ({
                 </div>
             </div> : <></>}
 
-            <div className={`ag-theme-quartz ${dragging ? 'dragging' : ''}`}
-                 style={{
-                     height: '100%', width: '100%', display: 'flex', flexDirection: 'column', overflowX: 'auto',
-                     border: dragging ? '2px dashed #1890ff' : 'none', position: 'relative'
-                 }}
-                 onDragOver={handleDragOver}
-                 onDragLeave={handleDragLeave}
-                 onDrop={handleDrop}
-            >
-                {dragging && (
-                    <div
-                        style={{
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            width: '100%',
-                            height: '100%',
-                            backgroundColor: 'rgba(255, 255, 255, 0.7)', // 반투명 흰색 배경
-                            zIndex: 10,
-                            pointerEvents: 'none', // 오버레이가 이벤트를 방해하지 않도록 설정
-                        }}
-                    >
-                        <InboxOutlined style={{color: 'blue', fontSize: 50, margin: '10% 50% 0 45%'}}/><br/>
-                        Drag & drop
-                    </div>
-                )}
-
+            <div>
                 <div style={{width: '100%', display: 'flex', justifyContent: 'space-between', margin: '10px 0'}}>
                     <div style={{fontWeight: 500}}>LIST</div>
 

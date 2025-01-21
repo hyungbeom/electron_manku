@@ -940,3 +940,26 @@ export const reqWriteList = {
   "회신일": 'replyDate',
   "비고": 'remarks'
 }
+
+
+
+// ==============================================================================================================================================
+export const projectWriteList = {
+    "연결 Inquiry No.": 'connectInquiryNo',
+    "MAKER": 'maker',
+    "ITEM": 'item',
+    "규격": 'spec',
+    "수량": 'quantity',
+    "단위가격": 'unitPrice',
+    "총액": 'total',
+    "화폐단위": 'currencyUnit',
+    "납기": 'deliveryDate',
+    "매입처명": 'agencyName',
+    "매입처 담당자명": 'agencyManagerName',
+    "매입처 전화번호": 'agencyManagerPhone',
+    "매입처 이메일": 'agencyManagerEmail',
+    "관련링크": 'relatedLink',
+    "납기요청일": 'requestDeliveryDate',
+    "비고": 'remarks',
+}
+

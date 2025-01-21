@@ -44,7 +44,7 @@ export default function projectWrite({dataInfo}) {
     }
 
     const [info, setInfo] = useState<any>({...copyInit, ...dataInfo, ...adminParams})
-    const [validate, setValidate] = useState({agencyCode: !!dataInfo, documentNumberFull: !!dataInfo});
+    const [validate, setValidate] = useState({documentNumberFull: true});
 
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
@@ -59,7 +59,7 @@ export default function projectWrite({dataInfo}) {
         delete copyData?.modifiedDate;
         const result = copyData?.projectDetailList;
         setInfo(copyData);
-        params.api.applyTransaction({add: result ? result : commonFunc.repeatObject(projectDetailUnit,30)});
+        params.api.applyTransaction({add: result ? result : commonFunc.repeatObject(projectDetailUnit, 30)});
     };
 
     async function handleKeyPress(e) {
@@ -81,8 +81,11 @@ export default function projectWrite({dataInfo}) {
     }
 
     function onChange(e) {
-        let bowl = {};
-        bowl[e.target.id] = e.target.value;
+        if (e.target.id === 'documentNumberFull') {
+            setValidate(v => {
+                return {...v,  documentNumberFull: true}
+            })
+        }
         commonManage.onChange(e, setInfo)
     }
 
@@ -96,6 +99,7 @@ export default function projectWrite({dataInfo}) {
             return message.warn('하위 데이터 1개 이상이여야 합니다');
         }
 
+        setLoading(true)
         const formData: any = new FormData();
 
         const handleIteration = () => {
@@ -118,11 +122,22 @@ export default function projectWrite({dataInfo}) {
         formData.delete('createdDate')
         formData.delete('modifiedDate')
 
-        await saveProject({data: formData, router: router})
+        await saveProject({data: formData, router: router, returnFunc: returnFunc})
     }
 
+    function returnFunc(e) {
+        if (e === -20001) {
+
+            setValidate(v => {
+                return {documentNumberFull: false}
+            })
+        }
+        setLoading(false)
+    }
 
     function clearAll() {
+
+        setLoading(false)
         setInfo({...infoInit});
         gridManage.deleteAll(gridRef);
     }
@@ -174,7 +189,8 @@ export default function projectWrite({dataInfo}) {
                                         title: 'PROJECT NO.',
                                         id: 'documentNumberFull',
                                         onChange: onChange,
-                                        data: info
+                                        data: info,
+                                        validate: validate['documentNumberFull']
                                     })}
                                     {inputForm({
                                         title: '프로젝트 제목',
@@ -239,7 +255,8 @@ export default function projectWrite({dataInfo}) {
                                 <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}>
                                     {/*@ts-ignored*/}
                                     <div style={{overFlowY: "auto", maxHeight: 300}}>
-                                        <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef} numb={5}/>
+                                        <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
+                                                         numb={5}/>
                                     </div>
                                 </BoxCard>
                             </div>
@@ -252,7 +269,7 @@ export default function projectWrite({dataInfo}) {
                     columns={projectWriteColumn}
                     onGridReady={onGridReady}
                     type={'write'}
-                    funcButtons={['addProjectRow', 'delete', 'print']}
+                    funcButtons={['projectUpload','addProjectRow', 'delete', 'print']}
                 />
             </div>
         </LayoutComponent>

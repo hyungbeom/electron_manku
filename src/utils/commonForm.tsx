@@ -18,8 +18,9 @@ import Radio from "antd/lib/radio";
 import TextArea from "antd/lib/input/TextArea";
 import Select from "antd/lib/select";
 import Tooltip from "antd/lib/tooltip";
-import {estimateRequestDetailUnit, projectDetailUnit, reqWriteList} from "@/utils/initialList";
+import {estimateRequestDetailUnit, projectDetailUnit, projectWriteList, reqWriteList} from "@/utils/initialList";
 import {ExcelUpload} from "@/component/common/ExcelUpload";
+import Upload from "antd/lib/upload";
 
 const {RangePicker} = DatePicker
 const {Option} = Select
@@ -275,6 +276,8 @@ export const tableButtonList = (type:any, gridRef?:any) => {
     }
 
     switch (type) {
+        case 'projectUpload' :
+            return <ExcelUpload gridRef={gridRef} list={projectWriteList}/>
         case 'upload' :
             return <ExcelUpload gridRef={gridRef} list={reqWriteList}/>
         case 'add' :

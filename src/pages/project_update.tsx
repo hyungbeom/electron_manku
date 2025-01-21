@@ -20,6 +20,7 @@ import {findCodeInfo} from "@/utils/api/commonApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {getData} from "@/manage/function/api";
 import moment from "moment";
+import Spin from "antd/lib/spin";
 
 const listType = 'projectDetailList'
 export default function projectUpdate({dataInfo}) {
@@ -80,7 +81,7 @@ export default function projectUpdate({dataInfo}) {
             return message.warn('하위 데이터 1개 이상이여야 합니다');
         }
 
-
+        setLoading(true)
         const formData: any = new FormData();
 
         commonManage.setInfoFormData(info, formData, listType, list)
@@ -121,7 +122,7 @@ export default function projectUpdate({dataInfo}) {
     }
 
 
-    return <>
+    return <Spin spinning={loading} tip={'프로젝트 수정중...'}>
         <SearchInfoModal info={info} setInfo={setInfo}
                          open={isModalOpen}
                          gridRef={gridRef}
@@ -249,11 +250,11 @@ export default function projectUpdate({dataInfo}) {
                     onGridReady={onGridReady}
                     columns={projectWriteColumn}
                     type={'write'}
-                    funcButtons={['add', 'delete', 'print']}
+                    funcButtons={['projectUpload','addProjectRow', 'delete', 'print']}
                 />
             </div>
         </LayoutComponent>
-    </>
+    </Spin>
 }
 
 // @ts-ignored

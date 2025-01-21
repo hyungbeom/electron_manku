@@ -1,16 +1,8 @@
 import React, {useEffect, useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
-import {
-    ClearOutlined,
-    CopyOutlined,
-    FileExcelOutlined,
-    FileSearchOutlined,
-    PlusSquareOutlined,
-    SaveOutlined
-} from "@ant-design/icons";
+import {ClearOutlined, FileSearchOutlined, PlusSquareOutlined, SaveOutlined} from "@ant-design/icons";
 import {subRfqWriteColumn} from "@/utils/columnList";
-import {estimateRequestDetailUnit, ModalInitList, reqWriteList, rfqWriteInitial} from "@/utils/initialList";
-import Button from "antd/lib/button";
+import {estimateRequestDetailUnit, ModalInitList, rfqWriteInitial} from "@/utils/initialList";
 import message from "antd/lib/message";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
@@ -24,16 +16,16 @@ import {
     inputForm,
     MainCard,
     selectBoxForm,
-    textAreaForm, tooltipInfo,
+    textAreaForm,
+    tooltipInfo,
     TopBoxCard
 } from "@/utils/commonForm";
 import {useRouter} from "next/router";
-import {commonManage, fileManage, gridManage} from "@/utils/commonManage";
+import {commonManage, gridManage} from "@/utils/commonManage";
 import _ from "lodash";
 import {findCodeInfo} from "@/utils/api/commonApi";
 import {checkInquiryNo, saveRfq} from "@/utils/api/mainApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
-import {ExcelUpload} from "@/component/common/ExcelUpload";
 import Select from "antd/lib/select";
 import {getData} from "@/manage/function/api";
 import moment from "moment";
@@ -70,7 +62,10 @@ export default function rqfWrite({dataInfo, managerList}) {
         ...adminParams
     }
 
-    const [info, setInfo] = useState<any>({...copyInit, ...dataInfo, ...adminParams, writtenDate: moment().format('YYYY-MM-DD')})
+    const [info, setInfo] = useState<any>({
+        ...copyInit, ...dataInfo, ...adminParams,
+        writtenDate: moment().format('YYYY-MM-DD')
+    })
     const [validate, setValidate] = useState({agencyCode: !!dataInfo, documentNumberFull: !!dataInfo});
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
@@ -394,7 +389,8 @@ export default function rqfWrite({dataInfo, managerList}) {
                                                 ]
                                             })}
                                         </div>
-                                        <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef} numb={info['uploadType']}/>
+                                        <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
+                                                         numb={info['uploadType']}/>
                                     </div>
                                 </BoxCard>
                             </div>
@@ -407,7 +403,7 @@ export default function rqfWrite({dataInfo, managerList}) {
                     columns={subRfqWriteColumn}
                     onGridReady={onGridReady}
                     type={'write'}
-                    funcButtons={['add', 'delete', 'print']}
+                    funcButtons={['upload', 'add', 'delete', 'print']}
                 />
             </div>
         </LayoutComponent>

@@ -102,16 +102,19 @@ export const saveRemittance = async ({data, router}) => {
     });
 };
 
-export const saveProject = async ({data, router}) => {
+
+export const saveProject = async ({data, router, returnFunc}) => {
     await getFormData.post('project/addProject', data).then(v => {
-        if (v.data.code === 1) {
+        const code = v.data.code;
+        if (code === 1) {
             message.success('저장되었습니다.')
             router.push(`/project_update?projectId=${v.data.entity.projectId}`)
-        } else if (v.data.code === -20001) {
+        } else if (code === -20001) {
             message.error('PROJECT NO.가 중복되었습니다.')
         } else {
             message.error('저장에 실패하였습니다.')
         }
+        returnFunc(code)
     });
 };
 export const saveStore = async ({data, router}) => {

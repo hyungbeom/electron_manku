@@ -527,6 +527,9 @@ export const estimateTotalColumns = [
 ];
 export const tableEstimateReadColumns = [
     {
+        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
+        checkboxSelection: true, // 각 행에 체크박스 추가
+        headerName: 'Document Number',
         headerName: '작성일자',
         field: 'writtenDate',
         width: 70,
@@ -535,8 +538,10 @@ export const tableEstimateReadColumns = [
     {
         // headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
         // checkboxSelection: true, // 각 행에 체크박스 추가
-        headerName: 'Document Number',
+        headerName: 'Inquiry No.',
         field: 'documentNumberFull',
+        pinned: 'left',
+        maxWidth : 100,
         cellRenderer: (params) => {
             const rowIndex = params.node.rowIndex;
             const currentData = params.value;
@@ -548,6 +553,7 @@ export const tableEstimateReadColumns = [
             }
             return currentData; // 첫 번째 값만 출력
         },
+
     },
     {
         headerName: '대리점코드',
@@ -2530,18 +2536,20 @@ export const modalCodeDiplomaColumn = [
 
 
 export const projectWriteColumn = [
-    {
+    {   headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
+        checkboxSelection: true, // 각 행에 체크박스 추가
+        pinned : 'left',
         headerName: '연결 Inquiry No.',
         field: 'connectInquiryNo',
-        minWidth: 150,
+        minWidth: 120,
         editable: true,
     }, {
-        headerName: 'Maker',
+        headerName: 'MAKER',
         field: 'maker',
         minWidth: 150,
         editable: true,
     }, {
-        headerName: 'Item',
+        headerName: 'ITEM',
         field: 'item',
         minWidth: 150,
         editable: true,

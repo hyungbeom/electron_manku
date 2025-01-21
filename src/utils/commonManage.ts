@@ -366,8 +366,6 @@ commonManage.getCheckList = function (gridRef) {
 commonManage.onChange = function (e, setInfo) {
     if(e.target.id === 'documentNumberFull'){
         commonFunc.unValidateInput('documentNumberFull')
-
-
     }
     let bowl = {}
     bowl[e.target.id] = e.target.value;
