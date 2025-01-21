@@ -231,16 +231,16 @@ export default function LayoutComponent({children, userInfo = null}) {
             icon: <SendOutlined/>,
             style: {margin: ' 0px -20px'},
             children: [
-                {label: <span style={{fontSize: '12px'}}>배송 등록</span>, key: 'rfq_mail_send'},
-                {label: <span style={{fontSize: '12px'}}>배송 조회</span>, key: 'rfq_mail_send'}
+                {label: <span style={{fontSize: '12px'}}>배송 등록</span>, key: 'write'},
+                {label: <span style={{fontSize: '12px'}}>배송 조회</span>, key: 'read'}
             ]
         }, {
             label: '공지사항',
-            key: 'notice',
+            key: '',
             icon: <NotificationOutlined/>,
             style: {margin: ' 0px -20px'},
             children: [
-                {label: <span style={{fontSize: '12px'}}>공지사항</span>, key: 'rfq_mail_send'},
+                {label: <span style={{fontSize: '12px'}}>공지사항</span>, key: 'notice'},
 
             ]
         },

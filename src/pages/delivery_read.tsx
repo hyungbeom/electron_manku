@@ -158,13 +158,15 @@ export default function delivery_read({dataInfo}) {
                         </div>
                         : <></>}
                 </MainCard>
-
-                <TableGrid
+                {/*@ts-ignored*/}
+                <TableGrid deleteComp={<Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}} onClick={deleteList}>
+                    <CopyOutlined/>삭제
+                </Button>}
                     gridRef={gridRef}
                     columns={delilveryReadColumn}
                     onGridReady={onGridReady}
                     type={'read'}
-                    funcButtons={subTableUtil}
+                    funcButtons={['print']}
                 />
             </div>
         </LayoutComponent>
