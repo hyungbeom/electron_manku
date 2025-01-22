@@ -401,7 +401,7 @@ export const deliveryDaehanInitial = {
     "packagingType": 0,                                 // 포장유형 (B or P)
     "shippingType": 0,                                 // 배송방식(택배 or 화물)
 
-    "paymentMethod": "",                       // 결제 방식 (착불, 후불) (DAESIN/QUICK 전용)
+    "paymentMethod": "착불",                       // 결제 방식 (착불, 후불) (DAESIN/QUICK 전용)
     "classification": "",                     // 구분 (용달, 대리점 등 QUICK 전용)
     "connectInquiryNo": "",                // 연결된 문의 번호
     "isConfirm": "X"

@@ -2,6 +2,7 @@ import {BoxCard, datePickerForm, inputForm, selectBoxForm, TopBoxCard} from "@/u
 import React from "react";
 import {commonManage} from "@/utils/commonManage";
 import AddressSearch from "@/component/AddressSearch";
+import {DownloadOutlined} from "@ant-design/icons";
 
 export default function ETC({info, setInfo}) {
 
@@ -19,7 +20,13 @@ export default function ETC({info, setInfo}) {
     return <>
         <TopBoxCard title={'기본 정보'} grid={'1fr 1fr 1fr 1fr 1fr 1fr'}>
             {datePickerForm({title: '출고일자', id: 'deliveryDate', onChange: onChange, data: info})}
-            {inputForm({title: '연결 INQUIRY NO.', id: 'connectInquiryNo', onChange: onChange, data: info})}
+            {inputForm({
+                title: '연결 INQUIRY No.',
+                id: 'connectInquiryNo',
+                suffix: <DownloadOutlined style={{cursor: 'pointer'}}/>,
+                onChange: onChange, data: info,
+                // handleKeyPress: handleKeyPress
+            })}
             {inputForm({title: '고객사명', id: 'customerName', onChange: onChange, data: info})}
         </TopBoxCard>
 
@@ -45,8 +52,8 @@ export default function ETC({info, setInfo}) {
                 {inputForm({title: '구분', id: 'classification', onChange: onChange, data: info})}
                 {selectBoxForm({
                     title: '결제방식', id: 'paymentMethod', list: [
-                        {value: '현불', label: '현불'},
                         {value: '착불', label: '착불'},
+                        {value: '후불', label: '후불'},
                     ], onChange: onChange, data: info
                 })}
                 {selectBoxForm({
