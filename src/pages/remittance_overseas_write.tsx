@@ -214,7 +214,7 @@ export default function OrderWriter({dataInfo}) {
 
                         <div style={{display: 'grid', gridTemplateColumns: '1fr 1.2fr  1.22fr 1.5fr', columnGap: 10}}>
 
-                            <Card size={'small'} title={'CUSTOMER & SUPPLY'}
+                            <Card size={'small'} title={'매입처 정보'}
                                   style={{
                                       fontSize: 13,
                                       boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
@@ -237,7 +237,7 @@ export default function OrderWriter({dataInfo}) {
                             </Card>
 
 
-                            <Card size={'small'} title={'MANAGER IN CHARGE'} style={{
+                            <Card size={'small'} title={'당담자 정보'} style={{
                                 fontSize: 13,
                                 boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                             }}>

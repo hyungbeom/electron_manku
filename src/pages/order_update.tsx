@@ -203,14 +203,16 @@ export default function order_update({dataInfo}) {
                             marginTop: 10
                         }}>
 
-                            <BoxCard title={'CUSTOMER & SUPPLY'}>
+                            <BoxCard title={'매입처 정보'}>
+
                                 {inputForm({title: 'Messrs', id: 'agencyCode', onChange: onChange, data: info})}
+                                {/*수신자*/}
                                 {inputForm({title: 'Attn To', id: 'attnTo', onChange: onChange, data: info})}
                                 {inputForm({title: '고객사명', id: 'agencyName', onChange: onChange, data: info})}
                             </BoxCard>
 
 
-                            <BoxCard title={'MANAGER IN CHARGE'}>
+                            <BoxCard title={'당담자 정보'}>
                                 {inputForm({title: 'Responsibility', id: 'managerId', onChange: onChange, data: info})}
                                 {inputForm({title: 'TEL', id: 'managerPhoneNumber', onChange: onChange, data: info})}
                                 {inputForm({title: 'Fax', id: 'managerFaxNumber', onChange: onChange, data: info})}

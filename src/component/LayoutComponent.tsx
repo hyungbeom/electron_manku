@@ -119,17 +119,7 @@ export default function LayoutComponent({children, userInfo = null}) {
                 {label: <span style={{fontSize: '12px'}}>공지사항</span>, key: 'note'},
                 {label: <span style={{fontSize: '12px'}}>공문서</span>, key: 'public'},
             ],
-        },
-        {
-            label: '기타',
-            key: 'etc',
-            icon: <MailOutlined/>,
-            style: {margin: ' 0px -20px'},
-            children: [
-                {label: <span style={{fontSize: '12px'}}>기타</span>, key: 'etc'},
-            ],
         }
-
 
     ];
 

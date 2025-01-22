@@ -2457,12 +2457,24 @@ export const projectWriteColumn = [
 
 export const projectReadColumn = [
     {
-        headerName: 'PROJECT No.',
+        headerName: 'PRJECT NO.',
         field: 'documentNumberFull',
         maxWidth: 120,
         headerCheckboxSelection: true,
         checkboxSelection: true,
-        pinned: 'left'
+        pinned: 'left',
+        cellRenderer: (params) => {
+            // 현재 행 데이터와 이전 행 데이터를 비교
+            const rowIndex = params.node.rowIndex; // 현재 행 인덱스
+            const currentValue = params.value;    // 현재 셀 값
+            const previousValue = params.api.getDisplayedRowAtIndex(rowIndex - 1)?.data?.documentNumberFull; // 이전 행의 값
+
+            // 이전 값과 동일하면 빈 문자열 반환
+            if (currentValue === previousValue) {
+                return '';
+            }
+            return currentValue;
+        },
     }, {
         headerName: '프로젝트 제목',
         field: 'projectTitle',
