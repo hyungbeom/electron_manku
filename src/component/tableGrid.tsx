@@ -11,6 +11,7 @@ import EstimateListModal from "@/component/EstimateListModal";
 import {tableButtonList} from "@/utils/commonForm";
 import {CopyOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
+import AgencyListModal from "@/component/AgencyListModal";
 
 const TableGrid = ({
                        gridRef,
@@ -29,7 +30,7 @@ const TableGrid = ({
     const [dragging, setDragging] = useState(false);
     const [pinnedBottomRowData, setPinnedBottomRowData] = useState([]);
     const [page, setPage] = useState({x: null, y: null, field: null, event: null})
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState({estimate : false, agency : false});
     const ref = useRef(null);
 
 
@@ -177,7 +178,8 @@ const TableGrid = ({
     }, typeof window !== 'undefined' ? document : null)
 
 
-    function getSelectedRows(ref) {
+    function
+    getSelectedRows(ref) {
         if (ref.current) {
             const selectedRows = ref.current.getSelectedRows();
 
@@ -207,11 +209,30 @@ const TableGrid = ({
     };
 
 
+    function getAgencyInfo(data){
 
+        if(page.event.node){
+            let selectedRow = page.event.node.data;
+            selectedRow['agencyName'] = data.agencyName
+            selectedRow['agencyManagerName'] = data.managerName
+            selectedRow['agencyManagerPhone'] = data.phoneNumber
+            selectedRow['agencyManagerEmail'] = data.email
+            page.event.api.applyTransaction({
+                update: [selectedRow],
+            });
+        }
+        // page.event.api.applyTransaction({update : [data]})
+        // 그리드 업데이트
+
+        // e.api.applyTransaction({
+        //     update: [updatedData],
+        // });
+    }
 
     return (
         <>
-            <EstimateListModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} getRows={getSelectedRows}/>
+            <EstimateListModal isModalOpen={isModalOpen['estimate']} setIsModalOpen={setIsModalOpen} getRows={getSelectedRows}/>
+            <AgencyListModal isModalOpen={isModalOpen['agency']} setIsModalOpen={setIsModalOpen} getRows={getAgencyInfo}/>
             {page.x ? <div style={{
                 position: 'fixed',
                 top: page.y,
@@ -227,9 +248,17 @@ const TableGrid = ({
                     setPage(v => {
                         return {...v, x: null, y: null}
                     });
-                    showModal();
+                    setIsModalOpen(v=>{return {...v, estimate : true} });
                 }} id={'right'} style={{backgroundColor: 'lightgray', padding: 3}}>견적 Inquiry조회
                 </div> : <></>}
+                {page.field.includes('agency') ? <div onClick={() => {
+                    setPage(v => {
+                        return {...v, x: null, y: null}
+                    });
+                    setIsModalOpen(v=>{return {...v, agency : true} });
+                }} id={'right'} style={{backgroundColor: 'lightgray', padding: 3}}>매입처 조회
+                </div> : <></>}
+
                 <div style={{paddingTop: 6, padding: 3}} onClick={() => {
                     setPage(v => {
                         return {...v, x: null, y: null}

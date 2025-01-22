@@ -2502,11 +2502,11 @@ export const projectReadColumn = [
         minWidth: 150,
     },
     {
-        headerName: 'Maker',
+        headerName: 'MAKER',
         field: 'maker',
 
     }, {
-        headerName: 'Item',
+        headerName: 'ITEM',
         field: 'item',
         minWidth: 150,
     }, {
@@ -2525,15 +2525,61 @@ export const projectReadColumn = [
         headerName: '총액',
         field: 'total',
         minWidth: 150,
-        pinned: 'right'
+        pinned: 'right',
+        valueGetter: (params) => {
+            const a = params.data?.quantity || 0; // A 필드 값
+            const b = params.data?.unitPrice || 0; // B 필드 값
+            return (a * b).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); // A와 B를 곱한 값
+        },
     }, {
         headerName: '화폐단위',
         field: 'currencyUnit',
         minWidth: 150,
     }, {
         headerName: '납기',
-        field: '??',
+        field: 'deliveryDate',
         minWidth: 150,
+    },
+    {
+        headerName: '비고',
+        field: 'remarks',
+        minWidth: 150,
+        hide: true,
+    }, {
+        headerName: '납기요청일',
+        field: 'requestDeliveryDate',
+        minWidth: 150,
+        hide: true,
+    },
+    {
+        headerName: '관련링크',
+        field: 'relatedLink',
+        minWidth: 150,
+        hide: true,
+    },
+    {
+        headerName: '매입처 이메일',
+        field: 'agencyManagerEmail',
+        minWidth: 150,
+        hide: true,
+    },
+    {
+        headerName: '매입처 전화번호',
+        field: 'agencyManagerPhone',
+        minWidth: 150,
+        hide: true,
+    },
+    {
+        headerName: '매입처 담당자',
+        field: 'agencyManagerName',
+        minWidth: 150,
+        hide: true,
+    },
+    {
+        headerName: '매입처명',
+        field: 'agencyName',
+        minWidth: 150,
+        hide: true,
     }
 ];
 

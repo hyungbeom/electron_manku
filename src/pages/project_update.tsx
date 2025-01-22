@@ -102,10 +102,11 @@ export default function projectUpdate({dataInfo}) {
                     "relatedId": infoInit['projectId']
                 }
             }).then(v => {
+                window.opener?.postMessage('update', window.location.origin);
                 const list = fileManage.getFormatFiles(v);
                 setFileList(list)
                 setOriginFileList(list)
-                setLoading(false)
+                setLoading(false);
             })
         } else {
             setLoading(false)

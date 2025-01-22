@@ -124,12 +124,13 @@ export default function projectWrite({dataInfo, managerList}) {
 
     function returnFunc(e) {
         if (e === -20001) {
-
             setValidate(v => {
                 return {documentNumberFull: false}
             })
         }
+        window.opener?.postMessage('write', window.location.origin);
         setLoading(false)
+
     }
 
     function clearAll() {
@@ -145,6 +146,8 @@ export default function projectWrite({dataInfo, managerList}) {
             return {...v, managerAdminId: e.adminId, managerAdminName: e.name}
         })
     };
+
+
 
     return <Spin spinning={loading} tip={'프로젝트 등록중...'}>
         <SearchInfoModal info={info} setInfo={setInfo}
@@ -266,7 +269,7 @@ export default function projectWrite({dataInfo, managerList}) {
                                         data: info
                                     })}
                                 </BoxCard>
-                                <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')} disabled={!info['microsoftId']} >
+                                <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')} disabled={!info['microsoftId']}>
                                     {/*@ts-ignored*/}
                                     <div style={{overFlowY: "auto", maxHeight: 300}}>
                                         <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
@@ -285,6 +288,7 @@ export default function projectWrite({dataInfo, managerList}) {
                     type={'write'}
                     funcButtons={['projectUpload', 'addProjectRow', 'delete', 'print']}
                 />
+
             </div>
         </LayoutComponent>
     </Spin>

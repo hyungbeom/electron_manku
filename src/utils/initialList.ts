@@ -949,7 +949,7 @@ export const projectWriteList = {
     "ITEM": 'item',
     "규격": 'spec',
     "수량": 'quantity',
-    "단위가격": 'unitPrice',
+    "단위 가격": 'unitPrice',
     "총액": 'total',
     "화폐단위": 'currencyUnit',
     "납기": 'deliveryDate',

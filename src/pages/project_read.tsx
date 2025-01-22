@@ -15,10 +15,12 @@ import {commonManage, gridManage} from "@/utils/commonManage";
 import {BoxCard, inputForm, MainCard, rangePickerForm, tooltipInfo, TopBoxCard} from "@/utils/commonForm";
 import {useRouter} from "next/router";
 import Spin from "antd/lib/spin";
+import ReceiveComponent from "@/component/ReceiveComponent";
 
 
 export default function ProjectRead({dataInfo}) {
 
+    console.log(dataInfo,'::')
     const router = useRouter();
     const gridRef = useRef(null);
     const [mini, setMini] = useState(true);
@@ -28,10 +30,13 @@ export default function ProjectRead({dataInfo}) {
 
     const [loading, setLoading] = useState(false);
 
+
+
     const onGridReady = (params) => {
         gridRef.current = params.api;
         params.api.applyTransaction({add: dataInfo ? dataInfo : []});
     };
+
 
     function handleKeyPress(e) {
         if (e.key === 'Enter') {
@@ -76,7 +81,9 @@ export default function ProjectRead({dataInfo}) {
         window.open(`/project_write`, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
     }
 
+
     return <Spin spinning={loading} tip={'프로젝트 조회중...'}>
+        <ReceiveComponent searchInfo={searchInfo}/>
         <LayoutComponent>
             <div style={{
                 display: 'grid',
@@ -216,6 +223,7 @@ export default function ProjectRead({dataInfo}) {
 
             </div>
         </LayoutComponent>
+
     </Spin>
 }
 

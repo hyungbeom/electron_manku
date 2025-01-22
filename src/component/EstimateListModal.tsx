@@ -22,11 +22,11 @@ export default function EstimateListModal({isModalOpen, setIsModalOpen, getRows}
 
 
     const handleOk = () => {
-        setIsModalOpen(false);
+        setIsModalOpen(v=>{return {...v, estimate : false} });
     };
 
     const handleCancel = () => {
-        setIsModalOpen(false);
+        setIsModalOpen(v=>{return {...v, estimate : false} });
     };
 
 
