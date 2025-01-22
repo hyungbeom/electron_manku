@@ -148,10 +148,8 @@ export default function LayoutComponent({children, userInfo = null}) {
 
         if (e.key.includes('write')) {
             window.open(root, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
-        } else if (e.key.includes('read')) {
+        }  else {
             router.push(`${root}`)
-        } else {
-            router.push(`/erp_rule`)
         }
 
     };

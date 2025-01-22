@@ -1,8 +1,5 @@
 import React, {useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
-import Card from "antd/lib/card/Card";
-import {CopyOutlined, FileExcelOutlined, MailOutlined, SearchOutlined} from "@ant-design/icons";
-import Button from "antd/lib/button";
 import {rfqReadColumns} from "@/utils/columnList";
 import {subRfqReadMailInitial} from "@/utils/initialList";
 import {wrapper} from "@/store/store";
@@ -11,11 +8,14 @@ import {setUserInfo} from "@/store/user/userSlice";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
 import {BoxCard, inputForm, MainCard, rangePickerForm, selectBoxForm} from "@/utils/commonForm";
-import {searchRfq} from "@/utils/api/mainApi";
+import {deleteOrder, deleteRfq, searchRfq} from "@/utils/api/mainApi";
 import PreviewMailModal from "@/component/PreviewMailModal";
 import _ from "lodash";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import {useRouter} from "next/router";
+import Spin from "antd/lib/spin";
+import Button from "antd/lib/button";
+import {CopyOutlined} from "@ant-design/icons";
 
 
 export default function rfqRead({dataInfo}) {
@@ -29,7 +29,7 @@ export default function rfqRead({dataInfo}) {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [previewData, setPreviewData] = useState([]);
-
+    const [loading, setLoading] = useState(false);
 
     const onGridReady = (params) => {
         gridRef.current = params.api;
@@ -47,15 +47,18 @@ export default function rfqRead({dataInfo}) {
     }
 
 
+
     async function searchInfo() {
         const copyData: any = {...info}
-
-        const result = await searchRfq({
+        setLoading(true)
+        await searchRfq({
             data: copyData
-        });
-        gridManage.resetData(gridRef, result);
-    }
+        }).then(v=>{
+            gridManage.resetData(gridRef, v);
+            setLoading(false)
+        })
 
+    }
 
     const handleSendMail = () => {
         const checkedData = gridManage.getSelectRows(gridRef);
@@ -118,14 +121,25 @@ export default function rfqRead({dataInfo}) {
         gridRef.current.deselectAll()
     }
 
+    async function deleteList() {
+        if (gridRef.current.getSelectedRows().length < 1) {
+            return message.error('삭제할 데이터를 선택해주세요.')
+        }
 
+        const deleteList = gridManage.getFieldDeleteList(gridRef, {
+            estimateRequestId: 'estimateRequestId',
+            estimateRequestDetailId: 'estimateRequestDetailId'
+        });
+        await deleteRfq({data: {deleteList: deleteList}, returnFunc: searchInfo});
 
-    return <>
+    }
+
+    return  <Spin spinning={loading} tip={'견적의뢰 조회중...'}>
         <PreviewMailModal data={previewData} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
         <LayoutComponent>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '220px' : '65px'} calc(100vh - ${mini ? 275 : 120}px)`,
+                gridTemplateRows: `${mini ? '195px' : '65px'} calc(100vh - ${mini ? 295 : 165}px)`,
                 columnGap: 5
             }}>
                 <MainCard title={'견적의뢰 메일전송'} list={[
@@ -150,8 +164,20 @@ export default function rfqRead({dataInfo}) {
                             </BoxCard>
 
                             <BoxCard title={''}>
-                                {inputForm({title: '대리점코드', id: 'searchAgencyCode', onChange: onChange, handleKeyPress:handleKeyPress, data: info})}
-                                {inputForm({title: '고객사명', id: 'searchCustomerName', onChange: onChange, handleKeyPress:handleKeyPress, data: info})}
+                                {inputForm({
+                                    title: '대리점코드',
+                                    id: 'searchAgencyCode',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: '고객사명',
+                                    id: 'searchCustomerName',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
                             </BoxCard>
 
                             <BoxCard title={''}>
@@ -173,8 +199,10 @@ export default function rfqRead({dataInfo}) {
                         </div>
                         : <></>}
                 </MainCard>
-
-                <TableGrid
+                {/*@ts-ignored*/}
+                <TableGrid deleteComp={<Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}} onClick={deleteList}>
+                    <CopyOutlined/>삭제
+                </Button>}
                     gridRef={gridRef}
                     onGridReady={onGridReady}
                     columns={rfqReadColumns}
@@ -184,7 +212,7 @@ export default function rfqRead({dataInfo}) {
 
             </div>
         </LayoutComponent>
-    </>
+    </Spin>
 }
 
 
