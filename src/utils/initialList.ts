@@ -487,8 +487,8 @@ export const remittanceDomesticSearchInitial = {
     "searchManagerAdminName": "",   // 담당자
     "searchRequestStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),   // 송금요청일자 검색 시작일
     "searchRequestEndDate": moment().format('YYYY-MM-DD'),     // 송금요청일자 검색 종료일
-    "searchIsSend": "X",             // 송금여부 O, X
-    "searchIsInvoice": "X",          // 계산서 발행여부 O, X
+    "searchIsSend": "",             // 송금여부 O, X
+    "searchIsInvoice": "",          // 계산서 발행여부 O, X
     "page": 1,
     "limit": -1
 }
@@ -840,7 +840,7 @@ export const searchOrderInitial = {
     searchEndDate: moment().format('YYYY-MM-DD'),
     searchCustomerName: "",
     searchRecipientPhone: "",
-    searchIsConfirm: "X",
+    searchIsConfirm: "",
     searchTrackingNumber: "",
 }
 

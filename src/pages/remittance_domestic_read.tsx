@@ -153,14 +153,14 @@ export default function remittance_domestic({dataInfo}) {
                                     id: 'searchIsSend',
                                     onChange: onChange,
                                     data: info,
-                                    list: [{value: 'O', title: 'O'}, {value: 'X', title: 'X'}]
+                                    list: [{value: 'O', title: 'O'}, {value: 'X', title: 'X'}, {value: '', title: '전체'}]
                                 })}
                                 {radioForm({
                                     title: '계산서 발행여부',
                                     id: 'searchIsInvoice',
                                     onChange: onChange,
                                     data: info,
-                                    list: [{value: 'O', title: 'O'}, {value: 'X', title: 'X'}]
+                                    list: [{value: 'O', title: 'O'}, {value: 'X', title: 'X'}, {value: '', title: '전체'}]
                                 })}
                             </BoxCard>
                         </div>

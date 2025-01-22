@@ -1,8 +1,7 @@
 import {useEffect, useState} from "react";
 
 export default function ReceiveComponent({searchInfo}){
-    const [popupData, setPopupData] = useState<string | null>(null);
-    // 메시지 이벤트 리스너
+
     useEffect(() => {
         const handleMessage = (event: MessageEvent) => {
             // 안전한 출처 확인
@@ -11,8 +10,9 @@ export default function ReceiveComponent({searchInfo}){
                 return;
             }
 
+
            if(event.data){
-               searchInfo(false)
+               searchInfo(true)
            }
         };
 

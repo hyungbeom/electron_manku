@@ -133,6 +133,7 @@ export default function delivery_read({dataInfo}) {
                                         title: '확인여부', id: 'searchIsConfirm', list: [
                                             {value: 'X', label: 'X'},
                                             {value: 'O', label: 'O'},
+                                            {value: '', label: '전체'},
                                         ], onChange: onChange, data: info
                                     })}
                                     {inputForm({

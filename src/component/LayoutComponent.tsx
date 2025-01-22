@@ -27,8 +27,8 @@ export default function LayoutComponent({children, userInfo = null}) {
             icon: <FundProjectionScreenOutlined/>,
             style: {margin: ' 0px -20px 0px -10px'},
             children: [
-                {label: <span style={{fontSize: '12px'}}>프로젝트 등록</span>, key: 'write'},
-                {label: <span style={{fontSize: '12px'}}>프로젝트 조회</span>, key: 'read'},
+                {label: <span style={{fontSize: '12px'}}>프로젝트 등록</span>, key: 'project_write'},
+                {label: <span style={{fontSize: '12px'}}>프로젝트 조회</span>, key: 'project_read'},
             ],
             popupOffset: [0, -4], // Y축 간격 줄이기
         }, {
@@ -37,9 +37,9 @@ export default function LayoutComponent({children, userInfo = null}) {
             icon: <PullRequestOutlined/>,
             style: {margin: ' 0px -20px'},
             children: [
-                {label: <span style={{fontSize: '12px'}}>견적의뢰 등록</span>, key: 'write'},
-                {label: <span style={{fontSize: '12px'}}>견적의뢰 조회</span>, key: 'read'},
-                {label: <span style={{fontSize: '12px'}}>메일전송</span>, key: 'mail'}
+                {label: <span style={{fontSize: '12px'}}>견적의뢰 등록</span>, key: 'rfq_write'},
+                {label: <span style={{fontSize: '12px'}}>견적의뢰 조회</span>, key: 'rfq_read'},
+                {label: <span style={{fontSize: '12px'}}>메일전송</span>, key: 'rfq_mail_send'}
             ],
 
             popupOffset: [0, -4],
@@ -50,9 +50,9 @@ export default function LayoutComponent({children, userInfo = null}) {
             style: {margin: ' 0px -20px'},
             children: [
 
-                {label: <span style={{fontSize: '12px'}}>견적서 등록</span>, key: 'write'},
-                {label: <span style={{fontSize: '12px'}}>견적서 조회</span>, key: 'read'},
-                {label: <span style={{fontSize: '12px'}}>통합견적서 발행</span>, key: 'rfq_mail_send'},
+                {label: <span style={{fontSize: '12px'}}>견적서 등록</span>, key: 'estimate_write'},
+                {label: <span style={{fontSize: '12px'}}>견적서 조회</span>, key: 'estimate_read'},
+                {label: <span style={{fontSize: '12px'}}>통합견적서 발행</span>, key: 'estimate_*'},
 
             ],
             popupOffset: [0, -4],
@@ -62,8 +62,8 @@ export default function LayoutComponent({children, userInfo = null}) {
             icon: <DiffOutlined/>,
             style: {margin: ' 0px -20px'},
             children: [
-                {label: <span style={{fontSize: '12px'}}>발주서 등록</span>, key: 'write'},
-                {label: <span style={{fontSize: '12px'}}>발주서 조회</span>, key: 'read'},
+                {label: <span style={{fontSize: '12px'}}>발주서 등록</span>, key: 'order_write'},
+                {label: <span style={{fontSize: '12px'}}>발주서 조회</span>, key: 'order_read'},
 
             ],
             popupOffset: [0, -4],
@@ -73,8 +73,8 @@ export default function LayoutComponent({children, userInfo = null}) {
             icon: <DropboxOutlined/>,
             style: {margin: ' 0px -20px'},
             children: [
-                {label: <span style={{fontSize: '12px'}}>입고 등록</span>, key: 'write'},
-                {label: <span style={{fontSize: '12px'}}>입고 조회</span>, key: 'read'}
+                {label: <span style={{fontSize: '12px'}}>입고 등록</span>, key: 'store_write'},
+                {label: <span style={{fontSize: '12px'}}>입고 조회</span>, key: 'store_read'}
             ]
         }, {
             label: '배송',
@@ -82,8 +82,8 @@ export default function LayoutComponent({children, userInfo = null}) {
             icon: <TruckOutlined />,
             style: {margin: ' 0px -20px'},
             children: [
-                {label: <span style={{fontSize: '12px'}}>배송 등록</span>, key: 'write'},
-                {label: <span style={{fontSize: '12px'}}>배송 조회</span>, key: 'read'}
+                {label: <span style={{fontSize: '12px'}}>배송 등록</span>, key: 'delivery_write'},
+                {label: <span style={{fontSize: '12px'}}>배송 조회</span>, key: 'delivery_read'}
             ],
             popupOffset: [0, -4],
         }, {
@@ -92,8 +92,8 @@ export default function LayoutComponent({children, userInfo = null}) {
             icon: <SendOutlined/>,
             style: {margin: ' 0px -20px'},
             children: [
-                {label: <span style={{fontSize: '12px'}}>국내 송금 등록</span>, key: 'write'},
-                {label: <span style={{fontSize: '12px'}}>국내 송금 목록</span>, key: 'read'},
+                {label: <span style={{fontSize: '12px'}}>국내 송금 등록</span>, key: 'remittance_domestic_write'},
+                {label: <span style={{fontSize: '12px'}}>국내 송금 목록</span>, key: 'remittance_domestic_read'},
             ],
             popupOffset: [0, -4],
         }, {
@@ -126,20 +126,16 @@ export default function LayoutComponent({children, userInfo = null}) {
 
 
     const onClick = (e) => {
-        const root = `/${e.keyPath[1]}_${e.keyPath[0]}`
+        const root = `/${e.keyPath[0]}`
 
-        switch (e.key) {
-            case 'write' :
-
-                window.open(root, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
-                break;
-            case 'read' :
-                router.push(`${root}`)
-                break;
-            case 'notice' :
-                router.push(`/erp_rule`)
-                break;
+        if(e.key.includes('write')){
+            window.open(root, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
+        }else if(e.key.includes('read')){
+            router.push(`${root}`)
+        }else{
+            router.push(`/erp_rule`)
         }
+
     };
 
     return <>
