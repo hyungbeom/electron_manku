@@ -32,7 +32,7 @@ export default function OrderWriter({dataInfo}) {
     const userInfo = useAppSelector((state) => state.user);
 
     const [mini, setMini] = useState(true);
-
+    const [validate, setValidate] = useState({documentNumberFull: true});
     const [fileList, setFileList] = useState([]);
 
     const [loading, setLoading] = useState(false);
@@ -74,11 +74,22 @@ export default function OrderWriter({dataInfo}) {
     }
 
     function onChange(e) {
+        if(e.target.id === 'documentNumberFull'){
+            setValidate(v=> {
+                return {...v, documentNumberFull: true}
+            })
+        }
         commonManage.onChange(e, setInfo)
     }
 
 
     async function saveFunc() {
+        if(!info['documentNumberFull']){
+            setValidate(v=> {
+                return {...v, documentNumberFull: false}
+            })
+            return message.warn('발주서 PO no를 입력하셔야 합니다.')
+        }
         const list = gridManage.getAllData(gridRef)
         if (!list.length) {
             return message.warn('하위 데이터 1개 이상이여야 합니다')
@@ -123,7 +134,7 @@ export default function OrderWriter({dataInfo}) {
                             {inputForm({title: '작성자', id: 'createdBy', disabled: true, onChange: onChange, data: info})}
                             {inputForm({title: '담당자', id: 'managerAdminName', onChange: onChange, data: info})}
 
-                            {inputForm({title: '발주서 PO no', id: 'documentNumberFull', onChange: onChange, data: info})}
+                            {inputForm({title: '발주서 PO no', id: 'documentNumberFull', onChange: onChange, data: info, validate:validate['documentNumberFull']})}
                             {inputForm({
                                 placeholder: '폴더생성 규칙 유의',
                                 title: '연결 INQUIRY No.',
