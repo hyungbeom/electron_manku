@@ -32,11 +32,11 @@ export const amountFormatParser = (params) => {
 }
 export const columnPlaceHolder = (params, title) => {
 
-        return params.value ? (
-            params.value
-        ) : (
-            <span style={{color : 'lightGray'}} className="ag-cell-placeholder">{title}</span>
-        );
+    return params.value ? (
+        params.value
+    ) : (
+        <span style={{color: 'lightGray'}} className="ag-cell-placeholder">{title}</span>
+    );
 
 }
 
@@ -257,7 +257,7 @@ export const subRfqWriteColumn = [
         editable: true,
         headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
         checkboxSelection: true, // 각 행에 체크박스 추가
-        pinned : 'left'
+        pinned: 'left'
     },
     {
         headerName: '수량',
@@ -265,7 +265,7 @@ export const subRfqWriteColumn = [
         editable: true,
         cellEditor: 'agNumberCellEditor',
         valueFormatter: numberFormat,
-        cellRenderer: (e)=> e.value ? e.value : ''
+        cellRenderer: (e) => e.value ? e.value : ''
     },
     {
         headerName: '단위',
@@ -293,35 +293,25 @@ export const subRfqWriteColumn = [
         valueFormatter: params => params.data.net ?? 0,
         // cellRenderer: (e)=> e.value ? e.value : '',
         // valueGetter: (e)=> e.value ? e.value : 0,
-        cellStyle: { textAlign: 'right' }
+        cellStyle: {textAlign: 'right'}
     },
     {
-        headerName: '납기', //없음
+        headerName: '납기',
         field: 'deliveryDate',
         editable: true,
-        cellEditor: "agTextCellEditor", // 기본 텍스트 입력
+        cellEditor: "agNumberCellEditor",
         valueSetter: (params) => {
-            const newValue = params.newValue?.toString().trim(); // 문자열 변환 후 trim 사용
-            const numericValue = parseFloat(newValue); // 숫자로 변환
 
-
-            if(numericValue > 100){
-               return message.warn('100주 이하로 설정이 가능합니다.')
+            if (params.newValue > 100) {
+                return message.warn('100주 이하로 설정이 가능합니다.')
             }
-
-            // 숫자 여부 확인
-            if (!isNaN(newValue) && newValue.trim() !== "" ) {
-                params.data[params.colDef.field] = parseFloat(newValue);
-                return true;
-            }
-            return false; // 숫자가 아니면 값 설정 안 함
+            params.data.deliveryDate = params.newValue
+            return true
         },
         valueParser: (params) => {
-            // 입력 값을 숫자로 변환
-            const value = params.newValue;
-            return isNaN(value) ? undefined : parseFloat(value);
+            return params.newValue == null || params.newValue === "" ? 0 : params.newValue;
         },
-        cellRenderer: (e)=>columnPlaceHolder(e, 'week')
+        cellRenderer: (e) => columnPlaceHolder(e, 'week')
     },
     {
         headerName: '회신여부',
@@ -339,7 +329,7 @@ export const subRfqWriteColumn = [
         editable: true,
         cellEditor: 'agDateCellEditor',
         valueFormatter: (params) => {
-            return moment(params.value).isValid() ?  dateFormat(params) : ''
+            return moment(params.value).isValid() ? dateFormat(params) : ''
         },
         valueGetter: (params) => {
             return params.data.replyDate
@@ -383,7 +373,7 @@ export const tableOrderWriteColumn = [
         field: 'net',
         editable: true,
         valueFormatter: params => commonManage.calcFloat(params, 2),
-        cellStyle: { textAlign: 'right' }
+        cellStyle: {textAlign: 'right'}
     },
     {
         headerName: 'Amount',
@@ -540,7 +530,7 @@ export const tableEstimateReadColumns = [
         headerName: 'Inquiry No.',
         field: 'documentNumberFull',
         pinned: 'left',
-        maxWidth : 100,
+        maxWidth: 100,
         cellRenderer: (params) => {
             const rowIndex = params.node.rowIndex;
             const currentData = params.value;
@@ -676,7 +666,7 @@ export const tableEstimateReadColumns = [
                 minWidth: 70,
                 cellDataType: 'number',
                 valueFormatter: numberFormat,
-                cellStyle: { textAlign: 'right' }
+                cellStyle: {textAlign: 'right'}
             },
             {
                 headerName: '합계',
@@ -684,7 +674,7 @@ export const tableEstimateReadColumns = [
                 minWidth: 70,
                 cellDataType: 'number',
                 valueFormatter: numberFormat,
-                cellStyle: { textAlign: 'right' }
+                cellStyle: {textAlign: 'right'}
             },
             {
                 headerName: 'Amount',
@@ -698,7 +688,7 @@ export const tableEstimateReadColumns = [
                     const {quantity, unitPrice} = params.data;
                     return Math.floor(quantity * unitPrice).toLocaleString();
                 },
-                cellStyle: { textAlign: 'right' }
+                cellStyle: {textAlign: 'right'}
             },
         ]
     },
@@ -746,14 +736,14 @@ export const tableEstimateWriteColumns = [
         field: 'model',
         editable: true,
         width: 120,
-        pinned : 'left'
+        pinned: 'left'
     },
     {
         headerName: '수량',
         field: 'quantity',
         editable: true,
         valueFormatter: numberFormat,
-        cellStyle: { textAlign: 'right' }
+        cellStyle: {textAlign: 'right'}
     },
     {
         headerName: '단위',
@@ -768,8 +758,8 @@ export const tableEstimateWriteColumns = [
         headerName: '단가',
         field: 'unitPrice',
         editable: true,
-        valueFormatter: params => !isNaN(params?.value) ?  params?.value?.toLocaleString() : 0,
-        cellStyle: { textAlign: 'right' }
+        valueFormatter: params => !isNaN(params?.value) ? params?.value?.toLocaleString() : 0,
+        cellStyle: {textAlign: 'right'}
     },
 
     {
@@ -783,9 +773,9 @@ export const tableEstimateWriteColumns = [
                 return params.value !== undefined ? params.value.toLocaleString() : '0';
             }
             const {quantity, unitPrice} = params.data;
-            return  (!quantity || !unitPrice) ? null : Math.floor(quantity * unitPrice).toLocaleString();
+            return (!quantity || !unitPrice) ? null : Math.floor(quantity * unitPrice).toLocaleString();
         },
-        cellStyle: { textAlign: 'right' }
+        cellStyle: {textAlign: 'right'}
     },
     {
         headerName: 'CURR',
@@ -801,10 +791,9 @@ export const tableEstimateWriteColumns = [
         field: 'net',
         editable: true,
         valueFormatter: params => commonManage.calcFloat(params, 2),
-        cellStyle: { textAlign: 'right' }
+        cellStyle: {textAlign: 'right'}
     }
 ];
-
 
 
 export const rfqReadColumns = [
@@ -815,7 +804,7 @@ export const rfqReadColumns = [
         width: 130,
         headerCheckboxSelection: true,
         checkboxSelection: true,
-        pinned : 'left'
+        pinned: 'left'
     },
 
     {
@@ -823,7 +812,7 @@ export const rfqReadColumns = [
         headerName: 'Inquiry No.',
         field: 'documentNumberFull',
         width: 100,
-        pinned : 'left',
+        pinned: 'left',
 
         // rowDrag: true
         cellRenderer: (params) => {
@@ -923,7 +912,7 @@ export const rfqReadColumns = [
                 minWidth: 60,
                 maxWidth: 120,
                 valueFormatter: params => commonManage.calcFloat(params, 2),
-                cellStyle: { textAlign: 'right' }
+                cellStyle: {textAlign: 'right'}
             },
             {
                 headerName: '납기',
@@ -1001,8 +990,6 @@ export const rfqReadColumns = [
 
 
 ];
-
-
 
 
 export const tableOrderReadColumns = [
@@ -1086,7 +1073,7 @@ export const tableOrderReadColumns = [
         align: 'center',
         minWidth: 40,
         valueFormatter: numberFormat,
-        cellStyle: { textAlign: 'right' }
+        cellStyle: {textAlign: 'right'}
     },
     {
         headerName: '주문수량',
@@ -1095,7 +1082,7 @@ export const tableOrderReadColumns = [
         align: 'center',
         minWidth: 70,
         valueFormatter: numberFormat,
-        cellStyle: { textAlign: 'right' }
+        cellStyle: {textAlign: 'right'}
     },
     {
         headerName: '입고수량',
@@ -1104,7 +1091,7 @@ export const tableOrderReadColumns = [
         align: 'center',
         minWidth: 70,
         valueFormatter: numberFormat,
-        cellStyle: { textAlign: 'right' }
+        cellStyle: {textAlign: 'right'}
     },
     {
         headerName: '미입고수량',
@@ -1113,14 +1100,14 @@ export const tableOrderReadColumns = [
         align: 'center',
         minWidth: 70,
         valueFormatter: (params) => {
-                if (params.node.rowPinned) {
-                    // 고정 행 (푸터)에서는 원래 값을 그대로 반환
-                    return params.value !== undefined ? params.value.toLocaleString() : '0';
-                }
-                const {quantity, receivedQuantity} = params.data;
-                return !isNaN(quantity - receivedQuantity) ? (quantity - receivedQuantity).toLocaleString('en-US')  : null
+            if (params.node.rowPinned) {
+                // 고정 행 (푸터)에서는 원래 값을 그대로 반환
+                return params.value !== undefined ? params.value.toLocaleString() : '0';
+            }
+            const {quantity, receivedQuantity} = params.data;
+            return !isNaN(quantity - receivedQuantity) ? (quantity - receivedQuantity).toLocaleString('en-US') : null
         },
-        cellStyle: { textAlign: 'right' }
+        cellStyle: {textAlign: 'right'}
         // valueFormatter: (params) => {
         //     if (params.node.rowPinned) {
         //         // 고정 행 (푸터)에서는 원래 값을 그대로 반환
@@ -1137,7 +1124,7 @@ export const tableOrderReadColumns = [
         align: 'center',
         minWidth: 50,
         valueFormatter: numberFormat,
-        cellStyle: { textAlign: 'right' }
+        cellStyle: {textAlign: 'right'}
     },
     {
         headerName: '금액',
@@ -1149,7 +1136,7 @@ export const tableOrderReadColumns = [
             const {quantity, unitPrice} = params.data;
             return Math.floor(quantity * unitPrice).toLocaleString();
         },
-        cellStyle: { textAlign: 'right' }
+        cellStyle: {textAlign: 'right'}
     },
     {
         headerName: '예상납기',
@@ -1494,7 +1481,6 @@ export const tableOrderCustomerColumns = [
 ];
 
 
-
 export const subAgencyReadColumns = [
     {
         headerName: 'No',
@@ -1516,31 +1502,30 @@ export const subAgencyReadColumns = [
         field: 'pendingForeignAmount',
         key: 'pendingForeignAmount',
         valueFormatter: numberFormat,
-        cellStyle: { textAlign: 'right' }
+        cellStyle: {textAlign: 'right'}
     },
     {
         headerName: '입고외화',
         field: 'receivedForeignAmount',
         key: 'receivedForeignAmount',
         valueFormatter: numberFormat,
-        cellStyle: { textAlign: 'right' }
+        cellStyle: {textAlign: 'right'}
     },
     {
         headerName: '외화합계',
         field: 'totalForeignAmount',
         key: 'totalForeignAmount',
         valueFormatter: numberFormat,
-        cellStyle: { textAlign: 'right' }
+        cellStyle: {textAlign: 'right'}
     },
     {
         headerName: '원화합계',
         field: 'totalAmountInKrw',
         key: 'totalAmountInKrw',
         valueFormatter: numberFormat,
-        cellStyle: { textAlign: 'right' }
+        cellStyle: {textAlign: 'right'}
     },
 ];
-
 
 
 export const tableCodeDomesticAgencyWriteColumns = [
@@ -1662,7 +1647,7 @@ export const tableCodeDomesticPurchaseColumns = [
         field: 'createdDate',
         key: 'createdDate',
         valueFormatter: (params) => {
-            return moment(params.value).isValid() ?  dateFormat(params) : ''
+            return moment(params.value).isValid() ? dateFormat(params) : ''
         }
 
     },
@@ -1676,7 +1661,7 @@ export const tableCodeDomesticPurchaseColumns = [
         field: 'modifiedDate',
         key: 'modifiedDate',
         valueFormatter: (params) => {
-            return moment(params.value).isValid() ?  dateFormat(params) : ''
+            return moment(params.value).isValid() ? dateFormat(params) : ''
         }
 
     },
@@ -2336,11 +2321,11 @@ export const modalCodeDiplomaColumn = [
 ];
 
 
-
 export const projectWriteColumn = [
-    {   headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
+    {
+        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
         checkboxSelection: true, // 각 행에 체크박스 추가
-        pinned : 'left',
+        pinned: 'left',
         headerName: '연결 Inquiry No.',
         field: 'connectInquiryNo',
         minWidth: 120,
@@ -2370,8 +2355,8 @@ export const projectWriteColumn = [
         minWidth: 150,
         editable: true,
         filter: 'agNumberColumnFilter',
-        valueFormatter: amountFormat,
-        valueParser: amountFormatParser,
+        // valueFormatter: amountFormat,
+        // valueParser: amountFormatParser,
     }, {
         headerName: '단위가격',
         field: 'unitPrice',
@@ -2406,16 +2391,19 @@ export const projectWriteColumn = [
     }, {
         headerName: '납기',
         field: 'deliveryDate',
-        filter: "agDateColumnFilter",
-        cellEditor: 'agDateCellEditor',
-        valueFormatter: (params) => {
-            if (!params.value) return ''; // 값이 없는 경우 처리
-            return moment(params.value).isValid() ? moment(params.value).format('YYYY-MM-DD') : '';
-
-            return moment(params.value).isValid() ?  dateFormat(params) : ''
-        },
         minWidth: 150,
         editable: true,
+        filter: 'agNumberColumnFilter',
+        valueSetter : (params)=>{
+            if (params.newValue > 100) {
+                return message.warn('100주 이하로 설정이 가능합니다.')
+            }
+            params.data.deliveryDate = params.newValue
+            return true
+        },
+        valueFormatter: amountFormat,
+        valueParser: amountFormatParser,
+        cellRenderer: (e) => columnPlaceHolder(e, 'week')
     }, {
         headerName: '매입처명',
         field: 'agencyName',
@@ -2453,7 +2441,7 @@ export const projectWriteColumn = [
         },
         valueParser: (params) => {
             const value = params.newValue;
-            return moment(params.value).isValid() ?  dateFormat(params) : ''
+            return moment(params.value).isValid() ? dateFormat(params) : ''
         },
         editable: true,
     }, {
@@ -2465,7 +2453,6 @@ export const projectWriteColumn = [
 ];
 
 
-
 export const projectReadColumn = [
     {
         headerName: 'PROJECT No.',
@@ -2473,12 +2460,12 @@ export const projectReadColumn = [
         maxWidth: 120,
         headerCheckboxSelection: true,
         checkboxSelection: true,
-        pinned : 'left'
+        pinned: 'left'
     }, {
         headerName: '프로젝트 제목',
         field: 'projectTitle',
         maxWidth: 130,
-        pinned : 'left'
+        pinned: 'left'
     }, {
         headerName: '거래처명',
         field: 'customerName',
@@ -2524,7 +2511,7 @@ export const projectReadColumn = [
         headerName: '총액',
         field: 'total',
         minWidth: 150,
-        pinned : 'right'
+        pinned: 'right'
     }, {
         headerName: '화폐단위',
         field: 'currencyUnit',
@@ -2535,8 +2522,6 @@ export const projectReadColumn = [
         minWidth: 150,
     }
 ];
-
-
 
 
 export const delilveryReadColumn = [
@@ -2575,7 +2560,7 @@ export const delilveryReadColumn = [
         cellEditor: 'agNumberCellEditor',
         editable: true,
         valueFormatter: params => commonManage.calcFloat(params, 2),
-        cellStyle: { textAlign: 'right' }
+        cellStyle: {textAlign: 'right'}
     }, {
         headerName: '배송방식',
         field: 'shippingType',
@@ -2619,12 +2604,12 @@ export const remittanceReadColumn = [
         minWidth: 150,
         headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
         checkboxSelection: true, // 각 행에 체크박스 추가
-        pinned : 'left'
+        pinned: 'left'
     }, {
         headerName: '담당자',
         field: 'managerAdminName',
         minWidth: 150,
-        pinned : 'right'
+        pinned: 'right'
     }, {
         headerName: '송금요청일자',
         field: 'requestDate',
@@ -2678,7 +2663,6 @@ export const remittanceReadColumn = [
         minWidth: 150,
     }
 ];
-
 
 
 export const storeWriteColumn = [
@@ -2784,7 +2768,7 @@ export const storeWriteColumn = [
         editable: true,
         cellEditor: 'agDateCellEditor',
         valueFormatter: (params) => {
-            return moment(params.value).isValid() ?  dateFormat(params) : ''
+            return moment(params.value).isValid() ? dateFormat(params) : ''
         }
     }, {
         headerName: '출고일자',
@@ -2797,7 +2781,7 @@ export const storeWriteColumn = [
         field: '',
         minWidth: 150,
         editable: true,
-    },{
+    }, {
         headerName: '결제 여부',
         field: 'paymentStatus',
         minWidth: 150,
@@ -2806,12 +2790,12 @@ export const storeWriteColumn = [
         cellEditorParams: {
             values: ['완료', '부분완료', '미완료'],
         }
-    },{
+    }, {
         headerName: '선수금',
         field: 'advancePayment',
         minWidth: 150,
         editable: true
-    },{
+    }, {
         headerName: '비고',
         field: 'remarks',
         minWidth: 150,
@@ -2829,14 +2813,14 @@ export const storeReadColumn = [
         headerName: 'B/L No.',
         field: 'blNo',
         maxWidth: 100,
-        pinned : 'left'
+        pinned: 'left'
     }, {
         headerName: 'Inquiry No.',
         field: 'orderDocumentNumberFull',
         maxWidth: 120,
         headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
         checkboxSelection: true, // 각 행에 체크박스 추가
-        pinned : 'left'
+        pinned: 'left'
     }, {
         headerName: '세부항목 번호',
         field: 'itemDetailNo',
@@ -2897,43 +2881,43 @@ export const storeReadColumn = [
         headerName: '운임비',
         field: 'shippingFee',
         minWidth: 120,
-    },{
+    }, {
         headerName: '합계',
         field: 'paymentStatus',
         minWidth: 150
-    },{
+    }, {
         headerName: '합계(VAT 포함)',
         field: 'advancePayment',
         minWidth: 150
-    },{
+    }, {
         headerName: '판매금액',
         field: 'remarks',
         minWidth: 150
-    },{
+    }, {
         headerName: '판매금액 (VAT 포함)',
         field: 'remarks',
         minWidth: 150
-    },{
+    }, {
         headerName: '영업이익금',
         field: 'remarks',
         minWidth: 150
-    },{
+    }, {
         headerName: '입고일자',
         field: 'receiptDate',
         minWidth: 150
-    },{
+    }, {
         headerName: '출고일자',
         field: 'remarks',
         minWidth: 150
-    },{
+    }, {
         headerName: '계산서 발행일자',
         field: 'invoiceDate',
         minWidth: 150
-    },{
+    }, {
         headerName: '결제여부',
         field: 'paymentStatus',
         minWidth: 150
-    },{
+    }, {
 
         headerName: '선수금',
         field: 'remarks',

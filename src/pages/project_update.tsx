@@ -1,16 +1,14 @@
 import React, {useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
-import {CopyOutlined, FileSearchOutlined, SaveOutlined, UploadOutlined} from "@ant-design/icons";
+import {FileSearchOutlined} from "@ant-design/icons";
 import {projectWriteColumn} from "@/utils/columnList";
-import {ModalInitList, projectDetailUnit, projectWriteInitial, rfqWriteInitial} from "@/utils/initialList";
-import Button from "antd/lib/button";
+import {ModalInitList, projectWriteInitial} from "@/utils/initialList";
 import message from "antd/lib/message";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import TableGrid from "@/component/tableGrid";
 import SearchInfoModal from "@/component/SearchAgencyModal";
-import Upload from "antd/lib/upload";
 import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, tooltipInfo, TopBoxCard} from "@/utils/commonForm";
 import {useRouter} from "next/router";
 import {commonManage, fileManage, gridManage} from "@/utils/commonManage";
@@ -40,6 +38,8 @@ export default function projectUpdate({dataInfo}) {
     const [originFileList, setOriginFileList] = useState(infoInitFile);
     const [loading, setLoading] = useState(false);
 
+
+    console.log(infoInit,'???')
     const onGridReady = (params) => {
         gridRef.current = params.api;
         params.api.applyTransaction({add: dataInfo?.projectDetail[listType]});
@@ -90,7 +90,7 @@ export default function projectUpdate({dataInfo}) {
         formData.delete('createdDate')
         formData.delete('modifiedDate')
 
-        await updateProject({data: formData, router: router, returnFunc:returnFunc})
+        await updateProject({data: formData, router: router, returnFunc: returnFunc})
     }
 
     async function returnFunc(e) {
@@ -144,7 +144,7 @@ export default function projectUpdate({dataInfo}) {
         <LayoutComponent>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '500px' : '65px'} calc(100vh - ${mini ? 555 : 120}px)`,
+                gridTemplateRows: `${mini ? '430px' : '65px'} calc(100vh - ${mini ? 485 : 120}px)`,
                 columnGap: 5
             }}>
 
@@ -179,13 +179,13 @@ export default function projectUpdate({dataInfo}) {
                                 gap: 10,
                                 marginTop: 10
                             }}>
-                                <BoxCard title={'프로젝트 정보'}  tooltip={tooltipInfo('readProejct')}>
+                                <BoxCard title={'프로젝트 정보'} tooltip={tooltipInfo('readProejct')}>
                                     {inputForm({
                                         title: 'PROJECT NO.',
                                         id: 'documentNumberFull',
                                         onChange: onChange,
                                         data: info,
-                                        disabled : true
+                                        disabled: true
                                     })}
                                     {inputForm({
                                         title: '프로젝트 제목',
@@ -251,7 +251,8 @@ export default function projectUpdate({dataInfo}) {
                                 <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}>
                                     {/*@ts-ignored*/}
                                     <div style={{overFlowY: "auto", maxHeight: 300}}>
-                                        <DriveUploadComp fileList={fileList} setFileList={setFileList}  fileRef={fileRef} numb={5}/>
+                                        <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
+                                                         numb={5}/>
                                     </div>
                                 </BoxCard>
                             </div>
@@ -264,7 +265,7 @@ export default function projectUpdate({dataInfo}) {
                     onGridReady={onGridReady}
                     columns={projectWriteColumn}
                     type={'write'}
-                    funcButtons={['projectUpload','addProjectRow', 'delete', 'print']}
+                    funcButtons={['projectUpload', 'addProjectRow', 'delete', 'print']}
                 />
             </div>
         </LayoutComponent>

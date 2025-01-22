@@ -80,7 +80,7 @@ export default function ProjectRead({dataInfo}) {
         <LayoutComponent>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '420px' : '65px'} calc(100vh - ${mini ? 475 : 120}px)`,
+                gridTemplateRows: `${mini ? '420px' : '65px'} calc(100vh - ${mini ? 515 : 160}px)`,
                 columnGap: 5
             }}>
 

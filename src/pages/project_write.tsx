@@ -151,7 +151,7 @@ export default function projectWrite({dataInfo}) {
         <LayoutComponent>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '500px' : '65px'} calc(100vh - ${mini ? 555 : 120}px)`,
+                gridTemplateRows: `${mini ? '430px' : '65px'} calc(100vh - ${mini ? 485 : 120}px)`,
                 columnGap: 5
             }}>
                 <MainCard title={'프로젝트 등록'} list={[

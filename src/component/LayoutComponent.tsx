@@ -254,11 +254,8 @@ export default function LayoutComponent({children, userInfo = null}) {
         console.log(e.key,'e.key::')
         switch (e.key) {
             case 'write' :
-                if (e.keyPath[1] === 'estimate_write') {
-                    return window.open(root, '_blank', 'width=1300,height=630,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
-                }
 
-                window.open(root, '_blank', 'width=1000,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
+                window.open(root, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
                 break;
             case 'read' :
                 router.push(`${root}`)

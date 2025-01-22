@@ -159,7 +159,7 @@ gridManage.getAllData = function (gridRef) {
             Object.keys(row).forEach((key) => {
 
                 if (row[key] === null || row[key] === undefined) {
-                    if (key === 'net') {
+                    if (key === 'net' || key === 'unitPrice') {
                         row[key] = 0;
                     }
                     if (key === 'currency') {
@@ -606,7 +606,7 @@ commonManage.setInfoDetailFormData = function (formData, listType, list?) {
     list.forEach((detail, index) => {
         Object.keys(detail).forEach((key) => {
             if (!(key == 'orderDate' || key === 'orderProcessing' || key === 'order')) {
-                if (key.includes('Date')) {
+                if (key.includes('Date')&& key !== 'deliveryDate') {
                     formData.append(`${listType}[${index}].${key}`, moment(detail[key]).isValid() ? dateFormat(detail[key]) : '');
                 } else {
                     formData.append(`${listType}[${index}].${key}`, detail[key]);

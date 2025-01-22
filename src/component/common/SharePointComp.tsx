@@ -30,6 +30,7 @@ export function DriveUploadComp({fileList, setFileList, fileRef, numb=0}) {
         setEditingFileId(null); // 수정 상태 종료
     };
 
+
     // 파일 클릭 이벤트 처리 (기존 로직 유지)
     const handleClick = (file, e) => {
         // Ctrl 키와 왼쪽 버튼 클릭 확인

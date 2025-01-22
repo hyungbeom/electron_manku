@@ -164,6 +164,10 @@ export default function rqfUpdate({dataInfo, managerList}) {
         router.push(`/rfq_write?${query}`)
     }
 
+    function onCellEditingStopped(){
+
+    }
+
 
     return <Spin spinning={loading} tip={'견적의뢰 수정중...'}>
         <SearchInfoModal info={info} setInfo={setInfo}
@@ -315,6 +319,7 @@ export default function rqfUpdate({dataInfo, managerList}) {
                 <TableGrid
                     gridRef={gridRef}
                     columns={subRfqWriteColumn}
+                    onCellEditingStopped={onCellEditingStopped}
                     onGridReady={onGridReady}
                     type={'write'}
                     funcButtons={['upload', 'add', 'delete', 'print']}

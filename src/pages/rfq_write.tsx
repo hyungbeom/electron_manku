@@ -390,7 +390,7 @@ export default function rqfWrite({dataInfo, managerList}) {
                                             })}
                                         </div>
                                         <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                         numb={info['uploadType']}/>
+                                                         numb={2}/>
                                     </div>
                                 </BoxCard>
                             </div>
