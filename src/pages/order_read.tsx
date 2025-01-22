@@ -191,7 +191,7 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
         store.dispatch(setUserInfo(userInfo));
         const result = await searchOrder({data: orderReadInitial})
         return {
-            props: {dataInfo: result ? result : null}
+            props: {dataInfo: result ?? null}
         }
     }
 })

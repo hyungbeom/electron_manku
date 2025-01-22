@@ -54,7 +54,7 @@ export function TopBoxCard({children, title = '', grid = '1fr 1fr 1fr 1fr'}) {
     </Card>
 }
 
-export function BoxCard({children, title = null, tooltip = '', disabled=false}: any) {
+export function BoxCard({children, title = null, tooltip = '', disabled = false}: any) {
     const disabledStyle = {
         opacity: disabled ? 0.5 : 1, // 흐리게 표시
         pointerEvents: disabled ? "none" : "auto", // 클릭 막기
@@ -67,7 +67,7 @@ export function BoxCard({children, title = null, tooltip = '', disabled=false}: 
     // <InfoCircleOutlined />
     // @ts-ignore
     return <Card style={defaultStyle} size={'small'}
-                 title={title ? <div style={{display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+                 title={title ? <div style={{display: 'flex', justifyContent: 'space-between', fontSize: 12}}>
                      <span>{title}</span>
                      <Tooltip style={{fontSize: 12}} title={<div style={{fontSize: 12}}>{tooltip}</div>} color={'cyan'}
                               key={'cyan'}>
@@ -75,7 +75,7 @@ export function BoxCard({children, title = null, tooltip = '', disabled=false}: 
                      </Tooltip>
                  </div> : null}>
         <div style={disabled ? disabledStyle : defaultStyle}>
-        {children}
+            {children}
         </div>
     </Card>
 }
@@ -110,7 +110,8 @@ export const inputForm = ({
                               title, id, disabled = false, placeHolder = '', suffix = null, onChange = function () {
     }, handleKeyPress = function () {
     }, data
-                              , validate = true
+                              , validate = true,
+                              size = 'small'
                           }: any) => {
 
     let bowl = data;
@@ -121,7 +122,7 @@ export const inputForm = ({
                id={id}
                value={bowl[id]} disabled={disabled}
                onChange={onChange}
-               size={'small'}
+               size={size}
                onKeyDown={handleKeyPress}
                suffix={suffix}
                style={{borderColor: validate ? '' : 'red', fontSize: 12}}
@@ -175,7 +176,7 @@ export const inputNumberForm = ({
                                     data,
                                     formatter = null,
                                     parser = null,
-    step = 1
+                                    step = 1
                                 }: any) => {
     let bowl = data;
 
@@ -303,6 +304,7 @@ export const tableButtonList = (type: any, gridRef?: any) => {
         const newRow = {...orderDetailUnit};
         gridRef.current.applyTransaction({add: [newRow]});
     }
+
     function addStoreRow() {
         const newRow = {...storeDetailUnit};
         gridRef.current.applyTransaction({add: [newRow]});
@@ -312,7 +314,6 @@ export const tableButtonList = (type: any, gridRef?: any) => {
         const newRow = {...projectDetailUnit};
         gridRef.current.applyTransaction({add: [newRow]});
     }
-
 
 
     switch (type) {

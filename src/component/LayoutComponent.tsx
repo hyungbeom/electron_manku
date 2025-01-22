@@ -3,15 +3,14 @@ import {Content} from "antd/lib/layout/layout";
 import Menu from "antd/lib/menu";
 import {
     AlertOutlined,
-    CodeOutlined, DatabaseOutlined,
+    DatabaseOutlined,
     DiffOutlined,
     DropboxOutlined,
     FormOutlined,
     FundProjectionScreenOutlined,
-    MailOutlined,
-    NotificationOutlined,
     PullRequestOutlined,
-    SendOutlined, TruckOutlined,
+    SendOutlined,
+    TruckOutlined,
 } from '@ant-design/icons';
 import {useRouter} from "next/router";
 
@@ -79,7 +78,7 @@ export default function LayoutComponent({children, userInfo = null}) {
         }, {
             label: '배송',
             key: 'delivery',
-            icon: <TruckOutlined />,
+            icon: <TruckOutlined/>,
             style: {margin: ' 0px -20px'},
             children: [
                 {label: <span style={{fontSize: '12px'}}>배송 등록</span>, key: 'delivery_write'},
@@ -99,25 +98,44 @@ export default function LayoutComponent({children, userInfo = null}) {
         }, {
             label: '데이터관리',
             key: 'data',
-            icon: <DatabaseOutlined />,
+            icon: <DatabaseOutlined/>,
             style: {margin: ' 0px -20px'},
             children: [
-                {label: <span style={{fontSize: '12px'}}>국내 매입처</span>, key: 'data_1'},
-                {label: <span style={{fontSize: '12px'}}>해외 매업처</span>, key: 'data_2'},
-                {label: <span style={{fontSize: '12px'}}>국내 고객사</span>, key: 'data_3'},
-                {label: <span style={{fontSize: '12px'}}>해외 고객사</span>, key: 'data_4'},
-                {label: <span style={{fontSize: '12px'}}>메이커</span>, key: 'data_5'},
+                {
+                    label: <span style={{fontSize: '12px', paddingLeft: 5}}>매입처</span>,
+                    key: 'data/domestic/agency_read',
+                    children: [
+                        {label: <span style={{fontSize: '12px'}}>국내 등록</span>, key: 'data/agency/domestic/agency_write'},
+                        {label: <span style={{fontSize: '12px'}}>국내 목록</span>, key: 'data/agency/domestic/agency_read'},
+                        {label: <span style={{fontSize: '12px'}}>해외 등록</span>, key: 'data/agency/overseas/agency_write'},
+                        {label: <span style={{fontSize: '12px'}}>해외 목록</span>, key: 'data/agency/overseas/agency_read'},
+                    ],
+                },
+                {
+                    label: <span style={{fontSize: '12px', paddingLeft: 5}}>고객사</span>, key: 'data_4',
+                    children: [
+                        {label: <span style={{fontSize: '12px'}}>국내 등록</span>, key: 'data/domestic/customer_write'},
+                        {label: <span style={{fontSize: '12px'}}>국내 목록</span>, key: 'data/domestic/customer_read'},
+                        {label: <span style={{fontSize: '12px'}}>해외 등록</span>, key: 'data/overseas/customer_write'},
+                        {label: <span style={{fontSize: '12px'}}>해외 목록</span>, key: 'data/overseas/customer_read'},
+                    ],
+                },
+                {label: <span style={{fontSize: '12px', paddingLeft: 5}}>메이커</span>, key: 'data_5',
+                    children: [
+                        {label: <span style={{fontSize: '12px'}}>메이커 등록</span>, key: 'maker_write'},
+                        {label: <span style={{fontSize: '12px'}}>메이커 목록</span>, key: 'maker_read'},
+                    ]},
+                {label: <span style={{fontSize: '12px'}}>공문서</span>, key: 'data/diploma/read'},
                 {label: <span style={{fontSize: '12px'}}>HS CODE</span>, key: 'data_6'},
             ],
             popupOffset: [0, -4],
         }, {
             label: '공지사항',
             key: 'note',
-            icon: <AlertOutlined />,
+            icon: <AlertOutlined/>,
             style: {margin: ' 0px -20px'},
             children: [
                 {label: <span style={{fontSize: '12px'}}>공지사항</span>, key: 'note'},
-                {label: <span style={{fontSize: '12px'}}>공문서</span>, key: 'public'},
             ],
             popupOffset: [0, -4],
         }
@@ -128,11 +146,11 @@ export default function LayoutComponent({children, userInfo = null}) {
     const onClick = (e) => {
         const root = `/${e.keyPath[0]}`
 
-        if(e.key.includes('write')){
+        if (e.key.includes('write')) {
             window.open(root, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
-        }else if(e.key.includes('read')){
+        } else if (e.key.includes('read')) {
             router.push(`${root}`)
-        }else{
+        } else {
             router.push(`/erp_rule`)
         }
 
@@ -148,7 +166,7 @@ export default function LayoutComponent({children, userInfo = null}) {
             }}>
                 <Menu onClick={onClick}
                       selectedKeys={null} mode="horizontal" items={items}
-                      style={{width: '100%', fontSize: 10, marginBottom : 7}} className="custom-menu"/>
+                      style={{width: '100%', fontSize: 10, marginBottom: 7}} className="custom-menu"/>
             </div> : <></>}
 
         <Content style={{padding: 5}}>

@@ -166,7 +166,7 @@ export default function rqfWrite({dataInfo, managerList}) {
 
         switch (param) {
             case '국내' :
-                // router.push('/code_domestic_agency_write')
+                // router.push('/agency_write')
                 break;
             case '해외' :
                 // router.push('/code_overseas_agency_write')

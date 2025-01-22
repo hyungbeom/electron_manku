@@ -24,7 +24,7 @@ import {setUserInfo} from "@/store/user/userSlice";
 import {wrapper} from "@/store/store";
 
 
-export default function code_domestic_agency_write() {
+export default function agency_write() {
     const gridRef = useRef(null);
 
     const [mini, setMini] = useState(true);

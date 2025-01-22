@@ -625,7 +625,8 @@ export const codeDomesticAgencyWriteInitial = {
     "businessRegistrationNumber": "",       // 사업자 번호
     "bankAccountNumber": "",                // 계좌번호
     "item": "",                             // 아이템
-    "agencyManagerList": []
+    "agencyManagerList": [],
+    searchType : 1
 }
 
 
