@@ -30,7 +30,7 @@ export default function LayoutComponent({children, userInfo = null}) {
                 {label: <span style={{fontSize: '12px'}}>프로젝트 등록</span>, key: 'write'},
                 {label: <span style={{fontSize: '12px'}}>프로젝트 조회</span>, key: 'read'},
             ],
-
+            popupOffset: [0, -4], // Y축 간격 줄이기
         }, {
             label: '견적의뢰',
             key: 'rfq',
@@ -40,9 +40,9 @@ export default function LayoutComponent({children, userInfo = null}) {
                 {label: <span style={{fontSize: '12px'}}>견적의뢰 등록</span>, key: 'write'},
                 {label: <span style={{fontSize: '12px'}}>견적의뢰 조회</span>, key: 'read'},
                 {label: <span style={{fontSize: '12px'}}>메일전송</span>, key: 'mail'}
-            ]
+            ],
 
-
+            popupOffset: [0, -4],
         }, {
             label: '견적서',
             key: 'estimate',
@@ -55,6 +55,7 @@ export default function LayoutComponent({children, userInfo = null}) {
                 {label: <span style={{fontSize: '12px'}}>통합견적서 발행</span>, key: 'rfq_mail_send'},
 
             ],
+            popupOffset: [0, -4],
         }, {
             label: '발주서',
             key: 'order',
@@ -63,14 +64,9 @@ export default function LayoutComponent({children, userInfo = null}) {
             children: [
                 {label: <span style={{fontSize: '12px'}}>발주서 등록</span>, key: 'write'},
                 {label: <span style={{fontSize: '12px'}}>발주서 조회</span>, key: 'read'},
-                // {label: <span style={{fontSize: '12px'}}>재고관리</span>, key: 'rfq_mail_send'},
-                // {
-                //     label: <span style={{fontSize: '12px'}}>정산관리</span>, key: 'rfq_mail_send', children: [
-                //         {label: <span style={{fontSize: '12px'}}>거래처 별 주문조회</span>, key: 'write'},
-                //         {label: <span style={{fontSize: '12px'}}>해외대리점 별 주문조회</span>, key: 'read'}
-                //     ],
-                // },
+
             ],
+            popupOffset: [0, -4],
         }, {
             label: '입고',
             key: 'store',
@@ -88,7 +84,8 @@ export default function LayoutComponent({children, userInfo = null}) {
             children: [
                 {label: <span style={{fontSize: '12px'}}>배송 등록</span>, key: 'write'},
                 {label: <span style={{fontSize: '12px'}}>배송 조회</span>, key: 'read'}
-            ]
+            ],
+            popupOffset: [0, -4],
         }, {
             label: '송금',
             key: 'remittance_domestic',
@@ -98,19 +95,21 @@ export default function LayoutComponent({children, userInfo = null}) {
                 {label: <span style={{fontSize: '12px'}}>국내 송금 등록</span>, key: 'write'},
                 {label: <span style={{fontSize: '12px'}}>국내 송금 목록</span>, key: 'read'},
             ],
+            popupOffset: [0, -4],
         }, {
             label: '데이터관리',
             key: 'data',
             icon: <DatabaseOutlined />,
             style: {margin: ' 0px -20px'},
             children: [
-                {label: <span style={{fontSize: '12px'}}>국내 매입처</span>, key: 'note'},
-                {label: <span style={{fontSize: '12px'}}>해외 매업처</span>, key: 'public'},
-                {label: <span style={{fontSize: '12px'}}>국내 고객사</span>, key: 'public'},
-                {label: <span style={{fontSize: '12px'}}>해외 고객사</span>, key: 'public'},
-                {label: <span style={{fontSize: '12px'}}>메이커</span>, key: 'public'},
-                {label: <span style={{fontSize: '12px'}}>HS CODE</span>, key: 'public'},
+                {label: <span style={{fontSize: '12px'}}>국내 매입처</span>, key: 'data_1'},
+                {label: <span style={{fontSize: '12px'}}>해외 매업처</span>, key: 'data_2'},
+                {label: <span style={{fontSize: '12px'}}>국내 고객사</span>, key: 'data_3'},
+                {label: <span style={{fontSize: '12px'}}>해외 고객사</span>, key: 'data_4'},
+                {label: <span style={{fontSize: '12px'}}>메이커</span>, key: 'data_5'},
+                {label: <span style={{fontSize: '12px'}}>HS CODE</span>, key: 'data_6'},
             ],
+            popupOffset: [0, -4],
         }, {
             label: '공지사항',
             key: 'note',
@@ -120,6 +119,7 @@ export default function LayoutComponent({children, userInfo = null}) {
                 {label: <span style={{fontSize: '12px'}}>공지사항</span>, key: 'note'},
                 {label: <span style={{fontSize: '12px'}}>공문서</span>, key: 'public'},
             ],
+            popupOffset: [0, -4],
         }
 
     ];
@@ -128,7 +128,6 @@ export default function LayoutComponent({children, userInfo = null}) {
     const onClick = (e) => {
         const root = `/${e.keyPath[1]}_${e.keyPath[0]}`
 
-        console.log(e.key, 'e.key::')
         switch (e.key) {
             case 'write' :
 
@@ -153,7 +152,7 @@ export default function LayoutComponent({children, userInfo = null}) {
             }}>
                 <Menu onClick={onClick}
                       selectedKeys={null} mode="horizontal" items={items}
-                      style={{width: '100%', fontSize: 10}} className="custom-menu"/>
+                      style={{width: '100%', fontSize: 10, marginBottom : 7}} className="custom-menu"/>
             </div> : <></>}
 
         <Content style={{padding: 5}}>

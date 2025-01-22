@@ -190,3 +190,8 @@ html, body {
     padding: 0 5px !important; /* 좌우 패딩을 10px로 설정 */
 }
 
+.custom-menu .ant-menu-submenu-popup {
+    top: 0 !important; /* 상단 위치 고정 */
+    transform: none !important; /* 기본 transform 제거 */
+    margin-top: -4px !important; /* 필요 시 간격 조정 */
+}
