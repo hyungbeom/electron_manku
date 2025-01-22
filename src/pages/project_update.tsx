@@ -248,7 +248,7 @@ export default function projectUpdate({dataInfo}) {
                                         data: info
                                     })}
                                 </BoxCard>
-                                <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}>
+                                <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')} disabled={!info['microsoftId']}>
                                     {/*@ts-ignored*/}
                                     <div style={{overFlowY: "auto", maxHeight: 300}}>
                                         <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}

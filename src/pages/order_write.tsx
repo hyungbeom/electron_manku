@@ -194,7 +194,7 @@ export default function OrderWriter({dataInfo}) {
                                 {inputForm({title: '견적서담당자', id: 'estimateManager', onChange: onChange, data: info})}
                                 {textAreaForm({title: '비고란', rows: 6, id: 'remarks', onChange: onChange, data: info})}
                             </BoxCard>
-                            <BoxCard title={'드라이브 목록'}>
+                            <BoxCard title={'드라이브 목록'}  disabled={!info['microsoftId']}>
                                 {/*@ts-ignored*/}
                                 <div style={{overFlowY: "auto", maxHeight: 300}}>
                                     <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}

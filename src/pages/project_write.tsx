@@ -1,9 +1,8 @@
 import React, {useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
-import {CopyOutlined, FileSearchOutlined, SaveOutlined, UploadOutlined} from "@ant-design/icons";
+import {FileSearchOutlined} from "@ant-design/icons";
 import {projectWriteColumn} from "@/utils/columnList";
 import {ModalInitList, projectDetailUnit, projectWriteInitial} from "@/utils/initialList";
-import Button from "antd/lib/button";
 import message from "antd/lib/message";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
@@ -11,7 +10,6 @@ import {setUserInfo} from "@/store/user/userSlice";
 import TableGrid from "@/component/tableGrid";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import SearchInfoModal from "@/component/SearchAgencyModal";
-import Upload, {UploadProps} from "antd/lib/upload";
 import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, tooltipInfo, TopBoxCard} from "@/utils/commonForm";
 import {useRouter} from "next/router";
 import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
@@ -31,6 +29,8 @@ export default function projectWrite({dataInfo}) {
     const copyUnitInit = _.cloneDeep(projectDetailUnit)
 
     const userInfo = useAppSelector((state) => state.user);
+
+    console.log(userInfo,'userInfo')
 
     const adminParams = {
         managerAdminId: userInfo['adminId'],
@@ -83,7 +83,7 @@ export default function projectWrite({dataInfo}) {
     function onChange(e) {
         if (e.target.id === 'documentNumberFull') {
             setValidate(v => {
-                return {...v,  documentNumberFull: true}
+                return {...v, documentNumberFull: true}
             })
         }
         commonManage.onChange(e, setInfo)
@@ -252,7 +252,7 @@ export default function projectWrite({dataInfo}) {
                                         data: info
                                     })}
                                 </BoxCard>
-                                <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}>
+                                <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')} disabled={!info['microsoftId']} >
                                     {/*@ts-ignored*/}
                                     <div style={{overFlowY: "auto", maxHeight: 300}}>
                                         <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
@@ -269,7 +269,7 @@ export default function projectWrite({dataInfo}) {
                     columns={projectWriteColumn}
                     onGridReady={onGridReady}
                     type={'write'}
-                    funcButtons={['projectUpload','addProjectRow', 'delete', 'print']}
+                    funcButtons={['projectUpload', 'addProjectRow', 'delete', 'print']}
                 />
             </div>
         </LayoutComponent>

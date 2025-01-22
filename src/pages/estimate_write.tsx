@@ -338,7 +338,7 @@ export default function EstimateWrite({dataInfo}) {
                                     })}
                                     {textAreaForm({title: '비고란', rows: 4, id: 'remarks', onChange: onChange, data: info})}
                                 </BoxCard>
-                                <BoxCard title={'드라이브 목록'}>
+                                <BoxCard title={'드라이브 목록'}  disabled={!info['microsoftId']}>
                                     {/*@ts-ignored*/}
                                     <div style={{overFlowY: "auto", maxHeight: 300}}>
                                         <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}

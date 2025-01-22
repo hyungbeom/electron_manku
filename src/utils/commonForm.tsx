@@ -54,21 +54,30 @@ export function TopBoxCard({children, title = '', grid = '1fr 1fr 1fr 1fr'}) {
     </Card>
 }
 
-export function BoxCard({children, title = null, tooltip = ''}: any) {
+export function BoxCard({children, title = null, tooltip = '', disabled=false}: any) {
+    console.log(disabled,'disabled:')
+    const disabledStyle = {
+        opacity: disabled ? 0.5 : 1, // 흐리게 표시
+        pointerEvents: disabled ? "none" : "auto", // 클릭 막기
+        userSelect: disabled ? "none" : "auto", // 텍스트 선택 불가
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+    }
+    const defaultStyle = {
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+    }
     // <InfoCircleOutlined />
-    return <Card size={'small'}
-                 title={title ? <div style={{display: 'flex', justifyContent: 'space-between', fontSize: 12}}>
+    // @ts-ignore
+    return <Card style={defaultStyle} size={'small'}
+                 title={title ? <div style={{display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
                      <span>{title}</span>
                      <Tooltip style={{fontSize: 12}} title={<div style={{fontSize: 12}}>{tooltip}</div>} color={'cyan'}
                               key={'cyan'}>
                          <InfoCircleOutlined style={{cursor: 'pointer'}}/>
                      </Tooltip>
-                 </div> : null}
-
-                 style={{
-                     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
-                 }}>
+                 </div> : null}>
+        <div style={disabled ? disabledStyle : defaultStyle}>
         {children}
+        </div>
     </Card>
 }
 
