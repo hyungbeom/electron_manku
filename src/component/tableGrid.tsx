@@ -85,7 +85,7 @@ const TableGrid = ({
     };
 
 
-    const option = 'width=1000,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no'
+    const option = 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no'
     const openType = '_blank'
     const handleDoubleClicked = (e) => {
 

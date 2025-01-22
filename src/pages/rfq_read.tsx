@@ -76,7 +76,7 @@ export default function rfqRead({dataInfo}) {
     }
 
     function moveRegist() {
-        window.open(`/rfq_write`, '_blank', 'width=1000,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
+        window.open(`/rfq_write`, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
     }
 
 

@@ -73,7 +73,7 @@ export default function ProjectRead({dataInfo}) {
     }
 
     function moveRegist() {
-        window.open(`/project_write`, '_blank', 'width=1000,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
+        window.open(`/project_write`, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
     }
 
     return <Spin spinning={loading} tip={'프로젝트 조회중...'}>
