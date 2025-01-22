@@ -2,7 +2,8 @@ import React from "react";
 import {Content} from "antd/lib/layout/layout";
 import Menu from "antd/lib/menu";
 import {
-    CodeOutlined,
+    AlertOutlined,
+    CodeOutlined, DatabaseOutlined,
     DiffOutlined,
     DropboxOutlined,
     FormOutlined,
@@ -10,7 +11,7 @@ import {
     MailOutlined,
     NotificationOutlined,
     PullRequestOutlined,
-    SendOutlined,
+    SendOutlined, TruckOutlined,
 } from '@ant-design/icons';
 import {useRouter} from "next/router";
 
@@ -82,7 +83,7 @@ export default function LayoutComponent({children, userInfo = null}) {
         }, {
             label: '배송',
             key: 'delivery',
-            icon: <SendOutlined/>,
+            icon: <TruckOutlined />,
             style: {margin: ' 0px -20px'},
             children: [
                 {label: <span style={{fontSize: '12px'}}>배송 등록</span>, key: 'write'},
@@ -100,7 +101,7 @@ export default function LayoutComponent({children, userInfo = null}) {
         }, {
             label: '데이터관리',
             key: 'data',
-            icon: <MailOutlined/>,
+            icon: <DatabaseOutlined />,
             style: {margin: ' 0px -20px'},
             children: [
                 {label: <span style={{fontSize: '12px'}}>국내 매입처</span>, key: 'note'},
@@ -113,7 +114,7 @@ export default function LayoutComponent({children, userInfo = null}) {
         }, {
             label: '공지사항',
             key: 'note',
-            icon: <MailOutlined/>,
+            icon: <AlertOutlined />,
             style: {margin: ' 0px -20px'},
             children: [
                 {label: <span style={{fontSize: '12px'}}>공지사항</span>, key: 'note'},
