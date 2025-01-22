@@ -169,7 +169,7 @@ gridManage.getAllData = function (gridRef) {
             });
 
             // 행이 빈 행인지 확인
-            const isEmptyRow = Object.values(row).every(value => value === null || value === undefined || value === '');
+            const isEmptyRow = Object.values(row).every(value => value === null || value === undefined || value === '' ||  value === 0);
             if (isEmptyRow) {
                 nodesToRemove.push(node); // 빈 행은 삭제 대상으로 추가
             } else {
