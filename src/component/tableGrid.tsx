@@ -9,6 +9,8 @@ import {commonFunc} from "@/utils/commonManage";
 import useEventListener from "@/utils/common/function/UseEventListener";
 import EstimateListModal from "@/component/EstimateListModal";
 import {tableButtonList} from "@/utils/commonForm";
+import {CopyOutlined} from "@ant-design/icons";
+import Button from "antd/lib/button";
 
 const TableGrid = ({
                        gridRef,
@@ -253,6 +255,12 @@ const TableGrid = ({
                     <div style={{fontWeight: 500}}>LIST</div>
 
                     <div style={{display: 'flex', alignItems: 'end', gap: 7}}>
+                        <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
+                                onClick={()=>{
+                                    gridRef?.current?.setFilterModel(null)
+                                }}>
+                            <CopyOutlined/>필터 초기화
+                        </Button>
                         {deleteComp}
                         {funcButtons?.map(v => tableButtonList(v, gridRef))}
                     </div>

@@ -212,9 +212,7 @@ export default function ProjectRead({dataInfo}) {
                            gridRef={gridRef}
                            onGridReady={onGridReady}
                            columns={projectReadColumn}
-                           funcButtons={['print']}
-
-                />
+                           funcButtons={['print']}/>
 
             </div>
         </LayoutComponent>
