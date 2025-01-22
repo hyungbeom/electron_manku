@@ -42,12 +42,7 @@ export default function codeDomesticPurchase({dataInfo}) {
         })
     }
 
-    async function onSearch() {
-        const result = await getData.post('agency/getAgencyList', info);
-        if (result?.data?.code === 1) {
-            // setTableData(result?.data?.entity?.agencyList)
-        }
-    }
+
 
     async function deleteList() {
         const api = gridRef.current.api;

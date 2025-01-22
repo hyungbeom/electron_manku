@@ -114,10 +114,10 @@ export default function LayoutComponent({children, userInfo = null}) {
                 {
                     label: <span style={{fontSize: '12px', paddingLeft: 5}}>고객사</span>, key: 'data_4',
                     children: [
-                        {label: <span style={{fontSize: '12px'}}>국내 등록</span>, key: 'data/domestic/customer_write'},
-                        {label: <span style={{fontSize: '12px'}}>국내 목록</span>, key: 'data/domestic/customer_read'},
-                        {label: <span style={{fontSize: '12px'}}>해외 등록</span>, key: 'data/overseas/customer_write'},
-                        {label: <span style={{fontSize: '12px'}}>해외 목록</span>, key: 'data/overseas/customer_read'},
+                        {label: <span style={{fontSize: '12px'}}>국내 등록</span>, key: 'data/customer/domestic/customer_write'},
+                        {label: <span style={{fontSize: '12px'}}>국내 목록</span>, key: 'data/customer/domestic/customer_read'},
+                        {label: <span style={{fontSize: '12px'}}>해외 등록</span>, key: 'data/customer/overseas/customer_write'},
+                        {label: <span style={{fontSize: '12px'}}>해외 목록</span>, key: 'data/customer/overseas/customer_read'},
                     ],
                 },
                 {label: <span style={{fontSize: '12px', paddingLeft: 5}}>메이커</span>, key: 'data_5',

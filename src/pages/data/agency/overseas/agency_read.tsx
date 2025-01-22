@@ -11,22 +11,29 @@ import {CopyOutlined, EditOutlined, FileExcelOutlined, SearchOutlined,} from "@a
 import * as XLSX from "xlsx";
 import message from "antd/lib/message";
 
-import {tableCodeOverseasPurchaseColumns,} from "@/utils/columnList";
-import {codeDomesticPurchaseInitial,} from "@/utils/initialList";
+import {tableCodeDomesticPurchaseColumns, tableCodeOverseasPurchaseColumns,} from "@/utils/columnList";
+import {codeDomesticAgencyWriteInitial, codeDomesticPurchaseInitial,} from "@/utils/initialList";
 import Radio from "antd/lib/radio";
 import TableGrid from "@/component/tableGrid";
 import Search from "antd/lib/input/Search";
 import {useRouter} from "next/router";
+import _ from "lodash";
 
 
-export default function codeOverseasPurchase({dataList}) {
+export default function codeOverseasPurchase({dataInfo}) {
     const gridRef = useRef(null);
     const router=useRouter();
+    const copyInit = _.cloneDeep(codeDomesticPurchaseInitial)
 
-    const {overseasAgencyList} = dataList;
-    const [info, setInfo] = useState(codeDomesticPurchaseInitial);
-    const [tableData, setTableData] = useState(overseasAgencyList);
+    const [info, setInfo] = useState(copyInit);
 
+
+
+
+    const onGridReady = (params) => {
+        gridRef.current = params.api;
+        params.api.applyTransaction({add: dataInfo ? dataInfo : []});
+    };
 
     function onChange(e) {
 
@@ -38,13 +45,7 @@ export default function codeOverseasPurchase({dataList}) {
         })
     }
 
-    async function onSearch() {
-        const result = await getData.post('agency/getOverseasAgencyList', info);
-        // console.log(result?.data?.entity?.overseasAgencyList,'result:')
-        if(result?.data?.code === 1){
-            setTableData(result?.data?.entity?.overseasAgencyList)
-        }1
-    }
+
 
     async function deleteList() {
         const api = gridRef.current.api;
@@ -68,14 +69,6 @@ export default function codeOverseasPurchase({dataList}) {
         }
     }
 
-    const downloadExcel = () => {
-
-        const worksheet = XLSX.utils.json_to_sheet(tableData);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-        XLSX.writeFile(workbook, "inventory_list.xlsx");
-    };
-
 
     return <LayoutComponent>
         <div style={{display: 'grid', gridTemplateRows: '120px 1fr', height: '100vh', columnGap: 5}}>
@@ -98,7 +91,7 @@ export default function codeOverseasPurchase({dataList}) {
                         </div>
 
                         <Search
-                            onSearch={onSearch}
+
                             onChange={onChange}
                             id={'searchText'}
                             placeholder="input search text"
@@ -115,22 +108,16 @@ export default function codeOverseasPurchase({dataList}) {
                 </Card>
             </Card>
 
-            <TableGrid
-                gridRef={gridRef}
-                columns={tableCodeOverseasPurchaseColumns}
-                tableData={tableData}
-                type={'read'}
-                excel={true}
-                funcButtons={<div>
-                    {/*@ts-ignored*/}
-                    <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={deleteList}>
-                        <CopyOutlined/>삭제
-                    </Button>
-                    <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={downloadExcel}>
-                        <FileExcelOutlined/>출력
-                    </Button></div>}
+            {/*@ts-ignored*/}
+            <TableGrid deleteComp={<Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
+                                           onClick={deleteList}>
+                <CopyOutlined/>삭제
+            </Button>}
+                       gridRef={gridRef}
+                       columns={tableCodeOverseasPurchaseColumns}
+                       onGridReady={onGridReady}
+                       funcButtons={['print']}
             />
-
         </div>
     </LayoutComponent>
 }
@@ -162,9 +149,9 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
             },
         };
     } else {
-        // result?.data?.entity?.estimateRequestList
+        const list = result?.data?.entity?.overseasAgencyList
         param = {
-            props: {dataList: result?.data?.entity}
+            props: {dataInfo: list ?? null}
         }
     }
 
