@@ -20,7 +20,7 @@ export const saveRfq = async ({data, router, setLoading}) => {
         }
     }, err => {
         setLoading(false);
-        message.error(err);
+       console.log(err)
     })
 };
 

@@ -1,25 +1,18 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import {Content} from "antd/lib/layout/layout";
-import Menu, {MenuProps} from "antd/lib/menu";
+import Menu from "antd/lib/menu";
 import {
-    AppstoreOutlined,
-    BarcodeOutlined,
-    CaretLeftFilled,
-    CaretRightFilled, CodeOutlined, DiffOutlined, DropboxOutlined,
-    EditOutlined,
-    FolderOpenOutlined,
-    FormOutlined, FundProjectionScreenOutlined,
-    HomeOutlined, MailOutlined,
-    MoneyCollectOutlined, NotificationOutlined,
-    ProductOutlined, PullRequestOutlined,
+    CodeOutlined,
+    DiffOutlined,
+    DropboxOutlined,
+    FormOutlined,
+    FundProjectionScreenOutlined,
+    MailOutlined,
+    NotificationOutlined,
+    PullRequestOutlined,
     SendOutlined,
-    SettingOutlined,
-    UserSwitchOutlined,
-    WalletOutlined,
 } from '@ant-design/icons';
 import {useRouter} from "next/router";
-import MenuItem from "antd/lib/menu/MenuItem";
-
 
 
 export default function LayoutComponent({children, userInfo = null}) {
