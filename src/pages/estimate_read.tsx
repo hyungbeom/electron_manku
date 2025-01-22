@@ -69,7 +69,7 @@ export default function EstimateRead({dataInfo}) {
 
         const deleteList = gridManage.getFieldDeleteList(gridRef, {
             estimateId: 'estimateId',
-            estimateDetailIdList: 'estimateDetailId'
+            estimateDetailId: 'estimateDetailId'
         });
         setLoading(true);
         await deleteEstimate({data: {deleteList: deleteList}, returnFunc: searchInfo});

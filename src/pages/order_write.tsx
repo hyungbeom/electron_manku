@@ -1,9 +1,8 @@
 import React, {useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
-import {CopyOutlined, DownloadOutlined, SaveOutlined} from "@ant-design/icons";
+import {DownloadOutlined} from "@ant-design/icons";
 import {tableOrderWriteColumn,} from "@/utils/columnList";
-import {ModalInitList, orderDetailUnit, orderWriteInitial} from "@/utils/initialList";
-import Button from "antd/lib/button";
+import {orderDetailUnit, orderWriteInitial} from "@/utils/initialList";
 import message from "antd/lib/message";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
@@ -55,9 +54,6 @@ export default function OrderWriter({dataInfo}) {
     }
 
     const [info, setInfo] = useState<any>({...copyInit, ...dataInfo, ...adminParams})
-
-
-
 
 
     const onGridReady = (params) => {
