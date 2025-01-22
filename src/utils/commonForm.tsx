@@ -55,7 +55,6 @@ export function TopBoxCard({children, title = '', grid = '1fr 1fr 1fr 1fr'}) {
 }
 
 export function BoxCard({children, title = null, tooltip = '', disabled=false}: any) {
-    console.log(disabled,'disabled:')
     const disabledStyle = {
         opacity: disabled ? 0.5 : 1, // 흐리게 표시
         pointerEvents: disabled ? "none" : "auto", // 클릭 막기

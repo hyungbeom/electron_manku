@@ -14,7 +14,7 @@ import {useRouter} from "next/router";
 import {commonManage, gridManage} from "@/utils/commonManage";
 
 
-export default function SearchInfoModal({info, setInfo, open, setIsModalOpen, setValidate = null, type='', gridRef}:any) {
+export default function SearchInfoModal({info, setInfo, open, setIsModalOpen, setValidate = null, type='', gridRef, compProps}:any) {
     const router = useRouter()
     const [code, setCode] = useState();
     const [list, setList] = useState([])
@@ -173,18 +173,6 @@ export default function SearchInfoModal({info, setInfo, open, setIsModalOpen, se
         setOpen(false);
     };
 
-    function moveRouter(param) {
-
-        switch (param) {
-            case '국내' :
-                router.push('/code_domestic_agency_write')
-                break;
-            case '해외' :
-                router.push('/code_overseas_agency_write')
-                break;
-        }
-        // router.push()
-    }
 
     return <>
         {page.x ? <div style={{
@@ -220,10 +208,7 @@ export default function SearchInfoModal({info, setInfo, open, setIsModalOpen, se
                 <span>
                 {modalList[openCheck]?.title}
             </span>
-                <div>
-                    <Button style={{marginRight: 5}} onClick={() => moveRouter('국내')} id={'국내'}>국내생성</Button>
-                    <Button style={{marginRight: 50}} onClick={() => moveRouter('해외')} id={'해외'}>해외생성</Button>
-                </div>
+                {compProps}
             </div>}
             onCancel={() => setIsModalOpen(ModalInitList)}
             open={!!openCheck}

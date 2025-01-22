@@ -21,12 +21,23 @@ export default function LayoutComponent({children, userInfo = null}) {
 
     const items: any = [
         {
+            label: '홈',
+            key: 'home',
+            icon: <FundProjectionScreenOutlined/>,
+            style: {margin: ' 0px -20px 0px -10px'},
+            children: [
+                {label: <span style={{fontSize: '12px'}}>메뉴</span>, key: 'menu'},
+                {label: <span style={{fontSize: '12px'}}>알림</span>, key: 'alarm'},
+                {label: <span style={{fontSize: '12px'}}>달력</span>, key: 'calender'}
+            ],
+        },
+        {
             label: '프로젝트',
             key: 'project',
             icon: <FundProjectionScreenOutlined/>,
             style: {margin: ' 0px -20px 0px -10px'},
             children: [
-                {label: <span style={{fontSize: '12px'}}>프로젝트 작성</span>, key: 'write'},
+                {label: <span style={{fontSize: '12px'}}>프로젝트 등록</span>, key: 'write'},
                 {label: <span style={{fontSize: '12px'}}>프로젝트 조회</span>, key: 'read'},
             ],
 
@@ -36,9 +47,9 @@ export default function LayoutComponent({children, userInfo = null}) {
             icon: <PullRequestOutlined/>,
             style: {margin: ' 0px -20px'},
             children: [
-                {label: <span style={{fontSize: '12px'}}>견적의뢰 작성</span>, key: 'write'},
+                {label: <span style={{fontSize: '12px'}}>견적의뢰 등록</span>, key: 'write'},
                 {label: <span style={{fontSize: '12px'}}>견적의뢰 조회</span>, key: 'read'},
-                {label: <span style={{fontSize: '12px'}}>견적의뢰 메일전송</span>, key: 'rfq_mail_send'}
+                {label: <span style={{fontSize: '12px'}}>메일전송</span>, key: 'mail'}
             ]
 
 
@@ -49,7 +60,7 @@ export default function LayoutComponent({children, userInfo = null}) {
             style: {margin: ' 0px -20px'},
             children: [
 
-                {label: <span style={{fontSize: '12px'}}>견적서 작성</span>, key: 'write'},
+                {label: <span style={{fontSize: '12px'}}>견적서 등록</span>, key: 'write'},
                 {label: <span style={{fontSize: '12px'}}>견적서 조회</span>, key: 'read'},
                 {label: <span style={{fontSize: '12px'}}>통합견적서 발행</span>, key: 'rfq_mail_send'},
 
@@ -60,51 +71,18 @@ export default function LayoutComponent({children, userInfo = null}) {
             icon: <DiffOutlined/>,
             style: {margin: ' 0px -20px'},
             children: [
-                {label: <span style={{fontSize: '12px'}}>발주서 작성</span>, key: 'write'},
+                {label: <span style={{fontSize: '12px'}}>발주서 등록</span>, key: 'write'},
                 {label: <span style={{fontSize: '12px'}}>발주서 조회</span>, key: 'read'},
-                {label: <span style={{fontSize: '12px'}}>재고관리</span>, key: 'rfq_mail_send'},
-                {
-                    label: <span style={{fontSize: '12px'}}>정산관리</span>, key: 'rfq_mail_send', children: [
-                        {label: <span style={{fontSize: '12px'}}>거래처 별 주문조회</span>, key: 'write'},
-                        {label: <span style={{fontSize: '12px'}}>해외대리점 별 주문조회</span>, key: 'read'}
-                    ],
-                },
+                // {label: <span style={{fontSize: '12px'}}>재고관리</span>, key: 'rfq_mail_send'},
+                // {
+                //     label: <span style={{fontSize: '12px'}}>정산관리</span>, key: 'rfq_mail_send', children: [
+                //         {label: <span style={{fontSize: '12px'}}>거래처 별 주문조회</span>, key: 'write'},
+                //         {label: <span style={{fontSize: '12px'}}>해외대리점 별 주문조회</span>, key: 'read'}
+                //     ],
+                // },
             ],
         }, {
-            label: 'MAKER',
-            key: 'maker',
-            icon: <MailOutlined/>,
-            style: {margin: ' 0px -20px'},
-            children: [
-                {label: <span style={{fontSize: '12px'}}>MAKER</span>, key: 'rfq_write'},
-            ],
-        }, {
-            label: '코드',
-            key: 'code',
-            icon: <CodeOutlined/>,
-            style: {margin: ' 0px -20px'},
-            children: [
-                {label: <span style={{fontSize: '12px'}}>국내 매입처</span>, key: 'rfq_write'},
-                {label: <span style={{fontSize: '12px'}}>해외 매입처</span>, key: 'rfq_read'},
-                {label: <span style={{fontSize: '12px'}}>국내 고객사</span>, key: 'rfq_mail_send'},
-                {label: <span style={{fontSize: '12px'}}>해외 고객사</span>, key: 'rfq_mail_send'},
-                {label: <span style={{fontSize: '12px'}}>공문서</span>, key: 'rfq_mail_send'},
-                {label: <span style={{fontSize: '12px'}}>환율조회</span>, key: 'rfq_mail_send'},
-                {label: <span style={{fontSize: '12px'}}>HS CODE 조회</span>, key: 'rfq_mail_send'},
-            ],
-        }, {
-            label: '송금',
-            key: 'remittance_domestic',
-            icon: <SendOutlined/>,
-            style: {margin: ' 0px -20px'},
-            children: [
-                {label: <span style={{fontSize: '12px'}}>국내 송금 등록</span>, key: 'write'},
-                {label: <span style={{fontSize: '12px'}}>국내 송금 목록</span>, key: 'read'},
-                {label: <span style={{fontSize: '12px'}}>해외 송금 관리</span>, key: '*'},
-                {label: <span style={{fontSize: '12px'}}>발주/송금 통합 관리</span>, key: '*'},
-            ],
-        }, {
-            label: '입고관리',
+            label: '입고',
             key: 'store',
             icon: <DropboxOutlined/>,
             style: {margin: ' 0px -20px'},
@@ -112,7 +90,7 @@ export default function LayoutComponent({children, userInfo = null}) {
                 {label: <span style={{fontSize: '12px'}}>입고 등록</span>, key: 'write'},
                 {label: <span style={{fontSize: '12px'}}>입고 조회</span>, key: 'read'}
             ]
-        }, {
+        },{
             label: '배송',
             key: 'delivery',
             icon: <SendOutlined/>,
@@ -121,16 +99,55 @@ export default function LayoutComponent({children, userInfo = null}) {
                 {label: <span style={{fontSize: '12px'}}>배송 등록</span>, key: 'write'},
                 {label: <span style={{fontSize: '12px'}}>배송 조회</span>, key: 'read'}
             ]
-        }, {
-            label: '공지사항',
-            key: '',
-            icon: <NotificationOutlined/>,
+        },{
+            label: '송금',
+            key: 'remittance_domestic',
+            icon: <SendOutlined/>,
             style: {margin: ' 0px -20px'},
             children: [
-                {label: <span style={{fontSize: '12px'}}>공지사항</span>, key: 'notice'},
-
-            ]
+                {label: <span style={{fontSize: '12px'}}>국내 송금 등록</span>, key: 'write'},
+                {label: <span style={{fontSize: '12px'}}>국내 송금 목록</span>, key: 'read'},
+            ],
+        },{
+            label: '데이터관리',
+            key: 'data',
+            icon: <MailOutlined/>,
+            style: {margin: ' 0px -20px'},
+            children: [
+                {label: <span style={{fontSize: '12px'}}>국내 매입처</span>, key: 'note'},
+                {label: <span style={{fontSize: '12px'}}>해외 매업처</span>, key: 'public'},
+                {label: <span style={{fontSize: '12px'}}>국내 고객사</span>, key: 'public'},
+                {label: <span style={{fontSize: '12px'}}>해외 고객사</span>, key: 'public'},
+                {label: <span style={{fontSize: '12px'}}>메이커</span>, key: 'public'},
+                {label: <span style={{fontSize: '12px'}}>HS CODE</span>, key: 'public'},
+            ],
+        },{
+            label: '공지사항',
+            key: 'note',
+            icon: <MailOutlined/>,
+            style: {margin: ' 0px -20px'},
+            children: [
+                {label: <span style={{fontSize: '12px'}}>공지사항</span>, key: 'note'},
+                {label: <span style={{fontSize: '12px'}}>공문서</span>, key: 'public'},
+            ],
         },
+        {
+            label: '기타',
+            key: 'etc',
+            icon: <MailOutlined/>,
+            style: {margin: ' 0px -20px'},
+            children: [
+                {label: <span style={{fontSize: '12px'}}>기타</span>, key: 'etc'},
+            ],
+        }
+
+
+
+
+
+
+
+
     ];
 
 

@@ -30,6 +30,7 @@ import Select from "antd/lib/select";
 import {getData} from "@/manage/function/api";
 import moment from "moment";
 import Spin from "antd/lib/spin";
+import Button from "antd/lib/button";
 
 const listType = 'estimateRequestDetailList'
 export default function rqfWrite({dataInfo, managerList}) {
@@ -160,13 +161,30 @@ export default function rqfWrite({dataInfo, managerList}) {
         })
     };
 
+    function moveRouter(param) {
+
+        switch (param) {
+            case '국내' :
+                // router.push('/code_domestic_agency_write')
+                break;
+            case '해외' :
+                // router.push('/code_overseas_agency_write')
+                break;
+        }
+        // router.push()
+    }
 
     return <Spin spinning={loading} tip={'견적의뢰 등록중...'}>
         <SearchInfoModal info={info} setInfo={setInfo}
                          open={isModalOpen}
                          gridRef={gridRef}
                          setValidate={setValidate}
-                         setIsModalOpen={setIsModalOpen}/>
+                         setIsModalOpen={setIsModalOpen}
+                        compProps={<div>
+                            <Button size={'small'} style={{marginRight: 5}} onClick={() => moveRouter('국내')} id={'국내'}>국내생성</Button>
+                            <Button size={'small'} style={{marginRight: 50}} onClick={() => moveRouter('해외')} id={'해외'}>해외생성</Button>
+                        </div>}
+        />
         <LayoutComponent>
             <div style={{
                 display: 'grid',
@@ -174,7 +192,7 @@ export default function rqfWrite({dataInfo, managerList}) {
                 columnGap: 5
             }}>
 
-                <MainCard title={'견적의뢰 작성'} list={[
+            <MainCard title={'견적의뢰 작성'} list={[
                     {
                         name: '저장',
                         func: saveFunc,

@@ -18,9 +18,16 @@ import {saveProject} from "@/utils/api/mainApi";
 import {findCodeInfo} from "@/utils/api/commonApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import Spin from "antd/lib/spin";
+import Select from "antd/lib/select";
+import {getData} from "@/manage/function/api";
 
 const listType = 'projectDetailList'
-export default function projectWrite({dataInfo}) {
+export default function projectWrite({dataInfo, managerList}) {
+    const options = managerList.map((item) => ({
+        ...item,
+        value: item.adminId,
+        label: item.name,
+    }));
     const fileRef = useRef(null);
     const gridRef = useRef(null);
     const router = useRouter();
@@ -91,6 +98,9 @@ export default function projectWrite({dataInfo}) {
 
     async function saveFunc() {
         if (!info['documentNumberFull']) {
+            setValidate(v => {
+                return {...v, documentNumberFull: false}
+            })
             return message.warn('프로젝트 번호가 누락되었습니다.')
         }
         const list = gridManage.getAllData(gridRef);
@@ -142,6 +152,13 @@ export default function projectWrite({dataInfo}) {
         gridManage.deleteAll(gridRef);
     }
 
+
+    const onCChange = (value: string, e: any) => {
+        setInfo(v => {
+            return {...v, managerAdminId: e.adminId, managerAdminName: e.name}
+        })
+    };
+
     return <Spin spinning={loading} tip={'프로젝트 등록중...'}>
         <SearchInfoModal info={info} setInfo={setInfo}
                          open={isModalOpen}
@@ -175,7 +192,17 @@ export default function projectWrite({dataInfo}) {
                                     onChange: onChange,
                                     data: info
                                 })}
-                                {inputForm({title: '담당자', id: 'managerAdminName', onChange: onChange, data: info})}
+                                <div>
+                                    <div>담당자</div>
+                                    <Select style={{width: '100%'}} size={'small'}
+                                            showSearch
+                                            value={info['managerAdminId']}
+                                            placeholder="Select a person"
+                                            optionFilterProp="label"
+                                            onChange={onCChange}
+                                            options={options}
+                                    />
+                                </div>
 
                             </TopBoxCard>
                             <div style={{
@@ -291,8 +318,16 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
         };
     }
     store.dispatch(setUserInfo(userInfo));
+    const result = await getData.post('admin/getAdminList', {
+        "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
+        "searchAuthority": null,    // 1: 일반, 0: 관리자
+        "page": 1,
+        "limit": -1
+    });
+    const list = result?.data?.entity?.adminList;
     if (query?.data) {
         const data = JSON.parse(decodeURIComponent(query.data));
-        return {props: {dataInfo: data}}
+        return {props: {dataInfo: data ?? {}, managerList: list ?? []}}
     }
+    return {props: {managerList: list}}
 })

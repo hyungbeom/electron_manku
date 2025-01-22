@@ -1,19 +1,47 @@
 import {BoxCard, datePickerForm, inputForm, inputNumberForm, selectBoxForm, TopBoxCard} from "@/utils/commonForm";
 import React, {useState} from "react";
-import {commonManage} from "@/utils/commonManage";
+import {commonManage, gridManage} from "@/utils/commonManage";
 import AddressSearch from "@/component/AddressSearch";
+import {DownloadOutlined} from "@ant-design/icons";
+import {findCodeInfo, findDocumentInfo} from "@/utils/api/commonApi";
 
 export default function Deahan({info, setInfo}) {
 
 
     const handleAddressComplete = (address, zipCode) => {
-        setInfo(v=>{
-            return {...v, recipientAddress : address, recipientPostalCode : zipCode}
+        setInfo(v => {
+            return {...v, recipientAddress: address, recipientPostalCode: zipCode}
         })
     };
 
     function onChange(e: any) {
         commonManage.onChange(e, setInfo)
+    }
+
+
+    async function handleKeyPress(e) {
+
+        if (e.key === 'Enter') {
+
+            switch (e.target.id) {
+                case 'connectInquiryNo' :
+                    const result = await findDocumentInfo(e, setInfo);
+                    setInfo(v => {
+                        return {
+                            ...result,
+                            connectInquiryNo: info.connectInquiryNo,
+                            documentNumberFull: v.documentNumberFull
+                        }
+                    })
+                    if (result?.agencyCode) {
+                        setValidate(v => {
+                            return {agencyCode: true}
+                        })
+                    }
+                    gridManage.resetData(gridRef, result?.estimateRequestDetailList);
+                    break;
+            }
+        }
     }
 
 
@@ -25,6 +53,15 @@ export default function Deahan({info, setInfo}) {
                 title: '연결 INQUIRY NO.', id: 'connectInquiryNo', onChange: onChange,
                 data: info
             })}
+
+            {inputForm({
+                title: '연결 INQUIRY No.',
+                id: 'connectInquiryNo',
+                suffix: <DownloadOutlined style={{cursor: 'pointer'}}/>,
+                onChange: onChange, data: info,
+                // handleKeyPress: handleKeyPress
+            })}
+
             {inputForm({
                 title: '고객사명', id: 'customerName', onChange: onChange,
                 data: info
