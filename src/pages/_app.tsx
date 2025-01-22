@@ -20,11 +20,9 @@ function App({Component, pageProps = {title: ''}, ...rest}: any) {
         }
     }, []);
 
+
       return   <>
-          <Script
-              src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"
-              strategy="lazyOnload"
-          />
+
             <Script src={"https://accounts.google.com/gsi/client"} async defer/>
           <Script src="https://apis.google.com/js/api.js" async defer/>
 

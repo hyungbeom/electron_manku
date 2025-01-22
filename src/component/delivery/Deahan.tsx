@@ -46,7 +46,7 @@ export default function Deahan({info, setInfo}) {
             gap: 10,
             marginTop: 10
         }}>
-            <BoxCard title={'받는분 정보'}>
+            <BoxCard title={'받는분 정보'} tooltip={'받는분의 정보에대한 입력란 입니다.'}>
                 {inputForm({
                     title: '성명', id: 'recipientName', onChange: onChange,
                     data: info
@@ -70,7 +70,7 @@ export default function Deahan({info, setInfo}) {
                 })}
             </BoxCard>
 
-            <BoxCard title={'화물정보'}>
+            <BoxCard title={'화물정보'} tooltip={'화물에 대한 정보 입력란 입니다.'}>
                 {inputForm({
                     title: '품목명', id: 'productName', onChange: onChange,
                     data: info

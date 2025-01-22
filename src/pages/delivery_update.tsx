@@ -72,7 +72,6 @@ export default function delivery_update({dataInfo}) {
 
     }
 
-
     return <>
         <LayoutComponent>
 

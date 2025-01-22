@@ -870,11 +870,11 @@ export const storeWriteInitial = {
     tariff: null,          // 관세
     vatAmount: null,              // 부가세
     shippingFee: null,            // 운임비
-    total : null,
-    totalVat : null,
-    saleTotal : null,
-    saleVatTotal : null,
-    operationIncome : null,
+    total: null,
+    totalVat: null,
+    saleTotal: null,
+    saleVatTotal: null,
+    operationIncome: null,
     orderStatusDetailList: []
 }
 
@@ -930,17 +930,16 @@ export const projectDetailUnit = {
 
 // ==============================================================================================================================================
 export const reqWriteList = {
-  "MODEL": 'model',
-  "수량": 'quantity',
-  "단위": 'unit',
-  "CURR": 'currency',
-  "NET/P": 'net',
-  "납기": 'deliveryDate',
-  "회신여부": 'content',
-  "회신일": 'replyDate',
-  "비고": 'remarks'
+    "MODEL": 'model',
+    "수량": 'quantity',
+    "단위": 'unit',
+    "CURR": 'currency',
+    "NET/P": 'net',
+    "납기": 'deliveryDate',
+    "회신여부": 'content',
+    "회신일": 'replyDate',
+    "비고": 'remarks'
 }
-
 
 
 // ==============================================================================================================================================
@@ -985,6 +984,32 @@ export const orderWriteList = {
     단가: 'unitPrice',
     금액: 'totalPrice'
 }
+export const storeWriteList = {
+    'Inquiry No.': 'orderDocumentNumberFull',
+    '세부항목 번호': 'itemDetailNo',
+    매입처명: 'agencyName',
+    거래처명: 'customerName',
+    환율: 'exchangeRate',
+    발주일자: 'orderDate',
+    송금일자: 'remittanceDate',
+    금액: 'amount',
+    환폐단위: 'currencyUnit',
+    원화환산금액: 'returnAmount',
+    수수료: 'commissionFee',
+    판매금액: 'salesAmount',
+    '판매금액(VAT 포함)': 'salesAmountVat',
+    입고일자: 'receiptDate',
+    출고일자: 'deliveryDate',
+    '계산서 발행일자결제': '',
+    '결제 여부': 'paymentStatus',
+    선수금: 'advancePayment',
+    비고: 'remarks'
+}
+
+
+
+
+
 
 
 

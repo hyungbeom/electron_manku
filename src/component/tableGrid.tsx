@@ -204,6 +204,9 @@ const TableGrid = ({
         setIsModalOpen(true);
     };
 
+
+
+
     return (
         <>
             <EstimateListModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} getRows={getSelectedRows}/>

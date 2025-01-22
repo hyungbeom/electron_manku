@@ -2676,10 +2676,12 @@ export const storeWriteColumn = [
         headerName: 'Inquiry No.',
         field: 'orderDocumentNumberFull',
         minWidth: 150,
+        editable: true
     }, {
         headerName: '세부항목 번호',
         field: 'itemDetailNo',
         minWidth: 150,
+        editable: true
     }, {
         headerName: '매입처명',
         field: 'agencyName',

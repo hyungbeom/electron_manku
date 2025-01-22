@@ -37,6 +37,7 @@ export function ExcelUpload({gridRef, list}) {
             // 시트를 JSON으로 변환
             const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
+
             // 첫 번째 행을 키로 사용해 객체 배열 생성
             const keys:any = jsonData[0];
             const rows = jsonData.slice(1);
@@ -47,6 +48,7 @@ export function ExcelUpload({gridRef, list}) {
                 });
                 return rowData;
             });
+            console.log(formattedData,'formattedData:')
 
            const result = gridManage.uploadExcelData(formattedData, list)
 

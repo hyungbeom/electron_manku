@@ -23,7 +23,7 @@ import {
     estimateRequestDetailUnit, estimateWriteList, orderDetailUnit, orderWriteList,
     projectDetailUnit,
     projectWriteList,
-    reqWriteList
+    reqWriteList, storeDetailUnit, storeWriteList
 } from "@/utils/initialList";
 import {ExcelUpload} from "@/component/common/ExcelUpload";
 import Upload from "antd/lib/upload";
@@ -207,7 +207,7 @@ export const selectBoxForm = ({title, id, disabled = false, data, onChange, list
         <div style={{fontSize: 12}}>{title}</div>
         {/*@ts-ignore*/}
         <Select className="custom-select" id={id} size={size}
-                value={!isNaN(parseInt(data[id])) ? parseInt(data[id]) : data[id] }
+                value={!isNaN(parseInt(data[id])) ? parseInt(data[id]) : data[id]}
                 onChange={(src, e) => onChange({target: {id: id, value: src, e: e}})}
                 style={{width: '100%', fontSize: 11}}>
             {list.map(v => {
@@ -293,6 +293,10 @@ export const tableButtonList = (type: any, gridRef?: any) => {
         const newRow = {...orderDetailUnit};
         gridRef.current.applyTransaction({add: [newRow]});
     }
+    function addStoreRow() {
+        const newRow = {...storeDetailUnit};
+        gridRef.current.applyTransaction({add: [newRow]});
+    }
 
     function addProjectRow() {
         const newRow = {...projectDetailUnit};
@@ -301,13 +305,21 @@ export const tableButtonList = (type: any, gridRef?: any) => {
 
     switch (type) {
 
+        case 'storeUpload' :
+            return <ExcelUpload gridRef={gridRef} list={storeWriteList}/>
+
+
+        case 'storeAdd' :
+            return <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
+                           onClick={addStoreRow}>
+                <SaveOutlined/>추가
+            </Button>
+
+        // ===================================================================
         case 'estimateUpload' :
             return <ExcelUpload gridRef={gridRef} list={estimateWriteList}/>
         case 'estimateAdd' :
-            return <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
-                           onClick={addEstimateRow}>
-                <SaveOutlined/>추가
-            </Button>
+
 
 
 

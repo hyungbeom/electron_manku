@@ -90,7 +90,7 @@ export default function delivery_read({dataInfo}) {
                           list={[{name: '조회', func: searchInfo, type: 'primary'}, {name: '신규생성', func: moveRouter}]}
                           mini={mini} setMini={setMini}>
                     {mini ? <div>
-                            <TopBoxCard title={'기본 정보'} grid={'1.5fr 1fr 1fr'}>
+                            <TopBoxCard title={'기본 정보'} grid={'300px 200px 1fr'}>
                                 {rangePickerForm({title: '출고일자', id: 'searchDate', onChange: onChange, data: info})}
                                 {inputForm({
                                     title: 'Inquiry No.',
@@ -100,7 +100,6 @@ export default function delivery_read({dataInfo}) {
                                     data: info
                                 })}
                             </TopBoxCard>
-
 
                             <div style={{display: 'grid', gridTemplateColumns: "350px 350px"}}>
                                 <BoxCard title={'받는분 정보'}>

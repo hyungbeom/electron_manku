@@ -120,10 +120,6 @@ export default function storeWrite({dataInfo}) {
         await saveStore({data: copyInfo, router: router})
     }
 
-    async function deleteList() {
-        const list = commonManage.getUnCheckList(gridRef);
-        gridManage.resetData(gridRef, list);
-    }
 
 
     function clearAll() {
@@ -213,19 +209,7 @@ export default function storeWrite({dataInfo}) {
         }
     }
 
-    /**
-     * @description 테이블 우측상단 관련 기본 유틸버튼
-     */
-    const subTableUtil = <div style={{display: 'flex', alignItems: 'end'}}>
-        {/*@ts-ignore*/}
-        <Button onClick={showModal} type={'primary'} size={'small'} style={{marginLeft: 5}}>
-            <SaveOutlined/>발주서 조회
-        </Button>
-        {/*@ts-ignored*/}
-        <Button type={'danger'} size={'small'} style={{marginLeft: 5,}} onClick={deleteList}>
-            <CopyOutlined/>삭제
-        </Button>
-    </div>
+
 
     return <>
         <OrderListModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} getRows={getSelectedRows}/>
@@ -338,12 +322,15 @@ export default function storeWrite({dataInfo}) {
                         : <></>}
                 </MainCard>
 
-                <TableGrid
+                {/*@ts-ignored*/}
+                <TableGrid deleteComp={  <Button onClick={showModal} type={'dash'} size={'small'} style={{marginLeft: 5, fontSize : 11}}>
+                    <SaveOutlined/>발주서 조회
+                </Button>}
                     gridRef={gridRef}
                     columns={storeWriteColumn}
                     onGridReady={onGridReady}
                     type={'write'}
-                    funcButtons={['storeUpload', 'storeAdd', 'delete', 'print']}
+                    funcButtons={['storeUpload', 'orderSelect', 'storeAdd', 'delete', 'print']}
                     onCellEditingStopped={onCellEditingStopped}
 
                 />
