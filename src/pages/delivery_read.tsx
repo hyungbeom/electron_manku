@@ -15,6 +15,7 @@ import {delilveryReadColumn} from "@/utils/columnList";
 import {useRouter} from "next/router";
 import message from "antd/lib/message";
 import Spin from "antd/lib/spin";
+import ReceiveComponent from "@/component/ReceiveComponent";
 
 export default function delivery_read({dataInfo}) {
     const router = useRouter();
@@ -85,6 +86,7 @@ export default function delivery_read({dataInfo}) {
     }
 
     return <Spin spinning={loading} tip={'배송정보 조회중...'}>
+        <ReceiveComponent searchInfo={searchInfo}/>
         <LayoutComponent>
             <div style={{
                 display: 'grid',

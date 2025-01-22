@@ -63,6 +63,7 @@ export default function delivery_write() {
         if (sendParam) {
             await getData.post('delivery/addDelivery', sendParam).then(v => {
                 if (v.data.code === 1) {
+                    window.opener?.postMessage('write', window.location.origin);
                     message.success('저장에 성공하였습니다.')
                     router.push(`/delivery_update?deliveryId=${v.data.entity.deliveryId}`)
                 } else {

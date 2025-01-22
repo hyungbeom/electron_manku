@@ -16,6 +16,8 @@ import Button from "antd/lib/button";
 import {CopyOutlined, FileExcelOutlined} from "@ant-design/icons";
 import {deleteProjectList, deleteRemittanceList, getDeliveryList, getRemittanceList} from "@/utils/api/mainApi";
 import message from "antd/lib/message";
+import Spin from "antd/lib/spin";
+import ReceiveComponent from "@/component/ReceiveComponent";
 
 const {RangePicker} = DatePicker
 export default function remittance_domestic({dataInfo}) {
@@ -25,7 +27,7 @@ export default function remittance_domestic({dataInfo}) {
 
     const [mini, setMini] = useState(true);
 
-
+    const [loading, setLoading] = useState(false);
     const [info, setInfo] = useState(copyInit)
 
 
@@ -44,13 +46,18 @@ export default function remittance_domestic({dataInfo}) {
 
     function handleKeyPress(e) {
         if (e.key === 'Enter') {
-            searchFunc()
+            searchInfo(e)
         }
     }
 
-    async function searchFunc() {
-        let result = await getRemittanceList({data: info});
-        gridManage.resetData(gridRef, result)
+    async function searchInfo(e) {
+        if(e) {
+            setLoading(true);
+            let result = await getRemittanceList({data: info});
+            gridManage.resetData(gridRef, result);
+            setLoading(false);
+        }
+        setLoading(false);
     }
 
 
@@ -60,7 +67,8 @@ export default function remittance_domestic({dataInfo}) {
         }
 
         const result = gridManage.getFieldValue(gridRef, 'remittanceId')
-        await deleteRemittanceList({data: {deleteRemittanceIdList: result}, returnFunc: searchFunc});
+        setLoading(true)
+        await deleteRemittanceList({data: {deleteRemittanceIdList: result}, returnFunc: searchInfo});
     }
 
     async function moveRouter() {
@@ -72,7 +80,8 @@ export default function remittance_domestic({dataInfo}) {
     }
 
 
-    return <>
+    return <Spin spinning={loading} tip={'국내송금 조회중...'}>
+        <ReceiveComponent searchInfo={searchInfo}/>
         <LayoutComponent>
             <div style={{
                 display: 'grid',
@@ -81,7 +90,7 @@ export default function remittance_domestic({dataInfo}) {
                 columnGap: 5
             }}>
                 <MainCard title={'국내송금 조회'} list={[
-                    {name: '조회', func: searchFunc, type: 'primary'},
+                    {name: '조회', func: searchInfo, type: 'primary'},
                     {name: '초기화', func: clearAll, type: 'danger'},
                     {name: '신규생성', func: moveRouter}
                 ]} mini={mini} setMini={setMini}>
@@ -168,7 +177,7 @@ export default function remittance_domestic({dataInfo}) {
                 />
             </div>
         </LayoutComponent>
-    </>
+    </Spin>
 }
 
 

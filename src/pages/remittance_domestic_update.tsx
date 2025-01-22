@@ -141,27 +141,10 @@ export default function remittance_domestic({dataInfo}) {
         };
 
         handleIteration();
-        const uploadContainer = document.querySelector(".ant-upload-list"); // 업로드 리스트 컨테이너
 
-        if (uploadContainer) {
-            const fileNodes = uploadContainer.querySelectorAll(".ant-upload-list-item-name");
-            const fileNames = Array.from(fileNodes).map((node:any) => node.textContent.trim());
 
-            let count = 0
-            fileRef.current.fileList.forEach((item, index) => {
-                if(item?.originFileObj){
-                    formData.append(`attachmentFileList[${count}].attachmentFile`, item.originFileObj);
-                    formData.append(`attachmentFileList[${count}].fileName`, fileNames[index].replace(/\s+/g, ""));
-                    count += 1;
-                }
-            });
-
-        }
-        //기존 기준 사라진 파일
-        const result = infoFileInit.filter(itemA => !fileRef.current.fileList.some(itemB => itemA.id === itemB.id));
-        result.map((v, idx) => {
-            formData.append(`deleteAttachmentIdList[${idx}]`, v.id);
-        })
+        commonManage.getUploadList(fileRef, formData);
+        commonManage.deleteUploadList(fileRef, formData, originFileList)
 
         formData.delete('createdDate')
         formData.delete('modifiedDate')

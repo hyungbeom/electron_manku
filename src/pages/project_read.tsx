@@ -13,15 +13,12 @@ import {deleteProjectList, searchProject} from "@/utils/api/mainApi";
 import _ from "lodash";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import {BoxCard, inputForm, MainCard, rangePickerForm, tooltipInfo, TopBoxCard} from "@/utils/commonForm";
-import {useRouter} from "next/router";
 import Spin from "antd/lib/spin";
 import ReceiveComponent from "@/component/ReceiveComponent";
 
 
 export default function ProjectRead({dataInfo}) {
 
-    console.log(dataInfo,'::')
-    const router = useRouter();
     const gridRef = useRef(null);
     const [mini, setMini] = useState(true);
     const copyInit = _.cloneDeep(projectReadInitial)
@@ -29,7 +26,6 @@ export default function ProjectRead({dataInfo}) {
     const [info, setInfo] = useState(copyInit)
 
     const [loading, setLoading] = useState(false);
-
 
 
     const onGridReady = (params) => {

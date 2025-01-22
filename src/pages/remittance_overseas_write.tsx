@@ -2,18 +2,17 @@ import React, {useEffect, useRef, useState} from "react";
 import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
-import {CopyOutlined, DownCircleFilled, DownloadOutlined,
+import {
+    CopyOutlined,
+    DownCircleFilled,
+    DownloadOutlined,
     RetweetOutlined,
     SaveOutlined,
-    UpCircleFilled} from "@ant-design/icons";
-import {
-    searchAgencyCodeColumn,
-    searchCustomerColumn,
-    tableOrderWriteColumn,
-} from "@/utils/columnList";
+    UpCircleFilled
+} from "@ant-design/icons";
+import {tableOrderWriteColumn,} from "@/utils/columnList";
 import DatePicker from "antd/lib/date-picker";
-import {orderWriteInitial, rfqWriteInitial, subRfqWriteInitial, tableOrderWriteInitial} from "@/utils/initialList";
-import {subOrderWriteInfo, subRfqWriteInfo} from "@/utils/modalDataList";
+import {orderWriteInitial, rfqWriteInitial} from "@/utils/initialList";
 import moment from "moment";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
@@ -22,16 +21,9 @@ import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import Select from "antd/lib/select";
-import * as XLSX from "xlsx";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
-import Modal from "antd/lib/modal/Modal";
-import Table from "antd/lib/table";
-import TableModal from "@/utils/TableModal";
 import {useRouter} from "next/router";
 import TableGrid from "@/component/tableGrid";
-import SearchAgendaModal from "@/component/SearchAgencyModal";
-import SearchCustomerModal from "@/component/SearchCustomerModal";
-import TextArea from "antd/lib/input/TextArea";
 
 export default function OrderWriter({dataInfo}) {
     const gridRef = useRef(null);
@@ -63,7 +55,6 @@ export default function OrderWriter({dataInfo}) {
     }, [dataInfo, router])
 
 
-
     function onChange(e) {
 
         let bowl = {}
@@ -84,7 +75,8 @@ export default function OrderWriter({dataInfo}) {
 
             // console.log(copyData, 'copyData~~~~~~~~~~~')
             await getData.post('order/addOrder', copyData).then(v => {
-                if(v.data.code === 1){
+                if (v.data.code === 1) {
+
                     message.success('저장되었습니다')
                     setInfo(rfqWriteInitial);
                     deleteList()
@@ -152,18 +144,18 @@ export default function OrderWriter({dataInfo}) {
 
         if (result?.data?.code === 1) {
 
-            if(result?.data?.entity?.estimateList.length) {
+            if (result?.data?.entity?.estimateList.length) {
                 setInfo(v => {
-                        return {...v, ...result?.data?.entity?.estimateList[0],
-                            writtenDate : moment(),
-                            delivery : moment()
+                        return {
+                            ...v, ...result?.data?.entity?.estimateList[0],
+                            writtenDate: moment(),
+                            delivery: moment()
                         }
                     }
                 )
             }
         }
     }
-
 
 
     function handleKeyPressDoc(e) {
@@ -173,18 +165,32 @@ export default function OrderWriter({dataInfo}) {
     }
 
 
-
     return <>
         <LayoutComponent>
-            <div style={{display: 'grid', gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`,  height: '100vh', columnGap: 5}}>
+            <div style={{
+                display: 'grid',
+                gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`,
+                height: '100vh',
+                columnGap: 5
+            }}>
 
-                <Card title={'발주서 작성'} style={{fontSize: 12, border: '1px solid lightGray'}} extra={<span style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>setMini(v => !v)}> {!mini ? <UpCircleFilled/> : <DownCircleFilled/>}</span>} >
+                <Card title={'발주서 작성'} style={{fontSize: 12, border: '1px solid lightGray'}}
+                      extra={<span style={{fontSize: 20, cursor: 'pointer'}} onClick={() => setMini(v => !v)}> {!mini ?
+                          <UpCircleFilled/> : <DownCircleFilled/>}</span>}>
 
                     {mini ? <div>
                         <Card size={'small'} title={'INQUIRY & PO no'}
-                              style={{ fontSize: 13, marginBottom : 5, boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
+                              style={{
+                                  fontSize: 13,
+                                  marginBottom: 5,
+                                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
                               }}>
-                            <div style={{display: 'grid', gridTemplateColumns: '0.6fr 1fr 1fr', width: 640, columnGap: 20}}>
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: '0.6fr 1fr 1fr',
+                                width: 640,
+                                columnGap: 20
+                            }}>
                                 <div>
                                     <div style={{paddingBottom: 3}}>작성일</div>
                                     <DatePicker value={info['writtenDate']}
@@ -201,7 +207,8 @@ export default function OrderWriter({dataInfo}) {
                                     <Input size={'small'} id={'documentNumberFull'} value={info['documentNumberFull']}
                                            onChange={onChange}
                                            onKeyDown={handleKeyPressDoc}
-                                           suffix={<DownloadOutlined style={{cursor: 'pointer'}} onClick={findDocument}/>}/>
+                                           suffix={<DownloadOutlined style={{cursor: 'pointer'}}
+                                                                     onClick={findDocument}/>}/>
                                 </div>
                                 <div>
                                     <div style={{paddingBottom: 3}}>거래처 PO no</div>
@@ -223,7 +230,8 @@ export default function OrderWriter({dataInfo}) {
 
                                 <div>
                                     <div style={{paddingBottom: 3}}>Messrs</div>
-                                    <Input id={'agencyCode'} value={info['agencyCode']} onChange={onChange} size={'small'}/>
+                                    <Input id={'agencyCode'} value={info['agencyCode']} onChange={onChange}
+                                           size={'small'}/>
                                 </div>
                                 <div style={{marginTop: 8}}>
                                     <div style={{paddingBottom: 3}}>Attn To</div>
@@ -245,11 +253,13 @@ export default function OrderWriter({dataInfo}) {
 
                                 <div>
                                     <div style={{paddingBottom: 3}}>Responsibility</div>
-                                    <Input disabled={true} id={'managerID'} value={userInfo['name']} onChange={onChange} size={'small'} />
+                                    <Input disabled={true} id={'managerID'} value={userInfo['name']} onChange={onChange}
+                                           size={'small'}/>
                                 </div>
                                 <div style={{marginTop: 8}}>
                                     <div style={{paddingBottom: 3}}>TEL</div>
-                                    <Input id={'managerPhoneNumber'} value={info['managerPhoneNumber']} onChange={onChange}
+                                    <Input id={'managerPhoneNumber'} value={info['managerPhoneNumber']}
+                                           onChange={onChange}
                                            size={'small'}/>
                                 </div>
                                 <div style={{marginTop: 8}}>
@@ -272,13 +282,14 @@ export default function OrderWriter({dataInfo}) {
                                 <div>
                                     <div style={{paddingBottom: 3}}>Payment Terms</div>
                                     <Select id={'paymentTerms'} size={'small'} defaultValue={'0'}
-                                            onChange={(src) => onChange({target: {id: 'searchType', value: src}})} options={[
-                                        {value: '0', label: 'By in advance T/T'},
-                                        {value: '1', label: 'Credit Card'},
-                                        {value: '2', label: 'L/C'},
-                                        {value: '3', label: 'Order 30% Before Shipping 70%'},
-                                        {value: '4', label: 'Order 50% Before Shipping 50%'},
-                                    ]} style={{width: '100%'}}>
+                                            onChange={(src) => onChange({target: {id: 'searchType', value: src}})}
+                                            options={[
+                                                {value: '0', label: 'By in advance T/T'},
+                                                {value: '1', label: 'Credit Card'},
+                                                {value: '2', label: 'L/C'},
+                                                {value: '3', label: 'Order 30% Before Shipping 70%'},
+                                                {value: '4', label: 'Order 50% Before Shipping 50%'},
+                                            ]} style={{width: '100%'}}>
                                     </Select>
                                 </div>
                                 <div style={{paddingTop: 8}}>
@@ -331,7 +342,7 @@ export default function OrderWriter({dataInfo}) {
 
                             <div style={{paddingTop: 10,}}>
 
-                                <Button type={'primary'} size={'small'} style={{fontSize: 11,marginRight: 8}}
+                                <Button type={'primary'} size={'small'} style={{fontSize: 11, marginRight: 8}}
                                         onClick={saveFunc}><SaveOutlined/>저장</Button>
 
                                 {/*@ts-ignored*/}
@@ -392,7 +403,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
 
     const result = await getData.post('order/getOrderDetail', {
-        orderId:orderId
+        orderId: orderId
     });
 
 

@@ -15,6 +15,7 @@ import {commonManage, gridManage} from "@/utils/commonManage";
 import {BoxCard, inputForm, MainCard, rangePickerForm, selectBoxForm} from "@/utils/commonForm";
 import {useRouter} from "next/router";
 import Spin from "antd/lib/spin";
+import ReceiveComponent from "@/component/ReceiveComponent";
 
 
 export default function EstimateRead({dataInfo}) {
@@ -82,6 +83,7 @@ export default function EstimateRead({dataInfo}) {
     }
 
     return <Spin spinning={loading} tip={'견적서 조회중...'}>
+        <ReceiveComponent searchInfo={searchInfo}/>
         <LayoutComponent>
             <div style={{
                 display: 'grid',

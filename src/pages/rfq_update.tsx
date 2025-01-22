@@ -123,6 +123,7 @@ export default function rqfUpdate({dataInfo, managerList}) {
 
     async function returnFunc(e) {
         if (e) {
+
             await getAttachmentFileList({
                 data: {
                     "relatedType": "ESTIMATE_REQUEST",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE

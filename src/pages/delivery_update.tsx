@@ -62,7 +62,8 @@ export default function delivery_update({dataInfo}) {
         if (sendParam) {
             await getData.post('delivery/updateDelivery', sendParam).then(v => {
                 if (v.data.code === 1) {
-                    return message.success('저장되었습니다.')
+                    window.opener?.postMessage('write', window.location.origin);
+                    return message.success('수정되었습니다.')
                 }
             }, err => console.log(err, '::::'))
         }

@@ -15,6 +15,7 @@ import {deleteRfq, searchRfq} from "@/utils/api/mainApi";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import {useRouter} from "next/router";
 import Spin from "antd/lib/spin";
+import ReceiveComponent from "@/component/ReceiveComponent";
 
 
 export default function rfqRead({dataInfo}) {
@@ -81,6 +82,7 @@ export default function rfqRead({dataInfo}) {
 
 
     return <Spin spinning={loading} tip={'견적의뢰 조회중...'}>
+        <ReceiveComponent searchInfo={searchInfo}/>
         <LayoutComponent>
             <div style={{
                 display: 'grid',

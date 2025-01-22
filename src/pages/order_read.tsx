@@ -11,11 +11,13 @@ import {setUserInfo} from "@/store/user/userSlice";
 import {getData} from "@/manage/function/api";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
-import {deleteOrder, searchOrder} from "@/utils/api/mainApi";
+import {deleteOrder, searchEstimate, searchOrder} from "@/utils/api/mainApi";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import _ from "lodash";
 import {BoxCard, inputForm, MainCard, rangePickerForm} from "@/utils/commonForm";
 import {useRouter} from "next/router";
+import ReceiveComponent from "@/component/ReceiveComponent";
+import Spin from "antd/lib/spin";
 
 
 export default function OrderRead({dataInfo}) {
@@ -27,6 +29,7 @@ export default function OrderRead({dataInfo}) {
     const [info, setInfo] = useState(copyInit);
     const [mini, setMini] = useState(true);
 
+    const [loading, setLoading] = useState(false);
     const onGridReady = (params) => {
         gridRef.current = params.api;
         params.api.applyTransaction({add: dataInfo ? dataInfo : []});
@@ -35,7 +38,7 @@ export default function OrderRead({dataInfo}) {
 
     function handleKeyPress(e) {
         if (e.key === 'Enter') {
-            searchInfo()
+            searchInfo(true)
         }
     }
 
@@ -44,13 +47,19 @@ export default function OrderRead({dataInfo}) {
     }
 
 
-    async function searchInfo() {
+    async function searchInfo(e) {
         const copyData: any = {...info}
-
-        const result = await getData.post('order/getOrderList',
-            {...copyData, "page": 1, "limit": -1});
-        gridManage.resetData(gridRef, result?.data?.entity?.orderList);
+        if(e) {
+            setLoading(true)
+            const result = await getData.post('order/getOrderList',
+                {...copyData, "page": 1, "limit": -1});
+            gridManage.resetData(gridRef, result?.data?.entity?.orderList);
+            setLoading(false)
+        }
+        setLoading(false)
     }
+
+
 
     async function deleteList() {
         if (gridRef.current.getSelectedRows().length < 1) {
@@ -63,6 +72,7 @@ export default function OrderRead({dataInfo}) {
         };
 
         const deleteList = gridManage.getFieldDeleteList(gridRef, fieldMappings);
+        setLoading(true);
         await deleteOrder({data: {deleteList: deleteList}, returnFunc: searchInfo});
 
     }
@@ -78,7 +88,8 @@ export default function OrderRead({dataInfo}) {
     }
 
 
-    return <>
+    return <Spin spinning={loading} tip={'견적서 조회중...'}>
+        <ReceiveComponent searchInfo={searchInfo}/>
         <LayoutComponent>
             <div style={{
                 display: 'grid',
@@ -161,7 +172,7 @@ export default function OrderRead({dataInfo}) {
 
             </div>
         </LayoutComponent>
-    </>
+    </Spin>
 }
 
 
