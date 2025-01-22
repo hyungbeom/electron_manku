@@ -105,7 +105,7 @@ export default function OrderWriter({dataInfo}) {
         <LayoutComponent>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '520px' : '65px'} calc(100vh - ${mini ? 575 : 120}px)`,
+                gridTemplateRows: `${mini ? '500px' : '65px'} calc(100vh - ${mini ? 555 : 120}px)`,
                 columnGap: 5
             }}>
                 <MainCard title={'발주서 작성'} list={[

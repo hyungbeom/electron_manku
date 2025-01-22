@@ -841,7 +841,7 @@ export const searchOrderInitial = {
     searchEndDate: moment().format('YYYY-MM-DD'),
     searchCustomerName: "",
     searchRecipientPhone: "",
-    searchIsConfirm: "",
+    searchIsConfirm: "X",
     searchTrackingNumber: "",
 }
 

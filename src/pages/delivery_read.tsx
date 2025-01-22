@@ -9,7 +9,7 @@ import {CopyOutlined, FileExcelOutlined} from "@ant-design/icons";
 import {deleteDelivery, getDeliveryList} from "@/utils/api/mainApi";
 import _ from "lodash";
 import {commonManage, gridManage} from "@/utils/commonManage";
-import {BoxCard, inputForm, MainCard, rangePickerForm, TopBoxCard} from "@/utils/commonForm";
+import {BoxCard, inputForm, MainCard, rangePickerForm, selectBoxForm, TopBoxCard} from "@/utils/commonForm";
 import TableGrid from "@/component/tableGrid";
 import {delilveryReadColumn} from "@/utils/columnList";
 import {useRouter} from "next/router";
@@ -126,13 +126,12 @@ export default function delivery_read({dataInfo}) {
                                     })}
                                 </BoxCard>
 
-                                <BoxCard title={'기타 정보'}>
-                                    {inputForm({
-                                        title: '확인여부',
-                                        id: 'searchIsConfirm',
-                                        onChange: onChange,
-                                        handleKeyPress: handleKeyPress,
-                                        data: info
+                                <BoxCard title={'기타 정보'} tooltip={''}>
+                                    {selectBoxForm({
+                                        title: '확인여부', id: 'searchIsConfirm', list: [
+                                            {value: 'X', label: 'X'},
+                                            {value: 'O', label: 'O'},
+                                        ], onChange: onChange, data: info
                                     })}
                                     {inputForm({
                                         title: '운송장번호',

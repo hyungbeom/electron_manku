@@ -73,7 +73,8 @@ export default function OrderRead({dataInfo}) {
     }
 
     async function moveRouter() {
-        router.push('/order_write')
+        window.open(`/order_write`, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
+
     }
 
 

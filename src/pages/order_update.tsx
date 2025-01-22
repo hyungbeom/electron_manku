@@ -1,8 +1,6 @@
 import React, {useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
-import {CopyOutlined, SaveOutlined} from "@ant-design/icons";
 import {orderDetailUnit, printEstimateInitial,} from "@/utils/initialList";
-import Button from "antd/lib/button";
 import message from "antd/lib/message";
 import {getData} from "@/manage/function/api";
 import {wrapper} from "@/store/store";
@@ -133,7 +131,6 @@ export default function order_update({dataInfo}) {
             }
         }
     }
-
 
 
     function copyPage() {

@@ -344,6 +344,8 @@ export const subRfqWriteColumn = [
 
 export const tableOrderWriteColumn = [
     {
+        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
+        checkboxSelection: true, // 각 행에 체크박스 추가
         headerName: 'MODEL',
         field: 'model',
         minWidth: 150,
@@ -2673,6 +2675,8 @@ export const remittanceReadColumn = [
 
 export const storeWriteColumn = [
     {
+        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
+        checkboxSelection: true, // 각 행에 체크박스 추가
         headerName: 'Inquiry No.',
         field: 'orderDocumentNumberFull',
         minWidth: 150,
