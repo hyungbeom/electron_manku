@@ -1,6 +1,7 @@
-import {BoxCard, datePickerForm, inputForm, TopBoxCard} from "@/utils/commonForm";
+import {BoxCard, datePickerForm, inputForm, selectBoxForm, TopBoxCard} from "@/utils/commonForm";
 import React from "react";
 import {commonManage} from "@/utils/commonManage";
+import AddressSearch from "@/component/AddressSearch";
 
 export default function ETC({info, setInfo}) {
 
@@ -8,6 +9,12 @@ export default function ETC({info, setInfo}) {
     function onChange(e) {
         commonManage.onChange(e, setInfo)
     }
+
+    const handleAddressComplete = (address, zipCode) => {
+        setInfo(v=>{
+            return {...v, recipientAddress : address, recipientPostalCode : zipCode}
+        })
+    };
 
     return <>
         <TopBoxCard title={'기본 정보'} grid={'1fr 1fr 1fr 1fr 1fr 1fr'}>
@@ -30,13 +37,24 @@ export default function ETC({info, setInfo}) {
                     id: 'recipientAddress',
                     placeholder: '매입처 당담자 입력 필요',
                     onChange: onChange,
-                    data: info
+                    data: info,
+                    suffix: <AddressSearch onComplete={handleAddressComplete}/>
                 })}
             </BoxCard>
             <BoxCard title={'화물정보'}>
                 {inputForm({title: '구분', id: 'classification', onChange: onChange, data: info})}
-                {inputForm({title: '결제방식', id: 'paymentMethod', onChange: onChange, data: info})}
-                {inputForm({title: '확인여부', id: 'isConfirm', onChange: onChange, data: info})}
+                {selectBoxForm({
+                    title: '결제방식', id: 'paymentMethod', list: [
+                        {value: '현불', label: '현불'},
+                        {value: '착불', label: '착불'},
+                    ], onChange: onChange, data: info
+                })}
+                {selectBoxForm({
+                    title: '유효기간', id: 'isConfirm', list: [
+                        {value: 'X', label: 'X'},
+                        {value: 'O', label: 'O'},
+                    ], onChange: onChange, data: info
+                })}
 
             </BoxCard>
 

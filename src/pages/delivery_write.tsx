@@ -87,7 +87,7 @@ export default function delivery_write() {
                 {name: '저장', func: saveFunc, type: 'primary'},
                 {name: '초기화', func: clearAll, type: 'danger'}
             ]}>
-                <Tabs activeKey={tabNumb} items={items} onChange={onChange}/>
+                <Tabs size={'small'} activeKey={tabNumb} items={items} onChange={onChange}/>
             </MainCard>
 
         </LayoutComponent>

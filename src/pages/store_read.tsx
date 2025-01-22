@@ -16,6 +16,7 @@ import {useRouter} from "next/router";
 import message from "antd/lib/message";
 
 export default function delivery_read({dataInfo}) {
+    console.log(dataInfo,'dataInfo:')
     const router = useRouter();
 
     const gridRef = useRef(null);
@@ -48,7 +49,7 @@ export default function delivery_read({dataInfo}) {
      * @description 배송등록 페이지로 이동합니다.
      */
     async function moveRouter() {
-        router.push('/delivery_write')
+        window.open(`/store_write`, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
     }
 
     /**

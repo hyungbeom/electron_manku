@@ -20,7 +20,7 @@ function createWindow() {
     });
 
     mainWindow.loadURL('http://localhost:3000'); // 올바른 URL 확인
-
+    mainWindow.setMenu(null);
     // 메뉴 커스터마이징
     const menu = Menu.buildFromTemplate([
         {
@@ -29,7 +29,7 @@ function createWindow() {
                 {
                     label: 'HOME',
                     click: () => {
-                        mainWindow.webContents.send('navigate-to', '/main'); // 클라이언트 측에서 페이지 이동 처리
+                        mainWindow.webContents.send('navigate-to', '/rfq_read'); // 클라이언트 측에서 페이지 이동 처리
                     }
                 }
             ]

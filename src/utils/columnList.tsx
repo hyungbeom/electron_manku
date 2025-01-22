@@ -2526,9 +2526,12 @@ export const projectReadColumn = [
 
 export const delilveryReadColumn = [
     {
+        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
+        checkboxSelection: true, // 각 행에 체크박스 추가
+        pinned: 'left',
         headerName: '출고일자.',
         field: 'deliveryDate',
-        minWidth: 150
+        maxWidth: 120
     }, {
         headerName: '운송유형',
         field: 'deliveryType',
@@ -2536,7 +2539,8 @@ export const delilveryReadColumn = [
     }, {
         headerName: 'Inquiry No.',
         field: 'connectInquiryNo',
-        minWidth: 150
+        maxWidth: 120,
+        pinned: 'left',
     }, {
         headerName: '받는분 성명',
         field: 'recipientName',
@@ -2576,11 +2580,12 @@ export const delilveryReadColumn = [
     }, {
         headerName: '고객사명',
         field: 'customerName',
-        minWidth: 150
+        minWidth: 150,
+        pinned: 'right'
     }, {
         headerName: 'model',
         field: 'model',
-        minWidth: 150,
+        maxWidth: 120,
     }, {
         headerName: 'maker',
         field: 'maker',
@@ -2592,7 +2597,8 @@ export const delilveryReadColumn = [
     }, {
         headerName: '확인 여부',
         field: 'isConfirm',
-        minWidth: 150,
+        maxWidth: 80,
+        pinned: 'right'
     }
 ];
 

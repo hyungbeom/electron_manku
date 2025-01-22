@@ -63,25 +63,9 @@ export default function remittance_domestic({dataInfo}) {
         await deleteRemittanceList({data: {deleteRemittanceIdList: result}, returnFunc: searchFunc});
     }
 
-
-    async function downloadExcel() {
-        gridManage.exportSelectedRowsToExcel(gridRef, '국내송금_조회리스트')
+    async function moveRouter() {
+        window.open(`/remittance_domestic_write`, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
     }
-
-
-    /**
-     * @description 테이블 우측상단 관련 기본 유틸버튼
-     */
-    const subTableUtil = <div>
-        {/*@ts-ignored*/}
-        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
-                onClick={deleteList}>
-            <CopyOutlined/>삭제
-        </Button>
-        <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
-                onClick={downloadExcel}>
-            <FileExcelOutlined/>출력
-        </Button></div>
 
 
     return <>
@@ -93,7 +77,8 @@ export default function remittance_domestic({dataInfo}) {
                 columnGap: 5
             }}>
                 <MainCard title={'국내송금 조회'} list={[
-                    {name: '조회', func: searchFunc, type: 'primary'}
+                    {name: '조회', func: searchFunc, type: 'primary'},
+                    {name: '신규생성', func: moveRouter}
                 ]} mini={mini} setMini={setMini}>
 
                     {mini ? <div>

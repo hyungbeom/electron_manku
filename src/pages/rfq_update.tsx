@@ -323,7 +323,6 @@ export default function rqfUpdate({dataInfo, managerList}) {
                     onGridReady={onGridReady}
                     type={'write'}
                     funcButtons={['upload', 'add', 'delete', 'print']}
-
                 />
 
             </div>

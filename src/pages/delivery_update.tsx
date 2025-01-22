@@ -22,7 +22,6 @@ export default function delivery_update({dataInfo}) {
     const [quickInfo, setQuickInfo] = useState({...dataInfo, deliveryType: 'QUICK'})
 
 
-    console.log(dataInfo, 'dataInfo::')
     const onChange = (key: string) => {
         setTabNumb(key);
     };

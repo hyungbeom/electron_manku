@@ -54,13 +54,14 @@ export function TopBoxCard({children, title = '', grid = '1fr 1fr 1fr 1fr'}) {
     </Card>
 }
 
-export function BoxCard({children, title = null, tooltip = ''}:any) {
+export function BoxCard({children, title = null, tooltip = ''}: any) {
     // <InfoCircleOutlined />
     return <Card size={'small'}
                  title={title ? <div style={{display: 'flex', justifyContent: 'space-between', fontSize: 12}}>
                      <span>{title}</span>
-                     <Tooltip style={{fontSize : 12}} title={<div style={{fontSize : 12}}>{tooltip}</div>} color={'cyan'} key={'cyan'}>
-                         <InfoCircleOutlined style={{cursor : 'pointer'}}/>
+                     <Tooltip style={{fontSize: 12}} title={<div style={{fontSize: 12}}>{tooltip}</div>} color={'cyan'}
+                              key={'cyan'}>
+                         <InfoCircleOutlined style={{cursor: 'pointer'}}/>
                      </Tooltip>
                  </div> : null}
 
@@ -126,8 +127,9 @@ export const rangePickerForm = ({
                                 }: any) => {
     let bowl = data;
     return <div style={{fontSize: 12, paddingBottom: 10}}>
-        <div style={{paddingBottom: 3,fontSize : 11}}>{title}</div>
-        <RangePicker className={'custom-rangepicker'} value={[moment(bowl[id][0]), moment(bowl[id][1])]} id={id} size={'small'} disabled={disabled}
+        <div style={{paddingBottom: 3, fontSize: 11}}>{title}</div>
+        <RangePicker className={'custom-rangepicker'} value={[moment(bowl[id][0]), moment(bowl[id][1])]} id={id}
+                     size={'small'} disabled={disabled}
                      onChange={(e, d) => onChange({target: {id: id, value: d}})} style={{width: '100%',}}/>
     </div>
 
@@ -140,7 +142,7 @@ export const datePickerForm = ({title, id, disabled = false, onChange, data}) =>
     return <div style={{fontSize: 12, paddingBottom: 10}}>
         <div>{title}</div>
         {/*@ts-ignore*/}
-        <DatePicker value={bowl[id] ? moment(bowl[id]) : ''} style={{width: '100%', fontSize : 11}}
+        <DatePicker value={bowl[id] ? moment(bowl[id]) : ''} style={{width: '100%', fontSize: 11}}
                     className="custom-datepicker"
                     disabledDate={commonManage.disabledDate}
                     onChange={(e, d) => onChange({
@@ -202,10 +204,11 @@ export const radioForm = ({title, id, disabled = false, data, onChange, list}) =
 export const selectBoxForm = ({title, id, disabled = false, data, onChange, list, size = 'small'}) => {
 
     return <div style={{}}>
-        <div style={{fontSize : 12}}>{title}</div>
+        <div style={{fontSize: 12}}>{title}</div>
         {/*@ts-ignore*/}
-        <Select className="custom-select"  id={id} size={size} value={parseInt(data[id])}
-                onChange={(src, e) => onChange({target: {id: id, value: src, e:e}})}
+        <Select className="custom-select" id={id} size={size}
+                value={!isNaN(parseInt(data[id])) ? parseInt(data[id]) : data[id] }
+                onChange={(src, e) => onChange({target: {id: id, value: src, e: e}})}
                 style={{width: '100%', fontSize: 11}}>
             {list.map(v => {
                 return <Option style={{fontSize: 11}} value={v.value}>{v.label}</Option>
@@ -227,7 +230,7 @@ export const textAreaForm = ({title, id, rows = 5, disabled = false, onChange, d
         />
     </div>
 }
-export const tooltipInfo = (type:any) => {
+export const tooltipInfo = (type: any) => {
 
     switch (type) {
         case 'readProject' :
@@ -249,7 +252,7 @@ export const tooltipInfo = (type:any) => {
                 <div>'SHARE_POINT' 파일 입력란입니다.</div>
                 <div>복제시 파일들은 복제가 되지 않습니다.</div>
                 <div>자세한 규칙은 아래 버튼을 클릭하세요</div>
-                <Button size={'small'} style={{color: 'black', cursor: 'pointer', fontSize: 10, marginTop : 10}}
+                <Button size={'small'} style={{color: 'black', cursor: 'pointer', fontSize: 10, marginTop: 10}}
                         onClick={() => {
                             window.open('/erp_rule', '_blank', 'width=800,height=600,scrollbars=yes');
                         }}>링크클릭</Button>
@@ -259,24 +262,27 @@ export const tooltipInfo = (type:any) => {
 }
 
 
-export const tableButtonList = (type:any, gridRef?:any) => {
+export const tableButtonList = (type: any, gridRef?: any) => {
 
     const downloadExcel = async () => {
         gridManage.exportSelectedRowsToExcel(gridRef, '조회리스트')
     };
+
     function deleteList() {
         const list = commonManage.getUnCheckList(gridRef);
         gridManage.resetData(gridRef, list);
     }
+
     function addRow() {
-        const agencyCode:any = document.getElementById('agencyCode')
+        const agencyCode: any = document.getElementById('agencyCode')
 
         const newRow = {...estimateRequestDetailUnit};
         newRow['currency'] = commonManage.changeCurr(agencyCode.value)
         gridRef.current.applyTransaction({add: [newRow]});
     }
+
     function addEstimateRow() {
-        const agencyCode:any = document.getElementById('agencyCode')
+        const agencyCode: any = document.getElementById('agencyCode')
 
         const newRow = {...estimateDetailUnit};
         newRow['currency'] = commonManage.changeCurr(agencyCode.value)
@@ -287,6 +293,7 @@ export const tableButtonList = (type:any, gridRef?:any) => {
         const newRow = {...orderDetailUnit};
         gridRef.current.applyTransaction({add: [newRow]});
     }
+
     function addProjectRow() {
         const newRow = {...projectDetailUnit};
         gridRef.current.applyTransaction({add: [newRow]});
@@ -297,8 +304,8 @@ export const tableButtonList = (type:any, gridRef?:any) => {
         case 'estimateUpload' :
             return <ExcelUpload gridRef={gridRef} list={estimateWriteList}/>
         case 'estimateAdd' :
-            return  <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
-                            onClick={addEstimateRow}>
+            return <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
+                           onClick={addEstimateRow}>
                 <SaveOutlined/>추가
             </Button>
 
@@ -309,8 +316,8 @@ export const tableButtonList = (type:any, gridRef?:any) => {
         case 'orderUpload' :
             return <ExcelUpload gridRef={gridRef} list={orderWriteList}/>
         case 'orderAdd' :
-            return  <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
-                            onClick={addOrderRow}>
+            return <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
+                           onClick={addOrderRow}>
                 <SaveOutlined/>추가
             </Button>
         // =======================================================
@@ -319,13 +326,13 @@ export const tableButtonList = (type:any, gridRef?:any) => {
         case 'upload' :
             return <ExcelUpload gridRef={gridRef} list={reqWriteList}/>
         case 'add' :
-            return  <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
-                            onClick={addRow}>
+            return <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
+                           onClick={addRow}>
                 <SaveOutlined/>추가
             </Button>
         case 'addProjectRow' :
-            return  <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
-                            onClick={addProjectRow}>
+            return <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
+                           onClick={addProjectRow}>
                 <SaveOutlined/>추가
             </Button>
         case 'delete' :
