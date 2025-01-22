@@ -111,23 +111,9 @@ export default function projectWrite({dataInfo, managerList}) {
 
         setLoading(true)
         const formData: any = new FormData();
+        commonManage.setInfoFormData(info, formData, listType, list)
+        commonManage.getUploadList(fileRef, formData);
 
-        const handleIteration = () => {
-            for (const {key, value} of commonManage.commonCalc(info)) {
-                if (key !== listType) {
-                    formData.append(key, value);
-                }
-            }
-        };
-
-        handleIteration();
-        list.forEach((detail, index) => {
-            Object.keys(detail).forEach((key) => {
-                formData.append(`${listType}[${index}].${key}`, detail[key]);
-            });
-        });
-
-        commonManage.getUploadList(fileRef, formData)
 
         formData.delete('createdDate')
         formData.delete('modifiedDate')

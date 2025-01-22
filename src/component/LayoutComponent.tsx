@@ -42,7 +42,7 @@ export default function LayoutComponent({children, userInfo = null}) {
             ],
 
         }, {
-            label: '전적의뢰',
+            label: '견적의뢰',
             key: 'rfq',
             icon: <PullRequestOutlined/>,
             style: {margin: ' 0px -20px'},
