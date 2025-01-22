@@ -68,20 +68,19 @@ export default function delivery_read({dataInfo}) {
         if (gridRef.current.getSelectedRows().length < 1) {
             return message.error('삭제할 데이터를 선택해주세요.')
         }
-        const fieldMappings = {
+
+        const deleteList = gridManage.getFieldDeleteList(gridRef, {
             orderStatusId: "orderStatusId",
             orderStatusDetailId: "orderStatusDetailId",
-        };
-
-        const deleteList = gridManage.getFieldDeleteList(gridRef, fieldMappings);
+        });
         deleteOrderStatusDetails({data: {deleteList: deleteList}, returnFunc: searchInfo})
     }
 
 
-    const downloadExcel = async () => {
-        gridManage.exportSelectedRowsToExcel(gridRef, '발주현황표')
-    };
-
+    function clearAll() {
+        setInfo(copyInit);
+        gridRef.current.deselectAll();
+    }
 
     return <>
         <LayoutComponent>
@@ -91,7 +90,9 @@ export default function delivery_read({dataInfo}) {
                 columnGap: 5
             }}>
                 <MainCard title={'입고조회'}
-                          list={[{name: '조회', func: searchInfo, type: 'primary'}, {name: '신규생성', func: moveRouter}]}
+                          list={[{name: '조회', func: searchInfo, type: 'primary'},
+                              {name: '초기화', func: clearAll, type: 'danger'},
+                              {name: '신규생성', func: moveRouter}]}
                           mini={mini} setMini={setMini}>
                     {mini ? <div>
                             <TopBoxCard title={'기본 정보'} grid={'1.5fr 1fr 1fr'}>

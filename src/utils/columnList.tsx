@@ -2818,6 +2818,8 @@ export const storeReadColumn = [
         field: 'carrierName',
         minWidth: 80,
     }, {
+        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
+        checkboxSelection: true, // 각 행에 체크박스 추가
         headerName: 'B/L No.',
         field: 'blNo',
         maxWidth: 100,
@@ -2826,8 +2828,7 @@ export const storeReadColumn = [
         headerName: 'Inquiry No.',
         field: 'orderDocumentNumberFull',
         maxWidth: 120,
-        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
-        checkboxSelection: true, // 각 행에 체크박스 추가
+
         pinned: 'left'
     }, {
         headerName: '세부항목 번호',

@@ -66,6 +66,10 @@ export default function remittance_domestic({dataInfo}) {
     async function moveRouter() {
         window.open(`/remittance_domestic_write`, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
     }
+    function clearAll() {
+        setInfo(copyInit);
+        gridRef.current.deselectAll();
+    }
 
 
     return <>
@@ -78,6 +82,7 @@ export default function remittance_domestic({dataInfo}) {
             }}>
                 <MainCard title={'국내송금 조회'} list={[
                     {name: '조회', func: searchFunc, type: 'primary'},
+                    {name: '초기화', func: clearAll, type: 'danger'},
                     {name: '신규생성', func: moveRouter}
                 ]} mini={mini} setMini={setMini}>
 

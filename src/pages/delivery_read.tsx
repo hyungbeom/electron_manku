@@ -79,6 +79,11 @@ export default function delivery_read({dataInfo}) {
         await deleteDelivery({data: {deleteIdList: deleteIdList}, returnFunc: searchInfo});
     }
 
+    function clearAll() {
+        setInfo(copyInit);
+        gridRef.current.deselectAll();
+    }
+
     return <Spin spinning={loading} tip={'배송정보 조회중...'}>
         <LayoutComponent>
             <div style={{
@@ -87,7 +92,9 @@ export default function delivery_read({dataInfo}) {
                 columnGap: 5
             }}>
                 <MainCard title={'배송조회'}
-                          list={[{name: '조회', func: searchInfo, type: 'primary'}, {name: '신규생성', func: moveRouter}]}
+                          list={[{name: '조회', func: searchInfo, type: 'primary'},
+                              {name: '초기화', func: clearAll, type: 'danger'},
+                              {name: '신규생성', func: moveRouter}]}
                           mini={mini} setMini={setMini}>
                     {mini ? <div>
                             <TopBoxCard title={'기본 정보'} grid={'300px 200px 1fr'}>

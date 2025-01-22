@@ -67,27 +67,15 @@ export default function OrderRead({dataInfo}) {
 
     }
 
-    const downloadExcel = async () => {
-        gridManage.exportSelectedRowsToExcel(gridRef, '발주서_목록')
-    };
+    function clearAll() {
+        setInfo(copyInit);
+        gridRef.current.deselectAll();
+    }
 
     async function moveRouter() {
         router.push('/order_write')
     }
 
-    /**
-     * @description 테이블 우측상단 관련 기본 유틸버튼
-     */
-    const subTableUtil = <div>
-        {/*@ts-ignored*/}
-        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
-                onClick={deleteList}>
-            <CopyOutlined/>삭제
-        </Button>
-        <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
-                onClick={downloadExcel}>
-            <FileExcelOutlined/>출력
-        </Button></div>
 
     return <>
         <LayoutComponent>
@@ -97,7 +85,9 @@ export default function OrderRead({dataInfo}) {
                 columnGap: 5
             }}>
                 <MainCard title={'발주서 조회'}
-                          list={[{name: '조회', func: searchInfo, type: 'primary'}, {name: '신규생성', func: moveRouter}]}
+                          list={[{name: '조회', func: searchInfo, type: 'primary'},
+                              {name: '초기화', func: clearAll, type: 'danger'},
+                              {name: '신규생성', func: moveRouter}]}
                           mini={mini} setMini={setMini}>
 
                     {mini ? <div
