@@ -21,17 +21,6 @@ export default function LayoutComponent({children, userInfo = null}) {
 
     const items: any = [
         {
-            label: '홈',
-            key: 'home',
-            icon: <FundProjectionScreenOutlined/>,
-            style: {margin: ' 0px -20px 0px -10px'},
-            children: [
-                {label: <span style={{fontSize: '12px'}}>메뉴</span>, key: 'menu'},
-                {label: <span style={{fontSize: '12px'}}>알림</span>, key: 'alarm'},
-                {label: <span style={{fontSize: '12px'}}>달력</span>, key: 'calender'}
-            ],
-        },
-        {
             label: '프로젝트',
             key: 'project',
             icon: <FundProjectionScreenOutlined/>,
@@ -90,7 +79,7 @@ export default function LayoutComponent({children, userInfo = null}) {
                 {label: <span style={{fontSize: '12px'}}>입고 등록</span>, key: 'write'},
                 {label: <span style={{fontSize: '12px'}}>입고 조회</span>, key: 'read'}
             ]
-        },{
+        }, {
             label: '배송',
             key: 'delivery',
             icon: <SendOutlined/>,
@@ -99,7 +88,7 @@ export default function LayoutComponent({children, userInfo = null}) {
                 {label: <span style={{fontSize: '12px'}}>배송 등록</span>, key: 'write'},
                 {label: <span style={{fontSize: '12px'}}>배송 조회</span>, key: 'read'}
             ]
-        },{
+        }, {
             label: '송금',
             key: 'remittance_domestic',
             icon: <SendOutlined/>,
@@ -108,7 +97,7 @@ export default function LayoutComponent({children, userInfo = null}) {
                 {label: <span style={{fontSize: '12px'}}>국내 송금 등록</span>, key: 'write'},
                 {label: <span style={{fontSize: '12px'}}>국내 송금 목록</span>, key: 'read'},
             ],
-        },{
+        }, {
             label: '데이터관리',
             key: 'data',
             icon: <MailOutlined/>,
@@ -121,7 +110,7 @@ export default function LayoutComponent({children, userInfo = null}) {
                 {label: <span style={{fontSize: '12px'}}>메이커</span>, key: 'public'},
                 {label: <span style={{fontSize: '12px'}}>HS CODE</span>, key: 'public'},
             ],
-        },{
+        }, {
             label: '공지사항',
             key: 'note',
             icon: <MailOutlined/>,
@@ -140,12 +129,6 @@ export default function LayoutComponent({children, userInfo = null}) {
                 {label: <span style={{fontSize: '12px'}}>기타</span>, key: 'etc'},
             ],
         }
-
-
-
-
-
-
 
 
     ];
