@@ -14,7 +14,7 @@ import TableGrid from "@/component/tableGrid";
 import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, TopBoxCard} from "@/utils/commonForm";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import _ from "lodash";
-import {findEstDocumentInfo} from "@/utils/api/commonApi";
+import {findEstDocumentInfo, findOrderDocumentInfo} from "@/utils/api/commonApi";
 import {saveOrder} from "@/utils/api/mainApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 
@@ -63,11 +63,12 @@ export default function OrderWriter({dataInfo}) {
     };
 
 
+
     async function handleKeyPress(e) {
         if (e.key === 'Enter') {
             switch (e.target.id) {
                 case 'ourPoNo' :
-                    await findEstDocumentInfo(e, setInfo)
+                    await findOrderDocumentInfo(e, setInfo, gridRef)
                     break;
             }
         }
@@ -141,7 +142,7 @@ export default function OrderWriter({dataInfo}) {
                                 title: '연결 INQUIRY No.',
                                 id: 'ourPoNo',
                                 suffix: <DownloadOutlined style={{cursor: 'pointer'}}/>,
-                                onChange: onChange, data: info
+                                onChange: onChange, data: info, handleKeyPress: handleKeyPress
                             })}
                             {inputForm({title: '거래처 PO no', id: 'yourPoNo', onChange: onChange, data: info})}
                         </TopBoxCard>

@@ -53,9 +53,8 @@ export function ExcelUpload({gridRef, list}) {
 
             const result = gridManage.uploadExcelData(formattedData, list)
 
-            console.log(formattedData,'formattedData::')
-            console.log(result,'result::')
-            gridManage.resetData(gridRef, result);
+
+            gridManage.newData(gridRef, result)
             message.success(`${file.name}_불러오기가 완료되었습니다.`);
         }
         reader.onerror = () => {

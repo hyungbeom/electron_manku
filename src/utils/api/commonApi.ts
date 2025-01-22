@@ -3,6 +3,7 @@ import message from "antd/lib/message";
 import {modalList} from "@/utils/initialList";
 import moment from "moment/moment";
 import {checkInquiryNo} from "@/utils/api/mainApi";
+import {gridManage} from "@/utils/commonManage";
 
 
 export const findCodeInfo = async (event, setInfo, openModal, type? , setValidate?) => {
@@ -111,13 +112,14 @@ export const findEstDocumentInfo = async (event, setInfo) => {
 };
 
 
-export const findOrderDocumentInfo = async (event, setInfo) => {
+export const findOrderDocumentInfo = async (event, setInfo, gridRef?) => {
 
     const result = await getData.post('estimate/getEstimateDetail', {
         "estimateId": null,
         "documentNumberFull": event.target.value
     });
     if (result?.data?.code === 1) {
+
 
 
         if (result?.data?.entity?.estimateDetail?.estimateDetailList.length) {
@@ -130,7 +132,9 @@ export const findOrderDocumentInfo = async (event, setInfo) => {
                         orderDetailList: result?.data?.entity?.estimateDetail?.estimateDetailList
                     }
                 }
-            )
+            );
+            gridManage.resetData(gridRef, result?.data?.entity?.estimateDetail?.estimateDetailList)
+
         }
     }
 };

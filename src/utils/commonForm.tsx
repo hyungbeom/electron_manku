@@ -174,7 +174,8 @@ export const inputNumberForm = ({
                                     onChange,
                                     data,
                                     formatter = null,
-                                    parser = null
+                                    parser = null,
+    step = 1
                                 }: any) => {
     let bowl = data;
 
@@ -185,6 +186,7 @@ export const inputNumberForm = ({
                      style={{width: '100%'}}
                      formatter={formatter}
                      parser={parser}
+                     step={step}
                      onChange={e => onChange({target: {id: id, value: e}})}
                      size={'small'}
                      placeholder={placeholder}
@@ -311,6 +313,8 @@ export const tableButtonList = (type: any, gridRef?: any) => {
         gridRef.current.applyTransaction({add: [newRow]});
     }
 
+
+
     switch (type) {
 
         case 'storeUpload' :
@@ -327,7 +331,10 @@ export const tableButtonList = (type: any, gridRef?: any) => {
         case 'estimateUpload' :
             return <ExcelUpload gridRef={gridRef} list={estimateWriteList}/>
         case 'estimateAdd' :
-
+            return <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
+                           onClick={addEstimateRow}>
+                <SaveOutlined/>추가
+            </Button>
 
 
 

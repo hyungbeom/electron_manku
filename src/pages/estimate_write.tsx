@@ -15,8 +15,8 @@ import {commonManage, gridManage} from "@/utils/commonManage";
 import {
     BoxCard,
     datePickerForm,
-    inputForm,
-    MainCard,
+    inputForm, inputNumberForm,
+    MainCard, numbFormatter, numbParser,
     selectBoxForm,
     textAreaForm,
     TopBoxCard
@@ -49,7 +49,7 @@ export default function EstimateWrite({dataInfo}) {
 
     const [info, setInfo] = useState<any>({...copyInit, ...dataInfo, ...adminParams})
     const [mini, setMini] = useState(true);
-    const [validate, setValidate] = useState({agencyCode: !!dataInfo});
+    const [validate, setValidate] = useState({agencyCode: !!dataInfo, documentNumberFull : true});
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
 
     const [fileList, setFileList] = useState([]);
@@ -85,7 +85,7 @@ export default function EstimateWrite({dataInfo}) {
                     })
                     if (result?.agencyCode) {
                         setValidate(v => {
-                            return {agencyCode: true}
+                            return {...v, agencyCode: true}
                         })
                     }
                     gridManage.resetData(gridRef, result?.estimateRequestDetailList);
@@ -109,6 +109,13 @@ export default function EstimateWrite({dataInfo}) {
     async function saveFunc() {
         gridRef.current.clearFocusedCell();
         const list = gridManage.getAllData(gridRef);
+
+        if (!info['documentNumberFull']) {
+            setValidate(v => {
+                return {...v, documentNumberFull: false}
+            })
+            return message.warn('INQUIRY NO. 정보가 누락되었습니다.')
+        }
 
         if (!info['agencyCode']) {
             return message.warn('매입처 코드가 누락되었습니다.')
@@ -174,6 +181,7 @@ export default function EstimateWrite({dataInfo}) {
                                     placeholder: '폴더생성 규칙 유의',
                                     onChange: onChange,
                                     data: info,
+                                    validate : validate['documentNumberFull'],
                                     suffix:
                                         <PlusSquareOutlined style={{cursor: 'pointer'}} onClick={
                                             async (e) => {
@@ -287,32 +295,26 @@ export default function EstimateWrite({dataInfo}) {
                                 <BoxCard title={'운송 정보'}>
                                     {selectBoxForm({
                                         title: '유효기간', id: 'validityPeriod', list: [
-                                            {value: '0', label: '견적 발행 후 10일간'},
-                                            {value: '1', label: '견적 발행 후 30일간'},
+                                            {value: '견적 발행 후 10일간', label: '견적 발행 후 10일간'},
+                                            {value: '견적 발행 후 30일간', label: '견적 발행 후 30일간'},
                                         ], onChange: onChange, data: info
                                     })}
                                     {selectBoxForm({
-                                        title: '결제조건', id: 'validityPeriod', list: [
-                                            {value: '0', label: '발주시 50% / 납품시 50%'},
-                                            {value: '1', label: '납품시 현금결제'},
-                                            {value: '2', label: '정기결제'},
+                                        title: '결제조건', id: 'paymentTerms', list: [
+                                            {value: '발주시 50% / 납품시 50%', label: '발주시 50% / 납품시 50%'},
+                                            {value: '납품시 현금결제', label: '납품시 현금결제'},
+                                            {value: '정기결제', label: '정기결제'},
                                         ], onChange: onChange, data: info
                                     })}
 
                                     {selectBoxForm({
                                         title: '운송조건', id: 'shippingTerms', list: [
-                                            {value: '0', label: '귀사도착도'},
-                                            {value: '1', label: '화물 및 택배비 별도'},
+                                            {value: '귀사도착도', label: '귀사도착도'},
+                                            {value: '화물 및 택배비 별도', label: '화물 및 택배비 별도'},
                                         ], onChange: onChange, data: info
                                     })}
-                                    {inputForm({title: 'Delivery(weeks)', id: 'delivery', onChange: onChange, data: info})}
-                                    {inputForm({
-                                        title: '환율',
-                                        id: 'exchangeRate',
-                                        placeholder: '직접기입(자동환율연결x)',
-                                        onChange: onChange,
-                                        data: info
-                                    })}
+                                    {inputNumberForm({title: 'Delivery(weeks)', id: 'delivery', onChange: onChange, data: info})}
+                                    {inputNumberForm({title: '환율', id: 'exchangeRate', onChange: onChange, data: info, step : 0.01})}
                                 </BoxCard>
 
                                 <BoxCard title={'Maker 정보'}>

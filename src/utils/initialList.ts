@@ -5,7 +5,6 @@ import {
     searchMakerColumn,
     tableOrderReadColumns
 } from "@/utils/columnList";
-import {commonManage} from "@/utils/commonManage";
 
 export const makerRegistInitial = {
     "makerName": "",                   // MAKER
@@ -42,9 +41,9 @@ export const estimateWriteInitial = {
     "managerName": "",      // 담당자
     "phoneNumber": "",  // 전화번호
     "faxNumber": "",                // 팩스번호
-    "validityPeriod": "0",    // 유효기간
-    "paymentTerms": "0",                // 결제조건
-    "shippingTerms": "0",             // 운송조건
+    "validityPeriod":'견적 발행 후 10일간',    // 유효기간
+    "paymentTerms": '발주시 50% / 납품시 50%',                // 결제조건
+    "shippingTerms": '귀사도착도',             // 운송조건
     "exchangeRate": "",                  // 환율
     "estimateManager": "",            // 담당자
     "email": "",             // E-MAIL

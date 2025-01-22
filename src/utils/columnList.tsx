@@ -2521,6 +2521,9 @@ export const projectReadColumn = [
         headerName: '단위 가격',
         field: 'unitPrice',
         minWidth: 150,
+        valueGetter: (params) => {
+            return (params.data.unitPrice).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); // A와 B를 곱한 값
+        },
     }, {
         headerName: '총액',
         field: 'total',

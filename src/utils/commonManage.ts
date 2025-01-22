@@ -653,3 +653,21 @@ fileManage.getFormatFiles = function (list) {
     }))
 
 }
+
+
+commonManage.removeInvalid = function(obj){
+    // 객체의 모든 키를 순회
+    for (const key in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+            // 값이 객체이면 재귀 호출
+            if (typeof obj[key] === "object" && obj[key] !== null) {
+                this.removeInvalid(obj[key]);
+            }
+            // 값이 "Invalid date"이면 빈 문자열로 변경
+            if (obj[key] === "Invalid date") {
+                obj[key] = "";
+            }
+        }
+    }
+    return obj;
+}
