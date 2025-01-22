@@ -107,6 +107,7 @@ export default function EstimateWrite({dataInfo}) {
     }
 
     async function saveFunc() {
+        gridRef.current.clearFocusedCell();
         const list = gridManage.getAllData(gridRef);
 
         if (!info['agencyCode']) {

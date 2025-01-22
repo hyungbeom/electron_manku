@@ -72,6 +72,7 @@ export default function projectUpdate({dataInfo}) {
     }
 
     async function saveFunc() {
+        gridRef.current.clearFocusedCell();
         if (!info['documentNumberFull']) {
             return message.warn('프로젝트 번호가 누락되었습니다.')
         }

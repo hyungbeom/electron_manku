@@ -91,6 +91,7 @@ export default function estimate_update({dataInfo}) {
 
 
     async function saveFunc() {
+        gridRef.current.clearFocusedCell();
         const list = gridManage.getAllData(gridRef)
         if (!list.length) {
             return message.warn('하위 데이터 1개 이상이여야 합니다')
@@ -101,16 +102,6 @@ export default function estimate_update({dataInfo}) {
 
         setLoading(true)
         const formData: any = new FormData();
-
-        const handleIteration = () => {
-            for (const {key, value} of commonManage.commonCalc(info)) {
-                if (key !== listType) {
-                    formData.append(key, value);
-                }
-            }
-        };
-
-        handleIteration();
 
         commonManage.setInfoFormData(info, formData, listType, list)
         commonManage.getUploadList(fileRef, formData);

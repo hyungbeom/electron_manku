@@ -50,6 +50,7 @@ export default function order_update({dataInfo}) {
     }
 
     async function saveFunc() {
+        gridRef.current.clearFocusedCell();
         const list = gridManage.getAllData(gridRef)
         if (!list.length) {
             return message.warn('하위 데이터 1개 이상이여야 합니다')
@@ -109,16 +110,6 @@ export default function order_update({dataInfo}) {
 
     }
 
-
-    function deleteList() {
-        const list = commonManage.getUnCheckList(gridRef);
-        gridManage.resetData(gridRef, list);
-    }
-
-    function addRow() {
-        const newRow = {...copyUnitInit, "currency": commonManage.changeCurr(info['agencyCode'])};
-        gridRef.current.applyTransaction({add: [newRow]});
-    }
 
 
     async function handleKeyPress(e) {

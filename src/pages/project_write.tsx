@@ -97,6 +97,7 @@ export default function projectWrite({dataInfo, managerList}) {
     }
 
     async function saveFunc() {
+        gridRef.current.clearFocusedCell();
         if (!info['documentNumberFull']) {
             setValidate(v => {
                 return {...v, documentNumberFull: false}

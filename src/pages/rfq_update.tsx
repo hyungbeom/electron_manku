@@ -95,6 +95,7 @@ export default function rqfUpdate({dataInfo, managerList}) {
     }
 
     async function saveFunc() {
+        gridRef.current.clearFocusedCell();
         if (!validate['agencyCode']) {
              message.warn('올바른 경로를 통한 매입처코드를 입력해주세요.');
             return;

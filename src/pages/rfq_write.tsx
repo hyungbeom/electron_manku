@@ -120,6 +120,7 @@ export default function rqfWrite({dataInfo, managerList}) {
     }
 
     async function saveFunc() {
+        gridRef.current.clearFocusedCell();
         if (!info['managerAdminName']) {
             return message.warn('담당자가 누락되었습니다.')
         }

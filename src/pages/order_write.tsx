@@ -84,6 +84,7 @@ export default function OrderWriter({dataInfo}) {
 
 
     async function saveFunc() {
+        gridRef.current.clearFocusedCell();
         if(!info['documentNumberFull']){
             setValidate(v=> {
                 return {...v, documentNumberFull: false}

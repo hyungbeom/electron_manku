@@ -95,6 +95,7 @@ export default function storeWrite({dataInfo}) {
     }
 
     async function saveFunc() {
+        gridRef.current.clearFocusedCell();
         if (!info['blNo']) {
             return message.warn('B/L No.가 누락되었습니다.')
         }
