@@ -42,8 +42,8 @@ export default function makerRead({dataInfo}) {
 
     }
 
-    function moveRouter() {
-
+    async function moveRouter() {
+        window.open(`/maker_write`, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
     }
 
     return <LayoutComponent>
@@ -52,7 +52,7 @@ export default function makerRead({dataInfo}) {
             gridTemplateRows: `${mini ? '120px' : '65px'} calc(100vh - ${mini ? 220 : 165}px)`,
             columnGap: 5
         }}>
-            <MainCard title={'해외 고객사 조회'}
+            <MainCard title={'메이커 조회'}
                       list={[{name: '조회', func: searchInfo, type: 'primary'},
                           {name: '초기화', func: clearAll, type: 'danger'},
                           {name: '신규생성', func: moveRouter}]}
