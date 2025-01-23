@@ -1,4 +1,5 @@
-import React, {useRef, useState} from "react";
+
+ import React, {useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
@@ -74,7 +75,7 @@ export default function codeOverseasPurchase({dataInfo}) {
     }
 
     function moveRouter() {
-
+        window.open(`/data/agency/overseas/agency_write`, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
     }
 
     return <LayoutComponent>
@@ -83,7 +84,7 @@ export default function codeOverseasPurchase({dataInfo}) {
             gridTemplateRows: `${mini ? '120px' : '65px'} calc(100vh - ${mini ? 220 : 165}px)`,
             columnGap: 5
         }}>
-            <MainCard title={'국내 매입처 조회'}
+            <MainCard title={'해외 매입처 조회'}
                       list={[{name: '조회', func: searchInfo, type: 'primary'},
                           {name: '초기화', func: clearAll, type: 'danger'},
                           {name: '신규생성', func: moveRouter}]}

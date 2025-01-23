@@ -1,44 +1,33 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import LayoutComponent from "@/component/LayoutComponent";
-import Card from "antd/lib/card/Card";
-import Button from "antd/lib/button";
-import {
-    CopyOutlined, DownCircleFilled, RetweetOutlined, SaveOutlined, UpCircleFilled,
-} from "@ant-design/icons";
 import message from "antd/lib/message";
-import {
-    tableCodeDomesticAgencyWriteColumns,
-} from "@/utils/columnList";
-import {
-    codeDomesticAgencyWriteInitial,
-} from "@/utils/initialList";
+import {tableCodeDomesticAgencyWriteColumns,} from "@/utils/columnList";
+import {codeDomesticAgencyWriteInitial, orderWriteInitial,} from "@/utils/initialList";
 import TableGrid from "@/component/tableGrid";
 import moment from "moment/moment";
-import DatePicker from "antd/lib/date-picker";
-import Input from "antd/lib/input/Input";
-import Select from "antd/lib/select";
 import initialServerRouter from "@/manage/function/initialServerRouter";
-import nookies from "nookies";
 import {setUserInfo} from "@/store/user/userSlice";
 import {wrapper} from "@/store/store";
-import {
-    BoxCard,
-    datePickerForm,
-    inputForm,
-    inputNumberForm,
-    MainCard,
-    selectBoxForm,
-    TopBoxCard
-} from "@/utils/commonForm";
+import {BoxCard, datePickerForm, inputForm, inputNumberForm, MainCard, selectBoxForm} from "@/utils/commonForm";
+import {gridManage} from "@/utils/commonManage";
+import _ from "lodash";
 
 
 export default function agency_write({dataInfo}) {
     const gridRef = useRef(null);
 
     const [mini, setMini] = useState(true);
-    const [info, setInfo] = useState(codeDomesticAgencyWriteInitial);
 
+    const copyInit = _.cloneDeep(codeDomesticAgencyWriteInitial)
+
+
+    const adminParams = {}
+    const infoInit = {
+        ...copyInit,
+        ...adminParams
+    }
+    const [info, setInfo] = useState<any>({...copyInit, ...dataInfo, ...adminParams})
 
     const onGridReady = (params) => {
         gridRef.current = params.api;
@@ -110,7 +99,10 @@ export default function agency_write({dataInfo}) {
         setInfo(copyData)
     }
 
-
+    function clearAll() {
+        setInfo({...infoInit});
+        gridManage.deleteAll(gridRef);
+    }
 
 
     return <LayoutComponent>
@@ -119,9 +111,9 @@ export default function agency_write({dataInfo}) {
             gridTemplateRows: `${mini ? '340px' : '65px'} calc(100vh - ${mini ? 395 : 120}px)`,
             columnGap: 5
         }}>
-            <MainCard title={'발주서 작성'} list={[
+            <MainCard title={'국내 매입처 등록'} list={[
                 {name: '저장', func: saveFunc, type: 'primary'},
-                // {name: '초기화', func: clearAll, type: 'danger'}
+                {name: '초기화', func: clearAll, type: 'danger'}
             ]} mini={mini} setMini={setMini}>
 
                 {mini ? <div style={{
@@ -133,30 +125,30 @@ export default function agency_write({dataInfo}) {
                         <BoxCard title={'매입처 정보'}>
                             {inputForm({title: '코드(약칭)', id: 'agencyCode', onChange: onChange, data: info})}
                             {inputForm({title: '상호', id: 'agencyName', onChange: onChange, data: info})}
-                            {inputForm({title: '사업자번호', id: 'agencyName', onChange: onChange, data: info})}
-                            {inputForm({title: '계좌번호', id: 'agencyName', onChange: onChange, data: info})}
+                            {inputForm({title: '사업자번호', id: 'businessRegistrationNumber', onChange: onChange, data: info})}
+                            {inputForm({title: '계좌번호', id: 'bankAccountNumber', onChange: onChange, data: info})}
                         </BoxCard>
                         <BoxCard title={'MAKER'}>
-                            {inputForm({title: 'MAKER', id: 'agencyCode', onChange: onChange, data: info})}
-                            {inputForm({title: 'ITEM', id: 'agencyName', onChange: onChange, data: info})}
-                            {inputForm({title: '홈페이지', id: 'agencyName', onChange: onChange, data: info})}
+                            {inputForm({title: 'MAKER', id: 'maker', onChange: onChange, data: info})}
+                            {inputForm({title: 'ITEM', id: 'item', onChange: onChange, data: info})}
+                            {inputForm({title: '홈페이지', id: 'homepage', onChange: onChange, data: info})}
                         </BoxCard>
                         <BoxCard title={'ETC'}>
                             {datePickerForm({title: '거래시작일', id: 'tradeStartDate', onChange: onChange, data: info})}
                             {selectBoxForm({
-                                title: '달러/제조', id: 'dealerType', onChange: onChange, data: info, list: [
-                                    {value: '달러', label: '달러'},
+                                title: '딜러/제조', id: 'dealerType', onChange: onChange, data: info, list: [
+                                    {value: '딜러', label: '딜러'},
                                     {value: '제조', label: '제조'},
                                 ]
                             })} {selectBoxForm({
-                            title: '등급', id: 'dealerType', onChange: onChange, data: info, list: [
+                            title: '등급', id: 'grade', onChange: onChange, data: info, list: [
                                 {value: 'A', label: 'A'},
                                 {value: 'B', label: 'B'},
                                 {value: 'C', label: 'C'},
                                 {value: 'D', label: 'D'},
                             ]
                         })}
-                            {inputNumberForm({title: '마진', id: 'margin', onChange: onChange, data: info, suffix: '%'})}
+                            {inputNumberForm({title: '마진', id: 'margin', onChange: onChange, data: info, addonAfter: '%'})}
                         </BoxCard>
                     </div>
                     : <></>}

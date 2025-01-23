@@ -113,7 +113,7 @@ const TableGrid = ({
             if (e.data.agencyId)
                 window.open(`/data/agency/domestic/agency_update?agencyCode=${e?.data?.agencyCode}`, openType, option);
             if (e.data.overseasAgencyId)
-                window.open(`/code_overseas_agency_update?agencyCode=${e?.data?.agencyCode}`, openType, option);
+                window.open(`/data/agency/overseas/agency_update?agencyCode=${e?.data?.agencyCode}`, openType, option);
             if (e.data.customerId)
                 window.open(`/code_domestic_customer_update?customerCode=${e?.data?.customerCode}`, openType, option);
             if (e.data.overseasCustomerId)

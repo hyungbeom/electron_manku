@@ -11,7 +11,7 @@ import {
     tableCodeDomesticAgencyWriteColumns,
 } from "@/utils/columnList";
 import {
-    codeDomesticAgencyWriteInitial,
+    codeDomesticAgencyWriteInitial, codeOverseasAgencyWriteInitial,
 } from "@/utils/initialList";
 import TableGrid from "@/component/tableGrid";
 import {useRouter} from "next/router";
@@ -23,17 +23,22 @@ import initialServerRouter from "@/manage/function/initialServerRouter";
 import nookies from "nookies";
 import {setUserInfo} from "@/store/user/userSlice";
 import {wrapper} from "@/store/store";
+import {BoxCard, datePickerForm, inputForm, inputNumberForm, MainCard, selectBoxForm} from "@/utils/commonForm";
 
-
-export default function code_domestic_agency_write({data}) {
+const listType = 'overseasAgencyManagerList'
+export default function code_domestic_agency_write({dataInfo}) {
     const gridRef = useRef(null);
     const router=useRouter();
 
-    // const {agencyList} = data;
     const [mini, setMini] = useState(true);
-    const [info, setInfo] = useState<any>(data)
-    console.log(data, 'data')
+    const [info, setInfo] = useState<any>(dataInfo)
 
+
+    const onGridReady = (params) => {
+        gridRef.current = params.api;
+        console.log(dataInfo,'dataInfo:')
+        params.api.applyTransaction({add: dataInfo[listType]});
+    };
 
     function onChange(e) {
 
@@ -99,174 +104,68 @@ export default function code_domestic_agency_write({data}) {
         setInfo(copyData)
     }
 
+    function clearAll() {
+        setInfo(codeOverseasAgencyWriteInitial);
+        gridRef.current.deselectAll();
+    }
+
     return <LayoutComponent>
-        <div style={{display: 'grid', gridTemplateRows:  `${mini ? 'auto' : '65px'} 1fr`, height: '100vh', columnGap: 5,}}>
-            <Card title={'해외 매입처 수정'} style={{fontSize: 12, border: '1px solid lightGray'}} extra={<span style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>setMini(v => !v)}> {!mini ? <UpCircleFilled/> : <DownCircleFilled/>}</span>} >
-                {mini ?<>
-                    <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1.5fr', columnGap: 20}}>
-                        <Card size={'small'} style={{
-                            fontSize: 13,
-                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
-                        }}>
-                            <div>
-                                <div style={{paddingBottom: 3}}>코드(약칭)</div>
-                                <Input id={'agencyCode'} value={info['agencyCode']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-                            <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>매입처 타입</div>
-                                <Select id={'dealerType'}
-                                        onChange={(src) => onChange({target: {id: 'dealerType', value: src}})}
-                                        size={'small'} value={info['dealerType']} options={[
-                                    {value: '0', label: '딜러'},
-                                    {value: '1', label: '제조'},
-                                ]} style={{width: '100%',}}/>
-                            </div>
+        <div style={{
+            display: 'grid',
+            gridTemplateRows: `${mini ? '340px' : '65px'} calc(100vh - ${mini ? 395 : 120}px)`,
+            columnGap: 5
+        }}>
+            <MainCard title={'해외 매입처 수정'} list={[
+                {name: '저장', func: saveFunc, type: 'primary'},
+                {name: '초기화', func: clearAll, type: 'danger'}
+            ]} mini={mini} setMini={setMini}>
 
-                            <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>등급</div>
-                                <Select id={'grade'}
-                                        onChange={(src) => onChange({target: {id: 'grade', value: src}})}
-                                        size={'small'} value={info['grade']} options={[
-                                    {value: '0', label: 'A'},
-                                    {value: '1', label: 'B'},
-                                    {value: '2', label: 'C'},
-                                    {value: '3', label: 'D'},
-                                ]} style={{width: '100%',}}/>
-                            </div>
-                            <div>
-                                <div style={{paddingTop: 8}}>ITEM</div>
-                                <Input id={'item'} value={info['item']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-                            <div>
-                                <div style={{paddingTop: 8}}>마진</div>
-                                <Input id={'margin'} value={info['margin']} onChange={onChange}
-                                       size={'small'} style={{width: '90%', marginRight: 8}}/><span>%</span>
-                            </div>
-                        </Card>
-                        <Card size={'small'} style={{
-                            fontSize: 13,
-                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
-                        }}>
-                            <div>
-                                <div style={{width: '100%'}}>거래시작일</div>
-                                {/*@ts-ignore*/}
-                                <DatePicker value={moment(info['tradeStartDate'])} style={{width: '100%'}}
-                                            onChange={(date, dateString) => onChange({
-                                                target: {
-                                                    id: 'tradeStartDate',
-                                                    value: date
-                                                }
-                                            })
-                                            } id={'tradeStartDate'} size={'small'}/>
-                            </div>
-
-
-                            <div>
-                                <div style={{paddingTop: 8}}>상호</div>
-                                <Input id={'agencyName'} value={info['agencyName']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-                            <div>
-                                <div style={{paddingTop: 8}}>국가</div>
-                                <Input id={'maker'} value={info['maker']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-
-                            <div>
-                                <div style={{paddingTop: 8}}>화폐단위</div>
-                                <Input id={'maker'} value={info['maker']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-                            <div>
-                                <div style={{paddingTop: 8}}>FTA no</div>
-                                <Input id={'maker'} value={info['maker']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-                            <div>
-                                <div style={{paddingTop: 8}}>주소</div>
-                                <Input id={'agencyName'} value={info['agencyName']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-                            <div>
-                                <div>홈페이지</div>
-                                <Input id={'homepage'} value={info['homepage']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-
-
-                        </Card>
-
-
-                        <Card size={'small'}
-                              style={{
-                                  fontSize: 13,
-                                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                              }}>
-
-                            <div>
-                                <div style={{paddingTop: 8}}>송금중개은행</div>
-                                <Input id={'maker'} value={info['maker']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-
-                            <div>
-                                <div style={{paddingTop: 8}}>계좌번호</div>
-                                <Input id={'bankAccountNumber'} value={info['bankAccountNumber']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-                            <div>
-                                <div style={{paddingTop: 8}}>IBan code</div>
-                                <Input id={'maker'} value={info['maker']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-                            <div>
-                                <div style={{paddingTop: 8}}>Switch Code</div>
-                                <Input id={'maker'} value={info['maker']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-                        </Card>
-
+                {mini ? <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: '180px 200px 200px 1fr 300px',
+                        columnGap: 10,
+                        marginTop: 10
+                    }}>
+                        <BoxCard title={'매입처 정보'}>
+                            {inputForm({title: '코드(약칭)', id: 'agencyCode', onChange: onChange, data: info})}
+                            {inputForm({title: '상호', id: 'agencyName', onChange: onChange, data: info})}
+                            {inputForm({title: '사업자번호', id: 'businessRegistrationNumber', onChange: onChange, data: info})}
+                            {inputForm({title: '계좌번호', id: 'bankAccountNumber', onChange: onChange, data: info})}
+                        </BoxCard>
+                        <BoxCard title={'MAKER'}>
+                            {inputForm({title: 'MAKER', id: 'maker', onChange: onChange, data: info})}
+                            {inputForm({title: 'ITEM', id: 'item', onChange: onChange, data: info})}
+                            {inputForm({title: '홈페이지', id: 'homepage', onChange: onChange, data: info})}
+                        </BoxCard>
+                        <BoxCard title={'ETC'}>
+                            {datePickerForm({title: '거래시작일', id: 'tradeStartDate', onChange: onChange, data: info})}
+                            {selectBoxForm({
+                                title: '달러/제조', id: 'dealerType', onChange: onChange, data: info, list: [
+                                    {value: '달러', label: '달러'},
+                                    {value: '제조', label: '제조'},
+                                ]
+                            })} {selectBoxForm({
+                            title: '등급', id: 'grade', onChange: onChange, data: info, list: [
+                                {value: 'A', label: 'A'},
+                                {value: 'B', label: 'B'},
+                                {value: 'C', label: 'C'},
+                                {value: 'D', label: 'D'},
+                            ]
+                        })}
+                            {inputNumberForm({title: '마진', id: 'margin', onChange: onChange, data: info, suffix: '%'})}
+                        </BoxCard>
                     </div>
-                    <div style={{paddingTop: 15, textAlign: 'right', width: '100%'}}>
-
-                        <Button type={'primary'} size={'small'} style={{marginRight: 8}}
-                                onClick={saveFunc}><SaveOutlined/>저장</Button>
-
-                        <Button size={'small'} type={'primary'} style={{marginRight: 8}}
-                                onClick={() => router?.push('/code_overseas_agency_write')}><EditOutlined/>신규</Button>
-
-                    </div>
-                </> : null}
-            </Card>
+                    : <></>}
+            </MainCard>
 
 
             <TableGrid
                 gridRef={gridRef}
                 columns={tableCodeDomesticAgencyWriteColumns}
-                tableData={info['overseasAgencyManagerList']}
-                listType={'overseasAgencyId'}
-                listDetailType={'overseasAgencyManagerList'}
-                // dataInfo={tableOrderReadInfo}
-                setInfo={setInfo}
-                // setTableInfo={setTableInfo}
-                excel={true}
+                onGridReady={onGridReady}
                 type={'write'}
-                funcButtons={<div>
-                    {/*@ts-ignored*/}
-                    <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
-                            onClick={addRow}>
-                        <SaveOutlined/>추가
-                    </Button>
-                    {/*@ts-ignored*/}
-                    <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
-                            onClick={deleteList}>
-                        <CopyOutlined/>삭제
-                    </Button>
-                </div>}
+                funcButtons={['daUpload', 'agencyDomesticAdd', 'delete', 'print']}
             />
-
         </div>
     </LayoutComponent>
 }
@@ -278,7 +177,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     let param = {}
 
 
-    const { query } = ctx;
+    const {query} = ctx;
 
     // 특정 쿼리 파라미터 가져오기
     const { agencyCode } = query; // 예: /page?id=123&name=example
@@ -303,8 +202,9 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
         limit:-1,
     });
 
+    const list = result?.data?.entity?.overseasAgencyList[0]
 
     return {
-        props: {data: result?.data?.entity?.overseasAgencyList?.[0]}
+        props: {dataInfo: list ?? {}}
     }
 })

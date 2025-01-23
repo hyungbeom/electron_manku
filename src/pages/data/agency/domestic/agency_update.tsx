@@ -24,8 +24,6 @@ export default function code_domestic_agency_write({dataInfo}) {
 
 
     const onGridReady = (params) => {
-
-        console.log(dataInfo,'dataInfo:')
         gridRef.current = params.api;
         params.api.applyTransaction({add: dataInfo[listType]});
     };
@@ -47,9 +45,6 @@ export default function code_domestic_agency_write({dataInfo}) {
         await getData.post('agency/updateAgency', copyData).then(v => {
             if (v.data.code === 1) {
                 message.success('수정되었습니다.')
-                setInfo(codeDomesticAgencyWriteInitial);
-                deleteList()
-
             } else {
                 message.error('저장에 실패하였습니다.')
             }
@@ -57,26 +52,6 @@ export default function code_domestic_agency_write({dataInfo}) {
 
     }
 
-
-    function deleteList() {
-
-        const api = gridRef.current.api;
-
-        // 전체 행 반복하면서 선택되지 않은 행만 추출
-        const uncheckedData = [];
-        for (let i = 0; i < api.getDisplayedRowCount(); i++) {
-            const rowNode = api.getDisplayedRowAtIndex(i);
-            if (!rowNode.isSelected()) {
-                uncheckedData.push(rowNode.data);
-            }
-        }
-
-        let copyData = {...info}
-        copyData['agencyManagerList'] = uncheckedData;
-        console.log(copyData, 'copyData::')
-        setInfo(copyData);
-
-    }
 
     function clearAll() {
         setInfo(codeDomesticAgencyWriteInitial);

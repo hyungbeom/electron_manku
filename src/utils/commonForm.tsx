@@ -178,7 +178,9 @@ export const inputNumberForm = ({
                                     formatter = null,
                                     parser = null,
                                     step = 1,
-                                    suffix = ''
+                                    addonAfter = '',
+                                    min = -99999,
+                                    max = 99999
                                 }: any) => {
     let bowl = data;
 
@@ -193,6 +195,9 @@ export const inputNumberForm = ({
                      onChange={e => onChange({target: {id: id, value: e}})}
                      size={'small'}
                      placeholder={placeholder}
+                     addonAfter={addonAfter}
+                     min={min}
+                     max={max}
         />
     </div>
 }
@@ -321,6 +326,7 @@ export const tableButtonList = (type: any, gridRef?: any) => {
         const newRow = {...orderDetailUnit};
         gridRef.current.applyTransaction({add: [newRow]});
     }
+
     switch (type) {
 
         case 'agencyDomesticAdd' :
@@ -331,7 +337,7 @@ export const tableButtonList = (type: any, gridRef?: any) => {
 
         case 'daUpload' :
             return <ExcelUpload gridRef={gridRef} list={tableCodeDomesticAgencyWriteColumns}/>
-  case 'storeUpload' :
+        case 'storeUpload' :
             return <ExcelUpload gridRef={gridRef} list={storeWriteList}/>
 
 
