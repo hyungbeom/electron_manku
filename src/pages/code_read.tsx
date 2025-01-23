@@ -32,16 +32,19 @@ import TableGrid from "@/component/tableGrid";
 import Search from "antd/lib/input/Search";
 
 
-export default function codeRead({dataList}) {
+export default function codeRead({dataInfo}) {
     const gridRef = useRef(null);
     const [mini, setMini] = useState(true);
 
-    const {hsCodeList} = dataList;
     const [searchData, setSearchData] = useState(codeReadInitial);
     const [saveData, setSaveData] = useState(codeSaveInitial);
-    const [tableData, setTableData] = useState(hsCodeList);
 
-    // console.log(hsCodeList,'saveInfo:')
+
+    const onGridReady = (params) => {
+        gridRef.current = params.api;
+        params.api.applyTransaction({add: dataInfo ?? []});
+    };
+
 
     function onSearchChange(e) {
 
@@ -66,7 +69,7 @@ export default function codeRead({dataList}) {
     async function onSearch() {
         const result = await getData.post('hsCode/getHsCodeList', searchData);
         if(result?.data?.code === 1){
-            setTableData(result?.data?.entity?.hsCodeList)
+
         }
     }
 
@@ -177,8 +180,6 @@ export default function codeRead({dataList}) {
 
                         </Card>
 
-
-
                     </div>
                 </> : null}
             </Card>
@@ -186,10 +187,8 @@ export default function codeRead({dataList}) {
             <TableGrid
                 gridRef={gridRef}
                 columns={tableCodeReadColumns}
-                tableData={tableData}
-                type={'hsCode'}
-                excel={true}
-                setInfo={setSaveData}
+                onGridReady={onGridReady}
+                funcButtons={['print']}
             />
 
         </div>
@@ -205,7 +204,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
     const result = await getData.post('hsCode/getHsCodeList', {
-        "searchType": "1",      // 1: 코드, 2: 상호명, 3: MAKER
+        "searchType": "",      // 1: 코드, 2: 상호명, 3: MAKER
         "searchText": "",
         "page": 1,
         "limit": -1
@@ -224,9 +223,9 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
             },
         };
     } else {
-        // result?.data?.entity?.estimateRequestList
+        const list = result?.data?.entity?.hsCodeList
         param = {
-            props: {dataList: result?.data?.entity}
+            props: {dataInfo: list ?? []}
         }
     }
 
