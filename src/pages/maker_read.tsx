@@ -4,26 +4,23 @@ import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import LayoutComponent from "@/component/LayoutComponent";
-import Card from "antd/lib/card/Card";
-
-import Button from "antd/lib/button";
-import {EditOutlined, SearchOutlined,} from "@ant-design/icons";
-import message from "antd/lib/message";
 
 import {makerColumn,} from "@/utils/columnList";
 import {codeDomesticPurchaseInitial,} from "@/utils/initialList";
-import Radio from "antd/lib/radio";
 import TableGrid from "@/component/tableGrid";
-import Search from "antd/lib/input/Search";
-import {useRouter} from "next/router";
+import {inputForm, MainCard, radioForm} from "@/utils/commonForm";
 
-export default function makerRead({dataList}) {
+export default function makerRead({dataInfo}) {
     const gridRef = useRef(null);
 
-    const {makerList} = dataList;
     const [info, setInfo] = useState(codeDomesticPurchaseInitial);
-    const [tableData, setTableData] = useState(makerList);
-    const router = useRouter();
+    const [mini, setMini] = useState(true);
+
+
+    const onGridReady = (params) => {
+        gridRef.current = params.api;
+        params.api.applyTransaction({add: dataInfo ?? []});
+    };
 
 
     function onChange(e) {
@@ -36,107 +33,63 @@ export default function makerRead({dataList}) {
         })
     }
 
-    async function onSearch() {
-        const result = await getData.post('maker/getMakerList', info);
 
-        if (result?.data?.code === 1) {
-            setTableData(result?.data?.entity?.makerList)
-        }
+    function searchInfo() {
 
     }
 
-    async function deleteList() {
-        const api = gridRef.current.api;
+    function clearAll() {
 
-        if (api.getSelectedRows().length < 1) {
-            message.error('삭제할 데이터를 선택해주세요.')
-        } else {
-            for (const item of api.getSelectedRows()) {
-                const response = await getData.post('maker/deleteMaker', {
-                    makerId: item.makerId
-                });
-                console.log(response)
-                if (response.data.code === 1) {
-                    message.success('삭제되었습니다.')
-                    window.location.reload();
-                } else {
-                    message.error('오류가 발생하였습니다. 다시 시도해주세요.')
-                }
-            }
-        }
     }
 
+    function moveRouter() {
 
-    async function copyRow() {
-        const api = gridRef.current.api;
-
-        if (api.getSelectedRows().length < 1) {
-            message.error('복사할 데이터를 선택해주세요.')
-        } else {
-            for (const item of api.getSelectedRows()) {
-
-                let newItem = {...item}
-
-                delete newItem.makerId;
-                delete newItem.key;
-                delete newItem.createdBy;
-                delete newItem.createdDate;
-                delete newItem.modifiedBy;
-                delete newItem.modifiedDate;
-
-                const response = await getData.post('maker/addMaker', newItem);
-                console.log(response)
-                if (response.data.code === 1) {
-                    message.success('복사되었습니다.')
-                    window.location.reload();
-                } else {
-                    message.error('오류가 발생하였습니다. 다시 시도해주세요.')
-                }
-            }
-        }
     }
 
     return <LayoutComponent>
-        <div style={{display: 'grid', gridTemplateRows: '120px 1fr', height: '100vh', gridColumnGap: 5}}>
-            <Card size={'small'} title={'Maker 관리'} style={{fontSize: 12, border: '1px solid lightGray'}}>
-                <Card size={'small'} style={{
-                    fontSize: 13,
-                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                }}>
-                    <div style={{display: 'grid', gridTemplateColumns: 'auto 1fr 120px'}}>
-                        <div style={{marginTop: 6}}>
-                            <Radio.Group onChange={e => setInfo(v => {
-                                return {...v, searchType: e.target.value}
-                            })} defaultValue={2} id={'searchType'}
-                                         value={info['searchType']}>
-                                <Radio value={1}>Maker</Radio>
-                                <Radio value={2}>Item</Radio>
-                                <Radio value={3}>Area</Radio>
-                            </Radio.Group>
-                        </div>
+        <div style={{
+            display: 'grid',
+            gridTemplateRows: `${mini ? '120px' : '65px'} calc(100vh - ${mini ? 220 : 165}px)`,
+            columnGap: 5
+        }}>
+            <MainCard title={'해외 거래처 조회'}
+                      list={[{name: '조회', func: searchInfo, type: 'primary'},
+                          {name: '초기화', func: clearAll, type: 'danger'},
+                          {name: '신규생성', func: moveRouter}]}
+                      mini={mini} setMini={setMini}>
 
-                        <Search
-                            onSearch={onSearch}
-                            onChange={onChange}
-                            id={'searchText'}
-                            placeholder="input search text"
-                            allowClear
-                            enterButton={<><SearchOutlined/>&nbsp;&nbsp; 조회</>}
-                        />
-                        <div style={{margin: '0 10px'}}>
-                            <Button type={'primary'} style={{backgroundColor: 'green', border: 'none'}}
-                                    onClick={() => router?.push('/maker_write')}><EditOutlined/>신규작성</Button>
-                        </div>
+                {mini ? <div style={{display: 'flex', alignItems: 'center', padding: 10}}>
+
+                    {radioForm({
+                        title: '',
+                        id: 'searchType',
+                        onChange: onChange,
+                        data: info,
+                        list: [{value: 1, title: '코드'},
+                            {value: 2, title: '상호명'},
+                            {value: 3, title: 'item'},
+                            {value: 4, title: '국가'}]
+                    })}
+
+
+                    <div style={{width: 500, marginLeft: 20}}>
+                        {inputForm({
+                            title: '',
+                            id: 'searchCustomerName',
+                            onChange: onChange,
+                            data: info,
+                            size: 'middle'
+                        })}
                     </div>
-                </Card>
-            </Card>
+
+
+                </div> : <></>}
+            </MainCard>
 
             <TableGrid
                 gridRef={gridRef}
                 columns={makerColumn}
-                tableData={tableData}
-                type={'read'}
-                excel={true}
+                onGridReady={onGridReady}
                 funcButtons={['print']}
             />
         </div>
@@ -151,8 +104,8 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
     const result = await getData.post('maker/getMakerList', {
-        "searchType": "1",      // 1: 코드, 2: 상호명, 3: MAKER
-        "searchText": "",
+        "searchType": "",       // 구분 1: MAKER, 2: ITEM, 3: "AREA"
+        "searchText": "",       // 검색어
         "page": 1,
         "limit": -1
     });
@@ -168,9 +121,9 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
             },
         };
     } else {
-        // result?.data?.entity?.estimateRequestList
+        const list = result?.data?.entity?.makerList;
         param = {
-            props: {dataList: result?.data?.entity}
+            props: {dataInfo: list ?? null}
         }
     }
 

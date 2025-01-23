@@ -126,7 +126,7 @@ export default function LayoutComponent({children, userInfo = null}) {
                         {label: <span style={{fontSize: '12px'}}>메이커 목록</span>, key: 'maker_read'},
                     ]},
                 {label: <span style={{fontSize: '12px'}}>공문서</span>, key: 'data/diploma/read'},
-                {label: <span style={{fontSize: '12px'}}>HS CODE</span>, key: 'data_6'},
+                {label: <span style={{fontSize: '12px'}}>HS CODE</span>, key: 'code_read'},
             ],
             popupOffset: [0, -4],
         }, {
@@ -155,7 +155,7 @@ export default function LayoutComponent({children, userInfo = null}) {
     };
 
     return <>
-        {router.pathname.includes('_read') || router.pathname === '/main' || router.pathname === '/rfq_mail_send' ?
+        {!(router.pathname.includes('_write') || router.pathname.includes('_update')) ?
             <div style={{
                 backgroundColor: '#f5f5f5',
                 width: '100%',

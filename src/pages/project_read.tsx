@@ -103,7 +103,7 @@ export default function ProjectRead({dataInfo}) {
                                     handleKeyPress: handleKeyPress,
                                     data: info
                                 })}
-                                {rangePickerForm({title: '작성일자', id: 'searchDate', onChange: onChange, data: info,})}
+                                {rangePickerForm({title: '작성일자', id: 'searchDate', onChange: onChange, data: info})}
                                 {inputForm({
                                     title: '담당자',
                                     id: 'searchManagerAdminName',

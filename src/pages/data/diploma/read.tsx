@@ -5,49 +5,34 @@ import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import LayoutComponent from "@/component/LayoutComponent";
-import Card from "antd/lib/card/Card";
-import Input from "antd/lib/input/Input";
 
-import Button from "antd/lib/button";
-import {CopyOutlined, EditOutlined, FileExcelOutlined, SearchOutlined,} from "@ant-design/icons";
-import * as XLSX from "xlsx";
-import message from "antd/lib/message";
-
-import {
-    modalCodeDiplomaColumn,
-    rfqReadColumns,
-    tableCodeDomesticPurchaseColumns,
-    tableCodeDomesticSalesColumns,
-    tableCodeOverseasPurchaseColumns,
-} from "@/utils/columnList";
-import {
-    codeDiplomaReadInitial,
-    codeDomesticPurchaseInitial,
-    tableCodeDomesticSalesInitial,
-    tableCodeOverseasSalesInitial,
-} from "@/utils/initialList";
-import Radio from "antd/lib/radio";
+import {modalCodeDiplomaColumn,} from "@/utils/columnList";
+import {codeDiplomaReadInitial,} from "@/utils/initialList";
 import TableGrid from "@/component/tableGrid";
-import Search from "antd/lib/input/Search";
 import {useRouter} from "next/router";
 import DatePicker from "antd/lib/date-picker";
+import {inputForm, MainCard, rangePickerForm} from "@/utils/commonForm";
 
 const {RangePicker} = DatePicker
 
-export default function codeOverseasPurchase({dataList}) {
+export default function codeOverseasPurchase({dataInfo}) {
     const gridRef = useRef(null);
-    const router=useRouter();
+    const router = useRouter();
 
-    const {officialDocumentList} = dataList;
+
     const [info, setInfo] = useState(codeDiplomaReadInitial);
-    const [tableData, setTableData] = useState(officialDocumentList);
-
+    const [mini, setMini] = useState(true);
 
     useEffect(() => {
         const copyData: any = {...info}
         copyData['searchDate'] = [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
         setInfo(copyData);
     }, [])
+
+    const onGridReady = (params) => {
+        gridRef.current = params.api;
+        params.api.applyTransaction({add: dataInfo ?? []});
+    };
 
 
     function onChange(e) {
@@ -70,67 +55,54 @@ export default function codeOverseasPurchase({dataList}) {
         }
         const result = await getData.post('officialDocument/getOfficialDocumentList',
             {...copyData, "page": 1, "limit": -1});
-        setTableData(result?.data?.entity?.officialDocumentList)
+
+    }
+
+    function clearAll() {
+
+    }
+
+    function moveRouter() {
 
     }
 
     return <LayoutComponent>
-        <div style={{display: 'grid', gridTemplateRows: 'auto 1fr', height: '100vh', gridColumnGap: 5}}>
-            <Card size={'small'} title={'공문서 관리'} style={{fontSize: 12, border: '1px solid lightGray'}}>
-                <Card size={'small'} style={{
-                    fontSize: 13,
-                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                }}>
-                    <div style={{display: 'grid', gridTemplateColumns: '300px 1fr 100px'}}>
-                        <div>
-                            <div style={{paddingBottom: 3}}>조회일자</div>
-                            <RangePicker style={{width: '100%'}}
-                                         value={[moment(info['searchDate']?.[0]), moment(info['searchDate']?.[1])]}
-                                         id={'searchDate'} size={'small'} onChange={(date, dateString) => {
-                                onChange({
-                                    target: {
-                                        id: 'searchDate',
-                                        value: date ? [moment(date[0]).format('YYYY-MM-DD'), moment(date[1]).format('YYYY-MM-DD')] : [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
-                                    }
-                                })
-                            }
-                            }/>
-                        </div>
 
-                        <div style={{marginTop: 8}}>
-                            <div style={{marginBottom: 3}}>문서번호</div>
-                            <Input id={'searchDocumentNumber'} value={info['searchDocumentNumber']}
-                                   onChange={onChange}
-                                   size={'small'}/>
-                        </div>
+        <div style={{
+            display: 'grid',
+            gridTemplateRows: `${mini ? '120px' : '65px'} calc(100vh - ${mini ? 220 : 165}px)`,
+            columnGap: 5
+        }}>
 
+            <MainCard title={'공문서 조회'}
+                      list={[{name: '조회', func: searchInfo, type: 'primary'},
+                          {name: '초기화', func: clearAll, type: 'danger'},
+                          {name: '신규생성', func: moveRouter}]}
+                      mini={mini} setMini={setMini}>
+
+                {mini ? <div style={{display: 'flex', alignItems: 'center', padding: 10}}>
+
+                    {rangePickerForm({title: '작성일자', id: 'searchDate', onChange: onChange, data: info,})}
+                    <div style={{width: 500, marginLeft: 20}}>
+                        {inputForm({
+                            title: '검색어',
+                            id: 'searchCustomerName',
+                            onChange: onChange,
+                            data: info,
+                            size: 'size'
+                        })}
                     </div>
 
-                    <div style={{paddingTop: 8, textAlign: 'right'}}>
-                        <Button type={'primary'} onClick={searchInfo}><SearchOutlined/>조회</Button>
-                        <Button type={'primary'} style={{backgroundColor:'green', border: 'none', marginLeft:10}}
-                                onClick={() => router?.push('/code_diploma_write')}><EditOutlined/>신규작성</Button>
-                    </div>
+                </div> : <></>}
+            </MainCard>
 
-                </Card>
-            </Card>
 
             <TableGrid
                 gridRef={gridRef}
                 columns={modalCodeDiplomaColumn}
-                tableData={tableData}
-                type={'read'}
-                excel={true}
-                // funcButtons={<div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
-                //     <CopyOutlined/>복사
-                // </Button>
-                //     {/*@ts-ignored*/}
-                //     <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={deleteList}>
-                //         <CopyOutlined/>삭제
-                //     </Button>
-                //     <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={downloadExcel}>
-                //         <FileExcelOutlined/>출력
-                //     </Button></div>}
+
+                onGridReady={onGridReady}
+                funcButtons={['print']}
             />
 
         </div>
@@ -165,9 +137,9 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
             },
         };
     } else {
-        // result?.data?.entity?.estimateRequestList
+        const list = result?.data?.entity?.officialDocumentList
         param = {
-            props: {dataList: result?.data?.entity}
+            props: {dataInfo: list ?? []}
         }
     }
 

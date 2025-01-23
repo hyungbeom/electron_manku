@@ -18,17 +18,18 @@ import {CopyOutlined, EditOutlined, FileExcelOutlined, SearchOutlined} from "@an
 import {useRouter} from "next/router";
 import {inputForm, MainCard, radioForm} from "@/utils/commonForm";
 
-export default function codeOverseasPurchase({dataList}) {
+export default function codeOverseasPurchase({dataInfo}) {
     const gridRef = useRef(null);
-    const router = useRouter();
 
-    const {overseasCustomerList} = dataList;
     const [info, setInfo] = useState(codeDomesticPurchaseInitial);
-    const [tableData, setTableData] = useState(overseasCustomerList);
 
     const [mini, setMini] = useState(true);
 
-    // console.log(customerList,'saveInfo:')
+    const onGridReady = (params) => {
+        gridRef.current = params.api;
+        params.api.applyTransaction({add: dataInfo ? dataInfo : []});
+    };
+
 
 
     function onChange(e) {
@@ -39,36 +40,6 @@ export default function codeOverseasPurchase({dataList}) {
         setInfo(v => {
             return {...v, ...bowl}
         })
-    }
-
-    async function onSearch() {
-        const result = await getData.post('customer/getOverseasCustomerList', info);
-        // console.log(result?.data?.entity?.overseasCustomerList,'result:')
-        if (result?.data?.code === 1) {
-            setTableData(result?.data?.entity?.overseasCustomerList)
-        }
-    }
-
-    async function deleteList() {
-        const api = gridRef.current.api;
-        console.log(api.getSelectedRows(), ':::')
-
-        if (api.getSelectedRows().length < 1) {
-            message.error('삭제할 데이터를 선택해주세요.')
-        } else {
-            for (const item of api.getSelectedRows()) {
-                const response = await getData.post('customer/deleteOverseasCustomer', {
-                    overseasCustomerId: item.overseasCustomerId
-                });
-                console.log(response)
-                if (response.data.code === 1) {
-                    message.success('삭제되었습니다.')
-                    window.location.reload();
-                } else {
-                    message.error('오류가 발생하였습니다. 다시 시도해주세요.')
-                }
-            }
-        }
     }
 
 
@@ -122,9 +93,7 @@ export default function codeOverseasPurchase({dataList}) {
             <TableGrid
                 gridRef={gridRef}
                 columns={tableCodeOverseasSalesColumns}
-                tableData={tableData}
-                type={'read'}
-                excel={true}
+                onGridReady={onGridReady}
                 funcButtons={['print']}
             />
 
@@ -160,9 +129,10 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
             },
         };
     } else {
-        // result?.data?.entity?.estimateRequestList
+
+        const list = result?.data?.entity?.overseasCustomerList;
         param = {
-            props: {dataList: result?.data?.entity}
+            props: {dataInfo: list ?? null}
         }
     }
 

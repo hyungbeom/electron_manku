@@ -578,8 +578,9 @@ export const codeErpSaveInitial = {
     "rightInfo": "",
 }
 export const codeDiplomaReadInitial = {
-    "searchStartDate": "",      // 작성일자 검색 시작일
-    "searchEndDate": "",        // 작성일자 검색 종료일
+    searchDate: [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
+    searchStartDate: moment().subtract(1, 'years').format('YYYY-MM-DD'),
+    searchEndDate: moment().format('YYYY-MM-DD'),
     "searchDocumentNumber": "",           // 문서번호 검색
 }
 
