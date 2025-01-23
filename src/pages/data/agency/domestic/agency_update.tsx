@@ -11,6 +11,8 @@ import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import {wrapper} from "@/store/store";
 import {BoxCard, datePickerForm, inputForm, inputNumberForm, MainCard, selectBoxForm} from "@/utils/commonForm";
+import {gridManage} from "@/utils/commonManage";
+import _ from "lodash";
 
 
 const listType = 'agencyManagerList'
@@ -21,7 +23,7 @@ export default function code_domestic_agency_write({dataInfo}) {
     // const {agencyList} = data;
     const [mini, setMini] = useState(true);
     const [info, setInfo] = useState<any>(dataInfo ?? codeDomesticAgencyWriteInitial)
-
+    const [validate, setValidate] = useState({agencyCode: true});
 
     const onGridReady = (params) => {
         gridRef.current = params.api;
@@ -39,11 +41,24 @@ export default function code_domestic_agency_write({dataInfo}) {
     }
 
     async function saveFunc() {
-        const copyData = {...info}
-        copyData['tradeStartDate'] = moment(info['tradeStartDate']).format('YYYY-MM-DD');
+        gridRef.current.clearFocusedCell();
+        const list = gridManage.getAllData(gridRef)
+        if (!info['agencyCode']) {
+            setValidate(v => {
+                return {...v, agencyCode: false}
+            })
+            return message.warn('코드(약칭)을 입력하셔야 합니다.')
+        }
+        if (!list.length) {
+            return message.warn('하위 데이터 1개 이상이여야 합니다')
+        }
+        const totalList = gridManage.getAllData(gridRef)
+        let copyInfo = _.cloneDeep(info)
+        copyInfo[listType] = totalList
 
-        await getData.post('agency/updateAgency', copyData).then(v => {
+        await getData.post('agency/updateAgency', copyInfo).then(v => {
             if (v.data.code === 1) {
+                window.opener?.postMessage('write', window.location.origin);
                 message.success('수정되었습니다.')
             } else {
                 message.error('저장에 실패하였습니다.')
@@ -58,6 +73,14 @@ export default function code_domestic_agency_write({dataInfo}) {
         gridRef.current.deselectAll();
     }
 
+    function copyPage() {
+        const totalList = gridManage.getAllData(gridRef)
+        let copyInfo = _.cloneDeep(info)
+        copyInfo[listType] = totalList
+
+        const query = `data=${encodeURIComponent(JSON.stringify(copyInfo))}`;
+        router.push(`/data/agency/domestic/agency_write?${query}`)
+    }
     return <LayoutComponent>
         <div style={{
             display: 'grid',
@@ -65,8 +88,10 @@ export default function code_domestic_agency_write({dataInfo}) {
             columnGap: 5
         }}>
             <MainCard title={'국내 매입처 수정'} list={[
-                {name: '저장', func: saveFunc, type: 'primary'},
-                {name: '초기화', func: clearAll, type: 'danger'}
+                {name: '수정', func: saveFunc, type: 'primary'},
+                {name: '삭제', func: saveFunc, type: 'danger'},
+                {name: '초기화', func: clearAll, type: ''},
+                {name: '복제', func: copyPage, type: 'default'},
             ]} mini={mini} setMini={setMini}>
 
                 {mini ? <div style={{
@@ -76,7 +101,7 @@ export default function code_domestic_agency_write({dataInfo}) {
                         marginTop: 10
                     }}>
                         <BoxCard title={'매입처 정보'}>
-                            {inputForm({title: '코드(약칭)', id: 'agencyCode', onChange: onChange, data: info})}
+                            {inputForm({title: '코드(약칭)', id: 'agencyCode', onChange: onChange, data: info, validate : validate['agencyCode']})}
                             {inputForm({title: '상호', id: 'agencyName', onChange: onChange, data: info})}
                             {inputForm({title: '사업자번호', id: 'businessRegistrationNumber', onChange: onChange, data: info})}
                             {inputForm({title: '계좌번호', id: 'bankAccountNumber', onChange: onChange, data: info})}

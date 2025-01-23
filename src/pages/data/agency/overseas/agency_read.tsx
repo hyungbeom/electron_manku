@@ -1,5 +1,4 @@
-
- import React, {useRef, useState} from "react";
+import React, {useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
@@ -16,16 +15,20 @@ import TableGrid from "@/component/tableGrid";
 import {useRouter} from "next/router";
 import _ from "lodash";
 import {inputForm, MainCard, radioForm} from "@/utils/commonForm";
+import {commonManage, gridManage} from "@/utils/commonManage";
+import Spin from "antd/lib/spin";
+import ReceiveComponent from "@/component/ReceiveComponent";
 
 
 export default function codeOverseasPurchase({dataInfo}) {
+    console.log(dataInfo,'::::')
     const gridRef = useRef(null);
     const router = useRouter();
     const copyInit = _.cloneDeep(codeDomesticPurchaseInitial)
 
     const [info, setInfo] = useState(copyInit);
     const [mini, setMini] = useState(true);
-
+    const [loading, setLoading] = useState(false);
 
     const onGridReady = (params) => {
         gridRef.current = params.api;
@@ -33,13 +36,13 @@ export default function codeOverseasPurchase({dataInfo}) {
     };
 
     function onChange(e) {
+        commonManage.onChange(e, setInfo)
+    }
 
-        let bowl = {}
-        bowl[e.target.id] = e.target.value;
-
-        setInfo(v => {
-            return {...v, ...bowl}
-        })
+    function handleKeyPress(e) {
+        if (e.key === 'Enter') {
+            searchInfo(true)
+        }
     }
 
 
@@ -66,8 +69,21 @@ export default function codeOverseasPurchase({dataInfo}) {
     }
 
 
-    function searchInfo() {
+    async function searchInfo(e) {
 
+        if (e) {
+            setLoading(true)
+            console.log(info,'info:')
+            const result = await getData.post('agency/getOverseasAgencyList', {
+                "searchType": info['searchType'],      // 1: 코드, 2: 상호명, 3: MAKER
+                "searchText": info['searchText'],
+                "page": 1,
+                "limit": -1
+            });
+            gridManage.resetData(gridRef, result?.data?.entity?.overseasAgencyList);
+            setLoading(false)
+        }
+        setLoading(false)
     }
 
     function clearAll() {
@@ -78,7 +94,9 @@ export default function codeOverseasPurchase({dataInfo}) {
         window.open(`/data/agency/overseas/agency_write`, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
     }
 
-    return <LayoutComponent>
+    return <Spin spinning={loading} tip={'해외 매입처 조회중...'}>
+        <ReceiveComponent searchInfo={searchInfo}/>
+        <LayoutComponent>
         <div style={{
             display: 'grid',
             gridTemplateRows: `${mini ? '120px' : '65px'} calc(100vh - ${mini ? 220 : 165}px)`,
@@ -105,10 +123,11 @@ export default function codeOverseasPurchase({dataInfo}) {
                     <div style={{width: 500, marginLeft: 20}}>
                         {inputForm({
                             title: '',
-                            id: 'searchCustomerName',
+                            id: 'searchText',
                             onChange: onChange,
                             data: info,
-                            size: 'middle'
+                            size: 'middle',
+                            handleKeyPress: handleKeyPress
                         })}
                     </div>
 
@@ -127,6 +146,7 @@ export default function codeOverseasPurchase({dataInfo}) {
             />
         </div>
     </LayoutComponent>
+    </Spin>
 }
 
 // @ts-ignore

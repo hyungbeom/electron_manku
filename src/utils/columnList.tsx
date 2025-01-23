@@ -1681,14 +1681,27 @@ export const tableCodeDomesticPurchaseColumns = [
 
 export const tableCodeOverseasPurchaseColumns = [
     {
+        headerName: "", // 컬럼 제목
+        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
+        cellStyle: { textAlign: "center" }, // 스타일 설정
+        maxWidth: 45, // 컬럼 너비
+        pinned: "left", // 왼쪽에 고정
+        filter: false
+    },
+    {
+        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
+        checkboxSelection: true, // 각 행에 체크박스 추가
         headerName: '코드',
         field: 'agencyCode',
         key: 'agencyCode',
+        maxWidth: 80, // 컬럼 너비
+        pinned: "left", // 왼쪽에 고정
     },
     {
         headerName: '상호',
         field: 'agencyName',
         key: 'agencyName',
+        pinned: "left", // 왼쪽에 고정
     },
     {
         headerName: '딜러구분',
@@ -1742,13 +1755,13 @@ export const tableCodeOverseasPurchaseColumns = [
     },
     {
         headerName: 'FTANo',
-        field: 'ftaNo',
-        key: 'ftaNo',
+        field: 'ftaNumber',
+        key: 'ftaNumber',
     },
     {
         headerName: '송금중개은행',
-        field: 'bankName',
-        key: 'bankName',
+        field: 'intermediaryBank',
+        key: 'intermediaryBank',
     },
     {
         headerName: '주소',
@@ -1774,6 +1787,9 @@ export const tableCodeOverseasPurchaseColumns = [
         headerName: '등록일자',
         field: 'createdDate',
         key: 'createdDate',
+        valueFormatter: (params) => {
+            return moment(params.value).isValid() ? dateFormat(params) : ''
+        }
     },
     {
         headerName: '수정자',
@@ -1784,62 +1800,31 @@ export const tableCodeOverseasPurchaseColumns = [
         headerName: '수정일자',
         field: 'modifiedDate',
         key: 'modifiedDate',
-    },
-    {
-        headerName: '매입처 담당자',
-        children: [
-            {
-                headerName: '담당자',
-                field: 'customerManager',
-                key: 'customerManager',
-            },
-            {
-                headerName: '전화번호',
-                field: 'phoneNumber',
-                key: 'phoneNumber',
-            },
-            {
-                headerName: '팩스번호',
-                field: 'faxNumber',
-                key: 'faxNumber',
-            },
-            {
-                headerName: '이메일',
-                field: 'email',
-                key: 'email',
-            },
-            {
-                headerName: '주소',
-                field: 'agencyAddress',
-                key: 'agencyAddress',
-            },
-            {
-                headerName: '국가대리점',
-                field: 'countryAgency',
-                key: 'countryAgency',
-            },
-            {
-                headerName: '휴대폰',
-                field: 'cellPhoneNumber',
-                key: 'cellPhoneNumber',
-            },
-            {
-                headerName: '비고',
-                field: 'remarks',
-                key: 'remarks',
-            },
-        ]
-    },
+        valueFormatter: (params) => {
+            return moment(params.value).isValid() ? dateFormat(params) : ''
+        }
+    }
 ];
 
 
 export const tableCodeOverseasAgencyWriteColumns = [
 
     {
+        headerName: "", // 컬럼 제목
+        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
+        cellStyle: { textAlign: "center" }, // 스타일 설정
+        maxWidth: 45, // 컬럼 너비
+        pinned: "left", // 왼쪽에 고정
+        filter: false
+    },
+    {
         headerName: '담당자',
         field: 'customerManager',
         key: 'customerManager',
         editable: true,
+
+        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
+        checkboxSelection: true, // 각 행에 체크박스 추가
     },
     {
         headerName: '전화번호',

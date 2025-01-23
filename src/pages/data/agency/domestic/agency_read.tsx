@@ -14,8 +14,9 @@ import TableGrid from "@/component/tableGrid";
 import _ from "lodash";
 import {codeDomesticAgencyWriteInitial} from "@/utils/initialList";
 import {inputForm, MainCard, selectBoxForm} from "@/utils/commonForm";
-import {gridManage} from "@/utils/commonManage";
+import {commonManage, gridManage} from "@/utils/commonManage";
 import Spin from "antd/lib/spin";
+import ReceiveComponent from "@/component/ReceiveComponent";
 
 
 export default function codeDomesticPurchase({dataInfo}) {
@@ -32,13 +33,7 @@ export default function codeDomesticPurchase({dataInfo}) {
     };
 
     function onChange(e) {
-
-        let bowl = {}
-        bowl[e.target.id] = e.target.value;
-
-        setInfo(v => {
-            return {...v, ...bowl}
-        })
+        commonManage.onChange(e, setInfo)
     }
 
     function handleKeyPress(e) {
@@ -90,7 +85,8 @@ export default function codeDomesticPurchase({dataInfo}) {
         window.open(`/data/agency/domestic/agency_write`, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
     }
 
-    return <Spin spinning={loading} tip={'견적서 조회중...'}>
+    return <Spin spinning={loading} tip={'국내 매입처 조회중...'}>
+        <ReceiveComponent searchInfo={searchInfo}/>
         <LayoutComponent>
 
             <div style={{

@@ -8,7 +8,7 @@ import {
 } from "@ant-design/icons";
 import message from "antd/lib/message";
 import {
-    tableCodeDomesticAgencyWriteColumns,
+    tableCodeDomesticAgencyWriteColumns, tableCodeOverseasAgencyWriteColumns,
 } from "@/utils/columnList";
 import {
     codeDomesticAgencyWriteInitial, codeOverseasAgencyWriteInitial,
@@ -27,6 +27,7 @@ import {BoxCard, datePickerForm, inputForm, inputNumberForm, MainCard, selectBox
 import {commonManage, gridManage} from "@/utils/commonManage";
 import {updateDomesticAgency} from "@/utils/api/mainApi";
 import Spin from "antd/lib/spin";
+import _ from "lodash";
 
 const listType = 'overseasAgencyManagerList'
 export default function code_domestic_agency_write({dataInfo}) {
@@ -66,6 +67,14 @@ export default function code_domestic_agency_write({dataInfo}) {
         gridManage.deleteAll(gridRef)
     }
 
+    function copyPage() {
+        const totalList = gridManage.getAllData(gridRef)
+        let copyInfo = _.cloneDeep(info)
+        copyInfo[listType] = totalList
+
+        const query = `data=${encodeURIComponent(JSON.stringify(copyInfo))}`;
+        router.push(`/data/agency/overseas/agency_write?${query}`)
+    }
     return  <Spin spinning={loading} tip={'견적의뢰 등록중...'}>
     <LayoutComponent>
         <div style={{
@@ -76,7 +85,8 @@ export default function code_domestic_agency_write({dataInfo}) {
             <MainCard title={'해외 매입처 수정'} list={[
                 {name: '수정', func: saveFunc, type: 'primary'},
                 {name: '삭제', func: saveFunc, type: 'danger'},
-                {name: '초기화', func: clearAll, type: ''}
+                {name: '초기화', func: clearAll, type: ''},
+                {name: '복제', func: copyPage, type: 'default'},
             ]} mini={mini} setMini={setMini}>
 
                 {mini ? <div style={{
@@ -92,8 +102,15 @@ export default function code_domestic_agency_write({dataInfo}) {
                         </BoxCard>
                         <BoxCard title={'매입처 정보'}>
                             {inputForm({title: '딜러/제조', id: 'dealerType', onChange: onChange, data: info})}
-                            {inputForm({title: '등급', id: 'grade', onChange: onChange, data: info})}
-                            {inputForm({title: '마진', id: 'margin', onChange: onChange, data: info})}
+                            {selectBoxForm({
+                                title: '등급', id: 'grade', onChange: onChange, data: info, list: [
+                                    {value: 'A', label: 'A'},
+                                    {value: 'B', label: 'B'},
+                                    {value: 'C', label: 'C'},
+                                    {value: 'D', label: 'D'},
+                                ]
+                            })}
+                            {inputNumberForm({title: '마진', id: 'margin', onChange: onChange, data: info, suffix: '%'})}
                         </BoxCard>
                         <BoxCard title={'ETC'}>
                             {inputForm({title: '송금중개은행', id: 'intermediaryBank', onChange: onChange, data: info})}
@@ -119,7 +136,7 @@ export default function code_domestic_agency_write({dataInfo}) {
 
             <TableGrid
                 gridRef={gridRef}
-                columns={tableCodeDomesticAgencyWriteColumns}
+                columns={tableCodeOverseasAgencyWriteColumns}
                 onGridReady={onGridReady}
                 type={'write'}
                 funcButtons={['daUpload', 'agencyDomesticAdd', 'delete', 'print']}

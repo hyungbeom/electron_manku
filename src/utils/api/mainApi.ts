@@ -388,6 +388,7 @@ export const saveDomesticAgency = async ({data, router}:any) => {
     getData.post('agency/addAgency', data).then(v=>{
         const code = v.data.code;
         if(code === 1){
+            window.opener?.postMessage('write', window.location.origin);
             message.success('등록되었습니다.')
             router.push(`/data/agency/domestic/agency_update?`)
         }else{
@@ -401,6 +402,7 @@ export const updateDomesticAgency = async ({data, returnFunc}:any) => {
     getData.post('agency/updateOverseasAgency', data).then(v=>{
         const code = v.data.code;
         if(code === 1){
+            window.opener?.postMessage('write', window.location.origin);
             message.success('수정되었습니다.')
         }else{
             message.error('실패하였습니다.')
