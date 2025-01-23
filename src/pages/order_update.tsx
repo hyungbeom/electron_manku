@@ -247,7 +247,7 @@ export default function order_update({dataInfo}) {
                             </BoxCard>
 
 
-                            <BoxCard title={'드라이브 목록'}  disabled={!info['microsoftId']}>
+                            <BoxCard title={'드라이브 목록'}  disabled={!userInfo['microsoftId']}>
                                 {/*@ts-ignored*/}
                                 <div style={{overFlowY: "auto", maxHeight: 300}}>
                                     <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}

@@ -297,7 +297,7 @@ export default function rqfUpdate({dataInfo, managerList}) {
                                 {inputForm({title: 'End User', id: 'endUser', onChange: onChange, data: info})}
                                 {textAreaForm({title: '비고란', rows: 7, id: 'remarks', onChange: onChange, data: info})}
                             </BoxCard>
-                            <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}  disabled={!info['microsoftId']}>
+                            <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}  disabled={!userInfo['microsoftId']}>
                                 {/*@ts-ignored*/}
                                 <div style={{overFlowY: "auto", maxHeight: 300}}>
                                     <div style={{width: 100, float: 'right'}}>

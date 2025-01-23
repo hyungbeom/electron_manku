@@ -396,7 +396,7 @@ export default function rqfWrite({dataInfo, managerList}) {
                                         data: info
                                     })}
                                 </BoxCard>
-                                <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}  disabled={!info['microsoftId']}>
+                                <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}  disabled={!userInfo['microsoftId']}>
                                     {/*@ts-ignored*/}
                                     <div style={{overFlowY: "auto", maxHeight: 300}}>
                                         <div style={{width: 100, float: 'right'}}>

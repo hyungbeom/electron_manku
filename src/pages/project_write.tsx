@@ -110,6 +110,7 @@ export default function projectWrite({dataInfo, managerList}) {
             return message.warn('하위 데이터 1개 이상이여야 합니다');
         }
 
+
         setLoading(true)
         const formData: any = new FormData();
         commonManage.setInfoFormData(info, formData, listType, list)
@@ -269,7 +270,7 @@ export default function projectWrite({dataInfo, managerList}) {
                                         data: info
                                     })}
                                 </BoxCard>
-                                <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')} disabled={!info['microsoftId']}>
+                                <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')} disabled={!userInfo['microsoftId']}>
                                     {/*@ts-ignored*/}
                                     <div style={{overFlowY: "auto", maxHeight: 300}}>
                                         <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}

@@ -124,7 +124,7 @@ export default function remittance_domestic_write({dataInfo}) {
                         {inputNumberForm({title: '합계', id: 'total', disabled: true, onChange: onChange, data: info, formatter : numbFormatter, parser:numbParser})}
                     </BoxCard>
 
-                    <BoxCard title={'드라이브 목록'}   disabled={!info['microsoftId']}>
+                    <BoxCard title={'드라이브 목록'}   disabled={!userInfo['microsoftId']}>
                         {/*@ts-ignored*/}
                         <div style={{overFlowY: "auto", maxHeight: 300}}>
                             <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
