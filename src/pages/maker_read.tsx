@@ -1,25 +1,17 @@
-import React, {useEffect, useRef, useState} from "react";
-import moment from "moment/moment";
+import React, {useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
-import Input from "antd/lib/input/Input";
 
 import Button from "antd/lib/button";
-import {CopyOutlined, EditOutlined, FileExcelOutlined, SearchOutlined,} from "@ant-design/icons";
-import * as XLSX from "xlsx";
+import {EditOutlined, SearchOutlined,} from "@ant-design/icons";
 import message from "antd/lib/message";
 
-import {
-    makerColumn,
-} from "@/utils/columnList";
-import {
-    codeDomesticPurchaseInitial,
-
-} from "@/utils/initialList";
+import {makerColumn,} from "@/utils/columnList";
+import {codeDomesticPurchaseInitial,} from "@/utils/initialList";
 import Radio from "antd/lib/radio";
 import TableGrid from "@/component/tableGrid";
 import Search from "antd/lib/input/Search";
@@ -31,7 +23,7 @@ export default function makerRead({dataList}) {
     const {makerList} = dataList;
     const [info, setInfo] = useState(codeDomesticPurchaseInitial);
     const [tableData, setTableData] = useState(makerList);
-    const router=useRouter();
+    const router = useRouter();
 
 
     function onChange(e) {
@@ -47,7 +39,7 @@ export default function makerRead({dataList}) {
     async function onSearch() {
         const result = await getData.post('maker/getMakerList', info);
 
-        if(result?.data?.code === 1){
+        if (result?.data?.code === 1) {
             setTableData(result?.data?.entity?.makerList)
         }
 
@@ -56,15 +48,15 @@ export default function makerRead({dataList}) {
     async function deleteList() {
         const api = gridRef.current.api;
 
-        if (api.getSelectedRows().length<1) {
+        if (api.getSelectedRows().length < 1) {
             message.error('삭제할 데이터를 선택해주세요.')
         } else {
             for (const item of api.getSelectedRows()) {
                 const response = await getData.post('maker/deleteMaker', {
-                    makerId:item.makerId
+                    makerId: item.makerId
                 });
                 console.log(response)
-                if (response.data.code===1) {
+                if (response.data.code === 1) {
                     message.success('삭제되었습니다.')
                     window.location.reload();
                 } else {
@@ -78,12 +70,12 @@ export default function makerRead({dataList}) {
     async function copyRow() {
         const api = gridRef.current.api;
 
-        if (api.getSelectedRows().length<1) {
+        if (api.getSelectedRows().length < 1) {
             message.error('복사할 데이터를 선택해주세요.')
         } else {
             for (const item of api.getSelectedRows()) {
 
-                let newItem={...item}
+                let newItem = {...item}
 
                 delete newItem.makerId;
                 delete newItem.key;
@@ -94,7 +86,7 @@ export default function makerRead({dataList}) {
 
                 const response = await getData.post('maker/addMaker', newItem);
                 console.log(response)
-                if (response.data.code===1) {
+                if (response.data.code === 1) {
                     message.success('복사되었습니다.')
                     window.location.reload();
                 } else {
@@ -103,15 +95,6 @@ export default function makerRead({dataList}) {
             }
         }
     }
-
-
-    const downloadExcel = () => {
-
-        const worksheet = XLSX.utils.json_to_sheet(tableData);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-        XLSX.writeFile(workbook, "maker_list.xlsx");
-    };
 
     return <LayoutComponent>
         <div style={{display: 'grid', gridTemplateRows: '120px 1fr', height: '100vh', gridColumnGap: 5}}>
@@ -132,25 +115,20 @@ export default function makerRead({dataList}) {
                             </Radio.Group>
                         </div>
 
-                            <Search
-                                onSearch={onSearch}
-                                onChange={onChange}
-                                id={'searchText'}
-                                placeholder="input search text"
-                                allowClear
-                                enterButton={<><SearchOutlined/>&nbsp;&nbsp; 조회</>}
-                            />
-                            <div style={{margin:'0 10px'}}>
-                            <Button type={'primary'} style={{backgroundColor:'green', border: 'none'}}
+                        <Search
+                            onSearch={onSearch}
+                            onChange={onChange}
+                            id={'searchText'}
+                            placeholder="input search text"
+                            allowClear
+                            enterButton={<><SearchOutlined/>&nbsp;&nbsp; 조회</>}
+                        />
+                        <div style={{margin: '0 10px'}}>
+                            <Button type={'primary'} style={{backgroundColor: 'green', border: 'none'}}
                                     onClick={() => router?.push('/maker_write')}><EditOutlined/>신규작성</Button>
                         </div>
-
-
                     </div>
-
                 </Card>
-
-
             </Card>
 
             <TableGrid
@@ -159,23 +137,14 @@ export default function makerRead({dataList}) {
                 tableData={tableData}
                 type={'read'}
                 excel={true}
-                funcButtons={<div>
-                    {/*@ts-ignored*/}
-                    <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}} onClick={deleteList}>
-                        <CopyOutlined/>삭제
-                    </Button>
-                    <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft:5,}} onClick={downloadExcel}>
-                        <FileExcelOutlined/>출력
-                    </Button></div>}
+                funcButtons={['print']}
             />
-
         </div>
     </LayoutComponent>
 }
 
 // @ts-ignore
 export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
-
 
     let param = {}
 
@@ -187,8 +156,6 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
         "page": 1,
         "limit": -1
     });
-
-    // console.log(result?.data?.entity,'result?.data?.entity:')
 
     if (userInfo) {
         store.dispatch(setUserInfo(userInfo));
