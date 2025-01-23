@@ -1583,10 +1583,21 @@ export const tableCodeDomesticAgencyWriteColumns = [
 
 
 export const tableCodeDomesticPurchaseColumns = [
-    {
+   {
+        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
+        checkboxSelection: true, // 각 행에 체크박스 추가
         headerName: '코드',
         field: 'agencyCode',
         key: 'agencyCode',
+        maxWidth: 70,
+        pinned: "left",
+    }, {
+        headerName: "", // 컬럼 제목
+        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
+        cellStyle: { textAlign: "center" }, // 스타일 설정
+        maxWidth: 45, // 컬럼 너비
+        pinned: "left", // 왼쪽에 고정
+        filter: false
     },
     {
         headerName: '상호',
@@ -1674,41 +1685,58 @@ export const tableCodeDomesticPurchaseColumns = [
                 headerName: '담당자',
                 field: 'managerName',
                 key: 'managerName',
+                pinned: "right",
+                maxWidth: 80,
+
             },
             {
                 headerName: '전화번호',
                 field: 'phoneNumber',
                 key: 'phoneNumber',
+                pinned: "right",
+                maxWidth: 80,
             },
             {
                 headerName: '팩스번호',
                 field: 'faxNumber',
                 key: 'faxNumber',
+                pinned: "right",
+                maxWidth: 80,
             },
             {
                 headerName: '이메일',
                 field: 'email',
                 key: 'email',
+                pinned: "right",
+                maxWidth: 100,
             },
             {
                 headerName: '주소',
                 field: 'address',
                 key: 'address',
+                pinned: "right",
+                maxWidth: 120,
             },
             {
                 headerName: '국가대리점',
                 field: 'countryAgency',
                 key: 'countryAgency',
+                pinned: "right",
+                maxWidth: 100,
             },
             {
                 headerName: '휴대폰',
                 field: 'mobilePhone',
                 key: 'mobilePhone',
+                pinned: "right",
+                maxWidth: 80,
             },
             {
                 headerName: '비고',
                 field: 'remarks',
                 key: 'remarks',
+                pinned: "right",
+                maxWidth: 120,
             },
         ]
     },

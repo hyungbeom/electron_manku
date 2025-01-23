@@ -15,6 +15,7 @@ import _ from "lodash";
 import {codeDomesticAgencyWriteInitial} from "@/utils/initialList";
 import {inputForm, MainCard, selectBoxForm} from "@/utils/commonForm";
 import {gridManage} from "@/utils/commonManage";
+import Spin from "antd/lib/spin";
 
 
 export default function codeDomesticPurchase({dataInfo}) {
@@ -91,11 +92,12 @@ export default function codeDomesticPurchase({dataInfo}) {
     }
 
     async function moveRouter() {
-        window.open(`/order_write`, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
+        window.open(`/data/agency/domestic/agency_write`, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
 
     }
 
-    return <LayoutComponent>
+    return <Spin spinning={loading} tip={'견적서 조회중...'}>
+    <LayoutComponent>
 
         <div style={{
             display: 'grid',
@@ -146,6 +148,7 @@ export default function codeDomesticPurchase({dataInfo}) {
 
         </div>
     </LayoutComponent>
+    </Spin>
 }
 
 // @ts-ignore

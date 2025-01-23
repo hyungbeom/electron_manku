@@ -125,7 +125,6 @@ export default function LayoutComponent({children, userInfo = null}) {
                         {label: <span style={{fontSize: '12px'}}>메이커 등록</span>, key: 'maker_write'},
                         {label: <span style={{fontSize: '12px'}}>메이커 목록</span>, key: 'maker_read'},
                     ]},
-                {label: <span style={{fontSize: '12px'}}>공문서</span>, key: 'data/diploma/read'},
                 {label: <span style={{fontSize: '12px'}}>HS CODE</span>, key: 'code_read'},
             ],
             popupOffset: [0, -4],
