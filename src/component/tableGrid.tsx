@@ -117,7 +117,8 @@ const TableGrid = ({
             if (e.data.customerId)
                 window.open(`/data/customer/domestic/customer_update?customerCode=${e?.data?.customerCode}`, openType, option);
             if (e.data.overseasCustomerId)
-                window.open(`/code_overseas_customer_update?customerCode=${e?.data?.customerCode}`, openType, option);
+
+                window.open(`/data/customer/overseas/customer_update?customerCode=${e?.data?.customerCode}`, openType, option);
             if (e.data.officialDocumentId)
 
                 window.open(`/code_diploma_update?officialDocumentId=${e?.data?.officialDocumentId}`, openType, option);

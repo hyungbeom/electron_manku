@@ -20,17 +20,19 @@ import {inputForm, MainCard, radioForm} from "@/utils/commonForm";
 
 export default function codeOverseasPurchase({dataInfo}) {
     const gridRef = useRef(null);
+    const router = useRouter();
+
+    console.log(dataInfo,'dataInfo:')
 
     const [info, setInfo] = useState(codeDomesticPurchaseInitial);
 
     const [mini, setMini] = useState(true);
+    // console.log(customerList,'saveInfo:')
 
     const onGridReady = (params) => {
         gridRef.current = params.api;
         params.api.applyTransaction({add: dataInfo ? dataInfo : []});
     };
-
-
 
     function onChange(e) {
 
@@ -43,8 +45,13 @@ export default function codeOverseasPurchase({dataInfo}) {
     }
 
 
-    function searchInfo() {
-
+    async function searchInfo() {
+        const result = await getData.post('customer/getOverseasCustomerList', {
+            "searchType": "1",      // 1: 코드, 2: 상호명, 3: MAKER
+            "searchText": "",
+            "page": 1,
+            "limit": -1
+        });
     }
 
     function clearAll() {
@@ -52,7 +59,7 @@ export default function codeOverseasPurchase({dataInfo}) {
     }
 
     function moveRouter() {
-
+        window.open(`/data/customer/overseas/customer_write`, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
     }
 
     return <LayoutComponent>
@@ -66,6 +73,8 @@ export default function codeOverseasPurchase({dataInfo}) {
                           {name: '초기화', func: clearAll, type: 'danger'},
                           {name: '신규생성', func: moveRouter}]}
                       mini={mini} setMini={setMini}>
+
+
                 {mini ? <div style={{display: 'flex', alignItems: 'center', padding: 10}}>
                     {radioForm({
                         title: '',
@@ -78,7 +87,6 @@ export default function codeOverseasPurchase({dataInfo}) {
                             {value: 4, title: '국가'}]
                     })}
 
-
                     <div style={{width: 500, marginLeft: 20}}>
                         {inputForm({
                             title: '',
@@ -88,15 +96,16 @@ export default function codeOverseasPurchase({dataInfo}) {
                             size: 'middle'
                         })}
                     </div>
+
                 </div> : <></>}
             </MainCard>
             <TableGrid
                 gridRef={gridRef}
-                columns={tableCodeOverseasSalesColumns}
                 onGridReady={onGridReady}
+                columns={tableCodeOverseasSalesColumns}
                 funcButtons={['print']}
             />
-
+            overseasCustomerList
         </div>
     </LayoutComponent>
 }
@@ -116,8 +125,6 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
         "limit": -1
     });
 
-    console.log(result?.data?.entity, 'result?.data?.entity:')
-
     if (userInfo) {
         store.dispatch(setUserInfo(userInfo));
     }
@@ -129,7 +136,6 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
             },
         };
     } else {
-
         const list = result?.data?.entity?.overseasCustomerList;
         param = {
             props: {dataInfo: list ?? null}

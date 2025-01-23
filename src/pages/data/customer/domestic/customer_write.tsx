@@ -21,7 +21,7 @@ import {setUserInfo} from "@/store/user/userSlice";
 import {wrapper} from "@/store/store";
 import TextArea from "antd/lib/input/TextArea";
 import _ from "lodash";
-import {gridManage} from "@/utils/commonManage";
+import {commonManage, gridManage} from "@/utils/commonManage";
 import {BoxCard, datePickerForm, inputForm, MainCard, selectBoxForm, textAreaForm} from "@/utils/commonForm";
 
 
@@ -40,33 +40,20 @@ export default function code_domestic_agency_write({dataInfo}) {
     }
 
 
+
     const [info, setInfo] = useState<any>({...copyInit, ...dataInfo, ...adminParams})
+
 
 
     const onGridReady = (params) => {
         gridRef.current = params.api;
-        const result = dataInfo?.orderDetailList;
+        const result = dataInfo?.customerManagerList;
         params.api.applyTransaction({add: result ? result : []});
     };
 
-    useEffect(() => {
-        let copyData: any = {...codeDomesticSalesWriteInitial}
-        // @ts-ignored
-        copyData['tradeStartDate'] = moment();
-
-        setInfo(copyData);
-
-    }, [])
-
 
     function onChange(e) {
-
-        let bowl = {}
-        bowl[e.target.id] = e.target.value;
-
-        setInfo(v => {
-            return {...v, ...bowl}
-        })
+        commonManage.onChange(e, setInfo)
     }
 
     async function saveFunc() {
@@ -116,90 +103,66 @@ export default function code_domestic_agency_write({dataInfo}) {
     return <LayoutComponent>
         <div style={{
             display: 'grid',
-            gridTemplateRows: `${mini ? '500px' : '65px'} calc(100vh - ${mini ? 555 : 120}px)`,
+            gridTemplateRows: `${mini ? '440px' : '65px'} calc(100vh - ${mini ? 495 : 120}px)`,
             columnGap: 5
         }}>
             <MainCard title={'국내 고객사 등록'} list={[
                 {name: '저장', func: saveFunc, type: 'primary'},
-                {name: '초기화', func: clearAll, type: 'danger'}
+                {name: '초기화', func: clearAll, type: 'default'},
             ]} mini={mini} setMini={setMini}>
-                {mini ? <div>
-                    <div style={{
-                        display: 'grid',
-                        gridTemplateColumns: '180px 200px 200px 1fr 300px',
-                        columnGap: 10,
-                        marginTop: 10
-                    }}>
-                        <BoxCard title={'매입처 정보'}>
-                            {inputForm({title: '코드(약칭)', id: 'customerCode', onChange: onChange, data: info})}
-                            {inputForm({title: '지역', id: 'customerRegion', onChange: onChange, data: info})}
-                            {inputForm({title: '업태', id: 'businessType', onChange: onChange, data: info})}
-                            {inputForm({title: '종목', id: 'businessItem', onChange: onChange, data: info})}
-                            {inputForm({title: '대표자', id: 'representative', onChange: onChange, data: info})}
-                        </BoxCard>
+
+                {mini ?  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: "180px 200px 1fr 240px",
+                }}>
+                    <BoxCard title={'INQUIRY & PO no'}>
+                        {inputForm({title: '코드(약칭)', id: 'customerCode', onChange: onChange, data: info})}
+                        {inputForm({title: '지역', id: 'customerRegion', onChange: onChange, data: info})}
+                        {inputForm({title: '업태', id: 'businessType', onChange: onChange, data: info})}
+                        {inputForm({title: '종목', id: 'businessItem', onChange: onChange, data: info})}
+                        {inputForm({title: '대표자', id: 'representative', onChange: onChange, data: info})}
+                    </BoxCard>
+
+                    <BoxCard title={'INQUIRY & PO no'}>
+                        {inputForm({title: '거래시작일', id: 'tradeStartDate', onChange: onChange, data: info})}
+                        {inputForm({title: '상호', id: 'customerName', onChange: onChange, data: info})}
+                        {inputForm({title: '주소', id: 'address', onChange: onChange, data: info})}
+                        {inputForm({title: '홈페이지', id: 'homepage', onChange: onChange, data: info})}
+                        {inputForm({title: '전화번호', id: 'customerTel', onChange: onChange, data: info})}
+                        {inputForm({title: '팩스번호', id: 'customerFax', onChange: onChange, data: info})}
+                    </BoxCard>
 
 
-                        <BoxCard title={'매입처 정보'}>
-                            {datePickerForm({
-                                title: '거래시작일',
-                                id: 'tradeStartDate',
-                                disabled: true,
-                                onChange: onChange,
-                                data: info
-                            })}
-                            {inputForm({title: '상호', id: 'customerName', onChange: onChange, data: info})}
-                            {inputForm({title: '주소', id: 'address', onChange: onChange, data: info})}
-                            {inputForm({title: '팩스번호', id: 'customerFax', onChange: onChange, data: info})}
-                        </BoxCard>
-
-                        <BoxCard title={'매입처 정보'}>
-
-                            {inputForm({title: '사업자번호', id: 'businessRegistrationNumber', onChange: onChange, data: info})}
-                            {inputForm({title: '업체확인사항', id: 'companyVerify', onChange: onChange, data: info})}
-                            {inputForm({title: '홈페이지', id: 'homepage', onChange: onChange, data: info})}
-                            {inputForm({title: '비고란', id: 'remarks', onChange: onChange, data: info})}
-                        </BoxCard>
-
-                        <BoxCard title={'매입처 정보'}>
-                            {selectBoxForm({
-                                title: '화물운송료', id: 'freightCharge', onChange: onChange, data: info, list: [
-                                    {value: '화물 선불', label: '화물 선불'},
-                                    {value: '화물 후불', label: '화물 후불'},
-                                    {value: '택배 선불', label: '택배 선불'},
-                                    {value: '택배 후불', label: '택배 후불'},
-                                ]
-                            })}
-                            {inputForm({title: '화물지점', id: 'freightBranch', onChange: onChange, data: info})}
-                            {selectBoxForm({
-                                title: '결제방법', id: 'paymentMethod', onChange: onChange, data: info, list: [
-                                    {value: '현금 결제', label: '현금 결제'},
-                                    {value: '선수금', label: '선수금'},
-                                    {value: '정기 결제', label: '정기 결제'},
-                                ]
-                            })}
-                            {selectBoxForm({
-                                title: '업체형태', id: 'grade', onChange: onChange, data: info, list: [
-                                    {value: '딜러', label: '딜러'},
-                                    {value: '제조', label: '제조'},
-                                    {value: '공공기관', label: '공공기관'}
-                                ]
-                            })}
-
-                        </BoxCard>
-
-
-
-                    </div>
-                    <div style={{paddingTop: 15, textAlign: 'right', width: '100%'}}>
-
-                        <Button type={'primary'} size={'small'} style={{marginRight: 8}}
-                                onClick={saveFunc}><SaveOutlined/>저장</Button>
-
-                        {/*@ts-ignored*/}
-                        <Button type={'danger'} size={'small'}
-                                onClick={() => setInfo(codeDomesticSalesWriteInitial)}><RetweetOutlined/>초기화</Button>
-
-                    </div>
+                    <BoxCard title={'INQUIRY & PO no'}>
+                        {inputForm({title: '사업자번호', id: 'businessRegistrationNumber', onChange: onChange, data: info})}
+                        {textAreaForm({title: '업체확인사항', id: 'companyVerify', onChange: onChange, data: info})}
+                        {textAreaForm({title: '비고란', id: 'remarks', onChange: onChange, data: info})}
+                    </BoxCard>
+                    <BoxCard title={'INQUIRY & PO no'}>
+                        {selectBoxForm({
+                            title: '화물운송료', id: 'uploadType', onChange: onChange, data: info, list: [
+                                {value: '화물 선불', label: '화물 선불'},
+                                {value: '화물 후불', label: '화물 후불'},
+                                {value: '택배 선불', label: '택배 선불'},
+                                {value: '택배 후불', label: '택배 후불'},
+                            ]
+                        })}
+                        {inputForm({title: '화물지점', id: 'freightBranch', onChange: onChange, data: info})}
+                        {selectBoxForm({
+                            title: '결제방법', id: 'paymentMethod', onChange: onChange, data: info, list: [
+                                {value: '현금 결제', label: '현금 결제'},
+                                {value: '선수금', label: '선수금'},
+                                {value: '정기 결제', label: '정기 결제'},
+                            ]
+                        })}
+                        {selectBoxForm({
+                            title: '업체형태', id: 'dealerType', onChange: onChange, data: info, list:[
+                                {value: '딜러', label: '딜러'},
+                                {value: '제조', label: '제조'}
+                            ]
+                        })}
+                        {inputForm({title: '만쿠담당자', id: 'mankuTradeManager', onChange: onChange, data: info})}
+                    </BoxCard>
                 </div> : null}
             </MainCard>
             <TableGrid
