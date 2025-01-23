@@ -59,13 +59,9 @@ export default function codeDomesticPurchase({dataInfo}) {
 
         setLoading(true)
 
-        await getData.post('agency/deleteAgency',  {deleteList: deleteList}).then(v=>{
+        await getData.post('agency/deleteAgency', {deleteList: deleteList}).then(v => {
             searchInfo(v.data.code === 1)
         })
-
-
-
-
     }
 
 
@@ -85,7 +81,6 @@ export default function codeDomesticPurchase({dataInfo}) {
         setLoading(false)
     }
 
-
     function clearAll() {
         setInfo(copyInit);
         gridRef.current.deselectAll();
@@ -93,61 +88,60 @@ export default function codeDomesticPurchase({dataInfo}) {
 
     async function moveRouter() {
         window.open(`/data/agency/domestic/agency_write`, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
-
     }
 
     return <Spin spinning={loading} tip={'견적서 조회중...'}>
-    <LayoutComponent>
+        <LayoutComponent>
 
-        <div style={{
-            display: 'grid',
-            gridTemplateRows: `${mini ? '120px' : '65px'} calc(100vh - ${mini ? 220 : 165}px)`,
-            columnGap: 5
-        }}>
-            <MainCard title={'국내 매입처 조회'}
-                      list={[{name: '조회', func: searchInfo, type: 'primary'},
-                          {name: '초기화', func: clearAll, type: 'danger'},
-                          {name: '신규생성', func: moveRouter}]}
-                      mini={mini} setMini={setMini}>
-                {mini ?
-                    <div style={{display: 'flex', alignItems: 'center'}}>
+            <div style={{
+                display: 'grid',
+                gridTemplateRows: `${mini ? '120px' : '65px'} calc(100vh - ${mini ? 220 : 165}px)`,
+                columnGap: 5
+            }}>
+                <MainCard title={'국내 매입처 조회'}
+                          list={[{name: '조회', func: searchInfo, type: 'primary'},
+                              {name: '초기화', func: clearAll, type: 'danger'},
+                              {name: '신규생성', func: moveRouter}]}
+                          mini={mini} setMini={setMini}>
+                    {mini ?
+                        <div style={{display: 'flex', alignItems: 'center'}}>
 
-                        <div style={{marginTop: -10, width: 150}}>
-                            {selectBoxForm({
-                                title: '유효기간', id: 'searchType', list: [
-                                    {value: 1, label: '코드'},
-                                    {value: 2, label: '상호명'},
-                                    {value: 3, label: 'MAKER'}
-                                ], onChange: onChange, data: info
-                            })}
+                            <div style={{marginTop: -10, width: 150}}>
+                                {selectBoxForm({
+                                    title: '유효기간', id: 'searchType', list: [
+                                        {value: 1, label: '코드'},
+                                        {value: 2, label: '상호명'},
+                                        {value: 3, label: 'MAKER'}
+                                    ], onChange: onChange, data: info
+                                })}
+                            </div>
+                            <div style={{width: 500, marginLeft: 10}}>
+                                {inputForm({
+                                    title: '검색어',
+                                    id: 'searchText',
+                                    onChange: onChange,
+                                    data: info,
+                                    size: 'small',
+                                    handleKeyPress: handleKeyPress
+                                })}
+                            </div>
                         </div>
-                        <div style={{width: 500, marginLeft: 10}}>
-                            {inputForm({
-                                title: '검색어',
-                                id: 'searchText',
-                                onChange: onChange,
-                                data: info,
-                                size: 'small',
-                                handleKeyPress: handleKeyPress
-                            })}
-                        </div>
-                    </div>
-                    : <></>}
-            </MainCard>
+                        : <></>}
+                </MainCard>
 
-            {/*@ts-ignored*/}
-            <TableGrid deleteComp={<Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
-                                           onClick={deleteList}>
-                <CopyOutlined/>삭제
-            </Button>}
-                       gridRef={gridRef}
-                       columns={tableCodeDomesticPurchaseColumns}
-                       onGridReady={onGridReady}
-                       funcButtons={['print']}
-            />
+                {/*@ts-ignored*/}
+                <TableGrid deleteComp={<Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
+                                               onClick={deleteList}>
+                    <CopyOutlined/>삭제
+                </Button>}
+                           gridRef={gridRef}
+                           columns={tableCodeDomesticPurchaseColumns}
+                           onGridReady={onGridReady}
+                           funcButtons={['print']}
+                />
 
-        </div>
-    </LayoutComponent>
+            </div>
+        </LayoutComponent>
     </Spin>
 }
 

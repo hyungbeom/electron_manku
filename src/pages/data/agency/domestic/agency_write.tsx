@@ -116,7 +116,7 @@ export default function agency_write({dataInfo}) {
     return <LayoutComponent>
         <div style={{
             display: 'grid',
-            gridTemplateRows: `${mini ? '500px' : '65px'} calc(100vh - ${mini ? 555 : 120}px)`,
+            gridTemplateRows: `${mini ? '340px' : '65px'} calc(100vh - ${mini ? 395 : 120}px)`,
             columnGap: 5
         }}>
             <MainCard title={'발주서 작성'} list={[
@@ -130,12 +130,12 @@ export default function agency_write({dataInfo}) {
                         columnGap: 10,
                         marginTop: 10
                     }}>
-                    <BoxCard title={'매입처 정보'}>
-                        {inputForm({title: '코드(약칭)', id: 'agencyCode', onChange: onChange, data: info})}
-                        {inputForm({title: '상호', id: 'agencyName', onChange: onChange, data: info})}
-                        {inputForm({title: '사업자번호', id: 'agencyName', onChange: onChange, data: info})}
-                        {inputForm({title: '계좌번호', id: 'agencyName', onChange: onChange, data: info})}
-                    </BoxCard>
+                        <BoxCard title={'매입처 정보'}>
+                            {inputForm({title: '코드(약칭)', id: 'agencyCode', onChange: onChange, data: info})}
+                            {inputForm({title: '상호', id: 'agencyName', onChange: onChange, data: info})}
+                            {inputForm({title: '사업자번호', id: 'agencyName', onChange: onChange, data: info})}
+                            {inputForm({title: '계좌번호', id: 'agencyName', onChange: onChange, data: info})}
+                        </BoxCard>
                         <BoxCard title={'MAKER'}>
                             {inputForm({title: 'MAKER', id: 'agencyCode', onChange: onChange, data: info})}
                             {inputForm({title: 'ITEM', id: 'agencyName', onChange: onChange, data: info})}
@@ -148,108 +148,30 @@ export default function agency_write({dataInfo}) {
                                     {value: '달러', label: '달러'},
                                     {value: '제조', label: '제조'},
                                 ]
-                            })}      {selectBoxForm({
-                                title: '등급', id: 'dealerType', onChange: onChange, data: info, list: [
+                            })} {selectBoxForm({
+                            title: '등급', id: 'dealerType', onChange: onChange, data: info, list: [
                                 {value: 'A', label: 'A'},
                                 {value: 'B', label: 'B'},
                                 {value: 'C', label: 'C'},
                                 {value: 'D', label: 'D'},
-                                ]
-                            })}
-                            {inputNumberForm({title: '마진', id: 'margin', onChange: onChange, data: info, suffix : '%'})}
+                            ]
+                        })}
+                            {inputNumberForm({title: '마진', id: 'margin', onChange: onChange, data: info, suffix: '%'})}
                         </BoxCard>
-
-                        {/*                <div style={{marginTop: 8}}>*/}
-                        {/*                    <div style={{paddingBottom: 3}}>매입처 타입</div>*/}
-                        {/*                    <Select id={'dealerType'}*/}
-                        {/*                            onChange={(src) => onChange({target: {id: 'dealerType', value: src}})}*/}
-                        {/*                            size={'small'} value={info['dealerType']} options={[*/}
-                        {/*                        {value: '0', label: '딜러'},*/}
-                        {/*                        {value: '1', label: '제조'},*/}
-                        {/*                    ]} style={{width: '100%',}}/>*/}
-                        {/*                </div>*/}
-
-                        {/*                <div style={{marginTop: 8}}>*/}
-                        {/*            <div style={{paddingBottom: 3}}>등급</div>*/}
-                        {/*            <Select id={'grade'}*/}
-                        {/*                    onChange={(src) => onChange({target: {id: 'grade', value: src}})}*/}
-                        {/*                    size={'small'} value={info['grade']} options={[*/}
-                        {/*                {value: '0', label: 'A'},*/}
-                        {/*                {value: '1', label: 'B'},*/}
-                        {/*                {value: '2', label: 'C'},*/}
-                        {/*                {value: '3', label: 'D'},*/}
-                        {/*            ]} style={{width: '100%',}}/>*/}
-                        {/*    </div>*/}
-                        {/*    <div>*/}
-                        {/*        <div style={{paddingTop: 8}}>마진</div>*/}
-                        {/*        <Input id={'margin'} value={info['margin']} onChange={onChange}*/}
-                        {/*               size={'small'} style={{width: '90%', marginRight: 8}}/><span>%</span>*/}
-                        {/*    </div>*/}
-
-                        {/*<Card size={'small'} style={{*/}
-                        {/*    fontSize: 13,*/}
-                        {/*    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',*/}
-                        {/*}}>*/}
-
-
-
-                        {/*    <div>*/}
-                        {/*        <div style={{paddingTop: 8}}>상호</div>*/}
-                        {/*        <Input id={'agencyName'} value={info['agencyName']} onChange={onChange}*/}
-                        {/*               size={'small'}/>*/}
-                        {/*    </div>*/}
-                        {/*    <div>*/}
-                        {/*        <div style={{paddingTop: 8}}>MAKER</div>*/}
-                        {/*        <Input id={'maker'} value={info['maker']} onChange={onChange}*/}
-                        {/*               size={'small'}/>*/}
-                        {/*    </div>*/}
-                        {/*    <div>*/}
-                        {/*        <div style={{paddingTop: 8}}>ITEM</div>*/}
-                        {/*        <Input id={'item'} value={info['item']} onChange={onChange}*/}
-                        {/*               size={'small'}/>*/}
-                        {/*    </div>*/}
-
-                        {/*</Card>*/}
-
-
-                        {/*<Card size={'small'}*/}
-                        {/*      style={{*/}
-                        {/*          fontSize: 13,*/}
-                        {/*          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'*/}
-                        {/*      }}>*/}
-                        {/*    <div>*/}
-                        {/*        <div>홈페이지</div>*/}
-                        {/*        <Input id={'homepage'} value={info['homepage']} onChange={onChange}*/}
-                        {/*               size={'small'}/>*/}
-                        {/*    </div>*/}
-                        {/*    <div>*/}
-                        {/*        <div style={{paddingTop: 8}}>사업자번호</div>*/}
-                        {/*        <Input id={'businessRegistrationNumber'} value={info['businessRegistrationNumber']} onChange={onChange}*/}
-                        {/*               size={'small'}/>*/}
-                        {/*    </div>*/}
-
-                        {/*    <div>*/}
-                        {/*        <div style={{paddingTop: 8}}>계좌번호</div>*/}
-                        {/*        <Input id={'bankAccountNumber'} value={info['bankAccountNumber']} onChange={onChange}*/}
-                        {/*               size={'small'}/>*/}
-                        {/*    </div>*/}
-                        {/*</Card>*/}
                     </div>
                     : <></>}
-
-
             </MainCard>
             <TableGrid
                 gridRef={gridRef}
                 columns={tableCodeDomesticAgencyWriteColumns}
                 onGridReady={onGridReady}
                 type={'write'}
-                funcButtons={['orderUpload', 'agencyDomesticAdd', 'delete', 'print']}
+                funcButtons={['daUpload', 'agencyDomesticAdd', 'delete', 'print']}
 
-    />
+            />
 
-</div>
-</LayoutComponent>
+        </div>
+    </LayoutComponent>
 }
 
 // @ts-ignore

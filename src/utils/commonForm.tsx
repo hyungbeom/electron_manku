@@ -27,6 +27,7 @@ import {
 } from "@/utils/initialList";
 import {ExcelUpload} from "@/component/common/ExcelUpload";
 import Upload from "antd/lib/upload";
+import {tableCodeDomesticAgencyWriteColumns} from "@/utils/columnList";
 
 const {RangePicker} = DatePicker
 const {Option} = Select
@@ -151,7 +152,7 @@ export const datePickerForm = ({title, id, disabled = false, onChange, data}) =>
     return <div style={{fontSize: 12, paddingBottom: 10}}>
         <div>{title}</div>
         {/*@ts-ignore*/}
-        <DatePicker value={bowl[id] ? moment(bowl[id]) : ''} style={{width: '100%', fontSize: 11}}
+        <DatePicker value={moment(bowl[id]).isValid() ? moment(bowl[id]) : ''} style={{width: '100%', fontSize: 11}}
                     className="custom-datepicker"
                     disabledDate={commonManage.disabledDate}
                     onChange={(e, d) => onChange({
@@ -328,7 +329,9 @@ export const tableButtonList = (type: any, gridRef?: any) => {
                 <SaveOutlined/>추가
             </Button>
 
-        case 'storeUpload' :
+        case 'daUpload' :
+            return <ExcelUpload gridRef={gridRef} list={tableCodeDomesticAgencyWriteColumns}/>
+  case 'storeUpload' :
             return <ExcelUpload gridRef={gridRef} list={storeWriteList}/>
 
 
