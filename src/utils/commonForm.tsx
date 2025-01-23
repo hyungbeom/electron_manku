@@ -176,7 +176,8 @@ export const inputNumberForm = ({
                                     data,
                                     formatter = null,
                                     parser = null,
-                                    step = 1
+                                    step = 1,
+                                    suffix = ''
                                 }: any) => {
     let bowl = data;
 
@@ -315,8 +316,17 @@ export const tableButtonList = (type: any, gridRef?: any) => {
         gridRef.current.applyTransaction({add: [newRow]});
     }
 
-
+    function addAgencyDomesticRow() {
+        const newRow = {...orderDetailUnit};
+        gridRef.current.applyTransaction({add: [newRow]});
+    }
     switch (type) {
+
+        case 'agencyDomesticAdd' :
+            return <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
+                           onClick={addAgencyDomesticRow}>
+                <SaveOutlined/>추가
+            </Button>
 
         case 'storeUpload' :
             return <ExcelUpload gridRef={gridRef} list={storeWriteList}/>

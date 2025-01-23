@@ -618,7 +618,7 @@ export const codeDomesticAgencyWriteInitial = {
     "agencyCode": "",        // 코드(약칭)
     "dealerType": "딜러",        // "딜러", "제조"
     "grade": "A",               // 등급
-    "margin": null,                // 마진
+    "margin": 0,                // 마진
     "agencyName": "",   // 상호
     "maker": "",            // MAKER
     "homepage": "",   // 홈페이지

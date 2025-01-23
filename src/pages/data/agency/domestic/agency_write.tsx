@@ -22,23 +22,29 @@ import initialServerRouter from "@/manage/function/initialServerRouter";
 import nookies from "nookies";
 import {setUserInfo} from "@/store/user/userSlice";
 import {wrapper} from "@/store/store";
+import {
+    BoxCard,
+    datePickerForm,
+    inputForm,
+    inputNumberForm,
+    MainCard,
+    selectBoxForm,
+    TopBoxCard
+} from "@/utils/commonForm";
 
 
-export default function agency_write() {
+export default function agency_write({dataInfo}) {
     const gridRef = useRef(null);
 
     const [mini, setMini] = useState(true);
     const [info, setInfo] = useState(codeDomesticAgencyWriteInitial);
 
 
-    useEffect(() => {
-        let copyData: any = {...codeDomesticAgencyWriteInitial}
-        // @ts-ignored
-        copyData['tradeStartDate'] = moment();
-
-        setInfo(copyData);
-
-    }, [])
+    const onGridReady = (params) => {
+        gridRef.current = params.api;
+        const result = dataInfo?.orderDetailList;
+        params.api.applyTransaction({add: result ? result : []});
+    };
 
 
     function onChange(e) {
@@ -84,9 +90,7 @@ export default function agency_write() {
 
         let copyData = {...info}
         copyData['agencyManagerList'] = uncheckedData;
-        console.log(copyData, 'copyData::')
         setInfo(copyData);
-
     }
 
 
@@ -99,176 +103,173 @@ export default function agency_write() {
             "email": "",       // 이메일
             "address": "",              //  주소
             "countryAgency": "",            // 국가대리점
-            "mobilePhone":  "",             // 핸드폰
+            "mobilePhone": "",             // 핸드폰
             "remarks": ""                // 비고
         })
 
         setInfo(copyData)
     }
 
+
+
+
     return <LayoutComponent>
-        <div style={{display: 'grid', gridTemplateRows:  `${mini ? 'auto' : '65px'} 1fr`, height: '100vh', columnGap: 5,}}>
-            <Card title={'국내 매입처 등록'} style={{fontSize: 12, border: '1px solid lightGray'}} extra={<span style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>setMini(v => !v)}> {!mini ? <UpCircleFilled/> : <DownCircleFilled/>}</span>} >
-                {mini ?<>
-                    <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1.5fr', columnGap: 20}}>
-                        <Card size={'small'} style={{
-                            fontSize: 13,
-                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
-                        }}>
-                            <div>
-                                <div style={{paddingBottom: 3}}>코드(약칭)</div>
-                                <Input id={'agencyCode'} value={info['agencyCode']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-                            <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>매입처 타입</div>
-                                <Select id={'dealerType'}
-                                        onChange={(src) => onChange({target: {id: 'dealerType', value: src}})}
-                                        size={'small'} value={info['dealerType']} options={[
-                                    {value: '0', label: '딜러'},
-                                    {value: '1', label: '제조'},
-                                ]} style={{width: '100%',}}/>
-                            </div>
+        <div style={{
+            display: 'grid',
+            gridTemplateRows: `${mini ? '500px' : '65px'} calc(100vh - ${mini ? 555 : 120}px)`,
+            columnGap: 5
+        }}>
+            <MainCard title={'발주서 작성'} list={[
+                {name: '저장', func: saveFunc, type: 'primary'},
+                // {name: '초기화', func: clearAll, type: 'danger'}
+            ]} mini={mini} setMini={setMini}>
 
-                            <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>등급</div>
-                                <Select id={'grade'}
-                                        onChange={(src) => onChange({target: {id: 'grade', value: src}})}
-                                        size={'small'} value={info['grade']} options={[
-                                    {value: '0', label: 'A'},
-                                    {value: '1', label: 'B'},
-                                    {value: '2', label: 'C'},
-                                    {value: '3', label: 'D'},
-                                ]} style={{width: '100%',}}/>
-                            </div>
-                            <div>
-                                <div style={{paddingTop: 8}}>마진</div>
-                                <Input id={'margin'} value={info['margin']} onChange={onChange}
-                                       size={'small'} style={{width: '90%', marginRight: 8}}/><span>%</span>
-                            </div>
-                        </Card>
-                        <Card size={'small'} style={{
-                            fontSize: 13,
-                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
-                        }}>
-                            <div>
-                                <div style={{width: '100%'}}>거래시작일</div>
-                                {/*@ts-ignore*/}
-                                <DatePicker value={info['tradeStartDate']} style={{width: '100%'}}
-                                            onChange={(date, dateString) => onChange({
-                                                target: {
-                                                    id: 'tradeStartDate',
-                                                    value: date
-                                                }
-                                            })
-                                            } id={'tradeStartDate'} size={'small'}/>
-                            </div>
+                {mini ? <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: '180px 200px 200px 1fr 300px',
+                        columnGap: 10,
+                        marginTop: 10
+                    }}>
+                    <BoxCard title={'매입처 정보'}>
+                        {inputForm({title: '코드(약칭)', id: 'agencyCode', onChange: onChange, data: info})}
+                        {inputForm({title: '상호', id: 'agencyName', onChange: onChange, data: info})}
+                        {inputForm({title: '사업자번호', id: 'agencyName', onChange: onChange, data: info})}
+                        {inputForm({title: '계좌번호', id: 'agencyName', onChange: onChange, data: info})}
+                    </BoxCard>
+                        <BoxCard title={'MAKER'}>
+                            {inputForm({title: 'MAKER', id: 'agencyCode', onChange: onChange, data: info})}
+                            {inputForm({title: 'ITEM', id: 'agencyName', onChange: onChange, data: info})}
+                            {inputForm({title: '홈페이지', id: 'agencyName', onChange: onChange, data: info})}
+                        </BoxCard>
+                        <BoxCard title={'ETC'}>
+                            {datePickerForm({title: '거래시작일', id: 'tradeStartDate', onChange: onChange, data: info})}
+                            {selectBoxForm({
+                                title: '달러/제조', id: 'dealerType', onChange: onChange, data: info, list: [
+                                    {value: '달러', label: '달러'},
+                                    {value: '제조', label: '제조'},
+                                ]
+                            })}      {selectBoxForm({
+                                title: '등급', id: 'dealerType', onChange: onChange, data: info, list: [
+                                {value: 'A', label: 'A'},
+                                {value: 'B', label: 'B'},
+                                {value: 'C', label: 'C'},
+                                {value: 'D', label: 'D'},
+                                ]
+                            })}
+                            {inputNumberForm({title: '마진', id: 'margin', onChange: onChange, data: info, suffix : '%'})}
+                        </BoxCard>
+
+                        {/*                <div style={{marginTop: 8}}>*/}
+                        {/*                    <div style={{paddingBottom: 3}}>매입처 타입</div>*/}
+                        {/*                    <Select id={'dealerType'}*/}
+                        {/*                            onChange={(src) => onChange({target: {id: 'dealerType', value: src}})}*/}
+                        {/*                            size={'small'} value={info['dealerType']} options={[*/}
+                        {/*                        {value: '0', label: '딜러'},*/}
+                        {/*                        {value: '1', label: '제조'},*/}
+                        {/*                    ]} style={{width: '100%',}}/>*/}
+                        {/*                </div>*/}
+
+                        {/*                <div style={{marginTop: 8}}>*/}
+                        {/*            <div style={{paddingBottom: 3}}>등급</div>*/}
+                        {/*            <Select id={'grade'}*/}
+                        {/*                    onChange={(src) => onChange({target: {id: 'grade', value: src}})}*/}
+                        {/*                    size={'small'} value={info['grade']} options={[*/}
+                        {/*                {value: '0', label: 'A'},*/}
+                        {/*                {value: '1', label: 'B'},*/}
+                        {/*                {value: '2', label: 'C'},*/}
+                        {/*                {value: '3', label: 'D'},*/}
+                        {/*            ]} style={{width: '100%',}}/>*/}
+                        {/*    </div>*/}
+                        {/*    <div>*/}
+                        {/*        <div style={{paddingTop: 8}}>마진</div>*/}
+                        {/*        <Input id={'margin'} value={info['margin']} onChange={onChange}*/}
+                        {/*               size={'small'} style={{width: '90%', marginRight: 8}}/><span>%</span>*/}
+                        {/*    </div>*/}
+
+                        {/*<Card size={'small'} style={{*/}
+                        {/*    fontSize: 13,*/}
+                        {/*    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',*/}
+                        {/*}}>*/}
 
 
-                            <div>
-                                <div style={{paddingTop: 8}}>상호</div>
-                                <Input id={'agencyName'} value={info['agencyName']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-                            <div>
-                                <div style={{paddingTop: 8}}>MAKER</div>
-                                <Input id={'maker'} value={info['maker']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-                            <div>
-                                <div style={{paddingTop: 8}}>ITEM</div>
-                                <Input id={'item'} value={info['item']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
 
-                        </Card>
+                        {/*    <div>*/}
+                        {/*        <div style={{paddingTop: 8}}>상호</div>*/}
+                        {/*        <Input id={'agencyName'} value={info['agencyName']} onChange={onChange}*/}
+                        {/*               size={'small'}/>*/}
+                        {/*    </div>*/}
+                        {/*    <div>*/}
+                        {/*        <div style={{paddingTop: 8}}>MAKER</div>*/}
+                        {/*        <Input id={'maker'} value={info['maker']} onChange={onChange}*/}
+                        {/*               size={'small'}/>*/}
+                        {/*    </div>*/}
+                        {/*    <div>*/}
+                        {/*        <div style={{paddingTop: 8}}>ITEM</div>*/}
+                        {/*        <Input id={'item'} value={info['item']} onChange={onChange}*/}
+                        {/*               size={'small'}/>*/}
+                        {/*    </div>*/}
+
+                        {/*</Card>*/}
 
 
-                        <Card size={'small'}
-                              style={{
-                                  fontSize: 13,
-                                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
-                              }}>
-                            <div>
-                                <div>홈페이지</div>
-                                <Input id={'homepage'} value={info['homepage']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-                            <div>
-                                <div style={{paddingTop: 8}}>사업자번호</div>
-                                <Input id={'businessRegistrationNumber'} value={info['businessRegistrationNumber']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
+                        {/*<Card size={'small'}*/}
+                        {/*      style={{*/}
+                        {/*          fontSize: 13,*/}
+                        {/*          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'*/}
+                        {/*      }}>*/}
+                        {/*    <div>*/}
+                        {/*        <div>홈페이지</div>*/}
+                        {/*        <Input id={'homepage'} value={info['homepage']} onChange={onChange}*/}
+                        {/*               size={'small'}/>*/}
+                        {/*    </div>*/}
+                        {/*    <div>*/}
+                        {/*        <div style={{paddingTop: 8}}>사업자번호</div>*/}
+                        {/*        <Input id={'businessRegistrationNumber'} value={info['businessRegistrationNumber']} onChange={onChange}*/}
+                        {/*               size={'small'}/>*/}
+                        {/*    </div>*/}
 
-                            <div>
-                                <div style={{paddingTop: 8}}>계좌번호</div>
-                                <Input id={'bankAccountNumber'} value={info['bankAccountNumber']} onChange={onChange}
-                                       size={'small'}/>
-                            </div>
-                        </Card>
-
+                        {/*    <div>*/}
+                        {/*        <div style={{paddingTop: 8}}>계좌번호</div>*/}
+                        {/*        <Input id={'bankAccountNumber'} value={info['bankAccountNumber']} onChange={onChange}*/}
+                        {/*               size={'small'}/>*/}
+                        {/*    </div>*/}
+                        {/*</Card>*/}
                     </div>
-                    <div style={{paddingTop:15, textAlign: 'right', width: '100%'}}>
-
-                        <Button type={'primary'} size={'small'} style={{marginRight: 8}}
-                                onClick={saveFunc}><SaveOutlined/>저장</Button>
-
-                        {/*@ts-ignored*/}
-                        <Button type={'danger'} size={'small'}
-                                onClick={() => setInfo(codeDomesticAgencyWriteInitial)}><RetweetOutlined/>초기화</Button>
-
-                    </div></>: null}
-            </Card>
+                    : <></>}
 
 
+            </MainCard>
             <TableGrid
                 gridRef={gridRef}
                 columns={tableCodeDomesticAgencyWriteColumns}
-                tableData={info['agencyManagerList']}
-                listType={'agencyCode'}
-                listDetailType={'agencyManagerList'}
-                // dataInfo={tableOrderReadInfo}
-                setInfo={setInfo}
-                // setTableInfo={setTableInfo}
-                excel={true}
+                onGridReady={onGridReady}
                 type={'write'}
-                funcButtons={<div>
-                    {/*@ts-ignored*/}
-                    <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
-                            onClick={addRow}>
-                        <SaveOutlined/>추가
-                    </Button>
-                    {/*@ts-ignored*/}
-                    <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
-                            onClick={deleteList}>
-                        <CopyOutlined/>삭제
-                    </Button>
-                </div>}
-            />
+                funcButtons={['orderUpload', 'agencyDomesticAdd', 'delete', 'print']}
 
-        </div>
-    </LayoutComponent>
+    />
+
+</div>
+</LayoutComponent>
 }
 
 // @ts-ignore
 export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
+    const {query} = ctx;
 
 
-    let param = {}
-
-    const {userInfo} = await initialServerRouter(ctx, store);
-    const cookies = nookies.get(ctx)
-    if (!userInfo) {
+    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
+    if (codeInfo < 0) {
         return {
             redirect: {
-                destination: '/', // 리다이렉트할 경로
-                permanent: false, // true면 301 리다이렉트, false면 302 리다이렉트
+                destination: '/',
+                permanent: false,
             },
         };
     }
-
     store.dispatch(setUserInfo(userInfo));
+    if (query?.data) {
+        const data = JSON.parse(decodeURIComponent(query.data));
+        return {props: {dataInfo: data}}
+    }
 
-
-    return param
 })

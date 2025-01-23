@@ -1,5 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
-import moment from "moment/moment";
+import React, {useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
@@ -12,22 +11,15 @@ import Button from "antd/lib/button";
 import {
     CopyOutlined,
     DownCircleFilled,
-    FileExcelOutlined, RetweetOutlined,
+    RetweetOutlined,
     SaveOutlined,
     SearchOutlined,
     UpCircleFilled,
 } from "@ant-design/icons";
-import * as XLSX from "xlsx";
 import message from "antd/lib/message";
 
-import {
-    rfqReadColumns,
-    tableCodeDomesticPurchaseColumns,
-    tableCodeDomesticSalesColumns,
-    tableCodeOverseasPurchaseColumns, tableCodeReadColumns,
-} from "@/utils/columnList";
+import {tableCodeReadColumns,} from "@/utils/columnList";
 import {codeReadInitial, codeSaveInitial,} from "@/utils/initialList";
-import Radio from "antd/lib/radio";
 import TableGrid from "@/component/tableGrid";
 import Search from "antd/lib/input/Search";
 
@@ -68,7 +60,7 @@ export default function codeRead({dataInfo}) {
 
     async function onSearch() {
         const result = await getData.post('hsCode/getHsCodeList', searchData);
-        if(result?.data?.code === 1){
+        if (result?.data?.code === 1) {
 
         }
     }
@@ -98,15 +90,15 @@ export default function codeRead({dataInfo}) {
         const api = gridRef.current.api;
         // console.log(api.getSelectedRows(),':::')
 
-        if (api.getSelectedRows().length<1) {
+        if (api.getSelectedRows().length < 1) {
             message.error('삭제할 데이터를 선택해주세요.')
         } else {
             for (const item of api.getSelectedRows()) {
                 const response = await getData.post('hsCode/deleteHsCode', {
-                    hsCodeId:item.hsCodeId
+                    hsCodeId: item.hsCodeId
                 });
                 console.log(response)
-                if (response.data.code===1) {
+                if (response.data.code === 1) {
                     message.success('삭제되었습니다.')
                     window.location.reload();
                 } else {
@@ -117,10 +109,14 @@ export default function codeRead({dataInfo}) {
     }
 
 
-
     return <LayoutComponent>
         <div
-            style={{display: 'grid', gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`, height: '100vh', columnGap: 5,}}>
+            style={{
+                display: 'grid',
+                gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`,
+                height: '100vh',
+                columnGap: 5,
+            }}>
             <Card title={'HS code 관리'} style={{fontSize: 12, border: '1px solid lightGray'}}
                   extra={<span style={{fontSize: 20, cursor: 'pointer'}} onClick={() => setMini(v => !v)}> {!mini ?
                       <UpCircleFilled/> : <DownCircleFilled/>}</span>}>
@@ -131,15 +127,15 @@ export default function codeRead({dataInfo}) {
                                   fontSize: 13,
                                   boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
                               }}>
-                        <Search
-                            style={{paddingTop:8}}
-                            onSearch={onSearch}
-                            onChange={onSearchChange}
-                            id={'searchText'}
-                            placeholder="input search text"
-                            allowClear
-                            enterButton={<><SearchOutlined/>&nbsp;&nbsp; 조회</>}
-                        />
+                            <Search
+                                style={{paddingTop: 8}}
+                                onSearch={onSearch}
+                                onChange={onSearchChange}
+                                id={'searchText'}
+                                placeholder="input search text"
+                                allowClear
+                                enterButton={<><SearchOutlined/>&nbsp;&nbsp; 조회</>}
+                            />
                         </Card>
 
                         <Card size={'small'} title={'추가'}
@@ -147,7 +143,7 @@ export default function codeRead({dataInfo}) {
                                   fontSize: 13,
                                   boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
                               }}>
-                            <div style={{display:'grid', gridTemplateColumns: '1fr 1fr 0.7fr', columnGap:20}}>
+                            <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 0.7fr', columnGap: 20}}>
 
                                 <div>
                                     <div>ITEM</div>
@@ -160,22 +156,22 @@ export default function codeRead({dataInfo}) {
                                            size={'small'}/>
                                 </div>
 
-                            <div style={{paddingTop: 18}}>
-                                {/*@ts-ignored*/}
-                                <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
-                                        onClick={saveFunc}>
-                                    <SaveOutlined/>{saveData['hsCodeId']? '수정':'추가'}
-                                </Button>
-                                {/*@ts-ignored*/}
-                                <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
-                                        onClick={() => setSaveData(codeSaveInitial)}><RetweetOutlined/>초기화</Button>
-                                {/*@ts-ignored*/}
-                                <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
-                                        onClick={deleteList}>
-                                    <CopyOutlined/>삭제
-                                </Button>
+                                <div style={{paddingTop: 18}}>
+                                    {/*@ts-ignored*/}
+                                    <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
+                                            onClick={saveFunc}>
+                                        <SaveOutlined/>{saveData['hsCodeId'] ? '수정' : '추가'}
+                                    </Button>
+                                    {/*@ts-ignored*/}
+                                    <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
+                                            onClick={() => setSaveData(codeSaveInitial)}><RetweetOutlined/>초기화</Button>
+                                    {/*@ts-ignored*/}
+                                    <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
+                                            onClick={deleteList}>
+                                        <CopyOutlined/>삭제
+                                    </Button>
 
-                            </div>
+                                </div>
                             </div>
 
                         </Card>
@@ -195,6 +191,7 @@ export default function codeRead({dataInfo}) {
     </LayoutComponent>
 }
 
+
 // @ts-ignore
 export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
 
@@ -209,7 +206,6 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
         "page": 1,
         "limit": -1
     });
-
 
 
     if (userInfo) {
