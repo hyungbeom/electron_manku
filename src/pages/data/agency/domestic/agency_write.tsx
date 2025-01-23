@@ -3,7 +3,7 @@ import {getData} from "@/manage/function/api";
 import LayoutComponent from "@/component/LayoutComponent";
 import message from "antd/lib/message";
 import {tableCodeDomesticAgencyWriteColumns,} from "@/utils/columnList";
-import {codeDomesticAgencyWriteInitial, orderWriteInitial,} from "@/utils/initialList";
+import {codeDomesticAgencyWriteInitial,} from "@/utils/initialList";
 import TableGrid from "@/component/tableGrid";
 import moment from "moment/moment";
 import initialServerRouter from "@/manage/function/initialServerRouter";
@@ -12,9 +12,13 @@ import {wrapper} from "@/store/store";
 import {BoxCard, datePickerForm, inputForm, inputNumberForm, MainCard, selectBoxForm} from "@/utils/commonForm";
 import {gridManage} from "@/utils/commonManage";
 import _ from "lodash";
+import {saveDomesticAgency} from "@/utils/api/mainApi";
+import {useRouter} from "next/router";
 
 
 export default function agency_write({dataInfo}) {
+    const router = useRouter();
+
     const gridRef = useRef(null);
 
     const [mini, setMini] = useState(true);
@@ -47,21 +51,15 @@ export default function agency_write({dataInfo}) {
     }
 
     async function saveFunc() {
-        const copyData = {...info}
-        copyData['tradeStartDate'] = moment(info['tradeStartDate']).format('YYYY-MM-DD');
 
-        await getData.post('agency/addAgency', copyData).then(v => {
-            if (v.data.code === 1) {
-                message.success('저장되었습니다.')
-                setInfo(codeDomesticAgencyWriteInitial);
-                deleteList()
-                window.location.href = '/code_domestic_agency'
-            } else {
-                message.error('저장에 실패하였습니다.')
-            }
-        });
+        if(!info['agencyCode']){
+            return message.error('코드(약칭)이 누락되었습니다.')
+        }
+
+        await saveDomesticAgency({data: info, router : router})
 
     }
+
 
 
     function deleteList() {

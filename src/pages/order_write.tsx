@@ -14,7 +14,7 @@ import TableGrid from "@/component/tableGrid";
 import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, TopBoxCard} from "@/utils/commonForm";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import _ from "lodash";
-import {findEstDocumentInfo, findOrderDocumentInfo} from "@/utils/api/commonApi";
+import {findOrderDocumentInfo} from "@/utils/api/commonApi";
 import {saveOrder} from "@/utils/api/mainApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 
@@ -27,7 +27,6 @@ export default function OrderWriter({dataInfo}) {
 
 
     const copyInit = _.cloneDeep(orderWriteInitial)
-    const copyUnitInit = _.cloneDeep(orderDetailUnit)
 
     const userInfo = useAppSelector((state) => state.user);
 
@@ -63,7 +62,6 @@ export default function OrderWriter({dataInfo}) {
     };
 
 
-
     async function handleKeyPress(e) {
         if (e.key === 'Enter') {
             switch (e.target.id) {
@@ -75,8 +73,8 @@ export default function OrderWriter({dataInfo}) {
     }
 
     function onChange(e) {
-        if(e.target.id === 'documentNumberFull'){
-            setValidate(v=> {
+        if (e.target.id === 'documentNumberFull') {
+            setValidate(v => {
                 return {...v, documentNumberFull: true}
             })
         }
@@ -86,8 +84,8 @@ export default function OrderWriter({dataInfo}) {
 
     async function saveFunc() {
         gridRef.current.clearFocusedCell();
-        if(!info['documentNumberFull']){
-            setValidate(v=> {
+        if (!info['documentNumberFull']) {
+            setValidate(v => {
                 return {...v, documentNumberFull: false}
             })
             return message.warn('발주서 PO no를 입력하셔야 합니다.')
@@ -136,7 +134,13 @@ export default function OrderWriter({dataInfo}) {
                             {inputForm({title: '작성자', id: 'createdBy', disabled: true, onChange: onChange, data: info})}
                             {inputForm({title: '담당자', id: 'managerAdminName', onChange: onChange, data: info})}
 
-                            {inputForm({title: '발주서 PO no', id: 'documentNumberFull', onChange: onChange, data: info, validate:validate['documentNumberFull']})}
+                            {inputForm({
+                                title: '발주서 PO no',
+                                id: 'documentNumberFull',
+                                onChange: onChange,
+                                data: info,
+                                validate: validate['documentNumberFull']
+                            })}
                             {inputForm({
                                 placeholder: '폴더생성 규칙 유의',
                                 title: '연결 INQUIRY No.',
@@ -196,7 +200,7 @@ export default function OrderWriter({dataInfo}) {
                                 {inputForm({title: '견적서담당자', id: 'estimateManager', onChange: onChange, data: info})}
                                 {textAreaForm({title: '비고란', rows: 6, id: 'remarks', onChange: onChange, data: info})}
                             </BoxCard>
-                            <BoxCard title={'드라이브 목록'}  disabled={!info['microsoftId']}>
+                            <BoxCard title={'드라이브 목록'} disabled={!info['microsoftId']}>
                                 {/*@ts-ignored*/}
                                 <div style={{overFlowY: "auto", maxHeight: 300}}>
                                     <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}

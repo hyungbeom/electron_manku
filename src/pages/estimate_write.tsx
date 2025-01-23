@@ -25,6 +25,7 @@ import _ from "lodash";
 import {findCodeInfo, findDocumentInfo} from "@/utils/api/commonApi";
 import {checkInquiryNo, saveEstimate} from "@/utils/api/mainApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
+import Spin from "antd/lib/spin";
 
 const listType = 'estimateDetailList'
 export default function EstimateWrite({dataInfo}) {
@@ -133,7 +134,7 @@ export default function EstimateWrite({dataInfo}) {
         formData.delete('createdDate')
         formData.delete('modifiedDate')
 
-
+        setLoading(true)
         await saveEstimate({data: formData, router: router})
 
     }
@@ -145,7 +146,7 @@ export default function EstimateWrite({dataInfo}) {
     }
 
 
-    return <>
+    return <Spin spinning={loading} tip={'견적의뢰 등록중...'}>
 
         <SearchInfoModal info={info} setInfo={setInfo}
                          open={isModalOpen}
@@ -361,7 +362,7 @@ export default function EstimateWrite({dataInfo}) {
                 />
             </div>
         </LayoutComponent>
-    </>
+    </Spin>
 }
 // @ts-ignore
 export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {

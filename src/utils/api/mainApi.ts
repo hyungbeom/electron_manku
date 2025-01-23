@@ -375,3 +375,37 @@ export const getRemittanceList = async ({data}) => {
         message.error('오류가 발생하였습니다. 다시 시도해주세요.')
     }
 };
+
+
+// =====================================================================================================================
+// =====================================================================================================================
+// ==============================================data===================================================================
+// =====================================================================================================================
+// =====================================================================================================================
+
+export const saveDomesticAgency = async ({data, router}:any) => {
+
+    getData.post('agency/addAgency', data).then(v=>{
+        const code = v.data.code;
+        if(code === 1){
+            message.success('등록되었습니다.')
+            router.push(`/data/agency/domestic/agency_update?`)
+        }else{
+            message.error('실패하였습니다.')
+        }
+    })
+};
+
+export const updateDomesticAgency = async ({data, returnFunc}:any) => {
+
+    getData.post('agency/updateOverseasAgency', data).then(v=>{
+        const code = v.data.code;
+        if(code === 1){
+            message.success('수정되었습니다.')
+        }else{
+            message.error('실패하였습니다.')
+        }
+        returnFunc();
+    })
+
+};

@@ -1676,72 +1676,7 @@ export const tableCodeDomesticPurchaseColumns = [
         valueFormatter: (params) => {
             return moment(params.value).isValid() ? dateFormat(params) : ''
         }
-
     },
-    {
-        headerName: '매입처 담당자',
-        children: [
-            {
-                headerName: '담당자',
-                field: 'managerName',
-                key: 'managerName',
-                pinned: "right",
-                maxWidth: 80,
-
-            },
-            {
-                headerName: '전화번호',
-                field: 'phoneNumber',
-                key: 'phoneNumber',
-                pinned: "right",
-                maxWidth: 80,
-            },
-            {
-                headerName: '팩스번호',
-                field: 'faxNumber',
-                key: 'faxNumber',
-                pinned: "right",
-                maxWidth: 80,
-            },
-            {
-                headerName: '이메일',
-                field: 'email',
-                key: 'email',
-                pinned: "right",
-                maxWidth: 100,
-            },
-            {
-                headerName: '주소',
-                field: 'address',
-                key: 'address',
-                pinned: "right",
-                maxWidth: 120,
-            },
-            {
-                headerName: '국가대리점',
-                field: 'countryAgency',
-                key: 'countryAgency',
-                pinned: "right",
-                maxWidth: 100,
-            },
-            {
-                headerName: '휴대폰',
-                field: 'mobilePhone',
-                key: 'mobilePhone',
-                pinned: "right",
-                maxWidth: 80,
-            },
-            {
-                headerName: '비고',
-                field: 'remarks',
-                key: 'remarks',
-                pinned: "right",
-                maxWidth: 120,
-            },
-        ]
-    },
-
-
 ];
 
 export const tableCodeOverseasPurchaseColumns = [
