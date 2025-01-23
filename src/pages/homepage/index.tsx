@@ -26,6 +26,7 @@ export default function Home() {
 
                 </div>
 
+                {/*@ts-ignored*/}
                 <div style={styles.textContainer}>
                     <div style={{width: "100%"}}>함께 이어가는 무역의 가치,</div>
                     <div>MANKU TRADE</div>
