@@ -29,6 +29,7 @@ import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {useRouter} from "next/router";
 import Select from "antd/lib/select";
 import Spin from "antd/lib/spin";
+import {useAppSelector} from "@/utils/common/function/reduxHooks";
 
 const listType = 'estimateRequestDetailList'
 export default function rqfUpdate({dataInfo, managerList}) {
@@ -45,7 +46,7 @@ export default function rqfUpdate({dataInfo, managerList}) {
     const infoInit = dataInfo?.estimateRequestDetail
     let infoInitFile = dataInfo?.attachmentFileList
 
-
+    const userInfo = useAppSelector((state) => state.user);
     const [info, setInfo] = useState<any>({...infoInit, uploadType: 0})
     const [validate, setValidate] = useState({agencyCode: true, documentNumberFull: true});
     const [mini, setMini] = useState(true);

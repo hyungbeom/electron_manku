@@ -16,9 +16,10 @@ import {commonManage, fileManage, gridManage} from "@/utils/commonManage";
 import {saveRemittance, updateRemittance} from "@/utils/api/mainApi";
 import {useRouter} from "next/router";
 import _ from "lodash";
+import {useAppSelector} from "@/utils/common/function/reduxHooks";
 
 export default function remittance_domestic({dataInfo}) {
-
+    const userInfo = useAppSelector((state) => state.user);
 
     const infoInit = dataInfo?.remittanceDetail
     const infoFileInit = dataInfo?.attachmentFileList

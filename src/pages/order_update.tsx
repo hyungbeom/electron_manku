@@ -17,6 +17,7 @@ import {getAttachmentFileList, updateOrder} from "@/utils/api/mainApi";
 import _ from "lodash";
 import {findEstDocumentInfo} from "@/utils/api/commonApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
+import {useAppSelector} from "@/utils/common/function/reduxHooks";
 
 const listType = 'orderDetailList'
 export default function order_update({dataInfo}) {
@@ -24,8 +25,7 @@ export default function order_update({dataInfo}) {
     const gridRef = useRef(null);
     const router = useRouter();
 
-    const copyUnitInit = _.cloneDeep(orderDetailUnit)
-
+    const userInfo = useAppSelector((state) => state.user);
     const infoInit = dataInfo?.orderDetail
     let infoInitFile = dataInfo?.attachmentFileList
 

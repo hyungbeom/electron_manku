@@ -19,6 +19,7 @@ import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {getData} from "@/manage/function/api";
 import moment from "moment";
 import Spin from "antd/lib/spin";
+import {useAppSelector} from "@/utils/common/function/reduxHooks";
 
 const listType = 'projectDetailList'
 export default function projectUpdate({dataInfo}) {
@@ -26,7 +27,7 @@ export default function projectUpdate({dataInfo}) {
     const fileRef = useRef(null);
     const gridRef = useRef(null);
     const router = useRouter();
-
+    const userInfo = useAppSelector((state) => state.user);
     const [validate, setValidate] = useState({agencyCode: true, documentNumberFull: true});
     const infoInit = dataInfo?.projectDetail
     const infoInitFile = dataInfo?.attachmentFileList
