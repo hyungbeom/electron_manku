@@ -174,7 +174,7 @@ export default function remittance_domestic({dataInfo}) {
 
                 <TopBoxCard title={'기본 정보'} grid={'250px 200px 200px 200px'}>
                     {inputForm({title: 'Inquiry No.', id: 'connectInquiryNo'})}
-                    {inputForm({title: '거래처명', id: 'customerName'})}
+                    {inputForm({title: '고객사명', id: 'customerName'})}
                     {inputForm({title: '매입처명', id: 'agencyName'})}
                     {inputForm({title: '담당자', id: 'managerAdminName', disabled: true})}
                 </TopBoxCard>

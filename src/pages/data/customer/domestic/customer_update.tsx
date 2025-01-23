@@ -95,7 +95,7 @@ export default function code_domestic_agency_write({data}) {
 
     return <LayoutComponent>
         <div style={{display: 'grid', gridTemplateRows:  `${mini ? 'auto' : '65px'} 1fr`, height: '100vh', columnGap: 5,}}>
-            <Card title={'국내 거래처 수정'} style={{fontSize: 12, border: '1px solid lightGray'}} extra={<span style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>setMini(v => !v)}> {!mini ? <UpCircleFilled/> : <DownCircleFilled/>}</span>} >
+            <Card title={'국내 고객사 수정'} style={{fontSize: 12, border: '1px solid lightGray'}} extra={<span style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>setMini(v => !v)}> {!mini ? <UpCircleFilled/> : <DownCircleFilled/>}</span>} >
                 {mini ?<>
                     <div style={{display: 'grid', gridTemplateColumns: '0.5fr 1.5fr 1.5fr 1.5fr', columnGap: 20}}>
                         <Card size={'small'} style={{

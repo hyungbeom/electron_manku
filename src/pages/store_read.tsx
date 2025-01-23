@@ -127,7 +127,7 @@ export default function delivery_read({dataInfo}) {
                                     data: info
                                 })}
                                 {inputForm({
-                                    title: '거래처명',
+                                    title: '고객사명',
                                     id: 'searchCustomerName',
                                     onChange: onChange,
                                     handleKeyPress: handleKeyPress,

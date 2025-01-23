@@ -92,7 +92,7 @@ export default function remittance_domestic_write({dataInfo}) {
                                 openModal('orderList');
                             }
                         }/> })}
-                    {inputForm({title: '거래처명', id: 'customerName', onChange: onChange, data: info})}
+                    {inputForm({title: '고객사명', id: 'customerName', onChange: onChange, data: info})}
                     {inputForm({title: '매입처명', id: 'agencyName', onChange: onChange, data: info})}
                     {inputForm({title: '담당자', id: 'managerAdminName', onChange: onChange, data: info, disabled: true})}
                 </TopBoxCard>

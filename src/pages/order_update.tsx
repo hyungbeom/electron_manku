@@ -192,7 +192,7 @@ export default function order_update({dataInfo}) {
                                     onChange: onChange,
                                     data: info
                                 })}
-                                {inputForm({title: '거래처 PO no', id: 'yourPoNo', onChange: onChange, data: info})}
+                                {inputForm({title: '고객사 PO no', id: 'yourPoNo', onChange: onChange, data: info})}
                             </div>
                         </BoxCard>
 

@@ -85,7 +85,7 @@ export default function codeOverseasPurchase({dataInfo}) {
             gridTemplateRows: `${mini ? '120px' : '65px'} calc(100vh - ${mini ? 220 : 165}px)`,
             columnGap: 5
         }}>
-            <MainCard title={'국내 거래처 조회'}
+            <MainCard title={'국내 고객사 조회'}
                       list={[{name: '조회', func: searchInfo, type: 'primary'},
                           {name: '초기화', func: clearAll, type: 'danger'},
                           {name: '신규생성', func: moveRouter}]}

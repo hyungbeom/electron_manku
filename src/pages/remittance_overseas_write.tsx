@@ -211,7 +211,7 @@ export default function OrderWriter({dataInfo}) {
                                                                      onClick={findDocument}/>}/>
                                 </div>
                                 <div>
-                                    <div style={{paddingBottom: 3}}>거래처 PO no</div>
+                                    <div style={{paddingBottom: 3}}>고객사 PO no</div>
                                     <Input id={'yourPoNo'} value={info['yourPoNo']} onChange={onChange} size={'small'}/>
                                 </div>
                             </div>

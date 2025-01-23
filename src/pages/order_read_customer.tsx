@@ -67,7 +67,7 @@ export default function orderReadCustomer({dataList}) {
 
     return <LayoutComponent>
         <div style={{display: 'grid', gridTemplateRows: 'auto 1fr', height: '100vh', gridColumnGap: 5}}>
-            <Card size={'small'} title={'거래처 별 주문 조회'} style={{fontSize: 12, border: '1px solid lightGray'}}>
+            <Card size={'small'} title={'고객사 별 주문 조회'} style={{fontSize: 12, border: '1px solid lightGray'}}>
                 <Card size={'small'} style={{
                     fontSize: 13,
                     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'

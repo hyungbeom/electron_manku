@@ -144,7 +144,7 @@ export default function OrderWriter({dataInfo}) {
                                 suffix: <DownloadOutlined style={{cursor: 'pointer'}}/>,
                                 onChange: onChange, data: info, handleKeyPress: handleKeyPress
                             })}
-                            {inputForm({title: '거래처 PO no', id: 'yourPoNo', onChange: onChange, data: info})}
+                            {inputForm({title: '고객사 PO no', id: 'yourPoNo', onChange: onChange, data: info})}
                         </TopBoxCard>
 
                         <div style={{

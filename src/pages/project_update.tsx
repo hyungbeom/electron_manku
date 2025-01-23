@@ -200,7 +200,7 @@ export default function projectUpdate({dataInfo}) {
                                 </BoxCard>
                                 <BoxCard title={'고객사 정보'} tooltip={tooltipInfo('customer')}>
                                     {inputForm({
-                                        title: '거래처명',
+                                        title: '고객사명',
                                         id: 'customerName',
                                         suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
                                             (e) => {
@@ -210,7 +210,7 @@ export default function projectUpdate({dataInfo}) {
                                         }/>, onChange: onChange, data: info, handleKeyPress: handleKeyPress
                                     })}
                                     {inputForm({
-                                        title: '거래처 담당자명',
+                                        title: '고객사 담당자명',
                                         id: 'customerManagerName',
                                         disabled: true,
                                         onChange: onChange,
