@@ -4,19 +4,17 @@ import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import LayoutComponent from "@/component/LayoutComponent";
-import Card from "antd/lib/card/Card";
 
 import Button from "antd/lib/button";
-import {CopyOutlined, EditOutlined, SearchOutlined,} from "@ant-design/icons";
+import {CopyOutlined,} from "@ant-design/icons";
 import message from "antd/lib/message";
 
 import {tableCodeDomesticPurchaseColumns,} from "@/utils/columnList";
-import Radio from "antd/lib/radio";
 import TableGrid from "@/component/tableGrid";
-import Search from "antd/lib/input/Search";
 import _ from "lodash";
 import {codeDomesticAgencyWriteInitial} from "@/utils/initialList";
-import {inputForm, MainCard, radioForm, selectBoxForm} from "@/utils/commonForm";
+import {inputForm, MainCard, selectBoxForm} from "@/utils/commonForm";
+import {gridManage} from "@/utils/commonManage";
 
 
 export default function codeDomesticPurchase({dataInfo}) {
@@ -26,7 +24,7 @@ export default function codeDomesticPurchase({dataInfo}) {
 
     const [info, setInfo] = useState(copyInit);
     const [mini, setMini] = useState(true);
-
+    const [loading, setLoading] = useState(false);
     const onGridReady = (params) => {
         gridRef.current = params.api;
         params.api.applyTransaction({add: dataInfo ? dataInfo : []});
@@ -42,32 +40,50 @@ export default function codeDomesticPurchase({dataInfo}) {
         })
     }
 
-
-
-    async function deleteList() {
-        const api = gridRef.current.api;
-        if (api.getSelectedRows().length < 1) {
-            message.error('삭제할 데이터를 선택해주세요.')
-        } else {
-            for (const item of api.getSelectedRows()) {
-                const response = await getData.post('agency/deleteAgency', {
-                    agencyId: item.agencyId
-                });
-                console.log(response)
-                if (response.data.code === 1) {
-                    message.success('삭제되었습니다.')
-                    window.location.reload();
-                } else {
-                    message.error('오류가 발생하였습니다. 다시 시도해주세요.')
-                }
-            }
+    function handleKeyPress(e) {
+        if (e.key === 'Enter') {
+            searchInfo(true)
         }
     }
 
 
-    function searchInfo() {
+    async function deleteList() {
+        if (gridRef.current.getSelectedRows().length < 1) {
+            return message.error('삭제할 데이터를 선택해주세요.')
+        }
+
+        const deleteList = gridManage.getFieldDeleteList(gridRef, {
+            agencyId: 'agencyId',
+        });
+
+        setLoading(true)
+
+        await getData.post('agency/deleteAgency',  {deleteList: deleteList}).then(v=>{
+            searchInfo(v.data.code === 1)
+        })
+
+
+
 
     }
+
+
+    async function searchInfo(e) {
+
+        if (e) {
+            setLoading(true)
+            const result = await getData.post('agency/getAgencyList', {
+                "searchType": info['searchType'],      // 1: 코드, 2: 상호명, 3: MAKER
+                "searchText": info['searchText'],
+                "page": 1,
+                "limit": -1
+            });
+            gridManage.resetData(gridRef, result?.data?.entity?.agencyList);
+            setLoading(false)
+        }
+        setLoading(false)
+    }
+
 
     function clearAll() {
         setInfo(copyInit);
@@ -81,41 +97,41 @@ export default function codeDomesticPurchase({dataInfo}) {
 
     return <LayoutComponent>
 
-            <div style={{
-                display: 'grid',
-                gridTemplateRows: `${mini ? '120px' : '65px'} calc(100vh - ${mini ? 220 : 165}px)`,
-                columnGap: 5
-            }}>
-                <MainCard title={'국내 매입처 조회'}
-                          list={[{name: '조회', func: searchInfo, type: 'primary'},
-                              {name: '초기화', func: clearAll, type: 'danger'},
-                              {name: '신규생성', func: moveRouter}]}
-                          mini={mini} setMini={setMini}>
-                    {mini ?
-                        <div style={{display: 'flex', alignItems: 'center', padding: 10}}>
+        <div style={{
+            display: 'grid',
+            gridTemplateRows: `${mini ? '120px' : '65px'} calc(100vh - ${mini ? 220 : 165}px)`,
+            columnGap: 5
+        }}>
+            <MainCard title={'국내 매입처 조회'}
+                      list={[{name: '조회', func: searchInfo, type: 'primary'},
+                          {name: '초기화', func: clearAll, type: 'danger'},
+                          {name: '신규생성', func: moveRouter}]}
+                      mini={mini} setMini={setMini}>
+                {mini ?
+                    <div style={{display: 'flex', alignItems: 'center'}}>
 
-                            {radioForm({
-                                title: '',
-                                id: 'searchType',
+                        <div style={{marginTop: -10, width: 150}}>
+                            {selectBoxForm({
+                                title: '유효기간', id: 'searchType', list: [
+                                    {value: 1, label: '코드'},
+                                    {value: 2, label: '상호명'},
+                                    {value: 3, label: 'MAKER'}
+                                ], onChange: onChange, data: info
+                            })}
+                        </div>
+                        <div style={{width: 500, marginLeft: 10}}>
+                            {inputForm({
+                                title: '검색어',
+                                id: 'searchText',
                                 onChange: onChange,
                                 data: info,
-                                list: [{value: 1, title: '코드'},
-                                    {value: 2, title: '상호명'},
-                                    {value: 3, title: 'MAKER'}]
+                                size: 'small',
+                                handleKeyPress: handleKeyPress
                             })}
-
-                            <div style={{width: 500, marginLeft: 20}}>
-                                {inputForm({
-                                    title: '',
-                                    id: 'searchCustomerName',
-                                    onChange: onChange,
-                                    data: info,
-                                    size: 'middle'
-                                })}
-                            </div>
                         </div>
-                        : <></>}
-                </MainCard>
+                    </div>
+                    : <></>}
+            </MainCard>
 
             {/*@ts-ignored*/}
             <TableGrid deleteComp={<Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}

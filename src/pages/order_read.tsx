@@ -66,12 +66,11 @@ export default function OrderRead({dataInfo}) {
             return message.error('삭제할 데이터를 선택해주세요.')
         }
 
-        const fieldMappings = {
+
+        const deleteList = gridManage.getFieldDeleteList(gridRef, {
             orderId: 'orderId',
             orderDetailId: 'orderDetailId'
-        };
-
-        const deleteList = gridManage.getFieldDeleteList(gridRef, fieldMappings);
+        });
         setLoading(true);
         await deleteOrder({data: {deleteList: deleteList}, returnFunc: searchInfo});
 

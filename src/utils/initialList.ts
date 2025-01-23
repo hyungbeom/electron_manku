@@ -130,7 +130,7 @@ export const rfqWriteInitial = {
 
 
 export const customerInitial = {
-    "customerCode": "",                // 거래처코드
+    "customerCode": "",                // 고객사코드
     "customerName": "",  // 고객사명(상호명)
     "phoneNumber": "",              // 전화번호
     "faxNumber": "",       // 팩스
@@ -482,7 +482,7 @@ export const remittanceDomesticInitial = {
 export const remittanceDomesticSearchInitial = {
     "searchDate": [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
     "searchConnectInquiryNo": "",   // InquiryNo
-    "searchCustomerName": "",       // 거래처명
+    "searchCustomerName": "",       // 고객사명
     "searchAgencyName": "",         // 매입처명
     "searchManagerAdminName": "",   // 담당자
     "searchRequestStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),   // 송금요청일자 검색 시작일
@@ -813,7 +813,7 @@ export const modalList = {
     },
     customerName: {
         url: 'customer/getCustomerListForEstimate',
-        title: '거래처 상호명 조회',
+        title: '고객사 상호명 조회',
         column: searchCustomerColumn,
         list: 'customerList',
         placeholder: '상호명 또는 담당자명 입력하세요'
@@ -830,7 +830,7 @@ export const modalList = {
         title: '발주서 조회',
         column: tableOrderReadColumns,
         list: 'orderList',
-        placeholder: '문서번호 또는 거래처명을 입력하세요'
+        placeholder: '문서번호 또는 고객사명을 입력하세요'
     },
 }
 
@@ -882,7 +882,7 @@ export const storeWriteInitial = {
 export const storeDetailUnit = {
     orderDocumentNumberFull: "",           // 발주서 Inquiry No
     itemDetailNo: '',                              // 세부 항목 번호
-    customerName: '',                           // 거래처명
+    customerName: '',                           // 고객사명
     agencyName: '',                             // 매입처명
     orderDate: '',                          // 발주일자
     remittanceDate: '',                     // 송금일자
@@ -907,7 +907,7 @@ export const storeRealInitial = {
     "searchStartArrivalDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),               // 입고일자 시작
     "searchEndArrivalDate": moment().format('YYYY-MM-DD'),                 // 입고일자 종료
     "searchOrderDocumentNumberFull": "",        // 발주 Inquirty No
-    "searchCustomerName": "",                   // 거래처명
+    "searchCustomerName": "",                   // 고객사명
 }
 
 
@@ -989,7 +989,7 @@ export const storeWriteList = {
     'Inquiry No.': 'orderDocumentNumberFull',
     '세부항목 번호': 'itemDetailNo',
     매입처명: 'agencyName',
-    거래처명: 'customerName',
+    고객사명: 'customerName',
     환율: 'exchangeRate',
     발주일자: 'orderDate',
     송금일자: 'remittanceDate',
