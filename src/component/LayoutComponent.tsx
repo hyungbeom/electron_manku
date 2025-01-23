@@ -7,7 +7,7 @@ import {
     DiffOutlined,
     DropboxOutlined,
     FormOutlined,
-    FundProjectionScreenOutlined,
+    FundProjectionScreenOutlined, HomeOutlined,
     PullRequestOutlined,
     SendOutlined,
     TruckOutlined,
@@ -135,6 +135,15 @@ export default function LayoutComponent({children, userInfo = null}) {
             style: {margin: ' 0px -20px'},
             children: [
                 {label: <span style={{fontSize: '12px'}}>공지사항</span>, key: 'note'},
+            ],
+            popupOffset: [0, -4],
+        }, {
+            label: 'MANKU_HOMEPAGE',
+            key: 'homepage',
+            icon: <HomeOutlined />,
+            style: {margin: ' 0px -20px'},
+            children: [
+                {label: <span style={{fontSize: '12px'}}>HOMEPAGE</span>, key: 'homepage'},
             ],
             popupOffset: [0, -4],
         }
