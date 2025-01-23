@@ -2,7 +2,7 @@ import React, {useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
 import {DownloadOutlined} from "@ant-design/icons";
 import {tableOrderWriteColumn,} from "@/utils/columnList";
-import {orderDetailUnit, orderWriteInitial} from "@/utils/initialList";
+import {orderWriteInitial} from "@/utils/initialList";
 import message from "antd/lib/message";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";

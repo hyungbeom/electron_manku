@@ -22,6 +22,7 @@ export default function codeOverseasPurchase({dataInfo}) {
     const gridRef = useRef(null);
     const router = useRouter();
 
+    console.log(dataInfo,'dataInfo:')
 
     const [info, setInfo] = useState(codeDomesticPurchaseInitial);
 
@@ -76,7 +77,7 @@ export default function codeOverseasPurchase({dataInfo}) {
     }
 
     function moveRouter() {
-
+        window.open(`/data/customer/domestic/customer_write`, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
     }
 
     return <LayoutComponent>

@@ -1871,16 +1871,28 @@ export const tableCodeOverseasAgencyWriteColumns = [
 ]
 
 export const tableCodeDomesticSalesColumns = [
+    {
+        headerName: "", // 컬럼 제목
+        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
+        cellStyle: { textAlign: "center" }, // 스타일 설정
+        maxWidth: 45, // 컬럼 너비
+        pinned: "left", // 왼쪽에 고정
+        filter: false
 
+    },
     {
         headerName: '코드',
         field: 'customerCode',
-
+        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
+        checkboxSelection: true, // 각 행에 체크박스 추가
+        pinned: "left", // 왼쪽에 고정
+        maxWidth: 55
     },
     {
         headerName: '상호',
         field: 'customerName',
-
+        pinned: "left", // 왼쪽에 고정
+        maxWidth: 120
     },
     {
         headerName: '지역',
@@ -1969,6 +1981,9 @@ export const tableCodeDomesticSalesColumns = [
     {
         headerName: '등록일자',
         field: 'createdDate',
+        valueFormatter: (params) => {
+            return moment(params.value).isValid() ? dateFormat(params) : ''
+        }
 
     },
     {
@@ -1978,6 +1993,9 @@ export const tableCodeDomesticSalesColumns = [
     {
         headerName: '수정일자',
         field: 'modifiedDate',
+        valueFormatter: (params) => {
+            return moment(params.value).isValid() ? dateFormat(params) : ''
+        }
     },
 
 ];
