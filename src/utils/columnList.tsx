@@ -1853,8 +1853,8 @@ export const tableCodeOverseasAgencyWriteColumns = [
     },
     {
         headerName: '주소',
-        field: 'agencyAddress',
-        key: 'agencyAddress',
+        field: 'address',
+        key: 'address',
         editable: true,
     },
     {
@@ -1865,8 +1865,8 @@ export const tableCodeOverseasAgencyWriteColumns = [
     },
     {
         headerName: '휴대폰',
-        field: 'cellPhoneNumber',
-        key: 'cellPhoneNumber',
+        field: 'mobilePhone',
+        key: 'mobilePhone',
         editable: true,
     },
     {

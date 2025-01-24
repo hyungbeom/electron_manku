@@ -106,6 +106,7 @@ export default function code_domestic_agency_write({dataInfo}) {
                             {inputForm({title: '사업자번호', id: 'businessRegistrationNumber', onChange: onChange, data: info})}
                             {inputForm({title: '계좌번호', id: 'bankAccountNumber', onChange: onChange, data: info})}
                         </BoxCard>
+
                         <BoxCard title={'MAKER'}>
                             {inputForm({title: 'MAKER', id: 'maker', onChange: onChange, data: info})}
                             {inputForm({title: 'ITEM', id: 'item', onChange: onChange, data: info})}
