@@ -1,6 +1,7 @@
 export default function Home() {
     return (
         <div style={{overflowX: 'hidden'}}>
+
             <div style={styles.fullscreenImage}>
 
                 <div style={{position: 'fixed', top: 0, left: 0, width: '100%', padding: '30px 75px 30px 60px'}}>
