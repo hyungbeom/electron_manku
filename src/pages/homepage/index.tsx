@@ -1,4 +1,26 @@
+import {inputForm, selectBoxForm, textAreaForm} from "@/utils/commonForm";
+import {commonManage} from "@/utils/commonManage";
+import {useState} from "react";
+
 export default function Home() {
+
+    const [info, setInfo] = useState({
+        companyName: '',
+        name: '',
+        phone: '',
+        email: '',
+        create: '',
+        item: '',
+        modelNumber: '',
+        quantity: '',
+        remark: '',
+        attachFile: ''
+    });
+
+    function onChange(e) {
+        commonManage.onChange(e, setInfo)
+    }
+
     return (
         <div style={{overflowX: 'hidden'}}>
             <div style={styles.fullscreenImage}>
@@ -197,8 +219,109 @@ export default function Home() {
                     </div>
 
                 </div>
+            </div>
+
+
+            <div style={{textAlign : 'center', border : '1px solid black', height : 300}}>
+
+                NOTICE!~~~~~~~~~~~~~
+            </div>
+
+
+            <div style={{display: 'grid', gridTemplateColumns: '400px 1fr', gridColumnGap: 120, padding: 150}}>
+                <img src={'/homepage/content7.png'} width={'100%'} alt=""/>
+                <div>
+                    <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: 25}}>
+                        {inputForm({
+                            title: '회사이름*',
+                            id: 'com',
+                            onChange: onChange,
+                            data: info,
+                            size: 'middle'
+                        })}
+                        {inputForm({
+                            title: '성함*',
+                            id: 'name',
+                            onChange: onChange,
+                            data: info,
+                            size: 'middle'
+                        })}
+                    </div>
+                    <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: 25, paddingTop: 10}}>
+                        {inputForm({
+                            title: '연락처*',
+                            id: 'phone',
+                            onChange: onChange,
+                            data: info,
+                            size: 'middle'
+                        })}
+                        {inputForm({
+                            title: '이메일*',
+                            id: 'email',
+                            onChange: onChange,
+                            data: info,
+                            size: 'middle'
+                        })}
+                    </div>
+
+                    <div style={{paddingTop: 10}}>
+                        {selectBoxForm({
+                            title: '제작사', id: 'create', onChange: onChange, data: info, list: [
+                                {value: 0, label: ''},
+                                {value: 1, label: ''},
+                                {value: 2, label: ''}
+                            ], size: 'middle'
+                        })}
+                    </div>
+                    <div style={{paddingTop: 20}}>
+                        {selectBoxForm({
+                            title: '아이템', id: 'item', onChange: onChange, data: info, list: [
+                                {value: 0, label: ''},
+                                {value: 1, label: ''},
+                                {value: 2, label: ''}
+                            ], size: 'middle'
+                        })}
+                    </div>
+                    <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: 25, paddingTop : 20}}>
+                        {selectBoxForm({
+                            title: '모델넘버', id: 'modelNumber', onChange: onChange, data: info, list: [
+                                {value: 0, label: ''},
+                                {value: 1, label: ''},
+                                {value: 2, label: ''}
+                            ], size: 'middle'
+                        })}
+                        {inputForm({
+                            title: '수량',
+                            id: 'quantity',
+                            onChange: onChange,
+                            data: info,
+                            size: 'middle'
+                        })}
+                    </div>
+                    <div style={{paddingTop : 20}}>
+                        {textAreaForm({
+                            title: '문의내용*',
+                            id: 'remark',
+                            onChange: onChange,
+                            data: info,
+                            size: 'middle'
+                        })}
+                    </div>
+                    <div style={{paddingTop : 20}}>
+                        {inputForm({
+                            title: '파일 또는 사진 첨부',
+                            id: 'attachFile',
+                            onChange: onChange,
+                            data: info,
+                            size: 'middle'
+                        })}
+                    </div>
+
+                    <div>BUTTON +</div>
+                </div>
 
             </div>
+
 
             <div style={{position: 'relative'}}>
                 <img src={'/homepage/footer.png'} style={{width: '100%'}} alt=""/>
@@ -213,17 +336,19 @@ export default function Home() {
                         fontSize: '0.8vw',
                     }}
                 >
-                    <div style={{    display: 'flex',
+                    <div style={{
+                        display: 'flex',
                         justifyContent: 'flex-end', // 자식들을 우측 정렬
                         alignItems: 'center', // 수직 중앙 정렬
-                        width: '36.5vw', gap : 18}}>
-                        <span style={{cursor : 'pointer'}}>홈</span>
-                        <span style={{cursor : 'pointer'}}>가입정보</span>
-                        <span style={{cursor : 'pointer'}}>사업분야</span>
-                        <span style={{cursor : 'pointer'}}>한국대리점</span>
-                        <span style={{cursor : 'pointer'}}>고객센터</span>
-                        <span style={{cursor : 'pointer'}}>메일문의</span>
-                        <span style={{cursor : 'pointer'}}>네이버스토어</span>
+                        width: '36.5vw', gap: 18
+                    }}>
+                        <span style={{cursor: 'pointer'}}>홈</span>
+                        <span style={{cursor: 'pointer'}}>가입정보</span>
+                        <span style={{cursor: 'pointer'}}>사업분야</span>
+                        <span style={{cursor: 'pointer'}}>한국대리점</span>
+                        <span style={{cursor: 'pointer'}}>고객센터</span>
+                        <span style={{cursor: 'pointer'}}>메일문의</span>
+                        <span style={{cursor: 'pointer'}}>네이버스토어</span>
                     </div>
                 </div>
                 <div
