@@ -1603,6 +1603,16 @@ export const tableCodeDomesticPurchaseColumns = [
         headerName: '상호',
         field: 'agencyName',
         key: 'agencyName',
+    }, {
+        headerName: 'ITEM',
+        field: 'item',
+        key: 'item',
+    },
+    {
+        headerName: 'MAKER',
+        field: 'maker',
+        key: 'maker',
+        minWidth: 180,
     },
     {
         headerName: '딜러구분',
@@ -1623,17 +1633,6 @@ export const tableCodeDomesticPurchaseColumns = [
         headerName: '홈페이지',
         field: 'homepage',
         key: 'homepage',
-    },
-    {
-        headerName: 'ITEM',
-        field: 'item',
-        key: 'item',
-    },
-    {
-        headerName: 'MAKER',
-        field: 'maker',
-        key: 'maker',
-        minWidth: 180,
     },
     {
         headerName: '거래시작일',

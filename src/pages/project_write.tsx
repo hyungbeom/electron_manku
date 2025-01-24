@@ -219,6 +219,10 @@ export default function projectWrite({dataInfo, managerList}) {
                                     })}
                                     {datePickerForm({title: '마감일자', id: 'dueDate', onChange: onChange, data: info})}
                                 </BoxCard>
+
+
+
+
                                 <BoxCard title={'고객사 정보'} tooltip={tooltipInfo('customer')}>
                                     {inputForm({
                                         title: '고객사명',

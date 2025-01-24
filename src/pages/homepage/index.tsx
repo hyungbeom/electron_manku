@@ -67,9 +67,8 @@ export default function Home() {
                 </div>
             </div>
 
-            <div>
-                test1
-            </div>
+            <img
+                src={'/homepage/content2.png'} alt=""/>
 
             <div>
                 test2

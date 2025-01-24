@@ -25,7 +25,13 @@ function App({Component, pageProps = {title: ''}, ...rest}: any) {
 
             <Script src={"https://accounts.google.com/gsi/client"} async defer/>
           <Script src="https://apis.google.com/js/api.js" async defer/>
-
+          <Head>
+              <title>홈페이지 제목</title>
+              <meta property="og:title" content="홈페이지 제목" />
+              <meta property="og:description" content="홈페이지 설명" />
+              <meta property="og:image" content="https://example.com/homepage-og-image.png" />
+              <meta property="og:url" content="https://example.com/home" />
+          </Head>
             <Provider store={store}>
                 <Component {...pageProps} />
             </Provider>
