@@ -1,7 +1,6 @@
 export default function Home() {
     return (
         <div style={{overflowX: 'hidden'}}>
-
             <div style={styles.fullscreenImage}>
 
                 <div style={{position: 'fixed', top: 0, left: 0, width: '100%', padding: '30px 75px 30px 60px'}}>
@@ -68,8 +67,89 @@ export default function Home() {
                 </div>
             </div>
 
-            <img
-                src={'/homepage/content2.png'} alt=""/>
+            <div style={{position: 'relative'}}>
+                <img
+                    style={{width: '100%'}}
+                    src={'/homepage/content2.png'}
+                    alt=""
+                />
+                <div
+                    style={{
+                        cursor : "pointer",
+                        backgroundColor: '#173F95',
+                        position: 'absolute',
+                        top: '40%', // 이미지 높이의 40%
+                        left: '13.5%', // 이미지 너비의 20%
+                        zIndex: 10,
+                        width: '10.5%', // 버튼 크기도 반응형으로 설정
+                        height: '6%',
+                        fontSize: '1vw',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        color: 'white', // 텍스트 가독성을 위해 흰색
+                    }}
+                >
+                    MRO 서비스 +
+                </div>
+                <div
+                    style={{
+                        cursor : "pointer",
+                        backgroundColor: '#2F363E',
+                        position: 'absolute',
+                        top: '48%', // 이미지 높이의 40%
+                        left: '13.5%', // 이미지 너비의 20%
+                        zIndex: 10,
+                        width: '9%', // 버튼 크기도 반응형으로 설정
+                        height: '6%',
+                        fontSize: '1vw',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        color: 'white', // 텍스트 가독성을 위해 흰색
+                    }}
+                >
+                    플랜트 사업부
+                </div>
+                <div
+                    style={{
+                        cursor : "pointer",
+                        backgroundColor: '#2F363E',
+                        position: 'absolute',
+                        top: '56%', // 이미지 높이의 40%
+                        left: '13.5%', // 이미지 너비의 20%
+                        zIndex: 10,
+                        width: '9%', // 버튼 크기도 반응형으로 설정
+                        height: '6%',
+                        fontSize: '1vw',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        color: 'white', // 텍스트 가독성을 위해 흰색
+                    }}
+                >
+                    반도체 사업부
+                </div>
+                <div
+                    style={{
+                        cursor : "pointer",
+                        backgroundColor: '#2F363E',
+                        position: 'absolute',
+                        top: '64%', // 이미지 높이의 40%
+                        left: '13.5%', // 이미지 너비의 20%
+                        zIndex: 10,
+                        width: '9%', // 버튼 크기도 반응형으로 설정
+                        height: '6%',
+                        fontSize: '1vw',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        color: 'white', // 텍스트 가독성을 위해 흰색
+                    }}
+                >
+                    무역 사업부
+                </div>
+            </div>
 
             <div>
                 test2
