@@ -1,6 +1,6 @@
 import React, {useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
-import {orderDetailUnit, printEstimateInitial,} from "@/utils/initialList";
+import {printEstimateInitial,} from "@/utils/initialList";
 import message from "antd/lib/message";
 import {getData} from "@/manage/function/api";
 import {wrapper} from "@/store/store";
@@ -34,7 +34,6 @@ export default function order_update({dataInfo}) {
     const [mini, setMini] = useState(true);
     const [customerData, setCustomerData] = useState(printEstimateInitial)
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
-    const [validate, setValidate] = useState({agencyCode: true});
     const [fileList, setFileList] = useState(fileManage.getFormatFiles(infoInitFile));
     const [originFileList, setOriginFileList] = useState(infoInitFile);
     const [loading, setLoading] = useState(false);
@@ -109,7 +108,6 @@ export default function order_update({dataInfo}) {
         }
 
     }
-
 
 
     async function handleKeyPress(e) {
@@ -247,7 +245,7 @@ export default function order_update({dataInfo}) {
                             </BoxCard>
 
 
-                            <BoxCard title={'드라이브 목록'}  disabled={!userInfo['microsoftId']}>
+                            <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
                                 {/*@ts-ignored*/}
                                 <div style={{overFlowY: "auto", maxHeight: 300}}>
                                     <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
@@ -284,15 +282,15 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
                 permanent: false,
             },
         };
-    } else {
-        store.dispatch(setUserInfo(userInfo));
-        const result = await getData.post('order/getOrderDetail', {
-            orderId: orderId
-        });
-        const dataInfo = result?.data?.entity;
-        return {
-            props: {dataInfo: dataInfo ? dataInfo : null}
-        }
-
     }
+    store.dispatch(setUserInfo(userInfo));
+    const result = await getData.post('order/getOrderDetail', {
+        orderId: orderId
+    });
+    const dataInfo = result?.data?.entity;
+    return {
+        props: {dataInfo: dataInfo ? dataInfo : null}
+    }
+
+
 })
