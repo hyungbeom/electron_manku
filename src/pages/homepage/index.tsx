@@ -75,7 +75,7 @@ export default function Home() {
                 />
                 <div
                     style={{
-                        cursor : "pointer",
+                        cursor: "pointer",
                         backgroundColor: '#173F95',
                         position: 'absolute',
                         top: '40%', // 이미지 높이의 40%
@@ -94,7 +94,7 @@ export default function Home() {
                 </div>
                 <div
                     style={{
-                        cursor : "pointer",
+                        cursor: "pointer",
                         backgroundColor: '#2F363E',
                         position: 'absolute',
                         top: '48%', // 이미지 높이의 40%
@@ -113,7 +113,7 @@ export default function Home() {
                 </div>
                 <div
                     style={{
-                        cursor : "pointer",
+                        cursor: "pointer",
                         backgroundColor: '#2F363E',
                         position: 'absolute',
                         top: '56%', // 이미지 높이의 40%
@@ -132,7 +132,7 @@ export default function Home() {
                 </div>
                 <div
                     style={{
-                        cursor : "pointer",
+                        cursor: "pointer",
                         backgroundColor: '#2F363E',
                         position: 'absolute',
                         top: '64%', // 이미지 높이의 40%
@@ -151,32 +151,45 @@ export default function Home() {
                 </div>
             </div>
 
-            <div>
-                test2
-            </div>
-            <div>
-                test2
-            </div>
-            <div>
-                test2
-            </div>
-            <div>
-                test2
-            </div>
-            <div>
-                test2
-            </div>
-            <div>
-                test2
-            </div>
-            <div>
-                test2
-            </div>
-            <div>
-                test2
-            </div>
-            <div>
-                test2
+            <div style={{display: 'grid', gridTemplateColumns: '11fr 5.05fr', marginTop: -10}}>
+                <div style={{position: 'relative'}}>
+                    <img src={'/homepage/content5.png'} style={{width: '100%'}} alt=""/>
+
+                    <div style={{
+                        position: 'absolute',
+                        bottom: '27%',
+                        left: '10%',
+                        color: 'white',
+                        fontWeight: 500,
+                        fontSize: '2.2vw'
+                    }}>거래품목 +
+                    </div>
+                    <div style={{
+                        position: 'absolute',
+                        bottom: '17%',
+                        left: '10%',
+                        color: 'white',
+                        fontWeight: 300,
+                        fontSize: '1.2vw'
+                    }}>기계장비/기계요소, 측정/제어, 밸브/배관/피팅
+                    </div>
+
+                </div>
+                <div style={{position: 'relative'}}>
+                    <img src={'/homepage/content6.png'} style={{width: '100%'}} alt=""/>
+                    <div style={{
+                        position: 'absolute',
+                        bottom: '27%',
+                        left: '10%',
+                        color: 'white',
+                        fontWeight: 500,
+                        fontSize: '2.2vw'
+                    }}>한국 대리점 +
+                    </div>
+                    <div style={{position: 'absolute', bottom : '17%', left : '10%', color: 'white',fontWeight : 300, fontSize : '1.2vw'}}>만쿠무역 주요 한국 대리점</div>
+
+                </div>
+
             </div>
         </div>
     );
