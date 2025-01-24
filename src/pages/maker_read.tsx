@@ -9,6 +9,8 @@ import {makerColumn,} from "@/utils/columnList";
 import {codeDomesticPurchaseInitial,} from "@/utils/initialList";
 import TableGrid from "@/component/tableGrid";
 import {inputForm, MainCard, radioForm} from "@/utils/commonForm";
+import Button from "antd/lib/button";
+import {CopyOutlined} from "@ant-design/icons";
 
 export default function makerRead({dataInfo}) {
     const gridRef = useRef(null);
@@ -34,8 +36,15 @@ export default function makerRead({dataInfo}) {
     }
 
 
-    function searchInfo() {
-
+    async function searchInfo() {
+            await getData.post('maker/getMakerList',{
+                "searchType": "",       // 구분 1: MAKER, 2: ITEM, 3: "AREA"
+                "searchText": "",       // 검색어
+                "page": 1,
+                "limit": -1
+            }).then(v=>{
+                console.log(v,'::::')
+            })
     }
 
     function clearAll() {
@@ -46,6 +55,9 @@ export default function makerRead({dataInfo}) {
         window.open(`/maker_write`, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
     }
 
+    function deleteList(){
+
+    }
     return <LayoutComponent>
         <div style={{
             display: 'grid',
@@ -86,6 +98,7 @@ export default function makerRead({dataInfo}) {
                 </div> : <></>}
             </MainCard>
 
+            {/*@ts-ignored*/}
             <TableGrid
                 gridRef={gridRef}
                 columns={makerColumn}

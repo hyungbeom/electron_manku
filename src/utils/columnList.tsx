@@ -178,10 +178,18 @@ export const searchMakerColumn = [
 
 export const makerColumn = [
     {
+        headerName: "", // 컬럼 제목
+        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
+        cellStyle: {textAlign: "center"}, // 스타일 설정
+        maxWidth: 45, // 컬럼 너비
+        pinned: "left", // 왼쪽에 고정
+        filter: false
+    },{
         headerName: 'MAKER',
         field: 'makerName',
         key: 'makerName',
-        minWidth: 180,
+        pinned: "left", // 왼쪽에 고정
+        maxWidth: 150,
         render: (text) => <div style={{width: 80}} className="ellipsis-cell">{text}</div>,
 
     },
