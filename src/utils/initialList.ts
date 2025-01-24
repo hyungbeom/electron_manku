@@ -543,8 +543,9 @@ export const subCodeExchangeInitial = {
 // ---------
 
 export const codeSaveInitial = {
-    "item": "",                  // MAKER
-    "hsCode": "",         // 문서번호
+    searchText: '',
+    item: '',
+    hsCode: ''
 }
 export const codeReadInitial = {
     "searchText": "",         // 문서번호
