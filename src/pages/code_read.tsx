@@ -9,13 +9,13 @@ import Button from "antd/lib/button";
 import message from "antd/lib/message";
 
 import {tableCodeReadColumns,} from "@/utils/columnList";
-import {codeReadInitial, codeSaveInitial,} from "@/utils/initialList";
+import {codeSaveInitial,} from "@/utils/initialList";
 import TableGrid from "@/component/tableGrid";
 import {inputForm, MainCard, TopBoxCard} from "@/utils/commonForm";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import Spin from "antd/lib/spin";
 import {CopyOutlined} from "@ant-design/icons";
-import {deleteHsCodeList, deleteOrder} from "@/utils/api/mainApi";
+import {deleteHsCodeList} from "@/utils/api/mainApi";
 
 
 export default function codeRead({dataInfo}) {
@@ -132,13 +132,14 @@ export default function codeRead({dataInfo}) {
                     </> : null}
                 </MainCard>
                 {/*@ts-ignored*/}
-                <TableGrid deleteComp={<Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}} onClick={deleteList}>
+                <TableGrid deleteComp={<Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
+                                               onClick={deleteList}>
                     <CopyOutlined/>삭제
                 </Button>}
-                    gridRef={gridRef}
-                    columns={tableCodeReadColumns}
-                    onGridReady={onGridReady}
-                    funcButtons={['hsDelete', 'print']}/>
+                           gridRef={gridRef}
+                           columns={tableCodeReadColumns}
+                           onGridReady={onGridReady}
+                           funcButtons={['hsDelete', 'print']}/>
             </div>
         </LayoutComponent>
     </Spin>
