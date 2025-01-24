@@ -303,8 +303,7 @@ export default function Home() {
                             title: '문의내용*',
                             id: 'remark',
                             onChange: onChange,
-                            data: info,
-                            size: 'middle'
+                            data: info
                         })}
                     </div>
                     <div style={{paddingTop : 20}}>
