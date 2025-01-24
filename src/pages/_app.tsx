@@ -5,6 +5,7 @@ import '@/resources/css/index.css'
 import 'antd/dist/antd.css';
 import Script from "next/script";
 import {useRouter} from "next/router";
+import Head from 'next/head';
 
 function App({Component, pageProps = {title: ''}, ...rest}: any) {
 
@@ -26,11 +27,11 @@ function App({Component, pageProps = {title: ''}, ...rest}: any) {
             <Script src={"https://accounts.google.com/gsi/client"} async defer/>
           <Script src="https://apis.google.com/js/api.js" async defer/>
           <Head>
-              <title>홈페이지 제목</title>
-              <meta property="og:title" content="홈페이지 제목" />
-              <meta property="og:description" content="홈페이지 설명" />
-              <meta property="og:image" content="https://example.com/homepage-og-image.png" />
-              <meta property="og:url" content="https://example.com/home" />
+              <title>(주)만쿠무역 글로벌 무역의 가치</title>
+              <meta property="og:title" content="미래 사업을 창출하는 주식회사 만쿠입니다." />
+              <meta property="og:description" content="글로벌 비지니스를 연결하며 가치를 확장합니다." />
+              <meta property="og:image" content="https://manku.progist.co.kr/homepage/content3.png" />
+              <meta property="og:url" content="https://manku.progist.co.kr/homepage" />
           </Head>
             <Provider store={store}>
                 <Component {...pageProps} />
