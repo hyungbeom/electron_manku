@@ -37,7 +37,8 @@ export function DriveUploadComp({fileList, setFileList, fileRef, numb=0}) {
         if (e.ctrlKey && e.button === 0) { // e.button === 0 -> 왼쪽 버튼 클릭
             if (e.target.className === "ant-upload-list-item-name") {
                 if (file.webUrl) {
-                    window.open(file.webUrl);
+                    window.open(file.webUrl, '_blank');
+
                 } else {
                     if (file.type.includes("image")) {
                         const src =
