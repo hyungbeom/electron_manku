@@ -238,6 +238,10 @@ export default function Home() {
             </div>
 
 
+            <div style={{paddingLeft: 150}}>
+<div style={{fontSize : 18, fontWeight : 500, color : '#173F95'}}>{`고객센터 ${'>'} 온라인 문의`}</div>
+<div style={{fontSize : 54, fontWeight : 600, marginBottom : -30}}>온라인 문의</div>
+            </div>
             <div style={{display: 'grid', gridTemplateColumns: '400px 1fr', gridColumnGap: 120, padding: 150}}>
                 <div>
                     <img src={'/homepage/content7.png'} width={'100%'} alt=""/>
