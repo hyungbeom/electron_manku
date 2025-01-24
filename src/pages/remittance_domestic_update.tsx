@@ -12,8 +12,8 @@ import {BoxCard, MainCard, TopBoxCard} from "@/utils/commonForm";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import Radio from "antd/lib/radio";
 import InputNumber from "antd/lib/input-number";
-import {commonManage, fileManage, gridManage} from "@/utils/commonManage";
-import {saveRemittance, updateRemittance} from "@/utils/api/mainApi";
+import {commonManage, fileManage} from "@/utils/commonManage";
+import {updateRemittance} from "@/utils/api/mainApi";
 import {useRouter} from "next/router";
 import _ from "lodash";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
@@ -34,16 +34,16 @@ export default function remittance_domestic({dataInfo}) {
     const [fileList, setFileList] = useState(fileManage.getFormatFiles(infoFileInit));
     const [originFileList, setOriginFileList] = useState(infoFileInit);
     const [loading, setLoading] = useState(false);
-    useEffect(()=>{
-        setInfo(v=>{
+    useEffect(() => {
+        setInfo(v => {
             return {
                 ...v,
                 surtax: Math.round(v.supplyAmount * 0.1),
                 total: v.supplyAmount + Math.round(v.supplyAmount * 0.1)
             }
         })
-    },[infoInit])
-    console.log(info,'info:')
+    }, [infoInit])
+    console.log(info, 'info:')
 
     const inputForm = ({title, id, disabled = false, suffix = null, placeholder = ''}) => {
         let bowl = info;
@@ -136,8 +136,8 @@ export default function remittance_domestic({dataInfo}) {
 
         const handleIteration = () => {
             for (const {key, value} of commonManage.commonCalc(info)) {
-                if(!(key === 'modifiedId' || key === 'modifiedDate'))
-                formData.append(key, value);
+                if (!(key === 'modifiedId' || key === 'modifiedDate'))
+                    formData.append(key, value);
             }
         };
 
@@ -158,11 +158,12 @@ export default function remittance_domestic({dataInfo}) {
 
     }
 
-    function copyPage(){
+    function copyPage() {
         let copyInfo = _.cloneDeep(info)
         const query = `data=${encodeURIComponent(JSON.stringify(copyInfo))}`;
         router.push(`/remittance_domestic?${query}`)
     }
+
     return <>
         <LayoutComponent>
 
@@ -198,10 +199,10 @@ export default function remittance_domestic({dataInfo}) {
                         {inputNumberForm({title: '합계', id: 'total', disabled: true})}
                     </BoxCard>
 
-                    <BoxCard title={'드라이브 목록'}  disabled={!userInfo['microsoftId']}>
+                    <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
                         {/*@ts-ignored*/}
                         <div style={{overFlowY: "auto", maxHeight: 300}}>
-                            <DriveUploadComp  fileList={fileList} setFileList={setFileList} fileRef={fileRef}/>
+                            <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}/>
                         </div>
                     </BoxCard>
                 </div>
@@ -236,6 +237,6 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     });
 
     return {
-        props: {dataInfo: result.data.entity, remittanceId:remittanceId}
+        props: {dataInfo: result.data.entity, remittanceId: remittanceId}
     }
 })

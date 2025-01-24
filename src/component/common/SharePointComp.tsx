@@ -59,6 +59,14 @@ export function DriveUploadComp({fileList, setFileList, fileRef, numb=0}) {
 
                     setTempFileName(namePart); // 파일 이름 저장
                     setFileExtension(extensionPart); // 확장자 저장
+                }else if(file?.downloadUrl){
+                    const fileUrl = file?.downloadUrl;
+                    const link = document.createElement('a');
+                    link.href = fileUrl;
+                    link.download = 'filename.pdf';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
                 }
             }
         }
