@@ -66,7 +66,11 @@ export default function codeRead({dataInfo}) {
 
     async function searchInfo() {
         setLoading(true)
-        await getData.post('hsCode/getHsCodeList', {...info, page: 1, limit: -1}).then(v => {
+        await getData.post('hsCode/getHsCodeList', {
+            searchText: info['item'] ? info['item'] : info['hsCode'],
+            page: 1,
+            limit: -1
+        }).then(v => {
             gridManage.resetData(gridRef, v.data.entity.hsCodeList)
             setLoading(false)
         })
