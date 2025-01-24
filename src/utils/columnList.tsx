@@ -1586,11 +1586,11 @@ export const tableCodeDomesticPurchaseColumns = [
     {
         headerName: "", // 컬럼 제목
         valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
-        cellStyle: { textAlign: "center" }, // 스타일 설정
+        cellStyle: {textAlign: "center"}, // 스타일 설정
         maxWidth: 45, // 컬럼 너비
         pinned: "left", // 왼쪽에 고정
         filter: false
-    },{
+    }, {
         headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
         checkboxSelection: true, // 각 행에 체크박스 추가
         headerName: '코드',
@@ -1682,7 +1682,7 @@ export const tableCodeOverseasPurchaseColumns = [
     {
         headerName: "", // 컬럼 제목
         valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
-        cellStyle: { textAlign: "center" }, // 스타일 설정
+        cellStyle: {textAlign: "center"}, // 스타일 설정
         maxWidth: 45, // 컬럼 너비
         pinned: "left", // 왼쪽에 고정
         filter: false
@@ -1811,7 +1811,7 @@ export const tableCodeOverseasAgencyWriteColumns = [
     {
         headerName: "", // 컬럼 제목
         valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
-        cellStyle: { textAlign: "center" }, // 스타일 설정
+        cellStyle: {textAlign: "center"}, // 스타일 설정
         maxWidth: 45, // 컬럼 너비
         pinned: "left", // 왼쪽에 고정
         filter: false
@@ -1873,11 +1873,10 @@ export const tableCodeDomesticSalesColumns = [
     {
         headerName: "", // 컬럼 제목
         valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
-        cellStyle: { textAlign: "center" }, // 스타일 설정
+        cellStyle: {textAlign: "center"}, // 스타일 설정
         maxWidth: 45, // 컬럼 너비
         pinned: "left", // 왼쪽에 고정
         filter: false
-
     },
     {
         headerName: '코드',
@@ -2171,7 +2170,19 @@ export const tableCodeExchangeColumns = [
 ]
 
 export const tableCodeReadColumns = [
+
     {
+        headerName: "", // 컬럼 제목
+
+        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
+        cellStyle: {textAlign: "center"}, // 스타일 설정
+        maxWidth: 45, // 컬럼 너비
+        pinned: "left", // 왼쪽에 고정
+        filter: false
+    }, {
+        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
+        checkboxSelection: true, // 각 행에 체크박스 추가
+        pinned: 'left',
         headerName: 'ITEM',
         field: 'item',
         maxWidth: 250
@@ -2361,7 +2372,7 @@ export const projectWriteColumn = [
         minWidth: 150,
         editable: true,
         filter: 'agNumberColumnFilter',
-        valueSetter : (params)=>{
+        valueSetter: (params) => {
             if (params.newValue > 100) {
                 return message.warn('100주 이하로 설정이 가능합니다.')
             }

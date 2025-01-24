@@ -339,6 +339,22 @@ export const deleteOrder = async ({
     }, err => message.error(err))
 };
 
+export const deleteHsCodeList = async ({
+                                      data, returnFunc = function (e) {
+    }
+                                  }) => {
+
+    await getData.post('hsCode/deleteHsCodes', data).then(v => {
+        const code = v.data.code;
+        if (code === 1) {
+            message.success('삭제되었습니다.')
+        } else {
+            message.error('오류가 발생하였습니다. 다시 시도해주세요.')
+        }
+        returnFunc(code === 1);
+    }, err => message.error(err))
+};
+
 
 export const getDeliveryList = async ({data}) => {
     const v = await getData.post('delivery/getDeliveryList', {
