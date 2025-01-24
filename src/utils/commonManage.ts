@@ -639,7 +639,7 @@ commonManage.deleteUploadList = function (fileRef, formData, originFileList) {
     const result = originFileList?.filter(itemA => !fileRef.current.fileList.some(itemB => itemA.id === itemB.id));
 
     result.map((v, idx) => {
-        formData.append(`deleteAttachementIdList[${idx}]`, v.id);
+        formData.append(`deleteAttachmentIdList [${idx}]`, v.id);
     })
 }
 
