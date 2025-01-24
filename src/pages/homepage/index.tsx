@@ -2,6 +2,16 @@ import {inputForm, selectBoxForm, textAreaForm} from "@/utils/commonForm";
 import {commonManage} from "@/utils/commonManage";
 import {useState} from "react";
 
+
+const iconList = <>
+    <span style={{cursor: 'pointer'}}>홈</span>
+    <span style={{cursor: 'pointer'}}>가입정보</span>
+    <span style={{cursor: 'pointer'}}>사업분야</span>
+    <span style={{cursor: 'pointer'}}>한국대리점</span>
+    <span style={{cursor: 'pointer'}}>고객센터</span>
+    <span style={{cursor: 'pointer'}}>메일문의</span>
+    <span style={{cursor: 'pointer'}}>네이버스토어</span>
+</>
 export default function Home() {
 
     const [info, setInfo] = useState({
@@ -222,14 +232,22 @@ export default function Home() {
             </div>
 
 
-            <div style={{textAlign : 'center', border : '1px solid black', height : 300}}>
+            <div style={{textAlign: 'center', border: '1px solid black', height: 300}}>
 
                 NOTICE!~~~~~~~~~~~~~
             </div>
 
 
             <div style={{display: 'grid', gridTemplateColumns: '400px 1fr', gridColumnGap: 120, padding: 150}}>
-                <img src={'/homepage/content7.png'} width={'100%'} alt=""/>
+                <div>
+                    <img src={'/homepage/content7.png'} width={'100%'} alt=""/>
+                    <div style={{position : 'absolute', left : 240, marginTop : -80}}>
+                        <img src={'/homepage/sns/kakao.png'} style={{width: '15%', cursor: 'pointer'}} alt="카카오톡"/>
+                        <img src={'/homepage/sns/store.png'} style={{width: '15%', cursor: 'pointer'}} alt="스토어"/>
+                        <img src={'/homepage/sns/naver.png'} style={{width: '15%', cursor: 'pointer'}} alt="네이버"/>
+                        <img src={'/homepage/sns/phone.png'} style={{width: '15%', cursor: 'pointer'}} alt="전화"/>
+                    </div>
+                </div>
                 <div>
                     <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: 25}}>
                         {inputForm({
@@ -282,7 +300,7 @@ export default function Home() {
                             ], size: 'middle'
                         })}
                     </div>
-                    <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: 25, paddingTop : 20}}>
+                    <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: 25, paddingTop: 20}}>
                         {selectBoxForm({
                             title: '모델넘버', id: 'modelNumber', onChange: onChange, data: info, list: [
                                 {value: 0, label: ''},
@@ -298,7 +316,7 @@ export default function Home() {
                             size: 'middle'
                         })}
                     </div>
-                    <div style={{paddingTop : 20}}>
+                    <div style={{paddingTop: 20}}>
                         {textAreaForm({
                             title: '문의내용*',
                             id: 'remark',
@@ -306,7 +324,7 @@ export default function Home() {
                             data: info
                         })}
                     </div>
-                    <div style={{paddingTop : 20}}>
+                    <div style={{paddingTop: 20}}>
                         {inputForm({
                             title: '파일 또는 사진 첨부',
                             id: 'attachFile',
