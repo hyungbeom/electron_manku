@@ -35,18 +35,49 @@ export default function Home() {
         <div style={{overflowX: 'hidden'}}>
             <div style={styles.fullscreenImage}>
 
-                <div style={{position: 'fixed', top: 0, left: 0, width: '100%', padding: '30px 75px 30px 60px'}}>
+                {/*<div style={{position: 'fixed', top: 0, left: 0, width: '100%', padding: '30px 75px 30px 60px'}}>*/}
+                {/*    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>*/}
+                {/*        <div style={{display: 'flex', alignItems: 'center', gap: '10px'}}><img*/}
+                {/*            src={'/homepage/logo_1.png'} alt=""/>Manku Trading*/}
+                {/*        </div>*/}
 
+                {/*        <div style={{display: 'flex', gap: '120px'}}>*/}
+                {/*            <span style={{cursor: "pointer"}}>기업정보</span>*/}
+                {/*            <span style={{cursor: "pointer"}}>사업분야</span>*/}
+                {/*            <span style={{cursor: "pointer"}}>한국대리점</span>*/}
+                {/*            <span style={{cursor: "pointer"}}>고객센터</span>*/}
+                {/*        </div>*/}
+
+                {/*        <div style={{display: 'flex', gap: '25px'}}>*/}
+                {/*            <img src={'/homepage/search.svg'} alt=""/>*/}
+                {/*            <img src={'/homepage/lang.svg'} alt=""/>*/}
+                {/*            <span>KOR</span>*/}
+                {/*        </div>*/}
+                {/*    </div>*/}
+                {/*</div>*/}
+
+
+                <div style={{
+                    position: 'fixed',
+                    zIndex : 120,
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    padding: '30px 75px 30px 60px',
+                    color: 'black',
+                    backgroundColor: 'white',
+                    borderBottom: '1px solid lightGray'
+                }}>
                     <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                        <div style={{display: 'flex', alignItems: 'center', gap: '10px'}}><img
-                            src={'/homepage/logo_1.png'} alt=""/>Mankuk Trading
+                        <div style={{display: 'flex', alignItems: 'center', gap: '10px', fontWeight : 600}}><img
+                            src={'/homepage/logo_1.png'} alt=""/>Manku Trading
                         </div>
 
-                        <div style={{display: 'flex', gap: '120px'}}>
-                            <span>기업정보</span>
-                            <span>사업분야</span>
-                            <span>한국대리점</span>
-                            <span>고객센터</span>
+                        <div style={{display: 'flex', gap: '30px', textAlign : 'center', fontWeight : 600}}>
+                            <span style={{cursor: "pointer", width : 150}}>기업정보</span>
+                            <span style={{cursor: "pointer", width : 150}}>사업분야</span>
+                            <span style={{cursor: "pointer", width : 150}}>한국대리점</span>
+                            <span style={{cursor: "pointer", width : 150}}>고객센터</span>
                         </div>
 
                         <div style={{display: 'flex', gap: '25px'}}>
@@ -55,15 +86,90 @@ export default function Home() {
                             <span>KOR</span>
                         </div>
                     </div>
-
                 </div>
+                <div style={{
+                    position: 'fixed',
+                    zIndex : 120,
+                    top: 83,
+                    left: 0,
+                    width: '100%',
+                    padding: '30px 75px 30px 60px',
+                    color: 'black',
+                    backgroundColor: 'white',
+                    borderBottom: '1px solid lightGray'
+                }}>
+                    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                        <div  style={{paddingLeft : 20}}/>
+
+                        <div style={{display: 'flex', gap: '30px', textAlign: 'center'}}>
+                             <span style={{
+                                 cursor: "pointer",
+                                 width: 150,
+                                 display: 'grid',
+                                 gridTemplateRows: '35px 35px 35px 35px'
+                             }}>
+                                <div>회사소개</div>
+                                <div>연혁</div>
+                                <div>주요고객</div>
+                                <div>오시는길</div>
+                            </span>
+                            <span style={{
+                                opacity : 0.3,
+                                cursor: "pointer",
+                                width: 150,
+                                display: 'grid',
+                                gridTemplateRows: '35px 35px 35px 35px'
+                            }}>
+                                <div>MRO 서비스</div>
+                                <div>플랜트 사업부</div>
+                                <div>반도체 사업부</div>
+                                <div>무역 사업부</div>
+                            </span>
+                            <span style={{
+                                opacity : 0.3,
+                                cursor: "pointer",
+                                width: 150,
+
+                                display: 'grid',
+                                gridTemplateRows: '35px 35px 35px 35px'
+                            }}>
+                                <div>KOENIG</div>
+                                <div>DST Chemical</div>
+                                <div>Daiichi</div>
+                                <div>Powerflex</div>
+                                <div>Bamo</div>
+                            </span>
+                            <span style={{
+                                opacity : 0.3,
+                                cursor: "pointer",
+                                width: 150,
+
+                                display: 'grid',
+                                gridTemplateRows: '35px 35px 35px 35px'
+                            }}>
+                                <div>온라인문의</div>
+                                <div>채용안내</div>
+                            </span>
+                        </div>
+
+                        <div/>
+
+                    </div>
+                </div>
+
+                {/*==========================================================================================================*/}
+                {/*==========================================================================================================*/}
+                {/*==========================================================================================================*/}
+                {/*==========================================================================================================*/}
+                {/*==========================================================================================================*/}
 
                 {/*@ts-ignored*/}
                 <div style={styles.textContainer}>
-                    <div style={{width: "100%"}}>함께 이어가는 무역의 가치,</div>
-                    <div>MANKU TRADE</div>
-                    <div style={{fontSize: 18, fontWeight: 400, paddingTop: 20}}>글로벌 비지니스를 연결하며 가치를 확장합니다.</div>
+                    {/*<div style={{width: "100%"}}>함께 이어가는 무역의 가치,</div>*/}
+                    {/*<div>MANKU TRADE</div>*/}
+                    {/*<div style={{fontSize: 18, fontWeight: 400, paddingTop: 20}}>글로벌 비지니스를 연결하며 가치를 확장합니다.</div>*/}
                 </div>
+
 
                 <div style={{
                     display: 'flex', gap: '60px',
@@ -83,20 +189,11 @@ export default function Home() {
             </div>
             <img src={'/homepage/content1.png'} style={{width: '100%'}} alt=""/>
 
-            <div style={{backgroundColor: '#F7F7F7', padding: 90, textAlign: 'center'}}>
-                <div style={{fontSize: 60, fontWeight: 700}}>Discover What Drives Us</div>
-                <div style={{paddingTop: 55, fontSize: 24}}>우리의 원동력을 탐구하고, 만쿠무역의 비전을 확인하세요.</div>
-                <div style={{
-                    backgroundColor: '#173F95',
-                    width: 200,
-                    height: 50,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'white',
-                    margin: '72px auto'
-                }}>자세히보기
-                </div>
+            <div style={{position: 'relative'}}>
+                <img style={{width: '100%'}} src={'/homepage/discover.svg'} alt=""/>
+                <img style={{position: 'absolute', bottom: '12%', left: '42.5%', width: '15%', cursor: 'pointer'}}
+                     src={'/homepage/look.svg'} alt=""/>
+
             </div>
 
             <div style={{position: 'relative'}}>
@@ -183,9 +280,9 @@ export default function Home() {
                 </div>
             </div>
 
-            <div style={{display: 'grid', gridTemplateColumns: '11fr 5.05fr', marginTop: -10}}>
+            <div style={{display: 'grid', gridTemplateColumns: '11fr 5.05fr', gap: 0, marginTop: -10}}>
                 <div style={{position: 'relative'}}>
-                    <img src={'/homepage/content5.png'} style={{width: '100%'}} alt=""/>
+                    <img src={'/homepage/content_5.png'} style={{width: '100%'}} alt=""/>
 
                     <div style={{
                         position: 'absolute',
@@ -208,7 +305,7 @@ export default function Home() {
 
                 </div>
                 <div style={{position: 'relative'}}>
-                    <img src={'/homepage/content6.png'} style={{width: '100%'}} alt=""/>
+                    <img src={'/homepage/content_6.png'} style={{width: '100%'}} alt=""/>
                     <div style={{
                         position: 'absolute',
                         bottom: '27%',
@@ -232,20 +329,194 @@ export default function Home() {
             </div>
 
 
-            <div style={{textAlign: 'center', border: '1px solid black', height: 300}}>
+            <div style={{textAlign: 'center', paddingTop: 180}}>
+                <div style={{fontSize: 60, fontWeight: 600}}>Notice</div>
+                <div style={{paddingTop: 60, fontSize: 18, fontWeight: 500}}>공지 사항 및 안내</div>
 
-                NOTICE!~~~~~~~~~~~~~
+                <div
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        height: '100%',
+                        paddingTop: 90,
+                    }}
+                >
+                    <div
+                        style={{
+                            display: 'flex',
+                            gap: '23px',
+                            width: '70%',
+                            maxWidth: '1200px', // 최대 너비 설정 (선택 사항)
+                            margin: '0 auto', // 수평 중앙 정렬
+                        }}
+                    >
+                        <div style={{flex: 1, position: 'relative'}}>
+                            <img
+                                src={'/homepage/notice/image_3.png'}
+                                alt=""
+                                style={{width: '100%', height: 'auto'}}
+                            />
+                            <div style={{
+                                position: 'absolute',
+                                top: 0,
+                                padding: '8%',
+                                fontSize: 'calc(0.6vw + 2px)',
+                                color: 'white',
+                                textAlign: 'left',
+                                lineHeight: '1.5vw',
+                            }}>
+                                <div>공지사항 공지사항 공지사항 공지사항 고지</div>
+                                <div>공지사항 공지사항 공지사항 어</div>
+                            </div>
+                            <div style={{
+                                position: 'absolute',
+                                top: 0,
+                                right: 12,
+                                fontSize: '0.75vw',
+                                color: 'white',
+                                paddingTop: '54%',
+                                lineHeight: '1.5vw',
+                            }}>
+                                2024.12.12
+                            </div>
+
+
+                            <div style={{
+                                width: '100%',
+                                backgroundColor: '#D9D8D6',
+                                fontSize: 'calc(0.6vw + 2px)',
+                                lineHeight: '2vw',
+                                fontWeight: 500,
+                                textAlign: 'left',
+                                padding: '8% 8% 4% 8%'
+                            }}>
+                                <div>
+                                    공지사항 내용공지사항 자세한 내용 자세한 내용들
+                                </div>
+                                <div>
+                                    공지사항 내용공지사항 자세한 내용용용
+                                </div>
+                                <div style={{fontSize: '1.5vw', textAlign: 'right'}}>
+                                    {`${'>'}`}
+                                </div>
+                            </div>
+                        </div>
+                        <div style={{flex: 1, position: 'relative'}}>
+                            <img
+                                src={'/homepage/notice/image_2.png'}
+                                alt=""
+                                style={{width: '100%', height: 'auto'}}
+                            />
+                            <div style={{
+                                position: 'absolute',
+                                top: 0,
+                                padding: '8%',
+                                fontSize: 'calc(0.6vw + 2px)',
+                                color: 'white',
+                                textAlign: 'left',
+                                lineHeight: '1.5vw',
+                            }}>
+                                <div>공지사항 공지사항 공지사항 공지사항 고지</div>
+                                <div>공지사항 공지사항 공지사항 어</div>
+                            </div>
+                            <div style={{
+                                position: 'absolute',
+                                top: 0,
+                                right: 12,
+                                fontSize: '0.75vw',
+                                color: 'white',
+                                paddingTop: '54%',
+                                lineHeight: '1.5vw',
+                            }}>
+                                2024.12.12
+                            </div>
+
+
+                            <div style={{
+                                width: '100%',
+                                backgroundColor: '#D9D8D6',
+                                fontSize: 'calc(0.6vw + 2px)',
+                                lineHeight: '2vw',
+                                fontWeight: 500,
+                                textAlign: 'left',
+                                padding: '8% 8% 4% 8%'
+                            }}>
+                                <div>
+                                    공지사항 내용공지사항 자세한 내용 자세한 내용들
+                                </div>
+                                <div>
+                                    공지사항 내용공지사항 자세한 내용용용
+                                </div>
+                                <div style={{fontSize: '1.5vw', textAlign: 'right'}}>
+                                    {`${'>'}`}
+                                </div>
+                            </div>
+                        </div>
+                        <div style={{flex: 1, position: 'relative'}}>
+                            <img
+                                src={'/homepage/notice/image_1.png'}
+                                alt=""
+                                style={{width: '100%', height: 'auto'}}
+                            />
+                            <div style={{
+                                position: 'absolute',
+                                top: 0,
+                                padding: '8%',
+                                fontSize: 'calc(0.6vw + 2px)',
+                                color: 'white',
+                                textAlign: 'left',
+                                lineHeight: '1.5vw',
+                            }}>
+                                <div>공지사항 공지사항 공지사항 공지사항 고지</div>
+                                <div>공지사항 공지사항 공지사항 어</div>
+                            </div>
+                            <div style={{
+                                position: 'absolute',
+                                top: 0,
+                                right: 12,
+                                fontSize: '0.75vw',
+                                color: 'white',
+                                paddingTop: '54%',
+                                lineHeight: '1.5vw',
+                            }}>
+                                2024.12.12
+                            </div>
+
+
+                            <div style={{
+                                width: '100%',
+                                backgroundColor: '#D9D8D6',
+                                fontSize: 'calc(0.6vw + 2px)',
+                                lineHeight: '2vw',
+                                fontWeight: 500,
+                                textAlign: 'left',
+                                padding: '8% 8% 4% 8%'
+                            }}>
+                                <div>
+                                    공지사항 내용공지사항 자세한 내용 자세한 내용들
+                                </div>
+                                <div>
+                                    공지사항 내용공지사항 자세한 내용용용
+                                </div>
+                                <div style={{fontSize: '1.5vw', textAlign: 'right'}}>
+                                    {`${'>'}`}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
 
-            <div style={{paddingLeft: 150}}>
-<div style={{fontSize : 18, fontWeight : 500, color : '#173F95'}}>{`고객센터 ${'>'} 온라인 문의`}</div>
-<div style={{fontSize : 54, fontWeight : 600, marginBottom : -30}}>온라인 문의</div>
+            <div style={{paddingLeft: 150, paddingTop: 180}}>
+                <div style={{fontSize: 18, fontWeight: 500, color: '#173F95'}}>{`고객센터 ${'>'} 온라인 문의`}</div>
+                <div style={{fontSize: 54, fontWeight: 600, marginBottom: -30}}>온라인 문의</div>
             </div>
-            <div style={{display: 'grid', gridTemplateColumns: '400px 1fr', gridColumnGap: 120, padding: 150}}>
+            <div style={{display: 'grid', gridTemplateColumns: '380px 1fr', gridColumnGap: 60, padding: 120}}>
                 <div>
                     <img src={'/homepage/content7.png'} width={'100%'} alt=""/>
-                    <div style={{position : 'absolute', left : 240, marginTop : -80}}>
+                    <div style={{position: 'absolute', left: 210, marginTop: -80}}>
                         <img src={'/homepage/sns/kakao.png'} style={{width: '15%', cursor: 'pointer'}} alt="카카오톡"/>
                         <img src={'/homepage/sns/store.png'} style={{width: '15%', cursor: 'pointer'}} alt="스토어"/>
                         <img src={'/homepage/sns/naver.png'} style={{width: '15%', cursor: 'pointer'}} alt="네이버"/>
@@ -259,14 +530,14 @@ export default function Home() {
                             id: 'com',
                             onChange: onChange,
                             data: info,
-                            size: 'middle'
+                            size: 'large'
                         })}
                         {inputForm({
                             title: '성함*',
                             id: 'name',
                             onChange: onChange,
                             data: info,
-                            size: 'middle'
+                            size: 'large'
                         })}
                     </div>
                     <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: 25, paddingTop: 10}}>
@@ -275,49 +546,50 @@ export default function Home() {
                             id: 'phone',
                             onChange: onChange,
                             data: info,
-                            size: 'middle'
+                            size: 'large'
                         })}
                         {inputForm({
                             title: '이메일*',
                             id: 'email',
                             onChange: onChange,
                             data: info,
-                            size: 'middle'
+                            size: 'large'
                         })}
                     </div>
 
                     <div style={{paddingTop: 10}}>
-                        {selectBoxForm({
-                            title: '제작사', id: 'create', onChange: onChange, data: info, list: [
-                                {value: 0, label: ''},
-                                {value: 1, label: ''},
-                                {value: 2, label: ''}
-                            ], size: 'middle'
+                        {inputForm({
+                            title: '제작사',
+                            id: 'create',
+                            onChange: onChange,
+                            data: info,
+                            size: 'large'
                         })}
                     </div>
                     <div style={{paddingTop: 20}}>
-                        {selectBoxForm({
-                            title: '아이템', id: 'item', onChange: onChange, data: info, list: [
-                                {value: 0, label: ''},
-                                {value: 1, label: ''},
-                                {value: 2, label: ''}
-                            ], size: 'middle'
+                        {inputForm({
+                            title: '아이템',
+                            id: 'item',
+                            onChange: onChange,
+                            data: info,
+                            size: 'large'
                         })}
+
                     </div>
                     <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: 25, paddingTop: 20}}>
-                        {selectBoxForm({
-                            title: '모델넘버', id: 'modelNumber', onChange: onChange, data: info, list: [
-                                {value: 0, label: ''},
-                                {value: 1, label: ''},
-                                {value: 2, label: ''}
-                            ], size: 'middle'
+                        {inputForm({
+                            title: '모델넘버',
+                            id: 'modelNumber',
+                            onChange: onChange,
+                            data: info,
+                            size: 'large'
                         })}
                         {inputForm({
                             title: '수량',
                             id: 'quantity',
                             onChange: onChange,
                             data: info,
-                            size: 'middle'
+                            size: 'large'
                         })}
                     </div>
                     <div style={{paddingTop: 20}}>
@@ -334,11 +606,13 @@ export default function Home() {
                             id: 'attachFile',
                             onChange: onChange,
                             data: info,
-                            size: 'middle'
+                            size: 'large'
                         })}
                     </div>
 
-                    <div>BUTTON +</div>
+                    <div style={{margin: '30px auto', textAlign: 'center'}}>
+                        <img src={'/homepage/send_button.png'} style={{cursor: 'pointer', width: '8vw'}} alt=""/>
+                    </div>
                 </div>
 
             </div>
