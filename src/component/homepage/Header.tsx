@@ -90,7 +90,7 @@ export default function Header() {
                     }} onPointerEnter={enterMouse} onPointerLeave={outMouse}>
                         <div style={{
                             cursor: "pointer",
-                            width: 150,
+                            width: 200,
                             height: 83,
                             display: 'flex',
                             alignItems: 'center',
@@ -101,7 +101,7 @@ export default function Header() {
                         </div>
                         <div style={{
                             cursor: "pointer",
-                            width: 150,
+                            width: 200,
                             height: 83,
                             display: 'flex',
                             alignItems: 'center',
@@ -112,7 +112,7 @@ export default function Header() {
                         </div>
                         <div style={{
                             cursor: "pointer",
-                            width: 150,
+                            width: 200,
                             height: 83,
                             display: 'flex',
                             alignItems: 'center',
@@ -123,7 +123,7 @@ export default function Header() {
                         </div>
                         <div style={{
                             cursor: "pointer",
-                            width: 150,
+                            width: 200,
                             height: 83,
                             display: 'flex',
                             alignItems: 'center',
@@ -164,17 +164,17 @@ export default function Header() {
                         alignItems: "center",
                     }}
                 >
-                    <div style={{paddingLeft: 20}}/>
+                    <div style={{paddingLeft:20}}/>
 
                     <div style={{display: "flex", textAlign: "center", padding: '20px 0px'}}
                          onPointerEnter={() => setIsExpanded(true)} onPointerLeave={outMouse}>
             <span
                 style={{
                     cursor: "pointer",
-                    width: 150,
+                    width: 200,
                     display: "grid",
                     gridTemplateRows: "35px 35px 35px 35px",
-                    color: hoverMenu === '1' ? 'black' : '#A5A5A5'
+                    color: hoverMenu === '1' ? 'black' : '#A5A5A5',
                 }}
                 onPointerEnter={() => setHoverMenu('1')}>
               <div className="menu-item">회사소개</div>
@@ -186,7 +186,7 @@ export default function Header() {
                             onPointerEnter={() => setHoverMenu('2')}
                             style={{
                                 cursor: "pointer",
-                                width: 150,
+                                width: 200,
                                 display: "grid",
                                 gridTemplateRows: "35px 35px 35px 35px",
                                 color: hoverMenu === '2' ? 'black' : '#A5A5A5'
@@ -201,7 +201,7 @@ export default function Header() {
                             onPointerEnter={() => setHoverMenu('3')}
                             style={{
                                 cursor: "pointer",
-                                width: 150,
+                                width: 200,
                                 display: "grid",
                                 gridTemplateRows: "35px 35px 35px 35px",
                                 color: hoverMenu === '3' ? 'black' : '#A5A5A5'
@@ -217,7 +217,8 @@ export default function Header() {
                             onPointerEnter={() => setHoverMenu('4')}
                             style={{
                                 cursor: "pointer",
-                                width: 150,
+                                width: 200,
+                                textAlign : 'center',
                                 display: "grid",
                                 gridTemplateRows: "35px 35px 35px 35px",
                                 color: hoverMenu === '4' ? 'black' : '#A5A5A5'
