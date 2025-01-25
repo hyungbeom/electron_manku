@@ -3,40 +3,40 @@ import {DownOutlined, MenuOutlined} from "@ant-design/icons";
 
 export default function MobileLanding() {
     const [currentIndex, setCurrentIndex] = useState(0); // 현재 섹션 인덱스
-    const sections = [0, 1, 2]; // 섹션의 배열
+    const sections = [0, 1, 2]; // 섹션 배열
+
+    let touchStartY = 0; // 스와이프 시작 위치
+    let touchEndY = 0; // 스와이프 종료 위치
+
+    const handleTouchStart = (e) => {
+        touchStartY = e.touches[0].clientY; // 스와이프 시작 지점의 Y좌표
+    };
+
+    const handleTouchEnd = (e) => {
+        touchEndY = e.changedTouches[0].clientY; // 스와이프 종료 지점의 Y좌표
+        handleSwipe();
+    };
+    const handleSwipe = () => {
+        const swipeDistance = touchStartY - touchEndY;
+
+        // 스와이프 거리가 일정 기준을 넘을 때만 동작
+        if (swipeDistance > 50 && currentIndex < sections.length - 1) {
+            // 위로 스와이프 -> 다음 섹션으로
+            setCurrentIndex((prevIndex) => prevIndex + 1);
+        } else if (swipeDistance < -50 && currentIndex > 0) {
+            // 아래로 스와이프 -> 이전 섹션으로
+            setCurrentIndex((prevIndex) => prevIndex - 1);
+        }
+    };
 
     useEffect(() => {
-        const handleScroll = (e) => {
-            // 스크롤 방향 감지
-            if (e.deltaY > 0) {
-                // 아래로 스크롤
-                if (currentIndex < sections.length - 1) {
-                    setCurrentIndex((prevIndex) => prevIndex + 1);
-                }
-            } else if (e.deltaY < 0) {
-                // 위로 스크롤
-                if (currentIndex > 0) {
-                    setCurrentIndex((prevIndex) => prevIndex - 1);
-                }
-            }
-        };
-
-        window.addEventListener("wheel", handleScroll, { passive: false });
-
-        return () => {
-            window.removeEventListener("wheel", handleScroll);
-        };
-    }, [currentIndex, sections.length]);
-
-    useEffect(() => {
-        // 현재 섹션으로 부드럽게 스크롤
+        // 현재 섹션으로 부드럽게 스크롤 이동
         const viewportHeight = window.innerHeight;
         window.scrollTo({
             top: currentIndex * viewportHeight,
             behavior: "smooth",
         });
     }, [currentIndex]);
-
 
     return <>
         <div style={{position: 'relative', width: '100vw', height: '300vh', overflow: 'hidden'}}>
