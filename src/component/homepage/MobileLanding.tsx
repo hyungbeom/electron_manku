@@ -39,7 +39,10 @@ export default function MobileLanding() {
     }, [currentIndex]);
 
     return <>
-        <div style={{position: 'relative', width: '100vw', height: '300vh', overflow: 'hidden'}}>
+        <div style={{position: 'relative', width: '100vw', height: '300vh', overflow: 'hidden'}}
+             onTouchStart={handleTouchStart} // 스와이프 시작
+             onTouchEnd={handleTouchEnd} // 스와이프 종료
+        >
             <div style={{            position: "relative",
                 width: "100vw",
                 height: "100vh"}}>
