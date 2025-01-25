@@ -196,3 +196,21 @@ html, body {
     margin-top: -4px !important; /* 필요 시 간격 조정 */
 }
 
+/*++++++++++++/*/
+
+
+.expandable-section {
+    height: 0;
+    transition: height 0.5s ease; /* 부드럽게 펼쳐지는 애니메이션 */
+    background-color: white;
+    border-bottom: 1px solid lightGray;
+}
+
+.expandable-section.expanded {
+    height: 200px; /* 섹션이 펼쳐질 때의 최종 높이 */
+}
+
+.menu-item:hover {
+    color: #173F95; /* hover 시 텍스트 색상을 검정으로 변경 */
+}
+
