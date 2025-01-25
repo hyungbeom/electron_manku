@@ -252,3 +252,24 @@ body {
     scrollbar-width: thin; /* 스크롤바 두께: thin, auto */
     scrollbar-color: #888 #f0f0f0; /* 막대 색상과 배경 색상 */
 }
+
+
+.gradient-arrow {
+    font-size: 1.5rem; /* 화살표 크기 */
+    font-weight: bold;
+    font-family: Arial, sans-serif;
+    color: #71d1df; /* 화살표 색상 */
+    display: inline-block; /* transform 처리를 위해 필요 */
+    transform: rotate(90deg); /* 90도 아래로 회전 */
+    animation: move-down 0.5s infinite linear; /* 아래로 이동하는 애니메이션 */
+}
+
+/* 애니메이션 키프레임 */
+@keyframes move-down {
+    0% {
+        transform: translateY(0) rotate(90deg); /* 초기 위치와 90도 회전 */
+    }
+    100% {
+        transform: translateY(15px) rotate(90deg); /* 아래로 이동하면서 90도 유지 */
+    }
+}
