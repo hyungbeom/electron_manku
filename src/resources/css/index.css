@@ -202,8 +202,8 @@ html, body {
 .expandable-section {
     height: 0;
     transition: height 0.5s ease; /* 부드럽게 펼쳐지는 애니메이션 */
-    background-color: white;
-    border-bottom: 1px solid lightGray;
+
+    /*border-top: 0.5px solid lightGray;*/
 }
 
 .expandable-section.expanded {

@@ -8,14 +8,16 @@ export default function Header() {
     const [isExpanded, setIsExpanded] = useState(false);
     const [hoverMenu, setHoverMenu] = useState(null);
 
-    function enterMouse(e){
+    function enterMouse(e) {
         setHoverMenu(e.target.id)
         setIsExpanded(true)
     }
-    function outMouse(e){
+
+    function outMouse(e) {
         setHoverMenu(null);
         setIsExpanded(false)
     }
+
     return (
         <>
             {/* 상단 고정된 헤더 */}
@@ -28,8 +30,8 @@ export default function Header() {
                     minWidth: 1048,
                     width: "100%",
                     // padding: "30px 35px",
-                    color: "black",
-                    backgroundColor: "white",
+                    color: isExpanded ? "black" : 'white',
+                    backgroundColor: isExpanded ? "white" : '',
 
                 }}
             >
@@ -47,8 +49,8 @@ export default function Header() {
                             alignItems: "center",
                             gap: "10px",
                             fontWeight: 600,
-                            cursor : 'pointer'
-                        }}  onClick={()=>router.push('/homepage')}>
+                            cursor: 'pointer'
+                        }} onClick={() => router.push('/homepage')}>
                         <img src={"/homepage/logo_1.png"}/>
                         Manku Trading
                     </div>
@@ -59,7 +61,7 @@ export default function Header() {
                         fontWeight: 600,
                         alignItems: 'center'
 
-                    }} onPointerEnter={enterMouse}  onPointerLeave={outMouse}>
+                    }} onPointerEnter={enterMouse} onPointerLeave={outMouse}>
                         <div style={{
                             cursor: "pointer",
                             width: 150,
@@ -67,7 +69,7 @@ export default function Header() {
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            color : hoverMenu === '1' ? '#173F95' : '',
+                            color: hoverMenu === '1' ? '#173F95' : '',
                             borderBottom: hoverMenu === '1' ? '2px solid #173F95' : ''
                         }} id={'1'} onPointerEnter={enterMouse}>기업정보
                         </div>
@@ -78,7 +80,7 @@ export default function Header() {
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            color : hoverMenu === '2' ? '#173F95' : '',
+                            color: hoverMenu === '2' ? '#173F95' : '',
                             borderBottom: hoverMenu === '2' ? '2px solid #173F95' : ''
                         }} id={'2'} onPointerEnter={enterMouse}>사업분야
                         </div>
@@ -89,7 +91,7 @@ export default function Header() {
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            color : hoverMenu === '3' ? '#173F95' : '',
+                            color: hoverMenu === '3' ? '#173F95' : '',
                             borderBottom: hoverMenu === '3' ? '2px solid #173F95' : ''
                         }} id={'3'} onPointerEnter={enterMouse}>한국대리점
                         </div>
@@ -100,7 +102,7 @@ export default function Header() {
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            color : hoverMenu === '4' ? '#173F95' : '',
+                            color: hoverMenu === '4' ? '#173F95' : '',
                             borderBottom: hoverMenu === '4' ? '2px solid #173F95' : ''
                         }} id={'4'} onPointerEnter={enterMouse}>고객센터
                         </div>
@@ -115,7 +117,7 @@ export default function Header() {
             </div>
 
             {/* 펼쳐지는 섹션 */}
-            <div
+            {<div
                 className={`expandable-section ${isExpanded ? "expanded" : ""}`}
                 style={{
                     position: "fixed",
@@ -125,7 +127,8 @@ export default function Header() {
                     minWidth: 1048,
                     width: "100%",
                     overflow: "hidden", // 숨김 처리
-                    borderTop : '0.1px solid lightGray'
+                    borderTop: isExpanded ? '0.1px solid lightGray' : '',
+                    backgroundColor: isExpanded ? 'white' : ''
                 }}>
                 <div
                     style={{
@@ -137,7 +140,8 @@ export default function Header() {
                 >
                     <div style={{paddingLeft: 20}}/>
 
-                    <div style={{display: "flex",  textAlign: "center", padding : '20px 0px'}} onPointerEnter={() => setIsExpanded(true)} onPointerLeave={() => setIsExpanded(false)}>
+                    <div style={{display: "flex", textAlign: "center", padding: '20px 0px'}}
+                         onPointerEnter={() => setIsExpanded(true)} onPointerLeave={outMouse}>
             <span
                 style={{
                     cursor: "pointer",
@@ -146,14 +150,14 @@ export default function Header() {
                     gridTemplateRows: "35px 35px 35px 35px",
                     color: hoverMenu === '1' ? 'black' : '#A5A5A5'
                 }}
-            onPointerEnter={()=>setHoverMenu('1')}>
-              <div  className="menu-item">회사소개</div>
+                onPointerEnter={() => setHoverMenu('1')}>
+              <div className="menu-item">회사소개</div>
               <div className="menu-item">연혁</div>
               <div className="menu-item">주요고객</div>
               <div className="menu-item">오시는길</div>
             </span>
                         <span
-                            onPointerEnter={()=>setHoverMenu('2')}
+                            onPointerEnter={() => setHoverMenu('2')}
                             style={{
                                 cursor: "pointer",
                                 width: 150,
@@ -168,7 +172,7 @@ export default function Header() {
               <div className="menu-item">무역 사업부</div>
             </span>
                         <span
-                            onPointerEnter={()=>setHoverMenu('3')}
+                            onPointerEnter={() => setHoverMenu('3')}
                             style={{
                                 cursor: "pointer",
                                 width: 150,
@@ -184,7 +188,7 @@ export default function Header() {
               <div className="menu-item">Bamo</div>
             </span>
                         <span
-                        onPointerEnter={()=>setHoverMenu('4')}
+                            onPointerEnter={() => setHoverMenu('4')}
                             style={{
                                 cursor: "pointer",
                                 width: 150,
@@ -199,7 +203,7 @@ export default function Header() {
                     </div>
                     <div/>
                 </div>
-            </div>
+            </div>}
         </>
     );
 }
