@@ -1,3 +1,6 @@
+import React from "react";
+import {DownOutlined, MenuOutlined} from "@ant-design/icons";
+
 export default function MobileLanding() {
 
 
@@ -12,6 +15,23 @@ export default function MobileLanding() {
                 width: 'auth'
             }} alt=""/>
 
+            <div
+                style={{
+                    position : 'fixed',
+                    padding :10
+                }}>
+                <img src={"/homepage/logo_1.png"}/>
+                <span style={{color : 'white', paddingLeft : 5, fontSize : 12}}>만쿠무역</span>
+            </div>
+            <div
+                style={{
+                    position : 'fixed',
+                    right : 10,
+                    padding :10
+                }}>
+                <MenuOutlined  style={{fontSize : 22, color : 'white'}}/>
+            </div>
+
             <div style={{position: 'absolute', textAlign: 'center', color: 'white', width: '100%', top: '30%'}}>
                 <div style={{fontSize: 15}}>무역을 바탕으로</div>
                 <div style={{fontSize: 15}}>미래 사업을 창출하는 종합사업회사</div>
@@ -22,7 +42,7 @@ export default function MobileLanding() {
             <div style={{position: 'absolute', textAlign: 'center', color: 'white', width: '100%', bottom: '30%'}}>
                 <div style={{fontSize: 15, fontWeight: 600}}>SCROLL</div>
                 <div className="gradient-arrow">
-                    {`${'>>'}`}
+                    <DownOutlined />
                 </div>
             </div>
 
