@@ -16,7 +16,8 @@ export default function Header() {
         const viewportHeight = window.innerHeight;
 
         // 스크롤 위치가 100vh 이상인지 확인
-        if (scrollY >= viewportHeight) {
+        // if (scrollY >= viewportHeight) {
+        if (scrollY >= 200) {
             setScrollCheck(true);
         } else {
             setScrollCheck(false);
