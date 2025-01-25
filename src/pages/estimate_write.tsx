@@ -26,9 +26,11 @@ import {findCodeInfo, findDocumentInfo} from "@/utils/api/commonApi";
 import {checkInquiryNo, saveEstimate} from "@/utils/api/mainApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import Spin from "antd/lib/spin";
+import Test from "@/pages/test";
 
 const listType = 'estimateDetailList'
 export default function EstimateWrite({dataInfo}) {
+    const pdfRef = useRef(null);
     const fileRef = useRef(null);
     const gridRef = useRef(null);
     const router = useRouter();
@@ -110,6 +112,9 @@ export default function EstimateWrite({dataInfo}) {
     async function saveFunc() {
         gridRef.current.clearFocusedCell();
         const list = gridManage.getAllData(gridRef);
+        setInfo(v=>{
+            return {...v, estimateDetailList : list}
+        })
 
         if (!info['documentNumberFull']) {
             setValidate(v => {
@@ -125,14 +130,26 @@ export default function EstimateWrite({dataInfo}) {
             return message.warn('하위 데이터 1개 이상이여야 합니다');
         }
 
-
         const formData: any = new FormData();
 
         commonManage.setInfoFormData(info, formData, listType, list)
-        commonManage.getUploadList(fileRef, formData)
+       const resultCount = commonManage.getUploadList(fileRef, formData)
+
 
         formData.delete('createdDate')
         formData.delete('modifiedDate')
+
+
+
+        const pdf = await commonManage.getPdfCreate(pdfRef);
+        const result = await commonManage.getPdfFile(pdf, info.documentNumberFull);
+
+
+
+        formData.append(`attachmentFileList[${resultCount}].attachmentFile`, result);
+        formData.append(`attachmentFileList[${resultCount}].fileName`, result.name);
+
+
 
         setLoading(true)
         await saveEstimate({data: formData, router: router})
@@ -354,6 +371,7 @@ export default function EstimateWrite({dataInfo}) {
                         : <></>}
                 </MainCard>
                 <TableGrid
+                    setInfo={setInfo}
                     gridRef={gridRef}
                     columns={tableEstimateWriteColumns}
                     type={'write'}
@@ -362,6 +380,7 @@ export default function EstimateWrite({dataInfo}) {
                 />
             </div>
         </LayoutComponent>
+        <Test data={info} pdfRef={pdfRef} gridRef={gridRef}/>
     </Spin>
 }
 // @ts-ignore

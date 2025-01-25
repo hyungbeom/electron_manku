@@ -2,6 +2,8 @@ import moment from "moment";
 import * as XLSX from "xlsx";
 import {dateFormat, rfqReadColumns} from "@/utils/columnList";
 import message from "antd/lib/message";
+import {jsPDF} from "jspdf";
+import html2canvas from "html2canvas";
 
 export const commonManage: any = {}
 export const apiManage: any = {}
@@ -631,6 +633,8 @@ commonManage.getUploadList = function (fileRef, formData) {
             count += 1;
         }
     });
+
+    return count
 }
 
 commonManage.deleteUploadList = function (fileRef, formData, originFileList) {
@@ -670,4 +674,27 @@ commonManage.removeInvalid = function(obj){
         }
     }
     return obj;
+}
+
+commonManage.getPdfCreate = async function(pdfRef){
+    const element = pdfRef.current;
+
+    // HTML 캡처 후 PDF 생성
+    const canvas = await html2canvas(element, { scale: 1, useCORS: true });
+    const imgData = canvas.toDataURL("image/jpeg", 0.98);
+    const pdf = new jsPDF("portrait", "px", "a4");
+
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+    return pdf
+}
+
+commonManage.getPdfFile = async function(pdf, documentNumberFull){
+    const pdfBlob = pdf.output("blob");
+    console.log(`PDF Blob Size: ${pdfBlob.size} bytes`);
+    const fileName = `${documentNumberFull}_견적서.pdf`;
+    const pdfFile = new File([pdfBlob], fileName, { type: "application/pdf" });
+    return pdfFile;
 }

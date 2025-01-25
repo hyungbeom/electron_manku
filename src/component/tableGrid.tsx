@@ -5,7 +5,7 @@ import {AgGridReact} from 'ag-grid-react';
 import {useRouter} from "next/router";
 import {tableTheme} from "@/utils/common";
 
-import {commonFunc} from "@/utils/commonManage";
+import {commonFunc, gridManage} from "@/utils/commonManage";
 import useEventListener from "@/utils/common/function/UseEventListener";
 import EstimateListModal from "@/component/EstimateListModal";
 import {tableButtonList} from "@/utils/commonForm";
@@ -21,7 +21,8 @@ const TableGrid = ({
                        type = 'read',
                        funcButtons = [],
                        onCellEditingStopped = null,
-                       deleteComp = <></>
+                       deleteComp = <></>,
+                       setInfo = null
                    }: any) => {
 
 
@@ -30,7 +31,7 @@ const TableGrid = ({
     const [dragging, setDragging] = useState(false);
     const [pinnedBottomRowData, setPinnedBottomRowData] = useState([]);
     const [page, setPage] = useState({x: null, y: null, field: null, event: null})
-    const [isModalOpen, setIsModalOpen] = useState({estimate : false, agency : false});
+    const [isModalOpen, setIsModalOpen] = useState({estimate: false, agency: false});
     const ref = useRef(null);
 
 
@@ -93,7 +94,7 @@ const TableGrid = ({
         if (type === 'read') {
             if (e.data.orderStatusId)
 
-            window.open(`/store_update?orderStatusId=${e?.data?.orderStatusId}`, openType, option);
+                window.open(`/store_update?orderStatusId=${e?.data?.orderStatusId}`, openType, option);
             if (e.data.projectId)
                 window.open(`/project_update?projectId=${e?.data?.projectId}`, openType, option);
             if (e.data.deliveryId)
@@ -146,6 +147,11 @@ const TableGrid = ({
     function dataChange(e) {
         clickRowCheck(e.api);
         handleSelectionChanged();
+        if (setInfo) {
+            setInfo(v => {
+                return {...v, count: v.count + 1}
+            })
+        }
     }
 
 
@@ -210,9 +216,9 @@ const TableGrid = ({
     };
 
 
-    function getAgencyInfo(data){
+    function getAgencyInfo(data) {
 
-        if(page.event.node){
+        if (page.event.node) {
             let selectedRow = page.event.node.data;
             selectedRow['agencyName'] = data.agencyName
             selectedRow['agencyManagerName'] = data.managerName
@@ -232,8 +238,10 @@ const TableGrid = ({
 
     return (
         <>
-            <EstimateListModal isModalOpen={isModalOpen['estimate']} setIsModalOpen={setIsModalOpen} getRows={getSelectedRows}/>
-            <AgencyListModal isModalOpen={isModalOpen['agency']} setIsModalOpen={setIsModalOpen} getRows={getAgencyInfo}/>
+            <EstimateListModal isModalOpen={isModalOpen['estimate']} setIsModalOpen={setIsModalOpen}
+                               getRows={getSelectedRows}/>
+            <AgencyListModal isModalOpen={isModalOpen['agency']} setIsModalOpen={setIsModalOpen}
+                             getRows={getAgencyInfo}/>
             {page.x ? <div style={{
                 position: 'fixed',
                 top: page.y,
@@ -249,14 +257,18 @@ const TableGrid = ({
                     setPage(v => {
                         return {...v, x: null, y: null}
                     });
-                    setIsModalOpen(v=>{return {...v, estimate : true} });
+                    setIsModalOpen(v => {
+                        return {...v, estimate: true}
+                    });
                 }} id={'right'} style={{backgroundColor: 'lightgray', padding: 3}}>견적 Inquiry조회
                 </div> : <></>}
                 {page.field.includes('agency') ? <div onClick={() => {
                     setPage(v => {
                         return {...v, x: null, y: null}
                     });
-                    setIsModalOpen(v=>{return {...v, agency : true} });
+                    setIsModalOpen(v => {
+                        return {...v, agency: true}
+                    });
                 }} id={'right'} style={{backgroundColor: 'lightgray', padding: 3}}>매입처 조회
                 </div> : <></>}
 
@@ -286,7 +298,7 @@ const TableGrid = ({
 
                     <div style={{display: 'flex', alignItems: 'end', gap: 7}}>
                         <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
-                                onClick={()=>{
+                                onClick={() => {
                                     gridRef?.current?.setFilterModel(null)
                                 }}>
                             <CopyOutlined/>필터 초기화
@@ -322,6 +334,23 @@ const TableGrid = ({
                                 return {backgroundColor: "#f5f5f5"}; // 옅은 갈색
                             }
                             return null; // 기본 스타일 유지
+                        },
+                        onCellValueChanged: (event) => {
+                            if (setInfo) {
+                                setInfo(v => {
+                                    return {...v, count: v.count + 1}
+                                })
+                            }
+                        },
+                        onRowDataUpdated: () => {
+                            if (setInfo) {
+                                setInfo(v => {
+                                    return {...v, count: v.count + 1}
+                                })
+                            }
+                        },
+                        onRowDataChanged: () => {
+                            console.log("Row Data Changed");
                         },
                     }}
                     rowDragManaged={true}

@@ -381,7 +381,7 @@ export default function PrintTransactionModal({ data, customerData, isModalOpen,
                                         lineHeight: "2.2",
                                     }}
                                 >
-                                    {customerData.businessRegistrationNumber}
+                                    {customerData?.businessRegistrationNumber}
                                 </div>
                                 <div
                                     style={{
@@ -393,11 +393,11 @@ export default function PrintTransactionModal({ data, customerData, isModalOpen,
                                     }}
                                 >
                                     <div style={{borderRight: "1px solid #A3A3A3", lineHeight: 1.1,}}>
-                                        {customerData.customerName}
+                                        {customerData?.customerName}
                                     </div>
                                     <div style={{borderRight: "1px solid #A3A3A3"}}>대표자</div>
                                     <div style={{paddingLeft: "3px", textAlign: "left"}}>
-                                        {customerData.representative}
+                                        {customerData?.representative}
                                     </div>
                                 </div>
                                 <div
@@ -411,7 +411,7 @@ export default function PrintTransactionModal({ data, customerData, isModalOpen,
                                         whiteSpace: "pre-wrap",
                                     }}
                                 >
-                                    {customerData.address}
+                                    {customerData?.address}
                                 </div>
                                 <div
                                     style={{
@@ -423,10 +423,10 @@ export default function PrintTransactionModal({ data, customerData, isModalOpen,
                                     }}
                                 >
                                     <div style={{borderRight: "1px solid #A3A3A3"}}>
-                                        {customerData.businessType}
+                                        {customerData?.businessType}
                                     </div>
                                     <div style={{borderRight: "1px solid #A3A3A3"}}>종목</div>
-                                    <div>{customerData.businessItem}</div>
+                                    <div>{customerData?.businessItem}</div>
                                 </div>
                                 <div
                                     style={{
@@ -437,10 +437,10 @@ export default function PrintTransactionModal({ data, customerData, isModalOpen,
                                     }}
                                 >
                                     <div style={{borderRight: "1px solid #A3A3A3"}}>
-                                        {customerData.manager}
+                                        {customerData?.manager}
                                     </div>
                                     <div style={{borderRight: "1px solid #A3A3A3"}}>전화번호</div>
-                                    <div>{customerData.customerTel}</div>
+                                    <div>{customerData?.customerTel}</div>
                                 </div>
                             </div>
                         </div>

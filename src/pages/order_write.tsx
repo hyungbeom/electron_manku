@@ -17,6 +17,9 @@ import _ from "lodash";
 import {findOrderDocumentInfo} from "@/utils/api/commonApi";
 import {saveOrder} from "@/utils/api/mainApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
+import {getData} from "@/manage/function/api";
+import PrintTransactionModal from "@/component/printTransaction";
+import PrintPo from "@/component/printPo";
 
 
 const listType = 'orderDetailList'
@@ -33,7 +36,7 @@ export default function OrderWriter({dataInfo}) {
     const [mini, setMini] = useState(true);
     const [validate, setValidate] = useState({documentNumberFull: true});
     const [fileList, setFileList] = useState([]);
-
+    const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
     const [loading, setLoading] = useState(false);
 
     const adminParams = {
@@ -108,14 +111,42 @@ export default function OrderWriter({dataInfo}) {
         gridManage.deleteAll(gridRef);
     }
 
+    async function printTransactionStatement() {
+        await searchCustomer();
+        setIsModalOpen({event1: true, event2: false});
+    }
+
+    function printPo() {
+        setIsModalOpen({event1: false, event2: true});
+    }
+
+
+    async function searchCustomer() {
+
+        const result = await getData.post('customer/getCustomerListForOrder', {
+            customerName: info['customerName']
+        })
+
+        if (result?.data?.code === 1) {
+
+            if (result?.data?.entity?.customerList.length) {
+            }
+        }
+
+    }
+
+
     return <>
         <LayoutComponent>
+
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '500px' : '65px'} calc(100vh - ${mini ? 555 : 120}px)`,
+                gridTemplateRows: `${mini ? '470px' : '65px'} calc(100vh - ${mini ? 525 : 120}px)`,
                 columnGap: 5
             }}>
                 <MainCard title={'발주서 작성'} list={[
+                    {name: '거래명세표 출력', func: null, type: 'default'},
+                    {name: '발주서 출력', func: null, type: 'default'},
                     {name: '저장', func: saveFunc, type: 'primary'},
                     {name: '초기화', func: clearAll, type: 'danger'}
                 ]} mini={mini} setMini={setMini}>
@@ -123,7 +154,7 @@ export default function OrderWriter({dataInfo}) {
 
                     {mini ? <div>
 
-                        <TopBoxCard title={'INQUIRY & PO no'} grid={'1fr 0.6fr 0.6fr 1fr 1fr 1fr'}>
+                        <TopBoxCard title={''} grid={'1fr 0.6fr 0.6fr 1fr 1fr 1fr'}>
                             {datePickerForm({
                                 title: '작성일',
                                 id: 'writtenDate',

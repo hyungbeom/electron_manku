@@ -2,10 +2,9 @@ import React, {useRef} from "react";
 import Modal from "antd/lib/modal/Modal";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
-import {gridManage} from "@/utils/commonManage";
+import {commonManage, gridManage} from "@/utils/commonManage";
 
 export default function PrintEstimate({ data, isModalOpen, userInfo, setIsModalOpen, gridRef }) {
-    const {estimateDetailList} = data;
     const pdfRef = useRef();
 
     const list = gridManage.getAllData(gridRef)
@@ -18,38 +17,11 @@ export default function PrintEstimate({ data, isModalOpen, userInfo, setIsModalO
     function formattedNumber(number) {
         return number?.toLocaleString();
     }
-
     const handleDownloadPDF = async () => {
-        const element = pdfRef.current;
+        commonManage.getPdfFile(pdfRef, 'fasdfds')
 
-        const pdf = new jsPDF("portrait", "px", "a4");
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = pdf.internal.pageSize.getHeight();
-        const bottomMargin = 20; // 하단 여백 (단위: px)
-
-        const canvas = await html2canvas(element, { scale: 2 });
-        const imgData = canvas.toDataURL("image/png");
-
-        // Calculate image dimensions and split pages
-        const imgProps = pdf.getImageProperties(imgData);
-        const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
-        let heightLeft = imgHeight;
-        let position = 0;
-
-        // Add first page
-        pdf.addImage(imgData, "PNG", 0, position, pdfWidth, imgHeight);
-        heightLeft -= (pdfHeight - bottomMargin);
-
-        // Add additional pages if necessary
-        while (heightLeft > 0) {
-            position -= (pdfHeight - bottomMargin);
-            pdf.addPage();
-            pdf.addImage(imgData, "PNG", 0, position, pdfWidth, imgHeight);
-            heightLeft -= (pdfHeight - bottomMargin);
-        }
-
-        pdf.save(`${data.documentNumberFull}_견적서.pdf`);
     };
+
 
 
     const handlePrint = () => {

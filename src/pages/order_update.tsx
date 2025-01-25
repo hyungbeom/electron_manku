@@ -135,7 +135,7 @@ export default function order_update({dataInfo}) {
         <LayoutComponent>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '500px' : '65px'} calc(100vh - ${mini ? 555 : 120}px)`,
+                gridTemplateRows: `${mini ? '470px' : '65px'} calc(100vh - ${mini ? 525 : 120}px)`,
                 columnGap: 5
             }}>
                 {/*@ts-ignore*/}
@@ -145,15 +145,15 @@ export default function order_update({dataInfo}) {
 
                 <MainCard title={'발주서 수정'} list={[
                     {name: '거래명세표 출력', func: printTransactionStatement, type: 'default'},
+                    {name: '발주서 출력', func: printPo, type: 'default'},
                     {name: '수정', func: saveFunc, type: 'primary'},
                     {name: '복제', func: copyPage, type: 'default'},
-                    {name: '발주서 출력', func: printPo, type: 'default'}
                 ]} mini={mini} setMini={setMini}>
 
 
                     {mini ? <div>
 
-                        <BoxCard title={'INQUIRY & PO no'}>
+                        <BoxCard title={''}>
                             <div style={{
                                 display: 'grid',
                                 gridTemplateColumns: '1fr 0.6fr 1fr 1fr 1fr',

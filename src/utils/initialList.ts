@@ -54,7 +54,8 @@ export const estimateWriteInitial = {
     "delivery": null,    // Delivery
     "remarks": "",          // 비고란
     "currencyUnit": "",          // 비고란
-    "estimateDetailList": []
+    "estimateDetailList": [],
+    count : 0
 }
 
 export const tableEstimateWriteInitial = {

@@ -29,6 +29,7 @@ import {getAttachmentFileList, updateEstimate} from "@/utils/api/mainApi";
 import _ from "lodash";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import Spin from "antd/lib/spin";
+import Test from "@/pages/test";
 
 
 const listType = 'estimateDetailList'
@@ -100,7 +101,7 @@ export default function estimate_update({dataInfo}) {
             return message.warn('매입처 코드가 누락되었습니다.')
         }
 
-        setLoading(true)
+        // setLoading(true)
         const formData: any = new FormData();
 
         commonManage.setInfoFormData(info, formData, listType, list)
@@ -360,6 +361,8 @@ export default function estimate_update({dataInfo}) {
                 />
             </div>
         </LayoutComponent>
+        <div style={{marginTop : 200}}/>
+
     </Spin>
 }
 
