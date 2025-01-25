@@ -229,7 +229,8 @@ html, body {
 
 /* Webkit 기반 브라우저 (크롬, 엣지, 사파리) */
 ::-webkit-scrollbar {
-    width: 10px; /* 스크롤바 너비 */
+    width: 8px; /* 스크롤바 너비 */
+    height: 8px; /* 가로 스크롤바 높이 */
 }
 
 ::-webkit-scrollbar-thumb {

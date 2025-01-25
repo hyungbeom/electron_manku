@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {backgroundColor} from "html2canvas/dist/types/css/property-descriptors/background-color";
 import {useRouter} from "next/router";
 
@@ -7,6 +7,31 @@ export default function Header() {
     const router = useRouter();
     const [isExpanded, setIsExpanded] = useState(false);
     const [hoverMenu, setHoverMenu] = useState(null);
+    const [scrollCheck, setScrollCheck] = useState(false);
+
+    const handleScroll = () => {
+        // 현재 스크롤 위치
+        const scrollY = window.scrollY;
+        // 뷰포트 높이
+        const viewportHeight = window.innerHeight;
+
+        // 스크롤 위치가 100vh 이상인지 확인
+        if (scrollY >= viewportHeight) {
+            setScrollCheck(true);
+        } else {
+            setScrollCheck(false);
+        }
+    };
+
+    useEffect(() => {
+        // 스크롤 이벤트 리스너 등록
+        window.addEventListener("scroll", handleScroll);
+
+        // 컴포넌트 언마운트 시 이벤트 리스너 제거
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+        };
+    }, []);
 
     function enterMouse(e) {
         setHoverMenu(e.target.id)
@@ -30,9 +55,9 @@ export default function Header() {
                     minWidth: 1048,
                     width: "100%",
                     // padding: "30px 35px",
-                    color: isExpanded ? "black" : 'white',
-                    backgroundColor: isExpanded ? "white" : '',
-
+                    color: (isExpanded || scrollCheck) ? "black" : 'white',
+                    backgroundColor: (isExpanded || scrollCheck) ? "white" : '',
+                    borderBottom : (isExpanded || scrollCheck) ?'0.1px solid lightGray' : ''
                 }}
             >
                 <div
