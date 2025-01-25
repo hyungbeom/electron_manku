@@ -67,7 +67,7 @@ export default function MobileLanding() {
                     style={{
                         position: 'fixed',
                         right: 10,
-                        padding: 10
+                        padding: 11
                     }}>
                     <MenuOutlined style={{fontSize: 22, color: 'white'}}/>
                 </div>
@@ -80,7 +80,7 @@ export default function MobileLanding() {
                 </div>
 
                 <div style={{position: 'absolute', textAlign: 'center', color: 'white', width: '100%', bottom: '30%'}}>
-                    <div style={{fontSize: 15, fontWeight: 600}}>SCROLL</div>
+                    <div style={{fontSize: 15, fontWeight: 600}}>SWIPE</div>
                     <div className="gradient-arrow">
                         <DownOutlined/>
                     </div>
