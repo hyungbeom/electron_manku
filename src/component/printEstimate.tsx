@@ -53,36 +53,7 @@ export default function PrintEstimate({ data, isModalOpen, userInfo, setIsModalO
 
     return (
         <Modal
-            title={<div style={{width: '100%', display: "flex", justifyContent: 'space-between', alignItems: 'center'}}>
-                <div>견적서 출력</div>
-                <div>
-                <button onClick={handleDownloadPDF} style={{
-                    padding: "5px 10px",
-                    backgroundColor: "#1890ff",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "4px",
-                    cursor: "pointer",
-                    fontSize: 11,
-                    marginRight: 10
-                }}>
-                    PDF
-                </button>
-                {/*@ts-ignore*/}
-                <button onClick={handlePrint} style={{
-                    padding: "5px 10px",
-                    backgroundColor: "gray",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "4px",
-                    cursor: "pointer",
-                    fontSize: 11,
-                    marginRight: 20
-                }}>
-                    인쇄
-                </button>
-                </div>
-            </div>}
+            title={}
             onCancel={() => setIsModalOpen(false)}
             open={isModalOpen}
             width={'640px'}

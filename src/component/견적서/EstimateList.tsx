@@ -1,5 +1,6 @@
 import {useEffect, useMemo} from "react";
 import {gridManage} from "@/utils/commonManage";
+import {amountFormat} from "@/utils/columnList";
 
 const headerStyle = {
     padding: '10px',
@@ -11,20 +12,21 @@ const headerStyle = {
 
 export default function EstimateList({data, gridRef}: any) {
 
-    const [totalQuantity, totalValue, list] = useMemo(() => {
+    const [totalQuantity, totalValue,units, list] = useMemo(() => {
         const list = gridManage.getAllData(gridRef);
 
         const result = list?.reduce((totals, item) => {
+            totals.unit = item.unit;
             totals.totalQuantity += item.quantity;
             totals.totalValue += item.quantity * item.unitPrice;
             return totals;
-        }, {totalQuantity: 0, totalValue: 0});
+        }, {totalQuantity: 0, totalValue: 0, unit : ''});
 
-        return [result?.totalQuantity, result?.totalValue, list]
+        return [result?.totalQuantity, result?.totalValue, result?.unit,list]
     }, [data]);
 
     return (
-        <div style={{fontFamily: 'Arial, sans-serif', fontSize: 12}}>
+        <div style={{fontFamily: 'Arial, sans-serif', fontSize: 13}}>
             <table
                 style={{
                     width: '100%',
@@ -39,6 +41,7 @@ export default function EstimateList({data, gridRef}: any) {
                 <tr style={{backgroundColor: '#ebf6f7', fontWeight: 'bold'}}>
                     <th colSpan={3} style={{width: '55%'}}>Specification</th>
                     <th style={headerStyle}>Qty</th>
+                    <th style={headerStyle}>Unit</th>
                     <th style={headerStyle}>Unit Price</th>
                     <th>Amount</th>
                 </tr>
@@ -57,6 +60,7 @@ export default function EstimateList({data, gridRef}: any) {
                     <th style={headerStyle}>{data?.maker ? data?.maker : '-'}</th>
                     <th style={{border: 'none'}}></th>
                     <th style={{border: 'none'}}></th>
+                    <th style={{border: 'none'}}></th>
                     <th style={{borderTop: '1px solid lightGray'}}></th>
                 </tr>
                 </thead>
@@ -64,29 +68,36 @@ export default function EstimateList({data, gridRef}: any) {
 
                 <thead>
                 {list?.map((v, i) => {
-                    return <tr style={{fontWeight: 'bold'}}>
+                    return <tr>
                         <th colSpan={2} style={{
                             width: '8%',
                             border: 'none',
                             textAlign: 'left',
                             paddingLeft: 10,
-                            borderBottom: '1px solid lightGray'
+                            borderBottom: '1px solid lightGray', fontSize : 12
+
                         }}>
                             <div style={{width: 30, borderRight: '1px solid lightGray'}}>{i + 1}</div>
                         </th>
-                        <th style={{borderBottom: '1px solid lightGray', textAlign: 'left'}}>
+                        <th style={{borderBottom: '1px solid lightGray', textAlign: 'left', fontSize : 12}}>
                             <div
                                 style={{
-                                    marginLeft: '-8vw',
+                                    marginLeft: '-4vw',
                                     wordWrap: 'break-word',
                                     wordBreak: 'break-word',
-                                    whiteSpace: 'pre-wrap'
+                                    whiteSpace: 'pre-wrap',
+                                    fontWeight: 'lighter'
                                 }}>{v.model}
                             </div>
                         </th>
-                        <th style={headerStyle}>{v.quantity} {v.unit}</th>
-                        <th style={headerStyle}>{v.unitPrice}</th>
-                        <th style={{borderTop: '1px solid lightGray'}}>{v.quantity * v.unitPrice}</th>
+                        <th style={{...headerStyle, textAlign : 'right',  fontWeight: 'lighter', fontSize : 12}}>{amountFormat(v.quantity)}</th>
+                        <th style={{...headerStyle, fontSize : 12}}>{v.unit}</th>
+                        <th style={{...headerStyle, textAlign: 'right',  fontWeight: 'lighter', fontSize : 12}}>{amountFormat(v.unitPrice)}<span
+                            style={{paddingLeft: 5, fontSize : 12}}>₩</span></th>
+                        <th style={{
+                            borderTop: '1px solid lightGray',
+                            textAlign: 'right', fontWeight: 'lighter', fontSize : 12
+                        }}>{amountFormat(v.quantity * v.unitPrice)}<span style={{paddingLeft: 5,  fontWeight: 'lighter', fontSize : 12}}>₩</span></th>
                     </tr>
                 })}
 
@@ -96,9 +107,10 @@ export default function EstimateList({data, gridRef}: any) {
                 <thead>
                 <tr style={{fontWeight: 'bold'}}>
                     <th colSpan={3} style={{backgroundColor: '#ebf6f7'}}>합계</th>
-                    <th style={headerStyle}>{totalQuantity}</th>
-                    <th style={headerStyle}>VAT 별도</th>
-                    <th style={{borderTop: '1px solid lightGray'}}>{totalValue}</th>
+                    <th style={{...headerStyle, textAlign : 'right'}}>{amountFormat(totalQuantity)}</th>
+                    <th style={headerStyle}>{units}</th>
+                    <th style={{...headerStyle, textAlign : 'right'}}>VAT 별도</th>
+                    <th style={{borderTop: '1px solid lightGray', textAlign : 'right'}}>{amountFormat(totalValue)}<span style={{paddingLeft : 5}}>₩</span></th>
                 </tr>
                 </thead>
             </table>

@@ -18,11 +18,11 @@ export const numberFormat = (params) => {
 };
 
 export const amountFormat = (params) => {
-    if (params.value === null || params.value === undefined) {
+    if (params === null || params === undefined) {
         return "";
     }
     // 숫자를 3자리마다 쉼표로 포맷
-    return params.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return params?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
 
 export const amountFormatParser = (params) => {
@@ -2349,7 +2349,7 @@ export const projectWriteColumn = [
         minWidth: 150,
         editable: true,
         filter: 'agNumberColumnFilter',
-        valueFormatter: amountFormat,
+        valueFormatter: (e)=>amountFormat(e.value),
         valueParser: amountFormatParser,
     }, {
         headerName: '총액',
@@ -2387,7 +2387,7 @@ export const projectWriteColumn = [
             params.data.deliveryDate = params.newValue
             return true
         },
-        valueFormatter: amountFormat,
+        valueFormatter: (e)=>amountFormat(e.value),
         valueParser: amountFormatParser,
         cellRenderer: (e) => columnPlaceHolder(e, 'week')
     }, {

@@ -15,8 +15,9 @@ import {commonManage, gridManage} from "@/utils/commonManage";
 import {
     BoxCard,
     datePickerForm,
-    inputForm, inputNumberForm,
-    MainCard, numbFormatter, numbParser,
+    inputForm,
+    inputNumberForm,
+    MainCard,
     selectBoxForm,
     textAreaForm,
     TopBoxCard
@@ -35,8 +36,8 @@ export default function EstimateWrite({dataInfo}) {
     const gridRef = useRef(null);
     const router = useRouter();
 
-    const copyInit = _.cloneDeep(estimateWriteInitial)
-    const copyUnitInit = _.cloneDeep(estimateDetailUnit)
+    const copyInit = _.cloneDeep(estimateWriteInitial);
+    const copyUnitInit = _.cloneDeep(estimateDetailUnit);
 
     const userInfo = useAppSelector((state) => state.user);
 
@@ -45,6 +46,7 @@ export default function EstimateWrite({dataInfo}) {
         createdBy: userInfo['name'],
         managerAdminName: userInfo['name']
     }
+
     const infoInit = {
         ...copyInit,
         ...adminParams
@@ -52,7 +54,7 @@ export default function EstimateWrite({dataInfo}) {
 
     const [info, setInfo] = useState<any>({...copyInit, ...dataInfo, ...adminParams})
     const [mini, setMini] = useState(true);
-    const [validate, setValidate] = useState({agencyCode: !!dataInfo, documentNumberFull : true});
+    const [validate, setValidate] = useState({agencyCode: !!dataInfo, documentNumberFull: true});
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
 
     const [fileList, setFileList] = useState([]);
@@ -112,8 +114,8 @@ export default function EstimateWrite({dataInfo}) {
     async function saveFunc() {
         gridRef.current.clearFocusedCell();
         const list = gridManage.getAllData(gridRef);
-        setInfo(v=>{
-            return {...v, estimateDetailList : list}
+        setInfo(v => {
+            return {...v, estimateDetailList: list}
         })
 
         if (!info['documentNumberFull']) {
@@ -133,22 +135,19 @@ export default function EstimateWrite({dataInfo}) {
         const formData: any = new FormData();
 
         commonManage.setInfoFormData(info, formData, listType, list)
-       const resultCount = commonManage.getUploadList(fileRef, formData)
+        const resultCount = commonManage.getUploadList(fileRef, formData)
 
 
         formData.delete('createdDate')
         formData.delete('modifiedDate')
 
 
-
         const pdf = await commonManage.getPdfCreate(pdfRef);
         const result = await commonManage.getPdfFile(pdf, info.documentNumberFull);
 
 
-
         formData.append(`attachmentFileList[${resultCount}].attachmentFile`, result);
         formData.append(`attachmentFileList[${resultCount}].fileName`, result.name);
-
 
 
         setLoading(true)
@@ -199,7 +198,7 @@ export default function EstimateWrite({dataInfo}) {
                                     placeholder: '폴더생성 규칙 유의',
                                     onChange: onChange,
                                     data: info,
-                                    validate : validate['documentNumberFull'],
+                                    validate: validate['documentNumberFull'],
                                     suffix:
                                         <PlusSquareOutlined style={{cursor: 'pointer'}} onClick={
                                             async (e) => {
@@ -331,8 +330,19 @@ export default function EstimateWrite({dataInfo}) {
                                             {value: '화물 및 택배비 별도', label: '화물 및 택배비 별도'},
                                         ], onChange: onChange, data: info
                                     })}
-                                    {inputNumberForm({title: 'Delivery(weeks)', id: 'delivery', onChange: onChange, data: info})}
-                                    {inputNumberForm({title: '환율', id: 'exchangeRate', onChange: onChange, data: info, step : 0.01})}
+                                    {inputNumberForm({
+                                        title: 'Delivery(weeks)',
+                                        id: 'delivery',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                    {inputNumberForm({
+                                        title: '환율',
+                                        id: 'exchangeRate',
+                                        onChange: onChange,
+                                        data: info,
+                                        step: 0.01
+                                    })}
                                 </BoxCard>
 
                                 <BoxCard title={'Maker 정보'}>
@@ -359,7 +369,7 @@ export default function EstimateWrite({dataInfo}) {
                                     })}
                                     {textAreaForm({title: '비고란', rows: 4, id: 'remarks', onChange: onChange, data: info})}
                                 </BoxCard>
-                                <BoxCard title={'드라이브 목록'}  disabled={!userInfo['microsoftId']}>
+                                <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
                                     {/*@ts-ignored*/}
                                     <div style={{overFlowY: "auto", maxHeight: 300}}>
                                         <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}

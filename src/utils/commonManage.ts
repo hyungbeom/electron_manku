@@ -688,6 +688,7 @@ commonManage.getPdfCreate = async function(pdfRef){
     const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
     pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+    
     return pdf
 }
 

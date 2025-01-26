@@ -30,10 +30,12 @@ import _ from "lodash";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import Spin from "antd/lib/spin";
 import Test from "@/pages/test";
+import Modal from "antd/lib/modal/Modal";
 
 
 const listType = 'estimateDetailList'
 export default function estimate_update({dataInfo}) {
+    const pdfRef = useRef(null);
     const fileRef = useRef(null);
     const gridRef = useRef(null);
     const router = useRouter();
@@ -108,11 +110,11 @@ export default function estimate_update({dataInfo}) {
         commonManage.getUploadList(fileRef, formData);
         commonManage.deleteUploadList(fileRef, formData, originFileList)
 
-        await updateEstimate({data: formData, returnFunc:returnFunc})
+        await updateEstimate({data: formData, returnFunc: returnFunc})
     }
 
     async function returnFunc(e) {
-        console.log(e,'e:')
+        console.log(e, 'e:')
         if (e) {
             await getAttachmentFileList({
                 data: {
@@ -145,11 +147,6 @@ export default function estimate_update({dataInfo}) {
         gridManage.resetData(gridRef, list);
     }
 
-    function addRow() {
-        const newRow = {...copyUnitInit, "currency": commonManage.changeCurr(info['agencyCode'])};
-        gridRef.current.applyTransaction({add: [newRow]});
-    }
-
 
     async function printEstimate() {
         const list = gridManage.getAllData(gridRef)
@@ -159,19 +156,31 @@ export default function estimate_update({dataInfo}) {
         setIsPrintModalOpen(true)
     }
 
-    const subTableUtil = <div style={{display: 'flex', alignItems: 'end'}}>
-        <Button type={'primary'} size={'small'} style={{marginLeft: 5}}
-                onClick={addRow}>
-            <SaveOutlined/>추가
-        </Button>
-        {/*@ts-ignored*/}
-        <Button type={'danger'} size={'small'} style={{marginLeft: 5,}} onClick={deleteList}>
-            <CopyOutlined/>삭제
-        </Button>
-    </div>
+    async function getPdfFile() {
+        const pdf = await commonManage.getPdfCreate(pdfRef);
+        pdf.save(`${info.documentNumberFull}_견적서.pdf`);
+    }
+
+    function EstimateModal() {
+        return <Modal
+            title={<div style={{display: 'flex', justifyContent: 'space-between', padding: '0px 30px'}}>
+                <span>견적서 출력</span>
+                <span>
+                       <Button style={{fontSize: 11, marginRight: 10}} size={'small'} onClick={getPdfFile}>다운로드</Button>
+                       <Button style={{fontSize: 11}} size={'small'}>인쇄</Button>
+                </span>
+            </div>}
+            onCancel={() => setIsPrintModalOpen(false)}
+            open={isPrintModalOpen}
+            width={1000}
+            footer={null}
+            onOk={() => setIsPrintModalOpen(false)}>
+            <Test data={info} pdfRef={pdfRef} gridRef={gridRef}/>
+        </Modal>
+    }
 
 
-    return  <Spin spinning={loading} tip={'견적의뢰 수정중...'}>
+    return <Spin spinning={loading} tip={'견적의뢰 수정중...'}>
         {/*@ts-ignore*/}
         <SearchInfoModal info={info} setInfo={setInfo}
                          open={isModalOpen}
@@ -179,8 +188,7 @@ export default function estimate_update({dataInfo}) {
                          gridRef={gridRef}
                          setValidate={setValidate}
                          setIsModalOpen={setIsModalOpen}/>
-        <PrintEstimate data={info} isModalOpen={isPrintModalOpen} userInfo={userInfo}
-                       setIsModalOpen={setIsPrintModalOpen} gridRef={gridRef}/>
+        <EstimateModal/>
         <LayoutComponent>
             <div style={{
                 display: 'grid',
@@ -228,7 +236,11 @@ export default function estimate_update({dataInfo}) {
                                             e.stopPropagation();
                                             openModal('agencyCode');
                                         }
-                                    }/>, onChange: onChange, data: info, handleKeyPress: handleKeyPress, validate : validate['agencyCode']
+                                    }/>,
+                                    onChange: onChange,
+                                    data: info,
+                                    handleKeyPress: handleKeyPress,
+                                    validate: validate['agencyCode']
                                 })}
                                 {inputForm({
                                     title: '매입처명',
@@ -314,8 +326,19 @@ export default function estimate_update({dataInfo}) {
                                         {value: '화물 및 택배비 별도', label: '화물 및 택배비 별도'},
                                     ], onChange: onChange, data: info
                                 })}
-                                {inputNumberForm({title: 'Delivery(weeks)', id: 'delivery', onChange: onChange, data: info})}
-                                {inputNumberForm({title: '환율', id: 'exchangeRate', onChange: onChange, data: info, step : 0.01})}
+                                {inputNumberForm({
+                                    title: 'Delivery(weeks)',
+                                    id: 'delivery',
+                                    onChange: onChange,
+                                    data: info
+                                })}
+                                {inputNumberForm({
+                                    title: '환율',
+                                    id: 'exchangeRate',
+                                    onChange: onChange,
+                                    data: info,
+                                    step: 0.01
+                                })}
                             </BoxCard>
                             <BoxCard title={'Maker 정보'}>
                                 {inputForm({
@@ -341,7 +364,7 @@ export default function estimate_update({dataInfo}) {
                                 })}
                                 {textAreaForm({title: '비고란', rows: 3, id: 'remarks', onChange: onChange, data: info})}
                             </BoxCard>
-                            <BoxCard title={'드라이브 목록'}  disabled={!userInfo['microsoftId']}>
+                            <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
                                 {/*@ts-ignored*/}
                                 <div style={{overFlowY: "auto", maxHeight: 300}}>
                                     <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
@@ -361,7 +384,7 @@ export default function estimate_update({dataInfo}) {
                 />
             </div>
         </LayoutComponent>
-        <div style={{marginTop : 200}}/>
+        <div style={{marginTop: 200}}/>
 
     </Spin>
 }
