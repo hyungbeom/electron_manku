@@ -27,7 +27,8 @@ import {findCodeInfo, findDocumentInfo} from "@/utils/api/commonApi";
 import {checkInquiryNo, saveEstimate} from "@/utils/api/mainApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import Spin from "antd/lib/spin";
-import Test from "@/pages/test";
+import EstimatePaper from "@/component/견적서/EstimatePaper";
+
 
 const listType = 'estimateDetailList'
 export default function EstimateWrite({dataInfo}) {
@@ -390,7 +391,7 @@ export default function EstimateWrite({dataInfo}) {
                 />
             </div>
         </LayoutComponent>
-        <Test data={info} pdfRef={pdfRef} gridRef={gridRef}/>
+        <EstimatePaper data={info} pdfRef={pdfRef} gridRef={gridRef}/>
     </Spin>
 }
 // @ts-ignore

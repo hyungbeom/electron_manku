@@ -1,8 +1,8 @@
 import React, {useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
-import {CopyOutlined, FileSearchOutlined, SaveOutlined} from "@ant-design/icons";
+import {FileSearchOutlined} from "@ant-design/icons";
 import {tableEstimateWriteColumns} from "@/utils/columnList";
-import {estimateDetailUnit, ModalInitList} from "@/utils/initialList";
+import {ModalInitList} from "@/utils/initialList";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
 import {getData} from "@/manage/function/api";
@@ -13,11 +13,11 @@ import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import TableGrid from "@/component/tableGrid";
 import {useRouter} from "next/router";
 import SearchInfoModal from "@/component/SearchAgencyModal";
-import PrintEstimate from "@/component/printEstimate";
 import {
     BoxCard,
     datePickerForm,
-    inputForm, inputNumberForm,
+    inputForm,
+    inputNumberForm,
     MainCard,
     selectBoxForm,
     textAreaForm,
@@ -29,8 +29,8 @@ import {getAttachmentFileList, updateEstimate} from "@/utils/api/mainApi";
 import _ from "lodash";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import Spin from "antd/lib/spin";
-import Test from "@/pages/test";
 import Modal from "antd/lib/modal/Modal";
+import EstimatePaper from "@/component/견적서/EstimatePaper";
 
 
 const listType = 'estimateDetailList'
@@ -40,12 +40,8 @@ export default function estimate_update({dataInfo}) {
     const gridRef = useRef(null);
     const router = useRouter();
 
-
-    const copyUnitInit = _.cloneDeep(estimateDetailUnit)
-
     const infoInit = dataInfo?.estimateDetail
     const infoInitFile = dataInfo?.attachmentFileList
-
 
     const userInfo = useAppSelector((state) => state.user);
 
@@ -161,13 +157,25 @@ export default function estimate_update({dataInfo}) {
         pdf.save(`${info.documentNumberFull}_견적서.pdf`);
     }
 
+    function print(){
+        const printContents = pdfRef.current.innerHTML;
+        const originalContents = document.body.innerHTML;
+
+        document.body.innerHTML = printContents;
+
+        window.print();
+
+        document.body.innerHTML = originalContents;
+        location.reload();
+    }
+
     function EstimateModal() {
         return <Modal
             title={<div style={{display: 'flex', justifyContent: 'space-between', padding: '0px 30px'}}>
                 <span>견적서 출력</span>
                 <span>
                        <Button style={{fontSize: 11, marginRight: 10}} size={'small'} onClick={getPdfFile}>다운로드</Button>
-                       <Button style={{fontSize: 11}} size={'small'}>인쇄</Button>
+                       <Button style={{fontSize: 11}}  size={'small'} onClick={print}>인쇄</Button>
                 </span>
             </div>}
             onCancel={() => setIsPrintModalOpen(false)}
@@ -175,7 +183,7 @@ export default function estimate_update({dataInfo}) {
             width={1000}
             footer={null}
             onOk={() => setIsPrintModalOpen(false)}>
-            <Test data={info} pdfRef={pdfRef} gridRef={gridRef}/>
+            <EstimatePaper data={info} pdfRef={pdfRef} gridRef={gridRef}/>
         </Modal>
     }
 
