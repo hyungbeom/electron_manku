@@ -6,7 +6,7 @@ import React, {useState} from "react";
 import _ from "lodash";
 import Tooltip from "antd/lib/tooltip";
 
-export function DriveUploadComp({fileList, setFileList, fileRef, numb=0}) {
+export function DriveUploadComp({fileList, setFileList, fileRef, numb=0, uploadType =true}) {
 
     const [editingFileId, setEditingFileId] = useState(null); // 수정 중인 파일 ID
     const [tempFileName, setTempFileName] = useState(""); // 임시 파일 이름 저장
@@ -179,7 +179,7 @@ export function DriveUploadComp({fileList, setFileList, fileRef, numb=0}) {
             maxCount={13}
         >
 
-            <Button style={{fontSize : 11}} size={'small'} icon={<UploadOutlined/>} type={'primary'}>Upload</Button>
+            {uploadType ? <Button style={{fontSize: 11}} size={'small'} icon={<UploadOutlined/>} type={'primary'}>Upload</Button> : <></>}
 
         </Upload>
 

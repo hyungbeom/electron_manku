@@ -30,6 +30,7 @@ export default function rfqRead({dataInfo}) {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [previewData, setPreviewData] = useState([]);
+    const [fileList, setFileList] = useState([]);
     const [loading, setLoading] = useState(false);
 
     const onGridReady = (params) => {
@@ -80,15 +81,17 @@ export default function rfqRead({dataInfo}) {
             acc.list.push({relatedType : 'ESTIMATE_REQUEST' ,relatedId : estimateRequestId});
             return acc;
         }, {});
-        console.log(groupedData,'groupedData:')
 
         await getData.post('common/getAttachmentFileList',{attachmentFileItemList : groupedData?.list}).then(v=>{
-            console.log(v)
+
+            setFileList(v.data.entity.attachmentFiles)
         })
+
+        setPreviewData(groupedData)
 
         delete groupedData.list;
 
-        setPreviewData(groupedData)
+
         setIsModalOpen(true)
     };
 
@@ -111,7 +114,7 @@ export default function rfqRead({dataInfo}) {
     }
 
     return <Spin spinning={loading} tip={'견적의뢰 조회중...'}>
-        <PreviewMailModal data={previewData} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
+        <PreviewMailModal data={previewData} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} fileList={fileList}/>
         <LayoutComponent>
             <div style={{
                 display: 'grid',
