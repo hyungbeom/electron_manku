@@ -174,7 +174,6 @@ export default function EstimateWrite({dataInfo}) {
         <LayoutComponent>
             <div style={{
                 display: 'grid',
-
                 gridTemplateRows: `${mini ? '510px' : '65px'} calc(100vh - ${mini ? 565 : 120}px)`,
                 columnGap: 5
             }}>

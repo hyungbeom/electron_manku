@@ -25,6 +25,7 @@ export default function order_update({dataInfo}) {
     const gridRef = useRef(null);
     const router = useRouter();
 
+    console.log(dataInfo, 'dataInfo:')
     const userInfo = useAppSelector((state) => state.user);
     const infoInit = dataInfo?.orderDetail
     let infoInitFile = dataInfo?.attachmentFileList
@@ -32,7 +33,7 @@ export default function order_update({dataInfo}) {
     const [info, setInfo] = useState<any>(infoInit)
 
     const [mini, setMini] = useState(true);
-    const [customerData, setCustomerData] = useState(printEstimateInitial)
+    const [customerData, setCustomerData] = useState<any>(printEstimateInitial)
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
     const [fileList, setFileList] = useState(fileManage.getFormatFiles(infoInitFile));
     const [originFileList, setOriginFileList] = useState(infoInitFile);
@@ -95,7 +96,6 @@ export default function order_update({dataInfo}) {
     }
 
     async function searchCustomer() {
-
         const result = await getData.post('customer/getCustomerListForOrder', {
             customerName: info['customerName']
         })
@@ -103,7 +103,10 @@ export default function order_update({dataInfo}) {
         if (result?.data?.code === 1) {
 
             if (result?.data?.entity?.customerList.length) {
-                setCustomerData(result?.data?.entity?.customerList?.[0])
+                const totalList = gridManage.getAllData(gridRef);
+                setCustomerData(v=> {
+                    return {...v, receiveComp: result?.data?.entity?.customerList[0], list: totalList}
+                })
             }
         }
 

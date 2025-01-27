@@ -799,7 +799,8 @@ export const printEstimateInitial = {
     "businessItem": "",
     "manager": null,
 
-    "customerCategory": ""
+    "customerCategory": "",
+    receiveComp :[]
 }
 
 

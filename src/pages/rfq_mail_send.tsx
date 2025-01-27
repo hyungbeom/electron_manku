@@ -8,7 +8,7 @@ import {setUserInfo} from "@/store/user/userSlice";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
 import {BoxCard, inputForm, MainCard, rangePickerForm, selectBoxForm} from "@/utils/commonForm";
-import {deleteOrder, deleteRfq, searchRfq} from "@/utils/api/mainApi";
+import {deleteRfq, searchRfq} from "@/utils/api/mainApi";
 import PreviewMailModal from "@/component/PreviewMailModal";
 import _ from "lodash";
 import {commonManage, gridManage} from "@/utils/commonManage";
@@ -47,13 +47,12 @@ export default function rfqRead({dataInfo}) {
     }
 
 
-
     async function searchInfo() {
         const copyData: any = {...info}
         setLoading(true)
         await searchRfq({
             data: copyData
-        }).then(v=>{
+        }).then(v => {
             gridManage.resetData(gridRef, v);
             setLoading(false)
         })
@@ -65,54 +64,16 @@ export default function rfqRead({dataInfo}) {
         if (!checkedData.length) {
             return message.warn('선택된 데이터가 없습니다.')
         }
+        const groupedData = checkedData.reduce((acc, item) => {
+            const agencyCode = item.agencyCode;
+            if (!acc[agencyCode]) {
+                acc[agencyCode] = [];
+            }
+            acc[agencyCode].push(item);
+            return acc;
+        }, {});
 
-        const result = Object.values(
-            checkedData.reduce((acc, items) => {
-                const {
-                    documentNumberFull,
-                    model,
-                    managerName,
-                    quantity,
-                    unit,
-                    maker,
-                    item,
-                    endUser
-                } = items;
-
-                // documentNumberFull로 그룹화
-                if (!acc[documentNumberFull]) {
-                    acc[documentNumberFull] = {
-                        documentNumberFull: documentNumberFull,
-                        managerName: managerName,
-                        unit: unit,
-                        list: [],
-                        totalQuantity: 0, // 총 수량 초기화
-                    };
-                }
-
-                // 동일한 모델 찾기
-                const existingModel = acc[documentNumberFull].list.find(
-                    (entry) => entry.model === model && entry.unit === unit
-                );
-
-                if (existingModel) {
-                    // 모델이 동일하면 수량 합산
-                    existingModel.quantity += quantity;
-                } else {
-                    // 새로 추가
-                    acc[documentNumberFull].list.push({model, quantity, unit});
-                }
-
-                // 총 수량 업데이트
-                acc[documentNumberFull].totalQuantity += quantity;
-                acc[documentNumberFull].maker = maker;
-                acc[documentNumberFull].item = item;
-                acc[documentNumberFull].endUser = endUser;
-                return acc;
-            }, {})
-        );
-
-        setPreviewData(result)
+        setPreviewData(groupedData)
         setIsModalOpen(true)
     };
 
@@ -134,7 +95,7 @@ export default function rfqRead({dataInfo}) {
 
     }
 
-    return  <Spin spinning={loading} tip={'견적의뢰 조회중...'}>
+    return <Spin spinning={loading} tip={'견적의뢰 조회중...'}>
         <PreviewMailModal data={previewData} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
         <LayoutComponent>
             <div style={{
@@ -200,16 +161,14 @@ export default function rfqRead({dataInfo}) {
                         : <></>}
                 </MainCard>
                 {/*@ts-ignored*/}
-                <TableGrid deleteComp={<Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}} onClick={deleteList}>
+                <TableGrid deleteComp={<Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
+                                               onClick={deleteList}>
                     <CopyOutlined/>삭제
                 </Button>}
-                    gridRef={gridRef}
-                    onGridReady={onGridReady}
-                    columns={rfqReadColumns}
-                    funcButtons={['print']}
-
-                />
-
+                           gridRef={gridRef}
+                           onGridReady={onGridReady}
+                           columns={rfqReadColumns}
+                           funcButtons={['print']}/>
             </div>
         </LayoutComponent>
     </Spin>
