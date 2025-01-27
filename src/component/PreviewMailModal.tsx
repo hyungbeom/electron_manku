@@ -26,7 +26,7 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen}) {
                title={<div style={{lineHeight: 2.5, fontWeight: 550}}>견적의뢰 메일 발송</div>} open={isModalOpen}
                onCancel={() => setIsModalOpen(false)}>
             <div style={{margin: '0px auto', fontSize : 13}}>
-                {Object.values(data).map(v => {
+                {Object.values(data).map((v:any) => {
                     return <div>
                         <div style={{fontSize : 18}}>{v[0].agencyManagerName}</div>
                         <div style={{fontSize : 15, paddingTop: 20}}>안녕하세요 <span style={{fontWeight : 600}}>{userInfo.name}</span>입니다</div>
