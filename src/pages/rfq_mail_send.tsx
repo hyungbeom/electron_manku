@@ -16,6 +16,7 @@ import {useRouter} from "next/router";
 import Spin from "antd/lib/spin";
 import Button from "antd/lib/button";
 import {CopyOutlined} from "@ant-design/icons";
+import {getData} from "@/manage/function/api";
 
 
 export default function rfqRead({dataInfo}) {
@@ -59,19 +60,33 @@ export default function rfqRead({dataInfo}) {
 
     }
 
-    const handleSendMail = () => {
+    const handleSendMail = async () => {
         const checkedData = gridManage.getSelectRows(gridRef);
         if (!checkedData.length) {
             return message.warn('선택된 데이터가 없습니다.')
         }
+        console.log(checkedData,'checkedData:')
         const groupedData = checkedData.reduce((acc, item) => {
             const agencyCode = item.agencyCode;
+            const estimateRequestId = item.estimateRequestId;
             if (!acc[agencyCode]) {
                 acc[agencyCode] = [];
             }
             acc[agencyCode].push(item);
+
+            if (!acc.list) {
+                acc.list = [];
+            }
+            acc.list.push({relatedType : 'ESTIMATE_REQUEST' ,relatedId : estimateRequestId});
             return acc;
         }, {});
+        console.log(groupedData,'groupedData:')
+
+        await getData.post('common/getAttachmentFileList',{attachmentFileItemList : groupedData?.list}).then(v=>{
+            console.log(v)
+        })
+
+        delete groupedData.list;
 
         setPreviewData(groupedData)
         setIsModalOpen(true)
