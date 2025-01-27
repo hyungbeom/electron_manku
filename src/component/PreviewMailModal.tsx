@@ -18,6 +18,8 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen}) {
 
     }
 
+    console.log(userInfo,'userInfo:')
+
 
     return <>
         <Modal okText={'메일 전송'} width={800} cancelText={'취소'} onOk={sendMail}
@@ -27,7 +29,7 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen}) {
                 {Object.values(data).map(v => {
                     return <div>
                         <div style={{fontSize : 18}}>{v[0].agencyManagerName}</div>
-                        <div style={{fontSize : 15, paddingTop: 20}}>안녕하세요 {v[0].agencyManagerName}입니다</div>
+                        <div style={{fontSize : 15, paddingTop: 20}}>안녕하세요 <span style={{fontWeight : 600}}>{userInfo.name}</span>입니다</div>
                         <div style={{fontSize : 15, paddingTop: 5}}>아래 견적 부탁드립니다.</div>
 
                         <table style={{width: '100%', marginTop : 30}}>
@@ -62,7 +64,7 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen}) {
                             </thead>
                         </table>
 
-                        {v.map((src, i) => {
+                        {v?.map((src, i) => {
                             return <div >
                                 <table style={{width: '100%'}}>
                                     <thead>
