@@ -194,16 +194,122 @@ export default function MobileLanding() {
                 </div>
 
 
-                <div>
+                <div style={{position: "relative"}}>
                     <img src={'homepage/mobile/content1.png'} width={'100%'} alt=""/>
+                    <div style={{
+                        position: 'absolute',
+                        bottom: 30,
+                        left: 54,
+                        color: 'white',
+                        zIndex: 110,
+                        fontSize: '4.5vw',
+                        fontWeight: 500
+                    }}>사업분야
+                    </div>
+                    <div style={{
+                        position: 'absolute',
+                        top: '18%',
+                        right: 54,
+                        color: 'white',
+                        zIndex: 110,
+                        fontSize: '4.5vw',
+                        fontWeight: 500,
+
+                    }}>
+
+                        <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            backgroundColor: '#173F95',
+                            padding: '2vw 4vw',
+                            fontSize: '3vw',
+                        }}>
+                            <span style={{paddingRight: 5}}>플랜트 사업부</span>
+                            <img src="/homepage/mobile/arrow.svg" alt=""/>
+                        </div>
+                        <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            backgroundColor: '#173F95',
+                            padding: '2vw 4vw',
+                            fontSize: '3vw',
+                            marginTop: '1.5vw'
+                        }}>
+                            <span style={{paddingRight: 5}}>MRO 서비스</span>
+                            <img src="/homepage/mobile/arrow.svg" alt=""/>
+                        </div>
+                        <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            backgroundColor: '#173F95',
+                            padding: '2vw 4vw',
+                            fontSize: '3vw',
+                            marginTop: '1.5vw'
+                        }}>
+                            <span style={{paddingRight: 5}}>반도체 사업부</span>
+                            <img src="/homepage/mobile/arrow.svg" alt=""/>
+                        </div>
+                        <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            backgroundColor: '#173F95',
+                            padding: '2vw 4vw',
+                            fontSize: '3vw',
+                            marginTop: '1.5vw'
+                        }}>
+                            <span style={{paddingRight: 5}}>무역 사업부</span>
+                            <img src="/homepage/mobile/arrow.svg" alt=""/>
+                        </div>
+                    </div>
+
                 </div>
 
-                <div>
-                    <img src={'homepage/mobile/content2.png'} width={'100%'} alt=""/>
-                </div>
+                <div style={{position: 'relative'}}>
+                    <div style={{position: 'absolute', bottom: 40, left: 24}}>
+                        <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            color: 'white',
+                            padding: '2vw 4vw',
+                            fontSize: '4.5vw',
+                            fontWeight: 500
+                            // marginTop: '1.5vw'
+                        }}>
+                            <div style={{paddingRight: 5}}>무역 사업부</div>
 
-                <div>
-                    <img src={'homepage/mobile/content3.png'} width={'100%'} alt=""/>
+                            <img src="/homepage/mobile/arrow.svg" width={'17vw'} alt=""/>
+                        </div>
+                        <div style={{fontSize: 10, padding: '0px 4vw', color: 'white'}}>기계장비/기계요소, 측정/제어, 밸브/배관/피팅</div>
+                    </div>
+
+                    <div>
+                        <img src={'homepage/mobile/content2.png'} width={'100%'} alt=""/>
+                    </div>
+                </div>
+                <div style={{position: 'relative'}}>
+                    <div style={{position: 'absolute', bottom: 40, left: 24}}>
+                        <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            color: 'white',
+                            padding: '2vw 4vw',
+                            fontSize: '4.5vw',
+                            fontWeight: 500
+                            // marginTop: '1.5vw'
+                        }}>
+                            <div style={{paddingRight: 5}}>한국 대리점</div>
+
+                            <img src="/homepage/mobile/arrow.svg" width={'17vw'} alt=""/>
+                        </div>
+                        <div style={{fontSize: 10, padding: '0px 4vw', color: 'white'}}>만쿠무역 주요 한국 대리점</div>
+                    </div>
+                    <div>
+                        <img src={'homepage/mobile/content3.png'} width={'100%'} alt=""/>
+                    </div>
                 </div>
             </div>
         </>
