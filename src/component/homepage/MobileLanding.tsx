@@ -86,7 +86,7 @@ export default function MobileLanding() {
                             textAlign: "center",
                             color: "white",
                             width: "100%",
-                            top: "30%",
+                            top: "35%",
                         }}
                     >
                         <div style={{fontSize: 15}}>무역을 바탕으로</div>
@@ -103,10 +103,10 @@ export default function MobileLanding() {
                             textAlign: "center",
                             color: "white",
                             width: "100%",
-                            bottom: "30%",
+                            bottom: "23%",
                         }}
                     >
-                        <div style={{fontSize: 15, fontWeight: 600}}>SWIPE</div>
+                        <div style={{fontSize: 13, fontWeight: 600}}>SWIPE</div>
                         <div className="gradient-arrow">
                             <DownOutlined/>
                         </div>
@@ -118,7 +118,7 @@ export default function MobileLanding() {
                             textAlign: "center",
                             color: "white",
                             width: "100%",
-                            bottom: "10%",
+                            bottom: "5%",
                             fontSize: 'calc(9px + 0.3vw)',
                             fontWeight: 600,
                             padding: 'calc(17px + 5vw)',

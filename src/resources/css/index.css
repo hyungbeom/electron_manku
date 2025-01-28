@@ -255,12 +255,13 @@ body {
 
 
 .gradient-arrow {
-    font-size: 1.5rem; /* 화살표 크기 */
+    font-size: 1rem; /* 화살표 크기 */
     font-weight: bold;
+    padding-top: 0;
     font-family: Arial, sans-serif;
     color: #71d1df; /* 화살표 색상 */
     display: inline-block; /* transform 처리를 위해 필요 */
-    animation: move-down 0.5s infinite linear; /* 아래로 이동하는 애니메이션 */
+    animation: move-down 0.6s infinite linear; /* 아래로 이동하는 애니메이션 */
 }
 
 /* 애니메이션 키프레임 */
