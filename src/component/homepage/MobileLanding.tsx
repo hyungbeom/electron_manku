@@ -393,7 +393,7 @@ export default function MobileLanding() {
                     <img src="/homepage/send_button.png" width={'150vw'} alt=""/>
 
                     <div style={{paddingTop: 40}}>
-                        <img src="/homepage/content7_1.png" width={'100%'} alt=""/>
+                        <img src="/homepage/content7_1.svg" width={'100%'} alt=""/>
                     </div>
                 </div>
                 <div style={{backgroundColor: '#2F363E', padding: '24px 30px'}}>
