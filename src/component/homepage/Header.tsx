@@ -75,7 +75,7 @@ export default function Header() {
                             display: "flex",
                             alignItems: "center",
                             gap: "10px",
-                            fontWeight: 600,
+                            fontWeight: 500,
                             cursor: 'pointer'
                         }} onClick={() => router.push('/homepage')}>
                         <img src={"/homepage/logo_1.png"}/>

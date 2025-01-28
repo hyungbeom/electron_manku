@@ -6,7 +6,7 @@ import Drawer from "antd/lib/drawer";
 import MobileMenu from "@/component/homepage/MobileMenu";
 import MFooter from "@/component/homepage/MFooter";
 
-export default function MobileLanding() {
+export default function MobileLanding({isMobile, width}) {
 
     const [info, setInfo] = useState(0); // 현재 섹션 인덱스
     const [currentIndex, setCurrentIndex] = useState(0); // 현재 섹션 인덱스
@@ -67,7 +67,7 @@ export default function MobileLanding() {
                     }}
                 >
                     <img
-                        src={"/homepage/m_landing.png"}
+                        src={'/homepage/landing_img.png'}
                         style={{
                             position: "absolute",
                             top: "50%",
@@ -107,7 +107,7 @@ export default function MobileLanding() {
                             bottom: "23%",
                         }}
                     >
-                        <div style={{fontSize: 13, fontWeight: 600}}>SWIPE</div>
+                        <div style={{fontSize: 12, fontWeight: 600}}>{isMobile ? 'SWIPE' : 'SCROLL' }</div>
                         <div className="gradient-arrow">
                             <DownOutlined/>
                         </div>
@@ -121,18 +121,15 @@ export default function MobileLanding() {
                             width: "100%",
                             bottom: "5%",
                             fontSize: 'calc(9px + 0.3vw)',
-                            fontWeight: 600,
-                            padding: 'calc(17px + 5vw)',
+                            fontWeight: 600
                         }}
                     >
                         <div style={{
-                            display: 'flex', justifyContent: 'space-between', padding: '0px 8' +
-                                'vw'
-                        }}>
+                            display: 'flex', justifyContent: 'space-between', width : 250, margin :'0px auto' }}>
                             <div>01 About us</div>
                             <div>02 Discover What Drives Us</div>
                         </div>
-                        <div style={{display: 'flex', justifyContent: 'space-between', paddingTop: 18}}>
+                        <div style={{display: 'flex', justifyContent: 'space-between', width : 350, paddingTop: 18,margin :'0px auto'}}>
                             <div>03 What MANKU TRADE do?</div>
                             <div>04 Notice</div>
                             <div>05 Contact us</div>
