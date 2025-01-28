@@ -112,12 +112,13 @@ export const inputForm = ({
     }, handleKeyPress = function () {
     }, data
                               , validate = true,
-                              size = 'small'
+                              size = 'small',
+    fontSize =12
                           }: any) => {
 
     let bowl = data;
-    return <div style={{fontSize: 12, paddingBottom: 10}}>
-        <div>{title}</div>
+    return <div style={{fontSize: fontSize, paddingBottom: 10}}>
+        <div style={{paddingBottom : fontSize / 2}}>{title}</div>
         {/*@ts-ignored*/}
         <Input placeHolder={placeHolder}
                id={id}

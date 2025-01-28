@@ -1,7 +1,10 @@
 import React, {useEffect, useState} from "react";
 import {DownOutlined, MenuOutlined} from "@ant-design/icons";
+import {commonManage} from "@/utils/commonManage";
+import {inputForm, textAreaForm} from "@/utils/commonForm";
 
 export default function MobileLanding() {
+    const [info, setInfo] = useState(0); // 현재 섹션 인덱스
     const [currentIndex, setCurrentIndex] = useState(0); // 현재 섹션 인덱스
     const sections = [0, 1, 2]; // 섹션 배열
     const [touchStartY, setTouchStartY] = useState(0); // 스와이프 시작 위치
@@ -31,13 +34,16 @@ export default function MobileLanding() {
     };
 
     useEffect(() => {
-        // 현재 섹션으로 부드럽게 스크롤 이동
         // const viewportHeight = window.innerHeight;
         // window.scrollTo({
         //     top: currentIndex * viewportHeight,
         //     behavior: "smooth",
         // });
     }, [currentIndex]);
+
+    function onChange(e) {
+        commonManage.onChange(e, setInfo)
+    }
 
     return (
         <>
@@ -168,7 +174,7 @@ export default function MobileLanding() {
                     }}
                 >
                     <div style={{fontSize: '6.3vw', fontWeight: 600}}>Discover What Drives Us</div>
-                    <div style={{fontSize: '3.5vw', paddingTop: 48}}>
+                    <div style={{fontSize: '3.5vw', paddingTop: 10}}>
                         <div>우리의 원동력을 탐구하고</div>
                         <div>만쿠무역의 비전을 확인하세요</div>
                     </div>
@@ -310,6 +316,133 @@ export default function MobileLanding() {
                     <div>
                         <img src={'homepage/mobile/content3.png'} width={'100%'} alt=""/>
                     </div>
+                </div>
+
+                <div style={{textAlign: 'center', paddingTop: 60}}>
+                    <div style={{fontSize: '6.3vw', fontWeight: 600}}>Notice</div>
+                    <div style={{fontSize: '3.5vw', paddingTop: 10}}>
+                        <div>공지 사항 및 안내</div>
+                    </div>
+
+                    <div style={{paddingTop: 60}}>
+                        <img src="/homepage/mobile/card_sample.png" alt=""/>
+                    </div>
+                </div>
+                <div style={{textAlign: 'center', paddingTop: 60}}>
+                    <div style={{fontSize: '6.3vw', fontWeight: 600}}>Contact us</div>
+                    <div style={{fontSize: '3.5vw', paddingTop: 10}}>
+                        <div>당사의 제품 및 서비스를 통해 귀사의 성공을 지원합니다.</div>
+                    </div>
+
+                    <div style={{textAlign: 'left', fontSize: 20, padding: '60px 24px 30px 24px'}}>
+                        {inputForm({
+                            title: '성함', id: 'searchCreatedBy',
+                            onChange: onChange,
+                            data: info,
+                            size: 'middle',
+                            fontSize: 13
+                        })}
+                        {inputForm({
+                            title: '연락처', id: 'searchCreatedBy',
+                            onChange: onChange,
+                            data: info,
+                            size: 'middle'
+                        })}
+                        {inputForm({
+                            title: '이메일', id: 'searchCreatedBy',
+                            onChange: onChange,
+                            data: info,
+                            size: 'middle'
+                        })}
+                        {inputForm({
+                            title: '제작사', id: 'searchCreatedBy',
+                            onChange: onChange,
+                            data: info,
+                            size: 'middle'
+                        })}
+                        {inputForm({
+                            title: '아이템', id: 'searchCreatedBy',
+                            onChange: onChange,
+                            data: info,
+                            size: 'middle'
+                        })}
+                        {inputForm({
+                            title: '모델넘버', id: 'searchCreatedBy',
+                            onChange: onChange,
+                            data: info,
+                            size: 'middle'
+                        })}
+                        {inputForm({
+                            title: '수량', id: 'searchCreatedBy',
+                            onChange: onChange,
+                            data: info,
+                            size: 'middle'
+                        })}
+                        {textAreaForm({
+                            title: '문의 내용*', id: 'searchCreatedBy',
+                            onChange: onChange,
+                            data: info,
+                        })}
+                        {inputForm({
+                            title: '파일 또는 사진 첨부 ', id: 'searchCreatedBy',
+                            onChange: onChange,
+                            data: info,
+                            size: 'middle'
+                        })}
+                    </div>
+                    <img src="/homepage/send_button.png" width={'150vw'} alt=""/>
+
+                    <div style={{paddingTop: 40}}>
+                        <img src="/homepage/content7_1.png" width={'100%'} alt=""/>
+                    </div>
+                </div>
+                <div style={{backgroundColor: '#2F363E', padding: '24px 30px'}}>
+
+                    <div style={{color: 'white', fontSize: '3vw', display: 'flex', gap: 10, justifyContent: 'end'}}>
+                        <span>홈</span>
+                        <span>기업정보</span>
+                        <span>사업분야</span>
+                        <span>한국대리점</span>
+                        <span>고객센터</span>
+                    </div>
+
+                    <div style={{
+                        color: 'white',
+                        fontSize: '3vw',
+                        display: 'flex',
+                        gap: 10,
+                        justifyContent: 'end',
+                        paddingTop: 10
+                    }}>
+                        <span>메일문의</span>
+                        <span>네이버스토어</span>
+                    </div>
+
+                    <div
+                        style={{
+                            display: 'flex',
+                            justifyContent: 'space-between', // 자식들을 우측 정렬
+                            alignItems: 'center', // 수직 중앙 정렬
+                            paddingTop : 22
+                        }}
+                    >
+                        <img src={'/homepage/sns/online.png'}
+                             style={{width: '28%', cursor: 'pointer'}} alt="온라인 문의"/>
+
+
+                            <img src={'/homepage/sns/kakao.png'} style={{width: '15%', cursor: 'pointer'}}
+                                 alt="카카오톡"/>
+                            <img src={'/homepage/sns/store.png'} style={{width: '15%', cursor: 'pointer'}}
+                                 alt="스토어"/>
+                            <img src={'/homepage/sns/naver.png'} style={{width: '15%', cursor: 'pointer'}}
+                                 alt="네이버"/>
+                            <img src={'/homepage/sns/phone.png'} style={{width: '15%', cursor: 'pointer'}}
+                                 alt="전화"/>
+
+                    </div>
+                    <img src="/homepage/mobile/m_footer.png" width={'100%'} style={{paddingTop: 20}}
+                         alt=""/>
+
                 </div>
             </div>
         </>
