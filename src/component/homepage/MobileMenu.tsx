@@ -1,17 +1,36 @@
 import Drawer from "antd/lib/drawer";
-import React, {useState} from "react";
-import {
-    AppstoreOutlined, CloseOutlined,
-    ContainerOutlined,
-    DesktopOutlined, DownOutlined,
-    MailOutlined,
-    MenuOutlined,
-    PieChartOutlined
-} from "@ant-design/icons";
+import React, {useEffect, useState} from "react";
+import {CloseOutlined, DownOutlined, MenuOutlined} from "@ant-design/icons";
 
 export default function MobileMenu() {
     const [open, setOpen] = useState(false);
     const [activeIndex, setActiveIndex] = useState<number | null>(null); // 현재 열려 있는 div의 index
+    const [scrollCheck, setScrollCheck] = useState(false);
+
+    const handleScroll = () => {
+        // 현재 스크롤 위치
+        const scrollY = window.scrollY;
+        // 뷰포트 높이
+        const viewportHeight = window.innerHeight;
+
+        // 스크롤 위치가 100vh 이상인지 확인
+        // if (scrollY >= viewportHeight) {
+        if (scrollY >= 100) {
+            setScrollCheck(true);
+        } else {
+            setScrollCheck(false);
+        }
+    };
+
+    useEffect(() => {
+        // 스크롤 이벤트 리스너 등록
+        window.addEventListener("scroll", handleScroll);
+
+        // 컴포넌트 언마운트 시 이벤트 리스너 제거
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+        };
+    }, []);
 
 
     const toggleBox = (index: number) => {
@@ -27,28 +46,23 @@ export default function MobileMenu() {
     const onClose = () => {
         setOpen(false);
     };
+
     return <>
-        <div
-            style={{
-                position: "fixed",
-                padding: 10,
-            }}
-        >
-            <img src={"/homepage/logo_1.png"}/>
-            <span
-                style={{color: "white", paddingLeft: 5, fontSize: 12, fontWeight: 600}}>Manku Trading</span>
+        {/*scrollCheck*/}
+        {!open ? <div
+            style={{position: "fixed", zIndex: 1000000, backgroundColor: scrollCheck ? 'white' : '', width: '100%', borderBottom : scrollCheck ?'1px solid lightGray' : 'none' }}>
+            <div style={{display: 'flex', justifyContent: 'space-between', padding: 20}}>
+                <div>
+                    <img src={"/homepage/logo_1.png"}/>
+                    <span
+                        style={{color: scrollCheck ? "" : 'white', paddingLeft: 5, fontSize: 12, fontWeight: 600}}>Manku Trading</span>
 
-        </div>
-        <div
-            style={{
-                position: "fixed",
-                right: 10,
-                padding: 11,
-            }}
-        >
-            <MenuOutlined style={{fontSize: 22, color: "white"}} onClick={showDrawer}/>
-        </div>
-
+                </div>
+                <div>
+                    <MenuOutlined style={{fontSize: 22, color: scrollCheck ? 'black' : "white"}} onClick={showDrawer}/>
+                </div>
+            </div>
+        </div> : <></>}
         <Drawer
             title={<div style={{display: 'flex', justifyContent: 'space-between'}}>
                 <div style={{display: "flex", gap: "10px", color: 'white', fontSize: 14}}>
@@ -56,7 +70,7 @@ export default function MobileMenu() {
                     <img src={"/homepage/lang.svg"} alt=""/>
                     <span>KOR</span>
                 </div>
-                <CloseOutlined style={{color : 'white', fontSize : 20} } onClick={onClose} />
+                <CloseOutlined style={{color: 'white', fontSize: 20}} onClick={onClose}/>
             </div>}
             closeIcon={null}
             headerStyle={{border: 'none', backgroundColor: '#173F95'}}
@@ -70,7 +84,13 @@ export default function MobileMenu() {
             <div style={{fontSize: 18, fontWeight: 500, display: 'grid', rowGap: 35, paddingTop: 45}}>
 
                 <div>
-                    {[{title :'기업통보', subTitle : ['회사소개', '연혁', '주요고객','오시는길']},{title :'사업분야', subTitle : ['회사소개', '연혁', '주요고객','오시는길']},{title :'한국대리점', subTitle : ['회사소개', '연혁', '주요고객','오시는길']},{title :'고객센터', subTitle : ['회사소개', '연혁', '주요고객','오시는길']}].map((v, index) => (
+                    {[{title: '기업통보', subTitle: ['회사소개', '연혁', '주요고객', '오시는길']}, {
+                        title: '사업분야',
+                        subTitle: ['회사소개', '연혁', '주요고객', '오시는길']
+                    }, {title: '한국대리점', subTitle: ['회사소개', '연혁', '주요고객', '오시는길']}, {
+                        title: '고객센터',
+                        subTitle: ['회사소개', '연혁', '주요고객', '오시는길']
+                    }].map((v, index) => (
                         <div key={index} style={{marginBottom: 30}}>
                             <div
                                 onClick={() => toggleBox(index)}
@@ -78,24 +98,28 @@ export default function MobileMenu() {
                                     backgroundColor: '#173F95', // 다크 모드 색상 설정
                                     color: '#ffffff', // 텍스트 색상 설정
                                     padding: '10px 52px', // 불필요한 여백 제거
-                                    border : 'none',
+                                    border: 'none',
                                 }}
                             >
-                                {v.title}<DownOutlined style={{fontSize : 13, paddingLeft : 10}} />
+                                {v.title}<DownOutlined style={{fontSize: 13, paddingLeft: 10}}/>
                             </div>
-                            <div style={{backgroundColor : '#2F363E'}}
-                                className={`box ${
-                                    activeIndex === index
-                                        ? "expanding"
-                                        : activeIndex === null
-                                            ? ""
-                                            : "collapsing"
-                                }`}
+                            <div style={{backgroundColor: '#2F363E'}}
+                                 className={`box ${
+                                     activeIndex === index
+                                         ? "expanding"
+                                         : activeIndex === null
+                                             ? ""
+                                             : "collapsing"
+                                 }`}
                             >
                                 {activeIndex === index && (
-                                    <div style={{backgroundColor : '#2F363E'}}>
-                                        {v.subTitle.map(src=>{
-                                            return <div style={{fontSize : 13, padding : '8px 40px', border : '1px solid #2F363E'}}>{src}</div>
+                                    <div style={{backgroundColor: '#2F363E'}}>
+                                        {v.subTitle.map(src => {
+                                            return <div style={{
+                                                fontSize: 13,
+                                                padding: '8px 40px',
+                                                border: '1px solid #2F363E'
+                                            }}>{src}</div>
                                         })}
                                     </div>
                                 )}
