@@ -34,11 +34,11 @@ export default function MobileLanding() {
     };
 
     useEffect(() => {
-        // const viewportHeight = window.innerHeight;
-        // window.scrollTo({
-        //     top: currentIndex * viewportHeight,
-        //     behavior: "smooth",
-        // });
+        const viewportHeight = window.innerHeight;
+        window.scrollTo({
+            top: currentIndex * viewportHeight,
+            behavior: "smooth",
+        });
     }, [currentIndex]);
 
     function onChange(e) {
