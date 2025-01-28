@@ -9,11 +9,12 @@ export default function Header() {
     const [hoverMenu, setHoverMenu] = useState(null);
     const [scrollCheck, setScrollCheck] = useState(false);
 
+
     const handleScroll = () => {
+
         // 현재 스크롤 위치
         const scrollY = window.scrollY;
         // 뷰포트 높이
-        const viewportHeight = window.innerHeight;
 
         // 스크롤 위치가 100vh 이상인지 확인
         // if (scrollY >= viewportHeight) {

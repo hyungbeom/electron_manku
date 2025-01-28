@@ -1,12 +1,15 @@
 import Drawer from "antd/lib/drawer";
 import React, {useEffect, useState} from "react";
 import {CloseOutlined, DownOutlined, MenuOutlined} from "@ant-design/icons";
+import {useRouter} from "next/router";
 
-export default function MobileMenu() {
+export default function MobileMenu({headerCheck = true}) {
     const [open, setOpen] = useState(false);
     const [activeIndex, setActiveIndex] = useState<number | null>(null); // 현재 열려 있는 div의 index
-    const [scrollCheck, setScrollCheck] = useState(false);
+    const [scrollCheck, setScrollCheck] = useState(headerCheck);
 
+
+    const router = useRouter()
     const handleScroll = () => {
         // 현재 스크롤 위치
         const scrollY = window.scrollY;
@@ -15,7 +18,7 @@ export default function MobileMenu() {
 
         // 스크롤 위치가 100vh 이상인지 확인
         // if (scrollY >= viewportHeight) {
-        if (scrollY >= 100) {
+        if (scrollY >= 50) {
             setScrollCheck(true);
         } else {
             setScrollCheck(false);
@@ -50,16 +53,16 @@ export default function MobileMenu() {
     return <>
         {/*scrollCheck*/}
         {!open ? <div
-            style={{position: "fixed", zIndex: 1000000, backgroundColor: scrollCheck ? 'white' : '', width: '100%', borderBottom : scrollCheck ?'1px solid lightGray' : 'none' }}>
+            style={{position: "fixed", zIndex: 1000000, backgroundColor: scrollCheck ? 'white' : '', width: '100%', borderBottom : headerCheck ?'1px solid lightGray' : (scrollCheck ?'1px solid lightGray' : 'none') }}>
             <div style={{display: 'flex', justifyContent: 'space-between', padding: 20}}>
                 <div>
                     <img src={"/homepage/logo_1.png"}/>
                     <span
-                        style={{color: scrollCheck ? "" : 'white', paddingLeft: 5, fontSize: 12, fontWeight: 600}}>Manku Trading</span>
+                        style={{color: headerCheck ? 'black' : (scrollCheck ? "" : 'white'), paddingLeft: 5, fontSize: 12, fontWeight: 600}}>Manku Trading</span>
 
                 </div>
                 <div>
-                    <MenuOutlined style={{fontSize: 22, color: scrollCheck ? 'black' : "white"}} onClick={showDrawer}/>
+                    <MenuOutlined style={{fontSize: 22, color: headerCheck ? 'black' : (scrollCheck ? 'black' : "white")}} onClick={showDrawer}/>
                 </div>
             </div>
         </div> : <></>}
@@ -84,7 +87,7 @@ export default function MobileMenu() {
             <div style={{fontSize: 18, fontWeight: 500, display: 'grid', rowGap: 35, paddingTop: 45}}>
 
                 <div>
-                    {[{title: '기업통보', subTitle: ['회사소개', '연혁', '주요고객', '오시는길']}, {
+                    {[{title: '기업통보', subTitle: [{title : '회사소개', path : 'aboutus'}, {title : '연혁', path : 'aboutus'}, {title : '주요고객', path : 'aboutus'}, {title : '오시는길', path : 'aboutus'}]}, {
                         title: '사업분야',
                         subTitle: ['회사소개', '연혁', '주요고객', '오시는길']
                     }, {title: '한국대리점', subTitle: ['회사소개', '연혁', '주요고객', '오시는길']}, {
@@ -119,7 +122,9 @@ export default function MobileMenu() {
                                                 fontSize: 13,
                                                 padding: '8px 40px',
                                                 border: '1px solid #2F363E'
-                                            }}>{src}</div>
+                                            }} onClick={()=>{
+                                                router.push('homepage/aboutus')
+                                            }}>{src.title}</div>
                                         })}
                                     </div>
                                 )}
