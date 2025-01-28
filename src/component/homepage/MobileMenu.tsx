@@ -1,9 +1,9 @@
 import Drawer from "antd/lib/drawer";
 import React, {useState} from "react";
 import {
-    AppstoreOutlined,
+    AppstoreOutlined, CloseOutlined,
     ContainerOutlined,
-    DesktopOutlined,
+    DesktopOutlined, DownOutlined,
     MailOutlined,
     MenuOutlined,
     PieChartOutlined
@@ -50,15 +50,16 @@ export default function MobileMenu() {
         </div>
 
         <Drawer
-            title={<>
+            title={<div style={{display: 'flex', justifyContent: 'space-between'}}>
                 <div style={{display: "flex", gap: "10px", color: 'white', fontSize: 14}}>
 
                     <img src={"/homepage/lang.svg"} alt=""/>
                     <span>KOR</span>
                 </div>
-            </>}
+                <CloseOutlined style={{color : 'white', fontSize : 20} } onClick={onClose} />
+            </div>}
             closeIcon={null}
-            headerStyle={{border: 'none', backgroundColor: '#173F95', display: 'flex', justifyContent: 'space-between'}}
+            headerStyle={{border: 'none', backgroundColor: '#173F95'}}
             onClose={onClose}
             open={open}
             bodyStyle={{
@@ -71,7 +72,7 @@ export default function MobileMenu() {
                 <div>
                     {[{title :'기업통보', subTitle : ['회사소개', '연혁', '주요고객','오시는길']},{title :'사업분야', subTitle : ['회사소개', '연혁', '주요고객','오시는길']},{title :'한국대리점', subTitle : ['회사소개', '연혁', '주요고객','오시는길']},{title :'고객센터', subTitle : ['회사소개', '연혁', '주요고객','오시는길']}].map((v, index) => (
                         <div key={index} style={{marginBottom: 30}}>
-                            <button
+                            <div
                                 onClick={() => toggleBox(index)}
                                 style={{
                                     backgroundColor: '#173F95', // 다크 모드 색상 설정
@@ -80,8 +81,8 @@ export default function MobileMenu() {
                                     border : 'none',
                                 }}
                             >
-                                {v.title}
-                            </button>
+                                {v.title}<DownOutlined style={{fontSize : 13, paddingLeft : 10}} />
+                            </div>
                             <div style={{backgroundColor : '#2F363E'}}
                                 className={`box ${
                                     activeIndex === index
