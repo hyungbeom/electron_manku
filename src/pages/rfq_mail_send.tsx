@@ -29,7 +29,8 @@ export default function rfqRead({dataInfo}) {
     const [info, setInfo] = useState(copyInit);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [previewData, setPreviewData] = useState([]);
+    const [previewData, setPreviewData] = useState({});
+
     const [fileList, setFileList] = useState([]);
     const [loading, setLoading] = useState(false);
 
@@ -66,32 +67,39 @@ export default function rfqRead({dataInfo}) {
         if (!checkedData.length) {
             return message.warn('선택된 데이터가 없습니다.')
         }
-        console.log(checkedData,'checkedData:')
-        const groupedData = checkedData.reduce((acc, item) => {
-            const agencyCode = item.agencyCode;
-            const estimateRequestId = item.estimateRequestId;
-            if (!acc[agencyCode]) {
-                acc[agencyCode] = [];
+
+
+
+
+        const groupedData = {};
+        const fileIdList = [];
+
+        checkedData.forEach(record => {
+            const agencyCode = record.agencyCode || "unknown";
+            const docNumber = record.documentNumberFull || "unknown";
+            fileIdList.push(record.estimateRequestId)
+            if (!groupedData[agencyCode]) {
+                groupedData[agencyCode] = {};
             }
-            acc[agencyCode].push(item);
 
-            if (!acc.list) {
-                acc.list = [];
+            if (!groupedData[agencyCode][docNumber]) {
+                groupedData[agencyCode][docNumber] = [];
             }
-            acc.list.push({relatedType : 'ESTIMATE_REQUEST' ,relatedId : estimateRequestId});
-            return acc;
-        }, {});
 
-        await getData.post('common/getAttachmentFileList',{attachmentFileItemList : groupedData?.list}).then(v=>{
+            groupedData[agencyCode][docNumber].push(record);
+        });
 
-            setFileList(v.data.entity.attachmentFiles)
-        })
+        // @ts-ignore
+        const data = [...new Set(fileIdList)]
 
         setPreviewData(groupedData)
 
-        delete groupedData.list;
+        await getData.post('common/getAttachmentFileList',{attachmentFileItemList :data.map(v=>{
+            return {relatedType : 'ESTIMATE_REQUEST' ,relatedId : v}
+            })}).then(v=>{
 
-
+            setFileList(v.data.entity.attachmentFiles)
+        })
         setIsModalOpen(true)
     };
 
