@@ -87,7 +87,7 @@ export default function MobileMenu({headerCheck = true}) {
             <div style={{fontSize: 18, fontWeight: 500, display: 'grid', rowGap: 35, paddingTop: 45}}>
 
                 <div>
-                    {[{title: '기업통보', subTitle: [{title : '회사소개', path : 'aboutus'}, {title : '연혁', path : 'aboutus'}, {title : '주요고객', path : 'aboutus'}, {title : '오시는길', path : 'aboutus'}]}, {
+                    {[{title: '기업통보', subTitle: [{title : '회사소개', path : 'aboutus'}, {title : '연혁', path : 'history'}, {title : '주요고객', path : 'partners'}, {title : '오시는길', path : 'aboutus'}]}, {
                         title: '사업분야',
                         subTitle: ['회사소개', '연혁', '주요고객', '오시는길']
                     }, {title: '한국대리점', subTitle: ['회사소개', '연혁', '주요고객', '오시는길']}, {
@@ -123,7 +123,7 @@ export default function MobileMenu({headerCheck = true}) {
                                                 padding: '8px 40px',
                                                 border: '1px solid #2F363E'
                                             }} onClick={()=>{
-                                                router.push('homepage/aboutus')
+                                                router.push(`/homepage/${src.path}`)
                                             }}>{src.title}</div>
                                         })}
                                     </div>
