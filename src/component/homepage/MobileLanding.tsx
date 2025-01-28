@@ -2,8 +2,11 @@ import React, {useEffect, useState} from "react";
 import {DownOutlined, MenuOutlined} from "@ant-design/icons";
 import {commonManage} from "@/utils/commonManage";
 import {inputForm, textAreaForm} from "@/utils/commonForm";
+import Drawer from "antd/lib/drawer";
+import MobileMenu from "@/component/homepage/MobileMenu";
 
 export default function MobileLanding() {
+
     const [info, setInfo] = useState(0); // 현재 섹션 인덱스
     const [currentIndex, setCurrentIndex] = useState(0); // 현재 섹션 인덱스
     const sections = [0, 1, 2]; // 섹션 배열
@@ -45,8 +48,10 @@ export default function MobileLanding() {
         commonManage.onChange(e, setInfo)
     }
 
+
     return (
         <>
+
             <div
                 style={{position: "relative", width: "100vw", overflow: "hidden"}}
                 onTouchStart={handleTouchStart} // 스와이프 시작
@@ -73,24 +78,7 @@ export default function MobileLanding() {
                         alt=""
                     />
 
-                    <div
-                        style={{
-                            position: "fixed",
-                            padding: 10,
-                        }}
-                    >
-                        <img src={"/homepage/logo_1.png"}/>
-                        <span style={{color: "white", paddingLeft: 5, fontSize: 12}}>만쿠무역</span>
-                    </div>
-                    <div
-                        style={{
-                            position: "fixed",
-                            right: 10,
-                            padding: 11,
-                        }}
-                    >
-                        <MenuOutlined style={{fontSize: 22, color: "white"}}/>
-                    </div>
+                    <MobileMenu/>
 
                     <div
                         style={{
@@ -194,7 +182,7 @@ export default function MobileLanding() {
                 >
                     <div style={{fontSize: '6.3vw', fontWeight: 600}}>Discover Our Expertise</div>
                     <div style={{fontSize: '3.5vw', paddingTop: 10}}>
-                        <div>그로벌 무역의 전문성을 만나보세요</div>
+                        <div>글로벌 무역의 전문성을 만나보세요</div>
                         <div style={{paddingTop: 40, fontSize: '2.6vw'}}>다양한 산업에서 쌓아온 만쿠무역의 경험과 노하우를 확인해보세요</div>
                     </div>
                 </div>
@@ -423,21 +411,21 @@ export default function MobileLanding() {
                             display: 'flex',
                             justifyContent: 'space-between', // 자식들을 우측 정렬
                             alignItems: 'center', // 수직 중앙 정렬
-                            paddingTop : 22
+                            paddingTop: 22
                         }}
                     >
                         <img src={'/homepage/sns/online.png'}
                              style={{width: '28%', cursor: 'pointer'}} alt="온라인 문의"/>
 
 
-                            <img src={'/homepage/sns/kakao.png'} style={{width: '15%', cursor: 'pointer'}}
-                                 alt="카카오톡"/>
-                            <img src={'/homepage/sns/store.png'} style={{width: '15%', cursor: 'pointer'}}
-                                 alt="스토어"/>
-                            <img src={'/homepage/sns/naver.png'} style={{width: '15%', cursor: 'pointer'}}
-                                 alt="네이버"/>
-                            <img src={'/homepage/sns/phone.png'} style={{width: '15%', cursor: 'pointer'}}
-                                 alt="전화"/>
+                        <img src={'/homepage/sns/kakao.png'} style={{width: '15%', cursor: 'pointer'}}
+                             alt="카카오톡"/>
+                        <img src={'/homepage/sns/store.png'} style={{width: '15%', cursor: 'pointer'}}
+                             alt="스토어"/>
+                        <img src={'/homepage/sns/naver.png'} style={{width: '15%', cursor: 'pointer'}}
+                             alt="네이버"/>
+                        <img src={'/homepage/sns/phone.png'} style={{width: '15%', cursor: 'pointer'}}
+                             alt="전화"/>
 
                     </div>
                     <img src="/homepage/mobile/m_footer.png" width={'100%'} style={{paddingTop: 20}}

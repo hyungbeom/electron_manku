@@ -272,3 +272,33 @@ body {
         transform: translateY(15px); /* 아래로 이동하면서 90도 유지 */
     }
 }
+
+.ant-menu{
+    background-color: red;
+}
+
+
+
+
+
+
+
+/*============================================================*/
+
+
+/* 기본 상태 */
+.box {
+    height: 0;
+    overflow: hidden;
+    transition: height 0.3s ease; /* 부드러운 애니메이션 */
+}
+
+/* 펼쳐지는 상태 */
+.box.expanding {
+    height: 160px
+}
+
+/* 닫히는 상태 */
+.box.collapsing {
+    height: 0;
+}
