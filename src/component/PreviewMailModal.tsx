@@ -9,7 +9,6 @@ import Card from "antd/lib/card/Card";
 const headerStyle = {
     padding: '10px',
     border: '1px solid #ddd',
-
     whiteSpace: 'nowrap'
 };
 
@@ -31,7 +30,7 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
 
 
     return <>
-        <Modal okText={'메일 전송'} width={800} cancelText={'취소'} onOk={sendMail}
+        <Modal okText={'메일 전송'} width={700} cancelText={'취소'} onOk={sendMail}
                title={<div style={{lineHeight: 2.5, fontWeight: 550}}>견적의뢰 메일 발송</div>} open={isModalOpen}
                onCancel={() => setIsModalOpen(false)}>
             <div style={{margin: '0px auto', fontSize: 13}}>
@@ -153,7 +152,6 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
                         <div style={{borderBottom: '1px solid lightGray', paddingTop: 100}}/>
                     </div>
                 })}
-
             </div>
         </Modal>
     </>

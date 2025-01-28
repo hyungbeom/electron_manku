@@ -7,11 +7,10 @@ import MobileLanding from "@/component/homepage/MobileLanding";
 
 export default function Home({isMobile}) {
 
-
     return (
         <>
 
-            {isMobile ?<MobileLanding/> : <>
+            {isMobile ?<MobileLanding /> : <>
                 <Header/>
                 <div style={{overflowX: 'hidden', minWidth: 1049}}>
                     {/*@ts-ignored*/}
