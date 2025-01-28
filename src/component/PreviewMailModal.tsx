@@ -3,6 +3,7 @@ import React from "react";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import MailFile from "@/component/MailFile";
 import Checkbox from "antd/lib/checkbox/Checkbox";
+import Card from "antd/lib/card/Card";
 
 
 const headerStyle = {
@@ -16,23 +17,16 @@ const headerStyle = {
 export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fileList}) {
     const userInfo = useAppSelector((state) => state.user);
 
-    console.log(data, 'data')
-    console.log(fileList, 'fileList')
-
     function sendMail() {
-        const groupedData = {};
 
-        Object.keys(data).forEach(category => {
-            data[category].forEach(record => {
-                const docNumber = record.documentNumberFull || "unknown";
-                if (!groupedData[docNumber]) {
-                    groupedData[docNumber] = [];
-                }
-                groupedData[docNumber].push(record);
-            });
-        });
+    }
 
-        console.log(groupedData);
+    function preview(e, data) {
+        if (e.ctrlKey && e.button === 0) {
+            window.open(data.webUrl, '_blank');
+        }else{
+            window.open(data.downloadUrl, '_blank');
+        }
     }
 
 
@@ -54,24 +48,27 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
                         <div style={{fontSize: 15, paddingTop: 5}}>아래 견적 부탁드립니다.</div>
 
                         {
-                            src.map((source:any, index) => {
+                            src.map((source: any, index) => {
 
 
-                                return <div>
-                                    <div style={{fontSize: 18}}>첨부파일 리스트(실제 메일에는 들어가지 않는 text입니다.)</div>
-                                    {
-                                        fileList[source[0]?.estimateRequestId]?.map(v =>
-                                            <div>
-                                                <Checkbox style={{
-                                                    fontSize: 16,
-                                                    cursor: 'pointer',
-                                                    color: 'blue'
-                                                }}> {v.fileName}
-                                                </Checkbox>
-                                            </div>
-                                        )
-                                    }
-                                    <table style={{width: '100%', marginTop: 30}}>
+                                return <div style={{marginTop: 30}}>
+                                    <Card size={'small'}>
+                                        {
+                                            fileList[source[0]?.estimateRequestId]?.map(v =>
+
+                                                <div style={{display : 'flex'}}>
+                                                    <Checkbox style={{paddingRight : 10}}/>
+                                                    <div  style={{
+                                                        fontSize: 12,
+                                                        cursor: 'pointer',
+                                                        color: 'blue'
+                                                    }} onClick={e=>preview(e,v)}> {v.fileName}
+                                                    </div>
+                                                </div>
+                                            )
+                                        }
+                                    </Card>
+                                    <table style={{width: '100%', marginTop: 10}}>
                                         <thead>
                                         <tr style={{fontWeight: 'bold', height: 30}}>
                                             <th style={{
@@ -124,7 +121,7 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
                                     </table>
                                     <table style={{width: '100%'}}>
                                         <thead>
-                                        {source.map((data:any, index) => {
+                                        {source.map((data: any, index) => {
                                             return <tr style={{fontWeight: 'bold', height: 30}}>
                                                 <th style={{
                                                     ...headerStyle,
@@ -151,193 +148,8 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
 
                                     </table>
                                 </div>
-
-                                // source.map(resource=>{
-                                //
-                                //     return <>
-                                //         <div style={{paddingTop: 30}}>
-                                //
-                                //             <div style={{fontSize: 18}}>첨부파일 리스트(실제 메일에는 들어가지 않는 text입니다.)</div>
-                                //             {/*{fileList[resource?.estimateRequestId].map(v => {*/}
-                                //             {/*    return <div>*/}
-                                //             {/*        <Checkbox style={{*/}
-                                //             {/*            fontSize: 16,*/}
-                                //             {/*            cursor: 'pointer',*/}
-                                //             {/*            color: 'blue'*/}
-                                //             {/*        }}> {v.fileName}*/}
-                                //             {/*        </Checkbox></div>*/}
-                                //             {/*})}*/}
-                                //
-                                //
-                                //             <table style={{width: '100%', marginTop: 30}}>
-                                //                 <thead>
-                                //                 <tr style={{fontWeight: 'bold', height: 30}}>
-                                //                     <th style={{
-                                //                         ...headerStyle,
-                                //                         textAlign: 'left',
-                                //                         paddingLeft: 20,
-                                //                         fontSize: 16
-                                //                     }}>{resource.documentNumberFull}</th>
-                                //                 </tr>
-                                //                 </thead>
-                                //             </table>
-                                //             <table style={{width: '100%'}}>
-                                //                 <thead>
-                                //                 <tr style={{fontWeight: 'bold', height: 30}}>
-                                //                     <th style={{
-                                //                         ...headerStyle,
-                                //                         width: 120,
-                                //                         borderTop: "none",
-                                //                         backgroundColor: '#ddd'
-                                //                     }}>MAKER
-                                //                     </th>
-                                //                     <th style={{
-                                //                         ...headerStyle,
-                                //                         borderTop: "none",
-                                //                         fontWeight: 500
-                                //                     }}>{resource.maker}</th>
-                                //                 </tr>
-                                //                 <tr style={{fontWeight: 'bold', height: 30}}>
-                                //                     <th style={{
-                                //                         ...headerStyle,
-                                //                         width: 120,
-                                //                         backgroundColor: 'gray'
-                                //                     }}>ITEM
-                                //                     </th>
-                                //                     <th style={{...headerStyle, fontWeight: 500}}>{resource.item}</th>
-                                //                 </tr>
-                                //                 </thead>
-                                //             </table>
-                                //             <table style={{width: '100%'}}>
-                                //                 <thead>
-                                //                 <tr style={{fontWeight: 'bold', height: 30}}>
-                                //                     <th style={{
-                                //                         ...headerStyle,
-                                //                         borderTop: "none",
-                                //                         backgroundColor: '#ddd'
-                                //                     }}>MODEL
-                                //                     </th>
-                                //                 </tr>
-                                //                 </thead>
-                                //             </table>
-                                //             <table style={{width: '100%'}}>
-                                //                 <thead>
-                                //                 {/*{datas[src.documentNumberFull].map((source, index) => {*/}
-                                //                 {/*    return <tr style={{fontWeight: 'bold', height: 30}}>*/}
-                                //                 {/*        <th style={{*/}
-                                //                 {/*            ...headerStyle,*/}
-                                //                 {/*            width: 40,*/}
-                                //                 {/*            borderTop: "none"*/}
-                                //                 {/*        }}>{index + 1}</th>*/}
-                                //                 {/*        <th style={{*/}
-                                //                 {/*            ...headerStyle,*/}
-                                //                 {/*            borderTop: "none",*/}
-                                //                 {/*            fontWeight: 500*/}
-                                //                 {/*        }}>{src.model}</th>*/}
-                                //                 {/*        <th style={{*/}
-                                //                 {/*            ...headerStyle,*/}
-                                //                 {/*            width: 100,*/}
-                                //                 {/*            borderTop: "none",*/}
-                                //                 {/*            fontWeight: 500*/}
-                                //                 {/*        }}>{src.quantity} {source.unit}</th>*/}
-                                //                 {/*    </tr>*/}
-                                //                 {/*})}*/}
-                                //
-                                //
-                                //                 </thead>
-                                //
-                                //
-                                //             </table>
-                                //         </div>
-                                //     </>
-                                // })
                             })
                         }
-
-
-                        {/*    {v?.map((src, i) =>
-
-                    {/*    return <div style={{paddingTop : 30}}>*/}
-                        {/*        <div style={{fontSize : 18}}>첨부파일 리스트(실제 메일에는 들어가지 않는 text입니다.)</div>*/}
-                        {/*        {fileList[src?.estimateRequestId].map(v=>{*/}
-                        {/*            return <div>*/}
-                        {/*                <Checkbox style={{fontSize: 16, cursor: 'pointer', color: 'blue'}}> {v.fileName}*/}
-                        {/*                </Checkbox></div>*/}
-                        {/*        })}*/}
-
-
-                        {/*        <table style={{width: '100%', marginTop: 30}}>*/}
-                        {/*            <thead>*/}
-                        {/*            <tr style={{fontWeight: 'bold', height: 30}}>*/}
-                        {/*                <th style={{*/}
-                        {/*                    ...headerStyle,*/}
-                        {/*                    textAlign: 'left',*/}
-                        {/*                    paddingLeft: 20,*/}
-                        {/*                    fontSize: 16*/}
-                        {/*                }}>{src.documentNumberFull}</th>*/}
-                        {/*            </tr>*/}
-                        {/*            </thead>*/}
-                        {/*        </table>*/}
-                        {/*        <table style={{width: '100%'}}>*/}
-                        {/*            <thead>*/}
-                        {/*            <tr style={{fontWeight: 'bold', height: 30}}>*/}
-                        {/*                <th style={{*/}
-                        {/*                    ...headerStyle,*/}
-                        {/*                    width: 120,*/}
-                        {/*                    borderTop: "none",*/}
-                        {/*                    backgroundColor: '#ddd'*/}
-                        {/*                }}>MAKER*/}
-                        {/*                </th>*/}
-                        {/*                <th style={{*/}
-                        {/*                    ...headerStyle,*/}
-                        {/*                    borderTop: "none",*/}
-                        {/*                    fontWeight: 500*/}
-                        {/*                }}>{src.maker}</th>*/}
-                        {/*            </tr>*/}
-                        {/*            <tr style={{fontWeight: 'bold', height: 30}}>*/}
-                        {/*                <th style={{...headerStyle, width: 120, backgroundColor: 'gray'}}>ITEM</th>*/}
-                        {/*                <th style={{...headerStyle, fontWeight: 500}}>{src.item}</th>*/}
-                        {/*            </tr>*/}
-                        {/*            </thead>*/}
-                        {/*        </table>*/}
-                        {/*        <table style={{width: '100%'}}>*/}
-                        {/*            <thead>*/}
-                        {/*            <tr style={{fontWeight: 'bold', height: 30}}>*/}
-                        {/*                <th style={{*/}
-                        {/*                    ...headerStyle,*/}
-                        {/*                    borderTop: "none",*/}
-                        {/*                    backgroundColor: '#ddd'*/}
-                        {/*                }}>MODEL*/}
-                        {/*                </th>*/}
-                        {/*            </tr>*/}
-                        {/*            </thead>*/}
-                        {/*        </table>*/}
-                        {/*        <table style={{width: '100%'}}>*/}
-                        {/*            <thead>*/}
-                        {/*            {datas[src.documentNumberFull].map((source, index) => {*/}
-                        {/*                return <tr style={{fontWeight: 'bold', height: 30}}>*/}
-                        {/*                    <th style={{...headerStyle, width: 40, borderTop: "none"}}>{index + 1}</th>*/}
-                        {/*                    <th style={{*/}
-                        {/*                        ...headerStyle,*/}
-                        {/*                        borderTop: "none",*/}
-                        {/*                        fontWeight: 500*/}
-                        {/*                    }}>{source.model}</th>*/}
-                        {/*                    <th style={{*/}
-                        {/*                        ...headerStyle,*/}
-                        {/*                        width: 100,*/}
-                        {/*                        borderTop: "none",*/}
-                        {/*                        fontWeight: 500*/}
-                        {/*                    }}>{source.quantity} {source.unit}</th>*/}
-                        {/*                </tr>*/}
-                        {/*            })}*/}
-
-
-                        {/*            </thead>*/}
-
-
-                        {/*        </table>*/}
-                        {/*    </div>*/}
-
                         <div style={{borderBottom: '1px solid lightGray', paddingTop: 100}}/>
                     </div>
                 })}
