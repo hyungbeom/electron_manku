@@ -168,18 +168,43 @@ export default function MobileLanding() {
                     }}
                 >
                     <div style={{fontSize: '6.3vw', fontWeight: 600}}>Discover What Drives Us</div>
-                    <div style={{fontSize: '3.5vw', paddingTop : 48}}>
+                    <div style={{fontSize: '3.5vw', paddingTop: 48}}>
                         <div>우리의 원동력을 탐구하고</div>
                         <div>만쿠무역의 비전을 확인하세요</div>
                     </div>
                     <img style={{
-                        paddingTop : 40,
+                        paddingTop: 40,
                         width: '40vw',
                         cursor: 'pointer'
                     }}
                          src={'/homepage/look.svg'} alt=""/>
                 </div>
+                <div
+                    style={{
+                        width: "100vw",
+                        textAlign: 'center',
+                        padding: '100px 50px 30px 50px'
+                    }}
+                >
+                    <div style={{fontSize: '6.3vw', fontWeight: 600}}>Discover Our Expertise</div>
+                    <div style={{fontSize: '3.5vw', paddingTop: 10}}>
+                        <div>그로벌 무역의 전문성을 만나보세요</div>
+                        <div style={{paddingTop: 40, fontSize: '2.6vw'}}>다양한 산업에서 쌓아온 만쿠무역의 경험과 노하우를 확인해보세요</div>
+                    </div>
+                </div>
 
+
+                <div>
+                    <img src={'homepage/mobile/content1.png'} width={'100%'} alt=""/>
+                </div>
+
+                <div>
+                    <img src={'homepage/mobile/content2.png'} width={'100%'} alt=""/>
+                </div>
+
+                <div>
+                    <img src={'homepage/mobile/content3.png'} width={'100%'} alt=""/>
+                </div>
             </div>
         </>
     );
