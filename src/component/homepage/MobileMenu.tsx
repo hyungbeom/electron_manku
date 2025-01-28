@@ -55,7 +55,7 @@ export default function MobileMenu({headerCheck = true}) {
         {!open ? <div
             style={{position: "fixed", zIndex: 1000000, backgroundColor: scrollCheck ? 'white' : '', width: '100%', borderBottom : headerCheck ?'1px solid lightGray' : (scrollCheck ?'1px solid lightGray' : 'none') }}>
             <div style={{display: 'flex', justifyContent: 'space-between', padding: 20}}>
-                <div>
+                <div onClick={()=> router.push('/homepage')}>
                     <img src={"/homepage/logo_1.png"}/>
                     <span
                         style={{color: headerCheck ? 'black' : (scrollCheck ? "" : 'white'), paddingLeft: 5, fontSize: 12, fontWeight: 600}}>Manku Trading</span>
