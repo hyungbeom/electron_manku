@@ -59,7 +59,7 @@ export default function Header() {
                     // padding: "30px 35px",
                     color: (isExpanded || scrollCheck) ? "black" : 'white',
                     backgroundColor: (isExpanded || scrollCheck) ? "white" : '',
-                    borderBottom : (isExpanded || scrollCheck) ?'0.1px solid lightGray' : ''
+                    borderBottom: (isExpanded || scrollCheck) ? '0.1px solid lightGray' : ''
                 }}
             >
                 <div
@@ -120,7 +120,7 @@ export default function Header() {
                             justifyContent: 'center',
                             color: hoverMenu === '3' ? '#173F95' : '',
                             borderBottom: hoverMenu === '3' ? '2px solid #173F95' : ''
-                        }} id={'3'} onPointerEnter={enterMouse}>한국대리점
+                        }} id={'3'} onPointerEnter={enterMouse}   onClick={() => router.push('/homepage/agency')}>한국대리점
                         </div>
                         <div style={{
                             cursor: "pointer",
@@ -165,7 +165,7 @@ export default function Header() {
                         alignItems: "center",
                     }}
                 >
-                    <div style={{paddingLeft:20}}/>
+                    <div style={{paddingLeft: 20}}/>
 
                     <div style={{display: "flex", textAlign: "center", padding: '20px 0px'}}
                          onPointerEnter={() => setIsExpanded(true)} onPointerLeave={outMouse}>
@@ -178,9 +178,9 @@ export default function Header() {
                     color: hoverMenu === '1' ? 'black' : '#A5A5A5',
                 }}
                 onPointerEnter={() => setHoverMenu('1')}>
-              <div className="menu-item">회사소개</div>
-              <div className="menu-item">연혁</div>
-              <div className="menu-item">주요고객</div>
+              <div className="menu-item" onClick={() => router.push('/homepage/aboutus')}>회사소개</div>
+              <div className="menu-item" onClick={() => router.push('/homepage/history')}>연혁</div>
+              <div className="menu-item" onClick={() => router.push('/homepage/partners')}>주요고객</div>
               <div className="menu-item">오시는길</div>
             </span>
                         <span
@@ -193,10 +193,10 @@ export default function Header() {
                                 color: hoverMenu === '2' ? 'black' : '#A5A5A5'
                             }}
                         >
-              <div className="menu-item">MRO 서비스</div>
-              <div className="menu-item">플랜트 사업부</div>
-              <div className="menu-item">반도체 사업부</div>
-              <div className="menu-item">무역 사업부</div>
+              <div className="menu-item" onClick={() => router.push('/homepage/mro')}>MRO 서비스</div>
+              <div className="menu-item" onClick={() => router.push('/homepage/plant')}>플랜트 사업부</div>
+              <div className="menu-item" onClick={() => router.push('/homepage/chip')}>반도체 사업부</div>
+              <div className="menu-item" onClick={() => router.push('/homepage/trade')}>무역 사업부</div>
             </span>
                         <span
                             onPointerEnter={() => setHoverMenu('3')}
@@ -208,18 +208,18 @@ export default function Header() {
                                 color: hoverMenu === '3' ? 'black' : '#A5A5A5'
                             }}
                         >
-              <div className="menu-item">KOENIG</div>
-              <div className="menu-item">DST Chemical</div>
-              <div className="menu-item">Daiichi</div>
-              <div className="menu-item">Powerflex</div>
-              <div className="menu-item">Bamo</div>
+              <div className="menu-item"  onClick={() => router.push('/homepage/agency')}>KOENIG</div>
+              <div className="menu-item"  onClick={() => router.push('/homepage/agency')}>DST Chemical</div>
+              <div className="menu-item"  onClick={() => router.push('/homepage/agency')}>Daiichi</div>
+              <div className="menu-item"  onClick={() => router.push('/homepage/agency')}>Powerflex</div>
+              <div className="menu-item"  onClick={() => router.push('/homepage/agency')}>Bamo</div>
             </span>
                         <span
                             onPointerEnter={() => setHoverMenu('4')}
                             style={{
                                 cursor: "pointer",
                                 width: 200,
-                                textAlign : 'center',
+                                textAlign: 'center',
                                 display: "grid",
                                 gridTemplateRows: "35px 35px 35px 35px",
                                 color: hoverMenu === '4' ? 'black' : '#A5A5A5'
