@@ -113,7 +113,7 @@ export default function estimate_update({dataInfo}) {
         console.log(e, 'e:')
         if (e) {
             await getAttachmentFileList({
-                getAttachmentFileList: {
+                data: {
                     "relatedType": "ESTIMATE",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
                     "relatedId": infoInit['estimateId']
                 }

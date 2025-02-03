@@ -94,7 +94,7 @@ export default function rfqRead({dataInfo}) {
 
         setPreviewData(groupedData)
 
-        await getData.post('common/getAttachmentFileList',{attachmentFileItemList :data.map(v=>{
+        await getData.post('common/getAttachmentFileList',{attachmentFileItemLists :data.map(v=>{
             return {relatedType : 'ESTIMATE_REQUEST' ,relatedId : v}
             })}).then(v=>{
 
