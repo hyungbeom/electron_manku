@@ -36,7 +36,7 @@ export default function Login() {
             if (v.data.code === 1) {
                 const {accessToken} = v?.data?.entity;
                 setCookies(null, 'token', accessToken)
-                return router.push('/main')
+                // return router.push('/main')
             }
             message.warn(v.data.message)
         })

@@ -3,7 +3,7 @@ import {getCookie} from "@/manage/function/cookie";
 
 
 //DEV
-export const API_URL = '/api/';
+export const API_URL = 'https://manku.progist.co.kr/api/';
 export const IMAGE_URL = 'https://image.season-market.co.kr/SeasonMarket/';
 
 
