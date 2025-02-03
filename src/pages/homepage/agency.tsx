@@ -59,6 +59,7 @@ export default function agency({isMobile}) {
                     </div>
                 </div>
             </div>
+
             <div style={{border: '1px solid lightGray'}}>
                 <div style={{
                     backgroundColor: '#F7F7F7',
