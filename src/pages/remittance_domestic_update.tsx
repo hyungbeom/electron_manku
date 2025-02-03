@@ -12,13 +12,14 @@ import {BoxCard, MainCard, TopBoxCard} from "@/utils/commonForm";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import Radio from "antd/lib/radio";
 import InputNumber from "antd/lib/input-number";
-import {commonManage, gridManage} from "@/utils/commonManage";
-import {saveRemittance, updateRemittance} from "@/utils/api/mainApi";
+import {commonManage, fileManage} from "@/utils/commonManage";
+import {updateRemittance} from "@/utils/api/mainApi";
 import {useRouter} from "next/router";
 import _ from "lodash";
+import {useAppSelector} from "@/utils/common/function/reduxHooks";
 
 export default function remittance_domestic({dataInfo}) {
-
+    const userInfo = useAppSelector((state) => state.user);
 
     const infoInit = dataInfo?.remittanceDetail
     const infoFileInit = dataInfo?.attachmentFileList
@@ -28,17 +29,21 @@ export default function remittance_domestic({dataInfo}) {
 
 
     const [info, setInfo] = useState(infoInit)
+    const [mini, setMini] = useState(true);
 
-    useEffect(()=>{
-        setInfo(v=>{
+    const [fileList, setFileList] = useState(fileManage.getFormatFiles(infoFileInit));
+    const [originFileList, setOriginFileList] = useState(infoFileInit);
+    const [loading, setLoading] = useState(false);
+    useEffect(() => {
+        setInfo(v => {
             return {
                 ...v,
                 surtax: Math.round(v.supplyAmount * 0.1),
                 total: v.supplyAmount + Math.round(v.supplyAmount * 0.1)
             }
         })
-    },[infoInit])
-    console.log(info,'info:')
+    }, [infoInit])
+    console.log(info, 'info:')
 
     const inputForm = ({title, id, disabled = false, suffix = null, placeholder = ''}) => {
         let bowl = info;
@@ -131,30 +136,19 @@ export default function remittance_domestic({dataInfo}) {
 
         const handleIteration = () => {
             for (const {key, value} of commonManage.commonCalc(info)) {
-                if(!(key === 'modifiedId' || key === 'modifiedDate'))
-                formData.append(key, value);
+                if (!(key === 'modifiedId' || key === 'modifiedDate'))
+                    formData.append(key, value);
             }
         };
 
         handleIteration();
 
-        const filesToSave = fileRef.current.fileList.map((item) => item.originFileObj).filter((file) => file instanceof File);
 
-        //새로 추가되는 파일
-        filesToSave.forEach((file, index) => {
-            formData.append(`attachmentFileList[${index}].attachmentFile`, file);
-            formData.append(`attachmentFileList[${index}].fileName`, file.name.replace(/\s+/g, ""));
-        });
+        commonManage.getUploadList(fileRef, formData);
+        commonManage.deleteUploadList(fileRef, formData, originFileList)
 
-        //기존 기준 사라진 파일
-        const result = infoFileInit.filter(itemA => !fileRef.current.fileList.some(itemB => itemA.id === itemB.id));
-        result.map((v, idx) => {
-            formData.append(`deleteAttachmentIdList[${idx}]`, v.id);
-        })
-
-        for (const [key, value] of formData.entries()) {
-            console.log(`Key: ${key}, Value: ${value}:::::::::`);
-        }
+        formData.delete('createdDate')
+        formData.delete('modifiedDate')
 
         await updateRemittance({data: formData, router: router})
 
@@ -164,11 +158,12 @@ export default function remittance_domestic({dataInfo}) {
 
     }
 
-    function copyPage(){
+    function copyPage() {
         let copyInfo = _.cloneDeep(info)
         const query = `data=${encodeURIComponent(JSON.stringify(copyInfo))}`;
         router.push(`/remittance_domestic?${query}`)
     }
+
     return <>
         <LayoutComponent>
 
@@ -181,7 +176,7 @@ export default function remittance_domestic({dataInfo}) {
 
                 <TopBoxCard title={'기본 정보'} grid={'250px 200px 200px 200px'}>
                     {inputForm({title: 'Inquiry No.', id: 'connectInquiryNo'})}
-                    {inputForm({title: '거래처명', id: 'customerName'})}
+                    {inputForm({title: '고객사명', id: 'customerName'})}
                     {inputForm({title: '매입처명', id: 'agencyName'})}
                     {inputForm({title: '담당자', id: 'managerAdminName', disabled: true})}
                 </TopBoxCard>
@@ -204,10 +199,10 @@ export default function remittance_domestic({dataInfo}) {
                         {inputNumberForm({title: '합계', id: 'total', disabled: true})}
                     </BoxCard>
 
-                    <BoxCard title={'드라이브 목록'}>
+                    <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
                         {/*@ts-ignored*/}
                         <div style={{overFlowY: "auto", maxHeight: 300}}>
-                            <DriveUploadComp infoFileInit={infoFileInit} fileRef={fileRef}/>
+                            <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}/>
                         </div>
                     </BoxCard>
                 </div>
@@ -242,6 +237,6 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     });
 
     return {
-        props: {dataInfo: result.data.entity}
+        props: {dataInfo: result.data.entity, remittanceId: remittanceId}
     }
 })

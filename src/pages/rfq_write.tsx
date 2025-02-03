@@ -1,13 +1,8 @@
 import React, {useEffect, useRef, useState} from "react";
-import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
-import TextArea from "antd/lib/input/TextArea";
-import {CopyOutlined, FileSearchOutlined, SaveOutlined, UploadOutlined} from "@ant-design/icons";
+import {ClearOutlined, FileSearchOutlined, PlusSquareOutlined, SaveOutlined} from "@ant-design/icons";
 import {subRfqWriteColumn} from "@/utils/columnList";
-import DatePicker from "antd/lib/date-picker";
 import {estimateRequestDetailUnit, ModalInitList, rfqWriteInitial} from "@/utils/initialList";
-import moment from "moment";
-import Button from "antd/lib/button";
 import message from "antd/lib/message";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
@@ -15,17 +10,37 @@ import {setUserInfo} from "@/store/user/userSlice";
 import TableGrid from "@/component/tableGrid";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import SearchInfoModal from "@/component/SearchAgencyModal";
-import Upload from "antd/lib/upload";
-import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, TopBoxCard} from "@/utils/commonForm";
+import {
+    BoxCard,
+    datePickerForm,
+    inputForm,
+    MainCard,
+    selectBoxForm,
+    textAreaForm,
+    tooltipInfo,
+    TopBoxCard
+} from "@/utils/commonForm";
 import {useRouter} from "next/router";
-import {commonManage} from "@/utils/commonManage";
+import {commonManage, gridManage} from "@/utils/commonManage";
 import _ from "lodash";
 import {findCodeInfo} from "@/utils/api/commonApi";
-import {saveRfq} from "@/utils/api/mainApi";
+import {checkInquiryNo, saveRfq} from "@/utils/api/mainApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
+import Select from "antd/lib/select";
+import {getData} from "@/manage/function/api";
+import moment from "moment";
+import Spin from "antd/lib/spin";
+import Button from "antd/lib/button";
 
 const listType = 'estimateRequestDetailList'
-export default function rqfWrite({dataInfo}) {
+export default function rqfWrite({dataInfo, managerList}) {
+    const options = managerList.map((item) => ({
+        ...item,
+        value: item.adminId,
+        label: item.name,
+    }));
+
+
     const fileRef = useRef(null);
     const gridRef = useRef(null);
     const router = useRouter();
@@ -36,11 +51,11 @@ export default function rqfWrite({dataInfo}) {
 
     const userInfo = useAppSelector((state) => state.user);
 
-
     const adminParams = {
         managerAdminId: userInfo['adminId'],
         managerAdminName: userInfo['name'],
-        adminName: userInfo['name'],
+        createBy: userInfo['name'],
+
     }
 
     const infoInit = {
@@ -48,9 +63,17 @@ export default function rqfWrite({dataInfo}) {
         ...adminParams
     }
 
-    const [info, setInfo] = useState<any>({...copyInit, ...dataInfo, ...adminParams})
+    const [info, setInfo] = useState<any>({
+        ...copyInit, ...dataInfo, ...adminParams,
+        writtenDate: moment().format('YYYY-MM-DD')
+    })
+    const [validate, setValidate] = useState({agencyCode: !!dataInfo, documentNumberFull: !!dataInfo});
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
+
+    const [fileList, setFileList] = useState([]);
+
+    const [loading, setLoading] = useState(false);
 
     const onGridReady = (params) => {
         gridRef.current = params.api;
@@ -58,7 +81,18 @@ export default function rqfWrite({dataInfo}) {
         params.api.applyTransaction({add: result ? result : []});
     };
 
-    // ======================================================================================================
+    useEffect(() => {
+        initCopyLoadInquiry()
+    }, []);
+
+    async function initCopyLoadInquiry() {
+        if (dataInfo) {
+            await checkInquiryNo({data: {agencyCode: dataInfo['agencyCode'], type: ''}}).then(data => {
+                onChange({target: {id: 'documentNumberFull', value: data}})
+            })
+        }
+    }
+
     async function handleKeyPress(e) {
         if (e.key === 'Enter') {
 
@@ -66,10 +100,9 @@ export default function rqfWrite({dataInfo}) {
                 case 'agencyCode' :
                 case 'customerName' :
                 case 'maker' :
-                    await findCodeInfo(e, setInfo, openModal)
+                    await findCodeInfo(e, setInfo, openModal, '', setValidate)
                     break;
             }
-
         }
     }
 
@@ -78,225 +111,305 @@ export default function rqfWrite({dataInfo}) {
     }
 
     function onChange(e) {
-        let bowl = {};
-        bowl[e.target.id] = e.target.value;
+        if (e.target.id === 'agencyCode') {
+            setValidate(v => {
+                return {...v, agencyCode: false, documentNumberFull: false}
+            })
+        }
         commonManage.onChange(e, setInfo)
     }
 
     async function saveFunc() {
+        gridRef.current.clearFocusedCell();
+        if (!info['managerAdminName']) {
+            return message.warn('담당자가 누락되었습니다.')
+        }
         if (!info['agencyCode']) {
             return message.warn('매입처 코드가 누락되었습니다.')
         }
-        if (!info[listType].length) {
+        if (!info['documentNumberFull']) {
+            return message.warn('INQUIRY NO.가 누락되었습니다.')
+        }
+        const list = gridManage.getAllData(gridRef);
+        if (!list.length) {
             return message.warn('하위 데이터 1개 이상이여야 합니다');
         }
 
+        setLoading(true)
+
         const formData: any = new FormData();
+        // serialNumbe
+        commonManage.setInfoFormData(info, formData, listType, list)
+        commonManage.getUploadList(fileRef, formData)
 
-        const handleIteration = () => {
-            for (const {key, value} of commonManage.commonCalc(info)) {
-                if (key !== listType) {
-                    if (key === 'dueDate') {
-                        formData.append(key, moment(value).format('YYYY-MM-DD'));
-                    } else {
-                        formData.append(key, value);
-                    }
-                }
-            }
-        };
+        formData.delete('createdDate');
+        formData.delete('modifiedDate');
 
-        handleIteration();
+        await saveRfq({data: formData, router: router, setLoading})
 
-
-        const copyData = {...info}
-
-
-        if (copyData[listType].length) {
-            copyData[listType].forEach((detail, index) => {
-                Object.keys(detail).forEach((key) => {
-                    if (key === 'replyDate') {
-                        formData.append(`${listType}[${index}].${key}`, moment(detail[key]).format('YYYY-MM-DD'));
-                    } else {
-                        formData.append(`${listType}[${index}].${key}`, detail[key]);
-                    }
-                });
-            });
-        }
-
-        const filesToSave = fileRef.current.fileList.map((item) => item.originFileObj).filter((file) => file instanceof File);
-        filesToSave.forEach((file, index) => {
-            formData.append(`attachmentFileList[${index}].attachmentFile`, file);
-            formData.append(`attachmentFileList[${index}].fileName`, file.name.replace(/\s+/g, ""));
-        });
-
-        await saveRfq({data: formData, router: router})
-
-    }
-
-
-    function deleteList() {
-        let copyData = {...info}
-        copyData[listType] = commonManage.getUnCheckList(gridRef.current.api);
-        setInfo(copyData);
-    }
-
-    function addRow() {
-        let copyData = {...info};
-        copyData[listType].push({
-            ...copyUnitInit,
-            "currency": commonManage.changeCurr(info['agencyCode'])
-        })
-        setInfo(copyData)
     }
 
 
     function clearAll() {
         setInfo({...infoInit});
+        gridManage.deleteAll(gridRef)
     }
 
 
-    /**
-     * @description 업로드 속성설정 property 세팅
-     */
-    const uploadProps = {
-        name: 'file',
-        accept: '.xlsx, .xls',
-        multiple: false,
-        showUploadList: false,
-        beforeUpload: (file) => {
-            const isExcel = file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
-                file.type === 'application/vnd.ms-excel' ||
-                file.name.toLowerCase().endsWith('.xlsx') ||
-                file.name.toLowerCase().endsWith('.xls');
-
-            if (!isExcel) {
-                message.error('엑셀 파일만 업로드 가능합니다.');
-                return Upload.LIST_IGNORE;
-            }
-
-            commonManage.excelFileRead(file).then(v => {
-                let copyData = {...info}
-                copyData[listType] = v;
-                setInfo(copyData);
-            })
-            return false;
-        },
+    const onCChange = (value: string, e: any) => {
+        setInfo(v => {
+            return {...v, managerAdminId: e.adminId, managerAdminName: e.name}
+        })
     };
 
+    function moveRouter(param) {
 
-    /**
-     * @description 테이블 우측상단 관련 기본 유틸버튼
-     */
-    const subTableUtil = <div style={{display: 'flex', alignItems: 'end'}}>
-        {/*@ts-ignore*/}
-        <Upload {...uploadProps} size={'small'} style={{marginLeft: 5}} showUploadList={false}>
-            <Button icon={<UploadOutlined/>} size={'small'}>엑셀 업로드</Button>
-        </Upload>
-        <Button type={'primary'} size={'small'} style={{marginLeft: 5}}
-                onClick={addRow}>
-            <SaveOutlined/>추가
-        </Button>
-        {/*@ts-ignored*/}
-        <Button type={'danger'} size={'small'} style={{marginLeft: 5,}} onClick={deleteList}>
-            <CopyOutlined/>삭제
-        </Button>
-    </div>
+        switch (param) {
+            case '국내' :
+                // router.push('/agency_write')
+                break;
+            case '해외' :
+                // router.push('/code_overseas_agency_write')
+                break;
+        }
+        // router.push()
+    }
 
-
-    return <>
+    return <Spin spinning={loading} tip={'견적의뢰 등록중...'}>
+        <SearchInfoModal info={info} setInfo={setInfo}
+                         open={isModalOpen}
+                         gridRef={gridRef}
+                         setValidate={setValidate}
+                         setIsModalOpen={setIsModalOpen}
+                        compProps={<div>
+                            <Button size={'small'} style={{marginRight: 5}} onClick={() => moveRouter('국내')} id={'국내'}>국내생성</Button>
+                            <Button size={'small'} style={{marginRight: 50}} onClick={() => moveRouter('해외')} id={'해외'}>해외생성</Button>
+                        </div>}
+        />
         <LayoutComponent>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`,
-                height: '100vh',
+                gridTemplateRows: `${mini ? 460 : 65}px calc(100vh - ${mini ? 515 : 120}px)`,
                 columnGap: 5
             }}>
-                {/*@ts-ignore*/}
-                <SearchInfoModal info={info} setInfo={setInfo}
-                                 open={isModalOpen}
-                                 setIsModalOpen={setIsModalOpen}/>
 
-                <MainCard title={'견적의뢰 작성'} list={[
-                    {name: '저장', func: saveFunc, type: 'primary'},
-                    {name: '초기화', func: clearAll, type: 'danger'}
+            <MainCard title={'견적의뢰 작성'} list={[
+                    {
+                        name: '저장',
+                        func: saveFunc,
+                        type: 'primary',
+                        title: '입력한 견적의뢰 내용을 저장합니다.',
+                        prefix: <SaveOutlined/>
+                    },
+                    {
+                        name: '초기화',
+                        func: clearAll,
+                        type: 'danger',
+                        title: '필드에 입력한 모든 정보들을 초기화 합니다.',
+                        prefix: <ClearOutlined/>
+                    }
                 ]} mini={mini} setMini={setMini}>
 
 
                     {mini ? <div>
-                            <TopBoxCard title={'기본 정보'} grid={'1fr 0.6fr 0.6fr 1fr 1fr 1fr'}>
-                                {datePickerForm({title: '작성일', id: 'writtenDate', disabled: true, onChange : onChange, data : info})}
-                                {inputForm({title: '작성자', id: 'adminName', disabled: true, onChange : onChange, data : info})}
-                                {inputForm({title: '담당자', id: 'managerAdminName', onChange : onChange, data : info})}
+                            <TopBoxCard title={''} grid={'1fr 0.6fr 150px 1fr 1fr 1fr'}>
+                                {datePickerForm({
+                                    title: '작성일',
+                                    id: 'writtenDate',
+                                    disabled: true,
+                                    onChange: onChange,
+                                    data: info
+                                })}
+                                {inputForm({title: '작성자', id: 'createBy', disabled: true, onChange: onChange, data: info})}
+                                <div>
+                                    <div>담당자</div>
+                                    <Select style={{width: '100%'}} size={'small'}
+                                            showSearch
+                                            value={info['managerAdminId']}
+                                            placeholder="Select a person"
+                                            optionFilterProp="label"
+                                            onChange={onCChange}
+                                            options={options}
+                                    />
+                                </div>
+                                {/*{inputForm({title: '담당자', id: 'managerAdminName', onChange: onChange, data: info, placeHolder: '담당자를 입력해주세요'})}*/}
                                 {inputForm({
                                     title: 'INQUIRY NO.',
                                     id: 'documentNumberFull',
+                                    onChange: onChange,
+                                    suffix:
+                                        <PlusSquareOutlined style={{cursor: 'pointer'}} onClick={
+                                            async (e) => {
+                                                e.stopPropagation();
+                                                if (!info['agencyCode']) {
+                                                    return message.warn('매입처코드를 선택해주세요')
+                                                }
+                                                const returnDocumentNumb = await checkInquiryNo({
+                                                    data: {
+                                                        agencyCode: info['agencyCode'],
+                                                        type: ''
+                                                    }
+                                                })
+                                                onChange({target: {id: 'documentNumberFull', value: returnDocumentNumb}})
+                                            }
+                                        }/>,
+                                    data: info,
                                     disabled: true,
-                                    placeholder: ''
-                                    , onChange : onChange, data : info
+                                    validate: validate['documentNumberFull']
                                 })}
-                                {inputForm({title: 'RFQ NO.', id: 'rfqNo', onChange : onChange, data : info})}
-                                {inputForm({title: '프로젝트 제목', id: 'projectTitle', onChange : onChange, data : info})}
+                                {inputForm({
+                                    title: 'RFQ NO.',
+                                    id: 'rfqNo',
+                                    onChange: onChange,
+                                    data: info
+
+                                })}
+                                {inputForm({
+                                    title: 'PROJECT NAME',
+                                    id: 'projectTitle',
+                                    onChange: onChange,
+                                    data: info
+
+                                })}
                             </TopBoxCard>
                             <div style={{
                                 display: 'grid',
-                                gridTemplateColumns: "150px 200px 1fr 1fr 300px",
-                                gap: 10,
-                                marginTop: 10
+                                gridTemplateColumns: "150px 160px 1fr 1fr 220px",
                             }}>
-                                <BoxCard title={'매입처 정보'}>
+                                <BoxCard title={'매입처 정보'} tooltip={tooltipInfo('agency')}>
                                     {inputForm({
                                         title: '매입처코드',
                                         id: 'agencyCode',
-                                        suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
-                                            (e) => {
-                                                e.stopPropagation();
-                                                openModal('agencyCode');
-                                            }
-                                        }/>, onChange : onChange, data : info
+                                        suffix: <FileSearchOutlined style={{cursor: 'pointer'}}
+                                                                    onClick={
+                                                                        (e) => {
+                                                                            e.stopPropagation();
+                                                                            openModal('agencyCode');
+                                                                        }
+                                                                    }/>,
+                                        onChange: onChange,
+                                        handleKeyPress: handleKeyPress,
+                                        data: info,
+                                        validate: validate['agencyCode']
                                     })}
-                                    {inputForm({title: '매입처명', id: 'agencyName', disabled: true, onChange : onChange, data : info})}
-                                    {inputForm({title: '매입처담당자', id: 'agencyManagerName', disabled: true, onChange : onChange, data : info})}
-                                    {datePickerForm({title: '마감일자(예상)', id: 'dueDate', onChange : onChange, data : info})}
+                                    {inputForm({
+                                        title: '매입처명',
+                                        id: 'agencyName',
+                                        disabled: true,
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: '매입처담당자',
+                                        id: 'agencyManagerName',
+                                        disabled: true,
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                    {datePickerForm({title: '마감일자(예상)', id: 'dueDate', onChange: onChange, data: info})}
                                 </BoxCard>
-                                <BoxCard title={'고객사 정보'}>
+                                <BoxCard title={'고객사 정보'} tooltip={tooltipInfo('customer')}>
                                     {inputForm({
                                         title: '고객사명',
                                         id: 'customerName',
-                                        suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
-                                            (e) => {
-                                                e.stopPropagation();
-                                                openModal('customerName');
-                                            }
-                                        }/>, onChange : onChange, data : info
+                                        suffix: <FileSearchOutlined style={{cursor: 'pointer'}}
+                                                                    onClick={
+                                                                        (e) => {
+                                                                            e.stopPropagation();
+                                                                            openModal('customerName');
+                                                                        }
+                                                                    }/>,
+                                        onChange: onChange,
+                                        handleKeyPress: handleKeyPress,
+                                        data: info
                                     })}
-                                    {inputForm({title: '담당자명', id: 'managerName', onChange : onChange, data : info})}
-                                    {inputForm({title: '전화번호', id: 'phoneNumber', onChange : onChange, data : info})}
-                                    {inputForm({title: '팩스', id: 'faxNumber', onChange : onChange, data : info})}
-                                    {inputForm({title: '이메일', id: 'customerManagerEmail', onChange : onChange, data : info})}
+                                    {inputForm({
+                                        title: '담당자명',
+                                        id: 'managerName',
+                                        onChange: onChange,
+                                        data: info,
+                                        disabled: true
+                                    })}
+                                    {inputForm({
+                                        title: '전화번호',
+                                        id: 'phoneNumber',
+                                        onChange: onChange,
+                                        data: info,
+                                        disabled: true
+                                    })}
+                                    {inputForm({
+                                        title: '팩스',
+                                        id: 'faxNumber',
+                                        onChange: onChange,
+                                        data: info,
+                                        disabled: true
+                                    })}
+                                    {inputForm({
+                                        title: '이메일',
+                                        id: 'customerManagerEmail',
+                                        onChange: onChange,
+                                        data: info,
+                                        disabled: true
+                                    })}
                                 </BoxCard>
 
-                                <BoxCard title={'Maker 정보'}>
+                                <BoxCard title={'Maker 정보'} tooltip={tooltipInfo('maker')}>
                                     {inputForm({
                                         title: 'MAKER',
                                         id: 'maker',
-                                        suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
-                                            (e) => {
-                                                e.stopPropagation();
-                                                openModal('maker');
-                                            }
-                                        }/>, onChange : onChange, data : info
+                                        suffix: <FileSearchOutlined style={{cursor: 'pointer'}}
+                                                                    onClick={
+                                                                        (e) => {
+                                                                            e.stopPropagation();
+                                                                            openModal('maker');
+                                                                        }
+                                                                    }/>,
+                                        onChange: onChange,
+                                        handleKeyPress: handleKeyPress,
+                                        data: info
                                     })}
-                                    {inputForm({title: 'ITEM', id: 'item', onChange : onChange, data : info})}
-                                    {textAreaForm({title: '지시사항', id: 'instructions', onChange : onChange, data : info})}
+                                    {inputForm({
+                                        title: 'ITEM',
+                                        id: 'item',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                    {textAreaForm({
+                                        title: '지시사항',
+                                        id: 'instructions',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
                                 </BoxCard>
-                                <BoxCard title={'ETC'}>
-                                    {inputForm({title: 'End User', id: 'endUser', onChange : onChange, data : info})}
-                                    {textAreaForm({title: '비고란', rows: 7, id: 'remarks', onChange : onChange, data : info})}
+                                <BoxCard title={'ETC'} tooltip={tooltipInfo('etc')}>
+                                    {inputForm({
+                                        title: 'End User',
+                                        id: 'endUser',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                    {textAreaForm({
+                                        title: '비고란',
+                                        rows: 7,
+                                        id: 'remarks',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
                                 </BoxCard>
-                                <BoxCard title={'드라이브 목록'}>
+                                <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}  disabled={!userInfo['microsoftId']}>
                                     {/*@ts-ignored*/}
                                     <div style={{overFlowY: "auto", maxHeight: 300}}>
-                                        <DriveUploadComp infoFileInit={[]} fileRef={fileRef}/>
+                                        <div style={{width: 100, float: 'right'}}>
+                                            {selectBoxForm({
+                                                title: '', id: 'uploadType', onChange: onChange, data: info, list: [
+                                                    {value: 0, label: '요청자료'},
+                                                    {value: 1, label: '첨부파일'},
+                                                    {value: 2, label: '업체회신자료'}
+                                                ]
+                                            })}
+                                        </div>
+                                        <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
+                                                         numb={info['uploadType']}/>
                                     </div>
                                 </BoxCard>
                             </div>
@@ -309,11 +422,11 @@ export default function rqfWrite({dataInfo}) {
                     columns={subRfqWriteColumn}
                     onGridReady={onGridReady}
                     type={'write'}
-                    funcButtons={subTableUtil}
+                    funcButtons={['upload', 'add', 'delete', 'print']}
                 />
             </div>
         </LayoutComponent>
-    </>
+    </Spin>
 }
 
 // @ts-ignored
@@ -330,9 +443,19 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
         };
     }
 
+
     store.dispatch(setUserInfo(userInfo));
+    const result = await getData.post('admin/getAdminList', {
+        "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
+        "searchAuthority": null,    // 1: 일반, 0: 관리자
+        "page": 1,
+        "limit": -1
+    });
+    const list = result?.data?.entity?.adminList;
     if (query?.data) {
         const data = JSON.parse(decodeURIComponent(query.data));
-        return {props: {dataInfo: data}}
+        return {props: {dataInfo: data ?? {}, managerList: list ?? []}}
     }
+
+    return {props: {managerList: list}}
 })

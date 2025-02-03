@@ -30,8 +30,8 @@ export default function OrderListModal({isModalOpen, setIsModalOpen, getRows}) {
     };
 
 
-    return <Modal title="발주서 조회" width={1000} footer={null} open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
-        <div style={{height: 600}}>
+    return <Modal title="견적서 조회" width={1000}  footer={null} open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+        <div style={{display : 'grid', height: 500,gridTemplateRows : 'auto 50px'}}>
             <TableGrid
                 gridRef={gridRef}
                 onGridReady={onGridReady}
@@ -45,7 +45,7 @@ export default function OrderListModal({isModalOpen, setIsModalOpen, getRows}) {
                 funcButtons={null}
             />
         </div>
-        <div style={{textAlign: 'right'}}>
+        <div style={{textAlign: 'right', paddingTop : 10}}>
             <Button type={'primary'} onClick={() => {
                 getRows(gridRef);
                 handleCancel();

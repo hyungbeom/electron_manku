@@ -1,6 +1,8 @@
-import {BoxCard, datePickerForm, inputForm, TopBoxCard} from "@/utils/commonForm";
+import {BoxCard, datePickerForm, inputForm, selectBoxForm, TopBoxCard} from "@/utils/commonForm";
 import React from "react";
 import {commonManage} from "@/utils/commonManage";
+import AddressSearch from "@/component/AddressSearch";
+import {DownloadOutlined} from "@ant-design/icons";
 
 export default function ETC({info, setInfo}) {
 
@@ -9,10 +11,22 @@ export default function ETC({info, setInfo}) {
         commonManage.onChange(e, setInfo)
     }
 
+    const handleAddressComplete = (address, zipCode) => {
+        setInfo(v=>{
+            return {...v, recipientAddress : address, recipientPostalCode : zipCode}
+        })
+    };
+
     return <>
         <TopBoxCard title={'기본 정보'} grid={'1fr 1fr 1fr 1fr 1fr 1fr'}>
             {datePickerForm({title: '출고일자', id: 'deliveryDate', onChange: onChange, data: info})}
-            {inputForm({title: '연결 INQUIRY NO.', id: 'connectInquiryNo', onChange: onChange, data: info})}
+            {inputForm({
+                title: '연결 INQUIRY No.',
+                id: 'connectInquiryNo',
+                suffix: <DownloadOutlined style={{cursor: 'pointer'}}/>,
+                onChange: onChange, data: info,
+                // handleKeyPress: handleKeyPress
+            })}
             {inputForm({title: '고객사명', id: 'customerName', onChange: onChange, data: info})}
         </TopBoxCard>
 
@@ -30,13 +44,24 @@ export default function ETC({info, setInfo}) {
                     id: 'recipientAddress',
                     placeholder: '매입처 당담자 입력 필요',
                     onChange: onChange,
-                    data: info
+                    data: info,
+                    suffix: <AddressSearch onComplete={handleAddressComplete}/>
                 })}
             </BoxCard>
             <BoxCard title={'화물정보'}>
                 {inputForm({title: '구분', id: 'classification', onChange: onChange, data: info})}
-                {inputForm({title: '결제방식', id: 'paymentMethod', onChange: onChange, data: info})}
-                {inputForm({title: '확인여부', id: 'isConfirm', onChange: onChange, data: info})}
+                {selectBoxForm({
+                    title: '결제방식', id: 'paymentMethod', list: [
+                        {value: '착불', label: '착불'},
+                        {value: '후불', label: '후불'},
+                    ], onChange: onChange, data: info
+                })}
+                {selectBoxForm({
+                    title: '유효기간', id: 'isConfirm', list: [
+                        {value: 'X', label: 'X'},
+                        {value: 'O', label: 'O'},
+                    ], onChange: onChange, data: info
+                })}
 
             </BoxCard>
 

@@ -122,7 +122,7 @@ const CodeErpUserManage = ({dataList}) => {
             copyData['writtenDate'] = moment(saveInfo['writtenDate']).format('YYYY-MM-DD');
 
             await getData.post('estimate/addEstimateRequest', copyData).then(v => {
-                console.log(v, ':::::')
+
             });
         }
 
@@ -201,9 +201,7 @@ const CodeErpUserManage = ({dataList}) => {
                                  pageInfo={paginationInfo}
                                  setPaginationInfo={setPaginationInfo}
 
-                                 subContent={<><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
-                                     <CopyOutlined/>복사
-                                 </Button>
+                                 subContent={<>
                                      {/*@ts-ignored*/}
                                      <Button type={'danger'} size={'small'} style={{fontSize: 11}} onClick={deleteList}>
                                          <CopyOutlined/>삭제

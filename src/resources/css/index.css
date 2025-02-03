@@ -156,3 +156,150 @@ html, body {
     border: 1px solid #ddd; /* 테두리 추가 */
     padding: 5px;
 }
+
+.custom-textarea .ant-input {
+    font-size: 12px !important;
+}
+
+.custom-datepicker .ant-picker-input > input {
+    font-size: 12px; /* 입력 필드의 글씨 크기 */
+}
+
+.custom-select .ant-select-selector {
+    font-size: 11px; /* 글씨 크기 */
+    /*display: flex;*/
+    /*align-items: center;*/
+    height: 8px;    /* 셀렉터 높이 */
+}
+
+.custom-select .ant-select-item {
+    font-size: 8px; /* 드롭다운 항목 글씨 크기 */
+}
+
+.custom-rangepicker .ant-picker {
+    font-size: 12px; /* 글씨 크기 */
+    height: 32px;    /* 입력 필드 높이 */
+}
+
+.custom-rangepicker .ant-picker-input > input {
+    font-size: 12px; /* 입력 텍스트 크기 */
+}
+
+
+.custom-menu .ant-menu-overflow-item .ant-menu-submenu .ant-menu-submenu-horizontal{
+    padding: 0 5px !important; /* 좌우 패딩을 10px로 설정 */
+}
+
+.custom-menu .ant-menu-submenu-popup {
+    top: 0 !important; /* 상단 위치 고정 */
+    transform: none !important; /* 기본 transform 제거 */
+    margin-top: -4px !important; /* 필요 시 간격 조정 */
+}
+
+/*++++++++++++/*/
+
+
+.expandable-section {
+    height: 0;
+    transition: height 0.5s ease; /* 부드럽게 펼쳐지는 애니메이션 */
+
+    /*border-top: 0.5px solid lightGray;*/
+}
+
+.expandable-section.expanded {
+    height: 200px; /* 섹션이 펼쳐질 때의 최종 높이 */
+}
+
+.menu-item:hover {
+    color: #173F95; /* hover 시 텍스트 색상을 검정으로 변경 */
+}
+
+
+/*=====================================*/
+
+
+/* 스크롤바 커스터마이징 */
+.content {
+    height: 300px;
+    overflow-y: scroll; /* 세로 스크롤 활성화 */
+    padding: 20px;
+    background-color: #fafafa;
+    border: 1px solid #ddd;
+}
+
+/* Webkit 기반 브라우저 (크롬, 엣지, 사파리) */
+::-webkit-scrollbar {
+    width: 8px; /* 스크롤바 너비 */
+    height: 8px; /* 가로 스크롤바 높이 */
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #71d1df; /* 막대 색상 */
+    border-radius: 10px; /* 막대 둥근 모서리 */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #71d1df; /* hover 시 색상 */
+}
+
+::-webkit-scrollbar-track {
+    background-color: #f0f0f0; /* 트랙 배경 색상 */
+    border-radius: 10px;
+}
+
+/* Firefox */
+body {
+    scrollbar-width: thin; /* 스크롤바 두께: thin, auto */
+    scrollbar-color: #888 #f0f0f0; /* 막대 색상과 배경 색상 */
+}
+
+
+.gradient-arrow {
+    font-size: 1rem; /* 화살표 크기 */
+    font-weight: bold;
+    padding-top: 0;
+    font-family: Arial, sans-serif;
+    color: #71d1df; /* 화살표 색상 */
+    display: inline-block; /* transform 처리를 위해 필요 */
+    animation: move-down 0.6s infinite linear; /* 아래로 이동하는 애니메이션 */
+}
+
+/* 애니메이션 키프레임 */
+@keyframes move-down {
+    0% {
+        transform: translateY(0); /* 초기 위치와 90도 회전 */
+    }
+    100% {
+        transform: translateY(15px); /* 아래로 이동하면서 90도 유지 */
+    }
+}
+
+.ant-menu{
+    background-color: red;
+}
+
+
+
+
+
+
+
+/*============================================================*/
+
+
+/* 기본 상태 */
+.box {
+    height: 0;
+    overflow: hidden;
+    transition: height 0.3s ease; /* 부드러운 애니메이션 */
+}
+
+/* 펼쳐지는 상태 */
+.box.expanding {
+    height: 160px
+}
+
+/* 닫히는 상태 */
+.box.collapsing {
+    height: 0;
+}

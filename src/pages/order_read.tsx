@@ -11,11 +11,13 @@ import {setUserInfo} from "@/store/user/userSlice";
 import {getData} from "@/manage/function/api";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
-import {deleteOrder, searchOrder} from "@/utils/api/mainApi";
+import {deleteOrder, searchEstimate, searchOrder} from "@/utils/api/mainApi";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import _ from "lodash";
 import {BoxCard, inputForm, MainCard, rangePickerForm} from "@/utils/commonForm";
 import {useRouter} from "next/router";
+import ReceiveComponent from "@/component/ReceiveComponent";
+import Spin from "antd/lib/spin";
 
 
 export default function OrderRead({dataInfo}) {
@@ -27,6 +29,7 @@ export default function OrderRead({dataInfo}) {
     const [info, setInfo] = useState(copyInit);
     const [mini, setMini] = useState(true);
 
+    const [loading, setLoading] = useState(false);
     const onGridReady = (params) => {
         gridRef.current = params.api;
         params.api.applyTransaction({add: dataInfo ? dataInfo : []});
@@ -35,7 +38,7 @@ export default function OrderRead({dataInfo}) {
 
     function handleKeyPress(e) {
         if (e.key === 'Enter') {
-            searchInfo()
+            searchInfo(true)
         }
     }
 
@@ -44,62 +47,58 @@ export default function OrderRead({dataInfo}) {
     }
 
 
-    async function searchInfo() {
+    async function searchInfo(e) {
         const copyData: any = {...info}
-
-        const result = await getData.post('order/getOrderList',
-            {...copyData, "page": 1, "limit": -1});
-        gridManage.resetData(gridRef, result?.data?.entity?.orderList);
+        if(e) {
+            setLoading(true)
+            const result = await getData.post('order/getOrderList',
+                {...copyData, "page": 1, "limit": -1});
+            gridManage.resetData(gridRef, result?.data?.entity?.orderList);
+            setLoading(false)
+        }
+        setLoading(false)
     }
+
+
 
     async function deleteList() {
         if (gridRef.current.getSelectedRows().length < 1) {
             return message.error('삭제할 데이터를 선택해주세요.')
         }
 
-        const fieldMappings = {
+
+        const deleteList = gridManage.getFieldDeleteList(gridRef, {
             orderId: 'orderId',
             orderDetailId: 'orderDetailId'
-        };
-
-        const deleteList = gridManage.getFieldDeleteList(gridRef, fieldMappings);
+        });
+        setLoading(true);
         await deleteOrder({data: {deleteList: deleteList}, returnFunc: searchInfo});
 
     }
 
-    const downloadExcel = async () => {
-        gridManage.exportSelectedRowsToExcel(gridRef, '발주서_목록')
-    };
-
-    async function moveRouter() {
-        router.push('/order_write')
+    function clearAll() {
+        setInfo(copyInit);
+        gridRef.current.deselectAll();
     }
 
-    /**
-     * @description 테이블 우측상단 관련 기본 유틸버튼
-     */
-    const subTableUtil = <div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
-        <CopyOutlined/>복사
-    </Button>
-        {/*@ts-ignored*/}
-        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
-                onClick={deleteList}>
-            <CopyOutlined/>삭제
-        </Button>
-        <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
-                onClick={downloadExcel}>
-            <FileExcelOutlined/>출력
-        </Button></div>
+    async function moveRouter() {
+        window.open(`/order_write`, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
 
-    return <>
+    }
+
+
+    return <Spin spinning={loading} tip={'견적서 조회중...'}>
+        <ReceiveComponent searchInfo={searchInfo}/>
         <LayoutComponent>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '380px' : '65px'} calc(100vh - ${mini ? 435 : 120}px)`,
+                gridTemplateRows: `${mini ? '250px' : '65px'} calc(100vh - ${mini ? 345 : 160}px)`,
                 columnGap: 5
             }}>
-                <MainCard title={'통합조회'}
-                          list={[{name: '조회', func: searchInfo, type: 'primary'}, {name: '신규생성', func: moveRouter}]}
+                <MainCard title={'발주서 조회'}
+                          list={[{name: '조회', func: searchInfo, type: 'primary'},
+                              {name: '초기화', func: clearAll, type: 'danger'},
+                              {name: '신규생성', func: moveRouter}]}
                           mini={mini} setMini={setMini}>
 
                     {mini ? <div
@@ -160,16 +159,19 @@ export default function OrderRead({dataInfo}) {
                         </div>
                         : <></>}
                 </MainCard>
-                <TableGrid
+                {/*@ts-ignored*/}
+                <TableGrid deleteComp={<Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}} onClick={deleteList}>
+                    <CopyOutlined/>삭제
+                </Button>}
                     gridRef={gridRef}
                     onGridReady={onGridReady}
                     columns={tableOrderReadColumns}
-                    funcButtons={subTableUtil}
+                    funcButtons={['print']}
                 />
 
             </div>
         </LayoutComponent>
-    </>
+    </Spin>
 }
 
 
@@ -188,7 +190,7 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
         store.dispatch(setUserInfo(userInfo));
         const result = await searchOrder({data: orderReadInitial})
         return {
-            props: {dataInfo: result ? result : null}
+            props: {dataInfo: result ?? null}
         }
     }
 })

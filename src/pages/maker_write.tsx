@@ -12,8 +12,9 @@ import message from "antd/lib/message";
 import {makerWriteInitial,} from "@/utils/initialList";
 import Input from "antd/lib/input/Input";
 import TextArea from "antd/lib/input/TextArea";
+import {commonManage} from "@/utils/commonManage";
 
-export default function makerRead() {
+export default function makerWrite({dataInfo}) {
 
     const [info, setInfo] = useState(makerWriteInitial);
 
@@ -34,14 +35,10 @@ export default function makerRead() {
     //     setInfo(copyData);
     // }, [dataList, router])
 
+
+
     function onChange(e) {
-
-        let bowl = {}
-        bowl[e.target.id] = e.target.value;
-
-        setInfo(v => {
-            return {...v, ...bowl}
-        })
+        commonManage.onChange(e, setInfo)
     }
 
     async function saveFunc() {
@@ -150,37 +147,27 @@ export default function makerRead() {
 
 // @ts-ignore
 export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
+    const {query} = ctx;
 
 
-    let param = {}
 
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
-    const result = await getData.post('maker/getMakerList', {
-        "searchType": "1",      // 1: 코드, 2: 상호명, 3: MAKER
-        "searchText": "",
-        "page": 1,
-        "limit": -1
-    });
 
-    console.log(result?.data?.entity,'result?.data?.entity:')
 
-    if (userInfo) {
-        store.dispatch(setUserInfo(userInfo));
-    }
     if (codeInfo !== 1) {
-        param = {
+        return {
             redirect: {
-                destination: '/', // 리다이렉트할 대상 페이지
-                permanent: false, // true로 설정하면 301 영구 리다이렉트, false면 302 임시 리다이렉트
+                destination: '/',
+                permanent: false,
             },
         };
-    } else {
-        // result?.data?.entity?.estimateRequestList
-        param = {
-            props: {dataList: result?.data?.entity}
-        }
+    }
+    store.dispatch(setUserInfo(userInfo));
+
+    if (query?.data) {
+        const data = JSON.parse(decodeURIComponent(query.data));
+        return {props: {dataInfo: data}}
     }
 
-    return param
 })

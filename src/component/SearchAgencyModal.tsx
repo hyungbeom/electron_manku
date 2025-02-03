@@ -6,17 +6,22 @@ import React, {useEffect, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import {tableTheme} from "@/utils/common";
 import {ModalInitList, modalList} from "@/utils/initialList";
-import moment from "moment";
 import useEventListener from "@/utils/common/function/UseEventListener";
 import message from "antd/lib/message";
 import {checkInquiryNo} from "@/utils/api/mainApi";
+import Drawer from "antd/lib/drawer";
+import {useRouter} from "next/router";
+import {commonManage, gridManage} from "@/utils/commonManage";
 
-export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen}) {
+
+export default function SearchInfoModal({info, setInfo, open, setIsModalOpen, setValidate = null, type='', gridRef, compProps}:any) {
+    const router = useRouter()
     const [code, setCode] = useState();
     const [list, setList] = useState([])
-    const [page, setPage] = useState({x: null, y: null})
-    const [openCheck, setOpenCheck] = useState('')
-    const [windowOpenKey, setWindowOpenKey] = useState({key: '', value: '', router: '', deleteApi: ''})
+    const [page, setPage] = useState({x: null, y: null});
+    const [openCheck, setOpenCheck] = useState('');
+    const [windowOpenKey, setWindowOpenKey] = useState({key: '', value: '', router: '', deleteApi: ''});
+    const [opens, setOpen] = useState(false);
 
     const ref = useRef(null);
 
@@ -41,13 +46,9 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
         }
     }, [open, info])
 
-
     useEffect(() => {
         setCode(info);
     }, [info])
-
-    // console.log(code, 'modal code~')
-
 
     async function searchFunc(v, text) {
         try {
@@ -107,6 +108,7 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
                 router: `/code_domestic_customer_update?customerCode=${e?.data?.customerCode}`,
                 deleteApi: 'customer/deleteCustomer'
             })
+
         else if (e.data.overseasCustomerId)
             setWindowOpenKey({
                 key: 'overseasCustomerId',
@@ -114,6 +116,7 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
                 router: `/code_overseas_customer_update?customerCode=${e?.data?.customerCode}`,
                 deleteApi: 'deleteOverseasCustomer'
             })
+
         else if (e.data.agencyId)
             setWindowOpenKey({
                 key: 'agencyId',
@@ -121,6 +124,7 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
                 router: `/code_domestic_agency_update?agencyCode=${e?.data?.agencyCode}`,
                 deleteApi: 'agency/deleteAgency'
             })
+
         else if (e.data.overseasAgencyId)
             setWindowOpenKey({
                 key: 'overseasAgencyId',
@@ -154,13 +158,20 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
 
     useEventListener('contextmenu', (e: any) => {
         e.preventDefault()
-    },typeof window !== 'undefined' ? document : null)
+    }, typeof window !== 'undefined' ? document : null)
 
     useEventListener('click', (e: any) => {
+        setPage({x: null, y: null})
+    }, typeof window !== 'undefined' ? document : null)
 
-        setPage({x : null, y : null})
-    },typeof window !== 'undefined' ? document : null )
 
+    const showDrawer = () => {
+        setOpen(true);
+    };
+
+    const onClose = () => {
+        setOpen(false);
+    };
 
 
     return <>
@@ -193,7 +204,12 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
         <Modal
             // @ts-ignored
             id={openCheck}
-            title={modalList[openCheck]?.title}
+            title={<div style={{display: 'flex', justifyContent: 'space-between'}}>
+                <span>
+                {modalList[openCheck]?.title}
+            </span>
+                {compProps}
+            </div>}
             onCancel={() => setIsModalOpen(ModalInitList)}
             open={!!openCheck}
             width={'60vw'}
@@ -237,23 +253,32 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
 
                                          setInfo(v => {
                                              return {
-                                                 ...v, ...e.data, maker: e.data.makerName ,connectInquiryNo: e.data.documentNumberFull,
+                                                 ...v, ...e.data,
+                                                 maker: e.data.makerName,
+                                                 connectInquiryNo: e.data.documentNumberFull,
                                              }
                                          })
                                          break;
                                      default :
-                                         const returnDocumentNumb = await checkInquiryNo({data: {agencyCode: info['agencyCode']}})
-                                         setInfo(v => {
-                                             return {
-                                                 ...v,
-                                                 documentNumberFull : returnDocumentNumb,
-                                                 agencyManagerId : e.data.agencyId,
-                                                 agencyCode : e.data.agencyCode,
-                                                 agencyName : e.data.agencyName,
-                                                 agencyManagerName : e.data.managerName,
-                                                 agencyManagerPhoneNumber : e.data.phoneNumber
-                                             }
+
+                                         await checkInquiryNo({data: {agencyCode: e.data.agencyCode, type : type}}).then(data => {
+                                             setInfo(v => {
+                                                 return {
+                                                     ...v,
+                                                     documentNumberFull:  data,
+                                                     agencyManagerId: e.data.agencyId,
+                                                     agencyCode: e.data.agencyCode,
+                                                     agencyName: e.data.agencyName,
+                                                     agencyManagerName: e.data.managerName,
+                                                     agencyManagerPhoneNumber: e.data.phoneNumber
+                                                 }
+                                             });
+                                             gridManage.updateAllFields(gridRef, 'currency', commonManage.changeCurr(e.data.agencyCode))
+                                             setValidate(v => {
+                                                 return {...v, agencyCode: true, documentNumberFull: true}
+                                             })
                                          })
+
                                          break;
                                  }
                                  setIsModalOpen(ModalInitList);
@@ -267,5 +292,16 @@ export default function SearchAgencyModal({info, setInfo, open, setIsModalOpen})
                 />
             </div>
         </Modal>
+        <Drawer
+            title="Basic Drawer"
+            placement={'top'}
+            closable={false}
+            onClose={onClose}
+            open={opens}
+        >
+            <p>Some contents...</p>
+            <p>Some contents...</p>
+            <p>Some contents...</p>
+        </Drawer>
     </>
 }

@@ -1,21 +1,8 @@
 import React, {useRef, useState} from "react";
-import Input from "antd/lib/input/Input";
 import LayoutComponent from "@/component/LayoutComponent";
-import Card from "antd/lib/card/Card";
-import TextArea from "antd/lib/input/TextArea";
-import {
-    CopyOutlined,
-    DownCircleFilled,
-    DownloadOutlined,
-    EditOutlined,
-    FileSearchOutlined,
-    SaveOutlined,
-    UpCircleFilled
-} from "@ant-design/icons";
+import {FileSearchOutlined} from "@ant-design/icons";
 import {tableEstimateWriteColumns} from "@/utils/columnList";
-import DatePicker from "antd/lib/date-picker";
-import {estimateDetailUnit, ModalInitList} from "@/utils/initialList";
-import moment from "moment";
+import {ModalInitList} from "@/utils/initialList";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
 import {getData} from "@/manage/function/api";
@@ -23,40 +10,38 @@ import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
-import Select from "antd/lib/select";
 import TableGrid from "@/component/tableGrid";
 import {useRouter} from "next/router";
 import SearchInfoModal from "@/component/SearchAgencyModal";
-import PrintEstimate from "@/component/printEstimate";
 import {
     BoxCard,
     datePickerForm,
     inputForm,
+    inputNumberForm,
     MainCard,
     selectBoxForm,
     textAreaForm,
     TopBoxCard
 } from "@/utils/commonForm";
-import {commonManage, gridManage} from "@/utils/commonManage";
+import {commonManage, fileManage, gridManage} from "@/utils/commonManage";
 import {findCodeInfo, findDocumentInfo} from "@/utils/api/commonApi";
-import {updateEstimate} from "@/utils/api/mainApi";
+import {getAttachmentFileList, updateEstimate} from "@/utils/api/mainApi";
 import _ from "lodash";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
+import Spin from "antd/lib/spin";
+import Modal from "antd/lib/modal/Modal";
+import EstimatePaper from "@/component/견적서/EstimatePaper";
 
 
 const listType = 'estimateDetailList'
 export default function estimate_update({dataInfo}) {
-    console.log(dataInfo,'dataInfo:')
+    const pdfRef = useRef(null);
     const fileRef = useRef(null);
     const gridRef = useRef(null);
     const router = useRouter();
 
-
-    const copyUnitInit = _.cloneDeep(estimateDetailUnit)
-
     const infoInit = dataInfo?.estimateDetail
-    const infoFileInit = dataInfo?.attachmentFileList
-
+    const infoInitFile = dataInfo?.attachmentFileList
 
     const userInfo = useAppSelector((state) => state.user);
 
@@ -64,9 +49,10 @@ export default function estimate_update({dataInfo}) {
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
     const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
-
-
-
+    const [validate, setValidate] = useState({agencyCode: true});
+    const [fileList, setFileList] = useState(fileManage.getFormatFiles(infoInitFile));
+    const [originFileList, setOriginFileList] = useState(infoInitFile);
+    const [loading, setLoading] = useState(false);
     const onGridReady = (params) => {
         gridRef.current = params.api;
         params.api.applyTransaction({add: dataInfo?.estimateDetail[listType]});
@@ -79,7 +65,7 @@ export default function estimate_update({dataInfo}) {
                 case 'agencyCode' :
                 case 'customerName' :
                 case 'maker' :
-                    await findCodeInfo(e, setInfo, openModal)
+                    await findCodeInfo(e, setInfo, openModal, 'ESTIMATE', setValidate)
                     break;
                 case 'connectDocumentNumberFull' :
                     await findDocumentInfo(e, setInfo)
@@ -94,11 +80,17 @@ export default function estimate_update({dataInfo}) {
     }
 
     function onChange(e) {
+        if (e.target.id === 'agencyCode') {
+            setValidate(v => {
+                return {...v, agencyCode: false}
+            })
+        }
         commonManage.onChange(e, setInfo)
     }
 
 
     async function saveFunc() {
+        gridRef.current.clearFocusedCell();
         const list = gridManage.getAllData(gridRef)
         if (!list.length) {
             return message.warn('하위 데이터 1개 이상이여야 합니다')
@@ -107,47 +99,33 @@ export default function estimate_update({dataInfo}) {
             return message.warn('매입처 코드가 누락되었습니다.')
         }
 
+        // setLoading(true)
+        const formData: any = new FormData();
 
+        commonManage.setInfoFormData(info, formData, listType, list)
+        commonManage.getUploadList(fileRef, formData);
+        commonManage.deleteUploadList(fileRef, formData, originFileList)
 
-        const formData:any = new FormData();
+        await updateEstimate({data: formData, returnFunc: returnFunc})
+    }
 
-        const handleIteration = () => {
-            for (const {key, value} of commonManage.commonCalc(info)) {
-                if (key !== listType) {
-                        formData.append(key, value);
+    async function returnFunc(e) {
+        console.log(e, 'e:')
+        if (e) {
+            await getAttachmentFileList({
+                data: {
+                    "relatedType": "ESTIMATE",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
+                    "relatedId": infoInit['estimateId']
                 }
-            }
-        };
-
-        handleIteration();
-
-        const copyData = {...info}
-
-
-        if (list.length) {
-            list.forEach((detail, index) => {
-                Object.keys(detail).forEach((key) => {
-                    if(!(key == 'orderDate' || key === 'orderProcessing'|| key === 'order') )
-                        formData.append(`${listType}[${index}].${key}`, detail[key]);
-                });
-            });
+            }).then(v => {
+                const list = fileManage.getFormatFiles(v);
+                setFileList(list)
+                setOriginFileList(list)
+                setLoading(false)
+            })
+        } else {
+            setLoading(false)
         }
-
-        const filesToSave = fileRef.current.fileList.map((item) => item.originFileObj).filter((file) => file instanceof File);
-
-        //새로 추가되는 파일
-        filesToSave.forEach((file, index) => {
-            formData.append(`attachmentFileList[${index}].attachmentFile`, file);
-            formData.append(`attachmentFileList[${index}].fileName`, file.name.replace(/\s+/g, ""));
-        });
-
-        //기존 기준 사라진 파일
-        const result = infoFileInit.filter(itemA => !fileRef.current.fileList.some(itemB => itemA.id === itemB.id));
-        result.map((v, idx) => {
-            formData.append(`deleteAttachementIdList[${idx}]`, v.id);
-        })
-
-        await updateEstimate({data: formData})
     }
 
     function copyPage() {
@@ -165,39 +143,60 @@ export default function estimate_update({dataInfo}) {
         gridManage.resetData(gridRef, list);
     }
 
-    function addRow() {
-        const newRow = {...copyUnitInit, "currency": commonManage.changeCurr(info['agencyCode'])};
-        gridRef.current.applyTransaction({add: [newRow]});
-    }
-
 
     async function printEstimate() {
+        const list = gridManage.getAllData(gridRef)
+        if (!list.length) {
+            return message.warn('하위 데이터 1개 이상이여야 합니다')
+        }
         setIsPrintModalOpen(true)
     }
 
+    async function getPdfFile() {
+        const pdf = await commonManage.getPdfCreate(pdfRef);
+        pdf.save(`${info.documentNumberFull}_견적서.pdf`);
+    }
 
-    /**
-     * @description 테이블 우측상단 관련 기본 유틸버튼
-     */
-    const subTableUtil = <div style={{display: 'flex', alignItems: 'end'}}>
-        <Button type={'primary'} size={'small'} style={{marginLeft: 5}}
-                onClick={addRow}>
-            <SaveOutlined/>추가
-        </Button>
-        {/*@ts-ignored*/}
-        <Button type={'danger'} size={'small'} style={{marginLeft: 5,}} onClick={deleteList}>
-            <CopyOutlined/>삭제
-        </Button>
-    </div>
+    function print(){
+        const printContents = pdfRef.current.innerHTML;
+        const originalContents = document.body.innerHTML;
+
+        document.body.innerHTML = printContents;
+
+        window.print();
+
+        document.body.innerHTML = originalContents;
+        location.reload();
+    }
+
+    function EstimateModal() {
+        return <Modal
+            title={<div style={{display: 'flex', justifyContent: 'space-between', padding: '0px 30px'}}>
+                <span>견적서 출력</span>
+                <span>
+                       <Button style={{fontSize: 11, marginRight: 10}} size={'small'} onClick={getPdfFile}>다운로드</Button>
+                       <Button style={{fontSize: 11}}  size={'small'} onClick={print}>인쇄</Button>
+                </span>
+            </div>}
+            onCancel={() => setIsPrintModalOpen(false)}
+            open={isPrintModalOpen}
+            width={1000}
+            footer={null}
+            onOk={() => setIsPrintModalOpen(false)}>
+            <EstimatePaper data={info} pdfRef={pdfRef} gridRef={gridRef}/>
+        </Modal>
+    }
 
 
-    return <>
+    return <Spin spinning={loading} tip={'견적의뢰 수정중...'}>
         {/*@ts-ignore*/}
-        <SearchInfoModal  info={info} setInfo={setInfo}
+        <SearchInfoModal info={info} setInfo={setInfo}
                          open={isModalOpen}
+                         type={'ESTIMATE'}
+                         gridRef={gridRef}
+                         setValidate={setValidate}
                          setIsModalOpen={setIsModalOpen}/>
-        <PrintEstimate data={info} isModalOpen={isPrintModalOpen} userInfo={userInfo}
-                       setIsModalOpen={setIsPrintModalOpen}/>
+        <EstimateModal/>
         <LayoutComponent>
             <div style={{
                 display: 'grid',
@@ -227,15 +226,9 @@ export default function estimate_update({dataInfo}) {
                                 id: 'documentNumberFull',
                                 placeholder: '폴더생성 규칙 유의',
                                 onChange: onChange,
-                                data: info
+                                data: info, disabled: true
                             })}
-                            {inputForm({
-                                placeholder: '폴더생성 규칙 유의',
-                                title: '연결 INQUIRY No.',
-                                id: 'connectDocumentNumberFull',
-                                suffix: <DownloadOutlined style={{cursor: 'pointer'}}/>,
-                                onChange: onChange, data: info
-                            })}
+
                             {inputForm({title: 'RFQ NO.', id: 'rfqNo', onChange: onChange, data: info})}
                             {inputForm({title: '프로젝트 제목', id: 'projectTitle', onChange: onChange, data: info})}
                         </TopBoxCard>
@@ -251,15 +244,31 @@ export default function estimate_update({dataInfo}) {
                                             e.stopPropagation();
                                             openModal('agencyCode');
                                         }
-                                    }/>, onChange: onChange, data: info
+                                    }/>,
+                                    onChange: onChange,
+                                    data: info,
+                                    handleKeyPress: handleKeyPress,
+                                    validate: validate['agencyCode']
                                 })}
-                                {inputForm({title: '매입처명', id: 'agencyName', onChange: onChange, data: info})}
-                                {inputForm({title: '담당자', id: 'agencyManagerName', onChange: onChange, data: info})}
+                                {inputForm({
+                                    title: '매입처명',
+                                    id: 'agencyName',
+                                    onChange: onChange,
+                                    data: info,
+                                    disabled: true
+                                })}
+                                {inputForm({
+                                    title: '담당자',
+                                    id: 'agencyManagerName',
+                                    onChange: onChange,
+                                    data: info,
+                                    disabled: true
+                                })}
                                 {inputForm({
                                     title: '연락처',
                                     id: 'agencyManagerPhoneNumber',
                                     onChange: onChange,
-                                    data: info
+                                    data: info, disabled: true
                                 })}
                             </BoxCard>
 
@@ -272,36 +281,72 @@ export default function estimate_update({dataInfo}) {
                                             e.stopPropagation();
                                             openModal('customerName');
                                         }
-                                    }/>, onChange: onChange, data: info
+                                    }/>, onChange: onChange, data: info, handleKeyPress: handleKeyPress
                                 })}
-                                {inputForm({title: '담당자', id: 'managerName', onChange: onChange, data: info})}
-                                {inputForm({title: '전화번호', id: 'phoneNumber', onChange: onChange, data: info})}
-                                {inputForm({title: '팩스', id: 'faxNumber', onChange: onChange, data: info})}
-                                {inputForm({title: '이메일', id: 'customerManagerEmail', onChange: onChange, data: info})}
+                                {inputForm({
+                                    title: '담당자',
+                                    id: 'managerName',
+                                    onChange: onChange,
+                                    data: info,
+                                    disabled: true
+                                })}
+                                {inputForm({
+                                    title: '전화번호',
+                                    id: 'phoneNumber',
+                                    onChange: onChange,
+                                    data: info,
+                                    disabled: true
+                                })}
+                                {inputForm({
+                                    title: '팩스',
+                                    id: 'faxNumber',
+                                    onChange: onChange,
+                                    data: info,
+                                    disabled: true
+                                })}
+                                {inputForm({
+                                    title: '이메일',
+                                    id: 'customerManagerEmail',
+                                    onChange: onChange,
+                                    data: info,
+                                    disabled: true
+                                })}
                             </BoxCard>
 
                             <BoxCard title={'운송 정보'}>
                                 {selectBoxForm({
                                     title: '유효기간', id: 'validityPeriod', list: [
-                                        {value: '0', label: '견적 발행 후 10일간'},
-                                        {value: '1', label: '견적 발행 후 30일간'},
+                                        {value: '견적 발행 후 10일간', label: '견적 발행 후 10일간'},
+                                        {value: '견적 발행 후 30일간', label: '견적 발행 후 30일간'},
                                     ], onChange: onChange, data: info
                                 })}
                                 {selectBoxForm({
                                     title: '결제조건', id: 'paymentTerms', list: [
-                                        {value: '0', label: '발주시 50% / 납품시 50%'},
-                                        {value: '1', label: '납품시 현금결제'},
-                                        {value: '2', label: '정기결제'},
+                                        {value: '발주시 50% / 납품시 50%', label: '발주시 50% / 납품시 50%'},
+                                        {value: '납품시 현금결제', label: '납품시 현금결제'},
+                                        {value: '정기결제', label: '정기결제'},
                                     ], onChange: onChange, data: info
                                 })}
+
                                 {selectBoxForm({
                                     title: '운송조건', id: 'shippingTerms', list: [
-                                        {value: '0', label: '귀사도착도'},
-                                        {value: '1', label: '화물 및 택배비 별도'},
+                                        {value: '귀사도착도', label: '귀사도착도'},
+                                        {value: '화물 및 택배비 별도', label: '화물 및 택배비 별도'},
                                     ], onChange: onChange, data: info
                                 })}
-                                {inputForm({title: 'Delivery(weeks)', id: 'delivery', onChange: onChange, data: info})}
-                                {inputForm({title: '환율', id: 'exchangeRate', onChange: onChange, data: info})}
+                                {inputNumberForm({
+                                    title: 'Delivery(weeks)',
+                                    id: 'delivery',
+                                    onChange: onChange,
+                                    data: info
+                                })}
+                                {inputNumberForm({
+                                    title: '환율',
+                                    id: 'exchangeRate',
+                                    onChange: onChange,
+                                    data: info,
+                                    step: 0.01
+                                })}
                             </BoxCard>
                             <BoxCard title={'Maker 정보'}>
                                 {inputForm({
@@ -313,7 +358,7 @@ export default function estimate_update({dataInfo}) {
                                             openModal('maker');
                                         }
                                     }/>
-                                    , onChange: onChange, data: info
+                                    , onChange: onChange, data: info, handleKeyPress: handleKeyPress
                                 })}
                                 {inputForm({title: 'ITEM', id: 'item', onChange: onChange, data: info})}
                             </BoxCard>
@@ -327,10 +372,11 @@ export default function estimate_update({dataInfo}) {
                                 })}
                                 {textAreaForm({title: '비고란', rows: 3, id: 'remarks', onChange: onChange, data: info})}
                             </BoxCard>
-                            <BoxCard title={'드라이브 목록'}>
+                            <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
                                 {/*@ts-ignored*/}
                                 <div style={{overFlowY: "auto", maxHeight: 300}}>
-                                    <DriveUploadComp infoFileInit={infoFileInit} fileRef={fileRef}/>
+                                    <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
+                                                     numb={3}/>
                                 </div>
                             </BoxCard>
                         </div>
@@ -342,11 +388,13 @@ export default function estimate_update({dataInfo}) {
                     onGridReady={onGridReady}
                     columns={tableEstimateWriteColumns}
                     type={'write'}
-                    funcButtons={subTableUtil}
+                    funcButtons={['estimateUpload', 'estimateAdd', 'delete', 'print']}
                 />
             </div>
         </LayoutComponent>
-    </>
+        <div style={{marginTop: 200}}/>
+
+    </Spin>
 }
 
 export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {

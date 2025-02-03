@@ -5,7 +5,7 @@ import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import Button from "antd/lib/button";
-import {CopyOutlined, FileExcelOutlined} from "@ant-design/icons";
+import {CopyOutlined} from "@ant-design/icons";
 import {deleteOrderStatusDetails, getOrderStatusList} from "@/utils/api/mainApi";
 import _ from "lodash";
 import {commonManage, gridManage} from "@/utils/commonManage";
@@ -14,8 +14,11 @@ import TableGrid from "@/component/tableGrid";
 import {storeReadColumn} from "@/utils/columnList";
 import {useRouter} from "next/router";
 import message from "antd/lib/message";
+import Spin from "antd/lib/spin";
+import ReceiveComponent from "@/component/ReceiveComponent";
 
 export default function delivery_read({dataInfo}) {
+    console.log(dataInfo,'dataInfo:')
     const router = useRouter();
 
     const gridRef = useRef(null);
@@ -24,6 +27,8 @@ export default function delivery_read({dataInfo}) {
 
     const [info, setInfo] = useState(copyInit)
     const [mini, setMini] = useState(true);
+
+    const [loading, setLoading] = useState(false);
 
     const onGridReady = (params) => {
         gridRef.current = params.api;
@@ -35,7 +40,7 @@ export default function delivery_read({dataInfo}) {
         if (e.key === 'Enter') {
             // 체크된 행 데이터 가져오기
             const selectedRows = gridRef.current.getSelectedRows();
-            searchInfo()
+            searchInfo(e)
         }
     }
 
@@ -44,67 +49,56 @@ export default function delivery_read({dataInfo}) {
     }
 
 
-    /**
-     * @description 배송등록 페이지로 이동합니다.
-     */
+
     async function moveRouter() {
-        router.push('/delivery_write')
+        window.open(`/store_write`, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
     }
 
     /**
      * @description 배송 등록리스트 출력 함수입니다.
      */
-    async function searchInfo() {
+    async function searchInfo(e) {
         const copyData: any = {...info}
-        let result = await getOrderStatusList({data: copyData});
-        gridManage.resetData(gridRef, result)
+        if(e) {
+            setLoading(true)
+            let result = await getOrderStatusList({data: copyData});
+            gridManage.resetData(gridRef, result)
+            setLoading(false)
+        }
+        setLoading(false)
     }
 
-    /**
-     * @description selectRows(~ deliveryList)를 삭제하는 함수입니다.
-     */
     async function deleteList() {
         if (gridRef.current.getSelectedRows().length < 1) {
             return message.error('삭제할 데이터를 선택해주세요.')
         }
-        const fieldMappings = {
+
+        const deleteList = gridManage.getFieldDeleteList(gridRef, {
             orderStatusId: "orderStatusId",
             orderStatusDetailId: "orderStatusDetailId",
-        };
-
-        const deleteList = gridManage.getFieldDeleteList(gridRef, fieldMappings);
+        });
+        setLoading(true)
         deleteOrderStatusDetails({data: {deleteList: deleteList}, returnFunc: searchInfo})
     }
 
-    /**
-     * @description 출력시 해당 Excel 현 테이블 기준으로 선택된 row만 출력
-     */
-    const downloadExcel = async () => {
-        gridManage.exportSelectedRowsToExcel(gridRef, '발주현황표')
-    };
 
+    function clearAll() {
+        setInfo(copyInit);
+        gridRef.current.deselectAll();
+    }
 
-    /**
-     * @description 테이블 우측상단 관련 기본 유틸버튼
-     */
-    const subTableUtil = <div>
-        {/*@ts-ignore*/}
-        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}} onClick={deleteList}>
-            <CopyOutlined/>삭제
-        </Button>
-        <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft: 5}} onClick={downloadExcel}>
-            <FileExcelOutlined/>출력
-        </Button></div>
-
-    return <>
+    return <Spin spinning={loading} tip={'입고 조회중...'}>
+        <ReceiveComponent searchInfo={searchInfo}/>
         <LayoutComponent>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '380px' : '65px'} calc(100vh - ${mini ? 435 : 120}px)`,
+                gridTemplateRows: `${mini ? '230px' : '65px'} calc(100vh - ${mini ? 325 : 160}px)`,
                 columnGap: 5
             }}>
-                <MainCard title={'통합조회'}
-                          list={[{name: '조회', func: searchInfo, type: 'primary'}, {name: '신규생성', func: moveRouter}]}
+                <MainCard title={'입고조회'}
+                          list={[{name: '조회', func: searchInfo, type: 'primary'},
+                              {name: '초기화', func: clearAll, type: 'danger'},
+                              {name: '신규생성', func: moveRouter}]}
                           mini={mini} setMini={setMini}>
                     {mini ? <div>
                             <TopBoxCard title={'기본 정보'} grid={'1.5fr 1fr 1fr'}>
@@ -131,7 +125,7 @@ export default function delivery_read({dataInfo}) {
                                     data: info
                                 })}
                                 {inputForm({
-                                    title: '거래처명',
+                                    title: '고객사명',
                                     id: 'searchCustomerName',
                                     onChange: onChange,
                                     handleKeyPress: handleKeyPress,
@@ -141,16 +135,19 @@ export default function delivery_read({dataInfo}) {
                         </div>
                         : <></>}
                 </MainCard>
-
-                <TableGrid
-                    gridRef={gridRef}
-                    columns={storeReadColumn}
-                    onGridReady={onGridReady}
-                    funcButtons={subTableUtil}
+                {/*@ts-ignored*/}
+                <TableGrid deleteComp={<Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
+                                               onClick={deleteList}>
+                    <CopyOutlined/>삭제
+                </Button>}
+                           gridRef={gridRef}
+                           columns={storeReadColumn}
+                           onGridReady={onGridReady}
+                           funcButtons={['print']}
                 />
             </div>
         </LayoutComponent>
-    </>
+    </Spin>
 }
 
 

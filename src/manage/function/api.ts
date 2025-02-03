@@ -1,14 +1,21 @@
 import axios from "axios";
 import {getCookie} from "@/manage/function/cookie";
+import https from 'https';
 
 
 //DEV
-export const API_URL = 'https://manku.progist.co.kr/api/';
+export const API_URL = 'https://manku.progist.co.kr/api';
 export const IMAGE_URL = 'https://image.season-market.co.kr/SeasonMarket/';
 
 
+// 1. 공통 Axios 인스턴스 생성
+const agent = new https.Agent({
+    rejectUnauthorized: false, // SSL 검증 비활성화 (개발 환경 전용)
+});
+
 export const getData = axios.create({
     baseURL: API_URL,
+    httpsAgent: agent,
     headers: {
         authorization: `Bearer ${getCookie(null,'token')}`,
         "Content-Type": `application/json`,
@@ -21,6 +28,7 @@ export const getData = axios.create({
 
 export const getFormData = axios.create({
     baseURL: API_URL,
+    httpsAgent: agent,
     headers: {
         authorization: `Bearer ${getCookie(null,'token')}`,
 

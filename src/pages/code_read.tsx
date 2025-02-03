@@ -1,202 +1,152 @@
-import React, {useEffect, useRef, useState} from "react";
-import moment from "moment/moment";
+import React, {useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import LayoutComponent from "@/component/LayoutComponent";
-import Card from "antd/lib/card/Card";
-import Input from "antd/lib/input/Input";
 
 import Button from "antd/lib/button";
-import {
-    CopyOutlined,
-    DownCircleFilled,
-    FileExcelOutlined, RetweetOutlined,
-    SaveOutlined,
-    SearchOutlined,
-    UpCircleFilled,
-} from "@ant-design/icons";
-import * as XLSX from "xlsx";
 import message from "antd/lib/message";
 
-import {
-    rfqReadColumns,
-    tableCodeDomesticPurchaseColumns,
-    tableCodeDomesticSalesColumns,
-    tableCodeOverseasPurchaseColumns, tableCodeReadColumns,
-} from "@/utils/columnList";
-import {codeReadInitial, codeSaveInitial,} from "@/utils/initialList";
-import Radio from "antd/lib/radio";
+import {tableCodeReadColumns,} from "@/utils/columnList";
+import {codeSaveInitial,} from "@/utils/initialList";
 import TableGrid from "@/component/tableGrid";
-import Search from "antd/lib/input/Search";
+import {inputForm, MainCard, TopBoxCard} from "@/utils/commonForm";
+import {commonManage, gridManage} from "@/utils/commonManage";
+import Spin from "antd/lib/spin";
+import {CopyOutlined} from "@ant-design/icons";
+import {deleteHsCodeList} from "@/utils/api/mainApi";
 
 
-export default function codeRead({dataList}) {
+export default function codeRead({dataInfo}) {
     const gridRef = useRef(null);
     const [mini, setMini] = useState(true);
 
-    const {hsCodeList} = dataList;
-    const [searchData, setSearchData] = useState(codeReadInitial);
-    const [saveData, setSaveData] = useState(codeSaveInitial);
-    const [tableData, setTableData] = useState(hsCodeList);
+    const [info, setInfo] = useState({
+        searchText: '',
+        item: '',
+        hsCode: ''
+    })
 
-    // console.log(hsCodeList,'saveInfo:')
+    const [loading, setLoading] = useState(false);
 
-    function onSearchChange(e) {
 
-        let bowl = {}
-        bowl[e.target.id] = e.target.value;
+    const onGridReady = (params) => {
+        gridRef.current = params.api;
+        params.api.applyTransaction({add: dataInfo ?? []});
+    };
 
-        setSearchData(v => {
-            return {...v, ...bowl}
-        })
+
+    function onChange(e) {
+        commonManage.onChange(e, setInfo)
     }
 
-    function onSaveChange(e) {
-
-        let bowl = {}
-        bowl[e.target.id] = e.target.value;
-
-        setSaveData(v => {
-            return {...v, ...bowl}
-        })
-    }
-
-    async function onSearch() {
-        const result = await getData.post('hsCode/getHsCodeList', searchData);
-        console.log(result?.data?.entity?.hsCodeList,'result:')
-        if(result?.data?.code === 1){
-            setTableData(result?.data?.entity?.hsCodeList)
-        }
-    }
 
     async function saveFunc() {
 
-        console.log(saveData['hsCodeId'], 'hsCodeId')
-
-        let api = '';
-
-        if (saveData['hsCodeId'])
-            api = 'hsCode/updateHsCode'
-        else
-            api = 'hsCode/addHsCode'
-
-        await getData.post(api, saveData).then(v => {
-            if (v.data.code === 1) {
-                message.success('저장되었습니다.')
-                setSaveData(codeSaveInitial);
+        setLoading(true);
+        await getData.post('hsCode/addHsCode', info).then(v => {
+            const code = v.data.code;
+            if (code === 1) {
+                message.success('등록되었습니다.')
             } else {
-                message.error('저장에 실패하였습니다.')
+                message.error('등록에 실패하였습니다.')
             }
-        });
-        onSearch()
-
+            returnFunc(code === 1)
+        })
     }
 
-    async function deleteList() {
-        const api = gridRef.current.api;
-        // console.log(api.getSelectedRows(),':::')
-
-        if (api.getSelectedRows().length<1) {
-            message.error('삭제할 데이터를 선택해주세요.')
-        } else {
-            for (const item of api.getSelectedRows()) {
-                const response = await getData.post('hsCode/deleteHsCode', {
-                    hsCodeId:item.hsCodeId
-                });
-                console.log(response)
-                if (response.data.code===1) {
-                    message.success('삭제되었습니다.')
-                    window.location.reload();
-                } else {
-                    message.error('오류가 발생하였습니다. 다시 시도해주세요.')
-                }
-            }
+    function returnFunc(e) {
+        setLoading(e)
+        if (e) {
+            searchInfo();
         }
     }
 
 
+    async function searchInfo() {
+        setLoading(true)
+        await getData.post('hsCode/getHsCodeList', {
+            searchText: info['item'] ? info['item'] : info['hsCode'],
+            page: 1,
+            limit: -1
+        }).then(v => {
+            gridManage.resetData(gridRef, v.data.entity.hsCodeList)
+            setLoading(false)
+        })
+    }
 
-    return <LayoutComponent>
-        <div
-            style={{display: 'grid', gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`, height: '100vh', columnGap: 5,}}>
-            <Card title={'HS code 관리'} style={{fontSize: 12, border: '1px solid lightGray'}}
-                  extra={<span style={{fontSize: 20, cursor: 'pointer'}} onClick={() => setMini(v => !v)}> {!mini ?
-                      <UpCircleFilled/> : <DownCircleFilled/>}</span>}>
-                {mini ? <>
-                    <div style={{display: 'grid', gridTemplateColumns: '0.6fr 1fr', columnGap: 20}}>
-                        <Card size={'small'} title={'조회'}
-                              style={{
-                                  fontSize: 13,
-                                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
-                              }}>
-                        <Search
-                            style={{paddingTop:8}}
-                            onSearch={onSearch}
-                            onChange={onSearchChange}
-                            id={'searchText'}
-                            placeholder="input search text"
-                            allowClear
-                            enterButton={<><SearchOutlined/>&nbsp;&nbsp; 조회</>}
-                        />
-                        </Card>
+    async function deleteList() {
+        if (gridRef.current.getSelectedRows().length < 1) {
+            return message.error('삭제할 데이터를 선택해주세요.')
+        }
 
-                        <Card size={'small'} title={'추가'}
-                              style={{
-                                  fontSize: 13,
-                                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
-                              }}>
-                            <div style={{display:'grid', gridTemplateColumns: '1fr 1fr 0.7fr', columnGap:20}}>
 
-                                <div>
-                                    <div>ITEM</div>
-                                    <Input id={'item'} value={saveData['item']} onChange={onSaveChange}
-                                           size={'small'}/>
-                                </div>
-                                <div>
-                                    <div>HS-CODE</div>
-                                    <Input id={'hsCode'} value={saveData['hsCode']} onChange={onSaveChange}
-                                           size={'small'}/>
-                                </div>
+        const selectedRows = gridRef.current.getSelectedRows();
+        const deleteList = selectedRows.map(v => v.hsCodeId)
+        await deleteHsCodeList({data: {hsCodeIdList: deleteList}, returnFunc: searchInfo});
+    }
 
-                            <div style={{paddingTop: 18}}>
-                                {/*@ts-ignored*/}
-                                <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
-                                        onClick={saveFunc}>
-                                    <SaveOutlined/>{saveData['hsCodeId']? '수정':'추가'}
-                                </Button>
-                                {/*@ts-ignored*/}
-                                <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
-                                        onClick={() => setSaveData(codeSaveInitial)}><RetweetOutlined/>초기화</Button>
-                                {/*@ts-ignored*/}
-                                <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
-                                        onClick={deleteList}>
-                                    <CopyOutlined/>삭제
-                                </Button>
+    function clearAll() {
+        setInfo(codeSaveInitial)
+        gridRef.current.deselectAll();
+    }
 
+    function moveRegist() {
+
+    }
+
+
+    return <Spin spinning={loading} tip={'HS-CODE 조회중...'}>
+        <LayoutComponent>
+            <div style={{
+                display: 'grid',
+                gridTemplateRows: `${mini ? '140px' : '65px'} calc(100vh - ${mini ? 240 : 160}px)`,
+                columnGap: 5
+            }}>
+                <MainCard title={'HS-CODE 조회'} list={[
+                    {name: '조회', func: searchInfo, type: 'primary'},
+                    {name: '초기화', func: clearAll, type: 'danger'}
+                ]} mini={mini} setMini={setMini}>
+                    {mini ? <>
+                        <TopBoxCard title={''} grid={"150px 250px 80px 1fr"}>
+                            {inputForm({
+                                title: 'ITEM',
+                                id: 'item',
+                                onChange: onChange,
+                                data: info
+                            })}
+                            {inputForm({
+                                title: 'HSCODE',
+                                id: 'hsCode',
+                                onChange: onChange,
+                                data: info
+                            })}
+                            {/*하단정렬*/}
+                            <div style={{
+                                display: 'flex',
+                                justifyContent: 'flex-end',
+                                flexDirection: 'column',
+                                marginBottom: 10
+                            }}>
+                                <Button size={'small'} style={{fontSize: 11}} type={'primary'}
+                                        onClick={saveFunc}>추가</Button>
                             </div>
-                            </div>
-
-                        </Card>
-
-
-
-                    </div>
-                </> : null}
-            </Card>
-
-            <TableGrid
-                gridRef={gridRef}
-                columns={tableCodeReadColumns}
-                tableData={tableData}
-                type={'hsCode'}
-                excel={true}
-                setInfo={setSaveData}
-            />
-
-        </div>
-    </LayoutComponent>
+                        </TopBoxCard>
+                    </> : null}
+                </MainCard>
+                {/*@ts-ignored*/}
+                <TableGrid deleteComp={<Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
+                                               onClick={deleteList}>
+                    <CopyOutlined/>삭제
+                </Button>}
+                           gridRef={gridRef}
+                           columns={tableCodeReadColumns}
+                           onGridReady={onGridReady}
+                           funcButtons={['hsDelete', 'print']}/>
+            </div>
+        </LayoutComponent>
+    </Spin>
 }
 
 // @ts-ignore
@@ -208,12 +158,11 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
     const result = await getData.post('hsCode/getHsCodeList', {
-        "searchType": "1",      // 1: 코드, 2: 상호명, 3: MAKER
+        "searchType": "",      // 1: 코드, 2: 상호명, 3: MAKER
         "searchText": "",
         "page": 1,
         "limit": -1
     });
-
 
 
     if (userInfo) {
@@ -227,9 +176,9 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
             },
         };
     } else {
-        // result?.data?.entity?.estimateRequestList
+        const list = result?.data?.entity?.hsCodeList
         param = {
-            props: {dataList: result?.data?.entity}
+            props: {dataInfo: list ?? []}
         }
     }
 

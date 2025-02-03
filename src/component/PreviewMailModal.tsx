@@ -1,117 +1,158 @@
 import Modal from "antd/lib/modal/Modal";
 import React from "react";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
+import MailFile from "@/component/MailFile";
+import Checkbox from "antd/lib/checkbox/Checkbox";
+import Card from "antd/lib/card/Card";
 
-export default function PreviewMailModal({data, isModalOpen, setIsModalOpen}) {
+
+const headerStyle = {
+    padding: '10px',
+    border: '1px solid #ddd',
+    whiteSpace: 'nowrap'
+};
+
+
+export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fileList}) {
     const userInfo = useAppSelector((state) => state.user);
 
-    function sendMail(){
+    function sendMail() {
 
     }
 
+    function preview(e, data) {
+        if (e.ctrlKey && e.button === 0) {
+            window.open(data.webUrl, '_blank');
+        }else{
+            window.open(data.downloadUrl, '_blank');
+        }
+    }
+
+
     return <>
-        <Modal okText={'메일 전송'} cancelText={'취소'} onOk={sendMail}
+        <Modal okText={'메일 전송'} width={700} cancelText={'취소'} onOk={sendMail}
                title={<div style={{lineHeight: 2.5, fontWeight: 550}}>견적의뢰 메일 발송</div>} open={isModalOpen}
                onCancel={() => setIsModalOpen(false)}>
+            <div style={{margin: '0px auto', fontSize: 13}}>
+
+                {Object.values(data).map((v: any) => {
+
+                    const src = Object.values(v);
+
+                    return <div>
+                        <div style={{fontSize: 18}}>{src[0][0]?.agencyManagerName}</div>
+                        <div style={{fontSize: 15, paddingTop: 20}}>안녕하세요 <span
+                            style={{fontWeight: 600}}>{userInfo.name}</span>입니다
+                        </div>
+                        <div style={{fontSize: 15, paddingTop: 5}}>아래 견적 부탁드립니다.</div>
+
+                        {
+                            src.map((source: any, index) => {
 
 
-            {data.map((v, idx) => {
-                return <>
-                    <div key={idx} style={{width: '100%', height: 'auto', paddingTop: 20}}>
-                        [<span
-                        // style={{fontWeight: 550}}>{v.agencyManagerName}</span>]님<br/><br/>안녕하십니까.
-                        style={{fontWeight: 550}}>{v.managerName}</span>]님<br/><br/>안녕하십니까.
-                        [<span style={{fontWeight: 550}}>만쿠무역 {userInfo.name}</span>]입니다.<br/>
-                        아래 견적 부탁드립니다.
+                                return <div style={{marginTop: 30}}>
+                                    <Card size={'small'}>
+                                        {
+                                            fileList[source[0]?.estimateRequestId]?.map(v =>
+
+                                                <div style={{display : 'flex'}}>
+                                                    <Checkbox style={{paddingRight : 10}}/>
+                                                    <div  style={{
+                                                        fontSize: 12,
+                                                        cursor: 'pointer',
+                                                        color: 'blue'
+                                                    }} onClick={e=>preview(e,v)}> {v.fileName}
+                                                    </div>
+                                                </div>
+                                            )
+                                        }
+                                    </Card>
+                                    <table style={{width: '100%', marginTop: 10}}>
+                                        <thead>
+                                        <tr style={{fontWeight: 'bold', height: 30}}>
+                                            <th style={{
+                                                ...headerStyle,
+                                                textAlign: 'left',
+                                                paddingLeft: 20,
+                                                fontSize: 16
+                                            }}>{source[0].documentNumberFull}</th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                    <table style={{width: '100%'}}>
+                                        <thead>
+                                        <tr style={{fontWeight: 'bold', height: 30}}>
+                                            <th style={{
+                                                ...headerStyle,
+                                                width: 120,
+                                                borderTop: "none",
+                                                backgroundColor: '#ddd'
+                                            }}>MAKER
+                                            </th>
+                                            <th style={{
+                                                ...headerStyle,
+                                                borderTop: "none",
+                                                fontWeight: 500
+                                            }}>{source[0].maker}</th>
+                                        </tr>
+                                        <tr style={{fontWeight: 'bold', height: 30}}>
+                                            <th style={{
+                                                ...headerStyle,
+                                                width: 120,
+                                                backgroundColor: 'gray'
+                                            }}>ITEM
+                                            </th>
+                                            <th style={{...headerStyle, fontWeight: 500}}>{source[0].item}</th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                    <table style={{width: '100%'}}>
+                                        <thead>
+                                        <tr style={{fontWeight: 'bold', height: 30}}>
+                                            <th style={{
+                                                ...headerStyle,
+                                                borderTop: "none",
+                                                backgroundColor: '#ddd'
+                                            }}>MODEL
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                    <table style={{width: '100%'}}>
+                                        <thead>
+                                        {source.map((data: any, index) => {
+                                            return <tr style={{fontWeight: 'bold', height: 30}}>
+                                                <th style={{
+                                                    ...headerStyle,
+                                                    width: 40,
+                                                    borderTop: "none"
+                                                }}>{index + 1}</th>
+                                                <th style={{
+                                                    ...headerStyle,
+                                                    borderTop: "none",
+                                                    fontWeight: 500
+                                                }}>{data.model}</th>
+                                                <th style={{
+                                                    ...headerStyle,
+                                                    width: 100,
+                                                    borderTop: "none",
+                                                    fontWeight: 500
+                                                }}>{data.quantity} {data.unit}</th>
+                                            </tr>
+                                        })}
+
+
+                                        </thead>
+
+
+                                    </table>
+                                </div>
+                            })
+                        }
+                        <div style={{borderBottom: '1px solid lightGray', paddingTop: 100}}/>
                     </div>
-
-                    <div style={{
-                        textAlign: 'center',
-                        lineHeight: 2.2,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        flexFlow: 'column'
-                    }}>
-                        <div style={{
-                            marginTop: 20,
-                            width: '100%',
-                            height: '35px',
-                            fontSize: 15,
-                            borderTop: '1px solid #121212',
-                            borderBottom: '1px solid #A3A3A3',
-                            textAlign : 'left',
-                            paddingLeft : 10,
-                            fontWeight : 700
-                        }}>
-                            {v.documentNumberFull}
-                        </div>
-                        <div style={{
-                            width: '100%',
-                            height: '35px',
-                            borderBottom: '1px solid #A3A3A3',
-                            display: 'flex'
-                        }}>
-                            <div style={{
-                                fontSize: '13px',
-                                backgroundColor: '#EBF6F7',
-                                width: '102px',
-                                height: '100%',
-                                borderRight: '1px solid #121212'
-                            }}>Maker
-                            </div>
-                            <div style={{lineHeight: 2, paddingLeft: 32}}>{v.maker}</div>
-                        </div>
-                        <div style={{width: '100%', height: 35, display: "flex", borderBottom: '1px solid #A3A3A3',}}>
-                            <div style={{
-                                fontSize: '13px',
-                                backgroundColor: '#EBF6F7',
-                                width: '102px',
-                                height: '100%',
-                                borderRight: '1px solid #121212'
-                            }}>Item
-                            </div>
-                            <div style={{lineHeight: 2, paddingLeft: 32}}>{v.item}</div>
-                        </div>
-
-
-                        <div style={{
-                            lineHeight: 1.9,
-                            width: '100%',
-                            height: 35,
-                            fontSize: 18,
-                            borderTop: '1px solid #121212',
-                            borderBottom: '1px solid #A3A3A3',
-                            backgroundColor: '#EBF6F7'
-                        }}>
-                            Model
-                        </div>
-                        {v.list.map((src, idx) => {
-                            return <div
-                                style={{
-                                    width: '100%',
-                                    height: 35,
-                                    borderBottom: '1px solid #A3A3A3',
-                                    display: 'flex'
-                                }}>
-                                <div style={{lineHeight: 2, textAlign : 'center', padding : '0px 10px'}}><span
-                                    style={{fontWeight: 550}}>{idx + 1}</span> </div>
-                                <div style={{
-                                    fontSize: 13,
-                                    letterSpacing: -1,
-                                    lineHeight: 2.5,
-                                    width: 340,
-                                    height: '100%',
-                                    borderRight: '1px solid #121212',
-                                    borderLeft: '1px solid #121212'
-                                }}>{src.model}</div>
-                                <div style={{lineHeight: 2, paddingLeft: 30,}}><span
-                                    style={{fontWeight: 550}}>{src.quantity}</span> {src.unit}</div>
-                            </div>
-
-                        })}
-                    </div>
-                </>
-            })}
+                })}
+            </div>
         </Modal>
     </>
 }

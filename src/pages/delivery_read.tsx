@@ -9,10 +9,13 @@ import {CopyOutlined, FileExcelOutlined} from "@ant-design/icons";
 import {deleteDelivery, getDeliveryList} from "@/utils/api/mainApi";
 import _ from "lodash";
 import {commonManage, gridManage} from "@/utils/commonManage";
-import {BoxCard, inputForm, MainCard, rangePickerForm, TopBoxCard} from "@/utils/commonForm";
+import {BoxCard, inputForm, MainCard, rangePickerForm, selectBoxForm, TopBoxCard} from "@/utils/commonForm";
 import TableGrid from "@/component/tableGrid";
 import {delilveryReadColumn} from "@/utils/columnList";
 import {useRouter} from "next/router";
+import message from "antd/lib/message";
+import Spin from "antd/lib/spin";
+import ReceiveComponent from "@/component/ReceiveComponent";
 
 export default function delivery_read({dataInfo}) {
     const router = useRouter();
@@ -24,6 +27,7 @@ export default function delivery_read({dataInfo}) {
     const [info, setInfo] = useState(copyInit)
     const [mini, setMini] = useState(true);
 
+    const [loading, setLoading] = useState(false);
 
     /**
      * @description ag-grid 테이블 초기 rowData 요소 '[]' 초기화 설정
@@ -39,7 +43,7 @@ export default function delivery_read({dataInfo}) {
         if (e.key === 'Enter') {
             // 체크된 행 데이터 가져오기
             const selectedRows = gridRef.current.getSelectedRows();
-            console.log(selectedRows,'selectedRows:')
+            console.log(selectedRows, 'selectedRows:')
             searchInfo()
         }
     }
@@ -49,11 +53,8 @@ export default function delivery_read({dataInfo}) {
     }
 
 
-    /**
-     * @description 배송등록 페이지로 이동합니다.
-     */
     async function moveRouter() {
-        router.push('/delivery_write')
+        window.open(`/delivery_write`, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
     }
 
     /**
@@ -61,51 +62,44 @@ export default function delivery_read({dataInfo}) {
      */
     async function searchInfo() {
         const copyData: any = {...info}
-        let result = await getDeliveryList({data: copyData});
-        gridManage.resetData(gridRef, result)
+        setLoading(true)
+        await getDeliveryList({data: copyData}).then(v => {
+            gridManage.resetData(gridRef, v);
+            setLoading(false)
+        })
     }
 
     /**
      * @description selectRows(~ deliveryList)를 삭제하는 함수입니다.
      */
     async function deleteList() {
+        if (gridRef.current.getSelectedRows().length < 1) {
+            return message.error('삭제할 데이터를 선택해주세요.')
+        }
         const deleteIdList = gridManage.getFieldValue(gridRef, 'deliveryId')
-        await deleteDelivery({data: {deleteIdList: deleteIdList}});
+        await deleteDelivery({data: {deleteIdList: deleteIdList}, returnFunc: searchInfo});
     }
 
-    /**
-     * @description 출력시 해당 Excel 현 테이블 기준으로 선택된 row만 출력
-     */
-    const downloadExcel = async () => {
-       gridManage.exportSelectedRowsToExcel(gridRef, '배송_조회리스트')
-    };
+    function clearAll() {
+        setInfo(copyInit);
+        gridRef.current.deselectAll();
+    }
 
-
-
-    /**
-     * @description 테이블 우측상단 관련 기본 유틸버튼
-     */
-    const subTableUtil = <div>
-        {/*@ts-ignore*/}
-        <Button type= {'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}} onClick={deleteList}>
-            <CopyOutlined/>삭제
-        </Button>
-        <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft: 5}} onClick={downloadExcel}>
-            <FileExcelOutlined/>출력
-        </Button></div>
-
-    return <>
+    return <Spin spinning={loading} tip={'배송정보 조회중...'}>
+        <ReceiveComponent searchInfo={searchInfo}/>
         <LayoutComponent>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '380px' : '65px'} calc(100vh - ${mini ? 435 : 120}px)`,
+                gridTemplateRows: `${mini ? '345px' : '65px'} calc(100vh - ${mini ? 435 : 155}px)`,
                 columnGap: 5
             }}>
                 <MainCard title={'배송조회'}
-                          list={[{name: '조회', func: searchInfo, type: 'primary'}, {name: '신규생성', func: moveRouter}]}
+                          list={[{name: '조회', func: searchInfo, type: 'primary'},
+                              {name: '초기화', func: clearAll, type: 'danger'},
+                              {name: '신규생성', func: moveRouter}]}
                           mini={mini} setMini={setMini}>
                     {mini ? <div>
-                            <TopBoxCard title={'기본 정보'} grid={'1.5fr 1fr 1fr'}>
+                            <TopBoxCard title={'기본 정보'} grid={'300px 200px 1fr'}>
                                 {rangePickerForm({title: '출고일자', id: 'searchDate', onChange: onChange, data: info})}
                                 {inputForm({
                                     title: 'Inquiry No.',
@@ -115,7 +109,6 @@ export default function delivery_read({dataInfo}) {
                                     data: info
                                 })}
                             </TopBoxCard>
-
 
                             <div style={{display: 'grid', gridTemplateColumns: "350px 350px"}}>
                                 <BoxCard title={'받는분 정보'}>
@@ -135,13 +128,13 @@ export default function delivery_read({dataInfo}) {
                                     })}
                                 </BoxCard>
 
-                                <BoxCard title={'기타 정보'}>
-                                    {inputForm({
-                                        title: '확인여부',
-                                        id: 'searchIsConfirm',
-                                        onChange: onChange,
-                                        handleKeyPress: handleKeyPress,
-                                        data: info
+                                <BoxCard title={'기타 정보'} tooltip={''}>
+                                    {selectBoxForm({
+                                        title: '확인여부', id: 'searchIsConfirm', list: [
+                                            {value: 'X', label: 'X'},
+                                            {value: 'O', label: 'O'},
+                                            {value: '', label: '전체'},
+                                        ], onChange: onChange, data: info
                                     })}
                                     {inputForm({
                                         title: '운송장번호',
@@ -155,17 +148,20 @@ export default function delivery_read({dataInfo}) {
                         </div>
                         : <></>}
                 </MainCard>
-
-                <TableGrid
-                    gridRef={gridRef}
-                    columns={delilveryReadColumn}
-                    onGridReady={onGridReady}
-                    type={'read'}
-                    funcButtons={subTableUtil}
+                {/*@ts-ignored*/}
+                <TableGrid deleteComp={<Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
+                                               onClick={deleteList}>
+                    <CopyOutlined/>삭제
+                </Button>}
+                           gridRef={gridRef}
+                           columns={delilveryReadColumn}
+                           onGridReady={onGridReady}
+                           type={'read'}
+                           funcButtons={['print']}
                 />
             </div>
         </LayoutComponent>
-    </>
+    </Spin>
 }
 
 

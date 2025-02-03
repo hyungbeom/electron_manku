@@ -49,7 +49,7 @@ export default function SearchCustomerModal({customerData, info, setInfo, isModa
         });
         setData(result?.data?.entity?.customerList)
 
-        console.log(data,'거래처')
+        console.log(data,'고객사')
     }
 
     function handleKeyPress(e){
@@ -62,7 +62,7 @@ export default function SearchCustomerModal({customerData, info, setInfo, isModa
     return <Modal
         // @ts-ignored
         id={'event2'}
-        title={'거래처 상호명 조회'}
+        title={'고객사 상호명 조회'}
         onCancel={() => setIsModalOpen({event1: false, event2: false, event3: false})}
         open={isModalOpen?.event2}
         width={'60vw'}

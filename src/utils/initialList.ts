@@ -5,7 +5,6 @@ import {
     searchMakerColumn,
     tableOrderReadColumns
 } from "@/utils/columnList";
-import {commonManage} from "@/utils/commonManage";
 
 export const makerRegistInitial = {
     "makerName": "",                   // MAKER
@@ -42,9 +41,9 @@ export const estimateWriteInitial = {
     "managerName": "",      // 담당자
     "phoneNumber": "",  // 전화번호
     "faxNumber": "",                // 팩스번호
-    "validityPeriod": "0",    // 유효기간
-    "paymentTerms": "0",                // 결제조건
-    "shippingTerms": "0",             // 운송조건
+    "validityPeriod":'견적 발행 후 10일간',    // 유효기간
+    "paymentTerms": '발주시 50% / 납품시 50%',                // 결제조건
+    "shippingTerms": '귀사도착도',             // 운송조건
     "exchangeRate": "",                  // 환율
     "estimateManager": "",            // 담당자
     "email": "",             // E-MAIL
@@ -55,7 +54,8 @@ export const estimateWriteInitial = {
     "delivery": null,    // Delivery
     "remarks": "",          // 비고란
     "currencyUnit": "",          // 비고란
-    "estimateDetailList": []
+    "estimateDetailList": [],
+    count : 0
 }
 
 export const tableEstimateWriteInitial = {
@@ -79,7 +79,7 @@ export const estimateRequestDetailUnit = {
     "currency": "krw",       // CURR
     "net": 0,                // NET/P
     "serialNumber": 0,       // 항목 순서 (1부터 시작)
-    "deliveryDate": "",      // 납기
+    "deliveryDate": 0,      // 납기
     "content": "미회신",       // 내용
     "replyDate": null,         // 회신일
     "remarks": ""            // 비고
@@ -112,11 +112,12 @@ export const rfqWriteInitial = {
     maker: '',
     item: '',
     instructions: '',
+    uploadType: 0,
 
 // =============================
 
 
-    remarks: 'note',
+    remarks: '',
     endUser: '',
 
 // ===========================
@@ -130,7 +131,7 @@ export const rfqWriteInitial = {
 
 
 export const customerInitial = {
-    "customerCode": "",                // 거래처코드
+    "customerCode": "",                // 고객사코드
     "customerName": "",  // 고객사명(상호명)
     "phoneNumber": "",              // 전화번호
     "faxNumber": "",       // 팩스
@@ -214,8 +215,8 @@ export const subRfqReadInitial = {
 export const subRfqReadMailInitial = {
 
     "searchDate": [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],   // front 사용
-    "searchStartDate": "",              // 작성일자 시작일
-    "searchEndDate": "",                // 작성일자 종료일
+    "searchStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),              // 작성일자 시작일
+    "searchEndDate": moment().format('YYYY-MM-DD'),                // 작성일자 종료일
     "searchDocumentNumber": "",         // 문서번호
     "searchCustomerName": "",           // 고객사명
     "searchMaker": "",                  // MAKER
@@ -232,7 +233,7 @@ export const subRfqReadMailInitial = {
     // 메일 전송 목록 검색 필드 추가 2024.11.28
     "searchSentStatus": 0,              // 전송 여부 1: 전송, 2: 미전송
     "searchReplyStatus": 0,             // 회신 여부 1: 회신, 2: 미회신
-    "searchAgencyCode": "k10",          // 대리점코드 검색
+    "searchAgencyCode": "",          // 대리점코드 검색
 
     "page": 1,
     "limit": -1
@@ -240,10 +241,10 @@ export const subRfqReadMailInitial = {
 }
 
 export const estimateReadInitial = {
-    "searchDate": "",   // front 사용
+    searchDate: [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
     "searchType": 0,                   // 검색조건 1: 회신, 2: 미회신
-    "searchStartDate": "",              // 작성일자 시작일
-    "searchEndDate": "",                // 작성일자 종료일
+    searchStartDate: moment().subtract(1, 'years').format('YYYY-MM-DD'),              // 작성일자 시작일
+    searchEndDate: moment().format('YYYY-MM-DD'),                // 작성일자 종료일
     "searchDocumentNumber": "",         // 문서번호
     "searchCustomerName": "",           // 고객사명
     "searchMaker": "",                  // MAKER
@@ -253,21 +254,24 @@ export const estimateReadInitial = {
 }
 
 export const projectReadInitial = {
-    "searchManagerAdminName": "",
-    "searchStartDate": "",
-    "searchEndDate": "",
-    "searchCreatedBy": "",
-    "searchDocumentNumberFull": "",
-    "searchProjectTitle": "",
-    "searchConnectInquiryNo": "",
-    "searchCustomerName": "",
-    "searchCustomerManagerName": "",
-    "searchCustomerPhone": "",
-    "searchCustomerEmail": "",
-    "searchAgencyName": "",
-    "searchAgencyManagerName": "",
-    "searchAgencyManagerPhone": "",
-    "searchAgencyManagerEmail": "",
+    searchManagerAdminName: "",
+    searchDate: [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
+    searchStartDate: moment().subtract(1, 'years').format('YYYY-MM-DD'),              // 작성일자 시작일
+    searchEndDate: moment().format('YYYY-MM-DD'),                // 작성일자 종료일
+    searchCreatedBy: "",
+    searchDocumentNumberFull: "",
+    searchProjectTitle: "",
+    searchConnectInquiryNo: "",
+    searchCustomerName: "",
+    searchCustomerManagerName: "",
+    searchCustomerPhone: "",
+    searchCustomerEmail: "",
+    searchAgencyName: "",
+    searchAgencyManagerName: "",
+    searchAgencyManagerPhone: "",
+    searchAgencyManagerEmail: "",
+    page: 1,
+    limit: -1
 }
 
 
@@ -397,7 +401,7 @@ export const deliveryDaehanInitial = {
     "packagingType": 0,                                 // 포장유형 (B or P)
     "shippingType": 0,                                 // 배송방식(택배 or 화물)
 
-    "paymentMethod": "",                       // 결제 방식 (착불, 후불) (DAESIN/QUICK 전용)
+    "paymentMethod": "착불",                       // 결제 방식 (착불, 후불) (DAESIN/QUICK 전용)
     "classification": "",                     // 구분 (용달, 대리점 등 QUICK 전용)
     "connectInquiryNo": "",                // 연결된 문의 번호
     "isConfirm": "X"
@@ -479,13 +483,13 @@ export const remittanceDomesticInitial = {
 export const remittanceDomesticSearchInitial = {
     "searchDate": [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
     "searchConnectInquiryNo": "",   // InquiryNo
-    "searchCustomerName": "",       // 거래처명
+    "searchCustomerName": "",       // 고객사명
     "searchAgencyName": "",         // 매입처명
     "searchManagerAdminName": "",   // 담당자
     "searchRequestStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),   // 송금요청일자 검색 시작일
     "searchRequestEndDate": moment().format('YYYY-MM-DD'),     // 송금요청일자 검색 종료일
-    "searchIsSend": "X",             // 송금여부 O, X
-    "searchIsInvoice": "X",          // 계산서 발행여부 O, X
+    "searchIsSend": "",             // 송금여부 O, X
+    "searchIsInvoice": "",          // 계산서 발행여부 O, X
     "page": 1,
     "limit": -1
 }
@@ -540,8 +544,9 @@ export const subCodeExchangeInitial = {
 // ---------
 
 export const codeSaveInitial = {
-    "item": "",                  // MAKER
-    "hsCode": "",         // 문서번호
+    searchText: '',
+    item: '',
+    hsCode: ''
 }
 export const codeReadInitial = {
     "searchText": "",         // 문서번호
@@ -575,8 +580,9 @@ export const codeErpSaveInitial = {
     "rightInfo": "",
 }
 export const codeDiplomaReadInitial = {
-    "searchStartDate": "",      // 작성일자 검색 시작일
-    "searchEndDate": "",        // 작성일자 검색 종료일
+    searchDate: [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
+    searchStartDate: moment().subtract(1, 'years').format('YYYY-MM-DD'),
+    searchEndDate: moment().format('YYYY-MM-DD'),
     "searchDocumentNumber": "",           // 문서번호 검색
 }
 
@@ -603,7 +609,7 @@ export const modalCodeDiplomaInitial = {
 }
 
 export const codeDomesticPurchaseInitial = {
-    "searchType": "2",
+    "searchType": 1,
     "searchText": "",
     "page": 1,
     "limit": -1
@@ -614,7 +620,7 @@ export const codeDomesticAgencyWriteInitial = {
     "agencyCode": "",        // 코드(약칭)
     "dealerType": "딜러",        // "딜러", "제조"
     "grade": "A",               // 등급
-    "margin": null,                // 마진
+    "margin": 0,                // 마진
     "agencyName": "",   // 상호
     "maker": "",            // MAKER
     "homepage": "",   // 홈페이지
@@ -622,7 +628,8 @@ export const codeDomesticAgencyWriteInitial = {
     "businessRegistrationNumber": "",       // 사업자 번호
     "bankAccountNumber": "",                // 계좌번호
     "item": "",                             // 아이템
-    "agencyManagerList": []
+    "agencyManagerList": [],
+    searchType : 1
 }
 
 
@@ -792,7 +799,8 @@ export const printEstimateInitial = {
     "businessItem": "",
     "manager": null,
 
-    "customerCategory": ""
+    "customerCategory": "",
+    receiveComp :[]
 }
 
 
@@ -808,7 +816,7 @@ export const modalList = {
     },
     customerName: {
         url: 'customer/getCustomerListForEstimate',
-        title: '거래처 상호명 조회',
+        title: '고객사 상호명 조회',
         column: searchCustomerColumn,
         list: 'customerList',
         placeholder: '상호명 또는 담당자명 입력하세요'
@@ -825,7 +833,7 @@ export const modalList = {
         title: '발주서 조회',
         column: tableOrderReadColumns,
         list: 'orderList',
-        placeholder: '문서번호 또는 거래처명을 입력하세요'
+        placeholder: '문서번호 또는 고객사명을 입력하세요'
     },
 }
 
@@ -866,18 +874,18 @@ export const storeWriteInitial = {
     tariff: null,          // 관세
     vatAmount: null,              // 부가세
     shippingFee: null,            // 운임비
-    total : null,
-    totalVat : null,
-    saleTotal : null,
-    saleVatTotal : null,
-    operationIncome : null,
+    total: null,
+    totalVat: null,
+    saleTotal: null,
+    saleVatTotal: null,
+    operationIncome: null,
     orderStatusDetailList: []
 }
 
 export const storeDetailUnit = {
     orderDocumentNumberFull: "",           // 발주서 Inquiry No
     itemDetailNo: '',                              // 세부 항목 번호
-    customerName: '',                           // 거래처명
+    customerName: '',                           // 고객사명
     agencyName: '',                             // 매입처명
     orderDate: '',                          // 발주일자
     remittanceDate: '',                     // 송금일자
@@ -902,7 +910,7 @@ export const storeRealInitial = {
     "searchStartArrivalDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),               // 입고일자 시작
     "searchEndArrivalDate": moment().format('YYYY-MM-DD'),                 // 입고일자 종료
     "searchOrderDocumentNumberFull": "",        // 발주 Inquirty No
-    "searchCustomerName": "",                   // 거래처명
+    "searchCustomerName": "",                   // 고객사명
 }
 
 
@@ -911,7 +919,7 @@ export const projectDetailUnit = {
     maker: '',
     item: '',
     spec: '',
-    quantity: null,
+    quantity: 0,
     unitPrice: '',
     currencyUnit: '',
     deliveryDate: '',
@@ -923,3 +931,89 @@ export const projectDetailUnit = {
     requestDeliveryDate: '',
     remarks: ''
 }
+
+// ==============================================================================================================================================
+export const reqWriteList = {
+    "MODEL": 'model',
+    "수량": 'quantity',
+    "단위": 'unit',
+    "CURR": 'currency',
+    "NET/P": 'net',
+    "납기": 'deliveryDate',
+    "회신여부": 'content',
+    "회신일": 'replyDate',
+    "비고": 'remarks'
+}
+
+
+// ==============================================================================================================================================
+export const projectWriteList = {
+    "연결 Inquiry No.": 'connectInquiryNo',
+    "MAKER": 'maker',
+    "ITEM": 'item',
+    "규격": 'spec',
+    "수량": 'quantity',
+    "단위 가격": 'unitPrice',
+    "총액": 'total',
+    "화폐단위": 'currencyUnit',
+    "납기": 'deliveryDate',
+    "매입처명": 'agencyName',
+    "매입처 담당자명": 'agencyManagerName',
+    "매입처 전화번호": 'agencyManagerPhone',
+    "매입처 이메일": 'agencyManagerEmail',
+    "관련링크": 'relatedLink',
+    "납기요청일": 'requestDeliveryDate',
+    "비고": 'remarks',
+}
+
+export const estimateWriteList = {
+    MODEL: 'model',
+    수량: 'quantity',
+    단위: 'unit',
+    단가: 'unitPrice',
+    금액: 'amount',
+    CURR: 'currency',
+    "NET/P": 'net',
+}
+
+export const orderWriteList = {
+    MODEL: 'model',
+    단위: 'unit',
+    CURR: 'currency',
+    "NET/P": 'net',
+    totalAmount: 'amount',
+    수량: 'quantity',
+    입고: 'receivedQuantity',
+    미입고: 'unreceivedQuantity',
+    단가: 'unitPrice',
+    금액: 'totalPrice'
+}
+export const storeWriteList = {
+    'Inquiry No.': 'orderDocumentNumberFull',
+    '세부항목 번호': 'itemDetailNo',
+    매입처명: 'agencyName',
+    고객사명: 'customerName',
+    환율: 'exchangeRate',
+    발주일자: 'orderDate',
+    송금일자: 'remittanceDate',
+    금액: 'amount',
+    환폐단위: 'currencyUnit',
+    원화환산금액: 'returnAmount',
+    수수료: 'commissionFee',
+    판매금액: 'salesAmount',
+    '판매금액(VAT 포함)': 'salesAmountVat',
+    입고일자: 'receiptDate',
+    출고일자: 'deliveryDate',
+    '계산서 발행일자결제': '',
+    '결제 여부': 'paymentStatus',
+    선수금: 'advancePayment',
+    비고: 'remarks'
+}
+
+
+
+
+
+
+
+

@@ -1,40 +1,37 @@
 import React, {useRef, useState} from "react";
-import Input from "antd/lib/input/Input";
-import Select from "antd/lib/select";
 import LayoutComponent from "@/component/LayoutComponent";
-import Card from "antd/lib/card/Card";
-import {CopyOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
+import {CopyOutlined, FileExcelOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
 import {rfqReadColumns} from "@/utils/columnList";
-import DatePicker from "antd/lib/date-picker";
 import {subRfqReadInitial} from "@/utils/initialList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
-import moment from "moment";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
-import {BoxCard, inputForm, rangePickerForm, selectBoxForm} from "@/utils/commonForm";
+import {BoxCard, inputForm, MainCard, rangePickerForm, selectBoxForm} from "@/utils/commonForm";
 import _ from "lodash";
-import {deleteOrder, deleteRfq, searchRfq} from "@/utils/api/mainApi";
+import {deleteRfq, searchRfq} from "@/utils/api/mainApi";
 import {commonManage, gridManage} from "@/utils/commonManage";
-
-
+import {useRouter} from "next/router";
+import Spin from "antd/lib/spin";
+import ReceiveComponent from "@/component/ReceiveComponent";
 
 
 export default function rfqRead({dataInfo}) {
 
-    console.log(dataInfo,':::')
+    const router = useRouter();
     const gridRef = useRef(null);
 
     const copyInit = _.cloneDeep(subRfqReadInitial)
-
+    const [mini, setMini] = useState(true);
     const [info, setInfo] = useState(copyInit);
+
+    const [loading, setLoading] = useState(false);
 
     const onGridReady = (params) => {
         gridRef.current = params.api;
         params.api.applyTransaction({add: dataInfo ? dataInfo : []});
-
     };
 
     function handleKeyPress(e) {
@@ -47,19 +44,17 @@ export default function rfqRead({dataInfo}) {
         commonManage.onChange(e, setInfo)
     }
 
-
-    /**
-     * @description 검색조건에 의해서 검색 조회 api
-     */
     async function searchInfo() {
         const copyData: any = {...info}
-
-        const result = await searchRfq({
+        setLoading(true)
+        await searchRfq({
             data: copyData
-        });
-        gridManage.resetData(gridRef, result);
-    }
+        }).then(v=>{
+            gridManage.resetData(gridRef, v);
+            setLoading(false)
+        })
 
+    }
 
 
     async function deleteList() {
@@ -67,67 +62,47 @@ export default function rfqRead({dataInfo}) {
             return message.error('삭제할 데이터를 선택해주세요.')
         }
 
-        const fieldMappings = {
+        const deleteList = gridManage.getFieldDeleteList(gridRef, {
             estimateRequestId: 'estimateRequestId',
             estimateRequestDetailId: 'estimateRequestDetailId'
-        };
-
-        const deleteList = gridManage.getFieldDeleteList(gridRef, fieldMappings);
+        });
         await deleteRfq({data: {deleteList: deleteList}, returnFunc: searchInfo});
 
     }
 
-    const downloadExcel = async () => {
-        gridManage.exportSelectedRowsToExcel(gridRef, '견적의뢰_목록')
-    };
+
+    function clearAll() {
+        setInfo(copyInit);
+        gridRef.current.deselectAll();
+    }
+
+    function moveRegist() {
+        window.open(`/rfq_write`, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
+    }
 
 
-    /**
-     * @description 테이블 우측상단 관련 기본 유틸버튼
-     */
-    const subTableUtil = <div><Button type={'primary'} size={'small'} style={{fontSize: 11}}>
-        <CopyOutlined/>복사
-    </Button>
-        {/*@ts-ignored*/}
-        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
-                onClick={deleteList}>
-            <CopyOutlined/>삭제
-        </Button>
-        <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft: 5,}}
-                onClick={downloadExcel}>
-            <FileExcelOutlined/>출력
-        </Button></div>
-
-
-    return <>
+    return <Spin spinning={loading} tip={'견적의뢰 조회중...'}>
+        <ReceiveComponent searchInfo={searchInfo}/>
         <LayoutComponent>
-            <div style={{display: 'grid', gridTemplateRows: 'auto 1fr', height: '100vh', columnGap: 5}}>
-
-                <Card title={<div style={{display: 'flex', justifyContent: 'space-between'}}>
-                    <div style={{fontSize: 14, fontWeight: 550}}>견적의뢰 조회</div>
-                    <div style={{textAlign: 'right'}}>
-                        <Button type={'primary'} size={'small'} onClick={searchInfo}><SearchOutlined/>조회</Button>
-                    </div>
-
-
-                </div>}
-                      headStyle={{marginTop: -10, height: 30}}
-                      style={{border: '1px solid lightGray',}} bodyStyle={{padding: '10px 24px'}}>
-                    <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1.5fr', width: '100%', columnGap: 20}}>
-
-                        <BoxCard title={''}>
-
+            <div style={{
+                display: 'grid',
+                gridTemplateRows: `${mini ? 255 : 65}px calc(100vh - ${mini ? 310 : 120}px)`,
+                columnGap: 5
+            }}>
+                <MainCard title={'견적의뢰 조회'} list={[
+                    {name: '조회', func: searchInfo, type: 'primary'},
+                    {name: '초기화', func: clearAll, type: 'danger'},
+                    {name: '신규작성', func: moveRegist, type: 'default'}
+                ]} mini={mini} setMini={setMini}>
+                    {mini ?  <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: "200px 250px 300px 1fr",
+                    }}>
+                        <BoxCard>
                             {rangePickerForm({title: '작성일자', id: 'searchDate', onChange: onChange, data: info})}
-                            {selectBoxForm({
-                                title: '회신 여부', id: 'searchReplyStatus', list: [
-                                    {value: 0, label: '전체'},
-                                    {value: 1, label: '회신'},
-                                    {value: 2, label: '미회신'}
-                                ], onChange: onChange, data: info
-                            })}
                         </BoxCard>
 
-                        <BoxCard title={''}>
+                        <BoxCard>
                             {inputForm({
                                 title: '문서번호', id: 'searchDocumentNumber',
                                 onChange: onChange,
@@ -148,7 +123,7 @@ export default function rfqRead({dataInfo}) {
                             })}
                         </BoxCard>
 
-                        <BoxCard title={''}>
+                        <BoxCard>
                             {inputForm({
                                 title: 'MAKER', id: 'searchMaker',
                                 onChange: onChange,
@@ -168,28 +143,28 @@ export default function rfqRead({dataInfo}) {
                                 data: info
                             })}
                         </BoxCard>
+                    </div>  : <></>}
+                </MainCard>
 
-                    </div>
-                </Card>
-
-                <TableGrid
+                {/*@ts-ignored*/}
+                <TableGrid deleteComp={<Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}} onClick={deleteList}>
+                    <CopyOutlined/>삭제
+                </Button>}
                     gridRef={gridRef}
                     columns={rfqReadColumns}
                     onGridReady={onGridReady}
                     type={'read'}
-                    funcButtons={subTableUtil}
-                />
+                    funcButtons={['print']}/>
 
             </div>
         </LayoutComponent>
-    </>
+    </Spin>
 }
 
 export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
 
-    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
-    console.log(codeInfo, 'codeInfo:')
+    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
     if (codeInfo < 0) {
         return {
             redirect: {
@@ -200,7 +175,11 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
     } else {
         store.dispatch(setUserInfo(userInfo));
 
+        const start = Date.now();
+
         const result = await searchRfq({data: subRfqReadInitial});
+
+        console.log("API 호출 시간:", Date.now() - start);
         return {
             props: {dataInfo: result ? result : null}
         }

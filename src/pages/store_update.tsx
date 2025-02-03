@@ -23,7 +23,7 @@ import {
 import {commonManage, gridManage} from "@/utils/commonManage";
 import _ from "lodash";
 import OrderListModal from "@/component/OrderListModal";
-import {saveStore} from "@/utils/api/mainApi";
+import {saveStore, updateStore} from "@/utils/api/mainApi";
 import {useRouter} from "next/router";
 import {getData} from "@/manage/function/api";
 
@@ -100,6 +100,7 @@ export default function storeUpdate({dataInfo}) {
 
 
     async function saveFunc() {
+        gridRef.current.clearFocusedCell();
         if (!info['blNo']) {
             return message.warn('B/L No.가 누락되었습니다.')
         }
@@ -122,7 +123,7 @@ export default function storeUpdate({dataInfo}) {
             copyInfo[listType][idx]['itemDetailNo'] = processedItemDetailNo;
 
         })
-        await saveStore({data: copyInfo, router: router})
+        await updateStore({data: copyInfo, router: router})
     }
 
     async function deleteList() {
@@ -251,7 +252,7 @@ export default function storeUpdate({dataInfo}) {
             }}>
 
                 <MainCard title={'입고 수정'} list={[
-                    {name: '저장', func: saveFunc, type: 'primary'},
+                    {name: '수정', func: saveFunc, type: 'primary'},
                     {name: '초기화', func: clearAll, type: 'danger'},
                     {name: '복제', func: copyPage, type: 'default'},
                 ]} mini={mini} setMini={setMini}>
@@ -358,7 +359,7 @@ export default function storeUpdate({dataInfo}) {
                     columns={storeWriteColumn}
                     onGridReady={onGridReady}
                     type={'write'}
-                    funcButtons={subTableUtil}
+                    funcButtons={['storeUpload', 'storeAdd', 'delete', 'print']}
                     onCellEditingStopped={onCellEditingStopped}
                 />
             </div>

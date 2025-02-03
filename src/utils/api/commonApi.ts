@@ -2,35 +2,42 @@ import {getData} from "@/manage/function/api";
 import message from "antd/lib/message";
 import {modalList} from "@/utils/initialList";
 import moment from "moment/moment";
+import {checkInquiryNo} from "@/utils/api/mainApi";
+import {gridManage} from "@/utils/commonManage";
 
 
-export const findCodeInfo = async (event, setInfo, openModal) => {
+export const findCodeInfo = async (event, setInfo, openModal, type? , setValidate?) => {
     getData.post(modalList[event.target.id]?.url, {
         "searchType": "1",
         "searchText": event.target.value,       // 대리점코드 or 대리점 상호명
         "page": 1,
         "limit": -1
-    }).then(v => {
+    }).then(async v => {
 
         const data = v?.data?.entity[modalList[event.target.id]?.list];
 
         const size = data?.length;
 
         if (size > 1) {
+
             return openModal(event.target.id);
         } else if (size === 1) {
             switch (event.target.id) {
                 case 'agencyCode' :
                     const {agencyId, agencyCode, agencyName, currencyUnit} = data[0];
+                    const returnDocumentNumb = await checkInquiryNo({data: {agencyCode: agencyCode, type : type}})
                     setInfo(v => {
                         return {
                             ...v,
+                            documentNumberFull : type === 'ESTIMATE' ? v.documentNumberFull : returnDocumentNumb,
                             agencyId: agencyId,
                             agencyCode: agencyCode,
                             agencyName: agencyName,
                             currencyUnit: currencyUnit
                         }
-                    })
+                    });
+                    setValidate(v=>{return{...v, agencyCode :true, documentNumberFull : true}})
+
                     break;
                 case 'customerName' :
                     const {customerName, managerName, directTel, faxNumber, email} = data[0];
@@ -72,21 +79,12 @@ export const findCodeInfo = async (event, setInfo, openModal) => {
 
 export const findDocumentInfo = async (event, setInfo) => {
 
-  const result =  await getData.post('estimate/getEstimateRequestDetail', {
-        "estimateId": null,
-        "documentNumberFull": event.target.value
+    const result = await getData.post('estimate/getEstimateRequestDetail', {
+        "documentNumberFull": event.target.value,
+        "page": 1,
+        "limit": -1
     })
-    if (result?.data?.code === 1) {
-
-
-        if(result?.data?.entity?.estimateRequestDetail) {
-
-            setInfo(v => {
-                    return {...v, ...result?.data?.entity?.estimateRequestDetail,estimateDetailList : result?.data?.entity?.estimateRequestDetail?.estimateRequestDetailList,writtenDate : moment()}
-                }
-            )
-        }
-    }
+    return result?.data?.entity?.estimateRequestDetail
 };
 
 export const findEstDocumentInfo = async (event, setInfo) => {
@@ -114,14 +112,14 @@ export const findEstDocumentInfo = async (event, setInfo) => {
 };
 
 
-
-export const findOrderDocumentInfo = async (event, setInfo) => {
+export const findOrderDocumentInfo = async (event, setInfo, gridRef?) => {
 
     const result = await getData.post('estimate/getEstimateDetail', {
         "estimateId": null,
         "documentNumberFull": event.target.value
     });
     if (result?.data?.code === 1) {
+
 
 
         if (result?.data?.entity?.estimateDetail?.estimateDetailList.length) {
@@ -134,7 +132,9 @@ export const findOrderDocumentInfo = async (event, setInfo) => {
                         orderDetailList: result?.data?.entity?.estimateDetail?.estimateDetailList
                     }
                 }
-            )
+            );
+            gridManage.resetData(gridRef, result?.data?.entity?.estimateDetail?.estimateDetailList)
+
         }
     }
 };

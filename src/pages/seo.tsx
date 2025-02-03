@@ -15,7 +15,7 @@ export default function Seo(props){
 
 
     useEffect(()=>{
-        console.log(Numb,'변햇구나')
+
     },[Numb])
 
 

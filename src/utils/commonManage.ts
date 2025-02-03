@@ -1,17 +1,26 @@
 import moment from "moment";
 import * as XLSX from "xlsx";
-import {rfqReadColumns} from "@/utils/columnList";
+import {dateFormat, rfqReadColumns} from "@/utils/columnList";
 import message from "antd/lib/message";
+import {jsPDF} from "jspdf";
+import html2canvas from "html2canvas";
 
 export const commonManage: any = {}
 export const apiManage: any = {}
 export const commonFunc: any = {}
 export const commonCalc: any = {}
 export const gridManage: any = {}
+export const fileManage: any = {}
 
 
-gridManage.exportSelectedRowsToExcel = function (gridRef, title ) {
-    if (gridRef.current ) {
+gridManage.getSelectRows = function (gridRef) {
+    const selectedNodes = gridRef.current.getSelectedNodes(); // gridOptions 대신 gridRef 사용
+    const selectedData = selectedNodes.map(node => node.data);
+    return selectedData;
+}
+
+gridManage.exportSelectedRowsToExcel = function (gridRef, title) {
+    if (gridRef.current) {
         // 체크된 행 데이터 가져오기
         const selectedRows = gridRef.current.getSelectedRows();
 
@@ -39,7 +48,7 @@ gridManage.exportSelectedRowsToExcel = function (gridRef, title ) {
         // 컬럼 너비 설정
         const columnWidths = columns.map((col) => {
             const width = col.getActualWidth(); // Ag-Grid의 실제 너비
-            return { wpx: width }; // 너비를 픽셀 단위로 설정
+            return {wpx: width}; // 너비를 픽셀 단위로 설정
         });
         worksheet['!cols'] = columnWidths;
 
@@ -68,13 +77,13 @@ gridManage.getFieldDeleteList = function (gridRef, fieldMappings) {
         const selectedRows = gridRef.current.getSelectedRows();
 
         // fieldMappings으로 원하는 필드 조합 생성
-        const fieldValues = selectedRows.map((row:any) => {
+        const fieldValues = selectedRows.map((row: any) => {
             const mappedObject = {};
             for (const [key, field] of Object.entries(fieldMappings)) {
                 // @ts-ignore
                 if (row[field] !== undefined) {
                     // @ts-ignore
-                    mappedObject[key] = row[field];
+                    mappedObject[key] = parseFloat(row[field]);
                 }
             }
             return mappedObject;
@@ -92,6 +101,7 @@ gridManage.deleteAll = function (gridRef) {
     gridRef.current.forEachNode((node) => {
         allData.push(node.data);
     });
+
     gridRef.current.applyTransaction({remove: allData});
 };
 
@@ -140,29 +150,67 @@ gridManage.getColumnsSums = function (gridRef, keyPairs) {
 
 
 gridManage.getAllData = function (gridRef) {
-    const allData = [];
-    const nodesToRemove = [];
+    if (gridRef.current) {
+        const allData = [];
+        const nodesToRemove = [];
 
-    // 모든 노드를 순회
-    gridRef.current.forEachNode((node) => {
-        const row = node.data;
+        // 모든 노드를 순회
+        gridRef.current.forEachNode((node) => {
+            // 데이터를 수정하여 null을 0으로 변환
+            const row = {...node.data};
+            Object.keys(row).forEach((key) => {
 
-        // 행이 빈 행인지 확인
-        const isEmptyRow = Object.values(row).every(value => value === null || value === undefined || value === '');
-        if (isEmptyRow) {
-            nodesToRemove.push(node); // 빈 행은 삭제 대상으로 추가
-        } else {
-            allData.push(row); // 유효한 행만 배열에 추가
+                if (row[key] === null || row[key] === undefined) {
+                    if (key === 'net' || key === 'unitPrice') {
+                        row[key] = 0;
+                    }
+                    if (key === 'currency') {
+                        row[key] = '';
+                    }
+                }
+            });
+
+            // 행이 빈 행인지 확인
+            const isEmptyRow = Object.values(row).every(value => value === null || value === undefined || value === '' ||  value === 0);
+            if (isEmptyRow) {
+                nodesToRemove.push(node); // 빈 행은 삭제 대상으로 추가
+            } else {
+                allData.push(row); // 유효한 행만 배열에 추가
+            }
+        });
+
+        // 빈 행 제거
+        if (nodesToRemove.length > 0) {
+            gridRef.current.applyTransaction({remove: nodesToRemove.map(node => node.data)});
         }
-    });
 
-    // 빈 행 제거
-    if (nodesToRemove.length > 0) {
-        gridRef.current.applyTransaction({remove: nodesToRemove.map(node => node.data)});
+        return allData; // 빈 행이 제거된 데이터를 반환
     }
-
-    return allData; // 빈 행이 제거된 데이터를 반환
 }
+
+
+gridManage.uploadExcelData = function (data, list) {
+// 데이터 변환 로직
+    const transformedData = data.map(obj => {
+        const newObj = {};
+        Object.keys(list).forEach(key => {
+            if (obj[key] !== undefined) {
+                newObj[list[key]] = obj[key];
+            }
+        });
+        return newObj;
+    });
+    return transformedData
+}
+
+gridManage.updateAllFields = function (gridRef, fieldName, newValue) {
+    if (gridRef.current) {
+        gridRef.current.forEachNode((node) => {
+            // 특정 필드의 값을 변경
+            node.setDataValue(fieldName, newValue);
+        });
+    }
+};
 
 
 // ===============================================
@@ -188,11 +236,6 @@ apiManage.generateCodeChallenge = async function (codeVerifier) {
 // ===============================================
 
 
-commonManage.getSelectRows = function (gridRef) {
-    const selectedNodes = gridRef.current.api.getSelectedNodes(); // gridOptions 대신 gridRef 사용
-    const selectedData = selectedNodes.map(node => node.data);
-    return selectedData;
-}
 /**
  * @param file 업로드 파일입니다.
  * @description 업로드한 파일을 json으로 풀어서 컬럼에 맞게 데이터 재출력을 하기위한 함수
@@ -322,6 +365,9 @@ commonManage.getCheckList = function (gridRef) {
 
 
 commonManage.onChange = function (e, setInfo) {
+    if (e.target.id === 'documentNumberFull') {
+        commonFunc.unValidateInput('documentNumberFull')
+    }
     let bowl = {}
     bowl[e.target.id] = e.target.value;
     setInfo(v => {
@@ -334,7 +380,7 @@ commonManage.onChange = function (e, setInfo) {
             addDate['searchStartArrivalDate'] = e.target.value[0];
             addDate['searchEndArrivalDate'] = e.target.value[1];
         }
-        if(e.target.id === 'supplyAmount'){
+        if (e.target.id === 'supplyAmount') {
             addDate['surtax'] = Math.round(e.target.value * 0.1)
             addDate['total'] = e.target.value + Math.round(e.target.value * 0.1)
         }
@@ -468,6 +514,25 @@ commonManage.changeCurr = function (value) {
     }
 }
 
+commonFunc.repeatObject = function (item, numb) {
+    return Array.from({length: numb}, () => ({...item}));
+}
+commonFunc.validateInput = function (id) {
+    const inputElement = document.getElementById(id);
+    if (inputElement) {
+        inputElement.style.border = "1px solid red"; // 빨간색 테두리
+        inputElement.style.boxShadow = "none"; // 그림자 제거
+        inputElement.focus();
+    }
+}
+commonFunc.unValidateInput = function (id) {
+    const inputElement = document.getElementById(id);
+    if (inputElement) {
+        inputElement.style.border = ""; // 빨간색 테두리
+        inputElement.style.boxShadow = ""; // 그림자 제거
+    }
+}
+
 
 commonFunc.sumCalc = function calculateTotals(rowData) {
 
@@ -525,3 +590,112 @@ commonManage.commonCalc = function (info) {
 
 
 // ----------------------------------------------------------------------------------------
+
+commonManage.setInfoFormData = function (info, formData, listType, list?) {
+    for (const {key, value} of commonManage.commonCalc(info)) {
+        if (key !== listType) {
+            if (key === 'dueDate') {
+                formData.append(key, moment(value).format('YYYY-MM-DD'));
+            } else {
+                formData.append(key, value);
+            }
+        }
+    }
+    this.setInfoDetailFormData(formData, listType, list)
+}
+commonManage.setInfoDetailFormData = function (formData, listType, list?) {
+
+    list.forEach((detail, index) => {
+        Object.keys(detail).forEach((key) => {
+            if (!(key == 'orderDate' || key === 'orderProcessing' || key === 'order')) {
+                if (key.includes('Date')&& key !== 'deliveryDate') {
+                    formData.append(`${listType}[${index}].${key}`, moment(detail[key]).isValid() ? dateFormat(detail[key]) : '');
+                } else {
+                    formData.append(`${listType}[${index}].${key}`, detail[key]);
+                }
+            }
+        });
+        formData.delete(`${listType}[${index}].serialNumber`);
+    });
+}
+
+
+commonManage.getUploadList = function (fileRef, formData) {
+    const uploadContainer = document.querySelector(".ant-upload-list"); // 업로드 리스트 컨테이너
+    const fileNodes = uploadContainer.querySelectorAll(".ant-upload-list-item-name");
+    const fileNames = Array.from(fileNodes).map((node: any) => node.textContent.trim());
+
+    let count = 0
+    fileRef.current.fileList.forEach((item, index) => {
+        if (item?.originFileObj) {
+            formData.append(`attachmentFileList[${count}].attachmentFile`, item.originFileObj);
+            formData.append(`attachmentFileList[${count}].fileName`, fileNames[index].replace(/\s+/g, ""));
+            count += 1;
+        }
+    });
+
+    return count
+}
+
+commonManage.deleteUploadList = function (fileRef, formData, originFileList) {
+
+    //기존 기준 사라진 파일
+    const result = originFileList?.filter(itemA => !fileRef.current.fileList.some(itemB => itemA.id === itemB.id));
+
+    result.map((v, idx) => {
+        formData.append(`deleteAttachmentIdList[${idx}]`, v.id);
+    })
+}
+
+
+fileManage.getFormatFiles = function (list) {
+    return list?.map((v) => ({
+        ...v,
+        uid: v.uid || Math.random().toString(36).substr(2, 9), // 고유 UID 생성
+        name: v.fileName,
+        status: "done",
+    }))
+
+}
+
+
+commonManage.removeInvalid = function(obj){
+    // 객체의 모든 키를 순회
+    for (const key in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+            // 값이 객체이면 재귀 호출
+            if (typeof obj[key] === "object" && obj[key] !== null) {
+                this.removeInvalid(obj[key]);
+            }
+            // 값이 "Invalid date"이면 빈 문자열로 변경
+            if (obj[key] === "Invalid date") {
+                obj[key] = "";
+            }
+        }
+    }
+    return obj;
+}
+
+commonManage.getPdfCreate = async function(pdfRef){
+    const element = pdfRef.current;
+
+    // HTML 캡처 후 PDF 생성
+    const canvas = await html2canvas(element, { scale: 1, useCORS: true });
+    const imgData = canvas.toDataURL("image/jpeg", 0.98);
+    const pdf = new jsPDF("portrait", "px", "a4");
+
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+    
+    return pdf
+}
+
+commonManage.getPdfFile = async function(pdf, documentNumberFull){
+    const pdfBlob = pdf.output("blob");
+    console.log(`PDF Blob Size: ${pdfBlob.size} bytes`);
+    const fileName = `${documentNumberFull}_견적서.pdf`;
+    const pdfFile = new File([pdfBlob], fileName, { type: "application/pdf" });
+    return pdfFile;
+}

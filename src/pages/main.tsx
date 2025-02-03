@@ -10,7 +10,7 @@ import {getData} from "@/manage/function/api";
 import Input from "antd/lib/input";
 import Button from "antd/lib/button";
 import moment from "moment";
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {EditOutlined} from "@ant-design/icons";
 import {useRouter} from "next/router";
 
@@ -26,25 +26,9 @@ const noticeList=[
     //계산서 : [상태] 인쿼리넘버, 고객사명, 금액, 담당자.
 ]
 
-
-
-
-
-
 export default function Main({dataList=[], date}) {
     const userInfo = useAppSelector((state) => state.user);
     const router = useRouter();
-
-
-
-
-
-
-
-
-
-
-
 
     const [datas, setDatas] = useState(dataList)
     const [info, setInfo] = useState({
@@ -53,7 +37,6 @@ export default function Main({dataList=[], date}) {
         year: date['year'],
         month: date['month']
     })
-
 
     const dateCellRender = (value) => {
 
@@ -93,15 +76,10 @@ export default function Main({dataList=[], date}) {
         return null;
     };
     const onPanelChange = (value) => {
-        console.log(value, 'valuevalue:')
-        console.log(value.year(), 'value.year():')
-        console.log(value.month() + 1, 'value.year():')
     };
 
     async function searchInfo() {
 
-        console.log(info['year'], 'info[\'year\']:')
-        console.log(info['month'], 'info[\'year\']:')
         const result = await getData.post('order/getOrderListByMonth', {
             "year": info['year'],     // 조회년도
             "month": info['month'],       // 조회월
@@ -124,7 +102,7 @@ export default function Main({dataList=[], date}) {
         })
     }
 
-    return <div>
+    return <>
         <LayoutComponent userInfo={userInfo}>
             <div style={{padding: 5}}>
                 <Card style={{borderRadius: 8}} title={'HOME'}>
@@ -136,15 +114,15 @@ export default function Main({dataList=[], date}) {
                                 fontWeight: 600,
                                 fontSize: 15,
                             }}>공지사항</div><div onClick={()=>router.push('/notice_write')}
-                                  style={{cursor: 'pointer', float: 'right', padding: '0 10px',}}><EditOutlined/></div>
+                                              style={{cursor: 'pointer', float: 'right', padding: '0 10px',}}><EditOutlined/></div>
                             </div>
                             } size='small'>
                                 {noticeList.map((v,i)=>{
-                                return (
-                                    <div style={{marginTop:5, fontSize:13}}>
-                                        <span style={{fontWeight:550,}}>[{v.category}]</span> {v.title}
-                                    </div>
-                                )})}
+                                    return (
+                                        <div style={{marginTop:5, fontSize:13}}>
+                                            <span style={{fontWeight:550,}}>[{v.category}]</span> {v.title}
+                                        </div>
+                                    )})}
                             </Card>
 
                             <Card title={<div onClick={()=>router.push('/order_delivery')} style={{cursor:'pointer', fontWeight:600, fontSize: 15}}>금일 집하</div>} size='small'>
@@ -188,7 +166,7 @@ export default function Main({dataList=[], date}) {
                 </Card>
             </div>
         </LayoutComponent>
-    </div>
+    </>
 }
 
 
@@ -212,13 +190,6 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     const month = today.getMonth() + 1; // 오늘의 월 (0부터 시작하므로 +1)
 
 
-    const result = await getData.post('order/getOrderListByMonth', {
-        "year": '2024',     // 조회년도
-        "month": '10',       // 조회월
-
-        "searchDocumentNumber": "",     // 문서번호 검색
-        "searchCustomerName": ""        // 고객사명 검색
-    })
 
 
     return {
