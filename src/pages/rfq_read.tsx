@@ -81,8 +81,10 @@ export default function rfqRead({dataInfo}) {
     }
 
 
-    return <Spin spinning={loading} tip={'견적의뢰 조회중...'}>
+    return <>
         <ReceiveComponent searchInfo={searchInfo}/>
+        <Spin spinning={loading} tip={'견적의뢰 조회중...'}>
+
         <LayoutComponent>
             <div style={{
                 display: 'grid',
@@ -159,6 +161,7 @@ export default function rfqRead({dataInfo}) {
             </div>
         </LayoutComponent>
     </Spin>
+        </>
 }
 
 export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {

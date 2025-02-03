@@ -98,7 +98,7 @@ export default function projectUpdate({dataInfo}) {
     async function returnFunc(e) {
         if (e) {
             await getAttachmentFileList({
-                data: {
+                getAttachmentFileList: {
                     "relatedType": "PROJECT",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
                     "relatedId": infoInit['projectId']
                 }

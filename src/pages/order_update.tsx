@@ -71,7 +71,7 @@ export default function order_update({dataInfo}) {
     async function returnFunc(e) {
         if (e) {
             await getAttachmentFileList({
-                data: {
+                getAttachmentFileList: {
                     "relatedType": "ORDER",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
                     "relatedId": infoInit['orderId']
                 }

@@ -126,7 +126,7 @@ export default function rqfUpdate({dataInfo, managerList}) {
         if (e) {
 
             await getAttachmentFileList({
-                data: {
+                getAttachmentFileList: {
                     "relatedType": "ESTIMATE_REQUEST",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
                     "relatedId": infoInit['estimateRequestId']
                 }
