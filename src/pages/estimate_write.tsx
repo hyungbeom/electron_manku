@@ -152,11 +152,12 @@ export default function EstimateWrite({dataInfo}) {
 
 
         setLoading(true)
-        await saveEstimate({data: formData, router: router, returnFunc : returnFunc})
+        await saveEstimate({data: formData, router: router, returnFunc: returnFunc})
 
     }
-    function returnFunc(code, msg){
-     if (code === -20001) {
+
+    function returnFunc(code, msg) {
+        if (code === -20001) {
             const inputElement = document.getElementById("documentNumberFull");
             if (inputElement) {
                 inputElement.style.border = "1px solid red"; // 빨간색 테두리
