@@ -18,6 +18,7 @@ import {findOrderDocumentInfo} from "@/utils/api/commonApi";
 import {saveOrder} from "@/utils/api/mainApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {getData} from "@/manage/function/api";
+import Spin from "antd/lib/spin";
 
 
 const listType = 'orderDetailList'
@@ -101,7 +102,19 @@ export default function OrderWriter({dataInfo}) {
 
         commonManage.setInfoFormData(info, formData, listType, list)
         commonManage.getUploadList(fileRef, formData)
-        await saveOrder({data: formData, router: router, setValidate : setValidate})
+        await saveOrder({data: formData, router: router, returnFunc : returnFunc})
+    }
+
+    function returnFunc(code, msg){
+        if(code === -20001){
+            message.error('발주서 PO no가 중복되었습니다.');
+            setValidate(v=>{
+                return {...v, documentNumberFull: false}
+            })
+        }else{
+            message.error(msg);
+        }
+        setLoading(false)
     }
 
     function clearAll() {
@@ -134,7 +147,7 @@ export default function OrderWriter({dataInfo}) {
     }
 
 
-    return <>
+    return <Spin spinning={loading} tip={'발주서 등록중...'}>
         <LayoutComponent>
 
             <div style={{
@@ -250,7 +263,7 @@ export default function OrderWriter({dataInfo}) {
 
             </div>
         </LayoutComponent>
-    </>
+    </Spin>
 }
 
 export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
