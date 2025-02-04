@@ -195,5 +195,4 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
             isMobile, // 모바일 여부를 클라이언트에 전달
         },
     };
-
 })
