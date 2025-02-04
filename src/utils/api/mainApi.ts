@@ -73,24 +73,16 @@ export const deleteRfq = async ({
 
 
 // =================================================================================================
-export const saveEstimate = async ({data, router}) => {
+export const saveEstimate = async ({data, router, returnFunc}) => {
     await getFormData.post('estimate/addEstimate', data).then(v => {
-        if (v.data.code === 1) {
+        const {code} = v.data
+        const  msg = v.data.message
+        if (code === 1) {
             window.opener?.postMessage('write', window.location.origin);
             message.success('저장되었습니다.');
             router.push(`/estimate_update?estimateId=${v.data.entity.estimateId}`)
-        } else if (v.data.code === -20001) {
-            const inputElement = document.getElementById("documentNumberFull");
-            if (inputElement) {
-                inputElement.style.border = "1px solid red"; // 빨간색 테두리
-                inputElement.style.boxShadow = "none"; // 그림자 제거
-                inputElement.focus();
-            }
-            commonFunc.validateInput('documentNumberFull')
-            message.error('문서번호가 중복되었습니다.')
-        } else {
-            message.error('저장에 실패하였습니다.')
         }
+        returnFunc(code, msg)
     });
 };
 

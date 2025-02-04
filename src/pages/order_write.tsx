@@ -35,7 +35,6 @@ export default function OrderWriter({dataInfo}) {
     const [mini, setMini] = useState(true);
     const [validate, setValidate] = useState({documentNumberFull: true});
     const [fileList, setFileList] = useState([]);
-    const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
     const [loading, setLoading] = useState(false);
 
     const adminParams = {
@@ -120,15 +119,6 @@ export default function OrderWriter({dataInfo}) {
     function clearAll() {
         setInfo({...infoInit});
         gridManage.deleteAll(gridRef);
-    }
-
-    async function printTransactionStatement() {
-        await searchCustomer();
-        setIsModalOpen({event1: true, event2: false});
-    }
-
-    function printPo() {
-        setIsModalOpen({event1: false, event2: true});
     }
 
 
