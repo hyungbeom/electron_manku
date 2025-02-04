@@ -94,10 +94,11 @@ export default function rfqRead({dataInfo}) {
 
         setPreviewData(groupedData)
 
-        await getData.post('common/getAttachmentFileList',{attachmentFileItemList :data.map(v=>{
+        await getData.post('common/getAttachmentFileLists',{attachmentFileItemList :data.map(v=>{
             return {relatedType : 'ESTIMATE_REQUEST' ,relatedId : v}
             })}).then(v=>{
 
+                console.log(v.data,'v.data.entity::')
             setFileList(v.data.entity.attachmentFiles)
         })
         setIsModalOpen(true)
