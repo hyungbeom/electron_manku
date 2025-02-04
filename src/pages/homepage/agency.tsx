@@ -189,7 +189,6 @@ const ClampText = styled.div`
 export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
     const userAgent = ctx.req.headers["user-agent"] || "";
     const isMobile = /mobile|android|iphone|ipad|phone/i.test(userAgent); // 모바일 디바이스 감지
-
     return {
         props: {
             isMobile, // 모바일 여부를 클라이언트에 전달

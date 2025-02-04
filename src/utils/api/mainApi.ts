@@ -286,15 +286,21 @@ export const deleteOrderStatusDetails = async ({
 
 // ==================================================================================================================
 
-export const saveOrder = async ({data, router}) => {
+export const saveOrder = async ({data, router, setValidate}) => {
     await getFormData.post('order/addOrder', data).then(v => {
-        if (v.data.code === 1) {
+        const {code} = v.data
+        const  msg = v.data.message
+        if (code === 1) {
             window.opener?.postMessage('write', window.location.origin);
             message.success('저장되었습니다')
             router.push(`/order_update?orderId=${v.data.entity.orderId}`)
-        } else {
-            ``
-            message.error('저장에 실패하였습니다.')
+        } else if(code === -20001) {
+            message.error('발주서 PO no가 중복되었습니다.');
+            setValidate(v=>{
+                return {...v, documentNumberFull: false}
+            })
+        }else{
+            message.error(msg)
         }
     });
 };

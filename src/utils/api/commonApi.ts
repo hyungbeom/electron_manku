@@ -128,7 +128,7 @@ export const findOrderDocumentInfo = async (event, setInfo, gridRef?) => {
                     return {
                         ...v, ...result?.data?.entity?.estimateDetail,
                         documentNumberFull: event.target.value,
-                        writtenDate: moment(),
+                        writtenDate: moment().format('YYYY-MM-DD'),
                         orderDetailList: result?.data?.entity?.estimateDetail?.estimateDetailList
                     }
                 }

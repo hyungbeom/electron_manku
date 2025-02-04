@@ -18,8 +18,6 @@ import {findOrderDocumentInfo} from "@/utils/api/commonApi";
 import {saveOrder} from "@/utils/api/mainApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {getData} from "@/manage/function/api";
-import PrintTransactionModal from "@/component/printTransaction";
-import PrintPo from "@/component/printPo";
 
 
 const listType = 'orderDetailList'
@@ -103,7 +101,7 @@ export default function OrderWriter({dataInfo}) {
 
         commonManage.setInfoFormData(info, formData, listType, list)
         commonManage.getUploadList(fileRef, formData)
-        await saveOrder({data: formData, router: router})
+        await saveOrder({data: formData, router: router, setValidate : setValidate})
     }
 
     function clearAll() {
@@ -208,11 +206,11 @@ export default function OrderWriter({dataInfo}) {
                                     <Select id={'paymentTerms'} size={'small'} defaultValue={'0'}
                                             onChange={(src) => onChange({target: {id: 'searchType', value: src}})}
                                             options={[
-                                                {value: '0', label: 'By in advance T/T'},
-                                                {value: '1', label: 'Credit Card'},
-                                                {value: '2', label: 'L/C'},
-                                                {value: '3', label: 'Order 30% Before Shipping 70%'},
-                                                {value: '4', label: 'Order 50% Before Shipping 50%'},
+                                                {value: 'By in advance T/T', label: 'By in advance T/T'},
+                                                {value: 'Credit Card', label: 'Credit Card'},
+                                                {value: 'L/C', label: 'L/C'},
+                                                {value: 'Order 30% Before Shipping 70%', label: 'Order 30% Before Shipping 70%'},
+                                                {value: 'Order 50% Before Shipping 50%', label: 'Order 50% Before Shipping 50%'},
                                             ]} style={{width: '100%'}}>
                                     </Select>
                                 </div>

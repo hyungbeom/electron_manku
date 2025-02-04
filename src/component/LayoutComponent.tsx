@@ -2,7 +2,7 @@ import React from "react";
 import {Content} from "antd/lib/layout/layout";
 import Menu from "antd/lib/menu";
 import {
-    AlertOutlined,
+    AlertOutlined, BankOutlined,
     DatabaseOutlined,
     DiffOutlined,
     DropboxOutlined,
@@ -19,7 +19,16 @@ export default function LayoutComponent({children, userInfo = null}) {
 
     const router = useRouter();
 
-    const items: any = [
+    const items: any = [{
+        label: 'HOME',
+        key: 'main',
+        icon: <BankOutlined/>,
+        style: {margin: ' 0px -20px 0px -10px'},
+        children: [
+            {label: <span style={{fontSize: '12px'}}>HOME</span>, key: 'main'},
+        ],
+        popupOffset: [0, -4], // Y축 간격 줄이기
+    },
         {
             label: '프로젝트',
             key: 'project',
@@ -105,26 +114,46 @@ export default function LayoutComponent({children, userInfo = null}) {
                     label: <span style={{fontSize: '12px', paddingLeft: 5}}>매입처</span>,
                     key: 'data/domestic/agency_read',
                     children: [
-                        {label: <span style={{fontSize: '12px'}}>국내 등록</span>, key: 'data/agency/domestic/agency_write'},
+                        {
+                            label: <span style={{fontSize: '12px'}}>국내 등록</span>,
+                            key: 'data/agency/domestic/agency_write'
+                        },
                         {label: <span style={{fontSize: '12px'}}>국내 목록</span>, key: 'data/agency/domestic/agency_read'},
-                        {label: <span style={{fontSize: '12px'}}>해외 등록</span>, key: 'data/agency/overseas/agency_write'},
+                        {
+                            label: <span style={{fontSize: '12px'}}>해외 등록</span>,
+                            key: 'data/agency/overseas/agency_write'
+                        },
                         {label: <span style={{fontSize: '12px'}}>해외 목록</span>, key: 'data/agency/overseas/agency_read'},
                     ],
                 },
                 {
                     label: <span style={{fontSize: '12px', paddingLeft: 5}}>고객사</span>, key: 'data_4',
                     children: [
-                        {label: <span style={{fontSize: '12px'}}>국내 등록</span>, key: 'data/customer/domestic/customer_write'},
-                        {label: <span style={{fontSize: '12px'}}>국내 목록</span>, key: 'data/customer/domestic/customer_read'},
-                        {label: <span style={{fontSize: '12px'}}>해외 등록</span>, key: 'data/customer/overseas/customer_write'},
-                        {label: <span style={{fontSize: '12px'}}>해외 목록</span>, key: 'data/customer/overseas/customer_read'},
+                        {
+                            label: <span style={{fontSize: '12px'}}>국내 등록</span>,
+                            key: 'data/customer/domestic/customer_write'
+                        },
+                        {
+                            label: <span style={{fontSize: '12px'}}>국내 목록</span>,
+                            key: 'data/customer/domestic/customer_read'
+                        },
+                        {
+                            label: <span style={{fontSize: '12px'}}>해외 등록</span>,
+                            key: 'data/customer/overseas/customer_write'
+                        },
+                        {
+                            label: <span style={{fontSize: '12px'}}>해외 목록</span>,
+                            key: 'data/customer/overseas/customer_read'
+                        },
                     ],
                 },
-                {label: <span style={{fontSize: '12px', paddingLeft: 5}}>메이커</span>, key: 'data_5',
+                {
+                    label: <span style={{fontSize: '12px', paddingLeft: 5}}>메이커</span>, key: 'data_5',
                     children: [
                         {label: <span style={{fontSize: '12px'}}>메이커 등록</span>, key: 'maker_write'},
                         {label: <span style={{fontSize: '12px'}}>메이커 목록</span>, key: 'maker_read'},
-                    ]},
+                    ]
+                },
                 {label: <span style={{fontSize: '12px'}}>HS CODE</span>, key: 'code_read'},
             ],
             popupOffset: [0, -4],
@@ -138,9 +167,10 @@ export default function LayoutComponent({children, userInfo = null}) {
             ],
             popupOffset: [0, -4],
         }, {
-            label: 'MANKU_HOMEPAGE',
+            label: '' +
+                'MANKU_HOMEPAGE',
             key: 'homepage',
-            icon: <HomeOutlined />,
+            icon: <HomeOutlined/>,
             style: {margin: ' 0px -20px'},
             children: [
                 {label: <span style={{fontSize: '12px'}}>HOMEPAGE</span>, key: 'homepage'},
@@ -156,7 +186,7 @@ export default function LayoutComponent({children, userInfo = null}) {
 
         if (e.key.includes('write')) {
             window.open(root, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
-        }  else {
+        } else {
             router.push(`${root}`)
         }
 
