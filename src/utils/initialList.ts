@@ -350,7 +350,7 @@ export const orderWriteInitial = {
     "managerPhoneNumber": "",  // Tel
     "managerFaxNumber": "",      // E-Mail
     "managerEmail": "",   // Fax
-    "paymentTerms": "",    // Payment Terms
+    "paymentTerms": 'By in advance T/T',    // Payment Terms
     "deliveryTerms": "",              // Delivery Terms
     "maker": "",                    // MAKER
     "item": "",                       // ITEM

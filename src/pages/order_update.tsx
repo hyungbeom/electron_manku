@@ -223,11 +223,11 @@ export default function order_update({dataInfo}) {
                             <BoxCard title={'LOGISTICS'}>
                                 {selectBoxForm({
                                     title: 'Payment Terms', id: 'paymentTerms', onChange: onChange, data: info, list: [
-                                        {value: '0', label: 'By in advance T/T'},
-                                        {value: '1', label: 'Credit Card'},
-                                        {value: '2', label: 'L/C'},
-                                        {value: '3', label: 'Order 30% Before Shipping 70%'},
-                                        {value: '4', label: 'Order 50% Before Shipping 50%'},
+                                        {value: 'By in advance T/T', label: 'By in advance T/T'},
+                                        {value: 'Credit Card', label: 'Credit Card'},
+                                        {value: 'L/C', label: 'L/C'},
+                                        {value: 'Order 30% Before Shipping 70%', label: 'Order 30% Before Shipping 70%'},
+                                        {value: 'Order 50% Before Shipping 50%', label: 'Order 50% Before Shipping 50%'},
                                     ]
                                 })}
                                 {inputForm({

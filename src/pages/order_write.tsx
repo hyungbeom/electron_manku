@@ -203,7 +203,7 @@ export default function OrderWriter({dataInfo}) {
                             <BoxCard title={'LOGISTICS'}>
                                 <div>
                                     <div style={{paddingBottom: 3}}>Payment Terms</div>
-                                    <Select id={'paymentTerms'} size={'small'} defaultValue={'0'}
+                                    <Select id={'paymentTerms'} size={'small'}
                                             onChange={(src) => onChange({target: {id: 'searchType', value: src}})}
                                             options={[
                                                 {value: 'By in advance T/T', label: 'By in advance T/T'},
