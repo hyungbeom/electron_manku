@@ -89,7 +89,7 @@ export default function EstimateWrite({dataInfo}) {
                            return {
                                ...result,
                                connectDocumentNumberFull: info.connectDocumentNumberFull,
-                               documentNumberFull: src.data.code ? src.data.entity.newDocumentNumberFull : v.documentNumberFull,
+                               documentNumberFull: src.data.code === 1 ? src.data.entity.newDocumentNumberFull : v.documentNumberFull,
                                validityPeriod:  '견적 발행 후 10일간',
                                paymentTerms: '발주시 50% / 납품시 50%',
                                shippingTerms: '귀사도착도'
