@@ -2,10 +2,39 @@ import moment from "moment";
 import {commonManage} from "@/utils/commonManage";
 import message from "antd/lib/message";
 
+
+class CustomTooltip {
+    init(params) {
+        this.eGui = document.createElement("div");
+        this.eGui.style.cssText = `
+            max-width: 300px;
+            white-space: pre-wrap;  /* ✅ 줄바꿈 유지 */
+            word-break: break-word; /* ✅ 긴 단어 줄바꿈 */
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px;
+            border-radius: 5px;
+            font-size: 14px;
+            opacity: 0; /* ✅ 처음에는 숨김 */
+            transition: opacity 0.1s ease-in-out; /* ✅ 부드럽게 나타남 */
+        `;
+        this.eGui.innerText = params.value || ""; // ✅ 실제 텍스트 값 사용 (줄바꿈 포함됨)
+
+        // ✅ 툴팁을 즉시 보이게 설정 (약간의 지연 후 표시)
+        setTimeout(() => {
+            this.eGui.style.opacity = "1";
+        }, 10);
+    }
+
+    getGui() {
+        return this.eGui;
+    }
+}
+
 class CustomTextEditor {
     init(params) {
         this.params = params;
-        this.defaultRowHeight = 40; // ✅ 기본 row 높이 (한 줄 크기)
+        this.defaultRowHeight = 40; // ✅ 한 줄 높이
         this.eInput = document.createElement('textarea');
         this.eInput.style.width = '100%';
         this.eInput.style.minHeight = `${this.defaultRowHeight}px`; // ✅ 기본 높이 설정
@@ -31,7 +60,7 @@ class CustomTextEditor {
 
         // ✅ Focus Out (편집 종료) 시 원래 row 높이로 강제 복귀
         this.eInput.addEventListener("blur", () => {
-            this.resetRowHeight();
+            this.resetRowHeight(); // 한 줄로 복귀
         });
 
         // 초기 높이 조정
@@ -61,9 +90,23 @@ class CustomTextEditor {
     // ✅ Focus Out 시 row 높이를 기본값(한 줄)으로 강제 복귀
     resetRowHeight() {
         if (this.params && this.params.api) {
-            this.params.node.setRowHeight(this.defaultRowHeight); // 기본 row 높이 적용
+            // ✅ textarea 스타일 강제로 한 줄로 변경
+            this.eInput.style.height = `${this.defaultRowHeight}px`;
+            this.eInput.style.whiteSpace = 'nowrap'; // ✅ 한 줄로 설정
+            this.eInput.style.overflow = 'hidden';
+            this.eInput.style.textOverflow = 'ellipsis';
+
+            // ✅ row 높이 강제 변경
+            this.params.node.setRowHeight(this.defaultRowHeight);
+
+            // ✅ 강제로 row를 다시 렌더링하여 문제 해결
+            this.params.api.onRowHeightChanged();
+            this.params.api.redrawRows({ rowNodes: [this.params.node] });
+
+            // ✅ 추가로 지연 호출을 사용하여 캐시 문제 해결
             setTimeout(() => {
-                this.params.api.onRowHeightChanged(); // ✅ 지연 호출하여 반영 문제 해결
+                this.params.api.onRowHeightChanged();
+                this.params.api.redrawRows({ rowNodes: [this.params.node] });
             }, 50);
         }
     }
@@ -2223,7 +2266,9 @@ export const projectWriteColumn = [
             "text-overflow": "ellipsis" // ✅ 생략(...) 처리
         },
         editable: true,
-        tooltipField: "model" // ✅ 마우스를 올리면 전체 텍스트 표시 가능
+        tooltipField: "model", // ✅ 마우스를 올리면 전체 텍스트 표시 가능
+        tooltipComponent: CustomTooltip,
+        tooltipShowDelay : 0
     },
     {
         headerName: 'MAKER',
