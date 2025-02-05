@@ -616,6 +616,11 @@ export const tableOrderWriteColumn = [
             const {quantity, unitPrice} = params.data;
             return Math.floor(quantity * unitPrice).toLocaleString();
         }
+    }, {
+        headerName: 'HS-CODE',
+        field: 'hsCode',
+        editable: true,
+
     }
 ];
 

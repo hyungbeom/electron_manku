@@ -12,6 +12,7 @@ import {tableButtonList} from "@/utils/commonForm";
 import {CopyOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
 import AgencyListModal from "@/component/AgencyListModal";
+import HsCodeListModal from "@/component/HsCodeListModal";
 
 const TableGrid = ({
                        gridRef,
@@ -22,7 +23,8 @@ const TableGrid = ({
                        funcButtons = [],
                        onCellEditingStopped = null,
                        deleteComp = <></>,
-                       setInfo = null
+                       setInfo = null,
+                       onRowClicked = null
                    }: any) => {
 
 
@@ -236,8 +238,23 @@ const TableGrid = ({
         // });
     }
 
+    function selectHsCode(info){
+        console.log(info,'::')
+        console.log(page,':page:')
+
+        let selectedRow = page.event.node.data;
+        selectedRow['hsCode'] = info.hsCode
+
+        page.event.api.applyTransaction({
+            update: [selectedRow],
+        });
+
+    }
+
     return (
         <>
+            <HsCodeListModal isModalOpen={isModalOpen['hsCode']} setIsModalOpen={setIsModalOpen}
+                               getRows={selectHsCode}/>
             <EstimateListModal isModalOpen={isModalOpen['estimate']} setIsModalOpen={setIsModalOpen}
                                getRows={getSelectedRows}/>
             <AgencyListModal isModalOpen={isModalOpen['agency']} setIsModalOpen={setIsModalOpen}
@@ -253,6 +270,15 @@ const TableGrid = ({
                 width: 90,
                 cursor: 'pointer'
             }} ref={ref} id={'right'}>
+                {page.field === 'hsCode' ? <div onClick={() => {
+                    setPage(v => {
+                        return {...v, x: null, y: null}
+                    });
+                    setIsModalOpen(v => {
+                        return {...v, hsCode: true}
+                    });
+                }} id={'right'} style={{backgroundColor: 'lightgray', padding: 3}}>HS-CODE 조회
+                </div> : <></>}
                 {page.field === 'connectInquiryNo' ? <div onClick={() => {
                     setPage(v => {
                         return {...v, x: null, y: null}
@@ -310,6 +336,7 @@ const TableGrid = ({
                 </div>
 
                 <AgGridReact
+                    onRowClicked={onRowClicked}
                     onGridReady={onGridReady}
                     theme={tableTheme} ref={gridRef}
                     //@ts-ignore
