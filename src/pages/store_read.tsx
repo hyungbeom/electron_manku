@@ -9,7 +9,7 @@ import {CopyOutlined} from "@ant-design/icons";
 import {deleteOrderStatusDetails, getOrderStatusList} from "@/utils/api/mainApi";
 import _ from "lodash";
 import {commonManage, gridManage} from "@/utils/commonManage";
-import {inputForm, MainCard, rangePickerForm, TopBoxCard} from "@/utils/commonForm";
+import {BoxCard, inputForm, MainCard, rangePickerForm, TopBoxCard} from "@/utils/commonForm";
 import TableGrid from "@/component/tableGrid";
 import {storeReadColumn} from "@/utils/columnList";
 import {useRouter} from "next/router";
@@ -18,7 +18,7 @@ import Spin from "antd/lib/spin";
 import ReceiveComponent from "@/component/ReceiveComponent";
 
 export default function delivery_read({dataInfo}) {
-    console.log(dataInfo,'dataInfo:')
+    console.log(dataInfo, 'dataInfo:')
     const router = useRouter();
 
     const gridRef = useRef(null);
@@ -49,7 +49,6 @@ export default function delivery_read({dataInfo}) {
     }
 
 
-
     async function moveRouter() {
         window.open(`/store_write`, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
     }
@@ -59,7 +58,7 @@ export default function delivery_read({dataInfo}) {
      */
     async function searchInfo(e) {
         const copyData: any = {...info}
-        if(e) {
+        if (e) {
             setLoading(true)
             let result = await getOrderStatusList({data: copyData});
             gridManage.resetData(gridRef, result)
@@ -106,7 +105,12 @@ export default function delivery_read({dataInfo}) {
                             width: '100%',
                             columnGap: 20
                         }}>
-                            <TopBoxCard title={'기본 정보'} grid={'1.5fr 1fr 1fr'}>
+
+                            <BoxCard>
+                                {rangePickerForm({title: '입고일자', id: 'searchArrivalDate', onChange: onChange, data: info})}
+                            </BoxCard>
+                            <BoxCard>
+
                                 {inputForm({
                                     title: 'B/L No.',
                                     id: 'searchBlNo',
@@ -115,20 +119,23 @@ export default function delivery_read({dataInfo}) {
                                     data: info
                                 })}
                                 {inputForm({
-                                    title: '결제여부',
-                                    id: 'searchPaymentStatus',
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
-                                {rangePickerForm({title: '입고일자', id: 'searchArrivalDate', onChange: onChange, data: info})}
-                                {inputForm({
                                     title: 'inquiry No.',
                                     id: 'searchOrderDocumentNumberFull',
                                     onChange: onChange,
                                     handleKeyPress: handleKeyPress,
                                     data: info
                                 })}
+                            </BoxCard>
+                            <BoxCard>
+                                {inputForm({
+                                    title: '결제여부',
+                                    id: 'searchPaymentStatus',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+
+
                                 {inputForm({
                                     title: '고객사명',
                                     id: 'searchCustomerName',
@@ -136,7 +143,7 @@ export default function delivery_read({dataInfo}) {
                                     handleKeyPress: handleKeyPress,
                                     data: info
                                 })}
-                            </TopBoxCard>
+                            </BoxCard>
                         </div>
                         : <></>}
                 </MainCard>

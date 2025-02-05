@@ -2,6 +2,73 @@ import moment from "moment";
 import {commonManage} from "@/utils/commonManage";
 import message from "antd/lib/message";
 
+class CustomTextEditor {
+    init(params) {
+        this.params = params;
+        this.defaultRowHeight = 40; // ✅ 기본 row 높이 (한 줄 크기)
+        this.eInput = document.createElement('textarea');
+        this.eInput.style.width = '100%';
+        this.eInput.style.minHeight = `${this.defaultRowHeight}px`; // ✅ 기본 높이 설정
+        this.eInput.style.height = 'auto';
+        this.eInput.style.overflow = 'hidden'; // ✅ 내부 스크롤 방지
+        this.eInput.style.whiteSpace = 'pre-wrap'; // ✅ 줄바꿈 유지
+        this.eInput.style.resize = 'none'; // ✅ 사용자가 크기 조절 못하도록
+        this.eInput.value = params.value || '';
+
+        // Shift + Enter 줄바꿈 추가
+        this.eInput.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" && event.shiftKey) {
+                event.preventDefault();
+                this.eInput.value += "\n"; // 줄바꿈 추가
+                this.adjustHeight(); // 높이 자동 조정
+            }
+        });
+
+        // 입력할 때마다 높이 조정 + row 높이 동기화
+        this.eInput.addEventListener("input", () => {
+            this.adjustHeight();
+        });
+
+        // ✅ Focus Out (편집 종료) 시 원래 row 높이로 강제 복귀
+        this.eInput.addEventListener("blur", () => {
+            this.resetRowHeight();
+        });
+
+        // 초기 높이 조정
+        setTimeout(() => this.adjustHeight(), 0);
+    }
+
+    getGui() {
+        return this.eInput;
+    }
+
+    getValue() {
+        return this.eInput.value;
+    }
+
+    // ✅ 높이 자동 조정 + row 높이 동기화
+    adjustHeight() {
+        this.eInput.style.height = 'auto'; // 초기화 후 높이 재계산
+        this.eInput.style.height = Math.max(this.eInput.scrollHeight, this.defaultRowHeight) + 'px'; // 최소 row 높이 유지
+
+        // ✅ ag-Grid row 높이 동기화
+        if (this.params && this.params.api) {
+            this.params.node.setRowHeight(this.eInput.scrollHeight + 10); // 추가 여유값 적용
+            this.params.api.onRowHeightChanged(); // 높이 변경 이벤트 호출
+        }
+    }
+
+    // ✅ Focus Out 시 row 높이를 기본값(한 줄)으로 강제 복귀
+    resetRowHeight() {
+        if (this.params && this.params.api) {
+            this.params.node.setRowHeight(this.defaultRowHeight); // 기본 row 높이 적용
+            setTimeout(() => {
+                this.params.api.onRowHeightChanged(); // ✅ 지연 호출하여 반영 문제 해결
+            }, 50);
+        }
+    }
+}
+
 const makeAbsoluteUrl = (url) => {
     if (!/^https?:\/\//i.test(url)) {
         return `https://${url}`;
@@ -30,12 +97,12 @@ export const amountFormatParser = (params) => {
     const parsedValue = parseFloat(params.newValue.replace(/,/g, ""));
     return isNaN(parsedValue) ? params.oldValue : parsedValue;
 }
-export const columnPlaceHolder = (params, title) => {
+export const columnPlaceHolder = (params, placeHolder, suffix) => {
 
     return params.value ? (
-        params.value
+        <div><span>{params.value}</span> <span>{suffix}</span></div>
     ) : (
-        <span style={{color: 'lightGray'}} className="ag-cell-placeholder">{title}</span>
+        <span style={{color: 'lightGray'}} className="ag-cell-placeholder">{placeHolder}</span>
     );
 
 }
@@ -319,7 +386,7 @@ export const subRfqWriteColumn = [
         valueParser: (params) => {
             return params.newValue == null || params.newValue === "" ? 0 : params.newValue;
         },
-        cellRenderer: (e) => columnPlaceHolder(e, 'week')
+        cellRenderer: (e) => columnPlaceHolder(e, 'week','주')
     },
     {
         headerName: '회신여부',
@@ -2141,28 +2208,37 @@ export const projectWriteColumn = [
         pinned: 'left',
         headerName: '연결 Inquiry No.',
         field: 'connectInquiryNo',
-        minWidth: 120,
+        maxWidth: 110,
         editable: true,
     }, {
         headerName: 'MODEL',
         field: 'model',
-        minWidth: 150,
+        minWidth: 200,
+        cellEditor: CustomTextEditor, // ✅ 커스텀 에디터 적용
+        wrapText: true,
+        autoHeight: true,
+        cellStyle: {
+            "white-space": "nowrap",  // ✅ 한 줄로 유지
+            "overflow": "hidden",      // ✅ 넘치는 부분 숨김
+            "text-overflow": "ellipsis" // ✅ 생략(...) 처리
+        },
         editable: true,
+        tooltipField: "model" // ✅ 마우스를 올리면 전체 텍스트 표시 가능
     },
     {
         headerName: 'MAKER',
         field: 'maker',
-        minWidth: 150,
+        minWidth: 200,
         editable: true,
     }, {
         headerName: 'ITEM',
         field: 'item',
-        minWidth: 150,
+        minWidth: 200,
         editable: true,
     }, {
         headerName: '규격',
         field: 'spec',
-        minWidth: 150,
+        maxWidth: 50,
         editable: true,
         cellEditor: 'agSelectCellEditor',
         cellEditorParams: {
@@ -2171,7 +2247,7 @@ export const projectWriteColumn = [
     }, {
         headerName: '수량',
         field: 'quantity',
-        minWidth: 150,
+        minWidth: 80,
         editable: true,
         filter: 'agNumberColumnFilter',
         // valueFormatter: amountFormat,
@@ -2222,7 +2298,7 @@ export const projectWriteColumn = [
         },
         valueFormatter: (e)=>amountFormat(e.value),
         valueParser: amountFormatParser,
-        cellRenderer: (e) => columnPlaceHolder(e, 'week')
+        cellRenderer: (e) => columnPlaceHolder(e, 'week', '주')
     }, {
         headerName: '매입처명',
         field: 'agencyName',
@@ -2339,7 +2415,7 @@ export const projectReadColumn = [
         field: 'unitPrice',
         minWidth: 150,
         valueGetter: (params) => {
-            return (params.data.unitPrice).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); // A와 B를 곱한 값
+            return (params.data.unitPrice)?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); // A와 B를 곱한 값
         },
     }, {
         headerName: '총액',

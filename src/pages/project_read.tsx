@@ -83,7 +83,7 @@ export default function ProjectRead({dataInfo}) {
         <LayoutComponent>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '420px' : '65px'} calc(100vh - ${mini ? 515 : 160}px)`,
+                gridTemplateRows: `${mini ? '370px' : '65px'} calc(100vh - ${mini ? 470 : 165}px)`,
                 columnGap: 5
             }}>
 
@@ -94,31 +94,31 @@ export default function ProjectRead({dataInfo}) {
                 ]} mini={mini} setMini={setMini}>
 
                     {mini ? <div>
-                            <TopBoxCard title={''} grid={"150px 250px 150px 1fr"}>
-
-                                {inputForm({
-                                    title: '작성자',
-                                    id: 'searchCreatedBy',
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
-                                {rangePickerForm({title: '작성일자', id: 'searchDate', onChange: onChange, data: info})}
-                                {inputForm({
-                                    title: '담당자',
-                                    id: 'searchManagerAdminName',
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
-
-                            </TopBoxCard>
+                          
                             <div style={{
                                 display: 'grid',
-                                gridTemplateColumns: "200px 250px 300px ",
+                                gridTemplateColumns:  '1fr 1fr 1fr 1.5fr',
                                 gap: 10,
                                 marginTop: 10
                             }}>
+                                <BoxCard title={'기본정보'} grid={"150px 250px 150px 1fr"}>
+                                    {rangePickerForm({title: '작성일자', id: 'searchDate', onChange: onChange, data: info})}
+                                    {inputForm({
+                                        title: '작성자',
+                                        id: 'searchCreatedBy',
+                                        onChange: onChange,
+                                        handleKeyPress: handleKeyPress,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: '담당자',
+                                        id: 'searchManagerAdminName',
+                                        onChange: onChange,
+                                        handleKeyPress: handleKeyPress,
+                                        data: info
+                                    })}
+
+                                </BoxCard>
                                 <BoxCard title={'프로젝트 정보'} tooltip={tooltipInfo('readProject')}>
                                     {inputForm({
                                         title: 'PROJECT NO.',

@@ -96,41 +96,18 @@ export default function remittance_domestic({dataInfo}) {
                 ]} mini={mini} setMini={setMini}>
 
                     {mini ? <div>
-                        <TopBoxCard title={'기본 정보'} grid={'250px 200px 200px 200px'}>
 
-                            {inputForm({
-                                title: 'Inquiry No.',
-                                id: 'searchConnectInquiryNo',
-                                onChange: onChange,
-                                handleKeyPress: handleKeyPress,
-                                data: info
-                            })}
-                            {inputForm({
-                                title: '고객사명',
-                                id: 'searchCustomerName',
-                                onChange: onChange,
-                                handleKeyPress: handleKeyPress,
-                                data: info
-                            })}
-                            {inputForm({
-                                title: '매입처명',
-                                id: 'searchAgencyName',
-                                onChange: onChange,
-                                handleKeyPress: handleKeyPress,
-                                data: info
-                            })}
-                            {inputForm({
-                                title: '담당자',
-                                id: 'searchManagerAdminName',
-                                onChange: onChange,
-                                handleKeyPress: handleKeyPress,
-                                data: info
-                            })}
-                        </TopBoxCard>
 
-                        <div style={{display: 'grid', gridTemplateColumns: "1fr 1fr 1fr 1fr"}}>
+                        <div style={{display: 'grid',    gridTemplateColumns:  '1fr 1fr 1.5fr', gap : 20}}>
+                            <BoxCard title={'기본 정보'}>
 
-                            <BoxCard title={'거래 정보'}>
+                                {inputForm({
+                                    title: 'Inquiry No.',
+                                    id: 'searchConnectInquiryNo',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
                                 <div>
                                     <div style={{marginBottom: 3}}>발주일자</div>
                                     <RangePicker style={{width: '100%'}}
@@ -145,6 +122,29 @@ export default function remittance_domestic({dataInfo}) {
                                     }
                                     }/>
                                 </div>
+                            </BoxCard>
+                            <BoxCard title={'거래 정보'}>
+                                {inputForm({
+                                    title: '고객사명',
+                                    id: 'searchCustomerName',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: '매입처명',
+                                    id: 'searchAgencyName',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: '담당자',
+                                    id: 'searchManagerAdminName',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
                             </BoxCard>
 
                             <BoxCard title={'확인정보'}>
