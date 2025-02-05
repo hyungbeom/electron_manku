@@ -50,7 +50,6 @@ export default function storeUpdate({dataInfo}) {
     const [mini, setMini] = useState(true);
 
 
-
     const onGridReady = (params) => {
         gridRef.current = params.api;
         params.api.applyTransaction({add: dataInfo[listType]});
@@ -114,7 +113,7 @@ export default function storeUpdate({dataInfo}) {
         let copyInfo = _.cloneDeep(info)
         copyInfo[listType] = totalList
 
-        copyInfo[listType].forEach((v,idx) => {
+        copyInfo[listType].forEach((v, idx) => {
 
             const processedItemDetailNo = Array.isArray(v.itemDetailNo)
                 ? v.itemDetailNo.join(',') // 배열을 쉼표로 구분된 문자열로 변환
@@ -219,7 +218,7 @@ export default function storeUpdate({dataInfo}) {
     }
 
 
-    function copyPage(){
+    function copyPage() {
         const totalList = gridManage.getAllData(gridRef)
         let copyInfo = _.cloneDeep(info)
         copyInfo[listType] = totalList
@@ -359,7 +358,7 @@ export default function storeUpdate({dataInfo}) {
                     columns={storeWriteColumn}
                     onGridReady={onGridReady}
                     type={'write'}
-                    funcButtons={['storeUpload', 'storeAdd', 'delete', 'print']}
+                    funcButtons={['storeUpload', 'delete', 'print']}
                     onCellEditingStopped={onCellEditingStopped}
                 />
             </div>

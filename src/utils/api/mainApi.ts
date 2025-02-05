@@ -119,7 +119,10 @@ export const saveStore = async ({data, router}) => {
             window.opener?.postMessage('write', window.location.origin);
             message.success('저장되었습니다.')
             router.push(`/store_update?orderStatusId=${v.data.entity.orderStatusId}`)
-        } else {
+        } else if(v.data.code === -20001) {
+
+            message.warning('B/L No.가 이미 존재합니다.')
+        }else{
             message.error('저장에 실패하였습니다.')
         }
     });
@@ -131,8 +134,11 @@ export const updateStore = async ({data, router}) => {
         if (v.data.code === 1) {
             window.opener?.postMessage('write', window.location.origin);
             message.success('수정되었습니다.')
-        } else {
+        } else if(v.data.code === -20001) {
+            message.error('B/L No.가 중복됩니다.')
+        } else{
             message.error('수정에 실패하였습니다.')
+
         }
     });
 };

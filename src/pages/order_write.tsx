@@ -27,6 +27,7 @@ export default function OrderWriter({dataInfo}) {
     const gridRef = useRef(null);
     const router = useRouter();
 
+    console.log(dataInfo,'dataInfo:::::')
 
     const copyInit = _.cloneDeep(orderWriteInitial)
 
@@ -206,8 +207,8 @@ export default function OrderWriter({dataInfo}) {
                             <BoxCard title={'LOGISTICS'}>
                                 <div>
                                     <div style={{paddingBottom: 3}}>Payment Terms</div>
-                                    <Select id={'paymentTerms'} size={'small'}
-                                            onChange={(src) => onChange({target: {id: 'searchType', value: src}})}
+                                    <Select value={info['paymentTerms']} id={'paymentTerms'} size={'small'}
+                                            onChange={(src) => onChange({target: {id: 'paymentTerms', value: src}})}
                                             options={[
                                                 {value: 'By in advance T/T', label: 'By in advance T/T'},
                                                 {value: 'Credit Card', label: 'Credit Card'},
