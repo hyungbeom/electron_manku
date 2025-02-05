@@ -45,33 +45,43 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
         const result = info.map((v, idx) => {
             let sumDiv = ''
             let detailList = []
-            v.detailList.forEach(source => {
+            let firstResult =  v.detailList.map(source => {
 
-                source.map(data=>{
-                    sumDiv += `<div>${data.model} ========= ${data.quantity} ${data.unit}</div>`;
+
+                {source.forEach((data: any, index) => {
+                    sumDiv += `<tr style="font-weight : bold; height : 30px" >
+                            <th style="border : 1px solid lightgrey width: 40px; border-top: none">${index + 1})</th>
+                            <th style="border : 1px solid lightgrey; border-top: none; white-space: pre-wrap; word-wrap: break-word; overflow-wrap: break-word;text-align: left; font-weight: 500;">  ${data.model.replace(/\n/g, '<br>')}</th>
+                            <th style="border : 1px solid lightgrey; width: 100px;border-top: none;font-weight: 500;">---- ${data.quantity} ${data.unit}</th>
+                        </tr>`
                     detailList.push(data.estimateRequestDetailId)
-                })
+                })}
+
+                let sendDom = `<thead>
+                <div>${source[0].documentNumberFull}</div>
+                <div>Maker : ${source[0].maker}</div>
+                <div>Item : ${source[0].item}</div>
+                <div>Model :</div>
+                  <table style="border : 1px solid lightgrey">
+                                    <thead>${sumDiv}</thead></table>
+            </div>`
+                sumDiv=''
+                return sendDom;
             })
 
-
-            let sendDom = `<div>
-                <div>${v.detailList[0][0].documentNumberFull}</div>
-                <div>${v.detailList[0][0].maker}</div>
-                <div>${v.detailList[0][0].item}</div>
-                <div>====Model====</div>
-                <div>${sumDiv}</div>
-            </div>`
-
+            console.log(firstResult,'firstResult:')
 
             return {
                 email: v.agencyManagerEmail,
                 name: v.sendName,
                 fileIdList: checkList[idx] ? checkList[idx] : [],
                 estimateRequestDetailIdList: detailList,
-                content: sendDom,
+                content:  firstResult.join(''),
                 subject: `${v?.agencyManagerName} 안녕하세요`,
                 ccList: null
             }
+
+
         })
 
 
