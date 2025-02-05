@@ -55,7 +55,7 @@ export default function EstimateWrite({dataInfo}) {
 
     const [info, setInfo] = useState<any>({...copyInit, ...dataInfo, ...adminParams})
     const [mini, setMini] = useState(true);
-    const [validate, setValidate] = useState({agencyCode: !!dataInfo, documentNumberFull: true});
+
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
 
     const [fileList, setFileList] = useState([]);
@@ -77,7 +77,7 @@ export default function EstimateWrite({dataInfo}) {
                 case 'agencyCode' :
                 case 'customerName' :
                 case 'maker' :
-                    await findCodeInfo(e, setInfo, openModal, 'ESTIMATE', setValidate)
+                    await findCodeInfo(e, setInfo, openModal, 'ESTIMATE')
                     break;
                 case 'connectDocumentNumberFull' :
                     const result = await findDocumentInfo(e, setInfo);
@@ -93,11 +93,7 @@ export default function EstimateWrite({dataInfo}) {
                             shippingTerms: '귀사도착도'
                         }
                     })
-                    if (result?.agencyCode) {
-                        setValidate(v => {
-                            return {...v, agencyCode: true}
-                        })
-                    }
+
                     gridManage.resetData(gridRef, result?.estimateRequestDetailList);
                     break;
             }
@@ -110,9 +106,7 @@ export default function EstimateWrite({dataInfo}) {
     }
 
     function onChange(e) {
-        setValidate(v => {
-            return {...v, agencyCode: e.target.id === 'agencyCode' ? false : v.agencyCode}
-        })
+
         commonManage.onChange(e, setInfo)
     }
 
@@ -124,9 +118,7 @@ export default function EstimateWrite({dataInfo}) {
         })
 
         if (!info['documentNumberFull']) {
-            setValidate(v => {
-                return {...v, documentNumberFull: false}
-            })
+
             return message.warn('INQUIRY NO. 정보가 누락되었습니다.')
         }
 
@@ -188,7 +180,6 @@ export default function EstimateWrite({dataInfo}) {
         <SearchInfoModal info={info} setInfo={setInfo}
                          open={isModalOpen}
                          gridRef={gridRef}
-                         setValidate={setValidate}
                          setIsModalOpen={setIsModalOpen} type={'ESTIMATE'}/>
 
         <LayoutComponent>
@@ -218,7 +209,7 @@ export default function EstimateWrite({dataInfo}) {
                                     placeholder: '폴더생성 규칙 유의',
                                     onChange: onChange,
                                     data: info,
-                                    validate: validate['documentNumberFull'],
+
                                     suffix:
                                         <PlusSquareOutlined style={{cursor: 'pointer'}} onClick={
                                             async (e) => {
@@ -263,7 +254,7 @@ export default function EstimateWrite({dataInfo}) {
                                         onChange: onChange,
                                         handleKeyPress: handleKeyPress,
                                         data: info,
-                                        validate: validate['agencyCode']
+
                                     })}
                                     {inputForm({
                                         title: '매입처명',
@@ -351,10 +342,11 @@ export default function EstimateWrite({dataInfo}) {
                                         ], onChange: onChange, data: info
                                     })}
                                     {inputNumberForm({
-                                        title: 'Delivery(weeks)',
+                                        title: 'Delivery',
                                         id: 'delivery',
                                         onChange: onChange,
-                                        data: info
+                                        data: info,
+                                        addonAfter : '주'
                                     })}
                                     {inputNumberForm({
                                         title: '환율',

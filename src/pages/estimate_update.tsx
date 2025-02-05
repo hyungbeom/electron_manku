@@ -49,7 +49,7 @@ export default function estimate_update({dataInfo}) {
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
     const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
-    const [validate, setValidate] = useState({agencyCode: true});
+
     const [fileList, setFileList] = useState(fileManage.getFormatFiles(infoInitFile));
     const [originFileList, setOriginFileList] = useState(infoInitFile);
     const [loading, setLoading] = useState(false);
@@ -68,7 +68,7 @@ export default function estimate_update({dataInfo}) {
                 case 'agencyCode' :
                 case 'customerName' :
                 case 'maker' :
-                    await findCodeInfo(e, setInfo, openModal, 'ESTIMATE', setValidate)
+                    await findCodeInfo(e, setInfo, openModal, 'ESTIMATE')
                     break;
                 case 'connectDocumentNumberFull' :
                     await findDocumentInfo(e, setInfo)
@@ -84,9 +84,6 @@ export default function estimate_update({dataInfo}) {
 
     function onChange(e) {
         if (e.target.id === 'agencyCode') {
-            setValidate(v => {
-                return {...v, agencyCode: false}
-            })
         }
         commonManage.onChange(e, setInfo)
     }
@@ -197,7 +194,6 @@ export default function estimate_update({dataInfo}) {
                          open={isModalOpen}
                          type={'ESTIMATE'}
                          gridRef={gridRef}
-                         setValidate={setValidate}
                          setIsModalOpen={setIsModalOpen}/>
         <EstimateModal/>
         <LayoutComponent>
@@ -250,8 +246,7 @@ export default function estimate_update({dataInfo}) {
                                     }/>,
                                     onChange: onChange,
                                     data: info,
-                                    handleKeyPress: handleKeyPress,
-                                    validate: validate['agencyCode']
+                                    handleKeyPress: handleKeyPress
                                 })}
                                 {inputForm({
                                     title: '매입처명',

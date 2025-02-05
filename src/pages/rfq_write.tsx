@@ -67,7 +67,7 @@ export default function rqfWrite({dataInfo, managerList}) {
         ...copyInit, ...dataInfo, ...adminParams,
         writtenDate: moment().format('YYYY-MM-DD')
     })
-    const [validate, setValidate] = useState({agencyCode: !!dataInfo, documentNumberFull: !!dataInfo});
+
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
 
@@ -100,7 +100,7 @@ export default function rqfWrite({dataInfo, managerList}) {
                 case 'agencyCode' :
                 case 'customerName' :
                 case 'maker' :
-                    await findCodeInfo(e, setInfo, openModal, '', setValidate)
+                    await findCodeInfo(e, setInfo, openModal, '')
                     break;
             }
         }
@@ -112,9 +112,7 @@ export default function rqfWrite({dataInfo, managerList}) {
 
     function onChange(e) {
         if (e.target.id === 'agencyCode') {
-            setValidate(v => {
-                return {...v, agencyCode: false, documentNumberFull: false}
-            })
+
         }
         commonManage.onChange(e, setInfo)
     }
@@ -179,7 +177,6 @@ export default function rqfWrite({dataInfo, managerList}) {
         <SearchInfoModal info={info} setInfo={setInfo}
                          open={isModalOpen}
                          gridRef={gridRef}
-                         setValidate={setValidate}
                          setIsModalOpen={setIsModalOpen}
                         compProps={<div>
                             <Button size={'small'} style={{marginRight: 5}} onClick={() => moveRouter('국내')} id={'국내'}>국내생성</Button>
@@ -254,8 +251,7 @@ export default function rqfWrite({dataInfo, managerList}) {
                                             }
                                         }/>,
                                     data: info,
-                                    disabled: true,
-                                    validate: validate['documentNumberFull']
+                                    disabled: true
                                 })}
                                 {inputForm({
                                     title: 'RFQ NO.',
@@ -289,8 +285,7 @@ export default function rqfWrite({dataInfo, managerList}) {
                                                                     }/>,
                                         onChange: onChange,
                                         handleKeyPress: handleKeyPress,
-                                        data: info,
-                                        validate: validate['agencyCode']
+                                        data: info
                                     })}
                                     {inputForm({
                                         title: '매입처명',

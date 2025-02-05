@@ -181,13 +181,13 @@ export const inputNumberForm = ({
                                     step = 1,
                                     addonAfter = '',
                                     min = -99999,
-                                    max = 99999
+                                    max = 99999,
                                 }: any) => {
     let bowl = data;
 
 
     return <div style={{fontSize: 12, paddingBottom: 10}}>
-        <div>{title}</div>
+        <div style={{paddingBottom : 5}}>{title}</div>
         <InputNumber id={id} value={bowl[id]} disabled={disabled}
                      style={{width: '100%'}}
                      formatter={formatter}
@@ -199,6 +199,7 @@ export const inputNumberForm = ({
                      addonAfter={addonAfter}
                      min={min}
                      max={max}
+
         />
     </div>
 }
@@ -220,15 +221,15 @@ export const radioForm = ({title, id, disabled = false, data, onChange, list}) =
     </div>
 }
 
-export const selectBoxForm = ({title, id, disabled = false, data, onChange, list, size = 'small'}) => {
+export const selectBoxForm = ({title, id, disabled = false, data, onChange, list, size = 'small',  fontSize =12}) => {
 
     return <div style={{}}>
-        <div style={{fontSize: 12}}>{title}</div>
+        <div style={{fontSize: 12, paddingBottom: 6}}>{title}</div>
         {/*@ts-ignore*/}
         <Select className="custom-select" id={id} size={size}
                 value={!isNaN(parseInt(data[id])) ? parseInt(data[id]) : data[id]}
                 onChange={(src, e) => onChange({target: {id: id, value: src, e: e}})}
-                style={{width: '100%', fontSize: 11}}>
+                style={{width: '100%', fontSize: 11, paddingBottom : 7}}>
             {list.map(v => {
                 return <Option style={{fontSize: 11}} value={v.value}>{v.label}</Option>
             })}
