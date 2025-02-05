@@ -100,7 +100,12 @@ export default function delivery_read({dataInfo}) {
                               {name: '초기화', func: clearAll, type: 'danger'},
                               {name: '신규생성', func: moveRouter}]}
                           mini={mini} setMini={setMini}>
-                    {mini ? <div>
+                    {mini ? <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: '1fr 1fr 1.5fr',
+                            width: '100%',
+                            columnGap: 20
+                        }}>
                             <TopBoxCard title={'기본 정보'} grid={'1.5fr 1fr 1fr'}>
                                 {inputForm({
                                     title: 'B/L No.',
