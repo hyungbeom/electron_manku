@@ -373,13 +373,28 @@ export const makerColumn = [
 
 export const subRfqWriteColumn = [
     {
-        headerName: 'MODEL',
-        field: 'model',
-        minWidth: 150,
-        editable: true,
+        headerName: "", // 컬럼 제목
         headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
         checkboxSelection: true, // 각 행에 체크박스 추가
-        pinned: 'left'
+        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
+        cellStyle: {textAlign: "center"}, // 스타일 설정
+        maxWidth: 45, // 컬럼 너비
+        pinned: "left", // 왼쪽에 고정
+        filter: false
+    },{
+        headerName: 'MODEL',
+        field: 'model',
+        minWidth: 200,
+        cellEditor: CustomTextEditor, // ✅ 커스텀 에디터 적용
+        wrapText: true,
+        autoHeight: true,
+        cellStyle: {
+            "white-space": "nowrap",  // ✅ 한 줄로 유지
+            "overflow": "hidden",      // ✅ 넘치는 부분 숨김
+            "text-overflow": "ellipsis" // ✅ 생략(...) 처리
+        },
+        editable: true,
+        tooltipField: "model", // ✅ 마우스를 올리면 전체 텍스트 표시 가능
     },
     {
         headerName: '수량',
@@ -842,13 +857,20 @@ export const tableEstimateWriteColumns = [
 
 
 export const rfqReadColumns = [
-
+    {
+        headerName: "", // 컬럼 제목
+        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
+        checkboxSelection: true, // 각 행에 체크박스 추가
+        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
+        cellStyle: {textAlign: "center"}, // 스타일 설정
+        maxWidth: 45, // 컬럼 너비
+        pinned: "left", // 왼쪽에 고정
+        filter: false
+    },
     {
         headerName: '작성일자',
         field: 'writtenDate',
         width: 130,
-        headerCheckboxSelection: true,
-        checkboxSelection: true,
         pinned: 'left'
     },
 
