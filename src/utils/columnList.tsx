@@ -2344,7 +2344,7 @@ export const projectWriteColumn = [
         minWidth: 200,
         editable: true,
     }, {
-        headerName: '규격',
+        headerName: '단위',
         field: 'spec',
         maxWidth: 50,
         editable: true,
