@@ -1,18 +1,20 @@
 import React from "react";
 import {Content} from "antd/lib/layout/layout";
 import Menu from "antd/lib/menu";
+import Dropdown from "antd/lib/dropdown";
 import {
     AlertOutlined, BankOutlined,
     DatabaseOutlined,
     DiffOutlined,
     DropboxOutlined,
     FormOutlined,
-    FundProjectionScreenOutlined, HomeOutlined,
+    FundProjectionScreenOutlined, HomeOutlined, LogoutOutlined,
     PullRequestOutlined,
-    SendOutlined,
-    TruckOutlined,
+    SendOutlined, SettingOutlined,
+    TruckOutlined, UserOutlined,
 } from '@ant-design/icons';
 import {useRouter} from "next/router";
+import {removeCookie} from "@/manage/function/cookie";
 
 
 export default function LayoutComponent({children, userInfo = null}) {
@@ -174,28 +176,51 @@ export default function LayoutComponent({children, userInfo = null}) {
     };
 
 
-
-
-
-
-
-
     return <>
 
-            <div style={{
-                backgroundColor: '#f5f5f5',
-                width: '100%',
-                borderBottom: '1px solid lightGray',
-                display: 'flex'
-            }}>
-                <Menu onClick={onClick}
-                      selectedKeys={null} mode="horizontal" items={items}
-                      style={{width: '100%', fontSize: 10}} className="custom-menu"/>
-            </div>
+        <div style={{
+            backgroundColor: '#f5f5f5',
+            width: '100%',
+            borderBottom: '1px solid lightGray',
+            display: 'flex'
+        }}>
+            <Menu onClick={onClick}
+                  selectedKeys={null} mode="horizontal" items={items}
+                  style={{width: '100%', fontSize: 10}} className="custom-menu"/>
+            <UserMenu/>
+        </div>
 
         <Content style={{padding: 5}}>
             {children}
         </Content>
 
     </>
+}
+
+export function UserMenu() {
+    const router = useRouter();
+    const items = [
+        {
+            label: <div style={{width: 100}}>마이페이지</div>,
+            key: '1',
+            icon: <UserOutlined/>,
+        },
+        {
+            label: <div style={{width: 100, color : 'red'}} onClick={()=>{
+                removeCookie(null, 'token')
+                router.push('/')
+            }}>로그아웃</div>,
+            key: '2',
+            icon: <LogoutOutlined style={{color : 'red'}}/>
+        }
+    ];
+    return <Dropdown menu={{items}}>
+        <UserOutlined style={{
+            fontSize: 20,
+            justifyContent: 'center',
+            alignItems: 'center',
+            paddingRight: 20,
+            cursor: 'pointer'
+        }}/>
+    </Dropdown>
 }
