@@ -527,11 +527,20 @@ export const estimateTotalColumns = [
 ];
 export const tableEstimateReadColumns = [
     {
+        headerName: "", // 컬럼 제목
         headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
         checkboxSelection: true, // 각 행에 체크박스 추가
+        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
+        cellStyle: {textAlign: "left"}, // 스타일 설정
+        maxWidth: 50, // 컬럼 너비
+        pinned: "left", // 왼쪽에 고정
+        filter: false
+    },
+    {
+
         headerName: '작성일자',
         field: 'writtenDate',
-        width: 130,
+        maxWidth: 80, // 컬럼 너비
         pinned: 'left'
     },
     {
@@ -540,7 +549,7 @@ export const tableEstimateReadColumns = [
         headerName: 'Inquiry No.',
         field: 'documentNumberFull',
         pinned: 'left',
-        maxWidth: 100,
+        maxWidth: 100, // 컬럼 너비
         cellRenderer: (params) => {
             const rowIndex = params.node.rowIndex;
             const currentData = params.value;
@@ -557,7 +566,7 @@ export const tableEstimateReadColumns = [
     {
         headerName: '매입처',
         field: 'agencyName',
-        minWidth: 80,
+        maxWidth: 100,
     },
     {
         headerName: '고객사',
@@ -565,33 +574,33 @@ export const tableEstimateReadColumns = [
             {
                 headerName: '고객사명',
                 field: 'customerName',
-                minWidth: 80,
+                maxWidth: 100,
             },
             {
                 headerName: '고객사담당자',
                 field: 'managerName',
-                minWidth: 80,
+                maxWidth: 80,
             }
         ]
     },
     {
         headerName: '담당자',
         field: 'managerAdminName',
-        minWidth: 70,
+        maxWidth: 80,
     },   {
         headerName: 'MAKER',
         field: 'maker',
-        maxWidth: 100
+        maxWidth: 200
     },
     {
         headerName: 'ITEM',
         field: 'item',
-        maxWidth: 100
+        maxWidth: 200
     },
     {
         headerName: 'MODEL',
         field: 'model',
-        maxWidth: 120
+        maxWidth: 200
     },
     {
         headerName: '물품',
@@ -599,20 +608,20 @@ export const tableEstimateReadColumns = [
             {
                 headerName: '수량',
                 field: 'quantity',
-                minWidth: 40,
+                maxWidth: 60,
                 cellDataType: 'number',
                 valueFormatter: numberFormat,
             },
             {
                 headerName: '단위',
                 field: 'unit',
-                minWidth: 40,
+                maxWidth: 60,
             },
 
             {
                 headerName: '주문여부',
                 field: 'order',
-                minWidth: 80,
+                maxWidth: 80,
                 cellDataType: 'text',
                 initialValue: '미주문'
             },
@@ -1083,109 +1092,6 @@ export const tableOrderReadColumns = [
     },
 ];
 
-
-export const tableOrderInventoryColumns = [
-    {
-        headerName: 'No.',
-        field: 'key',
-        key: 'key',
-
-        render: (text) => <div style={{width: 15}} className="ellipsis-cell">{text}</div>,
-        align: 'center',
-    },
-    {
-        headerName: 'MAKER',
-        field: 'maker',
-        key: 'maker',
-
-        render: (text) => <div style={{width: 100}} className="ellipsis-cell">{text}</div>,
-        align: 'center',
-        minWidth: 180,
-    },
-    {
-        headerName: 'MODEL',
-        field: 'model',
-        key: 'model',
-        minWidth: 150,
-
-        render: (text) => <div style={{width: 120}} className="ellipsis-cell">{text}</div>,
-        align: 'center',
-    },
-    {
-        headerName: '위치',
-        field: 'location',
-        key: 'location',
-
-        render: (text) => <div style={{width: 80}} className="ellipsis-cell">{text}</div>,
-        align: 'center',
-    },
-    {
-        headerName: '잔량',
-        field: 'remainingQuantity',
-        key: 'remainingQuantity',
-
-        render: (text) => <div style={{width: 50}} className="ellipsis-cell">{text}</div>,
-        align: 'center',
-    },
-    {
-        headerName: '출고량',
-        field: 'usageQuantity',
-        key: 'usageQuantity',
-
-        render: (text) => <div style={{width: 50}} className="ellipsis-cell">{text}</div>,
-        align: 'center',
-    },
-    {
-        headerName: '입고량',
-        field: 'receivedQuantity',
-        key: 'receivedQuantity',
-        render: (text) => <div style={{width: 50}} className="ellipsis-cell">{text}</div>,
-        align: 'center',
-    },
-    {
-        headerName: '입고일자',
-        field: 'receiptDate',
-        key: 'receiptDate',
-        render: (text) => <div className="ellipsis-cell" style={{width: 70}}>{moment(text).format('YYYY-MM-DD')}</div>,
-        align: 'center',
-    },
-    {
-        headerName: '문서번호',
-        field: 'documentNumber',
-        key: 'documentNumber',
-        render: (text) => <div style={{width: 80}} className="ellipsis-cell">{text}</div>,
-        align: 'center',
-    },
-    {
-        headerName: '수입단가',
-        field: 'importUnitPrice',
-        key: 'importUnitPrice',
-        render: (text) => <div style={{width: 58}} className="ellipsis-cell">{text}</div>,
-        align: 'center',
-    },
-    {
-        headerName: '화폐단위',
-        field: 'currencyUnit',
-        key: 'currencyUnit',
-        render: (text) => <div style={{width: 58}} className="ellipsis-cell">{text}</div>,
-        align: 'center',
-    },
-    {
-        headerName: '단위',
-        field: 'unit',
-        key: 'unit',
-        render: (text) => <div style={{width: 50}} className="ellipsis-cell">{text}</div>,
-        align: 'center',
-    },
-    {
-        headerName: '비고',
-        field: 'remarks',
-        key: 'remarks',
-
-        render: (text) => <div style={{width: 120}} className="ellipsis-cell">{text}</div>,
-        align: 'center',
-    },
-];
 
 export const remittanceDomesticColumns = [
 

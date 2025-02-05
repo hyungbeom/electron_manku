@@ -268,7 +268,7 @@ export default function PrintPo({ data, isModalOpen, setIsModalOpen }) {
                     fontWeight: 500,
                     width: '100%',
                     display: 'grid',
-                    gridTemplateColumns: '1fr 5fr',
+                    gridTemplateColumns: '0.7fr 3fr 0.5fr 1fr 1fr',
                     borderBottom: '1px solid #A3A3A3'
                 }}>
                     <div style={{padding: '3px 0', textAlign: 'center', borderRight: '1px solid #121212',}}>
