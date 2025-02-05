@@ -124,11 +124,13 @@ export const findOrderDocumentInfo = async (event, setInfo, gridRef?) => {
 
         if (result?.data?.entity?.estimateDetail?.estimateDetailList.length) {
 
+            console.log(result?.data?.entity?.estimateDetail,':::')
             setInfo(v => {
                     return {
                         ...v, ...result?.data?.entity?.estimateDetail,
                         documentNumberFull: event.target.value,
                         writtenDate: moment().format('YYYY-MM-DD'),
+                        estimateManager : result?.data?.entity?.estimateDetail?.managerAdminName,
                         orderDetailList: result?.data?.entity?.estimateDetail?.estimateDetailList
                     }
                 }
