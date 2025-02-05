@@ -31,6 +31,7 @@ class CustomTextEditor {
         this.eInput.addEventListener("keydown", (event) => {
             if (event.key === "Enter" && event.shiftKey) {
                 event.preventDefault();
+                // @ts-ignore
                 this.eInput.value += "\n"; // 줄바꿈 추가
                 this.adjustHeight(); // 높이 자동 조정
             }
