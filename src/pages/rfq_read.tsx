@@ -16,6 +16,7 @@ import {commonManage, gridManage} from "@/utils/commonManage";
 import {useRouter} from "next/router";
 import Spin from "antd/lib/spin";
 import ReceiveComponent from "@/component/ReceiveComponent";
+import moment from "moment";
 
 
 export default function rfqRead({dataInfo}) {
@@ -41,6 +42,7 @@ export default function rfqRead({dataInfo}) {
     }
 
     function onChange(e) {
+
         commonManage.onChange(e, setInfo)
     }
 

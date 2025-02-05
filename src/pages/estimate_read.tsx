@@ -13,7 +13,6 @@ import {deleteEstimate, searchEstimate} from "@/utils/api/mainApi";
 import _ from "lodash";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import {BoxCard, inputForm, MainCard, rangePickerForm, selectBoxForm} from "@/utils/commonForm";
-import {useRouter} from "next/router";
 import Spin from "antd/lib/spin";
 import ReceiveComponent from "@/component/ReceiveComponent";
 
@@ -47,7 +46,7 @@ export default function EstimateRead({dataInfo}) {
 
     async function searchInfo(e) {
         const copyData: any = {...info}
-        if(e){
+        if (e) {
             setLoading(true)
             await searchEstimate({data: copyData}).then(v => {
                 gridManage.resetData(gridRef, v);

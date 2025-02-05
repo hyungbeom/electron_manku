@@ -368,6 +368,11 @@ commonManage.onChange = function (e, setInfo) {
     if (e.target.id === 'documentNumberFull') {
         commonFunc.unValidateInput('documentNumberFull')
     }
+    if(e.target.id === 'searchDate'){
+        if(!e.target.value[0] || !e.target.value[1]){
+            e.target.value = [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
+        }
+    }
     let bowl = {}
     bowl[e.target.id] = e.target.value;
     setInfo(v => {
