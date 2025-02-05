@@ -64,20 +64,20 @@ export default function makerRead({dataInfo}) {
                     columnGap: 10,
                     marginTop: 10
                 }}>
-                    <BoxCard title={'???'}>
+                    <BoxCard >
 
                         {inputForm({title: 'MAKER', id: 'makerName', onChange: onChange, data: info})}
                         {inputForm({title: 'ITEM', id: 'item', onChange: onChange, data: info})}
                         {inputForm({title: '홈페이지', id: 'homepage', onChange: onChange, data: info})}
                         {inputForm({title: '한국매입처', id: 'koreanAgency', onChange: onChange, data: info})}
                     </BoxCard>
-                    <BoxCard title={'???'}>
+                    <BoxCard >
                         {inputForm({title: 'AREA', id: 'area', onChange: onChange, data: info})}
                         {inputForm({title: '원산지', id: 'origin', onChange: onChange, data: info})}
                         {inputForm({title: '담당자 확인', id: 'managerConfirm', onChange: onChange, data: info})}
                         {inputForm({title: '직접 확인', id: 'directConfirm', onChange: onChange, data: info})}
                     </BoxCard>
-                    <BoxCard title={'???'}>
+                    <BoxCard>
                         {textAreaForm({title: '지시사항', id: 'instructions', onChange: onChange, data: info})}
                     </BoxCard>
                 </div>

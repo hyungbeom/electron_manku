@@ -766,15 +766,6 @@ export const tableEstimateReadColumns = [
         headerName: '담당자',
         field: 'managerAdminName',
         maxWidth: 80,
-    },   {
-        headerName: 'MAKER',
-        field: 'maker',
-        maxWidth: 200
-    },
-    {
-        headerName: 'ITEM',
-        field: 'item',
-        maxWidth: 200
     },
     {
         headerName: 'MODEL',
@@ -786,6 +777,15 @@ export const tableEstimateReadColumns = [
         },
         onCellClicked: handleCellClick, // ✅ 셀 클릭 시 처리
         onCellMouseOut: handleCellMouseOut, // ✅ 셀 밖으로 이동 시 처리
+    },   {
+        headerName: 'MAKER',
+        field: 'maker',
+        minWidth: 200
+    },
+    {
+        headerName: 'ITEM',
+        field: 'item',
+        minWidth: 200
     },
     {
         headerName: '물품',
