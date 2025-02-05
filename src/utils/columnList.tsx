@@ -873,6 +873,7 @@ export const tableEstimateWriteColumns = [
         headerName: '수량',
         field: 'quantity',
         editable: true,
+        maxWidth: 80, // 컬럼 너비
         valueFormatter: numberFormat,
         cellStyle: {textAlign: 'right'}
     },
@@ -907,6 +908,12 @@ export const tableEstimateWriteColumns = [
             return (!quantity || !unitPrice) ? null : Math.floor(quantity * unitPrice).toLocaleString();
         },
         cellStyle: {textAlign: 'right'}
+    },{
+        headerName: '마진율',
+        field: 'marginRate',
+        maxWidth: 80,
+        filter: 'agNumberColumnFilter',
+        editable: true,
     },
     {
         headerName: 'CURR',
@@ -2386,8 +2393,14 @@ export const projectWriteColumn = [
         minWidth: 200,
         editable: true,
     }, {
+        headerName: '마진율',
+        field: 'marginRate',
+        minWidth: 80,
+        filter: 'agNumberColumnFilter',
+        editable: true,
+    }, {
         headerName: '단위',
-        field: 'spec',
+        field: 'unit',
         maxWidth: 50,
         editable: true,
         cellEditor: 'agSelectCellEditor',
