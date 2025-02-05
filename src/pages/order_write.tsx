@@ -41,6 +41,7 @@ export default function OrderWriter({dataInfo}) {
     const adminParams = {
         managerAdminId: userInfo['adminId'],
         managerAdminName: userInfo['name'],
+        estimateManager: userInfo['name'],
         createdBy: userInfo['name'],
         managerId: userInfo['name'],
         managerPhoneNumber: userInfo['contactNumber'],
