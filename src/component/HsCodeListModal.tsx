@@ -1,5 +1,10 @@
 import TableGrid from "@/component/tableGrid";
-import {tableCodeReadColumns, tableEstimateReadColumns, tableOrderReadColumns} from "@/utils/columnList";
+import {
+    subTableCodeReadColumns,
+    tableCodeReadColumns,
+    tableEstimateReadColumns,
+    tableOrderReadColumns
+} from "@/utils/columnList";
 import Modal from "antd/lib/modal/Modal";
 import React, {useEffect, useRef, useState} from "react";
 import {searchEstimate, searchOrder} from "@/utils/api/mainApi";
@@ -49,16 +54,12 @@ export default function HsCodeListModal({isModalOpen, setIsModalOpen, getRows}) 
             <TableGrid
                 gridRef={gridRef}
                 onGridReady={onGridReady}
-                columns={tableCodeReadColumns}
+                columns={subTableCodeReadColumns}
                 onRowClicked={onRowClicked}
                 type={'read'}
                 funcButtons={null}
             />
             <div style={{textAlign: 'right', marginTop: 60}}>
-                <Button type={'primary'} onClick={() => {
-                    getRows(gridRef);
-                    handleCancel();
-                }}>선택하기</Button>
             </div>
         </div>
     </Modal>
