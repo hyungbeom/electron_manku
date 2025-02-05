@@ -7,8 +7,6 @@ export default function PrintPo({ data, isModalOpen, setIsModalOpen }) {
     const {orderDetail, customerInfo} = data;
     const pdfRef = useRef();
 
-    console.log(orderDetail, 'orderDetail')
-
     let totalAmount = 0;
     let totalQuantity = 0;
     let unit = '';

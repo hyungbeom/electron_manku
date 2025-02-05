@@ -81,12 +81,14 @@ export default function EstimateWrite({dataInfo}) {
                     break;
                 case 'connectDocumentNumberFull' :
                     const result = await findDocumentInfo(e, setInfo);
-                    console.log(result, 'result:')
                     setInfo(v => {
                         return {
                             ...result,
                             connectDocumentNumberFull: info.connectDocumentNumberFull,
-                            documentNumberFull: v.documentNumberFull
+                            documentNumberFull: v.documentNumberFull,
+                            validityPeriod:  '견적 발행 후 10일간',
+                            paymentTerms: '발주시 50% / 납품시 50%',
+                            shippingTerms: '귀사도착도'
                         }
                     })
                     if (result?.agencyCode) {
