@@ -25,7 +25,6 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
         const list = Object.values(data).map(src => {
             const {agencyManagerName, agencyManagerEmail, agencyManagerId} = Object.values(src)[0][0];
 
-            console.log(agencyManagerName,'agencyManagerName:::')
 
             return {
                 agencyManagerName: (agencyManagerName && agencyManagerName !== 'null') ? agencyManagerName : '이형범 사원님',
@@ -238,6 +237,10 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
                                             <th style={{
                                                 ...headerStyle,
                                                 borderTop: "none",
+                                                whiteSpace : 'pre-wrap',
+                                                wordWrap : 'break-word',
+                                                overflowWrap : 'break-word',
+                                                textAlign : 'left',
                                                 fontWeight: 500
                                             }}>{data.model}</th>
                                             <th style={{

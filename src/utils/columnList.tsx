@@ -904,7 +904,7 @@ export const rfqReadColumns = [
     {
         headerName: '작성일자',
         field: 'writtenDate',
-        width: 130,
+        maxWidth: 80, // 컬럼 너비
         pinned: 'left'
     },
 
@@ -912,7 +912,7 @@ export const rfqReadColumns = [
 
         headerName: 'Inquiry No.',
         field: 'documentNumberFull',
-        width: 100,
+        maxWidth: 100, // 컬럼 너비
         pinned: 'left',
 
         // rowDrag: true
@@ -971,13 +971,12 @@ export const rfqReadColumns = [
             {
                 headerName: 'ITEM',
                 field: 'item',
-                minWidth: 100,
-                maxWidth: 120,
+                minWidth: 200,
             },
             {
                 headerName: 'MODEL',
                 field: 'model',
-                minWidth: 150,
+                minWidth: 200,
                 cellStyle: {
                     "white-space": "pre-wrap", // ✅ 줄바꿈 유지
                     "overflow": "hidden",     // ✅ 넘치는 부분 숨김

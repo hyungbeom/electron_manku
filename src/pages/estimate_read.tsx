@@ -19,8 +19,6 @@ import ReceiveComponent from "@/component/ReceiveComponent";
 
 export default function EstimateRead({dataInfo}) {
 
-    console.log(dataInfo,'dataInfo:')
-
     const gridRef = useRef(null);
 
     const copyInit = _.cloneDeep(estimateReadInitial)
