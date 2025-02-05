@@ -286,8 +286,9 @@ export const saveOrder = async ({data, router, returnFunc}) => {
             window.opener?.postMessage('write', window.location.origin);
             message.success('저장되었습니다')
             router.push(`/order_update?orderId=${v.data.entity.orderId}`)
+        }else{
+            returnFunc(code, msg)
         }
-        returnFunc(code, msg)
     });
 };
 
