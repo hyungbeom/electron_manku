@@ -6,6 +6,7 @@ import Card from "antd/lib/card/Card";
 import {getData} from "@/manage/function/api";
 import Input from "antd/lib/input";
 import _ from "lodash";
+import Button from "antd/lib/button";
 
 
 const headerStyle = {
@@ -24,8 +25,10 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
         const list = Object.values(data).map(src => {
             const {agencyManagerName, agencyManagerEmail, agencyManagerId} = Object.values(src)[0][0];
 
+            console.log(agencyManagerName,'agencyManagerName:::')
+
             return {
-                agencyManagerName: agencyManagerName ? agencyManagerName : '이형범 사원님',
+                agencyManagerName: (agencyManagerName && agencyManagerName !== 'null') ? agencyManagerName : '이형범 사원님',
                 agencyManagerEmail: agencyManagerEmail ? agencyManagerEmail : 'hblee@progist.co.kr',
                 agencyManagerId: agencyManagerId,
                 sendName: userInfo.name,
@@ -82,8 +85,6 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
             }
         })
 
-        console.log(list,'list:::!')
-
         await getData.post('estimate/sendMailEstimateRequests', {mailList: list}).then(v => {
             console.log(v, ':::::')
         }, err => console.log(err, '::::err'))
@@ -136,16 +137,18 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
                     return <div>
                         <div>
 
-                            <div><Input style={{fontSize: 18, width: 400}}
+                            <div><Input prefix={<Button type={'primary'} size={'small'}  style={{marginRight : 10}}>수신자 이메일 : </Button>} style={{fontSize: 15, width: 400, padding : 5}}
                                         value={src.agencyManagerEmail}
+                                        size={'small'}
                                         id={'agencyManagerEmail'}
                                         onChange={e => onChange(e, idx)}/>
                             </div>
-                            <Input style={{fontSize: 18, width: 200}}
+                            <Input prefix={<Button type={'primary'} size={'small'} style={{marginRight : 10}} >수신자 이름 : </Button>} style={{fontSize: 15, width: 250, marginTop : 10, padding : 5}}
+                                   size={'small'}
                                    value={src?.agencyManagerName}
                                    id={'agencyManagerName'}
                                    onChange={e => onChange(e, idx)}/></div>
-                        <div style={{fontSize: 15, paddingTop: 20}}>안녕하세요 <Input style={{fontWeight: 600, width: 130}}
+                        <div style={{fontSize: 15, paddingTop: 20}}>안녕하세요 <Input size={'small'} style={{fontWeight: 600, width: 130}}
                                                                                  value={src.sendName}
                                                                                  onChange={e => onChange(e, idx)}
                                                                                  id={'sendName'}/>입니다
@@ -154,12 +157,9 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
 
 
                         {src.detailList.map(v => {
-
-
-                            return <><Card size={'small'}>
+                            return <><Card size={'small'} title={'첨부파일'} style={{marginTop : 30}}>
                                 {
                                     fileList[v[0].estimateRequestId]?.map(v =>
-
                                         <>
                                             <div style={{display: 'flex'}}>
                                                 <Checkbox style={{paddingRight: 10}}
@@ -175,7 +175,7 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
                                     )
                                 }
                             </Card>
-                                <table style={{width: '100%', marginTop: 10}}>
+                                <table style={{width: '100%', marginTop : 5}}>
                                     <thead>
                                     <tr style={{fontWeight: 'bold', height: 30}}>
                                         <th style={{
