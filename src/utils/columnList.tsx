@@ -515,12 +515,28 @@ export const subRfqWriteColumn = [
 
 export const tableOrderWriteColumn = [
     {
+        headerName: "", // 컬럼 제목
         headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
         checkboxSelection: true, // 각 행에 체크박스 추가
+        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
+        cellStyle: {textAlign: "center"}, // 스타일 설정
+        maxWidth: 45, // 컬럼 너비
+        pinned: "left", // 왼쪽에 고정
+        filter: false
+    },{
         headerName: 'MODEL',
         field: 'model',
-        minWidth: 150,
+        minWidth: 200,
+        cellEditor: CustomTextEditor, // ✅ 커스텀 에디터 적용
+        wrapText: true,
+        autoHeight: true,
+        cellStyle: {
+            "white-space": "nowrap",  // ✅ 한 줄로 유지
+            "overflow": "hidden",      // ✅ 넘치는 부분 숨김
+            "text-overflow": "ellipsis" // ✅ 생략(...) 처리
+        },
         editable: true,
+        tooltipField: "model", // ✅ 마우스를 올리면 전체 텍스트 표시 가능
     },
 
     {
@@ -763,7 +779,13 @@ export const tableEstimateReadColumns = [
     {
         headerName: 'MODEL',
         field: 'model',
-        maxWidth: 200
+        minWidth: 200,
+        cellStyle: {
+            "white-space": "pre-wrap", // ✅ 줄바꿈 유지
+            "overflow": "hidden",     // ✅ 넘치는 부분 숨김
+        },
+        onCellClicked: handleCellClick, // ✅ 셀 클릭 시 처리
+        onCellMouseOut: handleCellMouseOut, // ✅ 셀 밖으로 이동 시 처리
     },
     {
         headerName: '물품',
@@ -824,13 +846,28 @@ export const tableEstimateReadColumns = [
 
 export const tableEstimateWriteColumns = [
     {
+        headerName: "", // 컬럼 제목
         headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
         checkboxSelection: true, // 각 행에 체크박스 추가
+        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
+        cellStyle: {textAlign: "center"}, // 스타일 설정
+        maxWidth: 45, // 컬럼 너비
+        pinned: "left", // 왼쪽에 고정
+        filter: false
+    },{
         headerName: 'MODEL',
         field: 'model',
+        minWidth: 200,
+        cellEditor: CustomTextEditor, // ✅ 커스텀 에디터 적용
+        wrapText: true,
+        autoHeight: true,
+        cellStyle: {
+            "white-space": "nowrap",  // ✅ 한 줄로 유지
+            "overflow": "hidden",      // ✅ 넘치는 부분 숨김
+            "text-overflow": "ellipsis" // ✅ 생략(...) 처리
+        },
         editable: true,
-        width: 120,
-        pinned: 'left'
+        tooltipField: "model", // ✅ 마우스를 올리면 전체 텍스트 표시 가능
     },
     {
         headerName: '수량',
@@ -1138,19 +1175,25 @@ export const tableOrderReadColumns = [
         headerName: 'MAKER',
         field: 'maker',
         align: 'center',
-        minWidth: 180,
+        minWidth: 200,
     },
     {
         headerName: 'ITEM',
         field: 'item',
         align: 'center',
-        minWidth: 100,
+        minWidth: 200,
 
     },
     {
         headerName: 'MODEL',
         field: 'model',
-        minWidth: 150,
+        minWidth: 200,
+        cellStyle: {
+            "white-space": "pre-wrap", // ✅ 줄바꿈 유지
+            "overflow": "hidden",     // ✅ 넘치는 부분 숨김
+        },
+        onCellClicked: handleCellClick, // ✅ 셀 클릭 시 처리
+        onCellMouseOut: handleCellMouseOut, // ✅ 셀 밖으로 이동 시 처리
     },
     {
         headerName: '단위',
