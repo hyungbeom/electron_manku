@@ -143,9 +143,11 @@ export default function EstimateWrite({dataInfo}) {
         const result = await commonManage.getPdfFile(pdf, info.documentNumberFull);
 
 
+        console.log(resultCount,'resultCount:s')
         formData.append(`attachmentFileList[${resultCount}].attachmentFile`, result);
-        formData.append(`attachmentFileList[${resultCount}].fileName`, result.name);
+        formData.append(`attachmentFileList[${resultCount}].fileName`, `03.${resultCount+1} ${result.name}`);
 
+        console.log(result.name,'result.name')
 
         setLoading(true)
         await saveEstimate({data: formData, router: router, returnFunc: returnFunc})

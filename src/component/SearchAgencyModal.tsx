@@ -274,9 +274,7 @@ export default function SearchInfoModal({info, setInfo, open, setIsModalOpen, se
                                                  }
                                              });
                                              gridManage.updateAllFields(gridRef, 'currency', commonManage.changeCurr(e.data.agencyCode))
-                                             setValidate(v => {
-                                                 return {...v, agencyCode: true, documentNumberFull: true}
-                                             })
+
                                          })
 
                                          break;
