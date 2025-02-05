@@ -1143,13 +1143,20 @@ export const rfqReadColumns = [
 
 export const tableOrderReadColumns = [
     {
+        headerName: "", // 컬럼 제목
+        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
+        checkboxSelection: true, // 각 행에 체크박스 추가
+        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
+        cellStyle: {textAlign: "center"}, // 스타일 설정
+        maxWidth: 45, // 컬럼 너비
+        pinned: "left", // 왼쪽에 고정
+        filter: false
+    },
+    {
         headerName: '작성일자',
         field: 'writtenDate',
-        maxWidth: 140,
-        pinned: 'left',
-        headerCheckboxSelection: true,
-        checkboxSelection: true,
-
+        maxWidth: 80,
+        pinned: 'left'
     },
     {
         headerName: '문서번호',
@@ -1176,7 +1183,7 @@ export const tableOrderReadColumns = [
     {
         headerName: '고객사명',
         field: 'customerName',
-        minWidth: 150,
+        minWidth: 100,
     },
     {
         headerName: 'MAKER',
@@ -2645,12 +2652,21 @@ export const projectReadColumn = [
 
 export const delilveryReadColumn = [
     {
+        headerName: "", // 컬럼 제목
         headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
         checkboxSelection: true, // 각 행에 체크박스 추가
+        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
+        cellStyle: {textAlign: "center"}, // 스타일 설정
+        maxWidth: 45, // 컬럼 너비
+        pinned: "left", // 왼쪽에 고정
+        filter: false
+    },
+    {
+
         pinned: 'left',
         headerName: '출고일자.',
         field: 'deliveryDate',
-        maxWidth: 120
+        maxWidth: 80
     }, {
         headerName: '운송유형',
         field: 'deliveryType',
@@ -2724,11 +2740,18 @@ export const delilveryReadColumn = [
 
 export const remittanceReadColumn = [
     {
-        headerName: 'Inquiry No.',
-        field: 'connectInquiryNo',
-        minWidth: 150,
+        headerName: "", // 컬럼 제목
         headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
         checkboxSelection: true, // 각 행에 체크박스 추가
+        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
+        cellStyle: {textAlign: "center"}, // 스타일 설정
+        maxWidth: 45, // 컬럼 너비
+        pinned: "left", // 왼쪽에 고정
+        filter: false
+    },{
+        headerName: 'Inquiry No.',
+        field: 'connectInquiryNo',
+        maxWidth: 80,
         pinned: 'left'
     }, {
         headerName: '담당자',
@@ -2792,8 +2815,16 @@ export const remittanceReadColumn = [
 
 export const storeWriteColumn = [
     {
+        headerName: "", // 컬럼 제목
         headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
         checkboxSelection: true, // 각 행에 체크박스 추가
+        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
+        cellStyle: {textAlign: "center"}, // 스타일 설정
+        maxWidth: 45, // 컬럼 너비
+        pinned: "left", // 왼쪽에 고정
+        filter: false
+    },{
+
         headerName: 'Inquiry No.',
         field: 'orderDocumentNumberFull',
         minWidth: 150,
@@ -2935,12 +2966,19 @@ export const storeWriteColumn = [
 
 export const storeReadColumn = [
     {
+        headerName: "", // 컬럼 제목
+        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
+        checkboxSelection: true, // 각 행에 체크박스 추가
+        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
+        cellStyle: {textAlign: "center"}, // 스타일 설정
+        maxWidth: 45, // 컬럼 너비
+        pinned: "left", // 왼쪽에 고정
+        filter: false
+    },{
         headerName: '운수사명',
         field: 'carrierName',
         minWidth: 80,
     }, {
-        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
-        checkboxSelection: true, // 각 행에 체크박스 추가
         headerName: 'B/L No.',
         field: 'blNo',
         maxWidth: 100,
