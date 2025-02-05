@@ -257,21 +257,25 @@ export default function estimate_update({dataInfo}) {
                                     title: '매입처명',
                                     id: 'agencyName',
                                     onChange: onChange,
-                                    data: info,
-                                    disabled: true
+                                    data: info
                                 })}
                                 {inputForm({
                                     title: '담당자',
                                     id: 'agencyManagerName',
                                     onChange: onChange,
-                                    data: info,
-                                    disabled: true
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: '매입처이메일',
+                                    id: 'agencyManagerEmail',
+                                    onChange: onChange,
+                                    data: info
                                 })}
                                 {inputForm({
                                     title: '연락처',
                                     id: 'agencyManagerPhoneNumber',
                                     onChange: onChange,
-                                    data: info, disabled: true
+                                    data: info
                                 })}
                             </BoxCard>
 

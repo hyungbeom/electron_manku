@@ -270,7 +270,6 @@ export default function EstimateWrite({dataInfo}) {
                                         id: 'agencyName',
                                         onChange: onChange,
                                         data: info,
-                                        disabled: true,
 
                                     })}
                                     {inputForm({
@@ -278,13 +277,18 @@ export default function EstimateWrite({dataInfo}) {
                                         id: 'agencyManagerName',
                                         onChange: onChange,
                                         data: info,
-                                        disabled: true
+                                    })}
+                                    {inputForm({
+                                        title: '매입처이메일',
+                                        id: 'agencyManagerEmail',
+                                        onChange: onChange,
+                                        data: info
                                     })}
                                     {inputForm({
                                         title: '연락처',
                                         id: 'agencyManagerPhoneNumber',
                                         onChange: onChange,
-                                        data: info, disabled: true
+                                        data: info
                                     })}
                                 </BoxCard>
 
@@ -303,29 +307,25 @@ export default function EstimateWrite({dataInfo}) {
                                         title: '담당자명',
                                         id: 'managerName',
                                         onChange: onChange,
-                                        data: info,
-                                        disabled: true
+                                        data: info
                                     })}
                                     {inputForm({
                                         title: '전화번호',
                                         id: 'phoneNumber',
                                         onChange: onChange,
-                                        data: info,
-                                        disabled: true
+                                        data: info
                                     })}
                                     {inputForm({
                                         title: '팩스',
                                         id: 'faxNumber',
                                         onChange: onChange,
-                                        data: info,
-                                        disabled: true
+                                        data: info
                                     })}
                                     {inputForm({
                                         title: '이메일',
                                         id: 'customerManagerEmail',
                                         onChange: onChange,
-                                        data: info,
-                                        disabled: true
+                                        data: info
                                     })}
                                 </BoxCard>
 
