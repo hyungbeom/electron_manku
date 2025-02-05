@@ -157,25 +157,6 @@ export default function LayoutComponent({children, userInfo = null}) {
                 {label: <span style={{fontSize: '12px'}}>HS CODE</span>, key: 'code_read'},
             ],
             popupOffset: [0, -4],
-        }, {
-            label: '공지사항',
-            key: 'note',
-            icon: <AlertOutlined/>,
-            style: {margin: ' 0px -20px'},
-            children: [
-                {label: <span style={{fontSize: '12px'}}>공지사항</span>, key: 'note'},
-            ],
-            popupOffset: [0, -4],
-        }, {
-            label: '' +
-                'MANKU_HOMEPAGE',
-            key: 'homepage',
-            icon: <HomeOutlined/>,
-            style: {margin: ' 0px -20px'},
-            children: [
-                {label: <span style={{fontSize: '12px'}}>HOMEPAGE</span>, key: 'homepage'},
-            ],
-            popupOffset: [0, -4],
         }
 
     ];
@@ -192,8 +173,15 @@ export default function LayoutComponent({children, userInfo = null}) {
 
     };
 
+
+
+
+
+
+
+
     return <>
-        {!(router.pathname.includes('_write') || router.pathname.includes('_update')) ?
+
             <div style={{
                 backgroundColor: '#f5f5f5',
                 width: '100%',
@@ -202,8 +190,8 @@ export default function LayoutComponent({children, userInfo = null}) {
             }}>
                 <Menu onClick={onClick}
                       selectedKeys={null} mode="horizontal" items={items}
-                      style={{width: '100%', fontSize: 10, marginBottom: 7}} className="custom-menu"/>
-            </div> : <></>}
+                      style={{width: '100%', fontSize: 10}} className="custom-menu"/>
+            </div>
 
         <Content style={{padding: 5}}>
             {children}
