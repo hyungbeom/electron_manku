@@ -68,9 +68,6 @@ export default function rfqRead({dataInfo}) {
             return message.warn('선택된 데이터가 없습니다.')
         }
 
-
-
-
         const groupedData = {};
         const fileIdList = [];
 
@@ -97,8 +94,6 @@ export default function rfqRead({dataInfo}) {
         await getData.post('common/getAttachmentFileLists',{attachmentFileItemList :data.map(v=>{
             return {relatedType : 'ESTIMATE_REQUEST' ,relatedId : v}
             })}).then(v=>{
-
-                console.log(v.data,'v.data.entity::')
             setFileList(v.data.entity.attachmentFiles)
         })
         setIsModalOpen(true)
@@ -123,7 +118,8 @@ export default function rfqRead({dataInfo}) {
     }
 
     return <Spin spinning={loading} tip={'견적의뢰 조회중...'}>
-        <PreviewMailModal data={previewData} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} fileList={fileList}/>
+        {isModalOpen && <PreviewMailModal data={previewData} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}
+                           fileList={fileList}/>}
         <LayoutComponent>
             <div style={{
                 display: 'grid',

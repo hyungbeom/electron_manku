@@ -34,7 +34,6 @@ export function DriveUploadComp({fileList, setFileList, fileRef, numb=0, uploadT
     // 파일 클릭 이벤트 처리 (기존 로직 유지)
     const handleClick = (file, e) => {
 
-        console.log(e.button,'??')
         // Ctrl 키와 왼쪽 버튼 클릭 확인
         if (e.ctrlKey && e.button === 0 || e.metaKey && e.button === 0) { // e.button === 0 -> 왼쪽 버튼 클릭
 
