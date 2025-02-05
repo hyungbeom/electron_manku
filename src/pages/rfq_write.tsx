@@ -129,15 +129,16 @@ export default function rqfWrite({dataInfo, managerList}) {
             return message.warn('INQUIRY NO.가 누락되었습니다.')
         }
         const list = gridManage.getAllData(gridRef);
-        if (!list.length) {
-            return message.warn('하위 데이터 1개 이상이여야 합니다');
+        const filterList = list.filter(v=> !!v.model);
+        if (!filterList.length) {
+            return message.warn('유효한 하위 데이터 1개 이상이여야 합니다');
         }
 
         setLoading(true)
 
         const formData: any = new FormData();
         // serialNumbe
-        commonManage.setInfoFormData(info, formData, listType, list)
+        commonManage.setInfoFormData(info, formData, listType, filterList)
         commonManage.getUploadList(fileRef, formData)
 
         formData.delete('createdDate');

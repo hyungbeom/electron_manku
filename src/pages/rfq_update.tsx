@@ -96,16 +96,17 @@ export default function rqfUpdate({dataInfo, managerList}) {
              message.warn('매입처 코드가 누락되었습니다.');
             return;
         }
-        const list = gridManage.getAllData(gridRef)
-        if (!list.length) {
-             message.warn('하위 데이터 1개 이상이여야 합니다');
+        const list = gridManage.getAllData(gridRef);
+        const filterList = list.filter(v=> !!v.model);
+        if (!filterList.length) {
+             message.warn('유효한 하위 데이터 1개 이상이여야 합니다');
             return;
         }
 
         setLoading(true)
         const formData: any = new FormData();
 
-        commonManage.setInfoFormData(info, formData, listType, list)
+        commonManage.setInfoFormData(info, formData, listType, filterList)
         commonManage.getUploadList(fileRef, formData);
         commonManage.deleteUploadList(fileRef, formData, originFileList)
         formData.delete('createdDate');

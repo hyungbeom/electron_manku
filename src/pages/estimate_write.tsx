@@ -84,7 +84,6 @@ export default function EstimateWrite({dataInfo}) {
                     const result = await findDocumentInfo(e, setInfo);
 
                    await getData.post('estimate/generateDocumentNumberFull',{type : 'ESTIMATE', documentNumberFull : info.connectDocumentNumberFull}).then(src=>{
-                       console.log(src.data.code,'::src::')
                        setInfo(v => {
                            return {
                                ...result,
@@ -129,13 +128,16 @@ export default function EstimateWrite({dataInfo}) {
         if (!info['agencyCode']) {
             return message.warn('매입처 코드가 누락되었습니다.')
         }
-        if (!list.length) {
-            return message.warn('하위 데이터 1개 이상이여야 합니다');
+
+        const filterList = list.filter(v=> !!v.model);
+
+        if (!filterList.length) {
+            return message.warn('유효한 하위 데이터 1개 이상이여야 합니다');
         }
 
         const formData: any = new FormData();
 
-        commonManage.setInfoFormData(info, formData, listType, list)
+        commonManage.setInfoFormData(info, formData, listType, filterList)
         const resultCount = commonManage.getUploadList(fileRef, formData)
 
 
