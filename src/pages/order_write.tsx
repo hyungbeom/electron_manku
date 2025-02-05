@@ -227,7 +227,7 @@ export default function OrderWriter({dataInfo}) {
                                 })}
                                 {inputForm({title: 'MAKER', id: 'maker', onChange: onChange, data: info})}
                                 {inputForm({title: 'ITEM', id: 'item', onChange: onChange, data: info})}
-                                {inputForm({title: 'Delivery', id: 'delivery', onChange: onChange, data: info})}
+                                {inputForm({title: 'Delivery', id: 'delivery', onChange: onChange, data: info, suffix : '주'})}
                             </BoxCard>
 
                             <BoxCard title={'ETC'}>

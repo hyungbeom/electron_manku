@@ -183,7 +183,7 @@ export default function EstimateWrite({dataInfo}) {
     }
 
 
-    return <Spin spinning={loading} tip={'견적의뢰 등록중...'}>
+    return <Spin spinning={loading} tip={'견적서 등록중...'}>
 
         <SearchInfoModal info={info} setInfo={setInfo}
                          open={isModalOpen}
