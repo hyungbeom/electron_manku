@@ -28,6 +28,7 @@ import {checkInquiryNo, saveEstimate} from "@/utils/api/mainApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import Spin from "antd/lib/spin";
 import EstimatePaper from "@/component/견적서/EstimatePaper";
+import {getData} from "@/manage/function/api";
 
 
 const listType = 'estimateDetailList'
@@ -82,17 +83,20 @@ export default function EstimateWrite({dataInfo}) {
                 case 'connectDocumentNumberFull' :
                     const result = await findDocumentInfo(e, setInfo);
 
+                   await getData.post('estimate/generateDocumentNumberFull',{type : 'ESTIMATE', documentNumberFull : info.connectDocumentNumberFull}).then(src=>{
+                       console.log(src.data.code,'::src::')
+                       setInfo(v => {
+                           return {
+                               ...result,
+                               connectDocumentNumberFull: info.connectDocumentNumberFull,
+                               documentNumberFull: src.data.code ? src.data.entity.newDocumentNumberFull : v.documentNumberFull,
+                               validityPeriod:  '견적 발행 후 10일간',
+                               paymentTerms: '발주시 50% / 납품시 50%',
+                               shippingTerms: '귀사도착도'
+                           }
+                       })
+                   })
 
-                    setInfo(v => {
-                        return {
-                            ...result,
-                            connectDocumentNumberFull: info.connectDocumentNumberFull,
-                            documentNumberFull: v.documentNumberFull,
-                            validityPeriod:  '견적 발행 후 10일간',
-                            paymentTerms: '발주시 50% / 납품시 50%',
-                            shippingTerms: '귀사도착도'
-                        }
-                    })
 
                     gridManage.resetData(gridRef, result?.estimateRequestDetailList);
                     break;

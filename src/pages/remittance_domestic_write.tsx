@@ -128,7 +128,7 @@ export default function remittance_domestic_write({dataInfo}) {
                         {/*@ts-ignored*/}
                         <div style={{overFlowY: "auto", maxHeight: 300}}>
                             <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                             numb={4}/>
+                                             numb={0}/>
                         </div>
                     </BoxCard>
                 </div>
