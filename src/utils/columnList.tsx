@@ -100,6 +100,7 @@ class CustomTextEditor {
             this.params.node.setRowHeight(this.defaultRowHeight);
 
             // ✅ 강제로 row를 다시 렌더링하여 문제 해결
+            // @ts-ignore
             this.params.api.onRowHeightChanged();
             // @ts-ignore
             this.params.api.redrawRows({ rowNodes: [this.params.node] });
