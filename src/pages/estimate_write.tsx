@@ -81,6 +81,8 @@ export default function EstimateWrite({dataInfo}) {
                     break;
                 case 'connectDocumentNumberFull' :
                     const result = await findDocumentInfo(e, setInfo);
+
+
                     setInfo(v => {
                         return {
                             ...result,

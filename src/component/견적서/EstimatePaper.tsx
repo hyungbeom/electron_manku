@@ -20,8 +20,8 @@ const EstimatePaper = ({data, pdfRef, gridRef}:any) => {
     },[data])
 
     return (
-        // <div ref={pdfRef} style={{padding : '0px 50px', position : 'absolute', zIndex : -100, top :-1000}}>
-        <div ref={pdfRef} style={{padding : '100px 50px', width : 900, margin : '0px auto'}}>
+        <div ref={pdfRef} style={{padding : '0px 50px', position : 'absolute', zIndex : -100, top :-1000}}>
+        {/*<div ref={pdfRef} style={{padding : '100px 50px', width : 900, margin : '0px auto'}}>*/}
 
 
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems : 'center'}}>
