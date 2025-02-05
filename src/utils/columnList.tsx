@@ -555,98 +555,44 @@ export const tableEstimateReadColumns = [
 
     },
     {
-        headerName: '대리점코드',
-        field: 'agencyCode',
-        minWidth: 70,
+        headerName: '매입처',
+        field: 'agencyName',
+        minWidth: 80,
     },
     {
         headerName: '고객사',
         children: [
             {
-                headerName: '고객사코드',
-                field: 'customerCode',
-                minWidth: 70,
-            },
-            {
                 headerName: '고객사명',
                 field: 'customerName',
-                minWidth: 100,
+                minWidth: 80,
             },
             {
                 headerName: '고객사담당자',
                 field: 'managerName',
-                minWidth: 100,
-            },
-            {
-                headerName: '전화번호',
-                field: 'phoneNumber',
-                minWidth: 100,
-            },
-            {
-                headerName: '팩스번호',
-                field: 'faxNumber',
-                minWidth: 100,
-            },
-
-        ]
-    },
-    {
-        headerName: '만쿠 담당자',
-        children: [
-            {
-                headerName: '담당자',
-                field: 'estimateManager',
-                minWidth: 70,
-            },
-            {
-                headerName: '이메일',
-                field: 'email',
-                minWidth: 100,
-            },
-            {
-                headerName: '전화번호',
-                field: 'managerPhoneNumber',
-                minWidth: 100,
-            },
-            {
-                headerName: '팩스번호',
-                field: 'managerFaxNumber',
-                minWidth: 100,
-            },
-        ]
-    },
-    {
-        headerName: '운송',
-        children: [
-
-            {
-                headerName: '결제조건',
-                field: 'paymentTerms',
-                minWidth: 100,
-            },
-            {
-                headerName: '운송조건',
-                field: 'shippingTerms',
-                minWidth: 100,
-            },
-            {
-                headerName: 'Delivery',
-                field: 'delivery',
                 minWidth: 80,
-            },
-            {
-                headerName: '환율',
-                field: 'exchangeRate',
-                minWidth: 100,
-                cellDataType: 'number',
-                valueFormatter: (params) => {
-                    return isNaN(params) ? null : parseFloat(params)
-                }
-
-            },
+            }
         ]
     },
-
+    {
+        headerName: '담당자',
+        field: 'managerAdminName',
+        minWidth: 70,
+    },   {
+        headerName: 'MAKER',
+        field: 'maker',
+        maxWidth: 100
+    },
+    {
+        headerName: 'ITEM',
+        field: 'item',
+        maxWidth: 100
+    },
+    {
+        headerName: 'MODEL',
+        field: 'model',
+        maxWidth: 120
+    },
     {
         headerName: '물품',
         children: [
@@ -701,41 +647,7 @@ export const tableEstimateReadColumns = [
                 cellStyle: {textAlign: 'right'}
             },
         ]
-    },
-    {
-        headerName: '견적유효기간',
-        field: 'validityPeriod',
-        minWidth: 100,
-    },
-    {
-        headerName: '비고란',
-        field: 'remarks',
-        width: 150,
-    },
-    {
-        headerName: '등록자',
-        field: 'createdBy',
-        width: 80,
-    },
-    {
-        headerName: 'MAKER',
-        field: 'maker',
-        maxWidth: 100,
-        pinned: 'right'
-    },
-    {
-        headerName: 'ITEM',
-        field: 'item',
-        maxWidth: 100,
-        pinned: 'right'
-    },
-    {
-        headerName: 'MODEL',
-        field: 'model',
-        maxWidth: 120,
-        pinned: 'right'
-    },
-
+    }
 ];
 
 export const tableEstimateWriteColumns = [
