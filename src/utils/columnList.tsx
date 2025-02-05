@@ -3,6 +3,40 @@ import {commonManage} from "@/utils/commonManage";
 import message from "antd/lib/message";
 
 
+let lastClickedRowNode = null; // ✅ 마지막으로 클릭된 row 추적
+
+
+
+function handleCellClick(params) {
+    const clickedNode = params.node;
+
+    // 이전에 클릭된 row 높이를 복귀
+    if (lastClickedRowNode && lastClickedRowNode !== clickedNode) {
+        lastClickedRowNode.setRowHeight(25); // ✅ 기본 높이로 복귀
+        params.api.onRowHeightChanged(); // ✅ 높이 변경 반영
+    }
+
+    // 현재 클릭된 row 높이를 확장
+    const rowContent = params.data[params.colDef.field] || '';
+    const lines = rowContent.split('\n').length; // 줄바꿈 기준으로 줄 수 계산
+    const newHeight = Math.max(40, lines * 20); // 줄 수에 따라 높이 조정
+
+    clickedNode.setRowHeight(newHeight); // ✅ 새로운 높이 적용
+    params.api.onRowHeightChanged(); // ✅ 높이 변경 반영
+
+    // 현재 row를 마지막 클릭된 row로 추적
+    lastClickedRowNode = clickedNode;
+}
+
+function handleCellMouseOut(params) {
+    // 현재 row가 아닌 경우, 기본 높이로 복귀
+    if (lastClickedRowNode && lastClickedRowNode !== params.node) {
+        lastClickedRowNode.setRowHeight(40); // ✅ 기본 높이로 복귀
+        params.api.onRowHeightChanged(); // ✅ 높이 변경 반영
+        lastClickedRowNode = null; // 추적 초기화
+    }
+}
+
 class CustomTextEditor {
     init(params:any) {
         // @ts-ignore
@@ -944,7 +978,12 @@ export const rfqReadColumns = [
                 headerName: 'MODEL',
                 field: 'model',
                 minWidth: 150,
-                // maxWidth: 120,
+                cellStyle: {
+                    "white-space": "pre-wrap", // ✅ 줄바꿈 유지
+                    "overflow": "hidden",     // ✅ 넘치는 부분 숨김
+                },
+                onCellClicked: handleCellClick, // ✅ 셀 클릭 시 처리
+                onCellMouseOut: handleCellMouseOut, // ✅ 셀 밖으로 이동 시 처리
             },
             {
                 headerName: '수량',

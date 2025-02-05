@@ -1,6 +1,6 @@
 import React, {useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
-import {CopyOutlined, FileExcelOutlined} from "@ant-design/icons";
+import {CopyOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
 import {rfqReadColumns} from "@/utils/columnList";
 import {subRfqReadInitial} from "@/utils/initialList";
@@ -9,14 +9,13 @@ import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
-import {BoxCard, inputForm, MainCard, rangePickerForm, selectBoxForm} from "@/utils/commonForm";
+import {BoxCard, inputForm, MainCard, rangePickerForm} from "@/utils/commonForm";
 import _ from "lodash";
 import {deleteRfq, searchRfq} from "@/utils/api/mainApi";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import {useRouter} from "next/router";
 import Spin from "antd/lib/spin";
 import ReceiveComponent from "@/component/ReceiveComponent";
-import moment from "moment";
 
 
 export default function rfqRead({dataInfo}) {
@@ -31,6 +30,7 @@ export default function rfqRead({dataInfo}) {
     const [loading, setLoading] = useState(false);
 
     const onGridReady = (params) => {
+
         gridRef.current = params.api;
         params.api.applyTransaction({add: dataInfo ? dataInfo : []});
     };
