@@ -247,14 +247,18 @@ export default function rqfUpdate({dataInfo, managerList}) {
                                 {inputForm({
                                     title: '매입처명',
                                     id: 'agencyName',
-                                    disabled: true,
                                     onChange: onChange,
                                     data: info
                                 })}
                                 {inputForm({
                                     title: '매입처담당자',
                                     id: 'agencyManagerName',
-                                    disabled: true,
+                                    onChange: onChange,
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: '매입처담당자',
+                                    id: 'agencyManagerEmail',
                                     onChange: onChange,
                                     data: info
                                 })}

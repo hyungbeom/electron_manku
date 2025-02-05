@@ -97,6 +97,7 @@ export const rfqWriteInitial = {
     agencyCode: '',
     agencyName: '',
     agencyManagerName: '',
+    agencyManagerEmail: '',
     agencyManagerId: null,
     dueDate: null,
     agencyType: '',

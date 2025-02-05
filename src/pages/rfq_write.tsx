@@ -295,14 +295,18 @@ export default function rqfWrite({dataInfo, managerList}) {
                                     {inputForm({
                                         title: '매입처명',
                                         id: 'agencyName',
-                                        disabled: true,
                                         onChange: onChange,
                                         data: info
                                     })}
                                     {inputForm({
                                         title: '매입처담당자',
                                         id: 'agencyManagerName',
-                                        disabled: true,
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: '매입처이메일',
+                                        id: 'agencyManagerEmail',
                                         onChange: onChange,
                                         data: info
                                     })}
@@ -328,28 +332,24 @@ export default function rqfWrite({dataInfo, managerList}) {
                                         id: 'managerName',
                                         onChange: onChange,
                                         data: info,
-                                        disabled: true
                                     })}
                                     {inputForm({
                                         title: '전화번호',
                                         id: 'phoneNumber',
                                         onChange: onChange,
                                         data: info,
-                                        disabled: true
                                     })}
                                     {inputForm({
                                         title: '팩스',
                                         id: 'faxNumber',
                                         onChange: onChange,
-                                        data: info,
-                                        disabled: true
+                                        data: info
                                     })}
                                     {inputForm({
                                         title: '이메일',
                                         id: 'customerManagerEmail',
                                         onChange: onChange,
-                                        data: info,
-                                        disabled: true
+                                        data: info
                                     })}
                                 </BoxCard>
 
