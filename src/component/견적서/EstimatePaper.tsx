@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import EstimateList from "@/component/견적서/EstimateList";
 
 
-const EstimatePaper = ({data, pdfRef, gridRef}:any) => {
+const EstimatePaper = ({data, pdfRef, gridRef, position =false}:any) => {
 
 
     const [info, setInfo] = useState<any>();
@@ -20,8 +20,10 @@ const EstimatePaper = ({data, pdfRef, gridRef}:any) => {
     },[data])
 
     return (
-        <div ref={pdfRef} style={{padding : '0px 50px', position : 'absolute', zIndex : -100, top :-1000}}>
-        {/*<div ref={pdfRef} style={{padding : '100px 50px', width : 900, margin : '0px auto'}}>*/}
+        // <div ref={pdfRef} style={{padding : '0px 50px', position : 'absolute', zIndex : -100, top :-1000}}>
+
+        // @ts-ignored
+        <div ref={pdfRef} style={{padding : '100px 50px', width : 900, margin : '0px auto', position : position ? '' : 'absolute',zIndex : -100, top :-1000  }}>
 
 
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems : 'center'}}>

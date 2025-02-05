@@ -186,7 +186,7 @@ export default function estimate_update({dataInfo}) {
             width={1000}
             footer={null}
             onOk={() => setIsPrintModalOpen(false)}>
-            <EstimatePaper data={info} pdfRef={pdfRef} gridRef={gridRef}/>
+            <EstimatePaper data={info} pdfRef={pdfRef} gridRef={gridRef} position={true}/>
         </Modal>
     }
 
@@ -294,29 +294,25 @@ export default function estimate_update({dataInfo}) {
                                     title: '담당자',
                                     id: 'managerName',
                                     onChange: onChange,
-                                    data: info,
-                                    disabled: true
+                                    data: info
                                 })}
                                 {inputForm({
                                     title: '전화번호',
                                     id: 'phoneNumber',
                                     onChange: onChange,
-                                    data: info,
-                                    disabled: true
+                                    data: info
                                 })}
                                 {inputForm({
                                     title: '팩스',
                                     id: 'faxNumber',
                                     onChange: onChange,
-                                    data: info,
-                                    disabled: true
+                                    data: info
                                 })}
                                 {inputForm({
                                     title: '이메일',
                                     id: 'customerManagerEmail',
                                     onChange: onChange,
-                                    data: info,
-                                    disabled: true
+                                    data: info
                                 })}
                             </BoxCard>
 
