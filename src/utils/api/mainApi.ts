@@ -81,8 +81,9 @@ export const saveEstimate = async ({data, router, returnFunc}) => {
             window.opener?.postMessage('write', window.location.origin);
             message.success('저장되었습니다.');
             router.push(`/estimate_update?estimateId=${v.data.entity.estimateId}`)
+        }else{
+            returnFunc(code, msg)
         }
-        returnFunc(code, msg)
     });
 };
 
