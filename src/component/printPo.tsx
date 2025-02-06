@@ -287,7 +287,7 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
                         backgroundColor: '#EBF6F7',
                         display: 'grid',
                         textAlign: 'center',
-                        gridTemplateColumns: '0.7fr 3fr 0.5fr 1fr 1fr',
+                        gridTemplateColumns: '0.7fr 3fr 0.5fr 0.9fr 1fr 1fr',
                         borderBottom: '1px solid #A3A3A3'
                     }}>
                         <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
@@ -298,6 +298,9 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
                         </div>
                         <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
                             Q`ty
+                        </div>
+                        <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
+                            HS-CODE
                         </div>
                         <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
                             Unit Price
@@ -313,7 +316,7 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
                         fontWeight: 500,
                         width: '100%',
                         display: 'grid',
-                        gridTemplateColumns: '0.7fr 3fr 0.5fr 1fr 1fr',
+                        gridTemplateColumns: '0.7fr 3fr 0.5fr 0.9fr 1fr 1fr',
                         borderBottom: '1px solid #A3A3A3'
                     }}>
                         <div style={{padding: '3px 0', textAlign: 'center', borderRight: '1px solid #121212',}}>
@@ -337,7 +340,7 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
                                 width: '100%',
                                 display: 'grid',
                                 textAlign: 'center',
-                                gridTemplateColumns: '0.7fr 3fr 0.5fr 1fr 1fr',
+                                gridTemplateColumns: '0.7fr 3fr 0.5fr 0.9fr 1fr 1fr',
                                 borderBottom: '1px solid #A3A3A3'
                             }}>
                                 <div style={{
@@ -366,6 +369,15 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
                                     justifyContent: 'center'
                                 }}>
                                     {v.quantity} {formattedNumber(v.unit)}
+                                </div>
+                                <div style={{
+                                    padding: '3px 0',
+                                    borderRight: '1px solid #121212',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                }}>
+                                    {v.hsCode !== 'null' ? v.hsCode : ''}
                                 </div>
                                 <div style={{
                                     padding: '3px 10px',
@@ -405,7 +417,7 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
                                 backgroundColor: '#EBF6F7',
                                 display: 'grid',
                                 textAlign: 'center',
-                                gridTemplateColumns: '0.7fr 3fr 0.5fr 1fr 1fr',
+                                gridTemplateColumns: '0.7fr 3fr 0.5fr 0.9fr 1fr 1fr',
                                 borderBottom: '1px solid #A3A3A3'
                             }}>
                                 <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
@@ -416,6 +428,9 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
                                 </div>
                                 <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
                                     Q`ty
+                                </div>
+                                <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
+                                    HS-CODE
                                 </div>
                                 <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
                                     Unit Price
@@ -437,7 +452,7 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
                                             width: '100%',
                                             display: 'grid',
                                             textAlign: 'center',
-                                            gridTemplateColumns: '0.7fr 3fr 0.5fr 1fr 1fr',
+                                            gridTemplateColumns: '0.7fr 3fr 0.5fr 0.9fr 1fr 1fr',
                                             borderBottom: '1px solid #A3A3A3',
                                             borderTop: '1px solid #A3A3A3'
                                         }}>
@@ -467,6 +482,15 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
                                                 justifyContent: 'center'
                                             }}>
                                                 {v.quantity} {formattedNumber(v.unit)}
+                                            </div>
+                                            <div style={{
+                                                padding: '3px 0',
+                                                borderRight: '1px solid #121212',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center'
+                                            }}>
+                                                {v.hsCode !== 'null' ? v.hsCode : ''}
                                             </div>
                                             <div style={{
                                                 padding: '3px 10px',
@@ -499,7 +523,7 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
                                 backgroundColor: '#EBF6F7',
                                 display: 'grid',
                                 textAlign: 'center',
-                                gridTemplateColumns: '0.7fr 3fr 0.5fr 2fr',
+                                gridTemplateColumns: '0.7fr 3fr 0.5fr 0.9fr 2fr',
                                 borderBottom: '1px solid #121212'
                             }}>
                                 <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
@@ -510,6 +534,9 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
                                 </div>
                                 <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
                                     {formattedNumber(totalQuantity)} {unit}
+                                </div>
+                                <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
+
                                 </div>
 
                                 <div style={{padding: '3px 20px', display: 'flex', justifyContent: 'space-between'}}>
