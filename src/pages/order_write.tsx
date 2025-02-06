@@ -282,6 +282,7 @@ export default function OrderWriter({dataInfo, managerList}) {
     </Spin>
 }
 
+// @ts-ignored
 export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
     const {query} = ctx;
 
