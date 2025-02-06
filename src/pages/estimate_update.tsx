@@ -364,12 +364,12 @@ export default function estimate_update({dataInfo}) {
                             <BoxCard title={'ETC'}>
                                 {textAreaForm({
                                     title: '지시사항',
-                                    rows: 2,
+                                    rows: 6,
                                     id: 'instructions',
                                     onChange: onChange,
                                     data: info
                                 })}
-                                {textAreaForm({title: '비고란', rows: 3, id: 'remarks', onChange: onChange, data: info})}
+                                {textAreaForm({title: '비고란', rows: 5, id: 'remarks', onChange: onChange, data: info})}
                             </BoxCard>
                             <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
                                 {/*@ts-ignored*/}

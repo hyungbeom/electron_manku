@@ -239,7 +239,7 @@ export const selectBoxForm = ({title, id, disabled = false, data, onChange, list
 
 export const textAreaForm = ({title, id, rows = 5, disabled = false, onChange, data, placeHolder = ''}) => {
     return <div style={{fontSize: 12, paddingBottom: 10}}>
-        <div>{title}</div>
+        <div style={{paddingBottom : 5}}>{title}</div>
         <TextArea style={{resize: 'none', fontSize: 12}} rows={rows} id={id} value={data[id]} disabled={disabled}
                   className="custom-textarea"
                   onChange={onChange}

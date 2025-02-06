@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState} from "react";
 import Modal from "antd/lib/modal/Modal";
 import {jsPDF} from "jspdf";
 import html2canvas from "html2canvas";
-import {gridManage} from "@/utils/commonManage";
+import {commonManage, gridManage} from "@/utils/commonManage";
 
 export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
     const {orderDetail, customerInfo} = data;
@@ -25,52 +25,16 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
 
     useEffect(() => {
         const totalList = gridManage.getAllData(gridRef)
-        const splitData = splitDataWithSequenceNumber(totalList, 23, 36);
+        const splitData = commonManage.splitDataWithSequenceNumber(totalList, 23, 36);
         setSplitData(splitData)
     }, [data])
-
-    function splitDataWithSequenceNumber(data, firstLimit = 20, nextLimit = 30) {
-        const result = [];
-        let currentGroup = [];
-        let currentCount = 0;
-        let currentLimit = firstLimit; // 첫 번째 그룹은 20줄 제한
-        let sequenceNumber = 1; // ✅ 전체 데이터에서 순서를 추적하는 시퀀스 넘버
-
-        data.forEach(item => {
-            const model = item.model || '';
-            const lineCount = model.split('\n').length;
-
-            // 현재 그룹에 추가해도 제한을 넘지 않으면 추가
-            if (currentCount + lineCount <= currentLimit) {
-                currentGroup.push({...item, sequenceNumber}); // ✅ 각 객체에 순서 추가
-                currentCount += lineCount;
-                sequenceNumber++; // ✅ 순서 증가
-            } else {
-                // 현재 그룹을 result에 추가하고 새로운 그룹 시작
-                result.push(currentGroup);
-                currentGroup = [{...item, sequenceNumber}]; // ✅ 새로운 그룹의 첫 번째 아이템
-                currentCount = lineCount;
-                sequenceNumber++; // ✅ 순서 증가
-
-                // ✅ 첫 번째 그룹 이후부터는 기준을 30으로 변경
-                currentLimit = nextLimit;
-            }
-        });
-
-        // 마지막 그룹이 남아있으면 추가
-        if (currentGroup.length > 0) {
-            result.push(currentGroup);
-        }
-
-        return result;
-    }
 
     const generatePDF = async (printMode = false) => {
         const pdf = new jsPDF("portrait", "px", "a4");
         const pdfWidth = pdf.internal.pageSize.getWidth();
 
         if (pdfRef.current) {
-            const firstCanvas = await html2canvas(pdfRef.current, { scale: 2 });
+            const firstCanvas = await html2canvas(pdfRef.current, {scale: 2});
             const firstImgData = firstCanvas.toDataURL("image/png");
             const firstImgProps = pdf.getImageProperties(firstImgData);
             const firstImgHeight = (firstImgProps.height * pdfWidth) / firstImgProps.width;
@@ -80,7 +44,7 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
         const elements = pdfSubRef.current.children;
         for (let i = 0; i < elements.length; i++) {
             const element = elements[i];
-            const canvas = await html2canvas(element, { scale: 2 });
+            const canvas = await html2canvas(element, {scale: 2});
             const imgData = canvas.toDataURL("image/png");
             const imgProps = pdf.getImageProperties(imgData);
             const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
@@ -95,33 +59,6 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
             pdf.save(`${data.documentNumberFull}_견적서.pdf`);
         }
     };
-
-    const handlePrint = () => {
-        const printStyles = `
-            @media print {
-                @page {
-                    size: A4;
-                    margin: 20mm;
-                }
-                .page-break {
-                    break-before: always;
-                }
-                .printable-content {
-                    page-break-inside: avoid;
-                }
-            }
-        `;
-
-        const styleSheet = document.createElement("style");
-        styleSheet.type = "text/css";
-        styleSheet.innerText = printStyles;
-        document.head.appendChild(styleSheet);
-
-        window.print();
-
-        document.head.removeChild(styleSheet);
-    };
-
 
     return (
         <Modal
@@ -141,7 +78,7 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
                         PDF
                     </button>
                     {/*@ts-ignore*/}
-                    <button  onClick={() => generatePDF(true)} style={{
+                    <button onClick={() => generatePDF(true)} style={{
                         padding: "5px 10px",
                         backgroundColor: "gray",
                         color: "#fff",
@@ -187,7 +124,8 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
                         fontWeight: 700,
                         margin: "0 auto"
                     }}>
-                        Purchase<br/>Order
+                        {orderDetail.agencyCode.toUpperCase().includes('K') ? '발주서' :
+                            <span> Purchase < br/> Order</span>}
                     </div>
                     <div style={{width: "auto", height: "auto", position: 'absolute', right: 50,}}>
                         <div style={{fontSize: "8px", width: 'auto'}}>

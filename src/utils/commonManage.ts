@@ -705,3 +705,39 @@ commonManage.getPdfFile = async function(pdf, documentNumberFull){
     const pdfFile = new File([pdfBlob], fileName, { type: "application/pdf" });
     return pdfFile;
 }
+
+commonManage.splitDataWithSequenceNumber = function(data, firstLimit = 20, nextLimit = 30) {
+    const result = [];
+    let currentGroup = [];
+    let currentCount = 0;
+    let currentLimit = firstLimit; // 첫 번째 그룹은 20줄 제한
+    let sequenceNumber = 1; // ✅ 전체 데이터에서 순서를 추적하는 시퀀스 넘버
+
+    data?.forEach(item => {
+        const model = item.model || '';
+        const lineCount = model.split('\n').length;
+
+        // 현재 그룹에 추가해도 제한을 넘지 않으면 추가
+        if (currentCount + lineCount <= currentLimit) {
+            currentGroup.push({...item, sequenceNumber}); // ✅ 각 객체에 순서 추가
+            currentCount += lineCount;
+            sequenceNumber++; // ✅ 순서 증가
+        } else {
+            // 현재 그룹을 result에 추가하고 새로운 그룹 시작
+            result.push(currentGroup);
+            currentGroup = [{...item, sequenceNumber}]; // ✅ 새로운 그룹의 첫 번째 아이템
+            currentCount = lineCount;
+            sequenceNumber++; // ✅ 순서 증가
+
+            // ✅ 첫 번째 그룹 이후부터는 기준을 30으로 변경
+            currentLimit = nextLimit;
+        }
+    });
+
+    // 마지막 그룹이 남아있으면 추가
+    if (currentGroup.length > 0) {
+        result.push(currentGroup);
+    }
+
+    return result;
+}
