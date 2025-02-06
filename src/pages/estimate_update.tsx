@@ -36,6 +36,7 @@ import EstimatePaper from "@/component/견적서/EstimatePaper";
 const listType = 'estimateDetailList'
 export default function estimate_update({dataInfo}) {
     const pdfRef = useRef(null);
+    const pdfSubRef = useRef(null);
     const fileRef = useRef(null);
     const gridRef = useRef(null);
     const router = useRouter();
@@ -184,7 +185,7 @@ export default function estimate_update({dataInfo}) {
             width={1000}
             footer={null}
             onOk={() => setIsPrintModalOpen(false)}>
-            <EstimatePaper data={info} pdfRef={pdfRef} gridRef={gridRef} position={true}/>
+            <EstimatePaper data={info} pdfRef={pdfRef} pdfSubRef={pdfSubRef} gridRef={gridRef} position={true}/>
         </Modal>
     }
 

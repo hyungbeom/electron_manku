@@ -4,7 +4,7 @@ import {commonManage, gridManage} from "@/utils/commonManage";
 import {amountFormat} from "@/utils/columnList";
 
 
-const EstimatePaper = ({data, pdfRef, gridRef, position = false}: any) => {
+const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any) => {
 
 
     const [info, setInfo] = useState<any>();
@@ -13,7 +13,7 @@ const EstimatePaper = ({data, pdfRef, gridRef, position = false}: any) => {
     const [splitData] = useMemo(() => {
 
         const totalList = gridManage.getAllData(gridRef)
-        const splitData = commonManage.splitDataWithSequenceNumber(totalList, 15, 36);
+        const splitData = commonManage.splitDataWithSequenceNumber(totalList, 20, 36);
         return [splitData]
     }, [data]);
 
@@ -204,7 +204,7 @@ const EstimatePaper = ({data, pdfRef, gridRef, position = false}: any) => {
             </div>
 
 
-            <div ref={pdfRef} style={{
+            <div ref={pdfSubRef} style={{
                 padding: '100px 50px',
                 width: 900,
                 margin: '0px auto',
@@ -215,65 +215,68 @@ const EstimatePaper = ({data, pdfRef, gridRef, position = false}: any) => {
 
 
                 {splitData.map((src, i) => {
+                    if (!i) {
+                        return null;
+                    }
 
-                   return <div style={{borderTop: '1px solid lightGry', paddingTop : 50}}>
-                       <thead>
-                       <tr style={{backgroundColor: '#ebf6f7', fontWeight: 'bold'}}>
-                           <th colSpan={3} style={{width: '55%'}}>Specification</th>
-                           <th style={headerStyle}>Qty</th>
-                           <th style={headerStyle}>Unit</th>
-                           <th style={headerStyle}>Unit Price</th>
-                           <th>Amount</th>
-                       </tr>
-                       </thead>
-                       {src.map(v => {
-                           return <thead>
-                           <tr>
-                               <th colSpan={2} style={{
-                                   width: '8%',
-                                   border: 'none',
-                                   textAlign: 'left',
-                                   paddingLeft: 10,
-                                   borderBottom: '1px solid lightGray', fontSize: 12
+                    return <div style={{borderTop: '1px solid lightGry', paddingTop: 50}}>
+                        <thead>
+                        <tr style={{backgroundColor: '#ebf6f7', fontWeight: 'bold'}}>
+                            <th colSpan={3} style={{width: '55%'}}>Specification</th>
+                            <th style={headerStyle}>Qty</th>
+                            <th style={headerStyle}>Unit</th>
+                            <th style={headerStyle}>Unit Price</th>
+                            <th>Amount</th>
+                        </tr>
+                        </thead>
+                        {src.map(v => {
+                            return <thead>
+                            <tr>
+                                <th colSpan={2} style={{
+                                    width: '8%',
+                                    border: 'none',
+                                    textAlign: 'left',
+                                    paddingLeft: 10,
+                                    borderBottom: '1px solid lightGray', fontSize: 12
 
-                               }}>
-                                   <div style={{width: 30, borderRight: '1px solid lightGray'}}>{i + 1}</div>
-                               </th>
-                               <th style={{borderBottom: '1px solid lightGray', textAlign: 'left', fontSize: 12}}>
-                                   <div
-                                       style={{
-                                           // marginLeft: '-4vw',
-                                           wordWrap: 'break-word',
-                                           wordBreak: 'break-word',
-                                           whiteSpace: 'pre-wrap',
-                                           fontWeight: 'lighter'
-                                       }}>{v.model}
-                                   </div>
-                               </th>
-                               <th style={{
-                                   ...headerStyle,
-                                   textAlign: 'right',
-                                   fontWeight: 'lighter',
-                                   fontSize: 12
-                               }}>{amountFormat(v.quantity)}</th>
-                               <th style={{...headerStyle, fontSize: 12}}>{v.unit}</th>
-                               <th style={{
-                                   ...headerStyle,
-                                   textAlign: 'right',
-                                   fontWeight: 'lighter',
-                                   fontSize: 12
-                               }}>{amountFormat(v.unitPrice)}<span
-                                   style={{paddingLeft: 5, fontSize: 12}}>₩</span></th>
-                               <th style={{
-                                   borderTop: '1px solid lightGray',
-                                   textAlign: 'right', fontWeight: 'lighter', fontSize: 12
-                               }}>{amountFormat(v.quantity * v.unitPrice)}<span
-                                   style={{paddingLeft: 5, fontWeight: 'lighter', fontSize: 12}}>₩</span></th>
-                           </tr>
-                           </thead>
+                                }}>
+                                    <div style={{width: 30, borderRight: '1px solid lightGray'}}>{i + 1}</div>
+                                </th>
+                                <th style={{borderBottom: '1px solid lightGray', textAlign: 'left', fontSize: 12}}>
+                                    <div
+                                        style={{
+                                            // marginLeft: '-4vw',
+                                            wordWrap: 'break-word',
+                                            wordBreak: 'break-word',
+                                            whiteSpace: 'pre-wrap',
+                                            fontWeight: 'lighter'
+                                        }}>{v.model}
+                                    </div>
+                                </th>
+                                <th style={{
+                                    ...headerStyle,
+                                    textAlign: 'right',
+                                    fontWeight: 'lighter',
+                                    fontSize: 12
+                                }}>{amountFormat(v.quantity)}</th>
+                                <th style={{...headerStyle, fontSize: 12}}>{v.unit}</th>
+                                <th style={{
+                                    ...headerStyle,
+                                    textAlign: 'right',
+                                    fontWeight: 'lighter',
+                                    fontSize: 12
+                                }}>{amountFormat(v.unitPrice)}<span
+                                    style={{paddingLeft: 5, fontSize: 12}}>₩</span></th>
+                                <th style={{
+                                    borderTop: '1px solid lightGray',
+                                    textAlign: 'right', fontWeight: 'lighter', fontSize: 12
+                                }}>{amountFormat(v.quantity * v.unitPrice)}<span
+                                    style={{paddingLeft: 5, fontWeight: 'lighter', fontSize: 12}}>₩</span></th>
+                            </tr>
+                            </thead>
 
-                       })
-                       }</div>
+                        })
+                        }</div>
                 })}
 
             </div>
