@@ -80,12 +80,21 @@ export const findCodeInfo = async (event, setInfo, openModal, type? , setValidat
 
 export const findDocumentInfo = async (event, setInfo) => {
 
-    const result = await getData.post('estimate/getEstimateRequestDetail', {
-        "documentNumberFull": event.target.value,
+
+    const result = await getData.post('order/getOrderList', {
+        "searchStartDate": "",          // 발주일자 검색 시작일
+        "searchEndDate": "",            // 발주일자 검색 종료일
+        "searchDocumentNumber": event.target.value,     // 문서번호
+        "searchCustomerName": "",       // 거래처명
+        "searchMaker": "",              // MAKER
+        "searchModel": "",              // MODEL
+        "searchItem": "",               // ITEM
+        "searchEstimateManager": "",    // 견적서담당자명
         "page": 1,
-        "limit": -1
-    })
-    return result?.data?.entity?.estimateRequestDetail
+        "limit": 20
+    });
+    console.log(result,':::')
+    return result?.data?.entity?.orderList;
 };
 
 export const findEstDocumentInfo = async (event, setInfo) => {

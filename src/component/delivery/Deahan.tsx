@@ -28,9 +28,8 @@ export default function Deahan({info, setInfo}) {
                     const result = await findDocumentInfo(e, setInfo);
                     setInfo(v => {
                         return {
-                            ...result,
-                            connectInquiryNo: info.connectInquiryNo,
-                            documentNumberFull: v.documentNumberFull
+                            ...result[0],
+                            connectInquiryNo: info.connectInquiryNo
                         }
                     })
 
@@ -49,7 +48,7 @@ export default function Deahan({info, setInfo}) {
                 id: 'connectInquiryNo',
                 suffix: <DownloadOutlined style={{cursor: 'pointer'}}/>,
                 onChange: onChange, data: info,
-                // handleKeyPress: handleKeyPress
+                handleKeyPress: handleKeyPress
             })}
 
             {inputForm({
