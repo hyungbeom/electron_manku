@@ -31,7 +31,8 @@ import {DriveUploadComp} from "@/component/common/SharePointComp";
 import Spin from "antd/lib/spin";
 import Modal from "antd/lib/modal/Modal";
 import EstimatePaper from "@/component/견적서/EstimatePaper";
-
+import {jsPDF} from "jspdf";
+import html2canvas from "html2canvas";
 
 const listType = 'estimateDetailList'
 export default function estimate_update({dataInfo}) {
@@ -112,7 +113,6 @@ export default function estimate_update({dataInfo}) {
     }
 
     async function returnFunc(e) {
-        console.log(e, 'e:')
         if (e) {
             await getAttachmentFileList({
                 data: {
@@ -154,10 +154,39 @@ export default function estimate_update({dataInfo}) {
         setIsPrintModalOpen(true)
     }
 
-    async function getPdfFile() {
-        const pdf = await commonManage.getPdfCreate(pdfRef);
-        pdf.save(`${info.documentNumberFull}_견적서.pdf`);
-    }
+    const generatePDF = async (printMode = false) => {
+        const pdf = new jsPDF("portrait", "px", "a4");
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const padding = 30; // 좌우 여백 설정
+        const contentWidth = pdfWidth - padding * 2; // 실제 이미지 너비
+
+        if (pdfRef.current) {
+            const firstCanvas = await html2canvas(pdfRef.current, {scale: 2});
+            const firstImgData = firstCanvas.toDataURL("image/png");
+            const firstImgProps = pdf.getImageProperties(firstImgData);
+            const firstImgHeight = (firstImgProps.height * pdfWidth) / firstImgProps.width;
+            pdf.addImage(firstImgData, "PNG", 0, 0, pdfWidth, firstImgHeight);
+        }
+
+        const elements = pdfSubRef.current.children;
+        for (let i = 0; i < elements.length; i++) {
+            const element = elements[i];
+            const canvas = await html2canvas(element, { scale: 2 });
+            const imgData = canvas.toDataURL("image/png");
+            const imgProps = pdf.getImageProperties(imgData);
+            const imgHeight = (imgProps.height * contentWidth) / imgProps.width;
+
+            pdf.addPage();
+            pdf.addImage(imgData, "PNG", padding, 0, contentWidth, imgHeight);
+        }
+
+        if (printMode) {
+            const pdfBlob = pdf.output("bloburl");
+            window.open(pdfBlob, "_blank");
+        } else {
+            pdf.save(`${info.documentNumberFull}_견적서.pdf`);
+        }
+    };
 
     function print(){
         const printContents = pdfRef.current.innerHTML;
@@ -176,8 +205,8 @@ export default function estimate_update({dataInfo}) {
             title={<div style={{display: 'flex', justifyContent: 'space-between', padding: '0px 30px'}}>
                 <span>견적서 출력</span>
                 <span>
-                       <Button style={{fontSize: 11, marginRight: 10}} size={'small'} onClick={getPdfFile}>다운로드</Button>
-                       <Button style={{fontSize: 11}}  size={'small'} onClick={print}>인쇄</Button>
+                       <Button style={{fontSize: 11, marginRight: 10}} size={'small'} onClick={()=>generatePDF(false)}>다운로드</Button>
+                       <Button style={{fontSize: 11}}  size={'small'} onClick={()=>generatePDF(true)}>인쇄</Button>
                 </span>
             </div>}
             onCancel={() => setIsPrintModalOpen(false)}

@@ -13,7 +13,7 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
     const [splitData] = useMemo(() => {
 
         const totalList = gridManage.getAllData(gridRef)
-        const splitData = commonManage.splitDataWithSequenceNumber(totalList, 20, 36);
+        const splitData = commonManage.splitDataWithSequenceNumber(totalList, 20, 50);
         return [splitData]
     }, [data]);
 
@@ -44,6 +44,7 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                 padding: '100px 50px',
                 width: 900,
                 margin: '0px auto',
+                // @ts-ignored
                 position: position ? '' : 'absolute',
                 zIndex: -100,
                 top: -1000
@@ -203,11 +204,13 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                 </table>
             </div>
 
+            <div style={{height : 2, borderBottom : '1px solid lightGray'}}/>
 
             <div ref={pdfSubRef} style={{
                 padding: '100px 50px',
                 width: 900,
                 margin: '0px auto',
+                // @ts-ignored
                 position: position ? '' : 'absolute',
                 zIndex: -100,
                 top: -1000
@@ -219,7 +222,7 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                         return null;
                     }
 
-                    return <div style={{borderTop: '1px solid lightGry', paddingTop: 50}}>
+                    return <div style={{borderTop: '1px solid lightGry', paddingTop: 150}}>
                         <thead>
                         <tr style={{backgroundColor: '#ebf6f7', fontWeight: 'bold'}}>
                             <th colSpan={3} style={{width: '55%'}}>Specification</th>
@@ -240,7 +243,7 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                                     borderBottom: '1px solid lightGray', fontSize: 12
 
                                 }}>
-                                    <div style={{width: 30, borderRight: '1px solid lightGray'}}>{i + 1}</div>
+                                    <div style={{width: 30, borderRight: '1px solid lightGray'}}>{v.sequenceNumber}</div>
                                 </th>
                                 <th style={{borderBottom: '1px solid lightGray', textAlign: 'left', fontSize: 12}}>
                                     <div
