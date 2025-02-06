@@ -188,7 +188,7 @@ export default function order_update({dataInfo}) {
                                 {/*{inputForm({title: '담당자', id: 'managerAdminName'})}*/}
 
                                 {inputForm({
-                                    title: '연결 PO No.',
+                                    title: 'PO No.',
                                     id: 'documentNumberFull',
                                     onChange: onChange,
                                     data: info

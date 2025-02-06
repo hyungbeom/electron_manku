@@ -22,12 +22,16 @@ import Spin from "antd/lib/spin";
 
 
 const listType = 'orderDetailList'
-export default function OrderWriter({dataInfo}) {
+export default function OrderWriter({dataInfo, managerList}) {
+    const options = managerList.map((item) => ({
+        ...item,
+        value: item.adminId,
+        label: item.name,
+    }));
     const fileRef = useRef(null);
     const gridRef = useRef(null);
     const router = useRouter();
 
-    console.log(dataInfo,'dataInfo:::::')
 
     const copyInit = _.cloneDeep(orderWriteInitial)
 
@@ -69,7 +73,7 @@ export default function OrderWriter({dataInfo}) {
         if (e.key === 'Enter') {
             switch (e.target.id) {
                 case 'ourPoNo' :
-                    await findOrderDocumentInfo(e, setInfo, gridRef)
+                    await findOrderDocumentInfo(e, setInfo, gridRef, managerList)
                     break;
             }
         }
@@ -138,6 +142,16 @@ export default function OrderWriter({dataInfo}) {
 
     }
 
+    const onCChange = (value: string, e: any) => {
+       const findValue = managerList.find(v=> v.adminId === value)
+        console.log(findValue,'value:')
+        setInfo(v => {
+            return {...v, managerAdminId: e.adminId, managerAdminName: e.name, managerId : findValue.name,managerPhoneNumber : findValue.contactNumber,managerFaxNumber : findValue.faxNumber, managerEmail : findValue.email  }
+        })
+
+
+    };
+
 
     return <Spin spinning={loading} tip={'발주서 등록중...'}>
         <LayoutComponent>
@@ -166,7 +180,17 @@ export default function OrderWriter({dataInfo}) {
                                 data: info
                             })}
                             {inputForm({title: '작성자', id: 'createdBy', disabled: true, onChange: onChange, data: info})}
-                            {inputForm({title: '담당자', id: 'managerAdminName', onChange: onChange, data: info})}
+                            <div>
+                                <div>담당자</div>
+                                <Select style={{width: '100%'}} size={'small'}
+                                        showSearch
+                                        value={info['managerAdminId']}
+                                        placeholder="Select a person"
+                                        optionFilterProp="label"
+                                        onChange={onCChange}
+                                        options={options}
+                                />
+                            </div>
 
                             {inputForm({
                                 title: '발주서 PO no',
@@ -272,9 +296,21 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
         };
     }
     store.dispatch(setUserInfo(userInfo));
+
+
+
     if (query?.data) {
         const data = JSON.parse(decodeURIComponent(query.data));
         return {props: {dataInfo: data}}
+    }else{
+        const result = await getData.post('admin/getAdminList', {
+            "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
+            "searchAuthority": null,    // 1: 일반, 0: 관리자
+            "page": 1,
+            "limit": -1
+        });
+        const list:any = result?.data?.entity?.adminList;
+        return {props: {managerList: list}}
     }
 
 

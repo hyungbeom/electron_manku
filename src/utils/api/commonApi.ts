@@ -4,6 +4,7 @@ import {modalList} from "@/utils/initialList";
 import moment from "moment/moment";
 import {checkInquiryNo} from "@/utils/api/mainApi";
 import {gridManage} from "@/utils/commonManage";
+import {inputForm} from "@/utils/commonForm";
 
 
 export const findCodeInfo = async (event, setInfo, openModal, type? , setValidate?) => {
@@ -112,24 +113,34 @@ export const findEstDocumentInfo = async (event, setInfo) => {
 };
 
 
-export const findOrderDocumentInfo = async (event, setInfo, gridRef?) => {
+export const findOrderDocumentInfo = async (event, setInfo, gridRef?, managerList?) => {
 
     const result = await getData.post('estimate/getEstimateDetail', {
         "estimateId": null,
         "documentNumberFull": event.target.value
     });
+
     if (result?.data?.code === 1) {
-
-
 
         if (result?.data?.entity?.estimateDetail?.estimateDetailList.length) {
 
-            console.log(result?.data?.entity?.estimateDetail,':::')
+            const list = managerList.find(v=> v.name === result?.data?.entity?.estimateDetail?.managerAdminName)
+
+
+
+
+
+
             setInfo(v => {
                     return {
                         ...v, ...result?.data?.entity?.estimateDetail,
                         documentNumberFull: event.target.value,
                         writtenDate: moment().format('YYYY-MM-DD'),
+                        managerAdminId: list?.adminId,
+                        managerId: list?.name,
+                        managerPhoneNumber: list?.contactNumber,
+                        managerFaxNumber: list?.faxNumber,
+                        managerEmail: list?.email,
                         estimateManager : result?.data?.entity?.estimateDetail?.managerAdminName,
                         orderDetailList: result?.data?.entity?.estimateDetail?.estimateDetailList
                     }
