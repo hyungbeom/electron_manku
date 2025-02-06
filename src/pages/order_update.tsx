@@ -18,9 +18,16 @@ import _ from "lodash";
 import {findEstDocumentInfo} from "@/utils/api/commonApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
+import Select from "antd/lib/select";
 
 const listType = 'orderDetailList'
-export default function order_update({dataInfo}) {
+export default function order_update({dataInfo, managerList}) {
+    const options = managerList?.map((item) => ({
+        ...item,
+        value: item.adminId,
+        label: item.name,
+    }));
+
     const fileRef = useRef(null);
     const gridRef = useRef(null);
     const router = useRouter();
@@ -134,6 +141,14 @@ export default function order_update({dataInfo}) {
         router.push(`/order_write?${query}`)
     }
 
+    const onCChange = (value: string, e: any) => {
+        const findValue = managerList.find(v=> v.adminId === value)
+        console.log(findValue,'value:')
+        setInfo(v => {
+            return {...v, estimateManager : findValue.name, managerAdminId: e.adminId, managerAdminName: e.name, managerId : findValue.name,managerPhoneNumber : findValue.contactNumber,managerFaxNumber : findValue.faxNumber, managerEmail : findValue.email  }
+        })
+    };
+
     return <>
         <LayoutComponent>
             <div style={{
@@ -179,12 +194,20 @@ export default function order_update({dataInfo}) {
                                     onChange: onChange,
                                     data: info
                                 })}
-                                {inputForm({
-                                    title: '담당자',
-                                    id: 'estimateManager',
-                                    onChange: onChange,
-                                    data: info
-                                })}
+
+                                <div>
+                                    <div>담당자</div>
+                                    <Select style={{width: '100%'}} size={'small'}
+                                            showSearch
+                                            value={info['estimateManager']}
+                                            placeholder="Select a person"
+                                            optionFilterProp="label"
+                                            onChange={onCChange}
+                                            options={options}
+                                    />
+                                </div>
+
+
                                 {/*{inputForm({title: '담당자', id: 'managerAdminName'})}*/}
 
                                 {inputForm({
@@ -290,9 +313,18 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
     const result = await getData.post('order/getOrderDetail', {
         orderId: orderId
     });
+
+    const result2 = await getData.post('admin/getAdminList', {
+        "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
+        "searchAuthority": null,    // 1: 일반, 0: 관리자
+        "page": 1,
+        "limit": -1
+    });
+    const list:any = result2?.data?.entity?.adminList;
+
     const dataInfo = result?.data?.entity;
     return {
-        props: {dataInfo: dataInfo ? dataInfo : null}
+        props: {dataInfo: dataInfo ? dataInfo : null, managerList: list}
     }
 
 

@@ -23,7 +23,7 @@ import Spin from "antd/lib/spin";
 
 const listType = 'orderDetailList'
 export default function OrderWriter({dataInfo, managerList}) {
-    const options = managerList.map((item) => ({
+    const options = managerList?.map((item) => ({
         ...item,
         value: item.adminId,
         label: item.name,
@@ -146,10 +146,8 @@ export default function OrderWriter({dataInfo, managerList}) {
        const findValue = managerList.find(v=> v.adminId === value)
         console.log(findValue,'value:')
         setInfo(v => {
-            return {...v, managerAdminId: e.adminId, managerAdminName: e.name, managerId : findValue.name,managerPhoneNumber : findValue.contactNumber,managerFaxNumber : findValue.faxNumber, managerEmail : findValue.email  }
+            return {...v, managerAdminId: e.adminId, estimateManager : findValue.name,managerAdminName: e.name, managerId : findValue.name,managerPhoneNumber : findValue.contactNumber,managerFaxNumber : findValue.faxNumber, managerEmail : findValue.email  }
         })
-
-
     };
 
 
@@ -184,7 +182,7 @@ export default function OrderWriter({dataInfo, managerList}) {
                                 <div>담당자</div>
                                 <Select style={{width: '100%'}} size={'small'}
                                         showSearch
-                                        value={info['managerAdminId']}
+                                        value={info['estimateManager']}
                                         placeholder="Select a person"
                                         optionFilterProp="label"
                                         onChange={onCChange}
@@ -299,18 +297,18 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
     store.dispatch(setUserInfo(userInfo));
 
 
-
+    const result = await getData.post('admin/getAdminList', {
+        "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
+        "searchAuthority": null,    // 1: 일반, 0: 관리자
+        "page": 1,
+        "limit": -1
+    });
+    const list:any = result?.data?.entity?.adminList;
     if (query?.data) {
         const data = JSON.parse(decodeURIComponent(query.data));
-        return {props: {dataInfo: data}}
+        return {props: {dataInfo: data,managerList: list}}
     }else{
-        const result = await getData.post('admin/getAdminList', {
-            "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
-            "searchAuthority": null,    // 1: 일반, 0: 관리자
-            "page": 1,
-            "limit": -1
-        });
-        const list:any = result?.data?.entity?.adminList;
+
         return {props: {managerList: list}}
     }
 

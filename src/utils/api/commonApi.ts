@@ -115,6 +115,7 @@ export const findEstDocumentInfo = async (event, setInfo) => {
 
 export const findOrderDocumentInfo = async (event, setInfo, gridRef?, managerList?) => {
 
+    console.log(managerList,'managerList:')
     const result = await getData.post('estimate/getEstimateDetail', {
         "estimateId": null,
         "documentNumberFull": event.target.value
@@ -124,7 +125,7 @@ export const findOrderDocumentInfo = async (event, setInfo, gridRef?, managerLis
 
         if (result?.data?.entity?.estimateDetail?.estimateDetailList.length) {
 
-            const list = managerList.find(v=> v.name === result?.data?.entity?.estimateDetail?.managerAdminName)
+            const list = managerList?.find(v=> v.name === result?.data?.entity?.estimateDetail?.managerAdminName)
 
 
 
