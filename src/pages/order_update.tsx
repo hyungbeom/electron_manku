@@ -32,7 +32,10 @@ export default function order_update({dataInfo, managerList}) {
     const gridRef = useRef(null);
     const router = useRouter();
 
-    console.log(dataInfo, 'dataInfo:')
+
+
+
+
     const userInfo = useAppSelector((state) => state.user);
     const infoInit = dataInfo?.orderDetail
     let infoInitFile = dataInfo?.attachmentFileList
@@ -45,6 +48,9 @@ export default function order_update({dataInfo, managerList}) {
     const [fileList, setFileList] = useState(fileManage.getFormatFiles(infoInitFile));
     const [originFileList, setOriginFileList] = useState(infoInitFile);
     const [loading, setLoading] = useState(false);
+
+
+
 
     const onGridReady = (params) => {
         gridRef.current = params.api;
@@ -111,7 +117,7 @@ export default function order_update({dataInfo, managerList}) {
 
             if (result?.data?.entity?.customerList.length) {
                 const totalList = gridManage.getAllData(gridRef);
-                setCustomerData(v=> {
+                setCustomerData(v => {
                     return {...v, receiveComp: result?.data?.entity?.customerList[0], list: totalList}
                 })
             }
@@ -142,10 +148,19 @@ export default function order_update({dataInfo, managerList}) {
     }
 
     const onCChange = (value: string, e: any) => {
-        const findValue = managerList.find(v=> v.adminId === value)
-        console.log(findValue,'value:')
+        const findValue = managerList.find(v => v.adminId === value)
+        console.log(findValue, 'value:')
         setInfo(v => {
-            return {...v, estimateManager : findValue.name, managerAdminId: e.adminId, managerAdminName: e.name, managerId : findValue.name,managerPhoneNumber : findValue.contactNumber,managerFaxNumber : findValue.faxNumber, managerEmail : findValue.email  }
+            return {
+                ...v,
+                estimateManager: findValue.name,
+                managerAdminId: e.adminId,
+                managerAdminName: e.name,
+                managerId: findValue.name,
+                managerPhoneNumber: findValue.contactNumber,
+                managerFaxNumber: findValue.faxNumber,
+                managerEmail: findValue.email
+            }
         })
     };
 
@@ -159,7 +174,7 @@ export default function order_update({dataInfo, managerList}) {
                 {/*@ts-ignore*/}
                 <PrintTransactionModal data={info} customerData={customerData} isModalOpen={isModalOpen}
                                        setIsModalOpen={setIsModalOpen}/>
-                <PrintPo data={dataInfo} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
+                {isModalOpen['event2'] && <PrintPo data={dataInfo} gridRef={gridRef} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>}
 
                 <MainCard title={'발주서 수정'} list={[
                     {name: '거래명세표 출력', func: printTransactionStatement, type: 'default'},
@@ -214,6 +229,7 @@ export default function order_update({dataInfo, managerList}) {
                                     title: 'PO No.',
                                     id: 'documentNumberFull',
                                     onChange: onChange,
+                                    disabled : true,
                                     data: info
                                 })}
                                 {inputForm({title: '고객사 PO no', id: 'yourPoNo', onChange: onChange, data: info})}
@@ -249,8 +265,14 @@ export default function order_update({dataInfo, managerList}) {
                                         {value: 'By in advance T/T', label: 'By in advance T/T'},
                                         {value: 'Credit Card', label: 'Credit Card'},
                                         {value: 'L/C', label: 'L/C'},
-                                        {value: 'Order 30% Before Shipping 70%', label: 'Order 30% Before Shipping 70%'},
-                                        {value: 'Order 50% Before Shipping 50%', label: 'Order 50% Before Shipping 50%'},
+                                        {
+                                            value: 'Order 30% Before Shipping 70%',
+                                            label: 'Order 30% Before Shipping 70%'
+                                        },
+                                        {
+                                            value: 'Order 50% Before Shipping 50%',
+                                            label: 'Order 50% Before Shipping 50%'
+                                        },
                                     ]
                                 })}
                                 {inputForm({
@@ -267,7 +289,7 @@ export default function order_update({dataInfo, managerList}) {
                             <BoxCard title={'ETC'}>
                                 {inputForm({title: '견적서담당자', id: 'estimateManager', onChange: onChange, data: info})}
                                 {textAreaForm({title: '비고란', rows: 4, id: 'remarks', onChange: onChange, data: info})}
-                                {textAreaForm({title: '하단태그', rows: 3, id: 'footer', onChange: onChange, data: info})}
+                                {textAreaForm({title: '하단태그', rows: 4, id: 'footer', onChange: onChange, data: info})}
                             </BoxCard>
 
 
@@ -320,7 +342,7 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
         "page": 1,
         "limit": -1
     });
-    const list:any = result2?.data?.entity?.adminList;
+    const list: any = result2?.data?.entity?.adminList;
 
     const dataInfo = result?.data?.entity;
     return {

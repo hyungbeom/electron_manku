@@ -82,19 +82,21 @@ export default function EstimateWrite({dataInfo}) {
                     break;
                 case 'connectDocumentNumberFull' :
                     const result = await findDocumentInfo(e, setInfo);
-
-                   await getData.post('estimate/generateDocumentNumberFull',{type : 'ESTIMATE', documentNumberFull : info.connectDocumentNumberFull}).then(src=>{
-                       setInfo(v => {
-                           return {
-                               ...result,
-                               connectDocumentNumberFull: info.connectDocumentNumberFull,
-                               documentNumberFull: src.data.code === 1 ? src.data.entity.newDocumentNumberFull : v.documentNumberFull,
-                               validityPeriod:  '견적 발행 후 10일간',
-                               paymentTerms: '발주시 50% / 납품시 50%',
-                               shippingTerms: '귀사도착도'
-                           }
-                       })
-                   })
+                    await getData.post('estimate/generateDocumentNumberFull', {
+                        type: 'ESTIMATE',
+                        documentNumberFull: info.connectDocumentNumberFull
+                    }).then(src => {
+                        setInfo(v => {
+                            return {
+                                ...result,
+                                connectDocumentNumberFull: info.connectDocumentNumberFull,
+                                documentNumberFull: src.data.code === 1 ? src.data.entity.newDocumentNumberFull : v.documentNumberFull,
+                                validityPeriod: '견적 발행 후 10일간',
+                                paymentTerms: '발주시 50% / 납품시 50%',
+                                shippingTerms: '귀사도착도'
+                            }
+                        });
+                    });
 
 
                     gridManage.resetData(gridRef, result?.estimateRequestDetailList);
@@ -129,7 +131,7 @@ export default function EstimateWrite({dataInfo}) {
             return message.warn('매입처 코드가 누락되었습니다.')
         }
 
-        const filterList = list.filter(v=> !!v.model);
+        const filterList = list.filter(v => !!v.model);
 
         if (!filterList.length) {
             return message.warn('유효한 하위 데이터 1개 이상이여야 합니다');
@@ -149,11 +151,10 @@ export default function EstimateWrite({dataInfo}) {
         const result = await commonManage.getPdfFile(pdf, info.documentNumberFull);
 
 
-        console.log(resultCount,'resultCount:s')
         formData.append(`attachmentFileList[${resultCount}].attachmentFile`, result);
-        formData.append(`attachmentFileList[${resultCount}].fileName`, `03.${resultCount+1} ${result.name}`);
+        formData.append(`attachmentFileList[${resultCount}].fileName`, `03.${resultCount + 1} ${result.name}`);
 
-        console.log(result.name,'result.name')
+        console.log(result.name, 'result.name')
 
         setLoading(true)
         await saveEstimate({data: formData, router: router, returnFunc: returnFunc})
@@ -354,7 +355,7 @@ export default function EstimateWrite({dataInfo}) {
                                         id: 'delivery',
                                         onChange: onChange,
                                         data: info,
-                                        addonAfter : '주'
+                                        addonAfter: '주'
                                     })}
                                     {inputNumberForm({
                                         title: '환율',
