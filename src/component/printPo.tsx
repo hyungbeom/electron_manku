@@ -397,6 +397,33 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
                     console.log(v, 'splitData[idx].length:')
                     if (!!idx) {
                         return <div style={{borderTop: '1px solid lightGray', padding: '50px 20px'}}>
+                            <div style={{
+                                fontSize: 9,
+                                borderTop: '1px solid #121212',
+                                fontWeight: 500,
+                                width: '100%',
+                                backgroundColor: '#EBF6F7',
+                                display: 'grid',
+                                textAlign: 'center',
+                                gridTemplateColumns: '0.7fr 3fr 0.5fr 1fr 1fr',
+                                borderBottom: '1px solid #A3A3A3'
+                            }}>
+                                <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
+                                    Item No.
+                                </div>
+                                <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
+                                    Specification
+                                </div>
+                                <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
+                                    Q`ty
+                                </div>
+                                <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
+                                    Unit Price
+                                </div>
+                                <div style={{padding: '3px 0'}}>
+                                    Amount
+                                </div>
+                            </div>
                             {splitData[idx].map((v, i) => {
                                 totalQuantity += v.quantity
                                 totalAmount += v.quantity * v.unitPrice
@@ -404,63 +431,63 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
                                 currency = v.currency
                                 return (
                                     <>
-                                    <div key={i} style={{
-                                        fontSize: 9,
-                                        fontWeight: 500,
-                                        width: '100%',
-                                        display: 'grid',
-                                        textAlign: 'center',
-                                        gridTemplateColumns: '0.7fr 3fr 0.5fr 1fr 1fr',
-                                        borderBottom: '1px solid #A3A3A3',
-                                        borderTop: '1px solid #A3A3A3'
-                                    }}>
-                                        <div style={{
-                                            padding: '3px 0',
-                                            borderRight: '1px solid #121212',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center'
+                                        <div key={i} style={{
+                                            fontSize: 9,
+                                            fontWeight: 500,
+                                            width: '100%',
+                                            display: 'grid',
+                                            textAlign: 'center',
+                                            gridTemplateColumns: '0.7fr 3fr 0.5fr 1fr 1fr',
+                                            borderBottom: '1px solid #A3A3A3',
+                                            borderTop: '1px solid #A3A3A3'
                                         }}>
-                                            {v.sequenceNumber}
+                                            <div style={{
+                                                padding: '3px 0',
+                                                borderRight: '1px solid #121212',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center'
+                                            }}>
+                                                {v.sequenceNumber}
+                                            </div>
+                                            <div style={{
+                                                padding: '3px 0',
+                                                borderRight: '1px solid #121212',
+                                                whiteSpace: "pre-line",
+                                                textAlign: 'left',
+                                                paddingLeft: 10
+                                            }}>
+                                                {v.model}
+                                            </div>
+                                            <div style={{
+                                                padding: '3px 0',
+                                                borderRight: '1px solid #121212',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center'
+                                            }}>
+                                                {v.quantity} {formattedNumber(v.unit)}
+                                            </div>
+                                            <div style={{
+                                                padding: '3px 10px',
+                                                borderRight: '1px solid #121212',
+                                                alignItems: 'center',
+                                                display: 'flex',
+                                                justifyContent: 'space-between'
+                                            }}>
+                                                <div>{v.currency}</div>
+                                                <div>{formattedNumber(v.unitPrice)}</div>
+                                            </div>
+                                            <div style={{
+                                                padding: '3px 10px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'space-between'
+                                            }}>
+                                                <div>{v.currency}</div>
+                                                <div>{formattedNumber(v.quantity * v.unitPrice)}</div>
+                                            </div>
                                         </div>
-                                        <div style={{
-                                            padding: '3px 0',
-                                            borderRight: '1px solid #121212',
-                                            whiteSpace: "pre-line",
-                                            textAlign: 'left',
-                                            paddingLeft: 10
-                                        }}>
-                                            {v.model}
-                                        </div>
-                                        <div style={{
-                                            padding: '3px 0',
-                                            borderRight: '1px solid #121212',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center'
-                                        }}>
-                                            {v.quantity} {formattedNumber(v.unit)}
-                                        </div>
-                                        <div style={{
-                                            padding: '3px 10px',
-                                            borderRight: '1px solid #121212',
-                                            alignItems: 'center',
-                                            display: 'flex',
-                                            justifyContent: 'space-between'
-                                        }}>
-                                            <div>{v.currency}</div>
-                                            <div>{formattedNumber(v.unitPrice)}</div>
-                                        </div>
-                                        <div style={{
-                                            padding: '3px 10px',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'space-between'
-                                        }}>
-                                            <div>{v.currency}</div>
-                                            <div>{formattedNumber(v.quantity * v.unitPrice)}</div>
-                                        </div>
-                                    </div>
                                     </>
                                 )
                             })}
