@@ -6,8 +6,8 @@ import {gridManage} from "@/utils/commonManage";
 
 export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
     const {orderDetail, customerInfo} = data;
-    const pdfRef = useRef();
-    const pdfSubRef = useRef();
+    const pdfRef = useRef<any>();
+    const pdfSubRef = useRef<any>();
 
     let totalAmount = 0;
     let totalQuantity = 0;
@@ -25,7 +25,7 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
 
     useEffect(() => {
         const totalList = gridManage.getAllData(gridRef)
-        const splitData = splitDataWithSequenceNumber(totalList, 20, 30);
+        const splitData = splitDataWithSequenceNumber(totalList, 23, 36);
         setSplitData(splitData)
     }, [data])
 
@@ -65,42 +65,35 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
         return result;
     }
 
-    const handleDownloadPDF = async () => {
-        const pdf = new jsPDF("portrait", "px", "a4"); // A4 크기 설정
+    const generatePDF = async (printMode = false) => {
+        const pdf = new jsPDF("portrait", "px", "a4");
         const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = pdf.internal.pageSize.getHeight();
-        const bottomMargin = 20; // 하단 여백
 
-        // ✅ 1. 첫 번째 페이지: pdfRef.current 캡처하여 추가
         if (pdfRef.current) {
             const firstCanvas = await html2canvas(pdfRef.current, { scale: 2 });
             const firstImgData = firstCanvas.toDataURL("image/png");
-
             const firstImgProps = pdf.getImageProperties(firstImgData);
             const firstImgHeight = (firstImgProps.height * pdfWidth) / firstImgProps.width;
-
             pdf.addImage(firstImgData, "PNG", 0, 0, pdfWidth, firstImgHeight);
         }
 
-        // ✅ 2. 이후 페이지: pdfSubRef.current 내부의 div들을 각각 추가
-        const elements = pdfSubRef.current.children; // pdfSubRef 내부의 모든 자식 div 가져오기
-
+        const elements = pdfSubRef.current.children;
         for (let i = 0; i < elements.length; i++) {
             const element = elements[i];
-
-            // html2canvas로 캡처
             const canvas = await html2canvas(element, { scale: 2 });
             const imgData = canvas.toDataURL("image/png");
-
-            // 이미지 비율 계산
             const imgProps = pdf.getImageProperties(imgData);
             const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-            pdf.addPage(); // ✅ 새로운 페이지 추가
+            pdf.addPage();
             pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, imgHeight);
         }
 
-        pdf.save(`${data.documentNumberFull}_견적서.pdf`);
+        if (printMode) {
+            const pdfBlob = pdf.output("bloburl");
+            window.open(pdfBlob, "_blank");
+        } else {
+            pdf.save(`${data.documentNumberFull}_견적서.pdf`);
+        }
     };
 
     const handlePrint = () => {
@@ -135,7 +128,7 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
             title={<div style={{width: '100%', display: "flex", justifyContent: 'space-between', alignItems: 'center'}}>
                 <div>발주서 출력</div>
                 <div>
-                    <button onClick={handleDownloadPDF} style={{
+                    <button onClick={() => generatePDF(false)} style={{
                         padding: "5px 10px",
                         backgroundColor: "#1890ff",
                         color: "#fff",
@@ -148,7 +141,7 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
                         PDF
                     </button>
                     {/*@ts-ignore*/}
-                    <button onClick={handlePrint} style={{
+                    <button  onClick={() => generatePDF(true)} style={{
                         padding: "5px 10px",
                         backgroundColor: "gray",
                         color: "#fff",
@@ -397,32 +390,6 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
                         )
                     })}
                 </div>
-                {/* 합계 */}
-                <div style={{
-                    fontSize: 9,
-                    fontWeight: 500,
-                    width: '100%',
-                    backgroundColor: '#EBF6F7',
-                    display: 'grid',
-                    textAlign: 'center',
-                    gridTemplateColumns: '0.7fr 3fr 0.5fr 2fr',
-                    borderBottom: '1px solid #121212'
-                }}>
-                    <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
-
-                    </div>
-                    <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
-                        Total
-                    </div>
-                    <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
-                        {formattedNumber(totalQuantity)} {unit}
-                    </div>
-
-                    <div style={{padding: '3px 20px', display: 'flex', justifyContent: 'space-between'}}>
-                        <div>{currency}</div>
-                        <div>{formattedNumber(totalAmount)}</div>
-                    </div>
-                </div>
             </div>
 
             <div ref={pdfSubRef}>
@@ -436,6 +403,7 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
                                 unit = v.unit
                                 currency = v.currency
                                 return (
+                                    <>
                                     <div key={i} style={{
                                         fontSize: 9,
                                         fontWeight: 500,
@@ -493,8 +461,36 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
                                             <div>{formattedNumber(v.quantity * v.unitPrice)}</div>
                                         </div>
                                     </div>
+                                    </>
                                 )
                             })}
+                            {/* 합계 */}
+                            {(splitData.length - 1) === idx && <div style={{
+                                fontSize: 9,
+                                fontWeight: 500,
+                                width: '100%',
+                                backgroundColor: '#EBF6F7',
+                                display: 'grid',
+                                textAlign: 'center',
+                                gridTemplateColumns: '0.7fr 3fr 0.5fr 2fr',
+                                borderBottom: '1px solid #121212'
+                            }}>
+                                <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
+
+                                </div>
+                                <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
+                                    Total
+                                </div>
+                                <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
+                                    {formattedNumber(totalQuantity)} {unit}
+                                </div>
+
+                                <div style={{padding: '3px 20px', display: 'flex', justifyContent: 'space-between'}}>
+                                    <div>{currency}</div>
+                                    <div>{formattedNumber(totalAmount)}</div>
+                                </div>
+                            </div>
+                            }
                         </div>
                     }
                 })}
