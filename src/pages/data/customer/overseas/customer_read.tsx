@@ -59,7 +59,7 @@ export default function codeOverseasPurchase({dataInfo}) {
     }
 
     function moveRouter() {
-        window.open(`/data/customer/overseas/customer_write`, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
+        router.push(`/data/customer/overseas/customer_write`);
     }
 
     return <LayoutComponent>

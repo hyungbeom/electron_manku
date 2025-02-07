@@ -167,11 +167,7 @@ export default function LayoutComponent({children, userInfo = null}) {
     const onClick = (e) => {
         const root = `/${e.keyPath[0]}`
 
-        if (e.key.includes('write')) {
-            window.open(root, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
-        } else {
-            router.push(`${root}`)
-        }
+        router.push(root)
 
     };
 

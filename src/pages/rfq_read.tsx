@@ -79,7 +79,7 @@ export default function rfqRead({dataInfo}) {
     }
 
     function moveRegist() {
-        window.open(`/rfq_write`, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
+        router.push('/rfq_write')
     }
 
 

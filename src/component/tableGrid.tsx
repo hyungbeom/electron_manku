@@ -95,36 +95,33 @@ const TableGrid = ({
 
         if (type === 'read') {
             if (e.data.orderStatusId)
-
-                window.open(`/store_update?orderStatusId=${e?.data?.orderStatusId}`, openType, option);
+                router.push(`/store_update?orderStatusId=${e?.data?.orderStatusId}`);
             if (e.data.projectId)
-                window.open(`/project_update?projectId=${e?.data?.projectId}`, openType, option);
+                router.push(`/project_update?projectId=${e?.data?.projectId}`);
             if (e.data.deliveryId)
-                window.open(`/delivery_update?deliveryId=${e?.data?.deliveryId}`, openType, option);
+                router.push(`/delivery_update?deliveryId=${e?.data?.deliveryId}`);
             if (e.data.remittanceId)
-                window.open(`/remittance_domestic_update?remittanceId=${e?.data?.remittanceId}`, openType, option);
+                router.push(`/remittance_domestic_update?remittanceId=${e?.data?.remittanceId}`);
             if (e.data.estimateRequestId)
-                window.open(`/rfq_update?estimateRequestId=${e?.data?.estimateRequestId}`, openType, option);
+                router.push(`/rfq_update?estimateRequestId=${e?.data?.estimateRequestId}`);
             if (e.data.estimateId)
-                window.open(`/estimate_update?estimateId=${e?.data?.estimateId}`, openType, 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
+                router.push(`/estimate_update?estimateId=${e?.data?.estimateId}`);
             if (e.data.orderId)
-                window.open(`/order_update?orderId=${e?.data?.orderId}`, openType, 'width=1200,height=900,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
+                router.push(`/order_update?orderId=${e?.data?.orderId}`);
             if (e.data.remainingQuantity)
-                window.open(`/inventory_update?maker=${e?.data?.maker}&model=${e?.data?.model}`, openType, option);
+                router.push(`/inventory_update?maker=${e?.data?.maker}&model=${e?.data?.model}`);
             if (e.data.makerId)
-                window.open(`/maker_update?makerName=${e?.data?.makerName}`, openType, option);
+                router.push(`/maker_update?makerName=${e?.data?.makerName}`);
             if (e.data.agencyId)
-                window.open(`/data/agency/domestic/agency_update?agencyCode=${e?.data?.agencyCode}`, openType, option);
+                router.push(`/data/agency/domestic/agency_update?agencyCode=${e?.data?.agencyCode}`);
             if (e.data.overseasAgencyId)
-                window.open(`/data/agency/overseas/agency_update?agencyCode=${e?.data?.agencyCode}`, openType, option);
+                router.push(`/data/agency/overseas/agency_update?agencyCode=${e?.data?.agencyCode}`)
             if (e.data.customerId)
-                window.open(`/data/customer/domestic/customer_update?customerCode=${e?.data?.customerCode}`, openType, option);
+                router.push(`/data/customer/domestic/customer_update?customerCode=${e?.data?.customerCode}`)
             if (e.data.overseasCustomerId)
-
-                window.open(`/data/customer/overseas/customer_update?customerCode=${e?.data?.customerCode}`, openType, option);
+                router.push(`/data/customer/overseas/customer_update?customerCode=${e?.data?.customerCode}`)
             if (e.data.officialDocumentId)
-
-                window.open(`/code_diploma_update?officialDocumentId=${e?.data?.officialDocumentId}`, openType, option);
+                router.push(`/code_diploma_update?officialDocumentId=${e?.data?.officialDocumentId}`)
         }
 
         if (type === 'hsCode') {
@@ -238,9 +235,9 @@ const TableGrid = ({
         // });
     }
 
-    function selectHsCode(info){
-        console.log(info,'::')
-        console.log(page,':page:')
+    function selectHsCode(info) {
+        console.log(info, '::')
+        console.log(page, ':page:')
 
         let selectedRow = page.event.node.data;
         selectedRow['hsCode'] = info.hsCode
@@ -254,7 +251,7 @@ const TableGrid = ({
     return (
         <>
             <HsCodeListModal isModalOpen={isModalOpen['hsCode']} setIsModalOpen={setIsModalOpen}
-                               getRows={selectHsCode}/>
+                             getRows={selectHsCode}/>
             <EstimateListModal isModalOpen={isModalOpen['estimate']} setIsModalOpen={setIsModalOpen}
                                getRows={getSelectedRows}/>
             <AgencyListModal isModalOpen={isModalOpen['agency']} setIsModalOpen={setIsModalOpen}

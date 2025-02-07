@@ -15,10 +15,12 @@ import {commonManage, gridManage} from "@/utils/commonManage";
 import {BoxCard, inputForm, MainCard, rangePickerForm, selectBoxForm} from "@/utils/commonForm";
 import Spin from "antd/lib/spin";
 import ReceiveComponent from "@/component/ReceiveComponent";
+import {useRouter} from "next/router";
 
 
 export default function EstimateRead({dataInfo}) {
 
+    const router = useRouter();
     const gridRef = useRef(null);
 
     const copyInit = _.cloneDeep(estimateReadInitial)
@@ -58,7 +60,7 @@ export default function EstimateRead({dataInfo}) {
     }
 
     async function moveRouter() {
-        window.open(`/estimate_write`, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
+        router.push('/estimate_write')
     }
 
 
