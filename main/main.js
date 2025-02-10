@@ -17,6 +17,7 @@ function createWindow() {
             contextIsolation: true,  // true로 설정하여 보안 강화
             preload: path.join(__dirname, 'preload.js')
         }
+
     });
 
     mainWindow.loadURL('http://localhost:3000'); // 올바른 URL 확인

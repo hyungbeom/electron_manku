@@ -281,12 +281,12 @@ export default function rqfUpdate({dataInfo, managerList}) {
                                     }/>, onChange: onChange, handleKeyPress: handleKeyPress, data: info
                                 })}
                                 {inputForm({title: 'ITEM', id: 'item', onChange: onChange, data: info})}
-                                {textAreaForm({title: '지시사항', id: 'instructions', onChange: onChange, data: info})}
+                                {textAreaForm({title: '지시사항',                rows : 7, id: 'instructions', onChange: onChange, data: info})}
 
                             </BoxCard>
                             <BoxCard title={'ETC'} tooltip={tooltipInfo('etc')}>
                                 {inputForm({title: 'End User', id: 'endUser', onChange: onChange, data: info})}
-                                {textAreaForm({title: '비고란', rows: 7, id: 'remarks', onChange: onChange, data: info})}
+                                {textAreaForm({title: '비고란', rows: 10, id: 'remarks', onChange: onChange, data: info})}
                             </BoxCard>
                             <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}  disabled={!userInfo['microsoftId']}>
                                 {/*@ts-ignored*/}
