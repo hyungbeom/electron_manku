@@ -68,7 +68,6 @@ export default function rfqRead({dataInfo}) {
             return message.warn('선택된 데이터가 없습니다.')
         }
 
-
         const groupedData = {};
         const fileIdList = [];
 
@@ -92,13 +91,9 @@ export default function rfqRead({dataInfo}) {
 
         setPreviewData(groupedData)
 
-        await getData.post('common/getAttachmentFileLists', {
-            attachmentFileItemList: data.map(v => {
-                return {relatedType: 'ESTIMATE_REQUEST', relatedId: v}
-            })
-        }).then(v => {
-
-            console.log(v.data, 'v.data.entity::')
+        await getData.post('common/getAttachmentFileLists',{attachmentFileItemList :data.map(v=>{
+            return {relatedType : 'ESTIMATE_REQUEST' ,relatedId : v}
+            })}).then(v=>{
             setFileList(v.data.entity.attachmentFiles)
         })
         setIsModalOpen(true)
@@ -123,8 +118,8 @@ export default function rfqRead({dataInfo}) {
     }
 
     return <Spin spinning={loading} tip={'견적의뢰 조회중...'}>
-        <PreviewMailModal data={previewData} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}
-                          fileList={fileList}/>
+        {isModalOpen && <PreviewMailModal data={previewData} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}
+                           fileList={fileList}/>}
         <LayoutComponent>
             <div style={{
                 display: 'grid',
@@ -149,8 +144,8 @@ export default function rfqRead({dataInfo}) {
                                     handleKeyPress: handleKeyPress,
                                     data: info
                                 })}
-                            </BoxCard>
 
+                            </BoxCard>
 
                             <BoxCard title={''}>
                                 {inputForm({
@@ -169,7 +164,6 @@ export default function rfqRead({dataInfo}) {
                                 })}
                             </BoxCard>
 
-
                             <BoxCard title={''}>
                                 {selectBoxForm({
                                     title: '발송 여부', id: 'searchSentStatus', onChange: onChange, data: info, list: [
@@ -178,7 +172,6 @@ export default function rfqRead({dataInfo}) {
                                         {value: 2, label: '미발송'}
                                     ]
                                 })}
-
                                 {selectBoxForm({
                                     title: '회신 여부', id: 'searchReplyStatus', onChange: onChange, data: info, list: [
                                         {value: 0, label: '전체'},

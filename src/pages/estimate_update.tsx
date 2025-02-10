@@ -31,11 +31,13 @@ import {DriveUploadComp} from "@/component/common/SharePointComp";
 import Spin from "antd/lib/spin";
 import Modal from "antd/lib/modal/Modal";
 import EstimatePaper from "@/component/견적서/EstimatePaper";
-
+import {jsPDF} from "jspdf";
+import html2canvas from "html2canvas";
 
 const listType = 'estimateDetailList'
 export default function estimate_update({dataInfo}) {
     const pdfRef = useRef(null);
+    const pdfSubRef = useRef(null);
     const fileRef = useRef(null);
     const gridRef = useRef(null);
     const router = useRouter();
@@ -49,7 +51,7 @@ export default function estimate_update({dataInfo}) {
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
     const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
-    const [validate, setValidate] = useState({agencyCode: true});
+
     const [fileList, setFileList] = useState(fileManage.getFormatFiles(infoInitFile));
     const [originFileList, setOriginFileList] = useState(infoInitFile);
     const [loading, setLoading] = useState(false);
@@ -58,6 +60,9 @@ export default function estimate_update({dataInfo}) {
         params.api.applyTransaction({add: dataInfo?.estimateDetail[listType]});
     };
 
+
+
+
     async function handleKeyPress(e) {
         if (e.key === 'Enter') {
 
@@ -65,7 +70,7 @@ export default function estimate_update({dataInfo}) {
                 case 'agencyCode' :
                 case 'customerName' :
                 case 'maker' :
-                    await findCodeInfo(e, setInfo, openModal, 'ESTIMATE', setValidate)
+                    await findCodeInfo(e, setInfo, openModal, 'ESTIMATE')
                     break;
                 case 'connectDocumentNumberFull' :
                     await findDocumentInfo(e, setInfo)
@@ -81,9 +86,6 @@ export default function estimate_update({dataInfo}) {
 
     function onChange(e) {
         if (e.target.id === 'agencyCode') {
-            setValidate(v => {
-                return {...v, agencyCode: false}
-            })
         }
         commonManage.onChange(e, setInfo)
     }
@@ -92,8 +94,9 @@ export default function estimate_update({dataInfo}) {
     async function saveFunc() {
         gridRef.current.clearFocusedCell();
         const list = gridManage.getAllData(gridRef)
-        if (!list.length) {
-            return message.warn('하위 데이터 1개 이상이여야 합니다')
+        const filterList = list.filter(v=> !!v.model);
+        if (!filterList.length) {
+            return message.warn('유효한 하위 데이터 1개 이상이여야 합니다')
         }
         if (!info['agencyCode']) {
             return message.warn('매입처 코드가 누락되었습니다.')
@@ -102,7 +105,7 @@ export default function estimate_update({dataInfo}) {
         // setLoading(true)
         const formData: any = new FormData();
 
-        commonManage.setInfoFormData(info, formData, listType, list)
+        commonManage.setInfoFormData(info, formData, listType, filterList)
         commonManage.getUploadList(fileRef, formData);
         commonManage.deleteUploadList(fileRef, formData, originFileList)
 
@@ -110,7 +113,6 @@ export default function estimate_update({dataInfo}) {
     }
 
     async function returnFunc(e) {
-        console.log(e, 'e:')
         if (e) {
             await getAttachmentFileList({
                 data: {
@@ -152,10 +154,39 @@ export default function estimate_update({dataInfo}) {
         setIsPrintModalOpen(true)
     }
 
-    async function getPdfFile() {
-        const pdf = await commonManage.getPdfCreate(pdfRef);
-        pdf.save(`${info.documentNumberFull}_견적서.pdf`);
-    }
+    const generatePDF = async (printMode = false) => {
+        const pdf = new jsPDF("portrait", "px", "a4");
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const padding = 30; // 좌우 여백 설정
+        const contentWidth = pdfWidth - padding * 2; // 실제 이미지 너비
+
+        if (pdfRef.current) {
+            const firstCanvas = await html2canvas(pdfRef.current, {scale: 2});
+            const firstImgData = firstCanvas.toDataURL("image/png");
+            const firstImgProps = pdf.getImageProperties(firstImgData);
+            const firstImgHeight = (firstImgProps.height * pdfWidth) / firstImgProps.width;
+            pdf.addImage(firstImgData, "PNG", 0, 0, pdfWidth, firstImgHeight);
+        }
+
+        const elements = pdfSubRef.current.children;
+        for (let i = 0; i < elements.length; i++) {
+            const element = elements[i];
+            const canvas = await html2canvas(element, { scale: 2 });
+            const imgData = canvas.toDataURL("image/png");
+            const imgProps = pdf.getImageProperties(imgData);
+            const imgHeight = (imgProps.height * contentWidth) / imgProps.width;
+
+            pdf.addPage();
+            pdf.addImage(imgData, "PNG", padding, 0, contentWidth, imgHeight);
+        }
+
+        if (printMode) {
+            const pdfBlob = pdf.output("bloburl");
+            window.open(pdfBlob, "_blank");
+        } else {
+            pdf.save(`${info.documentNumberFull}_견적서.pdf`);
+        }
+    };
 
     function print(){
         const printContents = pdfRef.current.innerHTML;
@@ -174,8 +205,8 @@ export default function estimate_update({dataInfo}) {
             title={<div style={{display: 'flex', justifyContent: 'space-between', padding: '0px 30px'}}>
                 <span>견적서 출력</span>
                 <span>
-                       <Button style={{fontSize: 11, marginRight: 10}} size={'small'} onClick={getPdfFile}>다운로드</Button>
-                       <Button style={{fontSize: 11}}  size={'small'} onClick={print}>인쇄</Button>
+                       <Button style={{fontSize: 11, marginRight: 10}} size={'small'} onClick={()=>generatePDF(false)}>다운로드</Button>
+                       <Button style={{fontSize: 11}}  size={'small'} onClick={()=>generatePDF(true)}>인쇄</Button>
                 </span>
             </div>}
             onCancel={() => setIsPrintModalOpen(false)}
@@ -183,7 +214,7 @@ export default function estimate_update({dataInfo}) {
             width={1000}
             footer={null}
             onOk={() => setIsPrintModalOpen(false)}>
-            <EstimatePaper data={info} pdfRef={pdfRef} gridRef={gridRef}/>
+            <EstimatePaper data={info} pdfRef={pdfRef} pdfSubRef={pdfSubRef} gridRef={gridRef} position={true}/>
         </Modal>
     }
 
@@ -194,7 +225,6 @@ export default function estimate_update({dataInfo}) {
                          open={isModalOpen}
                          type={'ESTIMATE'}
                          gridRef={gridRef}
-                         setValidate={setValidate}
                          setIsModalOpen={setIsModalOpen}/>
         <EstimateModal/>
         <LayoutComponent>
@@ -247,28 +277,31 @@ export default function estimate_update({dataInfo}) {
                                     }/>,
                                     onChange: onChange,
                                     data: info,
-                                    handleKeyPress: handleKeyPress,
-                                    validate: validate['agencyCode']
+                                    handleKeyPress: handleKeyPress
                                 })}
                                 {inputForm({
                                     title: '매입처명',
                                     id: 'agencyName',
                                     onChange: onChange,
-                                    data: info,
-                                    disabled: true
+                                    data: info
                                 })}
                                 {inputForm({
                                     title: '담당자',
                                     id: 'agencyManagerName',
                                     onChange: onChange,
-                                    data: info,
-                                    disabled: true
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: '매입처이메일',
+                                    id: 'agencyManagerEmail',
+                                    onChange: onChange,
+                                    data: info
                                 })}
                                 {inputForm({
                                     title: '연락처',
                                     id: 'agencyManagerPhoneNumber',
                                     onChange: onChange,
-                                    data: info, disabled: true
+                                    data: info
                                 })}
                             </BoxCard>
 
@@ -287,29 +320,25 @@ export default function estimate_update({dataInfo}) {
                                     title: '담당자',
                                     id: 'managerName',
                                     onChange: onChange,
-                                    data: info,
-                                    disabled: true
+                                    data: info
                                 })}
                                 {inputForm({
                                     title: '전화번호',
                                     id: 'phoneNumber',
                                     onChange: onChange,
-                                    data: info,
-                                    disabled: true
+                                    data: info
                                 })}
                                 {inputForm({
                                     title: '팩스',
                                     id: 'faxNumber',
                                     onChange: onChange,
-                                    data: info,
-                                    disabled: true
+                                    data: info
                                 })}
                                 {inputForm({
                                     title: '이메일',
                                     id: 'customerManagerEmail',
                                     onChange: onChange,
-                                    data: info,
-                                    disabled: true
+                                    data: info
                                 })}
                             </BoxCard>
 
@@ -365,12 +394,12 @@ export default function estimate_update({dataInfo}) {
                             <BoxCard title={'ETC'}>
                                 {textAreaForm({
                                     title: '지시사항',
-                                    rows: 2,
+                                    rows: 6,
                                     id: 'instructions',
                                     onChange: onChange,
                                     data: info
                                 })}
-                                {textAreaForm({title: '비고란', rows: 3, id: 'remarks', onChange: onChange, data: info})}
+                                {textAreaForm({title: '비고란', rows: 5, id: 'remarks', onChange: onChange, data: info})}
                             </BoxCard>
                             <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
                                 {/*@ts-ignored*/}

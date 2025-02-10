@@ -1,5 +1,5 @@
 import {useEffect, useMemo} from "react";
-import {gridManage} from "@/utils/commonManage";
+import {commonManage, gridManage} from "@/utils/commonManage";
 import {amountFormat} from "@/utils/columnList";
 
 const headerStyle = {
@@ -14,6 +14,11 @@ export default function EstimateList({data, gridRef}: any) {
 
     const [totalQuantity, totalValue,units, list] = useMemo(() => {
         const list = gridManage.getAllData(gridRef);
+
+
+
+        const totalList = gridManage.getAllData(gridRef)
+        const splitData = commonManage.splitDataWithSequenceNumber(totalList, 23, 36);
 
         const result = list?.reduce((totals, item) => {
             totals.unit = item.unit;

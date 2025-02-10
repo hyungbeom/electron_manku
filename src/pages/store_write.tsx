@@ -331,9 +331,8 @@ export default function storeWrite({dataInfo}) {
                     columns={storeWriteColumn}
                     onGridReady={onGridReady}
                     type={'write'}
-                    funcButtons={['storeUpload', 'orderSelect', 'storeAdd', 'delete', 'print']}
+                    funcButtons={['storeUpload', 'orderSelect',  'delete', 'print']}
                     onCellEditingStopped={onCellEditingStopped}
-
                 />
             </div>
         </LayoutComponent>

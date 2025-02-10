@@ -159,7 +159,7 @@ export default function projectWrite({dataInfo, managerList}) {
         <LayoutComponent>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '430px' : '65px'} calc(100vh - ${mini ? 485 : 120}px)`,
+                gridTemplateRows: `${mini ? '455px' : '65px'} calc(100vh - ${mini ? 510 : 120}px)`,
                 columnGap: 5
             }}>
                 <MainCard title={'프로젝트 등록'} list={[
@@ -237,21 +237,18 @@ export default function projectWrite({dataInfo, managerList}) {
                                     {inputForm({
                                         title: '고객사 담당자명',
                                         id: 'customerManagerName',
-                                        disabled: true,
                                         onChange: onChange,
                                         data: info
                                     })}
                                     {inputForm({
                                         title: '담당자 전화번호',
                                         id: 'customerManagerPhone',
-                                        disabled: true,
                                         onChange: onChange,
                                         data: info
                                     })}
                                     {inputForm({
                                         title: '담당자 이메일',
                                         id: 'customerManagerEmail',
-                                        disabled: true,
                                         onChange: onChange,
                                         data: info
                                     })}
@@ -268,7 +265,7 @@ export default function projectWrite({dataInfo, managerList}) {
                                     })}
                                     {textAreaForm({
                                         title: '특이사항',
-                                        rows: 2,
+                                        rows: 3,
                                         id: 'specialNotes',
                                         onChange: onChange,
                                         data: info

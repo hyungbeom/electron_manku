@@ -67,7 +67,7 @@ export default function rqfWrite({dataInfo, managerList}) {
         ...copyInit, ...dataInfo, ...adminParams,
         writtenDate: moment().format('YYYY-MM-DD')
     })
-    const [validate, setValidate] = useState({agencyCode: !!dataInfo, documentNumberFull: !!dataInfo});
+
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
 
@@ -100,7 +100,7 @@ export default function rqfWrite({dataInfo, managerList}) {
                 case 'agencyCode' :
                 case 'customerName' :
                 case 'maker' :
-                    await findCodeInfo(e, setInfo, openModal, '', setValidate)
+                    await findCodeInfo(e, setInfo, openModal, '')
                     break;
             }
         }
@@ -112,9 +112,7 @@ export default function rqfWrite({dataInfo, managerList}) {
 
     function onChange(e) {
         if (e.target.id === 'agencyCode') {
-            setValidate(v => {
-                return {...v, agencyCode: false, documentNumberFull: false}
-            })
+
         }
         commonManage.onChange(e, setInfo)
     }
@@ -131,15 +129,16 @@ export default function rqfWrite({dataInfo, managerList}) {
             return message.warn('INQUIRY NO.가 누락되었습니다.')
         }
         const list = gridManage.getAllData(gridRef);
-        if (!list.length) {
-            return message.warn('하위 데이터 1개 이상이여야 합니다');
+        const filterList = list.filter(v=> !!v.model);
+        if (!filterList.length) {
+            return message.warn('유효한 하위 데이터 1개 이상이여야 합니다');
         }
 
         setLoading(true)
 
         const formData: any = new FormData();
         // serialNumbe
-        commonManage.setInfoFormData(info, formData, listType, list)
+        commonManage.setInfoFormData(info, formData, listType, filterList)
         commonManage.getUploadList(fileRef, formData)
 
         formData.delete('createdDate');
@@ -179,7 +178,6 @@ export default function rqfWrite({dataInfo, managerList}) {
         <SearchInfoModal info={info} setInfo={setInfo}
                          open={isModalOpen}
                          gridRef={gridRef}
-                         setValidate={setValidate}
                          setIsModalOpen={setIsModalOpen}
                         compProps={<div>
                             <Button size={'small'} style={{marginRight: 5}} onClick={() => moveRouter('국내')} id={'국내'}>국내생성</Button>
@@ -222,7 +220,7 @@ export default function rqfWrite({dataInfo, managerList}) {
                                 })}
                                 {inputForm({title: '작성자', id: 'createBy', disabled: true, onChange: onChange, data: info})}
                                 <div>
-                                    <div>담당자</div>
+                                    <div style={{paddingBottom : 4.5}}>담당자</div>
                                     <Select style={{width: '100%'}} size={'small'}
                                             showSearch
                                             value={info['managerAdminId']}
@@ -254,8 +252,7 @@ export default function rqfWrite({dataInfo, managerList}) {
                                             }
                                         }/>,
                                     data: info,
-                                    disabled: true,
-                                    validate: validate['documentNumberFull']
+                                    disabled: true
                                 })}
                                 {inputForm({
                                     title: 'RFQ NO.',
@@ -289,20 +286,23 @@ export default function rqfWrite({dataInfo, managerList}) {
                                                                     }/>,
                                         onChange: onChange,
                                         handleKeyPress: handleKeyPress,
-                                        data: info,
-                                        validate: validate['agencyCode']
+                                        data: info
                                     })}
                                     {inputForm({
                                         title: '매입처명',
                                         id: 'agencyName',
-                                        disabled: true,
                                         onChange: onChange,
                                         data: info
                                     })}
                                     {inputForm({
                                         title: '매입처담당자',
                                         id: 'agencyManagerName',
-                                        disabled: true,
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: '매입처이메일',
+                                        id: 'agencyManagerEmail',
                                         onChange: onChange,
                                         data: info
                                     })}
@@ -328,28 +328,24 @@ export default function rqfWrite({dataInfo, managerList}) {
                                         id: 'managerName',
                                         onChange: onChange,
                                         data: info,
-                                        disabled: true
                                     })}
                                     {inputForm({
                                         title: '전화번호',
                                         id: 'phoneNumber',
                                         onChange: onChange,
                                         data: info,
-                                        disabled: true
                                     })}
                                     {inputForm({
                                         title: '팩스',
                                         id: 'faxNumber',
                                         onChange: onChange,
-                                        data: info,
-                                        disabled: true
+                                        data: info
                                     })}
                                     {inputForm({
                                         title: '이메일',
                                         id: 'customerManagerEmail',
                                         onChange: onChange,
-                                        data: info,
-                                        disabled: true
+                                        data: info
                                     })}
                                 </BoxCard>
 
@@ -378,7 +374,8 @@ export default function rqfWrite({dataInfo, managerList}) {
                                         title: '지시사항',
                                         id: 'instructions',
                                         onChange: onChange,
-                                        data: info
+                                        data: info,
+                                        rows : 7
                                     })}
                                 </BoxCard>
                                 <BoxCard title={'ETC'} tooltip={tooltipInfo('etc')}>
@@ -390,10 +387,11 @@ export default function rqfWrite({dataInfo, managerList}) {
                                     })}
                                     {textAreaForm({
                                         title: '비고란',
-                                        rows: 7,
+                                        rows: 10,
                                         id: 'remarks',
                                         onChange: onChange,
-                                        data: info
+                                        data: info,
+
                                     })}
                                 </BoxCard>
                                 <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}  disabled={!userInfo['microsoftId']}>

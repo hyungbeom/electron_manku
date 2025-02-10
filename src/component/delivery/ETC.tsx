@@ -3,12 +3,32 @@ import React from "react";
 import {commonManage} from "@/utils/commonManage";
 import AddressSearch from "@/component/AddressSearch";
 import {DownloadOutlined} from "@ant-design/icons";
+import {findDocumentInfo} from "@/utils/api/commonApi";
 
 export default function ETC({info, setInfo}) {
 
 
     function onChange(e) {
         commonManage.onChange(e, setInfo)
+    }
+
+    async function handleKeyPress(e) {
+
+        if (e.key === 'Enter') {
+
+            switch (e.target.id) {
+                case 'connectInquiryNo' :
+                    const result = await findDocumentInfo(e, setInfo);
+                    setInfo(v => {
+                        return {
+                            ...result[0],
+                            connectInquiryNo: info.connectInquiryNo
+                        }
+                    })
+
+                    break;
+            }
+        }
     }
 
     const handleAddressComplete = (address, zipCode) => {
@@ -25,7 +45,7 @@ export default function ETC({info, setInfo}) {
                 id: 'connectInquiryNo',
                 suffix: <DownloadOutlined style={{cursor: 'pointer'}}/>,
                 onChange: onChange, data: info,
-                // handleKeyPress: handleKeyPress
+                handleKeyPress: handleKeyPress
             })}
             {inputForm({title: '고객사명', id: 'customerName', onChange: onChange, data: info})}
         </TopBoxCard>

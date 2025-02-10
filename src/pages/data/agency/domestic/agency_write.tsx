@@ -1,11 +1,9 @@
 import React, {useRef, useState} from "react";
-import {getData} from "@/manage/function/api";
 import LayoutComponent from "@/component/LayoutComponent";
 import message from "antd/lib/message";
 import {tableCodeDomesticAgencyWriteColumns,} from "@/utils/columnList";
 import {codeDomesticAgencyWriteInitial,} from "@/utils/initialList";
 import TableGrid from "@/component/tableGrid";
-import moment from "moment/moment";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import {wrapper} from "@/store/store";
@@ -51,15 +49,17 @@ export default function agency_write({dataInfo}) {
     }
 
     async function saveFunc() {
+        gridRef.current.clearFocusedCell();
 
-        if(!info['agencyCode']){
+        if (!info['agencyCode']) {
             return message.error('코드(약칭)이 누락되었습니다.')
         }
 
-        await saveDomesticAgency({data: info, router : router})
+        const list = gridManage.getAllData(gridRef);
+
+        await saveDomesticAgency({data: {...info,agencyManagerList : list }, router: router})
 
     }
-
 
 
     function deleteList() {

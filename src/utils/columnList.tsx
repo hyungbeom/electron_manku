@@ -2,6 +2,154 @@ import moment from "moment";
 import {commonManage} from "@/utils/commonManage";
 import message from "antd/lib/message";
 
+
+let lastClickedRowNode = null; // ✅ 마지막으로 클릭된 row 추적
+
+
+
+function handleCellClick(params) {
+    const clickedNode = params.node;
+
+    // 이전에 클릭된 row 높이를 복귀
+    if (lastClickedRowNode && lastClickedRowNode !== clickedNode) {
+        lastClickedRowNode.setRowHeight(25); // ✅ 기본 높이로 복귀
+        params.api.onRowHeightChanged(); // ✅ 높이 변경 반영
+    }
+
+    // 현재 클릭된 row 높이를 확장
+    const rowContent = params.data[params.colDef.field] || '';
+    const lines = rowContent.split('\n').length; // 줄바꿈 기준으로 줄 수 계산
+    const newHeight = Math.max(40, lines * 20); // 줄 수에 따라 높이 조정
+
+    clickedNode.setRowHeight(newHeight); // ✅ 새로운 높이 적용
+    params.api.onRowHeightChanged(); // ✅ 높이 변경 반영
+
+    // 현재 row를 마지막 클릭된 row로 추적
+    lastClickedRowNode = clickedNode;
+}
+
+function handleCellMouseOut(params) {
+    // 현재 row가 아닌 경우, 기본 높이로 복귀
+    if (lastClickedRowNode && lastClickedRowNode !== params.node) {
+        lastClickedRowNode.setRowHeight(40); // ✅ 기본 높이로 복귀
+        params.api.onRowHeightChanged(); // ✅ 높이 변경 반영
+        lastClickedRowNode = null; // 추적 초기화
+    }
+}
+
+class CustomTextEditor {
+    init(params:any) {
+        // @ts-ignore
+        this.params = params;
+        // @ts-ignore
+        this.defaultRowHeight = 40; // ✅ 한 줄 높이
+        // @ts-ignore
+        this.eInput = document.createElement('textarea');
+        // @ts-ignore
+        this.eInput.style.width = '100%';
+        // @ts-ignore
+        this.eInput.style.minHeight = `${this.defaultRowHeight}px`; // ✅ 기본 높이 설정
+        // @ts-ignore
+        this.eInput.style.height = 'auto';
+        // @ts-ignore
+        this.eInput.style.overflow = 'hidden'; // ✅ 내부 스크롤 방지
+        // @ts-ignore
+        this.eInput.style.whiteSpace = 'pre-wrap'; // ✅ 줄바꿈 유지
+        // @ts-ignore
+        this.eInput.style.resize = 'none'; // ✅ 사용자가 크기 조절 못하도록
+        // @ts-ignore
+        this.eInput.value = params.value || '';
+
+        // Shift + Enter 줄바꿈 추가
+        // @ts-ignore
+        this.eInput.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" && event.shiftKey) {
+                event.preventDefault();
+                // @ts-ignore
+                this.eInput.value += "\n"; // 줄바꿈 추가
+                this.adjustHeight(); // 높이 자동 조정
+            }
+        });
+
+        // 입력할 때마다 높이 조정 + row 높이 동기화
+        // @ts-ignore
+        this.eInput.addEventListener("input", () => {
+            this.adjustHeight();
+        });
+
+        // ✅ Focus Out (편집 종료) 시 원래 row 높이로 강제 복귀
+        // @ts-ignore
+        this.eInput.addEventListener("blur", () => {
+            this.resetRowHeight(); // 한 줄로 복귀
+        });
+
+        // 초기 높이 조정
+        setTimeout(() => this.adjustHeight(), 0);
+    }
+
+    getGui() {
+        // @ts-ignore
+        return this.eInput;
+    }
+
+    getValue() {
+        // @ts-ignore
+        return this.eInput.value;
+    }
+
+    // ✅ 높이 자동 조정 + row 높이 동기화
+    adjustHeight() {
+        // @ts-ignore
+        this.eInput.style.height = 'auto'; // 초기화 후 높이 재계산
+        // @ts-ignore
+        this.eInput.style.height = Math.max(this.eInput.scrollHeight, this.defaultRowHeight) + 'px'; // 최소 row 높이 유지
+
+        // ✅ ag-Grid row 높이 동기화
+        // @ts-ignore
+        if (this.params && this.params.api) {
+            // @ts-ignore
+            this.params.node.setRowHeight(this.eInput.scrollHeight + 10); // 추가 여유값 적용
+            // @ts-ignore
+            this.params.api.onRowHeightChanged(); // 높이 변경 이벤트 호출
+
+        }
+    }
+
+    // ✅ Focus Out 시 row 높이를 기본값(한 줄)으로 강제 복귀
+    resetRowHeight() {
+        // @ts-ignore
+        if (this.params && this.params.api) {
+            // ✅ textarea 스타일 강제로 한 줄로 변경
+            // @ts-ignore
+            this.eInput.style.height = `${this.defaultRowHeight}px`;
+            // @ts-ignore
+            this.eInput.style.whiteSpace = 'nowrap'; // ✅ 한 줄로 설정
+            // @ts-ignore
+            this.eInput.style.overflow = 'hidden';
+            // @ts-ignore
+            this.eInput.style.textOverflow = 'ellipsis';
+
+            // ✅ row 높이 강제 변경
+            // @ts-ignore
+            this.params.node.setRowHeight(this.defaultRowHeight);
+
+            // ✅ 강제로 row를 다시 렌더링하여 문제 해결
+            // @ts-ignore
+            this.params.api.onRowHeightChanged();
+            // @ts-ignore
+            this.params.api.redrawRows({ rowNodes: [this.params.node] });
+
+            // ✅ 추가로 지연 호출을 사용하여 캐시 문제 해결
+            setTimeout(() => {
+                // @ts-ignore
+                this.params.api.onRowHeightChanged();
+                // @ts-ignore
+                this.params.api.redrawRows({ rowNodes: [this.params.node] });
+            }, 50);
+        }
+    }
+}
+
 const makeAbsoluteUrl = (url) => {
     if (!/^https?:\/\//i.test(url)) {
         return `https://${url}`;
@@ -30,12 +178,12 @@ export const amountFormatParser = (params) => {
     const parsedValue = parseFloat(params.newValue.replace(/,/g, ""));
     return isNaN(parsedValue) ? params.oldValue : parsedValue;
 }
-export const columnPlaceHolder = (params, title) => {
+export const columnPlaceHolder = (params, placeHolder, suffix) => {
 
     return params.value ? (
-        params.value
+        <div><span>{params.value}</span> <span>{suffix}</span></div>
     ) : (
-        <span style={{color: 'lightGray'}} className="ag-cell-placeholder">{title}</span>
+        <span style={{color: 'lightGray'}} className="ag-cell-placeholder">{placeHolder}</span>
     );
 
 }
@@ -259,13 +407,28 @@ export const makerColumn = [
 
 export const subRfqWriteColumn = [
     {
-        headerName: 'MODEL',
-        field: 'model',
-        minWidth: 150,
-        editable: true,
+        headerName: "", // 컬럼 제목
         headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
         checkboxSelection: true, // 각 행에 체크박스 추가
-        pinned: 'left'
+        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
+        cellStyle: {textAlign: "center"}, // 스타일 설정
+        maxWidth: 45, // 컬럼 너비
+        pinned: "left", // 왼쪽에 고정
+        filter: false
+    },{
+        headerName: 'MODEL',
+        field: 'model',
+        minWidth: 200,
+        cellEditor: CustomTextEditor, // ✅ 커스텀 에디터 적용
+        wrapText: true,
+        autoHeight: true,
+        cellStyle: {
+            "white-space": "nowrap",  // ✅ 한 줄로 유지
+            "overflow": "hidden",      // ✅ 넘치는 부분 숨김
+            "text-overflow": "ellipsis" // ✅ 생략(...) 처리
+        },
+        editable: true,
+        tooltipField: "model", // ✅ 마우스를 올리면 전체 텍스트 표시 가능
     },
     {
         headerName: '수량',
@@ -319,7 +482,7 @@ export const subRfqWriteColumn = [
         valueParser: (params) => {
             return params.newValue == null || params.newValue === "" ? 0 : params.newValue;
         },
-        cellRenderer: (e) => columnPlaceHolder(e, 'week')
+        cellRenderer: (e) => columnPlaceHolder(e, 'week','주')
     },
     {
         headerName: '회신여부',
@@ -352,12 +515,28 @@ export const subRfqWriteColumn = [
 
 export const tableOrderWriteColumn = [
     {
+        headerName: "", // 컬럼 제목
         headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
         checkboxSelection: true, // 각 행에 체크박스 추가
+        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
+        cellStyle: {textAlign: "center"}, // 스타일 설정
+        maxWidth: 45, // 컬럼 너비
+        pinned: "left", // 왼쪽에 고정
+        filter: false
+    },{
         headerName: 'MODEL',
         field: 'model',
-        minWidth: 150,
+        minWidth: 200,
+        cellEditor: CustomTextEditor, // ✅ 커스텀 에디터 적용
+        wrapText: true,
+        autoHeight: true,
+        cellStyle: {
+            "white-space": "nowrap",  // ✅ 한 줄로 유지
+            "overflow": "hidden",      // ✅ 넘치는 부분 숨김
+            "text-overflow": "ellipsis" // ✅ 생략(...) 처리
+        },
         editable: true,
+        tooltipField: "model", // ✅ 마우스를 올리면 전체 텍스트 표시 가능
     },
 
     {
@@ -437,6 +616,11 @@ export const tableOrderWriteColumn = [
             const {quantity, unitPrice} = params.data;
             return Math.floor(quantity * unitPrice).toLocaleString();
         }
+    }, {
+        headerName: 'HS-CODE',
+        field: 'hsCode',
+        editable: true,
+
     }
 ];
 
@@ -527,11 +711,20 @@ export const estimateTotalColumns = [
 ];
 export const tableEstimateReadColumns = [
     {
+        headerName: "", // 컬럼 제목
         headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
         checkboxSelection: true, // 각 행에 체크박스 추가
+        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
+        cellStyle: {textAlign: "left"}, // 스타일 설정
+        maxWidth: 50, // 컬럼 너비
+        pinned: "left", // 왼쪽에 고정
+        filter: false
+    },
+    {
+
         headerName: '작성일자',
         field: 'writtenDate',
-        width: 130,
+        maxWidth: 80, // 컬럼 너비
         pinned: 'left'
     },
     {
@@ -540,7 +733,7 @@ export const tableEstimateReadColumns = [
         headerName: 'Inquiry No.',
         field: 'documentNumberFull',
         pinned: 'left',
-        maxWidth: 100,
+        maxWidth: 100, // 컬럼 너비
         cellRenderer: (params) => {
             const rowIndex = params.node.rowIndex;
             const currentData = params.value;
@@ -555,118 +748,70 @@ export const tableEstimateReadColumns = [
 
     },
     {
-        headerName: '대리점코드',
-        field: 'agencyCode',
-        minWidth: 70,
+        headerName: '매입처',
+        field: 'agencyName',
+        maxWidth: 100,
     },
     {
         headerName: '고객사',
         children: [
             {
-                headerName: '고객사코드',
-                field: 'customerCode',
-                minWidth: 70,
-            },
-            {
                 headerName: '고객사명',
                 field: 'customerName',
-                minWidth: 100,
+                maxWidth: 100,
             },
             {
                 headerName: '고객사담당자',
                 field: 'managerName',
-                minWidth: 100,
-            },
-            {
-                headerName: '전화번호',
-                field: 'phoneNumber',
-                minWidth: 100,
-            },
-            {
-                headerName: '팩스번호',
-                field: 'faxNumber',
-                minWidth: 100,
-            },
-
+                maxWidth: 80,
+            }
         ]
     },
     {
-        headerName: '만쿠 담당자',
-        children: [
-            {
-                headerName: '담당자',
-                field: 'estimateManager',
-                minWidth: 70,
-            },
-            {
-                headerName: '이메일',
-                field: 'email',
-                minWidth: 100,
-            },
-            {
-                headerName: '전화번호',
-                field: 'managerPhoneNumber',
-                minWidth: 100,
-            },
-            {
-                headerName: '팩스번호',
-                field: 'managerFaxNumber',
-                minWidth: 100,
-            },
-        ]
+        headerName: '담당자',
+        field: 'managerAdminName',
+        maxWidth: 80,
     },
     {
-        headerName: '운송',
-        children: [
-
-            {
-                headerName: '결제조건',
-                field: 'paymentTerms',
-                minWidth: 100,
-            },
-            {
-                headerName: '운송조건',
-                field: 'shippingTerms',
-                minWidth: 100,
-            },
-            {
-                headerName: 'Delivery',
-                field: 'delivery',
-                minWidth: 80,
-            },
-            {
-                headerName: '환율',
-                field: 'exchangeRate',
-                minWidth: 100,
-                cellDataType: 'number',
-                valueFormatter: (params) => {
-                    return isNaN(params) ? null : parseFloat(params)
-                }
-
-            },
-        ]
+        headerName: 'MODEL',
+        field: 'model',
+        minWidth: 200,
+        cellStyle: {
+            "white-space": "pre-wrap", // ✅ 줄바꿈 유지
+            "overflow": "hidden",     // ✅ 넘치는 부분 숨김
+        },
+        onCellClicked: handleCellClick, // ✅ 셀 클릭 시 처리
+        onCellMouseOut: handleCellMouseOut, // ✅ 셀 밖으로 이동 시 처리
+    },   {
+        headerName: 'MAKER',
+        field: 'maker',
+        minWidth: 200
     },
-
+    {
+        headerName: 'ITEM',
+        field: 'item',
+        minWidth: 200
+    },
     {
         headerName: '물품',
         children: [
             {
                 headerName: '수량',
                 field: 'quantity',
-                minWidth: 40,
+                maxWidth: 60,
                 cellDataType: 'number',
                 valueFormatter: numberFormat,
             },
             {
                 headerName: '단위',
                 field: 'unit',
-                minWidth: 40,
+                maxWidth: 60,
             },
 
             {
                 headerName: '주문여부',
                 field: 'order',
-                minWidth: 80,
+                maxWidth: 80,
                 cellDataType: 'text',
                 initialValue: '미주문'
             },
@@ -701,57 +846,39 @@ export const tableEstimateReadColumns = [
                 cellStyle: {textAlign: 'right'}
             },
         ]
-    },
-    {
-        headerName: '견적유효기간',
-        field: 'validityPeriod',
-        minWidth: 100,
-    },
-    {
-        headerName: '비고란',
-        field: 'remarks',
-        width: 150,
-    },
-    {
-        headerName: '등록자',
-        field: 'createdBy',
-        width: 80,
-    },
-    {
-        headerName: 'MAKER',
-        field: 'maker',
-        maxWidth: 100,
-        pinned: 'right'
-    },
-    {
-        headerName: 'ITEM',
-        field: 'item',
-        maxWidth: 100,
-        pinned: 'right'
-    },
-    {
-        headerName: 'MODEL',
-        field: 'model',
-        maxWidth: 120,
-        pinned: 'right'
-    },
-
+    }
 ];
 
 export const tableEstimateWriteColumns = [
     {
+        headerName: "", // 컬럼 제목
         headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
         checkboxSelection: true, // 각 행에 체크박스 추가
+        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
+        cellStyle: {textAlign: "center"}, // 스타일 설정
+        maxWidth: 45, // 컬럼 너비
+        pinned: "left", // 왼쪽에 고정
+        filter: false
+    },{
         headerName: 'MODEL',
         field: 'model',
+        minWidth: 200,
+        cellEditor: CustomTextEditor, // ✅ 커스텀 에디터 적용
+        wrapText: true,
+        autoHeight: true,
+        cellStyle: {
+            "white-space": "nowrap",  // ✅ 한 줄로 유지
+            "overflow": "hidden",      // ✅ 넘치는 부분 숨김
+            "text-overflow": "ellipsis" // ✅ 생략(...) 처리
+        },
         editable: true,
-        width: 120,
-        pinned: 'left'
+        tooltipField: "model", // ✅ 마우스를 올리면 전체 텍스트 표시 가능
     },
     {
         headerName: '수량',
         field: 'quantity',
         editable: true,
+        maxWidth: 80, // 컬럼 너비
         valueFormatter: numberFormat,
         cellStyle: {textAlign: 'right'}
     },
@@ -786,6 +913,12 @@ export const tableEstimateWriteColumns = [
             return (!quantity || !unitPrice) ? null : Math.floor(quantity * unitPrice).toLocaleString();
         },
         cellStyle: {textAlign: 'right'}
+    },{
+        headerName: '마진율',
+        field: 'marginRate',
+        maxWidth: 80,
+        filter: 'agNumberColumnFilter',
+        editable: true,
     },
     {
         headerName: 'CURR',
@@ -807,13 +940,20 @@ export const tableEstimateWriteColumns = [
 
 
 export const rfqReadColumns = [
-
+    {
+        headerName: "", // 컬럼 제목
+        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
+        checkboxSelection: true, // 각 행에 체크박스 추가
+        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
+        cellStyle: {textAlign: "center"}, // 스타일 설정
+        maxWidth: 45, // 컬럼 너비
+        pinned: "left", // 왼쪽에 고정
+        filter: false
+    },
     {
         headerName: '작성일자',
         field: 'writtenDate',
-        width: 130,
-        headerCheckboxSelection: true,
-        checkboxSelection: true,
+        maxWidth: 80, // 컬럼 너비
         pinned: 'left'
     },
 
@@ -821,7 +961,7 @@ export const rfqReadColumns = [
 
         headerName: 'Inquiry No.',
         field: 'documentNumberFull',
-        width: 100,
+        maxWidth: 100, // 컬럼 너비
         pinned: 'left',
 
         // rowDrag: true
@@ -880,14 +1020,18 @@ export const rfqReadColumns = [
             {
                 headerName: 'ITEM',
                 field: 'item',
-                minWidth: 100,
-                maxWidth: 120,
+                minWidth: 200,
             },
             {
                 headerName: 'MODEL',
                 field: 'model',
-                minWidth: 150,
-                // maxWidth: 120,
+                minWidth: 200,
+                cellStyle: {
+                    "white-space": "pre-wrap", // ✅ 줄바꿈 유지
+                    "overflow": "hidden",     // ✅ 넘치는 부분 숨김
+                },
+                onCellClicked: handleCellClick, // ✅ 셀 클릭 시 처리
+                onCellMouseOut: handleCellMouseOut, // ✅ 셀 밖으로 이동 시 처리
             },
             {
                 headerName: '수량',
@@ -1004,13 +1148,20 @@ export const rfqReadColumns = [
 
 export const tableOrderReadColumns = [
     {
+        headerName: "", // 컬럼 제목
+        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
+        checkboxSelection: true, // 각 행에 체크박스 추가
+        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
+        cellStyle: {textAlign: "center"}, // 스타일 설정
+        maxWidth: 45, // 컬럼 너비
+        pinned: "left", // 왼쪽에 고정
+        filter: false
+    },
+    {
         headerName: '작성일자',
         field: 'writtenDate',
-        maxWidth: 140,
-        pinned: 'left',
-        headerCheckboxSelection: true,
-        checkboxSelection: true,
-
+        maxWidth: 80,
+        pinned: 'left'
     },
     {
         headerName: '문서번호',
@@ -1037,25 +1188,31 @@ export const tableOrderReadColumns = [
     {
         headerName: '고객사명',
         field: 'customerName',
-        minWidth: 150,
+        minWidth: 100,
     },
     {
         headerName: 'MAKER',
         field: 'maker',
         align: 'center',
-        minWidth: 180,
+        minWidth: 200,
     },
     {
         headerName: 'ITEM',
         field: 'item',
         align: 'center',
-        minWidth: 100,
+        minWidth: 200,
 
     },
     {
         headerName: 'MODEL',
         field: 'model',
-        minWidth: 150,
+        minWidth: 200,
+        cellStyle: {
+            "white-space": "pre-wrap", // ✅ 줄바꿈 유지
+            "overflow": "hidden",     // ✅ 넘치는 부분 숨김
+        },
+        onCellClicked: handleCellClick, // ✅ 셀 클릭 시 처리
+        onCellMouseOut: handleCellMouseOut, // ✅ 셀 밖으로 이동 시 처리
     },
     {
         headerName: '단위',
@@ -1171,109 +1328,6 @@ export const tableOrderReadColumns = [
     },
 ];
 
-
-export const tableOrderInventoryColumns = [
-    {
-        headerName: 'No.',
-        field: 'key',
-        key: 'key',
-
-        render: (text) => <div style={{width: 15}} className="ellipsis-cell">{text}</div>,
-        align: 'center',
-    },
-    {
-        headerName: 'MAKER',
-        field: 'maker',
-        key: 'maker',
-
-        render: (text) => <div style={{width: 100}} className="ellipsis-cell">{text}</div>,
-        align: 'center',
-        minWidth: 180,
-    },
-    {
-        headerName: 'MODEL',
-        field: 'model',
-        key: 'model',
-        minWidth: 150,
-
-        render: (text) => <div style={{width: 120}} className="ellipsis-cell">{text}</div>,
-        align: 'center',
-    },
-    {
-        headerName: '위치',
-        field: 'location',
-        key: 'location',
-
-        render: (text) => <div style={{width: 80}} className="ellipsis-cell">{text}</div>,
-        align: 'center',
-    },
-    {
-        headerName: '잔량',
-        field: 'remainingQuantity',
-        key: 'remainingQuantity',
-
-        render: (text) => <div style={{width: 50}} className="ellipsis-cell">{text}</div>,
-        align: 'center',
-    },
-    {
-        headerName: '출고량',
-        field: 'usageQuantity',
-        key: 'usageQuantity',
-
-        render: (text) => <div style={{width: 50}} className="ellipsis-cell">{text}</div>,
-        align: 'center',
-    },
-    {
-        headerName: '입고량',
-        field: 'receivedQuantity',
-        key: 'receivedQuantity',
-        render: (text) => <div style={{width: 50}} className="ellipsis-cell">{text}</div>,
-        align: 'center',
-    },
-    {
-        headerName: '입고일자',
-        field: 'receiptDate',
-        key: 'receiptDate',
-        render: (text) => <div className="ellipsis-cell" style={{width: 70}}>{moment(text).format('YYYY-MM-DD')}</div>,
-        align: 'center',
-    },
-    {
-        headerName: '문서번호',
-        field: 'documentNumber',
-        key: 'documentNumber',
-        render: (text) => <div style={{width: 80}} className="ellipsis-cell">{text}</div>,
-        align: 'center',
-    },
-    {
-        headerName: '수입단가',
-        field: 'importUnitPrice',
-        key: 'importUnitPrice',
-        render: (text) => <div style={{width: 58}} className="ellipsis-cell">{text}</div>,
-        align: 'center',
-    },
-    {
-        headerName: '화폐단위',
-        field: 'currencyUnit',
-        key: 'currencyUnit',
-        render: (text) => <div style={{width: 58}} className="ellipsis-cell">{text}</div>,
-        align: 'center',
-    },
-    {
-        headerName: '단위',
-        field: 'unit',
-        key: 'unit',
-        render: (text) => <div style={{width: 50}} className="ellipsis-cell">{text}</div>,
-        align: 'center',
-    },
-    {
-        headerName: '비고',
-        field: 'remarks',
-        key: 'remarks',
-
-        render: (text) => <div style={{width: 120}} className="ellipsis-cell">{text}</div>,
-        align: 'center',
-    },
-];
 
 export const remittanceDomesticColumns = [
 
@@ -2183,13 +2237,13 @@ export const tableCodeReadColumns = [
         headerName: "", // 컬럼 제목
 
         valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
+        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
+        checkboxSelection: true, // 각 행에 체크박스 추가
         cellStyle: {textAlign: "center"}, // 스타일 설정
         maxWidth: 45, // 컬럼 너비
         pinned: "left", // 왼쪽에 고정
         filter: false
     }, {
-        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
-        checkboxSelection: true, // 각 행에 체크박스 추가
         pinned: 'left',
         headerName: 'ITEM',
         field: 'item',
@@ -2200,6 +2254,29 @@ export const tableCodeReadColumns = [
         field: 'hsCode',
     },
 ]
+
+export const subTableCodeReadColumns = [
+
+    {
+        headerName: "", // 컬럼 제목
+
+        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
+        cellStyle: {textAlign: "center"}, // 스타일 설정
+        maxWidth: 45, // 컬럼 너비
+        pinned: "left", // 왼쪽에 고정
+        filter: false
+    }, {
+        pinned: 'left',
+        headerName: 'ITEM',
+        field: 'item',
+        maxWidth: 250
+    },
+    {
+        headerName: 'HS-CODE',
+        field: 'hsCode',
+    },
+]
+
 
 export const TableCodeUserColumns = [
     {
@@ -2309,27 +2386,57 @@ export const modalCodeDiplomaColumn = [
 
 export const projectWriteColumn = [
     {
+        headerName: "", // 컬럼 제목
         headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
         checkboxSelection: true, // 각 행에 체크박스 추가
+        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
+        cellStyle: {textAlign: "center"}, // 스타일 설정
+        maxWidth: 45, // 컬럼 너비
+        pinned: "left", // 왼쪽에 고정
+        filter: false
+    },
+    {
+
         pinned: 'left',
         headerName: '연결 Inquiry No.',
         field: 'connectInquiryNo',
-        minWidth: 120,
+        maxWidth: 110,
         editable: true,
     }, {
+        headerName: 'MODEL',
+        field: 'model',
+        minWidth: 200,
+        cellEditor: CustomTextEditor, // ✅ 커스텀 에디터 적용
+        wrapText: true,
+        autoHeight: true,
+        cellStyle: {
+            "white-space": "nowrap",  // ✅ 한 줄로 유지
+            "overflow": "hidden",      // ✅ 넘치는 부분 숨김
+            "text-overflow": "ellipsis" // ✅ 생략(...) 처리
+        },
+        editable: true,
+        tooltipField: "model", // ✅ 마우스를 올리면 전체 텍스트 표시 가능
+    },
+    {
         headerName: 'MAKER',
         field: 'maker',
-        minWidth: 150,
+        minWidth: 200,
         editable: true,
     }, {
         headerName: 'ITEM',
         field: 'item',
-        minWidth: 150,
+        minWidth: 200,
         editable: true,
     }, {
-        headerName: '규격',
-        field: 'spec',
-        minWidth: 150,
+        headerName: '마진율',
+        field: 'marginRate',
+        minWidth: 80,
+        filter: 'agNumberColumnFilter',
+        editable: true,
+    }, {
+        headerName: '단위',
+        field: 'unit',
+        maxWidth: 50,
         editable: true,
         cellEditor: 'agSelectCellEditor',
         cellEditorParams: {
@@ -2338,7 +2445,7 @@ export const projectWriteColumn = [
     }, {
         headerName: '수량',
         field: 'quantity',
-        minWidth: 150,
+        minWidth: 80,
         editable: true,
         filter: 'agNumberColumnFilter',
         // valueFormatter: amountFormat,
@@ -2389,7 +2496,7 @@ export const projectWriteColumn = [
         },
         valueFormatter: (e)=>amountFormat(e.value),
         valueParser: amountFormatParser,
-        cellRenderer: (e) => columnPlaceHolder(e, 'week')
+        cellRenderer: (e) => columnPlaceHolder(e, 'week', '주')
     }, {
         headerName: '매입처명',
         field: 'agencyName',
@@ -2506,7 +2613,7 @@ export const projectReadColumn = [
         field: 'unitPrice',
         minWidth: 150,
         valueGetter: (params) => {
-            return (params.data.unitPrice).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); // A와 B를 곱한 값
+            return (params.data.unitPrice)?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); // A와 B를 곱한 값
         },
     }, {
         headerName: '총액',
@@ -2573,12 +2680,21 @@ export const projectReadColumn = [
 
 export const delilveryReadColumn = [
     {
+        headerName: "", // 컬럼 제목
         headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
         checkboxSelection: true, // 각 행에 체크박스 추가
+        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
+        cellStyle: {textAlign: "center"}, // 스타일 설정
+        maxWidth: 45, // 컬럼 너비
+        pinned: "left", // 왼쪽에 고정
+        filter: false
+    },
+    {
+
         pinned: 'left',
         headerName: '출고일자.',
         field: 'deliveryDate',
-        maxWidth: 120
+        maxWidth: 80
     }, {
         headerName: '운송유형',
         field: 'deliveryType',
@@ -2652,11 +2768,18 @@ export const delilveryReadColumn = [
 
 export const remittanceReadColumn = [
     {
-        headerName: 'Inquiry No.',
-        field: 'connectInquiryNo',
-        minWidth: 150,
+        headerName: "", // 컬럼 제목
         headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
         checkboxSelection: true, // 각 행에 체크박스 추가
+        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
+        cellStyle: {textAlign: "center"}, // 스타일 설정
+        maxWidth: 45, // 컬럼 너비
+        pinned: "left", // 왼쪽에 고정
+        filter: false
+    },{
+        headerName: 'Inquiry No.',
+        field: 'connectInquiryNo',
+        maxWidth: 80,
         pinned: 'left'
     }, {
         headerName: '담당자',
@@ -2720,8 +2843,16 @@ export const remittanceReadColumn = [
 
 export const storeWriteColumn = [
     {
+        headerName: "", // 컬럼 제목
         headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
         checkboxSelection: true, // 각 행에 체크박스 추가
+        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
+        cellStyle: {textAlign: "center"}, // 스타일 설정
+        maxWidth: 45, // 컬럼 너비
+        pinned: "left", // 왼쪽에 고정
+        filter: false
+    },{
+
         headerName: 'Inquiry No.',
         field: 'orderDocumentNumberFull',
         minWidth: 150,
@@ -2863,12 +2994,19 @@ export const storeWriteColumn = [
 
 export const storeReadColumn = [
     {
+        headerName: "", // 컬럼 제목
+        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
+        checkboxSelection: true, // 각 행에 체크박스 추가
+        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
+        cellStyle: {textAlign: "center"}, // 스타일 설정
+        maxWidth: 45, // 컬럼 너비
+        pinned: "left", // 왼쪽에 고정
+        filter: false
+    },{
         headerName: '운수사명',
         field: 'carrierName',
         minWidth: 80,
     }, {
-        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
-        checkboxSelection: true, // 각 행에 체크박스 추가
         headerName: 'B/L No.',
         field: 'blNo',
         maxWidth: 100,

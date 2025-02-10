@@ -1,18 +1,20 @@
-import React, {useRef} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Modal from "antd/lib/modal/Modal";
-import { jsPDF } from "jspdf";
+import {jsPDF} from "jspdf";
 import html2canvas from "html2canvas";
+import {commonManage, gridManage} from "@/utils/commonManage";
 
-export default function PrintPo({ data, isModalOpen, setIsModalOpen }) {
+export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
     const {orderDetail, customerInfo} = data;
-    const pdfRef = useRef();
-
-    console.log(orderDetail, 'orderDetail')
+    const pdfRef = useRef<any>();
+    const pdfSubRef = useRef<any>();
 
     let totalAmount = 0;
     let totalQuantity = 0;
     let unit = '';
     let currency = '';
+
+    const [splitData, setSplitData] = useState([]);
 
     const today = new Date();
     const formattedDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
@@ -21,72 +23,49 @@ export default function PrintPo({ data, isModalOpen, setIsModalOpen }) {
         return number?.toLocaleString();
     }
 
-    const handleDownloadPDF = async () => {
-        const element = pdfRef.current;
+    useEffect(() => {
+        const totalList = gridManage.getAllData(gridRef)
+        const splitData = commonManage.splitDataWithSequenceNumber(totalList, 23, 36);
+        setSplitData(splitData)
+    }, [data])
 
+    const generatePDF = async (printMode = false) => {
         const pdf = new jsPDF("portrait", "px", "a4");
         const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = pdf.internal.pageSize.getHeight();
-        const bottomMargin = 20; // 하단 여백 (단위: px)
 
-        const canvas = await html2canvas(element, { scale: 2 });
-        const imgData = canvas.toDataURL("image/png");
-
-        // Calculate image dimensions and split pages
-        const imgProps = pdf.getImageProperties(imgData);
-        const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
-        let heightLeft = imgHeight;
-        let position = 0;
-
-        // Add first page
-        pdf.addImage(imgData, "PNG", 0, position, pdfWidth, imgHeight);
-        heightLeft -= (pdfHeight - bottomMargin);
-
-        // Add additional pages if necessary
-        while (heightLeft > 0) {
-            position -= (pdfHeight - bottomMargin);
-            pdf.addPage();
-            pdf.addImage(imgData, "PNG", 0, position, pdfWidth, imgHeight);
-            heightLeft -= (pdfHeight - bottomMargin);
+        if (pdfRef.current) {
+            const firstCanvas = await html2canvas(pdfRef.current, {scale: 2});
+            const firstImgData = firstCanvas.toDataURL("image/png");
+            const firstImgProps = pdf.getImageProperties(firstImgData);
+            const firstImgHeight = (firstImgProps.height * pdfWidth) / firstImgProps.width;
+            pdf.addImage(firstImgData, "PNG", 0, 0, pdfWidth, firstImgHeight);
         }
 
-        pdf.save(`${data.documentNumberFull}_견적서.pdf`);
+        const elements = pdfSubRef.current.children;
+        for (let i = 0; i < elements.length; i++) {
+            const element = elements[i];
+            const canvas = await html2canvas(element, {scale: 2});
+            const imgData = canvas.toDataURL("image/png");
+            const imgProps = pdf.getImageProperties(imgData);
+            const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
+            pdf.addPage();
+            pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, imgHeight);
+        }
+
+        if (printMode) {
+            const pdfBlob = pdf.output("bloburl");
+            window.open(pdfBlob, "_blank");
+        } else {
+            pdf.save(`${data.documentNumberFull}_견적서.pdf`);
+        }
     };
-
-
-    const handlePrint = () => {
-        const printStyles = `
-            @media print {
-                @page {
-                    size: A4;
-                    margin: 20mm;
-                }
-                .page-break {
-                    break-before: always;
-                }
-                .printable-content {
-                    page-break-inside: avoid;
-                }
-            }
-        `;
-
-        const styleSheet = document.createElement("style");
-        styleSheet.type = "text/css";
-        styleSheet.innerText = printStyles;
-        document.head.appendChild(styleSheet);
-
-        window.print();
-
-        document.head.removeChild(styleSheet);
-    };
-
 
     return (
         <Modal
             title={<div style={{width: '100%', display: "flex", justifyContent: 'space-between', alignItems: 'center'}}>
                 <div>발주서 출력</div>
                 <div>
-                    <button onClick={handleDownloadPDF} style={{
+                    <button onClick={() => generatePDF(false)} style={{
                         padding: "5px 10px",
                         backgroundColor: "#1890ff",
                         color: "#fff",
@@ -99,7 +78,7 @@ export default function PrintPo({ data, isModalOpen, setIsModalOpen }) {
                         PDF
                     </button>
                     {/*@ts-ignore*/}
-                    <button onClick={handlePrint} style={{
+                    <button onClick={() => generatePDF(true)} style={{
                         padding: "5px 10px",
                         backgroundColor: "gray",
                         color: "#fff",
@@ -145,7 +124,8 @@ export default function PrintPo({ data, isModalOpen, setIsModalOpen }) {
                         fontWeight: 700,
                         margin: "0 auto"
                     }}>
-                        Purchase<br/>Order
+                        {orderDetail.agencyCode.toUpperCase().includes('K') ? '발주서' :
+                            <span> Purchase < br/> Order</span>}
                     </div>
                     <div style={{width: "auto", height: "auto", position: 'absolute', right: 50,}}>
                         <div style={{fontSize: "8px", width: 'auto'}}>
@@ -235,116 +215,277 @@ export default function PrintPo({ data, isModalOpen, setIsModalOpen }) {
                     </div>
                 </div>
 
-                {/* 자식 요소 헤더 */}
-                <div style={{
-                    fontSize: 9,
-                    borderTop: '1px solid #121212',
-                    fontWeight: 500,
-                    width: '100%',
-                    backgroundColor: '#EBF6F7',
-                    display: 'grid',
-                    textAlign: 'center',
-                    gridTemplateColumns: '0.7fr 3fr 0.5fr 1fr 1fr',
-                    borderBottom: '1px solid #A3A3A3'
-                }}>
-                    <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
-                        Item No.
-                    </div>
-                    <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
-                        Specification
-                    </div>
-                    <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
-                        Q`ty
-                    </div>
-                    <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
-                        Unit Price
-                    </div>
-                    <div style={{padding: '3px 0'}}>
-                        Amount
-                    </div>
-                </div>
-
-                {/* 자식 요소 본문*/}
-                <div style={{
-                    fontSize: 9,
-                    fontWeight: 500,
-                    width: '100%',
-                    display: 'grid',
-                    gridTemplateColumns: '1fr 5fr',
-                    borderBottom: '1px solid #A3A3A3'
-                }}>
-                    <div style={{padding: '3px 0', textAlign: 'center', borderRight: '1px solid #121212',}}>
-                        Maker
-                    </div>
-                    <div style={{padding: '3px 10px'}}>
-                        {orderDetail.maker}
-                    </div>
-
-                </div>
-
-                {orderDetail.orderDetailList.map((v,i)=>{
-                    totalQuantity+=v.quantity
-                    totalAmount+=v.quantity*v.unitPrice
-                    unit=v.unit
-                    currency=v.currency
-                    return (
-                        <div key={i} style={{
-                            fontSize: 9,
-                            fontWeight: 500,
-                            width: '100%',
-                            display: 'grid',
-                            textAlign: 'center',
-                            gridTemplateColumns: '0.7fr 3fr 0.5fr 1fr 1fr',
-                            borderBottom: '1px solid #A3A3A3'
-                        }}>
-                            <div style={{padding: '3px 0', borderRight: '1px solid #121212', display:'flex', alignItems:'center', justifyContent:'center'}}>
-                                {i+1}
-                            </div>
-                            <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
-                                {v.model}
-                            </div>
-                            <div style={{padding: '3px 0', borderRight: '1px solid #121212', display:'flex', alignItems:'center', justifyContent:'center'}}>
-                                {v.quantity} {formattedNumber(v.unit)}
-                            </div>
-                            <div style={{padding: '3px 10px', borderRight: '1px solid #121212', alignItems:'center', display:'flex', justifyContent: 'space-between'}}>
-                                <div>{v.currency}</div>
-                                <div>{formattedNumber(v.unitPrice)}</div>
-                            </div>
-                            <div style={{padding: '3px 10px', display: 'flex', alignItems:'center', justifyContent: 'space-between'}}>
-                                <div>{v.currency}</div>
-                                <div>{formattedNumber(v.quantity*v.unitPrice)}</div>
-                            </div>
+                <div id={'contentList'}>
+                    {/* 자식 요소 헤더 */}
+                    <div style={{
+                        fontSize: 9,
+                        borderTop: '1px solid #121212',
+                        fontWeight: 500,
+                        width: '100%',
+                        backgroundColor: '#EBF6F7',
+                        display: 'grid',
+                        textAlign: 'center',
+                        gridTemplateColumns: '0.7fr 3fr 0.5fr 0.9fr 1fr 1fr',
+                        borderBottom: '1px solid #A3A3A3'
+                    }}>
+                        <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
+                            Item No.
                         </div>
-                    )
-                })}
-
-                {/* 합계 */}
-                <div style={{
-                    fontSize: 9,
-                    fontWeight: 500,
-                    width: '100%',
-                    backgroundColor: '#EBF6F7',
-                    display: 'grid',
-                    textAlign: 'center',
-                    gridTemplateColumns: '0.7fr 3fr 0.5fr 2fr',
-                    borderBottom: '1px solid #121212'
-                }}>
-                    <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
-
-                    </div>
-                    <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
-                        Total
-                    </div>
-                    <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
-                        {formattedNumber(totalQuantity)} {unit}
+                        <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
+                            Specification
+                        </div>
+                        <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
+                            Q`ty
+                        </div>
+                        <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
+                            HS-CODE
+                        </div>
+                        <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
+                            Unit Price
+                        </div>
+                        <div style={{padding: '3px 0'}}>
+                            Amount
+                        </div>
                     </div>
 
-                    <div style={{padding: '3px 20px', display:'flex', justifyContent:'space-between'}}>
-                        <div>{currency}</div><div>{formattedNumber(totalAmount)}</div>
+                    {/* 자식 요소 본문*/}
+                    <div style={{
+                        fontSize: 9,
+                        fontWeight: 500,
+                        width: '100%',
+                        display: 'grid',
+                        gridTemplateColumns: '0.7fr 3fr 0.5fr 0.9fr 1fr 1fr',
+                        borderBottom: '1px solid #A3A3A3'
+                    }}>
+                        <div style={{padding: '3px 0', textAlign: 'center', borderRight: '1px solid #121212',}}>
+                            Maker
+                        </div>
+                        <div style={{padding: '3px 10px'}}>
+                            {orderDetail.maker}
+                        </div>
+
                     </div>
+
+                    {splitData[0]?.map((v, i) => {
+                        totalQuantity += v.quantity
+                        totalAmount += v.quantity * v.unitPrice
+                        unit = v.unit
+                        currency = v.currency
+                        return (
+                            <div key={i} style={{
+                                fontSize: 9,
+                                fontWeight: 500,
+                                width: '100%',
+                                display: 'grid',
+                                textAlign: 'center',
+                                gridTemplateColumns: '0.7fr 3fr 0.5fr 0.9fr 1fr 1fr',
+                                borderBottom: '1px solid #A3A3A3'
+                            }}>
+                                <div style={{
+                                    padding: '3px 0',
+                                    borderRight: '1px solid #121212',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                }}>
+                                    {i + 1}
+                                </div>
+                                <div style={{
+                                    padding: '3px 0',
+                                    borderRight: '1px solid #121212',
+                                    whiteSpace: "pre-line",
+                                    textAlign: 'left',
+                                    paddingLeft: 10
+                                }}>
+                                    {v.model}
+                                </div>
+                                <div style={{
+                                    padding: '3px 0',
+                                    borderRight: '1px solid #121212',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                }}>
+                                    {v.quantity} {formattedNumber(v.unit)}
+                                </div>
+                                <div style={{
+                                    padding: '3px 0',
+                                    borderRight: '1px solid #121212',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                }}>
+                                    {v.hsCode !== 'null' ? v.hsCode : ''}
+                                </div>
+                                <div style={{
+                                    padding: '3px 10px',
+                                    borderRight: '1px solid #121212',
+                                    alignItems: 'center',
+                                    display: 'flex',
+                                    justifyContent: 'space-between'
+                                }}>
+                                    <div>{v.currency}</div>
+                                    <div>{formattedNumber(v.unitPrice)}</div>
+                                </div>
+                                <div style={{
+                                    padding: '3px 10px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between'
+                                }}>
+                                    <div>{v.currency}</div>
+                                    <div>{formattedNumber(v.quantity * v.unitPrice)}</div>
+                                </div>
+                            </div>
+                        )
+                    })}
                 </div>
+            </div>
 
+            <div ref={pdfSubRef}>
+                {splitData.map((v, idx) => {
+                    console.log(v, 'splitData[idx].length:')
+                    if (!!idx) {
+                        return <div style={{borderTop: '1px solid lightGray', padding: '50px 20px'}}>
+                            <div style={{
+                                fontSize: 9,
+                                borderTop: '1px solid #121212',
+                                fontWeight: 500,
+                                width: '100%',
+                                backgroundColor: '#EBF6F7',
+                                display: 'grid',
+                                textAlign: 'center',
+                                gridTemplateColumns: '0.7fr 3fr 0.5fr 0.9fr 1fr 1fr',
+                                borderBottom: '1px solid #A3A3A3'
+                            }}>
+                                <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
+                                    Item No.
+                                </div>
+                                <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
+                                    Specification
+                                </div>
+                                <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
+                                    Q`ty
+                                </div>
+                                <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
+                                    HS-CODE
+                                </div>
+                                <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
+                                    Unit Price
+                                </div>
+                                <div style={{padding: '3px 0'}}>
+                                    Amount
+                                </div>
+                            </div>
+                            {splitData[idx].map((v, i) => {
+                                totalQuantity += v.quantity
+                                totalAmount += v.quantity * v.unitPrice
+                                unit = v.unit
+                                currency = v.currency
+                                return (
+                                    <>
+                                        <div key={i} style={{
+                                            fontSize: 9,
+                                            fontWeight: 500,
+                                            width: '100%',
+                                            display: 'grid',
+                                            textAlign: 'center',
+                                            gridTemplateColumns: '0.7fr 3fr 0.5fr 0.9fr 1fr 1fr',
+                                            borderBottom: '1px solid #A3A3A3',
+                                            borderTop: '1px solid #A3A3A3'
+                                        }}>
+                                            <div style={{
+                                                padding: '3px 0',
+                                                borderRight: '1px solid #121212',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center'
+                                            }}>
+                                                {v.sequenceNumber}
+                                            </div>
+                                            <div style={{
+                                                padding: '3px 0',
+                                                borderRight: '1px solid #121212',
+                                                whiteSpace: "pre-line",
+                                                textAlign: 'left',
+                                                paddingLeft: 10
+                                            }}>
+                                                {v.model}
+                                            </div>
+                                            <div style={{
+                                                padding: '3px 0',
+                                                borderRight: '1px solid #121212',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center'
+                                            }}>
+                                                {v.quantity} {formattedNumber(v.unit)}
+                                            </div>
+                                            <div style={{
+                                                padding: '3px 0',
+                                                borderRight: '1px solid #121212',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center'
+                                            }}>
+                                                {v.hsCode !== 'null' ? v.hsCode : ''}
+                                            </div>
+                                            <div style={{
+                                                padding: '3px 10px',
+                                                borderRight: '1px solid #121212',
+                                                alignItems: 'center',
+                                                display: 'flex',
+                                                justifyContent: 'space-between'
+                                            }}>
+                                                <div>{v.currency}</div>
+                                                <div>{formattedNumber(v.unitPrice)}</div>
+                                            </div>
+                                            <div style={{
+                                                padding: '3px 10px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'space-between'
+                                            }}>
+                                                <div>{v.currency}</div>
+                                                <div>{formattedNumber(v.quantity * v.unitPrice)}</div>
+                                            </div>
+                                        </div>
+                                    </>
+                                )
+                            })}
+                            {/* 합계 */}
+                            {(splitData.length - 1) === idx && <div style={{
+                                fontSize: 9,
+                                fontWeight: 500,
+                                width: '100%',
+                                backgroundColor: '#EBF6F7',
+                                display: 'grid',
+                                textAlign: 'center',
+                                gridTemplateColumns: '0.7fr 3fr 0.5fr 0.9fr 2fr',
+                                borderBottom: '1px solid #121212'
+                            }}>
+                                <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
 
+                                </div>
+                                <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
+                                    Total
+                                </div>
+                                <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
+                                    {formattedNumber(totalQuantity)} {unit}
+                                </div>
+                                <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
+
+                                </div>
+
+                                <div style={{padding: '3px 20px', display: 'flex', justifyContent: 'space-between'}}>
+                                    <div>{currency}</div>
+                                    <div>{formattedNumber(totalAmount)}</div>
+                                </div>
+                            </div>
+                            }
+                        </div>
+                    }
+                })}
             </div>
         </Modal>
     )

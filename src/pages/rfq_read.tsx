@@ -1,6 +1,6 @@
 import React, {useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
-import {CopyOutlined, FileExcelOutlined} from "@ant-design/icons";
+import {CopyOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
 import {rfqReadColumns} from "@/utils/columnList";
 import {subRfqReadInitial} from "@/utils/initialList";
@@ -9,7 +9,7 @@ import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
-import {BoxCard, inputForm, MainCard, rangePickerForm, selectBoxForm} from "@/utils/commonForm";
+import {BoxCard, inputForm, MainCard, rangePickerForm} from "@/utils/commonForm";
 import _ from "lodash";
 import {deleteRfq, searchRfq} from "@/utils/api/mainApi";
 import {commonManage, gridManage} from "@/utils/commonManage";
@@ -30,6 +30,7 @@ export default function rfqRead({dataInfo}) {
     const [loading, setLoading] = useState(false);
 
     const onGridReady = (params) => {
+
         gridRef.current = params.api;
         params.api.applyTransaction({add: dataInfo ? dataInfo : []});
     };
@@ -41,6 +42,7 @@ export default function rfqRead({dataInfo}) {
     }
 
     function onChange(e) {
+
         commonManage.onChange(e, setInfo)
     }
 
@@ -49,7 +51,7 @@ export default function rfqRead({dataInfo}) {
         setLoading(true)
         await searchRfq({
             data: copyData
-        }).then(v=>{
+        }).then(v => {
             gridManage.resetData(gridRef, v);
             setLoading(false)
         })
@@ -77,7 +79,7 @@ export default function rfqRead({dataInfo}) {
     }
 
     function moveRegist() {
-        window.open(`/rfq_write`, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
+        router.push('/rfq_write')
     }
 
 
@@ -85,83 +87,86 @@ export default function rfqRead({dataInfo}) {
         <ReceiveComponent searchInfo={searchInfo}/>
         <Spin spinning={loading} tip={'견적의뢰 조회중...'}>
 
-        <LayoutComponent>
-            <div style={{
-                display: 'grid',
-                gridTemplateRows: `${mini ? 255 : 65}px calc(100vh - ${mini ? 310 : 120}px)`,
-                columnGap: 5
-            }}>
-                <MainCard title={'견적의뢰 조회'} list={[
-                    {name: '조회', func: searchInfo, type: 'primary'},
-                    {name: '초기화', func: clearAll, type: 'danger'},
-                    {name: '신규작성', func: moveRegist, type: 'default'}
-                ]} mini={mini} setMini={setMini}>
-                    {mini ?  <div style={{
-                        display: 'grid',
-                        gridTemplateColumns: "200px 250px 300px 1fr",
-                    }}>
-                        <BoxCard>
-                            {rangePickerForm({title: '작성일자', id: 'searchDate', onChange: onChange, data: info})}
-                        </BoxCard>
+            <LayoutComponent>
+                <div style={{
+                    display: 'grid',
+                    gridTemplateRows: `${mini ? 255 : 65}px calc(100vh - ${mini ? 310 : 120}px)`,
+                    columnGap: 5
+                }}>
+                    <MainCard title={'견적의뢰 조회'} list={[
+                        {name: '조회', func: searchInfo, type: 'primary'},
+                        {name: '초기화', func: clearAll, type: 'danger'},
+                        {name: '신규작성', func: moveRegist, type: 'default'}
+                    ]} mini={mini} setMini={setMini}>
+                        {mini ? <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: '1fr 1fr 1.5fr',
+                            width: '100%',
+                            columnGap: 20
+                        }}>
+                            <BoxCard>
+                                {rangePickerForm({title: '작성일자', id: 'searchDate', onChange: onChange, data: info})}
+                            </BoxCard>
 
-                        <BoxCard>
-                            {inputForm({
-                                title: '문서번호', id: 'searchDocumentNumber',
-                                onChange: onChange,
-                                handleKeyPress: handleKeyPress,
-                                data: info
-                            })}
-                            {inputForm({
-                                title: '등록직원명', id: 'searchCreatedBy',
-                                onChange: onChange,
-                                handleKeyPress: handleKeyPress,
-                                data: info
-                            })}
-                            {inputForm({
-                                title: '고객사명', id: 'searchCustomerName',
-                                onChange: onChange,
-                                handleKeyPress: handleKeyPress,
-                                data: info
-                            })}
-                        </BoxCard>
+                            <BoxCard>
+                                {inputForm({
+                                    title: '문서번호', id: 'searchDocumentNumber',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: '등록직원명', id: 'searchCreatedBy',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: '고객사명', id: 'searchCustomerName',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                            </BoxCard>
 
-                        <BoxCard>
-                            {inputForm({
-                                title: 'MAKER', id: 'searchMaker',
-                                onChange: onChange,
-                                handleKeyPress: handleKeyPress,
-                                data: info
-                            })}
-                            {inputForm({
-                                title: 'MODEL', id: 'searchModel',
-                                onChange: onChange,
-                                handleKeyPress: handleKeyPress,
-                                data: info
-                            })}
-                            {inputForm({
-                                title: 'ITEM', id: 'searchItem',
-                                onChange: onChange,
-                                handleKeyPress: handleKeyPress,
-                                data: info
-                            })}
-                        </BoxCard>
-                    </div>  : <></>}
-                </MainCard>
+                            <BoxCard>
+                                {inputForm({
+                                    title: 'MAKER', id: 'searchMaker',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: 'MODEL', id: 'searchModel',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: 'ITEM', id: 'searchItem',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                            </BoxCard>
+                        </div> : <></>}
+                    </MainCard>
 
-                {/*@ts-ignored*/}
-                <TableGrid deleteComp={<Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}} onClick={deleteList}>
-                    <CopyOutlined/>삭제
-                </Button>}
-                    gridRef={gridRef}
-                    columns={rfqReadColumns}
-                    onGridReady={onGridReady}
-                    type={'read'}
-                    funcButtons={['print']}/>
+                    {/*@ts-ignored*/}
+                    <TableGrid deleteComp={<Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
+                                                   onClick={deleteList}>
+                        <CopyOutlined/>삭제
+                    </Button>}
+                               gridRef={gridRef}
+                               columns={rfqReadColumns}
+                               onGridReady={onGridReady}
+                               type={'read'}
+                               funcButtons={['print']}/>
 
-            </div>
-        </LayoutComponent>
-    </Spin>
-        </>
+                </div>
+            </LayoutComponent>
+        </Spin>
+    </>
 }
 
 export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {

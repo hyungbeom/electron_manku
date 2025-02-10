@@ -11,7 +11,7 @@ import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import TableGrid from "@/component/tableGrid";
 import {useRouter} from "next/router";
 import SearchInfoModal from "@/component/SearchAgencyModal";
-import {commonManage, gridManage} from "@/utils/commonManage";
+import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
 import {
     BoxCard,
     datePickerForm,
@@ -28,6 +28,7 @@ import {checkInquiryNo, saveEstimate} from "@/utils/api/mainApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import Spin from "antd/lib/spin";
 import EstimatePaper from "@/component/견적서/EstimatePaper";
+import {getData} from "@/manage/function/api";
 
 
 const listType = 'estimateDetailList'
@@ -55,7 +56,7 @@ export default function EstimateWrite({dataInfo}) {
 
     const [info, setInfo] = useState<any>({...copyInit, ...dataInfo, ...adminParams})
     const [mini, setMini] = useState(true);
-    const [validate, setValidate] = useState({agencyCode: !!dataInfo, documentNumberFull: true});
+
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
 
     const [fileList, setFileList] = useState([]);
@@ -77,23 +78,27 @@ export default function EstimateWrite({dataInfo}) {
                 case 'agencyCode' :
                 case 'customerName' :
                 case 'maker' :
-                    await findCodeInfo(e, setInfo, openModal, 'ESTIMATE', setValidate)
+                    await findCodeInfo(e, setInfo, openModal, 'ESTIMATE')
                     break;
                 case 'connectDocumentNumberFull' :
                     const result = await findDocumentInfo(e, setInfo);
-                    console.log(result, 'result:')
-                    setInfo(v => {
-                        return {
-                            ...result,
-                            connectDocumentNumberFull: info.connectDocumentNumberFull,
-                            documentNumberFull: v.documentNumberFull
-                        }
-                    })
-                    if (result?.agencyCode) {
-                        setValidate(v => {
-                            return {...v, agencyCode: true}
-                        })
-                    }
+                    await getData.post('estimate/generateDocumentNumberFull', {
+                        type: 'ESTIMATE',
+                        documentNumberFull: info.connectDocumentNumberFull
+                    }).then(src => {
+                        setInfo(v => {
+                            return {
+                                ...result,
+                                connectDocumentNumberFull: info.connectDocumentNumberFull,
+                                documentNumberFull: src.data.code === 1 ? src.data.entity.newDocumentNumberFull : v.documentNumberFull,
+                                validityPeriod: '견적 발행 후 10일간',
+                                paymentTerms: '발주시 50% / 납품시 50%',
+                                shippingTerms: '귀사도착도'
+                            }
+                        });
+                    });
+
+
                     gridManage.resetData(gridRef, result?.estimateRequestDetailList);
                     break;
             }
@@ -106,9 +111,7 @@ export default function EstimateWrite({dataInfo}) {
     }
 
     function onChange(e) {
-        setValidate(v => {
-            return {...v, agencyCode: e.target.id === 'agencyCode' ? false : v.agencyCode}
-        })
+
         commonManage.onChange(e, setInfo)
     }
 
@@ -120,22 +123,23 @@ export default function EstimateWrite({dataInfo}) {
         })
 
         if (!info['documentNumberFull']) {
-            setValidate(v => {
-                return {...v, documentNumberFull: false}
-            })
+
             return message.warn('INQUIRY NO. 정보가 누락되었습니다.')
         }
 
         if (!info['agencyCode']) {
             return message.warn('매입처 코드가 누락되었습니다.')
         }
-        if (!list.length) {
-            return message.warn('하위 데이터 1개 이상이여야 합니다');
+
+        const filterList = list.filter(v => !!v.model);
+
+        if (!filterList.length) {
+            return message.warn('유효한 하위 데이터 1개 이상이여야 합니다');
         }
 
         const formData: any = new FormData();
 
-        commonManage.setInfoFormData(info, formData, listType, list)
+        commonManage.setInfoFormData(info, formData, listType, filterList)
         const resultCount = commonManage.getUploadList(fileRef, formData)
 
 
@@ -148,12 +152,29 @@ export default function EstimateWrite({dataInfo}) {
 
 
         formData.append(`attachmentFileList[${resultCount}].attachmentFile`, result);
-        formData.append(`attachmentFileList[${resultCount}].fileName`, result.name);
+        formData.append(`attachmentFileList[${resultCount}].fileName`, `03.${resultCount + 1} ${result.name}`);
 
+        console.log(result.name, 'result.name')
 
         setLoading(true)
-        await saveEstimate({data: formData, router: router})
+        await saveEstimate({data: formData, router: router, returnFunc: returnFunc})
 
+    }
+
+    function returnFunc(code, msg) {
+        if (code === -20001) {
+            const inputElement = document.getElementById("documentNumberFull");
+            if (inputElement) {
+                inputElement.style.border = "1px solid red"; // 빨간색 테두리
+                inputElement.style.boxShadow = "none"; // 그림자 제거
+                inputElement.focus();
+            }
+            commonFunc.validateInput('documentNumberFull')
+            message.error(msg)
+        } else {
+            message.error(msg)
+        }
+        setLoading(false)
     }
 
 
@@ -163,12 +184,11 @@ export default function EstimateWrite({dataInfo}) {
     }
 
 
-    return <Spin spinning={loading} tip={'견적의뢰 등록중...'}>
+    return <Spin spinning={loading} tip={'견적서 등록중...'}>
 
         <SearchInfoModal info={info} setInfo={setInfo}
                          open={isModalOpen}
                          gridRef={gridRef}
-                         setValidate={setValidate}
                          setIsModalOpen={setIsModalOpen} type={'ESTIMATE'}/>
 
         <LayoutComponent>
@@ -198,7 +218,7 @@ export default function EstimateWrite({dataInfo}) {
                                     placeholder: '폴더생성 규칙 유의',
                                     onChange: onChange,
                                     data: info,
-                                    validate: validate['documentNumberFull'],
+
                                     suffix:
                                         <PlusSquareOutlined style={{cursor: 'pointer'}} onClick={
                                             async (e) => {
@@ -243,14 +263,13 @@ export default function EstimateWrite({dataInfo}) {
                                         onChange: onChange,
                                         handleKeyPress: handleKeyPress,
                                         data: info,
-                                        validate: validate['agencyCode']
+
                                     })}
                                     {inputForm({
                                         title: '매입처명',
                                         id: 'agencyName',
                                         onChange: onChange,
                                         data: info,
-                                        disabled: true,
 
                                     })}
                                     {inputForm({
@@ -258,13 +277,18 @@ export default function EstimateWrite({dataInfo}) {
                                         id: 'agencyManagerName',
                                         onChange: onChange,
                                         data: info,
-                                        disabled: true
+                                    })}
+                                    {inputForm({
+                                        title: '매입처이메일',
+                                        id: 'agencyManagerEmail',
+                                        onChange: onChange,
+                                        data: info
                                     })}
                                     {inputForm({
                                         title: '연락처',
                                         id: 'agencyManagerPhoneNumber',
                                         onChange: onChange,
-                                        data: info, disabled: true
+                                        data: info
                                     })}
                                 </BoxCard>
 
@@ -283,29 +307,25 @@ export default function EstimateWrite({dataInfo}) {
                                         title: '담당자명',
                                         id: 'managerName',
                                         onChange: onChange,
-                                        data: info,
-                                        disabled: true
+                                        data: info
                                     })}
                                     {inputForm({
                                         title: '전화번호',
                                         id: 'phoneNumber',
                                         onChange: onChange,
-                                        data: info,
-                                        disabled: true
+                                        data: info
                                     })}
                                     {inputForm({
                                         title: '팩스',
                                         id: 'faxNumber',
                                         onChange: onChange,
-                                        data: info,
-                                        disabled: true
+                                        data: info
                                     })}
                                     {inputForm({
                                         title: '이메일',
                                         id: 'customerManagerEmail',
                                         onChange: onChange,
-                                        data: info,
-                                        disabled: true
+                                        data: info
                                     })}
                                 </BoxCard>
 
@@ -331,10 +351,11 @@ export default function EstimateWrite({dataInfo}) {
                                         ], onChange: onChange, data: info
                                     })}
                                     {inputNumberForm({
-                                        title: 'Delivery(weeks)',
+                                        title: 'Delivery',
                                         id: 'delivery',
                                         onChange: onChange,
-                                        data: info
+                                        data: info,
+                                        addonAfter: '주'
                                     })}
                                     {inputNumberForm({
                                         title: '환율',

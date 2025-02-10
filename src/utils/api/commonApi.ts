@@ -4,6 +4,7 @@ import {modalList} from "@/utils/initialList";
 import moment from "moment/moment";
 import {checkInquiryNo} from "@/utils/api/mainApi";
 import {gridManage} from "@/utils/commonManage";
+import {inputForm} from "@/utils/commonForm";
 
 
 export const findCodeInfo = async (event, setInfo, openModal, type? , setValidate?) => {
@@ -79,12 +80,21 @@ export const findCodeInfo = async (event, setInfo, openModal, type? , setValidat
 
 export const findDocumentInfo = async (event, setInfo) => {
 
-    const result = await getData.post('estimate/getEstimateRequestDetail', {
-        "documentNumberFull": event.target.value,
+
+    const result = await getData.post('order/getOrderList', {
+        "searchStartDate": "",          // 발주일자 검색 시작일
+        "searchEndDate": "",            // 발주일자 검색 종료일
+        "searchDocumentNumber": event.target.value,     // 문서번호
+        "searchCustomerName": "",       // 거래처명
+        "searchMaker": "",              // MAKER
+        "searchModel": "",              // MODEL
+        "searchItem": "",               // ITEM
+        "searchEstimateManager": "",    // 견적서담당자명
         "page": 1,
-        "limit": -1
-    })
-    return result?.data?.entity?.estimateRequestDetail
+        "limit": 20
+    });
+    console.log(result,':::')
+    return result?.data?.entity?.orderList;
 };
 
 export const findEstDocumentInfo = async (event, setInfo) => {
@@ -112,23 +122,36 @@ export const findEstDocumentInfo = async (event, setInfo) => {
 };
 
 
-export const findOrderDocumentInfo = async (event, setInfo, gridRef?) => {
+export const findOrderDocumentInfo = async (event, setInfo, gridRef?, managerList?) => {
 
+    console.log(managerList,'managerList:')
     const result = await getData.post('estimate/getEstimateDetail', {
         "estimateId": null,
         "documentNumberFull": event.target.value
     });
+
     if (result?.data?.code === 1) {
 
-
-
         if (result?.data?.entity?.estimateDetail?.estimateDetailList.length) {
+
+            const list = managerList?.find(v=> v.name === result?.data?.entity?.estimateDetail?.managerAdminName)
+
+
+
+
+
 
             setInfo(v => {
                     return {
                         ...v, ...result?.data?.entity?.estimateDetail,
                         documentNumberFull: event.target.value,
-                        writtenDate: moment(),
+                        writtenDate: moment().format('YYYY-MM-DD'),
+                        managerAdminId: list?.adminId,
+                        managerId: list?.name,
+                        managerPhoneNumber: list?.contactNumber,
+                        managerFaxNumber: list?.faxNumber,
+                        managerEmail: list?.email,
+                        estimateManager : result?.data?.entity?.estimateDetail?.managerAdminName,
                         orderDetailList: result?.data?.entity?.estimateDetail?.estimateDetailList
                     }
                 }

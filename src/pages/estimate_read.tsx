@@ -13,13 +13,14 @@ import {deleteEstimate, searchEstimate} from "@/utils/api/mainApi";
 import _ from "lodash";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import {BoxCard, inputForm, MainCard, rangePickerForm, selectBoxForm} from "@/utils/commonForm";
-import {useRouter} from "next/router";
 import Spin from "antd/lib/spin";
 import ReceiveComponent from "@/component/ReceiveComponent";
+import {useRouter} from "next/router";
 
 
 export default function EstimateRead({dataInfo}) {
 
+    const router = useRouter();
     const gridRef = useRef(null);
 
     const copyInit = _.cloneDeep(estimateReadInitial)
@@ -47,7 +48,7 @@ export default function EstimateRead({dataInfo}) {
 
     async function searchInfo(e) {
         const copyData: any = {...info}
-        if(e){
+        if (e) {
             setLoading(true)
             await searchEstimate({data: copyData}).then(v => {
                 gridManage.resetData(gridRef, v);
@@ -59,7 +60,7 @@ export default function EstimateRead({dataInfo}) {
     }
 
     async function moveRouter() {
-        window.open(`/estimate_write`, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
+        router.push('/estimate_write')
     }
 
 

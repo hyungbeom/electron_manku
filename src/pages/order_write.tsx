@@ -18,12 +18,16 @@ import {findOrderDocumentInfo} from "@/utils/api/commonApi";
 import {saveOrder} from "@/utils/api/mainApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {getData} from "@/manage/function/api";
-import PrintTransactionModal from "@/component/printTransaction";
-import PrintPo from "@/component/printPo";
+import Spin from "antd/lib/spin";
 
 
 const listType = 'orderDetailList'
-export default function OrderWriter({dataInfo}) {
+export default function OrderWriter({dataInfo, managerList}) {
+    const options = managerList?.map((item) => ({
+        ...item,
+        value: item.adminId,
+        label: item.name,
+    }));
     const fileRef = useRef(null);
     const gridRef = useRef(null);
     const router = useRouter();
@@ -36,12 +40,12 @@ export default function OrderWriter({dataInfo}) {
     const [mini, setMini] = useState(true);
     const [validate, setValidate] = useState({documentNumberFull: true});
     const [fileList, setFileList] = useState([]);
-    const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
     const [loading, setLoading] = useState(false);
 
     const adminParams = {
         managerAdminId: userInfo['adminId'],
         managerAdminName: userInfo['name'],
+        estimateManager: userInfo['name'],
         createdBy: userInfo['name'],
         managerId: userInfo['name'],
         managerPhoneNumber: userInfo['contactNumber'],
@@ -69,7 +73,7 @@ export default function OrderWriter({dataInfo}) {
         if (e.key === 'Enter') {
             switch (e.target.id) {
                 case 'ourPoNo' :
-                    await findOrderDocumentInfo(e, setInfo, gridRef)
+                    await findOrderDocumentInfo(e, setInfo, gridRef, managerList)
                     break;
             }
         }
@@ -103,21 +107,24 @@ export default function OrderWriter({dataInfo}) {
 
         commonManage.setInfoFormData(info, formData, listType, list)
         commonManage.getUploadList(fileRef, formData)
-        await saveOrder({data: formData, router: router})
+        await saveOrder({data: formData, router: router, returnFunc : returnFunc})
+    }
+
+    function returnFunc(code, msg){
+        if(code === -20001){
+            message.error('발주서 PO no가 중복되었습니다.');
+            setValidate(v=>{
+                return {...v, documentNumberFull: false}
+            })
+        }else{
+            message.error(msg);
+        }
+        setLoading(false)
     }
 
     function clearAll() {
         setInfo({...infoInit});
         gridManage.deleteAll(gridRef);
-    }
-
-    async function printTransactionStatement() {
-        await searchCustomer();
-        setIsModalOpen({event1: true, event2: false});
-    }
-
-    function printPo() {
-        setIsModalOpen({event1: false, event2: true});
     }
 
 
@@ -135,8 +142,16 @@ export default function OrderWriter({dataInfo}) {
 
     }
 
+    const onCChange = (value: string, e: any) => {
+       const findValue = managerList.find(v=> v.adminId === value)
+        console.log(findValue,'value:')
+        setInfo(v => {
+            return {...v, managerAdminId: e.adminId, estimateManager : findValue.name,managerAdminName: e.name, managerId : findValue.name,managerPhoneNumber : findValue.contactNumber,managerFaxNumber : findValue.faxNumber, managerEmail : findValue.email  }
+        })
+    };
 
-    return <>
+
+    return <Spin spinning={loading} tip={'발주서 등록중...'}>
         <LayoutComponent>
 
             <div style={{
@@ -163,7 +178,17 @@ export default function OrderWriter({dataInfo}) {
                                 data: info
                             })}
                             {inputForm({title: '작성자', id: 'createdBy', disabled: true, onChange: onChange, data: info})}
-                            {inputForm({title: '담당자', id: 'managerAdminName', onChange: onChange, data: info})}
+                            <div>
+                                <div>담당자</div>
+                                <Select style={{width: '100%'}} size={'small'}
+                                        showSearch
+                                        value={info['estimateManager']}
+                                        placeholder="Select a person"
+                                        optionFilterProp="label"
+                                        onChange={onCChange}
+                                        options={options}
+                                />
+                            </div>
 
                             {inputForm({
                                 title: '발주서 PO no',
@@ -205,14 +230,14 @@ export default function OrderWriter({dataInfo}) {
                             <BoxCard title={'LOGISTICS'}>
                                 <div>
                                     <div style={{paddingBottom: 3}}>Payment Terms</div>
-                                    <Select id={'paymentTerms'} size={'small'} defaultValue={'0'}
-                                            onChange={(src) => onChange({target: {id: 'searchType', value: src}})}
+                                    <Select value={info['paymentTerms']} id={'paymentTerms'} size={'small'}
+                                            onChange={(src) => onChange({target: {id: 'paymentTerms', value: src}})}
                                             options={[
-                                                {value: '0', label: 'By in advance T/T'},
-                                                {value: '1', label: 'Credit Card'},
-                                                {value: '2', label: 'L/C'},
-                                                {value: '3', label: 'Order 30% Before Shipping 70%'},
-                                                {value: '4', label: 'Order 50% Before Shipping 50%'},
+                                                {value: 'By in advance T/T', label: 'By in advance T/T'},
+                                                {value: 'Credit Card', label: 'Credit Card'},
+                                                {value: 'L/C', label: 'L/C'},
+                                                {value: 'Order 30% Before Shipping 70%', label: 'Order 30% Before Shipping 70%'},
+                                                {value: 'Order 50% Before Shipping 50%', label: 'Order 50% Before Shipping 50%'},
                                             ]} style={{width: '100%'}}>
                                     </Select>
                                 </div>
@@ -224,7 +249,7 @@ export default function OrderWriter({dataInfo}) {
                                 })}
                                 {inputForm({title: 'MAKER', id: 'maker', onChange: onChange, data: info})}
                                 {inputForm({title: 'ITEM', id: 'item', onChange: onChange, data: info})}
-                                {inputForm({title: 'Delivery', id: 'delivery', onChange: onChange, data: info})}
+                                {inputForm({title: 'Delivery', id: 'delivery', onChange: onChange, data: info, suffix : '주'})}
                             </BoxCard>
 
                             <BoxCard title={'ETC'}>
@@ -252,9 +277,10 @@ export default function OrderWriter({dataInfo}) {
 
             </div>
         </LayoutComponent>
-    </>
+    </Spin>
 }
 
+// @ts-ignored
 export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
     const {query} = ctx;
 
@@ -269,9 +295,21 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
         };
     }
     store.dispatch(setUserInfo(userInfo));
+
+
+    const result = await getData.post('admin/getAdminList', {
+        "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
+        "searchAuthority": null,    // 1: 일반, 0: 관리자
+        "page": 1,
+        "limit": -1
+    });
+    const list:any = result?.data?.entity?.adminList;
     if (query?.data) {
         const data = JSON.parse(decodeURIComponent(query.data));
-        return {props: {dataInfo: data}}
+        return {props: {dataInfo: data,managerList: list}}
+    }else{
+
+        return {props: {managerList: list}}
     }
 
 

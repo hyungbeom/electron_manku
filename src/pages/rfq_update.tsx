@@ -48,7 +48,6 @@ export default function rqfUpdate({dataInfo, managerList}) {
 
     const userInfo = useAppSelector((state) => state.user);
     const [info, setInfo] = useState<any>({...infoInit, uploadType: 0})
-    const [validate, setValidate] = useState({agencyCode: true, documentNumberFull: true});
     const [mini, setMini] = useState(true);
 
     const [fileList, setFileList] = useState(fileManage.getFormatFiles(infoInitFile));
@@ -74,11 +73,7 @@ export default function rqfUpdate({dataInfo, managerList}) {
     }
 
     function onChange(e) {
-        if (e.target.id === 'agencyCode') {
-            setValidate(v => {
-                return {...v, agencyCode: false}
-            })
-        }
+
         commonManage.onChange(e, setInfo)
     }
 
@@ -89,7 +84,7 @@ export default function rqfUpdate({dataInfo, managerList}) {
                 case 'agencyCode' :
                 case 'customerName' :
                 case 'maker' :
-                    await findCodeInfo(e, setInfo, openModal, '', setValidate)
+                    await findCodeInfo(e, setInfo, openModal, '')
                     break;
             }
         }
@@ -97,24 +92,21 @@ export default function rqfUpdate({dataInfo, managerList}) {
 
     async function saveFunc() {
         gridRef.current.clearFocusedCell();
-        if (!validate['agencyCode']) {
-             message.warn('올바른 경로를 통한 매입처코드를 입력해주세요.');
-            return;
-        }
         if (!info['agencyCode']) {
              message.warn('매입처 코드가 누락되었습니다.');
             return;
         }
-        const list = gridManage.getAllData(gridRef)
-        if (!list.length) {
-             message.warn('하위 데이터 1개 이상이여야 합니다');
+        const list = gridManage.getAllData(gridRef);
+        const filterList = list.filter(v=> !!v.model);
+        if (!filterList.length) {
+             message.warn('유효한 하위 데이터 1개 이상이여야 합니다');
             return;
         }
 
         setLoading(true)
         const formData: any = new FormData();
 
-        commonManage.setInfoFormData(info, formData, listType, list)
+        commonManage.setInfoFormData(info, formData, listType, filterList)
         commonManage.getUploadList(fileRef, formData);
         commonManage.deleteUploadList(fileRef, formData, originFileList)
         formData.delete('createdDate');
@@ -152,9 +144,6 @@ export default function rqfUpdate({dataInfo, managerList}) {
                 managerAdminId: v?.managerAdminId ? v?.managerAdminId : 0
             }
         });
-        setValidate(v => {
-            return {...v, agencyCode: false}
-        })
         gridManage.deleteAll(gridRef)
     }
 
@@ -177,7 +166,6 @@ export default function rqfUpdate({dataInfo, managerList}) {
                          open={isModalOpen}
                          type={''}
                          gridRef={gridRef}
-                         setValidate={setValidate}
                          setIsModalOpen={setIsModalOpen}/>
 
         <LayoutComponent>
@@ -206,8 +194,7 @@ export default function rqfUpdate({dataInfo, managerList}) {
                                 id: 'documentNumberFull',
                                 disabled: true,
                                 onChange: onChange,
-                                data: info,
-                                validate: validate['documentNumberFull']
+                                data: info
                             })}
                             {inputForm({title: '작성자', id: 'createdBy', disabled: true, onChange: onChange, data: info})}
                             <div>
@@ -241,20 +228,23 @@ export default function rqfUpdate({dataInfo, managerList}) {
                                     }/>,
                                     onChange: onChange,
                                     handleKeyPress: handleKeyPress,
-                                    data: info,
-                                    validate: validate['agencyCode']
+                                    data: info
                                 })}
                                 {inputForm({
                                     title: '매입처명',
                                     id: 'agencyName',
-                                    disabled: true,
                                     onChange: onChange,
                                     data: info
                                 })}
                                 {inputForm({
                                     title: '매입처담당자',
                                     id: 'agencyManagerName',
-                                    disabled: true,
+                                    onChange: onChange,
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: '매입처담당자',
+                                    id: 'agencyManagerEmail',
                                     onChange: onChange,
                                     data: info
                                 })}

@@ -90,7 +90,7 @@ export default function delivery_read({dataInfo}) {
         <LayoutComponent>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '345px' : '65px'} calc(100vh - ${mini ? 435 : 155}px)`,
+                gridTemplateRows: `${mini ? '245px' : '65px'} calc(100vh - ${mini ? 345 : 165}px)`,
                 columnGap: 5
             }}>
                 <MainCard title={'배송조회'}
@@ -99,18 +99,19 @@ export default function delivery_read({dataInfo}) {
                               {name: '신규생성', func: moveRouter}]}
                           mini={mini} setMini={setMini}>
                     {mini ? <div>
-                            <TopBoxCard title={'기본 정보'} grid={'300px 200px 1fr'}>
-                                {rangePickerForm({title: '출고일자', id: 'searchDate', onChange: onChange, data: info})}
-                                {inputForm({
-                                    title: 'Inquiry No.',
-                                    id: 'searchConnectInquiryNo',
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
-                            </TopBoxCard>
 
-                            <div style={{display: 'grid', gridTemplateColumns: "350px 350px"}}>
+
+                            <div style={{display: 'grid',    gridTemplateColumns:  '1fr 1fr 1.5fr', gap : 20}}>
+                                <BoxCard title={'기본 정보'} >
+                                    {rangePickerForm({title: '출고일자', id: 'searchDate', onChange: onChange, data: info})}
+                                    {inputForm({
+                                        title: 'Inquiry No.',
+                                        id: 'searchConnectInquiryNo',
+                                        onChange: onChange,
+                                        handleKeyPress: handleKeyPress,
+                                        data: info
+                                    })}
+                                </BoxCard>
                                 <BoxCard title={'받는분 정보'}>
                                     {inputForm({
                                         title: '고객사명',

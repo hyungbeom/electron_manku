@@ -9,7 +9,7 @@ import moment from "moment/moment";
 import {commonManage} from "@/utils/commonManage";
 import {getData} from "@/manage/function/api";
 import message from "antd/lib/message";
-import {findCodeInfo} from "@/utils/api/commonApi";
+import {findCodeInfo, findDocumentInfo} from "@/utils/api/commonApi";
 import AddressSearch from "@/component/AddressSearch";
 import {DownloadOutlined} from "@ant-design/icons";
 
@@ -27,16 +27,21 @@ export default function Deasin({info, setInfo}){
     }
 
     async function handleKeyPress(e) {
+
         if (e.key === 'Enter') {
 
             switch (e.target.id) {
-                case 'agencyCode' :
-                case 'customerName' :
-                case 'maker' :
-                    await findCodeInfo(e, setInfo, openModal)
+                case 'connectInquiryNo' :
+                    const result = await findDocumentInfo(e, setInfo);
+                    setInfo(v => {
+                        return {
+                            ...result[0],
+                            connectInquiryNo: info.connectInquiryNo
+                        }
+                    })
+
                     break;
             }
-
         }
     }
     const handleAddressComplete = (address, zipCode) => {
@@ -57,7 +62,7 @@ export default function Deasin({info, setInfo}){
                 id: 'connectInquiryNo',
                 suffix: <DownloadOutlined style={{cursor: 'pointer'}}/>,
                 onChange: onChange, data: info,
-                // handleKeyPress: handleKeyPress
+                handleKeyPress: handleKeyPress
             })}
             {inputForm({title: '고객사명', id: 'customerName', onChange:onChange, data : info})}
         </TopBoxCard>

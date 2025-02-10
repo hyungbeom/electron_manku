@@ -10,12 +10,22 @@ import useEventListener from "@/utils/common/function/UseEventListener";
 import message from "antd/lib/message";
 import {checkInquiryNo} from "@/utils/api/mainApi";
 import Drawer from "antd/lib/drawer";
-import {useRouter} from "next/router";
 import {commonManage, gridManage} from "@/utils/commonManage";
 
 
-export default function SearchInfoModal({info, setInfo, open, setIsModalOpen, setValidate = null, type='', gridRef, compProps}:any) {
-    const router = useRouter()
+
+export default function SearchInfoModal({
+                                            info,
+                                            setInfo,
+                                            open,
+                                            setIsModalOpen,
+
+                                            setValidate = null,
+                                            type = '',
+                                            gridRef,
+                                            compProps
+                                        }: any) {
+
     const [code, setCode] = useState();
     const [list, setList] = useState([])
     const [page, setPage] = useState({x: null, y: null});
@@ -261,11 +271,16 @@ export default function SearchInfoModal({info, setInfo, open, setIsModalOpen, se
                                          break;
                                      default :
 
-                                         await checkInquiryNo({data: {agencyCode: e.data.agencyCode, type : type}}).then(data => {
+                                         await checkInquiryNo({
+                                             data: {
+                                                 agencyCode: e.data.agencyCode,
+                                                 type: type
+                                             }
+                                         }).then(data => {
                                              setInfo(v => {
                                                  return {
                                                      ...v,
-                                                     documentNumberFull:  data,
+                                                     documentNumberFull: data,
                                                      agencyManagerId: e.data.agencyId,
                                                      agencyCode: e.data.agencyCode,
                                                      agencyName: e.data.agencyName,
@@ -274,9 +289,7 @@ export default function SearchInfoModal({info, setInfo, open, setIsModalOpen, se
                                                  }
                                              });
                                              gridManage.updateAllFields(gridRef, 'currency', commonManage.changeCurr(e.data.agencyCode))
-                                             setValidate(v => {
-                                                 return {...v, agencyCode: true, documentNumberFull: true}
-                                             })
+
                                          })
 
                                          break;

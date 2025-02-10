@@ -92,6 +92,7 @@ export default function projectUpdate({dataInfo}) {
         formData.delete('createdDate')
         formData.delete('modifiedDate')
 
+
         await updateProject({data: formData, router: router, returnFunc: returnFunc})
     }
 
@@ -213,21 +214,18 @@ export default function projectUpdate({dataInfo}) {
                                     {inputForm({
                                         title: '고객사 담당자명',
                                         id: 'customerManagerName',
-                                        disabled: true,
                                         onChange: onChange,
                                         data: info
                                     })}
                                     {inputForm({
                                         title: '담당자 전화번호',
                                         id: 'customerManagerPhone',
-                                        disabled: true,
                                         onChange: onChange,
                                         data: info
                                     })}
                                     {inputForm({
                                         title: '담당자 이메일',
                                         id: 'customerManagerEmail',
-                                        disabled: true,
                                         onChange: onChange,
                                         data: info
                                     })}

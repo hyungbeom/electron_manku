@@ -35,6 +35,7 @@ export const estimateWriteInitial = {
     "documentNumberFull": "", // INQUIRY No.
     "agencyCode": "",            // 대리점코드
     "agencyManagerName": "",
+    "agencyManagerEmail": "",
     "agencyManagerPhoneNumber": "",
     "customerCode": "",             // CUSTOMER 코드
     "customerName": "",    // 상호명
@@ -97,6 +98,7 @@ export const rfqWriteInitial = {
     agencyCode: '',
     agencyName: '',
     agencyManagerName: '',
+    agencyManagerEmail: '',
     agencyManagerId: null,
     dueDate: null,
     agencyType: '',
@@ -350,7 +352,7 @@ export const orderWriteInitial = {
     "managerPhoneNumber": "",  // Tel
     "managerFaxNumber": "",      // E-Mail
     "managerEmail": "",   // Fax
-    "paymentTerms": "",    // Payment Terms
+    "paymentTerms": 'By in advance T/T',    // Payment Terms
     "deliveryTerms": "",              // Delivery Terms
     "maker": "",                    // MAKER
     "item": "",                       // ITEM
