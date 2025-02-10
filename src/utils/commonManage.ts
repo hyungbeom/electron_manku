@@ -19,6 +19,7 @@ gridManage.getSelectRows = function (gridRef) {
     return selectedData;
 }
 
+
 gridManage.exportSelectedRowsToExcel = function (gridRef, title) {
     if (gridRef.current) {
         // 체크된 행 데이터 가져오기
@@ -61,6 +62,7 @@ gridManage.exportSelectedRowsToExcel = function (gridRef, title) {
         console.warn('GridRef or API is not available.');
     }
 };
+
 
 gridManage.getFieldValue = function (gridRef, field) {
     if (gridRef.current) {
