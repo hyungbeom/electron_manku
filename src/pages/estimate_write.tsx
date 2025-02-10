@@ -356,7 +356,7 @@ export default function EstimateWrite({dataInfo}) {
                                         id: 'delivery',
                                         onChange: onChange,
                                         data: info,
-                                        addonAfter: '주'
+                                        addonAfter: <span style={{fontSize : 12}}>주</span>
                                     })}
                                     {inputNumberForm({
                                         title: '환율',
