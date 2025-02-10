@@ -7,7 +7,7 @@ import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import {useRouter} from "next/router";
-import {BoxCard, inputForm, MainCard, selectBoxForm, textAreaForm} from "@/utils/commonForm";
+import {BoxCard, datePickerForm, inputForm, MainCard, selectBoxForm, textAreaForm} from "@/utils/commonForm";
 import TableGrid from "@/component/tableGrid";
 import {tableOrderWriteColumn} from "@/utils/columnList";
 import PrintPo from "@/component/printPo";
@@ -283,7 +283,7 @@ export default function order_update({dataInfo, managerList}) {
                                 })}
                                 {inputForm({title: 'MAKER', id: 'maker', onChange: onChange, data: info})}
                                 {inputForm({title: 'ITEM', id: 'item', onChange: onChange, data: info})}
-                                {inputForm({title: 'Delivery(weeks)', id: 'delivery', onChange: onChange, data: info})}
+                                {datePickerForm({title: 'Delivery', id: 'delivery', onChange:onChange, data : info})}
                             </BoxCard>
 
                             <BoxCard title={'ETC'}>

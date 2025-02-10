@@ -156,7 +156,7 @@ export default function OrderWriter({dataInfo, managerList}) {
 
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '470px' : '65px'} calc(100vh - ${mini ? 525 : 120}px)`,
+                gridTemplateRows: `${mini ? '545px' : '65px'} calc(100vh - ${mini ? 650 : 170}px)`,
                 columnGap: 5
             }}>
                 <MainCard title={'발주서 작성'} list={[
@@ -249,12 +249,12 @@ export default function OrderWriter({dataInfo, managerList}) {
                                 })}
                                 {inputForm({title: 'MAKER', id: 'maker', onChange: onChange, data: info})}
                                 {inputForm({title: 'ITEM', id: 'item', onChange: onChange, data: info})}
-                                {inputForm({title: 'Delivery', id: 'delivery', onChange: onChange, data: info, suffix : '주'})}
+                                {datePickerForm({title: 'Delivery', id: 'delivery', onChange:onChange, data : info})}
                             </BoxCard>
 
                             <BoxCard title={'ETC'}>
                                 {inputForm({title: '견적서담당자', id: 'estimateManager', onChange: onChange, data: info})}
-                                {textAreaForm({title: '비고란', rows: 6, id: 'remarks', onChange: onChange, data: info})}
+                                {textAreaForm({title: '비고란', rows: 9, id: 'remarks', onChange: onChange, data: info})}
                             </BoxCard>
                             <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
                                 {/*@ts-ignored*/}

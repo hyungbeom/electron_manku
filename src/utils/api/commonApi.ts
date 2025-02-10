@@ -7,7 +7,7 @@ import {gridManage} from "@/utils/commonManage";
 import {inputForm} from "@/utils/commonForm";
 
 
-export const findCodeInfo = async (event, setInfo, openModal, type? , setValidate?) => {
+export const findCodeInfo = async (event, setInfo, openModal, type?, setValidate?) => {
 
     getData.post(modalList[event.target.id]?.url, {
         "searchType": "1",
@@ -28,18 +28,20 @@ export const findCodeInfo = async (event, setInfo, openModal, type? , setValidat
             switch (event.target.id) {
                 case 'agencyCode' :
                     const {agencyId, agencyCode, agencyName, currencyUnit} = data[0];
-                    const returnDocumentNumb = await checkInquiryNo({data: {agencyCode: agencyCode, type : type}})
+                    const returnDocumentNumb = await checkInquiryNo({data: {agencyCode: agencyCode, type: type}})
                     setInfo(v => {
                         return {
                             ...v,
-                            documentNumberFull : type === 'ESTIMATE' ? v.documentNumberFull : returnDocumentNumb,
+                            documentNumberFull: type === 'ESTIMATE' ? v.documentNumberFull : returnDocumentNumb,
                             agencyId: agencyId,
                             agencyCode: agencyCode,
                             agencyName: agencyName,
                             currencyUnit: currencyUnit
                         }
                     });
-                    setValidate(v=>{return{...v, agencyCode :true, documentNumberFull : true}})
+                    setValidate(v => {
+                        return {...v, agencyCode: true, documentNumberFull: true}
+                    })
 
                     break;
                 case 'customerName' :
@@ -96,7 +98,7 @@ export const findDocumentInfo = async (event, setInfo) => {
         "page": 1,
         "limit": 20
     });
-    console.log(result,':::')
+    console.log(result, ':::')
     return result?.data?.entity?.orderList;
 };
 
@@ -127,7 +129,6 @@ export const findEstDocumentInfo = async (event, setInfo) => {
 
 export const findOrderDocumentInfo = async (event, setInfo, gridRef?, managerList?) => {
 
-    console.log(managerList,'managerList:')
     const result = await getData.post('estimate/getEstimateDetail', {
         "estimateId": null,
         "documentNumberFull": event.target.value
@@ -137,12 +138,18 @@ export const findOrderDocumentInfo = async (event, setInfo, gridRef?, managerLis
 
         if (result?.data?.entity?.estimateDetail?.estimateDetailList.length) {
 
-            const list = managerList?.find(v=> v.name === result?.data?.entity?.estimateDetail?.managerAdminName)
+            const list = managerList?.find(v => v.name === result?.data?.entity?.estimateDetail?.managerAdminName)
 
 
+            console.log(result?.data?.entity?.estimateDetail, 'list:')
 
+            const {delivery, writtenDate} = result?.data?.entity?.estimateDetail;
 
+            const date = moment(writtenDate);
 
+            const newDate = date.add(parseInt(delivery), 'weeks');
+
+            console.log(newDate.format('YYYY-MM-DD'),'delivery:')
 
             setInfo(v => {
                     return {
@@ -154,8 +161,9 @@ export const findOrderDocumentInfo = async (event, setInfo, gridRef?, managerLis
                         managerPhoneNumber: list?.contactNumber,
                         managerFaxNumber: list?.faxNumber,
                         managerEmail: list?.email,
-                        estimateManager : result?.data?.entity?.estimateDetail?.managerAdminName,
-                        orderDetailList: result?.data?.entity?.estimateDetail?.estimateDetailList
+                        estimateManager: result?.data?.entity?.estimateDetail?.managerAdminName,
+                        orderDetailList: result?.data?.entity?.estimateDetail?.estimateDetailList,
+                        delivery: newDate.format('YYYY-MM-DD')
                     }
                 }
             );

@@ -21,7 +21,9 @@ const TableGrid = ({
                        },
                        type = 'read',
                        funcButtons = [],
-                       onCellEditingStopped = null,
+                       onCellEditingStopped = function () {
+                           let isEditingCell = false;
+                       },
                        deleteComp = <></>,
                        setInfo = null,
                        onRowClicked = null
@@ -29,6 +31,7 @@ const TableGrid = ({
 
 
     const router = useRouter();
+    let isEditingCell = false;
 
     const [dragging, setDragging] = useState(false);
     const [pinnedBottomRowData, setPinnedBottomRowData] = useState([]);
@@ -248,6 +251,19 @@ const TableGrid = ({
 
     }
 
+    const onCellClicked = (event) => {
+        const headerName = event.column.getColDef().headerName || ''; // 🔍 현재 셀의 헤더 가져오기
+        const rowNode = event.node; // 🔍 현재 선택된 행 가져오기
+
+        if (headerName === '') {
+            console.log(`🔹 "${headerName}" 열 클릭됨 → 체크박스 토글`);
+
+            // 🔄 현재 체크박스 상태 반전 (on/off)
+            const isSelected = rowNode.isSelected();
+            rowNode.setSelected(!isSelected);
+        }
+    };
+
     return (
         <>
             <HsCodeListModal isModalOpen={isModalOpen['hsCode']} setIsModalOpen={setIsModalOpen}
@@ -352,6 +368,7 @@ const TableGrid = ({
                     onSelectionChanged={handleSelectionChanged} // 선택된 행 변경 이벤트
                     gridOptions={{
                         loadThemeGoogleFonts: true,
+                        onCellClicked: onCellClicked,
                         getRowStyle: (params) => {
                             // 짝수 행에만 스타일 적용
                             if (params.node.rowIndex % 2 === 1) {
@@ -376,6 +393,24 @@ const TableGrid = ({
                         onRowDataChanged: () => {
                             console.log("Row Data Changed");
                         },
+
+                        onCellKeyDown: (event) => {
+                            const isEditingCell = event.api.getEditingCells().length > 0;
+                            const selectedNodes = event.node;
+                            const headerName = event.column.getColDef().headerName || ''; // 🔍 헤더 이름 가져오기
+
+
+                            if (!isEditingCell) {
+                                if (event.event.key === 'Backspace' || event.event.key === 'Delete') {
+                                    // 🔥 조건: 헤더가 빈 문자열(`''`)일 때만 삭제 실행
+                                    if (headerName !== '') {
+                                        return; // 삭제 중단
+                                    }
+                                    event.api.applyTransaction({remove: [selectedNodes.data]});
+                                }
+                                console.log('🔹 선택된 셀에서 키 입력 감지:', event.event.key);
+                            }
+                        }
                     }}
                     rowDragManaged={true}
                     rowDragMultiRow={true}

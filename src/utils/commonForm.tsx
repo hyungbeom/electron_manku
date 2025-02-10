@@ -63,7 +63,7 @@ export function BoxCard({children, title = null, tooltip = '', disabled = false}
         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
     }
     const defaultStyle = {
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+        // boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
     }
     // <InfoCircleOutlined />
     // @ts-ignore

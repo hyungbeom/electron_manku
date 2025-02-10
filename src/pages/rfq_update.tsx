@@ -156,9 +156,6 @@ export default function rqfUpdate({dataInfo, managerList}) {
         router.push(`/rfq_write?${query}`)
     }
 
-    function onCellEditingStopped(){
-
-    }
 
 
     return <Spin spinning={loading} tip={'견적의뢰 수정중...'}>

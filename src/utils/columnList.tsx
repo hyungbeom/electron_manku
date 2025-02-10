@@ -37,6 +37,7 @@ function handleCellMouseOut(params) {
     }
 }
 
+
 class CustomTextEditor {
     init(params:any) {
         // @ts-ignore
@@ -60,14 +61,19 @@ class CustomTextEditor {
         // @ts-ignore
         this.eInput.value = params.value || '';
 
-        // Shift + Enter 줄바꿈 추가
+        // ✅ Shift + Enter 줄바꿈 추가
         // @ts-ignore
         this.eInput.addEventListener("keydown", (event) => {
-            if (event.key === "Enter" && event.shiftKey) {
-                event.preventDefault();
-                // @ts-ignore
-                this.eInput.value += "\n"; // 줄바꿈 추가
-                this.adjustHeight(); // 높이 자동 조정
+            if (event.key === "Enter") {
+                if (event.shiftKey) {
+                    event.preventDefault();
+                    // @ts-ignore
+                    this.eInput.value += "\n"; // 줄바꿈 추가
+                    this.adjustHeight();
+                } else {
+                    event.preventDefault();
+                    this.completeEditingAndMoveNext();
+                }
             }
         });
 
@@ -80,7 +86,7 @@ class CustomTextEditor {
         // ✅ Focus Out (편집 종료) 시 원래 row 높이로 강제 복귀
         // @ts-ignore
         this.eInput.addEventListener("blur", () => {
-            this.resetRowHeight(); // 한 줄로 복귀
+            this.resetRowHeight();
         });
 
         // 초기 높이 조정
@@ -111,7 +117,6 @@ class CustomTextEditor {
             this.params.node.setRowHeight(this.eInput.scrollHeight + 10); // 추가 여유값 적용
             // @ts-ignore
             this.params.api.onRowHeightChanged(); // 높이 변경 이벤트 호출
-
         }
     }
 
@@ -119,7 +124,6 @@ class CustomTextEditor {
     resetRowHeight() {
         // @ts-ignore
         if (this.params && this.params.api) {
-            // ✅ textarea 스타일 강제로 한 줄로 변경
             // @ts-ignore
             this.eInput.style.height = `${this.defaultRowHeight}px`;
             // @ts-ignore
@@ -128,18 +132,13 @@ class CustomTextEditor {
             this.eInput.style.overflow = 'hidden';
             // @ts-ignore
             this.eInput.style.textOverflow = 'ellipsis';
-
-            // ✅ row 높이 강제 변경
             // @ts-ignore
             this.params.node.setRowHeight(this.defaultRowHeight);
-
-            // ✅ 강제로 row를 다시 렌더링하여 문제 해결
             // @ts-ignore
             this.params.api.onRowHeightChanged();
             // @ts-ignore
             this.params.api.redrawRows({ rowNodes: [this.params.node] });
 
-            // ✅ 추가로 지연 호출을 사용하여 캐시 문제 해결
             setTimeout(() => {
                 // @ts-ignore
                 this.params.api.onRowHeightChanged();
@@ -148,7 +147,23 @@ class CustomTextEditor {
             }, 50);
         }
     }
+
+    // ✅ Enter 키 입력 시 편집 종료 후 다음 필드로 이동
+    completeEditingAndMoveNext() {
+        // @ts-ignore
+        if (this.params && this.params.api) {
+            // @ts-ignore
+            this.params.api.stopEditing(); // 현재 편집 종료
+            setTimeout(() => {
+                // @ts-ignore
+                this.params.api.tabToNextCell(); // 다음 필드로 이동
+            }, 0);
+        }
+    }
 }
+
+
+
 
 const makeAbsoluteUrl = (url) => {
     if (!/^https?:\/\//i.test(url)) {

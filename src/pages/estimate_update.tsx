@@ -33,6 +33,7 @@ import Modal from "antd/lib/modal/Modal";
 import EstimatePaper from "@/component/견적서/EstimatePaper";
 import {jsPDF} from "jspdf";
 import html2canvas from "html2canvas";
+import {spans} from "next/dist/build/webpack/plugins/profiling-plugin";
 
 const listType = 'estimateDetailList'
 export default function estimate_update({dataInfo}) {
@@ -230,7 +231,7 @@ export default function estimate_update({dataInfo}) {
         <LayoutComponent>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '500px' : '65px'} calc(100vh - ${mini ? 555 : 120}px)`,
+                gridTemplateRows: `${mini ? '510px' : '65px'} calc(100vh - ${mini ? 615 : 170}px)`,
                 columnGap: 5
             }}>
 
@@ -241,7 +242,7 @@ export default function estimate_update({dataInfo}) {
                 ]} mini={mini} setMini={setMini}>
 
                     {mini ? <div>
-                        <TopBoxCard title={'기본 정보'} grid={'1fr 0.6fr 0.6fr 1fr 1fr 1fr 1fr'}>
+                        <TopBoxCard grid={'1fr 0.6fr 0.6fr 1fr 1fr 1fr 1fr'}>
                             {datePickerForm({
                                 title: '작성일',
                                 id: 'writtenDate',
@@ -263,7 +264,7 @@ export default function estimate_update({dataInfo}) {
                             {inputForm({title: '프로젝트 제목', id: 'projectTitle', onChange: onChange, data: info})}
                         </TopBoxCard>
 
-                        <div style={{display: 'grid', gridTemplateColumns: "150px 200px 200px 180px 1fr 300px"}}>
+                        <div style={{display: 'grid', gridTemplateColumns: "180px 200px 200px 180px 1fr 300px", gridColumnGap : 10, paddingTop : 10}}>
 
                             <BoxCard title={'매입처 정보'}>
                                 {inputForm({
@@ -368,14 +369,16 @@ export default function estimate_update({dataInfo}) {
                                     title: 'Delivery(weeks)',
                                     id: 'delivery',
                                     onChange: onChange,
-                                    data: info
+                                    data: info,
+                                    addonAfter : <span style={{fontSize : 11}}>주</span>
                                 })}
                                 {inputNumberForm({
                                     title: '환율',
                                     id: 'exchangeRate',
                                     onChange: onChange,
                                     data: info,
-                                    step: 0.01
+                                    step: 0.01,
+                                    addonAfter : <span style={{fontSize : 11}}>%</span>
                                 })}
                             </BoxCard>
                             <BoxCard title={'Maker 정보'}>
