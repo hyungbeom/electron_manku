@@ -151,7 +151,7 @@ export const rangePickerForm = ({
 export const datePickerForm = ({title, id, disabled = false, onChange, data}) => {
     let bowl = data;
     return <div style={{fontSize: 12, paddingBottom: 10}}>
-        <div>{title}</div>
+        <div style={{paddingBottom : 5.5}}>{title}</div>
         {/*@ts-ignore*/}
         <DatePicker value={moment(bowl[id]).isValid() ? moment(bowl[id]) : ''} style={{width: '100%', fontSize: 11}}
                     className="custom-datepicker"

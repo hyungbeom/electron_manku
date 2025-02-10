@@ -220,7 +220,7 @@ export default function rqfWrite({dataInfo, managerList}) {
                                 })}
                                 {inputForm({title: '작성자', id: 'createBy', disabled: true, onChange: onChange, data: info})}
                                 <div>
-                                    <div>담당자</div>
+                                    <div style={{paddingBottom : 4.5}}>담당자</div>
                                     <Select style={{width: '100%'}} size={'small'}
                                             showSearch
                                             value={info['managerAdminId']}
@@ -374,7 +374,8 @@ export default function rqfWrite({dataInfo, managerList}) {
                                         title: '지시사항',
                                         id: 'instructions',
                                         onChange: onChange,
-                                        data: info
+                                        data: info,
+                                        rows : 7
                                     })}
                                 </BoxCard>
                                 <BoxCard title={'ETC'} tooltip={tooltipInfo('etc')}>
@@ -386,10 +387,11 @@ export default function rqfWrite({dataInfo, managerList}) {
                                     })}
                                     {textAreaForm({
                                         title: '비고란',
-                                        rows: 7,
+                                        rows: 10,
                                         id: 'remarks',
                                         onChange: onChange,
-                                        data: info
+                                        data: info,
+
                                     })}
                                 </BoxCard>
                                 <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}  disabled={!userInfo['microsoftId']}>
