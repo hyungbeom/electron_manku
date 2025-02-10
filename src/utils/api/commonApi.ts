@@ -8,12 +8,14 @@ import {inputForm} from "@/utils/commonForm";
 
 
 export const findCodeInfo = async (event, setInfo, openModal, type? , setValidate?) => {
+
     getData.post(modalList[event.target.id]?.url, {
         "searchType": "1",
         "searchText": event.target.value,       // 대리점코드 or 대리점 상호명
         "page": 1,
         "limit": -1
     }).then(async v => {
+
 
         const data = v?.data?.entity[modalList[event.target.id]?.list];
 
@@ -41,8 +43,8 @@ export const findCodeInfo = async (event, setInfo, openModal, type? , setValidat
 
                     break;
                 case 'customerName' :
-                    const {customerName, managerName, directTel, faxNumber, email} = data[0];
-                    // console.log(data[0], 'customerName~~~~')
+                    const {customerName, managerName, directTel, faxNumber, email, paymentMethod} = data[0];
+                    console.log(paymentMethod, 'customerName~~~~')
                     setInfo(v => {
                         return {
                             ...v,
@@ -50,7 +52,8 @@ export const findCodeInfo = async (event, setInfo, openModal, type? , setValidat
                             managerName: managerName,
                             phoneNumber: directTel,
                             faxNumber: faxNumber,
-                            customerManagerEmail: email
+                            customerManagerEmail: email,
+                            paymentTerms: paymentMethod ? paymentMethod : '발주시 50% / 납품시 50%',
 
                         }
                     })

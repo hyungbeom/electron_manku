@@ -247,6 +247,7 @@ export default function SearchInfoModal({
                                                  customerManagerName: e.data.managerName,
                                                  customerManagerPhone: e.data.directTel,
                                                  customerCode: e.data.customerCode,
+                                                 paymentTerms: e.data.paymentMethod ? e.data.paymentMethod : '발주시 50% / 납품시 50%',
                                                  ...e.data
                                              }
                                          });
@@ -305,16 +306,5 @@ export default function SearchInfoModal({
                 />
             </div>
         </Modal>
-        <Drawer
-            title="Basic Drawer"
-            placement={'top'}
-            closable={false}
-            onClose={onClose}
-            open={opens}
-        >
-            <p>Some contents...</p>
-            <p>Some contents...</p>
-            <p>Some contents...</p>
-        </Drawer>
     </>
 }

@@ -339,8 +339,9 @@ export default function EstimateWrite({dataInfo}) {
                                     {selectBoxForm({
                                         title: '결제조건', id: 'paymentTerms', list: [
                                             {value: '발주시 50% / 납품시 50%', label: '발주시 50% / 납품시 50%'},
-                                            {value: '납품시 현금결제', label: '납품시 현금결제'},
-                                            {value: '정기결제', label: '정기결제'},
+                                            {value: '현금결제', label: '현금결제'},
+                                            {value: '선수금', label: '선수금'},
+                                            {value: '정기 결제', label: '정기 결제'},
                                         ], onChange: onChange, data: info
                                     })}
 
