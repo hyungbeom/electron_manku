@@ -220,7 +220,7 @@ export default function OrderWriter({dataInfo, managerList}) {
                                 {inputForm({title: '매입처명', id: 'agencyName', onChange: onChange, data: info})}
                             </BoxCard>
 
-                            <BoxCard title={'당담자 정보'}>
+                            <BoxCard title={'담당자 정보'}>
                                 {inputForm({title: 'Responsibility', id: 'managerId', onChange: onChange, data: info})}
                                 {inputForm({title: 'TEL', id: 'managerPhoneNumber', onChange: onChange, data: info})}
                                 {inputForm({title: 'Fax', id: 'managerFaxNumber', onChange: onChange, data: info})}

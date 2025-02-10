@@ -85,6 +85,7 @@ export const findCodeInfo = async (event, setInfo, openModal, type?, setValidate
 
 export const findDocumentInfo = async (event, setInfo) => {
 
+    console.log(event.target.value,'event.target.value:')
 
     const result = await getData.post('order/getOrderList', {
         "searchStartDate": "",          // 발주일자 검색 시작일
@@ -131,7 +132,7 @@ export const findOrderDocumentInfo = async (event, setInfo, gridRef?, managerLis
 
     const result = await getData.post('estimate/getEstimateDetail', {
         "estimateId": null,
-        "documentNumberFull": event.target.value
+        "documentNumberFull": event.target.value.toUpperCase()
     });
 
     if (result?.data?.code === 1) {
@@ -141,20 +142,17 @@ export const findOrderDocumentInfo = async (event, setInfo, gridRef?, managerLis
             const list = managerList?.find(v => v.name === result?.data?.entity?.estimateDetail?.managerAdminName)
 
 
-            console.log(result?.data?.entity?.estimateDetail, 'list:')
-
             const {delivery, writtenDate} = result?.data?.entity?.estimateDetail;
 
             const date = moment(writtenDate);
 
             const newDate = date.add(parseInt(delivery), 'weeks');
 
-            console.log(newDate.format('YYYY-MM-DD'),'delivery:')
-
             setInfo(v => {
                     return {
                         ...v, ...result?.data?.entity?.estimateDetail,
-                        documentNumberFull: event.target.value,
+                        documentNumberFull: event.target.value.toUpperCase(),
+                        ourPoNo: event.target.value.toUpperCase(),
                         writtenDate: moment().format('YYYY-MM-DD'),
                         managerAdminId: list?.adminId,
                         managerId: list?.name,
@@ -167,7 +165,13 @@ export const findOrderDocumentInfo = async (event, setInfo, gridRef?, managerLis
                     }
                 }
             );
-            gridManage.resetData(gridRef, result?.data?.entity?.estimateDetail?.estimateDetailList)
+
+
+            const detailList = result?.data?.entity?.estimateDetail?.estimateDetailList.map(v=>{
+                return {...v, receivedQuantity : 0}
+            })
+
+            gridManage.resetData(gridRef, detailList)
 
         }
     }

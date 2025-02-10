@@ -280,7 +280,7 @@ export default function storeUpdate({dataInfo}) {
                                     {inputNumberForm({
                                         title: '관세',
                                         id: 'tariff',
-                                        placeholder: '매입처 당담자 입력 필요',
+                                        placeholder: '매입처 담당자 입력 필요',
                                         onChange: onChange,
                                         data: info,
                                         formatter: numbFormatter,

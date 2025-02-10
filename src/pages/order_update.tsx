@@ -252,7 +252,7 @@ export default function order_update({dataInfo, managerList}) {
                             </BoxCard>
 
 
-                            <BoxCard title={'당담자 정보'}>
+                            <BoxCard title={'담당자 정보'}>
                                 {inputForm({title: 'Responsibility', id: 'managerId', onChange: onChange, data: info})}
                                 {inputForm({title: 'TEL', id: 'managerPhoneNumber', onChange: onChange, data: info})}
                                 {inputForm({title: 'Fax', id: 'managerFaxNumber', onChange: onChange, data: info})}

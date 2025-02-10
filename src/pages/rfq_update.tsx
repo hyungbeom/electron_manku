@@ -309,7 +309,6 @@ export default function rqfUpdate({dataInfo, managerList}) {
                 <TableGrid
                     gridRef={gridRef}
                     columns={subRfqWriteColumn}
-                    onCellEditingStopped={onCellEditingStopped}
                     onGridReady={onGridReady}
                     type={'write'}
                     funcButtons={['upload', 'add', 'delete', 'print']}

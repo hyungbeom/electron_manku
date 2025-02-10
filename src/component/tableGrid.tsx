@@ -13,11 +13,14 @@ import {CopyOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
 import AgencyListModal from "@/component/AgencyListModal";
 import HsCodeListModal from "@/component/HsCodeListModal";
+import _ from "lodash";
 
 const TableGrid = ({
                        gridRef,
                        columns,
                        onGridReady = function () {
+                       },
+                       tempFunc = function () {
                        },
                        type = 'read',
                        funcButtons = [],
@@ -37,6 +40,8 @@ const TableGrid = ({
     const [pinnedBottomRowData, setPinnedBottomRowData] = useState([]);
     const [page, setPage] = useState({x: null, y: null, field: null, event: null})
     const [isModalOpen, setIsModalOpen] = useState({estimate: false, agency: false});
+    const [exQuantity, setExQuantity] = useState([]);
+
     const ref = useRef(null);
 
 
@@ -148,6 +153,39 @@ const TableGrid = ({
 
     function dataChange(e) {
         clickRowCheck(e.api);
+
+        if (e.column.colId === 'actualQuantity' || e.column.colId === 'expectQuantity') {
+            const {orderDetailId, actualQuantity, expectQuantity} = e.data;
+            console.log(expectQuantity,'expectQuantity:')
+            const copyData = _.cloneDeep(exQuantity);
+            const findObj = copyData.find(v => v.orderDetailId === orderDetailId)
+
+            let result = []
+            if (findObj) {
+                result = copyData.map(src => {
+                    if (src.orderDetailId === orderDetailId) {
+                        return {
+                            "orderDetailId": orderDetailId,
+                            "expectedQuantity": expectQuantity ? expectQuantity : 0,
+                            "actualQuantity": actualQuantity ? actualQuantity : 0
+                        }
+                    } else {
+                        return src
+                    }
+                });
+            } else {
+
+                result = [...copyData, {
+                    "orderDetailId": orderDetailId,
+                    "expectedQuantity": expectQuantity ? expectQuantity : 0,
+                    "actualQuantity": actualQuantity ? actualQuantity : 0
+                }]
+
+            }
+            setExQuantity(result)
+            tempFunc(result)
+        }
+
         handleSelectionChanged();
         if (setInfo) {
             setInfo(v => {
@@ -384,6 +422,7 @@ const TableGrid = ({
                             }
                         },
                         onRowDataUpdated: () => {
+
                             if (setInfo) {
                                 setInfo(v => {
                                     return {...v, count: v.count + 1}
@@ -399,7 +438,6 @@ const TableGrid = ({
                             const selectedNodes = event.node;
                             const headerName = event.column.getColDef().headerName || ''; // 🔍 헤더 이름 가져오기
 
-
                             if (!isEditingCell) {
                                 if (event.event.key === 'Backspace' || event.event.key === 'Delete') {
                                     // 🔥 조건: 헤더가 빈 문자열(`''`)일 때만 삭제 실행
@@ -408,12 +446,13 @@ const TableGrid = ({
                                     }
                                     event.api.applyTransaction({remove: [selectedNodes.data]});
                                 }
-                                console.log('🔹 선택된 셀에서 키 입력 감지:', event.event.key);
                             }
                         }
                     }}
                     rowDragManaged={true}
                     rowDragMultiRow={true}
+                    suppressDragLeaveHidesColumns={true} // ✅ 컬럼이 드래그로 삭제되지 않도록 방지
+                    suppressColumnMoveOutOfContainer={true} // ✅ 컬럼이 밖으로 나가지 않도록 방지
                     suppressRowClickSelection={true}
                 />
             </div>

@@ -213,7 +213,7 @@ export default function storeWrite({dataInfo}) {
 
 
     return <>
-        <OrderListModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} getRows={getSelectedRows}/>
+        {isModalOpen ? <OrderListModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} getRows={getSelectedRows}/> : <></>}
         <LayoutComponent>
             <div style={{
                 display: 'grid',
@@ -250,7 +250,7 @@ export default function storeWrite({dataInfo}) {
                                     {inputNumberForm({
                                         title: '관세',
                                         id: 'tariff',
-                                        placeholder: '매입처 당담자 입력 필요',
+                                        placeholder: '매입처 담당자 입력 필요',
                                         onChange: onChange,
                                         data: info,
                                         formatter: numbFormatter,

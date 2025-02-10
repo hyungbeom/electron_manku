@@ -81,15 +81,46 @@ export default function EstimateWrite({dataInfo}) {
                     await findCodeInfo(e, setInfo, openModal, 'ESTIMATE')
                     break;
                 case 'connectDocumentNumberFull' :
-                    const result = await findDocumentInfo(e, setInfo);
+
+
+                    const result = await getData.post('estimate/getEstimateRequestList', {
+                        "searchStartDate": "",              // 작성일자 시작일
+                        "searchEndDate": "",                // 작성일자 종료일
+                        "searchDocumentNumber": e.target.value.toUpperCase(),         // 문서번호
+                        "searchCustomerName": "",           // 거래처명
+                        "searchMaker": "",                  // MAKER
+                        "searchModel": "",                  // MODEL
+                        "searchItem": "",                   // ITEM
+                        "searchCreatedBy": "",              // 등록직원명
+                        "searchRfqNo": "",                  // 견적의뢰 RFQ No
+                        "searchProjectTitle": "",           // 프로젝트 제목
+                        "searchEndUser": "",                // End User
+                        "searchStartDueDate": "",           // 마감일 검색 시작일
+                        "searchEndDueDate": "",             // 마감일 검색 종료일
+                        "searchAgencyManagerName": "",      // 대리점 담당자 이름
+                        "searchAgencyName": "",             // 대리점 명
+
+                        // 메일 전송 목록 검색 필드 추가 2024.11.28
+                        "searchSentStatus": null,              // 전송 여부 1: 전송, 2: 미전송
+                        "searchReplyStatus": null,             // 회신 여부 1: 회신, 2: 미회신
+                        "searchAgencyCode": "",          // 대리점코드 검색
+
+                        "page": 1,
+                        "limit": -1
+                    });
+
+
+                    // const result = await findDocumentInfo(e, setInfo);
                     await getData.post('estimate/generateDocumentNumberFull', {
                         type: 'ESTIMATE',
-                        documentNumberFull: info.connectDocumentNumberFull
+                        documentNumberFull: info.connectDocumentNumberFull.toUpperCase()
                     }).then(src => {
+
                         setInfo(v => {
                             return {
-                                ...result,
-                                connectDocumentNumberFull: info.connectDocumentNumberFull,
+                                ...result.data.entity.estimateRequestList[0],
+                                managerAdminName : v.managerAdminName,
+                                connectDocumentNumberFull: v.connectDocumentNumberFull.toUpperCase(),
                                 documentNumberFull: src.data.code === 1 ? src.data.entity.newDocumentNumberFull : v.documentNumberFull,
                                 validityPeriod: '견적 발행 후 10일간',
                                 paymentTerms: '발주시 50% / 납품시 50%',
@@ -99,7 +130,7 @@ export default function EstimateWrite({dataInfo}) {
                     });
 
 
-                    gridManage.resetData(gridRef, result?.estimateRequestDetailList);
+                    gridManage.resetData(gridRef, result.data.entity.estimateRequestList);
                     break;
             }
         }
@@ -202,7 +233,7 @@ export default function EstimateWrite({dataInfo}) {
                     {name: '초기화', func: clearAll, type: 'danger'}
                 ]} mini={mini} setMini={setMini}>
                     {mini ? <div>
-                            <TopBoxCard title={'기본 정보'} grid={'1fr 0.6fr 0.6fr 1fr 1fr 1fr 1fr '}>
+                            <TopBoxCard grid={'1fr 0.6fr 0.6fr 1fr 1fr 1fr 1fr'}>
                                 {datePickerForm({
                                     title: '작성일',
                                     id: 'writtenDate',
@@ -248,7 +279,7 @@ export default function EstimateWrite({dataInfo}) {
                             </TopBoxCard>
 
 
-                            <div style={{display: 'grid', gridTemplateColumns: "150px 200px 200px 180px 1fr 300px"}}>
+                            <div style={{display: 'grid', gridTemplateColumns: "150px 200px 200px 180px 1fr 300px", gap : 10, paddingTop : 10}}>
 
                                 <BoxCard title={'매입처 정보'}>
                                     {inputForm({
@@ -356,14 +387,15 @@ export default function EstimateWrite({dataInfo}) {
                                         id: 'delivery',
                                         onChange: onChange,
                                         data: info,
-                                        addonAfter: <span style={{fontSize : 12}}>주</span>
+                                        addonAfter: <span style={{fontSize : 11}}>주</span>
                                     })}
                                     {inputNumberForm({
                                         title: '환율',
                                         id: 'exchangeRate',
                                         onChange: onChange,
                                         data: info,
-                                        step: 0.01
+                                        step: 0.01,
+                                        addonAfter: <span style={{fontSize : 11}}>%</span>
                                     })}
                                 </BoxCard>
 
@@ -384,12 +416,12 @@ export default function EstimateWrite({dataInfo}) {
                                 <BoxCard title={'ETC'}>
                                     {textAreaForm({
                                         title: '지시사항',
-                                        rows: 4,
+                                        rows: 5,
                                         id: 'instructions',
                                         onChange: onChange,
                                         data: info
                                     })}
-                                    {textAreaForm({title: '비고란', rows: 4, id: 'remarks', onChange: onChange, data: info})}
+                                    {textAreaForm({title: '비고란', rows: 5, id: 'remarks', onChange: onChange, data: info})}
                                 </BoxCard>
                                 <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
                                     {/*@ts-ignored*/}

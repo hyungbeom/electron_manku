@@ -245,7 +245,7 @@ export default function OrderWriter({dataInfo}) {
                             </Card>
 
 
-                            <Card size={'small'} title={'당담자 정보'} style={{
+                            <Card size={'small'} title={'담당자 정보'} style={{
                                 fontSize: 13,
                                 boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                             }}>

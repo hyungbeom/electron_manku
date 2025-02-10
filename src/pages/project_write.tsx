@@ -213,7 +213,7 @@ export default function projectWrite({dataInfo, managerList}) {
                                     {inputForm({
                                         title: '프로젝트 제목',
                                         id: 'projectTitle',
-                                        placeholder: '매입처 당담자 입력 필요',
+                                        placeholder: '매입처 담당자 입력 필요',
                                         onChange: onChange,
                                         data: info
                                     })}

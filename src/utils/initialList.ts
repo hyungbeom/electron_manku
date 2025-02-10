@@ -2,7 +2,7 @@ import moment from "moment/moment";
 import {
     searchAgencyCodeColumn,
     searchCustomerColumn,
-    searchMakerColumn,
+    searchMakerColumn, subTableOrderReadColumns,
     tableOrderReadColumns
 } from "@/utils/columnList";
 
@@ -833,7 +833,7 @@ export const modalList = {
     orderList: {
         url: 'order/getOrderList',
         title: '발주서 조회',
-        column: tableOrderReadColumns,
+        column: subTableOrderReadColumns,
         list: 'orderList',
         placeholder: '문서번호 또는 고객사명을 입력하세요'
     },
