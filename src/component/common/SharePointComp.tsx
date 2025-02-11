@@ -2,15 +2,58 @@ import Upload from "antd/lib/upload";
 import Button from "antd/lib/button";
 import Input from "antd/lib/input";
 import {UploadOutlined} from "@ant-design/icons";
-import React, {useState} from "react";
-import _ from "lodash";
-import Tooltip from "antd/lib/tooltip";
+import React, {useEffect, useRef, useState} from "react";
 
-export function DriveUploadComp({fileList, setFileList, fileRef, numb=0, uploadType =true}) {
+export function DriveUploadComp({fileList, setFileList, fileRef, numb = 0, uploadType = true}) {
+    const fileInputRef = useRef(null);
 
     const [editingFileId, setEditingFileId] = useState(null); // 수정 중인 파일 ID
     const [tempFileName, setTempFileName] = useState(""); // 임시 파일 이름 저장
     const [fileExtension, setFileExtension] = useState(""); // 파일 확장자 저장
+
+
+    const [isDragging, setIsDragging] = useState(false);
+    const [dragCounter, setDragCounter] = useState(0); // 드래그 이벤트 수를 추적
+
+    useEffect(() => {
+        const handleDragEnter = (event) => {
+            event.preventDefault();
+            setDragCounter((prev) => prev + 1);
+            setIsDragging(true);
+        };
+
+        const handleDragLeave = (event) => {
+            event.preventDefault();
+            setDragCounter((prev) => {
+                if (prev === 1) {
+                    setIsDragging(false);
+                }
+                return prev - 1;
+            });
+        };
+
+        const handleDragOver = (event) => {
+            event.preventDefault();
+        };
+
+        const handleDrop = (event) => {
+            event.preventDefault();
+            setIsDragging(false);
+            setDragCounter(0);
+        };
+
+        window.addEventListener("dragenter", handleDragEnter);
+        window.addEventListener("dragleave", handleDragLeave);
+        window.addEventListener("dragover", handleDragOver);
+        window.addEventListener("drop", handleDrop);
+
+        return () => {
+            window.removeEventListener("dragenter", handleDragEnter);
+            window.removeEventListener("dragleave", handleDragLeave);
+            window.removeEventListener("dragover", handleDragOver);
+            window.removeEventListener("drop", handleDrop);
+        };
+    }, []);
 
 
     // 파일 이름 수정 중
@@ -63,7 +106,7 @@ export function DriveUploadComp({fileList, setFileList, fileRef, numb=0, uploadT
 
                     setTempFileName(namePart); // 파일 이름 저장
                     setFileExtension(extensionPart); // 확장자 저장
-                }else if(file?.downloadUrl){
+                } else if (file?.downloadUrl) {
                     const fileUrl = file?.downloadUrl;
                     const link = document.createElement('a');
                     link.href = fileUrl;
@@ -76,7 +119,7 @@ export function DriveUploadComp({fileList, setFileList, fileRef, numb=0, uploadT
         }
     };
 
-    function fileChange({ file, fileList }) {
+    function fileChange({file, fileList}) {
         // 중복 파일 확인
         const isDuplicate = fileList.some(v => v?.uid === file?.uid);
 
@@ -135,56 +178,132 @@ export function DriveUploadComp({fileList, setFileList, fileRef, numb=0, uploadT
             fileRef.current.fileList = updatedFileList;
         }
     }
+
+
+    // 파일 선택 버튼 클릭
+    const handleFileSelect = (event) => {
+        const selectedFiles = Array.from(event.target.files);
+        console.log(event, ':::')
+    };
+
+
+
+    const handleDrop = (event) => {
+        event.preventDefault();
+        setIsDragging(false);
+        setDragCounter(0);
+
+        // 파일 읽기
+        const droppedFiles = Array.from(event.dataTransfer.files);
+        if (droppedFiles.length > 0) {
+            const newFileList = [
+                ...fileList,
+                ...droppedFiles.map((file:any) => ({
+                    uid: file.name + "_" + Date.now(),
+                    name: file.name,
+                    originFileObj: file,
+                    type: file.type,
+                })),
+            ];
+
+            setFileList(newFileList);
+
+            if (fileRef.current) {
+                fileRef.current.fileList = newFileList;
+            }
+        }
+    };
+
+
+
     return (
+        <>
 
-        <Upload
+            <input
+                type="file"
+                multiple
+                style={{display: 'none'}}
 
-            fileList={fileList} // 상태 기반의 파일 리스트
-            onChange={fileChange} // 파일 리스트 업데이트
-            // onChange={({ fileList }) => setFileList(fileList)} // 파일 리스트 업데이트
-            itemRender={(originNode, file:any) => {
-                const linkType = file?.webUrl || file.type.startsWith("image");
+                ref={fileInputRef}
+                onChange={handleFileSelect}
+            />
+
+            {isDragging ?<div
+                style={{
+                    position: 'absolute',
+                    height: '100%',
+                    border: isDragging ? `2px solid #1677FF` : '',
+                    backgroundColor: isDragging ? `#1890ffb5` : '',
+                    top: 0,
+                    left: 0,
+                    width: '100%'
+                }}
+                onDrop={(e) => {
+                    e.preventDefault();
+                    handleDrop(e)
+                }}
+                >
+                <div style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: "center",
+                    height: '100%',
+                    color: 'white',
+                    fontSize: 18,
+                    fontWeight: 600
+                }}>파일을 올려주세요
+                </div>
+            </div>
+             : <></>}
+            <Upload
+
+                fileList={fileList} // 상태 기반의 파일 리스트
+                onChange={fileChange} // 파일 리스트 업데이트
+                // onChange={({ fileList }) => setFileList(fileList)} // 파일 리스트 업데이트
+                itemRender={(originNode, file: any) => {
+                    const linkType = file?.webUrl || file.type.startsWith("image");
 
 
-                // 동적 스타일 적용
-                const style = {
-                    color: linkType ? "blue" : "black",
-                    cursor: linkType ? "pointer" : "default",
-                };
+                    // 동적 스타일 적용
+                    const style = {
+                        color: linkType ? "blue" : "black",
+                        cursor: linkType ? "pointer" : "default",
+                    };
 
 
-                return (
-                    <div
-                        style={style}
-                        onClick={(e) => handleClick(file, e)} // 기존 클릭 이벤트
-                    >
-                        {editingFileId === file.uid ? (
-                            <div style={{display: "flex", alignItems: "center"}}>
-                                <Input
-                                    style={{paddingLeft: 20, flex: 1}}
-                                    size="small"
-                                    value={tempFileName}
-                                    autoFocus
-                                    onChange={handleInputChange}
-                                    onBlur={() => handleInputBlur(file)} // 수정 완료
-                                    onPressEnter={() => handleInputBlur(file)} // Enter 키로 수정 완료
-                                />
-                                <span style={{marginLeft: 5}}>{fileExtension}</span>
-                            </div>
-                        ) : (
-                            originNode
-                        )}
-                    </div>
-                );
-            }}
-            ref={fileRef}
-            beforeUpload={() => false}
-            maxCount={13}
-        >
+                    return (
+                        <div
+                            style={style}
+                            onClick={(e) => handleClick(file, e)} // 기존 클릭 이벤트
+                        >
+                            {editingFileId === file.uid ? (
+                                <div style={{display: "flex", alignItems: "center"}}>
+                                    <Input
+                                        style={{paddingLeft: 20, flex: 1}}
+                                        size="small"
+                                        value={tempFileName}
+                                        autoFocus
+                                        onChange={handleInputChange}
+                                        onBlur={() => handleInputBlur(file)} // 수정 완료
+                                        onPressEnter={() => handleInputBlur(file)} // Enter 키로 수정 완료
+                                    />
+                                    <span style={{marginLeft: 5}}>{fileExtension}</span>
+                                </div>
+                            ) : (
+                                originNode
+                            )}
+                        </div>
+                    );
+                }}
+                ref={fileRef}
+                beforeUpload={() => false}
+                maxCount={13}
+            >
 
-            {uploadType ? <Button style={{fontSize: 11}} size={'small'} icon={<UploadOutlined/>} type={'primary'}>Upload</Button> : <></>}
+                {uploadType ? <Button style={{fontSize: 11, marginTop: 6}} size={'small'} icon={<UploadOutlined/>}
+                                      type={'primary'}>Upload</Button> : <></>}
 
-        </Upload>
-
+            </Upload>
+        </>
     );
 }
