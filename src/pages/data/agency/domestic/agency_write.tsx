@@ -158,7 +158,7 @@ export default function agency_write({dataInfo}) {
                                 {value: 'D', label: 'D'},
                             ]
                         })}
-                            {inputNumberForm({title: '마진', id: 'margin', onChange: onChange, data: info, addonAfter: '%'})}
+                            {inputNumberForm({title: '마진', id: 'margin', onChange: onChange, data: info, addonAfter: <span style={{fontSize : 11}}>%</span>  })}
                         </BoxCard>
                         <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')} disabled={!userInfo['microsoftId']}>
                             {/*@ts-ignored*/}
