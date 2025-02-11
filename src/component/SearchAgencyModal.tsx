@@ -69,6 +69,7 @@ export default function SearchInfoModal({
                 limit: -1
             });
 
+
             setList(resultList?.data?.entity[modalList[v]?.list]);
         } catch (err) {
             console.error(err, '::::');
@@ -261,6 +262,16 @@ export default function SearchInfoModal({
                                          })
                                          break;
                                      case 'orderList' :
+
+                                         setInfo(v => {
+                                             return {
+                                                 ...v, ...e.data,
+                                                 maker: e.data.makerName,
+                                                 connectInquiryNo: e.data.documentNumberFull,
+                                             }
+                                         })
+                                         break;
+                                     case 'orderSubList' :
 
                                          setInfo(v => {
                                              return {

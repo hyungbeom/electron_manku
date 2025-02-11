@@ -1520,6 +1520,82 @@ export const subTableOrderReadColumns = [
 
 
 
+
+export const subSecTableOrderReadColumns = [
+
+    {
+        headerName: '작성일자',
+        field: 'writtenDate',
+        maxWidth: 80,
+        pinned: 'left'
+    },
+    {
+        headerName: '문서번호',
+        field: 'documentNumberFull',
+        maxWidth: 100,
+        pinned: 'left',
+        valueGetter: (params) => {
+            const currentRowIndex = params.node.rowIndex;
+            const currentValue = params.data.documentNumberFull;
+            const previousRowNode = params.api.getDisplayedRowAtIndex(currentRowIndex - 1);
+
+            // 이전 행의 데이터가 없거나 값이 다르면 현재 값을 유지
+            if (!previousRowNode || previousRowNode.data.documentNumberFull !== currentValue) {
+                return currentValue;
+            }
+            // 중복되면 null 반환
+            return null;
+        },
+        cellRenderer: (params) => {
+            // valueGetter에서 null로 설정된 값은 빈칸으로 표시
+            return params.value !== null ? params.value : '';
+        },
+    },
+    {
+        headerName: '고객사명',
+        field: 'customerName',
+        minWidth: 100,
+    },
+    {
+        headerName: 'MAKER',
+        field: 'maker',
+        align: 'center',
+        minWidth: 200,
+    },
+    {
+        headerName: 'ITEM',
+        field: 'item',
+        align: 'center',
+        minWidth: 200,
+
+    },
+    {
+        headerName: '예상납기',
+        field: 'delivery',
+        key: 'delivery',
+        align: 'center',
+        minWidth: 80,
+    },
+    {
+        headerName: '견적서담당자',
+        field: 'estimateManager',
+        key: 'estimateManager',
+        align: 'center',
+        minWidth: 70,
+    },
+    {
+        headerName: '비고란',
+        field: 'remarks',
+        key: 'remarks',
+        align: 'center',
+        minWidth: 100,
+    },
+];
+
+
+
+
+
 export const remittanceDomesticColumns = [
 
     {
