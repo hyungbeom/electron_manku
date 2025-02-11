@@ -117,7 +117,6 @@ export default function EstimateWrite({dataInfo}) {
                     }).then(src => {
 
                         delete result.data.entity.estimateRequestList[0].adminId
-                        console.log(result.data.entity.estimateRequestList[0],'result:')
                         setInfo(v => {
                             return {
                                 ...result.data.entity.estimateRequestList[0],

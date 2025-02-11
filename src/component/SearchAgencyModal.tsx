@@ -287,7 +287,7 @@ export default function SearchInfoModal({
                                                  type: type
                                              }
                                          }).then(data => {
-                                             consol
+
                                              setInfo(v => {
                                                  return {
                                                      ...v,
