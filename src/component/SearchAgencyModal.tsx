@@ -272,7 +272,6 @@ export default function SearchInfoModal({
                                          })
                                          break;
                                      case 'orderSubList' :
-
                                          setInfo(v => {
                                              return {
                                                  ...v, ...e.data,
@@ -282,7 +281,6 @@ export default function SearchInfoModal({
                                          })
                                          break;
                                      default :
-
                                          await checkInquiryNo({
                                              data: {
                                                  agencyCode: e.data.agencyCode,
