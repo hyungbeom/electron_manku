@@ -116,6 +116,8 @@ export default function EstimateWrite({dataInfo}) {
                         documentNumberFull: info.connectDocumentNumberFull.toUpperCase()
                     }).then(src => {
 
+                        delete result.data.entity.estimateRequestList[0].adminId
+                        console.log(result.data.entity.estimateRequestList[0],'result:')
                         setInfo(v => {
                             return {
                                 ...result.data.entity.estimateRequestList[0],

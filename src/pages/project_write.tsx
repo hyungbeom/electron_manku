@@ -309,7 +309,8 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
                 permanent: false,
             },
         };
-    }
+    };
+
     store.dispatch(setUserInfo(userInfo));
     const result = await getData.post('admin/getAdminList', {
         "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호

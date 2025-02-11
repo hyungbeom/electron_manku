@@ -7,19 +7,31 @@ import TableGrid from "@/component/tableGrid";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import {wrapper} from "@/store/store";
-import {BoxCard, datePickerForm, inputForm, inputNumberForm, MainCard, selectBoxForm} from "@/utils/commonForm";
+import {
+    BoxCard,
+    datePickerForm,
+    inputForm,
+    inputNumberForm,
+    MainCard,
+    selectBoxForm,
+    tooltipInfo
+} from "@/utils/commonForm";
 import {gridManage} from "@/utils/commonManage";
 import _ from "lodash";
 import {saveDomesticAgency} from "@/utils/api/mainApi";
 import {useRouter} from "next/router";
+import {DriveUploadComp} from "@/component/common/SharePointComp";
+import {useAppSelector} from "@/utils/common/function/reduxHooks";
 
 
 export default function agency_write({dataInfo}) {
     const router = useRouter();
-
+    const fileRef = useRef(null);
     const gridRef = useRef(null);
 
     const [mini, setMini] = useState(true);
+    const [fileList, setFileList] = useState([]);
+    const userInfo = useAppSelector((state) => state.user);
 
     const copyInit = _.cloneDeep(codeDomesticAgencyWriteInitial)
 
@@ -147,6 +159,13 @@ export default function agency_write({dataInfo}) {
                             ]
                         })}
                             {inputNumberForm({title: '마진', id: 'margin', onChange: onChange, data: info, addonAfter: '%'})}
+                        </BoxCard>
+                        <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')} disabled={!userInfo['microsoftId']}>
+                            {/*@ts-ignored*/}
+                            <div style={{overFlowY: "auto", maxHeight: 300}}>
+                                <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
+                                                 numb={5}/>
+                            </div>
                         </BoxCard>
                     </div>
                     : <></>}
