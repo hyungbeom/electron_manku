@@ -129,8 +129,6 @@ export default function EstimateWrite({dataInfo}) {
                             }
                         });
                     });
-
-
                     gridManage.resetData(gridRef, result.data.entity.estimateRequestList);
                     break;
             }
