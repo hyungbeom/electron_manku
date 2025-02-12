@@ -178,7 +178,7 @@ const TableGrid = ({
 
                 result = [...copyData, {
                     "orderDetailId": orderDetailId,
-                    "expectedQuantity": expectQuantity ? expectQuantity : 0,
+                    "expectQuantity": expectQuantity ? expectQuantity : 0,
                     "actualQuantity": actualQuantity ? actualQuantity : 0
                 }]
 

@@ -129,7 +129,7 @@ export default function rqfWrite({dataInfo, managerList}) {
             return message.warn('INQUIRY NO.가 누락되었습니다.')
         }
         const list = gridManage.getAllData(gridRef);
-        const filterList = list.filter(v=> !!v.model);
+        const filterList = list.filter(v => !!v.model);
         if (!filterList.length) {
             return message.warn('유효한 하위 데이터 1개 이상이여야 합니다');
         }
@@ -179,19 +179,21 @@ export default function rqfWrite({dataInfo, managerList}) {
                          open={isModalOpen}
                          gridRef={gridRef}
                          setIsModalOpen={setIsModalOpen}
-                        compProps={<div>
-                            <Button size={'small'} style={{marginRight: 5}} onClick={() => moveRouter('국내')} id={'국내'}>국내생성</Button>
-                            <Button size={'small'} style={{marginRight: 50}} onClick={() => moveRouter('해외')} id={'해외'}>해외생성</Button>
-                        </div>}
+                         compProps={<div>
+                             <Button size={'small'} style={{marginRight: 5}} onClick={() => moveRouter('국내')}
+                                     id={'국내'}>국내생성</Button>
+                             <Button size={'small'} style={{marginRight: 50}} onClick={() => moveRouter('해외')}
+                                     id={'해외'}>해외생성</Button>
+                         </div>}
         />
         <LayoutComponent>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? 460 : 65}px calc(100vh - ${mini ? 515 : 120}px)`,
+                gridTemplateRows: `${mini ? 510 : 65}px calc(100vh - ${mini ? 610 : 150}px)`,
                 columnGap: 5
             }}>
 
-            <MainCard title={'견적의뢰 작성'} list={[
+                <MainCard title={'견적의뢰 작성'} list={[
                     {
                         name: '저장',
                         func: saveFunc,
@@ -220,7 +222,7 @@ export default function rqfWrite({dataInfo, managerList}) {
                                 })}
                                 {inputForm({title: '작성자', id: 'createBy', disabled: true, onChange: onChange, data: info})}
                                 <div>
-                                    <div style={{paddingBottom : 4.5}}>담당자</div>
+                                    <div style={{paddingBottom: 4.5}}>담당자</div>
                                     <Select style={{width: '100%'}} size={'small'}
                                             showSearch
                                             value={info['managerAdminId']}
@@ -231,29 +233,29 @@ export default function rqfWrite({dataInfo, managerList}) {
                                     />
                                 </div>
                                 {/*{inputForm({title: '담당자', id: 'managerAdminName', onChange: onChange, data: info, placeHolder: '담당자를 입력해주세요'})}*/}
-                                {inputForm({
-                                    title: 'INQUIRY NO.',
-                                    id: 'documentNumberFull',
-                                    onChange: onChange,
-                                    suffix:
-                                        <PlusSquareOutlined style={{cursor: 'pointer'}} onClick={
-                                            async (e) => {
-                                                e.stopPropagation();
-                                                if (!info['agencyCode']) {
-                                                    return message.warn('매입처코드를 선택해주세요')
-                                                }
-                                                const returnDocumentNumb = await checkInquiryNo({
-                                                    data: {
-                                                        agencyCode: info['agencyCode'],
-                                                        type: ''
-                                                    }
-                                                })
-                                                onChange({target: {id: 'documentNumberFull', value: returnDocumentNumb}})
-                                            }
-                                        }/>,
-                                    data: info,
-                                    disabled: true
-                                })}
+                                {/*{inputForm({*/}
+                                {/*    title: 'INQUIRY NO.',*/}
+                                {/*    id: 'documentNumberFull',*/}
+                                {/*    onChange: onChange,*/}
+                                {/*    suffix:*/}
+                                {/*        <PlusSquareOutlined style={{cursor: 'pointer'}} onClick={*/}
+                                {/*            async (e) => {*/}
+                                {/*                e.stopPropagation();*/}
+                                {/*                if (!info['agencyCode']) {*/}
+                                {/*                    return message.warn('매입처코드를 선택해주세요')*/}
+                                {/*                }*/}
+                                {/*                const returnDocumentNumb = await checkInquiryNo({*/}
+                                {/*                    data: {*/}
+                                {/*                        agencyCode: info['agencyCode'],*/}
+                                {/*                        type: ''*/}
+                                {/*                    }*/}
+                                {/*                })*/}
+                                {/*                onChange({target: {id: 'documentNumberFull', value: returnDocumentNumb}})*/}
+                                {/*            }*/}
+                                {/*        }/>,*/}
+                                {/*    data: info,*/}
+                                {/*    disabled: true*/}
+                                {/*})}*/}
                                 {inputForm({
                                     title: 'RFQ NO.',
                                     id: 'rfqNo',
@@ -272,6 +274,8 @@ export default function rqfWrite({dataInfo, managerList}) {
                             <div style={{
                                 display: 'grid',
                                 gridTemplateColumns: "150px 160px 1fr 1fr 220px",
+                                paddingTop: 10,
+                                gap: 10
                             }}>
                                 <BoxCard title={'매입처 정보'} tooltip={tooltipInfo('agency')}>
                                     {inputForm({
@@ -375,7 +379,7 @@ export default function rqfWrite({dataInfo, managerList}) {
                                         id: 'instructions',
                                         onChange: onChange,
                                         data: info,
-                                        rows : 7
+                                        rows: 7
                                     })}
                                 </BoxCard>
                                 <BoxCard title={'ETC'} tooltip={tooltipInfo('etc')}>
@@ -394,7 +398,8 @@ export default function rqfWrite({dataInfo, managerList}) {
 
                                     })}
                                 </BoxCard>
-                                <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}  disabled={!userInfo['microsoftId']}>
+                                <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}
+                                         disabled={!userInfo['microsoftId']}>
                                     {/*@ts-ignored*/}
                                     <div style={{overFlowY: "auto", maxHeight: 300}}>
                                         <div style={{width: 100, float: 'right'}}>

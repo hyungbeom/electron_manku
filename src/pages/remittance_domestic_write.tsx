@@ -89,7 +89,7 @@ export default function remittance_domestic_write({dataInfo}) {
                     {inputForm({title: 'Inquiry No.', id: 'connectInquiryNo', onChange: onChange, data: info,  disabled:true,  suffix: <FileSearchOutlined style={{cursor: 'pointer', color : 'black'}} onClick={
                             (e) => {
                                 e.stopPropagation();
-                                openModal('orderList');
+                                openModal('orderSubList');
                             }
                         }/> })}
                     {inputForm({title: '고객사명', id: 'customerName', onChange: onChange, data: info})}
