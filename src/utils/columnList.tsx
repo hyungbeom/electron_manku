@@ -2324,7 +2324,6 @@ export const tableCodeDomesticSalesColumns = [
             return moment(params.value).isValid() ? dateFormat(params) : ''
         }
     },
-
 ];
 
 

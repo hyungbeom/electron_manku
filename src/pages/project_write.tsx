@@ -265,7 +265,7 @@ export default function projectWrite({dataInfo, managerList}) {
                                     })}
                                     {textAreaForm({
                                         title: '특이사항',
-                                        rows: 3,
+                                        rows: 2,
                                         id: 'specialNotes',
                                         onChange: onChange,
                                         data: info

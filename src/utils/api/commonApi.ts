@@ -158,7 +158,7 @@ export const findOrderDocumentInfo = async (event, setInfo, gridRef?, managerLis
                         writtenDate: moment().format('YYYY-MM-DD'),
                         managerAdminId: list?.adminId,
                         managerId: list?.name,
-                        managerPhoneNumber: countryNumb === 'KRW' ? `+82 ${list?.contactNumber}` :  list?.contactNumber,
+                        managerPhoneNumber: countryNumb !== 'KRW' ? `+82 ${list?.contactNumber}` :  list?.contactNumber,
                         managerFaxNumber: list?.faxNumber,
                         managerEmail: list?.email,
                         estimateManager: result?.data?.entity?.estimateDetail?.managerAdminName,
