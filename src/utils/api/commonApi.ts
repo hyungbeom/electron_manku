@@ -3,7 +3,7 @@ import message from "antd/lib/message";
 import {modalList} from "@/utils/initialList";
 import moment from "moment/moment";
 import {checkInquiryNo} from "@/utils/api/mainApi";
-import {gridManage} from "@/utils/commonManage";
+import {commonManage, gridManage} from "@/utils/commonManage";
 import {inputForm} from "@/utils/commonForm";
 
 
@@ -142,12 +142,14 @@ export const findOrderDocumentInfo = async (event, setInfo, gridRef?, managerLis
             const list = managerList?.find(v => v.name === result?.data?.entity?.estimateDetail?.managerAdminName)
 
 
-            const {delivery, writtenDate} = result?.data?.entity?.estimateDetail;
+            const {delivery, writtenDate, agencyCode} = result?.data?.entity?.estimateDetail;
 
             const date = moment(writtenDate);
 
             const newDate = date.add(parseInt(delivery), 'weeks');
 
+            const countryNumb = commonManage.changeCurr(agencyCode);
+            console.log(countryNumb,'countryNumb:')
             setInfo(v => {
                     return {
                         ...v, ...result?.data?.entity?.estimateDetail,
@@ -156,7 +158,7 @@ export const findOrderDocumentInfo = async (event, setInfo, gridRef?, managerLis
                         writtenDate: moment().format('YYYY-MM-DD'),
                         managerAdminId: list?.adminId,
                         managerId: list?.name,
-                        managerPhoneNumber: list?.contactNumber,
+                        managerPhoneNumber: countryNumb === 'KRW' ? `+82 ${list?.contactNumber}` :  list?.contactNumber,
                         managerFaxNumber: list?.faxNumber,
                         managerEmail: list?.email,
                         estimateManager: result?.data?.entity?.estimateDetail?.managerAdminName,

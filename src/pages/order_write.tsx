@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
 import {DownloadOutlined} from "@ant-design/icons";
 import {tableOrderWriteColumn,} from "@/utils/columnList";
@@ -11,7 +11,15 @@ import Select from "antd/lib/select";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {useRouter} from "next/router";
 import TableGrid from "@/component/tableGrid";
-import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, TopBoxCard} from "@/utils/commonForm";
+import {
+    BoxCard,
+    datePickerForm,
+    inputForm,
+    MainCard,
+    selectBoxForm,
+    textAreaForm,
+    TopBoxCard
+} from "@/utils/commonForm";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import _ from "lodash";
 import {findOrderDocumentInfo} from "@/utils/api/commonApi";
@@ -22,11 +30,13 @@ import Spin from "antd/lib/spin";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import FormItem from "antd/lib/form/FormItem";
+import Input from "antd/lib/input";
 
 
 const listType = 'orderDetailList'
 export default function OrderWriter({dataInfo, managerList}) {
-    const [phone, setPhone] = useState("");
+    const [phone, setPhone] = useState({country: 'us', number: ''});
+    console.log(phone, 'phone:')
     const options = managerList?.map((item) => ({
         ...item,
         value: item.adminId,
@@ -72,7 +82,6 @@ export default function OrderWriter({dataInfo, managerList}) {
         params.api.applyTransaction({add: result ? result : []});
     };
 
-
     async function handleKeyPress(e) {
         if (e.key === 'Enter') {
             switch (e.target.id) {
@@ -111,16 +120,16 @@ export default function OrderWriter({dataInfo, managerList}) {
 
         commonManage.setInfoFormData(info, formData, listType, list)
         commonManage.getUploadList(fileRef, formData)
-        await saveOrder({data: formData, router: router, returnFunc : returnFunc})
+        await saveOrder({data: formData, router: router, returnFunc: returnFunc})
     }
 
-    function returnFunc(code, msg){
-        if(code === -20001){
+    function returnFunc(code, msg) {
+        if (code === -20001) {
             message.error('발주서 PO no가 중복되었습니다.');
-            setValidate(v=>{
+            setValidate(v => {
                 return {...v, documentNumberFull: false}
             })
-        }else{
+        } else {
             message.error(msg);
         }
         setLoading(false)
@@ -132,25 +141,20 @@ export default function OrderWriter({dataInfo, managerList}) {
     }
 
 
-    async function searchCustomer() {
-
-        const result = await getData.post('customer/getCustomerListForOrder', {
-            customerName: info['customerName']
-        })
-
-        if (result?.data?.code === 1) {
-
-            if (result?.data?.entity?.customerList.length) {
-            }
-        }
-
-    }
-
     const onCChange = (value: string, e: any) => {
-       const findValue = managerList.find(v=> v.adminId === value)
-        console.log(findValue,'value:')
+        const findValue = managerList.find(v => v.adminId === value)
+        console.log(findValue, 'value:')
         setInfo(v => {
-            return {...v, managerAdminId: e.adminId, estimateManager : findValue.name,managerAdminName: e.name, managerId : findValue.name,managerPhoneNumber : findValue.contactNumber,managerFaxNumber : findValue.faxNumber, managerEmail : findValue.email  }
+            return {
+                ...v,
+                managerAdminId: e.adminId,
+                estimateManager: findValue.name,
+                managerAdminName: e.name,
+                managerId: findValue.name,
+                managerPhoneNumber: findValue.contactNumber,
+                managerFaxNumber: findValue.faxNumber,
+                managerEmail: findValue.email
+            }
         })
     };
 
@@ -226,31 +230,37 @@ export default function OrderWriter({dataInfo, managerList}) {
 
                             <BoxCard title={'담당자 정보'}>
                                 {inputForm({title: 'Responsibility', id: 'managerId', onChange: onChange, data: info})}
-                                {inputForm({title: 'TEL', id: 'managerPhoneNumber', onChange: onChange, data: info})}
+                                {/*{inputForm({title: 'TEL', id: 'managerPhoneNumber', onChange: onChange, data: info})}*/}
                                 {inputForm({title: 'Fax', id: 'managerFaxNumber', onChange: onChange, data: info})}
-                                <PhoneInput
-                                    country={"us"} // 기본 국가 설정 (예: 미국)
-                                    value={phone}
-                                    onChange={setPhone}
-                                    inputStyle={{ width: "100%" }} // 스타일 조정 가능
-                                />
-                                {inputForm({title: 'E-Mail', id: 'managerEmail', onChange: onChange, data: info})}
 
+                                <div style={{fontSize: 12, paddingBottom: 10, width: '100%'}}>
+                                    <div style={{marginBottom: 5}}>Tel</div>
+                                    <div style={{display : 'flex'}}>
+                                        {/*@ts-ignored*/}
+                                        <PhoneInput disableDropdown={true}  country={"kr"} style={{width : 60}} inputStyle={{display: "none"}}
+                                                    buttonStyle={{width: 40, height: 23}}/>
+                                        <Input value={info['managerPhoneNumber']} id={'managerPhoneNumber'} onChange={onChange} size={'small'} style={{width : '100%', fontSize : 12, height : 23}}/>
+                                    </div>
+                                </div>
+                                {inputForm({title: 'E-Mail', id: 'managerEmail', onChange: onChange, data: info})}
                             </BoxCard>
                             <BoxCard title={'LOGISTICS'}>
-                                <div>
-                                    <div style={{paddingBottom: 3}}>Payment Terms</div>
-                                    <Select value={info['paymentTerms']} id={'paymentTerms'} size={'small'}
-                                            onChange={(src) => onChange({target: {id: 'paymentTerms', value: src}})}
-                                            options={[
-                                                {value: 'By in advance T/T', label: 'By in advance T/T'},
-                                                {value: 'Credit Card', label: 'Credit Card'},
-                                                {value: 'L/C', label: 'L/C'},
-                                                {value: 'Order 30% Before Shipping 70%', label: 'Order 30% Before Shipping 70%'},
-                                                {value: 'Order 50% Before Shipping 50%', label: 'Order 50% Before Shipping 50%'},
-                                            ]} style={{width: '100%'}}>
-                                    </Select>
-                                </div>
+                                {selectBoxForm({
+                                    title: 'paymentTerms', id: 'paymentTerms', onChange: src =>onChange({target: {id: 'paymentTerms', value: src}}), data: info, list: [
+                                        {value: 'By in advance T/T', label: 'By in advance T/T'},
+                                        {value: 'Credit Card', label: 'Credit Card'},
+                                        {value: 'L/C', label: 'L/C'},
+                                        {
+                                            value: 'Order 30% Before Shipping 70%',
+                                            label: 'Order 30% Before Shipping 70%'
+                                        },
+                                        {
+                                            value: 'Order 50% Before Shipping 50%',
+                                            label: 'Order 50% Before Shipping 50%'
+                                        },
+                                    ]
+                                })}
+
                                 {inputForm({
                                     title: 'Delivery Terms',
                                     id: 'deliveryTerms',
@@ -259,7 +269,7 @@ export default function OrderWriter({dataInfo, managerList}) {
                                 })}
                                 {inputForm({title: 'MAKER', id: 'maker', onChange: onChange, data: info})}
                                 {inputForm({title: 'ITEM', id: 'item', onChange: onChange, data: info})}
-                                {datePickerForm({title: 'Delivery', id: 'delivery', onChange:onChange, data : info})}
+                                {datePickerForm({title: 'Delivery', id: 'delivery', onChange: onChange, data: info})}
                             </BoxCard>
 
                             <BoxCard title={'ETC'}>
@@ -313,11 +323,11 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
         "page": 1,
         "limit": -1
     });
-    const list:any = result?.data?.entity?.adminList;
+    const list: any = result?.data?.entity?.adminList;
     if (query?.data) {
         const data = JSON.parse(decodeURIComponent(query.data));
-        return {props: {dataInfo: data,managerList: list}}
-    }else{
+        return {props: {dataInfo: data, managerList: list}}
+    } else {
 
         return {props: {managerList: list}}
     }
