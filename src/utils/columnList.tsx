@@ -2663,6 +2663,25 @@ export const projectWriteColumn = [
             return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }
 
+    }, {
+        headerName: '매입단가',
+        field: 'purchasePrice',
+        minWidth: 120,
+        filter: 'agNumberColumnFilter',
+        editable: true,
+    }, {
+        headerName: '매입총액',
+        field: 'totalPurchase',
+        minWidth: 120,
+        filter: 'agNumberColumnFilter',
+        valueFormatter: params => {
+            const value = params.data.quantity * params.data.purchasePrice;
+            if (isNaN(value)) {
+                return "";
+            }
+            // 숫자를 3자리마다 쉼표로 포맷
+            return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
     },
     {
         headerName: '화폐단위',

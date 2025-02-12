@@ -19,10 +19,14 @@ import {saveOrder} from "@/utils/api/mainApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {getData} from "@/manage/function/api";
 import Spin from "antd/lib/spin";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
+import FormItem from "antd/lib/form/FormItem";
 
 
 const listType = 'orderDetailList'
 export default function OrderWriter({dataInfo, managerList}) {
+    const [phone, setPhone] = useState("");
     const options = managerList?.map((item) => ({
         ...item,
         value: item.adminId,
@@ -224,6 +228,12 @@ export default function OrderWriter({dataInfo, managerList}) {
                                 {inputForm({title: 'Responsibility', id: 'managerId', onChange: onChange, data: info})}
                                 {inputForm({title: 'TEL', id: 'managerPhoneNumber', onChange: onChange, data: info})}
                                 {inputForm({title: 'Fax', id: 'managerFaxNumber', onChange: onChange, data: info})}
+                                <PhoneInput
+                                    country={"us"} // 기본 국가 설정 (예: 미국)
+                                    value={phone}
+                                    onChange={setPhone}
+                                    inputStyle={{ width: "100%" }} // 스타일 조정 가능
+                                />
                                 {inputForm({title: 'E-Mail', id: 'managerEmail', onChange: onChange, data: info})}
 
                             </BoxCard>

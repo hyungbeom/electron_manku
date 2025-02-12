@@ -929,6 +929,8 @@ export const projectDetailUnit = {
     agencyManagerName: '',
     agencyManagerPhone: '',
     agencyManagerEmail: '',
+    purchasePrice: '',
+    totalPurchase: '',
     relatedLink: '',
     requestDeliveryDate: '',
     remarks: ''

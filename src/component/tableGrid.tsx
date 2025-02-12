@@ -14,6 +14,7 @@ import Button from "antd/lib/button";
 import AgencyListModal from "@/component/AgencyListModal";
 import HsCodeListModal from "@/component/HsCodeListModal";
 import _ from "lodash";
+import moment from "moment";
 
 const TableGrid = ({
                        gridRef,
@@ -302,6 +303,35 @@ const TableGrid = ({
         }
     };
 
+    function cellDoubleClick(event){
+        if(type === 'write'){
+            if(event.column.getId() === 'content'){
+
+
+                const field = event.colDef.field;
+                const rowNode = event.node;
+
+                if (rowNode) {
+                    gridRef.current.stopEditing();
+
+                    // 직접 cellEditor 값을 설정
+                    rowNode.setDataValue(field, "회신");
+                    rowNode.setDataValue('replyDate', moment().format('YYYY-MM-DD'));
+
+
+                    gridRef.current.startEditingCell({
+                        rowIndex: event.rowIndex,
+                        colKey: field
+                    });
+
+                    console.log(`"${field}" 컬럼이 "aa"로 변경되었습니다.`);
+                }
+
+            }
+        }
+
+    }
+
     return (
         <>
             <HsCodeListModal isModalOpen={isModalOpen['hsCode']} setIsModalOpen={setIsModalOpen}
@@ -392,6 +422,7 @@ const TableGrid = ({
                     theme={tableTheme} ref={gridRef}
                     //@ts-ignore
                     onRowDoubleClicked={handleDoubleClicked}
+                    onCellDoubleClicked={cellDoubleClick}
                     rowSelection="multiple"
                     onCellEditingStopped={onCellEditingStopped}
                     defaultColDef={defaultColDef}
