@@ -151,47 +151,42 @@ export default function estimate_update({dataInfo}) {
         }
         setIsPrintModalOpen(true)
     }
-
     const generatePDF = async (printMode = false) => {
         const pdf = new jsPDF("portrait", "px", "a4");
         const pdfWidth = pdf.internal.pageSize.getWidth();
         const padding = 30; // 좌우 여백 설정
         const contentWidth = pdfWidth - padding * 2; // 실제 이미지 너비
 
-        const elements = pdfSubRef.current.children;
+        // ✅ 높이가 0이 아닌 요소만 필터링
+        const elements = Array.from(pdfSubRef.current.children).filter(
+            (el:any) => el.offsetHeight > 0 && el.innerHTML.trim() !== ""
+        );
 
         if (pdfRef.current) {
-            const firstCanvas = await html2canvas(pdfRef.current, {scale: 2,useCORS: true });
+            const firstCanvas = await html2canvas(pdfRef.current, { scale: 2, useCORS: true });
             const firstImgData = firstCanvas.toDataURL("image/png");
             const firstImgProps = pdf.getImageProperties(firstImgData);
             const firstImgHeight = (firstImgProps.height * pdfWidth) / firstImgProps.width;
             pdf.addImage(firstImgData, "PNG", 0, 0, pdfWidth, firstImgHeight);
 
-
-            const pageNumber = `Page ${1} of ${elements.length + 1}`;
-            pdf.setFontSize(10); // 폰트 크기 설정
+            const pageNumber = `Page 1 of ${elements.length + 1}`;
+            pdf.setFontSize(10);
             pdf.text(pageNumber, pdf.internal.pageSize.getWidth() / 2, pdf.internal.pageSize.getHeight() - 10, { align: "center" });
-
-
         }
 
-
         for (let i = 0; i < elements.length; i++) {
-            const element = elements[i];
-            const canvas = await html2canvas(element, { scale: 2,useCORS: true  });
+            const element:any = elements[i];
+            const canvas = await html2canvas(element, { scale: 2, useCORS: true });
             const imgData = canvas.toDataURL("image/png");
             const imgProps = pdf.getImageProperties(imgData);
             const imgHeight = (imgProps.height * contentWidth) / imgProps.width;
 
-
             pdf.addPage();
-            pdf.addImage(imgData, "PNG", padding, -20, contentWidth, imgHeight);
+            pdf.addImage(imgData, "PNG", padding, 0, contentWidth, imgHeight);
 
             const pageNumber = `Page ${i + 2} of ${elements.length + 1}`;
-            pdf.setFontSize(10); // 폰트 크기 설정
+            pdf.setFontSize(10);
             pdf.text(pageNumber, pdf.internal.pageSize.getWidth() / 2, pdf.internal.pageSize.getHeight() - 10, { align: "center" });
-
-
         }
 
         if (printMode) {
@@ -201,7 +196,6 @@ export default function estimate_update({dataInfo}) {
             pdf.save(`${info.documentNumberFull}_견적서.pdf`);
         }
     };
-
     function print(){
         const printContents = pdfRef.current.innerHTML;
         const originalContents = document.body.innerHTML;
