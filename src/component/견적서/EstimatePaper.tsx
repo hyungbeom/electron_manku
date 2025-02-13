@@ -59,7 +59,8 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
-                padding : 30
+                padding: 30,
+                border: '1px solid lightGray'
             }}>
 
                 <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
@@ -276,13 +277,11 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                         <div>· 성적서 및 품질보증서는 별도입니다.</div>
                     </div>
                 </> : <></>}
+                <div style={{textAlign : 'center'}}>- 1 -</div>
             </div>
 
-            <div style={{height: 2, borderBottom: '1px solid white'}}/>
 
-            <div ref={pdfSubRef}>
-
-
+            <div ref={pdfSubRef} style={{paddingTop : 1.5}}>
 
                 {splitData?.map((src, i) => {
                     if (!i) {
@@ -296,7 +295,8 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                             display: 'flex',
                             flexDirection: 'column',
                             justifyContent: 'space-between',
-                            padding : 30
+                            padding: 30,
+                            border: '1px solid lightGray'
                         }}><DataTable src={src} i={i} refList={[pdfRef, pdfSubRef]} setSplitData={setSplitData}/>
 
                             <div style={{flexGrow: 1}}/>
@@ -314,6 +314,8 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                                 <div>· 계좌번호: (기업은행)069-118428-04-010/(주)만쿠무역.</div>
                                 <div>· 성적서 및 품질보증서는 별도입니다.</div>
                             </div> : <></>}
+
+                            <div style={{textAlign: 'center'}}>- {i + 1} -</div>
                         </div>
 
                         <div style={{height: 2, borderBottom: '1px solid white'}}/>
