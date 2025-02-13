@@ -227,3 +227,22 @@ body {
 .ant-select:not(.ant-select-customize-input) .ant-select-selector {
     background-color: blue;
 }
+
+/* ✅ 증가/감소 버튼을 왼쪽으로 이동 */
+.custom-input-number .ant-input-number-handler-wrap {
+    display:  none
+}
+
+/* ✅ 입력 필드를 오른쪽에 맞추기 */
+.custom-input-number .ant-input-number-input-wrap {
+    text-align: right; /* 텍스트 우측 정렬 */
+    padding-left: 40px; /* 버튼 공간 확보 */
+
+}
+
+
+.custom-input-number input::-webkit-outer-spin-button,
+.custom-input-number input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}

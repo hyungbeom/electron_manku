@@ -169,9 +169,7 @@ export default function estimate_update({dataInfo}) {
             const firstImgHeight = (firstImgProps.height * pdfWidth) / firstImgProps.width;
             pdf.addImage(firstImgData, "PNG", 0, 20, pdfWidth, firstImgHeight);
 
-            const pageNumber = `Page 1 of ${elements.length + 1}`;
-            pdf.setFontSize(10);
-            pdf.text(pageNumber, pdf.internal.pageSize.getWidth() / 2, pdf.internal.pageSize.getHeight() - 10, { align: "center" });
+
         }
 
         for (let i = 0; i < elements.length; i++) {
@@ -184,9 +182,6 @@ export default function estimate_update({dataInfo}) {
             pdf.addPage();
             pdf.addImage(firstImgData, "PNG", 0, 0, pdfWidth, firstImgHeight);
 
-            const pageNumber = `Page ${i + 2} of ${elements.length + 1}`;
-            pdf.setFontSize(10);
-            pdf.text(pageNumber, pdf.internal.pageSize.getWidth() / 2, pdf.internal.pageSize.getHeight() - 10, { align: "center" });
         }
 
         if (printMode) {

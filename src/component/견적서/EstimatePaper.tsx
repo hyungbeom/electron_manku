@@ -10,7 +10,7 @@ const getTextAreaValues = (ref) => {
         // ✅ ID가 "textarea"인 모든 요소 가져오기
         const elements = ref.current.querySelectorAll("#textarea");
 
-        return Array.from(elements).map((element:any) => ({
+        return Array.from(elements).map((element: any) => ({
             model: element.value || element.textContent, // ✅ { model: value } 형태로 변환
         }));
     }
@@ -23,11 +23,11 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
 
     const [splitData, setSplitData] = useState([])
 
-    useEffect(()=>{
+    useEffect(() => {
         const totalList = gridManage.getAllData(gridRef)
-        const result = commonManage.splitDataWithSequenceNumber(totalList, 8, 18);
+        const result = commonManage.splitDataWithSequenceNumber(totalList, 8, 17);
         setSplitData(result)
-    },[data])
+    }, [data])
 
 
     useEffect(() => {
@@ -48,6 +48,197 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
 
 
     }, [data])
+
+    const RowTotal = ({defaultValue, id}) => {
+
+
+        return <Input value={amountFormat(defaultValue)}
+                      style={{border: 'none', textAlign: 'right', direction: 'rtl'}} id={id}
+                      prefix={<span style={{paddingLeft: 10}}>₩</span>}/>
+    }
+
+    const NumberInputForm = ({defaultValue, id, setInfo}) => {
+
+
+        // ✅ 입력 값 포맷팅 (쉼표 자동 추가)
+        const handleChange = (e) => {
+            const rawValue = e.target.value.replace(/,/g, ""); // 쉼표 제거
+
+            let bowl = {};
+
+
+            if (!isNaN(rawValue) && rawValue !== "") {
+                bowl[id] =new Intl.NumberFormat().format(rawValue); // 쉼표 적용
+            } else {
+                bowl[id] = ''
+            }
+            setInfo(v=> {
+                return {...v, ...bowl}
+            })
+        };
+
+        return <Input value={amountFormat(defaultValue)} onChange={handleChange}
+                      style={{border: 'none', textAlign: 'right', direction: 'rtl'}} name={id}
+                      prefix={<span style={{paddingLeft: 10}}>₩</span>}/>
+    }
+
+    const TotalCalc = () => {
+
+        useEffect(()=>{
+            console.log('!!!')
+        })
+
+        return <thead>
+        <tr style={{fontWeight: 'bold', height: 50}}>
+            <th colSpan={2} style={{
+                width: '7%',
+                border: '1px solid lightGray',
+                borderLeft: 'none',
+                fontSize: 12,
+                backgroundColor: '#ebf6f7'
+            }}>총합
+            </th>
+            <th style={{
+                borderTop: '1px solid lightGray',
+                backgroundColor: '#ebf6f7',
+                border: '1px solid lightGray',
+                borderLeft: 'none',
+                borderRight: 'none'
+            }}></th>
+            <th style={{
+                backgroundColor: '#ebf6f7',
+                borderTop: '1px solid lightGray', border: '1px solid lightGray',
+                borderRight: 'none'
+            }}>
+                <div id={'total_quantity'} style={{textAlign : 'right', paddingRight : 10, fontSize : 13.5}}></div>
+            </th>
+            <th style={{
+                backgroundColor: '#ebf6f7',
+
+                borderTop: '1px solid lightGray',
+                border: '1px solid lightGray',
+                borderRight: 'none'
+            }}>
+                <div id={'total_unit'} style={{textAlign : 'left', fontSize : 13.5, paddingLeft : 12}}></div>
+            </th>
+            <th style={{
+                borderTop: '1px solid lightGray', border: '1px solid lightGray',
+                backgroundColor: '#ebf6f7',
+                borderRight: 'none'
+            }}>
+                <div style={{display: 'flex', textAlign: 'right', direction: 'rtl', paddingRight: 13, fontSize: 13.5}}>
+                    <div style={{textAlign: 'right'}}>₩</div>
+                    <div style={{paddingRight: 10}}  id={'total_unit_price'}></div>
+                </div>
+            </th>
+            <th style={{
+                borderTop: '1px solid lightGray', border: '1px solid lightGray',
+                backgroundColor: '#ebf6f7',
+                borderRight: 'none'
+            }}>
+                <div style={{display: 'flex', textAlign: 'right', direction: 'rtl', paddingRight : 13, fontSize : 13.5}}>
+                    <div style={{textAlign: 'right'}}>₩</div>
+                    <div style={{paddingRight : 10}} id={'total_amount'}></div>
+                </div>
+            </th>
+        </tr>
+        </thead>
+    }
+
+    const RowContent = ({v, i}) => {
+        const [info, setInfo] = useState({quantity : v.quantity, unit : v.unit, unitPrice : v.unitPrice})
+
+        useEffect(() => {
+            const totalQuantity = Array.from(document.getElementsByName("quantity"))
+                .reduce((sum, input:any) => sum + (parseFloat(input.value) || 0), 0);
+
+            const totalPrice = Array.from(document.getElementsByName("unitPrice"))
+                .reduce((sum, input:any) => sum + (Number(input.value.replace(/,/g, "")) || 0), 0);
+
+            console.log(totalPrice);
+
+
+           const resultNum = Number(info?.unitPrice ? info?.unitPrice?.replace(/,/g, "") : '')
+            document.getElementById("total_amount").textContent = amountFormat(resultNum * info.quantity);
+            document.getElementById("total_unit_price").textContent = amountFormat(totalPrice);
+            document.getElementById("total_unit").textContent = info.unit;
+            document.getElementById("total_quantity").textContent = totalQuantity.toString()
+        }, [info]);
+
+        return <thead>
+        <tr>
+            <th colSpan={2} style={{
+                width: '7%',
+                border: 'none',
+                textAlign: 'left',
+                paddingLeft: 10,
+                borderBottom: '1px solid lightGray', fontSize: 12
+
+            }}>
+                <div style={{width: 30, borderRight: '1px solid lightGray'}}>{i + 1}</div>
+            </th>
+            <th style={{borderBottom: '1px solid lightGray', textAlign: 'left', fontSize: 12}}>
+                <Model v={v} refList={[pdfRef, pdfSubRef]} setSplitData={setSplitData}/>
+            </th>
+            <th style={{
+                ...headerStyle,
+                textAlign: 'right',
+                fontWeight: 'lighter',
+                fontSize: 12,
+                borderLeft: '1px solid lightGray'
+            }}>
+                <Input value={info['quantity']}
+                       name={'quantity'}
+                       onChange={e=>setInfo(v=>{return {...v, quantity: e.target.value}})}
+                       style={{
+                           border: 'none',
+                           backgroundColor: '#ebf6f7',
+                           textAlign: 'right',
+                           padding: 0
+                       }}/>
+            </th>
+            <th style={{
+                borderBottom: '1px solid lightGray',
+                fontSize: 12,
+                borderLeft: '1px solid lightGray'
+            }}>
+                <Select value={info?.unit}
+                        style={{border: 'none'}}
+                        bordered={false} suffixIcon={null}
+                        onChange={v=> {
+                            setInfo(src=> {
+                                return {...src, unit: v}
+                            })
+                        }}
+                >
+                    {['EA', 'SET', 'M', 'FEET', 'ROLL', 'BOX', 'G', 'KG', 'PACK', 'INCH', 'MOQ'].map(v => {
+                        // @ts-ignored
+                        return <Option style={{fontSize: 11}} value={v}>{v}</Option>
+                    })}
+                </Select>
+            </th>
+            <th style={{
+                borderBottom: '1px solid lightGray',
+                textAlign: 'right',
+                fontWeight: 'lighter',
+                fontSize: 12,
+                borderLeft: '1px solid lightGray'
+            }}>
+                <NumberInputForm defaultValue={info?.unitPrice} id={'unitPrice'} setInfo={setInfo}/>
+            </th>
+
+            <th style={{
+                borderTop: '1px solid lightGray',
+                textAlign: 'right', fontWeight: 'lighter', fontSize: 12,
+                borderLeft: '1px solid lightGray',
+                borderBottom: '1px solid lightGray'
+            }}>
+                <RowTotal defaultValue={info.quantity * Number(info?.unitPrice ? info?.unitPrice?.replace(/,/g, "") : '')}
+                          id={'amount'}/>
+            </th>
+        </tr>
+        </thead>
+    }
 
     return (
         // <div ref={pdfRef} style={{padding : '0px 50px', position : 'absolute', zIndex : -100, top :-1000}}>
@@ -189,74 +380,11 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                     </thead>
                     {splitData[0]?.map((v, i) => {
                         return <>
-
-                            <thead>
-                            <tr>
-                                <th colSpan={2} style={{
-                                    width: '7%',
-                                    border: 'none',
-                                    textAlign: 'left',
-                                    paddingLeft: 10,
-                                    borderBottom: '1px solid lightGray', fontSize: 12
-
-                                }}>
-                                    <div style={{width: 30, borderRight: '1px solid lightGray'}}>{i + 1}</div>
-                                </th>
-                                <th style={{borderBottom: '1px solid lightGray', textAlign: 'left', fontSize: 12}}>
-                                    <Model v={v} refList={[pdfRef, pdfSubRef]} setSplitData={setSplitData}/>
-                                </th>
-                                <th style={{
-                                    ...headerStyle,
-                                    textAlign: 'right',
-                                    fontWeight: 'lighter',
-                                    fontSize: 12,
-                                    borderLeft: '1px solid lightGray'
-                                }}>
-                                    <Input defaultValue={amountFormat(v.quantity)}
-                                           style={{
-                                               border: 'none',
-                                               backgroundColor: '#ebf6f7',
-                                               textAlign: 'right',
-                                               padding: 0
-                                           }}/>
-                                </th>
-                                <th style={{
-                                    borderBottom: '1px solid lightGray',
-                                    fontSize: 12,
-                                    borderLeft: '1px solid lightGray'
-                                }}>
-                                    <Select defaultValue={amountFormat(v.unit)}
-                                            style={{border: 'none'}}
-                                            bordered={false} suffixIcon={null}>
-                                        {['EA', 'SET', 'M', 'FEET', 'ROLL', 'BOX', 'G', 'KG', 'PACK', 'INCH', 'MOQ'].map(v => {
-                                            // @ts-ignored
-                                            return <Option style={{fontSize: 11}} value={v}>{v}</Option>
-                                        })}
-                                    </Select>
-                                </th>
-                                <th style={{
-                                    borderBottom: '1px solid lightGray',
-                                    textAlign: 'right',
-                                    fontWeight: 'lighter',
-                                    fontSize: 12,
-                                    borderLeft: '1px solid lightGray'
-                                }}>
-                                    <Input defaultValue={amountFormat(v.unitPrice)} style={{border: 'none'}}
-                                           suffix={'₩'}/>
-                                </th>
-
-                                <th style={{
-                                    borderTop: '1px solid lightGray',
-                                    textAlign: 'right', fontWeight: 'lighter', fontSize: 12,
-                                    borderLeft: '1px solid lightGray'
-                                }}>
-                                    <Input defaultValue={amountFormat(v.quantity * v.unitPrice)}
-                                           style={{border: 'none'}} suffix={'₩'}/>
-                                </th>
-                            </tr>
-                            </thead>
+                            <RowContent v={v} i={i}/>
                         </>
                     })}
+
+                    {splitData.length === 1 ? <TotalCalc/> : <></>}
                 </table>
                 <div style={{flexGrow: 1}}/>
                 {/* 여백 자동 확장하여 아래로 밀어줌 */}
@@ -277,11 +405,11 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                         <div>· 성적서 및 품질보증서는 별도입니다.</div>
                     </div>
                 </> : <></>}
-                <div style={{textAlign : 'center'}}>- 1 -</div>
+                <div style={{textAlign: 'center'}}>- 1 -</div>
             </div>
 
 
-            <div ref={pdfSubRef} style={{paddingTop : 1.5}}>
+            <div ref={pdfSubRef} style={{paddingTop: 1.5}}>
 
                 {splitData?.map((src, i) => {
                     if (!i) {
@@ -321,22 +449,7 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                         <div style={{height: 2, borderBottom: '1px solid white'}}/>
                     </>
                 })}
-
             </div>
-
-            {/*<div*/}
-            {/*    style={{*/}
-            {/*        padding: '0px 20px 30px 20px',*/}
-            {/*        fontSize: 12,*/}
-            {/*        lineHeight: 1.7,*/}
-            {/*        borderBottom: '1px solid black'*/}
-            {/*    }}>*/}
-            {/*    <div>· 금일 환율 기준으로 2%이상 인상될 시 , 단가가 인상될 수 있습니다.</div>*/}
-            {/*    <div>· 러-우전쟁 및 COVID-19 장기화로 납기 변동성이 큰 시기입니다. 납기 지연이 발생할 수 있는 점 양해 부탁드립니다.</div>*/}
-            {/*    <div>· 의뢰하신 Model로 기준한 견적이며, 견적 수량 전량 구입시 가격입니다. (긴급 납기시 담당자와 협의 가능합니다.)</div>*/}
-            {/*    <div>· 계좌번호: (기업은행)069-118428-04-010/(주)만쿠무역.</div>*/}
-            {/*    <div>· 성적서 및 품질보증서는 별도입니다.</div>*/}
-            {/*</div>*/}
         </>
     );
 };
@@ -364,7 +477,7 @@ const Model = ({v, refList, setSplitData}) => {
     function reRowDataList() {
         const result1 = getTextAreaValues(refList[0]); // pdfRef에서 ID가 textarea인 값만 가져오기
         const result2 = getTextAreaValues(refList[1]); // pdfRef에서 ID가 textarea인 값만 가져오기
-        const splitData = commonManage.splitDataWithSequenceNumber([...result1, ...result2], 8, 20);
+        const splitData = commonManage.splitDataWithSequenceNumber([...result1, ...result2], 8, 17);
         setSplitData(splitData)
     }
 
@@ -384,7 +497,7 @@ const Model = ({v, refList, setSplitData}) => {
                     <TextArea
                         id="textarea" // ✅ ID 추가
                         ref={inputRef}
-                        autoSize={{ minRows: 1 }}
+                        autoSize={{minRows: 1}}
                         bordered={false}
                         value={textValue} // ✅ 상태 관리 값으로 설정
                         onChange={(e) => setTextValue(e.target.value)} // ✅ 값 변경 시 즉시 상태 업데이트
@@ -419,7 +532,7 @@ const Model = ({v, refList, setSplitData}) => {
         </th>
     );
 };
-const DataTable = ({src,i, refList, setSplitData}) => {
+const DataTable = ({src, i, refList, setSplitData}) => {
 
 
     return <div>
@@ -427,7 +540,7 @@ const DataTable = ({src,i, refList, setSplitData}) => {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            padding: '100px 0px 20px 0px',
+            padding: '0px 0px 20px 0px',
             borderBottom: '2px solid #71d1df'
         }}>
             <div style={{width: '40%'}}>
@@ -458,7 +571,7 @@ const DataTable = ({src,i, refList, setSplitData}) => {
                 textAlign: 'right',
                 borderLeft: '1px solid lightGray',
                 borderBottom: '1px solid lightGray',
-                paddingRight : 10
+                paddingRight: 10
             }}>Qty
             </th>
             <th style={{
@@ -502,7 +615,7 @@ const DataTable = ({src,i, refList, setSplitData}) => {
                     overflowWrap: 'break-word'
                 }}>
                     <>
-                        <Model v={v}  refList={refList} setSplitData={setSplitData}/>
+                        <Model v={v} refList={refList} setSplitData={setSplitData}/>
                     </>
                 </th>
                 <th style={{
