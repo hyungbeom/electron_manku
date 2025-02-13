@@ -167,7 +167,7 @@ export default function estimate_update({dataInfo}) {
             const firstImgData = firstCanvas.toDataURL("image/png");
             const firstImgProps = pdf.getImageProperties(firstImgData);
             const firstImgHeight = (firstImgProps.height * pdfWidth) / firstImgProps.width;
-            pdf.addImage(firstImgData, "PNG", 0, 0, pdfWidth, firstImgHeight);
+            pdf.addImage(firstImgData, "PNG", 0, 20, pdfWidth, firstImgHeight);
 
             const pageNumber = `Page 1 of ${elements.length + 1}`;
             pdf.setFontSize(10);
@@ -176,13 +176,13 @@ export default function estimate_update({dataInfo}) {
 
         for (let i = 0; i < elements.length; i++) {
             const element:any = elements[i];
-            const canvas = await html2canvas(element, { scale: 2, useCORS: true });
-            const imgData = canvas.toDataURL("image/png");
-            const imgProps = pdf.getImageProperties(imgData);
-            const imgHeight = (imgProps.height * contentWidth) / imgProps.width;
+            const firstCanvas = await html2canvas(element, { scale: 2, useCORS: true });
+            const firstImgData = firstCanvas.toDataURL("image/png");
+            const firstImgProps = pdf.getImageProperties(firstImgData);
+            const firstImgHeight = (firstImgProps.height * pdfWidth) / firstImgProps.width;
 
             pdf.addPage();
-            pdf.addImage(imgData, "PNG", padding, 0, contentWidth, imgHeight);
+            pdf.addImage(firstImgData, "PNG", 0, 0, pdfWidth, firstImgHeight);
 
             const pageNumber = `Page ${i + 2} of ${elements.length + 1}`;
             pdf.setFontSize(10);

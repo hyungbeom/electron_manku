@@ -54,12 +54,12 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
         <>
 
             <div ref={pdfRef} style={{
-                padding: '100px 50px 0px 50px',
                 width: '100%',
                 aspectRatio: '1 / 1.414',
-                margin: '0px auto',
-                display: 'flex', // ✅ Flexbox 적용
-                flexDirection: 'column', // ✅ 세로 정렬
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                padding : 30
             }}>
 
                 <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
@@ -268,7 +268,6 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                             fontSize: 12,
                             lineHeight: 1.7,
                             borderTop: '1px solid black',
-                            marginTop: 'auto', // ✅ div가 항상 하단으로 이동
                         }}>
                         <div>· 금일 환율 기준으로 2%이상 인상될 시 , 단가가 인상될 수 있습니다.</div>
                         <div>· 러-우전쟁 및 COVID-19 장기화로 납기 변동성이 큰 시기입니다. 납기 지연이 발생할 수 있는 점 양해 부탁드립니다.</div>
@@ -294,9 +293,10 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                         <div style={{
                             width: '100%',
                             aspectRatio: '1 / 1.414',
-                            margin: '0px auto',
-                            display: 'flex', // ✅ Flexbox 적용
-                            flexDirection: 'column', // ✅ 세로 정렬
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'space-between',
+                            padding : 30
                         }}><DataTable src={src} i={i} refList={[pdfRef, pdfSubRef]} setSplitData={setSplitData}/>
 
                             <div style={{flexGrow: 1}}/>
