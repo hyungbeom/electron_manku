@@ -61,15 +61,12 @@ export default function estimate_update({dataInfo}) {
         params.api.applyTransaction({add: dataInfo?.estimateDetail[listType]});
     };
 
-
-
-
     async function handleKeyPress(e) {
         if (e.key === 'Enter') {
 
             switch (e.target.id) {
-                case 'agencyCode' :
-                case 'customerName' :
+                case 'agencyCode':
+                case 'customerName':
                 case 'maker' :
                     await findCodeInfo(e, setInfo, openModal, 'ESTIMATE')
                     break;
@@ -164,7 +161,7 @@ export default function estimate_update({dataInfo}) {
         const elements = pdfSubRef.current.children;
 
         if (pdfRef.current) {
-            const firstCanvas = await html2canvas(pdfRef.current, {scale: 2});
+            const firstCanvas = await html2canvas(pdfRef.current, {scale: 2,useCORS: true });
             const firstImgData = firstCanvas.toDataURL("image/png");
             const firstImgProps = pdf.getImageProperties(firstImgData);
             const firstImgHeight = (firstImgProps.height * pdfWidth) / firstImgProps.width;
@@ -181,7 +178,7 @@ export default function estimate_update({dataInfo}) {
 
         for (let i = 0; i < elements.length; i++) {
             const element = elements[i];
-            const canvas = await html2canvas(element, { scale: 2 });
+            const canvas = await html2canvas(element, { scale: 2,useCORS: true  });
             const imgData = canvas.toDataURL("image/png");
             const imgProps = pdf.getImageProperties(imgData);
             const imgHeight = (imgProps.height * contentWidth) / imgProps.width;
