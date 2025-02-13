@@ -2,6 +2,7 @@ import React, {useEffect, useMemo, useState} from 'react';
 import EstimateList from "@/component/견적서/EstimateList";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import {amountFormat} from "@/utils/columnList";
+import Input from "antd/lib/input";
 
 
 const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any) => {
@@ -29,7 +30,7 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                 label: '국내운송비',
                 value: data.shippingTerms,
                 label2: '납기',
-                value2: `${data.delivery ? data.delivery : '-'} 주`
+                value2: data.delivery
             }
         ])
 
@@ -92,7 +93,9 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                                     width: '300px',
                                     whiteSpace: 'pre-wrap',
                                     padding: 12
-                                }}>{row.value}</td>
+                                }}>
+                                <Input defaultValue={row.value} style={{border : 'none'}}/>
+                                </td>
                                 {!row.colSpan && (
                                     <>
                                         <td style={headerStyle}>{row.label2}</td>
@@ -100,10 +103,10 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                                             fontSize: 13,
                                             wordWrap: 'break-word',
                                             wordBreak: 'break-word',
-                                            width: '300px',
+                                            width:  '300px',
                                             whiteSpace: 'pre-wrap',
                                             padding: 12
-                                        }}>{row.value2}</td>
+                                        }}><Input defaultValue={row.value2} style={{border : 'none', width :  row.label2 === '납기' ? 70: '100%'}} suffix={ row.label2 === '납기' ? <span style={{fontSize : 12}}>주</span> : ''}/></td>
                                     </>
                                 )}
                             </tr>
@@ -125,8 +128,8 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                     <thead>
                     <tr style={{backgroundColor: '#ebf6f7', fontWeight: 'bold'}}>
                         <th colSpan={3} style={{width: '55%'}}>Specification</th>
-                        <th>Qty</th>
-                        <th>Unit</th>
+                        <th style={{textAlign : 'right'}}>Qty</th>
+                        <th style={{textAlign : 'left',paddingLeft : 10}}>Unit</th>
                         <th>Unit Price</th>
                         <th>Amount</th>
                     </tr>
@@ -184,11 +187,13 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                                     <div
                                         style={{
                                             marginLeft: '-4vw',
+                                            paddingRight : 25,
                                             wordWrap: 'break-word',
                                             wordBreak: 'break-word',
                                             whiteSpace: 'pre-wrap',
                                             fontWeight: 'lighter'
-                                        }}>{v.model}
+                                        }}>
+                                        <Input defaultValue={v.model} style={{border : 'none'}}/>
                                     </div>
                                 </th>
                                 <th style={{
@@ -212,8 +217,6 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                                     style={{paddingLeft: 5, fontWeight: 'lighter', fontSize: 12}}>₩</span></th>
                             </tr>
                             </thead>
-
-
                         </>
                     })}
                 </table>
@@ -243,6 +246,7 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                             justifyContent: 'space-between',
                             alignItems: 'center',
                             padding: '150px 0px 20px 0px',
+
                             borderBottom: '2px solid #71d1df'
                         }}>
                             <div style={{width: '40%'}}>
@@ -257,6 +261,8 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                                 </div>
                             </div>
 
+
+
                             <div style={{fontSize: 40, fontWeight: 700}}>견적서</div>
                             <div style={{width: '40%'}}>
                                 <img src={'/manku_stamp_ko.png'} style={{float: 'right'}} width={220} alt=""/>
@@ -266,11 +272,11 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                         <div style={{paddingBottom: 25}}/>
                         <thead>
                         <tr style={{backgroundColor: '#ebf6f7', fontWeight: 'bold'}}>
-                            <th colSpan={3} style={{width: '55%'}}>Specification</th>
-                            <th style={headerStyle}>Qty</th>
-                            <th style={headerStyle}>Unit</th>
-                            <th style={headerStyle}>Unit Price</th>
-                            <th>Amount</th>
+                            <th colSpan={3} style={{width: '55%', borderBottom : '1px solid lightGray'}}>Specification</th>
+                            <th style={{borderBottom : '1px solid lightGray', textAlign :'right'}}>Qty</th>
+                            <th style={{borderBottom : '1px solid lightGray', textAlign : 'left', paddingLeft : 10}}>Unit</th>
+                            <th style={{borderBottom : '1px solid lightGray'}}>Unit Price</th>
+                            <th style={{borderBottom : '1px solid lightGray'}}>Amount</th>
                         </tr>
                         </thead>
                         {src.map(v => {
@@ -313,7 +319,7 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                                 }}>{amountFormat(v.unitPrice)}<span
                                     style={{paddingLeft: 5, fontSize: 12}}>₩</span></th>
                                 <th style={{
-                                    borderTop: '1px solid lightGray',
+                                    borderBottom: '1px solid lightGray',
                                     textAlign: 'right', fontWeight: 'lighter', fontSize: 12
                                 }}>{amountFormat(v.quantity * v.unitPrice)}<span
                                     style={{paddingLeft: 5, fontWeight: 'lighter', fontSize: 12}}>₩</span></th>
