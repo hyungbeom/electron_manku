@@ -22,6 +22,7 @@ import {saveDomesticAgency} from "@/utils/api/mainApi";
 import {useRouter} from "next/router";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
+import {getData} from "@/manage/function/api";
 
 
 export default function agency_write({dataInfo}) {
@@ -136,7 +137,9 @@ export default function agency_write({dataInfo}) {
                             {inputForm({title: '코드(약칭)', id: 'agencyCode', onChange: onChange, data: info})}
                             {inputForm({title: '상호', id: 'agencyName', onChange: onChange, data: info})}
                             {inputForm({title: '사업자번호', id: 'businessRegistrationNumber', onChange: onChange, data: info})}
-                            {inputForm({title: '계좌번호', id: 'bankAccountNumber', onChange: onChange, data: info})}
+                            {inputForm({title: '계좌번호', id: 'bankAccountNumber', onChange: onChange, data: info, suffix : <span onClick={()=>{
+                                   // await getData.post('/real_name', { data: "example" }, { baseURL: 'https://openapi.openbanking.or.kr/v2.0/inquiry' })
+                                }}>click</span>})}
                         </BoxCard>
                         <BoxCard title={'MAKER'}>
                             {inputForm({title: 'MAKER', id: 'maker', onChange: onChange, data: info})}

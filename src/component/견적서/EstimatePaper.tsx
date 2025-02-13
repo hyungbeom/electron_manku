@@ -13,7 +13,7 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
     const [splitData] = useMemo(() => {
 
         const totalList = gridManage.getAllData(gridRef)
-        const splitData = commonManage.splitDataWithSequenceNumber(totalList, 20, 50);
+        const splitData = commonManage.splitDataWithSequenceNumber(totalList, 10, 20);
         return [splitData]
     }, [data]);
 
@@ -125,9 +125,9 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                     <thead>
                     <tr style={{backgroundColor: '#ebf6f7', fontWeight: 'bold'}}>
                         <th colSpan={3} style={{width: '55%'}}>Specification</th>
-                        <th style={headerStyle}>Qty</th>
-                        <th style={headerStyle}>Unit</th>
-                        <th style={headerStyle}>Unit Price</th>
+                        <th>Qty</th>
+                        <th>Unit</th>
+                        <th>Unit Price</th>
                         <th>Amount</th>
                     </tr>
                     </thead>
@@ -142,11 +142,26 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                             backgroundColor: '#ebf6f7'
                         }}>MAKER
                         </th>
-                        <th style={headerStyle}>{data?.maker ? data?.maker : '-'}</th>
-                        <th style={{border: 'none'}}></th>
-                        <th style={{border: 'none'}}></th>
-                        <th style={{border: 'none'}}></th>
-                        <th style={{borderTop: '1px solid lightGray'}}></th>
+                        <th style={{
+                            borderTop: '1px solid lightGray', backgroundColor: '#ebf6f7', border: '1px solid lightGray',
+                            borderLeft: 'none',borderRight : 'none'
+                        }}>{data?.maker ? data?.maker : '-'}</th>
+                        <th style={{
+                            borderTop: '1px solid lightGray', border: '1px solid lightGray',
+                            borderLeft: 'none',borderRight : 'none'
+                        }}></th>
+                        <th style={{
+                            borderTop: '1px solid lightGray', border: '1px solid lightGray',
+                            borderLeft: 'none',borderRight : 'none'
+                        }}></th>
+                        <th style={{
+                            borderTop: '1px solid lightGray', border: '1px solid lightGray',
+                            borderLeft: 'none',borderRight : 'none'
+                        }}></th>
+                        <th style={{
+                            borderTop: '1px solid lightGray', border: '1px solid lightGray',
+                            borderLeft: 'none', borderRight: 'none'
+                        }}></th>
                     </tr>
                     </thead>
                     {splitData[0]?.map((v, i) => {
@@ -204,10 +219,10 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                 </table>
             </div>
 
-            <div style={{height : 2, borderBottom : '1px solid lightGray'}}/>
+            <div style={{height: 2, borderBottom: '1px solid lightGray'}}/>
 
             <div ref={pdfSubRef} style={{
-                padding: '100px 50px',
+                padding: '0px 50px',
                 width: 900,
                 margin: '0px auto',
                 // @ts-ignored
@@ -222,7 +237,33 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                         return null;
                     }
 
-                    return <div style={{borderTop: '1px solid lightGry', paddingTop: 150}}>
+                    return <div style={{borderTop: '1px solid lightGry',}}>
+                        <div style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            padding: '150px 0px 20px 0px',
+                            borderBottom: '2px solid #71d1df'
+                        }}>
+                            <div style={{width: '40%'}}>
+                                <img src={'/manku_ci_black_text.png'} width={60} style={{paddingTop: 25, float: 'left'}}
+                                     alt=""/>
+                                <div style={{float: 'left', fontSize: 11, paddingLeft: 20}}>
+                                    <div>(주) 만쿠무역</div>
+                                    <div>Manku Trading Co., Ltd</div>
+                                    <div>서울시 송파구 충민로 52 가든파이브웍스</div>
+                                    <div> B동 2층 211호, 212호</div>
+                                    <div>Tel : 02-465-7838, Fax : 02-465-7839</div>
+                                </div>
+                            </div>
+
+                            <div style={{fontSize: 40, fontWeight: 700}}>견적서</div>
+                            <div style={{width: '40%'}}>
+                                <img src={'/manku_stamp_ko.png'} style={{float: 'right'}} width={220} alt=""/>
+                            </div>
+                        </div>
+
+                        <div style={{paddingBottom: 25}}/>
                         <thead>
                         <tr style={{backgroundColor: '#ebf6f7', fontWeight: 'bold'}}>
                             <th colSpan={3} style={{width: '55%'}}>Specification</th>
@@ -243,7 +284,8 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                                     borderBottom: '1px solid lightGray', fontSize: 12
 
                                 }}>
-                                    <div style={{width: 30, borderRight: '1px solid lightGray'}}>{v.sequenceNumber}</div>
+                                    <div
+                                        style={{width: 30, borderRight: '1px solid lightGray'}}>{v.sequenceNumber}</div>
                                 </th>
                                 <th style={{borderBottom: '1px solid lightGray', textAlign: 'left', fontSize: 12}}>
                                     <div
@@ -304,6 +346,7 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
 
 const headerStyle: any = {
     backgroundColor: '#ebf6f7',
+    borderBottom : '1px solid lightGray',
     fontWeight:
         'bold',
     fontSize:

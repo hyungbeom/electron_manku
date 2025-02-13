@@ -187,7 +187,7 @@ export const inputNumberForm = ({
 
 
     return <div style={{fontSize: 12, paddingBottom: 10}}>
-        <div style={{paddingBottom : 5}}>{title}</div>
+        <div style={{paddingBottom : 4}}>{title}</div>
         <InputNumber id={id} value={bowl[id]} disabled={disabled}
                      style={{width: '100%'}}
                      formatter={formatter}
