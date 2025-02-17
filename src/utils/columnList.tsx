@@ -435,7 +435,7 @@ export const subRfqWriteColumn = [
     },{
         headerName: 'MODEL',
         field: 'model',
-        minWidth: 200,
+        minWidth: 300,
         cellEditor: CustomTextEditor, // ✅ 커스텀 에디터 적용
         wrapText: true,
         autoHeight: true,
@@ -451,6 +451,7 @@ export const subRfqWriteColumn = [
         headerName: '수량',
         field: 'quantity',
         editable: true,
+        maxWidth: 50,
         cellEditor: 'agNumberCellEditor',
         valueFormatter: numberFormat,
         cellRenderer: (e) => e.value ? e.value : ''
@@ -999,7 +1000,6 @@ export const rfqReadColumns = [
         field: 'agencyName',
         minWidth: 100,
         maxWidth: 120,
-        pinned: 'right',
     },
     {
         headerName: '고객사',
