@@ -11,34 +11,29 @@ export default function getChatList() {
     const router = useRouter();
 
 
-    const list = [
-        {img : '', name : '이덕재', uid : 2, content : '안녕하세요', time : '2025-02-10 17:05:22'},
-        {img : '', name : '이형범', uid : 3, content : '네 안녕하세요', time : '2025-02-10 17:10:22'},
-        {img : '', name : '이형범', uid : 3, content : '나야', time : '2025-02-10 18:2:22'},
-        {img : '', name : '이형범', uid : 2, content : '들기름', time : '2025-02-10 18:08:22'},
-        {img : '', name : '이덕재', uid : 3, content : '참기름', time : '2025-02-10 18:11:22'},
-        {img : '', name : '이덕재', uid : 3, content : '방앗간', time : '2025-02-10 18:13:22'},
-        {img : '', name : '이형범', uid : 2, content : '안녕하세요1', time : '2025-02-10 18:15:22'},
-        {img : '', name : '이덕재', uid : 3, content : '안녕하세요2', time : '2025-02-10 18:16:22'},
-        {img : '', name : '이덕재', uid : 3, content : '안녕하세요3', time : '2025-02-10 18:16:22'}
-    ]
+    // const list = [
+    //     {img : 'https://www.test.com/1.png', name : '이덕재', uid : 2, content : '안녕하세요', time : '2025-02-10 17:05:22'},
+    //     {img : 'https://www.test.com/2.png', name : '이형범', uid : 3, content : '네 안녕하세요', time : '2025-02-10 17:10:22'},
+    //     {img : 'https://www.test.com/2.png', name : '이형범', uid : 3, content : '나야', time : '2025-02-10 18:08:22'},
+    //     {img : 'https://www.test.com/2.png', name : '이형범', uid : 3, content : '들기름', time : '2025-02-10 18:08:23'},
+    //     {img : 'https://www.test.com/1.png', name : '이덕재', uid : 2, content : '참기름', time : '2025-02-10 18:11:22'},
+    //     {img : 'https://www.test.com/1.png', name : '이덕재', uid : 2, content : '방앗간', time : '2025-02-10 18:11:23'},
+    //     {img : 'https://www.test.com/2.png', name : '이형범', uid : 3, content : '안녕하세요1', time : '2025-02-10 18:15:22'},
+    //     {img : 'https://www.test.com/1.png', name : '이덕재', uid : 2, content : '안녕하세요2', time : '2025-02-10 18:16:22'},
+    //     {img : 'https://www.test.com/1.png', name : '이덕재', uid : 2, content : '안녕하세요3', time : '2025-02-10 18:17:23'}
+    // ]
 
     const [chatList, setChatList] = useState(
         [
-            {sender: '심재한', message: '1번 내용입니다.', isRead: false},
-            {sender: '심재한', message: '2번 내용입니다.', isRead: false},
-            {sender: '심재한', message: '3번 내용입니다.', isRead: false},
-            {sender: '심재한', message: '4번 내용입니다.', isRead: false},
-            {sender: '심재한', message: '5번 내용입니다.', isRead: false},
-            {sender: '심재한', message: '6번 내용입니다.', isRead: false},
-            {sender: '심재한', message: '7번 내용입니다.', isRead: false},
-            {sender: '심재한', message: '8번 내용입니다.', isRead: false},
-            {sender: '심재한', message: '9번 내용입니다.', isRead: false},
-            {sender: '심재한', message: '10번 내용입니다.', isRead: false},
-            {sender: '심재한', message: '10번 내용입니다.', isRead: false},
-            {sender: '심재한', message: '10번 내용입니다.', isRead: false},
-            {sender: '심재한', message: '10번 내용입니다.', isRead: false},
-            {sender: '심재한', message: '10번 내용입니다.', isRead: false}
+            {uid : 2, img : 'https://www.test.com/1.png', name : '이덕재', content : '안녕하세요', time : '2025-02-10 17:05:22'},
+            {uid : 3, img : 'https://www.test.com/2.png', name : '이형범', content : '네 안녕하세요', time : '2025-02-10 17:10:22'},
+            {uid : 3, img : 'https://www.test.com/2.png', name : '이형범', content : '나야', time : '2025-02-10 18:08:22'},
+            {uid : 3, img : 'https://www.test.com/2.png', name : '이형범', content : '들기름', time : '2025-02-10 18:08:23'},
+            {uid : 2, img : 'https://www.test.com/1.png', name : '이덕재', content : '참기름', time : '2025-02-10 18:11:22'},
+            {uid : 2, img : 'https://www.test.com/1.png', name : '이덕재', content : '방앗간', time : '2025-02-10 18:11:23'},
+            {uid : 3, img : 'https://www.test.com/2.png', name : '이형범', content : '안녕하세요1', time : '2025-02-10 18:15:22'},
+            {uid : 2, img : 'https://www.test.com/1.png', name : '이덕재', content : '안녕하세요2', time : '2025-02-10 18:16:22'},
+            {uid : 2, img : 'https://www.test.com/1.png', name : '이덕재', content : '안녕하세요3', time : '2025-02-10 18:17:23'}
         ]
     )
 
@@ -54,7 +49,7 @@ export default function getChatList() {
     return <>
         {open ? <ChatOpenBox chat={info}/> : <></>}
         <LayoutComponent>
-            {list.map(v=>{
+            {chatList.map(v=>{
                 return <div></div>
             })}
             <div style={{padding: 5}}>
@@ -111,6 +106,11 @@ export default function getChatList() {
 }
 
 export function Content({chat, i, clickEvent}) {
+
+    async function moveRouter() {
+        window.open(`/chat`, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
+    }
+
     return <div
         key={i}
         style={{
@@ -122,7 +122,7 @@ export function Content({chat, i, clickEvent}) {
             border: '1px solid #ddd',
             borderRadius: '8px',
         }}
-        onClick={() => clickEvent(chat, i)}>
+        onClick={() => moveRouter(chat, i)}>
         <div
             style={{display: 'flex', justifyContent: 'space-between', fontWeight: 600}}>
             <div>
@@ -143,7 +143,7 @@ export function Content({chat, i, clickEvent}) {
             )}
         </div>
         <div style={{color: '#666', fontSize: '14px', marginTop: '5px'}}>
-            {chat.message.length > 50 ? chat.message.substring(0, 50) + '...' : chat.message}
+            {chat.content.length > 50 ? chat.content.substring(0, 50) + '...' : chat.content}
         </div>
     </div>
 }
