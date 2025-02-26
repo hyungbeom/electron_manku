@@ -9,9 +9,17 @@ const getTextAreaValues = (ref) => {
     if (ref.current) {
         // ✅ ID가 "textarea"인 모든 요소 가져오기
         const elements = ref.current.querySelectorAll("#textarea");
+        const unitPriceElements = ref.current.querySelectorAll("#unitPrice");
+        const quantityElements = ref.current.querySelectorAll("#quantity");
+        const unitElements = ref.current.querySelectorAll(".unit");
 
-        return Array.from(elements).map((element: any) => ({
-            model: element.value || element.textContent, // ✅ { model: value } 형태로 변환
+
+        // ✅ 두 리스트의 길이가 같은 경우에만 매핑
+        return Array.from(elements).map((element: any, index) => ({
+            model: element.value || element.textContent, // textarea 값
+            unitPrice: unitPriceElements[index]?.value || unitPriceElements[index]?.textContent || '', // unitPrice 값
+            quantity: quantityElements[index]?.value || quantityElements[index]?.textContent || '', // unitPrice 값
+            unit: unitElements[index]?.value || unitElements[index]?.textContent || '', // unitPrice 값
         }));
     }
     return [];
@@ -26,7 +34,7 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
     useEffect(() => {
         const totalList = gridManage.getAllData(gridRef)
         const result = commonManage.splitDataWithSequenceNumber(totalList, 8, 17);
-        setSplitData(result)
+        setSplitData(result);
     }, [data])
 
 
@@ -78,15 +86,11 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
         };
 
         return <Input value={amountFormat(defaultValue)} onChange={handleChange}
-                      style={{border: 'none', textAlign: 'right', direction: 'rtl'}} name={id}
+                      style={{border: 'none', textAlign: 'right', direction: 'rtl'}} id={id} name={id}
                       prefix={<span style={{paddingLeft: 10}}>₩</span>}/>
     }
 
     const TotalCalc = () => {
-
-        useEffect(()=>{
-            console.log('!!!')
-        })
 
         return <thead>
         <tr style={{fontWeight: 'bold', height: 50}}>
@@ -127,8 +131,7 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                 borderRight: 'none'
             }}>
                 <div style={{display: 'flex', textAlign: 'right', direction: 'rtl', paddingRight: 13, fontSize: 13.5}}>
-                    <div style={{textAlign: 'right'}}>₩</div>
-                    <div style={{paddingRight: 10}}  id={'total_unit_price'}></div>
+
                 </div>
             </th>
             <th style={{
@@ -155,14 +158,20 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
             const totalPrice = Array.from(document.getElementsByName("unitPrice"))
                 .reduce((sum, input:any) => sum + (Number(input.value.replace(/,/g, "")) || 0), 0);
 
-            console.log(totalPrice);
-
+            const totalAmount = Array.from(document.getElementsByName("quantity"))
+                .map((input: any, index) => {
+                    const quantity = parseFloat(input.value) || 0;
+                    const unitPriceElement = document.getElementsByName("unitPrice")[index];
+                    const unitPrice = unitPriceElement ? Number(unitPriceElement.value.replace(/,/g, "")) || 0 : 0;
+                    return quantity * unitPrice;
+                })
+                .reduce((sum, value) => sum + value, 0);
 
            const resultNum = Number(info?.unitPrice ? info?.unitPrice?.replace(/,/g, "") : '')
             document.getElementById("total_amount").textContent = amountFormat(resultNum * info.quantity);
-            document.getElementById("total_unit_price").textContent = amountFormat(totalPrice);
             document.getElementById("total_unit").textContent = info.unit;
             document.getElementById("total_quantity").textContent = totalQuantity.toString()
+            document.getElementById("total_amount").textContent = amountFormat(totalAmount)
         }, [info]);
 
         return <thead>
@@ -178,7 +187,7 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                 <div style={{width: 30, borderRight: '1px solid lightGray'}}>{i + 1}</div>
             </th>
             <th style={{borderBottom: '1px solid lightGray', textAlign: 'left', fontSize: 12}}>
-                <Model v={v} refList={[pdfRef, pdfSubRef]} setSplitData={setSplitData}/>
+                <Model v={v} i={i} refList={[pdfRef, pdfSubRef]} setSplitData={setSplitData}/>
             </th>
             <th style={{
                 ...headerStyle,
@@ -189,6 +198,7 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
             }}>
                 <Input value={info['quantity']}
                        name={'quantity'}
+                       id={'quantity'}
                        onChange={e=>setInfo(v=>{return {...v, quantity: e.target.value}})}
                        style={{
                            border: 'none',
@@ -203,6 +213,9 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                 borderLeft: '1px solid lightGray'
             }}>
                 <Select value={info?.unit}
+                        className={'unit'}
+                        id={'unit'}
+                        name={'unit'}
                         style={{border: 'none'}}
                         bordered={false} suffixIcon={null}
                         onChange={v=> {
@@ -425,8 +438,11 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                             justifyContent: 'space-between',
                             padding: 30,
                             border: '1px solid lightGray'
-                        }}><DataTable src={src} i={i} refList={[pdfRef, pdfSubRef]} setSplitData={setSplitData}/>
-
+                        }}>
+                            <div>
+                            <DataTable src={src} i={i} refList={[pdfRef, pdfSubRef]} setSplitData={setSplitData}/>
+                                {splitData.length === i + 1 ? <TotalCalc/> : <></>}
+                            </div>
                             <div style={{flexGrow: 1}}/>
                             {splitData.length === i + 1 ? <div
                                 style={{
@@ -453,7 +469,7 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
         </>
     );
 };
-const Model = ({v, refList, setSplitData}) => {
+const Model = ({v,i, refList, setSplitData}) => {
     const [toggle, setToggle] = useState(false);
     const [textValue, setTextValue] = useState(v.model); // ✅ useState로 값 저장
     const inputRef = useRef(null);
@@ -626,6 +642,7 @@ const DataTable = ({src, i, refList, setSplitData}) => {
                     borderLeft: '1px solid lightGray'
                 }}>
                     <Input defaultValue={amountFormat(v.quantity)}
+                           id={'quantity'}
                            style={{
                                border: 'none',
                                backgroundColor: '#ebf6f7',
@@ -639,6 +656,9 @@ const DataTable = ({src, i, refList, setSplitData}) => {
                     borderLeft: '1px solid lightGray'
                 }}>
                     <Select defaultValue={amountFormat(v.unit)}
+                            className={'unit'}
+                            id={'unit'}
+                            name={'unit'}
                             style={{border: 'none'}}
                             bordered={false} suffixIcon={null}>
                         {['EA', 'SET', 'M', 'FEET', 'ROLL', 'BOX', 'G', 'KG', 'PACK', 'INCH', 'MOQ'].map(v => {
@@ -654,7 +674,7 @@ const DataTable = ({src, i, refList, setSplitData}) => {
                     fontSize: 12,
                     borderLeft: '1px solid lightGray'
                 }}>
-                    <Input defaultValue={amountFormat(v.unitPrice)} style={{border: 'none'}}
+                    <Input defaultValue={amountFormat(v.unitPrice)} style={{border: 'none'}} id={'unitPrice'}
                            suffix={'₩'}/>
                 </th>
 
@@ -663,7 +683,7 @@ const DataTable = ({src, i, refList, setSplitData}) => {
                     textAlign: 'right', fontWeight: 'lighter', fontSize: 12,
                     borderLeft: '1px solid lightGray'
                 }}>
-                    <Input defaultValue={amountFormat(v.quantity * v.unitPrice)}
+                    <Input defaultValue={amountFormat(v.quantity * v.unitPrice)} id={'total'}
                            style={{border: 'none'}} suffix={'₩'}/>
                 </th>
             </tr>
