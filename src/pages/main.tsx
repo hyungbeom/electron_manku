@@ -111,29 +111,6 @@ export default function Main() {
             const updatedModel = Model.fromJson(updatedLayout);
             setTabs(updatedLayout);
             setModel(updatedModel);
-            // const rootNode = updatedModel.getRoot();
-            // const tabsets = rootNode.getChildren();
-            // for (const tabset of tabsets) {
-            //     // 각 tabset의 자식들 (탭들)을 가져옵니다
-            //     const tabs = tabset.getChildren();
-            //
-            //     for (const tab of tabs) {
-            //         // 탭의 이름을 확인하고 일치하는지 검사
-            //         if (tab.getName() === '프로젝트 조회') {
-            //
-            //             model.doAction(Actions.selectTab(tab.getId()))
-            //         }
-            //     }
-            // }
-
-            // 모든 노드를 순회하면서 이름이 일치하는 탭을 찾습니다
-            // for (const node of nodes) {
-            //     // 탭이 가지고 있는 name 값을 가져옵니다
-            //     if (node.getName() === tabName) {
-            //         // 이름이 일치하면 해당 탭의 ID를 반환합니다
-            //         return node.getId();
-            //     }
-            // }
 
         }
     };
@@ -155,14 +132,10 @@ export default function Main() {
             }
         }
     }, [selectMenu]);
-    function onLayoutChange(action: any) {
-        // 모델이 준비되면 탭 활성화 코드 추가
-        const tabNode = model.getNodeById("#0c2b4265-60c4-41af-95a4-fdd876475818");  // 예시로 ID를 사용
-        console.log(action,'::')
-        if (tabNode) {
 
-            // model.setActiveTabById(tabNode.getId());
-        }
+    function onLayoutChange(action: any) {
+       setTabs(model.toJson())
+        setModel(action);
     }
 
     return (
