@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
 import {rfqReadColumns} from "@/utils/columnList";
 import {subRfqReadMailInitial} from "@/utils/initialList";
@@ -20,6 +20,7 @@ import {getData} from "@/manage/function/api";
 
 
 export default function rfqRead({dataInfo}) {
+    let count = 1;
     const router = useRouter();
     const gridRef = useRef(null);
     const [mini, setMini] = useState(true);
@@ -37,7 +38,54 @@ export default function rfqRead({dataInfo}) {
     const onGridReady = (params) => {
         gridRef.current = params.api;
         params.api.applyTransaction({add: dataInfo ? dataInfo : []});
+
+        // 그리드 로드 후 스크롤 이벤트 추가
+        setTimeout(() => {
+            const gridElement = document.querySelector(".ag-body-viewport");
+            if (gridElement) {
+                gridElement.addEventListener("scroll", handleScroll);
+            }
+        }, 100);
     };
+
+    const handleScroll = async () => {
+        const gridElement = document.querySelector(".ag-body-viewport");
+        if (!gridElement) return;
+
+        const {scrollTop, scrollHeight, clientHeight} = gridElement;
+        const atBottom = scrollHeight - scrollTop <= clientHeight + 1; // 소수점 오차 보정
+
+
+
+        if (atBottom) {
+            if (!!count) {
+                count += 1;
+
+                setLoading(true);
+                let copyInit = _.cloneDeep(subRfqReadMailInitial);
+
+                await getData.post('estimate/getEstimateRequestList', {...copyInit, page: count}).then(v => {
+                    if (!v.data.entity.pageInfo.isNextPage) {
+                        count = 0;
+                    }
+                    gridRef.current.applyTransaction({add: v.data.entity.estimateRequestList ? v.data.entity.estimateRequestList : []});
+                    setLoading(false)
+                })
+                    setLoading(false)
+            }
+        }
+    };
+
+    useEffect(() => {
+        return () => {
+            // 컴포넌트 언마운트 시 스크롤 이벤트 제거
+            const gridElement = document.querySelector(".ag-body-viewport");
+            if (gridElement) {
+                gridElement.removeEventListener("scroll", handleScroll);
+            }
+        };
+    }, []);
+
 
     function onChange(e) {
         commonManage.onChange(e, setInfo)
@@ -59,7 +107,6 @@ export default function rfqRead({dataInfo}) {
             gridManage.resetData(gridRef, v);
             setLoading(false)
         })
-
     }
 
     const handleSendMail = async () => {
@@ -82,7 +129,6 @@ export default function rfqRead({dataInfo}) {
             if (!groupedData[agencyCode][docNumber]) {
                 groupedData[agencyCode][docNumber] = [];
             }
-
             groupedData[agencyCode][docNumber].push(record);
         });
 
@@ -91,9 +137,11 @@ export default function rfqRead({dataInfo}) {
 
         setPreviewData(groupedData)
 
-        await getData.post('common/getAttachmentFileLists',{attachmentFileItemList :data.map(v=>{
-            return {relatedType : 'ESTIMATE_REQUEST' ,relatedId : v}
-            })}).then(v=>{
+        await getData.post('common/getAttachmentFileLists', {
+            attachmentFileItemList: data.map(v => {
+                return {relatedType: 'ESTIMATE_REQUEST', relatedId: v}
+            })
+        }).then(v => {
             setFileList(v.data.entity.attachmentFiles)
         })
         setIsModalOpen(true)
@@ -119,7 +167,7 @@ export default function rfqRead({dataInfo}) {
 
     return <Spin spinning={loading} tip={'견적의뢰 조회중...'}>
         {isModalOpen && <PreviewMailModal data={previewData} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}
-                           fileList={fileList}/>}
+                                          fileList={fileList}/>}
         <LayoutComponent>
             <div style={{
                 display: 'grid',

@@ -13,18 +13,16 @@ import message from "antd/lib/message";
 
 export default function Home(props) {
 
-    console.log(props,'::')
+
     const router = useRouter();
 
     const [page, setPage] = useState('login');
 
     const {query} = router;
 
-
     const pageChange = (e) => {
         setPage(e)
     };
-
 
     function moveClick() {
         router.push('/join')
@@ -72,6 +70,7 @@ export default function Home(props) {
                             label: ' SIGN UP',
                         }
                     ]} onChange={pageChange}/>
+
 
                     {page === 'login' ? <Login/> : <SignUp/>}
 

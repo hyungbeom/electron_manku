@@ -38,6 +38,8 @@ export default function EstimateWrite({dataInfo}) {
     const gridRef = useRef(null);
     const router = useRouter();
 
+    const [ready, setReady] = useState(false);
+
     const copyInit = _.cloneDeep(estimateWriteInitial);
     const copyUnitInit = _.cloneDeep(estimateDetailUnit);
 
@@ -67,6 +69,7 @@ export default function EstimateWrite({dataInfo}) {
         gridRef.current = params.api;
         const result = dataInfo?.estimateDetailList;
         params.api.applyTransaction({add: result ? result : []});
+        setReady(true)
     };
 
 
@@ -443,9 +446,10 @@ export default function EstimateWrite({dataInfo}) {
                 />
             </div>
         </LayoutComponent>
-        <EstimatePaper data={info} pdfRef={pdfRef} gridRef={gridRef}/>
+        {ready && <EstimatePaper data={info} pdfRef={pdfRef} gridRef={gridRef}/>}
     </Spin>
 }
+
 // @ts-ignore
 export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
     const {query} = ctx;

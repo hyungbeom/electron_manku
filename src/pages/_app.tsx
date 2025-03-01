@@ -6,7 +6,7 @@ import 'antd/dist/antd.css';
 import Script from "next/script";
 import {useRouter} from "next/router";
 import Head from 'next/head';
-
+import "flexlayout-react/style/light.css";
 function App({Component, pageProps = {title: ''}, ...rest}: any) {
 
     const {store, props} = wrapper.useWrappedStore(pageProps);
@@ -34,6 +34,7 @@ function App({Component, pageProps = {title: ''}, ...rest}: any) {
             <meta property="og:url" content="https://manku.progist.co.kr/homepage"/>
         </Head>
         <Provider store={store}>
+
             <Component {...pageProps} />
         </Provider>
     </>

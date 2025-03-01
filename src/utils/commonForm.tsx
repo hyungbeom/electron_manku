@@ -3,13 +3,14 @@ import React from "react";
 import Button from "antd/lib/button";
 import {
     CopyOutlined,
-    DownCircleFilled, FileExcelOutlined,
+    DownCircleFilled,
+    FileExcelOutlined,
     InfoCircleOutlined,
-    RetweetOutlined,
     SaveOutlined,
     UpCircleFilled
 } from "@ant-design/icons";
 import Input from "antd/lib/input/Input";
+import Password from "antd/lib/input/Password";
 import DatePicker from "antd/lib/date-picker";
 import moment from "moment";
 import InputNumber from "antd/lib/input-number";
@@ -20,13 +21,17 @@ import Select from "antd/lib/select";
 import Tooltip from "antd/lib/tooltip";
 import {
     estimateDetailUnit,
-    estimateRequestDetailUnit, estimateWriteList, orderDetailUnit, orderWriteList,
+    estimateRequestDetailUnit,
+    estimateWriteList,
+    orderDetailUnit,
+    orderWriteList,
     projectDetailUnit,
     projectWriteList,
-    reqWriteList, storeDetailUnit, storeWriteList
+    reqWriteList,
+    storeDetailUnit,
+    storeWriteList
 } from "@/utils/initialList";
 import {ExcelUpload} from "@/component/common/ExcelUpload";
-import Upload from "antd/lib/upload";
 import {tableCodeDomesticAgencyWriteColumns} from "@/utils/columnList";
 
 const {RangePicker} = DatePicker
@@ -113,12 +118,12 @@ export const inputForm = ({
     }, data
                               , validate = true,
                               size = 'small',
-    fontSize =12
+                              fontSize = 12
                           }: any) => {
 
     let bowl = data;
     return <div style={{fontSize: fontSize, paddingBottom: 10}}>
-        <div style={{paddingBottom : fontSize / 2}}>{title}</div>
+        <div style={{paddingBottom: fontSize / 2}}>{title}</div>
         {/*@ts-ignored*/}
         <Input placeHolder={placeHolder}
                id={id}
@@ -131,6 +136,41 @@ export const inputForm = ({
         />
     </div>
 }
+
+export const inputPasswordForm = ({
+                                      title,
+                                      id,
+                                      disabled = false,
+                                      placeHolder = '',
+                                      suffix = null,
+                                      onChange = function () {
+                                      },
+                                      handleKeyPress = function () {
+                                      },
+                                      data
+                                      ,
+                                      validate = true,
+                                      size = 'small',
+                                      fontSize = 12
+                                  }: any) => {
+
+    let bowl = data;
+    return <div style={{fontSize: fontSize, paddingBottom: 10}}>
+        <div style={{paddingBottom: fontSize / 2}}>{title}</div>
+        {/*@ts-ignored*/}
+        <Password placeHolder={placeHolder}
+
+                  id={id}
+                  value={bowl[id]} disabled={disabled}
+                  onChange={onChange}
+                  size={size}
+                  onKeyDown={handleKeyPress}
+                  suffix={suffix}
+                  style={{borderColor: validate ? '' : 'red', fontSize: 12}}
+        />
+    </div>
+}
+
 
 export const rangePickerForm = ({
                                     title, id, disabled = false, onChange = function () {
@@ -151,7 +191,7 @@ export const rangePickerForm = ({
 export const datePickerForm = ({title, id, disabled = false, onChange, data}) => {
     let bowl = data;
     return <div style={{fontSize: 12, paddingBottom: 10}}>
-        <div style={{paddingBottom : 5.5}}>{title}</div>
+        <div style={{paddingBottom: 5.5}}>{title}</div>
         {/*@ts-ignore*/}
         <DatePicker value={moment(bowl[id]).isValid() ? moment(bowl[id]) : ''} style={{width: '100%', fontSize: 11}}
                     className="custom-datepicker"
@@ -187,7 +227,7 @@ export const inputNumberForm = ({
 
 
     return <div style={{fontSize: 12, paddingBottom: 10}}>
-        <div style={{paddingBottom : 4}}>{title}</div>
+        <div style={{paddingBottom: 4}}>{title}</div>
         <InputNumber id={id} value={bowl[id]} disabled={disabled}
                      style={{width: '100%'}}
                      formatter={formatter}
@@ -221,7 +261,7 @@ export const radioForm = ({title, id, disabled = false, data, onChange, list}) =
     </div>
 }
 
-export const selectBoxForm = ({title, id, disabled = false, data, onChange, list, size = 'small',  fontSize =12}) => {
+export const selectBoxForm = ({title, id, disabled = false, data, onChange, list, size = 'small', fontSize = 12}) => {
 
     return <div style={{}}>
         <div style={{fontSize: 12, paddingBottom: 6}}>{title}</div>
@@ -229,7 +269,7 @@ export const selectBoxForm = ({title, id, disabled = false, data, onChange, list
         <Select className="custom-select" id={id} size={size}
                 value={!isNaN(parseInt(data[id])) ? parseInt(data[id]) : data[id]}
                 onChange={(src, e) => onChange({target: {id: id, value: src, e: e}})}
-                style={{width: '100%', fontSize: 11, paddingBottom : 7}}>
+                style={{width: '100%', fontSize: 11, paddingBottom: 7}}>
             {list.map(v => {
                 return <Option style={{fontSize: 11}} value={v.value}>{v.label}</Option>
             })}
@@ -239,7 +279,7 @@ export const selectBoxForm = ({title, id, disabled = false, data, onChange, list
 
 export const textAreaForm = ({title, id, rows = 5, disabled = false, onChange, data, placeHolder = ''}) => {
     return <div style={{fontSize: 12, paddingBottom: 10}}>
-        <div style={{paddingBottom : 5}}>{title}</div>
+        <div style={{paddingBottom: 5}}>{title}</div>
         <TextArea style={{resize: 'none', fontSize: 12}} rows={rows} id={id} value={data[id]} disabled={disabled}
                   className="custom-textarea"
                   onChange={onChange}

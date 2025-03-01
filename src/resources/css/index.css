@@ -246,3 +246,17 @@ body {
     -webkit-appearance: none;
     margin: 0;
 }
+
+.placeholder {
+    font-family: Arial;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    box-sizing: border-box;
+}
+
+.flexlayout__layout {
+    position: relative !important;
+}

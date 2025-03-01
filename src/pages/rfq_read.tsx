@@ -1,9 +1,9 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
 import {CopyOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
 import {rfqReadColumns} from "@/utils/columnList";
-import {subRfqReadInitial} from "@/utils/initialList";
+import {subRfqReadInitial, subRfqReadMailInitial} from "@/utils/initialList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
@@ -16,10 +16,11 @@ import {commonManage, gridManage} from "@/utils/commonManage";
 import {useRouter} from "next/router";
 import Spin from "antd/lib/spin";
 import ReceiveComponent from "@/component/ReceiveComponent";
+import {getData} from "@/manage/function/api";
 
 
 export default function rfqRead({dataInfo}) {
-
+    let count = 1;
     const router = useRouter();
     const gridRef = useRef(null);
 
@@ -33,7 +34,53 @@ export default function rfqRead({dataInfo}) {
 
         gridRef.current = params.api;
         params.api.applyTransaction({add: dataInfo ? dataInfo : []});
+
+        // 그리드 로드 후 스크롤 이벤트 추가
+        setTimeout(() => {
+            const gridElement = document.querySelector(".ag-body-viewport");
+            if (gridElement) {
+                gridElement.addEventListener("scroll", handleScroll);
+            }
+        }, 100);
     };
+
+    const handleScroll = async () => {
+        const gridElement = document.querySelector(".ag-body-viewport");
+        if (!gridElement) return;
+
+        const {scrollTop, scrollHeight, clientHeight} = gridElement;
+        const atBottom = scrollHeight - scrollTop <= clientHeight + 1; // 소수점 오차 보정
+
+
+
+        if (atBottom) {
+            if (!!count) {
+                count += 1;
+
+                setLoading(true);
+                let copyInit = _.cloneDeep(subRfqReadMailInitial);
+
+                await getData.post('estimate/getEstimateRequestList', {...copyInit, page: count}).then(v => {
+                    if (!v.data.entity.pageInfo.isNextPage) {
+                        count = 0;
+                    }
+                    gridRef.current.applyTransaction({add: v.data.entity.estimateRequestList ? v.data.entity.estimateRequestList : []});
+                    setLoading(false)
+                })
+                setLoading(false)
+            }
+        }
+    };
+
+    useEffect(() => {
+        return () => {
+            // 컴포넌트 언마운트 시 스크롤 이벤트 제거
+            const gridElement = document.querySelector(".ag-body-viewport");
+            if (gridElement) {
+                gridElement.removeEventListener("scroll", handleScroll);
+            }
+        };
+    }, []);
 
     function handleKeyPress(e) {
         if (e.key === 'Enter') {
@@ -187,7 +234,9 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
 
         const result = await searchRfq({data: subRfqReadInitial});
 
+
         console.log("API 호출 시간:", Date.now() - start);
+
         return {
             props: {dataInfo: result ? result : null}
         }

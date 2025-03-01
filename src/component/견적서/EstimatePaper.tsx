@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {commonManage, gridManage} from "@/utils/commonManage";
 import {amountFormat} from "@/utils/columnList";
 import Input from "antd/lib/input";
@@ -27,7 +27,7 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
         const totalList = gridManage.getAllData(gridRef)
         const result = commonManage.splitDataWithSequenceNumber(totalList, 8, 17);
         setSplitData(result)
-    }, [data])
+    }, [data, gridRef.current])
 
 
     useEffect(() => {
@@ -68,11 +68,11 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
 
 
             if (!isNaN(rawValue) && rawValue !== "") {
-                bowl[id] =new Intl.NumberFormat().format(rawValue); // 쉼표 적용
+                bowl[id] = new Intl.NumberFormat().format(rawValue); // 쉼표 적용
             } else {
                 bowl[id] = ''
             }
-            setInfo(v=> {
+            setInfo(v => {
                 return {...v, ...bowl}
             })
         };
@@ -84,7 +84,7 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
 
     const TotalCalc = () => {
 
-        useEffect(()=>{
+        useEffect(() => {
             console.log('!!!')
         })
 
@@ -110,7 +110,7 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                 borderTop: '1px solid lightGray', border: '1px solid lightGray',
                 borderRight: 'none'
             }}>
-                <div id={'total_quantity'} style={{textAlign : 'right', paddingRight : 10, fontSize : 13.5}}></div>
+                <div id={'total_quantity'} style={{textAlign: 'right', paddingRight: 10, fontSize: 13.5}}></div>
             </th>
             <th style={{
                 backgroundColor: '#ebf6f7',
@@ -119,7 +119,7 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                 border: '1px solid lightGray',
                 borderRight: 'none'
             }}>
-                <div id={'total_unit'} style={{textAlign : 'left', fontSize : 13.5, paddingLeft : 12}}></div>
+                <div id={'total_unit'} style={{textAlign: 'left', fontSize: 13.5, paddingLeft: 12}}></div>
             </th>
             <th style={{
                 borderTop: '1px solid lightGray', border: '1px solid lightGray',
@@ -128,7 +128,7 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
             }}>
                 <div style={{display: 'flex', textAlign: 'right', direction: 'rtl', paddingRight: 13, fontSize: 13.5}}>
                     <div style={{textAlign: 'right'}}>₩</div>
-                    <div style={{paddingRight: 10}}  id={'total_unit_price'}></div>
+                    <div style={{paddingRight: 10}} id={'total_unit_price'}></div>
                 </div>
             </th>
             <th style={{
@@ -136,9 +136,9 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                 backgroundColor: '#ebf6f7',
                 borderRight: 'none'
             }}>
-                <div style={{display: 'flex', textAlign: 'right', direction: 'rtl', paddingRight : 13, fontSize : 13.5}}>
+                <div style={{display: 'flex', textAlign: 'right', direction: 'rtl', paddingRight: 13, fontSize: 13.5}}>
                     <div style={{textAlign: 'right'}}>₩</div>
-                    <div style={{paddingRight : 10}} id={'total_amount'}></div>
+                    <div style={{paddingRight: 10}} id={'total_amount'}></div>
                 </div>
             </th>
         </tr>
@@ -146,19 +146,19 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
     }
 
     const RowContent = ({v, i}) => {
-        const [info, setInfo] = useState({quantity : v.quantity, unit : v.unit, unitPrice : v.unitPrice})
+        const [info, setInfo] = useState({quantity: v.quantity, unit: v.unit, unitPrice: v.unitPrice})
 
         useEffect(() => {
             const totalQuantity = Array.from(document.getElementsByName("quantity"))
-                .reduce((sum, input:any) => sum + (parseFloat(input.value) || 0), 0);
+                .reduce((sum, input: any) => sum + (parseFloat(input.value) || 0), 0);
 
             const totalPrice = Array.from(document.getElementsByName("unitPrice"))
-                .reduce((sum, input:any) => sum + (Number(input.value.replace(/,/g, "")) || 0), 0);
+                .reduce((sum, input: any) => sum + (Number(input.value.replace(/,/g, "")) || 0), 0);
 
             console.log(totalPrice);
 
 
-           const resultNum = Number(info?.unitPrice ? info?.unitPrice?.replace(/,/g, "") : '')
+            const resultNum = Number(info?.unitPrice ? info?.unitPrice?.replace(/,/g, "") : '')
             document.getElementById("total_amount").textContent = amountFormat(resultNum * info.quantity);
             document.getElementById("total_unit_price").textContent = amountFormat(totalPrice);
             document.getElementById("total_unit").textContent = info.unit;
@@ -189,7 +189,9 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
             }}>
                 <Input value={info['quantity']}
                        name={'quantity'}
-                       onChange={e=>setInfo(v=>{return {...v, quantity: e.target.value}})}
+                       onChange={e => setInfo(v => {
+                           return {...v, quantity: e.target.value}
+                       })}
                        style={{
                            border: 'none',
                            backgroundColor: '#ebf6f7',
@@ -205,8 +207,8 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                 <Select value={info?.unit}
                         style={{border: 'none'}}
                         bordered={false} suffixIcon={null}
-                        onChange={v=> {
-                            setInfo(src=> {
+                        onChange={v => {
+                            setInfo(src => {
                                 return {...src, unit: v}
                             })
                         }}
@@ -233,8 +235,9 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                 borderLeft: '1px solid lightGray',
                 borderBottom: '1px solid lightGray'
             }}>
-                <RowTotal defaultValue={info.quantity * Number(info?.unitPrice ? info?.unitPrice?.replace(/,/g, "") : '')}
-                          id={'amount'}/>
+                <RowTotal
+                    defaultValue={info.quantity * Number(info?.unitPrice ? info?.unitPrice?.replace(/,/g, "") : '')}
+                    id={'amount'}/>
             </th>
         </tr>
         </thead>

@@ -174,19 +174,19 @@ export default function LayoutComponent({children, userInfo = null}) {
 
     return <>
 
-        <div style={{
-            backgroundColor: '#f5f5f5',
-            width: '100%',
-            borderBottom: '1px solid lightGray',
-            display: 'flex'
-        }}>
-            <Menu onClick={onClick}
-                  selectedKeys={null} mode="horizontal" items={items}
-                  style={{width: '100%', fontSize: 10}} className="custom-menu"/>
-            <UserMenu/>
-        </div>
+        {/*<div style={{*/}
+        {/*    backgroundColor: '#f5f5f5',*/}
+        {/*    width: '100%',*/}
+        {/*    borderBottom: '1px solid lightGray',*/}
+        {/*    display: 'flex'*/}
+        {/*}}>*/}
+        {/*    <Menu onClick={onClick}*/}
+        {/*          selectedKeys={null} mode="horizontal" items={items}*/}
+        {/*          style={{width: '100%', fontSize: 10}} className="custom-menu"/>*/}
+        {/*    <UserMenu/>*/}
+        {/*</div>*/}
 
-        <Content style={{padding: 5}}>
+        <Content>
             {children}
         </Content>
 

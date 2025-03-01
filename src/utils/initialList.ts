@@ -30,6 +30,7 @@ export const estimateDetailUnit = {
     "amount": 0,               // 금액
     "serialNumber": 1           // 견적의뢰 내역 순서 (1부터 시작)
 }
+
 export const estimateWriteInitial = {
     "writtenDate": moment().format('YYYY-MM-DD'),    // 작성일
     "documentNumberFull": "", // INQUIRY No.
@@ -56,7 +57,7 @@ export const estimateWriteInitial = {
     "remarks": "",          // 비고란
     "currencyUnit": "",          // 비고란
     "estimateDetailList": [],
-    count : 0
+    'count' : 0
 }
 
 export const tableEstimateWriteInitial = {
@@ -211,7 +212,7 @@ export const subRfqReadInitial = {
     "searchMobileNumber": "",           // 담당자 연락처
     "searchBiddingNumber": "",          // 입찰번호(미완성)
     "page": 1,
-    "limit": 50
+    "limit": 100
 }
 
 export const subRfqReadMailInitial = {
@@ -238,7 +239,7 @@ export const subRfqReadMailInitial = {
     "searchAgencyCode": "",          // 대리점코드 검색
 
     "page": 1,
-    "limit": -1
+    "limit": 100
 
 }
 
