@@ -287,17 +287,17 @@ export default function Main() {
             title: node.children ? ( // 자식이 있는 경우만 아이콘 추가
                 <>
                     {expandedKeys.includes(node.key) ? (
-                        <span style={{marginRight: 8}}>📂</span>
+                        <span style={{marginRight: 2,fontSize : 11}}>📂</span>
 
                     ) : (
-                        <span style={{marginRight: 8}}>📁</span>
+                        <span style={{marginRight: 2, fontSize : 11}}>📁</span>
                     )}
-                    {node.title}
+                    <span style={{fontSize : 12}}>{node.title}</span>
                 </>
             ) : (
                 <>
-                    <span style={{marginRight: 8}}>📄</span>
-                    <span>{node.title}</span>
+                    <span style={{marginRight: 2, fontSize : 10}}>📄</span>
+                    <span style={{fontSize: 12}}>{node.title}</span>
                 </>
             ),
             children: node.children ? transformTreeData(node.children) : undefined,
@@ -306,9 +306,9 @@ export default function Main() {
 
     return (
         <LayoutComponent>
-            <div style={{display: "grid", gridTemplateColumns: "220px auto"}}>
-                <div style={{borderRight: "1px solid lightGray", padding: 3, paddingTop: 10}}>
-                    <Tree style={{minHeight: 'calc(100vh - 70px)', height: '100%'}}
+            <div style={{display: "grid", gridTemplateColumns: "205px auto"}}>
+                <div style={{borderRight: "1px solid lightGray",  paddingTop: 15,  height : 'calc(100vh - 55px)%', overflowY: "auto"}}>
+                    <Tree
                           defaultExpandedKeys={getRootKeys(treeData)}
                           showLine
                           switcherIcon={<DownOutlined/>}

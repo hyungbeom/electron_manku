@@ -859,6 +859,8 @@ export const searchOrderInitial = {
     searchRecipientPhone: "",
     searchIsConfirm: "",
     searchTrackingNumber: "",
+    page : 1 ,
+    limit : -1
 }
 
 
@@ -923,6 +925,8 @@ export const storeRealInitial = {
     "searchEndArrivalDate": moment().format('YYYY-MM-DD'),                 // 입고일자 종료
     "searchOrderDocumentNumberFull": "",        // 발주 Inquirty No
     "searchCustomerName": "",                   // 고객사명
+    page : 1,
+    limit : -1
 }
 
 

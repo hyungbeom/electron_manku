@@ -17,21 +17,31 @@ import Button from "antd/lib/button";
 import {CopyOutlined, EditOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
 import {useRouter} from "next/router";
 import {inputForm, MainCard, radioForm} from "@/utils/commonForm";
+import {gridManage} from "@/utils/commonManage";
 
 export default function OverseasCustomerRead({dataInfo=[], getPropertyId}) {
     const gridRef = useRef(null);
     const router = useRouter();
 
-    console.log(dataInfo,'dataInfo:')
 
     const [info, setInfo] = useState(codeDomesticPurchaseInitial);
 
     const [mini, setMini] = useState(true);
-    // console.log(customerList,'saveInfo:')
 
-    const onGridReady = (params) => {
+
+    const onGridReady = async (params) => {
         gridRef.current = params.api;
-        params.api.applyTransaction({add: dataInfo ? dataInfo : []});
+        await getData.post('customer/getOverseasCustomerList', {
+            "searchType": "1",      // 1: 코드, 2: 상호명, 3: MAKER
+            "searchText": "",
+            "page": 1,
+            "limit": -1
+        }).then(v=>{
+            if(v.data.code === 1){
+                params.api.applyTransaction({add:  v?.data?.entity?.overseasCustomerList});
+            }
+        })
+
     };
 
     function onChange(e) {
@@ -46,12 +56,15 @@ export default function OverseasCustomerRead({dataInfo=[], getPropertyId}) {
 
 
     async function searchInfo() {
-        const result = await getData.post('customer/getOverseasCustomerList', {
-            "searchType": "1",      // 1: 코드, 2: 상호명, 3: MAKER
-            "searchText": "",
+        await getData.post('customer/getOverseasCustomerList', {
+            ...info,
             "page": 1,
             "limit": -1
-        });
+        }).then(v=>{
+            if(v.data.code === 1){
+                gridManage.resetData(gridRef, v?.data?.entity?.overseasCustomerList)
+            }
+        })
     }
 
     function clearAll() {

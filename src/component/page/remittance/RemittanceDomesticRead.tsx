@@ -35,9 +35,13 @@ export default function RemittanceDomesticRead({dataInfo=[], getPropertyId}) {
      * @description ag-grid 테이블 초기 rowData 요소 '[]' 초기화 설정
      * @param params ag-grid 제공 event 파라미터
      */
-    const onGridReady = (params) => {
+    const onGridReady = async (params) => {
         gridRef.current = params.api;
-        params.api.applyTransaction({add: dataInfo});
+         await getData.post('remittance/getRemittanceList', remittanceDomesticSearchInitial).then(v=>{
+            if(v.data.code === 1){
+                params.api.applyTransaction({add: v?.data?.entity?.remittanceList});
+            }
+         })
     };
 
     function onChange(e) {

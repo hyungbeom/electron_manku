@@ -16,7 +16,7 @@
     "productName": "MANKU_ERP",
     "win": {
       "target": "nsis",
-      "icon": "public/installer-icon.ico",
+      "icon": "public/main.ico",
       "artifactName": "${productName}-${version}-setup.exe"
     },
     "mac": {
@@ -32,8 +32,8 @@
       "oneClick": false,
       "allowElevation": true,
       "perMachine": false,
-      "installerIcon": "public/installer-icon.ico",
-      "uninstallerIcon": "public/installer-icon.ico",
+      "installerIcon": "public/installer.ico",
+      "uninstallerIcon": "public/uninstaller.ico",
       "uninstallDisplayName": "MANKU_ERP Uninstaller",
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true

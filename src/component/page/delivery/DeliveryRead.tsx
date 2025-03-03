@@ -34,7 +34,9 @@ export default function DeliveryRead({dataInfo=[], getPropertyId}) {
      */
     const onGridReady = (params) => {
         gridRef.current = params.api;
-        params.api.applyTransaction({add: dataInfo});
+        getDeliveryList({data: searchOrderInitial}).then(v=>{
+            params.api.applyTransaction({add: v});
+        })
     };
 
 
@@ -164,27 +166,3 @@ export default function DeliveryRead({dataInfo=[], getPropertyId}) {
         </>
     </Spin>
 }
-
-
-export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
-
-
-    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
-
-    if (codeInfo < 0) {
-        return {
-            redirect: {
-                destination: '/',
-                permanent: false,
-            },
-        };
-    } else {
-        store.dispatch(setUserInfo(userInfo));
-
-        let result = await getDeliveryList({data: searchOrderInitial});
-
-        return {
-            props: {dataInfo: result ? result : null}
-        }
-    }
-})

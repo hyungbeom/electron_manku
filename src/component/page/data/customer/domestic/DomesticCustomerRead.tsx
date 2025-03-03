@@ -29,9 +29,18 @@ export default function DomesticCustomerRead({dataInfo = [], getPropertyId}) {
     const [mini, setMini] = useState(true);
     // console.log(customerList,'saveInfo:')
 
-    const onGridReady = (params) => {
+    const onGridReady = async (params) => {
         gridRef.current = params.api;
-        params.api.applyTransaction({add: dataInfo ? dataInfo : []});
+        await getData.post('customer/getCustomerList', {
+            "searchType": "1",      // 1: 코드, 2: 상호명, 3: MAKER
+            "searchText": "",
+            "page": 1,
+            "limit": -1
+        }).then(v=>{
+            if(v.data.code === 1){
+                params.api.applyTransaction({add: v?.data?.entity?.customerList});
+            }
+        })
     };
 
     function onChange(e) {
