@@ -18,7 +18,7 @@ import {useRouter} from "next/router";
 import _ from "lodash";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 
-export default function remittance_domestic({dataInfo}) {
+export default function RemittanceDomesticUpdate({dataInfo, updateKey, getCopyPage}) {
     const userInfo = useAppSelector((state) => state.user);
 
     const infoInit = dataInfo?.remittanceDetail

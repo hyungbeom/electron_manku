@@ -14,7 +14,7 @@ import {wrapper} from "@/store/store";
 import message from "antd/lib/message";
 
 
-export default function delivery_update({dataInfo}) {
+export default function DeliveryUpdate({dataInfo, updateKey, getCopyPage}) {
 
     const [tabNumb, setTabNumb] = useState(dataInfo['deliveryType'])
     const [cjInfo, setCjInfo] = useState({...dataInfo, deliveryType: 'CJ'})

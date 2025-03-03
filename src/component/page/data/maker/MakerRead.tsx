@@ -12,7 +12,7 @@ import {inputForm, MainCard, radioForm} from "@/utils/commonForm";
 import Button from "antd/lib/button";
 import {CopyOutlined} from "@ant-design/icons";
 
-export default function makerRead({dataInfo}) {
+export default function MakerRead({dataInfo, getPropertyId}) {
     const gridRef = useRef(null);
 
     const [info, setInfo] = useState(codeDomesticPurchaseInitial);
@@ -58,10 +58,10 @@ export default function makerRead({dataInfo}) {
     function deleteList(){
 
     }
-    return <LayoutComponent>
+    return <>
         <div style={{
             display: 'grid',
-            gridTemplateRows: `${mini ? '120px' : '65px'} calc(100vh - ${mini ? 220 : 165}px)`,
+            gridTemplateRows: `${mini ? '120px' : '65px'} calc(100vh - ${mini ? 250 : 195}px)`,
             columnGap: 5
         }}>
             <MainCard title={'메이커 조회'}
@@ -106,7 +106,7 @@ export default function makerRead({dataInfo}) {
                 funcButtons={['print']}
             />
         </div>
-    </LayoutComponent>
+    </>
 }
 
 // @ts-ignore

@@ -109,7 +109,7 @@ export const treeData = [
                     {title: "메이커 조회", key: 'maker_read'}
                 ]
             },
-            {title: "HS CODE", key: "hcode"},
+            {title: "HS CODE 조회", key: "hcode_read"},
         ],
     },
 ];
@@ -154,7 +154,7 @@ export const introMenulist = [
         icon: <CarFilled/>,
         color: 'teal',
         title: '배송',
-        children: [{name: '배송 등록', key: 'rfq_write'}, {name: '배송 조회', key: 'rfq_read'}]
+        children: [{name: '배송 등록', key: 'delivery_write'}, {name: '배송 조회', key: 'delivery_read'}]
     },
     {
         icon: <PoundCircleFilled/>,
@@ -165,18 +165,18 @@ export const introMenulist = [
     {
         icon: <DatabaseFilled/>, color: 'dimgray',
         title: '데이터관리',
-        children: [{name: '국내매입처 조회', path: 'domestic_agency_read'}, {
+        children: [{name: '국내매입처 조회', key: 'domestic_agency_read'}, {
             name: '해외매입처 조회',
-            path: 'overseas_agency_read'
+            key: 'overseas_agency_read'
         }, {
             name: '국내거래처 조회',
-            path: 'domestic_customer_read'
+            key: 'domestic_customer_read'
         }, {
             name: '해외거래처 조회',
-            path: 'overseas_customer_read'
-        }, {name: '메이커 조회', path: 'maker_read'}, {
+            key: 'overseas_customer_read'
+        }, {name: '메이커 조회', key: 'maker_read'}, {
             name: 'HS CODE',
-            path: 'hcode_read'
+            key: 'hcode_read'
         }]
     },
 ]

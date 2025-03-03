@@ -1,15 +1,14 @@
 import React, {useRef, useState} from "react";
-import LayoutComponent from "@/component/LayoutComponent";
 import {searchOrderInitial} from "@/utils/initialList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import Button from "antd/lib/button";
-import {CopyOutlined, FileExcelOutlined} from "@ant-design/icons";
+import {CopyOutlined} from "@ant-design/icons";
 import {deleteDelivery, getDeliveryList} from "@/utils/api/mainApi";
 import _ from "lodash";
 import {commonManage, gridManage} from "@/utils/commonManage";
-import {BoxCard, inputForm, MainCard, rangePickerForm, selectBoxForm, TopBoxCard} from "@/utils/commonForm";
+import {BoxCard, inputForm, MainCard, rangePickerForm, selectBoxForm} from "@/utils/commonForm";
 import TableGrid from "@/component/tableGrid";
 import {delilveryReadColumn} from "@/utils/columnList";
 import {useRouter} from "next/router";
@@ -17,7 +16,7 @@ import message from "antd/lib/message";
 import Spin from "antd/lib/spin";
 import ReceiveComponent from "@/component/ReceiveComponent";
 
-export default function delivery_read({dataInfo}) {
+export default function DeliveryRead({dataInfo, getPropertyId}) {
     const router = useRouter();
 
     const gridRef = useRef(null);
@@ -87,10 +86,10 @@ export default function delivery_read({dataInfo}) {
 
     return <Spin spinning={loading} tip={'배송정보 조회중...'}>
         <ReceiveComponent searchInfo={searchInfo}/>
-        <LayoutComponent>
+        <>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '245px' : '65px'} calc(100vh - ${mini ? 345 : 165}px)`,
+                gridTemplateRows: `${mini ? '240px' : '65px'} calc(100vh - ${mini ? 370 : 195}px)`,
                 columnGap: 5
             }}>
                 <MainCard title={'배송조회'}
@@ -101,8 +100,8 @@ export default function delivery_read({dataInfo}) {
                     {mini ? <div>
 
 
-                            <div style={{display: 'grid',    gridTemplateColumns:  '1fr 1fr 1.5fr', gap : 20}}>
-                                <BoxCard title={'기본 정보'} >
+                            <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1.5fr', gap: 20}}>
+                                <BoxCard title={'기본 정보'}>
                                     {rangePickerForm({title: '출고일자', id: 'searchDate', onChange: onChange, data: info})}
                                     {inputForm({
                                         title: 'Inquiry No.',
@@ -154,6 +153,7 @@ export default function delivery_read({dataInfo}) {
                                                onClick={deleteList}>
                     <CopyOutlined/>삭제
                 </Button>}
+                           getPropertyId={getPropertyId}
                            gridRef={gridRef}
                            columns={delilveryReadColumn}
                            onGridReady={onGridReady}
@@ -161,7 +161,7 @@ export default function delivery_read({dataInfo}) {
                            funcButtons={['print']}
                 />
             </div>
-        </LayoutComponent>
+        </>
     </Spin>
 }
 

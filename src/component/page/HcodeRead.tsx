@@ -18,7 +18,7 @@ import {CopyOutlined} from "@ant-design/icons";
 import {deleteHsCodeList} from "@/utils/api/mainApi";
 
 
-export default function codeRead({dataInfo}) {
+export default function HcodeRead({dataInfo, updateKey, getCopyPage}) {
     const gridRef = useRef(null);
     const [mini, setMini] = useState(true);
 
@@ -98,10 +98,10 @@ export default function codeRead({dataInfo}) {
 
 
     return <Spin spinning={loading} tip={'HS-CODE 조회중...'}>
-        <LayoutComponent>
+        <>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '140px' : '65px'} calc(100vh - ${mini ? 240 : 160}px)`,
+                gridTemplateRows: `${mini ? '150px' : '65px'} calc(100vh - ${mini ? 280 : 195}px)`,
                 columnGap: 5
             }}>
                 <MainCard title={'HS-CODE 조회'} list={[
@@ -145,7 +145,7 @@ export default function codeRead({dataInfo}) {
                            onGridReady={onGridReady}
                            funcButtons={['hsDelete', 'print']}/>
             </div>
-        </LayoutComponent>
+        </>
     </Spin>
 }
 

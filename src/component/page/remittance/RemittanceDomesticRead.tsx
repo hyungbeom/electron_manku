@@ -20,7 +20,7 @@ import Spin from "antd/lib/spin";
 import ReceiveComponent from "@/component/ReceiveComponent";
 
 const {RangePicker} = DatePicker
-export default function remittance_domestic({dataInfo}) {
+export default function RemittanceDomesticRead({dataInfo, getPropertyId}) {
 
     const gridRef = useRef(null);
     const copyInit = _.cloneDeep(remittanceDomesticSearchInitial)
@@ -82,11 +82,10 @@ export default function remittance_domestic({dataInfo}) {
 
     return <Spin spinning={loading} tip={'국내송금 조회중...'}>
         <ReceiveComponent searchInfo={searchInfo}/>
-        <LayoutComponent>
+        <>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? 'auto' : '65px'} 1fr`,
-                height: '100vh',
+                gridTemplateRows: `${mini ? '295px' : '65px'} calc(100vh - ${mini ? 425 : 195}px)`,
                 columnGap: 5
             }}>
                 <MainCard title={'국내송금 조회'} list={[
@@ -97,8 +96,7 @@ export default function remittance_domestic({dataInfo}) {
 
                     {mini ? <div>
 
-
-                        <div style={{display: 'grid',    gridTemplateColumns:  '1fr 1fr 1.5fr', gap : 20}}>
+                        <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1.5fr', gap: 20}}>
                             <BoxCard title={'기본 정보'}>
 
                                 {inputForm({
@@ -167,16 +165,18 @@ export default function remittance_domestic({dataInfo}) {
                     </div> : <></>}
                 </MainCard>
                 {/*@ts-ignored*/}
-                <TableGrid deleteComp={<Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}} onClick={deleteList}>
+                <TableGrid deleteComp={<Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
+                                               onClick={deleteList}>
                     <CopyOutlined/>삭제
                 </Button>}
-                    gridRef={gridRef}
-                    columns={remittanceReadColumn}
-                    onGridReady={onGridReady}
+                           getPropertyId={getPropertyId}
+                           gridRef={gridRef}
+                           columns={remittanceReadColumn}
+                           onGridReady={onGridReady}
                            funcButtons={['print']}
                 />
             </div>
-        </LayoutComponent>
+        </>
     </Spin>
 }
 

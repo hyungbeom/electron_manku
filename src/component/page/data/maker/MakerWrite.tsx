@@ -14,7 +14,7 @@ import Input from "antd/lib/input/Input";
 import TextArea from "antd/lib/input/TextArea";
 import {commonManage} from "@/utils/commonManage";
 
-export default function makerWrite({dataInfo}) {
+export default function MakerWrite({copyPageInfo}) {
 
     const [info, setInfo] = useState(makerWriteInitial);
 
@@ -56,8 +56,8 @@ export default function makerWrite({dataInfo}) {
 
     }
 
-    return <LayoutComponent>
-            <div style={{display: 'grid', gridTemplateRows: 'auto 1fr', height: '100vh', columnGap: 5}}>
+    return <>
+            <div style={{display: 'grid', gridTemplateRows: 'auto 1fr', columnGap: 5}}>
                 <Card title={<span style={{fontSize: 12,}}>Maker 등록</span>} headStyle={{marginTop: -10, height: 30}}
                       style={{border: '1px solid lightGray',}} bodyStyle={{padding: '10px 24px'}}>
 
@@ -142,7 +142,7 @@ export default function makerWrite({dataInfo}) {
                 </Card>
 
             </div>
-        </LayoutComponent>
+        </>
 }
 
 // @ts-ignore

@@ -34,7 +34,7 @@ import Input from "antd/lib/input";
 
 
 const listType = 'orderDetailList'
-export default function OrderWriter({dataInfo, managerList}) {
+export default function OrderWrite({dataInfo = [], managerList=[], copyPageInfo}) {
     const [phone, setPhone] = useState({country: 'us', number: ''});
     console.log(phone, 'phone:')
     const options = managerList?.map((item) => ({
@@ -78,8 +78,8 @@ export default function OrderWriter({dataInfo, managerList}) {
 
     const onGridReady = (params) => {
         gridRef.current = params.api;
-        const result = dataInfo?.orderDetailList;
-        params.api.applyTransaction({add: result ? result : []});
+        // const result = dataInfo?.orderDetailList;
+        // params.api.applyTransaction({add: result ? result : []});
     };
 
     async function handleKeyPress(e) {
@@ -160,11 +160,11 @@ export default function OrderWriter({dataInfo, managerList}) {
 
 
     return <Spin spinning={loading} tip={'발주서 등록중...'}>
-        <LayoutComponent>
+        <>
 
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '545px' : '65px'} calc(100vh - ${mini ? 650 : 170}px)`,
+                gridTemplateRows: `${mini ? '500px' : '65px'} calc(100vh - ${mini ? 630 : 195}px)`,
                 columnGap: 5
             }}>
                 <MainCard title={'발주서 작성'} list={[
@@ -296,7 +296,7 @@ export default function OrderWriter({dataInfo, managerList}) {
                 />
 
             </div>
-        </LayoutComponent>
+        </>
     </Spin>
 }
 

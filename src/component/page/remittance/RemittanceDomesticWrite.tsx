@@ -26,7 +26,7 @@ import SearchInfoModal from "@/component/SearchAgencyModal";
 import {FileSearchOutlined} from "@ant-design/icons";
 
 
-export default function remittance_domestic_write({dataInfo}) {
+export default function RemittanceDomesticWrite({dataInfo,copyPageInfo}) {
     const fileRef = useRef(null);
     const copyInit = _.cloneDeep(remittanceDomesticInitial)
 
@@ -74,7 +74,7 @@ export default function remittance_domestic_write({dataInfo}) {
     }
 
     return <>
-        <LayoutComponent>
+        <>
             <SearchInfoModal info={info} setInfo={setInfo}
                              open={isModalOpen}
                              setIsModalOpen={setIsModalOpen}/>
@@ -133,7 +133,7 @@ export default function remittance_domestic_write({dataInfo}) {
                     </BoxCard>
                 </div>
             </MainCard>
-        </LayoutComponent>
+        </>
     </>
 }
 

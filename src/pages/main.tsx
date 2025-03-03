@@ -17,8 +17,22 @@ import RqfUpdate from "@/component/page/rfq/RfqUpdate";
 import RfqMailSend from "@/component/page/rfq/RfqMailSend";
 import EstimateWrite from "@/component/page/estimate/EstimateWrite";
 import EstimateRead from "@/component/page/estimate/EstimateRead";
-import EstimateTotalWrite from "@/component/page/estimate/EstimateTotalWrite";
 import EstimateUpdate from "@/component/page/estimate/EstimateUpdate";
+import OrderWrite from "@/component/page/order/OrderWrite";
+import OrderUpdate from "@/component/page/order/OrderUpdate";
+import OrderRead from "@/component/page/order/OrderRead";
+import StoreRead from "@/component/page/store/StoreRead";
+import StoreWrite from "@/component/page/store/StoreWrite";
+import DeliveryWrite from "@/component/page/delivery/DeliveryWrite";
+import DeliveryRead from "@/component/page/delivery/DeliveryRead";
+import DeliveryUpdate from "@/component/page/delivery/DeliveryUpdate";
+import RemittanceDomesticWrite from "@/component/page/remittance/RemittanceDomesticWrite";
+import RemittanceDomesticRead from "@/component/page/remittance/RemittanceDomesticRead";
+import RemittanceDomesticUpdate from "@/component/page/remittance/RemittanceDomesticUpdate";
+import MakerWrite from "@/component/page/data/maker/MakerWrite";
+import MakerRead from "@/component/page/data/maker/MakerRead";
+import MakerUpdate from "@/component/page/data/maker/MakerUpdate";
+import HcodeRead from "@/component/page/HcodeRead";
 
 
 function findTitleByKey(data, key) {
@@ -84,7 +98,7 @@ export default function Main() {
         onSelect([key]);
     }
 
-    function getCopyPage(page, v){
+    function getCopyPage(page, v) {
         let copyObject = _.cloneDeep(copyPageInfo);
         copyObject[page] = v;
         setCopyPageInfo(copyObject);
@@ -102,6 +116,7 @@ export default function Main() {
         const title = findTitleByKey(treeData, selectedKey);
 
 
+        console.log(title,'title:')
         if (title) {
             setSelectMenu(title);
             updateSelectTab();
@@ -123,17 +138,45 @@ export default function Main() {
     };
     const tabComponents = {
         project_write: {name: "프로젝트 등록", component: <ProjectWrite copyPageInfo={copyPageInfo}/>},
-        project_read: {name: "프로젝트 조회", component: <ProjectRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>},
+        project_read: {
+            name: "프로젝트 조회",
+            component: <ProjectRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>
+        },
         project_update: {name: "프로젝트 수정", component: <ProjectUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
 
-        rfq_write: {name: "견적의뢰 등록", component: <RfqWrite copyPageInfo={copyPageInfo} />},
-        rfq_read: {name: "견적의뢰 조회", component: <RfqRead getPropertyId={getPropertyId} />},
+        rfq_write: {name: "견적의뢰 등록", component: <RfqWrite copyPageInfo={copyPageInfo}/>},
+        rfq_read: {name: "견적의뢰 조회", component: <RfqRead getPropertyId={getPropertyId}/>},
         rfq_update: {name: "견적의뢰 수정", component: <RqfUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
         rfq_mail_send: {name: "메일전송", component: <RfqMailSend getPropertyId={getPropertyId}/>},
 
         estimate_write: {name: "견적서 등록", component: <EstimateWrite copyPageInfo={copyPageInfo}/>},
-        estimate_read: {name: "견적서 조회", component: <EstimateRead getPropertyId={getPropertyId} />},
+        estimate_read: {name: "견적서 조회", component: <EstimateRead getPropertyId={getPropertyId}/>},
         estimate_update: {name: "견적서 수정", component: <EstimateUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
+
+        order_write: {name: "발주서 등록", component: <OrderWrite copyPageInfo={copyPageInfo}/>},
+        order_read: {name: "발주서 조회", component: <OrderRead getPropertyId={getPropertyId}/>},
+        order_update: {name: "발주서 수정", component: <OrderUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
+
+        store_write: {name: "입고 등록", component: <StoreWrite copyPageInfo={copyPageInfo}/>},
+        store_read: {name: "입고 조회", component: <StoreRead getPropertyId={getPropertyId}/>},
+        store_update: {name: "입고 수정", component: <OrderUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
+
+        delivery_write: {name: "배송 등록", component: <DeliveryWrite copyPageInfo={copyPageInfo}/>},
+        delivery_read: {name: "배송 조회", component: <DeliveryRead getPropertyId={getPropertyId}/>},
+        delivery_update: {name: "배송 수정", component: <DeliveryUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
+
+
+        remittance_write: {name: "송금 등록", component: <RemittanceDomesticWrite copyPageInfo={copyPageInfo}/>},
+        remittance_read: {name: "송금 조회", component: <RemittanceDomesticRead getPropertyId={getPropertyId}/>},
+        remittance_update: {name: "송금 수정", component: <RemittanceDomesticUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
+
+        maker_write: {name: "메이커 등록", component: <MakerWrite copyPageInfo={copyPageInfo}/>},
+        maker_read: {name: "메이커 조회", component: <MakerRead getPropertyId={getPropertyId}/>},
+        maker_update: {name: "메이커 수정", component: <MakerUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
+
+
+
+        hcode_read: {name: "HS CODE 조회", component: <HcodeRead updateKey={updateKey} getCopyPage={getCopyPage}/>},
 
     };
 
@@ -142,7 +185,6 @@ export default function Main() {
         const componentKey = node.getComponent();
         return tabComponents[componentKey]?.component;
     };
-
 
 
     function addTab(selectedKey) {
@@ -276,7 +318,7 @@ export default function Main() {
                         })}
                     </div>
                 </div>}
-                <Layout model={model} factory={factory} onModelChange={onLayoutChange} ref={layoutRef} />
+                <Layout model={model} factory={factory} onModelChange={onLayoutChange} ref={layoutRef}/>
 
             </div>
         </LayoutComponent>

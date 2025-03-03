@@ -28,7 +28,7 @@ import {useRouter} from "next/router";
 
 const listType = 'orderStatusDetailList'
 
-export default function storeWrite({dataInfo}) {
+export default function StoreWrite({dataInfo={orderStatusDetailList : []}, copyPageInfo}) {
     const router = useRouter();
 
     const gridRef = useRef(null);
@@ -214,10 +214,10 @@ export default function storeWrite({dataInfo}) {
 
     return <>
         {isModalOpen ? <OrderListModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} getRows={getSelectedRows}/> : <></>}
-        <LayoutComponent>
+        <>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '420px' : '65px'} calc(100vh - ${mini ? 475 : 120}px)`,
+                gridTemplateRows: `${mini ? '425px' : '65px'} calc(100vh - ${mini ? 555 : 195}px)`,
                 columnGap: 5
             }}>
 
@@ -335,7 +335,7 @@ export default function storeWrite({dataInfo}) {
                     onCellEditingStopped={onCellEditingStopped}
                 />
             </div>
-        </LayoutComponent>
+        </>
     </>
 }
 

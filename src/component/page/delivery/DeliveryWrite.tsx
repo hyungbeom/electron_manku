@@ -13,7 +13,7 @@ import message from "antd/lib/message";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {wrapper} from "@/store/store";
 
-export default function delivery_write() {
+export default function DeliveryWrite({copyPageInfo}) {
 
     const router = useRouter();
 
@@ -81,7 +81,7 @@ export default function delivery_write() {
 
 
     return <>
-        <LayoutComponent>
+        <>
 
             <MainCard title={'배송 등록'} list={[
                 {name: '저장', func: saveFunc, type: 'primary'},
@@ -90,7 +90,7 @@ export default function delivery_write() {
                 <Tabs size={'small'} activeKey={tabNumb} items={items} onChange={onChange}/>
             </MainCard>
 
-        </LayoutComponent>
+        </>
     </>
 }
 

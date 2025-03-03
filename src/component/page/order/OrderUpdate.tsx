@@ -21,7 +21,7 @@ import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import Select from "antd/lib/select";
 
 const listType = 'orderDetailList'
-export default function order_update({dataInfo, managerList}) {
+export default function OrderUpdate({dataInfo = {orderDetail : [], attachmentFileList : []}, managerList=[], updateKey, getCopyPage}) {
     const options = managerList?.map((item) => ({
         ...item,
         value: item.adminId,
@@ -165,10 +165,10 @@ export default function order_update({dataInfo, managerList}) {
     };
 
     return <>
-        <LayoutComponent>
+        <>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '470px' : '65px'} calc(100vh - ${mini ? 525 : 120}px)`,
+                gridTemplateRows: `${mini ? '505px' : '65px'} calc(100vh - ${mini ? 635 : 195}px)`,
                 columnGap: 5
             }}>
                 {/*@ts-ignore*/}
@@ -314,7 +314,7 @@ export default function order_update({dataInfo, managerList}) {
                 />
 
             </div>
-        </LayoutComponent>
+        </>
     </>
 }
 

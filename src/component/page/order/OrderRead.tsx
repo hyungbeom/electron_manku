@@ -1,141 +1,127 @@
 import React, {useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
-import {storeRealInitial} from "@/utils/initialList";
+import Card from "antd/lib/card/Card";
+import {CopyOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
+import Button from "antd/lib/button";
+import {tableOrderReadColumns} from "@/utils/columnList";
+import {estimateReadInitial, orderReadInitial} from "@/utils/initialList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
-import Button from "antd/lib/button";
-import {CopyOutlined} from "@ant-design/icons";
-import {deleteOrderStatusDetails, getOrderStatusList} from "@/utils/api/mainApi";
-import _ from "lodash";
-import {commonManage, gridManage} from "@/utils/commonManage";
-import {BoxCard, inputForm, MainCard, rangePickerForm, TopBoxCard} from "@/utils/commonForm";
+import {getData} from "@/manage/function/api";
 import TableGrid from "@/component/tableGrid";
-import {storeReadColumn} from "@/utils/columnList";
-import {useRouter} from "next/router";
 import message from "antd/lib/message";
-import Spin from "antd/lib/spin";
+import {deleteOrder, searchEstimate, searchOrder} from "@/utils/api/mainApi";
+import {commonManage, gridManage} from "@/utils/commonManage";
+import _ from "lodash";
+import {BoxCard, inputForm, MainCard, rangePickerForm} from "@/utils/commonForm";
+import {useRouter} from "next/router";
 import ReceiveComponent from "@/component/ReceiveComponent";
+import Spin from "antd/lib/spin";
 
-export default function delivery_read({dataInfo}) {
-    console.log(dataInfo, 'dataInfo:')
+
+export default function OrderRead({dataInfo = [], getPropertyId}) {
     const router = useRouter();
 
     const gridRef = useRef(null);
+    const copyInit = _.cloneDeep(orderReadInitial)
 
-    const copyInit = _.cloneDeep(storeRealInitial)
-
-    const [info, setInfo] = useState(copyInit)
+    const [info, setInfo] = useState(copyInit);
     const [mini, setMini] = useState(true);
 
     const [loading, setLoading] = useState(false);
-
-    const onGridReady = (params) => {
+    const onGridReady = async (params) => {
         gridRef.current = params.api;
-        params.api.applyTransaction({add: dataInfo});
+        await searchOrder({data: orderReadInitial}).then(v => {
+            params.api.applyTransaction({add: v});
+        })
     };
 
 
     function handleKeyPress(e) {
         if (e.key === 'Enter') {
-            // 체크된 행 데이터 가져오기
-            const selectedRows = gridRef.current.getSelectedRows();
-            searchInfo(e)
+            searchInfo(true)
         }
     }
 
-    function onChange(e: any) {
+    function onChange(e) {
         commonManage.onChange(e, setInfo)
     }
 
 
-    async function moveRouter() {
-        window.open(`/store_write`, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
-    }
-
-    /**
-     * @description 배송 등록리스트 출력 함수입니다.
-     */
     async function searchInfo(e) {
         const copyData: any = {...info}
         if (e) {
             setLoading(true)
-            let result = await getOrderStatusList({data: copyData});
-            gridManage.resetData(gridRef, result)
+            const result = await getData.post('order/getOrderList',
+                {...copyData, "page": 1, "limit": -1});
+            gridManage.resetData(gridRef, result?.data?.entity?.orderList);
             setLoading(false)
         }
         setLoading(false)
     }
+
 
     async function deleteList() {
         if (gridRef.current.getSelectedRows().length < 1) {
             return message.error('삭제할 데이터를 선택해주세요.')
         }
 
-        const deleteList = gridManage.getFieldDeleteList(gridRef, {
-            orderStatusId: "orderStatusId",
-            orderStatusDetailId: "orderStatusDetailId",
-        });
-        setLoading(true)
-        deleteOrderStatusDetails({data: {deleteList: deleteList}, returnFunc: searchInfo})
-    }
 
+        const deleteList = gridManage.getFieldDeleteList(gridRef, {
+            orderId: 'orderId',
+            orderDetailId: 'orderDetailId'
+        });
+        setLoading(true);
+        await deleteOrder({data: {deleteList: deleteList}, returnFunc: searchInfo});
+
+    }
 
     function clearAll() {
         setInfo(copyInit);
         gridRef.current.deselectAll();
     }
 
-    return <Spin spinning={loading} tip={'입고 조회중...'}>
+    async function moveRouter() {
+        router.push(`/order_write`);
+    }
+
+
+    return <Spin spinning={loading} tip={'견적서 조회중...'}>
         <ReceiveComponent searchInfo={searchInfo}/>
-        <LayoutComponent>
+        <>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '230px' : '65px'} calc(100vh - ${mini ? 325 : 160}px)`,
+                gridTemplateRows: `${mini ? '260px' : '65px'} calc(100vh - ${mini ? 390 : 195}px)`,
                 columnGap: 5
             }}>
-                <MainCard title={'입고조회'}
+                <MainCard title={'발주서 조회'}
                           list={[{name: '조회', func: searchInfo, type: 'primary'},
                               {name: '초기화', func: clearAll, type: 'danger'},
                               {name: '신규생성', func: moveRouter}]}
                           mini={mini} setMini={setMini}>
-                    {mini ? <div style={{
-                            display: 'grid',
-                            gridTemplateColumns: '1fr 1fr 1.5fr',
-                            width: '100%',
-                            columnGap: 20
-                        }}>
 
-                            <BoxCard>
-                                {rangePickerForm({title: '입고일자', id: 'searchArrivalDate', onChange: onChange, data: info})}
-                            </BoxCard>
-                            <BoxCard>
+                    {mini ? <div
+                            style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1.5fr', width: '100%', columnGap: 20}}>
 
+                            <BoxCard title={''}>
+                                {rangePickerForm({title: '발주일자', id: 'searchDate', onChange: onChange, data: info})}
                                 {inputForm({
-                                    title: 'B/L No.',
-                                    id: 'searchBlNo',
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
-                                {inputForm({
-                                    title: 'inquiry No.',
-                                    id: 'searchOrderDocumentNumberFull',
+                                    title: '문서번호',
+                                    id: 'searchDocumentNumber',
                                     onChange: onChange,
                                     handleKeyPress: handleKeyPress,
                                     data: info
                                 })}
                             </BoxCard>
-                            <BoxCard>
+                            <BoxCard title={''}>
                                 {inputForm({
-                                    title: '결제여부',
-                                    id: 'searchPaymentStatus',
+                                    title: '견적서 담당자',
+                                    id: 'searchEstimateManager',
                                     onChange: onChange,
                                     handleKeyPress: handleKeyPress,
                                     data: info
                                 })}
-
-
                                 {inputForm({
                                     title: '고객사명',
                                     id: 'searchCustomerName',
@@ -144,6 +130,32 @@ export default function delivery_read({dataInfo}) {
                                     data: info
                                 })}
                             </BoxCard>
+                            <BoxCard title={''}>
+
+
+                                {inputForm({
+                                    title: 'MAKER',
+                                    id: 'searchMaker',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: 'MODEL',
+                                    id: 'searchModel',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: 'ITEM',
+                                    id: 'searchItem',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                            </BoxCard>
+
                         </div>
                         : <></>}
                 </MainCard>
@@ -152,19 +164,21 @@ export default function delivery_read({dataInfo}) {
                                                onClick={deleteList}>
                     <CopyOutlined/>삭제
                 </Button>}
+
+                           getPropertyId={getPropertyId}
                            gridRef={gridRef}
-                           columns={storeReadColumn}
                            onGridReady={onGridReady}
+                           columns={tableOrderReadColumns}
                            funcButtons={['print']}
                 />
+
             </div>
-        </LayoutComponent>
+        </>
     </Spin>
 }
 
 
 export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
-
 
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
@@ -177,11 +191,9 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
         };
     } else {
         store.dispatch(setUserInfo(userInfo));
-
-        let result = await getOrderStatusList({data: storeRealInitial});
-
+        const result = await searchOrder({data: orderReadInitial})
         return {
-            props: {dataInfo: result ? result : null}
+            props: {dataInfo: result ?? null}
         }
     }
 })
