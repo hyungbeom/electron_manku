@@ -42,6 +42,7 @@ export default function ProjectUpdate({dataInfo = {projectDetail: [], attachment
     useEffect(() => {
         getDataInfo().then(v => {
             const {projectDetail, attachmentFileList} = v;
+            console.log(attachmentFileList,'attachmentFileList:')
             setFileList(fileManage.getFormatFiles(attachmentFileList))
             setInfo(projectDetail)
             initInfo(projectDetail[listType]);
