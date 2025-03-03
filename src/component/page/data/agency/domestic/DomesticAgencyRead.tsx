@@ -19,7 +19,7 @@ import Spin from "antd/lib/spin";
 import ReceiveComponent from "@/component/ReceiveComponent";
 
 
-export default function codeDomesticPurchase({dataInfo}) {
+export default function DomesticAgencyUpdate({dataInfo=[], getPropertyId}) {
 
     const gridRef = useRef(null);
     const copyInit = _.cloneDeep(codeDomesticAgencyWriteInitial)
@@ -87,11 +87,11 @@ export default function codeDomesticPurchase({dataInfo}) {
 
     return <Spin spinning={loading} tip={'국내 매입처 조회중...'}>
         <ReceiveComponent searchInfo={searchInfo}/>
-        <LayoutComponent>
+        <>
 
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '120px' : '65px'} calc(100vh - ${mini ? 220 : 165}px)`,
+                gridTemplateRows: `${mini ? '120px' : '65px'} calc(100vh - ${mini ? 250 : 195}px)`,
                 columnGap: 5
             }}>
                 <MainCard title={'국내 매입처 조회'}
@@ -130,6 +130,7 @@ export default function codeDomesticPurchase({dataInfo}) {
                                                onClick={deleteList}>
                     <CopyOutlined/>삭제
                 </Button>}
+                           getPropertyId={getPropertyId}
                            gridRef={gridRef}
                            columns={tableCodeDomesticPurchaseColumns}
                            onGridReady={onGridReady}
@@ -137,7 +138,7 @@ export default function codeDomesticPurchase({dataInfo}) {
                 />
 
             </div>
-        </LayoutComponent>
+        </>
     </Spin>
 }
 

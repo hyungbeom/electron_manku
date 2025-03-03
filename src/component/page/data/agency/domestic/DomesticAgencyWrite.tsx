@@ -25,7 +25,7 @@ import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {getData} from "@/manage/function/api";
 
 
-export default function agency_write({dataInfo}) {
+export default function DomesticAgencyWrite({dataInfo={orderDetailList : []}, copyPageInfo}) {
     const router = useRouter();
     const fileRef = useRef(null);
     const gridRef = useRef(null);
@@ -116,10 +116,10 @@ export default function agency_write({dataInfo}) {
     }
 
 
-    return <LayoutComponent>
+    return <>
         <div style={{
             display: 'grid',
-            gridTemplateRows: `${mini ? '340px' : '65px'} calc(100vh - ${mini ? 395 : 120}px)`,
+            gridTemplateRows: `${mini ? '350px' : '65px'} calc(100vh - ${mini ? 480 : 195}px)`,
             columnGap: 5
         }}>
             <MainCard title={'국내 매입처 등록'} list={[
@@ -130,8 +130,7 @@ export default function agency_write({dataInfo}) {
                 {mini ? <div style={{
                         display: 'grid',
                         gridTemplateColumns: '180px 200px 200px 1fr 300px',
-                        columnGap: 10,
-                        marginTop: 10
+                        columnGap: 10
                     }}>
                         <BoxCard title={'매입처 정보'}>
                             {inputForm({title: '코드(약칭)', id: 'agencyCode', onChange: onChange, data: info})}
@@ -183,7 +182,7 @@ export default function agency_write({dataInfo}) {
             />
 
         </div>
-    </LayoutComponent>
+    </>
 }
 
 // @ts-ignore

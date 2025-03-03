@@ -18,7 +18,7 @@ import {CopyOutlined, EditOutlined, FileExcelOutlined, SearchOutlined} from "@an
 import {useRouter} from "next/router";
 import {inputForm, MainCard, radioForm} from "@/utils/commonForm";
 
-export default function codeOverseasPurchase({dataInfo}) {
+export default function DomesticCustomerRead({dataInfo = [], getPropertyId}) {
     const gridRef = useRef(null);
     const router = useRouter();
 
@@ -80,10 +80,10 @@ export default function codeOverseasPurchase({dataInfo}) {
        router.push(`/data/customer/domestic/customer_write`)
     }
 
-    return <LayoutComponent>
+    return <>
         <div style={{
             display: 'grid',
-            gridTemplateRows: `${mini ? '120px' : '65px'} calc(100vh - ${mini ? 220 : 165}px)`,
+            gridTemplateRows: `${mini ? '120px' : '65px'} calc(100vh - ${mini ? 250 : 195}px)`,
             columnGap: 5
         }}>
             <MainCard title={'국내 고객사 조회'}
@@ -118,6 +118,7 @@ export default function codeOverseasPurchase({dataInfo}) {
                 </div> : <></>}
             </MainCard>
             <TableGrid
+                getPropertyId={getPropertyId}
                 gridRef={gridRef}
                 onGridReady={onGridReady}
                 columns={tableCodeDomesticSalesColumns}
@@ -125,7 +126,7 @@ export default function codeOverseasPurchase({dataInfo}) {
             />
 
         </div>
-    </LayoutComponent>
+    </>
 }
 
 // @ts-ignore

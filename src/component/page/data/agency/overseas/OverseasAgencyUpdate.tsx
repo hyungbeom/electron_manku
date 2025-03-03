@@ -1,112 +1,92 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import LayoutComponent from "@/component/LayoutComponent";
+import Card from "antd/lib/card/Card";
+import Button from "antd/lib/button";
+import {
+    CopyOutlined, DownCircleFilled, EditOutlined, RetweetOutlined, SaveOutlined, UpCircleFilled,
+} from "@ant-design/icons";
 import message from "antd/lib/message";
-import {tableCodeOverseasAgencyWriteColumns,} from "@/utils/columnList";
-import {codeOverseasAgencyInitial, codeOverseasAgencyWriteInitial,} from "@/utils/initialList";
+import {
+    tableCodeDomesticAgencyWriteColumns, tableCodeOverseasAgencyWriteColumns,
+} from "@/utils/columnList";
+import {
+    codeDomesticAgencyWriteInitial, codeOverseasAgencyWriteInitial,
+} from "@/utils/initialList";
 import TableGrid from "@/component/tableGrid";
+import {useRouter} from "next/router";
+import moment from "moment/moment";
+import DatePicker from "antd/lib/date-picker";
+import Input from "antd/lib/input/Input";
+import Select from "antd/lib/select";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import nookies from "nookies";
 import {setUserInfo} from "@/store/user/userSlice";
 import {wrapper} from "@/store/store";
 import {BoxCard, datePickerForm, inputForm, inputNumberForm, MainCard, selectBoxForm} from "@/utils/commonForm";
-import _ from "lodash";
 import {commonManage, gridManage} from "@/utils/commonManage";
+import {updateDomesticAgency} from "@/utils/api/mainApi";
+import Spin from "antd/lib/spin";
+import _ from "lodash";
 
 const listType = 'overseasAgencyManagerList'
-export default function code_domestic_agency_write({dataInfo}) {
+export default function OverseasAgencyUpdate({dataInfo=[], updateKey, getCopyPage}) {
     const gridRef = useRef(null);
+    const router=useRouter();
 
     const [mini, setMini] = useState(true);
-    const [validate, setValidate] = useState({agencyCode: true});
-    const copyInit = _.cloneDeep(codeOverseasAgencyWriteInitial);
-    const adminParams = {agencyCode: ''}
-    const infoInit = {
-        ...copyInit,
-        ...adminParams
-    }
+    const [info, setInfo] = useState<any>(dataInfo)
+    const [loading, setLoading] = useState<any>(false)
 
-
-    const [info, setInfo] = useState<any>({...copyInit, ...dataInfo, ...adminParams})
 
     const onGridReady = (params) => {
         gridRef.current = params.api;
-        const result = dataInfo?.overseasAgencyManagerList
-        params.api.applyTransaction({add: result ? result : []});
+        params.api.applyTransaction({add: dataInfo[listType]});
     };
 
-
     function onChange(e) {
-        if (e.target.id === 'agencyCode') {
-            setValidate(v => {
-                return {...v, agencyCode: true}
-            })
-        }
         commonManage.onChange(e, setInfo)
     }
 
     async function saveFunc() {
-        gridRef.current.clearFocusedCell();
-        const list = gridManage.getAllData(gridRef)
-        if (!info['agencyCode']) {
-            setValidate(v => {
-                return {...v, agencyCode: false}
-            })
-            return message.warn('코드(약칭)을 입력하셔야 합니다.')
-        }
-        if (!list.length) {
-            return message.warn('하위 데이터 1개 이상이여야 합니다')
-        }
 
-        await getData.post('agency/addOverseasAgency', info).then(v => {
-            if (v.data.code === 1) {
-                window.opener?.postMessage('write', window.location.origin);
-                message.success('저장되었습니다.')
-                setInfo(codeOverseasAgencyInitial);
-                deleteList()
-                window.location.href = '/code_overseas_agency'
-            } else {
-                message.error('저장에 실패하였습니다.')
-            }
-        });
-
+        if(!info['agencyCode']){
+            return message.error('코드(약칭)이 누락되었습니다.')
+        }
+        setLoading(true)
+        await updateDomesticAgency({data : info, returnFunc : returnFunc})
     }
 
-
-    function deleteList() {
-
-        const api = gridRef.current.api;
-
-        // 전체 행 반복하면서 선택되지 않은 행만 추출
-        const uncheckedData = [];
-        for (let i = 0; i < api.getDisplayedRowCount(); i++) {
-            const rowNode = api.getDisplayedRowAtIndex(i);
-            if (!rowNode.isSelected()) {
-                uncheckedData.push(rowNode.data);
-            }
-        }
-
-        let copyData = {...info}
-        copyData['overseasAgencyManagerList'] = uncheckedData;
-
-        setInfo(copyData);
-
+    function returnFunc(){
+        setLoading(false)
     }
+
 
     function clearAll() {
-        setInfo({...infoInit});
-        gridManage.deleteAll(gridRef);
+        setInfo(codeOverseasAgencyWriteInitial);
+        gridManage.deleteAll(gridRef)
     }
 
-    return <LayoutComponent>
+    function copyPage() {
+        const totalList = gridManage.getAllData(gridRef)
+        let copyInfo = _.cloneDeep(info)
+        copyInfo[listType] = totalList
+
+        const query = `data=${encodeURIComponent(JSON.stringify(copyInfo))}`;
+        router.push(`/data/agency/overseas/agency_write?${query}`)
+    }
+    return  <Spin spinning={loading} tip={'견적의뢰 등록중...'}>
+    <LayoutComponent>
         <div style={{
             display: 'grid',
             gridTemplateRows: `${mini ? '340px' : '65px'} calc(100vh - ${mini ? 395 : 120}px)`,
             columnGap: 5
         }}>
-            <MainCard title={'해외 매입처 등록'} list={[
-                {name: '저장', func: saveFunc, type: 'primary'},
-                {name: '초기화', func: clearAll, type: 'danger'}
+            <MainCard title={'해외 매입처 수정'} list={[
+                {name: '수정', func: saveFunc, type: 'primary'},
+                {name: '삭제', func: saveFunc, type: 'danger'},
+                {name: '초기화', func: clearAll, type: ''},
+                {name: '복제', func: copyPage, type: 'default'},
             ]} mini={mini} setMini={setMini}>
 
                 {mini ? <div style={{
@@ -116,7 +96,7 @@ export default function code_domestic_agency_write({dataInfo}) {
                         marginTop: 10
                     }}>
                         <BoxCard title={'코드 정보'}>
-                            {inputForm({title: '코드(약칭)', id: 'agencyCode', onChange: onChange, data: info, validate : validate['agencyCode']})}
+                            {inputForm({title: '코드(약칭)', id: 'agencyCode', onChange: onChange, data: info})}
                             {inputForm({title: '상호', id: 'agencyName', onChange: onChange, data: info})}
                             {inputForm({title: '아이템', id: 'item', onChange: onChange, data: info})}
                         </BoxCard>
@@ -163,17 +143,23 @@ export default function code_domestic_agency_write({dataInfo}) {
             />
         </div>
     </LayoutComponent>
+    </Spin>
 }
 
 // @ts-ignore
 export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
-    const {query} = ctx;
 
 
     let param = {}
 
+
+    const {query} = ctx;
+
+    // 특정 쿼리 파라미터 가져오기
+    const { agencyCode } = query; // 예: /page?id=123&name=example
+
     const {userInfo} = await initialServerRouter(ctx, store);
-    const cookies = nookies.get(ctx)
+
     if (!userInfo) {
         return {
             redirect: {
@@ -184,10 +170,17 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     }
 
     store.dispatch(setUserInfo(userInfo));
-    if (query?.data) {
-        const data = JSON.parse(decodeURIComponent(query.data));
-        return {props: {dataInfo: data}}
-    }
 
-    return param
+    const result = await getData.post('agency/getOverseasAgencyList', {
+        searchType: 1,
+        searchText: agencyCode,
+        page:1,
+        limit:-1,
+    });
+
+    const list = result?.data?.entity?.overseasAgencyList[0]
+
+    return {
+        props: {dataInfo: list ?? {}}
+    }
 })

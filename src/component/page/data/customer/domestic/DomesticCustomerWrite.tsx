@@ -25,7 +25,7 @@ import {commonManage, gridManage} from "@/utils/commonManage";
 import {BoxCard, datePickerForm, inputForm, MainCard, selectBoxForm, textAreaForm} from "@/utils/commonForm";
 
 
-export default function code_domestic_agency_write({dataInfo}) {
+export default function DomesticCustomerWrite({dataInfo = {customerManagerList : []}, copyPageInfo}) {
     const gridRef = useRef(null);
 
     const [mini, setMini] = useState(true);
@@ -100,10 +100,10 @@ export default function code_domestic_agency_write({dataInfo}) {
         gridManage.deleteAll(gridRef);
     }
 
-    return <LayoutComponent>
+    return <>
         <div style={{
             display: 'grid',
-            gridTemplateRows: `${mini ? '440px' : '65px'} calc(100vh - ${mini ? 495 : 120}px)`,
+            gridTemplateRows: `${mini ? '460px' : '65px'} calc(100vh - ${mini ? 590 : 195}px)`,
             columnGap: 5
         }}>
             <MainCard title={'국내 고객사 등록'} list={[
@@ -174,7 +174,7 @@ export default function code_domestic_agency_write({dataInfo}) {
             />
 
         </div>
-    </LayoutComponent>
+    </>
 }
 
 // @ts-ignore

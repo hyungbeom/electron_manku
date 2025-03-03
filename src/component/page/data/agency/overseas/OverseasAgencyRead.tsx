@@ -20,7 +20,7 @@ import Spin from "antd/lib/spin";
 import ReceiveComponent from "@/component/ReceiveComponent";
 
 
-export default function codeOverseasPurchase({dataInfo}) {
+export default function OverseasAgencyRead({dataInfo=[], getPropertyId}) {
     console.log(dataInfo,'::::')
     const gridRef = useRef(null);
     const router = useRouter();
@@ -96,10 +96,10 @@ export default function codeOverseasPurchase({dataInfo}) {
 
     return <Spin spinning={loading} tip={'해외 매입처 조회중...'}>
         <ReceiveComponent searchInfo={searchInfo}/>
-        <LayoutComponent>
+        <>
         <div style={{
             display: 'grid',
-            gridTemplateRows: `${mini ? '120px' : '65px'} calc(100vh - ${mini ? 220 : 165}px)`,
+            gridTemplateRows: `${mini ? '120px' : '65px'} calc(100vh - ${mini ? 250 : 195}px)`,
             columnGap: 5
         }}>
             <MainCard title={'해외 매입처 조회'}
@@ -145,7 +145,7 @@ export default function codeOverseasPurchase({dataInfo}) {
                        funcButtons={['print']}
             />
         </div>
-    </LayoutComponent>
+    </>
     </Spin>
 }
 

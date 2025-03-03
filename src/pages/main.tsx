@@ -33,6 +33,18 @@ import MakerWrite from "@/component/page/data/maker/MakerWrite";
 import MakerRead from "@/component/page/data/maker/MakerRead";
 import MakerUpdate from "@/component/page/data/maker/MakerUpdate";
 import HcodeRead from "@/component/page/HcodeRead";
+import DomesticAgencyWrite from "@/component/page/data/agency/domestic/DomesticAgencyWrite";
+import DomesticAgencyUpdate from "@/component/page/data/agency/domestic/DomesticAgencyUpdate";
+import DomesticAgencyRead from "@/component/page/data/agency/domestic/DomesticAgencyRead";
+import OverseasAgencyWrite from "@/component/page/data/agency/overseas/OverseasAgencyWrite";
+import OverseasAgencyRead from "@/component/page/data/agency/overseas/OverseasAgencyRead";
+import OverseasAgencyUpdate from "@/component/page/data/agency/overseas/OverseasAgencyUpdate";
+import DomesticCustomerWrite from "@/component/page/data/customer/domestic/DomesticCustomerWrite";
+import OverseasCustomerWrite from "@/component/page/data/customer/overseas/OverseasCustomerWrite";
+import OverseasCustomerRead from "@/component/page/data/customer/overseas/OverseasCustomerRead";
+import OverseasCustomerUpdate from "@/component/page/data/customer/overseas/OverseasCustomerUpdate";
+import DomesticCustomerRead from "@/component/page/data/customer/domestic/DomesticCustomerRead";
+import DomesticCustomerUpdate from "@/component/page/data/customer/domestic/DomesticCustomerUpdate";
 
 
 function findTitleByKey(data, key) {
@@ -170,6 +182,30 @@ export default function Main() {
         remittance_read: {name: "송금 조회", component: <RemittanceDomesticRead getPropertyId={getPropertyId}/>},
         remittance_update: {name: "송금 수정", component: <RemittanceDomesticUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
 
+
+        domestic_agency_write: {name: "국내매입처 등록", component: <DomesticAgencyWrite copyPageInfo={copyPageInfo}/>},
+        domestic_agency_read: {name: "국내매입처 조회", component: <DomesticAgencyRead getPropertyId={getPropertyId}/>},
+        domestic_agency_update: {name: "국내매입처 수정", component: <DomesticAgencyUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
+
+        overseas_agency_write: {name: "해외매입처 등록", component: <OverseasAgencyWrite copyPageInfo={copyPageInfo}/>},
+        overseas_agency_read: {name: "해외매입처 조회", component: <OverseasAgencyRead getPropertyId={getPropertyId}/>},
+        overseas_agency_update: {name: "해외매입처 수정", component: <OverseasAgencyUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
+
+
+
+
+        domestic_customer_write:  {name: "국내고객사 등록", component: <DomesticCustomerWrite copyPageInfo={copyPageInfo}/>},
+        domestic_customer_read:   {name: "국내고객사 조회", component: <DomesticCustomerRead getPropertyId={getPropertyId}/>},
+        domestic_customer_update: {name: "국내고객사 수정", component: <DomesticCustomerUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
+
+        overseas_customer_write:  {name: "해외고객사 등록", component: <OverseasCustomerWrite copyPageInfo={copyPageInfo}/>},
+        overseas_customer_read:   {name: "해외고객사 조회", component: <OverseasCustomerRead getPropertyId={getPropertyId}/>},
+        overseas_customer_update: {name: "해외고객사 수정", component: <OverseasCustomerUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
+
+
+
+
+
         maker_write: {name: "메이커 등록", component: <MakerWrite copyPageInfo={copyPageInfo}/>},
         maker_read: {name: "메이커 조회", component: <MakerRead getPropertyId={getPropertyId}/>},
         maker_update: {name: "메이커 수정", component: <MakerUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
@@ -183,7 +219,7 @@ export default function Main() {
 
     const factory = (node: TabNode) => {
         const componentKey = node.getComponent();
-        return tabComponents[componentKey]?.component;
+        return <div style={{padding : '0px 5px 0px 5px'}}>{tabComponents[componentKey]?.component}</div>;
     };
 
 
@@ -270,7 +306,7 @@ export default function Main() {
 
     return (
         <LayoutComponent>
-            <div style={{display: "grid", gridTemplateColumns: "190px auto"}}>
+            <div style={{display: "grid", gridTemplateColumns: "220px auto"}}>
                 <div style={{borderRight: "1px solid lightGray", padding: 3, paddingTop: 10}}>
                     <Tree style={{minHeight: 'calc(100vh - 70px)', height: '100%'}}
                           defaultExpandedKeys={getRootKeys(treeData)}
@@ -318,6 +354,7 @@ export default function Main() {
                         })}
                     </div>
                 </div>}
+
                 <Layout model={model} factory={factory} onModelChange={onLayoutChange} ref={layoutRef}/>
 
             </div>

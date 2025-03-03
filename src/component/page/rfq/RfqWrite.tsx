@@ -174,7 +174,7 @@ export default function RqfWrite({managerList = [], copyPageInfo = {}, dataInfo 
 
         switch (param) {
             case '국내' :
-                // router.push('/agency_write')
+                // router.push('/agencyWrite')
                 break;
             case '해외' :
                 // router.push('/code_overseas_agency_write')

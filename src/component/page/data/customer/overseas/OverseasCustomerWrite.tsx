@@ -3,7 +3,7 @@ import {getData} from "@/manage/function/api";
 import LayoutComponent from "@/component/LayoutComponent";
 import message from "antd/lib/message";
 import {tableCodeDomesticWriteColumn,} from "@/utils/columnList";
-import {codeDomesticSalesWriteInitial,} from "@/utils/initialList";
+import {codeDomesticSalesWriteInitial, codeOverseasSalesWriteInitial, orderWriteInitial,} from "@/utils/initialList";
 import TableGrid from "@/component/tableGrid";
 import {useRouter} from "next/router";
 import initialServerRouter from "@/manage/function/initialServerRouter";
@@ -14,14 +14,23 @@ import {commonManage, gridManage} from "@/utils/commonManage";
 import _ from "lodash";
 
 const listType = 'customerManagerList'
-export default function code_domestic_agency_write({dataInfo}) {
+export default function OverseasCustomerWrite({dataInfo = {overseasCustomerManagerList : []}, copyPageInfo}) {
     const gridRef = useRef(null);
     const router = useRouter();
 
     const [mini, setMini] = useState(true);
-    const [info, setInfo] = useState<any>(dataInfo);
 
-    console.log(dataInfo, 'dataInfo:')
+    const copyInit = _.cloneDeep(codeOverseasSalesWriteInitial)
+
+    const adminParams = {}
+
+    const infoInit = {
+        ...copyInit,
+        ...adminParams
+    }
+
+    const [info, setInfo] = useState<any>({...copyInit, ...dataInfo, ...adminParams})
+
     const onGridReady = (params) => {
         gridRef.current = params.api;
         params.api.applyTransaction({add: dataInfo?.overseasCustomerManagerList});
@@ -78,13 +87,13 @@ export default function code_domestic_agency_write({dataInfo}) {
         router.push(`/data/customer/overseas/customer_write?${query}`)
     }
 
-    return <LayoutComponent>
+    return <>
         <div style={{
             display: 'grid',
-            gridTemplateRows: `${mini ? '330px' : '65px'} calc(100vh - ${mini ? 385 : 120}px)`,
+            gridTemplateRows: `${mini ? '350px' : '65px'} calc(100vh - ${mini ? 480 : 195}px)`,
             columnGap: 5
         }}>
-            <MainCard title={'해외 고객사 수정'} list={[
+            <MainCard title={'해외 고객사 등록'} list={[
                 {name: '수정', func: saveFunc, type: 'primary'},
                 {name: '삭제', func: saveFunc, type: 'danger'},
                 {name: '복제', func: copyPage, type: 'default'},
@@ -135,7 +144,7 @@ export default function code_domestic_agency_write({dataInfo}) {
                 funcButtons={['orderUpload', 'orderAdd', 'delete', 'print']}
             />
         </div>
-    </LayoutComponent>
+    </>
 }
 
 // @ts-ignore
@@ -162,16 +171,8 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     }
 
     store.dispatch(setUserInfo(userInfo));
-
-    const result = await getData.post('customer/getOverseasCustomerList', {
-        searchType: 1,
-        searchText: customerCode,
-        page: 1,
-        limit: 1,
-    });
-
-    const list = result?.data.entity.overseasCustomerList;
-    return {
-        props: {dataInfo: list[0] ?? null}
+    if (query?.data) {
+        const data = JSON.parse(decodeURIComponent(query.data));
+        return {props: {dataInfo: data}}
     }
 })

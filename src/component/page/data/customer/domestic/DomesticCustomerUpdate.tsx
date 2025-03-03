@@ -1,39 +1,40 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import LayoutComponent from "@/component/LayoutComponent";
+import Card from "antd/lib/card/Card";
+import Button from "antd/lib/button";
+import {
+    CopyOutlined, DownCircleFilled, EditOutlined, RetweetOutlined, SaveOutlined, UpCircleFilled,
+} from "@ant-design/icons";
 import message from "antd/lib/message";
 import {tableCodeDomesticWriteColumn,} from "@/utils/columnList";
-import {codeDomesticSalesWriteInitial, codeOverseasSalesWriteInitial, orderWriteInitial,} from "@/utils/initialList";
+import {codeDomesticSalesWriteInitial,} from "@/utils/initialList";
 import TableGrid from "@/component/tableGrid";
 import {useRouter} from "next/router";
+import moment from "moment/moment";
+import DatePicker from "antd/lib/date-picker";
+import Input from "antd/lib/input/Input";
+import Select from "antd/lib/select";
 import initialServerRouter from "@/manage/function/initialServerRouter";
+import nookies from "nookies";
 import {setUserInfo} from "@/store/user/userSlice";
 import {wrapper} from "@/store/store";
-import {BoxCard, datePickerForm, inputForm, MainCard, selectBoxForm} from "@/utils/commonForm";
+import TextArea from "antd/lib/input/TextArea";
+import {BoxCard, inputForm, MainCard, selectBoxForm, textAreaForm} from "@/utils/commonForm";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import _ from "lodash";
 
 const listType = 'customerManagerList'
-export default function code_domestic_agency_write({dataInfo}) {
+export default function DomesticCustomerUpdate({dataInfo = {customerManagerList : []}, updateKey, getCopyPage}) {
     const gridRef = useRef(null);
     const router = useRouter();
 
     const [mini, setMini] = useState(true);
-
-    const copyInit = _.cloneDeep(codeOverseasSalesWriteInitial)
-
-    const adminParams = {}
-
-    const infoInit = {
-        ...copyInit,
-        ...adminParams
-    }
-
-    const [info, setInfo] = useState<any>({...copyInit, ...dataInfo, ...adminParams})
+    const [info, setInfo] = useState<any>(dataInfo);
 
     const onGridReady = (params) => {
         gridRef.current = params.api;
-        params.api.applyTransaction({add: dataInfo?.overseasCustomerManagerList});
+        params.api.applyTransaction({add: dataInfo?.customerManagerList});
     };
 
     function onChange(e) {
@@ -41,14 +42,12 @@ export default function code_domestic_agency_write({dataInfo}) {
     }
 
     async function saveFunc() {
-
-
-        await getData.post('customer/updateOverseasCustomer', info).then(v => {
+        await getData.post('customer/updateCustomer', info).then(v => {
             if (v.data.code === 1) {
                 message.success('저장되었습니다.')
                 setInfo(codeDomesticSalesWriteInitial);
                 deleteList()
-                window.location.href = '/code_overseas_customer'
+                window.location.href = '/code_domestic_customer'
             } else {
                 message.error('저장에 실패하였습니다.')
             }
@@ -84,57 +83,73 @@ export default function code_domestic_agency_write({dataInfo}) {
         copyInfo[listType] = totalList
 
         const query = `data=${encodeURIComponent(JSON.stringify(copyInfo))}`;
-        router.push(`/data/customer/overseas/customer_write?${query}`)
+        router.push(`/data/customer/domestic/customer_write?${query}`)
     }
 
     return <LayoutComponent>
         <div style={{
             display: 'grid',
-            gridTemplateRows: `${mini ? '330px' : '65px'} calc(100vh - ${mini ? 385 : 120}px)`,
+            gridTemplateRows: `${mini ? '500px' : '65px'} calc(100vh - ${mini ? 555 : 120}px)`,
             columnGap: 5
         }}>
-            <MainCard title={'해외 고객사 등록'} list={[
+            <MainCard title={'국내 고객사 수정'} list={[
                 {name: '수정', func: saveFunc, type: 'primary'},
                 {name: '삭제', func: saveFunc, type: 'danger'},
                 {name: '복제', func: copyPage, type: 'default'},
             ]} mini={mini} setMini={setMini}>
 
-
                 {mini ? <div style={{
                     display: 'grid',
-                    gridTemplateColumns: "180px 200px 1fr 1fr",
+                    gridTemplateColumns: "150px 160px 1fr 1fr 220px",
                 }}>
                     <BoxCard title={'INQUIRY & PO no'}>
                         {inputForm({title: '코드(약칭)', id: 'customerCode', onChange: onChange, data: info})}
                         {inputForm({title: '지역', id: 'customerRegion', onChange: onChange, data: info})}
-                        {inputForm({title: 'FTA No', id: 'ftaNumber', onChange: onChange, data: info})}
-                        {selectBoxForm({
-                            title: '화폐단위', id: 'currencyUnit', onChange: onChange, data: info, list: [
-                                {value: '0', label: 'KRW'},
-                                {value: '1', label: 'EUR'},
-                                {value: '2', label: 'JPY'},
-                                {value: '3', label: 'USD'},
-                                {value: '4', label: 'GBP'},
-                            ]
-                        })}
+                        {inputForm({title: '업태', id: 'businessType', onChange: onChange, data: info})}
+                        {inputForm({title: '종목', id: 'businessItem', onChange: onChange, data: info})}
+                        {inputForm({title: '대표자', id: 'representative', onChange: onChange, data: info})}
                     </BoxCard>
-
                     <BoxCard title={'INQUIRY & PO no'}>
-                        {datePickerForm({title: '거래시작일', id: 'tradeStartDate', onChange: onChange, data: info})}
+                        {inputForm({title: '거래시작일', id: 'tradeStartDate', onChange: onChange, data: info})}
                         {inputForm({title: '상호', id: 'customerName', onChange: onChange, data: info})}
                         {inputForm({title: '주소', id: 'address', onChange: onChange, data: info})}
                         {inputForm({title: '홈페이지', id: 'homepage', onChange: onChange, data: info})}
+                        {inputForm({title: '전화번호', id: 'customerTel', onChange: onChange, data: info})}
+                        {inputForm({title: '팩스번호', id: 'customerFax', onChange: onChange, data: info})}
+                    </BoxCard>
+
+
+                    <BoxCard title={'INQUIRY & PO no'}>
+                        {inputForm({title: '사업자번호', id: 'businessRegistrationNumber', onChange: onChange, data: info})}
+                        {textAreaForm({title: '업체확인사항', id: 'companyVerify', onChange: onChange, data: info})}
+                        {textAreaForm({title: '비고란', id: 'remarks', onChange: onChange, data: info})}
                     </BoxCard>
                     <BoxCard title={'INQUIRY & PO no'}>
-                        {datePickerForm({title: '전화번호', id: 'phoneNumber', onChange: onChange, data: info})}
-                        {inputForm({title: '팩스번호', id: 'faxNumber', onChange: onChange, data: info})}
-                        {inputForm({title: '만쿠 담당자', id: 'mankuTradeManager', onChange: onChange, data: info})}
+                        {selectBoxForm({
+                            title: '화물운송료', id: 'uploadType', onChange: onChange, data: info, list: [
+                                {value: '화물 선불', label: '화물 선불'},
+                                {value: '화물 후불', label: '화물 후불'},
+                                {value: '택배 선불', label: '택배 선불'},
+                                {value: '택배 후불', label: '택배 후불'},
+                            ]
+                        })}
+                        {inputForm({title: '화물지점', id: 'freightBranch', onChange: onChange, data: info})}
+                        {selectBoxForm({
+                            title: '결제방법', id: 'paymentMethod', onChange: onChange, data: info, list: [
+                                {value: '현금 결제', label: '현금 결제'},
+                                {value: '선수금', label: '선수금'},
+                                {value: '정기 결제', label: '정기 결제'},
+                            ]
+                        })}
+                        {selectBoxForm({
+                            title: '업체형태', id: 'dealerType', onChange: onChange, data: info, list: [
+                                {value: '딜러', label: '딜러'},
+                                {value: '제조', label: '제조'}
+                            ]
+                        })}
+                        {inputForm({title: '만쿠담당자', id: 'mankuTradeManager', onChange: onChange, data: info})}
                     </BoxCard>
-                    <BoxCard title={'INQUIRY & PO no'}>
-                        {datePickerForm({title: '업체확인사항', id: 'companyVerification', onChange: onChange, data: info})}
-                        {inputForm({title: '비고란', id: 'remarks', onChange: onChange, data: info})}
-                    </BoxCard>
-                </div> : <></>}
+                </div> : null}
             </MainCard>
             <TableGrid
                 gridRef={gridRef}
@@ -171,8 +186,17 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     }
 
     store.dispatch(setUserInfo(userInfo));
-    if (query?.data) {
-        const data = JSON.parse(decodeURIComponent(query.data));
-        return {props: {dataInfo: data}}
+
+    const result = await getData.post('customer/getCustomerList', {
+        searchType: 1,
+        searchText: customerCode,
+        page: 1,
+        limit: 1,
+    });
+
+
+    const list = result?.data.entity.customerList;
+    return {
+        props: {dataInfo: list[0] ?? null}
     }
 })

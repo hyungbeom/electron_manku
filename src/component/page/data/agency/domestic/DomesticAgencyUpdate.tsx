@@ -16,7 +16,7 @@ import _ from "lodash";
 
 
 const listType = 'agencyManagerList'
-export default function code_domestic_agency_write({dataInfo}) {
+export default function DomesticAgencyUpdate({dataInfo=[], updateKey, getCopyPage}) {
     const gridRef = useRef(null);
     const router = useRouter();
 
