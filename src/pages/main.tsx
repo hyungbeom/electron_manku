@@ -307,7 +307,7 @@ export default function Main() {
     return (
         <LayoutComponent>
             <div style={{display: "grid", gridTemplateColumns: "205px auto"}}>
-                <div style={{borderRight: "1px solid lightGray",  paddingTop: 15,  height : 'calc(100vh - 55px)%', overflowY: "auto"}}>
+                <div style={{borderRight: "1px solid lightGray",  paddingTop: 15,  height : 'calc(100vh - 55px)', overflowY: "auto"}}>
                     <Tree
                           defaultExpandedKeys={getRootKeys(treeData)}
                           showLine

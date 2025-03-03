@@ -54,10 +54,14 @@ export default function LayoutComponent({children}) {
                 </div>
                 <div style={{display: 'flex'}}>
                     <div style={{alignItems : 'center', display : 'flex', gap : 20, paddingRight : 20}}>
-                        <SettingFilled style={{fontSize : 25, color : 'dimgray', cursor : 'pointer'}} />
+                        <SettingFilled style={{fontSize : 25, color : 'dimgray', cursor : 'pointer'}} onClick={()=>{
+                            router.push('/manage')
+                        }} />
                         <PieChartFilled style={{fontSize : 25, color : 'blueviolet', cursor : 'pointer'}} />
                         <BellFilled style={{fontSize : 25, color : "gold", cursor : 'pointer'}} />
-                        <SlidersFilled style={{fontSize : 25, color : 'darkcyan', cursor : 'pointer'}} />
+                        <SlidersFilled style={{fontSize : 25, color : 'darkcyan', cursor : 'pointer'}}  onClick={()=>{
+                            router.push('/main')
+                        }}/>
                     </div>
                 <div style={{ display: 'flex',borderLeft : '1px solid lightGray'}}>
                     <UserOutlined style={{fontSize: 30, paddingLeft : 10}}/>
