@@ -1,7 +1,12 @@
 import React, {useEffect, useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
 import {tableEstimateReadColumns} from "@/utils/columnList";
-import {estimateReadInitial, subRfqReadInitial} from "@/utils/initialList";
+import {
+    estimateDetailUnit,
+    estimateReadInitial,
+    estimateRequestDetailUnit,
+    subRfqReadInitial
+} from "@/utils/initialList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
@@ -11,7 +16,7 @@ import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
 import {deleteEstimate, searchEstimate, searchRfq} from "@/utils/api/mainApi";
 import _ from "lodash";
-import {commonManage, gridManage} from "@/utils/commonManage";
+import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
 import {BoxCard, inputForm, MainCard, rangePickerForm, selectBoxForm} from "@/utils/commonForm";
 import Spin from "antd/lib/spin";
 import ReceiveComponent from "@/component/ReceiveComponent";
@@ -19,7 +24,7 @@ import {useRouter} from "next/router";
 import {getData} from "@/manage/function/api";
 
 
-export default function EstimateRead({getPropertyId}) {
+export default function EstimateRead({getPropertyId, getCopyPage}) {
 
     const router = useRouter();
     const countRef = useRef(1);
@@ -112,7 +117,8 @@ export default function EstimateRead({getPropertyId}) {
     }
 
     async function moveRouter() {
-        router.push('/estimate_write')
+        getCopyPage('estimate_write', {estimateDetailList : commonFunc.repeatObject(estimateDetailUnit, 10)})
+
     }
 
 

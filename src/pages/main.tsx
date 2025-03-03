@@ -157,16 +157,16 @@ export default function Main() {
         project_update: {name: "프로젝트 수정", component: <ProjectUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
 
         rfq_write: {name: "견적의뢰 등록", component: <RfqWrite copyPageInfo={copyPageInfo}/>},
-        rfq_read: {name: "견적의뢰 조회", component: <RfqRead getPropertyId={getPropertyId}/>},
+        rfq_read: {name: "견적의뢰 조회", component: <RfqRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>},
         rfq_update: {name: "견적의뢰 수정", component: <RqfUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
         rfq_mail_send: {name: "메일전송", component: <RfqMailSend getPropertyId={getPropertyId}/>},
 
         estimate_write: {name: "견적서 등록", component: <EstimateWrite copyPageInfo={copyPageInfo}/>},
-        estimate_read: {name: "견적서 조회", component: <EstimateRead getPropertyId={getPropertyId}/>},
+        estimate_read: {name: "견적서 조회", component: <EstimateRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>},
         estimate_update: {name: "견적서 수정", component: <EstimateUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
 
-        order_write: {name: "발주서 등록", component: <OrderWrite copyPageInfo={copyPageInfo}/>},
-        order_read: {name: "발주서 조회", component: <OrderRead getPropertyId={getPropertyId}/>},
+        order_write: {name: "발주서 등록", component: <OrderWrite copyPageInfo={copyPageInfo}/>} ,
+        order_read: {name: "발주서 조회", component: <OrderRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>},
         order_update: {name: "발주서 수정", component: <OrderUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
 
         store_write: {name: "입고 등록", component: <StoreWrite copyPageInfo={copyPageInfo}/>},

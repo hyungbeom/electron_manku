@@ -4,7 +4,7 @@ import Card from "antd/lib/card/Card";
 import {CopyOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
 import {tableOrderReadColumns} from "@/utils/columnList";
-import {estimateReadInitial, orderReadInitial} from "@/utils/initialList";
+import {estimateDetailUnit, estimateReadInitial, orderDetailUnit, orderReadInitial} from "@/utils/initialList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
@@ -12,7 +12,7 @@ import {getData} from "@/manage/function/api";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
 import {deleteOrder, searchEstimate, searchOrder} from "@/utils/api/mainApi";
-import {commonManage, gridManage} from "@/utils/commonManage";
+import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
 import _ from "lodash";
 import {BoxCard, inputForm, MainCard, rangePickerForm} from "@/utils/commonForm";
 import {useRouter} from "next/router";
@@ -20,7 +20,7 @@ import ReceiveComponent from "@/component/ReceiveComponent";
 import Spin from "antd/lib/spin";
 
 
-export default function OrderRead({dataInfo = [], getPropertyId}) {
+export default function OrderRead({getPropertyId, getCopyPage}) {
     const router = useRouter();
 
     const gridRef = useRef(null);
@@ -83,7 +83,7 @@ export default function OrderRead({dataInfo = [], getPropertyId}) {
     }
 
     async function moveRouter() {
-        router.push(`/order_write`);
+        getCopyPage('order_write', {orderDetailList : commonFunc.repeatObject(orderDetailUnit, 10)})
     }
 
 

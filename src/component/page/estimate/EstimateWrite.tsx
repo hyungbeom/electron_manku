@@ -2,7 +2,7 @@ import React, {useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
 import {DownloadOutlined, FileSearchOutlined, PlusSquareOutlined} from "@ant-design/icons";
 import {tableEstimateWriteColumns} from "@/utils/columnList";
-import {estimateDetailUnit, estimateWriteInitial, ModalInitList} from "@/utils/initialList";
+import {estimateDetailUnit, estimateRequestDetailUnit, estimateWriteInitial, ModalInitList} from "@/utils/initialList";
 import message from "antd/lib/message";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
@@ -65,10 +65,10 @@ export default function EstimateWrite({dataInfo=[], copyPageInfo = {}}) {
 
     const [loading, setLoading] = useState(false);
 
+
     const onGridReady = (params) => {
         gridRef.current = params.api;
-        // const result = dataInfo?.estimateDetailList;
-        // params.api.applyTransaction({add: result ? result : []});
+        params.api.applyTransaction({add: copyPageInfo['estimate_write']?.estimateRequestList ? copyPageInfo['estimate_write'][listType] : commonFunc.repeatObject(estimateDetailUnit, 10)});
         setReady(true)
     };
 

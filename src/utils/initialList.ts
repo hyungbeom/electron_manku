@@ -212,7 +212,7 @@ export const subRfqReadInitial = {
     "searchMobileNumber": "",           // 담당자 연락처
     "searchBiddingNumber": "",          // 입찰번호(미완성)
     "page": 1,
-    "limit": 100
+    "limit": -1
 }
 
 export const subRfqReadMailInitial = {

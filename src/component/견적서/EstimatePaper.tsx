@@ -159,10 +159,13 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
 
 
             const resultNum = Number(info?.unitPrice ? info?.unitPrice?.replace(/,/g, "") : '')
-            document.getElementById("total_amount").textContent = amountFormat(resultNum * info.quantity);
-            document.getElementById("total_unit_price").textContent = amountFormat(totalPrice);
-            document.getElementById("total_unit").textContent = info.unit;
-            document.getElementById("total_quantity").textContent = totalQuantity.toString()
+            if(document.getElementById("total_amount")){
+                document.getElementById("total_amount").textContent = amountFormat(resultNum * info.quantity);
+                document.getElementById("total_unit_price").textContent = amountFormat(totalPrice);
+                document.getElementById("total_unit").textContent = info.unit;
+                document.getElementById("total_quantity").textContent = totalQuantity.toString()
+            }
+
         }, [info]);
 
         return <thead>
@@ -245,7 +248,7 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
 
     return (
         // <div ref={pdfRef} style={{padding : '0px 50px', position : 'absolute', zIndex : -100, top :-1000}}>
-        <div ref={pdfRef} style={{position: 'absolute', zIndex: -100, top: -1000}}>
+        <div ref={pdfRef} style={{position: 'fixed', zIndex: -100, left: -1110, top : 1000}}>
 
             <div ref={pdfRef} style={{
                 width: '100%',

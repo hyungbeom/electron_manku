@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
 import {DownloadOutlined} from "@ant-design/icons";
 import {tableOrderWriteColumn,} from "@/utils/columnList";
-import {orderWriteInitial} from "@/utils/initialList";
+import {estimateDetailUnit, orderDetailUnit, orderWriteInitial} from "@/utils/initialList";
 import message from "antd/lib/message";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
@@ -20,7 +20,7 @@ import {
     textAreaForm,
     TopBoxCard
 } from "@/utils/commonForm";
-import {commonManage, gridManage} from "@/utils/commonManage";
+import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
 import _ from "lodash";
 import {findOrderDocumentInfo} from "@/utils/api/commonApi";
 import {saveOrder} from "@/utils/api/mainApi";
@@ -76,11 +76,13 @@ export default function OrderWrite({dataInfo = [], managerList=[], copyPageInfo}
     const [info, setInfo] = useState<any>({...copyInit, ...dataInfo, ...adminParams})
 
 
+
     const onGridReady = (params) => {
         gridRef.current = params.api;
-        // const result = dataInfo?.orderDetailList;
-        // params.api.applyTransaction({add: result ? result : []});
+        params.api.applyTransaction({add: copyPageInfo['order_write']?.orderDetailList ? copyPageInfo['order_write'][listType] : commonFunc.repeatObject(orderDetailUnit, 10)});
+
     };
+
 
     async function handleKeyPress(e) {
         if (e.key === 'Enter') {

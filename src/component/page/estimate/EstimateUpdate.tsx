@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
 import {FileSearchOutlined} from "@ant-design/icons";
 import {tableEstimateWriteColumns} from "@/utils/columnList";
@@ -58,6 +58,24 @@ export default function EstimateUpdate({dataInfo = {estimateDetail: [], attachme
 
 
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        getDataInfo().then(v => {
+            const {estimateDetail, attachmentFileList} = v;
+            setFileList(fileManage.getFormatFiles(attachmentFileList))
+            setInfo(estimateDetail)
+            gridManage.resetData(gridRef, estimateDetail[listType])
+        })
+    }, [updateKey['estimate_update']])
+
+    async function getDataInfo() {
+        const result = await getData.post('estimate/getEstimateDetail', {
+            estimateId: updateKey['estimate_update'],
+            documentNumberFull: ""
+        });
+
+        return result?.data?.entity;
+    }
 
 
     const onGridReady = (params) => {

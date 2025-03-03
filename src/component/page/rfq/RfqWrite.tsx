@@ -77,6 +77,7 @@ export default function RqfWrite({managerList = [], copyPageInfo = {}, dataInfo 
 
     useEffect(() => {
         if (copyPageInfo['rfq_write']) {
+            console.log(copyPageInfo,'copyPageInfo:')
             setInfo({...copyInit, ...copyPageInfo['rfq_write'], ...adminParams})
             if (gridRef.current?.forEachNode) {
                 gridManage.resetData(gridRef, copyPageInfo['rfq_write'][listType])
