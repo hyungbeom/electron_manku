@@ -35,7 +35,7 @@ export default function RemittanceDomesticUpdate({dataInfo = { remittanceDetail 
     const [originFileList, setOriginFileList] = useState(infoFileInit);
     const [loading, setLoading] = useState(false);
     useEffect(() => {
-        setInfo(v => {
+        setInfo((v:any) => {
             return {
                 ...v,
                 surtax: Math.round(v.supplyAmount * 0.1),
