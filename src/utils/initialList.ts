@@ -254,6 +254,8 @@ export const estimateReadInitial = {
     "searchModel": "",                  // MODEL
     "searchItem": "",                   // ITEM
     "searchCreatedBy": "",      // 등록 관리자 이름
+    page: 1,
+    limit: -1
 }
 
 export const projectReadInitial = {

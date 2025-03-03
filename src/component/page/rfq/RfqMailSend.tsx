@@ -177,10 +177,10 @@ export default function RfqMailSend({getPropertyId}) {
     return <Spin spinning={loading} tip={'견적의뢰 조회중...'}>
         {isModalOpen && <PreviewMailModal data={previewData} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}
                                           fileList={fileList}/>}
-        <LayoutComponent>
+        <>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '195px' : '65px'} calc(100vh - ${mini ? 295 : 165}px)`,
+                gridTemplateRows: `${mini ? '195px' : '65px'} calc(100vh - ${mini ? 325 : 195}px)`,
                 columnGap: 5
             }}>
                 <MainCard title={'견적의뢰 메일전송'} list={[
@@ -251,7 +251,7 @@ export default function RfqMailSend({getPropertyId}) {
                            columns={rfqReadColumns}
                            funcButtons={['print']}/>
             </div>
-        </LayoutComponent>
+        </>
     </Spin>
 }
 

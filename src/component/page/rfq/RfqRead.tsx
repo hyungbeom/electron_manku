@@ -29,10 +29,7 @@ export default function RfqRead({getPropertyId}) {
     const [loading, setLoading] = useState(false);
 
     const onGridReady = async (params) => {
-
         gridRef.current = params.api;
-
-
         await searchRfq({data: subRfqReadInitial}).then(v=>{
             params.api.applyTransaction({add: v});
         })

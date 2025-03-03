@@ -32,7 +32,7 @@ import {getData} from "@/manage/function/api";
 
 
 const listType = 'estimateDetailList'
-export default function EstimateWrite({dataInfo}) {
+export default function EstimateWrite({dataInfo=[], copyPageInfo = {}}) {
     const pdfRef = useRef(null);
     const fileRef = useRef(null);
     const gridRef = useRef(null);
@@ -67,8 +67,8 @@ export default function EstimateWrite({dataInfo}) {
 
     const onGridReady = (params) => {
         gridRef.current = params.api;
-        const result = dataInfo?.estimateDetailList;
-        params.api.applyTransaction({add: result ? result : []});
+        // const result = dataInfo?.estimateDetailList;
+        // params.api.applyTransaction({add: result ? result : []});
         setReady(true)
     };
 
@@ -187,8 +187,6 @@ export default function EstimateWrite({dataInfo}) {
         formData.append(`attachmentFileList[${resultCount}].attachmentFile`, result);
         formData.append(`attachmentFileList[${resultCount}].fileName`, `03.${resultCount + 1} ${result.name}`);
 
-        console.log(result.name, 'result.name')
-
         setLoading(true)
         await saveEstimate({data: formData, router: router, returnFunc: returnFunc})
 
@@ -224,10 +222,10 @@ export default function EstimateWrite({dataInfo}) {
                          gridRef={gridRef}
                          setIsModalOpen={setIsModalOpen} type={'ESTIMATE'}/>
 
-        <LayoutComponent>
+        <>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '510px' : '65px'} calc(100vh - ${mini ? 565 : 120}px)`,
+                gridTemplateRows: `${mini ? '510px' : '65px'} calc(100vh - ${mini ? 640 : 195}px)`,
                 columnGap: 5
             }}>
                 <MainCard title={'견적서 작성'} list={[
@@ -445,7 +443,7 @@ export default function EstimateWrite({dataInfo}) {
                     funcButtons={['estimateUpload', 'estimateAdd', 'delete', 'print']}
                 />
             </div>
-        </LayoutComponent>
+        </>
         {ready && <EstimatePaper data={info} pdfRef={pdfRef} gridRef={gridRef}/>}
     </Spin>
 }

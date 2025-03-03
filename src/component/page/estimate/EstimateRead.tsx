@@ -1,7 +1,7 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
 import {tableEstimateReadColumns} from "@/utils/columnList";
-import {estimateReadInitial} from "@/utils/initialList";
+import {estimateReadInitial, subRfqReadInitial} from "@/utils/initialList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
@@ -9,18 +9,21 @@ import Button from "antd/lib/button";
 import {CopyOutlined} from "@ant-design/icons";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
-import {deleteEstimate, searchEstimate} from "@/utils/api/mainApi";
+import {deleteEstimate, searchEstimate, searchRfq} from "@/utils/api/mainApi";
 import _ from "lodash";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import {BoxCard, inputForm, MainCard, rangePickerForm, selectBoxForm} from "@/utils/commonForm";
 import Spin from "antd/lib/spin";
 import ReceiveComponent from "@/component/ReceiveComponent";
 import {useRouter} from "next/router";
+import {getData} from "@/manage/function/api";
 
 
-export default function EstimateRead({dataInfo}) {
+export default function EstimateRead({getPropertyId}) {
 
     const router = useRouter();
+    const countRef = useRef(1);
+    const infoRef = useRef(null);
     const gridRef = useRef(null);
 
     const copyInit = _.cloneDeep(estimateReadInitial)
@@ -29,11 +32,60 @@ export default function EstimateRead({dataInfo}) {
 
     const [loading, setLoading] = useState(false);
 
-    const onGridReady = (params) => {
+    const onGridReady = async (params) => {
         gridRef.current = params.api;
-        params.api.applyTransaction({add: dataInfo});
+        await searchEstimate({data: estimateReadInitial}).then(v => {
+            params.api.applyTransaction({add: v});
+        })
+
+        // 그리드 로드 후 스크롤 이벤트 추가
+        setTimeout(() => {
+            const gridElement = document.querySelector(".ag-body-viewport");
+            if (gridElement) {
+                gridElement.addEventListener("scroll", handleScroll);
+            }
+        }, 100);
+    };
+    useEffect(() => {
+        infoRef.current = info
+    }, [info]);
+
+    const handleScroll = async () => {
+        const gridElement = document.querySelector(".ag-body-viewport");
+        if (!gridElement) return;
+
+        const {scrollTop, scrollHeight, clientHeight} = gridElement;
+        const atBottom = scrollHeight - scrollTop <= clientHeight + 1; // 소수점 오차 보정
+
+        if (atBottom) {
+            if (countRef.current) {
+                countRef.current += 1; // countRef를 직접 수정
+
+                setLoading(true);
+
+
+                await getData.post('estimate/getEstimateList', {...infoRef.current, page: countRef.current}).then(v => {
+                    if (!v.data.entity.pageInfo.isNextPage) {
+                        countRef.current = 0;
+                    } else {
+                        gridRef.current.applyTransaction({add: v.data.entity.estimateRequestList ? v.data.entity.estimateRequestList : []});
+                    }
+                    setLoading(false)
+                })
+                setLoading(false)
+            }
+        }
     };
 
+    useEffect(() => {
+        return () => {
+            // 컴포넌트 언마운트 시 스크롤 이벤트 제거
+            const gridElement = document.querySelector(".ag-body-viewport");
+            if (gridElement) {
+                gridElement.removeEventListener("scroll", handleScroll);
+            }
+        };
+    }, []);
 
     function handleKeyPress(e) {
         if (e.key === 'Enter') {
@@ -85,10 +137,10 @@ export default function EstimateRead({dataInfo}) {
 
     return <Spin spinning={loading} tip={'견적서 조회중...'}>
         <ReceiveComponent searchInfo={searchInfo}/>
-        <LayoutComponent>
+        <>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '260px' : '65px'} calc(100vh - ${mini ? 320 : 120}px)`,
+                gridTemplateRows: `${mini ? '260px' : '65px'} calc(100vh - ${mini ? 390 : 195}px)`,
                 columnGap: 5
             }}>
                 <MainCard title={'견적서 조회'}
@@ -163,7 +215,7 @@ export default function EstimateRead({dataInfo}) {
                                                onClick={deleteList}>
                     <CopyOutlined/>삭제
                 </Button>}
-
+                           getPropertyId={getPropertyId}
                            gridRef={gridRef}
                            onGridReady={onGridReady}
                            columns={tableEstimateReadColumns}
@@ -171,7 +223,7 @@ export default function EstimateRead({dataInfo}) {
                 />
 
             </div>
-        </LayoutComponent>
+        </>
     </Spin>
 }
 

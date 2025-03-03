@@ -195,10 +195,10 @@ export default function RqfWrite({managerList = [], copyPageInfo = {}, dataInfo 
                                      id={'해외'}>해외생성</Button>
                          </div>}
         />
-        <LayoutComponent>
+        <>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? 510 : 65}px calc(100vh - ${mini ? 610 : 150}px)`,
+                gridTemplateRows: `${mini ? 510 : 65}px calc(100vh - ${mini ? 640 : 195}px)`,
                 columnGap: 5
             }}>
 
@@ -241,30 +241,6 @@ export default function RqfWrite({managerList = [], copyPageInfo = {}, dataInfo 
                                             options={options}
                                     />
                                 </div>
-                                {/*{inputForm({title: '담당자', id: 'managerAdminName', onChange: onChange, data: info, placeHolder: '담당자를 입력해주세요'})}*/}
-                                {/*{inputForm({*/}
-                                {/*    title: 'INQUIRY NO.',*/}
-                                {/*    id: 'documentNumberFull',*/}
-                                {/*    onChange: onChange,*/}
-                                {/*    suffix:*/}
-                                {/*        <PlusSquareOutlined style={{cursor: 'pointer'}} onClick={*/}
-                                {/*            async (e) => {*/}
-                                {/*                e.stopPropagation();*/}
-                                {/*                if (!info['agencyCode']) {*/}
-                                {/*                    return message.warn('매입처코드를 선택해주세요')*/}
-                                {/*                }*/}
-                                {/*                const returnDocumentNumb = await checkInquiryNo({*/}
-                                {/*                    data: {*/}
-                                {/*                        agencyCode: info['agencyCode'],*/}
-                                {/*                        type: ''*/}
-                                {/*                    }*/}
-                                {/*                })*/}
-                                {/*                onChange({target: {id: 'documentNumberFull', value: returnDocumentNumb}})*/}
-                                {/*            }*/}
-                                {/*        }/>,*/}
-                                {/*    data: info,*/}
-                                {/*    disabled: true*/}
-                                {/*})}*/}
                                 {inputForm({
                                     title: 'RFQ NO.',
                                     id: 'rfqNo',
@@ -437,7 +413,7 @@ export default function RqfWrite({managerList = [], copyPageInfo = {}, dataInfo 
                     funcButtons={['upload', 'add', 'delete', 'print']}
                 />
             </div>
-        </LayoutComponent>
+        </>
     </Spin>
 }
 

@@ -23,7 +23,7 @@ import {BoxCard} from "@/utils/commonForm";
 const {RangePicker} = DatePicker
 
 
-export default function EstimateMerge({estimateList}) {
+export default function EstimateTotalWrite({estimateList=[]}) {
     const gridRef = useRef(null);
 
     const userInfo = useAppSelector((state) => state.user);

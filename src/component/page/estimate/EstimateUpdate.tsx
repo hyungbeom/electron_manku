@@ -36,7 +36,7 @@ import html2canvas from "html2canvas";
 import {spans} from "next/dist/build/webpack/plugins/profiling-plugin";
 
 const listType = 'estimateDetailList'
-export default function estimate_update({dataInfo}) {
+export default function EstimateUpdate({dataInfo = {estimateDetail: [], attachmentFileList: []}, updateKey = {}, getCopyPage = null, managerList = []}) {
     const pdfRef = useRef(null);
     const pdfSubRef = useRef(null);
     const fileRef = useRef(null);
@@ -55,7 +55,11 @@ export default function estimate_update({dataInfo}) {
 
     const [fileList, setFileList] = useState(fileManage.getFormatFiles(infoInitFile));
     const [originFileList, setOriginFileList] = useState(infoInitFile);
+
+
     const [loading, setLoading] = useState(false);
+
+
     const onGridReady = (params) => {
         gridRef.current = params.api;
         params.api.applyTransaction({add: dataInfo?.estimateDetail[listType]});
@@ -230,10 +234,10 @@ export default function estimate_update({dataInfo}) {
                          gridRef={gridRef}
                          setIsModalOpen={setIsModalOpen}/>
         <EstimateModal/>
-        <LayoutComponent>
+        <>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '510px' : '65px'} calc(100vh - ${mini ? 615 : 170}px)`,
+                gridTemplateRows: `${mini ? '510px' : '65px'} calc(100vh - ${mini ? 640 : 195}px)`,
                 columnGap: 5
             }}>
 
@@ -426,8 +430,7 @@ export default function estimate_update({dataInfo}) {
                     funcButtons={['estimateUpload', 'estimateAdd', 'delete', 'print']}
                 />
             </div>
-        </LayoutComponent>
-        <div style={{marginTop: 200}}/>
+        </>
 
     </Spin>
 }

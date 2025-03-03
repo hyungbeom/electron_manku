@@ -78,7 +78,9 @@ export default function ProjectWrite({managerList = [], copyPageInfo = {}}) {
             }
         }else{
             setInfo({...copyInit, ...adminParams});
-            gridManage.resetData(gridRef, commonFunc.repeatObject(projectDetailUnit, 10))
+            if (gridRef.current?.forEachNode) {
+                gridManage.resetData(gridRef, commonFunc.repeatObject(projectDetailUnit, 10))
+            }
         }
     }, [copyPageInfo]);
 

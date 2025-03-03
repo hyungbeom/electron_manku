@@ -15,6 +15,10 @@ import ProjectUpdate from "@/component/page/project/ProjectUpdate";
 import RfqRead from "@/component/page/rfq/RfqRead";
 import RqfUpdate from "@/component/page/rfq/RfqUpdate";
 import RfqMailSend from "@/component/page/rfq/RfqMailSend";
+import EstimateWrite from "@/component/page/estimate/EstimateWrite";
+import EstimateRead from "@/component/page/estimate/EstimateRead";
+import EstimateTotalWrite from "@/component/page/estimate/EstimateTotalWrite";
+import EstimateUpdate from "@/component/page/estimate/EstimateUpdate";
 
 
 function findTitleByKey(data, key) {
@@ -121,10 +125,16 @@ export default function Main() {
         project_write: {name: "프로젝트 등록", component: <ProjectWrite copyPageInfo={copyPageInfo}/>},
         project_read: {name: "프로젝트 조회", component: <ProjectRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>},
         project_update: {name: "프로젝트 수정", component: <ProjectUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
+
         rfq_write: {name: "견적의뢰 등록", component: <RfqWrite copyPageInfo={copyPageInfo} />},
         rfq_read: {name: "견적의뢰 조회", component: <RfqRead getPropertyId={getPropertyId} />},
         rfq_update: {name: "견적의뢰 수정", component: <RqfUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
         rfq_mail_send: {name: "메일전송", component: <RfqMailSend getPropertyId={getPropertyId}/>},
+
+        estimate_write: {name: "견적서 등록", component: <EstimateWrite copyPageInfo={copyPageInfo}/>},
+        estimate_read: {name: "견적서 조회", component: <EstimateRead getPropertyId={getPropertyId} />},
+        estimate_update: {name: "견적서 수정", component: <EstimateUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
+
     };
 
 

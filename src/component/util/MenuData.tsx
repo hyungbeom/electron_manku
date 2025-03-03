@@ -16,7 +16,19 @@ export default function MenuData(){
 
 export const updateList = [
     {title : '프로젝트 수정', key : 'project_update'},
-    {title : '견적의뢰 수정', key : 'rfq_update'}
+    {title : '견적의뢰 수정', key : 'rfq_update'},
+    {title : '견적서 수정', key : 'estimate_update'},
+    {title : '발주서 수정', key : 'order_update'},
+    {title : '입고 수정', key : 'store_update'},
+    {title : '입고 수정', key : 'store_update'},
+    {title : '배송 수정', key : 'delivery_update'},
+    {title : '송금 수정', key : 'remittance_update'},
+    {title : '매입처 국내 수정', key : 'domestic_agency_update'},
+    {title : '매입처 해외 수정', key : 'overseas_agency_update'},
+    {title : '고객사 국내 수정', key : 'domestic_customer_update'},
+    {title : '고객사 해외 수정', key : 'overseas_customer_update'},
+    {title : '메이커 수정', key : 'maker_update'},
+    {title : 'HS CODE 수정', key : 'hcode_update'},
 ]
 
 export const treeData = [
@@ -42,7 +54,6 @@ export const treeData = [
         children: [
             {title: "견적서 등록", key: "estimate_write"},
             {title: "견적서 조회", key: "estimate_read"},
-            {title: "통합견적서", key: "rfq87_mail_send"},
         ],
     }, {
         title: "발주서",
@@ -77,7 +88,7 @@ export const treeData = [
         key: "data",
         children: [
             {
-                title: "매입처", key: "44444", children: [
+                title: "매입처", key: "agency", children: [
                     {title: "국내 등록", key: "domestic_agency_write"},
                     {title: "국내 조회", key: "domestic_agency_read"},
                     {title: "해외 등록", key: "overseas_agency_write"},
@@ -85,7 +96,7 @@ export const treeData = [
                 ]
             },
             {
-                title: "고객사", key: "rfq_rea555d", children: [
+                title: "고객사", key: "customer", children: [
                     {title: "국내 등록", key: "domestic_customer_write"},
                     {title: "국내 조회", key: "domestic_customer_read"},
                     {title: "해외 등록", key: "overseas_customer_write"},
