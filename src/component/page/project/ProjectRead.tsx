@@ -29,7 +29,6 @@ export default function ProjectRead({getPropertyId}) {
         gridRef.current = params.api;
         await searchProject({data: projectReadInitial}).then(v => {
             params.api.applyTransaction({add: v ? v : []});
-
         })
 
     };

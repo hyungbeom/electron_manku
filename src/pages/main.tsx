@@ -12,6 +12,8 @@ import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import {introMenulist, treeData, updateList} from "@/component/util/MenuData";
 import ProjectUpdate from "@/component/page/project/ProjectUpdate";
+import RfqRead from "@/component/page/rfq/RfqRead";
+import RqfUpdate from "@/component/page/rfq/RfqUpdate";
 
 
 function findTitleByKey(data, key) {
@@ -88,8 +90,9 @@ export default function Main() {
         project_write: {name: "프로젝트 등록", component: <ProjectWrite copyPageInfo={copyPageInfo}/>},
         project_read: {name: "프로젝트 조회", component: <ProjectRead getPropertyId={getPropertyId}/>},
         project_update: {name: "프로젝트 수정", component: <ProjectUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
-        rfq_write: {name: "견적의뢰 등록", component: <RfqWrite/>},
-        rfq_read: {name: "견적의뢰 수정", component: () => <div>견적의뢰 수정 화면</div>},
+        rfq_write: {name: "견적의뢰 등록", component: <RfqWrite copyPageInfo={copyPageInfo} />},
+        rfq_read: {name: "견적의뢰 조회", component: <RfqRead getPropertyId={getPropertyId} />},
+        rfq_update: {name: "견적의뢰 수정", component: <RqfUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
         rfq_mail_send: {name: "메일전송", component: () => <div>메일전송 화면</div>},
     };
 

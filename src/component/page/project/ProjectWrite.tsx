@@ -87,7 +87,7 @@ export default function ProjectWrite({managerList = [], copyPageInfo = {}}) {
         delete copyData?.modifiedDate;
         const result = copyData?.projectDetailList;
 
-        params.api.applyTransaction({add: copyPageInfo['project_write'][listType] ? copyPageInfo['project_write'][listType] : commonFunc.repeatObject(projectDetailUnit, 30)});
+        params.api.applyTransaction({add: copyPageInfo['project_write']?.projectDetailList ? copyPageInfo['project_write'][listType] : commonFunc.repeatObject(projectDetailUnit, 10)});
     };
 
 

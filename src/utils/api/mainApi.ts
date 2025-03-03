@@ -105,7 +105,6 @@ export const saveProject = async ({data, router, returnFunc}) => {
         const code = v.data.code;
         if (code === 1) {
             message.success('저장되었습니다.')
-            router.push(`/project_update?projectId=${v.data.entity.projectId}`)
         } else if (code === -20001) {
             message.error('PROJECT NO.가 중복되었습니다.')
         } else {

@@ -33,7 +33,7 @@ import Spin from "antd/lib/spin";
 import Button from "antd/lib/button";
 
 const listType = 'estimateRequestDetailList'
-export default function RqfWrite({dataInfo=[], managerList=[]}) {
+export default function RqfWrite({managerList = [], copyPageInfo = {}, dataInfo = {}}) {
     const options = managerList.map((item) => ({
         ...item,
         value: item.adminId,
