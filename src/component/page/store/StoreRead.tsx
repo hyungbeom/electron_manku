@@ -1,6 +1,6 @@
 import React, {useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
-import {orderReadInitial, storeRealInitial} from "@/utils/initialList";
+import {estimateDetailUnit, orderReadInitial, storeRealInitial} from "@/utils/initialList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
@@ -8,7 +8,7 @@ import Button from "antd/lib/button";
 import {CopyOutlined} from "@ant-design/icons";
 import {deleteOrderStatusDetails, getOrderStatusList, searchOrder} from "@/utils/api/mainApi";
 import _ from "lodash";
-import {commonManage, gridManage} from "@/utils/commonManage";
+import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
 import {BoxCard, inputForm, MainCard, rangePickerForm, TopBoxCard} from "@/utils/commonForm";
 import TableGrid from "@/component/tableGrid";
 import {storeReadColumn} from "@/utils/columnList";
@@ -17,7 +17,7 @@ import message from "antd/lib/message";
 import Spin from "antd/lib/spin";
 import ReceiveComponent from "@/component/ReceiveComponent";
 
-export default function StoreRead({ getPropertyId}) {
+export default function StoreRead({ getPropertyId, getCopyPage}) {
     const router = useRouter();
 
     const gridRef = useRef(null);
@@ -51,7 +51,7 @@ export default function StoreRead({ getPropertyId}) {
 
 
     async function moveRouter() {
-        window.open(`/store_write`, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
+        getCopyPage('store_write', {orderStatusDetailList : []})
     }
 
     /**

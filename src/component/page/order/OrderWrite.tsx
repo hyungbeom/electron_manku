@@ -80,7 +80,6 @@ export default function OrderWrite({dataInfo = [], managerList=[], copyPageInfo}
     const onGridReady = (params) => {
         gridRef.current = params.api;
         params.api.applyTransaction({add: copyPageInfo['order_write']?.orderDetailList ? copyPageInfo['order_write'][listType] : commonFunc.repeatObject(orderDetailUnit, 10)});
-
     };
 
 

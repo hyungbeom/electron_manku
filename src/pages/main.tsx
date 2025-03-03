@@ -170,7 +170,7 @@ export default function Main() {
         order_update: {name: "발주서 수정", component: <OrderUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
 
         store_write: {name: "입고 등록", component: <StoreWrite copyPageInfo={copyPageInfo}/>},
-        store_read: {name: "입고 조회", component: <StoreRead getPropertyId={getPropertyId}/>},
+        store_read: {name: "입고 조회", component: <StoreRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>},
         store_update: {name: "입고 수정", component: <OrderUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
 
         delivery_write: {name: "배송 등록", component: <DeliveryWrite copyPageInfo={copyPageInfo}/>},
@@ -307,7 +307,7 @@ export default function Main() {
     return (
         <LayoutComponent>
             <div style={{display: "grid", gridTemplateColumns: "205px auto"}}>
-                <div style={{borderRight: "1px solid lightGray",  paddingTop: 15,  height : 'calc(100vh - 55px)', overflowY: "auto"}}>
+                <div style={{borderRight: "1px solid lightGray",  paddingTop: 15,  height : 'calc(100vh - 56px)', overflowY: "auto"}}>
                     <Tree
                           defaultExpandedKeys={getRootKeys(treeData)}
                           showLine

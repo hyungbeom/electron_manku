@@ -2,7 +2,7 @@ import React, {useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
 import {CopyOutlined, SaveOutlined} from "@ant-design/icons";
 import {storeWriteColumn} from "@/utils/columnList";
-import {storeDetailUnit, storeWriteInitial} from "@/utils/initialList";
+import {orderDetailUnit, storeDetailUnit, storeWriteInitial} from "@/utils/initialList";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
 import {wrapper} from "@/store/store";
@@ -20,7 +20,7 @@ import {
     numbParser,
     TopBoxCard
 } from "@/utils/commonForm";
-import {commonManage, gridManage} from "@/utils/commonManage";
+import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
 import _ from "lodash";
 import OrderListModal from "@/component/OrderListModal";
 import {saveProject, saveStore} from "@/utils/api/mainApi";
@@ -28,7 +28,7 @@ import {useRouter} from "next/router";
 
 const listType = 'orderStatusDetailList'
 
-export default function StoreWrite({dataInfo={orderStatusDetailList : []}, copyPageInfo}) {
+export default function StoreWrite({copyPageInfo}) {
     const router = useRouter();
 
     const gridRef = useRef(null);
@@ -45,16 +45,18 @@ export default function StoreWrite({dataInfo={orderStatusDetailList : []}, copyP
 
 
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [info, setInfo] = useState<any>({...infoInit, ...dataInfo})
+    const [info, setInfo] = useState<any>({...infoInit})
     const [mini, setMini] = useState(true);
+
+
 
 
 
     const onGridReady = (params) => {
         gridRef.current = params.api;
-        const result = dataInfo?.orderStatusDetailList;
-        params.api.applyTransaction({add: result ? result : []});
+        params.api.applyTransaction({add: copyPageInfo['store_write']?.orderDetailList ? copyPageInfo['store_write'][listType] : []});
     };
+
 
     function getTotalTableValue() {
         const totalList = gridManage.getAllData(gridRef)
