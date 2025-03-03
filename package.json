@@ -7,21 +7,27 @@
   "description": "manku erp project",
   "scripts": {
     "dev": "concurrently -n \"NEXT,ELECTRON\" -c \"yellow,blue\" --kill-others \"next dev\" \"electron .\"",
-    "build": "next build",
+    "build": "electron-builder",
     "start": "next start",
     "lint": "next lint"
   },
   "build": {
-    "appId": "com.example.yourapp",
-    "productName": "YourApp",
-    "files": [
-      "**/*"
-    ],
+    "appId": "com.example.app",
+    "productName": "MANKU_ERP",
     "win": {
-      "target": "nsis"
+      "target": "nsis",
+      "icon": "public/installer-icon.ico",
+      "artifactName": "${productName}-${version}-setup.exe"
     },
-    "mac": {
-      "target": "dmg"
+    "nsis": {
+      "oneClick": false,
+      "allowElevation": true,
+      "perMachine": false,
+      "installerIcon": "public/installer-icon.ico",
+      "uninstallerIcon": "public/installer-icon.ico",
+      "uninstallDisplayName": "YourApp Uninstaller",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
     }
   },
   "dependencies": {
@@ -33,6 +39,7 @@
     "axios": "^1.7.7",
     "dotenv": "^16.4.7",
     "electron-serve": "^2.1.1",
+    "electron-updater": "^6.3.9",
     "flexlayout-react": "^0.8.3",
     "gapi-script": "^1.2.0",
     "html2canvas": "^1.4.1",
@@ -50,8 +57,11 @@
     "react": "^18",
     "react-contextmenu": "^2.14.0",
     "react-dom": "^18",
+    "react-grid-layout": "0.6.1",
     "react-phone-input-2": "^2.15.1",
     "react-redux": "^9.1.2",
+    "react-resizable-panels": "^2.1.7",
+    "react-splitter-layout": "^4.0.0",
     "styled-components": "^6.1.13",
     "xlsx": "^0.18.5"
   },

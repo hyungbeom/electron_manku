@@ -2,9 +2,6 @@ import React, {useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
 import {projectReadColumn} from "@/utils/columnList";
 import {projectReadInitial} from "@/utils/initialList";
-import {wrapper} from "@/store/store";
-import initialServerRouter from "@/manage/function/initialServerRouter";
-import {setUserInfo} from "@/store/user/userSlice";
 import Button from "antd/lib/button";
 import {CopyOutlined} from "@ant-design/icons";
 import TableGrid from "@/component/tableGrid";
@@ -12,12 +9,12 @@ import message from "antd/lib/message";
 import {deleteProjectList, searchProject} from "@/utils/api/mainApi";
 import _ from "lodash";
 import {commonManage, gridManage} from "@/utils/commonManage";
-import {BoxCard, inputForm, MainCard, rangePickerForm, tooltipInfo, TopBoxCard} from "@/utils/commonForm";
+import {BoxCard, inputForm, MainCard, rangePickerForm, tooltipInfo} from "@/utils/commonForm";
 import Spin from "antd/lib/spin";
 import ReceiveComponent from "@/component/ReceiveComponent";
 
 
-export default function ProjectRead({dataInfo}) {
+export default function ProjectRead({getPropertyId}) {
 
     const gridRef = useRef(null);
     const [mini, setMini] = useState(true);
@@ -28,9 +25,13 @@ export default function ProjectRead({dataInfo}) {
     const [loading, setLoading] = useState(false);
 
 
-    const onGridReady = (params) => {
+    const onGridReady = async (params) => {
         gridRef.current = params.api;
-        params.api.applyTransaction({add: dataInfo ? dataInfo : []});
+        await searchProject({data: projectReadInitial}).then(v => {
+            params.api.applyTransaction({add: v ? v : []});
+
+        })
+
     };
 
 
@@ -51,7 +52,6 @@ export default function ProjectRead({dataInfo}) {
             gridManage.resetData(gridRef, v);
             setLoading(false)
         }, e => setLoading(false))
-
     }
 
     async function deleteList() {
@@ -80,13 +80,12 @@ export default function ProjectRead({dataInfo}) {
 
     return <Spin spinning={loading} tip={'프로젝트 조회중...'}>
         <ReceiveComponent searchInfo={searchInfo}/>
-        <LayoutComponent>
+
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '370px' : '65px'} calc(100vh - ${mini ? 470 : 165}px)`,
+                gridTemplateRows: `${mini ? '370px' : '65px'} calc(100vh - ${mini ? 495 : 190}px)`,
                 columnGap: 5
             }}>
-
                 <MainCard title={'프로젝트 조회'} list={[
                     {name: '조회', func: searchInfo, type: 'primary'},
                     {name: '초기화', func: clearAll, type: 'danger'},
@@ -97,7 +96,7 @@ export default function ProjectRead({dataInfo}) {
 
                             <div style={{
                                 display: 'grid',
-                                gridTemplateColumns:  '1fr 1fr 1fr 1.5fr',
+                                gridTemplateColumns: '1fr 1fr 1fr 1.5fr',
                                 gap: 10,
                                 marginTop: 10
                             }}>
@@ -209,38 +208,18 @@ export default function ProjectRead({dataInfo}) {
 
                 {/*@ts-ignored*/}
                 <TableGrid deleteComp={<Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
-                                               onClick={deleteList}>
+                                               onClick={deleteList} >
                     <CopyOutlined/>삭제
                 </Button>}
+                           getPropertyId={getPropertyId}
                            gridRef={gridRef}
                            onGridReady={onGridReady}
                            columns={projectReadColumn}
                            funcButtons={['print']}/>
 
             </div>
-        </LayoutComponent>
+
 
     </Spin>
 }
 
-
-export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
-
-
-    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
-
-    if (codeInfo < 0) {
-        return {
-            redirect: {
-                destination: '/',
-                permanent: false,
-            },
-        };
-    } else {
-        store.dispatch(setUserInfo(userInfo));
-        let result = await searchProject({data: projectReadInitial});
-        return {
-            props: {dataInfo: result ? result : null}
-        }
-    }
-})

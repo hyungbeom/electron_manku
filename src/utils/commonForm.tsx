@@ -65,9 +65,12 @@ export function BoxCard({children, title = null, tooltip = '', disabled = false}
         opacity: disabled ? 0.5 : 1, // 흐리게 표시
         pointerEvents: disabled ? "none" : "auto", // 클릭 막기
         userSelect: disabled ? "none" : "auto", // 텍스트 선택 불가
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
+
     }
     const defaultStyle = {
+        height : '100%',
+
         // boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
     }
     // <InfoCircleOutlined />
@@ -80,6 +83,7 @@ export function BoxCard({children, title = null, tooltip = '', disabled = false}
                          <InfoCircleOutlined style={{cursor: 'pointer'}}/>
                      </Tooltip>
                  </div> : null}>
+         {/*@ts-ignore*/}
         <div style={disabled ? disabledStyle : defaultStyle}>
             {children}
         </div>

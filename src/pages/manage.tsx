@@ -30,7 +30,7 @@ export default function Manage({memberList}:any) {
 
     };
 
-    return <LayoutComponent userInfo={userInfo}>
+    return <LayoutComponent>
     <div style={{padding : 20}}>
         <Card title={'관리자 페이지'}>
 

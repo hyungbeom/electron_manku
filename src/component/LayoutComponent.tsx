@@ -3,174 +3,28 @@ import {Content} from "antd/lib/layout/layout";
 import Menu from "antd/lib/menu";
 import Dropdown from "antd/lib/dropdown";
 import {
-    AlertOutlined, BankOutlined,
+    AlertOutlined, BankOutlined, BellFilled,
     DatabaseOutlined,
     DiffOutlined,
     DropboxOutlined,
     FormOutlined,
-    FundProjectionScreenOutlined, HomeOutlined, LogoutOutlined,
+    FundProjectionScreenOutlined, HomeOutlined, LogoutOutlined, PieChartFilled,
     PullRequestOutlined,
-    SendOutlined, SettingOutlined,
+    SendOutlined, SettingFilled, SettingOutlined, SlidersFilled, ToolFilled,
     TruckOutlined, UserOutlined,
 } from '@ant-design/icons';
 import {useRouter} from "next/router";
 import {removeCookie} from "@/manage/function/cookie";
+import {useAppSelector} from "@/utils/common/function/reduxHooks";
 
 
-export default function LayoutComponent({children, userInfo = null}) {
+export default function LayoutComponent({children}) {
 
     const router = useRouter();
 
-    const items: any = [{
-        label: 'HOME',
-        key: 'main',
-        icon: <BankOutlined/>,
-        style: {margin: ' 0px -20px 0px -10px'},
-        children: [
-            {label: <span style={{fontSize: '12px'}}>HOME</span>, key: 'main'},
-        ],
-        popupOffset: [0, -4], // Y축 간격 줄이기
-    },
-        {
-            label: '프로젝트',
-            key: 'project',
-            icon: <FundProjectionScreenOutlined/>,
-            style: {margin: ' 0px -20px 0px -10px'},
-            children: [
-                {label: <span style={{fontSize: '12px'}}>프로젝트 등록</span>, key: 'project_write'},
-                {label: <span style={{fontSize: '12px'}}>프로젝트 조회</span>, key: 'project_read'},
-            ],
-            popupOffset: [0, -4], // Y축 간격 줄이기
-        }, {
-            label: '견적의뢰',
-            key: 'rfq',
-            icon: <PullRequestOutlined/>,
-            style: {margin: ' 0px -20px'},
-            children: [
-                {label: <span style={{fontSize: '12px'}}>견적의뢰 등록</span>, key: 'rfq_write'},
-                {label: <span style={{fontSize: '12px'}}>견적의뢰 조회</span>, key: 'rfq_read'},
-                {label: <span style={{fontSize: '12px'}}>메일전송</span>, key: 'rfq_mail_send'}
-            ],
+    const userInfo = useAppSelector((state) => state.user);
 
-            popupOffset: [0, -4],
-        }, {
-            label: '견적서',
-            key: 'estimate',
-            icon: <FormOutlined/>,
-            style: {margin: ' 0px -20px'},
-            children: [
-
-                {label: <span style={{fontSize: '12px'}}>견적서 등록</span>, key: 'estimate_write'},
-                {label: <span style={{fontSize: '12px'}}>견적서 조회</span>, key: 'estimate_read'},
-                {label: <span style={{fontSize: '12px'}}>통합견적서 발행</span>, key: 'estimate_*'},
-
-            ],
-            popupOffset: [0, -4],
-        }, {
-            label: '발주서',
-            key: 'order',
-            icon: <DiffOutlined/>,
-            style: {margin: ' 0px -20px'},
-            children: [
-                {label: <span style={{fontSize: '12px'}}>발주서 등록</span>, key: 'order_write'},
-                {label: <span style={{fontSize: '12px'}}>발주서 조회</span>, key: 'order_read'},
-
-            ],
-            popupOffset: [0, -4],
-        }, {
-            label: '입고',
-            key: 'store',
-            icon: <DropboxOutlined/>,
-            style: {margin: ' 0px -20px'},
-            children: [
-                {label: <span style={{fontSize: '12px'}}>입고 등록</span>, key: 'store_write'},
-                {label: <span style={{fontSize: '12px'}}>입고 조회</span>, key: 'store_read'}
-            ]
-        }, {
-            label: '배송',
-            key: 'delivery',
-            icon: <TruckOutlined/>,
-            style: {margin: ' 0px -20px'},
-            children: [
-                {label: <span style={{fontSize: '12px'}}>배송 등록</span>, key: 'delivery_write'},
-                {label: <span style={{fontSize: '12px'}}>배송 조회</span>, key: 'delivery_read'}
-            ],
-            popupOffset: [0, -4],
-        }, {
-            label: '송금',
-            key: 'remittance_domestic',
-            icon: <SendOutlined/>,
-            style: {margin: ' 0px -20px'},
-            children: [
-                {label: <span style={{fontSize: '12px'}}>국내 송금 등록</span>, key: 'remittance_domestic_write'},
-                {label: <span style={{fontSize: '12px'}}>국내 송금 목록</span>, key: 'remittance_domestic_read'},
-            ],
-            popupOffset: [0, -4],
-        }, {
-            label: '데이터관리',
-            key: 'data',
-            icon: <DatabaseOutlined/>,
-            style: {margin: ' 0px -20px'},
-            children: [
-                {
-                    label: <span style={{fontSize: '12px', paddingLeft: 5}}>매입처</span>,
-                    key: 'data/domestic/agency_read',
-                    children: [
-                        {
-                            label: <span style={{fontSize: '12px'}}>국내 등록</span>,
-                            key: 'data/agency/domestic/agency_write'
-                        },
-                        {label: <span style={{fontSize: '12px'}}>국내 목록</span>, key: 'data/agency/domestic/agency_read'},
-                        {
-                            label: <span style={{fontSize: '12px'}}>해외 등록</span>,
-                            key: 'data/agency/overseas/agency_write'
-                        },
-                        {label: <span style={{fontSize: '12px'}}>해외 목록</span>, key: 'data/agency/overseas/agency_read'},
-                    ],
-                },
-                {
-                    label: <span style={{fontSize: '12px', paddingLeft: 5}}>고객사</span>, key: 'data_4',
-                    children: [
-                        {
-                            label: <span style={{fontSize: '12px'}}>국내 등록</span>,
-                            key: 'data/customer/domestic/customer_write'
-                        },
-                        {
-                            label: <span style={{fontSize: '12px'}}>국내 목록</span>,
-                            key: 'data/customer/domestic/customer_read'
-                        },
-                        {
-                            label: <span style={{fontSize: '12px'}}>해외 등록</span>,
-                            key: 'data/customer/overseas/customer_write'
-                        },
-                        {
-                            label: <span style={{fontSize: '12px'}}>해외 목록</span>,
-                            key: 'data/customer/overseas/customer_read'
-                        },
-                    ],
-                },
-                {
-                    label: <span style={{fontSize: '12px', paddingLeft: 5}}>메이커</span>, key: 'data_5',
-                    children: [
-                        {label: <span style={{fontSize: '12px'}}>메이커 등록</span>, key: 'maker_write'},
-                        {label: <span style={{fontSize: '12px'}}>메이커 목록</span>, key: 'maker_read'},
-                    ]
-                },
-                {label: <span style={{fontSize: '12px'}}>HS CODE</span>, key: 'code_read'},
-            ],
-            popupOffset: [0, -4],
-        }
-
-    ];
-
-
-    const onClick = (e) => {
-        const root = `/${e.keyPath[0]}`
-
-        router.push(root)
-
-    };
-
+    console.log(userInfo, 'userInfo:')
 
     return <>
 
@@ -187,6 +41,36 @@ export default function LayoutComponent({children, userInfo = null}) {
         {/*</div>*/}
 
         <Content>
+            <div style={{
+                border: '1px solid lightGray',
+                height: 55,
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '0px 20px'
+            }}>
+                <div style={{display: 'flex', alignItems : 'center'}}>
+                    <img src="/installer-icon.ico" width={50} alt=""/>
+                    <div style={{fontSize: 20, fontWeight: 500, paddingLeft : 5}}>MANKU</div>
+
+                </div>
+                <div style={{display: 'flex'}}>
+                    <div style={{alignItems : 'center', display : 'flex', gap : 20, paddingRight : 20}}>
+                        <SettingFilled style={{fontSize : 25, color : 'dimgray', cursor : 'pointer'}} />
+                        <PieChartFilled style={{fontSize : 25, color : 'blueviolet', cursor : 'pointer'}} />
+                        <BellFilled style={{fontSize : 25, color : "gold", cursor : 'pointer'}} />
+                        <SlidersFilled style={{fontSize : 25, color : 'darkcyan', cursor : 'pointer'}} />
+                    </div>
+                <div style={{ display: 'flex',borderLeft : '1px solid lightGray'}}>
+                    <UserOutlined style={{fontSize: 30, paddingLeft : 10}}/>
+
+                    <div style={{paddingLeft: 12}}>
+                        <div>{userInfo.name}님 환영합니다</div>
+                        <div>{userInfo.email}</div>
+                    </div>
+                </div>
+                </div>
+            </div>
             {children}
         </Content>
 
@@ -202,12 +86,12 @@ export function UserMenu() {
             icon: <UserOutlined/>,
         },
         {
-            label: <div style={{width: 100, color : 'red'}} onClick={()=>{
+            label: <div style={{width: 100, color: 'red'}} onClick={() => {
                 removeCookie(null, 'token')
                 router.push('/')
             }}>로그아웃</div>,
             key: '2',
-            icon: <LogoutOutlined style={{color : 'red'}}/>
+            icon: <LogoutOutlined style={{color: 'red'}}/>
         }
     ];
     return <Dropdown menu={{items}}>

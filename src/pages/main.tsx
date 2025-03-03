@@ -1,53 +1,44 @@
 import LayoutComponent from "@/component/LayoutComponent";
-import { wrapper } from "@/store/store";
-import { useAppSelector } from "@/utils/common/function/reduxHooks";
-import React, {useEffect, useRef, useState} from "react";
-import { DownOutlined } from "@ant-design/icons";
+import {wrapper} from "@/store/store";
+import React, {useEffect, useMemo, useRef, useState} from "react";
+import {DownOutlined} from "@ant-design/icons";
 import {Actions, Layout, Model, TabNode} from "flexlayout-react";
 import Tree from "antd/lib/tree/Tree";
 import ProjectWrite from "@/component/page/project/ProjectWrite";
 import ProjectRead from "@/component/page/project/ProjectRead";
 import _ from "lodash";
+import RfqWrite from "@/component/page/rfq/RfqWrite";
+import initialServerRouter from "@/manage/function/initialServerRouter";
+import {setUserInfo} from "@/store/user/userSlice";
+import {introMenulist, treeData, updateList} from "@/component/util/MenuData";
+import ProjectUpdate from "@/component/page/project/ProjectUpdate";
 
-const treeData = [
-    { title: "HOME", key: "home" },
-    {
-        title: "프로젝트",
-        key: "project",
-        children: [
-            { title: "프로젝트 등록", key: "project_write" },
-            { title: "프로젝트 조회", key: "project_read" },
-        ],
-    },
-    {
-        title: "견적의뢰",
-        key: "rfq",
-        children: [
-            { title: "견적의뢰 등록", key: "rfq_write" },
-            { title: "견적의뢰 수정", key: "rfq_read" },
-            { title: "메일전송", key: "rfq_mail_send" },
-        ],
-    },
-];
 
-// 각 탭에 대한 매핑 정의
-const tabComponents = {
-    project_write: { name: "프로젝트 등록", component: <ProjectWrite dataInfo={[]} managerList={[]} /> },
-    project_read: { name: "프로젝트 조회", component: <ProjectRead dataInfo={[]} /> },
-    rfq_write: { name: "견적의뢰 등록", component: <div>견적의뢰 등록 화면</div> },
-    rfq_read: { name: "견적의뢰 수정", component: <div>견적의뢰 수정 화면</div> },
-    rfq_mail_send: { name: "메일전송", component: <div>메일전송 화면</div> },
-};
+function findTitleByKey(data, key) {
+    for (const item of data) {
+
+        if (item.key === key) {
+            return item.title;
+        }
+
+        if (item.children) {
+            const title = findTitleByKey(item.children, key);
+            if (title) {
+                return title;
+            }
+        }
+    }
+    return null;
+}
+
 
 export default function Main() {
     const layoutRef = useRef<any>(null);
 
-    const userInfo = useAppSelector((state) => state.user);
-
-
     const [selectMenu, setSelectMenu] = useState('')
+    const [count, setCount] = useState(0)
     const [tabs, setTabs] = useState({
-        global: { tabEnablePopout: true },
+        global: {},
         borders: [],
         layout: {
             type: "row",
@@ -62,100 +53,225 @@ export default function Main() {
         },
     });
 
-    // flexlayout-react의 Model 생성
-    const [model, setModel] = useState(Model.fromJson(tabs));
+    const [model, setModel] = useState<any>(Model.fromJson(tabs));
 
-    // 탭을 렌더링할 Factory 함수
-    const factory = (node: TabNode) => {
-        const componentKey = node.getComponent();
-        return tabComponents[componentKey]?.component || <div>Unknown Component</div>;
+    const tabCounts = useMemo(() => {
+        let tabCount = 0;
+
+
+        model.visitNodes((node) => {
+            if (node.getType() === "tab") {
+                tabCount++;
+            }
+        });
+        return tabCount
+    }, [count]);
+
+    const [updateKey, setUpdateKey] = useState({})
+
+    function getPropertyId(key, id) {
+        let copyObject = _.cloneDeep(updateKey);
+        copyObject[key] = id;
+        setUpdateKey(copyObject)
+        onSelect([key]);
+    }
+
+    const tabComponents = {
+        project_write: {name: "프로젝트 등록", component: <ProjectWrite/>},
+        project_read: {name: "프로젝트 조회", component: <ProjectRead getPropertyId={getPropertyId}/>},
+        project_update: {name: "프로젝트 수정", component: <ProjectUpdate updateKey={updateKey}/>},
+        rfq_write: {name: "견적의뢰 등록", component: RfqWrite},
+        rfq_read: {name: "견적의뢰 수정", component: () => <div>견적의뢰 수정 화면</div>},
+        rfq_mail_send: {name: "메일전송", component: () => <div>메일전송 화면</div>},
     };
 
-    // 트리 항목 클릭 시 실행될 함수
-    const onSelect = (selectedKeys, b) => {
+
+    const factory = (node: TabNode) => {
+        const componentKey = node.getComponent();
+        return tabComponents[componentKey]?.component;
+    };
+
+    const onSelect = (selectedKeys) => {
         const selectedKey = selectedKeys[0];
 
         const result = model.toJson().layout.children.map((v) => {
             return v.children.map((src) => src.component);
         });
 
-        setSelectMenu(b.node.title)
+
+        const title = findTitleByKey(treeData, selectedKey);
+
+        if(title){
+            setSelectMenu(title);
+        }else{
+           const result = updateList.find(v=> v.key === selectedKey)
+            setSelectMenu(result.title);
+        }
+
+
         if (result.flat().includes(selectedKey)) {
             return; // 이미 존재하면 추가하지 않음
         }
 
+
         // 선택한 항목이 등록된 탭인지 확인
         if (tabComponents[selectedKey]) {
-            const newTab = {
-                type: "tab",
-                name: tabComponents[selectedKey].name,
-                component: selectedKey,
-            };
-
-            const updatedLayout = _.cloneDeep(tabs);
-            const firstObject = updatedLayout.layout.children[0];
-
-            // 나머지 객체들
-            const remainingObjects = updatedLayout.layout.children.slice(1);
-
-            // 기존 모델을 변경하고 새로운 탭 추가
-            updatedLayout.layout.children = [
-                {
-                    ...firstObject, // 기존 탭셋 유지
-                    children: [...firstObject.children, newTab], // 새로운 탭 추가
-                },
-                ...remainingObjects,
-            ];
-
-            // 모델 업데이트
-            const updatedModel = Model.fromJson(updatedLayout);
-            setTabs(updatedLayout);
-            setModel(updatedModel);
-
+            addTab(selectedKey)
         }
     };
 
 
+    function addTab(selectedKey) {
+        const updatedLayout = _.cloneDeep(tabs);
+        const firstObject = updatedLayout.layout.children[0];
+
+        let newTab = {
+            type: "tab",
+            name: tabComponents[selectedKey].name,
+            component: selectedKey,
+        };
+
+        const remainingObjects = updatedLayout.layout.children.slice(1);
+
+        updatedLayout.layout.children = [
+            {
+                ...firstObject,
+                children: [...firstObject.children, newTab],
+            },
+            ...remainingObjects,
+        ];
+
+        const updatedModel = Model.fromJson(updatedLayout);
+        setModel(updatedModel);
+        setTabs(updatedLayout);
+    }
+
     useEffect(() => {
+        updateSelectTab()
+    }, [selectMenu, model, updateKey]);
+
+    function updateSelectTab() {
         const rootNode = model.getRoot();
         const tabsets = rootNode.getChildren();
         for (const tabset of tabsets) {
-            // 각 tabset의 자식들 (탭들)을 가져옵니다
             const tabs = tabset.getChildren();
-
             for (const tab of tabs) {
-                // 탭의 이름을 확인하고 일치하는지 검사
                 if (tab.getName() === selectMenu) {
-
-                    model.doAction(Actions.selectTab(tab.getId()))
+                    model.doAction(Actions.selectTab(tab.getId()));
                 }
             }
         }
-    }, [selectMenu]);
+    }
+
 
     function onLayoutChange(action: any) {
-       setTabs(model.toJson())
+        setCount(v => v + 1)
+        setTabs(model.toJson())
         setModel(action);
     }
 
+    const getRootKeys = (data) => data.map((node) => node.key);
+
+    const [expandedKeys, setExpandedKeys] = useState(getRootKeys(treeData));
+
+    // 노드 확장/축소 이벤트 핸들러
+    const onExpand = (keys) => {
+        setExpandedKeys(keys);
+    };
+
+    const transformTreeData = (data) =>
+        data.map((node) => ({
+            ...node,
+            title: node.children ? ( // 자식이 있는 경우만 아이콘 추가
+                <>
+                    {expandedKeys.includes(node.key) ? (
+                        <span style={{marginRight: 8}}>📂</span>
+
+                    ) : (
+                        <span style={{marginRight: 8}}>📁</span>
+                    )}
+                    {node.title}
+                </>
+            ) : (
+                <>
+                    <span style={{marginRight: 8}}>📄</span>
+                    <span>{node.title}</span>
+                </>
+            ),
+            children: node.children ? transformTreeData(node.children) : undefined,
+        }));
+
+
     return (
-        <LayoutComponent userInfo={userInfo}>
-            <div style={{ display: "grid", gridTemplateColumns: "150px auto", height: "100vh" }}>
-                <div style={{ borderRight: "1px solid lightGray", padding: 3, paddingTop: 10 }}>
-                    <Tree
-                        showLine
-                        switcherIcon={<DownOutlined />}
-                        onSelect={onSelect}
-                        treeData={treeData}
+        <LayoutComponent>
+            <div style={{display: "grid", gridTemplateColumns: "190px auto"}}>
+                <div style={{borderRight: "1px solid lightGray", padding: 3, paddingTop: 10}}>
+                    <Tree style={{minHeight: 'calc(100vh - 70px)', height: '100%'}}
+                          defaultExpandedKeys={getRootKeys(treeData)}
+                          showLine
+                          switcherIcon={<DownOutlined/>}
+                          onSelect={onSelect}
+                          treeData={transformTreeData(treeData)}
+                          onExpand={onExpand}
                     />
                 </div>
-                <Layout model={model} factory={factory} onModelChange={onLayoutChange} ref={layoutRef} />
+                {!tabCounts && <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr 1fr 1fr',
+                        gap: 100,
+                        gridTemplateRows: '200px auto'
+                    }}>
+
+                        {introMenulist.map(v => {
+                            return <div>
+                                <div style={{
+                                    border: '1px solid lightGray',
+                                    width: 85,
+                                    height: 85,
+                                    borderRadius: 10,
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center'
+                                }}>
+                                    <div style={{fontSize: 50, color: v.color}}>
+                                        {v.icon}
+                                    </div>
+                                </div>
+                                <div style={{textAlign: 'center', fontSize: 16, fontWeight: 500, paddingTop: 10}}>
+                                    {v.title}
+                                </div>
+                                <div style={{paddingTop: 10, cursor: 'pointer', textAlign: 'center'}}>
+                                    {v.children.map(src => {
+                                        return <div style={{color: v.color, paddingTop: 3}} onClick={() => {
+                                            onSelect([src.key])
+                                        }}>{src.name}</div>
+                                    })}
+                                </div>
+                            </div>
+                        })}
+                    </div>
+                </div>}
+                <Layout model={model} factory={factory} onModelChange={onLayoutChange} ref={layoutRef}/>
+
             </div>
         </LayoutComponent>
     );
 }
 
-// @ts-ignore
-export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
-    return { props: null };
-});
+export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
+
+
+    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
+
+    if (codeInfo < 0) {
+        return {
+            redirect: {
+                destination: '/',
+                permanent: false,
+            },
+        };
+    } else {
+        store.dispatch(setUserInfo(userInfo));
+    }
+})

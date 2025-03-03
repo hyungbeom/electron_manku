@@ -30,7 +30,8 @@ const TableGrid = ({
                        },
                        deleteComp = <></>,
                        setInfo = null,
-                       onRowClicked = null
+                       onRowClicked = null,
+                       getPropertyId = null
                    }: any) => {
 
 
@@ -103,10 +104,12 @@ const TableGrid = ({
     const handleDoubleClicked = (e) => {
 
         if (type === 'read') {
+
             if (e.data.orderStatusId)
                 router.push(`/store_update?orderStatusId=${e?.data?.orderStatusId}`);
-            if (e.data.projectId)
-                router.push(`/project_update?projectId=${e?.data?.projectId}`);
+            if (e.data.projectId){
+                getPropertyId('project_update', e.data.projectId)
+            }
             if (e.data.deliveryId)
                 router.push(`/delivery_update?deliveryId=${e?.data?.deliveryId}`);
             if (e.data.remittanceId)
@@ -269,17 +272,10 @@ const TableGrid = ({
                 update: [selectedRow],
             });
         }
-        // page.event.api.applyTransaction({update : [data]})
-        // 그리드 업데이트
-
-        // e.api.applyTransaction({
-        //     update: [updatedData],
-        // });
     }
 
     function selectHsCode(info) {
-        console.log(info, '::')
-        console.log(page, ':page:')
+
 
         let selectedRow = page.event.node.data;
         selectedRow['hsCode'] = info.hsCode
