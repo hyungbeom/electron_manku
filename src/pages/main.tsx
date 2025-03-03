@@ -68,6 +68,7 @@ export default function Main() {
     }, [count]);
 
     const [updateKey, setUpdateKey] = useState({})
+    const [copyPageInfo, setCopyPageInfo] = useState({})
 
     function getPropertyId(key, id) {
         let copyObject = _.cloneDeep(updateKey);
@@ -76,11 +77,18 @@ export default function Main() {
         onSelect([key]);
     }
 
+    function getCopyPage(page, v){
+        let copyObject = _.cloneDeep(copyPageInfo);
+        copyObject[page] = v;
+        setCopyPageInfo(copyObject);
+        onSelect([page])
+    }
+
     const tabComponents = {
-        project_write: {name: "프로젝트 등록", component: <ProjectWrite/>},
+        project_write: {name: "프로젝트 등록", component: <ProjectWrite copyPageInfo={copyPageInfo}/>},
         project_read: {name: "프로젝트 조회", component: <ProjectRead getPropertyId={getPropertyId}/>},
-        project_update: {name: "프로젝트 수정", component: <ProjectUpdate updateKey={updateKey}/>},
-        rfq_write: {name: "견적의뢰 등록", component: RfqWrite},
+        project_update: {name: "프로젝트 수정", component: <ProjectUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
+        rfq_write: {name: "견적의뢰 등록", component: <RfqWrite/>},
         rfq_read: {name: "견적의뢰 수정", component: () => <div>견적의뢰 수정 화면</div>},
         rfq_mail_send: {name: "메일전송", component: () => <div>메일전송 화면</div>},
     };
@@ -101,10 +109,10 @@ export default function Main() {
 
         const title = findTitleByKey(treeData, selectedKey);
 
-        if(title){
+        if (title) {
             setSelectMenu(title);
-        }else{
-           const result = updateList.find(v=> v.key === selectedKey)
+        } else {
+            const result = updateList.find(v => v.key === selectedKey)
             setSelectMenu(result.title);
         }
 

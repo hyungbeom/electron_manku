@@ -24,8 +24,6 @@ export default function LayoutComponent({children}) {
 
     const userInfo = useAppSelector((state) => state.user);
 
-    console.log(userInfo, 'userInfo:')
-
     return <>
 
         {/*<div style={{*/}
