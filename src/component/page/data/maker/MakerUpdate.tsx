@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {getData} from "@/manage/function/api";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
@@ -11,10 +11,15 @@ import {makerWriteInitial} from "@/utils/initialList";
 import _ from "lodash";
 import {useRouter} from "next/router";
 
-export default function MakerUpdate({dataInfo={}, updateKey,getCopyPage}) {
+export default function MakerUpdate({dataInfo={}, updateKey}) {
 
     const router = useRouter();
     const [info, setInfo] = useState<any>(dataInfo);
+
+
+    useEffect(()=>{
+        setInfo(updateKey['maker_update'])
+    },[updateKey['maker_update']])
 
     function onChange(e) {
         commonManage.onChange(e, setInfo)
@@ -45,7 +50,7 @@ export default function MakerUpdate({dataInfo={}, updateKey,getCopyPage}) {
         setInfo(makerWriteInitial);
     }
 
-    return <LayoutComponent>
+    return <>
         <div style={{
             display: 'grid',
             gridTemplateRows: `340px`,
@@ -84,7 +89,7 @@ export default function MakerUpdate({dataInfo={}, updateKey,getCopyPage}) {
 
             </MainCard>
         </div>
-    </LayoutComponent>
+    </>
 }
 
 // @ts-ignore

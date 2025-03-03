@@ -64,7 +64,6 @@ export default function DeliveryWrite({copyPageInfo}) {
             await getData.post('delivery/addDelivery', sendParam).then(v => {
                 if (v.data.code === 1) {
                     message.success('저장에 성공하였습니다.')
-                    router.push(`/delivery_update?deliveryId=${v.data.entity.deliveryId}`)
                 } else {
                     message.error('저장에 실패하였습니다..')
 

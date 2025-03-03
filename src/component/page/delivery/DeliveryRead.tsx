@@ -16,7 +16,7 @@ import message from "antd/lib/message";
 import Spin from "antd/lib/spin";
 import ReceiveComponent from "@/component/ReceiveComponent";
 
-export default function DeliveryRead({dataInfo=[], getPropertyId}) {
+export default function DeliveryRead({getPropertyId, getCopyPage}) {
     const router = useRouter();
 
     const gridRef = useRef(null);
@@ -55,7 +55,7 @@ export default function DeliveryRead({dataInfo=[], getPropertyId}) {
 
 
     async function moveRouter() {
-        window.open(`/delivery_write`, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
+        getCopyPage('delivery_write', {orderStatusDetailList : []})
     }
 
     /**

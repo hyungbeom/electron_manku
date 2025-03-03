@@ -163,24 +163,24 @@ export default function Main() {
 
         estimate_write: {name: "견적서 등록", component: <EstimateWrite copyPageInfo={copyPageInfo}/>},
         estimate_read: {name: "견적서 조회", component: <EstimateRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>},
-        estimate_update: {name: "견적서 수정", component: <EstimateUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
+        estimate_update: {name: "견적서 수정", component: <EstimateUpdate updateKey={updateKey}/>},
 
         order_write: {name: "발주서 등록", component: <OrderWrite copyPageInfo={copyPageInfo}/>} ,
         order_read: {name: "발주서 조회", component: <OrderRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>},
-        order_update: {name: "발주서 수정", component: <OrderUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
+        order_update: {name: "발주서 수정", component: <OrderUpdate updateKey={updateKey} />},
 
         store_write: {name: "입고 등록", component: <StoreWrite copyPageInfo={copyPageInfo}/>},
         store_read: {name: "입고 조회", component: <StoreRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>},
-        store_update: {name: "입고 수정", component: <OrderUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
+        store_update: {name: "입고 수정", component: <OrderUpdate updateKey={updateKey}/>},
 
         delivery_write: {name: "배송 등록", component: <DeliveryWrite copyPageInfo={copyPageInfo}/>},
-        delivery_read: {name: "배송 조회", component: <DeliveryRead getPropertyId={getPropertyId}/>},
-        delivery_update: {name: "배송 수정", component: <DeliveryUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
+        delivery_read: {name: "배송 조회", component: <DeliveryRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>},
+        delivery_update: {name: "배송 수정", component: <DeliveryUpdate updateKey={updateKey} />},
 
 
-        remittance_write: {name: "송금 등록", component: <RemittanceDomesticWrite copyPageInfo={copyPageInfo}/>},
-        remittance_read: {name: "송금 조회", component: <RemittanceDomesticRead getPropertyId={getPropertyId}/>},
-        remittance_update: {name: "송금 수정", component: <RemittanceDomesticUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
+        remittance_domestic_write: {name: "국내송금 등록", component: <RemittanceDomesticWrite copyPageInfo={copyPageInfo}/>},
+        remittance_domestic_read: {name: "국내송금 조회", component: <RemittanceDomesticRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>},
+        remittance_domestic_update: {name: "국내송금 수정", component: <RemittanceDomesticUpdate updateKey={updateKey}/>},
 
 
         domestic_agency_write: {name: "국내매입처 등록", component: <DomesticAgencyWrite copyPageInfo={copyPageInfo}/>},
@@ -207,8 +207,8 @@ export default function Main() {
 
 
         maker_write: {name: "메이커 등록", component: <MakerWrite copyPageInfo={copyPageInfo}/>},
-        maker_read: {name: "메이커 조회", component: <MakerRead getPropertyId={getPropertyId}/>},
-        maker_update: {name: "메이커 수정", component: <MakerUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
+        maker_read: {name: "메이커 조회", component: <MakerRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>},
+        maker_update: {name: "메이커 수정", component: <MakerUpdate updateKey={updateKey} />},
 
 
 

@@ -6,13 +6,14 @@ import {setUserInfo} from "@/store/user/userSlice";
 import LayoutComponent from "@/component/LayoutComponent";
 
 import {makerColumn,} from "@/utils/columnList";
-import {codeDomesticPurchaseInitial,} from "@/utils/initialList";
+import {codeDomesticPurchaseInitial, orderDetailUnit,} from "@/utils/initialList";
 import TableGrid from "@/component/tableGrid";
 import {inputForm, MainCard, radioForm} from "@/utils/commonForm";
 import Button from "antd/lib/button";
 import {CopyOutlined} from "@ant-design/icons";
+import {commonFunc} from "@/utils/commonManage";
 
-export default function MakerRead({dataInfo=[], getPropertyId}) {
+export default function MakerRead({dataInfo=[], getPropertyId, getCopyPage}) {
     const gridRef = useRef(null);
 
     const [info, setInfo] = useState(codeDomesticPurchaseInitial);
@@ -60,7 +61,8 @@ export default function MakerRead({dataInfo=[], getPropertyId}) {
     }
 
     async function moveRouter() {
-        window.open(`/maker_write`, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
+        getCopyPage('maker_write', {orderDetailList : []})
+
     }
 
     function deleteList(){
@@ -108,6 +110,7 @@ export default function MakerRead({dataInfo=[], getPropertyId}) {
 
             {/*@ts-ignored*/}
             <TableGrid
+                getPropertyId={getPropertyId}
                 gridRef={gridRef}
                 columns={makerColumn}
                 onGridReady={onGridReady}

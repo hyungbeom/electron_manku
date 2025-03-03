@@ -1,6 +1,6 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
-import {printEstimateInitial,} from "@/utils/initialList";
+import {orderWriteInitial, printEstimateInitial,} from "@/utils/initialList";
 import message from "antd/lib/message";
 import {getData} from "@/manage/function/api";
 import {wrapper} from "@/store/store";
@@ -21,7 +21,7 @@ import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import Select from "antd/lib/select";
 
 const listType = 'orderDetailList'
-export default function OrderUpdate({dataInfo = {orderDetail : [], attachmentFileList : []}, managerList=[], updateKey, getCopyPage}) {
+export default function OrderUpdate({ managerList=[], updateKey}) {
     const options = managerList?.map((item) => ({
         ...item,
         value: item.adminId,
@@ -37,24 +37,42 @@ export default function OrderUpdate({dataInfo = {orderDetail : [], attachmentFil
 
 
     const userInfo = useAppSelector((state) => state.user);
-    const infoInit = dataInfo?.orderDetail
-    let infoInitFile = dataInfo?.attachmentFileList
+    // const infoInit = dataInfo?.orderDetail
+    // let infoInitFile = dataInfo?.attachmentFileList
 
-    const [info, setInfo] = useState<any>(infoInit)
+    const [info, setInfo] = useState<any>(orderWriteInitial)
 
     const [mini, setMini] = useState(true);
     const [customerData, setCustomerData] = useState<any>(printEstimateInitial)
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
-    const [fileList, setFileList] = useState(fileManage.getFormatFiles(infoInitFile));
-    const [originFileList, setOriginFileList] = useState(infoInitFile);
+    const [fileList, setFileList] = useState();
+    const [originFileList, setOriginFileList] = useState();
     const [loading, setLoading] = useState(false);
 
 
 
 
+    useEffect(() => {
+        getDataInfo().then(v => {
+            const {orderDetail, attachmentFileList} = v;
+            setFileList(fileManage.getFormatFiles(attachmentFileList))
+            setOriginFileList(attachmentFileList)
+            setInfo(orderDetail)
+            gridManage.resetData(gridRef, orderDetail[listType])
+        })
+    }, [updateKey['order_update']])
+
+    async function getDataInfo() {
+       return await getData.post('order/getOrderDetail', {
+            orderId: updateKey['order_update'],
+        }).then(v=>{
+            return v?.data?.entity;
+        })
+    }
+
     const onGridReady = (params) => {
         gridRef.current = params.api;
-        params.api.applyTransaction({add: dataInfo?.orderDetail[listType]});
+        // params.api.applyTransaction({add: dataInfo?.orderDetail[listType]});
     };
 
 
@@ -86,7 +104,7 @@ export default function OrderUpdate({dataInfo = {orderDetail : [], attachmentFil
             await getAttachmentFileList({
                 data: {
                     "relatedType": "ORDER",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
-                    "relatedId": infoInit['orderId']
+                    "relatedId": info['orderId']
                 }
             }).then(v => {
                 const list = fileManage.getFormatFiles(v);
@@ -174,7 +192,7 @@ export default function OrderUpdate({dataInfo = {orderDetail : [], attachmentFil
                 {/*@ts-ignore*/}
                 <PrintTransactionModal data={info} customerData={customerData} isModalOpen={isModalOpen}
                                        setIsModalOpen={setIsModalOpen}/>
-                {isModalOpen['event2'] && <PrintPo data={dataInfo} gridRef={gridRef} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>}
+                {isModalOpen['event2'] && <PrintPo data={info} gridRef={gridRef} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>}
 
                 <MainCard title={'발주서 수정'} list={[
                     {name: '거래명세표 출력', func: printTransactionStatement, type: 'default'},

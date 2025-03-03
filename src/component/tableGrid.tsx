@@ -121,8 +121,9 @@ const TableGrid = ({
                 getPropertyId('order_update', e.data.orderId)
             if (e.data.remainingQuantity)
                 getPropertyId('inventory_update', e.data.model)
-            if (e.data.makerId)
-                getPropertyId('maker_update', e.data.makerName)
+            if (e.data.makerId);
+            console.log(e.data,';;;')
+                getPropertyId('maker_update', e.data)
             if (e.data.agencyId)
                 getPropertyId('domestic_agency_update', e.data.agencyCode)
             if (e.data.overseasAgencyId)

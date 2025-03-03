@@ -36,7 +36,7 @@ import html2canvas from "html2canvas";
 import {spans} from "next/dist/build/webpack/plugins/profiling-plugin";
 
 const listType = 'estimateDetailList'
-export default function EstimateUpdate({dataInfo = {estimateDetail: [], attachmentFileList: []}, updateKey = {}, getCopyPage = null, managerList = []}) {
+export default function EstimateUpdate({dataInfo = {estimateDetail: [], attachmentFileList: []}, updateKey = {},  managerList = []}) {
     const pdfRef = useRef(null);
     const pdfSubRef = useRef(null);
     const fileRef = useRef(null);

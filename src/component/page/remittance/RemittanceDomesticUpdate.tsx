@@ -1,6 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
 import Input from "antd/lib/input/Input";
-import LayoutComponent from "@/component/LayoutComponent";
 import DatePicker from "antd/lib/date-picker";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
@@ -18,7 +17,10 @@ import {useRouter} from "next/router";
 import _ from "lodash";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 
-export default function RemittanceDomesticUpdate({dataInfo = { remittanceDetail :[], attachmentFileList : []}, updateKey, getCopyPage}) {
+export default function RemittanceDomesticUpdate({
+                                                     dataInfo = {remittanceDetail: [], attachmentFileList: []},
+                                                     updateKey
+                                                 }) {
     const userInfo = useAppSelector((state) => state.user);
 
     const infoInit = dataInfo?.remittanceDetail
@@ -35,7 +37,7 @@ export default function RemittanceDomesticUpdate({dataInfo = { remittanceDetail 
     const [originFileList, setOriginFileList] = useState(infoFileInit);
     const [loading, setLoading] = useState(false);
     useEffect(() => {
-        setInfo((v:any) => {
+        setInfo((v: any) => {
             return {
                 ...v,
                 surtax: Math.round(v.supplyAmount * 0.1),
@@ -165,7 +167,7 @@ export default function RemittanceDomesticUpdate({dataInfo = { remittanceDetail 
     }
 
     return <>
-        <LayoutComponent>
+        <>
 
             <MainCard title={'국내 송금 수정'} list={[
                 {name: '수정', func: saveFunc, type: 'primary'},
@@ -207,7 +209,7 @@ export default function RemittanceDomesticUpdate({dataInfo = { remittanceDetail 
                     </BoxCard>
                 </div>
             </MainCard>
-        </LayoutComponent>
+        </>
     </>
 }
 

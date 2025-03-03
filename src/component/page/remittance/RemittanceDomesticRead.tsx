@@ -20,7 +20,7 @@ import Spin from "antd/lib/spin";
 import ReceiveComponent from "@/component/ReceiveComponent";
 
 const {RangePicker} = DatePicker
-export default function RemittanceDomesticRead({dataInfo=[], getPropertyId}) {
+export default function RemittanceDomesticRead({getPropertyId, getCopyPage}) {
 
     const gridRef = useRef(null);
     const copyInit = _.cloneDeep(remittanceDomesticSearchInitial)
@@ -76,7 +76,7 @@ export default function RemittanceDomesticRead({dataInfo=[], getPropertyId}) {
     }
 
     async function moveRouter() {
-        window.open(`/remittance_domestic_write`, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
+        getCopyPage('remittance_domestic_write', {orderStatusDetailList : []})
     }
     function clearAll() {
         setInfo(copyInit);

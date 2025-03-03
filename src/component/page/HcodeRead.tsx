@@ -31,9 +31,18 @@ export default function HcodeRead({dataInfo=[], updateKey, getCopyPage}) {
     const [loading, setLoading] = useState(false);
 
 
-    const onGridReady = (params) => {
+    const onGridReady = async (params) => {
         gridRef.current = params.api;
-        params.api.applyTransaction({add: dataInfo ?? []});
+        await getData.post('hsCode/getHsCodeList', {
+            "searchType": "",      // 1: 코드, 2: 상호명, 3: MAKER
+            "searchText": "",
+            "page": 1,
+            "limit": -1
+        }).then(v=>{
+
+            params.api.applyTransaction({add:  v?.data?.entity?.hsCodeList});
+        })
+
     };
 
 
@@ -148,39 +157,3 @@ export default function HcodeRead({dataInfo=[], updateKey, getCopyPage}) {
         </>
     </Spin>
 }
-
-// @ts-ignore
-export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
-
-
-    let param = {}
-
-    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
-
-    const result = await getData.post('hsCode/getHsCodeList', {
-        "searchType": "",      // 1: 코드, 2: 상호명, 3: MAKER
-        "searchText": "",
-        "page": 1,
-        "limit": -1
-    });
-
-
-    if (userInfo) {
-        store.dispatch(setUserInfo(userInfo));
-    }
-    if (codeInfo !== 1) {
-        param = {
-            redirect: {
-                destination: '/', // 리다이렉트할 대상 페이지
-                permanent: false, // true로 설정하면 301 영구 리다이렉트, false면 302 임시 리다이렉트
-            },
-        };
-    } else {
-        const list = result?.data?.entity?.hsCodeList
-        param = {
-            props: {dataInfo: list ?? []}
-        }
-    }
-
-    return param
-})

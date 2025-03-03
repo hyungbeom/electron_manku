@@ -22,7 +22,7 @@ export const updateList = [
     {title : '입고 수정', key : 'store_update'},
     {title : '입고 수정', key : 'store_update'},
     {title : '배송 수정', key : 'delivery_update'},
-    {title : '송금 수정', key : 'remittance_update'},
+    {title : '국내송금 수정', key : 'remittance_domestic_update'},
     {title : '매입처 국내 수정', key : 'domestic_agency_update'},
     {title : '매입처 해외 수정', key : 'overseas_agency_update'},
     {title : '고객사 국내 수정', key : 'domestic_customer_update'},
@@ -80,8 +80,14 @@ export const treeData = [
         title: "송금",
         key: "remittance",
         children: [
-            {title: "송금 등록", key: "remittance_write"},
-            {title: "송금 조회", key: "remittance_read"}
+            {title: "국내", key: "remittance_domestic", children: [
+                    {title: "국내송금 등록", key: "remittance_domestic_write"},
+                    {title: "국내송금 조회", key: "remittance_domestic_read"}
+                ]},
+            {title: "해외", key: "remittance_overseas", disabled : true , children: [
+                    {title: "해외송금 등록", key: "remittance_overseas_write", disabled : true},
+                    {title: "해외송금 조회", key: "remittance_overseas_read", disabled: true}
+                ]},
         ],
     }, {
         title: "데이터관리",
@@ -160,7 +166,7 @@ export const introMenulist = [
         icon: <PoundCircleFilled/>,
         color: 'burlywood',
         title: '송금',
-        children: [{name: '송금 등록', key: 'remittance_write'}, {name: '송금 조회', key: 'remittance_read'}]
+        children: [{name: '국내송금 등록', key: 'remittance_domestic_write'}, {name: '국내송금 조회', key: 'remittance_domestic_read'}]
     },
     {
         icon: <DatabaseFilled/>, color: 'dimgray',

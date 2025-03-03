@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
 import {deliveryDaehanInitial,} from "@/utils/initialList";
 import {getData} from "@/manage/function/api";
@@ -12,15 +12,37 @@ import {setUserInfo} from "@/store/user/userSlice";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {wrapper} from "@/store/store";
 import message from "antd/lib/message";
+import {fileManage, gridManage} from "@/utils/commonManage";
 
 
-export default function DeliveryUpdate({dataInfo=[], updateKey, getCopyPage}) {
+export default function DeliveryUpdate({updateKey})
+{
 
-    const [tabNumb, setTabNumb] = useState(dataInfo['deliveryType'])
-    const [cjInfo, setCjInfo] = useState({...dataInfo, deliveryType: 'CJ'})
-    const [daesinInfo, setDaesinInfo] = useState({...dataInfo, deliveryType: 'DAESIN'})
-    const [quickInfo, setQuickInfo] = useState({...dataInfo, deliveryType: 'QUICK'})
+    const [tabNumb, setTabNumb] = useState('')
+    const [cjInfo, setCjInfo] = useState({deliveryType: 'CJ'})
+    const [daesinInfo, setDaesinInfo] = useState({deliveryType: 'DAESIN'})
+    const [quickInfo, setQuickInfo] = useState({deliveryType: 'QUICK'})
 
+
+    // await getData.post('delivery/getDeliveryDetail', {deliveryId: deliveryId})
+
+    useEffect(() => {
+
+        getDataInfo().then(v => {
+
+            const {deliveryDetail} = v;
+            setTabNumb(deliveryDetail['deliveryType'])
+            setCjInfo({...deliveryDetail, deliveryType: 'CJ'})
+            setDaesinInfo({...deliveryDetail, deliveryType: 'DAESIN'})
+            setQuickInfo({...deliveryDetail, deliveryType: 'QUICK'})
+        })
+    }, [updateKey['delivery_update']])
+
+    async function getDataInfo() {
+        return await getData.post('delivery/getDeliveryDetail', {deliveryId: updateKey['delivery_update']}).then(v => {
+            return v?.data?.entity;
+        })
+    }
 
     const onChange = (key: string) => {
         setTabNumb(key);
@@ -74,7 +96,7 @@ export default function DeliveryUpdate({dataInfo=[], updateKey, getCopyPage}) {
     }
 
     return <>
-        <LayoutComponent>
+        <>
 
             <MainCard title={'배송 수정'} list={[
                 {name: '수정', func: saveFunc, type: 'primary'},
@@ -83,7 +105,7 @@ export default function DeliveryUpdate({dataInfo=[], updateKey, getCopyPage}) {
                 <Tabs activeKey={tabNumb} items={items} onChange={onChange}/>
             </MainCard>
 
-        </LayoutComponent>
+        </>
     </>
 }
 
