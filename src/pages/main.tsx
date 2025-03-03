@@ -14,6 +14,7 @@ import {introMenulist, treeData, updateList} from "@/component/util/MenuData";
 import ProjectUpdate from "@/component/page/project/ProjectUpdate";
 import RfqRead from "@/component/page/rfq/RfqRead";
 import RqfUpdate from "@/component/page/rfq/RfqUpdate";
+import RfqMailSend from "@/component/page/rfq/RfqMailSend";
 
 
 function findTitleByKey(data, key) {
@@ -75,7 +76,7 @@ export default function Main() {
     function getPropertyId(key, id) {
         let copyObject = _.cloneDeep(updateKey);
         copyObject[key] = id;
-        setUpdateKey(copyObject)
+        setUpdateKey(copyObject);
         onSelect([key]);
     }
 
@@ -85,22 +86,6 @@ export default function Main() {
         setCopyPageInfo(copyObject);
         onSelect([page])
     }
-
-    const tabComponents = {
-        project_write: {name: "프로젝트 등록", component: <ProjectWrite copyPageInfo={copyPageInfo}/>},
-        project_read: {name: "프로젝트 조회", component: <ProjectRead getPropertyId={getPropertyId}/>},
-        project_update: {name: "프로젝트 수정", component: <ProjectUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
-        rfq_write: {name: "견적의뢰 등록", component: <RfqWrite copyPageInfo={copyPageInfo} />},
-        rfq_read: {name: "견적의뢰 조회", component: <RfqRead getPropertyId={getPropertyId} />},
-        rfq_update: {name: "견적의뢰 수정", component: <RqfUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
-        rfq_mail_send: {name: "메일전송", component: () => <div>메일전송 화면</div>},
-    };
-
-
-    const factory = (node: TabNode) => {
-        const componentKey = node.getComponent();
-        return tabComponents[componentKey]?.component;
-    };
 
     const onSelect = (selectedKeys) => {
         const selectedKey = selectedKeys[0];
@@ -112,11 +97,13 @@ export default function Main() {
 
         const title = findTitleByKey(treeData, selectedKey);
 
+
         if (title) {
             setSelectMenu(title);
+            updateSelectTab();
         } else {
             const result = updateList.find(v => v.key === selectedKey)
-            setSelectMenu(result.title);
+            setSelectMenu(result?.title);
         }
 
 
@@ -130,6 +117,22 @@ export default function Main() {
             addTab(selectedKey)
         }
     };
+    const tabComponents = {
+        project_write: {name: "프로젝트 등록", component: <ProjectWrite copyPageInfo={copyPageInfo}/>},
+        project_read: {name: "프로젝트 조회", component: <ProjectRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>},
+        project_update: {name: "프로젝트 수정", component: <ProjectUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
+        rfq_write: {name: "견적의뢰 등록", component: <RfqWrite copyPageInfo={copyPageInfo} />},
+        rfq_read: {name: "견적의뢰 조회", component: <RfqRead getPropertyId={getPropertyId} />},
+        rfq_update: {name: "견적의뢰 수정", component: <RqfUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
+        rfq_mail_send: {name: "메일전송", component: <RfqMailSend getPropertyId={getPropertyId}/>},
+    };
+
+
+    const factory = (node: TabNode) => {
+        const componentKey = node.getComponent();
+        return tabComponents[componentKey]?.component;
+    };
+
 
 
     function addTab(selectedKey) {
@@ -158,7 +161,7 @@ export default function Main() {
     }
 
     useEffect(() => {
-        updateSelectTab()
+        updateSelectTab();
     }, [selectMenu, model, updateKey]);
 
     function updateSelectTab() {
@@ -263,7 +266,7 @@ export default function Main() {
                         })}
                     </div>
                 </div>}
-                <Layout model={model} factory={factory} onModelChange={onLayoutChange} ref={layoutRef}/>
+                <Layout model={model} factory={factory} onModelChange={onLayoutChange} ref={layoutRef} />
 
             </div>
         </LayoutComponent>

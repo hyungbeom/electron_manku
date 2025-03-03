@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
 import {FileSearchOutlined} from "@ant-design/icons";
 import {subRfqWriteColumn} from "@/utils/columnList";
@@ -30,9 +30,13 @@ import {useRouter} from "next/router";
 import Select from "antd/lib/select";
 import Spin from "antd/lib/spin";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
+import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 
 const listType = 'estimateRequestDetailList'
 export default function RqfUpdate({dataInfo = {estimateRequestDetail: [], attachmentFileList: []}, updateKey = {}, getCopyPage = null, managerList = []}) {
+    const groupRef = useRef<any>(null)
+
+
     const options = managerList.map((item) => ({
         ...item,
         value: item.name,
@@ -55,6 +59,48 @@ export default function RqfUpdate({dataInfo = {estimateRequestDetail: [], attach
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false, event3: false});
 
     const [loading, setLoading] = useState(false);
+
+
+    useEffect(() => {
+        getDataInfo().then(v => {
+            const {estimateRequestDetail, attachmentFileList} = v;
+            setFileList(fileManage.getFormatFiles(attachmentFileList))
+            setInfo(estimateRequestDetail)
+            gridManage.resetData(gridRef, estimateRequestDetail[listType])
+        })
+    }, [updateKey['rfq_update']])
+
+    async function getDataInfo() {
+        const result = await getData.post('estimate/getEstimateRequestDetail', {
+            "estimateRequestId": updateKey['rfq_update']
+        });
+        return result?.data?.entity;
+    }
+
+    const getSavedSizes = () => {
+        const savedSizes = localStorage.getItem('rfq_write');
+        return savedSizes ? JSON.parse(savedSizes) : [15, 15, 25, 25, 20]; // 기본값 [50, 50, 50]
+    };
+
+    const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
+
+    function onResizeChange() {
+        setSizes(groupRef.current.getLayout())
+
+    }
+
+    const handleMouseUp = () => {
+        setSizes(groupRef.current.getLayout())
+        localStorage.setItem('rfq_write', JSON.stringify(groupRef.current.getLayout()));
+    };
+    useEffect(() => {
+        window.addEventListener('pointerup', handleMouseUp);
+
+        // 컴포넌트 언마운트 시 이벤트 리스너 제거
+        return () => {
+            window.removeEventListener('pointerup', handleMouseUp);
+        };
+    }, []);
 
     const onGridReady = (params) => {
         gridRef.current = params.api;
@@ -152,8 +198,7 @@ export default function RqfUpdate({dataInfo = {estimateRequestDetail: [], attach
         let copyInfo = _.cloneDeep(info)
         copyInfo[listType] = totalList
 
-        const query = `data=${encodeURIComponent(JSON.stringify(copyInfo))}`;
-        router.push(`/rfq_write?${query}`)
+        getCopyPage('rfq_write',copyInfo)
     }
 
 
@@ -165,7 +210,7 @@ export default function RqfUpdate({dataInfo = {estimateRequestDetail: [], attach
                          gridRef={gridRef}
                          setIsModalOpen={setIsModalOpen}/>
 
-        <LayoutComponent>
+        <>
             <div style={{
                 display: 'grid',
                 gridTemplateRows: `${mini ? 470 : 65}px calc(100vh - ${mini ? 480 : 75}px)`,
@@ -209,10 +254,8 @@ export default function RqfUpdate({dataInfo = {estimateRequestDetail: [], attach
                             {inputForm({title: 'RFQ NO.', id: 'rfqNo', onChange: onChange, data: info})}
                             {inputForm({title: '프로젝트 제목', id: 'projectTitle', onChange: onChange, data: info})}
                         </TopBoxCard>
-                        <div style={{
-                            display: 'grid',
-                            gridTemplateColumns: "150px 160px 1fr 1fr 220px",
-                        }}>
+                        <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 3, paddingTop: 3}}>
+                            <Panel defaultSize={sizes[0]} minSize={15} maxSize={100} onResize={onResizeChange}>
                             <BoxCard title={'매입처 정보'} tooltip={tooltipInfo('agency')}>
                                 {inputForm({
                                     title: '매입처코드',
@@ -247,7 +290,9 @@ export default function RqfUpdate({dataInfo = {estimateRequestDetail: [], attach
                                 })}
                                 {datePickerForm({title: '마감일자(예상)', id: 'dueDate', onChange: onChange, data: info})}
                             </BoxCard>
-
+                            </Panel>
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[1]} minSize={15} maxSize={100} onResize={onResizeChange}>
                             <BoxCard title={'고객사 정보'} tooltip={tooltipInfo('customer')}>
                                 {inputForm({
                                     title: '고객사명',
@@ -264,8 +309,9 @@ export default function RqfUpdate({dataInfo = {estimateRequestDetail: [], attach
                                 {inputForm({title: '팩스', id: 'faxNumber', onChange: onChange, data: info})}
                                 {inputForm({title: '이메일', id: 'customerManagerEmail', onChange: onChange, data: info})}
                             </BoxCard>
-
-
+                            </Panel>
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[2]} minSize={15} maxSize={100} onResize={onResizeChange}>
                             <BoxCard title={'Maker 정보'} tooltip={tooltipInfo('etc')}>
                                 {inputForm({
                                     title: 'MAKER',
@@ -281,10 +327,16 @@ export default function RqfUpdate({dataInfo = {estimateRequestDetail: [], attach
                                 {textAreaForm({title: '지시사항',                rows : 7, id: 'instructions', onChange: onChange, data: info})}
 
                             </BoxCard>
+                            </Panel>
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[3]} minSize={15} maxSize={100} onResize={onResizeChange}>
                             <BoxCard title={'ETC'} tooltip={tooltipInfo('etc')}>
                                 {inputForm({title: 'End User', id: 'endUser', onChange: onChange, data: info})}
                                 {textAreaForm({title: '비고란', rows: 10, id: 'remarks', onChange: onChange, data: info})}
                             </BoxCard>
+                            </Panel>
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[4]} minSize={23} maxSize={100} onResize={onResizeChange}>
                             <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}  disabled={!userInfo['microsoftId']}>
                                 {/*@ts-ignored*/}
                                 <div style={{overFlowY: "auto", maxHeight: 300}}>
@@ -301,7 +353,8 @@ export default function RqfUpdate({dataInfo = {estimateRequestDetail: [], attach
                                                      numb={info['uploadType']}/>
                                 </div>
                             </BoxCard>
-                        </div>
+                            </Panel>
+                        </PanelGroup>
                     </div> : null}
                 </MainCard>
 
@@ -316,7 +369,7 @@ export default function RqfUpdate({dataInfo = {estimateRequestDetail: [], attach
 
             </div>
             <MyComponent/>
-        </LayoutComponent>
+        </>
     </Spin>
 }
 

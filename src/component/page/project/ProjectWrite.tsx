@@ -76,16 +76,15 @@ export default function ProjectWrite({managerList = [], copyPageInfo = {}}) {
             if (gridRef.current?.forEachNode) {
                 gridManage.resetData(gridRef, copyPageInfo['project_write'][listType])
             }
+        }else{
+            setInfo({...copyInit, ...adminParams});
+            gridManage.resetData(gridRef, commonFunc.repeatObject(projectDetailUnit, 10))
         }
     }, [copyPageInfo]);
 
 
     const onGridReady = (params) => {
         gridRef.current = params.api;
-        const copyData = _.cloneDeep(info);
-        delete copyData?.createdDate;
-        delete copyData?.modifiedDate;
-        const result = copyData?.projectDetailList;
 
         params.api.applyTransaction({add: copyPageInfo['project_write']?.projectDetailList ? copyPageInfo['project_write'][listType] : commonFunc.repeatObject(projectDetailUnit, 10)});
     };
@@ -160,7 +159,7 @@ export default function ProjectWrite({managerList = [], copyPageInfo = {}}) {
 
         setLoading(false)
         setInfo({...infoInit});
-        gridManage.deleteAll(gridRef);
+        gridManage.resetData(gridRef, commonFunc.repeatObject(projectDetailUnit, 10))
     }
 
 

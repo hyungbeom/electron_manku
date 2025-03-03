@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
 import {ClearOutlined, FileSearchOutlined, PlusSquareOutlined, SaveOutlined} from "@ant-design/icons";
 import {subRfqWriteColumn} from "@/utils/columnList";
-import {estimateRequestDetailUnit, ModalInitList, rfqWriteInitial} from "@/utils/initialList";
+import {estimateRequestDetailUnit, ModalInitList, projectDetailUnit, rfqWriteInitial} from "@/utils/initialList";
 import message from "antd/lib/message";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
@@ -21,7 +21,7 @@ import {
     TopBoxCard
 } from "@/utils/commonForm";
 import {useRouter} from "next/router";
-import {commonManage, gridManage} from "@/utils/commonManage";
+import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
 import _ from "lodash";
 import {findCodeInfo} from "@/utils/api/commonApi";
 import {checkInquiryNo, saveRfq} from "@/utils/api/mainApi";
@@ -75,10 +75,19 @@ export default function RqfWrite({managerList = [], copyPageInfo = {}, dataInfo 
 
     const [loading, setLoading] = useState(false);
 
+    useEffect(() => {
+        if (copyPageInfo['rfq_write']) {
+            setInfo({...copyInit, ...copyPageInfo['rfq_write'], ...adminParams})
+            if (gridRef.current?.forEachNode) {
+                gridManage.resetData(gridRef, copyPageInfo['rfq_write'][listType])
+            }
+        }
+    }, [copyPageInfo]);
+
+
     const onGridReady = (params) => {
         gridRef.current = params.api;
-        // const result = dataInfo?.estimateRequestDetailList;
-        // params.api.applyTransaction({add: result ? result : []});
+        params.api.applyTransaction({add: copyPageInfo['rfq_write']?.projectDetailList ? copyPageInfo['rfq_write'][listType] : commonFunc.repeatObject(estimateRequestDetailUnit, 10)});
     };
 
     useEffect(() => {

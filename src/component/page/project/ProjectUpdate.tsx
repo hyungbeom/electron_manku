@@ -56,7 +56,14 @@ export default function ProjectUpdate({dataInfo = {projectDetail: [], attachment
         setSizes(groupRef.current.getLayout())
         localStorage.setItem('project_write', JSON.stringify(groupRef.current.getLayout()));
     };
+    useEffect(() => {
+        window.addEventListener('pointerup', handleMouseUp);
 
+        // 컴포넌트 언마운트 시 이벤트 리스너 제거
+        return () => {
+            window.removeEventListener('pointerup', handleMouseUp);
+        };
+    }, []);
 
     const onGridReady = async (params) => {
         gridRef.current = params.api;
@@ -65,7 +72,6 @@ export default function ProjectUpdate({dataInfo = {projectDetail: [], attachment
     useEffect(() => {
         getDataInfo().then(v => {
             const {projectDetail, attachmentFileList} = v;
-            console.log(attachmentFileList, 'attachmentFileList:')
             setFileList(fileManage.getFormatFiles(attachmentFileList))
             setInfo(projectDetail)
             initInfo(projectDetail[listType]);

@@ -1,20 +1,20 @@
 import React, {useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
 import {projectReadColumn} from "@/utils/columnList";
-import {projectReadInitial} from "@/utils/initialList";
+import {projectDetailUnit, projectReadInitial} from "@/utils/initialList";
 import Button from "antd/lib/button";
 import {CopyOutlined} from "@ant-design/icons";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
 import {deleteProjectList, searchProject} from "@/utils/api/mainApi";
 import _ from "lodash";
-import {commonManage, gridManage} from "@/utils/commonManage";
+import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
 import {BoxCard, inputForm, MainCard, rangePickerForm, tooltipInfo} from "@/utils/commonForm";
 import Spin from "antd/lib/spin";
 import ReceiveComponent from "@/component/ReceiveComponent";
 
 
-export default function ProjectRead({getPropertyId}) {
+export default function ProjectRead({getPropertyId, getCopyPage}) {
 
     const gridRef = useRef(null);
     const [mini, setMini] = useState(true);
@@ -73,7 +73,7 @@ export default function ProjectRead({getPropertyId}) {
     }
 
     function moveRegist() {
-        window.open(`/project_write`, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
+        getCopyPage('project_write', {projectDetailList : commonFunc.repeatObject(projectDetailUnit, 10)})
     }
 
 
@@ -82,8 +82,7 @@ export default function ProjectRead({getPropertyId}) {
 
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '370px' : '65px'} calc(100vh - ${mini ? 495 : 190}px)`,
-                columnGap: 5
+                gridTemplateRows: `${mini ? '350px' : '65px'} calc(100vh - ${mini ? 480 : 195}px)`,
             }}>
                 <MainCard title={'프로젝트 조회'} list={[
                     {name: '조회', func: searchInfo, type: 'primary'},
@@ -96,8 +95,7 @@ export default function ProjectRead({getPropertyId}) {
                             <div style={{
                                 display: 'grid',
                                 gridTemplateColumns: '1fr 1fr 1fr 1.5fr',
-                                gap: 10,
-                                marginTop: 10
+                                columnGap: 5
                             }}>
                                 <BoxCard title={'기본정보'} grid={"150px 250px 150px 1fr"}>
                                     {rangePickerForm({title: '작성일자', id: 'searchDate', onChange: onChange, data: info})}

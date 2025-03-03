@@ -396,7 +396,7 @@ const TableGrid = ({
 
             <div>
                 <div style={{width: '100%', display: 'flex', justifyContent: 'space-between', margin: '10px 0'}}>
-                    <div style={{fontWeight: 500}}>LIST</div>
+                    <div style={{fontWeight: 500, paddingLeft : 15}}>LIST</div>
 
                     <div style={{display: 'flex', alignItems: 'end', gap: 7}}>
                         <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft: 5}}

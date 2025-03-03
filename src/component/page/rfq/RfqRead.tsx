@@ -16,8 +16,10 @@ import {getData} from "@/manage/function/api";
 
 
 export default function RfqRead({getPropertyId}) {
-    let count = 1;
+
     const router = useRouter();
+    const countRef = useRef(1);
+    const infoRef = useRef(null);
     const gridRef = useRef(null);
 
     const copyInit = _.cloneDeep(subRfqReadInitial)
@@ -44,6 +46,10 @@ export default function RfqRead({getPropertyId}) {
         }, 100);
     };
 
+    useEffect(() => {
+        infoRef.current = info
+    }, [info]);
+
     const handleScroll = async () => {
         const gridElement = document.querySelector(".ag-body-viewport");
         if (!gridElement) return;
@@ -51,19 +57,19 @@ export default function RfqRead({getPropertyId}) {
         const {scrollTop, scrollHeight, clientHeight} = gridElement;
         const atBottom = scrollHeight - scrollTop <= clientHeight + 1; // 소수점 오차 보정
 
-
         if (atBottom) {
-            if (!!count) {
-                count += 1;
+            if (countRef.current) {
+                countRef.current += 1; // countRef를 직접 수정
 
                 setLoading(true);
-                let copyInit = _.cloneDeep(subRfqReadMailInitial);
 
-                await getData.post('estimate/getEstimateRequestList', {...copyInit, page: count}).then(v => {
+
+                await getData.post('estimate/getEstimateRequestList', {...infoRef.current, page: countRef.current}).then(v => {
                     if (!v.data.entity.pageInfo.isNextPage) {
-                        count = 0;
+                        countRef.current = 0;
+                    }else{
+                        gridRef.current.applyTransaction({add: v.data.entity.estimateRequestList ? v.data.entity.estimateRequestList : []});
                     }
-                    gridRef.current.applyTransaction({add: v.data.entity.estimateRequestList ? v.data.entity.estimateRequestList : []});
                     setLoading(false)
                 })
                 setLoading(false)
@@ -98,8 +104,10 @@ export default function RfqRead({getPropertyId}) {
         await searchRfq({
             data: copyData
         }).then(v => {
+            countRef.current = 1;
             gridManage.resetData(gridRef, v);
             setLoading(false)
+            gridRef.current.ensureIndexVisible(0)
         })
 
     }
@@ -136,7 +144,7 @@ export default function RfqRead({getPropertyId}) {
             <>
                 <div style={{
                     display: 'grid',
-                    gridTemplateRows: `${mini ? 255 : 65}px calc(100vh - ${mini ? 310 : 120}px)`,
+                    gridTemplateRows: `${mini ? 250 : 65}px calc(100vh - ${mini ? 390 : 155}px)`,
                     columnGap: 5
                 }}>
                     <MainCard title={'견적의뢰 조회'} list={[
@@ -148,7 +156,7 @@ export default function RfqRead({getPropertyId}) {
                             display: 'grid',
                             gridTemplateColumns: '1fr 1fr 1.5fr',
                             width: '100%',
-                            columnGap: 20
+                            columnGap: 5
                         }}>
                             <BoxCard>
                                 {rangePickerForm({title: '작성일자', id: 'searchDate', onChange: onChange, data: info})}
@@ -209,6 +217,7 @@ export default function RfqRead({getPropertyId}) {
                                onGridReady={onGridReady}
                                type={'read'}
                                funcButtons={['print']}/>
+
 
                 </div>
             </>

@@ -15,7 +15,8 @@ export default function MenuData(){
 }
 
 export const updateList = [
-    {title : '프로젝트 수정', key : 'project_update'}
+    {title : '프로젝트 수정', key : 'project_update'},
+    {title : '견적의뢰 수정', key : 'rfq_update'}
 ]
 
 export const treeData = [
