@@ -18,7 +18,7 @@ import {CopyOutlined} from "@ant-design/icons";
 import {deleteHsCodeList} from "@/utils/api/mainApi";
 
 
-export default function HcodeRead({dataInfo, updateKey, getCopyPage}) {
+export default function HcodeRead({dataInfo=[], updateKey, getCopyPage}) {
     const gridRef = useRef(null);
     const [mini, setMini] = useState(true);
 

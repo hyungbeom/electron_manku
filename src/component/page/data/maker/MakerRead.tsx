@@ -12,7 +12,7 @@ import {inputForm, MainCard, radioForm} from "@/utils/commonForm";
 import Button from "antd/lib/button";
 import {CopyOutlined} from "@ant-design/icons";
 
-export default function MakerRead({dataInfo, getPropertyId}) {
+export default function MakerRead({dataInfo=[], getPropertyId}) {
     const gridRef = useRef(null);
 
     const [info, setInfo] = useState(codeDomesticPurchaseInitial);

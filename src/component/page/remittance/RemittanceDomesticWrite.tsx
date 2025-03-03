@@ -26,7 +26,7 @@ import SearchInfoModal from "@/component/SearchAgencyModal";
 import {FileSearchOutlined} from "@ant-design/icons";
 
 
-export default function RemittanceDomesticWrite({dataInfo,copyPageInfo}) {
+export default function RemittanceDomesticWrite({dataInfo =[],copyPageInfo}) {
     const fileRef = useRef(null);
     const copyInit = _.cloneDeep(remittanceDomesticInitial)
 

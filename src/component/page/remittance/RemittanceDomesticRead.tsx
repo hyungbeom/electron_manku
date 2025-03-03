@@ -20,7 +20,7 @@ import Spin from "antd/lib/spin";
 import ReceiveComponent from "@/component/ReceiveComponent";
 
 const {RangePicker} = DatePicker
-export default function RemittanceDomesticRead({dataInfo, getPropertyId}) {
+export default function RemittanceDomesticRead({dataInfo=[], getPropertyId}) {
 
     const gridRef = useRef(null);
     const copyInit = _.cloneDeep(remittanceDomesticSearchInitial)

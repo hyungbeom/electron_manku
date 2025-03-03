@@ -11,7 +11,7 @@ import {makerWriteInitial} from "@/utils/initialList";
 import _ from "lodash";
 import {useRouter} from "next/router";
 
-export default function MakerUpdate({dataInfo, updateKey,getCopyPage}) {
+export default function MakerUpdate({dataInfo=[], updateKey,getCopyPage}) {
 
     const router = useRouter();
     const [info, setInfo] = useState(dataInfo);
