@@ -20,6 +20,9 @@
       "artifactName": "${productName}-${version}-setup.exe"
     },
     "mac": {
+      "icon": "public/installer-icon.icns",
+      "artifactName": "${productName}-${version}-mac.dmg",
+      "category": "public.app-category.business",
       "target": [
         {
           "target": "dmg",
@@ -34,10 +37,7 @@
             ]
           }
         }
-      ],
-      "icon": "public/installer-icon.icns",
-      "artifactName": "${productName}-${version}-mac.dmg",
-      "category": "public.app-category.business"
+      ]
     },
     "nsis": {
       "oneClick": false,
