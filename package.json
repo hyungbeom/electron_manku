@@ -7,7 +7,7 @@
   "description": "manku erp project",
   "scripts": {
     "dev": "concurrently -n \"NEXT,ELECTRON\" -c \"yellow,blue\" --kill-others \"next dev\" \"electron .\"",
-    "build": "next build",
+    "build": "electron-builder",
     "start": "next start",
     "lint": "next lint"
   },
@@ -20,19 +20,24 @@
       "artifactName": "${productName}-${version}-setup.exe"
     },
     "mac": {
-      "target": "dmg",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["x64"],
+          "dmg": {
+            "background": "public/manku_ci_black_text.png",
+            "icon": "public/installer-icon.ico",
+            "iconSize": 100,
+            "contents": [
+              { "x": 130, "y": 220, "type": "link", "path": "/Applications" },
+              { "x": 210, "y": 220, "type": "file", "path": "./dist/mac/${productName}.app" }
+            ]
+          }
+        }
+      ],
       "icon": "public/installer-icon.icns",
       "artifactName": "${productName}-${version}-mac.dmg",
-      "category": "public.app-category.business",
-      "dmg": {
-        "background": "public/manku_ci_black_text.png",
-        "icon": "public/installer-icon.ico",
-        "iconSize": 100,
-        "contents": [
-          { "x": 130, "y": 220, "type": "link", "path": "/Applications" },
-          { "x": 210, "y": 220, "type": "file", "path": "./dist/mac/${productName}.app" }
-        ]
-      }
+      "category": "public.app-category.business"
     },
     "nsis": {
       "oneClick": false,
