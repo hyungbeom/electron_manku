@@ -18,7 +18,7 @@ import {CopyOutlined, EditOutlined, FileExcelOutlined, SearchOutlined} from "@an
 import {useRouter} from "next/router";
 import {inputForm, MainCard, radioForm} from "@/utils/commonForm";
 
-export default function DomesticCustomerRead({dataInfo = [], getPropertyId}) {
+export default function DomesticCustomerRead({dataInfo = [], getPropertyId, getCopyPage}) {
     const gridRef = useRef(null);
     const router = useRouter();
 
@@ -86,7 +86,7 @@ export default function DomesticCustomerRead({dataInfo = [], getPropertyId}) {
     }
 
     function moveRouter() {
-       router.push(`/data/customer/domestic/customer_write`)
+        getCopyPage('domestic_customer_write', {orderDetailList : []})
     }
 
     return <>

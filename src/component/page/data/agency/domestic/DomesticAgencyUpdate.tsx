@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import LayoutComponent from "@/component/LayoutComponent";
 import message from "antd/lib/message";
@@ -16,19 +16,38 @@ import _ from "lodash";
 
 
 const listType = 'agencyManagerList'
-export default function DomesticAgencyUpdate({dataInfo=[], updateKey, getCopyPage}) {
+export default function DomesticAgencyUpdate({dataInfo=[], updateKey}) {
     const gridRef = useRef(null);
     const router = useRouter();
 
     // const {agencyList} = data;
     const [mini, setMini] = useState(true);
-    const [info, setInfo] = useState<any>(dataInfo ?? codeDomesticAgencyWriteInitial)
+    const [info, setInfo] = useState<any>(codeDomesticAgencyWriteInitial)
     const [validate, setValidate] = useState({agencyCode: true});
 
     const onGridReady = (params) => {
         gridRef.current = params.api;
-        params.api.applyTransaction({add: dataInfo[listType]});
     };
+
+    useEffect(() => {
+        getInfo();
+    }, [updateKey['domestic_agency_update']]);
+
+    async function getInfo(){
+        await getData.post('agency/getAgencyList', {
+            searchType: 1,
+            searchText: updateKey['domestic_agency_update'],
+            page: 1,
+            limit: -1,
+        }).then(v=>{
+            if(v.data.code === 1){
+               const result = v.data.entity.agencyList.find(src => src.agencyCode === updateKey['domestic_agency_update'])
+                setInfo(result);
+               console.log(result,'sss')
+                gridManage.resetData(gridRef, result[listType])
+            }
+        })
+    }
 
     function onChange(e) {
 
@@ -81,10 +100,10 @@ export default function DomesticAgencyUpdate({dataInfo=[], updateKey, getCopyPag
         const query = `data=${encodeURIComponent(JSON.stringify(copyInfo))}`;
         router.push(`/data/agency/domestic/agency_write?${query}`)
     }
-    return <LayoutComponent>
+    return <>
         <div style={{
             display: 'grid',
-            gridTemplateRows: `${mini ? '340px' : '65px'} calc(100vh - ${mini ? 395 : 120}px)`,
+            gridTemplateRows: `${mini ? '360px' : '65px'} calc(100vh - ${mini ? 490 : 195}px)`,
             columnGap: 5
         }}>
             <MainCard title={'국내 매입처 수정'} list={[
@@ -142,7 +161,7 @@ export default function DomesticAgencyUpdate({dataInfo=[], updateKey, getCopyPag
             />
 
         </div>
-    </LayoutComponent>
+    </>
 }
 
 // @ts-ignore

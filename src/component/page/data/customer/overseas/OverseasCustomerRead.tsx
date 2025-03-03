@@ -7,7 +7,7 @@ import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
 
 import {tableCodeDomesticSalesColumns, tableCodeOverseasSalesColumns,} from "@/utils/columnList";
-import {codeDomesticPurchaseInitial, tableCodeDomesticSalesInitial,} from "@/utils/initialList";
+import {codeDomesticPurchaseInitial, estimateDetailUnit, tableCodeDomesticSalesInitial,} from "@/utils/initialList";
 import Radio from "antd/lib/radio";
 import TableGrid from "@/component/tableGrid";
 import Search from "antd/lib/input/Search";
@@ -17,9 +17,9 @@ import Button from "antd/lib/button";
 import {CopyOutlined, EditOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
 import {useRouter} from "next/router";
 import {inputForm, MainCard, radioForm} from "@/utils/commonForm";
-import {gridManage} from "@/utils/commonManage";
+import {commonFunc, gridManage} from "@/utils/commonManage";
 
-export default function OverseasCustomerRead({dataInfo=[], getPropertyId}) {
+export default function OverseasCustomerRead({getPropertyId, getCopyPage}) {
     const gridRef = useRef(null);
     const router = useRouter();
 
@@ -72,7 +72,8 @@ export default function OverseasCustomerRead({dataInfo=[], getPropertyId}) {
     }
 
     function moveRouter() {
-        router.push(`/data/customer/overseas/customer_write`);
+        getCopyPage('overseas_customer_write', {estimateDetailList : []})
+
     }
 
     return <>

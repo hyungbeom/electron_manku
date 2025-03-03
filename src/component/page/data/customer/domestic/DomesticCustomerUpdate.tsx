@@ -25,7 +25,7 @@ import {commonManage, gridManage} from "@/utils/commonManage";
 import _ from "lodash";
 
 const listType = 'customerManagerList'
-export default function DomesticCustomerUpdate({dataInfo = {customerManagerList : []}, updateKey, getCopyPage}) {
+export default function DomesticCustomerUpdate({dataInfo = {customerManagerList: []}, updateKey}) {
     const gridRef = useRef(null);
     const router = useRouter();
 
@@ -36,6 +36,26 @@ export default function DomesticCustomerUpdate({dataInfo = {customerManagerList 
         gridRef.current = params.api;
         params.api.applyTransaction({add: dataInfo?.customerManagerList});
     };
+
+    useEffect(() => {
+        getInfo();
+    }, [updateKey['domestic_customer_update']]);
+
+    async function getInfo() {
+
+        await getData.post('customer/getCustomerList', {
+            searchType: 1,
+            searchText: updateKey['domestic_customer_update'],
+            page: 1,
+            limit: -1,
+        }).then(v => {
+            const result = v.data.entity.customerList.find(src => src.customerCode === updateKey['domestic_customer_update'])
+            setInfo(result)
+            gridManage.resetData(gridRef, result[listType])
+        })
+
+
+    }
 
     function onChange(e) {
         commonManage.onChange(e, setInfo)
@@ -86,10 +106,10 @@ export default function DomesticCustomerUpdate({dataInfo = {customerManagerList 
         router.push(`/data/customer/domestic/customer_write?${query}`)
     }
 
-    return <LayoutComponent>
+    return <>
         <div style={{
             display: 'grid',
-            gridTemplateRows: `${mini ? '500px' : '65px'} calc(100vh - ${mini ? 555 : 120}px)`,
+            gridTemplateRows: `${mini ? '460px' : '65px'} calc(100vh - ${mini ? 590 : 195}px)`,
             columnGap: 5
         }}>
             <MainCard title={'국내 고객사 수정'} list={[
@@ -159,44 +179,5 @@ export default function DomesticCustomerUpdate({dataInfo = {customerManagerList 
                 funcButtons={['orderUpload', 'orderAdd', 'delete', 'print']}
             />
         </div>
-    </LayoutComponent>
+    </>
 }
-
-// @ts-ignore
-export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
-
-
-    let param = {}
-
-
-    const {query} = ctx;
-
-    // 특정 쿼리 파라미터 가져오기
-    const {customerCode} = query; // 예: /page?id=123&name=example
-
-    const {userInfo} = await initialServerRouter(ctx, store);
-
-    if (!userInfo) {
-        return {
-            redirect: {
-                destination: '/', // 리다이렉트할 경로
-                permanent: false, // true면 301 리다이렉트, false면 302 리다이렉트
-            },
-        };
-    }
-
-    store.dispatch(setUserInfo(userInfo));
-
-    const result = await getData.post('customer/getCustomerList', {
-        searchType: 1,
-        searchText: customerCode,
-        page: 1,
-        limit: 1,
-    });
-
-
-    const list = result?.data.entity.customerList;
-    return {
-        props: {dataInfo: list[0] ?? null}
-    }
-})

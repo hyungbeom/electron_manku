@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import LayoutComponent from "@/component/LayoutComponent";
 import message from "antd/lib/message";
@@ -13,20 +13,35 @@ import {BoxCard, datePickerForm, inputForm, MainCard, selectBoxForm} from "@/uti
 import {commonManage, gridManage} from "@/utils/commonManage";
 import _ from "lodash";
 
-const listType = 'customerManagerList'
-export default function OverseasCustomerUpdate({dataInfo = {overseasCustomerManagerList : []}, updateKey, getCopyPage}) {
+const listType = 'overseasCustomerManagerList'
+export default function OverseasCustomerUpdate({ updateKey, getCopyPage}) {
     const gridRef = useRef(null);
     const router = useRouter();
 
     const [mini, setMini] = useState(true);
-    const [info, setInfo] = useState<any>(dataInfo);
+    const [info, setInfo] = useState<any>({});
 
-    console.log(dataInfo, 'dataInfo:')
     const onGridReady = (params) => {
         gridRef.current = params.api;
-        params.api.applyTransaction({add: dataInfo?.overseasCustomerManagerList});
     };
 
+    useEffect(() => {
+        getInfo();
+    }, [updateKey]);
+
+    async function getInfo(){
+        const result = await getData.post('customer/getOverseasCustomerList', {
+            searchType: 1,
+            searchText: updateKey['overseas_customer_update'],
+            page: 1,
+            limit: 1,
+        }).then(v=>{
+           const result = v?.data.entity.overseasCustomerList.find(src => src.customerCode === updateKey['overseas_customer_update'])
+            setInfo(result);
+           console.log(result,'result[listType]:')
+            gridManage.resetData(gridRef, result[listType])
+        })
+    }
     function onChange(e) {
         commonManage.onChange(e, setInfo)
     }
@@ -78,10 +93,10 @@ export default function OverseasCustomerUpdate({dataInfo = {overseasCustomerMana
         router.push(`/data/customer/overseas/customer_write?${query}`)
     }
 
-    return <LayoutComponent>
+    return <>
         <div style={{
             display: 'grid',
-            gridTemplateRows: `${mini ? '330px' : '65px'} calc(100vh - ${mini ? 385 : 120}px)`,
+            gridTemplateRows: `${mini ? '350px' : '65px'} calc(100vh - ${mini ? 480 : 195}px)`,
             columnGap: 5
         }}>
             <MainCard title={'해외 고객사 수정'} list={[
@@ -135,43 +150,5 @@ export default function OverseasCustomerUpdate({dataInfo = {overseasCustomerMana
                 funcButtons={['orderUpload', 'orderAdd', 'delete', 'print']}
             />
         </div>
-    </LayoutComponent>
+    </>
 }
-
-// @ts-ignore
-export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
-
-
-    let param = {}
-
-
-    const {query} = ctx;
-
-    // 특정 쿼리 파라미터 가져오기
-    const {customerCode} = query; // 예: /page?id=123&name=example
-
-    const {userInfo} = await initialServerRouter(ctx, store);
-
-    if (!userInfo) {
-        return {
-            redirect: {
-                destination: '/', // 리다이렉트할 경로
-                permanent: false, // true면 301 리다이렉트, false면 302 리다이렉트
-            },
-        };
-    }
-
-    store.dispatch(setUserInfo(userInfo));
-
-    const result = await getData.post('customer/getOverseasCustomerList', {
-        searchType: 1,
-        searchText: customerCode,
-        page: 1,
-        limit: 1,
-    });
-
-    const list = result?.data.entity.overseasCustomerList;
-    return {
-        props: {dataInfo: list[0] ?? null}
-    }
-})

@@ -20,7 +20,7 @@ import Spin from "antd/lib/spin";
 import ReceiveComponent from "@/component/ReceiveComponent";
 
 
-export default function OverseasAgencyRead({dataInfo=[], getPropertyId}) {
+export default function OverseasAgencyRead({dataInfo=[], getPropertyId, getCopyPage}) {
     console.log(dataInfo,'::::')
     const gridRef = useRef(null);
     const router = useRouter();
@@ -100,7 +100,7 @@ export default function OverseasAgencyRead({dataInfo=[], getPropertyId}) {
     }
 
     function moveRouter() {
-        window.open(`/data/agency/overseas/agency_write`, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
+        getCopyPage('overseas_agency_write', {orderDetailList : []})
     }
 
     return <Spin spinning={loading} tip={'해외 매입처 조회중...'}>
@@ -148,6 +148,7 @@ export default function OverseasAgencyRead({dataInfo=[], getPropertyId}) {
                                            onClick={deleteList}>
                 <CopyOutlined/>삭제
             </Button>}
+                       getPropertyId={getPropertyId}
                        gridRef={gridRef}
                        columns={tableCodeOverseasPurchaseColumns}
                        onGridReady={onGridReady}

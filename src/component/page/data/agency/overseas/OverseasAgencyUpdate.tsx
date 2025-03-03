@@ -30,19 +30,33 @@ import Spin from "antd/lib/spin";
 import _ from "lodash";
 
 const listType = 'overseasAgencyManagerList'
-export default function OverseasAgencyUpdate({dataInfo=[], updateKey, getCopyPage}) {
+export default function OverseasAgencyUpdate({ updateKey, getCopyPage}) {
     const gridRef = useRef(null);
     const router=useRouter();
 
     const [mini, setMini] = useState(true);
-    const [info, setInfo] = useState<any>(dataInfo)
+    const [info, setInfo] = useState<any>([])
     const [loading, setLoading] = useState<any>(false)
 
 
-    const onGridReady = (params) => {
+    const onGridReady = async (params) => {
         gridRef.current = params.api;
-        params.api.applyTransaction({add: dataInfo[listType]});
     };
+
+    async function getInfo(){
+        await getData.post('agency/getOverseasAgencyList', {
+            searchType: 1,
+            searchText: updateKey['overseas_agency_update'],
+            page:1,
+            limit:-1,
+        }).then(v=>{
+            setInfo(v?.data?.entity?.overseasAgencyList[0])
+            gridManage.resetData(gridRef,v?.data?.entity?.overseasAgencyList[0][listType] )
+        })
+    }
+    useEffect(() => {
+        getInfo()
+    }, [updateKey['overseas_agency_update']]);
 
     function onChange(e) {
         commonManage.onChange(e, setInfo)
@@ -76,11 +90,11 @@ export default function OverseasAgencyUpdate({dataInfo=[], updateKey, getCopyPag
         router.push(`/data/agency/overseas/agency_write?${query}`)
     }
     return  <Spin spinning={loading} tip={'견적의뢰 등록중...'}>
-    <LayoutComponent>
+    <>
         <div style={{
             display: 'grid',
-            gridTemplateRows: `${mini ? '340px' : '65px'} calc(100vh - ${mini ? 395 : 120}px)`,
-            columnGap: 5
+            gridTemplateRows: `${mini ? '370px' : '65px'} calc(100vh - ${mini ? 500 : 195}px)`,
+            columnGap: 3
         }}>
             <MainCard title={'해외 매입처 수정'} list={[
                 {name: '수정', func: saveFunc, type: 'primary'},
@@ -93,7 +107,6 @@ export default function OverseasAgencyUpdate({dataInfo=[], updateKey, getCopyPag
                         display: 'grid',
                         gridTemplateColumns: '180px 200px 200px 1fr 300px',
                         columnGap: 10,
-                        marginTop: 10
                     }}>
                         <BoxCard title={'코드 정보'}>
                             {inputForm({title: '코드(약칭)', id: 'agencyCode', onChange: onChange, data: info})}
@@ -142,7 +155,7 @@ export default function OverseasAgencyUpdate({dataInfo=[], updateKey, getCopyPag
                 funcButtons={['daUpload', 'agencyDomesticAdd', 'delete', 'print']}
             />
         </div>
-    </LayoutComponent>
+    </>
     </Spin>
 }
 

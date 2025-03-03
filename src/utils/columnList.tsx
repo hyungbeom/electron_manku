@@ -2506,7 +2506,7 @@ export const tableCodeReadColumns = [
         headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
         checkboxSelection: true, // 각 행에 체크박스 추가
         cellStyle: {textAlign: "center"}, // 스타일 설정
-        maxWidth: 55, // 컬럼 너비
+        maxWidth: 45, // 컬럼 너비
         pinned: "left", // 왼쪽에 고정
         filter: false
     }, {

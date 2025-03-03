@@ -19,7 +19,7 @@ import Spin from "antd/lib/spin";
 import ReceiveComponent from "@/component/ReceiveComponent";
 
 
-export default function DomesticAgencyUpdate({dataInfo=[], getPropertyId}) {
+export default function DomesticAgencyUpdate({getPropertyId, getCopyPage}) {
 
     const gridRef = useRef(null);
     const copyInit = _.cloneDeep(codeDomesticAgencyWriteInitial)
@@ -94,7 +94,7 @@ export default function DomesticAgencyUpdate({dataInfo=[], getPropertyId}) {
     }
 
     async function moveRouter() {
-        window.open(`/data/agency/domestic/agency_write`, '_blank', 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
+        getCopyPage('domestic_agency_write', {orderDetailList : []})
     }
 
     return <Spin spinning={loading} tip={'국내 매입처 조회중...'}>

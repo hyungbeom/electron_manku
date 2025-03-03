@@ -184,22 +184,23 @@ export default function Main() {
 
 
         domestic_agency_write: {name: "국내매입처 등록", component: <DomesticAgencyWrite copyPageInfo={copyPageInfo}/>},
-        domestic_agency_read: {name: "국내매입처 조회", component: <DomesticAgencyRead getPropertyId={getPropertyId}/>},
-        domestic_agency_update: {name: "국내매입처 수정", component: <DomesticAgencyUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
+        domestic_agency_read: {name: "국내매입처 조회", component: <DomesticAgencyRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>},
+        domestic_agency_update: {name: "국내매입처 수정", component: <DomesticAgencyUpdate updateKey={updateKey}/>},
 
         overseas_agency_write: {name: "해외매입처 등록", component: <OverseasAgencyWrite copyPageInfo={copyPageInfo}/>},
-        overseas_agency_read: {name: "해외매입처 조회", component: <OverseasAgencyRead getPropertyId={getPropertyId}/>},
+        overseas_agency_read: {name: "해외매입처 조회", component: <OverseasAgencyRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>},
         overseas_agency_update: {name: "해외매입처 수정", component: <OverseasAgencyUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
 
 
 
 
         domestic_customer_write:  {name: "국내고객사 등록", component: <DomesticCustomerWrite copyPageInfo={copyPageInfo}/>},
-        domestic_customer_read:   {name: "국내고객사 조회", component: <DomesticCustomerRead getPropertyId={getPropertyId}/>},
-        domestic_customer_update: {name: "국내고객사 수정", component: <DomesticCustomerUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
+        domestic_customer_read:   {name: "국내고객사 조회", component: <DomesticCustomerRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>},
+        domestic_customer_update: {name: "국내고객사 수정", component: <DomesticCustomerUpdate updateKey={updateKey}/>},
 
         overseas_customer_write:  {name: "해외고객사 등록", component: <OverseasCustomerWrite copyPageInfo={copyPageInfo}/>},
-        overseas_customer_read:   {name: "해외고객사 조회", component: <OverseasCustomerRead getPropertyId={getPropertyId}/>},
+        overseas_customer_read:   {name: "해외고객사 조회", component: <OverseasCustomerRead getPropertyId={getPropertyId}
+                                                                                      getCopyPage={getCopyPage}/>},
         overseas_customer_update: {name: "해외고객사 수정", component: <OverseasCustomerUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
 
 
