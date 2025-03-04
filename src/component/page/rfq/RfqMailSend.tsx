@@ -62,10 +62,11 @@ export default function RfqMailSend({getPropertyId}) {
         const copyData: any = {...info}
         setLoading(true)
         await searchRfq({
-            data: copyData
+            data: {...copyData, page : 1, limit : -1}
         }).then(v => {
 
-            gridManage.resetData(gridRef, v);
+            gridManage.resetData(gridRef, v.data);
+            setTotalRow(v.pageInfo.totalRow)
             setLoading(false)
             gridRef.current.ensureIndexVisible(0)
         })

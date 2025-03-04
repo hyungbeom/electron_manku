@@ -200,8 +200,8 @@ export const subRfqReadInitial = {
     "searchDate": [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],   // front 사용
     "searchEstimateRequestId": "",      // 견적의뢰 Id
     "searchType": "0",                   // 검색조건 1: 회신, 2: 미회신
-    "searchStartDate": "",              // 작성일자 시작일
-    "searchEndDate": "",                // 작성일자 종료일
+    "searchStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),              // 작성일자 시작일
+    "searchEndDate":moment().format('YYYY-MM-DD'),                // 작성일자 종료일
     "searchDocumentNumber": "",         // 문서번호
     "searchCustomerName": "",           // 고객사명
     "searchMaker": "",                  // MAKER
@@ -239,7 +239,7 @@ export const subRfqReadMailInitial = {
     "searchAgencyCode": "",          // 대리점코드 검색
 
     "page": 1,
-    "limit": 100
+    "limit": -1
 
 }
 
