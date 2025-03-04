@@ -3,7 +3,7 @@ import {
     CopyFilled, DatabaseFilled,
     DropboxSquareFilled,
     FileUnknownFilled, PoundCircleFilled,
-    ProjectFilled,
+    ProjectFilled, SettingOutlined,
     WalletFilled
 } from "@ant-design/icons";
 import React from "react";
@@ -184,5 +184,12 @@ export const introMenulist = [
             name: 'HS CODE',
             key: 'hcode_read'
         }]
+    },   {
+        icon: <SettingOutlined />, color: 'black',
+        title: '시스템관리',
+        children: [{name: '승인 관리자', key: 'accept_member'}, {
+            name: '데이터 로그 관리',
+            key: 'data_log'
+        },]
     },
 ]

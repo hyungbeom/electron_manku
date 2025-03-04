@@ -48,6 +48,7 @@ import DomesticCustomerUpdate from "@/component/page/data/customer/domestic/Dome
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {getData} from "@/manage/function/api";
 import StoreUpdate from "@/component/page/store/StoreUpdate";
+import {useRouter} from "next/router";
 
 
 function findTitleByKey(data, key) {
@@ -72,7 +73,7 @@ export default function Main() {
     const layoutRef = useRef<any>(null);
 
     const userInfo = useAppSelector((state) => state.user);
-
+    const router = useRouter();
     const [selectMenu, setSelectMenu] = useState('')
     const [count, setCount] = useState(0)
     const [tabs, setTabs] = useState({
@@ -357,12 +358,15 @@ export default function Main() {
                 {!tabCounts && <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
                     <div style={{
                         display: 'grid',
-                        gridTemplateColumns: '1fr 1fr 1fr 1fr',
+                        gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr',
                         gap: 100,
                         gridTemplateRows: '200px auto'
                     }}>
 
                         {introMenulist.map(v => {
+                            if(v.title === '시스템관리' && userInfo.authority === 0){
+                                return false;
+                            }
                             return <div>
                                 <div style={{
                                     border: '1px solid lightGray',
@@ -383,7 +387,14 @@ export default function Main() {
                                 <div style={{paddingTop: 10, cursor: 'pointer', textAlign: 'center'}}>
                                     {v.children.map(src => {
                                         return <div style={{color: v.color, paddingTop: 3}} onClick={() => {
-                                            onSelect([src.key])
+
+                                            if(src.key === 'accept_member'){
+                                                router.push('/manage')
+                                            }else if(src.key === 'data_log'){
+                                                router.push('/logData')
+                                            }else{
+                                                onSelect([src.key])
+                                            }
                                         }}>{src.name}</div>
                                     })}
                                 </div>
