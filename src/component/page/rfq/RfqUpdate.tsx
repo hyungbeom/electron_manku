@@ -259,8 +259,8 @@ export default function RqfUpdate({dataInfo = {estimateRequestDetail: [], attach
                             })}
                             {inputForm({title: '작성자', id: 'createdBy', disabled: true, onChange: onChange, data: info})}
                             <div>
-                                <div style={{fontSize: 12}}>담당자</div>
-                                <Select style={{width: '100%'}} size={'small'}
+                                <div style={{paddingBottom: 4.5, fontSize : 12}}>담당자</div>
+                                <Select style={{width: '100%', fontSize : 12}} size={'small'}
                                         showSearch
                                         value={info['managerAdminName']}
                                         className="custom-select"

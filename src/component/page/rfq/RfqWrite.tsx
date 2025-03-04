@@ -2,7 +2,13 @@ import React, {useEffect, useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
 import {ClearOutlined, FileSearchOutlined, PlusSquareOutlined, SaveOutlined} from "@ant-design/icons";
 import {subRfqWriteColumn} from "@/utils/columnList";
-import {estimateRequestDetailUnit, ModalInitList, projectDetailUnit, rfqWriteInitial} from "@/utils/initialList";
+import {
+    estimateDetailUnit,
+    estimateRequestDetailUnit,
+    ModalInitList,
+    projectDetailUnit,
+    rfqWriteInitial
+} from "@/utils/initialList";
 import message from "antd/lib/message";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
@@ -31,9 +37,12 @@ import {getData} from "@/manage/function/api";
 import moment from "moment";
 import Spin from "antd/lib/spin";
 import Button from "antd/lib/button";
+import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 
 const listType = 'estimateRequestDetailList'
 export default function RqfWrite({ copyPageInfo = {}}) {
+
+    const [ready, setReady] = useState(false);
 
     const [memberList, setMemberList] = useState([]);
 
@@ -95,23 +104,27 @@ export default function RqfWrite({ copyPageInfo = {}}) {
 
     const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        if (copyPageInfo['rfq_write']) {
 
-            setInfo({...copyInit, ...copyPageInfo['rfq_write'], ...adminParams, documentNumberFull :copyPageInfo['rfq_write'].documentNumberFull })
-            if (gridRef.current?.forEachNode) {
-                gridManage.resetData(gridRef, copyPageInfo['rfq_write'][listType])
-            }
-        }else{
-
-        }
-    }, [copyPageInfo]);
 
 
     const onGridReady = (params) => {
         gridRef.current = params.api;
-        params.api.applyTransaction({add: copyPageInfo['rfq_write']?.projectDetailList ? copyPageInfo['rfq_write'][listType] : commonFunc.repeatObject(estimateRequestDetailUnit, 10)});
+        setInfo(isEmptyObj(copyPageInfo['rfq_write'])?copyPageInfo['rfq_write'] : infoInit);
+        params.api.applyTransaction({add: copyPageInfo['rfq_write'][listType] ? copyPageInfo['rfq_write'][listType] : commonFunc.repeatObject(estimateRequestDetailUnit, 10)});
+        setReady(true)
     };
+
+    useEffect(() => {
+        if(ready) {
+            if(copyPageInfo['rfq_write'] && !isEmptyObj(copyPageInfo['rfq_write'])){
+                setInfo(infoInit);
+                gridManage.resetData(gridRef,commonFunc.repeatObject(estimateRequestDetailUnit, 10))
+            }else{
+                setInfo({...copyPageInfo['rfq_write'], ...adminParams});
+                gridManage.resetData(gridRef, copyPageInfo['rfq_write'][listType])
+            }
+        }
+    }, [copyPageInfo['rfq_write']]);
 
     // useEffect(() => {
     //     initCopyLoadInquiry()
@@ -260,8 +273,8 @@ export default function RqfWrite({ copyPageInfo = {}}) {
                                 })}
                                 {inputForm({title: '작성자', id: 'createBy', disabled: true, onChange: onChange, data: info})}
                                 <div>
-                                    <div style={{paddingBottom: 4.5}}>담당자</div>
-                                    <Select style={{width: '100%'}} size={'small'}
+                                    <div style={{paddingBottom: 4.5, fontSize : 12}}>담당자</div>
+                                    <Select style={{width: '100%', fontSize : 12}} size={'small'}
                                             showSearch
                                             value={info['managerAdminId']}
                                             placeholder="Select a person"
