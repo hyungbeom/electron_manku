@@ -211,6 +211,10 @@ export const subRfqReadInitial = {
     "searchManagerName": "",            // 담당자명
     "searchMobileNumber": "",           // 담당자 연락처
     "searchBiddingNumber": "",          // 입찰번호(미완성)
+    "searchSentStatus": 2,              // 전송 여부 1: 전송, 2: 미전송
+    "searchReplyStatus": 0,             // 회신 여부 1: 회신, 2: 미회신
+    "searchAgencyCode": "",          // 대리점코드 검색
+
     "page": 1,
     "limit": -1
 }
