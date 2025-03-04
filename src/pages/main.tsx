@@ -111,19 +111,7 @@ export default function Main() {
         onSelect([key]);
     }
 
-    useEffect(() => {
-        getInfo();
-    }, []);
-    async function getInfo(){
-        return await getData.post('admin/getAdminList',{
-            "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
-            "searchAuthority": null,    // 1: 일반, 0: 관리자
-            "page": 1,
-            "limit": -1
-        }).then(v=>{
-            console.log(v,'v;;;;;')
-        })
-    }
+
 
     function getCopyPage(page, v) {
         let copyObject = _.cloneDeep(copyPageInfo);

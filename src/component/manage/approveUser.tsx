@@ -8,6 +8,7 @@ import {setCookies} from "@/manage/function/cookie";
 export default function ApproveUser({memberList}:any){
 
     const [list, setList] = useState([])
+    console.log(memberList,'memberList:')
 
     const columns = [
         {

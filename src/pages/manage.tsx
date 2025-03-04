@@ -18,7 +18,7 @@ export default function Manage(any) {
 
     useEffect(()=>{
         getInfo()
-    })
+    },[])
 
     async function getInfo(){
         return await getData.post('admin/getAdminList',{
