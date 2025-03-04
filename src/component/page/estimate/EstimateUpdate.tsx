@@ -1,5 +1,4 @@
 import React, {useEffect, useRef, useState} from "react";
-import LayoutComponent from "@/component/LayoutComponent";
 import {FileSearchOutlined} from "@ant-design/icons";
 import {tableEstimateWriteColumns} from "@/utils/columnList";
 import {ModalInitList} from "@/utils/initialList";
@@ -30,14 +29,17 @@ import _ from "lodash";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import Spin from "antd/lib/spin";
 import Modal from "antd/lib/modal/Modal";
-import EstimatePaper from "@/component/견적서/EstimatePaper";
 import {jsPDF} from "jspdf";
 import html2canvas from "html2canvas";
-import {spans} from "next/dist/build/webpack/plugins/profiling-plugin";
 import Select from "antd/lib/select";
 
 const listType = 'estimateDetailList'
-export default function EstimateUpdate({dataInfo = {estimateDetail: [], attachmentFileList: []}, updateKey = {},  managerList = [], getCopyPage = null}) {
+export default function EstimateUpdate({
+                                           dataInfo = {estimateDetail: [], attachmentFileList: []},
+                                           updateKey = {},
+
+                                           getCopyPage = null
+                                       }) {
     const [memberList, setMemberList] = useState([]);
 
     useEffect(() => {
@@ -72,7 +74,6 @@ export default function EstimateUpdate({dataInfo = {estimateDetail: [], attachme
     // }
 
 
-
     const pdfRef = useRef(null);
     const pdfSubRef = useRef(null);
     const fileRef = useRef(null);
@@ -105,7 +106,7 @@ export default function EstimateUpdate({dataInfo = {estimateDetail: [], attachme
         return await getData.post('estimate/getEstimateDetail', {
             estimateId: updateKey['estimate_update'],
             documentNumberFull: ""
-        }).then(v=>{
+        }).then(v => {
             return v.data?.entity;
         })
 
@@ -116,6 +117,7 @@ export default function EstimateUpdate({dataInfo = {estimateDetail: [], attachme
     const onGridReady = (params) => {
         gridRef.current = params.api;
         params.api.applyTransaction({add: dataInfo?.estimateDetail[listType]});
+
     };
 
     async function handleKeyPress(e) {
@@ -149,7 +151,7 @@ export default function EstimateUpdate({dataInfo = {estimateDetail: [], attachme
     async function saveFunc() {
         gridRef.current.clearFocusedCell();
         const list = gridManage.getAllData(gridRef)
-        const filterList = list.filter(v=> !!v.model);
+        const filterList = list.filter(v => !!v.model);
         if (!filterList.length) {
             return message.warn('유효한 하위 데이터 1개 이상이여야 합니다')
         }
@@ -157,14 +159,15 @@ export default function EstimateUpdate({dataInfo = {estimateDetail: [], attachme
             return message.warn('매입처 코드가 누락되었습니다.')
         }
 
-        // setLoading(true)
+        setLoading(true)
         const formData: any = new FormData();
 
         commonManage.setInfoFormData(info, formData, listType, filterList)
         commonManage.getUploadList(fileRef, formData);
         commonManage.deleteUploadList(fileRef, formData, originFileList)
 
-        await updateEstimate({data: formData, returnFunc: returnFunc})
+        await updateEstimate({data: formData, returnFunc: returnFunc});
+        setLoading(false)
     }
 
     async function returnFunc(e) {
@@ -190,7 +193,7 @@ export default function EstimateUpdate({dataInfo = {estimateDetail: [], attachme
         let copyInfo = _.cloneDeep(info)
         copyInfo[listType] = totalList
 
-        getCopyPage('estimate_write',copyInfo)
+        getCopyPage('estimate_write', copyInfo)
 
     }
 
@@ -208,6 +211,7 @@ export default function EstimateUpdate({dataInfo = {estimateDetail: [], attachme
         }
         setIsPrintModalOpen(true)
     }
+
     const generatePDF = async (printMode = false) => {
         const pdf = new jsPDF("portrait", "px", "a4");
         const pdfWidth = pdf.internal.pageSize.getWidth();
@@ -216,11 +220,11 @@ export default function EstimateUpdate({dataInfo = {estimateDetail: [], attachme
 
         // ✅ 높이가 0이 아닌 요소만 필터링
         const elements = Array.from(pdfSubRef.current.children).filter(
-            (el:any) => el.offsetHeight > 0 && el.innerHTML.trim() !== ""
+            (el: any) => el.offsetHeight > 0 && el.innerHTML.trim() !== ""
         );
 
         if (pdfRef.current) {
-            const firstCanvas = await html2canvas(pdfRef.current, { scale: 2, useCORS: true });
+            const firstCanvas = await html2canvas(pdfRef.current, {scale: 2, useCORS: true});
             const firstImgData = firstCanvas.toDataURL("image/png");
             const firstImgProps = pdf.getImageProperties(firstImgData);
             const firstImgHeight = (firstImgProps.height * pdfWidth) / firstImgProps.width;
@@ -230,8 +234,8 @@ export default function EstimateUpdate({dataInfo = {estimateDetail: [], attachme
         }
 
         for (let i = 0; i < elements.length; i++) {
-            const element:any = elements[i];
-            const firstCanvas = await html2canvas(element, { scale: 2, useCORS: true });
+            const element: any = elements[i];
+            const firstCanvas = await html2canvas(element, {scale: 2, useCORS: true});
             const firstImgData = firstCanvas.toDataURL("image/png");
             const firstImgProps = pdf.getImageProperties(firstImgData);
             const firstImgHeight = (firstImgProps.height * pdfWidth) / firstImgProps.width;
@@ -248,7 +252,8 @@ export default function EstimateUpdate({dataInfo = {estimateDetail: [], attachme
             pdf.save(`${info.documentNumberFull}_견적서.pdf`);
         }
     };
-    function print(){
+
+    function print() {
         const printContents = pdfRef.current.innerHTML;
         const originalContents = document.body.innerHTML;
 
@@ -265,8 +270,9 @@ export default function EstimateUpdate({dataInfo = {estimateDetail: [], attachme
             title={<div style={{display: 'flex', justifyContent: 'space-between', padding: '0px 30px'}}>
                 <span>견적서 출력</span>
                 <span>
-                       <Button style={{fontSize: 11, marginRight: 10}} size={'small'} onClick={()=>generatePDF(false)}>다운로드</Button>
-                       <Button style={{fontSize: 11}}  size={'small'} onClick={()=>generatePDF(true)}>인쇄</Button>
+                       <Button style={{fontSize: 11, marginRight: 10}} size={'small'}
+                               onClick={() => generatePDF(false)}>다운로드</Button>
+                       <Button style={{fontSize: 11}} size={'small'} onClick={() => generatePDF(true)}>인쇄</Button>
                 </span>
             </div>}
             onCancel={() => setIsPrintModalOpen(false)}
@@ -277,6 +283,7 @@ export default function EstimateUpdate({dataInfo = {estimateDetail: [], attachme
             {/*<EstimatePaper data={info} pdfRef={pdfRef} pdfSubRef={pdfSubRef} gridRef={gridRef} position={true}/>*/}
         </Modal>
     }
+
     const onCChange = (value: string, e: any) => {
         setInfo(v => {
             return {...v, managerAdminId: e.adminId, managerAdminName: e.name}
@@ -316,8 +323,8 @@ export default function EstimateUpdate({dataInfo = {estimateDetail: [], attachme
                             {inputForm({title: '작성자', id: 'createdBy', disabled: true, onChange: onChange, data: info})}
                             {/*{inputForm({title: '담당자', id: 'managerAdminName', onChange: onChange, data: info})}*/}
                             <div>
-                                <div style={{paddingBottom: 4.5, fontSize : 12}}>담당자</div>
-                                <Select style={{width: '100%', fontSize : 12}} size={'small'}
+                                <div style={{paddingBottom: 4.5, fontSize: 12}}>담당자</div>
+                                <Select style={{width: '100%', fontSize: 12}} size={'small'}
                                         showSearch
                                         value={info['managerAdminId']}
                                         placeholder="Select a person"
@@ -449,7 +456,7 @@ export default function EstimateUpdate({dataInfo = {estimateDetail: [], attachme
                                     id: 'delivery',
                                     onChange: onChange,
                                     data: info,
-                                    addonAfter : <span style={{fontSize : 11}}>주</span>
+                                    addonAfter: <span style={{fontSize: 11}}>주</span>
                                 })}
                                 {inputNumberForm({
                                     title: '환율',
@@ -457,7 +464,7 @@ export default function EstimateUpdate({dataInfo = {estimateDetail: [], attachme
                                     onChange: onChange,
                                     data: info,
                                     step: 0.01,
-                                    addonAfter : <span style={{fontSize : 11}}>%</span>
+                                    addonAfter: <span style={{fontSize: 11}}>%</span>
                                 })}
                             </BoxCard>
                             <BoxCard title={'Maker 정보'}>
