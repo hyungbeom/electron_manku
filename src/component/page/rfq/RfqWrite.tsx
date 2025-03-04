@@ -33,8 +33,28 @@ import Spin from "antd/lib/spin";
 import Button from "antd/lib/button";
 
 const listType = 'estimateRequestDetailList'
-export default function RqfWrite({managerList = [], copyPageInfo = {}}) {
-    const options = managerList.map((item) => ({
+export default function RqfWrite({ copyPageInfo = {}}) {
+
+    const [memberList, setMemberList] = useState([]);
+
+    useEffect(() => {
+        getMemberList();
+    }, []);
+
+    async function getMemberList() {
+        // @ts-ignore
+        return await getData.post('admin/getAdminList', {
+            "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
+            "searchAuthority": null,    // 1: 일반, 0: 관리자
+            "page": 1,
+            "limit": -1
+        }).then(v => {
+            setMemberList(v.data.entity.adminList)
+        })
+    }
+
+
+    const options = memberList.map((item) => ({
         ...item,
         value: item.adminId,
         label: item.name,

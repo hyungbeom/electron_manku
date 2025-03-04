@@ -36,10 +36,28 @@ const listType = 'estimateRequestDetailList'
 export default function RqfUpdate({dataInfo = {estimateRequestDetail: [], attachmentFileList: []}, updateKey = {}, getCopyPage = null, managerList = []}) {
     const groupRef = useRef<any>(null)
 
+    const [memberList, setMemberList] = useState([]);
 
-    const options = managerList.map((item) => ({
+    useEffect(() => {
+        getMemberList();
+    }, []);
+
+    async function getMemberList() {
+        // @ts-ignore
+        return await getData.post('admin/getAdminList', {
+            "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
+            "searchAuthority": null,    // 1: 일반, 0: 관리자
+            "page": 1,
+            "limit": -1
+        }).then(v => {
+            setMemberList(v.data.entity.adminList)
+        })
+    }
+
+
+    const options = memberList.map((item) => ({
         ...item,
-        value: item.name,
+        value: item.adminId,
         label: item.name,
     }));
 

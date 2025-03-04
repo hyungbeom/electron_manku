@@ -22,12 +22,30 @@ import Select from "antd/lib/select";
 
 const listType = 'orderDetailList'
 export default function OrderUpdate({ managerList=[], updateKey}) {
-    const options = managerList?.map((item) => ({
+    const [memberList, setMemberList] = useState([]);
+
+    useEffect(() => {
+        getMemberList();
+    }, []);
+
+    async function getMemberList() {
+        // @ts-ignore
+        return await getData.post('admin/getAdminList', {
+            "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
+            "searchAuthority": null,    // 1: 일반, 0: 관리자
+            "page": 1,
+            "limit": -1
+        }).then(v => {
+            setMemberList(v.data.entity.adminList)
+        })
+    }
+
+
+    const options = memberList?.map((item) => ({
         ...item,
         value: item.adminId,
         label: item.name,
     }));
-
     const fileRef = useRef(null);
     const gridRef = useRef(null);
     const router = useRouter();

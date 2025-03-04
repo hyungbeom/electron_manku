@@ -61,6 +61,7 @@ export default function EstimateUpdate({dataInfo = {estimateDetail: [], attachme
 
     useEffect(() => {
         getDataInfo().then(v => {
+            console.log(v,'?????')
             const {estimateDetail, attachmentFileList} = v;
             setFileList(fileManage.getFormatFiles(attachmentFileList))
             setInfo(estimateDetail)
@@ -69,12 +70,14 @@ export default function EstimateUpdate({dataInfo = {estimateDetail: [], attachme
     }, [updateKey['estimate_update']])
 
     async function getDataInfo() {
-        const result = await getData.post('estimate/getEstimateDetail', {
+        return await getData.post('estimate/getEstimateDetail', {
             estimateId: updateKey['estimate_update'],
             documentNumberFull: ""
-        });
+        }).then(v=>{
+            return v.data?.entity;
+        })
 
-        return result?.data?.entity;
+
     }
 
 

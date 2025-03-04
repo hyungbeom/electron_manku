@@ -33,6 +33,8 @@ import {getData} from "@/manage/function/api";
 
 const listType = 'estimateDetailList'
 export default function EstimateWrite({dataInfo=[], copyPageInfo = {}}) {
+
+
     const pdfRef = useRef(null);
     const fileRef = useRef(null);
     const gridRef = useRef(null);

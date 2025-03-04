@@ -46,6 +46,7 @@ import OverseasCustomerUpdate from "@/component/page/data/customer/overseas/Over
 import DomesticCustomerRead from "@/component/page/data/customer/domestic/DomesticCustomerRead";
 import DomesticCustomerUpdate from "@/component/page/data/customer/domestic/DomesticCustomerUpdate";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
+import {getData} from "@/manage/function/api";
 
 
 function findTitleByKey(data, key) {
