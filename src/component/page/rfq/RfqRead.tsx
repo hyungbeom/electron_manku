@@ -30,13 +30,15 @@ export default function RfqRead({getPropertyId, getCopyPage}) {
     const copyInit = _.cloneDeep(subRfqReadInitial)
     const [mini, setMini] = useState(true);
     const [info, setInfo] = useState(copyInit);
-
     const [loading, setLoading] = useState(false);
+    const [totalRow, setTotalRow] = useState(0);
 
     const onGridReady = async (params) => {
         gridRef.current = params.api;
         await searchRfq({data: subRfqReadInitial}).then(v=>{
-            params.api.applyTransaction({add: v});
+            const {data, pageInfo} = v;
+            setTotalRow(pageInfo.totalRow)
+            params.api.applyTransaction({add: data});
         })
 
         // 그리드 로드 후 스크롤 이벤트 추가
@@ -107,7 +109,9 @@ export default function RfqRead({getPropertyId, getCopyPage}) {
             data: copyData
         }).then(v => {
             countRef.current = 1;
-            gridManage.resetData(gridRef, v);
+            const {data, pageInfo} = v;
+            setTotalRow(pageInfo.totalRow)
+            gridManage.resetData(gridRef, data);
             setLoading(false)
             gridRef.current.ensureIndexVisible(0)
         })
@@ -213,6 +217,7 @@ export default function RfqRead({getPropertyId, getCopyPage}) {
                                                    onClick={deleteList}>
                         <CopyOutlined/>삭제
                     </Button>}
+                               totalRow={totalRow}
                                getPropertyId={getPropertyId}
                                gridRef={gridRef}
                                columns={rfqReadColumns}

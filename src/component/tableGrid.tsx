@@ -31,7 +31,8 @@ const TableGrid = ({
                        deleteComp = <></>,
                        setInfo = null,
                        onRowClicked = null,
-                       getPropertyId = null
+                       getPropertyId = null,
+                       totalRow = 0
                    }: any) => {
 
 
@@ -397,7 +398,7 @@ const TableGrid = ({
 
             <div>
                 <div style={{width: '100%', display: 'flex', justifyContent: 'space-between', margin: '10px 0'}}>
-                    <div style={{fontWeight: 500, paddingLeft : 15}}>LIST</div>
+                    <div style={{fontWeight: 500, paddingLeft : 15}}>LIST &nbsp;&nbsp;    <span style={{fontSize : 12}}>검색결과(<span style={{color : 'orangered'}}>{totalRow}</span>건)</span></div>
 
                     <div style={{display: 'flex', alignItems: 'end', gap: 7}}>
                         <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft: 5}}

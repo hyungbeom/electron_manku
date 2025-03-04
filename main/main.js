@@ -116,3 +116,4 @@ ipcMain.on('close-app', () => app.quit());
 ipcMain.on('minimize-app', () => mainWindow?.minimize());
 ipcMain.on('maximize-app', () => mainWindow?.maximize());
 ipcMain.on('login-success', () => mainWindow?.setFullScreen(true));
+
