@@ -196,7 +196,7 @@ export default function RqfUpdate({dataInfo = {estimateRequestDetail: [], attach
 
     function copyPage() {
         const totalList = gridManage.getAllData(gridRef)
-        let copyInfo = _.cloneDeep(info)
+        let copyInfo = _.cloneDeep(info);
         copyInfo[listType] = totalList
 
         getCopyPage('rfq_write',copyInfo)

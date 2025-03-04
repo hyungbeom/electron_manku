@@ -33,7 +33,7 @@ import Spin from "antd/lib/spin";
 import Button from "antd/lib/button";
 
 const listType = 'estimateRequestDetailList'
-export default function RqfWrite({managerList = [], copyPageInfo = {}, dataInfo = {}}) {
+export default function RqfWrite({managerList = [], copyPageInfo = {}}) {
     const options = managerList.map((item) => ({
         ...item,
         value: item.adminId,
@@ -64,7 +64,7 @@ export default function RqfWrite({managerList = [], copyPageInfo = {}, dataInfo 
     }
 
     const [info, setInfo] = useState<any>({
-        ...copyInit, ...dataInfo, ...adminParams,
+        ...copyInit,  ...adminParams,
         writtenDate: moment().format('YYYY-MM-DD')
     })
 
@@ -77,11 +77,13 @@ export default function RqfWrite({managerList = [], copyPageInfo = {}, dataInfo 
 
     useEffect(() => {
         if (copyPageInfo['rfq_write']) {
-            console.log(copyPageInfo,'copyPageInfo:')
-            setInfo({...copyInit, ...copyPageInfo['rfq_write'], ...adminParams})
+
+            setInfo({...copyInit, ...copyPageInfo['rfq_write'], ...adminParams, documentNumberFull :copyPageInfo['rfq_write'].documentNumberFull })
             if (gridRef.current?.forEachNode) {
                 gridManage.resetData(gridRef, copyPageInfo['rfq_write'][listType])
             }
+        }else{
+
         }
     }, [copyPageInfo]);
 
@@ -91,17 +93,17 @@ export default function RqfWrite({managerList = [], copyPageInfo = {}, dataInfo 
         params.api.applyTransaction({add: copyPageInfo['rfq_write']?.projectDetailList ? copyPageInfo['rfq_write'][listType] : commonFunc.repeatObject(estimateRequestDetailUnit, 10)});
     };
 
-    useEffect(() => {
-        initCopyLoadInquiry()
-    }, []);
-
-    async function initCopyLoadInquiry() {
-        if (dataInfo) {
-            await checkInquiryNo({data: {agencyCode: dataInfo['agencyCode'], type: ''}}).then(data => {
-                onChange({target: {id: 'documentNumberFull', value: data}})
-            })
-        }
-    }
+    // useEffect(() => {
+    //     initCopyLoadInquiry()
+    // }, []);
+    //
+    // async function initCopyLoadInquiry() {
+    //     if (dataInfo) {
+    //         await checkInquiryNo({data: {agencyCode: dataInfo['agencyCode'], type: ''}}).then(data => {
+    //             onChange({target: {id: 'documentNumberFull', value: data}})
+    //         })
+    //     }
+    // }
 
     async function handleKeyPress(e) {
         if (e.key === 'Enter') {
@@ -227,6 +229,12 @@ export default function RqfWrite({managerList = [], copyPageInfo = {}, dataInfo 
                                     title: '작성일',
                                     id: 'writtenDate',
                                     disabled: true,
+                                    onChange: onChange,
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: 'INQUIRY NO.',
+                                    id: 'documentNumberFull',
                                     onChange: onChange,
                                     data: info
                                 })}
