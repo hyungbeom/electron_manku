@@ -359,7 +359,7 @@ export default function Main() {
                     <div style={{
                         display: 'grid',
                         gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr',
-                        gap: 100,
+                        gap: 70,
                         gridTemplateRows: '200px auto'
                     }}>
 
@@ -367,17 +367,18 @@ export default function Main() {
                             if(v.title === '시스템관리' && userInfo.authority === 0){
                                 return false;
                             }
-                            return <div>
+                            return <div >
                                 <div style={{
                                     border: '1px solid lightGray',
-                                    width: 85,
-                                    height: 85,
+                                    width: 70,
+                                    height: 70,
                                     borderRadius: 10,
                                     display: 'flex',
                                     justifyContent: 'center',
-                                    alignItems: 'center'
+                                    alignItems: 'center',
+                                    margin : '0px auto'
                                 }}>
-                                    <div style={{fontSize: 50, color: v.color}}>
+                                    <div style={{fontSize: 40, color: v.color}}>
                                         {v.icon}
                                     </div>
                                 </div>
