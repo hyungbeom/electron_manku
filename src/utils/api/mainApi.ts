@@ -15,10 +15,9 @@ export const saveRfq = async ({data, router, setLoading}) => {
         if (v.data.code === 1) {
             window.opener?.postMessage('write', window.location.origin);
             message.success('저장되었습니다.');
-            router.push(`/rfq_update?estimateRequestId=${v?.data?.entity?.estimateRequestId}`)
-        }else{
-            setLoading(false);
+            // router.push(`/rfq_update?estimateRequestId=${v?.data?.entity?.estimateRequestId}`)
         }
+        setLoading(false);
     }, err => {
         setLoading(false);
        console.log(err)

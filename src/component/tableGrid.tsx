@@ -106,25 +106,33 @@ const TableGrid = ({
 
         if (type === 'read') {
 
-            if (e.data.orderStatusId)
+            if (e.data.orderStatusId){
                 getPropertyId('store_update', e.data.orderStatusId)
-            if (e.data.projectId)
+            }
+            if (e.data.projectId){
                 getPropertyId('project_update', e.data.projectId)
-            if (e.data.deliveryId)
+            }
+            if (e.data.deliveryId){
                 getPropertyId('delivery_update', e.data.deliveryId)
-            if (e.data.remittanceId)
+            }
+            if (e.data.remittanceId){
                 getPropertyId('remittance_domestic_update', e.data.remittanceId)
-            if (e.data.estimateRequestId)
+            }
+            if (e.data.estimateRequestId){
                 getPropertyId('rfq_update', e.data.estimateRequestId)
-            if (e.data.estimateId)
+            }
+            if (e.data.estimateId){
                 getPropertyId('estimate_update', e.data.estimateId)
-            if (e.data.orderId)
+            }
+            if (e.data.orderId){
                 getPropertyId('order_update', e.data.orderId)
-            if (e.data.remainingQuantity)
+            }
+            if (e.data.remainingQuantity){
                 getPropertyId('inventory_update', e.data.model)
-            if (e.data.makerId);
-            console.log(e.data,';;;')
+            }
+            if (e.data.makerId){
                 getPropertyId('maker_update', e.data)
+            }
             if (e.data.agencyId)
                 getPropertyId('domestic_agency_update', e.data.agencyCode)
             if (e.data.overseasAgencyId)
