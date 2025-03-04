@@ -38,10 +38,12 @@ import moment from "moment";
 import Spin from "antd/lib/spin";
 import Button from "antd/lib/button";
 import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
+import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
+import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 
 const listType = 'estimateRequestDetailList'
 export default function RqfWrite({ copyPageInfo = {}}) {
-
+    const groupRef = useRef<any>(null)
     const [ready, setReady] = useState(false);
 
     const [memberList, setMemberList] = useState([]);
@@ -220,7 +222,22 @@ export default function RqfWrite({ copyPageInfo = {}}) {
         // router.push()
     }
 
+
+
+
+    const getSavedSizes = () => {
+        const savedSizes = localStorage.getItem('rfq_write');
+        return savedSizes ? JSON.parse(savedSizes) : [25, 25, 25, 25, 25]; // 기본값 [50, 50, 50]
+    };
+
+    function onResizeChange() {
+        setSizes(groupRef.current.getLayout())
+    }
+    const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
+
+
     return <Spin spinning={loading} tip={'견적의뢰 등록중...'}>
+        <PanelSizeUtil groupRef={groupRef} setSizes={setSizes} storage={'rfq_write'}/>
         <SearchInfoModal info={info} setInfo={setInfo}
                          open={isModalOpen}
                          gridRef={gridRef}
@@ -299,12 +316,8 @@ export default function RqfWrite({ copyPageInfo = {}}) {
 
                                 })}
                             </TopBoxCard>
-                            <div style={{
-                                display: 'grid',
-                                gridTemplateColumns: "150px 160px 1fr 1fr 220px",
-                                paddingTop: 10,
-                                gap: 10
-                            }}>
+                        <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 3, paddingTop: 3}}>
+                            <Panel defaultSize={sizes[0]} minSize={10} maxSize={100} onResize={onResizeChange}>
                                 <BoxCard title={'매입처 정보'} tooltip={tooltipInfo('agency')}>
                                     {inputForm({
                                         title: '매입처코드',
@@ -340,6 +353,9 @@ export default function RqfWrite({ copyPageInfo = {}}) {
                                     })}
                                     {datePickerForm({title: '마감일자(예상)', id: 'dueDate', onChange: onChange, data: info})}
                                 </BoxCard>
+                            </Panel>
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[1]} minSize={10} maxSize={100} onResize={onResizeChange}>
                                 <BoxCard title={'고객사 정보'} tooltip={tooltipInfo('customer')}>
                                     {inputForm({
                                         title: '고객사명',
@@ -380,7 +396,9 @@ export default function RqfWrite({ copyPageInfo = {}}) {
                                         data: info
                                     })}
                                 </BoxCard>
-
+                            </Panel>
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[2]} minSize={10} maxSize={100} onResize={onResizeChange}>
                                 <BoxCard title={'Maker 정보'} tooltip={tooltipInfo('maker')}>
                                     {inputForm({
                                         title: 'MAKER',
@@ -410,6 +428,9 @@ export default function RqfWrite({ copyPageInfo = {}}) {
                                         rows: 7
                                     })}
                                 </BoxCard>
+                            </Panel>
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[3]} minSize={10} maxSize={100} onResize={onResizeChange}>
                                 <BoxCard title={'ETC'} tooltip={tooltipInfo('etc')}>
                                     {inputForm({
                                         title: 'End User',
@@ -426,6 +447,9 @@ export default function RqfWrite({ copyPageInfo = {}}) {
 
                                     })}
                                 </BoxCard>
+                            </Panel>
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[4]} minSize={10} maxSize={100} onResize={onResizeChange}>
                                 <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}
                                          disabled={!userInfo['microsoftId']}>
                                     {/*@ts-ignored*/}
@@ -443,7 +467,8 @@ export default function RqfWrite({ copyPageInfo = {}}) {
                                                          numb={info['uploadType']}/>
                                     </div>
                                 </BoxCard>
-                            </div>
+                            </Panel>
+                        </PanelGroup>
                         </div>
                         : <></>}
                 </MainCard>

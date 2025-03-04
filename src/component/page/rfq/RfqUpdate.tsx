@@ -31,6 +31,7 @@ import Select from "antd/lib/select";
 import Spin from "antd/lib/spin";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
+import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 
 const listType = 'estimateRequestDetailList'
 export default function RqfUpdate({dataInfo = {estimateRequestDetail: [], attachmentFileList: []}, updateKey = {}, getCopyPage = null, managerList = []}) {
@@ -98,30 +99,7 @@ export default function RqfUpdate({dataInfo = {estimateRequestDetail: [], attach
         return result?.data?.entity;
     }
 
-    const getSavedSizes = () => {
-        const savedSizes = localStorage.getItem('rfq_write');
-        return savedSizes ? JSON.parse(savedSizes) : [15, 15, 25, 25, 20]; // 기본값 [50, 50, 50]
-    };
 
-    const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
-
-    function onResizeChange() {
-        setSizes(groupRef.current.getLayout())
-
-    }
-
-    const handleMouseUp = () => {
-        setSizes(groupRef.current.getLayout())
-        localStorage.setItem('rfq_write', JSON.stringify(groupRef.current.getLayout()));
-    };
-    useEffect(() => {
-        window.addEventListener('pointerup', handleMouseUp);
-
-        // 컴포넌트 언마운트 시 이벤트 리스너 제거
-        return () => {
-            window.removeEventListener('pointerup', handleMouseUp);
-        };
-    }, []);
 
     const onGridReady = (params) => {
         gridRef.current = params.api;
@@ -224,7 +202,22 @@ export default function RqfUpdate({dataInfo = {estimateRequestDetail: [], attach
 
 
 
+
+
+
+    const getSavedSizes = () => {
+        const savedSizes = localStorage.getItem('rfq_write');
+        return savedSizes ? JSON.parse(savedSizes) : [25, 25, 25, 25, 25]; // 기본값 [50, 50, 50]
+    };
+
+    function onResizeChange() {
+        setSizes(groupRef.current.getLayout())
+    }
+    const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
+
+
     return <Spin spinning={loading} tip={'견적의뢰 수정중...'}>
+        <PanelSizeUtil groupRef={groupRef} setSizes={setSizes} storage={'rfq_write'}/>
         <SearchInfoModal info={info} setInfo={setInfo}
                          open={isModalOpen}
                          type={''}
