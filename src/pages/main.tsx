@@ -119,10 +119,11 @@ export default function Main() {
         let copyObject = _.cloneDeep(copyPageInfo);
         copyObject[page] = v;
         setCopyPageInfo(copyObject);
+        console.log('check')
         onSelect([page])
     }
 
-    const onSelect = (selectedKeys) => {
+    const onSelect = (selectedKeys, event?) => {
         const selectedKey = selectedKeys[0];
 
         const result = model.toJson().layout.children.map((v) => {
@@ -132,14 +133,18 @@ export default function Main() {
 
         const title = findTitleByKey(treeData, selectedKey);
 
-
-        console.log(title, 'title:')
         if (title) {
             setSelectMenu(title);
             updateSelectTab();
         } else {
             const result = updateList.find(v => v.key === selectedKey)
             setSelectMenu(result?.title);
+        }
+
+        if(event?.event === 'select'){
+            let copyObject = _.cloneDeep(copyPageInfo);
+            copyObject[selectedKey] = {};
+            setCopyPageInfo(copyObject);
         }
 
 
@@ -171,7 +176,7 @@ export default function Main() {
             name: "견적서 조회",
             component: <EstimateRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>
         },
-        estimate_update: {name: "견적서 수정", component: <EstimateUpdate updateKey={updateKey}/>},
+        estimate_update: {name: "견적서 수정", component: <EstimateUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
 
         order_write: {name: "발주서 등록", component: <OrderWrite copyPageInfo={copyPageInfo}/>},
         order_read: {name: "발주서 조회", component: <OrderRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>},

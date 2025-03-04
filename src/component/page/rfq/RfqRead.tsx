@@ -2,12 +2,7 @@ import React, {useEffect, useRef, useState} from "react";
 import {CopyOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
 import {rfqReadColumns} from "@/utils/columnList";
-import {
-    estimateRequestDetailUnit,
-    projectDetailUnit,
-    subRfqReadInitial,
-    subRfqReadMailInitial
-} from "@/utils/initialList";
+import {estimateRequestDetailUnit, subRfqReadInitial} from "@/utils/initialList";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
 import {BoxCard, inputForm, MainCard, rangePickerForm} from "@/utils/commonForm";
@@ -17,7 +12,6 @@ import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
 import {useRouter} from "next/router";
 import Spin from "antd/lib/spin";
 import ReceiveComponent from "@/component/ReceiveComponent";
-import {getData} from "@/manage/function/api";
 
 
 export default function RfqRead({getPropertyId, getCopyPage}) {
@@ -35,9 +29,11 @@ export default function RfqRead({getPropertyId, getCopyPage}) {
 
     const onGridReady = async (params) => {
         gridRef.current = params.api;
-        await searchRfq({data: subRfqReadInitial}).then(v=>{
+        await searchRfq({data: subRfqReadInitial}).then(v => {
+            console.log(v,':::')
             const {data, pageInfo} = v;
             setTotalRow(pageInfo.totalRow)
+
             params.api.applyTransaction({add: data});
         })
 
@@ -139,7 +135,7 @@ export default function RfqRead({getPropertyId, getCopyPage}) {
     }
 
     function moveRegist() {
-        getCopyPage('rfq_write', {estimateRequestDetailList : commonFunc.repeatObject(estimateRequestDetailUnit, 10)})
+        getCopyPage('rfq_write', {estimateRequestDetailList: commonFunc.repeatObject(estimateRequestDetailUnit, 10)})
     }
 
 

@@ -1,6 +1,6 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
-import {DownloadOutlined, FileSearchOutlined, PlusSquareOutlined} from "@ant-design/icons";
+import {DownloadOutlined, FileSearchOutlined, PlusSquareOutlined, RetweetOutlined} from "@ant-design/icons";
 import {tableEstimateWriteColumns} from "@/utils/columnList";
 import {estimateDetailUnit, estimateRequestDetailUnit, estimateWriteInitial, ModalInitList} from "@/utils/initialList";
 import message from "antd/lib/message";
@@ -29,10 +29,36 @@ import {DriveUploadComp} from "@/component/common/SharePointComp";
 import Spin from "antd/lib/spin";
 import EstimatePaper from "@/component/견적서/EstimatePaper";
 import {getData} from "@/manage/function/api";
+import Select from "antd/lib/select";
+import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 
 
 const listType = 'estimateDetailList'
-export default function EstimateWrite({dataInfo=[], copyPageInfo = {}}) {
+export default function EstimateWrite({ copyPageInfo = {}}) {
+
+    const [memberList, setMemberList] = useState([]);
+
+    useEffect(() => {
+        getMemberList();
+    }, []);
+
+    async function getMemberList() {
+        // @ts-ignore
+        return await getData.post('admin/getAdminList', {
+            "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
+            "searchAuthority": null,    // 1: 일반, 0: 관리자
+            "page": 1,
+            "limit": -1
+        }).then(v => {
+            setMemberList(v.data.entity.adminList)
+        })
+    }
+
+    const options = memberList.map((item) => ({
+        ...item,
+        value: item.adminId,
+        label: item.name,
+    }));
 
 
     const pdfRef = useRef(null);
@@ -58,7 +84,7 @@ export default function EstimateWrite({dataInfo=[], copyPageInfo = {}}) {
         ...adminParams
     }
 
-    const [info, setInfo] = useState<any>({...copyInit, ...dataInfo, ...adminParams})
+    const [info, setInfo] = useState<any>({...copyInit, ...adminParams})
     const [mini, setMini] = useState(true);
 
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
@@ -70,10 +96,22 @@ export default function EstimateWrite({dataInfo=[], copyPageInfo = {}}) {
 
     const onGridReady = (params) => {
         gridRef.current = params.api;
-        params.api.applyTransaction({add: copyPageInfo['estimate_write']?.estimateRequestList ? copyPageInfo['estimate_write'][listType] : commonFunc.repeatObject(estimateDetailUnit, 10)});
+        setInfo(isEmptyObj(copyPageInfo['estimate_write'])?copyPageInfo['estimate_write'] : infoInit);
+        params.api.applyTransaction({add: copyPageInfo['estimate_write'][listType] ? copyPageInfo['estimate_write'][listType] : commonFunc.repeatObject(estimateDetailUnit, 10)});
         setReady(true)
     };
 
+    useEffect(() => {
+        if(ready) {
+            if(!isEmptyObj(copyPageInfo['estimate_write'])){
+                setInfo(infoInit);
+                gridManage.resetData(gridRef,commonFunc.repeatObject(estimateDetailUnit, 10))
+            }else{
+                setInfo({...copyPageInfo['estimate_write'], ...adminParams});
+                gridManage.resetData(gridRef, copyPageInfo['estimate_write'][listType])
+            }
+        }
+    }, [copyPageInfo['estimate_write']]);
 
     async function handleKeyPress(e) {
 
@@ -125,7 +163,7 @@ export default function EstimateWrite({dataInfo=[], copyPageInfo = {}}) {
                         setInfo(v => {
                             return {
                                 ...result.data.entity.estimateRequestList[0],
-                                managerAdminName : v.managerAdminName,
+                                managerAdminName: v.managerAdminName,
                                 connectDocumentNumberFull: v.connectDocumentNumberFull.toUpperCase(),
                                 documentNumberFull: src.data.code === 1 ? src.data.entity.newDocumentNumberFull : v.documentNumberFull,
                                 validityPeriod: '견적 발행 후 10일간',
@@ -216,6 +254,12 @@ export default function EstimateWrite({dataInfo=[], copyPageInfo = {}}) {
         gridManage.deleteAll(gridRef);
     }
 
+    const onCChange = (value: string, e: any) => {
+        setInfo(v => {
+            return {...v, managerAdminId: e.adminId, managerAdminName: e.name}
+        })
+    };
+
 
     return <Spin spinning={loading} tip={'견적서 등록중...'}>
 
@@ -244,7 +288,18 @@ export default function EstimateWrite({dataInfo=[], copyPageInfo = {}}) {
                                     data: info
                                 })}
                                 {inputForm({title: '작성자', id: 'createdBy', disabled: true, onChange: onChange, data: info})}
-                                {inputForm({title: '담당자', id: 'managerAdminName', onChange: onChange, data: info})}
+                                <div>
+                                    <div style={{paddingBottom: 4.5, fontSize : 12}}>담당자</div>
+                                    <Select style={{width: '100%', fontSize : 12}} size={'small'}
+                                            showSearch
+                                            value={info['managerAdminId']}
+                                            placeholder="Select a person"
+                                            optionFilterProp="label"
+                                            onChange={onCChange}
+                                            options={options}
+                                    />
+                                </div>
+                                {/*{inputForm({title: '담당자', id: 'managerAdminName', onChange: onChange, data: info})}*/}
                                 {inputForm({
                                     title: 'INQUIRY NO.',
                                     id: 'documentNumberFull',
@@ -253,7 +308,7 @@ export default function EstimateWrite({dataInfo=[], copyPageInfo = {}}) {
                                     data: info,
 
                                     suffix:
-                                        <PlusSquareOutlined style={{cursor: 'pointer'}} onClick={
+                                        <RetweetOutlined style={{cursor: 'pointer'}} onClick={
                                             async (e) => {
                                                 e.stopPropagation();
                                                 if (!info['agencyCode']) {
@@ -281,7 +336,12 @@ export default function EstimateWrite({dataInfo=[], copyPageInfo = {}}) {
                             </TopBoxCard>
 
 
-                            <div style={{display: 'grid', gridTemplateColumns: "150px 200px 200px 180px 1fr 300px", gap : 10, paddingTop : 10}}>
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: "150px 200px 200px 180px 1fr 300px",
+                                gap: 10,
+                                paddingTop: 10
+                            }}>
 
                                 <BoxCard title={'매입처 정보'}>
                                     {inputForm({
@@ -389,7 +449,7 @@ export default function EstimateWrite({dataInfo=[], copyPageInfo = {}}) {
                                         id: 'delivery',
                                         onChange: onChange,
                                         data: info,
-                                        addonAfter: <span style={{fontSize : 11}}>주</span>
+                                        addonAfter: <span style={{fontSize: 11}}>주</span>
                                     })}
                                     {inputNumberForm({
                                         title: '환율',
@@ -397,7 +457,7 @@ export default function EstimateWrite({dataInfo=[], copyPageInfo = {}}) {
                                         onChange: onChange,
                                         data: info,
                                         step: 0.01,
-                                        addonAfter: <span style={{fontSize : 11}}>%</span>
+                                        addonAfter: <span style={{fontSize: 11}}>%</span>
                                     })}
                                 </BoxCard>
 

@@ -34,9 +34,45 @@ import EstimatePaper from "@/component/견적서/EstimatePaper";
 import {jsPDF} from "jspdf";
 import html2canvas from "html2canvas";
 import {spans} from "next/dist/build/webpack/plugins/profiling-plugin";
+import Select from "antd/lib/select";
 
 const listType = 'estimateDetailList'
-export default function EstimateUpdate({dataInfo = {estimateDetail: [], attachmentFileList: []}, updateKey = {},  managerList = []}) {
+export default function EstimateUpdate({dataInfo = {estimateDetail: [], attachmentFileList: []}, updateKey = {},  managerList = [], getCopyPage = null}) {
+    const [memberList, setMemberList] = useState([]);
+
+    useEffect(() => {
+        getMemberList();
+    }, []);
+
+    async function getMemberList() {
+        // @ts-ignore
+        return await getData.post('admin/getAdminList', {
+            "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
+            "searchAuthority": null,    // 1: 일반, 0: 관리자
+            "page": 1,
+            "limit": -1
+        }).then(v => {
+            setMemberList(v.data.entity.adminList)
+        })
+    }
+
+    const options = memberList.map((item) => ({
+        ...item,
+        value: item.adminId,
+        label: item.name,
+    }));
+
+    const userInfo = useAppSelector((state) => state.user);
+
+
+    // const adminParams = {
+    //     managerAdminId: userInfo['adminId'],
+    //     createdBy: userInfo['name'],
+    //     managerAdminName: userInfo['name']
+    // }
+
+
+
     const pdfRef = useRef(null);
     const pdfSubRef = useRef(null);
     const fileRef = useRef(null);
@@ -45,8 +81,6 @@ export default function EstimateUpdate({dataInfo = {estimateDetail: [], attachme
 
     const infoInit = dataInfo?.estimateDetail
     const infoInitFile = dataInfo?.attachmentFileList
-
-    const userInfo = useAppSelector((state) => state.user);
 
     const [info, setInfo] = useState<any>(infoInit)
     const [mini, setMini] = useState(true);
@@ -61,11 +95,9 @@ export default function EstimateUpdate({dataInfo = {estimateDetail: [], attachme
 
     useEffect(() => {
         getDataInfo().then(v => {
-
-            const {estimateDetail, attachmentFileList} = v;
-            setFileList(fileManage.getFormatFiles(attachmentFileList))
-            setInfo(estimateDetail)
-            gridManage.resetData(gridRef, estimateDetail[listType])
+            setFileList(fileManage.getFormatFiles(v?.attachmentFileList))
+            setInfo(v?.estimateDetail)
+            gridManage.resetData(gridRef, v?.estimateDetail[listType])
         })
     }, [updateKey['estimate_update']])
 
@@ -158,8 +190,8 @@ export default function EstimateUpdate({dataInfo = {estimateDetail: [], attachme
         let copyInfo = _.cloneDeep(info)
         copyInfo[listType] = totalList
 
-        const query = `data=${encodeURIComponent(JSON.stringify(copyInfo))}`;
-        router.push(`/estimate_write?${query}`)
+        getCopyPage('estimate_write',copyInfo)
+
     }
 
 
@@ -245,7 +277,11 @@ export default function EstimateUpdate({dataInfo = {estimateDetail: [], attachme
             {/*<EstimatePaper data={info} pdfRef={pdfRef} pdfSubRef={pdfSubRef} gridRef={gridRef} position={true}/>*/}
         </Modal>
     }
-
+    const onCChange = (value: string, e: any) => {
+        setInfo(v => {
+            return {...v, managerAdminId: e.adminId, managerAdminName: e.name}
+        })
+    };
 
     return <Spin spinning={loading} tip={'견적의뢰 수정중...'}>
         {/*@ts-ignore*/}
@@ -278,7 +314,18 @@ export default function EstimateUpdate({dataInfo = {estimateDetail: [], attachme
                                 data: info
                             })}
                             {inputForm({title: '작성자', id: 'createdBy', disabled: true, onChange: onChange, data: info})}
-                            {inputForm({title: '담당자', id: 'managerAdminName', onChange: onChange, data: info})}
+                            {/*{inputForm({title: '담당자', id: 'managerAdminName', onChange: onChange, data: info})}*/}
+                            <div>
+                                <div style={{paddingBottom: 4.5}}>담당자</div>
+                                <Select style={{width: '100%'}} size={'small'}
+                                        showSearch
+                                        value={info['managerAdminId']}
+                                        placeholder="Select a person"
+                                        optionFilterProp="label"
+                                        onChange={onCChange}
+                                        options={options}
+                                />
+                            </div>
                             {inputForm({
                                 title: 'INQUIRY NO.',
                                 id: 'documentNumberFull',
@@ -291,7 +338,12 @@ export default function EstimateUpdate({dataInfo = {estimateDetail: [], attachme
                             {inputForm({title: '프로젝트 제목', id: 'projectTitle', onChange: onChange, data: info})}
                         </TopBoxCard>
 
-                        <div style={{display: 'grid', gridTemplateColumns: "180px 200px 200px 180px 1fr 300px", gridColumnGap : 10, paddingTop : 10}}>
+                        <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: "180px 200px 200px 180px 1fr 300px",
+                            gridColumnGap: 10,
+                            paddingTop: 10
+                        }}>
 
                             <BoxCard title={'매입처 정보'}>
                                 {inputForm({
