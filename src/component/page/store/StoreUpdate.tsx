@@ -26,21 +26,20 @@ import OrderListModal from "@/component/OrderListModal";
 import {saveStore, updateStore} from "@/utils/api/mainApi";
 import {useRouter} from "next/router";
 import {getData} from "@/manage/function/api";
+import Spin from "antd/lib/spin";
 
 const listType = 'orderStatusDetailList'
 
-export default function StoreUpdate({dataInfo}) {
+export default function StoreUpdate({updateKey, getCopyPage}) {
     const router = useRouter();
 
     const gridRef = useRef(null);
 
-    const copyInit = _.cloneDeep(dataInfo)
 
     const userInfo = useAppSelector((state) => state.user);
 
 
     const infoInit = {
-        ...copyInit,
         managerAdminId: userInfo['adminId'],
         managerAdminName: userInfo['name']
     }
@@ -48,13 +47,31 @@ export default function StoreUpdate({dataInfo}) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [info, setInfo] = useState<any>(infoInit)
     const [mini, setMini] = useState(true);
-
+    const [loading, setLoading] = useState(false);
 
     const onGridReady = (params) => {
         gridRef.current = params.api;
-        params.api.applyTransaction({add: dataInfo[listType]});
+        getDataInfo()
         updateMainInput()
     };
+
+    useEffect(() => {
+        setLoading(true)
+        getDataInfo().then(v=>{
+            const {orderStatusDetail} = v;
+            setInfo(orderStatusDetail)
+            gridManage.resetData(gridRef, orderStatusDetail[listType]);
+            setLoading(false)
+        })
+    }, [updateKey['store_update']]);
+
+    async function getDataInfo() {
+        return await getData.post('order/getOrderStatusDetail', {orderStatusId: updateKey['store_update']}).then(v=>{
+            return  v?.data?.entity
+        })
+    }
+
+
 
 
     function getTotalTableValue() {
@@ -223,8 +240,7 @@ export default function StoreUpdate({dataInfo}) {
         let copyInfo = _.cloneDeep(info)
         copyInfo[listType] = totalList
 
-        const query = `data=${encodeURIComponent(JSON.stringify(copyInfo))}`;
-        router.push(`/store_write?${query}`)
+        getCopyPage('store_write',copyInfo)
     }
 
     /**
@@ -241,7 +257,7 @@ export default function StoreUpdate({dataInfo}) {
         </Button>
     </div>
 
-    return <>
+    return  <Spin spinning={loading} tip={'입고 수정중...'}>
         <OrderListModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} getRows={getSelectedRows}/>
         <LayoutComponent>
             <div style={{
@@ -363,7 +379,7 @@ export default function StoreUpdate({dataInfo}) {
                 />
             </div>
         </LayoutComponent>
-    </>
+    </Spin>
 }
 
 // @ts-ignored

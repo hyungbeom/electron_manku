@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
 import {CopyOutlined, SaveOutlined} from "@ant-design/icons";
 import {storeWriteColumn} from "@/utils/columnList";
@@ -25,10 +25,12 @@ import _ from "lodash";
 import OrderListModal from "@/component/OrderListModal";
 import {saveProject, saveStore} from "@/utils/api/mainApi";
 import {useRouter} from "next/router";
+import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 
 const listType = 'orderStatusDetailList'
 
 export default function StoreWrite({copyPageInfo}) {
+    const [ready, setReady] = useState(false);
     const router = useRouter();
 
     const gridRef = useRef(null);
@@ -51,11 +53,25 @@ export default function StoreWrite({copyPageInfo}) {
 
 
 
-
     const onGridReady = (params) => {
         gridRef.current = params.api;
-        params.api.applyTransaction({add: copyPageInfo['store_write']?.orderDetailList ? copyPageInfo['store_write'][listType] : []});
+        setInfo(isEmptyObj(copyPageInfo['store_write'])?copyPageInfo['store_write'] : infoInit);
+        params.api.applyTransaction({add: copyPageInfo['store_write'][listType] ? copyPageInfo['store_write'][listType] : []});
+        setReady(true)
     };
+
+    useEffect(() => {
+        if(ready) {
+            if(copyPageInfo['store_write'] && !isEmptyObj(copyPageInfo['store_write'])){
+                setInfo(infoInit);
+                gridManage.resetData(gridRef,[])
+            }else{
+                setInfo({...copyPageInfo['store_write']});
+                gridManage.resetData(gridRef, copyPageInfo['store_write'][listType])
+            }
+        }
+    }, [copyPageInfo['store_write'],ready]);
+
 
 
     function getTotalTableValue() {

@@ -129,7 +129,8 @@ export const introMenulist = [
         children: [{name: '프로젝트 등록', key: 'project_write'}, {name: '프로젝트 조회', key: 'project_read'}]
     },
     {
-        icon: <FileUnknownFilled/>, color: 'indianred',
+        icon: <FileUnknownFilled/>,
+        color: 'indianred',
         title: '견적의뢰',
         children: [{name: '견적의뢰 등록', key: 'rfq_write'}, {name: '견적의뢰 조회', key: 'rfq_read'}, {
             name: '메일전송',
@@ -137,7 +138,8 @@ export const introMenulist = [
         }]
     },
     {
-        icon: <CopyFilled/>, color: 'yellowgreen',
+        icon: <CopyFilled/>,
+        color: 'yellowgreen',
         title: '견적서',
         children: [{name: '견적서 등록', key: 'estimate_write'}, {name: '견적서 조회', key: 'estimate_read'}, {
             name: '통합견적서',
@@ -190,6 +192,9 @@ export const introMenulist = [
         children: [{name: '승인 관리자', key: 'accept_member'}, {
             name: '데이터 로그 관리',
             key: 'data_log'
-        },]
+        },{
+            name: '통계페이지',
+            key: 'chart_data'
+        }]
     },
 ]

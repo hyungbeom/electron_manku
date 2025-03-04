@@ -186,7 +186,7 @@ export default function Main() {
 
         store_write: {name: "입고 등록", component: <StoreWrite copyPageInfo={copyPageInfo}/>},
         store_read: {name: "입고 조회", component: <StoreRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>},
-        store_update: {name: "입고 수정", component: <StoreUpdate dataInfo={[]} />},
+        store_update: {name: "입고 수정", component: <StoreUpdate updateKey={updateKey} getCopyPage={getCopyPage} />},
 
         delivery_write: {name: "배송 등록", component: <DeliveryWrite copyPageInfo={copyPageInfo}/>},
         delivery_read: {
