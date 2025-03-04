@@ -461,7 +461,6 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
                                         onChange: onChange,
                                         data: info,
                                         step: 0.01,
-                                        addonAfter: <span style={{fontSize: 11}}>%</span>
                                     })}
                                 </BoxCard>
 

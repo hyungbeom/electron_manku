@@ -94,12 +94,23 @@ export default function EstimateUpdate({
 
     const [loading, setLoading] = useState(false);
 
+
+
+
+    const onGridReady = (params) => {
+        gridRef.current = params.api;
+        params.api.applyTransaction({add: dataInfo?.estimateDetail[listType]});
+    };
+
     useEffect(() => {
+        setLoading(true)
         getDataInfo().then(v => {
             setFileList(fileManage.getFormatFiles(v?.attachmentFileList))
             setInfo(v?.estimateDetail)
             gridManage.resetData(gridRef, v?.estimateDetail[listType])
+            setLoading(false)
         })
+        // setLoading(false)
     }, [updateKey['estimate_update']])
 
     async function getDataInfo() {
@@ -109,16 +120,8 @@ export default function EstimateUpdate({
         }).then(v => {
             return v.data?.entity;
         })
-
-
     }
 
-
-    const onGridReady = (params) => {
-        gridRef.current = params.api;
-        params.api.applyTransaction({add: dataInfo?.estimateDetail[listType]});
-
-    };
 
     async function handleKeyPress(e) {
         if (e.key === 'Enter') {
@@ -463,8 +466,7 @@ export default function EstimateUpdate({
                                     id: 'exchangeRate',
                                     onChange: onChange,
                                     data: info,
-                                    step: 0.01,
-                                    addonAfter: <span style={{fontSize: 11}}>%</span>
+                                    step: 0.01
                                 })}
                             </BoxCard>
                             <BoxCard title={'Maker 정보'}>

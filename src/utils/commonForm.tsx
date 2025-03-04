@@ -437,7 +437,7 @@ export const tableButtonList = (type: any, gridRef?: any) => {
         case 'print' :
             return <Button
                 size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>
-                <FileExcelOutlined/>Excel 출력
+                <FileExcelOutlined/>Excel 다운로드
             </Button>
     }
 }
