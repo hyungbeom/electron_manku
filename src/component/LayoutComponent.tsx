@@ -80,7 +80,6 @@ export function UserMenu() {
         {
             key: '4',
             label: <span  onClick={() => {
-                removeCookie(null, 'token');
                 router.push('/manage');
             }}><SettingOutlined style={{ paddingRight: 5}}/>관리자</span>
         },

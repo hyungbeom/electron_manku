@@ -26,7 +26,7 @@ export default function Manage({memberList}:any) {
             "page": 1,
             "limit": -1
         }).then(v=>{
-            console.log(v,'v::::')
+            console.log(v,'v;;;;;')
         })
     }
 
@@ -62,31 +62,19 @@ export default function Manage({memberList}:any) {
 }
 
 // @ts-ignore
-export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
+export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
 
 
-    const userAgent = ctx.req.headers['user-agent'];
-    const isMobile = /mobile/i.test(userAgent);
+    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
-    let param = {}
-
-    const {userInfo} = await initialServerRouter(ctx, store);
-
-
-    getData.defaults.headers["authorization"] = `Bearer ${getCookie(ctx,'token')}`;
-    getData.defaults.headers["refresh_token"] = getCookie(ctx,"refreshToken");
-
-    const result = await getData.post('admin/getAdminList',{
-        "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
-        "searchAuthority": null,    // 1: 일반, 0: 관리자
-        "page": 1,
-        "limit": -1
-    })
-
-    if (userInfo) {
+    if (codeInfo < 0) {
+        return {
+            redirect: {
+                destination: '/',
+                permanent: false,
+            },
+        };
+    } else {
         store.dispatch(setUserInfo(userInfo));
     }
-    const data = result?.data?.entity?.adminList;
-
-    return {props : {memberList : data ? data : []}}
 })
