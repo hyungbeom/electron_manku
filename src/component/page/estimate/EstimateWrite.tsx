@@ -342,7 +342,7 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
 
                             <div style={{
                                 display: 'grid',
-                                gridTemplateColumns: "150px 200px 200px 180px 1fr 300px",
+                                gridTemplateColumns: "150px 200px 200px 180px 200px 200px",
                                 gap: 10,
                                 paddingTop: 10
                             }}>
