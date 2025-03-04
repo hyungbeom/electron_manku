@@ -1,12 +1,8 @@
 import React, {useEffect, useRef, useState} from "react";
-import LayoutComponent from "@/component/LayoutComponent";
 import {FileSearchOutlined} from "@ant-design/icons";
 import {projectWriteColumn} from "@/utils/columnList";
 import {ModalInitList, projectDetailUnit, projectWriteInitial} from "@/utils/initialList";
 import message from "antd/lib/message";
-import {wrapper} from "@/store/store";
-import initialServerRouter from "@/manage/function/initialServerRouter";
-import {setUserInfo} from "@/store/user/userSlice";
 import TableGrid from "@/component/tableGrid";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import SearchInfoModal from "@/component/SearchAgencyModal";
@@ -19,8 +15,6 @@ import {findCodeInfo} from "@/utils/api/commonApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import Spin from "antd/lib/spin";
 import Select from "antd/lib/select";
-import {getData} from "@/manage/function/api";
-import SplitterLayout from 'react-splitter-layout';
 import 'react-splitter-layout/lib/index.css';
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import moment from "moment";
@@ -76,7 +70,7 @@ export default function ProjectWrite({managerList = [], copyPageInfo = {}}) {
             if (gridRef.current?.forEachNode) {
                 gridManage.resetData(gridRef, copyPageInfo['project_write'][listType])
             }
-        }else{
+        } else {
             setInfo({...copyInit, ...adminParams});
             if (gridRef.current?.forEachNode) {
                 gridManage.resetData(gridRef, commonFunc.repeatObject(projectDetailUnit, 10))

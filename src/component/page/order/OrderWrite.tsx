@@ -122,6 +122,7 @@ export default function OrderWrite({dataInfo = [], managerList=[], copyPageInfo}
         commonManage.setInfoFormData(info, formData, listType, list)
         commonManage.getUploadList(fileRef, formData)
         await saveOrder({data: formData, router: router, returnFunc: returnFunc})
+        setLoading(false)
     }
 
     function returnFunc(code, msg) {

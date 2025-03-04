@@ -91,7 +91,7 @@ export const saveRemittance = async ({data, router}) => {
         if (v.data.code === 1) {
             window.opener?.postMessage('write', window.location.origin);
             message.success('저장되었습니다.')
-            router.push(`/remittance_domestic_update?remittanceId=${v.data.entity.remittanceId}`)
+            // router.push(`/remittance_domestic_update?remittanceId=${v.data.entity.remittanceId}`)
         } else {
             message.error('저장에 실패하였습니다.')
         }
@@ -117,7 +117,6 @@ export const saveStore = async ({data, router}) => {
         if (v.data.code === 1) {
             window.opener?.postMessage('write', window.location.origin);
             message.success('저장되었습니다.')
-            router.push(`/store_update?orderStatusId=${v.data.entity.orderStatusId}`)
         } else if (v.data.code === -20001) {
 
             message.warning('B/L No.가 이미 존재합니다.')
@@ -294,7 +293,7 @@ export const saveOrder = async ({data, router, returnFunc}) => {
         if (code === 1) {
             window.opener?.postMessage('write', window.location.origin);
             message.success('저장되었습니다')
-            router.push(`/order_update?orderId=${v.data.entity.orderId}`)
+            // router.push(`/order_update?orderId=${v.data.entity.orderId}`)
         } else {
             returnFunc(code, msg)
         }

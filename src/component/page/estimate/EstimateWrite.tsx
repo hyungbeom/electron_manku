@@ -189,7 +189,7 @@ export default function EstimateWrite({dataInfo=[], copyPageInfo = {}}) {
 
         setLoading(true)
         await saveEstimate({data: formData, router: router, returnFunc: returnFunc})
-
+        setLoading(false)
     }
 
     function returnFunc(code, msg) {
