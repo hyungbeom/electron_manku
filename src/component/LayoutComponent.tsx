@@ -1,28 +1,16 @@
 import React from "react";
 import {Content} from "antd/lib/layout/layout";
-import Menu from "antd/lib/menu";
 import Dropdown from "antd/lib/dropdown";
-import {
-    AlertOutlined, BankOutlined, BellFilled,
-    DatabaseOutlined,
-    DiffOutlined,
-    DropboxOutlined,
-    FormOutlined,
-    FundProjectionScreenOutlined, HomeOutlined, LogoutOutlined, PieChartFilled,
-    PullRequestOutlined,
-    SendOutlined, SettingFilled, SettingOutlined, SlidersFilled, ToolFilled,
-    TruckOutlined, UserOutlined,
-} from '@ant-design/icons';
+import {LogoutOutlined, SettingOutlined,} from '@ant-design/icons';
 import {useRouter} from "next/router";
 import {removeCookie} from "@/manage/function/cookie";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
-import {Space} from "antd";
+import Space from "antd/lib/space";
 
 
 export default function LayoutComponent({children}) {
 
     const router = useRouter();
-
 
 
     return <>
@@ -48,13 +36,14 @@ export default function LayoutComponent({children}) {
                 alignItems: 'center',
                 padding: '0px 30px 0px 10px'
             }}>
-                <div style={{display: 'flex', alignItems : 'center'}}>
+                <div style={{display: 'flex', alignItems: 'center'}}>
                     <img src="/installer-icon.ico" width={35} alt=""/>
-                    <div style={{fontSize: 20, fontWeight: 500, paddingLeft : 5}}>MANKU</div>
+                    <div style={{fontSize: 20, fontWeight: 500, paddingLeft: 5}}>MANKU</div>
                 </div>
                 <div style={{display: 'flex'}}>
                     <div style={{alignItems: 'center', display: 'flex', gap: 20, paddingRight: 20}}>
-                        <svg style={{cursor : 'pointer'}} onClick={()=>     window.open('/erp_rule', '_blank')} viewBox="64 64 896 896" focusable="false" data-icon="question-circle" width="1em"
+                        <svg style={{cursor: 'pointer'}} onClick={() => window.open('/erp_rule', '_blank')}
+                             viewBox="64 64 896 896" focusable="false" data-icon="question-circle" width="1em"
                              height="1em" fill="currentColor" aria-hidden="true">
                             <path
                                 d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"></path>
@@ -72,7 +61,7 @@ export default function LayoutComponent({children}) {
 }
 
 export function UserMenu() {
-    const items: any= [
+    const items: any = [
         {
             key: '1',
             label: 'My Account',
@@ -83,13 +72,17 @@ export function UserMenu() {
         },
         {
             key: '2',
-            label: 'Logout',
-            icon: <LogoutOutlined style={{color: 'red'}}/>
+            label: <span onClick={() => {
+                removeCookie(null, 'token');
+                router.push('/');
+            }}><LogoutOutlined style={{color: 'red', paddingRight: 5}}/>Logout</span>
         },
         {
             key: '4',
-            label: '관리자',
-            icon: <SettingOutlined />,
+            label: <span  onClick={() => {
+                removeCookie(null, 'token');
+                router.push('/manage');
+            }}><SettingOutlined style={{ paddingRight: 5}}/>관리자</span>
         },
     ];
 
@@ -112,14 +105,14 @@ export function UserMenu() {
     // ];
     return <Dropdown menu={{items}}>
         <Space>
-        <div style={{display: 'flex',}}>
-            <img src='https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png' width={25}
-                 alt=""/>
-            <div style={{paddingLeft: 10, display: 'flex', alignItems: 'center', color: 'gray'}}>
-                <div>{userInfo.name}</div>
-                {/*<div>{userInfo.email}</div>*/}
+            <div style={{display: 'flex',}}>
+                <img src='https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png' width={25}
+                     alt=""/>
+                <div style={{paddingLeft: 10, display: 'flex', alignItems: 'center', color: 'gray'}}>
+                    <div>{userInfo.name}</div>
+                    {/*<div>{userInfo.email}</div>*/}
+                </div>
             </div>
-        </div>
         </Space>
     </Dropdown>
 }
