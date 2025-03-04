@@ -245,7 +245,7 @@ export default function Main() {
         maker_update: {name: "메이커 수정", component: <MakerUpdate updateKey={updateKey}/>},
 
 
-        hcode_read: {name: "HS CODE 조회", component: <HcodeRead updateKey={updateKey} getCopyPage={getCopyPage}/>},
+        hcode_read: {name: "HS CODE 조회", component: <HcodeRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>},
 
     };
 
