@@ -11,9 +11,12 @@ import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
 import {BoxCard, inputForm, MainCard, rangePickerForm, tooltipInfo} from "@/utils/commonForm";
 import Spin from "antd/lib/spin";
 import ReceiveComponent from "@/component/ReceiveComponent";
-
+import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
+import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 
 export default function ProjectRead({getPropertyId, getCopyPage}) {
+
+    const groupRef = useRef<any>(null)
 
     const gridRef = useRef(null);
     const [mini, setMini] = useState(true);
@@ -78,7 +81,19 @@ export default function ProjectRead({getPropertyId, getCopyPage}) {
     }
 
 
+
+    const getSavedSizes = () => {
+        const savedSizes = localStorage.getItem('project_read');
+        return savedSizes ? JSON.parse(savedSizes) : [25, 25, 25, 25]; // 기본값 [50, 50, 50]
+    };
+    function onResizeChange() {
+        setSizes(groupRef.current.getLayout())
+    }
+    const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
+
+
     return <Spin spinning={loading} tip={'프로젝트 조회중...'}>
+        <PanelSizeUtil groupRef={groupRef} setSizes={setSizes} storage={'project_read'}/>
         <ReceiveComponent searchInfo={searchInfo}/>
 
         <div style={{
@@ -93,11 +108,8 @@ export default function ProjectRead({getPropertyId, getCopyPage}) {
 
                 {mini ? <div>
 
-                        <div style={{
-                            display: 'grid',
-                            gridTemplateColumns: '1fr 1fr 1fr 1.5fr',
-                            columnGap: 5
-                        }}>
+                    <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 3, paddingTop: 3}}>
+                        <Panel defaultSize={sizes[0]} minSize={10} maxSize={100} onResize={onResizeChange}>
                             <BoxCard title={'기본정보'} grid={"150px 250px 150px 1fr"}>
                                 {rangePickerForm({title: '작성일자', id: 'searchDate', onChange: onChange, data: info})}
                                 {inputForm({
@@ -114,8 +126,10 @@ export default function ProjectRead({getPropertyId, getCopyPage}) {
                                     handleKeyPress: handleKeyPress,
                                     data: info
                                 })}
-
                             </BoxCard>
+                        </Panel>
+                        <PanelResizeHandle/>
+                        <Panel defaultSize={sizes[1]} minSize={10} maxSize={100} onResize={onResizeChange}>
                             <BoxCard title={'프로젝트 정보'} tooltip={tooltipInfo('readProject')}>
                                 {inputForm({
                                     title: 'PROJECT NO.',
@@ -139,6 +153,9 @@ export default function ProjectRead({getPropertyId, getCopyPage}) {
                                     data: info
                                 })}
                             </BoxCard>
+                        </Panel>
+                        <PanelResizeHandle/>
+                        <Panel defaultSize={sizes[2]} minSize={10} maxSize={100} onResize={onResizeChange}>
                             <BoxCard title={'매입처 정보'} tooltip={tooltipInfo('readAgency')}>
                                 {inputForm({
                                     title: '매입처명',
@@ -169,6 +186,9 @@ export default function ProjectRead({getPropertyId, getCopyPage}) {
                                     data: info
                                 })}
                             </BoxCard>
+                        </Panel>
+                        <PanelResizeHandle/>
+                        <Panel defaultSize={sizes[3]} minSize={10} maxSize={100} onResize={onResizeChange}>
                             <BoxCard title={'고객사 정보'} tooltip={tooltipInfo('readCustomer')}>
                                 {inputForm({
                                     title: '고객사명',
@@ -199,7 +219,8 @@ export default function ProjectRead({getPropertyId, getCopyPage}) {
                                     data: info
                                 })}
                             </BoxCard>
-                        </div>
+                        </Panel>
+                    </PanelGroup>
                     </div>
                     : <></>}
             </MainCard>

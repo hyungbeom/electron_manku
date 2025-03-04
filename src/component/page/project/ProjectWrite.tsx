@@ -18,6 +18,7 @@ import Select from "antd/lib/select";
 import 'react-splitter-layout/lib/index.css';
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import moment from "moment";
+import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 
 
 const listType = 'projectDetailList'
@@ -166,39 +167,20 @@ export default function ProjectWrite({managerList = [], copyPageInfo = {}}) {
     };
 
 
+
+
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('project_write');
         return savedSizes ? JSON.parse(savedSizes) : [15, 15, 40, 30]; // 기본값 [50, 50, 50]
     };
-
-    const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
-
     function onResizeChange() {
         setSizes(groupRef.current.getLayout())
-
     }
+    const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
-    const handleMouseUp = () => {
-        setSizes(groupRef.current.getLayout())
-        localStorage.setItem('project_write', JSON.stringify(groupRef.current.getLayout()));
-    };
-
-    useEffect(() => {
-
-    }, [sizes]); // 크기 변경 시마다 localStorage에 저장
-
-
-    // 컴포넌트가 마운트될 때, 전역 마우스 업 이벤트를 추가
-    useEffect(() => {
-        window.addEventListener('pointerup', handleMouseUp);
-
-        // 컴포넌트 언마운트 시 이벤트 리스너 제거
-        return () => {
-            window.removeEventListener('pointerup', handleMouseUp);
-        };
-    }, []);
 
     return <Spin spinning={loading} tip={'프로젝트 등록중...'}>
+        <PanelSizeUtil groupRef={groupRef} setSizes={setSizes} storage={'project_write'}/>
         <SearchInfoModal info={info} setInfo={setInfo}
                          open={isModalOpen}
                          gridRef={gridRef}
@@ -207,7 +189,7 @@ export default function ProjectWrite({managerList = [], copyPageInfo = {}}) {
 
         <div style={{
             display: 'grid',
-            gridTemplateRows: `${mini ? '470px' : '65px'} calc(100vh - ${mini ? 600 : 195}px)`,
+            gridTemplateRows: `${mini ? '440px' : '65px'} calc(100vh - ${mini ? 570 : 195}px)`,
             columnGap: 5
         }}>
             <MainCard title={'프로젝트 등록'} list={[
