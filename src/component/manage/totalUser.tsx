@@ -49,9 +49,9 @@ export default function TotalUser(){
             key: 'authority',
             render: (text) => {
                 return <>{text ? <Tag color={'blue'}>
-                    일반유저
-                </Tag> : <Tag color={'red'} >
                     관리자
+                </Tag> : <Tag color={'red'} >
+                    일반유저
                 </Tag>  }</>
             },
 

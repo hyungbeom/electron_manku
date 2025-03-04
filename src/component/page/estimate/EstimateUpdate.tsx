@@ -61,7 +61,7 @@ export default function EstimateUpdate({dataInfo = {estimateDetail: [], attachme
 
     useEffect(() => {
         getDataInfo().then(v => {
-            console.log(v,'?????')
+
             const {estimateDetail, attachmentFileList} = v;
             setFileList(fileManage.getFormatFiles(attachmentFileList))
             setInfo(estimateDetail)
@@ -242,7 +242,7 @@ export default function EstimateUpdate({dataInfo = {estimateDetail: [], attachme
             width={1000}
             footer={null}
             onOk={() => setIsPrintModalOpen(false)}>
-            <EstimatePaper data={info} pdfRef={pdfRef} pdfSubRef={pdfSubRef} gridRef={gridRef} position={true}/>
+            {/*<EstimatePaper data={info} pdfRef={pdfRef} pdfSubRef={pdfSubRef} gridRef={gridRef} position={true}/>*/}
         </Modal>
     }
 

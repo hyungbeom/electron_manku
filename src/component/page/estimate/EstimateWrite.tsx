@@ -446,7 +446,7 @@ export default function EstimateWrite({dataInfo=[], copyPageInfo = {}}) {
                 />
             </div>
         </>
-        {ready && <EstimatePaper data={info} pdfRef={pdfRef} gridRef={gridRef}/>}
+        {/*{ready && <EstimatePaper data={info} pdfRef={pdfRef} gridRef={gridRef}/>}*/}
     </Spin>
 }
 
