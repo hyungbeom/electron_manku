@@ -41,7 +41,7 @@ export default function ApproveUser({memberList}:any){
                                 "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
                                 "searchAuthority": null,    // 1: 일반, 0: 관리자
                                 "page": 1,
-                                "limit": 20
+                                "limit": -1
                             });
                             const result2 = filterList(result?.data?.entity?.adminList)
                             setList(result2)

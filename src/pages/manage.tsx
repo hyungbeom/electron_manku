@@ -9,6 +9,7 @@ import Tabs from "antd/lib/tabs";
 import TotalUser from "@/component/manage/totalUser";
 import ApproveUser from "@/component/manage/approveUser";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
+import {getCookie} from "@/manage/function/cookie";
 
 export default function Manage({memberList}:any) {
     const userInfo = useAppSelector((state) => state.user);
@@ -52,13 +53,17 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     let param = {}
 
     const {userInfo} = await initialServerRouter(ctx, store);
+
+
+    getData.defaults.headers["authorization"] = `Bearer ${getCookie(ctx,'token')}`;
+    //     // refresh_token header setting
+    getData.defaults.headers["refresh_token"] = getCookie(ctx,"refreshToken");
     const result = await getData.post('admin/getAdminList',{
         "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
         "searchAuthority": null,    // 1: 일반, 0: 관리자
         "page": 1,
-        "limit": 20
-    });
-
+        "limit": -1
+    })
 
     if (userInfo) {
         store.dispatch(setUserInfo(userInfo));

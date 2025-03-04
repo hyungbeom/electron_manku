@@ -109,7 +109,7 @@ export default function joint({code}) {
 
 
     return <>
-        <div style={{padding : '30px 0px 0px 30px'}}><ArrowLeftOutlined style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>{router.back()}}/></div>
+        <div style={{padding : '30px 0px 0px 30px'}}><ArrowLeftOutlined style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>{router.push('/')}}/></div>
         <div style={{maxWidth: 500, margin: '0px auto'}}>
             <div style={{fontSize: 30, fontWeight: 500, textAlign: 'center', padding: '50px 0px 30px 0px'}}>SIGN UP
             </div>
