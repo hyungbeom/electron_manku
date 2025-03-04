@@ -21,7 +21,7 @@ import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import Select from "antd/lib/select";
 
 const listType = 'orderDetailList'
-export default function OrderUpdate({ managerList=[], updateKey}) {
+export default function OrderUpdate({  updateKey}) {
     const [memberList, setMemberList] = useState([]);
 
     useEffect(() => {
@@ -184,7 +184,7 @@ export default function OrderUpdate({ managerList=[], updateKey}) {
     }
 
     const onCChange = (value: string, e: any) => {
-        const findValue = managerList.find(v => v.adminId === value)
+        const findValue = memberList.find(v => v.adminId === value)
         console.log(findValue, 'value:')
         setInfo(v => {
             return {

@@ -34,7 +34,7 @@ import Input from "antd/lib/input";
 
 
 const listType = 'orderDetailList'
-export default function OrderWrite({dataInfo = [], managerList=[], copyPageInfo}) {
+export default function OrderWrite({dataInfo = [],  copyPageInfo}) {
 
     const [memberList, setMemberList] = useState([]);
 
@@ -105,7 +105,7 @@ export default function OrderWrite({dataInfo = [], managerList=[], copyPageInfo}
         if (e.key === 'Enter') {
             switch (e.target.id) {
                 case 'ourPoNo' :
-                    await findOrderDocumentInfo(e, setInfo, gridRef, managerList)
+                    await findOrderDocumentInfo(e, setInfo, gridRef, memberList)
                     break;
             }
         }
@@ -162,7 +162,7 @@ export default function OrderWrite({dataInfo = [], managerList=[], copyPageInfo}
 
 
     const onCChange = (value: string, e: any) => {
-        const findValue = managerList.find(v => v.adminId === value)
+        const findValue = memberList.find(v => v.adminId === value)
         console.log(findValue, 'value:')
         setInfo(v => {
             return {
