@@ -234,7 +234,7 @@ export const subRfqReadMailInitial = {
     "searchAgencyManagerName": "",      // 대리점 담당자 이름
 
     // 메일 전송 목록 검색 필드 추가 2024.11.28
-    "searchSentStatus": 0,              // 전송 여부 1: 전송, 2: 미전송
+    "searchSentStatus": 2,              // 전송 여부 1: 전송, 2: 미전송
     "searchReplyStatus": 0,             // 회신 여부 1: 회신, 2: 미회신
     "searchAgencyCode": "",          // 대리점코드 검색
 
