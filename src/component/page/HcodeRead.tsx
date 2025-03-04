@@ -9,16 +9,16 @@ import Button from "antd/lib/button";
 import message from "antd/lib/message";
 
 import {tableCodeReadColumns,} from "@/utils/columnList";
-import {codeSaveInitial,} from "@/utils/initialList";
+import {codeSaveInitial, orderReadInitial,} from "@/utils/initialList";
 import TableGrid from "@/component/tableGrid";
 import {inputForm, MainCard, TopBoxCard} from "@/utils/commonForm";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import Spin from "antd/lib/spin";
 import {CopyOutlined} from "@ant-design/icons";
-import {deleteHsCodeList} from "@/utils/api/mainApi";
+import {deleteHsCodeList, searchHSCode, searchMaker} from "@/utils/api/mainApi";
 
 
-export default function HcodeRead({dataInfo=[], updateKey, getCopyPage}) {
+export default function HcodeRead({getPropertyId, getCopyPage}) {
     const gridRef = useRef(null);
     const [mini, setMini] = useState(true);
 
@@ -28,21 +28,15 @@ export default function HcodeRead({dataInfo=[], updateKey, getCopyPage}) {
         hsCode: ''
     })
 
+    const [totalRow, setTotalRow] = useState(0);
     const [loading, setLoading] = useState(false);
-
 
     const onGridReady = async (params) => {
         gridRef.current = params.api;
-        await getData.post('hsCode/getHsCodeList', {
-            "searchType": "",      // 1: 코드, 2: 상호명, 3: MAKER
-            "searchText": "",
-            "page": 1,
-            "limit": -1
-        }).then(v=>{
-
-            params.api.applyTransaction({add:  v?.data?.entity?.hsCodeList});
+        await searchHSCode({data: orderReadInitial}).then(v => {
+            params.api.applyTransaction({add: v.data});
+            setTotalRow(v.pageInfo.totalRow)
         })
-
     };
 
 
@@ -73,17 +67,31 @@ export default function HcodeRead({dataInfo=[], updateKey, getCopyPage}) {
     }
 
 
-    async function searchInfo() {
-        setLoading(true)
-        await getData.post('hsCode/getHsCodeList', {
-            searchText: info['item'] ? info['item'] : info['hsCode'],
-            page: 1,
-            limit: -1
-        }).then(v => {
-            gridManage.resetData(gridRef, v.data.entity.hsCodeList)
-            setLoading(false)
-        })
+    async function searchInfo(e?) {
+
+        if (e) {
+            setLoading(true)
+
+
+            await searchHSCode({
+                data: {
+                    "searchText": info['item'] ? info['item'] : info['hsCode'],
+                    "page": 1,
+                    "limit": -1
+                }
+            }).then(v => {
+                gridManage.resetData(gridRef, v.data);
+                setTotalRow(v.pageInfo.totalRow)
+                setLoading(false)
+            })
+        }
+        setLoading(false)
     }
+
+
+
+
+
 
     async function deleteList() {
         if (gridRef.current.getSelectedRows().length < 1) {
@@ -105,6 +113,11 @@ export default function HcodeRead({dataInfo=[], updateKey, getCopyPage}) {
 
     }
 
+    function handleKeyPress(e) {
+        if (e.key === 'Enter') {
+            searchInfo(true)
+        }
+    }
 
     return <Spin spinning={loading} tip={'HS-CODE 조회중...'}>
         <>
@@ -123,12 +136,14 @@ export default function HcodeRead({dataInfo=[], updateKey, getCopyPage}) {
                                 title: 'ITEM',
                                 id: 'item',
                                 onChange: onChange,
+                                handleKeyPress : handleKeyPress,
                                 data: info
                             })}
                             {inputForm({
                                 title: 'HSCODE',
                                 id: 'hsCode',
                                 onChange: onChange,
+                                handleKeyPress : handleKeyPress,
                                 data: info
                             })}
                             {/*하단정렬*/}
@@ -149,6 +164,7 @@ export default function HcodeRead({dataInfo=[], updateKey, getCopyPage}) {
                                                onClick={deleteList}>
                     <CopyOutlined/>삭제
                 </Button>}
+                           totalRow={totalRow}
                            gridRef={gridRef}
                            columns={tableCodeReadColumns}
                            onGridReady={onGridReady}

@@ -196,10 +196,10 @@ export const searchEstimate = async ({data}) => {
 
 export const searchProject = async ({data}) => {
 
-  return await getData.post('project/getProjectList', data).then(v=>{
-        if(v.data.code === 1){
+    return await getData.post('project/getProjectList', data).then(v => {
+        if (v.data.code === 1) {
             const {projectList, pageInfo} = v.data.entity;
-            return {data : projectList, pageInfo : pageInfo}
+            return {data: projectList, pageInfo: pageInfo}
         }
     })
 };
@@ -376,16 +376,18 @@ export const getDeliveryList = async ({data}) => {
     }
 };
 export const getOrderStatusList = async ({data}) => {
-    const v = await getData.post('order/getOrderStatusList', {
+    return await getData.post('order/getOrderStatusList', {
         ...data, page: 1,
         limit: -1
+    }).then(v => {
+        if (v.data.code === 1) {
+            const {orderStatusList, pageInfo} =v.data.entity
+            return {data : orderStatusList, pageInfo : pageInfo}
+        } else {
+            message.error('오류가 발생하였습니다. 다시 시도해주세요.')
+        }
     })
-    if (v.data.code === 1) {
-        console.log(v, 'v:')
-        return v.data.entity.orderStatusList
-    } else {
-        message.error('오류가 발생하였습니다. 다시 시도해주세요.')
-    }
+
 };
 
 export const getRemittanceList = async ({data}) => {
@@ -432,6 +434,102 @@ export const updateDomesticAgency = async ({data, returnFunc}: any) => {
             message.error('실패하였습니다.')
         }
         returnFunc();
+    })
+
+};
+
+
+export const searchDomesticAgency = async ({data}: any) => {
+
+   return getData.post('agency/getAgencyList', data).then(v => {
+        const code = v.data.code;
+        if (code === 1) {
+            const {agencyList, pageInfo} =v.data.entity
+            return {data : agencyList, pageInfo : pageInfo}
+            message.success('수정되었습니다.')
+        } else {
+            message.error('실패하였습니다.')
+        }
+    })
+
+};
+
+export const searchOverseasAgency = async ({data}: any) => {
+
+    return getData.post('agency/getOverseasAgencyList', data).then(v => {
+        const code = v.data.code;
+        if (code === 1) {
+            const {overseasAgencyList, pageInfo} =v.data.entity
+            return {data : overseasAgencyList, pageInfo : pageInfo}
+            message.success('수정되었습니다.')
+        } else {
+            message.error('실패하였습니다.')
+        }
+    })
+
+};
+
+
+export const searchDomesticCustomer = async ({data}: any) => {
+
+    return getData.post('customer/getCustomerList', data).then(v => {
+        const code = v.data.code;
+        if (code === 1) {
+            const {customerList, pageInfo} =v.data.entity
+            return {data : customerList, pageInfo : pageInfo}
+            message.success('수정되었습니다.')
+        } else {
+            message.error('실패하였습니다.')
+        }
+    })
+
+};
+
+
+
+export const searchOverseasCustomer = async ({data}: any) => {
+
+    return getData.post('customer/getOverseasCustomerList', data).then(v => {
+        const code = v.data.code;
+        if (code === 1) {
+            const {overseasCustomerList, pageInfo} =v.data.entity
+            return {data : overseasCustomerList, pageInfo : pageInfo}
+            message.success('수정되었습니다.')
+        } else {
+            message.error('실패하였습니다.')
+        }
+    })
+
+};
+
+
+
+export const searchMaker = async ({data}: any) => {
+
+    return getData.post('maker/getMakerList', data).then(v => {
+        const code = v.data.code;
+        if (code === 1) {
+            const {makerList, pageInfo} =v.data.entity
+            return {data : makerList, pageInfo : pageInfo}
+            message.success('수정되었습니다.')
+        } else {
+            message.error('실패하였습니다.')
+        }
+    })
+
+};
+
+export const searchHSCode = async ({data}: any) => {
+
+    return getData.post('hsCode/getHsCodeList', data).then(v => {
+        const code = v.data.code;
+        if (code === 1) {
+            const {hsCodeList, pageInfo} =v.data.entity
+            return {data : hsCodeList, pageInfo : pageInfo}
+            message.success('수정되었습니다.')
+        } else {
+            message.error('실패하였습니다.')
+        }
     })
 
 };

@@ -17,29 +17,32 @@ import Button from "antd/lib/button";
 import {CopyOutlined, EditOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
 import {useRouter} from "next/router";
 import {inputForm, MainCard, radioForm} from "@/utils/commonForm";
+import {searchDomesticAgency, searchDomesticCustomer} from "@/utils/api/mainApi";
+import {gridManage} from "@/utils/commonManage";
+import Spin from "antd/lib/spin";
 
-export default function DomesticCustomerRead({dataInfo = [], getPropertyId, getCopyPage}) {
+export default function DomesticCustomerRead({ getPropertyId, getCopyPage}) {
     const gridRef = useRef(null);
     const router = useRouter();
 
-    console.log(dataInfo,'dataInfo:')
-
+    const [loading, setLoading] = useState(false);
     const [info, setInfo] = useState(codeDomesticPurchaseInitial);
-
+    const [totalRow, setTotalRow] = useState(0);
     const [mini, setMini] = useState(true);
     // console.log(customerList,'saveInfo:')
 
     const onGridReady = async (params) => {
         gridRef.current = params.api;
-        await getData.post('customer/getCustomerList', {
-            "searchType": "1",      // 1: 코드, 2: 상호명, 3: MAKER
-            "searchText": "",
-            "page": 1,
-            "limit": -1
-        }).then(v=>{
-            if(v.data.code === 1){
-                params.api.applyTransaction({add: v?.data?.entity?.customerList});
+        await searchDomesticCustomer({
+            data: {
+                "searchType": "1",      // 1: 코드, 2: 상호명, 3: MAKER
+                "searchText": "",
+                "page": 1,
+                "limit": -1
             }
+        }).then(v => {
+            params.api.applyTransaction({add: v.data});
+            setTotalRow(v.pageInfo.totalRow)
         })
     };
 
@@ -77,8 +80,27 @@ export default function DomesticCustomerRead({dataInfo = [], getPropertyId, getC
     }
 
 
-    function searchInfo() {
+    async function searchInfo(e) {
 
+        if (e) {
+            setLoading(true)
+
+
+            await searchDomesticCustomer({
+                data: {
+                    "searchType": info['searchType'],      // 1: 코드, 2: 상호명, 3: MAKER
+                    "searchText": info['searchText'],
+                    "page": 1,
+                    "limit": -1
+                }
+            }).then(v => {
+                console.log(info,'v.data:')
+                gridManage.resetData(gridRef, v.data);
+                setTotalRow(v.pageInfo.totalRow)
+                setLoading(false)
+            })
+        }
+        setLoading(false)
     }
 
     function clearAll() {
@@ -88,8 +110,12 @@ export default function DomesticCustomerRead({dataInfo = [], getPropertyId, getC
     function moveRouter() {
         getCopyPage('domestic_customer_write', {orderDetailList : []})
     }
-
-    return <>
+    function handleKeyPress(e) {
+        if (e.key === 'Enter') {
+            searchInfo(true)
+        }
+    }
+    return <Spin spinning={loading} tip={'국내고객사 조회중...'}>
         <div style={{
             display: 'grid',
             gridTemplateRows: `${mini ? '120px' : '65px'} calc(100vh - ${mini ? 250 : 195}px)`,
@@ -117,8 +143,9 @@ export default function DomesticCustomerRead({dataInfo = [], getPropertyId, getC
                     <div style={{width: 500, marginLeft: 20}}>
                         {inputForm({
                             title: '',
-                            id: 'searchCustomerName',
+                            id: 'searchText',
                             onChange: onChange,
+                            handleKeyPress: handleKeyPress,
                             data: info,
                             size: 'middle'
                         })}
@@ -127,6 +154,7 @@ export default function DomesticCustomerRead({dataInfo = [], getPropertyId, getC
                 </div> : <></>}
             </MainCard>
             <TableGrid
+                totalRow={totalRow}
                 getPropertyId={getPropertyId}
                 gridRef={gridRef}
                 onGridReady={onGridReady}
@@ -135,7 +163,7 @@ export default function DomesticCustomerRead({dataInfo = [], getPropertyId, getC
             />
 
         </div>
-    </>
+    </Spin>
 }
 
 // @ts-ignore

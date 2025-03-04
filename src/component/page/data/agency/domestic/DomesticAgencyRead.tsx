@@ -17,6 +17,7 @@ import {inputForm, MainCard, selectBoxForm} from "@/utils/commonForm";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import Spin from "antd/lib/spin";
 import ReceiveComponent from "@/component/ReceiveComponent";
+import {searchDomesticAgency} from "@/utils/api/mainApi";
 
 
 export default function DomesticAgencyUpdate({getPropertyId, getCopyPage}) {
@@ -26,23 +27,23 @@ export default function DomesticAgencyUpdate({getPropertyId, getCopyPage}) {
 
     const [info, setInfo] = useState(copyInit);
     const [mini, setMini] = useState(true);
+    const [totalRow, setTotalRow] = useState(0);
     const [loading, setLoading] = useState(false);
+
     const onGridReady = async (params) => {
         gridRef.current = params.api;
-        await getData.post('agency/getAgencyList', {
-            "searchType": "1",      // 1: 코드, 2: 상호명, 3: MAKER
-            "searchText": "",
-            "page": 1,
-            "limit": -1
-        }).then(v=>{
-            if(v.data.code){
-                params.api.applyTransaction({add: v?.data?.entity?.agencyList});
+        await searchDomesticAgency({
+            data: {
+                "searchType": "1",      // 1: 코드, 2: 상호명, 3: MAKER
+                "searchText": "",
+                "page": 1,
+                "limit": -1
             }
+        }).then(v => {
+            params.api.applyTransaction({add: v.data});
+            setTotalRow(v.pageInfo.totalRow)
         })
-
-
-
-        };
+    };
 
     function onChange(e) {
         commonManage.onChange(e, setInfo)
@@ -76,14 +77,20 @@ export default function DomesticAgencyUpdate({getPropertyId, getCopyPage}) {
 
         if (e) {
             setLoading(true)
-            const result = await getData.post('agency/getAgencyList', {
-                "searchType": info['searchType'],      // 1: 코드, 2: 상호명, 3: MAKER
-                "searchText": info['searchText'],
-                "page": 1,
-                "limit": -1
-            });
-            gridManage.resetData(gridRef, result?.data?.entity?.agencyList);
-            setLoading(false)
+
+
+            await searchDomesticAgency({
+                data: {
+                    "searchType": info['searchType'],      // 1: 코드, 2: 상호명, 3: MAKER
+                    "searchText": info['searchText'],
+                    "page": 1,
+                    "limit": -1
+                }
+            }).then(v => {
+                gridManage.resetData(gridRef, v.data);
+                setTotalRow(v.pageInfo.totalRow)
+                setLoading(false)
+            })
         }
         setLoading(false)
     }
@@ -94,7 +101,7 @@ export default function DomesticAgencyUpdate({getPropertyId, getCopyPage}) {
     }
 
     async function moveRouter() {
-        getCopyPage('domestic_agency_write', {orderDetailList : []})
+        getCopyPage('domestic_agency_write', {orderDetailList: []})
     }
 
     return <Spin spinning={loading} tip={'국내 매입처 조회중...'}>
@@ -142,6 +149,7 @@ export default function DomesticAgencyUpdate({getPropertyId, getCopyPage}) {
                                                onClick={deleteList}>
                     <CopyOutlined/>삭제
                 </Button>}
+                           totalRow={totalRow}
                            getPropertyId={getPropertyId}
                            gridRef={gridRef}
                            columns={tableCodeDomesticPurchaseColumns}

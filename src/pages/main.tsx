@@ -209,7 +209,7 @@ export default function Main() {
             name: "국내매입처 조회",
             component: <DomesticAgencyRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>
         },
-        domestic_agency_update: {name: "국내매입처 수정", component: <DomesticAgencyUpdate updateKey={updateKey}/>},
+        domestic_agency_update: {name: "국내매입처 수정", component: <DomesticAgencyUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
 
         overseas_agency_write: {name: "해외매입처 등록", component: <OverseasAgencyWrite copyPageInfo={copyPageInfo}/>},
         overseas_agency_read: {

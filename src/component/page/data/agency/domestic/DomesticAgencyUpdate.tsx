@@ -16,7 +16,7 @@ import _ from "lodash";
 
 
 const listType = 'agencyManagerList'
-export default function DomesticAgencyUpdate({dataInfo=[], updateKey}) {
+export default function DomesticAgencyUpdate({updateKey, getCopyPage}) {
     const gridRef = useRef(null);
     const router = useRouter();
 
@@ -33,17 +33,16 @@ export default function DomesticAgencyUpdate({dataInfo=[], updateKey}) {
         getInfo();
     }, [updateKey['domestic_agency_update']]);
 
-    async function getInfo(){
+    async function getInfo() {
         await getData.post('agency/getAgencyList', {
             searchType: 1,
             searchText: updateKey['domestic_agency_update'],
             page: 1,
             limit: -1,
-        }).then(v=>{
-            if(v.data.code === 1){
-               const result = v.data.entity.agencyList.find(src => src.agencyCode === updateKey['domestic_agency_update'])
+        }).then(v => {
+            if (v.data.code === 1) {
+                const result = v.data.entity.agencyList.find(src => src.agencyCode === updateKey['domestic_agency_update'])
                 setInfo(result);
-               console.log(result,'sss')
                 gridManage.resetData(gridRef, result[listType])
             }
         })
@@ -100,6 +99,7 @@ export default function DomesticAgencyUpdate({dataInfo=[], updateKey}) {
         const query = `data=${encodeURIComponent(JSON.stringify(copyInfo))}`;
         router.push(`/data/agency/domestic/agency_write?${query}`)
     }
+
     return <>
         <div style={{
             display: 'grid',
@@ -120,7 +120,13 @@ export default function DomesticAgencyUpdate({dataInfo=[], updateKey}) {
                         marginTop: 10
                     }}>
                         <BoxCard title={'매입처 정보'}>
-                            {inputForm({title: '코드(약칭)', id: 'agencyCode', onChange: onChange, data: info, validate : validate['agencyCode']})}
+                            {inputForm({
+                                title: '코드(약칭)',
+                                id: 'agencyCode',
+                                onChange: onChange,
+                                data: info,
+                                validate: validate['agencyCode']
+                            })}
                             {inputForm({title: '상호', id: 'agencyName', onChange: onChange, data: info})}
                             {inputForm({title: '사업자번호', id: 'businessRegistrationNumber', onChange: onChange, data: info})}
                             {inputForm({title: '계좌번호', id: 'bankAccountNumber', onChange: onChange, data: info})}

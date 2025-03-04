@@ -26,13 +26,14 @@ export default function StoreRead({ getPropertyId, getCopyPage}) {
 
     const [info, setInfo] = useState(copyInit)
     const [mini, setMini] = useState(true);
-
+    const [totalRow, setTotalRow] = useState(0);
     const [loading, setLoading] = useState(false);
 
     const onGridReady = async (params) => {
         gridRef.current = params.api;
         await getOrderStatusList({data: storeRealInitial}).then(v => {
-            params.api.applyTransaction({add: v});
+            params.api.applyTransaction({add: v.data});
+            setTotalRow(v.pageInfo.totalRow)
         })
     };
 
@@ -61,9 +62,11 @@ export default function StoreRead({ getPropertyId, getCopyPage}) {
         const copyData: any = {...info}
         if (e) {
             setLoading(true)
-            let result = await getOrderStatusList({data: copyData});
-            gridManage.resetData(gridRef, result)
-            setLoading(false)
+            await getOrderStatusList({data: copyData}).then(v=>{
+                gridManage.resetData(gridRef, v.data);
+                setTotalRow(v.pageInfo.totalRow)
+                setLoading(false)
+            })
         }
         setLoading(false)
     }
@@ -153,6 +156,7 @@ export default function StoreRead({ getPropertyId, getCopyPage}) {
                                                onClick={deleteList}>
                     <CopyOutlined/>삭제
                 </Button>}
+                           totalRow={totalRow}
                            getPropertyId={getPropertyId}
                            gridRef={gridRef}
                            columns={storeReadColumn}

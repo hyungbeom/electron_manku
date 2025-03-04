@@ -1,37 +1,38 @@
 import React, {useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
-import {wrapper} from "@/store/store";
-import initialServerRouter from "@/manage/function/initialServerRouter";
-import {setUserInfo} from "@/store/user/userSlice";
-import LayoutComponent from "@/component/LayoutComponent";
 
 import {makerColumn,} from "@/utils/columnList";
-import {codeDomesticPurchaseInitial, orderDetailUnit,} from "@/utils/initialList";
+import {codeDomesticPurchaseInitial, orderReadInitial,} from "@/utils/initialList";
 import TableGrid from "@/component/tableGrid";
 import {inputForm, MainCard, radioForm} from "@/utils/commonForm";
-import Button from "antd/lib/button";
-import {CopyOutlined} from "@ant-design/icons";
-import {commonFunc} from "@/utils/commonManage";
+import {searchDomesticCustomer, searchMaker, searchOrder} from "@/utils/api/mainApi";
+import {gridManage} from "@/utils/commonManage";
+import Spin from "antd/lib/spin";
 
-export default function MakerRead({dataInfo=[], getPropertyId, getCopyPage}) {
+export default function MakerRead({getPropertyId, getCopyPage}) {
     const gridRef = useRef(null);
 
     const [info, setInfo] = useState(codeDomesticPurchaseInitial);
     const [mini, setMini] = useState(true);
+    const [totalRow, setTotalRow] = useState(0);
+    const [loading, setLoading] = useState(false);
 
 
     const onGridReady = async (params) => {
         gridRef.current = params.api;
-        await getData.post('maker/getMakerList', {
-            "searchType": "",       // 구분 1: MAKER, 2: ITEM, 3: "AREA"
-            "searchText": "",       // 검색어
-            "page": 1,
-            "limit": -1
-        }).then(v=>{
-            params.api.applyTransaction({add: v?.data?.entity?.makerList});
+        await searchMaker({data: orderReadInitial}).then(v => {
+            params.api.applyTransaction({add: v.data});
+            setTotalRow(v.pageInfo.totalRow)
         })
-
     };
+
+    function handleKeyPress(e) {
+        if (e.key === 'Enter') {
+            searchInfo(true)
+        }
+    }
+
+
 
 
     function onChange(e) {
@@ -45,30 +46,45 @@ export default function MakerRead({dataInfo=[], getPropertyId, getCopyPage}) {
     }
 
 
-    async function searchInfo() {
-            await getData.post('maker/getMakerList',{
-                "searchType": "",       // 구분 1: MAKER, 2: ITEM, 3: "AREA"
-                "searchText": "",       // 검색어
-                "page": 1,
-                "limit": -1
-            }).then(v=>{
-                console.log(v,'::::')
+
+    async function searchInfo(e) {
+
+        if (e) {
+            setLoading(true)
+
+
+            await searchMaker({
+                data: {
+                    "searchType": info['searchType'],      // 1: 코드, 2: 상호명, 3: MAKER
+                    "searchText": info['searchText'],
+                    "page": 1,
+                    "limit": -1
+                }
+            }).then(v => {
+                console.log(info,'v.data:')
+                gridManage.resetData(gridRef, v.data);
+                setTotalRow(v.pageInfo.totalRow)
+                setLoading(false)
             })
+        }
+        setLoading(false)
     }
+
 
     function clearAll() {
 
     }
 
     async function moveRouter() {
-        getCopyPage('maker_write', {orderDetailList : []})
+        getCopyPage('maker_write', {orderDetailList: []})
 
     }
 
-    function deleteList(){
+    function deleteList() {
 
     }
-    return <>
+
+    return  <Spin spinning={loading} tip={'메이커 조회중...'}>
         <div style={{
             display: 'grid',
             gridTemplateRows: `${mini ? '120px' : '65px'} calc(100vh - ${mini ? 250 : 195}px)`,
@@ -87,18 +103,18 @@ export default function MakerRead({dataInfo=[], getPropertyId, getCopyPage}) {
                         id: 'searchType',
                         onChange: onChange,
                         data: info,
-                        list: [{value: 1, title: '코드'},
-                            {value: 2, title: '상호명'},
-                            {value: 3, title: 'item'},
-                            {value: 4, title: '국가'}]
+                        list: [{value: 1, title: 'MAKER'},
+                            {value: 2, title: 'ITEM'},
+                            {value: 3, title: 'AREA'}]
                     })}
 
 
                     <div style={{width: 500, marginLeft: 20}}>
                         {inputForm({
                             title: '',
-                            id: 'searchCustomerName',
+                            id: 'searchText',
                             onChange: onChange,
+                            handleKeyPress : handleKeyPress,
                             data: info,
                             size: 'middle'
                         })}
@@ -110,6 +126,7 @@ export default function MakerRead({dataInfo=[], getPropertyId, getCopyPage}) {
 
             {/*@ts-ignored*/}
             <TableGrid
+                totalRow={totalRow}
                 getPropertyId={getPropertyId}
                 gridRef={gridRef}
                 columns={makerColumn}
@@ -117,5 +134,5 @@ export default function MakerRead({dataInfo=[], getPropertyId, getCopyPage}) {
                 funcButtons={['print']}
             />
         </div>
-    </>
+    </Spin>
 }

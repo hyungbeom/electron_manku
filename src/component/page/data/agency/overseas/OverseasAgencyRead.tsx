@@ -1,9 +1,5 @@
 import React, {useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
-import {wrapper} from "@/store/store";
-import initialServerRouter from "@/manage/function/initialServerRouter";
-import {setUserInfo} from "@/store/user/userSlice";
-import LayoutComponent from "@/component/LayoutComponent";
 
 import Button from "antd/lib/button";
 import {CopyOutlined,} from "@ant-design/icons";
@@ -18,31 +14,37 @@ import {inputForm, MainCard, radioForm} from "@/utils/commonForm";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import Spin from "antd/lib/spin";
 import ReceiveComponent from "@/component/ReceiveComponent";
+import {searchDomesticAgency, searchOverseasAgency} from "@/utils/api/mainApi";
 
 
-export default function OverseasAgencyRead({dataInfo=[], getPropertyId, getCopyPage}) {
-    console.log(dataInfo,'::::')
+export default function OverseasAgencyRead({ getPropertyId, getCopyPage}) {
+
     const gridRef = useRef(null);
     const router = useRouter();
     const copyInit = _.cloneDeep(codeDomesticPurchaseInitial)
 
     const [info, setInfo] = useState(copyInit);
+    const [totalRow, setTotalRow] = useState(0);
     const [mini, setMini] = useState(true);
     const [loading, setLoading] = useState(false);
 
+
+
     const onGridReady = async (params) => {
         gridRef.current = params.api;
-        await getData.post('agency/getOverseasAgencyList', {
-            "searchType": "1",      // 1: 코드, 2: 상호명, 3: MAKER
-            "searchText": "",
-            "page": 1,
-            "limit": -1
-        }).then(v=>{
-            if(v.data.code === 1){
-                params.api.applyTransaction({add: v.data?.entity?.overseasAgencyList});
+        await searchOverseasAgency({
+            data: {
+                "searchType": "1",      // 1: 코드, 2: 상호명, 3: MAKER
+                "searchText": "",
+                "page": 1,
+                "limit": -1
             }
+        }).then(v => {
+            params.api.applyTransaction({add: v.data});
+            setTotalRow(v.pageInfo.totalRow)
         })
     };
+
 
     function onChange(e) {
         commonManage.onChange(e, setInfo)
@@ -82,15 +84,20 @@ export default function OverseasAgencyRead({dataInfo=[], getPropertyId, getCopyP
 
         if (e) {
             setLoading(true)
-            console.log(info,'info:')
-            const result = await getData.post('agency/getOverseasAgencyList', {
-                "searchType": info['searchType'],      // 1: 코드, 2: 상호명, 3: MAKER
-                "searchText": info['searchText'],
-                "page": 1,
-                "limit": -1
-            });
-            gridManage.resetData(gridRef, result?.data?.entity?.overseasAgencyList);
-            setLoading(false)
+
+            await searchOverseasAgency({
+                data: {
+                    "searchType": info['searchType'],      // 1: 코드, 2: 상호명, 3: MAKER
+                    "searchText": info['searchText'],
+                    "page": 1,
+                    "limit": -1
+                }
+            }).then(v => {
+                gridManage.resetData(gridRef, v.data);
+                setTotalRow(v.pageInfo.totalRow)
+                setLoading(false)
+            })
+
         }
         setLoading(false)
     }
@@ -100,61 +107,62 @@ export default function OverseasAgencyRead({dataInfo=[], getPropertyId, getCopyP
     }
 
     function moveRouter() {
-        getCopyPage('overseas_agency_write', {orderDetailList : []})
+        getCopyPage('overseas_agency_write', {orderDetailList: []})
     }
 
     return <Spin spinning={loading} tip={'해외 매입처 조회중...'}>
         <ReceiveComponent searchInfo={searchInfo}/>
         <>
-        <div style={{
-            display: 'grid',
-            gridTemplateRows: `${mini ? '120px' : '65px'} calc(100vh - ${mini ? 250 : 195}px)`,
-            columnGap: 5
-        }}>
-            <MainCard title={'해외 매입처 조회'}
-                      list={[{name: '조회', func: searchInfo, type: 'primary'},
-                          {name: '초기화', func: clearAll, type: 'danger'},
-                          {name: '신규생성', func: moveRouter}]}
-                      mini={mini} setMini={setMini}>
+            <div style={{
+                display: 'grid',
+                gridTemplateRows: `${mini ? '120px' : '65px'} calc(100vh - ${mini ? 250 : 195}px)`,
+                columnGap: 5
+            }}>
+                <MainCard title={'해외 매입처 조회'}
+                          list={[{name: '조회', func: searchInfo, type: 'primary'},
+                              {name: '초기화', func: clearAll, type: 'danger'},
+                              {name: '신규생성', func: moveRouter}]}
+                          mini={mini} setMini={setMini}>
 
-                {mini ? <div style={{display: 'flex', alignItems: 'center', padding: 10}}>
-                    {radioForm({
-                        title: '',
-                        id: 'searchType',
-                        onChange: onChange,
-                        data: info,
-                        list: [{value: 1, title: '코드'},
-                            {value: 2, title: '상호명'},
-                            {value: 3, title: 'item'},
-                            {value: 4, title: '국가'}]
-                    })}
-
-                    <div style={{width: 500, marginLeft: 20}}>
-                        {inputForm({
+                    {mini ? <div style={{display: 'flex', alignItems: 'center', padding: 10}}>
+                        {radioForm({
                             title: '',
-                            id: 'searchText',
+                            id: 'searchType',
                             onChange: onChange,
                             data: info,
-                            size: 'middle',
-                            handleKeyPress: handleKeyPress
+                            list: [{value: 1, title: '코드'},
+                                {value: 2, title: '상호명'},
+                                {value: 3, title: 'item'},
+                                {value: 4, title: '국가'}]
                         })}
-                    </div>
 
-                </div> : <></>}
-            </MainCard>
+                        <div style={{width: 500, marginLeft: 20}}>
+                            {inputForm({
+                                title: '',
+                                id: 'searchText',
+                                onChange: onChange,
+                                data: info,
+                                size: 'middle',
+                                handleKeyPress: handleKeyPress
+                            })}
+                        </div>
 
-            {/*@ts-ignored*/}
-            <TableGrid deleteComp={<Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
-                                           onClick={deleteList}>
-                <CopyOutlined/>삭제
-            </Button>}
-                       getPropertyId={getPropertyId}
-                       gridRef={gridRef}
-                       columns={tableCodeOverseasPurchaseColumns}
-                       onGridReady={onGridReady}
-                       funcButtons={['print']}
-            />
-        </div>
-    </>
+                    </div> : <></>}
+                </MainCard>
+
+                {/*@ts-ignored*/}
+                <TableGrid deleteComp={<Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
+                                               onClick={deleteList}>
+                    <CopyOutlined/>삭제
+                </Button>}
+                           totalRow={totalRow}
+                           getPropertyId={getPropertyId}
+                           gridRef={gridRef}
+                           columns={tableCodeOverseasPurchaseColumns}
+                           onGridReady={onGridReady}
+                           funcButtons={['print']}
+                />
+            </div>
+        </>
     </Spin>
 }

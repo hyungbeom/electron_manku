@@ -18,31 +18,34 @@ import {CopyOutlined, EditOutlined, FileExcelOutlined, SearchOutlined} from "@an
 import {useRouter} from "next/router";
 import {inputForm, MainCard, radioForm} from "@/utils/commonForm";
 import {commonFunc, gridManage} from "@/utils/commonManage";
+import {searchDomesticCustomer, searchOverseasCustomer} from "@/utils/api/mainApi";
 
 export default function OverseasCustomerRead({getPropertyId, getCopyPage}) {
     const gridRef = useRef(null);
     const router = useRouter();
 
-
+    const [loading, setLoading] = useState(false);
     const [info, setInfo] = useState(codeDomesticPurchaseInitial);
-
+    const [totalRow, setTotalRow] = useState(0);
     const [mini, setMini] = useState(true);
 
 
     const onGridReady = async (params) => {
         gridRef.current = params.api;
-        await getData.post('customer/getOverseasCustomerList', {
-            "searchType": "1",      // 1: 코드, 2: 상호명, 3: MAKER
-            "searchText": "",
-            "page": 1,
-            "limit": -1
-        }).then(v=>{
-            if(v.data.code === 1){
-                params.api.applyTransaction({add:  v?.data?.entity?.overseasCustomerList});
+        await searchOverseasCustomer({
+            data: {
+                "searchType": "1",      // 1: 코드, 2: 상호명, 3: MAKER
+                "searchText": "",
+                "page": 1,
+                "limit": -1
             }
+        }).then(v => {
+            params.api.applyTransaction({add: v.data});
+            setTotalRow(v.pageInfo.totalRow)
         })
-
     };
+
+
 
     function onChange(e) {
 
@@ -55,16 +58,28 @@ export default function OverseasCustomerRead({getPropertyId, getCopyPage}) {
     }
 
 
-    async function searchInfo() {
-        await getData.post('customer/getOverseasCustomerList', {
-            ...info,
-            "page": 1,
-            "limit": -1
-        }).then(v=>{
-            if(v.data.code === 1){
-                gridManage.resetData(gridRef, v?.data?.entity?.overseasCustomerList)
-            }
-        })
+
+    async function searchInfo(e) {
+
+        if (e) {
+            setLoading(true)
+
+
+            await searchOverseasCustomer({
+                data: {
+                    "searchType": info['searchType'],      // 1: 코드, 2: 상호명, 3: MAKER
+                    "searchText": info['searchText'],
+                    "page": 1,
+                    "limit": -1
+                }
+            }).then(v => {
+                console.log(info,'v.data:')
+                gridManage.resetData(gridRef, v.data);
+                setTotalRow(v.pageInfo.totalRow)
+                setLoading(false)
+            })
+        }
+        setLoading(false)
     }
 
     function clearAll() {
@@ -75,7 +90,11 @@ export default function OverseasCustomerRead({getPropertyId, getCopyPage}) {
         getCopyPage('overseas_customer_write', {estimateDetailList : []})
 
     }
-
+    function handleKeyPress(e) {
+        if (e.key === 'Enter') {
+            searchInfo(true)
+        }
+    }
     return <>
         <div style={{
             display: 'grid',
@@ -104,8 +123,9 @@ export default function OverseasCustomerRead({getPropertyId, getCopyPage}) {
                     <div style={{width: 500, marginLeft: 20}}>
                         {inputForm({
                             title: '',
-                            id: 'searchCustomerName',
+                            id: 'searchText',
                             onChange: onChange,
+                            handleKeyPress: handleKeyPress,
                             data: info,
                             size: 'middle'
                         })}
@@ -114,6 +134,7 @@ export default function OverseasCustomerRead({getPropertyId, getCopyPage}) {
                 </div> : <></>}
             </MainCard>
             <TableGrid
+                totalRow={totalRow}
                 getPropertyId={getPropertyId}
                 gridRef={gridRef}
                 onGridReady={onGridReady}
@@ -124,38 +145,3 @@ export default function OverseasCustomerRead({getPropertyId, getCopyPage}) {
         </div>
     </>
 }
-
-// @ts-ignore
-export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
-
-
-    let param = {}
-
-    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
-
-    const result = await getData.post('customer/getOverseasCustomerList', {
-        "searchType": "1",      // 1: 코드, 2: 상호명, 3: MAKER
-        "searchText": "",
-        "page": 1,
-        "limit": -1
-    });
-
-    if (userInfo) {
-        store.dispatch(setUserInfo(userInfo));
-    }
-    if (codeInfo !== 1) {
-        param = {
-            redirect: {
-                destination: '/', // 리다이렉트할 대상 페이지
-                permanent: false, // true로 설정하면 301 영구 리다이렉트, false면 302 임시 리다이렉트
-            },
-        };
-    } else {
-        const list = result?.data?.entity?.overseasCustomerList;
-        param = {
-            props: {dataInfo: list ?? null}
-        }
-    }
-
-    return param
-})
