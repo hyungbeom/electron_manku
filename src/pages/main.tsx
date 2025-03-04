@@ -47,6 +47,7 @@ import DomesticCustomerRead from "@/component/page/data/customer/domestic/Domest
 import DomesticCustomerUpdate from "@/component/page/data/customer/domestic/DomesticCustomerUpdate";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {getData} from "@/manage/function/api";
+import StoreUpdate from "@/component/page/store/StoreUpdate";
 
 
 function findTitleByKey(data, key) {
@@ -180,11 +181,11 @@ export default function Main() {
 
         order_write: {name: "발주서 등록", component: <OrderWrite copyPageInfo={copyPageInfo}/>},
         order_read: {name: "발주서 조회", component: <OrderRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>},
-        order_update: {name: "발주서 수정", component: <OrderUpdate updateKey={updateKey}/>},
+        order_update: {name: "발주서 수정", component: <OrderUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
 
         store_write: {name: "입고 등록", component: <StoreWrite copyPageInfo={copyPageInfo}/>},
         store_read: {name: "입고 조회", component: <StoreRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>},
-        store_update: {name: "입고 수정", component: <OrderUpdate updateKey={updateKey}/>},
+        store_update: {name: "입고 수정", component: <StoreUpdate dataInfo={[]} />},
 
         delivery_write: {name: "배송 등록", component: <DeliveryWrite copyPageInfo={copyPageInfo}/>},
         delivery_read: {

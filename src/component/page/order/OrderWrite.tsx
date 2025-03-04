@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
 import {DownloadOutlined} from "@ant-design/icons";
 import {tableOrderWriteColumn,} from "@/utils/columnList";
-import {estimateDetailUnit, orderDetailUnit, orderWriteInitial} from "@/utils/initialList";
+import {estimateDetailUnit, estimateRequestDetailUnit, orderDetailUnit, orderWriteInitial} from "@/utils/initialList";
 import message from "antd/lib/message";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
@@ -31,10 +31,12 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import FormItem from "antd/lib/form/FormItem";
 import Input from "antd/lib/input";
+import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 
 
 const listType = 'orderDetailList'
 export default function OrderWrite({dataInfo = [],  copyPageInfo}) {
+    const [ready, setReady] = useState(false);
 
     const [memberList, setMemberList] = useState([]);
 
@@ -94,11 +96,25 @@ export default function OrderWrite({dataInfo = [],  copyPageInfo}) {
     const [info, setInfo] = useState<any>({...copyInit, ...dataInfo, ...adminParams})
 
 
-
     const onGridReady = (params) => {
         gridRef.current = params.api;
-        params.api.applyTransaction({add: copyPageInfo['order_write']?.orderDetailList ? copyPageInfo['order_write'][listType] : commonFunc.repeatObject(orderDetailUnit, 10)});
+        setInfo(isEmptyObj(copyPageInfo['order_write'])?copyPageInfo['order_write'] : infoInit);
+        params.api.applyTransaction({add: copyPageInfo['order_write'][listType] ? copyPageInfo['order_write'][listType] : commonFunc.repeatObject(orderDetailUnit, 10)});
+        setReady(true)
     };
+
+    useEffect(() => {
+        if(ready) {
+            if(copyPageInfo['order_write'] && !isEmptyObj(copyPageInfo['order_write'])){
+                setInfo(infoInit);
+                gridManage.resetData(gridRef,commonFunc.repeatObject(orderDetailUnit, 10))
+            }else{
+                setInfo({...copyPageInfo['order_write'], ...adminParams});
+                console.log(adminParams,'as')
+                gridManage.resetData(gridRef, copyPageInfo['order_write'][listType])
+            }
+        }
+    }, [copyPageInfo['order_write'],ready]);
 
 
     async function handleKeyPress(e) {

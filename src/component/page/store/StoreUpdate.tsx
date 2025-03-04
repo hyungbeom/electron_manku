@@ -29,7 +29,7 @@ import {getData} from "@/manage/function/api";
 
 const listType = 'orderStatusDetailList'
 
-export default function storeUpdate({dataInfo}) {
+export default function StoreUpdate({dataInfo}) {
     const router = useRouter();
 
     const gridRef = useRef(null);

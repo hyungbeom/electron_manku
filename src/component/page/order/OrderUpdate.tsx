@@ -19,9 +19,10 @@ import {findEstDocumentInfo} from "@/utils/api/commonApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import Select from "antd/lib/select";
+import Spin from "antd/lib/spin";
 
 const listType = 'orderDetailList'
-export default function OrderUpdate({  updateKey}) {
+export default function OrderUpdate({  updateKey, getCopyPage}) {
     const [memberList, setMemberList] = useState([]);
 
     useEffect(() => {
@@ -71,12 +72,14 @@ export default function OrderUpdate({  updateKey}) {
 
 
     useEffect(() => {
+        setLoading(true)
         getDataInfo().then(v => {
             const {orderDetail, attachmentFileList} = v;
             setFileList(fileManage.getFormatFiles(attachmentFileList))
             setOriginFileList(attachmentFileList)
             setInfo(orderDetail)
-            gridManage.resetData(gridRef, orderDetail[listType])
+            gridManage.resetData(gridRef, orderDetail[listType]);
+            setLoading(false)
         })
     }, [updateKey['order_update']])
 
@@ -179,13 +182,11 @@ export default function OrderUpdate({  updateKey}) {
         let copyInfo = _.cloneDeep(info)
         copyInfo[listType] = totalList
 
-        const query = `data=${encodeURIComponent(JSON.stringify(copyInfo))}`;
-        router.push(`/order_write?${query}`)
+        getCopyPage('order_write',copyInfo)
     }
 
     const onCChange = (value: string, e: any) => {
         const findValue = memberList.find(v => v.adminId === value)
-        console.log(findValue, 'value:')
         setInfo(v => {
             return {
                 ...v,
@@ -200,7 +201,7 @@ export default function OrderUpdate({  updateKey}) {
         })
     };
 
-    return <>
+    return  <Spin spinning={loading} tip={'발주서 수정중...'}>
         <>
             <div style={{
                 display: 'grid',
@@ -351,7 +352,7 @@ export default function OrderUpdate({  updateKey}) {
 
             </div>
         </>
-    </>
+    </Spin>
 }
 
 export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
