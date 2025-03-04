@@ -26,7 +26,7 @@ export default function RfqMailSend({getPropertyId}) {
     const gridRef = useRef(null);
     const [mini, setMini] = useState(true);
     const copyInit = _.cloneDeep(subRfqReadMailInitial)
-
+    const [totalRow, setTotalRow] = useState(0);
 
     const [info, setInfo] = useState(copyInit);
 
@@ -42,57 +42,11 @@ export default function RfqMailSend({getPropertyId}) {
 
 
         await searchRfq({data: subRfqReadInitial}).then(v=>{
-            params.api.applyTransaction({add: v});
+            console.log(v.pageInfo)
+            setTotalRow(v.pageInfo.totalRow)
+            params.api.applyTransaction({add: v.data});
         })
-
-        // 그리드 로드 후 스크롤 이벤트 추가
-        setTimeout(() => {
-            const gridElement = document.querySelector(".ag-body-viewport");
-            if (gridElement) {
-                gridElement.addEventListener("scroll", handleScroll);
-            }
-        }, 100);
     };
-
-    useEffect(() => {
-        infoRef.current = info
-    }, [info]);
-    const handleScroll = async () => {
-        const gridElement = document.querySelector(".ag-body-viewport");
-        if (!gridElement) return;
-
-        const {scrollTop, scrollHeight, clientHeight} = gridElement;
-        const atBottom = scrollHeight - scrollTop <= clientHeight + 1; // 소수점 오차 보정
-
-        if (atBottom) {
-            if (countRef.current) {
-                countRef.current += 1; // countRef를 직접 수정
-
-                setLoading(true);
-
-
-                await getData.post('estimate/getEstimateRequestList', {...infoRef.current, page: countRef.current}).then(v => {
-                    if (!v.data.entity.pageInfo.isNextPage) {
-                        countRef.current = 0;
-                    }else{
-                        gridRef.current.applyTransaction({add: v.data.entity.estimateRequestList ? v.data.entity.estimateRequestList : []});
-                    }
-                    setLoading(false)
-                })
-                setLoading(false)
-            }
-        }
-    };
-
-    useEffect(() => {
-        return () => {
-            // 컴포넌트 언마운트 시 스크롤 이벤트 제거
-            const gridElement = document.querySelector(".ag-body-viewport");
-            if (gridElement) {
-                gridElement.removeEventListener("scroll", handleScroll);
-            }
-        };
-    }, []);
 
     function onChange(e) {
         commonManage.onChange(e, setInfo)
@@ -110,7 +64,7 @@ export default function RfqMailSend({getPropertyId}) {
         await searchRfq({
             data: copyData
         }).then(v => {
-            countRef.current = 1;
+
             gridManage.resetData(gridRef, v);
             setLoading(false)
             gridRef.current.ensureIndexVisible(0)
@@ -245,6 +199,7 @@ export default function RfqMailSend({getPropertyId}) {
                                                onClick={deleteList}>
                     <CopyOutlined/>삭제
                 </Button>}
+                           totalRow={totalRow}
                            getPropertyId={getPropertyId}
                            gridRef={gridRef}
                            onGridReady={onGridReady}
@@ -254,27 +209,3 @@ export default function RfqMailSend({getPropertyId}) {
         </>
     </Spin>
 }
-
-
-export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
-
-    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
-
-    if (codeInfo < 0) {
-        return {
-            redirect: {
-                destination: '/',
-                permanent: false,
-            },
-        };
-    } else {
-        store.dispatch(setUserInfo(userInfo));
-
-        const result = await searchRfq({data: subRfqReadMailInitial});
-
-        return {
-            props: {dataInfo: result ? result : null}
-        }
-    }
-
-})
