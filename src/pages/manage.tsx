@@ -10,8 +10,26 @@ import TotalUser from "@/component/manage/totalUser";
 import ApproveUser from "@/component/manage/approveUser";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {getCookie} from "@/manage/function/cookie";
+import {useEffect} from "react";
 
 export default function Manage({memberList}:any) {
+
+
+    useEffect(()=>{
+        getInfo()
+    })
+
+    async function getInfo(){
+        return await getData.post('admin/getAdminList',{
+            "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
+            "searchAuthority": null,    // 1: 일반, 0: 관리자
+            "page": 1,
+            "limit": -1
+        }).then(v=>{
+            console.log(v,'v::::')
+        })
+    }
+
     const userInfo = useAppSelector((state) => state.user);
     const items = [
         {
@@ -56,8 +74,8 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
 
     getData.defaults.headers["authorization"] = `Bearer ${getCookie(ctx,'token')}`;
-    //     // refresh_token header setting
     getData.defaults.headers["refresh_token"] = getCookie(ctx,"refreshToken");
+
     const result = await getData.post('admin/getAdminList',{
         "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
         "searchAuthority": null,    // 1: 일반, 0: 관리자
@@ -68,7 +86,6 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     if (userInfo) {
         store.dispatch(setUserInfo(userInfo));
     }
-
     const data = result?.data?.entity?.adminList;
 
     return {props : {memberList : data ? data : []}}
