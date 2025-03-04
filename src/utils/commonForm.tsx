@@ -117,7 +117,7 @@ export function MainCard({children, title, list, mini = null, setMini = Function
 }
 
 export const inputForm = ({
-                              title, id, disabled = false, placeHolder = '', suffix = null, onChange = function () {
+                            value = '',  title, id, disabled = false, placeHolder = '', suffix = null, onChange = function () {
     }, handleKeyPress = function () {
     }, data
                               , validate = true,
@@ -131,7 +131,7 @@ export const inputForm = ({
         {/*@ts-ignored*/}
         <Input placeHolder={placeHolder}
                id={id}
-               value={bowl[id]} disabled={disabled}
+               value={value ? value : bowl[id]} disabled={disabled}
                onChange={onChange}
                size={size}
                onKeyDown={handleKeyPress}
@@ -281,16 +281,16 @@ export const selectBoxForm = ({title, id, disabled = false, data, onChange, list
     </div>
 }
 
-export const textAreaForm = ({title, id, rows = 5, disabled = false, onChange, data, placeHolder = ''}) => {
+export const textAreaForm = ({value='', title, id, rows = 5, disabled = false, onChange, data, placeHolder = '', maxLength = 1000}) => {
     return <div style={{fontSize: 12, paddingBottom: 10}}>
         <div style={{paddingBottom: 5}}>{title}</div>
-        <TextArea style={{resize: 'none', fontSize: 12}} rows={rows} id={id} value={data[id]} disabled={disabled}
+        <TextArea style={{resize: 'none', fontSize: 12}} rows={rows} id={id} value={value ? value : data[id]} disabled={disabled}
                   className="custom-textarea"
                   onChange={onChange}
                   size={'small'}
                   placeholder={placeHolder}
                   showCount
-                  maxLength={1000}
+                  maxLength={maxLength}
         />
     </div>
 }
