@@ -81,11 +81,13 @@ export default function RqfUpdate({dataInfo = {estimateRequestDetail: [], attach
 
 
     useEffect(() => {
+        setLoading(true)
         getDataInfo().then(v => {
             const {estimateRequestDetail, attachmentFileList} = v;
             setFileList(fileManage.getFormatFiles(attachmentFileList))
             setInfo(estimateRequestDetail)
             gridManage.resetData(gridRef, estimateRequestDetail[listType])
+            setLoading(false)
         })
     }, [updateKey['rfq_update']])
 
