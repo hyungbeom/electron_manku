@@ -36,11 +36,13 @@ export default function EstimateRead({getPropertyId, getCopyPage}) {
     const [mini, setMini] = useState(true);
 
     const [loading, setLoading] = useState(false);
-
+    const [totalRow, setTotalRow] = useState(0);
     const onGridReady = async (params) => {
         gridRef.current = params.api;
         await searchEstimate({data: estimateReadInitial}).then(v => {
-            params.api.applyTransaction({add: v});
+
+            params.api.applyTransaction({add: v.data});
+            setTotalRow(v.pageInfo.totalRow)
         })
 
         // 그리드 로드 후 스크롤 이벤트 추가
@@ -108,7 +110,8 @@ export default function EstimateRead({getPropertyId, getCopyPage}) {
         if (e) {
             setLoading(true)
             await searchEstimate({data: copyData}).then(v => {
-                gridManage.resetData(gridRef, v);
+                gridManage.resetData(gridRef, v.data);
+                setTotalRow(v.pageInfo.totalRow)
                 setLoading(false)
             })
         }
@@ -221,6 +224,7 @@ export default function EstimateRead({getPropertyId, getCopyPage}) {
                                                onClick={deleteList}>
                     <CopyOutlined/>삭제
                 </Button>}
+                           totalRow={totalRow}
                            getPropertyId={getPropertyId}
                            gridRef={gridRef}
                            onGridReady={onGridReady}
@@ -233,24 +237,3 @@ export default function EstimateRead({getPropertyId, getCopyPage}) {
     </Spin>
 }
 
-
-export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
-
-
-    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
-
-    if (codeInfo < 0) {
-        return {
-            redirect: {
-                destination: '/',
-                permanent: false,
-            },
-        };
-    }
-    store.dispatch(setUserInfo(userInfo));
-    let result = await searchEstimate({data: estimateReadInitial});
-    return {
-        props: {dataInfo: result ? result : null}
-    }
-
-})

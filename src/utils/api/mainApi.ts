@@ -20,7 +20,7 @@ export const saveRfq = async ({data, router, setLoading}) => {
         setLoading(false);
     }, err => {
         setLoading(false);
-       console.log(err)
+        console.log(err)
     })
 };
 
@@ -38,7 +38,7 @@ export const updateRfq = async ({data, returnFunc}) => {
 };
 
 export const getAttachmentFileList = async ({data}) => {
-   return await getFormData.post('common/getAttachmentFileList', data).then(v => {
+    return await getFormData.post('common/getAttachmentFileList', data).then(v => {
         const code = v.data.code;
         if (code === 1) {
             return v.data.entity;
@@ -52,7 +52,7 @@ export const getAttachmentFileList = async ({data}) => {
 export const searchRfq = async ({data}) => {
     const result = await getData.post('estimate/getEstimateRequestList', data);
     const {estimateRequestList, pageInfo} = result?.data?.entity
-    return {data : estimateRequestList, pageInfo:pageInfo}
+    return {data: estimateRequestList, pageInfo: pageInfo}
 };
 
 
@@ -76,11 +76,11 @@ export const deleteRfq = async ({
 export const saveEstimate = async ({data, router, returnFunc}) => {
     await getFormData.post('estimate/addEstimate', data).then(v => {
         const {code} = v.data
-        const  msg = v.data.message
+        const msg = v.data.message
         if (code === 1) {
             window.opener?.postMessage('write', window.location.origin);
             message.success('저장되었습니다.');
-        }else{
+        } else {
             returnFunc(code, msg)
         }
     });
@@ -118,10 +118,10 @@ export const saveStore = async ({data, router}) => {
             window.opener?.postMessage('write', window.location.origin);
             message.success('저장되었습니다.')
             router.push(`/store_update?orderStatusId=${v.data.entity.orderStatusId}`)
-        } else if(v.data.code === -20001) {
+        } else if (v.data.code === -20001) {
 
             message.warning('B/L No.가 이미 존재합니다.')
-        }else{
+        } else {
             message.error('저장에 실패하였습니다.')
         }
     });
@@ -133,9 +133,9 @@ export const updateStore = async ({data, router}) => {
         if (v.data.code === 1) {
             window.opener?.postMessage('write', window.location.origin);
             message.success('수정되었습니다.')
-        } else if(v.data.code === -20001) {
+        } else if (v.data.code === -20001) {
             message.error('B/L No.가 중복됩니다.')
-        } else{
+        } else {
             message.error('수정에 실패하였습니다.')
 
         }
@@ -182,12 +182,16 @@ export const updateEstimate = async ({data, returnFunc}) => {
 
 export const searchEstimate = async ({data}) => {
 
-    const result = await getData.post('estimate/getEstimateList', {
+    return await getData.post('estimate/getEstimateList', {
         ...data, page: 1,
         limit: -1
-    });
+    }).then(v => {
+        if (v.data.code === 1) {
+            const {estimateList, pageInfo} = v?.data?.entity
+            return {data: estimateList, pageInfo: pageInfo}
+        }
+    })
 
-    return result?.data?.entity?.estimateList
 };
 
 
@@ -286,12 +290,12 @@ export const deleteOrderStatusDetails = async ({
 export const saveOrder = async ({data, router, returnFunc}) => {
     await getFormData.post('order/addOrder', data).then(v => {
         const {code} = v.data
-        const  msg = v.data.message
+        const msg = v.data.message
         if (code === 1) {
             window.opener?.postMessage('write', window.location.origin);
             message.success('저장되었습니다')
             router.push(`/order_update?orderId=${v.data.entity.orderId}`)
-        }else{
+        } else {
             returnFunc(code, msg)
         }
     });
@@ -314,11 +318,15 @@ export const updateOrder = async ({data, returnFunc}) => {
 
 export const searchOrder = async ({data}) => {
 
-    const result = await getData.post('order/getOrderList', {
+    return await getData.post('order/getOrderList', {
         ...data, page: 1,
         limit: -1
-    });
-    return result?.data?.entity?.orderList
+    }).then(v => {
+        if (v.data.code === 1) {
+            const {orderList, pageInfo} = v?.data?.entity;
+            return {data: orderList, pageInfo: pageInfo}
+        }
+    })
 };
 
 export const deleteOrder = async ({
@@ -338,9 +346,9 @@ export const deleteOrder = async ({
 };
 
 export const deleteHsCodeList = async ({
-                                      data, returnFunc = function (e) {
+                                           data, returnFunc = function (e) {
     }
-                                  }) => {
+                                       }) => {
 
     await getData.post('hsCode/deleteHsCodes', data).then(v => {
         const code = v.data.code;
@@ -397,28 +405,28 @@ export const getRemittanceList = async ({data}) => {
 // =====================================================================================================================
 // =====================================================================================================================
 
-export const saveDomesticAgency = async ({data, router}:any) => {
+export const saveDomesticAgency = async ({data, router}: any) => {
 
-    getData.post('agency/addAgency', data).then(v=>{
+    getData.post('agency/addAgency', data).then(v => {
         const code = v.data.code;
-        if(code === 1){
+        if (code === 1) {
             window.opener?.postMessage('write', window.location.origin);
             message.success('등록되었습니다.')
             router.push(`/data/agency/domestic/agency_update?`)
-        }else{
+        } else {
             message.error('실패하였습니다.')
         }
     })
 };
 
-export const updateDomesticAgency = async ({data, returnFunc}:any) => {
+export const updateDomesticAgency = async ({data, returnFunc}: any) => {
 
-    getData.post('agency/updateOverseasAgency', data).then(v=>{
+    getData.post('agency/updateOverseasAgency', data).then(v => {
         const code = v.data.code;
-        if(code === 1){
+        if (code === 1) {
             window.opener?.postMessage('write', window.location.origin);
             message.success('수정되었습니다.')
-        }else{
+        } else {
             message.error('실패하였습니다.')
         }
         returnFunc();

@@ -28,12 +28,13 @@ export default function OrderRead({getPropertyId, getCopyPage}) {
 
     const [info, setInfo] = useState(copyInit);
     const [mini, setMini] = useState(true);
-
+    const [totalRow, setTotalRow] = useState(0);
     const [loading, setLoading] = useState(false);
     const onGridReady = async (params) => {
         gridRef.current = params.api;
         await searchOrder({data: orderReadInitial}).then(v => {
-            params.api.applyTransaction({add: v});
+            params.api.applyTransaction({add: v.data});
+            setTotalRow(v.pageInfo.totalRow)
         })
     };
 
@@ -52,11 +53,13 @@ export default function OrderRead({getPropertyId, getCopyPage}) {
     async function searchInfo(e) {
         const copyData: any = {...info}
         if (e) {
-            setLoading(true)
-            const result = await getData.post('order/getOrderList',
-                {...copyData, "page": 1, "limit": -1});
-            gridManage.resetData(gridRef, result?.data?.entity?.orderList);
-            setLoading(false)
+            setLoading(true);
+            await searchOrder({data: {...copyData, "page": 1, "limit": -1}}).then(v => {
+                gridManage.resetData(gridRef, v.data);
+                setTotalRow(v.pageInfo.totalRow)
+                setLoading(false)
+            })
+
         }
         setLoading(false)
     }
@@ -83,7 +86,7 @@ export default function OrderRead({getPropertyId, getCopyPage}) {
     }
 
     async function moveRouter() {
-        getCopyPage('order_write', {orderDetailList : commonFunc.repeatObject(orderDetailUnit, 10)})
+        getCopyPage('order_write', {orderDetailList: commonFunc.repeatObject(orderDetailUnit, 10)})
     }
 
 
@@ -165,6 +168,7 @@ export default function OrderRead({getPropertyId, getCopyPage}) {
                     <CopyOutlined/>삭제
                 </Button>}
 
+                           totalRow={totalRow}
                            getPropertyId={getPropertyId}
                            gridRef={gridRef}
                            onGridReady={onGridReady}
@@ -177,23 +181,3 @@ export default function OrderRead({getPropertyId, getCopyPage}) {
     </Spin>
 }
 
-
-export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
-
-    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
-
-    if (codeInfo < 0) {
-        return {
-            redirect: {
-                destination: '/',
-                permanent: false,
-            },
-        };
-    } else {
-        store.dispatch(setUserInfo(userInfo));
-        const result = await searchOrder({data: orderReadInitial})
-        return {
-            props: {dataInfo: result ?? null}
-        }
-    }
-})
