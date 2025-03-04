@@ -8,6 +8,7 @@ import Input from "antd/lib/input";
 import _ from "lodash";
 import Button from "antd/lib/button";
 import {inputForm, MainCard, textAreaForm, TopBoxCard} from "@/utils/commonForm";
+import message from "antd/lib/message";
 
 
 function formatDocumentNumbers(documentNumbersArray) {
@@ -103,7 +104,7 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
             const {output, documentNumbers} = generateFormattedOutputWithDocumentNumbers(Object.values(src))
 
             return {
-                agencyManagerName:agencyManagerName,
+                agencyManagerName:(agencyManagerName && agencyManagerName !== 'undefined') ? agencyManagerName : '',
                 agencyManagerEmail: agencyManagerEmail,
                 agencyManagerId: agencyManagerId,
                 sendName: userInfo.name,
@@ -121,8 +122,7 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
 
 
         const result = info.map((v, idx) => {
-            console.log(v,'v:')
-            console.log(checkList[idx],'checkList[idx]:')
+
             let sumDiv = ''
             let detailList = []
             let firstResult = v.detailList.map(source => {
@@ -168,7 +168,7 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
             v.content = v.content.replace(/\n/g, "<br>");
             return {
                 ...v, content: `<div><div>${v.content}</div>
-<div style="padding-top: 300px">
+<div style="padding-top: 200px">
     <div style="font-size: 15px; font-weight: 800;">${name}</div>
     <div style="font-weight: normal;">President</div>
     <div style="color: #56cbdb; font-weight: 500;">Manku Trading Co., Ltd.</div>
@@ -184,7 +184,11 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
         })
 
         await getData.post('estimate/sendMailEstimateRequests', {mailList: list}).then(v => {
-            console.log(v, ':::::')
+            if(v.data.code === 1){
+                message.success(v.data.message);
+            }else{
+                message.warning(v.data.message);
+            }
         }, err => console.log(err, '::::err'))
     }
 
@@ -240,7 +244,7 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
                                 onChange: e => onChange(e, idx),
                                 data: info,
                                 value: src.agencyManagerEmail,
-                                size: 'middle'
+                                size: 'middle',
                             })}</div>
                         {inputForm({
                             title: '메일 제목',
@@ -259,7 +263,7 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
                             onChange: e => onChange(e, idx),
                             data: info,
                             maxLength: 10000,
-                            rows: 20
+                            rows: 15
                         })}
                         <Card size={'small'} title={'첨부파일'} style={{marginTop: 15}}>
                             {src.detailList.map(v => {
@@ -280,6 +284,7 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
                                             </>
                                         )
                                     }
+                                    {!src.detailList.length ? <div></div> : <></>}
                                 </>
                             })
                             }

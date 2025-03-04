@@ -43,7 +43,7 @@ export default function RfqMailSend({getPropertyId}) {
 
         await searchRfq({data: subRfqReadInitial}).then(v=>{
             console.log(v.pageInfo)
-            setTotalRow(v.pageInfo.totalRow)
+            setTotalRow(v.pageInfo.totalRow);
             params.api.applyTransaction({add: v.data});
         })
     };
