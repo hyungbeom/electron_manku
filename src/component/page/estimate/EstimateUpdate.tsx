@@ -316,8 +316,8 @@ export default function EstimateUpdate({dataInfo = {estimateDetail: [], attachme
                             {inputForm({title: '작성자', id: 'createdBy', disabled: true, onChange: onChange, data: info})}
                             {/*{inputForm({title: '담당자', id: 'managerAdminName', onChange: onChange, data: info})}*/}
                             <div>
-                                <div style={{paddingBottom: 4.5}}>담당자</div>
-                                <Select style={{width: '100%'}} size={'small'}
+                                <div style={{paddingBottom: 4.5, fontSize : 12}}>담당자</div>
+                                <Select style={{width: '100%', fontSize : 12}} size={'small'}
                                         showSearch
                                         value={info['managerAdminId']}
                                         placeholder="Select a person"

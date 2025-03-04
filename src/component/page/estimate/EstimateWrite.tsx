@@ -31,6 +31,7 @@ import EstimatePaper from "@/component/견적서/EstimatePaper";
 import {getData} from "@/manage/function/api";
 import Select from "antd/lib/select";
 import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
+import moment from "moment";
 
 
 const listType = 'estimateDetailList'
@@ -103,7 +104,7 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
 
     useEffect(() => {
         if(ready) {
-            if(!isEmptyObj(copyPageInfo['estimate_write'])){
+            if(copyPageInfo['estimate_write'] && !isEmptyObj(copyPageInfo['estimate_write'])){
                 setInfo(infoInit);
                 gridManage.resetData(gridRef,commonFunc.repeatObject(estimateDetailUnit, 10))
             }else{
@@ -168,7 +169,9 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
                                 documentNumberFull: src.data.code === 1 ? src.data.entity.newDocumentNumberFull : v.documentNumberFull,
                                 validityPeriod: '견적 발행 후 10일간',
                                 paymentTerms: '발주시 50% / 납품시 50%',
-                                shippingTerms: '귀사도착도'
+                                shippingTerms: '귀사도착도',
+                                writtenDate : moment().format('YYYY-MM-DD'),
+                                ...adminParams
                             }
                         });
                     });
@@ -189,6 +192,7 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
     }
 
     async function saveFunc() {
+
         gridRef.current.clearFocusedCell();
         const list = gridManage.getAllData(gridRef);
         setInfo(v => {
@@ -219,15 +223,15 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
         formData.delete('createdDate')
         formData.delete('modifiedDate')
 
+        console.log(info,'info::::')
 
-        const pdf = await commonManage.getPdfCreate(pdfRef);
-        const result = await commonManage.getPdfFile(pdf, info.documentNumberFull);
-
-
-        formData.append(`attachmentFileList[${resultCount}].attachmentFile`, result);
-        formData.append(`attachmentFileList[${resultCount}].fileName`, `03.${resultCount + 1} ${result.name}`);
+        // const pdf = await commonManage.getPdfCreate(pdfRef);
+        // const result = await commonManage.getPdfFile(pdf, info.documentNumberFull);
+        // formData.append(`attachmentFileList[${resultCount}].attachmentFile`, result);
+        // formData.append(`attachmentFileList[${resultCount}].fileName`, `03.${resultCount + 1} ${result.name}`);
 
         setLoading(true)
+
         await saveEstimate({data: formData, router: router, returnFunc: returnFunc})
         setLoading(false)
     }
