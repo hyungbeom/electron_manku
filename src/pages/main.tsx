@@ -407,6 +407,7 @@ export default function Main() {
                 <Layout model={model} factory={factory} onModelChange={onLayoutChange} ref={layoutRef}/>
 
             </div>
+
         </LayoutComponent>
     );
 }

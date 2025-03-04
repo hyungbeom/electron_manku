@@ -85,7 +85,7 @@ function generateFormattedOutputWithDocumentNumbers(data) {
 
     // documentNumberFull만 객체로 리턴
     return {
-        output: output,
+        output: output + '\n\n\n' + '감사합니다',
         documentNumbers: Object.keys(documentNumbers)
     };
 }
@@ -121,6 +121,8 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
 
 
         const result = info.map((v, idx) => {
+            console.log(v,'v:')
+            console.log(checkList[idx],'checkList[idx]:')
             let sumDiv = ''
             let detailList = []
             let firstResult = v.detailList.map(source => {
@@ -154,22 +156,30 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
                 name: v.sendName,
                 fileIdList: checkList[idx] ? checkList[idx] : [],
                 estimateRequestDetailIdList: detailList,
-                content: firstResult.join(''),
-                subject: `${v?.agencyManagerName} 안녕하세요`,
+                content: v.contents,
+                subject: v.title,
                 ccList: null
             }
-
-
         })
 
+        const {name, contactNumber} = userInfo;
 
         const list = result.map(v => {
-
+            v.content = v.content.replace(/\n/g, "<br>");
             return {
-                ...v, content: `<div>
-
-        <div style="font-size : 15px; padding-top : 20px;">안녕하세요 <span style="font-weight: 600;">${v.name}</span>입니다.</div>
-                           <div style="font-size: 15px; padding-top: 5px; padding-bottom: 30px">아래 견적 부탁드립니다.</div>${v.content}</div>`
+                ...v, content: `<div><div>${v.content}</div>
+<div style="padding-top: 300px">
+    <div style="font-size: 15px; font-weight: 800;">Mr. Min-Kuk KIM</div>
+    <div style="font-weight: normal;">President</div>
+    <div style="color: #56cbdb; font-weight: 500;">Manku Trading Co., Ltd.</div>
+    <div style="font-weight: 500;">B-802#, 114, Beobwon-ro, Songpa-gu, Seoul, Republic of Korea</div>
+    <div style="font-weight: 500;">Post Code 05854</div>
+    <div style="text-decoration: underline;">Tel: +82/2-465-7838</div>
+    <div style="text-decoration: underline;">HP: +82/10-8874-7888</div>
+    <div style="text-decoration: underline;">Fax: +82/2-465-7839</div>
+    <a href="https://www.manku.co.kr" style="text-decoration: none; color: inherit;">www.manku.co.kr</a>
+</div>
+</div>`
             }
         })
 
