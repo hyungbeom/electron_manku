@@ -13,6 +13,7 @@ export default function LayoutComponent({children}) {
     const router = useRouter();
 
 
+
     return <>
 
         {/*<div style={{*/}
@@ -61,6 +62,7 @@ export default function LayoutComponent({children}) {
 }
 
 export function UserMenu() {
+    const userInfo = useAppSelector((state) => state.user);
     const items: any = [
         {
             key: '1',
@@ -77,15 +79,13 @@ export function UserMenu() {
                 router.push('/');
             }}><LogoutOutlined style={{color: 'red', paddingRight: 5}}/>Logout</span>
         },
-        {
+        userInfo.authority === 1 &&  {
             key: '4',
             label: <span  onClick={() => {
                 router.push('/manage');
             }}><SettingOutlined style={{ paddingRight: 5}}/>관리자</span>
         },
     ];
-
-    const userInfo = useAppSelector((state) => state.user);
     const router = useRouter();
     // const items = [
     //     {

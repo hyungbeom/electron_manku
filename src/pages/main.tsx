@@ -45,7 +45,7 @@ import OverseasCustomerRead from "@/component/page/data/customer/overseas/Overse
 import OverseasCustomerUpdate from "@/component/page/data/customer/overseas/OverseasCustomerUpdate";
 import DomesticCustomerRead from "@/component/page/data/customer/domestic/DomesticCustomerRead";
 import DomesticCustomerUpdate from "@/component/page/data/customer/domestic/DomesticCustomerUpdate";
-import {getData} from "@/manage/function/api";
+import {useAppSelector} from "@/utils/common/function/reduxHooks";
 
 
 function findTitleByKey(data, key) {
@@ -68,6 +68,8 @@ function findTitleByKey(data, key) {
 
 export default function Main() {
     const layoutRef = useRef<any>(null);
+
+    const userInfo = useAppSelector((state) => state.user);
 
     const [selectMenu, setSelectMenu] = useState('')
     const [count, setCount] = useState(0)
@@ -112,7 +114,6 @@ export default function Main() {
     }
 
 
-
     function getCopyPage(page, v) {
         let copyObject = _.cloneDeep(copyPageInfo);
         copyObject[page] = v;
@@ -131,7 +132,7 @@ export default function Main() {
         const title = findTitleByKey(treeData, selectedKey);
 
 
-        console.log(title,'title:')
+        console.log(title, 'title:')
         if (title) {
             setSelectMenu(title);
             updateSelectTab();
@@ -165,55 +166,75 @@ export default function Main() {
         rfq_mail_send: {name: "메일전송", component: <RfqMailSend getPropertyId={getPropertyId}/>},
 
         estimate_write: {name: "견적서 등록", component: <EstimateWrite copyPageInfo={copyPageInfo}/>},
-        estimate_read: {name: "견적서 조회", component: <EstimateRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>},
+        estimate_read: {
+            name: "견적서 조회",
+            component: <EstimateRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>
+        },
         estimate_update: {name: "견적서 수정", component: <EstimateUpdate updateKey={updateKey}/>},
 
-        order_write: {name: "발주서 등록", component: <OrderWrite copyPageInfo={copyPageInfo}/>} ,
+        order_write: {name: "발주서 등록", component: <OrderWrite copyPageInfo={copyPageInfo}/>},
         order_read: {name: "발주서 조회", component: <OrderRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>},
-        order_update: {name: "발주서 수정", component: <OrderUpdate updateKey={updateKey} />},
+        order_update: {name: "발주서 수정", component: <OrderUpdate updateKey={updateKey}/>},
 
         store_write: {name: "입고 등록", component: <StoreWrite copyPageInfo={copyPageInfo}/>},
         store_read: {name: "입고 조회", component: <StoreRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>},
         store_update: {name: "입고 수정", component: <OrderUpdate updateKey={updateKey}/>},
 
         delivery_write: {name: "배송 등록", component: <DeliveryWrite copyPageInfo={copyPageInfo}/>},
-        delivery_read: {name: "배송 조회", component: <DeliveryRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>},
-        delivery_update: {name: "배송 수정", component: <DeliveryUpdate updateKey={updateKey} />},
+        delivery_read: {
+            name: "배송 조회",
+            component: <DeliveryRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>
+        },
+        delivery_update: {name: "배송 수정", component: <DeliveryUpdate updateKey={updateKey}/>},
 
 
         remittance_domestic_write: {name: "국내송금 등록", component: <RemittanceDomesticWrite copyPageInfo={copyPageInfo}/>},
-        remittance_domestic_read: {name: "국내송금 조회", component: <RemittanceDomesticRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>},
+        remittance_domestic_read: {
+            name: "국내송금 조회",
+            component: <RemittanceDomesticRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>
+        },
         remittance_domestic_update: {name: "국내송금 수정", component: <RemittanceDomesticUpdate updateKey={updateKey}/>},
 
 
         domestic_agency_write: {name: "국내매입처 등록", component: <DomesticAgencyWrite copyPageInfo={copyPageInfo}/>},
-        domestic_agency_read: {name: "국내매입처 조회", component: <DomesticAgencyRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>},
+        domestic_agency_read: {
+            name: "국내매입처 조회",
+            component: <DomesticAgencyRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>
+        },
         domestic_agency_update: {name: "국내매입처 수정", component: <DomesticAgencyUpdate updateKey={updateKey}/>},
 
         overseas_agency_write: {name: "해외매입처 등록", component: <OverseasAgencyWrite copyPageInfo={copyPageInfo}/>},
-        overseas_agency_read: {name: "해외매입처 조회", component: <OverseasAgencyRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>},
-        overseas_agency_update: {name: "해외매입처 수정", component: <OverseasAgencyUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
+        overseas_agency_read: {
+            name: "해외매입처 조회",
+            component: <OverseasAgencyRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>
+        },
+        overseas_agency_update: {
+            name: "해외매입처 수정",
+            component: <OverseasAgencyUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>
+        },
 
 
-
-
-        domestic_customer_write:  {name: "국내고객사 등록", component: <DomesticCustomerWrite copyPageInfo={copyPageInfo}/>},
-        domestic_customer_read:   {name: "국내고객사 조회", component: <DomesticCustomerRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>},
+        domestic_customer_write: {name: "국내고객사 등록", component: <DomesticCustomerWrite copyPageInfo={copyPageInfo}/>},
+        domestic_customer_read: {
+            name: "국내고객사 조회",
+            component: <DomesticCustomerRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>
+        },
         domestic_customer_update: {name: "국내고객사 수정", component: <DomesticCustomerUpdate updateKey={updateKey}/>},
 
-        overseas_customer_write:  {name: "해외고객사 등록", component: <OverseasCustomerWrite copyPageInfo={copyPageInfo}/>},
-        overseas_customer_read:   {name: "해외고객사 조회", component: <OverseasCustomerRead getPropertyId={getPropertyId}
-                                                                                      getCopyPage={getCopyPage}/>},
-        overseas_customer_update: {name: "해외고객사 수정", component: <OverseasCustomerUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
-
-
-
+        overseas_customer_write: {name: "해외고객사 등록", component: <OverseasCustomerWrite copyPageInfo={copyPageInfo}/>},
+        overseas_customer_read: {
+            name: "해외고객사 조회", component: <OverseasCustomerRead getPropertyId={getPropertyId}
+                                                               getCopyPage={getCopyPage}/>
+        },
+        overseas_customer_update: {
+            name: "해외고객사 수정",
+            component: <OverseasCustomerUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>
+        },
 
 
         maker_write: {name: "메이커 등록", component: <MakerWrite copyPageInfo={copyPageInfo}/>},
         maker_read: {name: "메이커 조회", component: <MakerRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>},
-        maker_update: {name: "메이커 수정", component: <MakerUpdate updateKey={updateKey} />},
-
+        maker_update: {name: "메이커 수정", component: <MakerUpdate updateKey={updateKey}/>},
 
 
         hcode_read: {name: "HS CODE 조회", component: <HcodeRead updateKey={updateKey} getCopyPage={getCopyPage}/>},
@@ -223,7 +244,7 @@ export default function Main() {
 
     const factory = (node: TabNode) => {
         const componentKey = node.getComponent();
-        return <div style={{padding : '0px 5px 0px 5px'}}>{tabComponents[componentKey]?.component}</div>;
+        return <div style={{padding: '0px 5px 0px 5px'}}>{tabComponents[componentKey]?.component}</div>;
     };
 
 
@@ -291,16 +312,16 @@ export default function Main() {
             title: node.children ? ( // 자식이 있는 경우만 아이콘 추가
                 <>
                     {expandedKeys.includes(node.key) ? (
-                        <span style={{marginRight: 2,fontSize : 11}}>📂</span>
+                        <span style={{marginRight: 2, fontSize: 11}}>📂</span>
 
                     ) : (
-                        <span style={{marginRight: 2, fontSize : 11}}>📁</span>
+                        <span style={{marginRight: 2, fontSize: 11}}>📁</span>
                     )}
-                    <span style={{fontSize : 12}}>{node.title}</span>
+                    <span style={{fontSize: 12}}>{node.title}</span>
                 </>
             ) : (
                 <>
-                    <span style={{marginRight: 2, fontSize : 10}}>📄</span>
+                    <span style={{marginRight: 2, fontSize: 10}}>📄</span>
                     <span style={{fontSize: 12}}>{node.title}</span>
                 </>
             ),
@@ -311,14 +332,19 @@ export default function Main() {
     return (
         <LayoutComponent>
             <div style={{display: "grid", gridTemplateColumns: "205px auto"}}>
-                <div style={{borderRight: "1px solid lightGray",  paddingTop: 15,  height : 'calc(100vh - 56px)', overflowY: "auto"}}>
+                <div style={{
+                    borderRight: "1px solid lightGray",
+                    paddingTop: 15,
+                    height: 'calc(100vh - 56px)',
+                    overflowY: "auto"
+                }}>
                     <Tree
-                          defaultExpandedKeys={getRootKeys(treeData)}
-                          showLine
-                          switcherIcon={<DownOutlined/>}
-                          onSelect={onSelect}
-                          treeData={transformTreeData(treeData)}
-                          onExpand={onExpand}
+                        defaultExpandedKeys={getRootKeys(treeData)}
+                        showLine
+                        switcherIcon={<DownOutlined/>}
+                        onSelect={onSelect}
+                        treeData={transformTreeData(treeData)}
+                        onExpand={onExpand}
                     />
                 </div>
                 {!tabCounts && <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>

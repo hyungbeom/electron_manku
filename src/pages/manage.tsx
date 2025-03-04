@@ -31,7 +31,7 @@ export default function Manage(any) {
         })
     }
 
-    const userInfo = useAppSelector((state) => state.user);
+
     const items = [
         {
             key: '1',
