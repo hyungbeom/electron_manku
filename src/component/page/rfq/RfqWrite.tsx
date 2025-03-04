@@ -121,10 +121,11 @@ export default function RqfWrite({ copyPageInfo = {}}) {
                 gridManage.resetData(gridRef,commonFunc.repeatObject(estimateRequestDetailUnit, 10))
             }else{
                 setInfo({...copyPageInfo['rfq_write'], ...adminParams});
+                console.log(adminParams,'as')
                 gridManage.resetData(gridRef, copyPageInfo['rfq_write'][listType])
             }
         }
-    }, [copyPageInfo['rfq_write']]);
+    }, [copyPageInfo['rfq_write'],ready]);
 
     // useEffect(() => {
     //     initCopyLoadInquiry()
