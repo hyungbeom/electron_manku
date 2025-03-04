@@ -41,7 +41,7 @@ export default function RfqMailSend({getPropertyId}) {
         gridRef.current = params.api;
 
 
-        await searchRfq({data: subRfqReadInitial}).then(v=>{
+        await searchRfq({data: subRfqReadMailInitial}).then(v=>{
             console.log(v.pageInfo)
             setTotalRow(v.pageInfo.totalRow);
             params.api.applyTransaction({add: v.data});
