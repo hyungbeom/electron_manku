@@ -16,13 +16,14 @@ import {
 import {useRouter} from "next/router";
 import {removeCookie} from "@/manage/function/cookie";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
+import {Space} from "antd";
 
 
 export default function LayoutComponent({children}) {
 
     const router = useRouter();
 
-    const userInfo = useAppSelector((state) => state.user);
+
 
     return <>
 
@@ -61,14 +62,7 @@ export default function LayoutComponent({children}) {
                                 d="M623.6 316.7C593.6 290.4 554 276 512 276s-81.6 14.5-111.6 40.7C369.2 344 352 380.7 352 420v7.6c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V420c0-44.1 43.1-80 96-80s96 35.9 96 80c0 31.1-22 59.6-56.1 72.7-21.2 8.1-39.2 22.3-52.1 40.9-13.1 19-19.9 41.8-19.9 64.9V620c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8v-22.7a48.3 48.3 0 0130.9-44.8c59-22.7 97.1-74.7 97.1-132.5.1-39.3-17.1-76-48.3-103.3zM472 732a40 40 0 1080 0 40 40 0 10-80 0z"></path>
                         </svg>
                     </div>
-                    <div style={{display: 'flex',}}>
-                        <img src='https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png' width={25}
-                             alt=""/>
-                        <div style={{paddingLeft: 10, display: 'flex', alignItems: 'center', color: 'gray'}}>
-                            <div>{userInfo.name}</div>
-                            {/*<div>{userInfo.email}</div>*/}
-                        </div>
-                    </div>
+                    <UserMenu/>
                 </div>
             </div>
             {children}
@@ -78,29 +72,54 @@ export default function LayoutComponent({children}) {
 }
 
 export function UserMenu() {
-    const router = useRouter();
-    const items = [
+    const items: any= [
         {
-            label: <div style={{width: 100}}>마이페이지</div>,
             key: '1',
-            icon: <UserOutlined/>,
+            label: 'My Account',
+            disabled: true,
         },
         {
-            label: <div style={{width: 100, color: 'red'}} onClick={() => {
-                removeCookie(null, 'token')
-                router.push('/')
-            }}>로그아웃</div>,
+            type: 'divider',
+        },
+        {
             key: '2',
+            label: 'Logout',
             icon: <LogoutOutlined style={{color: 'red'}}/>
-        }
+        },
+        {
+            key: '4',
+            label: '관리자',
+            icon: <SettingOutlined />,
+        },
     ];
+
+    const userInfo = useAppSelector((state) => state.user);
+    const router = useRouter();
+    // const items = [
+    //     {
+    //         label: <div style={{width: 100}}>마이페이지</div>,
+    //         key: '1',
+    //         icon: <UserOutlined/>,
+    //     },
+    //     {
+    //         label: <div style={{width: 100, color: 'red'}} onClick={() => {
+    //             removeCookie(null, 'token')
+    //             router.push('/')
+    //         }}>로그아웃</div>,
+    //         key: '2',
+    //         icon: <LogoutOutlined style={{color: 'red'}}/>
+    //     }
+    // ];
     return <Dropdown menu={{items}}>
-        <UserOutlined style={{
-            fontSize: 20,
-            justifyContent: 'center',
-            alignItems: 'center',
-            paddingRight: 20,
-            cursor: 'pointer'
-        }}/>
+        <Space>
+        <div style={{display: 'flex',}}>
+            <img src='https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png' width={25}
+                 alt=""/>
+            <div style={{paddingLeft: 10, display: 'flex', alignItems: 'center', color: 'gray'}}>
+                <div>{userInfo.name}</div>
+                {/*<div>{userInfo.email}</div>*/}
+            </div>
+        </div>
+        </Space>
     </Dropdown>
 }
