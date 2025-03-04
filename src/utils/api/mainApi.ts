@@ -196,9 +196,12 @@ export const searchEstimate = async ({data}) => {
 
 export const searchProject = async ({data}) => {
 
-    const result = await getData.post('project/getProjectList', data);
-    console.log(result, 'resultresult')
-    return result?.data?.entity?.projectList
+  return await getData.post('project/getProjectList', data).then(v=>{
+        if(v.data.code === 1){
+            const {projectList, pageInfo} = v.data.entity;
+            return {data : projectList, pageInfo : pageInfo}
+        }
+    })
 };
 
 export const deleteProjectList = async ({

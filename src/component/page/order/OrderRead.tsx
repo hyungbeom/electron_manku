@@ -1,17 +1,11 @@
 import React, {useRef, useState} from "react";
-import LayoutComponent from "@/component/LayoutComponent";
-import Card from "antd/lib/card/Card";
-import {CopyOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
+import {CopyOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
 import {tableOrderReadColumns} from "@/utils/columnList";
-import {estimateDetailUnit, estimateReadInitial, orderDetailUnit, orderReadInitial} from "@/utils/initialList";
-import {wrapper} from "@/store/store";
-import initialServerRouter from "@/manage/function/initialServerRouter";
-import {setUserInfo} from "@/store/user/userSlice";
-import {getData} from "@/manage/function/api";
+import {orderDetailUnit, orderReadInitial} from "@/utils/initialList";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
-import {deleteOrder, searchEstimate, searchOrder} from "@/utils/api/mainApi";
+import {deleteOrder, searchOrder} from "@/utils/api/mainApi";
 import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
 import _ from "lodash";
 import {BoxCard, inputForm, MainCard, rangePickerForm} from "@/utils/commonForm";
@@ -30,6 +24,7 @@ export default function OrderRead({getPropertyId, getCopyPage}) {
     const [mini, setMini] = useState(true);
     const [totalRow, setTotalRow] = useState(0);
     const [loading, setLoading] = useState(false);
+
     const onGridReady = async (params) => {
         gridRef.current = params.api;
         await searchOrder({data: orderReadInitial}).then(v => {

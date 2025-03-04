@@ -1,5 +1,4 @@
 import React, {useRef, useState} from "react";
-import LayoutComponent from "@/component/LayoutComponent";
 import {projectReadColumn} from "@/utils/columnList";
 import {projectDetailUnit, projectReadInitial} from "@/utils/initialList";
 import Button from "antd/lib/button";
@@ -21,14 +20,15 @@ export default function ProjectRead({getPropertyId, getCopyPage}) {
     const copyInit = _.cloneDeep(projectReadInitial)
 
     const [info, setInfo] = useState(copyInit)
-
+    const [totalRow, setTotalRow] = useState(0);
     const [loading, setLoading] = useState(false);
 
 
     const onGridReady = async (params) => {
         gridRef.current = params.api;
         await searchProject({data: projectReadInitial}).then(v => {
-            params.api.applyTransaction({add: v ? v : []});
+            params.api.applyTransaction({add: v.data})
+            setTotalRow(v.pageInfo.totalRow)
         })
 
     };
@@ -48,7 +48,8 @@ export default function ProjectRead({getPropertyId, getCopyPage}) {
     async function searchInfo(e) {
         setLoading(e)
         await searchProject({data: info}).then(v => {
-            gridManage.resetData(gridRef, v);
+            gridManage.resetData(gridRef, v.data);
+            setTotalRow(v.pageInfo.totalRow)
             setLoading(false)
         }, e => setLoading(false))
     }
@@ -73,148 +74,149 @@ export default function ProjectRead({getPropertyId, getCopyPage}) {
     }
 
     function moveRegist() {
-        getCopyPage('project_write', {projectDetailList : commonFunc.repeatObject(projectDetailUnit, 10)})
+        getCopyPage('project_write', {projectDetailList: commonFunc.repeatObject(projectDetailUnit, 10)})
     }
 
 
     return <Spin spinning={loading} tip={'프로젝트 조회중...'}>
         <ReceiveComponent searchInfo={searchInfo}/>
 
-            <div style={{
-                display: 'grid',
-                gridTemplateRows: `${mini ? '350px' : '65px'} calc(100vh - ${mini ? 480 : 195}px)`,
-            }}>
-                <MainCard title={'프로젝트 조회'} list={[
-                    {name: '조회', func: searchInfo, type: 'primary'},
-                    {name: '초기화', func: clearAll, type: 'danger'},
-                    {name: '신규작성', func: moveRegist, type: 'default'}
-                ]} mini={mini} setMini={setMini}>
+        <div style={{
+            display: 'grid',
+            gridTemplateRows: `${mini ? '350px' : '65px'} calc(100vh - ${mini ? 480 : 195}px)`,
+        }}>
+            <MainCard title={'프로젝트 조회'} list={[
+                {name: '조회', func: searchInfo, type: 'primary'},
+                {name: '초기화', func: clearAll, type: 'danger'},
+                {name: '신규작성', func: moveRegist, type: 'default'}
+            ]} mini={mini} setMini={setMini}>
 
-                    {mini ? <div>
+                {mini ? <div>
 
-                            <div style={{
-                                display: 'grid',
-                                gridTemplateColumns: '1fr 1fr 1fr 1.5fr',
-                                columnGap: 5
-                            }}>
-                                <BoxCard title={'기본정보'} grid={"150px 250px 150px 1fr"}>
-                                    {rangePickerForm({title: '작성일자', id: 'searchDate', onChange: onChange, data: info})}
-                                    {inputForm({
-                                        title: '작성자',
-                                        id: 'searchCreatedBy',
-                                        onChange: onChange,
-                                        handleKeyPress: handleKeyPress,
-                                        data: info
-                                    })}
-                                    {inputForm({
-                                        title: '담당자',
-                                        id: 'searchManagerAdminName',
-                                        onChange: onChange,
-                                        handleKeyPress: handleKeyPress,
-                                        data: info
-                                    })}
+                        <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: '1fr 1fr 1fr 1.5fr',
+                            columnGap: 5
+                        }}>
+                            <BoxCard title={'기본정보'} grid={"150px 250px 150px 1fr"}>
+                                {rangePickerForm({title: '작성일자', id: 'searchDate', onChange: onChange, data: info})}
+                                {inputForm({
+                                    title: '작성자',
+                                    id: 'searchCreatedBy',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: '담당자',
+                                    id: 'searchManagerAdminName',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
 
-                                </BoxCard>
-                                <BoxCard title={'프로젝트 정보'} tooltip={tooltipInfo('readProject')}>
-                                    {inputForm({
-                                        title: 'PROJECT NO.',
-                                        id: 'searchDocumentNumberFull',
-                                        onChange: onChange,
-                                        handleKeyPress: handleKeyPress,
-                                        data: info
-                                    })}
-                                    {inputForm({
-                                        title: '프로젝트 제목',
-                                        id: 'searchProjectTitle',
-                                        onChange: onChange,
-                                        handleKeyPress: handleKeyPress,
-                                        data: info
-                                    })}
-                                    {inputForm({
-                                        title: 'Inquiry No.',
-                                        id: 'searchConnectInquiryNo',
-                                        onChange: onChange,
-                                        handleKeyPress: handleKeyPress,
-                                        data: info
-                                    })}
-                                </BoxCard>
-                                <BoxCard title={'매입처 정보'} tooltip={tooltipInfo('readAgency')}>
-                                    {inputForm({
-                                        title: '매입처명',
-                                        id: 'searchAgencyName',
-                                        onChange: onChange,
-                                        handleKeyPress: handleKeyPress,
-                                        data: info
-                                    })}
-                                    {inputForm({
-                                        title: '매입처 담당자명',
-                                        id: 'searchAgencyManagerName',
-                                        onChange: onChange,
-                                        handleKeyPress: handleKeyPress,
-                                        data: info
-                                    })}
-                                    {inputForm({
-                                        title: '담당자 전화번호',
-                                        id: 'searchAgencyManagerPhone',
-                                        onChange: onChange,
-                                        handleKeyPress: handleKeyPress,
-                                        data: info
-                                    })}
-                                    {inputForm({
-                                        title: '담당자 이메일',
-                                        id: 'searchAgencyManagerEmail',
-                                        onChange: onChange,
-                                        handleKeyPress: handleKeyPress,
-                                        data: info
-                                    })}
-                                </BoxCard>
-                                <BoxCard title={'고객사 정보'} tooltip={tooltipInfo('readCustomer')}>
-                                    {inputForm({
-                                        title: '고객사명',
-                                        id: 'searchCustomerName',
-                                        onChange: onChange,
-                                        handleKeyPress: handleKeyPress,
-                                        data: info
-                                    })}
-                                    {inputForm({
-                                        title: '고객사 담당자명',
-                                        id: 'searchCustomerManagerName',
-                                        onChange: onChange,
-                                        handleKeyPress: handleKeyPress,
-                                        data: info
-                                    })}
-                                    {inputForm({
-                                        title: '담당자 전화번호',
-                                        id: 'searchCustomerPhone',
-                                        onChange: onChange,
-                                        handleKeyPress: handleKeyPress,
-                                        data: info
-                                    })}
-                                    {inputForm({
-                                        title: '담당자 이메일',
-                                        id: 'searchCustomerEmail',
-                                        onChange: onChange,
-                                        handleKeyPress: handleKeyPress,
-                                        data: info
-                                    })}
-                                </BoxCard>
-                            </div>
+                            </BoxCard>
+                            <BoxCard title={'프로젝트 정보'} tooltip={tooltipInfo('readProject')}>
+                                {inputForm({
+                                    title: 'PROJECT NO.',
+                                    id: 'searchDocumentNumberFull',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: '프로젝트 제목',
+                                    id: 'searchProjectTitle',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: 'Inquiry No.',
+                                    id: 'searchConnectInquiryNo',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                            </BoxCard>
+                            <BoxCard title={'매입처 정보'} tooltip={tooltipInfo('readAgency')}>
+                                {inputForm({
+                                    title: '매입처명',
+                                    id: 'searchAgencyName',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: '매입처 담당자명',
+                                    id: 'searchAgencyManagerName',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: '담당자 전화번호',
+                                    id: 'searchAgencyManagerPhone',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: '담당자 이메일',
+                                    id: 'searchAgencyManagerEmail',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                            </BoxCard>
+                            <BoxCard title={'고객사 정보'} tooltip={tooltipInfo('readCustomer')}>
+                                {inputForm({
+                                    title: '고객사명',
+                                    id: 'searchCustomerName',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: '고객사 담당자명',
+                                    id: 'searchCustomerManagerName',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: '담당자 전화번호',
+                                    id: 'searchCustomerPhone',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: '담당자 이메일',
+                                    id: 'searchCustomerEmail',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                            </BoxCard>
                         </div>
-                        : <></>}
-                </MainCard>
+                    </div>
+                    : <></>}
+            </MainCard>
 
-                {/*@ts-ignored*/}
-                <TableGrid deleteComp={<Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
-                                               onClick={deleteList} >
-                    <CopyOutlined/>삭제
-                </Button>}
-                           getPropertyId={getPropertyId}
-                           gridRef={gridRef}
-                           onGridReady={onGridReady}
-                           columns={projectReadColumn}
-                           funcButtons={['print']}/>
+            {/*@ts-ignored*/}
+            <TableGrid deleteComp={<Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
+                                           onClick={deleteList}>
+                <CopyOutlined/>삭제
+            </Button>}
+                       totalRow={totalRow}
+                       getPropertyId={getPropertyId}
+                       gridRef={gridRef}
+                       onGridReady={onGridReady}
+                       columns={projectReadColumn}
+                       funcButtons={['print']}/>
 
-            </div>
+        </div>
 
 
     </Spin>

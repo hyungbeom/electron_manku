@@ -70,11 +70,13 @@ export default function ProjectUpdate({dataInfo = {projectDetail: [], attachment
     };
 
     useEffect(() => {
+        setLoading(true)
         getDataInfo().then(v => {
             const {projectDetail, attachmentFileList} = v;
             setFileList(fileManage.getFormatFiles(attachmentFileList))
             setInfo(projectDetail)
             initInfo(projectDetail[listType]);
+            setLoading(false)
         })
     }, [updateKey['project_update']])
 
