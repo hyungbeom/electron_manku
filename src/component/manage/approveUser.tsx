@@ -34,7 +34,6 @@ export default function ApproveUser({memberList}:any){
             dataIndex: 'adminId',
             key: 'adminId',
             render: (text) => {
-                console.log(text,'text:')
                 return <Button type={'primary'} onClick={async () => {
                     await getData.post('admin/approvalAdmin', {'adminId': text}).then(async v => {
                         if (v.data.code === 1) {

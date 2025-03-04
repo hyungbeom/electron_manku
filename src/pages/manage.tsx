@@ -10,10 +10,11 @@ import TotalUser from "@/component/manage/totalUser";
 import ApproveUser from "@/component/manage/approveUser";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {getCookie} from "@/manage/function/cookie";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 
-export default function Manage({memberList}:any) {
+export default function Manage(any) {
 
+    const [memberList, setMemberList] = useState([])
 
     useEffect(()=>{
         getInfo()
@@ -26,7 +27,7 @@ export default function Manage({memberList}:any) {
             "page": 1,
             "limit": -1
         }).then(v=>{
-            console.log(v,'v;;;;;')
+            setMemberList(v.data.entity.adminList)
         })
     }
 
