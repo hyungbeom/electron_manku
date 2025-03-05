@@ -27,7 +27,8 @@ export const findCodeInfo = async (event, setInfo, openModal, type?, setValidate
         } else if (size === 1) {
             switch (event.target.id) {
                 case 'agencyCode' : {
-                    const {agencyId, agencyCode, agencyName, currencyUnit, email, managerName} = data[0];
+                    const {agencyId, agencyCode, agencyName, currencyUnit, email, managerName, phoneNumber} = data[0];
+                    console.log(data[0],'data[0]:')
                     const returnDocumentNumb = await checkInquiryNo({data: {agencyCode: agencyCode, type: type}})
                     setInfo(v => {
                         return {
@@ -38,7 +39,8 @@ export const findCodeInfo = async (event, setInfo, openModal, type?, setValidate
                             agencyName: agencyName,
                             agencyManagerName: managerName,
                             agencyManagerEmail: email,
-                            currencyUnit: currencyUnit
+                            currencyUnit: currencyUnit,
+                            agencyManagerPhoneNumber: phoneNumber
                         }
                     });
 

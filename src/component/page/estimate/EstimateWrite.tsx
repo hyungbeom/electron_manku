@@ -11,7 +11,7 @@ import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import TableGrid from "@/component/tableGrid";
 import {useRouter} from "next/router";
 import SearchInfoModal from "@/component/SearchAgencyModal";
-import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
+import {commonFunc, commonManage, fileManage, gridManage} from "@/utils/commonManage";
 import {
     BoxCard,
     datePickerForm,
@@ -24,7 +24,7 @@ import {
 } from "@/utils/commonForm";
 import _ from "lodash";
 import {findCodeInfo, findDocumentInfo} from "@/utils/api/commonApi";
-import {checkInquiryNo, saveEstimate} from "@/utils/api/mainApi";
+import {checkInquiryNo, getAttachmentFileList, saveEstimate} from "@/utils/api/mainApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import Spin from "antd/lib/spin";
 import EstimatePaper from "@/component/견적서/EstimatePaper";
@@ -231,8 +231,27 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
 
         setLoading(true)
 
-        await saveEstimate({data: formData, router: router, returnFunc: returnFunc})
-        setLoading(false)
+        await saveEstimate({data: formData, router: router, returnFunc: returnFunc}).then(v=>{
+            getAttachFile(v.data.entity.estimateId)
+            // setLoading(false)
+        })
+    }
+
+    async function getAttachFile(e) {
+        if (e) {
+            await getAttachmentFileList({
+                data: {
+                    "relatedType": "ESTIMATE",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
+                    "relatedId": e
+                }
+            }).then(v => {
+                const list = fileManage.getFormatFiles(v);
+                setFileList(list)
+                setLoading(false)
+            })
+        } else {
+            setLoading(false)
+        }
     }
 
     function returnFunc(code, msg) {
@@ -262,6 +281,7 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
             return {...v, managerAdminId: e.adminId, managerAdminName: e.name}
         })
     };
+
 
 
     return  <div style={{overflow : 'hidden'}}><Spin spinning={loading} tip={'견적서 등록중...'}>
