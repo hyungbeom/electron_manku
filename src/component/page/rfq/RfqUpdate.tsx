@@ -298,7 +298,7 @@ export default function RqfUpdate({ updateKey = {}, getCopyPage = null, managerL
                                     data: info
                                 })}
                                 {inputForm({
-                                    title: '매입처담당자',
+                                    title: '매입처이메일',
                                     id: 'agencyManagerEmail',
                                     onChange: onChange,
                                     data: info
