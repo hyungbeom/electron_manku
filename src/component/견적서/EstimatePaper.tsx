@@ -248,7 +248,7 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
     }
 
     return (
-        <>
+        <div style={{position : 'absolute', top : 0, zIndex : -100}}>
 
             <div ref={pdfRef} style={{
                 width: '1000px',  // A4 가로
@@ -258,7 +258,9 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                 flexDirection: 'column',
                 justifyContent: 'space-between',
                 padding: 30,
-                border: '1px solid lightGray'
+                border: '1px solid lightGray',
+
+
             }}>
 
                 <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
@@ -457,7 +459,7 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                     </>
                 })}
             </div>
-        </>
+        </div>
     );
 };
 const Model = ({v, refList, setSplitData}) => {
