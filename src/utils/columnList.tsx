@@ -748,7 +748,7 @@ export const tableEstimateReadColumns = [
     {
         // headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
         // checkboxSelection: true, // 각 행에 체크박스 추가
-        headerName: 'Inquiry No.',
+        headerName: 'INQUIRY NO.',
         field: 'documentNumberFull',
         pinned: 'left',
         maxWidth: 100, // 컬럼 너비
@@ -985,7 +985,7 @@ export const rfqReadColumns = [
 
     {
 
-        headerName: 'Inquiry No.',
+        headerName: 'INQUIRY NO.',
         field: 'documentNumberFull',
         maxWidth: 100, // 컬럼 너비
         pinned: 'left',
@@ -1004,7 +1004,7 @@ export const rfqReadColumns = [
         },
     },
     {
-        headerName: '대리점명',
+        headerName: '매입처명',
         field: 'agencyName',
         minWidth: 100,
         maxWidth: 120,
@@ -1832,7 +1832,7 @@ export const subAgencyReadColumns = [
         key: 'agencyCode',
     },
     {
-        headerName: '대리점명',
+        headerName: '매입처명',
         field: 'agencyName',
         key: 'agencyName',
     },
@@ -2672,7 +2672,7 @@ export const projectWriteColumn = [
     {
 
         pinned: 'left',
-        headerName: '연결 Inquiry No.',
+        headerName: '연결 INQUIRY NO.',
         field: 'connectInquiryNo',
         maxWidth: 110,
         editable: true,
@@ -2993,7 +2993,7 @@ export const delilveryReadColumn = [
         field: 'deliveryType',
         minWidth: 80
     }, {
-        headerName: 'Inquiry No.',
+        headerName: 'INQUIRY NO.',
         field: 'connectInquiryNo',
         maxWidth: 120,
         pinned: 'left',
@@ -3070,7 +3070,7 @@ export const remittanceReadColumn = [
         pinned: "left", // 왼쪽에 고정
         filter: false
     },{
-        headerName: 'Inquiry No.',
+        headerName: 'INQUIRY NO.',
         field: 'connectInquiryNo',
         maxWidth: 80,
         pinned: 'left'
@@ -3146,7 +3146,7 @@ export const storeWriteColumn = [
         filter: false
     },{
 
-        headerName: 'Inquiry No.',
+        headerName: 'INQUIRY NO.',
         field: 'orderDocumentNumberFull',
         minWidth: 150,
         editable: true
@@ -3305,7 +3305,7 @@ export const storeReadColumn = [
         maxWidth: 100,
         pinned: 'left'
     }, {
-        headerName: 'Inquiry No.',
+        headerName: 'INQUIRY NO.',
         field: 'orderDocumentNumberFull',
         maxWidth: 120,
 

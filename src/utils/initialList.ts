@@ -33,7 +33,7 @@ export const estimateDetailUnit = {
 
 export const estimateWriteInitial = {
     "writtenDate": moment().format('YYYY-MM-DD'),    // 작성일
-    "documentNumberFull": "", // INQUIRY No.
+    "documentNumberFull": "", // INQUIRY NO.
     "agencyCode": "",            // 대리점코드
     "agencyManagerName": "",
     "agencyManagerEmail": "",
@@ -970,7 +970,7 @@ export const reqWriteList = {
 
 // ==============================================================================================================================================
 export const projectWriteList = {
-    "연결 Inquiry No.": 'connectInquiryNo',
+    "연결 INQUIRY NO.": 'connectInquiryNo',
     "MAKER": 'maker',
     "ITEM": 'item',
     "규격": 'spec',
@@ -1011,7 +1011,7 @@ export const orderWriteList = {
     금액: 'totalPrice'
 }
 export const storeWriteList = {
-    'Inquiry No.': 'orderDocumentNumberFull',
+    'INQUIRY NO.': 'orderDocumentNumberFull',
     '세부항목 번호': 'itemDetailNo',
     매입처명: 'agencyName',
     고객사명: 'customerName',

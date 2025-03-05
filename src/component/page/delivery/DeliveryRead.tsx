@@ -106,7 +106,7 @@ export default function DeliveryRead({getPropertyId, getCopyPage}) {
                                 <BoxCard title={'기본 정보'}>
                                     {rangePickerForm({title: '출고일자', id: 'searchDate', onChange: onChange, data: info})}
                                     {inputForm({
-                                        title: 'Inquiry No.',
+                                        title: 'INQUIRY NO.',
                                         id: 'searchConnectInquiryNo',
                                         onChange: onChange,
                                         handleKeyPress: handleKeyPress,

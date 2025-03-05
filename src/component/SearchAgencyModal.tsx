@@ -288,11 +288,10 @@ export default function SearchInfoModal({
                                              }
                                          }).then(data => {
 
-                                             console.log(e.data,':::::')
                                              setInfo(v => {
                                                  return {
                                                      ...v,
-                                                     documentNumberFull: data,
+                                                     // documentNumberFull: data,
                                                      agencyManagerId: e.data.agencyId,
                                                      agencyCode: e.data.agencyCode,
                                                      agencyName: e.data.agencyName,

@@ -28,12 +28,12 @@ export const findCodeInfo = async (event, setInfo, openModal, type?, setValidate
             switch (event.target.id) {
                 case 'agencyCode' : {
                     const {agencyId, agencyCode, agencyName, currencyUnit, email, managerName, phoneNumber} = data[0];
-                    console.log(data[0],'data[0]:')
-                    const returnDocumentNumb = await checkInquiryNo({data: {agencyCode: agencyCode, type: type}})
+                    // console.log(data[0],'data[0]:')
+                    // const returnDocumentNumb = await checkInquiryNo({data: {agencyCode: agencyCode, type: type}})
                     setInfo(v => {
                         return {
                             ...v,
-                            documentNumberFull: type === 'ESTIMATE' ? v.documentNumberFull : returnDocumentNumb,
+                            // documentNumberFull: type === 'ESTIMATE' ? v.documentNumberFull : returnDocumentNumb,
                             agencyId: agencyId,
                             agencyCode: agencyCode,
                             agencyName: agencyName,

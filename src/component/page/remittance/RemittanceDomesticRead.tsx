@@ -104,7 +104,7 @@ export default function RemittanceDomesticRead({getPropertyId, getCopyPage}) {
                             <BoxCard title={'기본 정보'}>
 
                                 {inputForm({
-                                    title: 'Inquiry No.',
+                                    title: 'INQUIRY NO.',
                                     id: 'searchConnectInquiryNo',
                                     onChange: onChange,
                                     handleKeyPress: handleKeyPress,

@@ -120,7 +120,7 @@ export const tableOrderCustomerInfo = {
 export const subAgencyReadInfo = {
     "agencyId": {title : 'No'},                  // MAKER
     "agencyCode": {title : '코드'},                  // MAKER
-    "agencyName": {title : '대리점명'},                  // MAKER
+    "agencyName": {title : '매입처명'},                  // MAKER
     "unpaidAmount": {title : '미입고외화'},                  // MAKER
     "paidAmount": {title : '입고외화'},                  // MODEL
     "totalAmount": {title : '외화합계'},                   // ITEM

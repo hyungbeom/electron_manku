@@ -173,9 +173,9 @@ export default function RqfWrite({ copyPageInfo = {}}) {
         if (!info['agencyCode']) {
             return message.warn('매입처 코드가 누락되었습니다.')
         }
-        if (!info['documentNumberFull']) {
-            return message.warn('INQUIRY NO.가 누락되었습니다.')
-        }
+        // if (!info['documentNumberFull']) {
+        //     return message.warn('INQUIRY NO.가 누락되었습니다.')
+        // }
         const list = gridManage.getAllData(gridRef);
         const filterList = list.filter(v => !!v.model);
         if (!filterList.length) {
@@ -287,7 +287,9 @@ export default function RqfWrite({ copyPageInfo = {}}) {
                                     title: 'INQUIRY NO.',
                                     id: 'documentNumberFull',
                                     onChange: onChange,
-                                    data: info
+                                    data: info,
+                                    disabled : true,
+                                    placeHolder : '자동생성'
                                 })}
                                 {inputForm({title: '작성자', id: 'createBy', disabled: true, onChange: onChange, data: info})}
                                 <div>

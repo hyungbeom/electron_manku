@@ -146,7 +146,7 @@ export default function ProjectRead({getPropertyId, getCopyPage}) {
                                     data: info
                                 })}
                                 {inputForm({
-                                    title: 'Inquiry No.',
+                                    title: 'INQUIRY NO.',
                                     id: 'searchConnectInquiryNo',
                                     onChange: onChange,
                                     handleKeyPress: handleKeyPress,

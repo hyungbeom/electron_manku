@@ -124,7 +124,7 @@ export const refWriteInitial = {
 }
 
 export const estimateWriteInitial = {
-    "documentNumberFull": "", // INQUIRY No.
+    "documentNumberFull": "", // INQUIRY NO.
     "writtenDate": "",    // 작성일
     "agencyCode": "",            // 대리점코드
     "customerCode": "",             // CUSTOMER 코드

@@ -44,7 +44,7 @@ export default function Deahan({info, setInfo}) {
         <TopBoxCard title={''} grid={'1fr 1fr 0.6fr 1fr 1fr 1fr'}>
             {datePickerForm({title: '출고일자', id: 'deliveryDate', onChange: onChange, data: info})}
             {inputForm({
-                title: '연결 INQUIRY No.',
+                title: '연결 INQUIRY NO.',
                 id: 'connectInquiryNo',
                 suffix: <DownloadOutlined style={{cursor: 'pointer'}}/>,
                 onChange: onChange, data: info,

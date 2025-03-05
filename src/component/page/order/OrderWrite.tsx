@@ -243,7 +243,7 @@ export default function OrderWrite({dataInfo = [],  copyPageInfo}) {
                             })}
                             {inputForm({
                                 placeholder: '폴더생성 규칙 유의',
-                                title: '연결 INQUIRY No.',
+                                title: '연결 INQUIRY NO.',
                                 id: 'ourPoNo',
                                 suffix: <DownloadOutlined style={{cursor: 'pointer'}}/>,
                                 onChange: onChange, data: info, handleKeyPress: handleKeyPress

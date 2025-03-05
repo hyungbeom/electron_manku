@@ -352,7 +352,7 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
                                 })}
                                 {inputForm({
                                     placeholder: '폴더생성 규칙 유의',
-                                    title: '연결 INQUIRY No.',
+                                    title: '연결 INQUIRY NO.',
                                     id: 'connectDocumentNumberFull',
                                     suffix: <DownloadOutlined style={{cursor: 'pointer'}}/>
                                     , onChange: onChange, data: info, handleKeyPress: handleKeyPress

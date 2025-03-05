@@ -60,7 +60,7 @@ export function WriteRfq_V({info, onChange, setIsModalOpen}){
                            }/>}/>
                 </div>
                 <div>
-                    <div style={{paddingBottom: 3}}>대리점명</div>
+                    <div style={{paddingBottom: 3}}>매입처명</div>
                     <Input id={'agencyName'} value={info['agencyName']} onChange={onChange} size={'small'}/>
                 </div>
             </TwinInputBox>
