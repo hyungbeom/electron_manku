@@ -104,7 +104,7 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
             const {output, documentNumbers} = generateFormattedOutputWithDocumentNumbers(Object.values(src))
 
 
-            console.log(agencyManagerName,'??')
+            console.log(Object.values(src)[0][0],'??')
             return {
                 agencyManagerName:agencyManagerName,
                 agencyManagerEmail: agencyManagerEmail,
@@ -112,7 +112,7 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
                 sendName: userInfo.name,
                 detailList: Object.values(src),
                 title: 'Inquiry ' + formatDocumentNumbers(documentNumbers),
-                contents: `${!!agencyManagerName ? (agencyManagerName === 'undefined' ? '' : agencyManagerName) : ''}  \n\n아래 진행 부탁 드립니다.\n\n` + output
+                contents: `${agencyManagerName}  \n\n아래 진행 부탁 드립니다.\n\n` + output
             }
         })
 
