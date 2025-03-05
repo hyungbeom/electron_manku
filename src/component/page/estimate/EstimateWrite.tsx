@@ -35,7 +35,7 @@ import moment from "moment";
 
 
 const listType = 'estimateDetailList'
-export default function EstimateWrite({ copyPageInfo = {}}) {
+export default function EstimateWrite({copyPageInfo = {}}) {
 
     const [memberList, setMemberList] = useState([]);
 
@@ -95,19 +95,58 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
     const [loading, setLoading] = useState(false);
 
 
-    const onGridReady = (params) => {
+    function removeLastSegment(str) {
+        // 문자열에서 '-'의 개수를 확인
+        let parts = str.split('-');
+
+        // '-'가 3개 이상일 때만 마지막 부분 제거
+        if (parts.length > 3) {
+            parts.pop();
+        }
+
+        // 다시 '-'로 합쳐 반환
+        return parts.join('-');
+    }
+
+    const onGridReady = async (params) => {
         gridRef.current = params.api;
-        setInfo(isEmptyObj(copyPageInfo['estimate_write'])?copyPageInfo['estimate_write'] : infoInit);
-        params.api.applyTransaction({add: copyPageInfo['estimate_write'][listType] ? copyPageInfo['estimate_write'][listType] : commonFunc.repeatObject(estimateDetailUnit, 10)});
+
+
+        if (copyPageInfo['estimate_write']) {
+            // 문서번호
+
+            await getData.post('estimate/generateDocumentNumberFull', {
+                type: 'ESTIMATE',
+                documentNumberFull: removeLastSegment(copyPageInfo['estimate_write'].documentNumberFull).toUpperCase()
+            }).then(v => {
+                if (v.data.code === 1) {
+                    console.log(v.data.entity.newDocumentNumberFull, '::::')
+                    setInfo({
+                        ...copyPageInfo['estimate_write'],
+                        documentNumberFull: v.data.entity.newDocumentNumberFull
+                    });
+                }else{
+                    setInfo(copyPageInfo['estimate_write']);
+                }
+
+            })
+
+            params.api.applyTransaction({add: copyPageInfo['estimate_write'][listType]});
+        } else {
+            setInfo(infoInit);
+            params.api.applyTransaction({add: commonFunc.repeatObject(estimateDetailUnit, 10)});
+        }
+
         setReady(true)
     };
 
     useEffect(() => {
-        if(ready) {
-            if(copyPageInfo['estimate_write'] && !isEmptyObj(copyPageInfo['estimate_write'])){
+        if (ready) {
+            if (copyPageInfo['estimate_write'] && !isEmptyObj(copyPageInfo['estimate_write'])) {
                 setInfo(infoInit);
-                gridManage.resetData(gridRef,commonFunc.repeatObject(estimateDetailUnit, 10))
-            }else{
+                gridManage.resetData(gridRef, commonFunc.repeatObject(estimateDetailUnit, 10))
+            } else {
+                console.log(copyPageInfo['estimate_write'].documentNumberFull, '::')
                 setInfo({...copyPageInfo['estimate_write'], ...adminParams});
                 gridManage.resetData(gridRef, copyPageInfo['estimate_write'][listType])
             }
@@ -170,7 +209,7 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
                                 validityPeriod: '견적 발행 후 10일간',
                                 paymentTerms: '발주시 50% / 납품시 50%',
                                 shippingTerms: '귀사도착도',
-                                writtenDate : moment().format('YYYY-MM-DD'),
+                                writtenDate: moment().format('YYYY-MM-DD'),
                                 ...adminParams
                             }
                         });
@@ -231,7 +270,7 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
 
         setLoading(true)
 
-        await saveEstimate({data: formData, router: router, returnFunc: returnFunc}).then(v=>{
+        await saveEstimate({data: formData, router: router, returnFunc: returnFunc}).then(v => {
             getAttachFile(v.data.entity.estimateId)
             // setLoading(false)
         })
@@ -283,8 +322,7 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
     };
 
 
-
-    return  <div
+    return <div
         // style={{overflow : 'hidden'}}
     ><Spin spinning={loading} tip={'견적서 등록중...'}>
 
@@ -315,8 +353,8 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
                                 })}
                                 {inputForm({title: '작성자', id: 'createdBy', disabled: true, onChange: onChange, data: info})}
                                 <div>
-                                    <div style={{paddingBottom: 4.5, fontSize : 12}}>담당자</div>
-                                    <Select style={{width: '100%', fontSize : 12}} size={'small'}
+                                    <div style={{paddingBottom: 4.5, fontSize: 12}}>담당자</div>
+                                    <Select style={{width: '100%', fontSize: 12}} size={'small'}
                                             showSearch
                                             value={info['managerAdminId']}
                                             placeholder="Select a person"
