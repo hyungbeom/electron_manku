@@ -284,7 +284,9 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
 
 
 
-    return  <div style={{overflow : 'hidden'}}><Spin spinning={loading} tip={'견적서 등록중...'}>
+    return  <div
+        // style={{overflow : 'hidden'}}
+    ><Spin spinning={loading} tip={'견적서 등록중...'}>
 
         <SearchInfoModal info={info} setInfo={setInfo}
                          open={isModalOpen}
@@ -295,7 +297,7 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
             <div style={{
                 display: 'grid',
                 gridTemplateRows: `${mini ? '500px' : '65px'} calc(100vh - ${mini ? 605 : 195}px)`,
-                overflowY: 'hidden',
+                // overflowY: 'hidden',
                 columnGap: 5
             }}>
                 <MainCard title={'견적서 작성'} list={[

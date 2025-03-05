@@ -4,6 +4,8 @@ import {amountFormat} from "@/utils/columnList";
 import Input from "antd/lib/input";
 import Select from "antd/lib/select";
 import TextArea from "antd/lib/input/TextArea";
+import {useAppSelector} from "@/utils/common/function/reduxHooks";
+import {getData} from "@/manage/function/api";
 
 const getTextAreaValues = (ref) => {
     if (ref?.current) {
@@ -18,6 +20,7 @@ const getTextAreaValues = (ref) => {
 };
 
 const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any) => {
+    const userInfo = useAppSelector((state) => state.user);
 
     const [info, setInfo] = useState<any>();
 
@@ -31,21 +34,33 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
     }, [data, gridRef.current])
 
 
+    async function getInfo() {
+        return await getData.post('admin/getAdminList', {
+            "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
+            "searchAuthority": null,    // 1: 일반, 0: 관리자
+            "page": 1,
+            "limit": -1
+        }).then(v => {
+            return v
+        })
+    }
     useEffect(() => {
-        setInfo([
-            {label: '견적일자', value: data.writtenDate, label2: '담당자', value2: data.managerAdminName},
-            {label: '견적서 No.', value: data.documentNumberFull, label2: '연락처', value2: data.managerPhoneNumber},
-            {label: '업체명', value: data.agencyName, label2: 'E-mail', value2: data.email},
-            {label: '담당자', value: data.agencyManagerName, label2: '유효기간', value2: data.validityPeriod},
-            {label: '연락처', value: data.agencyManagerPhoneNumber, label2: '결제조건', value2: data.paymentTerms},
-            {label: 'faxNumber', value: data.faxNumber, label2: 'email', value2: data.email},
-            {
-                label: '국내운송비',
-                value: data.shippingTerms,
-                label2: '납기',
-                value2: data.delivery
-            }
-        ])
+        getInfo().then(v => {
+           const findObj = v.data.entity.adminList.find(src=> src.adminId === data.managerAdminId);
+           console.log(findObj,'findObj:')
+
+            setInfo([
+                {label: '견적일자', value: data.writtenDate, label2: '담당자', value2: findObj.name},
+                {label: '견적서 No.', value: data.documentNumberFull, label2: '연락처', value2: findObj.contactNumber},
+                {label: '고객사', value: data.customerName, label2: 'E-mail', value2: findObj.email},
+                {label: '담당자', value: data.customerManagerName, label2: '유효기간', value2: data.validityPeriod},
+                {label: '연락처', value: data.customerManagerPhone, label2: '결제조건', value2: data.paymentTerms},
+                {label: 'mail', value: data.customerManagerEmail, label2: '납기', value2: data.delivery},
+                {label: 'Fax', value: data.faxNumber, label2: '납품조건', value2: data.shippingTerms},
+
+            ])
+        })
+
 
 
     }, [data])
@@ -162,7 +177,7 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
             console.log((totalAmount), 'info.totalAmount::')
             if (document.getElementById("total_amount")) {
                 document.getElementById("total_amount").textContent = amountFormat(totalAmount);
-                document.getElementById("total_unit_price").textContent = amountFormat(totalPrice);
+                document.getElementById("total_unit_price").textContent = '(V.A.T)별도';
                 document.getElementById("total_unit").textContent = info.unit;
                 document.getElementById("total_quantity").textContent = totalQuantity.toString()
             }
@@ -248,7 +263,9 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
     }
 
     return (
-        <div style={{position : 'absolute', top : 0, zIndex : -100}}>
+        <div
+            // style={{position : 'absolute', top : 0, zIndex : -100}}
+        >
 
             <div ref={pdfRef} style={{
                 width: '1000px',  // A4 가로
@@ -582,7 +599,6 @@ const DataTable = ({src, indexNumber, refList, splitData, setSplitData}) => {
         </thead>
 
         {src.map((v, idx) => {
-            console.log(v.quantity, '??')
             return <thead>
             <tr>
                 <th colSpan={2} style={{
