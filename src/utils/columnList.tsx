@@ -963,10 +963,18 @@ export const rfqReadColumns = [
         headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
         checkboxSelection: true, // 각 행에 체크박스 추가
         valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
-        cellStyle: {textAlign: "center"}, // 스타일 설정
-        maxWidth: 45, // 컬럼 너비
+
+        maxWidth: 55, // 컬럼 너비
         pinned: "left", // 왼쪽에 고정
-        filter: false
+        filter: false,
+        cellStyle: (params) => {
+
+            if (!!params.data.isRead) {
+                return { color: 'blue' ,textAlign: "center"}; // 값이 100 이상이면 초록색
+            } else {
+                return {textAlign: "center"}; // 값이 100 미만이면 빨간색
+            }
+        }
     },
     {
         headerName: '작성일자',

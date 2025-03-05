@@ -15,13 +15,12 @@ export const saveRfq = async ({data, router, setLoading}) => {
         if (v.data.code === 1) {
             window.opener?.postMessage('write', window.location.origin);
             message.success('저장되었습니다.');
-            router.push(`/rfq_update?estimateRequestId=${v?.data?.entity?.estimateRequestId}`)
-        }else{
-            setLoading(false);
+            // router.push(`/rfq_update?estimateRequestId=${v?.data?.entity?.estimateRequestId}`)
         }
+        setLoading(false);
     }, err => {
         setLoading(false);
-       console.log(err)
+        console.log(err)
     })
 };
 
@@ -39,7 +38,7 @@ export const updateRfq = async ({data, returnFunc}) => {
 };
 
 export const getAttachmentFileList = async ({data}) => {
-   return await getFormData.post('common/getAttachmentFileList', data).then(v => {
+    return await getFormData.post('common/getAttachmentFileList', data).then(v => {
         const code = v.data.code;
         if (code === 1) {
             return v.data.entity;
@@ -52,7 +51,8 @@ export const getAttachmentFileList = async ({data}) => {
 
 export const searchRfq = async ({data}) => {
     const result = await getData.post('estimate/getEstimateRequestList', data);
-    return result?.data?.entity?.estimateRequestList
+    const {estimateRequestList, pageInfo} = result?.data?.entity
+    return {data: estimateRequestList, pageInfo: pageInfo}
 };
 
 
@@ -76,12 +76,11 @@ export const deleteRfq = async ({
 export const saveEstimate = async ({data, router, returnFunc}) => {
     await getFormData.post('estimate/addEstimate', data).then(v => {
         const {code} = v.data
-        const  msg = v.data.message
+        const msg = v.data.message
         if (code === 1) {
             window.opener?.postMessage('write', window.location.origin);
             message.success('저장되었습니다.');
-            router.push(`/estimate_update?estimateId=${v.data.entity.estimateId}`)
-        }else{
+        } else {
             returnFunc(code, msg)
         }
     });
@@ -92,7 +91,7 @@ export const saveRemittance = async ({data, router}) => {
         if (v.data.code === 1) {
             window.opener?.postMessage('write', window.location.origin);
             message.success('저장되었습니다.')
-            router.push(`/remittance_domestic_update?remittanceId=${v.data.entity.remittanceId}`)
+            // router.push(`/remittance_domestic_update?remittanceId=${v.data.entity.remittanceId}`)
         } else {
             message.error('저장에 실패하였습니다.')
         }
@@ -105,7 +104,6 @@ export const saveProject = async ({data, router, returnFunc}) => {
         const code = v.data.code;
         if (code === 1) {
             message.success('저장되었습니다.')
-            router.push(`/project_update?projectId=${v.data.entity.projectId}`)
         } else if (code === -20001) {
             message.error('PROJECT NO.가 중복되었습니다.')
         } else {
@@ -119,11 +117,10 @@ export const saveStore = async ({data, router}) => {
         if (v.data.code === 1) {
             window.opener?.postMessage('write', window.location.origin);
             message.success('저장되었습니다.')
-            router.push(`/store_update?orderStatusId=${v.data.entity.orderStatusId}`)
-        } else if(v.data.code === -20001) {
+        } else if (v.data.code === -20001) {
 
             message.warning('B/L No.가 이미 존재합니다.')
-        }else{
+        } else {
             message.error('저장에 실패하였습니다.')
         }
     });
@@ -135,9 +132,9 @@ export const updateStore = async ({data, router}) => {
         if (v.data.code === 1) {
             window.opener?.postMessage('write', window.location.origin);
             message.success('수정되었습니다.')
-        } else if(v.data.code === -20001) {
+        } else if (v.data.code === -20001) {
             message.error('B/L No.가 중복됩니다.')
-        } else{
+        } else {
             message.error('수정에 실패하였습니다.')
 
         }
@@ -184,20 +181,27 @@ export const updateEstimate = async ({data, returnFunc}) => {
 
 export const searchEstimate = async ({data}) => {
 
-    const result = await getData.post('estimate/getEstimateList', {
+    return await getData.post('estimate/getEstimateList', {
         ...data, page: 1,
         limit: -1
-    });
+    }).then(v => {
+        if (v.data.code === 1) {
+            const {estimateList, pageInfo} = v?.data?.entity
+            return {data: estimateList, pageInfo: pageInfo}
+        }
+    })
 
-    return result?.data?.entity?.estimateList
 };
 
 
 export const searchProject = async ({data}) => {
 
-    const result = await getData.post('project/getProjectList', data);
-    console.log(result, 'resultresult')
-    return result?.data?.entity?.projectList
+    return await getData.post('project/getProjectList', data).then(v => {
+        if (v.data.code === 1) {
+            const {projectList, pageInfo} = v.data.entity;
+            return {data: projectList, pageInfo: pageInfo}
+        }
+    })
 };
 
 export const deleteProjectList = async ({
@@ -288,12 +292,12 @@ export const deleteOrderStatusDetails = async ({
 export const saveOrder = async ({data, router, returnFunc}) => {
     await getFormData.post('order/addOrder', data).then(v => {
         const {code} = v.data
-        const  msg = v.data.message
+        const msg = v.data.message
         if (code === 1) {
             window.opener?.postMessage('write', window.location.origin);
             message.success('저장되었습니다')
-            router.push(`/order_update?orderId=${v.data.entity.orderId}`)
-        }else{
+            // router.push(`/order_update?orderId=${v.data.entity.orderId}`)
+        } else {
             returnFunc(code, msg)
         }
     });
@@ -316,11 +320,15 @@ export const updateOrder = async ({data, returnFunc}) => {
 
 export const searchOrder = async ({data}) => {
 
-    const result = await getData.post('order/getOrderList', {
+    return await getData.post('order/getOrderList', {
         ...data, page: 1,
         limit: -1
-    });
-    return result?.data?.entity?.orderList
+    }).then(v => {
+        if (v.data.code === 1) {
+            const {orderList, pageInfo} = v?.data?.entity;
+            return {data: orderList, pageInfo: pageInfo}
+        }
+    })
 };
 
 export const deleteOrder = async ({
@@ -340,9 +348,9 @@ export const deleteOrder = async ({
 };
 
 export const deleteHsCodeList = async ({
-                                      data, returnFunc = function (e) {
+                                           data, returnFunc = function (e) {
     }
-                                  }) => {
+                                       }) => {
 
     await getData.post('hsCode/deleteHsCodes', data).then(v => {
         const code = v.data.code;
@@ -368,16 +376,18 @@ export const getDeliveryList = async ({data}) => {
     }
 };
 export const getOrderStatusList = async ({data}) => {
-    const v = await getData.post('order/getOrderStatusList', {
+    return await getData.post('order/getOrderStatusList', {
         ...data, page: 1,
         limit: -1
+    }).then(v => {
+        if (v.data.code === 1) {
+            const {orderStatusList, pageInfo} =v.data.entity
+            return {data : orderStatusList, pageInfo : pageInfo}
+        } else {
+            message.error('오류가 발생하였습니다. 다시 시도해주세요.')
+        }
     })
-    if (v.data.code === 1) {
-        console.log(v, 'v:')
-        return v.data.entity.orderStatusList
-    } else {
-        message.error('오류가 발생하였습니다. 다시 시도해주세요.')
-    }
+
 };
 
 export const getRemittanceList = async ({data}) => {
@@ -399,31 +409,127 @@ export const getRemittanceList = async ({data}) => {
 // =====================================================================================================================
 // =====================================================================================================================
 
-export const saveDomesticAgency = async ({data, router}:any) => {
+export const saveDomesticAgency = async ({data, router}: any) => {
 
-    getData.post('agency/addAgency', data).then(v=>{
+    getData.post('agency/addAgency', data).then(v => {
         const code = v.data.code;
-        if(code === 1){
+        if (code === 1) {
             window.opener?.postMessage('write', window.location.origin);
             message.success('등록되었습니다.')
             router.push(`/data/agency/domestic/agency_update?`)
-        }else{
+        } else {
             message.error('실패하였습니다.')
         }
     })
 };
 
-export const updateDomesticAgency = async ({data, returnFunc}:any) => {
+export const updateDomesticAgency = async ({data, returnFunc}: any) => {
 
-    getData.post('agency/updateOverseasAgency', data).then(v=>{
+    getData.post('agency/updateOverseasAgency', data).then(v => {
         const code = v.data.code;
-        if(code === 1){
+        if (code === 1) {
             window.opener?.postMessage('write', window.location.origin);
             message.success('수정되었습니다.')
-        }else{
+        } else {
             message.error('실패하였습니다.')
         }
         returnFunc();
+    })
+
+};
+
+
+export const searchDomesticAgency = async ({data}: any) => {
+
+   return getData.post('agency/getAgencyList', data).then(v => {
+        const code = v.data.code;
+        if (code === 1) {
+            const {agencyList, pageInfo} =v.data.entity
+            return {data : agencyList, pageInfo : pageInfo}
+            message.success('수정되었습니다.')
+        } else {
+            message.error('실패하였습니다.')
+        }
+    })
+
+};
+
+export const searchOverseasAgency = async ({data}: any) => {
+
+    return getData.post('agency/getOverseasAgencyList', data).then(v => {
+        const code = v.data.code;
+        if (code === 1) {
+            const {overseasAgencyList, pageInfo} =v.data.entity
+            return {data : overseasAgencyList, pageInfo : pageInfo}
+            message.success('수정되었습니다.')
+        } else {
+            message.error('실패하였습니다.')
+        }
+    })
+
+};
+
+
+export const searchDomesticCustomer = async ({data}: any) => {
+
+    return getData.post('customer/getCustomerList', data).then(v => {
+        const code = v.data.code;
+        if (code === 1) {
+            const {customerList, pageInfo} =v.data.entity
+            return {data : customerList, pageInfo : pageInfo}
+            message.success('수정되었습니다.')
+        } else {
+            message.error('실패하였습니다.')
+        }
+    })
+
+};
+
+
+
+export const searchOverseasCustomer = async ({data}: any) => {
+
+    return getData.post('customer/getOverseasCustomerList', data).then(v => {
+        const code = v.data.code;
+        if (code === 1) {
+            const {overseasCustomerList, pageInfo} =v.data.entity
+            return {data : overseasCustomerList, pageInfo : pageInfo}
+            message.success('수정되었습니다.')
+        } else {
+            message.error('실패하였습니다.')
+        }
+    })
+
+};
+
+
+
+export const searchMaker = async ({data}: any) => {
+
+    return getData.post('maker/getMakerList', data).then(v => {
+        const code = v.data.code;
+        if (code === 1) {
+            const {makerList, pageInfo} =v.data.entity
+            return {data : makerList, pageInfo : pageInfo}
+            message.success('수정되었습니다.')
+        } else {
+            message.error('실패하였습니다.')
+        }
+    })
+
+};
+
+export const searchHSCode = async ({data}: any) => {
+
+    return getData.post('hsCode/getHsCodeList', data).then(v => {
+        const code = v.data.code;
+        if (code === 1) {
+            const {hsCodeList, pageInfo} =v.data.entity
+            return {data : hsCodeList, pageInfo : pageInfo}
+            message.success('수정되었습니다.')
+        } else {
+            message.error('실패하였습니다.')
+        }
     })
 
 };

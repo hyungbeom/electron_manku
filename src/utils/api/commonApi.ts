@@ -26,8 +26,8 @@ export const findCodeInfo = async (event, setInfo, openModal, type?, setValidate
             return openModal(event.target.id);
         } else if (size === 1) {
             switch (event.target.id) {
-                case 'agencyCode' :
-                    const {agencyId, agencyCode, agencyName, currencyUnit} = data[0];
+                case 'agencyCode' : {
+                    const {agencyId, agencyCode, agencyName, currencyUnit, email, managerName} = data[0];
                     const returnDocumentNumb = await checkInquiryNo({data: {agencyCode: agencyCode, type: type}})
                     setInfo(v => {
                         return {
@@ -36,13 +36,19 @@ export const findCodeInfo = async (event, setInfo, openModal, type?, setValidate
                             agencyId: agencyId,
                             agencyCode: agencyCode,
                             agencyName: agencyName,
+                            agencyManagerName: managerName,
+                            agencyManagerEmail: email,
                             currencyUnit: currencyUnit
                         }
                     });
-                    setValidate(v => {
-                        return {...v, agencyCode: true, documentNumberFull: true}
-                    })
 
+                }
+                    if (setValidate) {
+                        setValidate(v => {
+                            return {...v, agencyCode: true, documentNumberFull: true}
+                        })
+
+                    }
                     break;
                 case 'customerName' :
                     const {customerName, managerName, directTel, faxNumber, email, paymentMethod} = data[0];
@@ -85,7 +91,7 @@ export const findCodeInfo = async (event, setInfo, openModal, type?, setValidate
 
 export const findDocumentInfo = async (event, setInfo) => {
 
-    console.log(event.target.value,'event.target.value:')
+    console.log(event.target.value, 'event.target.value:')
 
     const result = await getData.post('order/getOrderList', {
         "searchStartDate": "",          // 발주일자 검색 시작일
@@ -149,7 +155,7 @@ export const findOrderDocumentInfo = async (event, setInfo, gridRef?, managerLis
             const newDate = date.add(parseInt(delivery), 'weeks');
 
             const countryNumb = commonManage.changeCurr(agencyCode);
-            console.log(countryNumb,'countryNumb:')
+            console.log(countryNumb, 'countryNumb:')
             setInfo(v => {
                     return {
                         ...v, ...result?.data?.entity?.estimateDetail,
@@ -158,7 +164,7 @@ export const findOrderDocumentInfo = async (event, setInfo, gridRef?, managerLis
                         writtenDate: moment().format('YYYY-MM-DD'),
                         managerAdminId: list?.adminId,
                         managerId: list?.name,
-                        managerPhoneNumber: countryNumb !== 'KRW' ? `+82 ${list?.contactNumber}` :  list?.contactNumber,
+                        managerPhoneNumber: countryNumb !== 'KRW' ? `+82 ${list?.contactNumber}` : list?.contactNumber,
                         managerFaxNumber: list?.faxNumber,
                         managerEmail: list?.email,
                         estimateManager: result?.data?.entity?.estimateDetail?.managerAdminName,
@@ -169,8 +175,8 @@ export const findOrderDocumentInfo = async (event, setInfo, gridRef?, managerLis
             );
 
 
-            const detailList = result?.data?.entity?.estimateDetail?.estimateDetailList.map(v=>{
-                return {...v, receivedQuantity : 0}
+            const detailList = result?.data?.entity?.estimateDetail?.estimateDetailList.map(v => {
+                return {...v, receivedQuantity: 0}
             })
 
             gridManage.resetData(gridRef, detailList)

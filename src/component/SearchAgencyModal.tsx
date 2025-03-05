@@ -288,6 +288,7 @@ export default function SearchInfoModal({
                                              }
                                          }).then(data => {
 
+                                             console.log(e.data,':::::')
                                              setInfo(v => {
                                                  return {
                                                      ...v,
@@ -296,6 +297,7 @@ export default function SearchInfoModal({
                                                      agencyCode: e.data.agencyCode,
                                                      agencyName: e.data.agencyName,
                                                      agencyManagerName: e.data.managerName,
+                                                     agencyManagerEmail: e.data.email,
                                                      agencyManagerPhoneNumber: e.data.phoneNumber
                                                  }
                                              });

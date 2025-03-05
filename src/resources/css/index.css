@@ -246,3 +246,35 @@ body {
     -webkit-appearance: none;
     margin: 0;
 }
+
+
+.flexlayout__layout {
+    position: relative !important;
+}
+/* 탭의 font-size 조정 */
+.flexlayout__tab_button_content {
+    font-size: 12px !important; /* 원하는 크기로 설정 */
+}
+
+
+/* x축 스크롤바 스타일링 */
+.ag-body-viewport::-webkit-scrollbar {
+    height: 8px !important;  /* x축 스크롤바의 높이 */
+}
+
+/* x축 스크롤바 트랙(배경) */
+.ag-body-viewport::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+    border-radius: 10px !important;
+}
+
+/* x축 스크롤바 손잡이(슬라이드 부분) */
+.ag-body-viewport::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 10px !important;
+}
+
+/* 손잡이(슬라이드 부분) 마우스 오버 시 색상 변경 */
+.ag-body-viewport::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+}

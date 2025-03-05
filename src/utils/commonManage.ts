@@ -98,9 +98,10 @@ gridManage.getFieldDeleteList = function (gridRef, fieldMappings) {
 };
 
 gridManage.deleteAll = function (gridRef) {
+
     // 모든 데이터 제거
     const allData = [];
-    gridRef.current.forEachNode((node) => {
+    gridRef?.current?.forEachNode((node) => {
         allData.push(node.data);
     });
 

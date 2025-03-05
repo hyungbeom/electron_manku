@@ -9,9 +9,29 @@ import Tabs from "antd/lib/tabs";
 import TotalUser from "@/component/manage/totalUser";
 import ApproveUser from "@/component/manage/approveUser";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
+import {getCookie} from "@/manage/function/cookie";
+import {useEffect, useState} from "react";
 
-export default function Manage({memberList}:any) {
-    const userInfo = useAppSelector((state) => state.user);
+export default function Manage(any) {
+
+    const [memberList, setMemberList] = useState([])
+
+    useEffect(()=>{
+        getInfo()
+    },[])
+
+    async function getInfo(){
+        return await getData.post('admin/getAdminList',{
+            "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
+            "searchAuthority": null,    // 1: 일반, 0: 관리자
+            "page": 1,
+            "limit": -1
+        }).then(v=>{
+            setMemberList(v.data.entity.adminList)
+        })
+    }
+
+
     const items = [
         {
             key: '1',
@@ -30,7 +50,7 @@ export default function Manage({memberList}:any) {
 
     };
 
-    return <LayoutComponent userInfo={userInfo}>
+    return <LayoutComponent>
     <div style={{padding : 20}}>
         <Card title={'관리자 페이지'}>
 
@@ -43,28 +63,19 @@ export default function Manage({memberList}:any) {
 }
 
 // @ts-ignore
-export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
+export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
 
 
-    const userAgent = ctx.req.headers['user-agent'];
-    const isMobile = /mobile/i.test(userAgent);
+    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
-    let param = {}
-
-    const {userInfo} = await initialServerRouter(ctx, store);
-    const result = await getData.post('admin/getAdminList',{
-        "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
-        "searchAuthority": null,    // 1: 일반, 0: 관리자
-        "page": 1,
-        "limit": 20
-    });
-
-
-    if (userInfo) {
+    if (codeInfo < 0) {
+        return {
+            redirect: {
+                destination: '/',
+                permanent: false,
+            },
+        };
+    } else {
         store.dispatch(setUserInfo(userInfo));
     }
-
-    const data = result?.data?.entity?.adminList;
-
-    return {props : {memberList : data ? data : []}}
 })

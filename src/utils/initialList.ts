@@ -30,6 +30,7 @@ export const estimateDetailUnit = {
     "amount": 0,               // 금액
     "serialNumber": 1           // 견적의뢰 내역 순서 (1부터 시작)
 }
+
 export const estimateWriteInitial = {
     "writtenDate": moment().format('YYYY-MM-DD'),    // 작성일
     "documentNumberFull": "", // INQUIRY No.
@@ -56,7 +57,7 @@ export const estimateWriteInitial = {
     "remarks": "",          // 비고란
     "currencyUnit": "",          // 비고란
     "estimateDetailList": [],
-    count : 0
+    'count' : 0
 }
 
 export const tableEstimateWriteInitial = {
@@ -199,8 +200,8 @@ export const subRfqReadInitial = {
     "searchDate": [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],   // front 사용
     "searchEstimateRequestId": "",      // 견적의뢰 Id
     "searchType": "0",                   // 검색조건 1: 회신, 2: 미회신
-    "searchStartDate": "",              // 작성일자 시작일
-    "searchEndDate": "",                // 작성일자 종료일
+    "searchStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),              // 작성일자 시작일
+    "searchEndDate":moment().format('YYYY-MM-DD'),                // 작성일자 종료일
     "searchDocumentNumber": "",         // 문서번호
     "searchCustomerName": "",           // 고객사명
     "searchMaker": "",                  // MAKER
@@ -210,8 +211,12 @@ export const subRfqReadInitial = {
     "searchManagerName": "",            // 담당자명
     "searchMobileNumber": "",           // 담당자 연락처
     "searchBiddingNumber": "",          // 입찰번호(미완성)
+    "searchSentStatus": 0,              // 전송 여부 1: 전송, 2: 미전송
+    "searchReplyStatus": 0,             // 회신 여부 1: 회신, 2: 미회신
+    "searchAgencyCode": "",          // 대리점코드 검색
+
     "page": 1,
-    "limit": 50
+    "limit": -1
 }
 
 export const subRfqReadMailInitial = {
@@ -233,7 +238,7 @@ export const subRfqReadMailInitial = {
     "searchAgencyManagerName": "",      // 대리점 담당자 이름
 
     // 메일 전송 목록 검색 필드 추가 2024.11.28
-    "searchSentStatus": 0,              // 전송 여부 1: 전송, 2: 미전송
+    "searchSentStatus": 2,              // 전송 여부 1: 전송, 2: 미전송
     "searchReplyStatus": 0,             // 회신 여부 1: 회신, 2: 미회신
     "searchAgencyCode": "",          // 대리점코드 검색
 
@@ -253,6 +258,8 @@ export const estimateReadInitial = {
     "searchModel": "",                  // MODEL
     "searchItem": "",                   // ITEM
     "searchCreatedBy": "",      // 등록 관리자 이름
+    page: 1,
+    limit: -1
 }
 
 export const projectReadInitial = {
@@ -856,6 +863,8 @@ export const searchOrderInitial = {
     searchRecipientPhone: "",
     searchIsConfirm: "",
     searchTrackingNumber: "",
+    page : 1 ,
+    limit : -1
 }
 
 
@@ -920,6 +929,8 @@ export const storeRealInitial = {
     "searchEndArrivalDate": moment().format('YYYY-MM-DD'),                 // 입고일자 종료
     "searchOrderDocumentNumberFull": "",        // 발주 Inquirty No
     "searchCustomerName": "",                   // 고객사명
+    page : 1,
+    limit : -1
 }
 
 

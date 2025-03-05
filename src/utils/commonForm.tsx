@@ -3,13 +3,14 @@ import React from "react";
 import Button from "antd/lib/button";
 import {
     CopyOutlined,
-    DownCircleFilled, FileExcelOutlined,
+    DownCircleFilled,
+    FileExcelOutlined,
     InfoCircleOutlined,
-    RetweetOutlined,
     SaveOutlined,
     UpCircleFilled
 } from "@ant-design/icons";
 import Input from "antd/lib/input/Input";
+import Password from "antd/lib/input/Password";
 import DatePicker from "antd/lib/date-picker";
 import moment from "moment";
 import InputNumber from "antd/lib/input-number";
@@ -20,13 +21,17 @@ import Select from "antd/lib/select";
 import Tooltip from "antd/lib/tooltip";
 import {
     estimateDetailUnit,
-    estimateRequestDetailUnit, estimateWriteList, orderDetailUnit, orderWriteList,
+    estimateRequestDetailUnit,
+    estimateWriteList,
+    orderDetailUnit,
+    orderWriteList,
     projectDetailUnit,
     projectWriteList,
-    reqWriteList, storeDetailUnit, storeWriteList
+    reqWriteList,
+    storeDetailUnit,
+    storeWriteList
 } from "@/utils/initialList";
 import {ExcelUpload} from "@/component/common/ExcelUpload";
-import Upload from "antd/lib/upload";
 import {tableCodeDomesticAgencyWriteColumns} from "@/utils/columnList";
 
 const {RangePicker} = DatePicker
@@ -60,9 +65,12 @@ export function BoxCard({children, title = null, tooltip = '', disabled = false}
         opacity: disabled ? 0.5 : 1, // 흐리게 표시
         pointerEvents: disabled ? "none" : "auto", // 클릭 막기
         userSelect: disabled ? "none" : "auto", // 텍스트 선택 불가
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)',
+
     }
     const defaultStyle = {
+        height : '100%',
+
         // boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
     }
     // <InfoCircleOutlined />
@@ -75,6 +83,7 @@ export function BoxCard({children, title = null, tooltip = '', disabled = false}
                          <InfoCircleOutlined style={{cursor: 'pointer'}}/>
                      </Tooltip>
                  </div> : null}>
+         {/*@ts-ignore*/}
         <div style={disabled ? disabledStyle : defaultStyle}>
             {children}
         </div>
@@ -108,21 +117,21 @@ export function MainCard({children, title, list, mini = null, setMini = Function
 }
 
 export const inputForm = ({
-                              title, id, disabled = false, placeHolder = '', suffix = null, onChange = function () {
+                            value = '',  title, id, disabled = false, placeHolder = '', suffix = null, onChange = function () {
     }, handleKeyPress = function () {
     }, data
                               , validate = true,
                               size = 'small',
-    fontSize =12
+                              fontSize = 12
                           }: any) => {
 
     let bowl = data;
     return <div style={{fontSize: fontSize, paddingBottom: 10}}>
-        <div style={{paddingBottom : fontSize / 2}}>{title}</div>
+        <div style={{paddingBottom: fontSize / 2}}>{title}</div>
         {/*@ts-ignored*/}
         <Input placeHolder={placeHolder}
                id={id}
-               value={bowl[id]} disabled={disabled}
+               value={value ? value : bowl[id]} disabled={disabled}
                onChange={onChange}
                size={size}
                onKeyDown={handleKeyPress}
@@ -131,6 +140,41 @@ export const inputForm = ({
         />
     </div>
 }
+
+export const inputPasswordForm = ({
+                                      title,
+                                      id,
+                                      disabled = false,
+                                      placeHolder = '',
+                                      suffix = null,
+                                      onChange = function () {
+                                      },
+                                      handleKeyPress = function () {
+                                      },
+                                      data
+                                      ,
+                                      validate = true,
+                                      size = 'small',
+                                      fontSize = 12
+                                  }: any) => {
+
+    let bowl = data;
+    return <div style={{fontSize: fontSize, paddingBottom: 10}}>
+        <div style={{paddingBottom: fontSize / 2}}>{title}</div>
+        {/*@ts-ignored*/}
+        <Password placeHolder={placeHolder}
+
+                  id={id}
+                  value={bowl[id]} disabled={disabled}
+                  onChange={onChange}
+                  size={size}
+                  onKeyDown={handleKeyPress}
+                  suffix={suffix}
+                  style={{borderColor: validate ? '' : 'red', fontSize: 12}}
+        />
+    </div>
+}
+
 
 export const rangePickerForm = ({
                                     title, id, disabled = false, onChange = function () {
@@ -151,7 +195,7 @@ export const rangePickerForm = ({
 export const datePickerForm = ({title, id, disabled = false, onChange, data}) => {
     let bowl = data;
     return <div style={{fontSize: 12, paddingBottom: 10}}>
-        <div style={{paddingBottom : 5.5}}>{title}</div>
+        <div style={{paddingBottom: 5.5}}>{title}</div>
         {/*@ts-ignore*/}
         <DatePicker value={moment(bowl[id]).isValid() ? moment(bowl[id]) : ''} style={{width: '100%', fontSize: 11}}
                     className="custom-datepicker"
@@ -187,7 +231,7 @@ export const inputNumberForm = ({
 
 
     return <div style={{fontSize: 12, paddingBottom: 10}}>
-        <div style={{paddingBottom : 4}}>{title}</div>
+        <div style={{paddingBottom: 4}}>{title}</div>
         <InputNumber id={id} value={bowl[id]} disabled={disabled}
                      style={{width: '100%'}}
                      formatter={formatter}
@@ -221,7 +265,7 @@ export const radioForm = ({title, id, disabled = false, data, onChange, list}) =
     </div>
 }
 
-export const selectBoxForm = ({title, id, disabled = false, data, onChange, list, size = 'small',  fontSize =12}) => {
+export const selectBoxForm = ({title, id, disabled = false, data, onChange, list, size = 'small', fontSize = 12}) => {
 
     return <div style={{}}>
         <div style={{fontSize: 12, paddingBottom: 6}}>{title}</div>
@@ -229,7 +273,7 @@ export const selectBoxForm = ({title, id, disabled = false, data, onChange, list
         <Select className="custom-select" id={id} size={size}
                 value={!isNaN(parseInt(data[id])) ? parseInt(data[id]) : data[id]}
                 onChange={(src, e) => onChange({target: {id: id, value: src, e: e}})}
-                style={{width: '100%', fontSize: 11, paddingBottom : 7}}>
+                style={{width: '100%', fontSize: 11, paddingBottom: 7}}>
             {list.map(v => {
                 return <Option style={{fontSize: 11}} value={v.value}>{v.label}</Option>
             })}
@@ -237,16 +281,16 @@ export const selectBoxForm = ({title, id, disabled = false, data, onChange, list
     </div>
 }
 
-export const textAreaForm = ({title, id, rows = 5, disabled = false, onChange, data, placeHolder = ''}) => {
+export const textAreaForm = ({value='', title, id, rows = 5, disabled = false, onChange, data, placeHolder = '', maxLength = 1000}) => {
     return <div style={{fontSize: 12, paddingBottom: 10}}>
-        <div style={{paddingBottom : 5}}>{title}</div>
-        <TextArea style={{resize: 'none', fontSize: 12}} rows={rows} id={id} value={data[id]} disabled={disabled}
+        <div style={{paddingBottom: 5}}>{title}</div>
+        <TextArea style={{resize: 'none', fontSize: 12}} rows={rows} id={id} value={value ? value : data[id]} disabled={disabled}
                   className="custom-textarea"
                   onChange={onChange}
                   size={'small'}
                   placeholder={placeHolder}
                   showCount
-                  maxLength={1000}
+                  maxLength={maxLength}
         />
     </div>
 }
@@ -393,7 +437,7 @@ export const tableButtonList = (type: any, gridRef?: any) => {
         case 'print' :
             return <Button
                 size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>
-                <FileExcelOutlined/>출력
+                <FileExcelOutlined/>Excel 다운로드
             </Button>
     }
 }

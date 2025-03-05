@@ -30,7 +30,9 @@ const TableGrid = ({
                        },
                        deleteComp = <></>,
                        setInfo = null,
-                       onRowClicked = null
+                       onRowClicked = null,
+                       getPropertyId = null,
+                       totalRow = 0
                    }: any) => {
 
 
@@ -103,34 +105,45 @@ const TableGrid = ({
     const handleDoubleClicked = (e) => {
 
         if (type === 'read') {
-            if (e.data.orderStatusId)
-                router.push(`/store_update?orderStatusId=${e?.data?.orderStatusId}`);
-            if (e.data.projectId)
-                router.push(`/project_update?projectId=${e?.data?.projectId}`);
-            if (e.data.deliveryId)
-                router.push(`/delivery_update?deliveryId=${e?.data?.deliveryId}`);
-            if (e.data.remittanceId)
-                router.push(`/remittance_domestic_update?remittanceId=${e?.data?.remittanceId}`);
-            if (e.data.estimateRequestId)
-                router.push(`/rfq_update?estimateRequestId=${e?.data?.estimateRequestId}`);
-            if (e.data.estimateId)
-                router.push(`/estimate_update?estimateId=${e?.data?.estimateId}`);
-            if (e.data.orderId)
-                router.push(`/order_update?orderId=${e?.data?.orderId}`);
-            if (e.data.remainingQuantity)
-                router.push(`/inventory_update?maker=${e?.data?.maker}&model=${e?.data?.model}`);
-            if (e.data.makerId)
-                router.push(`/maker_update?makerName=${e?.data?.makerName}`);
-            if (e.data.agencyId)
-                router.push(`/data/agency/domestic/agency_update?agencyCode=${e?.data?.agencyCode}`);
+
+            if (e.data.orderStatusId){
+                getPropertyId('store_update', e.data.orderStatusId)
+            }
+            if (e.data.projectId){
+                getPropertyId('project_update', e.data.projectId)
+            }
+            if (e.data.deliveryId){
+                getPropertyId('delivery_update', e.data.deliveryId)
+            }
+            if (e.data.remittanceId){
+                getPropertyId('remittance_domestic_update', e.data.remittanceId)
+            }
+            if (e.data.estimateRequestId){
+                getPropertyId('rfq_update', e.data.estimateRequestId)
+            }
+            if (e.data.estimateId){
+                getPropertyId('estimate_update', e.data.estimateId)
+            }
+            if (e.data.orderId){
+                getPropertyId('order_update', e.data.orderId)
+            }
+            if (e.data.remainingQuantity){
+                getPropertyId('inventory_update', e.data.model)
+            }
+            if (e.data.makerId){
+                getPropertyId('maker_update', e.data)
+            }
+            if (e.data.agencyId){
+                getPropertyId('domestic_agency_update', e.data.agencyCode)
+            }
             if (e.data.overseasAgencyId)
-                router.push(`/data/agency/overseas/agency_update?agencyCode=${e?.data?.agencyCode}`)
+                getPropertyId('overseas_agency_update', e.data.agencyCode)
             if (e.data.customerId)
-                router.push(`/data/customer/domestic/customer_update?customerCode=${e?.data?.customerCode}`)
+                getPropertyId('domestic_customer_update', e.data.customerCode)
             if (e.data.overseasCustomerId)
-                router.push(`/data/customer/overseas/customer_update?customerCode=${e?.data?.customerCode}`)
+                getPropertyId('overseas_customer_update', e.data.customerCode)
             if (e.data.officialDocumentId)
-                router.push(`/code_diploma_update?officialDocumentId=${e?.data?.officialDocumentId}`)
+                getPropertyId('code_diploma_update', e.data.officialDocumentId)
         }
 
         if (type === 'hsCode') {
@@ -269,17 +282,10 @@ const TableGrid = ({
                 update: [selectedRow],
             });
         }
-        // page.event.api.applyTransaction({update : [data]})
-        // 그리드 업데이트
-
-        // e.api.applyTransaction({
-        //     update: [updatedData],
-        // });
     }
 
     function selectHsCode(info) {
-        console.log(info, '::')
-        console.log(page, ':page:')
+
 
         let selectedRow = page.event.node.data;
         selectedRow['hsCode'] = info.hsCode
@@ -401,7 +407,8 @@ const TableGrid = ({
 
             <div>
                 <div style={{width: '100%', display: 'flex', justifyContent: 'space-between', margin: '10px 0'}}>
-                    <div style={{fontWeight: 500}}>LIST</div>
+                    <div style={{fontWeight: 500, paddingLeft : 15}}>LIST &nbsp;&nbsp;    {type === 'read' ?<span style={{fontSize: 12}}>검색결과(<span
+                        style={{color: 'orangered'}}>{totalRow}</span>건)</span> : <></>}</div>
 
                     <div style={{display: 'flex', alignItems: 'end', gap: 7}}>
                         <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
@@ -428,9 +435,9 @@ const TableGrid = ({
                     defaultColDef={defaultColDef}
                     columnDefs={columns}
                     onCellContextMenu={handleCellRightClick}
-                    paginationPageSize={1000}
-                    paginationPageSizeSelector={[100, 500, 1000]}
-                    pagination={true}
+                    // paginationPageSize={1000}
+                    // paginationPageSizeSelector={[100, 500, 1000]}
+                    // pagination={true}
                     onRowSelected={handleRowSelected}
                     onCellValueChanged={dataChange}
                     pinnedBottomRowData={pinnedBottomRowData}

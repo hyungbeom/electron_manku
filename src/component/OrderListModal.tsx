@@ -20,9 +20,10 @@ export default function OrderListModal({isModalOpen, setIsModalOpen, getRows}) {
      */
     const onGridReady = async (params) => {
         gridRef.current = params.api;
-        const data = await searchOrder({data: {"searchStartDate": '', "searchEndDate": ''}});
-        console.log(data,'data::')
-        gridRef.current.applyTransaction({add: data});
+        await searchOrder({data: {"searchStartDate": '', "searchEndDate": ''}}).then(v=>{
+            gridRef.current.applyTransaction({add: v.data});
+        })
+
     };
 
 
