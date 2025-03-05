@@ -32,6 +32,7 @@ import Modal from "antd/lib/modal/Modal";
 import {jsPDF} from "jspdf";
 import html2canvas from "html2canvas";
 import Select from "antd/lib/select";
+import EstimatePaper from "@/component/견적서/EstimatePaper";
 
 const listType = 'estimateDetailList'
 export default function EstimateUpdate({
@@ -122,6 +123,7 @@ export default function EstimateUpdate({
         })
     }
 
+    console.log(info,'info')
 
     async function handleKeyPress(e) {
         if (e.key === 'Enter') {
@@ -280,10 +282,10 @@ export default function EstimateUpdate({
             </div>}
             onCancel={() => setIsPrintModalOpen(false)}
             open={isPrintModalOpen}
-            width={1000}
+            width={1050}
             footer={null}
             onOk={() => setIsPrintModalOpen(false)}>
-            {/*<EstimatePaper data={info} pdfRef={pdfRef} pdfSubRef={pdfSubRef} gridRef={gridRef} position={true}/>*/}
+            <EstimatePaper data={info} pdfRef={pdfRef} pdfSubRef={pdfSubRef} gridRef={gridRef} position={true}/>
         </Modal>
     }
 
