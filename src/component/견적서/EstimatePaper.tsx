@@ -6,7 +6,7 @@ import Select from "antd/lib/select";
 import TextArea from "antd/lib/input/TextArea";
 
 const getTextAreaValues = (ref) => {
-    if (ref.current) {
+    if (ref?.current) {
         // ✅ ID가 "textarea"인 모든 요소 가져오기
         const elements = ref.current.querySelectorAll("#textarea");
 
@@ -24,8 +24,9 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
     const [splitData, setSplitData] = useState([])
 
     useEffect(() => {
-        const totalList = gridManage.getAllData(gridRef)
-        const result = commonManage.splitDataWithSequenceNumber(totalList, 8, 17);
+        const totalList = gridManage.getAllData(gridRef);
+        const filterTotalList = totalList.filter(v => !!v.model)
+        const result = commonManage.splitDataWithSequenceNumber(filterTotalList, 30, 30);
         setSplitData(result)
     }, [data, gridRef.current])
 
@@ -158,7 +159,7 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
             console.log(totalPrice);
 
 
-            const resultNum = Number(info?.unitPrice ? info?.unitPrice?.replace(/,/g, "") : '')
+            const resultNum = Number(info?.unitPrice ? info?.unitPrice : '')
             if(document.getElementById("total_amount")){
                 document.getElementById("total_amount").textContent = amountFormat(resultNum * info.quantity);
                 document.getElementById("total_unit_price").textContent = amountFormat(totalPrice);
@@ -239,7 +240,7 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                 borderBottom: '1px solid lightGray'
             }}>
                 <RowTotal
-                    defaultValue={info.quantity * Number(info?.unitPrice ? info?.unitPrice?.replace(/,/g, "") : '')}
+                    defaultValue={info.quantity * Number(info?.unitPrice ? info?.unitPrice : '')}
                     id={'amount'}/>
             </th>
         </tr>
@@ -248,7 +249,7 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
 
     return (
         // <div ref={pdfRef} style={{padding : '0px 50px', position : 'absolute', zIndex : -100, top :-1000}}>
-        <div ref={pdfRef} style={{position: 'fixed', zIndex: -100, left: -1110, top : 1000}}>
+        <>
 
             <div ref={pdfRef} style={{
                 width: '100%',
@@ -395,8 +396,7 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                 <div style={{flexGrow: 1}}/>
                 {/* 여백 자동 확장하여 아래로 밀어줌 */}
 
-                {splitData.length === 1 ? <>
-                    {/* ✅ 하단 고정된 안내문 */}
+
                     <div
                         style={{
                             padding: '30px 20px',
@@ -410,7 +410,7 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                         <div>· 계좌번호: (기업은행)069-118428-04-010/(주)만쿠무역.</div>
                         <div>· 성적서 및 품질보증서는 별도입니다.</div>
                     </div>
-                </> : <></>}
+
                 <div style={{textAlign: 'center'}}>- 1 -</div>
             </div>
 
@@ -456,7 +456,7 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                     </>
                 })}
             </div>
-        </div>
+        </>
     );
 };
 const Model = ({v, refList, setSplitData}) => {

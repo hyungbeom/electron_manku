@@ -223,12 +223,11 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
         formData.delete('createdDate')
         formData.delete('modifiedDate')
 
-        console.log(info,'info::::')
 
-        // const pdf = await commonManage.getPdfCreate(pdfRef);
-        // const result = await commonManage.getPdfFile(pdf, info.documentNumberFull);
-        // formData.append(`attachmentFileList[${resultCount}].attachmentFile`, result);
-        // formData.append(`attachmentFileList[${resultCount}].fileName`, `03.${resultCount + 1} ${result.name}`);
+        const pdf = await commonManage.getPdfCreate(pdfRef);
+        const result = await commonManage.getPdfFile(pdf, info.documentNumberFull);
+        formData.append(`attachmentFileList[${resultCount}].attachmentFile`, result);
+        formData.append(`attachmentFileList[${resultCount}].fileName`, `03.${resultCount + 1} ${result.name}`);
 
         setLoading(true)
 
@@ -509,7 +508,7 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
                 />
             </div>
         </>
-        {/*{ready && <EstimatePaper data={info} pdfRef={pdfRef} gridRef={gridRef}/>}*/}
+        {ready && <EstimatePaper data={info} pdfRef={pdfRef} gridRef={gridRef}/>}
     </Spin>
 }
 
