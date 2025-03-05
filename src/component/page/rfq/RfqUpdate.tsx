@@ -70,7 +70,7 @@ export default function RqfUpdate({ updateKey = {}, getCopyPage = null, managerL
 
 
     const userInfo = useAppSelector((state) => state.user);
-    const [info, setInfo] = useState<any>({uploadType: 0})
+    const [info, setInfo] = useState<any>({})
     const [mini, setMini] = useState(true);
 
     const [fileList, setFileList] = useState([]);
@@ -86,7 +86,7 @@ export default function RqfUpdate({ updateKey = {}, getCopyPage = null, managerL
             const {estimateRequestDetail, attachmentFileList} = v;
             setFileList(fileManage.getFormatFiles(attachmentFileList));
             setOriginFileList(attachmentFileList)
-            setInfo(estimateRequestDetail)
+            setInfo({...estimateRequestDetail, uploadType: 0})
             gridManage.resetData(gridRef, estimateRequestDetail[listType])
             setLoading(false)
         })
