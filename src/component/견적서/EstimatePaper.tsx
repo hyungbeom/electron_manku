@@ -23,6 +23,8 @@ const getTextAreaValues = (ref) => {
 const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any) => {
     const userInfo = useAppSelector((state) => state.user);
 
+    console.log(data,'data::')
+
     const [info, setInfo] = useState<any>([]);
 
     const [splitData, setSplitData] = useState([])

@@ -201,6 +201,9 @@ export default function OrderUpdate({  updateKey, getCopyPage}) {
         })
     };
 
+    console.log(info,'info:s')
+
+
     return  <Spin spinning={loading} tip={'발주서 수정중...'}>
         <>
             <div style={{
@@ -248,8 +251,8 @@ export default function OrderUpdate({  updateKey, getCopyPage}) {
                                 })}
 
                                 <div>
-                                    <div>담당자</div>
-                                    <Select style={{width: '100%'}} size={'small'}
+                                    <div style={{fontSize : 12}}>담당자</div>
+                                    <Select style={{width: '100%', marginTop : 4, fontSize : 12}} size={'small'}
                                             showSearch
                                             value={info['estimateManager']}
                                             placeholder="Select a person"

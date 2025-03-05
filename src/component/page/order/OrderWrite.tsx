@@ -32,12 +32,13 @@ import "react-phone-input-2/lib/style.css";
 import FormItem from "antd/lib/form/FormItem";
 import Input from "antd/lib/input";
 import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
+import PrintPo from "@/component/printPo";
 
 
 const listType = 'orderDetailList'
 export default function OrderWrite({dataInfo = [],  copyPageInfo}) {
     const [ready, setReady] = useState(false);
-
+    const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
     const [memberList, setMemberList] = useState([]);
 
     useEffect(() => {
@@ -194,10 +195,14 @@ export default function OrderWrite({dataInfo = [],  copyPageInfo}) {
         })
     };
 
+    function printPo() {
+        setIsModalOpen({event1: false, event2: true});
+    }
+
 
     return <Spin spinning={loading} tip={'발주서 등록중...'}>
         <>
-
+            {isModalOpen['event2'] && <PrintPo data={info} gridRef={gridRef} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>}
             <div style={{
                 display: 'grid',
                 gridTemplateRows: `${mini ? '500px' : '65px'} calc(100vh - ${mini ? 630 : 195}px)`,
@@ -205,7 +210,7 @@ export default function OrderWrite({dataInfo = [],  copyPageInfo}) {
             }}>
                 <MainCard title={'발주서 작성'} list={[
                     {name: '거래명세표 출력', func: null, type: 'default'},
-                    {name: '발주서 출력', func: null, type: 'default'},
+                    {name: '발주서 출력', func: printPo, type: 'default'},
                     {name: '저장', func: saveFunc, type: 'primary'},
                     {name: '초기화', func: clearAll, type: 'danger'}
                 ]} mini={mini} setMini={setMini}>
@@ -223,8 +228,8 @@ export default function OrderWrite({dataInfo = [],  copyPageInfo}) {
                             })}
                             {inputForm({title: '작성자', id: 'createdBy', disabled: true, onChange: onChange, data: info})}
                             <div>
-                                <div>담당자</div>
-                                <Select style={{width: '100%'}} size={'small'}
+                                <div style={{fontSize : 12}}>담당자</div>
+                                <Select style={{width: '100%', marginTop : 5, fontSize : 12}} size={'small'}
                                         showSearch
                                         value={info['estimateManager']}
                                         placeholder="Select a person"

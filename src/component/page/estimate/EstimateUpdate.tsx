@@ -106,10 +106,12 @@ export default function EstimateUpdate({
     useEffect(() => {
         setLoading(true)
         getDataInfo().then(v => {
-            setFileList(fileManage.getFormatFiles(v?.attachmentFileList))
-            setInfo(v?.estimateDetail)
-            gridManage.resetData(gridRef, v?.estimateDetail[listType])
+            const {estimateDetail, attachmentFileList} = v;
+            setFileList(fileManage.getFormatFiles(attachmentFileList))
+            setInfo(estimateDetail)
+            gridManage.resetData(gridRef, estimateDetail[listType])
             setLoading(false)
+
         })
         // setLoading(false)
     }, [updateKey['estimate_update']])
@@ -213,6 +215,9 @@ export default function EstimateUpdate({
         const list = gridManage.getAllData(gridRef)
         if (!list.length) {
             return message.warn('하위 데이터 1개 이상이여야 합니다')
+        }
+        if(!info['managerAdminName']){
+            return message.warn('담당자를 선택해주세요')
         }
         setIsPrintModalOpen(true)
     }

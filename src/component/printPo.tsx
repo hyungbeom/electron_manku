@@ -5,7 +5,7 @@ import html2canvas from "html2canvas";
 import {commonManage, gridManage} from "@/utils/commonManage";
 
 export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
-    const {orderDetail, customerInfo} = data;
+
     const pdfRef = useRef<any>();
     const pdfSubRef = useRef<any>();
 
@@ -124,7 +124,7 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
                         fontWeight: 700,
                         margin: "0 auto"
                     }}>
-                        {orderDetail.agencyCode.toUpperCase().includes('K') ? '발주서' :
+                        {data.agencyCode.toUpperCase().includes('K') ? '발주서' :
                             <span> Purchase < br/> Order</span>}
                     </div>
                     <div style={{width: "auto", height: "auto", position: 'absolute', right: 50,}}>
@@ -159,52 +159,52 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
                         <span style={{marginRight: 20}}>
                             - Our REFQ NO.
                         </span>
-                        {orderDetail.documentNumberFull}
+                        {data.documentNumberFull}
                     </div>
                     <div>
                         <span style={{marginRight: 20}}>
                             - Payment terms :
                         </span>
-                        {orderDetail.paymentTerms}
+                        {data.paymentTerms}
                     </div>
 
                     <div>
                         <span style={{marginRight: 20}}>
                             - Your REFQ NO.
                         </span>
-                        {orderDetail.yourPoNo}
+                        {data.yourPoNo}
                     </div>
                     <div>
                         <span style={{marginRight: 20}}>
                             - Delivery terms :
                         </span>
-                        {orderDetail.deliveryTerms}
+                        {data.deliveryTerms}
                     </div>
 
                     <div>
                         <span style={{marginRight: 20}}>
                            - Messrs
                         </span>
-                        {orderDetail.agencyCode}
+                        {data.agencyCode}
                     </div>
                     <div>
                         <span style={{marginRight: 20}}>
                             - Packing :
                         </span>
-                        {orderDetail.packing}
+                        {data.packing}
                     </div>
 
                     <div>
                         <span style={{marginRight: 20}}>
                             - Attn To.
                         </span>
-                        {orderDetail.attnTo}
+                        {data.attnTo}
                     </div>
                     <div>
                         <span style={{marginRight: 20}}>
                             - Inspection :
                         </span>
-                        {orderDetail.inpection}
+                        {data.inpection}
                     </div>
                     <div/>
                     <div>
@@ -261,7 +261,7 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
                             Maker
                         </div>
                         <div style={{padding: '3px 10px'}}>
-                            {orderDetail.maker}
+                            {data.maker}
                         </div>
 
                     </div>

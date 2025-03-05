@@ -91,7 +91,8 @@ export default function RqfWrite({ copyPageInfo = {}}) {
 
     const infoInit = {
         ...copyInit,
-        ...adminParams
+        ...adminParams,
+        writtenDate: moment().format('YYYY-MM-DD')
     }
 
     const [info, setInfo] = useState<any>({
@@ -122,13 +123,13 @@ export default function RqfWrite({ copyPageInfo = {}}) {
                 setInfo(infoInit);
                 gridManage.resetData(gridRef,commonFunc.repeatObject(estimateRequestDetailUnit, 10))
             }else{
-                setInfo({...copyPageInfo['rfq_write'], ...adminParams, documentNumberFull : ''});
-                console.log(adminParams,'as')
+                setInfo({...copyPageInfo['rfq_write'], ...adminParams, documentNumberFull : '', writtenDate: moment().format('YYYY-MM-DD')});
                 gridManage.resetData(gridRef, copyPageInfo['rfq_write'][listType])
             }
         }
     }, [copyPageInfo['rfq_write'],ready]);
 
+    console.log(info,'::')
     // useEffect(() => {
     //     initCopyLoadInquiry()
     // }, []);

@@ -86,7 +86,7 @@ export default function RqfUpdate({ updateKey = {}, getCopyPage = null, managerL
             const {estimateRequestDetail, attachmentFileList} = v;
             setFileList(fileManage.getFormatFiles(attachmentFileList));
             setOriginFileList(attachmentFileList)
-            setInfo({...estimateRequestDetail, uploadType: 0})
+            setInfo({...estimateRequestDetail, uploadType: 0 , managerAdminName : estimateRequestDetail['managerAdminName'] ? estimateRequestDetail['managerAdminName'] : estimateRequestDetail['createdBy']})
             gridManage.resetData(gridRef, estimateRequestDetail[listType])
             setLoading(false)
         })
@@ -103,7 +103,6 @@ export default function RqfUpdate({ updateKey = {}, getCopyPage = null, managerL
 
     const onGridReady = (params) => {
         gridRef.current = params.api;
-        // params.api.applyTransaction({add: dataInfo?.estimateRequestDetail[listType]});
     };
 
 
@@ -228,7 +227,7 @@ export default function RqfUpdate({ updateKey = {}, getCopyPage = null, managerL
         <>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? 470 : 65}px calc(100vh - ${mini ? 480 : 75}px)`,
+                gridTemplateRows: `${mini ? 500 : 65}px calc(100vh - ${mini ? 630 : 75}px)`,
                 columnGap: 5
             }}>
                 <MainCard title={'견적의뢰 수정'} list={[
