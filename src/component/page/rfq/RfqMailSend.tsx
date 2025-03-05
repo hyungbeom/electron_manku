@@ -21,8 +21,6 @@ import {getData} from "@/manage/function/api";
 
 export default function RfqMailSend({getPropertyId}) {
 
-    const countRef = useRef(1);
-    const infoRef = useRef(null);
     const gridRef = useRef(null);
     const [mini, setMini] = useState(true);
     const copyInit = _.cloneDeep(subRfqReadMailInitial)
@@ -42,7 +40,6 @@ export default function RfqMailSend({getPropertyId}) {
 
 
         await searchRfq({data: subRfqReadMailInitial}).then(v=>{
-            console.log(v.pageInfo)
             setTotalRow(v.pageInfo.totalRow);
             params.api.applyTransaction({add: v.data});
         })
