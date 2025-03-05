@@ -34,7 +34,7 @@ import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 
 const listType = 'estimateRequestDetailList'
-export default function RqfUpdate({dataInfo = {estimateRequestDetail: [], attachmentFileList: []}, updateKey = {}, getCopyPage = null, managerList = []}) {
+export default function RqfUpdate({ updateKey = {}, getCopyPage = null, managerList = []}) {
     const groupRef = useRef<any>(null)
 
     const [memberList, setMemberList] = useState([]);
@@ -67,15 +67,14 @@ export default function RqfUpdate({dataInfo = {estimateRequestDetail: [], attach
     const gridRef = useRef(null);
     const router = useRouter();
 
-    const infoInit = dataInfo?.estimateRequestDetail
-    let infoInitFile = dataInfo?.attachmentFileList
+
 
     const userInfo = useAppSelector((state) => state.user);
-    const [info, setInfo] = useState<any>({...infoInit, uploadType: 0})
+    const [info, setInfo] = useState<any>({uploadType: 0})
     const [mini, setMini] = useState(true);
 
-    const [fileList, setFileList] = useState(fileManage.getFormatFiles(infoInitFile));
-    const [originFileList, setOriginFileList] = useState(infoInitFile);
+    const [fileList, setFileList] = useState([]);
+    const [originFileList, setOriginFileList] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false, event3: false});
 
     const [loading, setLoading] = useState(false);
@@ -85,7 +84,8 @@ export default function RqfUpdate({dataInfo = {estimateRequestDetail: [], attach
         setLoading(true)
         getDataInfo().then(v => {
             const {estimateRequestDetail, attachmentFileList} = v;
-            setFileList(fileManage.getFormatFiles(attachmentFileList))
+            setFileList(fileManage.getFormatFiles(attachmentFileList));
+            setOriginFileList(attachmentFileList)
             setInfo(estimateRequestDetail)
             gridManage.resetData(gridRef, estimateRequestDetail[listType])
             setLoading(false)
@@ -103,7 +103,7 @@ export default function RqfUpdate({dataInfo = {estimateRequestDetail: [], attach
 
     const onGridReady = (params) => {
         gridRef.current = params.api;
-        params.api.applyTransaction({add: dataInfo?.estimateRequestDetail[listType]});
+        // params.api.applyTransaction({add: dataInfo?.estimateRequestDetail[listType]});
     };
 
 
@@ -165,9 +165,10 @@ export default function RqfUpdate({dataInfo = {estimateRequestDetail: [], attach
             await getAttachmentFileList({
                 data: {
                     "relatedType": "ESTIMATE_REQUEST",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
-                    "relatedId": infoInit['estimateRequestId']
+                    "relatedId": updateKey['rfq_update']
                 }
             }).then(v => {
+                console.log(';;;')
                 const list = fileManage.getFormatFiles(v);
                 setFileList(list)
                 setOriginFileList(list)
