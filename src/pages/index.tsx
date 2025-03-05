@@ -13,7 +13,6 @@ import message from "antd/lib/message";
 
 export default function Home(props) {
 
-    console.log(props,'::')
     const router = useRouter();
 
     const [page, setPage] = useState('login');
@@ -34,8 +33,8 @@ export default function Home(props) {
         if (props?.message) {
             return message.error(props?.message)
         }
-
     }, [])
+
     return (
 
         <div className={'container'}>

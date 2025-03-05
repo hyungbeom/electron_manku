@@ -156,36 +156,37 @@ gridManage.getAllData = function (gridRef) {
         const allData = [];
         const nodesToRemove = [];
 
-        // 모든 노드를 순회
-        gridRef.current.forEachNode((node) => {
-            // 데이터를 수정하여 null을 0으로 변환
-            const row = {...node.data};
-            Object.keys(row).forEach((key) => {
+        if (gridRef.current) {
+            // 모든 노드를 순회
+            gridRef.current.forEachNode((node) => {
+                // 데이터를 수정하여 null을 0으로 변환
+                const row = {...node.data};
+                Object.keys(row).forEach((key) => {
 
-                if (row[key] === null || row[key] === undefined) {
-                    if (key === 'net' || key === 'unitPrice') {
-                        row[key] = 0;
+                    if (row[key] === null || row[key] === undefined) {
+                        if (key === 'net' || key === 'unitPrice') {
+                            row[key] = 0;
+                        }
+                        if (key === 'currency') {
+                            row[key] = '';
+                        }
                     }
-                    if (key === 'currency') {
-                        row[key] = '';
-                    }
+                });
+
+                // 행이 빈 행인지 확인
+                const isEmptyRow = Object.values(row).every(value => value === null || value === undefined || value === '' || value === 0);
+                if (isEmptyRow) {
+                    nodesToRemove.push(node); // 빈 행은 삭제 대상으로 추가
+                } else {
+                    allData.push(row); // 유효한 행만 배열에 추가
                 }
             });
 
-            // 행이 빈 행인지 확인
-            const isEmptyRow = Object.values(row).every(value => value === null || value === undefined || value === '' ||  value === 0);
-            if (isEmptyRow) {
-                nodesToRemove.push(node); // 빈 행은 삭제 대상으로 추가
-            } else {
-                allData.push(row); // 유효한 행만 배열에 추가
+            // 빈 행 제거
+            if (nodesToRemove.length > 0) {
+                gridRef.current.applyTransaction({remove: nodesToRemove.map(node => node.data)});
             }
-        });
-
-        // 빈 행 제거
-        if (nodesToRemove.length > 0) {
-            gridRef.current.applyTransaction({remove: nodesToRemove.map(node => node.data)});
         }
-
         return allData; // 빈 행이 제거된 데이터를 반환
     }
 }
@@ -371,8 +372,8 @@ commonManage.onChange = function (e, setInfo) {
         commonFunc.unValidateInput('documentNumberFull')
     }
 
-    if(e.target.id === 'searchDate' ||e.target.id === 'searchArrivalDate'){
-        if(!e.target.value[0] || !e.target.value[1]){
+    if (e.target.id === 'searchDate' || e.target.id === 'searchArrivalDate') {
+        if (!e.target.value[0] || !e.target.value[1]) {
             e.target.value = [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
         }
     }
@@ -616,7 +617,7 @@ commonManage.setInfoDetailFormData = function (formData, listType, list?) {
     list.forEach((detail, index) => {
         Object.keys(detail).forEach((key) => {
             if (!(key == 'orderDate' || key === 'orderProcessing' || key === 'order')) {
-                if (key.includes('Date')&& key !== 'deliveryDate') {
+                if (key.includes('Date') && key !== 'deliveryDate') {
                     formData.append(`${listType}[${index}].${key}`, moment(detail[key]).isValid() ? dateFormat(detail[key]) : '');
                 } else {
                     formData.append(`${listType}[${index}].${key}`, detail[key]);
@@ -667,7 +668,7 @@ fileManage.getFormatFiles = function (list) {
 }
 
 
-commonManage.removeInvalid = function(obj){
+commonManage.removeInvalid = function (obj) {
     // 객체의 모든 키를 순회
     for (const key in obj) {
         if (Object.prototype.hasOwnProperty.call(obj, key)) {
@@ -684,11 +685,11 @@ commonManage.removeInvalid = function(obj){
     return obj;
 }
 
-commonManage.getPdfCreate = async function(pdfRef){
+commonManage.getPdfCreate = async function (pdfRef) {
     const element = pdfRef.current;
 
     // HTML 캡처 후 PDF 생성
-    const canvas = await html2canvas(element, { scale: 1, useCORS: true });
+    const canvas = await html2canvas(element, {scale: 1, useCORS: true});
     const imgData = canvas.toDataURL("image/jpeg", 0.98);
     const pdf = new jsPDF("portrait", "px", "a4");
 
@@ -696,19 +697,19 @@ commonManage.getPdfCreate = async function(pdfRef){
     const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
     pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-    
+
     return pdf
 }
 
-commonManage.getPdfFile = async function(pdf, documentNumberFull){
+commonManage.getPdfFile = async function (pdf, documentNumberFull) {
     const pdfBlob = pdf.output("blob");
     console.log(`PDF Blob Size: ${pdfBlob.size} bytes`);
     const fileName = `${documentNumberFull}_견적서.pdf`;
-    const pdfFile = new File([pdfBlob], fileName, { type: "application/pdf" });
+    const pdfFile = new File([pdfBlob], fileName, {type: "application/pdf"});
     return pdfFile;
 }
 
-commonManage.splitDataWithSequenceNumber = function(data, firstLimit = 20, nextLimit = 30) {
+commonManage.splitDataWithSequenceNumber = function (data, firstLimit = 20, nextLimit = 30) {
     const result = [];
     let currentGroup = [];
     let currentCount = 0;
