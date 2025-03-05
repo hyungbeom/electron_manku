@@ -11,7 +11,7 @@ import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import TableGrid from "@/component/tableGrid";
 import {useRouter} from "next/router";
 import SearchInfoModal from "@/component/SearchAgencyModal";
-import {commonFunc, commonManage, fileManage, gridManage} from "@/utils/commonManage";
+import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
 import {
     BoxCard,
     datePickerForm,
@@ -24,7 +24,7 @@ import {
 } from "@/utils/commonForm";
 import _ from "lodash";
 import {findCodeInfo, findDocumentInfo} from "@/utils/api/commonApi";
-import {checkInquiryNo, getAttachmentFileList, saveEstimate} from "@/utils/api/mainApi";
+import {checkInquiryNo, saveEstimate} from "@/utils/api/mainApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import Spin from "antd/lib/spin";
 import EstimatePaper from "@/component/견적서/EstimatePaper";
@@ -35,7 +35,7 @@ import moment from "moment";
 
 
 const listType = 'estimateDetailList'
-export default function EstimateWrite({copyPageInfo = {}}) {
+export default function EstimateWrite({ copyPageInfo = {}}) {
 
     const [memberList, setMemberList] = useState([]);
 
@@ -95,73 +95,21 @@ export default function EstimateWrite({copyPageInfo = {}}) {
     const [loading, setLoading] = useState(false);
 
 
-    function removeLastSegment(str) {
-        // 문자열에서 '-'의 개수를 확인
-        let parts = str.split('-');
-
-        // '-'가 3개 이상일 때만 마지막 부분 제거
-        if (parts.length > 3) {
-            parts.pop();
-        }
-
-        // 다시 '-'로 합쳐 반환
-        return parts.join('-');
-    }
-
-    const onGridReady = async (params) => {
+    const onGridReady = (params) => {
         gridRef.current = params.api;
-
-
-        if (isEmptyObj(copyPageInfo['estimate_write'])) {
-
-            console.log(copyPageInfo['estimate_write'],'??????')
-            await getData.post('estimate/generateDocumentNumberFull', {
-                type: 'ESTIMATE',
-                documentNumberFull: removeLastSegment(copyPageInfo['estimate_write'].documentNumberFull).toUpperCase()
-            }).then(v => {
-                if (v.data.code === 1) {
-                    console.log(v.data.entity.newDocumentNumberFull, '::::')
-                    setInfo({
-                        ...copyPageInfo['estimate_write'],
-                        documentNumberFull: v.data.entity.newDocumentNumberFull
-                    });
-                } else {
-                    setInfo(copyPageInfo['estimate_write']);
-                }
-            })
-
-            params.api.applyTransaction({add: copyPageInfo['estimate_write'][listType]});
-        } else {
-            setInfo(infoInit);
-            params.api.applyTransaction({add: commonFunc.repeatObject(estimateDetailUnit, 10)});
-        }
-
+        setInfo(isEmptyObj(copyPageInfo['estimate_write'])?copyPageInfo['estimate_write'] : infoInit);
+        params.api.applyTransaction({add: copyPageInfo['estimate_write'][listType] ? copyPageInfo['estimate_write'][listType] : commonFunc.repeatObject(estimateDetailUnit, 10)});
         setReady(true)
     };
 
-
-    async function getDocumentNumber() {
-        return await getData.post('estimate/generateDocumentNumberFull', {
-            type: 'ESTIMATE',
-            documentNumberFull: removeLastSegment(copyPageInfo['estimate_write'].documentNumberFull).toUpperCase()
-        }).then(v => {
-            if (v.data.code === 1) {
-                return v.data.entity.newDocumentNumberFull
-            }
-        })
-    }
-
     useEffect(() => {
-        if (ready) {
-            if (copyPageInfo['estimate_write'] && !isEmptyObj(copyPageInfo['estimate_write'])) {
+        if(ready) {
+            if(copyPageInfo['estimate_write'] && !isEmptyObj(copyPageInfo['estimate_write'])){
                 setInfo(infoInit);
-                gridManage.resetData(gridRef, commonFunc.repeatObject(estimateDetailUnit, 10))
-            } else {
-                getDocumentNumber().then(v=>{
-                    setInfo({...copyPageInfo['estimate_write'],documentNumberFull : v ? v : copyPageInfo['estimate_write'].documentNumberFull,  ...adminParams});
-                    gridManage.resetData(gridRef, copyPageInfo['estimate_write'][listType])
-                })
-
+                gridManage.resetData(gridRef,commonFunc.repeatObject(estimateDetailUnit, 10))
+            }else{
+                setInfo({...copyPageInfo['estimate_write'], ...adminParams});
+                gridManage.resetData(gridRef, copyPageInfo['estimate_write'][listType])
             }
         }
     }, [copyPageInfo['estimate_write']]);
@@ -222,7 +170,7 @@ export default function EstimateWrite({copyPageInfo = {}}) {
                                 validityPeriod: '견적 발행 후 10일간',
                                 paymentTerms: '발주시 50% / 납품시 50%',
                                 shippingTerms: '귀사도착도',
-                                writtenDate: moment().format('YYYY-MM-DD'),
+                                writtenDate : moment().format('YYYY-MM-DD'),
                                 ...adminParams
                             }
                         });
@@ -283,27 +231,8 @@ export default function EstimateWrite({copyPageInfo = {}}) {
 
         setLoading(true)
 
-        await saveEstimate({data: formData, router: router, returnFunc: returnFunc}).then(v => {
-            getAttachFile(v.data.entity.estimateId)
-            // setLoading(false)
-        })
-    }
-
-    async function getAttachFile(e) {
-        if (e) {
-            await getAttachmentFileList({
-                data: {
-                    "relatedType": "ESTIMATE",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
-                    "relatedId": e
-                }
-            }).then(v => {
-                const list = fileManage.getFormatFiles(v);
-                setFileList(list)
-                setLoading(false)
-            })
-        } else {
-            setLoading(false)
-        }
+        await saveEstimate({data: formData, router: router, returnFunc: returnFunc})
+        setLoading(false)
     }
 
     function returnFunc(code, msg) {
@@ -335,9 +264,7 @@ export default function EstimateWrite({copyPageInfo = {}}) {
     };
 
 
-    return <div
-        // style={{overflow : 'hidden'}}
-    ><Spin spinning={loading} tip={'견적서 등록중...'}>
+    return  <div style={{overflow : 'hidden'}}><Spin spinning={loading} tip={'견적서 등록중...'}>
 
         <SearchInfoModal info={info} setInfo={setInfo}
                          open={isModalOpen}
@@ -348,7 +275,7 @@ export default function EstimateWrite({copyPageInfo = {}}) {
             <div style={{
                 display: 'grid',
                 gridTemplateRows: `${mini ? '500px' : '65px'} calc(100vh - ${mini ? 605 : 195}px)`,
-                // overflowY: 'hidden',
+                overflowY: 'hidden',
                 columnGap: 5
             }}>
                 <MainCard title={'견적서 작성'} list={[
@@ -366,8 +293,8 @@ export default function EstimateWrite({copyPageInfo = {}}) {
                                 })}
                                 {inputForm({title: '작성자', id: 'createdBy', disabled: true, onChange: onChange, data: info})}
                                 <div>
-                                    <div style={{paddingBottom: 4.5, fontSize: 12}}>담당자</div>
-                                    <Select style={{width: '100%', fontSize: 12}} size={'small'}
+                                    <div style={{paddingBottom: 4.5, fontSize : 12}}>담당자</div>
+                                    <Select style={{width: '100%', fontSize : 12}} size={'small'}
                                             showSearch
                                             value={info['managerAdminId']}
                                             placeholder="Select a person"
@@ -403,7 +330,7 @@ export default function EstimateWrite({copyPageInfo = {}}) {
                                 })}
                                 {inputForm({
                                     placeholder: '폴더생성 규칙 유의',
-                                    title: '연결 INQUIRY NO.',
+                                    title: '연결 INQUIRY No.',
                                     id: 'connectDocumentNumberFull',
                                     suffix: <DownloadOutlined style={{cursor: 'pointer'}}/>
                                     , onChange: onChange, data: info, handleKeyPress: handleKeyPress

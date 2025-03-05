@@ -6,6 +6,7 @@ import Select from "antd/lib/select";
 import TextArea from "antd/lib/input/TextArea";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {getData} from "@/manage/function/api";
+import InputNumber from "antd/lib/input-number";
 
 const getTextAreaValues = (ref) => {
     if (ref?.current) {
@@ -22,7 +23,7 @@ const getTextAreaValues = (ref) => {
 const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any) => {
     const userInfo = useAppSelector((state) => state.user);
 
-    const [info, setInfo] = useState<any>();
+    const [info, setInfo] = useState<any>([]);
 
     const [splitData, setSplitData] = useState([])
 
@@ -44,23 +45,29 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
             return v
         })
     }
+
     useEffect(() => {
         getInfo().then(v => {
-           const findObj = v.data.entity.adminList.find(src=> src.adminId === data.managerAdminId);
-           console.log(findObj,'findObj:')
+            const findObj = v.data.entity.adminList.find(src => src.adminId === data.managerAdminId);
+
 
             setInfo([
-                {label: '견적일자', value: data.writtenDate, label2: '담당자', value2: findObj.name},
-                {label: '견적서 No.', value: data.documentNumberFull, label2: '연락처', value2: findObj.contactNumber},
-                {label: '고객사', value: data.customerName, label2: 'E-mail', value2: findObj.email},
-                {label: '담당자', value: data.customerManagerName, label2: '유효기간', value2: data.validityPeriod},
-                {label: '연락처', value: data.customerManagerPhone, label2: '결제조건', value2: data.paymentTerms},
-                {label: 'mail', value: data.customerManagerEmail, label2: '납기', value2: data.delivery},
-                {label: 'Fax', value: data.faxNumber, label2: '납품조건', value2: data.shippingTerms},
-
+                {title: '견적일자', value: data.writtenDate, id: 'writtenDate'},
+                {title: '담당자', value: findObj.name, id: 'name'},
+                {title: '견적서 No', value: data.documentNumberFull, id: 'documentNumberFull'},
+                {title: '연락처', value: findObj.contactNumber, id: 'contactNumber'},
+                {title: '고객사', value: data.customerName, id: 'customerName'},
+                {title: 'E-mail', value: findObj.email, id: 'email'},
+                {title: '담당자', value: data.customerManagerName, id: 'customerManagerName'},
+                {title: '유효기간', value: data.validityPeriod, id: 'validityPeriod'},
+                {title: '연락처', value: data.customerManagerPhone, id: 'customerManagerPhone'},
+                {title: '결제조건', value: data.paymentTerms, id: 'paymentTerms'},
+                {title: 'E-mail', value: data.customerManagerEmail, id: 'customerManagerEmail'},
+                {title: '납기', value: data.delivery, id: 'delivery'},
+                {title: 'Fax', value: data.faxNumber, id: 'faxNumber'},
+                {title: '납품조건', value: data.shippingTerms, id: 'shippingTerms'},
             ])
         })
-
 
 
     }, [data])
@@ -75,27 +82,36 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
 
     const NumberInputForm = ({defaultValue, id, setInfo}) => {
 
+        const inputRef = useRef<any>();
+        const [toggle, setToggle] = useState(false);
 
-        // ✅ 입력 값 포맷팅 (쉼표 자동 추가)
         const handleChange = (e) => {
-            const rawValue = e.target.value.replace(/,/g, ""); // 쉼표 제거
-
-            let bowl = {};
-
-
-            if (!isNaN(rawValue) && rawValue !== "") {
-                bowl[id] = new Intl.NumberFormat().format(rawValue); // 쉼표 적용
-            } else {
-                bowl[id] = ''
-            }
             setInfo(v => {
-                return {...v, ...bowl}
+                return {...v, unitPrice: e}
             })
         };
 
-        return <Input value={amountFormat(defaultValue)} onChange={handleChange}
-                      style={{border: 'none', textAlign: 'right', direction: 'rtl'}} name={id}
-                      prefix={<span style={{paddingLeft: 10}}>₩</span>}/>
+        function blur() {
+            console.log('!!')
+            setToggle(false)
+        }
+
+        useEffect(() => {
+            if (toggle) {
+                inputRef.current.focus();
+            }
+        }, [toggle]);
+
+        return <>{toggle ? <InputNumber ref={inputRef} onBlur={blur} value={defaultValue} onChange={handleChange}
+                                        formatter={(value) => value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                        parser={(value) => value.replace(/[^0-9]/g, '')}
+                                        style={{border: 'none', textAlign: 'right', direction: 'rtl', width: '90%'}}
+                                        name={id}
+                                        prefix={<span style={{paddingLeft: 10}}>₩</span>}/> :
+            <div style={{fontSize : 14, padding : 10}}
+                 onClick={() => {
+                     setToggle(true);
+                 }}>{amountFormat(defaultValue)}  ₩</div>}</>
     }
 
     const TotalCalc = () => {
@@ -174,7 +190,6 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
 
             const resultNum = Number(info?.unitPrice ? info?.unitPrice : '');
 
-            console.log((totalAmount), 'info.totalAmount::')
             if (document.getElementById("total_amount")) {
                 document.getElementById("total_amount").textContent = amountFormat(totalAmount);
                 document.getElementById("total_unit_price").textContent = '(V.A.T)별도';
@@ -184,10 +199,11 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
 
         }, [info]);
 
+
         return <thead>
         <tr>
             <th colSpan={2} style={{
-                width: '7%',
+
                 border: 'none',
                 textAlign: 'left',
                 paddingLeft: 10,
@@ -201,6 +217,7 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
             </th>
             <th style={{
                 ...headerStyle,
+                width: 60,
                 textAlign: 'right',
                 fontWeight: 'lighter',
                 fontSize: 12,
@@ -239,6 +256,7 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                 </Select>
             </th>
             <th style={{
+                width: 150,
                 borderBottom: '1px solid lightGray',
                 textAlign: 'right',
                 fontWeight: 'lighter',
@@ -302,49 +320,53 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                 <div style={{padding: 20, borderTop: '2px solid #71d1df', textAlign: 'center', marginTop: 20}}>
                     (주) 만쿠무역은 세계 각지의 공급처를 통해 원하시는 부품 및 산업자재를 저렵하게 공급합니다.
                 </div>
-                <div style={{fontFamily: 'Arial, sans-serif'}}>
-                    <table
-                        style={{width: '100%', borderCollapse: 'collapse'}}>
-                        <tbody>
-                        {info?.map((row: any, index) => {
-                                return <tr key={index} style={{
-                                    borderTop: '0.5px solid lightGray',
-                                    borderBottom: index === info.length - 1 ? '0.5px solid lightGray' : 'none',
-                                }}>
-                                    <td style={headerStyle}>{row.label}</td>
+                <div style={{
+                    fontFamily: 'Arial, sans-serif',
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr',
+                    gridTemplateRows: '40px 40px 40px 40px 40px 40px 40px',
+                    alignItems: 'center',
+                    paddingTop: 20
+                }}>
+                    {info?.map((v: any, index) => {
 
-                                    {/*@ts-ignored*/}
-                                    <td colSpan={row.colSpan ? "3" : "1"} style={{
-                                        fontSize: 13,
-                                        wordWrap: 'break-word',
-                                        wordBreak: 'break-word',
-                                        width: '300px',
-                                        whiteSpace: 'pre-wrap',
-                                        padding: 12
-                                    }}>
-                                        <Input value={row.value} style={{border: 'none'}}/>
-                                    </td>
-                                    {!row.colSpan && (
-                                        <>
-                                            <td style={headerStyle}>{row.label2}</td>
-                                            <td style={{
-                                                fontSize: 13,
-                                                wordWrap: 'break-word',
-                                                wordBreak: 'break-word',
-                                                width: '300px',
-                                                whiteSpace: 'pre-wrap',
-                                                padding: 12
-                                            }}><Input value={row.value2}
-                                                      style={{border: 'none', width: row.label2 === '납기' ? 70 : '100%'}}
-                                                      suffix={row.label2 === '납기' ?
-                                                          <span style={{fontSize: 12}}>주</span> : ''}/></td>
-                                        </>
-                                    )}
-                                </tr>
-                            }
-                        )}
-                        </tbody>
-                    </table>
+                            return <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: '85px 1fr',
+                                alignItems: 'center',
+                                fontSize: 15
+                            }}>
+
+                                <div style={{alignItems: 'center', fontWeight: 600}}>{v.title} <span
+                                    style={{float: 'right', fontWeight: 600}}>:</span></div>
+
+                                {(v.id === 'documentNumberFull' || v.id === 'writtenDate') ?
+                                    <div style={{paddingLeft: 15}}>{v.value}</div>
+
+                                    :
+                                    <Input value={v.value} id={v.id}
+                                           onChange={e => {
+                                               let copyData = [...info]
+                                               let getParam = copyData.find(src => src.id === v.id)
+                                               getParam['value'] = e.target.value;
+                                               let index = copyData.findIndex(item => item.id === getParam.id);
+                                               if (index !== -1) {
+                                                   copyData[index] = getParam;
+                                               }
+                                               setInfo(copyData)
+                                           }}
+                                           suffix={<>{v.id === 'delivery' ? '주' : ''}</>}
+                                           style={{
+                                               border: 'none',
+                                               paddingLeft: 15,
+                                               alignItems: 'center',
+                                               fontSize: 15,
+                                               width: v.id === 'delivery' ? 70 : '100%'
+                                           }}/>
+                                }
+                            </div>
+                        }
+                    )}
                 </div>
 
                 <table
