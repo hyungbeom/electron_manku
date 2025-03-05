@@ -191,6 +191,7 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
             }else{
                 message.warning(v.data.message);
             }
+            setIsModalOpen(false)
         }, err => console.log(err, '::::err'))
     }
 
