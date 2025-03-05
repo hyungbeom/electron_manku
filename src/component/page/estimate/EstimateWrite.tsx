@@ -125,7 +125,7 @@ export default function EstimateWrite({copyPageInfo = {}}) {
                         ...copyPageInfo['estimate_write'],
                         documentNumberFull: v.data.entity.newDocumentNumberFull
                     });
-                }else{
+                } else {
                     setInfo(copyPageInfo['estimate_write']);
                 }
 
@@ -140,15 +140,29 @@ export default function EstimateWrite({copyPageInfo = {}}) {
         setReady(true)
     };
 
+
+    async function getDocumentNumber() {
+        return await getData.post('estimate/generateDocumentNumberFull', {
+            type: 'ESTIMATE',
+            documentNumberFull: removeLastSegment(copyPageInfo['estimate_write'].documentNumberFull).toUpperCase()
+        }).then(v => {
+            if (v.data.code === 1) {
+                return v.data.entity.newDocumentNumberFull
+            }
+        })
+    }
+
     useEffect(() => {
         if (ready) {
             if (copyPageInfo['estimate_write'] && !isEmptyObj(copyPageInfo['estimate_write'])) {
                 setInfo(infoInit);
                 gridManage.resetData(gridRef, commonFunc.repeatObject(estimateDetailUnit, 10))
             } else {
-                console.log(copyPageInfo['estimate_write'].documentNumberFull, '::')
-                setInfo({...copyPageInfo['estimate_write'], ...adminParams});
-                gridManage.resetData(gridRef, copyPageInfo['estimate_write'][listType])
+                getDocumentNumber().then(v=>{
+                    setInfo({...copyPageInfo['estimate_write'],documentNumberFull : v ? v : copyPageInfo['estimate_write'].documentNumberFull,  ...adminParams});
+                    gridManage.resetData(gridRef, copyPageInfo['estimate_write'][listType])
+                })
+
             }
         }
     }, [copyPageInfo['estimate_write']]);
