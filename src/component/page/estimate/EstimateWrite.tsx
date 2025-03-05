@@ -97,29 +97,30 @@ export default function EstimateWrite({copyPageInfo = {}}) {
 
     function removeLastSegment(str) {
         // 문자열에서 '-'의 개수를 확인
-        let parts = str?.split('-');
+        let parts = str.split('-');
 
         // '-'가 3개 이상일 때만 마지막 부분 제거
-        if (parts?.length > 3) {
-            parts?.pop();
+        if (parts.length > 3) {
+            parts.pop();
         }
 
         // 다시 '-'로 합쳐 반환
-        return parts?.join('-');
+        return parts.join('-');
     }
 
     const onGridReady = async (params) => {
         gridRef.current = params.api;
 
 
-        if (copyPageInfo['estimate_write']) {
-            // 문서번호
+        if (isEmptyObj(copyPageInfo['estimate_write'])) {
 
+            console.log(copyPageInfo['estimate_write'],'??????')
             await getData.post('estimate/generateDocumentNumberFull', {
                 type: 'ESTIMATE',
-                documentNumberFull: removeLastSegment(copyPageInfo['estimate_write']?.documentNumberFull)?.toUpperCase()
+                documentNumberFull: removeLastSegment(copyPageInfo['estimate_write'].documentNumberFull).toUpperCase()
             }).then(v => {
                 if (v.data.code === 1) {
+                    console.log(v.data.entity.newDocumentNumberFull, '::::')
                     setInfo({
                         ...copyPageInfo['estimate_write'],
                         documentNumberFull: v.data.entity.newDocumentNumberFull
@@ -127,7 +128,6 @@ export default function EstimateWrite({copyPageInfo = {}}) {
                 } else {
                     setInfo(copyPageInfo['estimate_write']);
                 }
-
             })
 
             params.api.applyTransaction({add: copyPageInfo['estimate_write'][listType]});
