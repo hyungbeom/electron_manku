@@ -54,7 +54,7 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
 
 
         return <Input value={amountFormat(defaultValue)}
-                      style={{border: 'none', textAlign: 'right', direction: 'rtl'}} id={id}
+                      style={{border: 'none', textAlign: 'right', direction: 'rtl'}} id={id} name={id}
                       prefix={<span style={{paddingLeft: 10}}>₩</span>}/>
     }
 
@@ -85,9 +85,6 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
 
     const TotalCalc = () => {
 
-        useEffect(() => {
-            console.log('!!!')
-        })
 
         return <thead>
         <tr style={{fontWeight: 'bold', height: 50}}>
@@ -156,12 +153,16 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
             const totalPrice = Array.from(document.getElementsByName("unitPrice"))
                 .reduce((sum, input: any) => sum + (Number(input.value.replace(/,/g, "")) || 0), 0);
 
-            console.log(totalPrice);
+      const totalAmount = Array.from(document.getElementsByName("amount"))
+                .reduce((sum, input: any) => sum + (Number(input.value.replace(/,/g, "")) || 0), 0);
 
 
-            const resultNum = Number(info?.unitPrice ? info?.unitPrice : '')
-            if(document.getElementById("total_amount")){
-                document.getElementById("total_amount").textContent = amountFormat(resultNum * info.quantity);
+
+            const resultNum = Number(info?.unitPrice ? info?.unitPrice : '');
+
+            console.log((totalAmount),'info.totalAmount::')
+            if (document.getElementById("total_amount")) {
+                document.getElementById("total_amount").textContent = amountFormat(totalAmount);
                 document.getElementById("total_unit_price").textContent = amountFormat(totalPrice);
                 document.getElementById("total_unit").textContent = info.unit;
                 document.getElementById("total_quantity").textContent = totalQuantity.toString()
@@ -287,42 +288,43 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                     <table
                         style={{width: '100%', borderCollapse: 'collapse'}}>
                         <tbody>
-                        {info?.map((row: any, index) => (
-                            <tr key={index} style={{
-                                borderTop: '0.5px solid lightGray',
-                                borderBottom: index === info.length - 1 ? '0.5px solid lightGray' : 'none',
-                            }}>
-                                <td style={headerStyle}>{row.label}</td>
-
-                                {/*@ts-ignored*/}
-                                <td colSpan={row.colSpan ? "3" : "1"} style={{
-                                    fontSize: 13,
-                                    wordWrap: 'break-word',
-                                    wordBreak: 'break-word',
-                                    width: '300px',
-                                    whiteSpace: 'pre-wrap',
-                                    padding: 12
+                        {info?.map((row: any, index) => {
+                                return <tr key={index} style={{
+                                    borderTop: '0.5px solid lightGray',
+                                    borderBottom: index === info.length - 1 ? '0.5px solid lightGray' : 'none',
                                 }}>
-                                    <Input defaultValue={row.value} style={{border: 'none'}}/>
-                                </td>
-                                {!row.colSpan && (
-                                    <>
-                                        <td style={headerStyle}>{row.label2}</td>
-                                        <td style={{
-                                            fontSize: 13,
-                                            wordWrap: 'break-word',
-                                            wordBreak: 'break-word',
-                                            width: '300px',
-                                            whiteSpace: 'pre-wrap',
-                                            padding: 12
-                                        }}><Input defaultValue={row.value2}
-                                                  style={{border: 'none', width: row.label2 === '납기' ? 70 : '100%'}}
-                                                  suffix={row.label2 === '납기' ?
-                                                      <span style={{fontSize: 12}}>주</span> : ''}/></td>
-                                    </>
-                                )}
-                            </tr>
-                        ))}
+                                    <td style={headerStyle}>{row.label}</td>
+
+                                    {/*@ts-ignored*/}
+                                    <td colSpan={row.colSpan ? "3" : "1"} style={{
+                                        fontSize: 13,
+                                        wordWrap: 'break-word',
+                                        wordBreak: 'break-word',
+                                        width: '300px',
+                                        whiteSpace: 'pre-wrap',
+                                        padding: 12
+                                    }}>
+                                        <Input value={row.value} style={{border: 'none'}}/>
+                                    </td>
+                                    {!row.colSpan && (
+                                        <>
+                                            <td style={headerStyle}>{row.label2}</td>
+                                            <td style={{
+                                                fontSize: 13,
+                                                wordWrap: 'break-word',
+                                                wordBreak: 'break-word',
+                                                width: '300px',
+                                                whiteSpace: 'pre-wrap',
+                                                padding: 12
+                                            }}><Input value={row.value2}
+                                                      style={{border: 'none', width: row.label2 === '납기' ? 70 : '100%'}}
+                                                      suffix={row.label2 === '납기' ?
+                                                          <span style={{fontSize: 12}}>주</span> : ''}/></td>
+                                        </>
+                                    )}
+                                </tr>
+                            }
+                        )}
                         </tbody>
                     </table>
                 </div>
@@ -397,19 +399,19 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                 {/* 여백 자동 확장하여 아래로 밀어줌 */}
 
 
-                    <div
-                        style={{
-                            padding: '30px 20px',
-                            fontSize: 12,
-                            lineHeight: 1.7,
-                            borderTop: '1px solid black',
-                        }}>
-                        <div>· 금일 환율 기준으로 2%이상 인상될 시 , 단가가 인상될 수 있습니다.</div>
-                        <div>· 러-우전쟁 및 COVID-19 장기화로 납기 변동성이 큰 시기입니다. 납기 지연이 발생할 수 있는 점 양해 부탁드립니다.</div>
-                        <div>· 의뢰하신 Model로 기준한 견적이며, 견적 수량 전량 구입시 가격입니다. (긴급 납기시 담당자와 협의 가능합니다.)</div>
-                        <div>· 계좌번호: (기업은행)069-118428-04-010/(주)만쿠무역.</div>
-                        <div>· 성적서 및 품질보증서는 별도입니다.</div>
-                    </div>
+                <div
+                    style={{
+                        padding: '30px 20px',
+                        fontSize: 12,
+                        lineHeight: 1.7,
+                        borderTop: '1px solid black',
+                    }}>
+                    <div>· 금일 환율 기준으로 2%이상 인상될 시 , 단가가 인상될 수 있습니다.</div>
+                    <div>· 러-우전쟁 및 COVID-19 장기화로 납기 변동성이 큰 시기입니다. 납기 지연이 발생할 수 있는 점 양해 부탁드립니다.</div>
+                    <div>· 의뢰하신 Model로 기준한 견적이며, 견적 수량 전량 구입시 가격입니다. (긴급 납기시 담당자와 협의 가능합니다.)</div>
+                    <div>· 계좌번호: (기업은행)069-118428-04-010/(주)만쿠무역.</div>
+                    <div>· 성적서 및 품질보증서는 별도입니다.</div>
+                </div>
 
                 <div style={{textAlign: 'center'}}>- 1 -</div>
             </div>
