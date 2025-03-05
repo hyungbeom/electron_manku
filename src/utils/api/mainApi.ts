@@ -11,15 +11,14 @@ export const checkInquiryNo = async ({data}) => {
 };
 
 export const saveRfq = async ({data, router, setLoading}) => {
-    await getFormData.post('estimate/addEstimateRequest', data).then(v => {
+    return await getFormData.post('estimate/addEstimateRequest', data).then(v => {
         if (v.data.code === 1) {
-            window.opener?.postMessage('write', window.location.origin);
             message.success('저장되었습니다.');
-            // router.push(`/rfq_update?estimateRequestId=${v?.data?.entity?.estimateRequestId}`)
+            return v.data.entity.documentNumberFull
         }
-        setLoading(false);
+
     }, err => {
-        setLoading(false);
+
         console.log(err)
     })
 };
@@ -382,8 +381,8 @@ export const getOrderStatusList = async ({data}) => {
         limit: -1
     }).then(v => {
         if (v.data.code === 1) {
-            const {orderStatusList, pageInfo} =v.data.entity
-            return {data : orderStatusList, pageInfo : pageInfo}
+            const {orderStatusList, pageInfo} = v.data.entity
+            return {data: orderStatusList, pageInfo: pageInfo}
         } else {
             message.error('오류가 발생하였습니다. 다시 시도해주세요.')
         }
@@ -442,11 +441,11 @@ export const updateDomesticAgency = async ({data, returnFunc}: any) => {
 
 export const searchDomesticAgency = async ({data}: any) => {
 
-   return getData.post('agency/getAgencyList', data).then(v => {
+    return getData.post('agency/getAgencyList', data).then(v => {
         const code = v.data.code;
         if (code === 1) {
-            const {agencyList, pageInfo} =v.data.entity
-            return {data : agencyList, pageInfo : pageInfo}
+            const {agencyList, pageInfo} = v.data.entity
+            return {data: agencyList, pageInfo: pageInfo}
             message.success('수정되었습니다.')
         } else {
             message.error('실패하였습니다.')
@@ -460,8 +459,8 @@ export const searchOverseasAgency = async ({data}: any) => {
     return getData.post('agency/getOverseasAgencyList', data).then(v => {
         const code = v.data.code;
         if (code === 1) {
-            const {overseasAgencyList, pageInfo} =v.data.entity
-            return {data : overseasAgencyList, pageInfo : pageInfo}
+            const {overseasAgencyList, pageInfo} = v.data.entity
+            return {data: overseasAgencyList, pageInfo: pageInfo}
             message.success('수정되었습니다.')
         } else {
             message.error('실패하였습니다.')
@@ -476,8 +475,8 @@ export const searchDomesticCustomer = async ({data}: any) => {
     return getData.post('customer/getCustomerList', data).then(v => {
         const code = v.data.code;
         if (code === 1) {
-            const {customerList, pageInfo} =v.data.entity
-            return {data : customerList, pageInfo : pageInfo}
+            const {customerList, pageInfo} = v.data.entity
+            return {data: customerList, pageInfo: pageInfo}
             message.success('수정되었습니다.')
         } else {
             message.error('실패하였습니다.')
@@ -485,7 +484,6 @@ export const searchDomesticCustomer = async ({data}: any) => {
     })
 
 };
-
 
 
 export const searchOverseasCustomer = async ({data}: any) => {
@@ -493,8 +491,8 @@ export const searchOverseasCustomer = async ({data}: any) => {
     return getData.post('customer/getOverseasCustomerList', data).then(v => {
         const code = v.data.code;
         if (code === 1) {
-            const {overseasCustomerList, pageInfo} =v.data.entity
-            return {data : overseasCustomerList, pageInfo : pageInfo}
+            const {overseasCustomerList, pageInfo} = v.data.entity
+            return {data: overseasCustomerList, pageInfo: pageInfo}
             message.success('수정되었습니다.')
         } else {
             message.error('실패하였습니다.')
@@ -504,14 +502,13 @@ export const searchOverseasCustomer = async ({data}: any) => {
 };
 
 
-
 export const searchMaker = async ({data}: any) => {
 
     return getData.post('maker/getMakerList', data).then(v => {
         const code = v.data.code;
         if (code === 1) {
-            const {makerList, pageInfo} =v.data.entity
-            return {data : makerList, pageInfo : pageInfo}
+            const {makerList, pageInfo} = v.data.entity
+            return {data: makerList, pageInfo: pageInfo}
             message.success('수정되었습니다.')
         } else {
             message.error('실패하였습니다.')
@@ -525,8 +522,8 @@ export const searchHSCode = async ({data}: any) => {
     return getData.post('hsCode/getHsCodeList', data).then(v => {
         const code = v.data.code;
         if (code === 1) {
-            const {hsCodeList, pageInfo} =v.data.entity
-            return {data : hsCodeList, pageInfo : pageInfo}
+            const {hsCodeList, pageInfo} = v.data.entity
+            return {data: hsCodeList, pageInfo: pageInfo}
             message.success('수정되었습니다.')
         } else {
             message.error('실패하였습니다.')

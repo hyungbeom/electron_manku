@@ -111,7 +111,7 @@ export default function RqfWrite({ copyPageInfo = {}}) {
 
     const onGridReady = (params) => {
         gridRef.current = params.api;
-        setInfo(isEmptyObj(copyPageInfo['rfq_write'])?copyPageInfo['rfq_write'] : infoInit);
+        setInfo(isEmptyObj(copyPageInfo['rfq_write']) ? {...copyPageInfo['rfq_write'], documentNumberFull : ''} : infoInit);
         params.api.applyTransaction({add: copyPageInfo['rfq_write'][listType] ? copyPageInfo['rfq_write'][listType] : commonFunc.repeatObject(estimateRequestDetailUnit, 10)});
         setReady(true)
     };
@@ -122,7 +122,7 @@ export default function RqfWrite({ copyPageInfo = {}}) {
                 setInfo(infoInit);
                 gridManage.resetData(gridRef,commonFunc.repeatObject(estimateRequestDetailUnit, 10))
             }else{
-                setInfo({...copyPageInfo['rfq_write'], ...adminParams});
+                setInfo({...copyPageInfo['rfq_write'], ...adminParams, documentNumberFull : ''});
                 console.log(adminParams,'as')
                 gridManage.resetData(gridRef, copyPageInfo['rfq_write'][listType])
             }
@@ -192,7 +192,12 @@ export default function RqfWrite({ copyPageInfo = {}}) {
         formData.delete('createdDate');
         formData.delete('modifiedDate');
 
-        await saveRfq({data: formData, router: router, setLoading})
+        await saveRfq({data: formData, router: router, setLoading}).then(v=>{
+            setInfo(src=>{
+                return {...src, documentNumberFull : v}
+            })
+            setLoading(false);
+        })
 
     }
 
