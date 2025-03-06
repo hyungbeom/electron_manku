@@ -34,6 +34,7 @@ export default function DomesticCustomerUpdate({dataInfo = {customerManagerList:
 
     const onGridReady = (params) => {
         gridRef.current = params.api;
+        console.log(dataInfo?.customerManagerList,'dataInfo?.customerManagersList:')
         params.api.applyTransaction({add: dataInfo?.customerManagerList});
     };
 
@@ -51,10 +52,9 @@ export default function DomesticCustomerUpdate({dataInfo = {customerManagerList:
         }).then(v => {
             const result = v.data.entity.customerList.find(src => src.customerCode === updateKey['domestic_customer_update'])
             setInfo(result)
+
             gridManage.resetData(gridRef, result[listType])
         })
-
-
     }
 
     function onChange(e) {

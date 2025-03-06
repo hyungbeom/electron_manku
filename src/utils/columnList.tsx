@@ -2343,7 +2343,7 @@ export const tableCodeDomesticWriteColumn = [
     },
     {
         headerName: '전화번호',
-        field: 'phoneNumber',
+        field: 'directTel',
         editable: true,
     },
     {
@@ -2353,7 +2353,7 @@ export const tableCodeDomesticWriteColumn = [
     },
     {
         headerName: '휴대폰번호',
-        field: 'email',
+        field: 'mobileNumber',
         editable: true,
     },
     {

@@ -34,6 +34,7 @@ export default function PrintTransactionModal({data, customerData, isModalOpen, 
 
         return number?.toLocaleString();
     }
+    console.log(data,'data:')
 
     const handleDownloadPDF = async () => {
         const element = pdfRef.current;
