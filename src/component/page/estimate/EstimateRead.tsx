@@ -11,7 +11,7 @@ import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import Button from "antd/lib/button";
-import {CopyOutlined} from "@ant-design/icons";
+import {CopyOutlined, FileExcelOutlined} from "@ant-design/icons";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
 import {deleteEstimate, searchEstimate, searchRfq} from "@/utils/api/mainApi";
@@ -22,6 +22,9 @@ import Spin from "antd/lib/spin";
 import ReceiveComponent from "@/component/ReceiveComponent";
 import {useRouter} from "next/router";
 import {getData} from "@/manage/function/api";
+import EstimateTotalWrite from "@/component/page/estimate/EstimateTotalWrite";
+import PrintIntegratedEstimate from "@/component/printIntegratedEstimate";
+import {useAppSelector} from "@/utils/common/function/reduxHooks";
 
 
 export default function EstimateRead({getPropertyId, getCopyPage}) {
@@ -34,9 +37,13 @@ export default function EstimateRead({getPropertyId, getCopyPage}) {
     const copyInit = _.cloneDeep(estimateReadInitial)
     const [info, setInfo] = useState(copyInit)
     const [mini, setMini] = useState(true);
-
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedRow, setSelectedRow] = useState([])
     const [loading, setLoading] = useState(false);
     const [totalRow, setTotalRow] = useState(0);
+
+    const userInfo = useAppSelector((state) => state.user);
+
     const onGridReady = async (params) => {
         gridRef.current = params.api;
         await searchEstimate({data: estimateReadInitial}).then(v => {
@@ -144,8 +151,21 @@ export default function EstimateRead({getPropertyId, getCopyPage}) {
         gridRef.current.deselectAll();
     }
 
+    async function printEstimate() {
+
+        const checkedData = gridRef.current.getSelectedRows();
+
+        setSelectedRow(checkedData)
+        // console.log(selectedRow, 'setSelectedRow')
+        setIsModalOpen(true)
+    }
+
     return <Spin spinning={loading} tip={'견적서 조회중...'}>
         <ReceiveComponent searchInfo={searchInfo}/>
+        {selectedRow.length > 0 &&
+            <PrintIntegratedEstimate data={selectedRow} isModalOpen={isModalOpen} userInfo={userInfo}
+                                     setIsModalOpen={setIsModalOpen}/>
+        }
         <>
             <div style={{
                 display: 'grid',
@@ -220,10 +240,18 @@ export default function EstimateRead({getPropertyId, getCopyPage}) {
                         : <></>}
                 </MainCard>
                 {/*@ts-ignored*/}
-                <TableGrid deleteComp={<Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
+                <TableGrid deleteComp={<><Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
                                                onClick={deleteList}>
                     <CopyOutlined/>삭제
-                </Button>}
+                </Button>
+                    <Button type={'primary'} size={'small'}
+                            style={{backgroundColor: 'green', border: 'none', fontSize: 11, marginLeft: 5,}}
+                            onClick={printEstimate}>
+                        <FileExcelOutlined/>통합 견적서 발행
+                    </Button>
+
+                </>
+                }
                            totalRow={totalRow}
                            getPropertyId={getPropertyId}
                            gridRef={gridRef}

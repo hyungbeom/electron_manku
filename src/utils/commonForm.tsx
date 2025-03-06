@@ -439,6 +439,7 @@ export const tableButtonList = (type: any, gridRef?: any) => {
                 size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>
                 <FileExcelOutlined/>Excel 다운로드
             </Button>
+
     }
 }
 

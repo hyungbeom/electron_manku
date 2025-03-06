@@ -160,7 +160,7 @@ export default function EstimateTotalWrite({estimateList=[]}) {
                     tableData={tableData}
                     type={'read'}
                     excel={true}
-                    funcButtons={subTableUtil}
+                    // funcButtons={subTableUtil}
                 />
 
 
