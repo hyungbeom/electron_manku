@@ -83,6 +83,7 @@ export default function RqfUpdate({ updateKey = {}, getCopyPage = null, managerL
     useEffect(() => {
         setLoading(true)
         getDataInfo().then(v => {
+            console.log(v,'v::::')
             const {estimateRequestDetail, attachmentFileList} = v;
             setFileList(fileManage.getFormatFiles(attachmentFileList));
             setOriginFileList(attachmentFileList)
@@ -93,9 +94,11 @@ export default function RqfUpdate({ updateKey = {}, getCopyPage = null, managerL
     }, [updateKey['rfq_update']])
 
     async function getDataInfo() {
+
         const result = await getData.post('estimate/getEstimateRequestDetail', {
             "estimateRequestId": updateKey['rfq_update']
         });
+        console.log(result,'??')
         return result?.data?.entity;
     }
 

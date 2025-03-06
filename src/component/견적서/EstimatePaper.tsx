@@ -317,7 +317,7 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                 </div>
 
                 <div style={{padding: 20, borderTop: '2px solid #71d1df', textAlign: 'center', marginTop: 20}}>
-                    (주) 만쿠무역은 세계 각지의 공급처를 통해 원하시는 부품 및 산업자재를 저렵하게 공급합니다.
+                    (주) 만쿠무역은 세계 각지의 공급처를 통해 원하시는 부품 및 산업자재를 저렴하게 공급합니다.
                 </div>
                 <div style={{
                     fontFamily: 'Arial, sans-serif',

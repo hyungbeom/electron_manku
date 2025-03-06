@@ -267,15 +267,13 @@ export default function OrderWrite({dataInfo = [],  copyPageInfo}) {
                             <BoxCard title={'매입처 정보'}>
                                 {inputForm({title: '매입처 코드', id: 'agencyCode', onChange: onChange, data: info})}
                                 {inputForm({title: '매입처명', id: 'agencyName', onChange: onChange, data: info})}
-                                {inputForm({title: '매입처 견적서명', id: 'attnTo', onChange: onChange, data: info})}
+                                {inputForm({title: '매입처 관리번호', id: 'attnTo', onChange: onChange, data: info})}
                                 {inputForm({title: '담당자', id: 'attnTo', onChange: onChange, data: info})}
                             </BoxCard>
 
                             <BoxCard title={'담당자 정보'}>
-                                {inputForm({title: 'Responsibility', id: 'managerId', onChange: onChange, data: info})}
+                                {inputForm({title: '작성자', id: 'managerId', onChange: onChange, data: info})}
                                 {/*{inputForm({title: 'TEL', id: 'managerPhoneNumber', onChange: onChange, data: info})}*/}
-                                {inputForm({title: 'Fax', id: 'managerFaxNumber', onChange: onChange, data: info})}
-
                                 <div style={{fontSize: 12, paddingBottom: 10, width: '100%'}}>
                                     <div style={{marginBottom: 5}}>Tel</div>
                                     <div style={{display : 'flex'}}>
@@ -285,34 +283,28 @@ export default function OrderWrite({dataInfo = [],  copyPageInfo}) {
                                         <Input value={info['managerPhoneNumber']} id={'managerPhoneNumber'} onChange={onChange} size={'small'} style={{width : '100%', fontSize : 12, height : 23}}/>
                                     </div>
                                 </div>
+                                {inputForm({title: 'Fax', id: 'managerFaxNumber', onChange: onChange, data: info})}
+
                                 {inputForm({title: 'E-Mail', id: 'managerEmail', onChange: onChange, data: info})}
                             </BoxCard>
-                            <BoxCard title={'LOGISTICS'}>
+                            <BoxCard title={'세부사항'}>
                                 {selectBoxForm({
-                                    title: 'paymentTerms', id: 'paymentTerms', onChange: src =>onChange({target: {id: 'paymentTerms', value: src}}), data: info, list: [
-                                        {value: 'By in advance T/T', label: 'By in advance T/T'},
-                                        {value: 'Credit Card', label: 'Credit Card'},
-                                        {value: 'L/C', label: 'L/C'},
-                                        {
-                                            value: 'Order 30% Before Shipping 70%',
-                                            label: 'Order 30% Before Shipping 70%'
-                                        },
-                                        {
-                                            value: 'Order 50% Before Shipping 50%',
-                                            label: 'Order 50% Before Shipping 50%'
-                                        },
+                                    title: '결제 조건', id: 'paymentTerms', onChange: src =>onChange({target: {id: 'paymentTerms', value: src}}), data: info, list: [
+                                        {value: 'By in advance T/T1', label: '정기결제'},
+                                        {value: 'By in advance T/T', label: '현금결제'},
+                                        {value: 'Credit Card', label: '카드결제'},
                                     ]
                                 })}
 
                                 {inputForm({
-                                    title: 'Delivery Terms',
+                                    title: '납기',
                                     id: 'deliveryTerms',
                                     onChange: onChange,
                                     data: info
                                 })}
                                 {inputForm({title: 'Maker', id: 'maker', onChange: onChange, data: info})}
                                 {inputForm({title: 'Item', id: 'item', onChange: onChange, data: info})}
-                                {datePickerForm({title: '납기', id: 'delivery', onChange: onChange, data: info})}
+                                {datePickerForm({title: '예상 입고일', id: 'delivery', onChange: onChange, data: info})}
                             </BoxCard>
 
                             <BoxCard title={'ETC'}>

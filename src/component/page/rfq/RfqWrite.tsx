@@ -278,7 +278,7 @@ export default function RqfWrite({ copyPageInfo = {}}) {
 
 
                     {mini ? <div>
-                            <TopBoxCard title={''} grid={'1fr 0.6fr 150px 1fr 1fr 1fr'}>
+                            <TopBoxCard title={''} grid={'110px 110px 150px 150px 150px 350px'}>
                                 {datePickerForm({
                                     title: '작성일',
                                     id: 'writtenDate',
@@ -286,14 +286,7 @@ export default function RqfWrite({ copyPageInfo = {}}) {
                                     onChange: onChange,
                                     data: info
                                 })}
-                                {inputForm({
-                                    title: 'Inquiry No.',
-                                    id: 'documentNumberFull',
-                                    onChange: onChange,
-                                    data: info,
-                                    disabled : true,
-                                    placeHolder : '자동생성'
-                                })}
+
                                 {inputForm({title: '작성자', id: 'createBy', disabled: true, onChange: onChange, data: info})}
                                 <div>
                                     <div style={{paddingBottom: 4.5, fontSize : 12}}>담당자</div>
@@ -306,6 +299,14 @@ export default function RqfWrite({ copyPageInfo = {}}) {
                                             options={options}
                                     />
                                 </div>
+                                {inputForm({
+                                    title: 'Inquiry No.',
+                                    id: 'documentNumberFull',
+                                    onChange: onChange,
+                                    data: info,
+                                    disabled : true,
+                                    placeHolder : '자동생성'
+                                })}
                                 {inputForm({
                                     title: 'RFQ No.',
                                     id: 'rfqNo',

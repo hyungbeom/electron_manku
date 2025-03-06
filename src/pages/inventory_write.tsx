@@ -144,16 +144,18 @@ export default function OrderInventoryWrite() {
                                             onChange={(src) => onChange({target: {id: 'currencyUnit', value: src}})}
                                             size={'small'} value={info['currencyUnit']} options={[
                                         {value: '0', label: 'ea'},
-                                        {value: '1', label: 'set'},
-                                        {value: '2', label: 'm'},
-                                        {value: '3', label: 'feet'},
-                                        {value: '4', label: 'roll'},
-                                        {value: '5', label: 'box'},
-                                        {value: '6', label: 'g'},
-                                        {value: '7', label: 'kg'},
-                                        {value: '8', label: 'Pack'},
-                                        {value: '9', label: 'Inch'},
-                                        {value: '10', label: 'MOQ'},
+                                        {value: '1', label: 'Set'},
+                                        {value: '2', label: 'Pack'},
+                                        {value: '3', label: 'Can'},
+                                        {value: '4', label: 'Box'},
+                                        {value: '5', label: 'MOQ'},
+                                        {value: '6', label: 'Meter'},
+                                        {value: '7', label: 'Inch'},
+                                        {value: '8', label: 'Roll'},
+                                        {value: '9', label: 'g'},
+                                        {value: '10', label: 'kg'},
+                                        {value: '10', label: 'oz'},
+                                        {value: '10', label: '직접입력'},
                                     ]} style={{width: '100%',}}/>
                                 </div>
                             </div>

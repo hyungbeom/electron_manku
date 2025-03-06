@@ -61,7 +61,7 @@ export const subOrderWriteInfo = {
     "net": {title : '매입 단가'},            // 매입단가
     "quantity": {title : '주문수량'},
     "receivedQuantity": {title : '입고'},
-    "unreceivedQuantity": {title : '미입고'},
+    "unreceivedQuantity": {title : '미 입고'},
     "unitPrice": {title : '단가'},
     "amount": {title : 'Amount'},
 }
