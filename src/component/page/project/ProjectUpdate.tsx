@@ -19,10 +19,37 @@ import {useAppSelector} from "@/utils/common/function/reduxHooks";
 
 import 'react-splitter-layout/lib/index.css';
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
+import Select from "antd/lib/select";
 
 
 const listType = 'projectDetailList'
 export default function ProjectUpdate({dataInfo = {projectDetail: [], attachmentFileList: []}, updateKey = {}, getCopyPage = null}) {
+
+    const [memberList, setMemberList] = useState([]);
+
+    useEffect(() => {
+        getMemberList();
+    }, []);
+
+    async function getMemberList() {
+        // @ts-ignore
+        return await getData.post('admin/getAdminList', {
+            "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
+            "searchAuthority": null,    // 1: 일반, 0: 관리자
+            "page": 1,
+            "limit": -1
+        }).then(v => {
+            setMemberList(v.data.entity.adminList)
+        })
+    }
+
+
+    const options = memberList.map((item) => ({
+        ...item,
+        value: item.adminId,
+        label: item.name,
+    }));
+
     const groupRef = useRef<any>(null)
 
     const fileRef = useRef(null);
@@ -186,6 +213,14 @@ export default function ProjectUpdate({dataInfo = {projectDetail: [], attachment
         gridManage.deleteAll(gridRef)
     }
 
+    const onCChange = (value: string, e: any) => {
+        setInfo(v => {
+            return {...v, managerAdminId: e.adminId, managerAdminName: e.name}
+        })
+    };
+
+
+
     return <Spin spinning={loading} tip={'프로젝트 수정중...'}>
         <SearchInfoModal info={info} setInfo={setInfo}
                          open={isModalOpen}
@@ -206,33 +241,43 @@ export default function ProjectUpdate({dataInfo = {projectDetail: [], attachment
                 ]} mini={mini} setMini={setMini}>
 
                     {mini ? <div>
-                        <TopBoxCard>
-                            {inputForm({
-                                title: '작성자',
-                                id: 'createdBy',
-                                disabled: true,
-                                onChange: onChange,
-                                data: info
-                            })}
-                            {datePickerForm({
-                                title: '작성일자',
-                                id: 'writtenDate',
-                                disabled: true,
-                                onChange: onChange,
-                                data: info
-                            })}
-                            {inputForm({title: '담당자', id: 'managerAdminName', onChange: onChange, data: info})}
+                            <TopBoxCard>
+                                {inputForm({
+                                    title: '작성자',
+                                    id: 'createdBy',
+                                    disabled: true,
+                                    onChange: onChange,
+                                    data: info
+                                })}
+                                {datePickerForm({
+                                    title: '작성일자',
+                                    id: 'writtenDate',
+                                    disabled: true,
+                                    onChange: onChange,
+                                    data: info
+                                })}
+                                <div>
+                                    <div style={{fontSize: 12}}>담당자</div>
+                                    <Select style={{width: '100%', fontSize: 12, marginTop: 5}} size={'small'}
+                                            showSearch
+                                            value={info['managerAdminId']}
+                                            placeholder="Select a person"
+                                            optionFilterProp="label"
+                                            onChange={onCChange}
+                                            options={options}
+                                    />
+                                </div>
 
-                        </TopBoxCard>
-                        <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 3, paddingTop: 3}}>
-                            <Panel defaultSize={sizes[0]} minSize={10} maxSize={100} onResize={onResizeChange}>
-                                <BoxCard title={'프로젝트 정보'} tooltip={tooltipInfo('readProejct')}>
-                                    {inputForm({
-                                        title: 'PROJECT NO.',
-                                        id: 'documentNumberFull',
-                                        onChange: onChange,
-                                        data: info,
-                                        disabled: true
+                            </TopBoxCard>
+                            <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 3, paddingTop: 3}}>
+                                <Panel defaultSize={sizes[0]} minSize={10} maxSize={100} onResize={onResizeChange}>
+                                    <BoxCard title={'프로젝트 정보'} tooltip={tooltipInfo('readProejct')}>
+                                        {inputForm({
+                                            title: 'PROJECT NO.',
+                                            id: 'documentNumberFull',
+                                            onChange: onChange,
+                                            data: info,
+                                            disabled: true
                                     })}
                                     {inputForm({
                                         title: '프로젝트 제목',

@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from "react";
 import {FileSearchOutlined} from "@ant-design/icons";
 import {projectWriteColumn} from "@/utils/columnList";
-import {ModalInitList, projectDetailUnit, projectWriteInitial} from "@/utils/initialList";
+import {estimateDetailUnit, ModalInitList, projectDetailUnit, projectWriteInitial} from "@/utils/initialList";
 import message from "antd/lib/message";
 import TableGrid from "@/component/tableGrid";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
@@ -19,22 +19,44 @@ import 'react-splitter-layout/lib/index.css';
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import moment from "moment";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
+import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
+import {getData} from "@/manage/function/api";
 
 
 const listType = 'projectDetailList'
 export default function ProjectWrite({managerList = [], copyPageInfo = {}}) {
 
+    const [memberList, setMemberList] = useState([]);
+
+    useEffect(() => {
+        getMemberList();
+    }, []);
+
+    async function getMemberList() {
+        // @ts-ignore
+        return await getData.post('admin/getAdminList', {
+            "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
+            "searchAuthority": null,    // 1: 일반, 0: 관리자
+            "page": 1,
+            "limit": -1
+        }).then(v => {
+            setMemberList(v.data.entity.adminList)
+        })
+    }
+
+
+    const options = memberList.map((item) => ({
+        ...item,
+        value: item.adminId,
+        label: item.name,
+    }));
 
     const router = useRouter();
 
 
     const groupRef = useRef<any>(null)
 
-    const options = managerList.map((item) => ({
-        ...item,
-        value: item.adminId,
-        label: item.name,
-    }));
+
     const fileRef = useRef(null);
     const gridRef = useRef(null);
     const copyInit = _.cloneDeep(projectWriteInitial)
@@ -51,11 +73,12 @@ export default function ProjectWrite({managerList = [], copyPageInfo = {}}) {
 
     const infoInit = {
         ...copyInit,
-        ...adminParams
+        ...adminParams,
+        writtenDate: moment().format('YYYY-MM-DD')
     }
+    const [ready, setReady] = useState(false);
 
-
-    const [info, setInfo] = useState<any>({...copyInit, ...adminParams})
+    const [info, setInfo] = useState<any>(infoInit)
     const [validate, setValidate] = useState({documentNumberFull: true});
 
     const [mini, setMini] = useState(true);
@@ -65,27 +88,25 @@ export default function ProjectWrite({managerList = [], copyPageInfo = {}}) {
     const [loading, setLoading] = useState(false);
 
 
-    useEffect(() => {
-        if (copyPageInfo['project_write']) {
-            setInfo({...copyInit, ...copyPageInfo['project_write'], ...adminParams})
-            if (gridRef.current?.forEachNode) {
-                gridManage.resetData(gridRef, copyPageInfo['project_write'][listType])
-            }
-        } else {
-            setInfo({...copyInit, ...adminParams});
-            if (gridRef.current?.forEachNode) {
-                gridManage.resetData(gridRef, commonFunc.repeatObject(projectDetailUnit, 10))
-            }
-        }
-    }, [copyPageInfo]);
-
-
     const onGridReady = (params) => {
-        gridRef.current = params.api;
 
-        params.api.applyTransaction({add: copyPageInfo['project_write']?.projectDetailList ? copyPageInfo['project_write'][listType] : commonFunc.repeatObject(projectDetailUnit, 10)});
+        gridRef.current = params.api;
+        setInfo(isEmptyObj(copyPageInfo['project_write'])?copyPageInfo['project_write'] : infoInit);
+        params.api.applyTransaction({add: copyPageInfo['project_write'][listType] ? copyPageInfo['project_write'][listType] : commonFunc.repeatObject(projectDetailUnit, 10)});
+        setReady(true)
     };
 
+    useEffect(() => {
+        if(ready) {
+            if(copyPageInfo['project_write'] && !isEmptyObj(copyPageInfo['project_write'])){
+                setInfo(infoInit);
+                gridManage.resetData(gridRef,commonFunc.repeatObject(projectDetailUnit, 10))
+            }else{
+                setInfo({...copyPageInfo['project_write'], ...adminParams, writtenDate: moment().format('YYYY-MM-DD')});
+                gridManage.resetData(gridRef, copyPageInfo['project_write'][listType])
+            }
+        }
+    }, [copyPageInfo['project_write']]);
 
     async function handleKeyPress(e) {
         if (e.key === 'Enter') {
@@ -214,8 +235,8 @@ export default function ProjectWrite({managerList = [], copyPageInfo = {}}) {
                                 data: info
                             })}
                             <div>
-                                <div>담당자</div>
-                                <Select style={{width: '100%'}} size={'small'}
+                                <div style={{fontSize : 12}}>담당자</div>
+                                <Select style={{width: '100%', fontSize : 12, marginTop : 5}} size={'small'}
                                         showSearch
                                         value={info['managerAdminId']}
                                         placeholder="Select a person"

@@ -95,10 +95,7 @@ export default function RqfWrite({ copyPageInfo = {}}) {
         writtenDate: moment().format('YYYY-MM-DD')
     }
 
-    const [info, setInfo] = useState<any>({
-        ...copyInit,  ...adminParams,
-        writtenDate: moment().format('YYYY-MM-DD')
-    })
+    const [info, setInfo] = useState<any>(infoInit)
 
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);

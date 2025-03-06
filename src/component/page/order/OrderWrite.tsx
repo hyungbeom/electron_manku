@@ -33,6 +33,7 @@ import FormItem from "antd/lib/form/FormItem";
 import Input from "antd/lib/input";
 import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 import PrintPo from "@/component/printPo";
+import moment from "moment/moment";
 
 
 const listType = 'orderDetailList'
@@ -91,10 +92,11 @@ export default function OrderWrite({dataInfo = [],  copyPageInfo}) {
     }
     const infoInit = {
         ...copyInit,
-        ...adminParams
+        ...adminParams,
+        writtenDate: moment().format('YYYY-MM-DD')
     }
 
-    const [info, setInfo] = useState<any>({...copyInit, ...dataInfo, ...adminParams})
+    const [info, setInfo] = useState<any>(infoInit)
 
 
     const onGridReady = (params) => {
@@ -110,8 +112,7 @@ export default function OrderWrite({dataInfo = [],  copyPageInfo}) {
                 setInfo(infoInit);
                 gridManage.resetData(gridRef,commonFunc.repeatObject(orderDetailUnit, 10))
             }else{
-                setInfo({...copyPageInfo['order_write'], ...adminParams});
-                console.log(adminParams,'as')
+                setInfo({...copyPageInfo['order_write'], ...adminParams, writtenDate: moment().format('YYYY-MM-DD')});
                 gridManage.resetData(gridRef, copyPageInfo['order_write'][listType])
             }
         }

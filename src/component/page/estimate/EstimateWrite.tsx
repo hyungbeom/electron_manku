@@ -82,10 +82,11 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
 
     const infoInit = {
         ...copyInit,
-        ...adminParams
+        ...adminParams,
+        writtenDate: moment().format('YYYY-MM-DD')
     }
 
-    const [info, setInfo] = useState<any>({...copyInit, ...adminParams})
+    const [info, setInfo] = useState<any>(infoInit)
     const [mini, setMini] = useState(true);
 
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
@@ -108,7 +109,7 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
                 setInfo(infoInit);
                 gridManage.resetData(gridRef,commonFunc.repeatObject(estimateDetailUnit, 10))
             }else{
-                setInfo({...copyPageInfo['estimate_write'], ...adminParams});
+                setInfo({...copyPageInfo['estimate_write'], ...adminParams, writtenDate: moment().format('YYYY-MM-DD')});
                 gridManage.resetData(gridRef, copyPageInfo['estimate_write'][listType])
             }
         }
