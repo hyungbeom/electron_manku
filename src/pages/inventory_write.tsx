@@ -193,8 +193,8 @@ export default function OrderInventoryWrite() {
 //
 //     const result = await getData.post('inventory/getInventoryList', {
 //         "searchInventoryId": "",
-//         "searchMaker": "",          // MAKER 검색
-//         "searchModel": "",          // MODEL 검색
+//         "searchMaker": "",          // Maker 검색
+//         "searchModel": "",          // Model 검색
 //         "searchLocation": "",       // 위치 검색
 //         "page": 1,
 //         "limit": -1,

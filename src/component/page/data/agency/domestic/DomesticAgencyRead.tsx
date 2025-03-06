@@ -34,7 +34,7 @@ export default function DomesticAgencyUpdate({getPropertyId, getCopyPage}) {
         gridRef.current = params.api;
         await searchDomesticAgency({
             data: {
-                "searchType": "1",      // 1: 코드, 2: 상호명, 3: MAKER
+                "searchType": "1",      // 1: 코드, 2: 상호명, 3: Maker
                 "searchText": "",
                 "page": 1,
                 "limit": -1
@@ -81,7 +81,7 @@ export default function DomesticAgencyUpdate({getPropertyId, getCopyPage}) {
 
             await searchDomesticAgency({
                 data: {
-                    "searchType": info['searchType'],      // 1: 코드, 2: 상호명, 3: MAKER
+                    "searchType": info['searchType'],      // 1: 코드, 2: 상호명, 3: Maker
                     "searchText": info['searchText'],
                     "page": 1,
                     "limit": -1
@@ -126,7 +126,7 @@ export default function DomesticAgencyUpdate({getPropertyId, getCopyPage}) {
                                     title: '유효기간', id: 'searchType', list: [
                                         {value: 1, label: '코드'},
                                         {value: 2, label: '상호명'},
-                                        {value: 3, label: 'MAKER'}
+                                        {value: 3, label: 'Maker'}
                                     ], onChange: onChange, data: info
                                 })}
                             </div>

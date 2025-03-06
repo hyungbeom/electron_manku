@@ -100,9 +100,9 @@ export const findDocumentInfo = async (event, setInfo) => {
         "searchEndDate": "",            // 발주일자 검색 종료일
         "searchDocumentNumber": event.target.value,     // 문서번호
         "searchCustomerName": "",       // 거래처명
-        "searchMaker": "",              // MAKER
-        "searchModel": "",              // MODEL
-        "searchItem": "",               // ITEM
+        "searchMaker": "",              // Maker
+        "searchModel": "",              // Model
+        "searchItem": "",               // Item
         "searchEstimateManager": "",    // 견적서담당자명
         "page": 1,
         "limit": 20

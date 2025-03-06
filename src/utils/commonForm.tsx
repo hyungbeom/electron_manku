@@ -308,7 +308,7 @@ export const tooltipInfo = (type: any) => {
         case 'customer' :
             return '고객사 정보는 Enter 또는 우측 아이콘클릭 이후 검색을 통한 선택만 사용을 하여야합니다.'
         case 'maker' :
-            return 'MAKER 정보는 하단 아이콘클릭을 통한 검색으로 선택이 가능합니다.'
+            return 'Maker 정보는 하단 아이콘클릭을 통한 검색으로 선택이 가능합니다.'
         case 'etc' :
             return '기타 정보입력란 입니다.'
         case 'drive' :

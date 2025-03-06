@@ -34,7 +34,7 @@ export default function OverseasAgencyRead({ getPropertyId, getCopyPage}) {
         gridRef.current = params.api;
         await searchOverseasAgency({
             data: {
-                "searchType": "1",      // 1: 코드, 2: 상호명, 3: MAKER
+                "searchType": "1",      // 1: 코드, 2: 상호명, 3: Maker
                 "searchText": "",
                 "page": 1,
                 "limit": -1
@@ -87,7 +87,7 @@ export default function OverseasAgencyRead({ getPropertyId, getCopyPage}) {
 
             await searchOverseasAgency({
                 data: {
-                    "searchType": info['searchType'],      // 1: 코드, 2: 상호명, 3: MAKER
+                    "searchType": info['searchType'],      // 1: 코드, 2: 상호명, 3: Maker
                     "searchText": info['searchText'],
                     "page": 1,
                     "limit": -1

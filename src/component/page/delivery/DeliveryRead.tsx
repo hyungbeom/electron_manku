@@ -106,7 +106,7 @@ export default function DeliveryRead({getPropertyId, getCopyPage}) {
                                 <BoxCard title={'기본 정보'}>
                                     {rangePickerForm({title: '출고일자', id: 'searchDate', onChange: onChange, data: info})}
                                     {inputForm({
-                                        title: 'INQUIRY NO.',
+                                        title: 'Inquiry No.',
                                         id: 'searchConnectInquiryNo',
                                         onChange: onChange,
                                         handleKeyPress: handleKeyPress,
@@ -122,7 +122,7 @@ export default function DeliveryRead({getPropertyId, getCopyPage}) {
                                         data: info
                                     })}
                                     {inputForm({
-                                        title: '받는분 전화번호',
+                                        title: '받는분 연락처',
                                         id: 'searchRecipientPhone',
                                         onChange: onChange,
                                         handleKeyPress: handleKeyPress,

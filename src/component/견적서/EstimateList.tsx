@@ -60,7 +60,7 @@ export default function EstimateList({data, gridRef}: any) {
                         border: '1px solid lightGray',
                         borderLeft: 'none',
                         backgroundColor: '#ebf6f7'
-                    }}>MAKER
+                    }}>Maker
                     </th>
                     <th style={headerStyle}>{data?.maker ? data?.maker : '-'}</th>
                     <th style={{border: 'none'}}></th>

@@ -147,7 +147,7 @@ export default function remittance_order_integrate({data}) {
                                        size={'small'}/>
                             </div>
                             <div style={{marginTop: 8}}>
-                                <div style={{marginBottom: 3}}>등록자</div>
+                                <div style={{marginBottom: 3}}>작성자</div>
                                 <Input id={'searchAdminId'} value={info['searchAdminId']}
                                        onChange={onChange}
                                        size={'small'}/>
@@ -159,13 +159,13 @@ export default function remittance_order_integrate({data}) {
                             boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                         }}>
                             <div style={{marginTop: 8}}>
-                                <div style={{marginBottom: 3}}>MAKER</div>
+                                <div style={{marginBottom: 3}}>Maker</div>
                                 <Input id={'searchAdminId'} value={info['searchAdminId']}
                                        onChange={onChange}
                                        size={'small'}/>
                             </div>
                             <div style={{marginTop: 8}}>
-                                <div style={{marginBottom: 3}}>MODEL</div>
+                                <div style={{marginBottom: 3}}>Model</div>
                                 <Input id={'searchAdminId'} value={info['searchAdminId']}
                                        onChange={onChange}
                                        size={'small'}/>

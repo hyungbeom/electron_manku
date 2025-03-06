@@ -322,7 +322,7 @@ export default function PrintIntegratedEstimate({ data, isModalOpen, userInfo, s
                                         whiteSpace: "pre-line",
                                     }}
                                 >
-                                    MAKER
+                                    Maker
                                 </div>
                                 <div
                                     style={{

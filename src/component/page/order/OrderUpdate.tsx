@@ -288,7 +288,7 @@ export default function OrderUpdate({  updateKey, getCopyPage}) {
                                 {inputForm({title: 'Messrs', id: 'agencyCode', onChange: onChange, data: info})}
                                 {/*수신자*/}
                                 {inputForm({title: 'Attn To', id: 'attnTo', onChange: onChange, data: info})}
-                                {inputForm({title: '고객사명', id: 'agencyName', onChange: onChange, data: info})}
+                                {inputForm({title: '매입처명', id: 'agencyName', onChange: onChange, data: info})}
                             </BoxCard>
 
 
@@ -321,9 +321,9 @@ export default function OrderUpdate({  updateKey, getCopyPage}) {
                                     onChange: onChange,
                                     data: info
                                 })}
-                                {inputForm({title: 'MAKER', id: 'maker', onChange: onChange, data: info})}
-                                {inputForm({title: 'ITEM', id: 'item', onChange: onChange, data: info})}
-                                {datePickerForm({title: 'Delivery', id: 'delivery', onChange:onChange, data : info})}
+                                {inputForm({title: 'Maker', id: 'maker', onChange: onChange, data: info})}
+                                {inputForm({title: 'Item', id: 'item', onChange: onChange, data: info})}
+                                {datePickerForm({title: '납기', id: 'delivery', onChange:onChange, data : info})}
                             </BoxCard>
 
                             <BoxCard title={'ETC'}>

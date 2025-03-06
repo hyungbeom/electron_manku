@@ -123,12 +123,12 @@ export default function SearchMakerModal({makerData, info, setInfo, isModalOpen,
 
                     <div>
                         <div style={{fontSize: 11}}>
-                            <div style={{paddingBottom: 3}}>MAKER</div>
+                            <div style={{paddingBottom: 3}}>Maker</div>
                             <Input id={'makerName'} value={writeData['makerName']} onChange={onChange}
                                    style={{fontSize: 11}} size={'small'}/>
                         </div>
                         <div style={{marginTop: 8, fontSize: 11}}>
-                            <div style={{paddingBottom: 3}}>ITEM</div>
+                            <div style={{paddingBottom: 3}}>Item</div>
                             <Input id={'item'} value={writeData['item']} onChange={onChange}
                                    style={{fontSize: 11}} size={'small'}/>
                         </div>

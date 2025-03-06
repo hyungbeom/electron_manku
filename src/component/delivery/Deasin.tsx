@@ -58,7 +58,7 @@ export default function Deasin({info, setInfo}){
         <TopBoxCard title={'기본 정보'} grid={'1fr 1fr 0.6fr 1fr 1fr 1fr'}>
             {datePickerForm({title: '출고일자', id: 'deliveryDate', onChange:onChange, data : info})}
             {inputForm({
-                title: '연결 INQUIRY NO.',
+                title: '연결 Inquiry No.',
                 id: 'connectInquiryNo',
                 suffix: <DownloadOutlined style={{cursor: 'pointer'}}/>,
                 onChange: onChange, data: info,

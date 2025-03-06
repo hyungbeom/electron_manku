@@ -132,21 +132,21 @@ export default function OrderRead({getPropertyId, getCopyPage}) {
 
 
                                 {inputForm({
-                                    title: 'MAKER',
+                                    title: 'Maker',
                                     id: 'searchMaker',
                                     onChange: onChange,
                                     handleKeyPress: handleKeyPress,
                                     data: info
                                 })}
                                 {inputForm({
-                                    title: 'MODEL',
+                                    title: 'Model',
                                     id: 'searchModel',
                                     onChange: onChange,
                                     handleKeyPress: handleKeyPress,
                                     data: info
                                 })}
                                 {inputForm({
-                                    title: 'ITEM',
+                                    title: 'Item',
                                     id: 'searchItem',
                                     onChange: onChange,
                                     handleKeyPress: handleKeyPress,

@@ -1,9 +1,9 @@
 export const subRfqWriteInfo = {
-    "model": {title : 'MODEL'},           // MODEL
+    "model": {title : 'Model'},           // Model
     "quantity": {title : '수량'},              // 수량
     "unit": {title : '단위'},               // 단위
     "currency": {title : 'CURR'},          // CURR
-    "net": {title : 'NET/P'},            // NET/P
+    "net": {title : '매입 단가'},            // 매입단가
     "serialNumber": 1,          // 항목 순서 (1부터 시작)
     "deliveryDate": {title : '납기'},   // 납기
     "content": {title : '내용'},         // 내용
@@ -18,9 +18,9 @@ export const subRfqReadInfo = {
     "searchEndDate": {title : '종료일'},              // 작성일자 종료일
     "searchDocumentNumber": {title : '문서번호'},         // 문서번호
     "searchCustomerName": {title : '고객사명'},           // 고객사명
-    "searchMaker": {title : 'MAKER'},                  // MAKER
-    "searchModel": {title : 'MODEL'},                  // MODEL
-    "searchItem": {title : 'ITEM'},                   // ITEM
+    "searchMaker": {title : 'Maker'},                  // Maker
+    "searchModel": {title : 'Model'},                  // Model
+    "searchItem": {title : 'Item'},                   // Item
     "searchCreatedBy": {title : '등록직원명'},              // 등록직원명
 }
 
@@ -29,25 +29,25 @@ export const tableEstimateReadInfo = {
     "documentNumber":{title : '문서번호'},
     "agencyCode": {title : '코드'},                   // 검색조건 1: 회신, 2: 미회신
     "customerName": {title : '고객사명'},               // 작성일자 시작일
-    "maker": {title : 'MAKER'},                // 작성일자 종료일
-    "item": {title : 'ITEM'},        // 문서번호
-    "model": {title : 'MODEL'},            // 고객사명
-    "quantity": {title : '수량'},                   // MAKER
-    "unit": {title : '단위'},                 // MODEL
-    "deliveryDate": {title : '납기'},                     // ITEM
+    "maker": {title : 'Maker'},                // 작성일자 종료일
+    "item": {title : 'Item'},        // 문서번호
+    "model": {title : 'Model'},            // 고객사명
+    "quantity": {title : '수량'},                   // Maker
+    "unit": {title : '단위'},                 // Model
+    "deliveryDate": {title : '납기'},                     // Item
     "order": {title : '주문'},                // 등록직원명
     "unitPrice": {title : '단가'},             // 담당자명
     "total": {title : '합계'},            // 담당자 연락처
-    "register": {title : '등록자'},            // 입찰번호(미완성)
+    "register": {title : '작성자'},            // 입찰번호(미완성)
     "remarks": {title : '비고란'},           // 입찰번호(미완성)
 }
 
 export const tableEstimateWriteInfo = {
-    "model": {title : 'MODEL'},            // 고객사명
-    "quantity": {title : '수량'},                   // MAKER
-    "unit": {title : '단위'},                 // MODEL
+    "model": {title : 'Model'},            // 고객사명
+    "quantity": {title : '수량'},                   // Maker
+    "unit": {title : '단위'},                 // Model
     "currency" : {title : 'CURR'},
-    "net": {title : 'NET/P'},
+    "net": {title : '매입 단가'},
     "unitPrice": {title : '단가'},             // 담당자명
     "amount": {title : '금액'},
 }
@@ -55,10 +55,10 @@ export const tableEstimateWriteInfo = {
 
 
 export const subOrderWriteInfo = {
-    "model": {title : 'MODEL'},           // MODEL     // 수량
+    "model": {title : 'Model'},           // Model     // 수량
     "unit": {title : '단위'},               // 단위
     "currency": {title : 'CURR'},          // CURR
-    "net": {title : 'NET/P'},            // NET/P
+    "net": {title : '매입 단가'},            // 매입단가
     "quantity": {title : '주문수량'},
     "receivedQuantity": {title : '입고'},
     "unreceivedQuantity": {title : '미입고'},
@@ -71,14 +71,14 @@ export const tableOrderReadInfo = {
     "writtenDate": {title : '작성일자'},              // 작성일자 시작일
     "documentNumberFull": {title : '문서번호'},              // 작성일자 종료일
     "customerName": {title : '고객사명'},         // 문서번호
-    "item": {title : 'ITEM'},           // 고객사명
-    "maker": {title : 'MAKER'},                  // MAKER
-    "model": {title : 'MODEL'},                  // MODEL
-    "unit": {title : '단위'},                   // ITEM
-    "currency": {title : 'CURR'},                   // ITEM
-    "net": {title : 'NET'},                   // ITEM
-    "amount": {title : 'Amount'},                   // ITEM
-    "quantity": {title : '주문수량'},                   // ITEM
+    "item": {title : 'Item'},           // 고객사명
+    "maker": {title : 'Maker'},                  // Maker
+    "model": {title : 'Model'},                  // Model
+    "unit": {title : '단위'},                   // Item
+    "currency": {title : 'CURR'},                   // Item
+    "net": {title : '매입 단가'},                   // Item
+    "amount": {title : 'Amount'},                   // Item
+    "quantity": {title : '주문수량'},                   // Item
     "receivedQuantity": {title : '입고수량'},              // 등록직원명
     "unreceivedQuantity": {title : '미입고수량'},              // 등록직원명
     "unitPrice": {title : '단가'},              // 등록직원명
@@ -89,16 +89,16 @@ export const tableOrderReadInfo = {
 }
 
 export const subInvenReadInfo = {
-    "searchText": {title : '재고등록검색(문서번호, MAKER, Model)'},                  // MAKER
-    "searchMaker": {title : 'MAKER'},                  // MAKER
-    "searchModel": {title : 'MODEL'},                  // MODEL
-    "searchItem": {title : 'ITEM'},                   // ITEM
+    "searchText": {title : '재고등록검색(문서번호, Maker, Model)'},                  // Maker
+    "searchMaker": {title : 'Maker'},                  // Maker
+    "searchModel": {title : 'Model'},                  // Model
+    "searchItem": {title : 'Item'},                   // Item
 }
 
 export const tableOrderInventoryInfo = {
-    "receiptDate": {title : '입고일자'},           // MODEL
+    "receiptDate": {title : '입고일자'},           // Model
     "documentNumber": {title : '문서번호'},               // 단위
-    "maker": {title : 'Maker'},            // NET/P
+    "maker": {title : 'Maker'},            // 매입단가
     "model": {title : 'Model'},
     "importUnitPrice": {title : '수입단가'},
     "currencyUnit": {title : '화폐단위'},
@@ -110,42 +110,42 @@ export const tableOrderInventoryInfo = {
 }
 
 export const tableOrderCustomerInfo = {
-    "key": {title : 'No'},                  // MAKER
-    "customerName": {title : '고객사명'},                  // MAKER
-    "unpaidAmount": {title : '미입고금액'},                  // MAKER
-    "paidAmount": {title : '입고금액'},                  // MODEL
-    "totalAmount": {title : '합계'},                   // ITEM
+    "key": {title : 'No'},                  // Maker
+    "customerName": {title : '고객사명'},                  // Maker
+    "unpaidAmount": {title : '미입고금액'},                  // Maker
+    "paidAmount": {title : '입고금액'},                  // Model
+    "totalAmount": {title : '합계'},                   // Item
 }
 
 export const subAgencyReadInfo = {
-    "agencyId": {title : 'No'},                  // MAKER
-    "agencyCode": {title : '코드'},                  // MAKER
-    "agencyName": {title : '매입처명'},                  // MAKER
-    "unpaidAmount": {title : '미입고외화'},                  // MAKER
-    "paidAmount": {title : '입고외화'},                  // MODEL
-    "totalAmount": {title : '외화합계'},                   // ITEM
-    "krwTotalAmount": {title : '원화합계'},                   // ITEM
+    "agencyId": {title : 'No'},                  // Maker
+    "agencyCode": {title : '코드'},                  // Maker
+    "agencyName": {title : '매입처명'},                  // Maker
+    "unpaidAmount": {title : '미입고외화'},                  // Maker
+    "paidAmount": {title : '입고외화'},                  // Model
+    "totalAmount": {title : '외화합계'},                   // Item
+    "krwTotalAmount": {title : '원화합계'},                   // Item
 }
 
 export const tableCodeDiplomaInfo = {
-    "documentNumber": {title : '문서번호'},           // MODEL
+    "documentNumber": {title : '문서번호'},           // Model
     "title": {title : '문서제목'},              // 수량
     "to": {title : '수신'},               // 단위
     "reference": {title : '참조'},          // CURR
-    "subTitle": {title : '소제목'},            // NET/P
+    "subTitle": {title : '소제목'},            // 매입단가
     "content": {title : '내용'},
-    "registerer": {title : '등록자'},
+    "registerer": {title : '작성자'},
     "registerDate": {title : '등록일자'},
     "modifier": {title : '수정자'},
     "modifyDate": {title : '수정일자'},
 }
 
 export const tableCodeExchangeInfo = {
-    "model": {title : '통화'},           // MODEL
+    "model": {title : '통화'},           // Model
     "quantity": {title : '통화명'},              // 수량
     "unit": {title : '매매기준율'},               // 단위
     "currency": {title : '송금보낼때'},          // CURR
-    "net": {title : '송금받을때'},            // NET/P
+    "net": {title : '송금받을때'},            // 매입단가
     "amount": {title : '현찰살때(스프레드)'},
     "orderQuantity": {title : '현찰팔때(스프레드)'},
     "receivedQuantity": {title : 'T/C살때'},
@@ -153,12 +153,12 @@ export const tableCodeExchangeInfo = {
 }
 
 export const tableCodeReadInfo = {
-    "item": {title : 'ITEM'},           // MODEL
+    "item": {title : 'Item'},           // Model
     "hsCode": {title : 'HS-CODE'},              // 수량
 }
 
 export const tableCodeUserInfo = {
-    "customerName": {title : '업체명'},           // MODEL
+    "customerName": {title : '업체명'},           // Model
     "id": {title : 'ID'},              // 수량
     "pw": {title : 'Password'},              
     "homepage": {title : '홈페이지'},              
@@ -192,14 +192,14 @@ export const tableCodeDomesticPurchaseInfo = {
     "dealerType": {title : '딜러'},
     "grade": {title : '등급'},
     "margin": {title : '마진'},
-    "maker": {title : 'MAKER'},
+    "maker": {title : 'Maker'},
     "homepage": {title : '홈페이지'},
     "businessRegistrationNumber": {title : '사업자번호'},
     "bankAccountNumber": {title : '계좌번호'},
-    "item": {title : 'ITEM'},
+    "item": {title : 'Item'},
     "tradeStartDate": {title : '거래시작일'},
     "customerManager": {title : '담당자'},
-    "phoneNumber": {title : '전화번호'},
+    "phoneNumber": {title : '연락처'},
     "faxNumber": {title : '팩스번호'},
     "email": {title : '이메일'},
     "address": {title : '주소'},
@@ -213,7 +213,7 @@ export const tableCodeDomesticSalesInfo = {
     "agencyName": {title : '상호'},
     "region": {title : '지역'},
     "tradeStartDate": {title : '거래시작일'},
-    "phoneNumber": {title : '전화번호'},
+    "phoneNumber": {title : '연락처'},
     "faxNumber": {title : '팩스번호'},
     "homepage": {title : '홈페이지'},
     "postalCode": {title : '우편번호'},
@@ -234,7 +234,7 @@ export const tableCodeOverseasSalesInfo = {
     "agencyName": {title : '상호'},
     "region": {title : '지역'},
     "tradeStartDate": {title : '거래시작일'},
-    "phoneNumber": {title : '전화번호'},
+    "phoneNumber": {title : '연락처'},
     "faxNumber": {title : '팩스번호'},
     "currencyUnit": {title : '화폐단위'},
     "managerName": {title : '만쿠담당자'},
@@ -257,7 +257,7 @@ export const tableCodeOverseasPurchaseInfo = {
     "grade": {title : '등급'},
     "margin": {title : '마진'},
     "homepage": {title : '홈페이지'},
-    "item": {title : 'ITEM'},
+    "item": {title : 'Item'},
     "tradeStartDate": {title : '거래시작일'},
     "currencyUnit":{title : '화폐단위'},
     "manager":{title : '거래시작일'},
@@ -268,12 +268,12 @@ export const tableCodeOverseasPurchaseInfo = {
     "agencyAddress":{title : '주소'},
     "ibanCode":{title : 'IBanCode'},
     "swiftCode":{title : 'SwiftCode'},
-    "createdBy": {title : '등록자'},
+    "createdBy": {title : '작성자'},
     "createdDate": {title : '등록일자'},
     "modifiedBy": {title : '수정자'},
     "modifiedDate": {title : '수정일자'},
     "customerManager": {title : '담당자'},
-    "phoneNumber": {title : '전화번호'},
+    "phoneNumber": {title : '연락처'},
     "faxNumber": {title : '팩스번호'},
     "email": {title : '이메일'},
     "address": {title : '주소'},

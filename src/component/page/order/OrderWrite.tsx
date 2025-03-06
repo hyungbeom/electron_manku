@@ -239,7 +239,13 @@ export default function OrderWrite({dataInfo = [],  copyPageInfo}) {
                                         options={options}
                                 />
                             </div>
-
+                            {inputForm({
+                                placeholder: '폴더생성 규칙 유의',
+                                title: '연결 Inquiry No.',
+                                id: 'ourPoNo',
+                                suffix: <DownloadOutlined style={{cursor: 'pointer'}}/>,
+                                onChange: onChange, data: info, handleKeyPress: handleKeyPress
+                            })}
                             {inputForm({
                                 title: '발주서 PO no',
                                 id: 'documentNumberFull',
@@ -247,13 +253,7 @@ export default function OrderWrite({dataInfo = [],  copyPageInfo}) {
                                 data: info,
                                 validate: validate['documentNumberFull']
                             })}
-                            {inputForm({
-                                placeholder: '폴더생성 규칙 유의',
-                                title: '연결 INQUIRY NO.',
-                                id: 'ourPoNo',
-                                suffix: <DownloadOutlined style={{cursor: 'pointer'}}/>,
-                                onChange: onChange, data: info, handleKeyPress: handleKeyPress
-                            })}
+
                             {inputForm({title: '고객사 PO no', id: 'yourPoNo', onChange: onChange, data: info})}
                         </TopBoxCard>
 
@@ -265,9 +265,10 @@ export default function OrderWrite({dataInfo = [],  copyPageInfo}) {
                         }}>
 
                             <BoxCard title={'매입처 정보'}>
-                                {inputForm({title: 'Messrs', id: 'agencyCode', onChange: onChange, data: info})}
-                                {inputForm({title: 'Attn To', id: 'attnTo', onChange: onChange, data: info})}
+                                {inputForm({title: '매입처 코드', id: 'agencyCode', onChange: onChange, data: info})}
                                 {inputForm({title: '매입처명', id: 'agencyName', onChange: onChange, data: info})}
+                                {inputForm({title: '매입처 견적서명', id: 'attnTo', onChange: onChange, data: info})}
+                                {inputForm({title: '담당자', id: 'attnTo', onChange: onChange, data: info})}
                             </BoxCard>
 
                             <BoxCard title={'담당자 정보'}>
@@ -309,9 +310,9 @@ export default function OrderWrite({dataInfo = [],  copyPageInfo}) {
                                     onChange: onChange,
                                     data: info
                                 })}
-                                {inputForm({title: 'MAKER', id: 'maker', onChange: onChange, data: info})}
-                                {inputForm({title: 'ITEM', id: 'item', onChange: onChange, data: info})}
-                                {datePickerForm({title: 'Delivery', id: 'delivery', onChange: onChange, data: info})}
+                                {inputForm({title: 'Maker', id: 'maker', onChange: onChange, data: info})}
+                                {inputForm({title: 'Item', id: 'item', onChange: onChange, data: info})}
+                                {datePickerForm({title: '납기', id: 'delivery', onChange: onChange, data: info})}
                             </BoxCard>
 
                             <BoxCard title={'ETC'}>

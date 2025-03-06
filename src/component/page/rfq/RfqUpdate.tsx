@@ -246,7 +246,7 @@ export default function RqfUpdate({ updateKey = {}, getCopyPage = null, managerL
                                 data: info
                             })}
                             {inputForm({
-                                title: 'INQUIRY NO.',
+                                title: 'Inquiry No.',
                                 id: 'documentNumberFull',
                                 disabled: true,
                                 onChange: onChange,
@@ -265,7 +265,7 @@ export default function RqfUpdate({ updateKey = {}, getCopyPage = null, managerL
                                         options={options}
                                 />
                             </div>
-                            {inputForm({title: 'RFQ NO.', id: 'rfqNo', onChange: onChange, data: info})}
+                            {inputForm({title: 'RFQ No.', id: 'rfqNo', onChange: onChange, data: info})}
                             {inputForm({title: '프로젝트 제목', id: 'projectTitle', onChange: onChange, data: info})}
                         </TopBoxCard>
                         <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 3, paddingTop: 3}}>
@@ -319,7 +319,7 @@ export default function RqfUpdate({ updateKey = {}, getCopyPage = null, managerL
                                     }/>, onChange: onChange, handleKeyPress: handleKeyPress, data: info
                                 })}
                                 {inputForm({title: '담당자명', id: 'managerName', onChange: onChange, data: info})}
-                                {inputForm({title: '전화번호', id: 'phoneNumber', onChange: onChange, data: info})}
+                                {inputForm({title: '연락처', id: 'phoneNumber', onChange: onChange, data: info})}
                                 {inputForm({title: '팩스', id: 'faxNumber', onChange: onChange, data: info})}
                                 {inputForm({title: '이메일', id: 'customerManagerEmail', onChange: onChange, data: info})}
                             </BoxCard>
@@ -328,7 +328,7 @@ export default function RqfUpdate({ updateKey = {}, getCopyPage = null, managerL
                             <Panel defaultSize={sizes[2]} minSize={15} maxSize={100} onResize={onResizeChange}>
                             <BoxCard title={'Maker 정보'} tooltip={tooltipInfo('etc')}>
                                 {inputForm({
-                                    title: 'MAKER',
+                                    title: 'Maker',
                                     id: 'maker',
                                     suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
                                         (e) => {
@@ -337,7 +337,7 @@ export default function RqfUpdate({ updateKey = {}, getCopyPage = null, managerL
                                         }
                                     }/>, onChange: onChange, handleKeyPress: handleKeyPress, data: info
                                 })}
-                                {inputForm({title: 'ITEM', id: 'item', onChange: onChange, data: info})}
+                                {inputForm({title: 'Item', id: 'item', onChange: onChange, data: info})}
                                 {textAreaForm({title: '지시사항',                rows : 7, id: 'instructions', onChange: onChange, data: info})}
 
                             </BoxCard>

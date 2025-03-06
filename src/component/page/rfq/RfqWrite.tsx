@@ -172,7 +172,7 @@ export default function RqfWrite({ copyPageInfo = {}}) {
             return message.warn('매입처 코드가 누락되었습니다.')
         }
         // if (!info['documentNumberFull']) {
-        //     return message.warn('INQUIRY NO.가 누락되었습니다.')
+        //     return message.warn('Inquiry No.가 누락되었습니다.')
         // }
         const list = gridManage.getAllData(gridRef);
         const filterList = list.filter(v => !!v.model);
@@ -287,7 +287,7 @@ export default function RqfWrite({ copyPageInfo = {}}) {
                                     data: info
                                 })}
                                 {inputForm({
-                                    title: 'INQUIRY NO.',
+                                    title: 'Inquiry No.',
                                     id: 'documentNumberFull',
                                     onChange: onChange,
                                     data: info,
@@ -307,7 +307,7 @@ export default function RqfWrite({ copyPageInfo = {}}) {
                                     />
                                 </div>
                                 {inputForm({
-                                    title: 'RFQ NO.',
+                                    title: 'RFQ No.',
                                     id: 'rfqNo',
                                     onChange: onChange,
                                     data: info
@@ -383,7 +383,7 @@ export default function RqfWrite({ copyPageInfo = {}}) {
                                         data: info,
                                     })}
                                     {inputForm({
-                                        title: '전화번호',
+                                        title: '연락처',
                                         id: 'phoneNumber',
                                         onChange: onChange,
                                         data: info,
@@ -406,7 +406,7 @@ export default function RqfWrite({ copyPageInfo = {}}) {
                             <Panel defaultSize={sizes[2]} minSize={10} maxSize={100} onResize={onResizeChange}>
                                 <BoxCard title={'Maker 정보'} tooltip={tooltipInfo('maker')}>
                                     {inputForm({
-                                        title: 'MAKER',
+                                        title: 'Maker',
                                         id: 'maker',
                                         suffix: <FileSearchOutlined style={{cursor: 'pointer'}}
                                                                     onClick={
@@ -420,7 +420,7 @@ export default function RqfWrite({ copyPageInfo = {}}) {
                                         data: info
                                     })}
                                     {inputForm({
-                                        title: 'ITEM',
+                                        title: 'Item',
                                         id: 'item',
                                         onChange: onChange,
                                         data: info

@@ -412,7 +412,7 @@ commonManage.changeColumn = {
     '수량': 'quantity',
     '단위': 'unit',
     'CURR': 'currency',
-    'NET/P': 'net',
+    '매입 단가': 'net',
     '납기': 'deliveryDate',
     '회신여부': 'content',
     '회신일': 'replyDate',

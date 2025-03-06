@@ -132,7 +132,7 @@ export default function RemittanceDomesticUpdate({
 
     async function saveFunc() {
         if (!info['connectInquiryNo']) {
-            return message.warn('INQUIRY NO. 가 누락되었습니다.')
+            return message.warn('Inquiry No. 가 누락되었습니다.')
         }
         const formData: any = new FormData();
 
@@ -177,7 +177,7 @@ export default function RemittanceDomesticUpdate({
 
 
                 <TopBoxCard title={'기본 정보'} grid={'250px 200px 200px 200px'}>
-                    {inputForm({title: 'INQUIRY NO.', id: 'connectInquiryNo'})}
+                    {inputForm({title: 'Inquiry No.', id: 'connectInquiryNo'})}
                     {inputForm({title: '고객사명', id: 'customerName'})}
                     {inputForm({title: '매입처명', id: 'agencyName'})}
                     {inputForm({title: '담당자', id: 'managerAdminName', disabled: true})}

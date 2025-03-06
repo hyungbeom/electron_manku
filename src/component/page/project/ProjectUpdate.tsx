@@ -273,7 +273,7 @@ export default function ProjectUpdate({dataInfo = {projectDetail: [], attachment
                                 <Panel defaultSize={sizes[0]} minSize={10} maxSize={100} onResize={onResizeChange}>
                                     <BoxCard title={'프로젝트 정보'} tooltip={tooltipInfo('readProejct')}>
                                         {inputForm({
-                                            title: 'PROJECT NO.',
+                                            title: 'Project No.',
                                             id: 'documentNumberFull',
                                             onChange: onChange,
                                             data: info,
@@ -309,7 +309,7 @@ export default function ProjectUpdate({dataInfo = {projectDetail: [], attachment
                                     data: info
                                 })}
                                 {inputForm({
-                                    title: '담당자 전화번호',
+                                    title: '담당자 연락처',
                                     id: 'customerManagerPhone',
                                     onChange: onChange,
                                     data: info

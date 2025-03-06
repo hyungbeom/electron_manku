@@ -39,7 +39,7 @@ export default function TotalUser(){
             key: 'position',
         },
         {
-            title: '전화번호',
+            title: '연락처',
             dataIndex: 'contactNumber',
             key: 'address',
         },

@@ -123,7 +123,7 @@ export default function StoreRead({ getPropertyId, getCopyPage}) {
                                     data: info
                                 })}
                                 {inputForm({
-                                    title: 'INQUIRY NO.',
+                                    title: 'Inquiry No.',
                                     id: 'searchOrderDocumentNumberFull',
                                     onChange: onChange,
                                     handleKeyPress: handleKeyPress,

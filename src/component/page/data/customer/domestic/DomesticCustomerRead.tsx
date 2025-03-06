@@ -35,7 +35,7 @@ export default function DomesticCustomerRead({ getPropertyId, getCopyPage}) {
         gridRef.current = params.api;
         await searchDomesticCustomer({
             data: {
-                "searchType": "1",      // 1: 코드, 2: 상호명, 3: MAKER
+                "searchType": "1",      // 1: 코드, 2: 상호명, 3: Maker
                 "searchText": "",
                 "page": 1,
                 "limit": -1
@@ -88,7 +88,7 @@ export default function DomesticCustomerRead({ getPropertyId, getCopyPage}) {
 
             await searchDomesticCustomer({
                 data: {
-                    "searchType": info['searchType'],      // 1: 코드, 2: 상호명, 3: MAKER
+                    "searchType": info['searchType'],      // 1: 코드, 2: 상호명, 3: Maker
                     "searchText": info['searchText'],
                     "page": 1,
                     "limit": -1
@@ -175,7 +175,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
     const result = await getData.post('customer/getCustomerList', {
-        "searchType": "1",      // 1: 코드, 2: 상호명, 3: MAKER
+        "searchType": "1",      // 1: 코드, 2: 상호명, 3: Maker
         "searchText": "",
         "page": 1,
         "limit": -1

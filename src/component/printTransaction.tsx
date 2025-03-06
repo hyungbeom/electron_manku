@@ -192,7 +192,7 @@ export default function PrintTransactionModal({data, customerData, isModalOpen, 
                         <tr>
                             <th style={headerStyle}>담당자</th>
                             <th style={cellStyle}>신단비</th>
-                            <th style={headerStyle}>전화번호</th>
+                            <th style={headerStyle}>연락처</th>
                             <th style={cellStyle}>02-465-7838</th>
                         </tr>
                         </thead>
@@ -244,7 +244,7 @@ export default function PrintTransactionModal({data, customerData, isModalOpen, 
                         <tr>
                             <th style={headerStyle}>담당자</th>
                             <th style={cellStyle}>신단비</th>
-                            <th style={headerStyle}>전화번호</th>
+                            <th style={headerStyle}>연락처</th>
                             <th style={cellStyle}>02-465-7838</th>
                         </tr>
                         </thead>

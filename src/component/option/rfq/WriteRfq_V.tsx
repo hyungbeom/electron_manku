@@ -22,7 +22,7 @@ export function WriteRfq_V({info, onChange, setIsModalOpen}){
         }}>
             <TwinInputBox>
                 <div>
-                    <div style={{paddingBottom: 3}}>INQUIRY NO.</div>
+                    <div style={{paddingBottom: 3}}>Inquiry No.</div>
                     <Input disabled={true} size={'small'}/>
                 </div>
                 <div>
@@ -107,7 +107,7 @@ export function WriteRfq_V({info, onChange, setIsModalOpen}){
             </TwinInputBox>
             <TwinInputBox>
                 <div>
-                    <div style={{paddingBottom: 3}}>전화번호</div>
+                    <div style={{paddingBottom: 3}}>연락처</div>
                     <Input id={'phoneNumber'} value={info['phoneNumber']} onChange={onChange}
                            size={'small'}/>
                 </div>
@@ -124,11 +124,11 @@ export function WriteRfq_V({info, onChange, setIsModalOpen}){
             boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
         }}>
             <div style={{paddingTop: 8}}>
-                <div style={{paddingBottom: 3}}>MAKER</div>
+                <div style={{paddingBottom: 3}}>Maker</div>
                 <Input id={'maker'} value={info['maker']} onChange={onChange} size={'small'}/>
             </div>
             <div style={{paddingTop: 8}}>
-                <div style={{paddingBottom: 3}}>ITEM</div>
+                <div style={{paddingBottom: 3}}>Item</div>
                 <Input id={'item'} value={info['item']} onChange={onChange} size={'small'}/>
             </div>
             <div style={{paddingTop: 8}}>

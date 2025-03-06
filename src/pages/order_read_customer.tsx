@@ -101,7 +101,7 @@ export default function orderReadCustomer({dataList}) {
                         {/*        <Radio value={1}>코드</Radio>*/}
                         {/*        <Radio value={2}>상호명</Radio>*/}
                         {/*        <Radio value={3}>지역</Radio>*/}
-                        {/*        <Radio value={4}>전화번호</Radio>*/}
+                        {/*        <Radio value={4}>연락처</Radio>*/}
                         {/*    </Radio.Group>*/}
                         {/*</div>*/}
 
@@ -139,7 +139,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
     const result = await getData.post('settlement/getOrderListByCustomer', {
-        "searchType": "1",      // 1: 코드, 2: 상호명, 3: MAKER
+        "searchType": "1",      // 1: 코드, 2: 상호명, 3: Maker
         "searchText": "",
         "page": 1,
         "limit": -1

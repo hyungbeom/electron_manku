@@ -55,7 +55,7 @@ export default function MakerRead({getPropertyId, getCopyPage}) {
 
             await searchMaker({
                 data: {
-                    "searchType": info['searchType'],      // 1: 코드, 2: 상호명, 3: MAKER
+                    "searchType": info['searchType'],      // 1: 코드, 2: 상호명, 3: Maker
                     "searchText": info['searchText'],
                     "page": 1,
                     "limit": -1
@@ -103,8 +103,8 @@ export default function MakerRead({getPropertyId, getCopyPage}) {
                         id: 'searchType',
                         onChange: onChange,
                         data: info,
-                        list: [{value: 1, title: 'MAKER'},
-                            {value: 2, title: 'ITEM'},
+                        list: [{value: 1, title: 'Maker'},
+                            {value: 2, title: 'Item'},
                             {value: 3, title: 'AREA'}]
                     })}
 

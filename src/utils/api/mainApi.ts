@@ -105,7 +105,7 @@ export const saveProject = async ({data, router, returnFunc}) => {
         if (code === 1) {
             message.success('저장되었습니다.')
         } else if (code === -20001) {
-            message.error('PROJECT NO.가 중복되었습니다.')
+            message.error('Project No.가 중복되었습니다.')
         } else {
             message.error('저장에 실패하였습니다.')
         }

@@ -132,12 +132,12 @@ export default function OrderInventoryRead({dataList}) {
                             columnGap: 20
                         }}>
                             {/*<div>*/}
-                            {/*    <div style={{paddingBottom: 3}}>MAKER</div>*/}
+                            {/*    <div style={{paddingBottom: 3}}>Maker</div>*/}
                             {/*    <Input id={'searchMaker'} value={info['searchMaker']} onChange={onChange}*/}
                             {/*           size={'small'}/>*/}
                             {/*</div>*/}
                             {/*<div>*/}
-                            {/*    <div style={{paddingBottom: 3}}>MODEL</div>*/}
+                            {/*    <div style={{paddingBottom: 3}}>Model</div>*/}
                             {/*    <Input id={'searchModel'} value={info['searchModel']} onChange={onChange}*/}
                             {/*           size={'small'}/>*/}
                             {/*</div>*/}
@@ -147,7 +147,7 @@ export default function OrderInventoryRead({dataList}) {
                             {/*           size={'small'}/>*/}
                             {/*</div>*/}
                             <div>
-                                <div style={{paddingBottom: 3}}>MAKER 또는 MODEL을 입력하세요</div>
+                                <div style={{paddingBottom: 3}}>Maker 또는 MODEL을 입력하세요</div>
                                 <Input id={'searchText'} value={info['searchText']} onChange={onChange}
                                        size={'small'}/>
                             </div>

@@ -221,7 +221,7 @@ export const searchCustomerColumn = [
 
     },
     {
-        headerName: '전화번호',
+        headerName: '연락처',
         field: 'directTel',
         key: 'directTel',
 
@@ -259,7 +259,7 @@ export const searchAgencyCodeColumn = [
 
     },
     {
-        headerName: '전화번호',
+        headerName: '연락처',
         field: 'phoneNumber',
         key: 'phoneNumber',
     },
@@ -269,13 +269,13 @@ export const searchAgencyCodeColumn = [
 
 export const searchMakerColumn = [
     {
-        headerName: 'MAKER',
+        headerName: 'Maker',
         field: 'makerName',
         minWidth: 180,
         editable: true,
     },
     {
-        headerName: 'ITEM',
+        headerName: 'Item',
         field: 'item',
         editable: true,
     },
@@ -320,7 +320,7 @@ export const searchMakerColumn = [
         editable: true,
     },
     {
-        headerName: '등록자',
+        headerName: '작성자',
         field: 'createdBy',
     },
     {
@@ -350,7 +350,7 @@ export const makerColumn = [
         pinned: "left", // 왼쪽에 고정
         filter: false
     },{
-        headerName: 'MAKER',
+        headerName: 'Maker',
         field: 'makerName',
         key: 'makerName',
         pinned: "left", // 왼쪽에 고정
@@ -359,7 +359,7 @@ export const makerColumn = [
 
     },
     {
-        headerName: 'ITEM',
+        headerName: 'Item',
         field: 'item',
         key: 'item',
         render: (text) => <div style={{width: 80}} className="ellipsis-cell">{text}</div>,
@@ -433,7 +433,7 @@ export const subRfqWriteColumn = [
         pinned: "left", // 왼쪽에 고정
         filter: false
     },{
-        headerName: 'MODEL',
+        headerName: 'Model',
         field: 'model',
         minWidth: 300,
         cellEditor: CustomTextEditor, // ✅ 커스텀 에디터 적용
@@ -475,7 +475,7 @@ export const subRfqWriteColumn = [
         }
     },
     {
-        headerName: 'NET/P',
+        headerName: '매입 단가',
         field: 'net',
         cellEditor: 'agNumberCellEditor',
         editable: true,
@@ -542,7 +542,7 @@ export const tableOrderWriteColumn = [
         pinned: "left", // 왼쪽에 고정
         filter: false
     },{
-        headerName: 'MODEL',
+        headerName: 'Model',
         field: 'model',
         minWidth: 200,
         cellEditor: CustomTextEditor, // ✅ 커스텀 에디터 적용
@@ -576,14 +576,14 @@ export const tableOrderWriteColumn = [
         }
     },
     {
-        headerName: 'NET/P',
+        headerName: '매입 단가',
         field: 'net',
         editable: true,
         valueFormatter: params => commonManage.calcFloat(params, 2),
         cellStyle: {textAlign: 'right'}
     },
     {
-        headerName: 'Amount',
+        headerName: '매입 총액',
         field: 'totalAmount',
         editable: true,
         valueFormatter: (params) => {
@@ -616,14 +616,14 @@ export const tableOrderWriteColumn = [
         }
     },
     {
-        headerName: '단가',
+        headerName: '매출 단가',
         field: 'unitPrice',
         editable: true,
         valueFormatter: numberFormat,
 
     },
     {
-        headerName: '금액',
+        headerName: '매출 총액',
         field: 'totalPrice',
         editable: true,
         valueFormatter: (params) => {
@@ -665,18 +665,18 @@ export const estimateTotalColumns = [
         key: 'customerName',
     },
     {
-        headerName: 'MAKER',
+        headerName: 'Maker',
         field: 'maker',
         key: 'maker',
         minWidth: 180,
     },
     {
-        headerName: 'ITEM',
+        headerName: 'Item',
         field: 'item',
         key: 'item',
     },
     {
-        headerName: 'MODEL',
+        headerName: 'Model',
         field: 'model',
         key: 'model',
         minWidth: 150,
@@ -697,7 +697,7 @@ export const estimateTotalColumns = [
         key: 'currency',
     },
     {
-        headerName: 'NET',
+        headerName: '매입 단가',
         field: 'net',
         key: 'net',
     },
@@ -717,7 +717,7 @@ export const estimateTotalColumns = [
         key: 'unitPrice',
     },
     {
-        headerName: '등록자',
+        headerName: '작성자',
         field: 'createdBy',
         key: 'createdBy',
     },
@@ -748,7 +748,7 @@ export const tableEstimateReadColumns = [
     {
         // headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
         // checkboxSelection: true, // 각 행에 체크박스 추가
-        headerName: 'INQUIRY NO.',
+        headerName: 'Inquiry No.',
         field: 'documentNumberFull',
         pinned: 'left',
         maxWidth: 100, // 컬럼 너비
@@ -791,7 +791,7 @@ export const tableEstimateReadColumns = [
         maxWidth: 80,
     },
     {
-        headerName: 'MODEL',
+        headerName: 'Model',
         field: 'model',
         minWidth: 200,
         cellStyle: {
@@ -801,12 +801,12 @@ export const tableEstimateReadColumns = [
         onCellClicked: handleCellClick, // ✅ 셀 클릭 시 처리
         onCellMouseOut: handleCellMouseOut, // ✅ 셀 밖으로 이동 시 처리
     },   {
-        headerName: 'MAKER',
+        headerName: 'Maker',
         field: 'maker',
         minWidth: 200
     },
     {
-        headerName: 'ITEM',
+        headerName: 'Item',
         field: 'item',
         minWidth: 200
     },
@@ -834,7 +834,7 @@ export const tableEstimateReadColumns = [
                 initialValue: '미주문'
             },
             {
-                headerName: '단가',
+                headerName: '매출 단가',
                 field: 'unitPrice',
                 minWidth: 70,
                 cellDataType: 'number',
@@ -842,7 +842,7 @@ export const tableEstimateReadColumns = [
                 cellStyle: {textAlign: 'right'}
             },
             {
-                headerName: '합계',
+                headerName: '매출 총액',
                 field: 'amount',
                 minWidth: 70,
                 cellDataType: 'number',
@@ -878,7 +878,7 @@ export const tableEstimateWriteColumns = [
         pinned: "left", // 왼쪽에 고정
         filter: false
     },{
-        headerName: 'MODEL',
+        headerName: 'Model',
         field: 'model',
         minWidth: 200,
         cellEditor: CustomTextEditor, // ✅ 커스텀 에디터 적용
@@ -910,7 +910,7 @@ export const tableEstimateWriteColumns = [
         editable: true,
     },
     {
-        headerName: '단가',
+        headerName: '매출 단가',
         field: 'unitPrice',
         editable: true,
         valueFormatter: params => !isNaN(params?.value) ? params?.value?.toLocaleString() : 0,
@@ -918,7 +918,7 @@ export const tableEstimateWriteColumns = [
     },
 
     {
-        headerName: '금액',
+        headerName: '매출 총액',
         field: 'amount',
         width: 120,
         // editable: true,
@@ -948,7 +948,7 @@ export const tableEstimateWriteColumns = [
         }
     },
     {
-        headerName: 'NET/P',
+        headerName: '매입 단가',
         field: 'net',
         editable: true,
         valueFormatter: params => commonManage.calcFloat(params, 2),
@@ -985,7 +985,7 @@ export const rfqReadColumns = [
 
     {
 
-        headerName: 'INQUIRY NO.',
+        headerName: 'Inquiry No.',
         field: 'documentNumberFull',
         maxWidth: 100, // 컬럼 너비
         pinned: 'left',
@@ -1038,17 +1038,17 @@ export const rfqReadColumns = [
         headerName: '물품',
         children: [
             {
-                headerName: 'MAKER',
+                headerName: 'Maker',
                 field: 'maker',
                 minWidth: 200,
             },
             {
-                headerName: 'ITEM',
+                headerName: 'Item',
                 field: 'item',
                 minWidth: 200,
             },
             {
-                headerName: 'MODEL',
+                headerName: 'Model',
                 field: 'model',
                 minWidth: 200,
                 cellStyle: {
@@ -1086,7 +1086,7 @@ export const rfqReadColumns = [
                 }
             },
             {
-                headerName: 'NET/P',
+                headerName: '매입 단가',
                 field: 'net',
                 minWidth: 60,
                 maxWidth: 120,
@@ -1124,7 +1124,7 @@ export const rfqReadColumns = [
     },
 
     {
-        headerName: '등록자',
+        headerName: '작성자',
         field: 'createdBy',
         minWidth: 60,
         maxWidth: 120,
@@ -1189,7 +1189,7 @@ export const tableOrderReadColumns = [
         pinned: 'left'
     },
     {
-        headerName: '문서번호',
+        headerName: 'Inquiry No.',
         field: 'documentNumberFull',
         maxWidth: 100,
         pinned: 'left',
@@ -1216,20 +1216,20 @@ export const tableOrderReadColumns = [
         minWidth: 100,
     },
     {
-        headerName: 'MAKER',
+        headerName: 'Maker',
         field: 'maker',
         align: 'center',
         minWidth: 200,
     },
     {
-        headerName: 'ITEM',
+        headerName: 'Item',
         field: 'item',
         align: 'center',
         minWidth: 200,
 
     },
     {
-        headerName: 'MODEL',
+        headerName: 'Model',
         field: 'model',
         minWidth: 200,
         cellStyle: {
@@ -1260,7 +1260,7 @@ export const tableOrderReadColumns = [
         }
     },
     {
-        headerName: 'NET',
+        headerName: '매입 단가',
         field: 'net',
         align: 'center',
         minWidth: 40,
@@ -1310,7 +1310,7 @@ export const tableOrderReadColumns = [
         // }
     },
     {
-        headerName: '단가',
+        headerName: '매출 단가',
         field: 'unitPrice',
         key: 'unitPrice',
         align: 'center',
@@ -1319,7 +1319,7 @@ export const tableOrderReadColumns = [
         cellStyle: {textAlign: 'right'}
     },
     {
-        headerName: '금액',
+        headerName: '매출 총액',
         field: 'totalPrice',
         key: 'totalPrice',
         align: 'center',
@@ -1389,20 +1389,20 @@ export const subTableOrderReadColumns = [
         minWidth: 100,
     },
     {
-        headerName: 'MAKER',
+        headerName: 'Maker',
         field: 'maker',
         align: 'center',
         minWidth: 200,
     },
     {
-        headerName: 'ITEM',
+        headerName: 'Item',
         field: 'item',
         align: 'center',
         minWidth: 200,
 
     },
     {
-        headerName: 'MODEL',
+        headerName: 'Model',
         field: 'model',
         minWidth: 200,
         cellStyle: {
@@ -1433,7 +1433,7 @@ export const subTableOrderReadColumns = [
         }
     },
     {
-        headerName: 'NET',
+        headerName: '매입 단가',
         field: 'net',
         align: 'center',
         minWidth: 40,
@@ -1565,13 +1565,13 @@ export const subSecTableOrderReadColumns = [
         minWidth: 100,
     },
     {
-        headerName: 'MAKER',
+        headerName: 'Maker',
         field: 'maker',
         align: 'center',
         minWidth: 200,
     },
     {
-        headerName: 'ITEM',
+        headerName: 'Item',
         field: 'item',
         align: 'center',
         minWidth: 200,
@@ -1758,12 +1758,12 @@ export const remittanceDomesticColumns = [
 
 export const tableOrderInventory = [
     {
-        headerName: 'MAKER',
+        headerName: 'Maker',
         field: 'maker',
         key: 'maker',
     },
     {
-        headerName: 'MODEL',
+        headerName: 'Model',
         field: 'model',
         key: 'model',
     },
@@ -1875,7 +1875,7 @@ export const tableCodeDomesticAgencyWriteColumns = [
         editable: true,
     },
     {
-        headerName: '전화번호',
+        headerName: '연락처',
         field: 'phoneNumber',
         key: 'phoneNumber',
         editable: true,
@@ -1941,12 +1941,12 @@ export const tableCodeDomesticPurchaseColumns = [
         field: 'agencyName',
         key: 'agencyName',
     }, {
-        headerName: 'ITEM',
+        headerName: 'Item',
         field: 'item',
         key: 'item',
     },
     {
-        headerName: 'MAKER',
+        headerName: 'Maker',
         field: 'maker',
         key: 'maker',
         minWidth: 180,
@@ -1987,7 +1987,7 @@ export const tableCodeDomesticPurchaseColumns = [
         key: 'bankAccountNumber',
     },
     {
-        headerName: '등록자',
+        headerName: '작성자',
         field: 'createdBy',
         key: 'createdBy',
     },
@@ -2060,7 +2060,7 @@ export const tableCodeOverseasPurchaseColumns = [
         key: 'homepage',
     },
     {
-        headerName: 'ITEM',
+        headerName: 'Item',
         field: 'item',
         key: 'item',
     },
@@ -2115,7 +2115,7 @@ export const tableCodeOverseasPurchaseColumns = [
         key: 'swiftCode',
     },
     {
-        headerName: '등록자',
+        headerName: '작성자',
         field: 'createdBy',
         key: 'createdBy',
     },
@@ -2163,7 +2163,7 @@ export const tableCodeOverseasAgencyWriteColumns = [
         checkboxSelection: true, // 각 행에 체크박스 추가
     },
     {
-        headerName: '전화번호',
+        headerName: '연락처',
         field: 'phoneNumber',
         key: 'phoneNumber',
         editable: true,
@@ -2239,7 +2239,7 @@ export const tableCodeDomesticSalesColumns = [
         field: 'tradeStartDate',
     },
     {
-        headerName: '전화번호',
+        headerName: '연락처',
         field: 'customerTel',
 
     },
@@ -2309,7 +2309,7 @@ export const tableCodeDomesticSalesColumns = [
 
     },
     {
-        headerName: '등록자',
+        headerName: '작성자',
         field: 'createdBy',
 
     },
@@ -2342,7 +2342,7 @@ export const tableCodeDomesticWriteColumn = [
         editable: true,
     },
     {
-        headerName: '전화번호',
+        headerName: '연락처',
         field: 'directTel',
         editable: true,
     },
@@ -2387,7 +2387,7 @@ export const tableCodeOverseasSalesColumns = [
         field: 'tradeStartDate',
     },
     {
-        headerName: '전화번호',
+        headerName: '연락처',
         field: 'phoneNumber',
     },
     {
@@ -2437,7 +2437,7 @@ export const tableCodeOverseasSalesColumns = [
         field: 'checkList',
     },
     {
-        headerName: '등록자',
+        headerName: '작성자',
         field: 'createdBy',
     },
     {
@@ -2519,7 +2519,7 @@ export const tableCodeReadColumns = [
         filter: false
     }, {
         pinned: 'left',
-        headerName: 'ITEM',
+        headerName: 'Item',
         field: 'item',
         maxWidth: 250
     },
@@ -2541,7 +2541,7 @@ export const subTableCodeReadColumns = [
         filter: false
     }, {
         pinned: 'left',
-        headerName: 'ITEM',
+        headerName: 'Item',
         field: 'item',
         maxWidth: 250
     },
@@ -2672,12 +2672,12 @@ export const projectWriteColumn = [
     {
 
         pinned: 'left',
-        headerName: '연결 INQUIRY NO.',
+        headerName: '연결 Inquiry No.',
         field: 'connectInquiryNo',
         maxWidth: 110,
         editable: true,
     }, {
-        headerName: 'MODEL',
+        headerName: 'Model',
         field: 'model',
         minWidth: 200,
         cellEditor: CustomTextEditor, // ✅ 커스텀 에디터 적용
@@ -2692,12 +2692,12 @@ export const projectWriteColumn = [
         tooltipField: "model", // ✅ 마우스를 올리면 전체 텍스트 표시 가능
     },
     {
-        headerName: 'MAKER',
+        headerName: 'Maker',
         field: 'maker',
         minWidth: 200,
         editable: true,
     }, {
-        headerName: 'ITEM',
+        headerName: 'Item',
         field: 'item',
         minWidth: 200,
         editable: true,
@@ -2725,7 +2725,7 @@ export const projectWriteColumn = [
         // valueFormatter: amountFormat,
         // valueParser: amountFormatParser,
     }, {
-        headerName: '단위가격',
+        headerName: '매출 단가',
         field: 'unitPrice',
         minWidth: 150,
         editable: true,
@@ -2733,7 +2733,7 @@ export const projectWriteColumn = [
         valueFormatter: (e)=>amountFormat(e.value),
         valueParser: amountFormatParser,
     }, {
-        headerName: '총액',
+        headerName: '매출 총액',
         field: 'total',
         minWidth: 150,
         filter: 'agNumberColumnFilter',
@@ -2747,13 +2747,13 @@ export const projectWriteColumn = [
         }
 
     }, {
-        headerName: '매입단가',
+        headerName: '매입 단가',
         field: 'purchasePrice',
         minWidth: 120,
         filter: 'agNumberColumnFilter',
         editable: true,
     }, {
-        headerName: '매입총액',
+        headerName: '매입 총액',
         field: 'totalPurchase',
         minWidth: 120,
         filter: 'agNumberColumnFilter',
@@ -2801,7 +2801,7 @@ export const projectWriteColumn = [
         minWidth: 150,
         editable: true,
     }, {
-        headerName: '매입처 전화번호',
+        headerName: '매입처 연락처',
         field: 'agencyManagerPhone',
         minWidth: 150,
         editable: true,
@@ -2816,7 +2816,7 @@ export const projectWriteColumn = [
         minWidth: 150,
         editable: true,
     }, {
-        headerName: '납기요청일',
+        headerName: '납품기한',
         field: 'requestDeliveryDate',
         minWidth: 150,
         filter: "agDateColumnFilter",
@@ -2841,7 +2841,7 @@ export const projectWriteColumn = [
 
 export const projectReadColumn = [
     {
-        headerName: 'PRJECT NO.',
+        headerName: 'Project No.',
         field: 'documentNumberFull',
         maxWidth: 120,
         headerCheckboxSelection: true,
@@ -2886,15 +2886,15 @@ export const projectReadColumn = [
         minWidth: 150,
     },
     {
-        headerName: 'MAKER',
+        headerName: 'Maker',
         field: 'maker',
 
     }, {
-        headerName: 'ITEM',
+        headerName: 'Item',
         field: 'item',
         minWidth: 150,
     }, {
-        headerName: '규격',
+        headerName: '단위',
         field: 'spec',
         minWidth: 150,
     }, {
@@ -2902,14 +2902,14 @@ export const projectReadColumn = [
         field: 'quantity',
         minWidth: 150,
     }, {
-        headerName: '단위 가격',
+        headerName: '매출 단가',
         field: 'unitPrice',
         minWidth: 150,
         valueGetter: (params) => {
             return (params.data.unitPrice)?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); // A와 B를 곱한 값
         },
     }, {
-        headerName: '총액',
+        headerName: '매출 총액',
         field: 'total',
         minWidth: 150,
         pinned: 'right',
@@ -2933,7 +2933,7 @@ export const projectReadColumn = [
         minWidth: 150,
         hide: true,
     }, {
-        headerName: '납기요청일',
+        headerName: '납품기한',
         field: 'requestDeliveryDate',
         minWidth: 150,
         hide: true,
@@ -2951,7 +2951,7 @@ export const projectReadColumn = [
         hide: true,
     },
     {
-        headerName: '매입처 전화번호',
+        headerName: '매입처 연락처',
         field: 'agencyManagerPhone',
         minWidth: 150,
         hide: true,
@@ -2993,7 +2993,7 @@ export const delilveryReadColumn = [
         field: 'deliveryType',
         minWidth: 80
     }, {
-        headerName: 'INQUIRY NO.',
+        headerName: 'Inquiry No.',
         field: 'connectInquiryNo',
         maxWidth: 120,
         pinned: 'left',
@@ -3002,7 +3002,7 @@ export const delilveryReadColumn = [
         field: 'recipientName',
         minWidth: 80
     }, {
-        headerName: '받는분 전화번호',
+        headerName: '받는분 연락처',
         field: 'recipientPhone',
         minWidth: 100
     }, {
@@ -3070,7 +3070,7 @@ export const remittanceReadColumn = [
         pinned: "left", // 왼쪽에 고정
         filter: false
     },{
-        headerName: 'INQUIRY NO.',
+        headerName: 'Inquiry No.',
         field: 'connectInquiryNo',
         maxWidth: 80,
         pinned: 'left'
@@ -3146,7 +3146,7 @@ export const storeWriteColumn = [
         filter: false
     },{
 
-        headerName: 'INQUIRY NO.',
+        headerName: 'Inquiry No.',
         field: 'orderDocumentNumberFull',
         minWidth: 150,
         editable: true
@@ -3305,7 +3305,7 @@ export const storeReadColumn = [
         maxWidth: 100,
         pinned: 'left'
     }, {
-        headerName: 'INQUIRY NO.',
+        headerName: 'Inquiry No.',
         field: 'orderDocumentNumberFull',
         maxWidth: 120,
 

@@ -344,14 +344,14 @@ export default function EstimateUpdate({
                                 />
                             </div>
                             {inputForm({
-                                title: 'INQUIRY NO.',
+                                title: 'Inquiry No.',
                                 id: 'documentNumberFull',
                                 placeholder: '폴더생성 규칙 유의',
                                 onChange: onChange,
                                 data: info, disabled: true
                             })}
 
-                            {inputForm({title: 'RFQ NO.', id: 'rfqNo', onChange: onChange, data: info})}
+                            {inputForm({title: 'RFQ No.', id: 'rfqNo', onChange: onChange, data: info})}
                             {inputForm({title: '프로젝트 제목', id: 'projectTitle', onChange: onChange, data: info})}
                         </TopBoxCard>
 
@@ -420,7 +420,7 @@ export default function EstimateUpdate({
                                     data: info
                                 })}
                                 {inputForm({
-                                    title: '전화번호',
+                                    title: '연락처',
                                     id: 'phoneNumber',
                                     onChange: onChange,
                                     data: info
@@ -462,7 +462,7 @@ export default function EstimateUpdate({
                                     ], onChange: onChange, data: info
                                 })}
                                 {inputNumberForm({
-                                    title: 'Delivery(weeks)',
+                                    title: '납기',
                                     id: 'delivery',
                                     onChange: onChange,
                                     data: info,
@@ -478,7 +478,7 @@ export default function EstimateUpdate({
                             </BoxCard>
                             <BoxCard title={'Maker 정보'}>
                                 {inputForm({
-                                    title: 'MAKER',
+                                    title: 'Maker',
                                     id: 'maker',
                                     suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
                                         (e) => {
@@ -488,7 +488,7 @@ export default function EstimateUpdate({
                                     }/>
                                     , onChange: onChange, data: info, handleKeyPress: handleKeyPress
                                 })}
-                                {inputForm({title: 'ITEM', id: 'item', onChange: onChange, data: info})}
+                                {inputForm({title: 'Item', id: 'item', onChange: onChange, data: info})}
                             </BoxCard>
                             <BoxCard title={'ETC'}>
                                 {textAreaForm({

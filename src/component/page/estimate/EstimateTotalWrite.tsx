@@ -139,9 +139,9 @@ export default function EstimateTotalWrite({estimateList=[]}) {
                             {inputForm({title: '고객사명', id: 'searchCustomerName'})}
                         </BoxCard>
                         <BoxCard title={''}>
-                            {inputForm({title: 'MAKER', id: 'searchMaker'})}
-                            {inputForm({title: 'MODEL', id: 'searchModel'})}
-                            {inputForm({title: 'ITEM', id: 'searchItem'})}
+                            {inputForm({title: 'Maker', id: 'searchMaker'})}
+                            {inputForm({title: 'Model', id: 'searchModel'})}
+                            {inputForm({title: 'Item', id: 'searchItem'})}
 
                         </BoxCard>
                     </div>

@@ -71,8 +71,8 @@ export default function MakerUpdate({dataInfo={}, updateKey}) {
                 }}>
                     <BoxCard >
 
-                        {inputForm({title: 'MAKER', id: 'makerName', onChange: onChange, data: info})}
-                        {inputForm({title: 'ITEM', id: 'item', onChange: onChange, data: info})}
+                        {inputForm({title: 'Maker', id: 'makerName', onChange: onChange, data: info})}
+                        {inputForm({title: 'Item', id: 'item', onChange: onChange, data: info})}
                         {inputForm({title: '홈페이지', id: 'homepage', onChange: onChange, data: info})}
                         {inputForm({title: '한국매입처', id: 'koreanAgency', onChange: onChange, data: info})}
                     </BoxCard>
@@ -114,7 +114,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     store.dispatch(setUserInfo(userInfo));
 
     const result = await getData.post('maker/getMakerList', {
-        "searchType": "1",      // 1: 코드, 2: 상호명, 3: MAKER
+        "searchType": "1",      // 1: 코드, 2: 상호명, 3: Maker
         "searchText": makerName,
         "page": 1,
         "limit": -1

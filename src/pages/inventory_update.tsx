@@ -103,12 +103,12 @@ export default function OrderInventoryRead({dataInfo}) {
                                        onChange={onChange}/>
                             </div>
                             <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>MAKER</div>
+                                <div style={{paddingBottom: 3}}>Maker</div>
                                 <Input id={'maker'} value={info['maker']} onChange={onChange}
                                        size={'small'}/>
                             </div>
                             <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>MODEL</div>
+                                <div style={{paddingBottom: 3}}>Model</div>
                                 <Input id={'model'} value={info['model']} onChange={onChange}
                                        size={'small'}/>
                             </div>

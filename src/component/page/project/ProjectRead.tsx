@@ -132,7 +132,7 @@ export default function ProjectRead({getPropertyId, getCopyPage}) {
                         <Panel defaultSize={sizes[1]} minSize={10} maxSize={100} onResize={onResizeChange}>
                             <BoxCard title={'프로젝트 정보'} tooltip={tooltipInfo('readProject')}>
                                 {inputForm({
-                                    title: 'PROJECT NO.',
+                                    title: 'Project No.',
                                     id: 'searchDocumentNumberFull',
                                     onChange: onChange,
                                     handleKeyPress: handleKeyPress,
@@ -146,7 +146,7 @@ export default function ProjectRead({getPropertyId, getCopyPage}) {
                                     data: info
                                 })}
                                 {inputForm({
-                                    title: 'INQUIRY NO.',
+                                    title: 'Inquiry No.',
                                     id: 'searchConnectInquiryNo',
                                     onChange: onChange,
                                     handleKeyPress: handleKeyPress,
@@ -172,7 +172,7 @@ export default function ProjectRead({getPropertyId, getCopyPage}) {
                                     data: info
                                 })}
                                 {inputForm({
-                                    title: '담당자 전화번호',
+                                    title: '담당자 연락처',
                                     id: 'searchAgencyManagerPhone',
                                     onChange: onChange,
                                     handleKeyPress: handleKeyPress,
@@ -205,7 +205,7 @@ export default function ProjectRead({getPropertyId, getCopyPage}) {
                                     data: info
                                 })}
                                 {inputForm({
-                                    title: '담당자 전화번호',
+                                    title: '담당자 연락처',
                                     id: 'searchCustomerPhone',
                                     onChange: onChange,
                                     handleKeyPress: handleKeyPress,

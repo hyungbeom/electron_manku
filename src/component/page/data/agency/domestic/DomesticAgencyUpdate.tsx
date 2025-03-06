@@ -132,9 +132,9 @@ export default function DomesticAgencyUpdate({updateKey, getCopyPage}) {
                             {inputForm({title: '계좌번호', id: 'bankAccountNumber', onChange: onChange, data: info})}
                         </BoxCard>
 
-                        <BoxCard title={'MAKER'}>
-                            {inputForm({title: 'MAKER', id: 'maker', onChange: onChange, data: info})}
-                            {inputForm({title: 'ITEM', id: 'item', onChange: onChange, data: info})}
+                        <BoxCard title={'Maker'}>
+                            {inputForm({title: 'Maker', id: 'maker', onChange: onChange, data: info})}
+                            {inputForm({title: 'Item', id: 'item', onChange: onChange, data: info})}
                             {inputForm({title: '홈페이지', id: 'homepage', onChange: onChange, data: info})}
                         </BoxCard>
                         <BoxCard title={'ETC'}>

@@ -134,7 +134,7 @@ export default function DomesticCustomerUpdate({dataInfo = {customerManagerList:
                         {inputForm({title: '상호', id: 'customerName', onChange: onChange, data: info})}
                         {inputForm({title: '주소', id: 'address', onChange: onChange, data: info})}
                         {inputForm({title: '홈페이지', id: 'homepage', onChange: onChange, data: info})}
-                        {inputForm({title: '전화번호', id: 'customerTel', onChange: onChange, data: info})}
+                        {inputForm({title: '연락처', id: 'customerTel', onChange: onChange, data: info})}
                         {inputForm({title: '팩스번호', id: 'customerFax', onChange: onChange, data: info})}
                     </BoxCard>
 

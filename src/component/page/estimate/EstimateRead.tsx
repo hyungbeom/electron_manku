@@ -217,19 +217,19 @@ export default function EstimateRead({getPropertyId, getCopyPage}) {
                             <BoxCard title={''}>
 
                                 {inputForm({
-                                    title: 'MAKER', id: 'searchMaker',
+                                    title: 'Maker', id: 'searchMaker',
                                     onChange: onChange,
                                     handleKeyPress: handleKeyPress,
                                     data: info
                                 })}
                                 {inputForm({
-                                    title: 'MODEL', id: 'searchModel',
+                                    title: 'Model', id: 'searchModel',
                                     onChange: onChange,
                                     handleKeyPress: handleKeyPress,
                                     data: info
                                 })}
                                 {inputForm({
-                                    title: 'ITEM', id: 'searchItem',
+                                    title: 'Item', id: 'searchItem',
                                     onChange: onChange,
                                     handleKeyPress: handleKeyPress,
                                     data: info

@@ -479,7 +479,7 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
                             borderLeft: 'none',
                             fontSize: 12,
                             backgroundColor: '#ebf6f7'
-                        }}>MAKER
+                        }}>Maker
                         </th>
                         <th style={{
                             borderTop: '1px solid lightGray', backgroundColor: '#ebf6f7', border: '1px solid lightGray',

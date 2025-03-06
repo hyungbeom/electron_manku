@@ -178,7 +178,7 @@ export default function joint({code}) {
                 id: 'contactNumber',
                 onChange: onChange,
                 data: info,
-                placeHolder: '전화번호 입력해 주세요',
+                placeHolder: '연락처 입력해 주세요',
                 size: 'middle'
             })}
 

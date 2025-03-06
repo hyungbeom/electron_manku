@@ -132,7 +132,7 @@ export default function OverseasCustomerUpdate({ updateKey, getCopyPage}) {
                         {inputForm({title: '홈페이지', id: 'homepage', onChange: onChange, data: info})}
                     </BoxCard>
                     <BoxCard title={'INQUIRY & PO no'}>
-                        {datePickerForm({title: '전화번호', id: 'phoneNumber', onChange: onChange, data: info})}
+                        {datePickerForm({title: '연락처', id: 'phoneNumber', onChange: onChange, data: info})}
                         {inputForm({title: '팩스번호', id: 'faxNumber', onChange: onChange, data: info})}
                         {inputForm({title: '만쿠 담당자', id: 'mankuTradeManager', onChange: onChange, data: info})}
                     </BoxCard>

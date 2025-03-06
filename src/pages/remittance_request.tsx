@@ -116,10 +116,10 @@ export default function OrderWriter({dataInfo}) {
     function addRow() {
         let copyData = {...info};
         copyData['orderDetailList'].push({
-            "model": "",           // MODEL
+            "model": "",           // Model
             "unit": "ea",               // 단위
             "currency": "KWD",          // CURR
-            "net": 0,            // NET/P
+            "net": 0,            // 매입단가
             "quantity": 1,              // 수량
             "receivedQuantity": 0,
             "unreceivedQuantity": 0,
@@ -139,9 +139,9 @@ export default function OrderWriter({dataInfo}) {
             "searchEndDate": "",        // 작성일 검색 종료일
             "searchDocumentNumber": info['documentNumberFull'], // 문서번호
             "searchCustomerName": "",   // 고객사명
-            "searchModel": "",          // MODEL
-            "searchMaker": "",          // MAKER
-            "searchItem": "",           // ITEM
+            "searchModel": "",          // Model
+            "searchMaker": "",          // Maker
+            "searchItem": "",           // Item
             "searchCreatedBy": "",      // 등록 관리자 이름
             "page": 1,
             "limit": 1

@@ -181,17 +181,17 @@ export default function remittance_domestic({data}) {
                             boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
                         }}>
                             <div>
-                                <div style={{marginBottom: 3}}>MAKER</div>
+                                <div style={{marginBottom: 3}}>Maker</div>
                                 <Input id={'searchMaker'} value={info['searchMaker']} onChange={onChange}
                                        size={'small'}/>
                             </div>
                             <div style={{marginTop: 8}}>
-                                <div style={{marginBottom: 3}}>MODEL</div>
+                                <div style={{marginBottom: 3}}>Model</div>
                                 <Input id={'searchModel'} value={info['searchModel']} onChange={onChange}
                                        size={'small'}/>
                             </div>
                             <div style={{marginTop: 8}}>
-                                <div style={{marginBottom: 3}}>ITEM</div>
+                                <div style={{marginBottom: 3}}>Item</div>
                                 <Input id={'searchItem'} value={info['searchItem']} onChange={onChange}
                                        size={'small'}/>
                             </div>

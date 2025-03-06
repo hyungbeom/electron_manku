@@ -53,7 +53,7 @@ export default function RemittanceDomesticWrite({dataInfo =[],copyPageInfo}) {
     async function saveFunc() {
 
         if (!info['connectInquiryNo']) {
-            return message.warn('INQUIRY NO. 가 누락되었습니다.')
+            return message.warn('Inquiry No. 가 누락되었습니다.')
         }
         const formData: any = new FormData();
 
@@ -86,7 +86,7 @@ export default function RemittanceDomesticWrite({dataInfo =[],copyPageInfo}) {
 
 
                 <TopBoxCard title={'기본 정보'} grid={'250px 200px 200px 200px'}>
-                    {inputForm({title: 'INQUIRY NO.', id: 'connectInquiryNo', onChange: onChange, data: info,  disabled:true,  suffix: <FileSearchOutlined style={{cursor: 'pointer', color : 'black'}} onClick={
+                    {inputForm({title: 'Inquiry No.', id: 'connectInquiryNo', onChange: onChange, data: info,  disabled:true,  suffix: <FileSearchOutlined style={{cursor: 'pointer', color : 'black'}} onClick={
                             (e) => {
                                 e.stopPropagation();
                                 openModal('orderSubList');

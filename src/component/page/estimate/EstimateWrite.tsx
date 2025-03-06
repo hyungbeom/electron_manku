@@ -133,9 +133,9 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
                         "searchEndDate": "",                // 작성일자 종료일
                         "searchDocumentNumber": e.target.value.toUpperCase(),         // 문서번호
                         "searchCustomerName": "",           // 거래처명
-                        "searchMaker": "",                  // MAKER
-                        "searchModel": "",                  // MODEL
-                        "searchItem": "",                   // ITEM
+                        "searchMaker": "",                  // Maker
+                        "searchModel": "",                  // Model
+                        "searchItem": "",                   // Item
                         "searchCreatedBy": "",              // 등록직원명
                         "searchRfqNo": "",                  // 견적의뢰 RFQ No
                         "searchProjectTitle": "",           // 프로젝트 제목
@@ -202,7 +202,7 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
 
         if (!info['documentNumberFull']) {
 
-            return message.warn('INQUIRY NO. 정보가 누락되었습니다.')
+            return message.warn('Inquiry No. 정보가 누락되었습니다.')
         }
 
         if (!info['agencyCode']) {
@@ -306,7 +306,7 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
                                 </div>
                                 {/*{inputForm({title: '담당자', id: 'managerAdminName', onChange: onChange, data: info})}*/}
                                 {inputForm({
-                                    title: 'INQUIRY NO.',
+                                    title: 'Inquiry No.',
                                     id: 'documentNumberFull',
                                     placeholder: '폴더생성 규칙 유의',
                                     onChange: onChange,
@@ -336,7 +336,7 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
                                     suffix: <DownloadOutlined style={{cursor: 'pointer'}}/>
                                     , onChange: onChange, data: info, handleKeyPress: handleKeyPress
                                 })}
-                                {inputForm({title: 'RFQ NO.', id: 'rfqNo', onChange: onChange, data: info})}
+                                {inputForm({title: 'RFQ No.', id: 'rfqNo', onChange: onChange, data: info})}
                                 {inputForm({title: '프로젝트 제목', id: 'projectTitle', onChange: onChange, data: info})}
                             </TopBoxCard>
 
@@ -408,7 +408,7 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
                                         data: info
                                     })}
                                     {inputForm({
-                                        title: '전화번호',
+                                        title: '연락처',
                                         id: 'phoneNumber',
                                         onChange: onChange,
                                         data: info
@@ -450,7 +450,7 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
                                         ], onChange: onChange, data: info
                                     })}
                                     {inputNumberForm({
-                                        title: 'Delivery',
+                                        title: '납기',
                                         id: 'delivery',
                                         onChange: onChange,
                                         data: info,
@@ -467,7 +467,7 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
 
                                 <BoxCard title={'Maker 정보'}>
                                     {inputForm({
-                                        title: 'MAKER',
+                                        title: 'Maker',
                                         id: 'maker',
                                         suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
                                             (e) => {
@@ -476,7 +476,7 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
                                             }
                                         }/>, onChange: onChange, handleKeyPress: handleKeyPress, data: info
                                     })}
-                                    {inputForm({title: 'ITEM', id: 'item', onChange: onChange, data: info})}
+                                    {inputForm({title: 'Item', id: 'item', onChange: onChange, data: info})}
                                 </BoxCard>
 
                                 <BoxCard title={'ETC'}>

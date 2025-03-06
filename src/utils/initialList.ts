@@ -7,8 +7,8 @@ import {
 } from "@/utils/columnList";
 
 export const makerRegistInitial = {
-    "makerName": "",                   // MAKER
-    "item": "",               // ITEM
+    "makerName": "",                   // Maker
+    "item": "",               // Item
     "homepage": "",  // 홈페이지
     "area": "",                            // AREA
     "origin": "",                               // 원산지
@@ -21,11 +21,11 @@ export const makerRegistInitial = {
 
 
 export const estimateDetailUnit = {
-    "model": "",   // MODEL
+    "model": "",   // Model
     "quantity": 0,                  // 수량
     "unit": "EA",                   // 단위
     "currency": null,          // CURR
-    "net": 0,                 // NET/P
+    "net": 0,                 // 매입단가
     "unitPrice": 0,           // 단가
     "amount": 0,               // 금액
     "serialNumber": 1           // 견적의뢰 내역 순서 (1부터 시작)
@@ -33,7 +33,7 @@ export const estimateDetailUnit = {
 
 export const estimateWriteInitial = {
     "writtenDate": moment().format('YYYY-MM-DD'),    // 작성일
-    "documentNumberFull": "", // INQUIRY NO.
+    "documentNumberFull": "", // Inquiry No.
     "agencyCode": "",            // 대리점코드
     "agencyManagerName": "",
     "agencyManagerEmail": "",
@@ -41,7 +41,7 @@ export const estimateWriteInitial = {
     "customerCode": "",             // CUSTOMER 코드
     "customerName": "",    // 상호명
     "managerName": "",      // 담당자
-    "phoneNumber": "",  // 전화번호
+    "phoneNumber": "",  // 연락처
     "faxNumber": "",                // 팩스번호
     "validityPeriod":'견적 발행 후 10일간',    // 유효기간
     "paymentTerms": '발주시 50% / 납품시 50%',                // 결제조건
@@ -49,11 +49,11 @@ export const estimateWriteInitial = {
     "exchangeRate": "",                  // 환율
     "estimateManager": "",            // 담당자
     "email": "",             // E-MAIL
-    "managerPhoneNumber": "",   // 전화번호
+    "managerPhoneNumber": "",   // 연락처
     "managerFaxNumber": "",       // 팩스번호
-    "maker": "",      // MAKER
-    "item": "",      // ITEM
-    "delivery": null,    // Delivery
+    "maker": "",      // Maker
+    "item": "",      // Item
+    "delivery": null,    // 납기
     "remarks": "",          // 비고란
     "currencyUnit": "",          // 비고란
     "estimateDetailList": [],
@@ -61,11 +61,11 @@ export const estimateWriteInitial = {
 }
 
 export const tableEstimateWriteInitial = {
-    "model": "",   // MODEL
+    "model": "",   // Model
     "quantity": 0,                  // 수량
     "unit": "EA",                   // 단위
     "currency": "USD",              // CURR
-    "net": 0,                 // NET/P
+    "net": 0,                 // 매입단가
     "unitPrice": 0,           // 단가
     "amount": 0               // 금액
 }
@@ -75,11 +75,11 @@ export const tableEstimateWriteInitial = {
 
 
 export const estimateRequestDetailUnit = {
-    "model": "",             // MODEL
+    "model": "",             // Model
     "quantity": 0,           // 수량
     "unit": "ea",            // 단위
     "currency": "krw",       // CURR
-    "net": 0,                // NET/P
+    "net": 0,                // 매입단가
     "serialNumber": 0,       // 항목 순서 (1부터 시작)
     "deliveryDate": 0,      // 납기
     "content": "미회신",       // 내용
@@ -136,7 +136,7 @@ export const rfqWriteInitial = {
 export const customerInitial = {
     "customerCode": "",                // 고객사코드
     "customerName": "",  // 고객사명(상호명)
-    "phoneNumber": "",              // 전화번호
+    "phoneNumber": "",              // 연락처
     "faxNumber": "",       // 팩스
     "customerManagerEmail": "",       // 이메일
     "managerName": ""        // 담당자명
@@ -144,8 +144,8 @@ export const customerInitial = {
 
 
 export const makerWriteInitial = {
-    "makerName": "",                   // MAKER
-    "item": "",               // ITEM
+    "makerName": "",                   // Maker
+    "item": "",               // Item
     "homepage": "",  // 홈페이지
     "area": "",                            // AREA
     "origin": "",                               // 원산지
@@ -157,11 +157,11 @@ export const makerWriteInitial = {
 }
 
 export const subRfqWriteInitial = {
-    "model": "",           // MODEL
+    "model": "",           // Model
     "quantity": 1,              // 수량
     "unit": "ea",               // 단위
     "currency": "KRW",          // CURR
-    "net": 0,            // NET/P
+    "net": 0,            // 매입단가
     "deliveryDate": "",   // 납기
     "content": "",         // 내용
     "replyDate": "",  // 회신일
@@ -170,11 +170,11 @@ export const subRfqWriteInitial = {
 }
 
 export const subRfqTableInitial = {
-    "model": "",             // MODEL
+    "model": "",             // Model
     "quantity": 0,           // 수량
     "unit": "ea",            // 단위
     "currency": "KRW",       // CURR
-    "net": 0,                // NET/P
+    "net": 0,                // 매입단가
     "serialNumber": 0,       // 항목 순서 (1부터 시작)
     "deliveryDate": "",      // 납기
     "content": "미회신",       // 내용
@@ -184,10 +184,10 @@ export const subRfqTableInitial = {
 
 
 export const tableOrderWriteInitial = {
-    "model": "",           // MODEL
+    "model": "",           // Model
     "unit": "ea",               // 단위
     "currency": "krw",          // CURR
-    "net": 0,            // NET/P
+    "net": 0,            // 매입단가
     "quantity": 1,              // 수량
     "receivedQuantity": 0,
     "unreceivedQuantity": 0,
@@ -204,9 +204,9 @@ export const subRfqReadInitial = {
     "searchEndDate":moment().format('YYYY-MM-DD'),                // 작성일자 종료일
     "searchDocumentNumber": "",         // 문서번호
     "searchCustomerName": "",           // 고객사명
-    "searchMaker": "",                  // MAKER
-    "searchModel": "",                  // MODEL
-    "searchItem": "",                   // ITEM
+    "searchMaker": "",                  // Maker
+    "searchModel": "",                  // Model
+    "searchItem": "",                   // Item
     "searchCreatedBy": "",              // 등록직원명
     "searchManagerName": "",            // 담당자명
     "searchMobileNumber": "",           // 담당자 연락처
@@ -226,9 +226,9 @@ export const subRfqReadMailInitial = {
     "searchEndDate": moment().format('YYYY-MM-DD'),                // 작성일자 종료일
     "searchDocumentNumber": "",         // 문서번호
     "searchCustomerName": "",           // 고객사명
-    "searchMaker": "",                  // MAKER
-    "searchModel": "",                  // MODEL
-    "searchItem": "",                   // ITEM
+    "searchMaker": "",                  // Maker
+    "searchModel": "",                  // Model
+    "searchItem": "",                   // Item
     "searchCreatedBy": "",              // 등록직원명
     "searchRfqNo": "",                  // 견적의뢰 RFQ No
     "searchProjectTitle": "",           // 프로젝트 제목
@@ -254,9 +254,9 @@ export const estimateReadInitial = {
     searchEndDate: moment().format('YYYY-MM-DD'),                // 작성일자 종료일
     "searchDocumentNumber": "",         // 문서번호
     "searchCustomerName": "",           // 고객사명
-    "searchMaker": "",                  // MAKER
-    "searchModel": "",                  // MODEL
-    "searchItem": "",                   // ITEM
+    "searchMaker": "",                  // Maker
+    "searchModel": "",                  // Model
+    "searchItem": "",                   // Item
     "searchCreatedBy": "",      // 등록 관리자 이름
     page: 1,
     limit: -1
@@ -335,10 +335,10 @@ export const tableEstimateReadInitial = {
 }
 
 export const orderDetailUnit = {
-    "model": "",           // MODEL
+    "model": "",           // Model
     "unit": "ea",               // 단위
     "currency": null,
-    "net": 0,            // NET/P
+    "net": 0,            // 매입단가
     "quantity": 0,              // 수량
     "receivedQuantity": 0,
     "unreceivedQuantity": 0,
@@ -360,18 +360,18 @@ export const orderWriteInitial = {
     "managerFaxNumber": "",      // E-Mail
     "managerEmail": "",   // Fax
     "paymentTerms": 'By in advance T/T',    // Payment Terms
-    "deliveryTerms": "",              // Delivery Terms
-    "maker": "",                    // MAKER
-    "item": "",                       // ITEM
-    "delivery": '',               // Delivery
+    "deliveryTerms": "",              // 납기 Terms
+    "maker": "",                    // Maker
+    "item": "",                       // Item
+    "delivery": '',               // 납기
     "remarks": "",                      // 비고란
     "currencyUnit": "",                      // 비고란
     "orderDetailList": [],
 }
 
 export const orderStockInitial = {
-    "receiptDate": "",          // MAKER 검색
-    "documentNumber": "",          // MODEL 검색
+    "receiptDate": "",          // Maker 검색
+    "documentNumber": "",          // Model 검색
     "maker": "",       // 위치 검색
     "page": 1,
     "limit": 20
@@ -380,7 +380,7 @@ export const orderStockInitial = {
 export const tableOrderInventoryInitial = {
     "receiptDate": "",        // 입고일자
     "documentNumber": "",     // 문서번호
-    "maker": "",                 // MAKER
+    "maker": "",                 // Maker
     "model": "",                 // Model
     "importUnitPrice": null,          // 수입단가
     "currencyUnit": "KRW",              // 화폐단위
@@ -397,7 +397,7 @@ export const deliveryDaehanInitial = {
     "deliveryDate": moment().format('YYYY-MM-DD'),                  // 출고일자
     "customerName": "",                // 고객사명
     "recipientName": "",                     // 받는 분 성명
-    "recipientPhone": "",             // 받는 분 전화번호
+    "recipientPhone": "",             // 받는 분 연락처
     "recipientAltPhone": "",          // 받는 분 기타 연락처
     "recipientPostalCode": "",                // 받는 분 우편번호
     "recipientAddress": "",        // 받는 분 주소
@@ -467,9 +467,9 @@ export const orderReadInitial = {
     searchEndDate: moment().format('YYYY-MM-DD'),
     "searchDocumentNumber": "",         // 문서번호
     "searchCustomerName": "",           // 고객사명
-    "searchMaker": "",                  // MAKER
-    "searchModel": "",                  // MODEL
-    "searchItem": "",                   // ITEM
+    "searchMaker": "",                  // Maker
+    "searchModel": "",                  // Model
+    "searchItem": "",                   // Item
     "searchEstimateManager": "",              // 등록직원명
     "page": 1,
     "limit": -1
@@ -504,10 +504,10 @@ export const remittanceDomesticSearchInitial = {
 }
 
 export const inventoryReadInitial = {
-    "searchText": "",              // 재고 등록 검색 (문서번호, MAKER, Model)
-    "searchMaker": "",                  // MAKER
-    "searchModel": "",                  // MODEL
-    "searchLocation": "",                   // ITEM
+    "searchText": "",              // 재고 등록 검색 (문서번호, Maker, Model)
+    "searchMaker": "",                  // Maker
+    "searchModel": "",                  // Model
+    "searchLocation": "",                   // Item
     "page": 1,
     "limit": 10
 }
@@ -523,8 +523,8 @@ export const orderCustomerReadInitial = {
 }
 
 export const orderAgencyReadInitial = {
-    "searchText": "",              // 재고 등록 검색 (문서번호, MAKER, Model)
-    "searchDate": "",                  // MAKER
+    "searchText": "",              // 재고 등록 검색 (문서번호, Maker, Model)
+    "searchDate": "",                  // Maker
     "page": 1,
     "limit": 10
 }
@@ -542,9 +542,9 @@ export const subCodeExchangeInitial = {
     "searchDate": "",              // 작성일자 시작일
     "searchDocumentNumber": "",         // 문서번호
     "searchCustomerName": "",           // 고객사명
-    "searchMaker": "",                  // MAKER
-    "searchModel": "",                  // MODEL
-    "searchItem": "",                   // ITEM
+    "searchMaker": "",                  // Maker
+    "searchModel": "",                  // Model
+    "searchItem": "",                   // Item
     "searchEstimateManager": "",              // 등록직원명
     "page": 1,
     "limit": 10
@@ -565,7 +565,7 @@ export const codeReadInitial = {
 
 
 export const codeUserSaveInitial = {
-    "customerName": "",                  // MAKER
+    "customerName": "",                  // Maker
     "homepage": "",         // 문서번호
     "id": "",
     "pw": "",
@@ -631,7 +631,7 @@ export const codeDomesticAgencyWriteInitial = {
     "grade": "A",               // 등급
     "margin": 0,                // 마진
     "agencyName": "",   // 상호
-    "maker": "",            // MAKER
+    "maker": "",            // Maker
     "homepage": "",   // 홈페이지
     "tradeStartDate": "",         // 거래시작일
     "businessRegistrationNumber": "",       // 사업자 번호
@@ -780,7 +780,7 @@ export const codeOverseasAgencyWriteInitial = {
     "grade": "",                             // 등급
     "margin": null,                           // 마진
     "homepage": "",   // 홈페이지
-    "item": "",                        // ITEM
+    "item": "",                        // Item
     "tradeStartDate": "",               // 거래 시작일
     "currencyUnit": "",                        // 화폐단위
     "manager": "",                     // 담당자
@@ -956,11 +956,11 @@ export const projectDetailUnit = {
 
 // ==============================================================================================================================================
 export const reqWriteList = {
-    "MODEL": 'model',
+    "Model": 'model',
     "수량": 'quantity',
     "단위": 'unit',
     "CURR": 'currency',
-    "NET/P": 'net',
+    "매입단가": 'net',
     "납기": 'deliveryDate',
     "회신여부": 'content',
     "회신일": 'replyDate',
@@ -970,39 +970,39 @@ export const reqWriteList = {
 
 // ==============================================================================================================================================
 export const projectWriteList = {
-    "연결 INQUIRY NO.": 'connectInquiryNo',
-    "MAKER": 'maker',
-    "ITEM": 'item',
+    "연결 Inquiry No.": 'connectInquiryNo',
+    "Maker": 'maker',
+    "Item": 'item',
     "규격": 'spec',
     "수량": 'quantity',
-    "단위 가격": 'unitPrice',
-    "총액": 'total',
+    "매출단가": 'unitPrice',
+    "매출총액": 'total',
     "화폐단위": 'currencyUnit',
     "납기": 'deliveryDate',
     "매입처명": 'agencyName',
     "매입처 담당자명": 'agencyManagerName',
-    "매입처 전화번호": 'agencyManagerPhone',
+    "매입처 연락처": 'agencyManagerPhone',
     "매입처 이메일": 'agencyManagerEmail',
     "관련링크": 'relatedLink',
-    "납기요청일": 'requestDeliveryDate',
+    "납품기한": 'requestDeliveryDate',
     "비고": 'remarks',
 }
 
 export const estimateWriteList = {
-    MODEL: 'model',
+    Model: 'model',
     수량: 'quantity',
     단위: 'unit',
     단가: 'unitPrice',
     금액: 'amount',
     CURR: 'currency',
-    "NET/P": 'net',
+    "매입단가": 'net',
 }
 
 export const orderWriteList = {
-    MODEL: 'model',
+    Model: 'model',
     단위: 'unit',
     CURR: 'currency',
-    "NET/P": 'net',
+    "매입단가": 'net',
     totalAmount: 'amount',
     수량: 'quantity',
     입고: 'receivedQuantity',
@@ -1011,7 +1011,7 @@ export const orderWriteList = {
     금액: 'totalPrice'
 }
 export const storeWriteList = {
-    'INQUIRY NO.': 'orderDocumentNumberFull',
+    'Inquiry No.': 'orderDocumentNumberFull',
     '세부항목 번호': 'itemDetailNo',
     매입처명: 'agencyName',
     고객사명: 'customerName',

@@ -133,7 +133,7 @@ export default function HcodeRead({getPropertyId, getCopyPage}) {
                     {mini ? <>
                         <TopBoxCard title={''} grid={"150px 250px 80px 1fr"}>
                             {inputForm({
-                                title: 'ITEM',
+                                title: 'Item',
                                 id: 'item',
                                 onChange: onChange,
                                 handleKeyPress : handleKeyPress,

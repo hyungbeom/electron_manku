@@ -98,7 +98,7 @@ export default function DomesticAgencyWrite({dataInfo={orderDetailList : []}, co
         let copyData = {...info};
         copyData['agencyManagerList'].push({
             "managerName": "",        // 담당자
-            "phoneNumber": "",   // 전화번호
+            "phoneNumber": "",   // 연락처
             "faxNumber": "",      // 팩스번호
             "email": "",       // 이메일
             "address": "",              //  주소
@@ -140,9 +140,9 @@ export default function DomesticAgencyWrite({dataInfo={orderDetailList : []}, co
                                    // await getData.post('/real_name', { data: "example" }, { baseURL: 'https://openapi.openbanking.or.kr/v2.0/inquiry' })
                                 }}>click</span>})}
                         </BoxCard>
-                        <BoxCard title={'MAKER'}>
-                            {inputForm({title: 'MAKER', id: 'maker', onChange: onChange, data: info})}
-                            {inputForm({title: 'ITEM', id: 'item', onChange: onChange, data: info})}
+                        <BoxCard title={'Maker'}>
+                            {inputForm({title: 'Maker', id: 'maker', onChange: onChange, data: info})}
+                            {inputForm({title: 'Item', id: 'item', onChange: onChange, data: info})}
                             {inputForm({title: '홈페이지', id: 'homepage', onChange: onChange, data: info})}
                         </BoxCard>
                         <BoxCard title={'ETC'}>

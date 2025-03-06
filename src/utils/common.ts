@@ -17,9 +17,9 @@ export const TagTypeList = {
     "searchEndDate": {type : 'date'},  // 작성일자 종료일
     "searchDocumentNumber": {type : 'input'},  // 문서번호
     "searchCustomerName": {type : 'input'},  // 고객사명
-    "searchMaker": {type : 'input'},                // MAKER
-    "searchModel": {type : 'input'},                  // MODEL
-    "searchItem": {type : 'input'},              // ITEM
+    "searchMaker": {type : 'input'},                // Maker
+    "searchModel": {type : 'input'},                  // Model
+    "searchItem": {type : 'input'},              // Item
     "searchCreatedBy": {type : 'input'},        // 등록직원명
     "unit": {type : 'select', boxList : ['EA', 'SET', 'M', 'FEAT', 'ROLL', 'BOX','G','KG','PACK', 'INCH', 'MOQ']},               // 단위
 
@@ -124,13 +124,13 @@ export const refWriteInitial = {
 }
 
 export const estimateWriteInitial = {
-    "documentNumberFull": "", // INQUIRY NO.
+    "documentNumberFull": "", // Inquiry No.
     "writtenDate": "",    // 작성일
     "agencyCode": "",            // 대리점코드
     "customerCode": "",             // CUSTOMER 코드
     "customerName": "",    // 상호명
     "managerName": "",      // 담당자
-    "phoneNumber": "",  // 전화번호
+    "phoneNumber": "",  // 연락처
     "faxNumber": "",                // 팩스번호
     "validityPeriod": "",    // 유효기간
     "paymentTerms": "",                // 결제조건
@@ -138,19 +138,19 @@ export const estimateWriteInitial = {
     "exchangeRate": "",                  // 환율
     "estimateManager": "",            // 담당자
     "email": "",             // E-MAIL
-    "managerPhoneNumber": "",   // 전화번호
+    "managerPhoneNumber": "",   // 연락처
     "managerFaxNumber": "",       // 팩스번호
-    "maker": "",      // MAKER
-    "item": "",      // ITEM
-    "delivery": "",    // Delivery
+    "maker": "",      // Maker
+    "item": "",      // Item
+    "delivery": "",    // 납기
     "remarks": "",          // 비고란
     "estimateDetailList": [
         {
-            "model": "",   // MODEL
+            "model": "",   // Model
             "quantity": 0,                  // 수량
             "unit": "",                   // 단위
             "currency": "",              // CURR
-            "net": 0,                 // NET/P
+            "net": 0,                 // 매입단가
             "unitPrice": 0,           // 단가
             "amount": 0               // 금액
         }
@@ -164,7 +164,7 @@ export const estimateInfo = {
     customerCode : {type : 'input', title : 'CUSTOMER 코드', size : 50},
     customerName : {type : 'searchInput', title : '상호명', size : 50},
     managerName : {type : 'input', title : '담당자', size : 50},
-    phoneNumber : {type : 'input', title : '전화번호', size : 50},
+    phoneNumber : {type : 'input', title : '연락처', size : 50},
     faxNumber : {type : 'input', title : '팩스번호', size : 50},
     validityPeriod : {type : 'selectBox', title : '유효기간', boxList :['견적 발행 후 10일간', '견적 발행 후 30일간'], size : 50},
     paymentTerms : {type : 'selectBox', title : '결제조건', boxList : ['발주시50% / 납품시 50%', '납품시 현금결제', '정기결제'], size : 50},
@@ -172,7 +172,7 @@ export const estimateInfo = {
     exchangeRate : {type : 'input', title : '환율', size : 50},
     estimateManager : {type : 'input', title : '담당자', size : 50},
     email : {type : 'input', title : '이메일', size : 50},
-    managerPhoneNumber : {type : 'input', title : '전화번호', size : 50},
+    managerPhoneNumber : {type : 'input', title : '연락처', size : 50},
     managerFaxNumber : {type : 'input', title : '팩스번호', size : 50},
     maker : {type : 'input', title : 'maker', size : 50},
     item : {type : 'input', title : 'item', size : 50},
@@ -198,9 +198,9 @@ export const estimateReadInfo = {
     searchDate : {type : 'datePicker', title : '작성일자', size : 50},
     searchType : {type : 'selectBox', title : '검색조건',boxList : ['전체','주문','미주문'], size : 50},
     searchCustomerName : {type : 'input', title : '고객사명', size : 50},
-    searchMaker : {type : 'input', title : 'MAKER', size : 50},
-    searchModel : {type : 'input', title : 'MODEL', size : 50},
-    searchItem : {type : 'input', title : 'ITEM', size : 50},
+    searchMaker : {type : 'input', title : 'Maker', size : 50},
+    searchModel : {type : 'input', title : 'Model', size : 50},
+    searchItem : {type : 'input', title : 'Item', size : 50},
     searchCreatedBy : {type : 'input', title : '등록직원명', size : 50},
 }
 
@@ -221,10 +221,10 @@ export const estimateTotalWriteInfo = {
     searchDate : {type : 'datePicker', title : '작성일자', size : 50},
     searchType : {type : 'selectBox', title : '검색조건',boxList : ['전체','주문','미주문'], size : 50},
     searchCustomerName : {type : 'input', title : '고객사명', size : 50},
-    searchMaker : {type : 'input', title : 'MAKER', size : 50},
+    searchMaker : {type : 'input', title : 'Maker', size : 50},
     storeCode : {type : 'input', title : '대리점코드', size : 50},
-    searchModel : {type : 'input', title : 'MODEL', size : 50},
-    searchItem : {type : 'input', title : 'ITEM', size : 50},
+    searchModel : {type : 'input', title : 'Model', size : 50},
+    searchItem : {type : 'input', title : 'Item', size : 50},
     searchCreatedBy : {type : 'input', title : '등록직원명', size : 50},
 }
 
@@ -252,17 +252,17 @@ export const estimateTotalWriteColumn = [
         key: 'searchCustomerName',
     },
     {
-        title: 'MAKER',
+        title: 'Maker',
         dataIndex: 'maker',
         key: 'maker',
     },
     {
-        title: 'ITEM',
+        title: 'Item',
         dataIndex: 'item',
         key: 'item',
     },
     {
-        title: 'MODEL',
+        title: 'Model',
         dataIndex: 'model',
         key: 'model',
     },
@@ -280,7 +280,7 @@ export const estimateTotalWriteColumn = [
         dataIndex: 'currency',
         key: 'currency',
     },    {
-        title: 'NET',
+        title: '매입 단가',
         dataIndex: 'net',
         key: 'net',
     },  {
@@ -296,7 +296,7 @@ export const estimateTotalWriteColumn = [
         dataIndex: 'unitPrice',
         key: 'unitPrice',
     },  {
-        title: '등록자',
+        title: '작성자',
         dataIndex: 'writer',
         key: 'writer',
     },  {

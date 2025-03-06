@@ -69,12 +69,12 @@ export default function MakerWrite({copyPageInfo}) {
                         }}>
 
                             <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>MAKER</div>
+                                <div style={{paddingBottom: 3}}>Maker</div>
                                 <Input id={'makerName'} value={info['makerName']} onChange={onChange}
                                        size={'small'}/>
                             </div>
                             <div style={{marginTop: 8}}>
-                                <div style={{paddingBottom: 3}}>ITEM</div>
+                                <div style={{paddingBottom: 3}}>Item</div>
                                 <Input id={'item'} value={info['item']} onChange={onChange}
                                        size={'small'}/>
                             </div>

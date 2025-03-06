@@ -111,10 +111,10 @@ export default function OrderWriter({dataInfo}) {
     function addRow() {
         let copyData = {...info};
         copyData['orderDetailList'].push({
-            "model": "",           // MODEL
+            "model": "",           // Model
             "unit": "ea",               // 단위
             "currency": "KWD",          // CURR
-            "net": 0,            // NET/P
+            "net": 0,            // 매입단가
             "quantity": 1,              // 수량
             "receivedQuantity": 0,
             "unreceivedQuantity": 0,
@@ -134,9 +134,9 @@ export default function OrderWriter({dataInfo}) {
             "searchEndDate": "",        // 작성일 검색 종료일
             "searchDocumentNumber": info['documentNumberFull'], // 문서번호
             "searchCustomerName": "",   // 고객사명
-            "searchModel": "",          // MODEL
-            "searchMaker": "",          // MAKER
-            "searchItem": "",           // ITEM
+            "searchModel": "",          // Model
+            "searchMaker": "",          // Maker
+            "searchItem": "",           // Item
             "searchCreatedBy": "",      // 등록 관리자 이름
             "page": 1,
             "limit": 1
@@ -298,15 +298,15 @@ export default function OrderWriter({dataInfo}) {
                                            size={'small'}/>
                                 </div>
                                 <div style={{paddingTop: 8}}>
-                                    <div style={{paddingBottom: 3}}>MAKER</div>
+                                    <div style={{paddingBottom: 3}}>Maker</div>
                                     <Input id={'maker'} value={info['maker']} onChange={onChange} size={'small'}/>
                                 </div>
                                 <div style={{paddingTop: 8}}>
-                                    <div style={{paddingBottom: 3}}>ITEM</div>
+                                    <div style={{paddingBottom: 3}}>Item</div>
                                     <Input id={'item'} value={info['item']} onChange={onChange} size={'small'}/>
                                 </div>
                                 <div style={{paddingTop: 8}}>
-                                    <div style={{paddingBottom: 3}}>Delivery</div>
+                                    <div style={{paddingBottom: 3}}>납기</div>
                                     <DatePicker value={moment(info['delivery'])}
                                                 onChange={(date, dateString) => onChange({
                                                     target: {
