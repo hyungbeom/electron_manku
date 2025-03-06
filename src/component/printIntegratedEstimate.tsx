@@ -57,7 +57,7 @@ export default function PrintIntegratedEstimate({ data, isModalOpen, userInfo, s
     return (
         <Modal
             title={<div style={{width:'100%', display:"flex", justifyContent:'space-between', alignItems:'center'}}>
-                <div>견적서 출력</div>
+                <div>견적서 출력(수정중)</div>
             <button onClick={handleDownloadPDF} style={{
                 padding: "5px 10px",
                 backgroundColor: "#1890ff",
@@ -99,7 +99,7 @@ export default function PrintIntegratedEstimate({ data, isModalOpen, userInfo, s
                         </div>
                     </div>
                     <div style={{fontSize: "24px", fontWeight: 550, margin: "0 auto 0 54px"}}>
-                        견적서
+                        견적서(수정중)
                     </div>
                     <div style={{width: "120px", height: "60px", float: "right",}}>
                         <img src='/manku_stamp_ko.png' width={120} alt='stamp'/>

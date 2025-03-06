@@ -1,8 +1,11 @@
-import React, {useRef} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Modal from "antd/lib/modal/Modal";
 import {jsPDF} from "jspdf";
 import html2canvas from "html2canvas";
 import {amountFormat} from "@/utils/columnList";
+import Input from "antd/lib/input/Input";
+import moment from "moment";
+import {getData} from "@/manage/function/api";
 
 const cellStyle = {
 
@@ -34,7 +37,8 @@ export default function PrintTransactionModal({data, customerData, isModalOpen, 
 
         return number?.toLocaleString();
     }
-    console.log(data,'data:')
+
+    console.log(data, 'data:')
 
     const handleDownloadPDF = async () => {
         const element = pdfRef.current;
@@ -95,6 +99,36 @@ export default function PrintTransactionModal({data, customerData, isModalOpen, 
         document.head.removeChild(styleSheet);
     };
 
+    const [info, setInfo] = useState({writtenDate: moment().format('YYYY-MM-DD')});
+
+    async function getCustomerInfo(){
+        await getData.post('api/customer/getCustomerDetail', {
+            "customerId": 0,
+            "customerCode": "string"
+        })
+    }
+
+    useEffect(() => {
+
+    }, [data]);
+
+
+    const InputUnit = ({id}) => {
+        const inputRef= useRef<any>()
+        const [toggle, setToggle] = useState(false);
+
+
+        function blur(){
+            setToggle(false)
+        }
+
+        useEffect(() => {
+
+        }, [toggle]);
+
+
+        return <Input ref={inputRef} defaultValue={info[id]} style={{width: '100%', border : toggle ? '' : 'none', fontWeight: 550 }} onBlur={blur}/>
+    }
 
     return (
         <Modal
@@ -105,7 +139,10 @@ export default function PrintTransactionModal({data, customerData, isModalOpen, 
             onOk={() => setIsModalOpen({event1: false, event2: false})}>
 
             <div style={{textAlign: 'center', fontSize: 30, fontWeight: 'bold'}}>거래명세표</div>
-            <div style={{textAlign: 'center', fontSize: 14, fontWeight: 'bold', paddingTop: 20}}>거래일자 : 2025-01-26</div>
+            <div style={{textAlign: 'center', fontSize: 14, fontWeight: 'bold', paddingTop: 20, display: 'flex', justifyContent : 'center'}}>
+                <div style={{alignItems: 'center', display: 'flex', justifyContent : 'center'}}>거래일자 :</div>
+                <div style={{width: 100, alignItems: 'center'}}><InputUnit id={'writtenDate'}/></div>
+            </div>
             <div style={{display: 'flex', gap: 5, justifyContent: 'center', width: 900, paddingTop: 30}}>
 
                 <div style={{
@@ -130,7 +167,8 @@ export default function PrintTransactionModal({data, customerData, isModalOpen, 
                             <th style={headerStyle}>상호</th>
                             <th style={cellStyle}>주식회사 만쿠무역</th>
                             <th style={headerStyle}>대표자</th>
-                            <th style={cellStyle}>김민국 <img src={'/manku_stamp_only.png'} width={30} alt="" style={{marginLeft : -10}}/></th>
+                            <th style={cellStyle}>김민국 <img src={'/manku_stamp_only.png'} width={30} alt=""
+                                                           style={{marginLeft: -10}}/></th>
                         </tr>
                         </thead>
                         <thead>
@@ -182,7 +220,7 @@ export default function PrintTransactionModal({data, customerData, isModalOpen, 
                             <th style={headerStyle}>상호</th>
                             <th style={cellStyle}>주식회사 만쿠무역</th>
                             <th style={headerStyle}>대표자</th>
-                            <th style={cellStyle}>김민국 </th>
+                            <th style={cellStyle}>김민국</th>
                         </tr>
                         </thead>
                         <thead>
@@ -214,7 +252,7 @@ export default function PrintTransactionModal({data, customerData, isModalOpen, 
                 </div>
             </div>
 
-            <table style={{width: 900, fontSize : 11}}>
+            <table style={{width: 900, fontSize: 11}}>
                 <thead>
                 <tr>
                     <th style={headerStyle}>NO</th>
@@ -228,7 +266,7 @@ export default function PrintTransactionModal({data, customerData, isModalOpen, 
                 </tr>
                 </thead>
                 <thead>
-                {list?.map((v, i)=> {
+                {list?.map((v, i) => {
                     return <tr>
                         <th style={cellStyle}>{i + 1}</th>
                         <th style={cellStyle}>이거 어디 데이터지? 직접입력인가?</th>
