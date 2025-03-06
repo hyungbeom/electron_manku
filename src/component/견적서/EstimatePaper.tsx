@@ -21,9 +21,6 @@ const getTextAreaValues = (ref) => {
 };
 
 const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any) => {
-    const userInfo = useAppSelector((state) => state.user);
-
-    console.log(data,'data::')
 
     const [info, setInfo] = useState<any>([]);
 
@@ -55,11 +52,11 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
 
             setInfo([
                 {title: '견적일자', value: data.writtenDate, id: 'writtenDate'},
-                {title: '담당자', value: findObj.name, id: 'name'},
+                {title: '담당자', value: findObj?.name, id: 'name'},
                 {title: '견적서 No', value: data.documentNumberFull, id: 'documentNumberFull'},
-                {title: '연락처', value: findObj.contactNumber, id: 'contactNumber'},
+                {title: '연락처', value: findObj?.contactNumber, id: 'contactNumber'},
                 {title: '고객사', value: data.customerName, id: 'customerName'},
-                {title: 'E-mail', value: findObj.email, id: 'email'},
+                {title: 'E-mail', value: findObj?.email, id: 'email'},
                 {title: '담당자', value: data.customerManagerName, id: 'customerManagerName'},
                 {title: '유효기간', value: data.validityPeriod, id: 'validityPeriod'},
                 {title: '연락처', value: data.customerManagerPhone, id: 'customerManagerPhone'},

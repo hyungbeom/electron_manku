@@ -3,6 +3,25 @@ import Modal from "antd/lib/modal/Modal";
 import {jsPDF} from "jspdf";
 import html2canvas from "html2canvas";
 import {commonManage, gridManage} from "@/utils/commonManage";
+import Input from "antd/lib/input";
+import {getData} from "@/manage/function/api";
+import {amountFormat} from "@/utils/columnList";
+import Select from "antd/lib/select";
+import InputNumber from "antd/lib/input-number";
+
+
+const getTextAreaValues = (ref) => {
+    if (ref?.current) {
+        // ✅ ID가 "textarea"인 모든 요소 가져오기
+        const elements = ref.current.querySelectorAll("#textarea");
+
+        return Array.from(elements).map((element: any) => ({
+            model: element.value || element.textContent, // ✅ { model: value } 형태로 변환
+        }));
+    }
+    return [];
+};
+
 
 export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
 
@@ -15,6 +34,7 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
     let currency = '';
 
     const [splitData, setSplitData] = useState([]);
+    const [info, setInfo] = useState([]);
 
     const today = new Date();
     const formattedDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
@@ -60,6 +80,251 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
         }
     };
 
+
+    async function getInfo() {
+        return await getData.post('admin/getAdminList', {
+            "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
+            "searchAuthority": null,    // 1: 일반, 0: 관리자
+            "page": 1,
+            "limit": -1
+        }).then(v => {
+            return v
+        })
+    }
+
+    useEffect(() => {
+        getInfo().then(v => {
+            const findObj = v.data.entity.adminList.find(src => src.adminId === data.managerAdminId);
+
+            console.log(data, 'data:')
+
+            setInfo([
+                {title: 'Our REFQ NO.', value: data.ourPoNo, id: 'ourPoNo'},
+                {title: 'Responsibility', value: findObj?.name, id: 'name'},
+                {title: 'Your REFQ NO.', value: data.yourPoNo, id: 'yourPoNo'},
+                {title: 'TEL', value: findObj?.contactNumber, id: 'contactNumber'},
+                {title: 'Messrs', value: data.agencyCode, id: 'agencyCode'},
+                {title: 'E-mail', value: findObj?.email, id: 'email'},
+                {title: 'Attn To.', value: data.attnTo, id: 'attnTo'},
+                {title: '', value: '', id: ''},
+                {title: 'Payment Terms', value: data.paymentTerms, id: 'paymentTerms'},
+                {title: 'Packing', value: '???', id: 'faxNumber'},
+                {title: 'Delivery Terms', value: data.deliveryTerms, id: 'deliveryTerms'},
+                {title: 'Inspection', value: '???', id: 'shippingTerms'},
+
+            ])
+        })
+
+
+    }, [data])
+
+    const RowTotal = ({defaultValue, id}) => {
+
+
+        return <Input value={amountFormat(defaultValue)}
+                      style={{border: 'none', textAlign: 'right', direction: 'rtl'}} id={id} name={id}
+                      prefix={<span style={{paddingLeft: 10}}>₩</span>}/>
+    }
+
+    const NumberInputForm = ({defaultValue, id, setInfo}) => {
+
+        const inputRef = useRef<any>();
+        const [toggle, setToggle] = useState(false);
+
+        const handleChange = (e) => {
+            setInfo(v => {
+                return {...v, unitPrice: e}
+            })
+        };
+
+        function blur() {
+            console.log('!!')
+            setToggle(false)
+        }
+
+        useEffect(() => {
+            if (toggle) {
+                inputRef.current.focus();
+            }
+        }, [toggle]);
+
+        return <>{toggle ? <InputNumber ref={inputRef} onBlur={blur} value={defaultValue} onChange={handleChange}
+                                        formatter={(value) => value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                        parser={(value) => value.replace(/[^0-9]/g, '')}
+                                        style={{border: 'none', textAlign: 'right', direction: 'rtl', width: '90%'}}
+                                        name={id}
+                                        prefix={<span style={{paddingLeft: 10}}>₩</span>}/> :
+            <div style={{fontSize: 14, padding: 10}}
+                 onClick={() => {
+                     setToggle(true);
+                 }}>{amountFormat(defaultValue)} ₩</div>}</>
+    }
+    const Model = ({v, refList, setSplitData}) => {
+        const [toggle, setToggle] = useState(false);
+        const [textValue, setTextValue] = useState(v.model); // ✅ useState로 값 저장
+        const inputRef = useRef(null);
+
+        // 바깥 클릭 감지
+        useEffect(() => {
+            function handleClickOutside(event) {
+                const textAreaElement = inputRef.current?.resizableTextArea?.textArea;
+                if (textAreaElement && !textAreaElement.contains(event.target)) {
+                    reRowDataList();
+                    setToggle(false);
+                }
+            }
+
+            document.addEventListener("mousedown", handleClickOutside);
+            return () => {
+                document.removeEventListener("mousedown", handleClickOutside);
+            };
+        }, []);
+
+        function reRowDataList() {
+            const result1 = getTextAreaValues(refList[0]); // pdfRef에서 ID가 textarea인 값만 가져오기
+            const result2 = getTextAreaValues(refList[1]); // pdfRef에서 ID가 textarea인 값만 가져오기
+            const splitData = commonManage.splitDataWithSequenceNumber([...result1, ...result2], 8, 17);
+            setSplitData(splitData)
+        }
+
+        return (
+            <th
+                style={{
+                    width: 480,
+                    textAlign: "left",
+                    fontSize: 12,
+                    whiteSpace: "normal",
+                    wordBreak: "break-word",
+                    overflowWrap: "break-word",
+                }}
+            >
+                <>
+
+                    <div
+                        id="textarea" // ✅ ID 추가 (div에서도 동일 ID 유지)
+                        style={{
+
+                            wordWrap: "break-word",
+                            wordBreak: "break-word",
+                            whiteSpace: "pre-wrap",
+                            fontWeight: "lighter",
+                            minHeight: "20px",
+                        }}
+                    >
+                        {v.model} {/* 값이 없을 때 가이드 텍스트 표시 */}
+                    </div>
+
+                </>
+            </th>
+        );
+    };
+
+    const RowContent = ({v, i}) => {
+        const [info, setInfo] = useState({quantity: v.quantity, unit: v.unit, unitPrice: v.unitPrice})
+
+        useEffect(() => {
+            const totalQuantity = Array.from(document.getElementsByName("quantity"))
+                .reduce((sum, input: any) => sum + (parseFloat(input.value) || 0), 0);
+
+            const totalPrice = Array.from(document.getElementsByName("unitPrice"))
+                .reduce((sum, input: any) => sum + (Number(input.value.replace(/,/g, "")) || 0), 0);
+
+            const totalAmount = Array.from(document.getElementsByName("amount"))
+                .reduce((sum, input: any) => sum + (Number(input.value.replace(/,/g, "")) || 0), 0);
+
+
+            const resultNum = Number(info?.unitPrice ? info?.unitPrice : '');
+
+            if (document.getElementById("total_amount")) {
+                document.getElementById("total_amount").textContent = amountFormat(totalAmount);
+                document.getElementById("total_unit_price").textContent = '(V.A.T)별도';
+                document.getElementById("total_unit").textContent = info.unit;
+                document.getElementById("total_quantity").textContent = totalQuantity.toString()
+            }
+
+        }, [info]);
+
+
+        return <thead>
+        <tr>
+            <th colSpan={2} style={{
+
+                border: 'none',
+                textAlign: 'left',
+                paddingLeft: 10,
+                borderBottom: '1px solid lightGray', fontSize: 12
+
+            }}>
+                <div style={{width: 30, borderRight: '1px solid lightGray'}}>{i + 1}</div>
+            </th>
+            <th style={{borderBottom: '1px solid lightGray', textAlign: 'left', fontSize: 12}}>
+                <Model v={v} refList={[pdfRef, pdfSubRef]} setSplitData={setSplitData}/>
+            </th>
+            <th style={{
+                ...headerStyle,
+                width: 60,
+                textAlign: 'right',
+                fontWeight: 'lighter',
+                fontSize: 12,
+                borderLeft: '1px solid lightGray'
+            }}>
+                <Input value={info['quantity']}
+                       name={'quantity'}
+                       onChange={e => setInfo(v => {
+                           return {...v, quantity: e.target.value}
+                       })}
+                       style={{
+                           border: 'none',
+                           backgroundColor: '#ebf6f7',
+                           textAlign: 'right',
+                           padding: 0
+                       }}/>
+            </th>
+            <th style={{
+                borderBottom: '1px solid lightGray',
+                fontSize: 12,
+                borderLeft: '1px solid lightGray'
+            }}>
+                <Select value={info?.unit}
+                        style={{border: 'none'}}
+                        bordered={false} suffixIcon={null}
+                        onChange={v => {
+                            setInfo(src => {
+                                return {...src, unit: v}
+                            })
+                        }}
+                >
+                    {['EA', 'SET', 'M', 'FEET', 'ROLL', 'BOX', 'G', 'KG', 'PACK', 'INCH', 'MOQ'].map(v => {
+                        // @ts-ignored
+                        return <Option style={{fontSize: 11}} value={v}>{v}</Option>
+                    })}
+                </Select>
+            </th>
+            <th style={{
+                width: 150,
+                borderBottom: '1px solid lightGray',
+                textAlign: 'right',
+                fontWeight: 'lighter',
+                fontSize: 12,
+                borderLeft: '1px solid lightGray'
+            }}>
+                <NumberInputForm defaultValue={info?.unitPrice} id={'unitPrice'} setInfo={setInfo}/>
+            </th>
+
+            <th style={{
+                borderTop: '1px solid lightGray',
+                textAlign: 'right', fontWeight: 'lighter', fontSize: 12,
+                borderLeft: '1px solid lightGray',
+                borderBottom: '1px solid lightGray'
+            }}>
+                <RowTotal
+                    defaultValue={info.quantity * Number(info?.unitPrice ? info?.unitPrice : '')}
+                    id={'amount'}/>
+            </th>
+        </tr>
+        </thead>
+    }
+
     return (
         <Modal
             title={<div style={{width: '100%', display: "flex", justifyContent: 'space-between', alignItems: 'center'}}>
@@ -94,252 +359,182 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
             </div>}
             onCancel={() => setIsModalOpen({event1: false, event2: false})}
             open={isModalOpen?.event2}
-            width={'640px'}
+            width={1100}
             footer={null}
             onOk={() => setIsModalOpen({event1: false, event2: false})}
         >
-            <div ref={pdfRef} style={{position: 'relative', width: "595px", height: "842px", padding: "40px 24px"}}>
-                {/* Header */}
-                <div style={{
-                    borderBottom: '1px solid #11AFC2',
-                    backgroundColor: '#EBF6F7',
-                    display: "flex",
-                    width: "100%",
-                    alignItems: "center",
-                    padding: "20px 24px"
-                }}>
-                    <div style={{
-                        width: 'auto',
-                        display: "flex",
-                        position: 'absolute',
-                        alignItems: "center",
-                        gap: "15px"
-                    }}>
-                        <img src='/manku_ci_black_text.png' width='44px' alt='manku_logo'/>
+            <div ref={pdfRef} style={{
+                width: '1000px',  // A4 가로
+                height: '1414px',  // A4 세로
+                aspectRatio: '1 / 1.414',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                padding: 30,
+                border: '1px solid lightGray',
+
+
+            }}>
+
+                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                    <div style={{width: '40%'}}>
+                        <img src={'/manku_ci_black_text.png'} width={60} style={{paddingTop: 25, float: 'left'}}
+                             alt=""/>
+                        <div style={{float: 'left', fontSize: 11, paddingLeft: 20}}>
+                            <div>(주) 만쿠무역</div>
+                            <div>Manku Trading Co., Ltd</div>
+                            <div>서울시 송파구 충민로 52 가든파이브웍스</div>
+                            <div> B동 2층 211호, 212호</div>
+                            <div>Tel : 02-465-7838, Fax : 02-465-7839</div>
+                        </div>
                     </div>
+
                     <div style={{
-                        fontSize: "24px",
-                        width: '100%',
-                        textAlign: 'center',
+                        fontSize: 40,
                         fontWeight: 700,
-                        margin: "0 auto"
-                    }}>
-                        {data.agencyCode.toUpperCase().includes('K') ? '발주서' :
-                            <span> Purchase < br/> Order</span>}
-                    </div>
-                    <div style={{width: "auto", height: "auto", position: 'absolute', right: 50,}}>
-                        <div style={{fontSize: "8px", width: 'auto'}}>
-                            Garden-five works, B-211#, 212#
-                            <br/>
-                            52, Chungmin-ro, Songpa-gu,
-                            <br/>
-                            Seoul, Republic of Korea
-                            <br/>
-                            <br/>
-                            Tel: 02-465-7838, Fax: 02-465-7839
-                            <br/>
-                            sales@manku.co.kr
-                        </div>
+                        textAlign : 'center'
+                    }}>       {data.agencyCode.toUpperCase().includes('K') ? '발주서' :
+                        <span> Purchase < br/> Order</span>}</div>
+                    <div style={{width: '40%'}}>
+                        <img src={'/manku_stamp_ko.png'} style={{float: 'right'}} width={220} alt=""/>
                     </div>
                 </div>
 
-                {/* 상단 부모 정보 */}
+                <div style={{padding: 20, borderTop: '2px solid #71d1df', textAlign: 'center', marginTop: 20}}>
+                    (주) 만쿠무역은 세계 각지의 공급처를 통해 원하시는 부품 및 산업자재를 저렵하게 공급합니다.
+                </div>
                 <div style={{
-                    fontWeight: 550,
-                    fontSize: 9,
-                    width: '100%',
-                    display: "grid",
+                    fontFamily: 'Arial, sans-serif',
+                    display: 'grid',
                     gridTemplateColumns: '1fr 1fr',
-                    gridAutoFlow: 'row',
-                    padding: '45px 40px 40px 35px',
-                    rowGap: 6,
+                    gridTemplateRows: '40px 40px 40px 40px 40px 40px 40px',
+                    alignItems: 'center',
+                    paddingTop: 20
                 }}>
+                    {info?.map((v: any, index) => {
 
-                    <div>
-                        <span style={{marginRight: 20}}>
-                            - Our REFQ NO.
-                        </span>
-                        {data.documentNumberFull}
-                    </div>
-                    <div>
-                        <span style={{marginRight: 20}}>
-                            - Payment terms :
-                        </span>
-                        {data.paymentTerms}
-                    </div>
-
-                    <div>
-                        <span style={{marginRight: 20}}>
-                            - Your REFQ NO.
-                        </span>
-                        {data.yourPoNo}
-                    </div>
-                    <div>
-                        <span style={{marginRight: 20}}>
-                            - Delivery terms :
-                        </span>
-                        {data.deliveryTerms}
-                    </div>
-
-                    <div>
-                        <span style={{marginRight: 20}}>
-                           - Messrs
-                        </span>
-                        {data.agencyCode}
-                    </div>
-                    <div>
-                        <span style={{marginRight: 20}}>
-                            - Packing :
-                        </span>
-                        {data.packing}
-                    </div>
-
-                    <div>
-                        <span style={{marginRight: 20}}>
-                            - Attn To.
-                        </span>
-                        {data.attnTo}
-                    </div>
-                    <div>
-                        <span style={{marginRight: 20}}>
-                            - Inspection :
-                        </span>
-                        {data.inpection}
-                    </div>
-                    <div/>
-                    <div>
-                        <span style={{marginRight: 20}}>
-                            - Issue Date:
-                        </span>
-                        {formattedDate}
-                    </div>
-                </div>
-
-                <div id={'contentList'}>
-                    {/* 자식 요소 헤더 */}
-                    <div style={{
-                        fontSize: 9,
-                        borderTop: '1px solid #121212',
-                        fontWeight: 500,
-                        width: '100%',
-                        backgroundColor: '#EBF6F7',
-                        display: 'grid',
-                        textAlign: 'center',
-                        gridTemplateColumns: '0.7fr 3fr 0.5fr 0.9fr 1fr 1fr',
-                        borderBottom: '1px solid #A3A3A3'
-                    }}>
-                        <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
-                            Item No.
-                        </div>
-                        <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
-                            Specification
-                        </div>
-                        <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
-                            Q`ty
-                        </div>
-                        <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
-                            HS-CODE
-                        </div>
-                        <div style={{padding: '3px 0', borderRight: '1px solid #121212',}}>
-                            Unit Price
-                        </div>
-                        <div style={{padding: '3px 0'}}>
-                            Amount
-                        </div>
-                    </div>
-
-                    {/* 자식 요소 본문*/}
-                    <div style={{
-                        fontSize: 9,
-                        fontWeight: 500,
-                        width: '100%',
-                        display: 'grid',
-                        gridTemplateColumns: '0.7fr 3fr 0.5fr 0.9fr 1fr 1fr',
-                        borderBottom: '1px solid #A3A3A3'
-                    }}>
-                        <div style={{padding: '3px 0', textAlign: 'center', borderRight: '1px solid #121212',}}>
-                            Maker
-                        </div>
-                        <div style={{padding: '3px 10px'}}>
-                            {data.maker}
-                        </div>
-
-                    </div>
-
-                    {splitData[0]?.map((v, i) => {
-                        totalQuantity += v.quantity
-                        totalAmount += v.quantity * v.unitPrice
-                        unit = v.unit
-                        currency = v.currency
-                        return (
-                            <div key={i} style={{
-                                fontSize: 9,
-                                fontWeight: 500,
-                                width: '100%',
+                            return <div style={{
                                 display: 'grid',
-                                textAlign: 'center',
-                                gridTemplateColumns: '0.7fr 3fr 0.5fr 0.9fr 1fr 1fr',
-                                borderBottom: '1px solid #A3A3A3'
+                                gridTemplateColumns: '125px 1fr',
+                                alignItems: 'center',
+                                fontSize: 15
                             }}>
-                                <div style={{
-                                    padding: '3px 0',
-                                    borderRight: '1px solid #121212',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center'
-                                }}>
-                                    {i + 1}
-                                </div>
-                                <div style={{
-                                    padding: '3px 0',
-                                    borderRight: '1px solid #121212',
-                                    whiteSpace: "pre-line",
-                                    textAlign: 'left',
-                                    paddingLeft: 10
-                                }}>
-                                    {v.model}
-                                </div>
-                                <div style={{
-                                    padding: '3px 0',
-                                    borderRight: '1px solid #121212',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center'
-                                }}>
-                                    {v.quantity} {formattedNumber(v.unit)}
-                                </div>
-                                <div style={{
-                                    padding: '3px 0',
-                                    borderRight: '1px solid #121212',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center'
-                                }}>
-                                    {v.hsCode !== 'null' ? v.hsCode : ''}
-                                </div>
-                                <div style={{
-                                    padding: '3px 10px',
-                                    borderRight: '1px solid #121212',
-                                    alignItems: 'center',
-                                    display: 'flex',
-                                    justifyContent: 'space-between'
-                                }}>
-                                    <div>{v.currency}</div>
-                                    <div>{formattedNumber(v.unitPrice)}</div>
-                                </div>
-                                <div style={{
-                                    padding: '3px 10px',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'space-between'
-                                }}>
-                                    <div>{v.currency}</div>
-                                    <div>{formattedNumber(v.quantity * v.unitPrice)}</div>
-                                </div>
+
+                                <div style={{alignItems: 'center', fontWeight: 600}}>{v.title} <span
+                                    style={{float: 'right', fontWeight: 600}}>{v.title ? ':' : null}</span></div>
+
+                                {(v.id === 'documentNumberFull' || v.id === 'writtenDate') ?
+                                    <div style={{paddingLeft: 15}}>{v.value}</div>
+                                    :
+                                    <Input value={v.value} id={v.id}
+                                           onChange={e => {
+                                               let copyData = [...info]
+                                               let getParam = copyData.find(src => src.id === v.id)
+                                               getParam['value'] = e.target.value;
+                                               let index = copyData.findIndex(item => item.id === getParam.id);
+                                               if (index !== -1) {
+                                                   copyData[index] = getParam;
+                                               }
+                                               setInfo(copyData)
+                                           }}
+                                           style={{
+                                               border: 'none',
+                                               paddingLeft: 15,
+                                               alignItems: 'center',
+                                               fontSize: 15,
+                                               width: '100%'
+                                           }}/>
+                                }
                             </div>
-                        )
-                    })}
+                        }
+                    )}
                 </div>
+
+                <table
+                    style={{
+                        width: '100%',
+                        borderCollapse: 'collapse',
+                        margin: '20px 0',
+                        textAlign: 'center',
+                        // border: '1px solid lightGray',
+                        // borderLeft: 'none',
+                        // borderRight: 'none'
+                    }}>
+                    <thead>
+                    <tr style={{backgroundColor: '#ebf6f7', fontWeight: 'bold'}}>
+                        <th colSpan={3} style={{width: '55%'}}>Specification</th>
+                        <th style={{textAlign: 'right', borderLeft: '1px solid lightGray', paddingRight: 10}}>Qty</th>
+                        <th style={{textAlign: 'left', paddingLeft: 10, borderLeft: '1px solid lightGray'}}>Unit</th>
+                        <th style={{borderLeft: '1px solid lightGray'}}>Unit Price</th>
+                        <th style={{borderLeft: '1px solid lightGray'}}>Amount</th>
+                    </tr>
+                    </thead>
+
+
+                    <thead>
+                    <tr style={{fontWeight: 'bold', height: 50}}>
+                        <th colSpan={2} style={{
+                            width: '7%',
+                            border: '1px solid lightGray',
+                            borderLeft: 'none',
+                            fontSize: 12,
+                            backgroundColor: '#ebf6f7'
+                        }}>MAKER
+                        </th>
+                        <th style={{
+                            borderTop: '1px solid lightGray', backgroundColor: '#ebf6f7', border: '1px solid lightGray',
+                            borderLeft: 'none', borderRight: 'none'
+                        }}>{data?.maker ? data?.maker : '-'}</th>
+                        <th style={{
+                            backgroundColor: '#ebf6f7',
+                            borderTop: '1px solid lightGray', border: '1px solid lightGray',
+                            borderRight: 'none'
+                        }}></th>
+                        <th style={{
+                            backgroundColor: '#ebf6f7',
+                            borderTop: '1px solid lightGray',
+                            border: '1px solid lightGray',
+                            borderRight: 'none'
+                        }}></th>
+                        <th style={{
+                            borderTop: '1px solid lightGray', border: '1px solid lightGray',
+                            backgroundColor: '#ebf6f7',
+                            borderRight: 'none'
+                        }}></th>
+                        <th style={{
+                            borderTop: '1px solid lightGray', border: '1px solid lightGray',
+                            backgroundColor: '#ebf6f7',
+                            borderRight: 'none'
+                        }}></th>
+                    </tr>
+                    </thead>
+                    {splitData[0]?.map((v, i) => {
+                        return <>
+                            <RowContent v={v} i={i}/>
+                        </>
+                    })}
+
+                    {/*{splitData.length === 1 ? <TotalCalc/> : <></>}*/}
+                </table>
+                <div style={{flexGrow: 1}}/>
+                {/* 여백 자동 확장하여 아래로 밀어줌 */}
+
+
+                <div
+                    style={{
+                        padding: '30px 20px',
+                        fontSize: 12,
+                        lineHeight: 1.7,
+                        borderTop: '1px solid black',
+                    }}>
+                    <div>· 금일 환율 기준으로 2%이상 인상될 시 , 단가가 인상될 수 있습니다.</div>
+                    <div>· 러-우전쟁 및 COVID-19 장기화로 납기 변동성이 큰 시기입니다. 납기 지연이 발생할 수 있는 점 양해 부탁드립니다.</div>
+                    <div>· 의뢰하신 Model로 기준한 견적이며, 견적 수량 전량 구입시 가격입니다. (긴급 납기시 담당자와 협의 가능합니다.)</div>
+                    <div>· 계좌번호: (기업은행)069-118428-04-010/(주)만쿠무역.</div>
+                    <div>· 성적서 및 품질보증서는 별도입니다.</div>
+                </div>
+
+                <div style={{textAlign: 'center'}}>- 1 -</div>
             </div>
 
             <div ref={pdfSubRef}>
@@ -491,3 +686,14 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
     )
         ;
 }
+
+
+const headerStyle: any = {
+    backgroundColor: '#ebf6f7',
+    borderBottom: '1px solid lightGray',
+    fontWeight: 'bold',
+    fontSize: 11,
+    padding: 12,
+    textAlign: 'left',
+    width: 100
+};
