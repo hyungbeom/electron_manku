@@ -33,7 +33,6 @@ export default function ProjectRead({getPropertyId, getCopyPage}) {
             params.api.applyTransaction({add: v.data})
             setTotalRow(v.pageInfo.totalRow)
         })
-
     };
 
 

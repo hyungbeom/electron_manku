@@ -30,6 +30,7 @@ export default withTM([
     'rc-util',         // rc-util을 포함하여 트랜스파일
     'xlsx',
     'flexlayout-react',
-    'react-splitter-layout'
+    'react-splitter-layout',
+    '@handsontable/react-wrapper'
 
 ])(nextConfig);

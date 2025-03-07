@@ -24,7 +24,8 @@
         "default"
       ],
       "icon": "build/icons/icon.icns"
-    },"dmg": {
+    },
+    "dmg": {
       "title": "MANKU_ERP",
       "icon": "public/installer-icon.ico"
     },
@@ -42,6 +43,7 @@
   "dependencies": {
     "@ag-grid-community/theming": "^32.3.2",
     "@ant-design/icons": "^5.5.1",
+    "@handsontable/react-wrapper": "^15.1.0",
     "ag-grid-community": "^32.3.2",
     "ag-grid-react": "^32.3.2",
     "antd": "^4.24.16",
@@ -51,6 +53,7 @@
     "electron-updater": "^6.3.9",
     "flexlayout-react": "^0.8.3",
     "gapi-script": "^1.2.0",
+    "handsontable": "^15.1.0",
     "html2canvas": "^1.4.1",
     "immutability-helper": "^3.1.1",
     "jspdf": "^2.5.2",
