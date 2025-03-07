@@ -94,10 +94,12 @@ const Table = ({ data = new Array(100).fill({}), column, type = '' }) => {
         if (prop === "total" || prop === 'totalPurchase') {
             return {className: "htRedText"}; // 🔥 total 컬럼에 빨간색 스타일 적용
         }
-        return {};
+        if (prop === "unitPrice" || prop === 'purchasePrice' || prop === 'purchasePrice'|| prop === 'quantity') {
+            return {className: "priceText"};
+        }
     };
 
-    const handleDblClick = (event, coords, TD) => {
+    const handleDblClick = (e, coords, TD) => {
         if (!hotRef.current) return;
 
         const hotInstance = hotRef.current.hotInstance;
@@ -109,19 +111,27 @@ const Table = ({ data = new Array(100).fill({}), column, type = '' }) => {
         }
         const rowData = hotInstance.getSourceDataAtRow(coords.row);
 
-        if (coords.col === colIndexUnit && (!rowData.unit || rowData.unit === '')) {
-            hotInstance.setDataAtCell(coords.row, coords.col, "ea", "update");
+
+        if(e.target.className === 'colHeader'){
+            return false;
         }
 
-        if (coords.col === colIndexCurrency && (!rowData.currencyUnit || rowData.currencyUnit === '')) {
-            hotInstance.setDataAtCell(coords.row, coords.col, "KRW", "update");
+        if (coords.col === colIndexUnit && (!rowData?.unit || rowData?.unit === '')) {
+            hotInstance?.setDataAtCell(coords.row, coords.col, "ea", "update");
         }
 
-        if (coords.col === colIndexRequestDeliveryDate && (!rowData.requestDeliveryDate || rowData.requestDeliveryDate === '')) {
-            hotInstance.setDataAtCell(coords.row, coords.col, moment().format('YYYY-MM-DD'), "update");
+        if (coords.col === colIndexCurrency && (!rowData?.currencyUnit || rowData?.currencyUnit === '')) {
+            hotInstance?.setDataAtCell(coords.row, coords.col, "KRW", "update");
+        }
+
+        if (coords.col === colIndexRequestDeliveryDate && (!rowData?.requestDeliveryDate || rowData?.requestDeliveryDate === '')) {
+            hotInstance?.setDataAtCell(coords.row, coords.col, moment().format('YYYY-MM-DD'), "update");
         }
 
     };
+
+
+
 
     return (
         <HotTable
@@ -129,6 +139,8 @@ const Table = ({ data = new Array(100).fill({}), column, type = '' }) => {
             data={dataList}
             height={400}
             stretchH="all"
+            colWidths={[160, 220, 220, 200, 80, 80, 60, 120, 120, 120, 120, 90, 60, 160, 130, 130, 180, 160, 120, 180]}
+
             colHeaders={column['column']}
             columns={column['columnList']}
             contextMenu={[
@@ -146,9 +158,17 @@ const Table = ({ data = new Array(100).fill({}), column, type = '' }) => {
             hiddenColumns={{ indicators: true }}
             fixedRowsBottom={1} // ✅ 마지막 행(합계) 고정
             manualColumnMove={true}
-            multiColumnSorting={true}
+            // multiColumnSorting={true}
+            undo={null}
+            navigableHeaders={true}
             afterOnCellMouseDown={handleDblClick}
             rowHeaders={true}
+            headerClassName="htLeft"
+            manualRowMove={true}
+            autoWrapRow={true}
+            autoWrapCol={true}
+            manualRowResize={true}
+            manualColumnResize={true}
 
             cells={(row, col, prop) => getCellStyle(row, col, prop)}
             licenseKey="non-commercial-and-evaluation"

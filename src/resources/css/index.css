@@ -265,3 +265,12 @@ body {
     color: red !important;
     text-align: right;
 }
+
+.priceText {
+    text-align: right;
+}
+.colHeader {
+    font-weight:700;
+    /*color: gray;*/
+}
+
