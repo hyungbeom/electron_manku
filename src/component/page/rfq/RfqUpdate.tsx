@@ -1,5 +1,4 @@
 import React, {useEffect, useRef, useState} from "react";
-import LayoutComponent from "@/component/LayoutComponent";
 import {FileSearchOutlined} from "@ant-design/icons";
 import {subRfqWriteColumn} from "@/utils/columnList";
 import message from "antd/lib/message";
@@ -7,7 +6,6 @@ import {getData} from "@/manage/function/api";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
-import MyComponent from "@/component/MyComponent";
 import TableGrid from "@/component/tableGrid";
 import SearchInfoModal from "@/component/SearchAgencyModal";
 import {
@@ -23,7 +21,7 @@ import {
 import {commonManage, fileManage, gridManage} from "@/utils/commonManage";
 import {findCodeInfo} from "@/utils/api/commonApi";
 import {getAttachmentFileList, updateRfq} from "@/utils/api/mainApi";
-import {estimateRequestDetailUnit, rfqWriteInitial} from "@/utils/initialList";
+import {rfqWriteInitial} from "@/utils/initialList";
 import _ from "lodash";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {useRouter} from "next/router";
@@ -34,7 +32,7 @@ import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 
 const listType = 'estimateRequestDetailList'
-export default function RqfUpdate({ updateKey = {}, getCopyPage = null, managerList = []}) {
+export default function RqfUpdate({updateKey = {}, getCopyPage = null, managerList = []}) {
     const groupRef = useRef<any>(null)
 
     const [memberList, setMemberList] = useState([]);
@@ -68,7 +66,6 @@ export default function RqfUpdate({ updateKey = {}, getCopyPage = null, managerL
     const router = useRouter();
 
 
-
     const userInfo = useAppSelector((state) => state.user);
     const [info, setInfo] = useState<any>({})
     const [mini, setMini] = useState(true);
@@ -83,11 +80,15 @@ export default function RqfUpdate({ updateKey = {}, getCopyPage = null, managerL
     useEffect(() => {
         setLoading(true)
         getDataInfo().then(v => {
-            console.log(v,'v::::')
+            console.log(v, 'v::::')
             const {estimateRequestDetail, attachmentFileList} = v;
             setFileList(fileManage.getFormatFiles(attachmentFileList));
             setOriginFileList(attachmentFileList)
-            setInfo({...estimateRequestDetail, uploadType: 0 , managerAdminName : estimateRequestDetail['managerAdminName'] ? estimateRequestDetail['managerAdminName'] : estimateRequestDetail['createdBy']})
+            setInfo({
+                ...estimateRequestDetail,
+                uploadType: 0,
+                managerAdminName: estimateRequestDetail['managerAdminName'] ? estimateRequestDetail['managerAdminName'] : estimateRequestDetail['createdBy']
+            })
             gridManage.resetData(gridRef, estimateRequestDetail[listType])
             setLoading(false)
         })
@@ -98,10 +99,9 @@ export default function RqfUpdate({ updateKey = {}, getCopyPage = null, managerL
         const result = await getData.post('estimate/getEstimateRequestDetail', {
             "estimateRequestId": updateKey['rfq_update']
         });
-        console.log(result,'??')
+        console.log(result, '??')
         return result?.data?.entity;
     }
-
 
 
     const onGridReady = (params) => {
@@ -144,7 +144,7 @@ export default function RqfUpdate({ updateKey = {}, getCopyPage = null, managerL
             return;
         }
         const list = gridManage.getAllData(gridRef);
-        const filterList = list.filter(v=> !!v.model);
+        const filterList = list.filter(v => !!v.model);
         if (!filterList.length) {
             message.warn('유효한 하위 데이터 1개 이상이여야 합니다');
             return;
@@ -200,12 +200,8 @@ export default function RqfUpdate({ updateKey = {}, getCopyPage = null, managerL
         let copyInfo = _.cloneDeep(info);
         copyInfo[listType] = totalList
 
-        getCopyPage('rfq_write',copyInfo)
+        getCopyPage('rfq_write', copyInfo)
     }
-
-
-
-
 
 
     const getSavedSizes = () => {
@@ -216,6 +212,7 @@ export default function RqfUpdate({ updateKey = {}, getCopyPage = null, managerL
     function onResizeChange() {
         setSizes(groupRef.current.getLayout())
     }
+
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
 
@@ -257,8 +254,8 @@ export default function RqfUpdate({ updateKey = {}, getCopyPage = null, managerL
                             })}
                             {inputForm({title: '작성자', id: 'createdBy', disabled: true, onChange: onChange, data: info})}
                             <div>
-                                <div style={{paddingBottom: 4.5, fontSize : 12}}>담당자</div>
-                                <Select style={{width: '100%', fontSize : 12}} size={'small'}
+                                <div style={{paddingBottom: 4.5, fontSize: 12}}>담당자</div>
+                                <Select style={{width: '100%', fontSize: 12}} size={'small'}
                                         showSearch
                                         value={info['managerAdminName']}
                                         className="custom-select"
@@ -273,103 +270,121 @@ export default function RqfUpdate({ updateKey = {}, getCopyPage = null, managerL
                         </TopBoxCard>
                         <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 3, paddingTop: 3}}>
                             <Panel defaultSize={sizes[0]} minSize={15} maxSize={100} onResize={onResizeChange}>
-                            <BoxCard title={'매입처 정보'} tooltip={tooltipInfo('agency')}>
-                                {inputForm({
-                                    title: '매입처코드',
-                                    id: 'agencyCode',
-                                    suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
-                                        (e) => {
-                                            e.stopPropagation();
-                                            openModal('agencyCode');
-                                        }
-                                    }/>,
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
-                                {inputForm({
-                                    title: '매입처명',
-                                    id: 'agencyName',
-                                    onChange: onChange,
-                                    data: info
-                                })}
-                                {inputForm({
-                                    title: '매입처담당자',
-                                    id: 'agencyManagerName',
-                                    onChange: onChange,
-                                    data: info
-                                })}
-                                {inputForm({
-                                    title: '매입처이메일',
-                                    id: 'agencyManagerEmail',
-                                    onChange: onChange,
-                                    data: info
-                                })}
-                                {datePickerForm({title: '마감일자(예상)', id: 'dueDate', onChange: onChange, data: info})}
-                            </BoxCard>
+                                <BoxCard title={'매입처 정보'} tooltip={tooltipInfo('agency')}>
+                                    {inputForm({
+                                        title: '매입처코드',
+                                        id: 'agencyCode',
+                                        suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
+                                            (e) => {
+                                                e.stopPropagation();
+                                                openModal('agencyCode');
+                                            }
+                                        }/>,
+                                        onChange: onChange,
+                                        handleKeyPress: handleKeyPress,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: '매입처명',
+                                        id: 'agencyName',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: '매입처담당자',
+                                        id: 'agencyManagerName',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: '매입처이메일',
+                                        id: 'agencyManagerEmail',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                    {datePickerForm({title: '마감일자(예상)', id: 'dueDate', onChange: onChange, data: info})}
+                                </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
                             <Panel defaultSize={sizes[1]} minSize={15} maxSize={100} onResize={onResizeChange}>
-                            <BoxCard title={'고객사 정보'} tooltip={tooltipInfo('customer')}>
-                                {inputForm({
-                                    title: '고객사명',
-                                    id: 'customerName',
-                                    suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
-                                        (e) => {
-                                            e.stopPropagation();
-                                            openModal('customerName');
-                                        }
-                                    }/>, onChange: onChange, handleKeyPress: handleKeyPress, data: info
-                                })}
-                                {inputForm({title: '담당자명', id: 'managerName', onChange: onChange, data: info})}
-                                {inputForm({title: '연락처', id: 'phoneNumber', onChange: onChange, data: info})}
-                                {inputForm({title: '팩스', id: 'faxNumber', onChange: onChange, data: info})}
-                                {inputForm({title: '이메일', id: 'customerManagerEmail', onChange: onChange, data: info})}
-                            </BoxCard>
+                                <BoxCard title={'고객사 정보'} tooltip={tooltipInfo('customer')}>
+                                    {inputForm({
+                                        title: '고객사명',
+                                        id: 'customerName',
+                                        suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
+                                            (e) => {
+                                                e.stopPropagation();
+                                                openModal('customerName');
+                                            }
+                                        }/>, onChange: onChange, handleKeyPress: handleKeyPress, data: info
+                                    })}
+                                    {inputForm({title: '담당자명', id: 'managerName', onChange: onChange, data: info})}
+                                    {inputForm({title: '연락처', id: 'phoneNumber', onChange: onChange, data: info})}
+                                    {inputForm({title: '팩스', id: 'faxNumber', onChange: onChange, data: info})}
+                                    {inputForm({
+                                        title: '이메일',
+                                        id: 'customerManagerEmail',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
                             <Panel defaultSize={sizes[2]} minSize={15} maxSize={100} onResize={onResizeChange}>
-                            <BoxCard title={'Maker 정보'} tooltip={tooltipInfo('etc')}>
-                                {inputForm({
-                                    title: 'Maker',
-                                    id: 'maker',
-                                    suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
-                                        (e) => {
-                                            e.stopPropagation();
-                                            openModal('maker');
-                                        }
-                                    }/>, onChange: onChange, handleKeyPress: handleKeyPress, data: info
-                                })}
-                                {inputForm({title: 'Item', id: 'item', onChange: onChange, data: info})}
-                                {textAreaForm({title: '지시사항',                rows : 7, id: 'instructions', onChange: onChange, data: info})}
+                                <BoxCard title={'Maker 정보'} tooltip={tooltipInfo('etc')}>
+                                    {inputForm({
+                                        title: 'Maker',
+                                        id: 'maker',
+                                        suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
+                                            (e) => {
+                                                e.stopPropagation();
+                                                openModal('maker');
+                                            }
+                                        }/>, onChange: onChange, handleKeyPress: handleKeyPress, data: info
+                                    })}
+                                    {inputForm({title: 'Item', id: 'item', onChange: onChange, data: info})}
+                                    {textAreaForm({
+                                        title: '지시사항',
+                                        rows: 7,
+                                        id: 'instructions',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
 
-                            </BoxCard>
+                                </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
                             <Panel defaultSize={sizes[3]} minSize={15} maxSize={100} onResize={onResizeChange}>
-                            <BoxCard title={'ETC'} tooltip={tooltipInfo('etc')}>
-                                {inputForm({title: 'End User', id: 'endUser', onChange: onChange, data: info})}
-                                {textAreaForm({title: '비고란', rows: 10, id: 'remarks', onChange: onChange, data: info})}
-                            </BoxCard>
+                                <BoxCard title={'ETC'} tooltip={tooltipInfo('etc')}>
+                                    {inputForm({title: 'End User', id: 'endUser', onChange: onChange, data: info})}
+                                    {textAreaForm({
+                                        title: '비고란',
+                                        rows: 10,
+                                        id: 'remarks',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
                             <Panel defaultSize={sizes[4]} minSize={23} maxSize={100} onResize={onResizeChange}>
-                            <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}  disabled={!userInfo['microsoftId']}>
-                                {/*@ts-ignored*/}
-                                <div style={{overFlowY: "auto", maxHeight: 300}}>
-                                    <div style={{width: 100, float: 'right'}}>
-                                        {selectBoxForm({
-                                            title: '', id: 'uploadType', onChange: onChange, data: info, list: [
-                                                {value: 0, label: '요청자료'},
-                                                {value: 1, label: '첨부파일'},
-                                                {value: 2, label: '업체회신자료'}
-                                            ]
-                                        })}
+                                <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}
+                                         disabled={!userInfo['microsoftId']}>
+                                    {/*@ts-ignored*/}
+                                    <div style={{overFlowY: "auto", maxHeight: 300}}>
+                                        <div style={{width: 100, float: 'right'}}>
+                                            {selectBoxForm({
+                                                title: '', id: 'uploadType', onChange: onChange, data: info, list: [
+                                                    {value: 0, label: '요청자료'},
+                                                    {value: 1, label: '첨부파일'},
+                                                    {value: 2, label: '업체회신자료'}
+                                                ]
+                                            })}
+                                        </div>
+                                        <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
+                                                         numb={info['uploadType']}/>
                                     </div>
-                                    <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                     numb={info['uploadType']}/>
-                                </div>
-                            </BoxCard>
+                                </BoxCard>
                             </Panel>
                         </PanelGroup>
                     </div> : null}
@@ -385,7 +400,7 @@ export default function RqfUpdate({ updateKey = {}, getCopyPage = null, managerL
                 />
 
             </div>
-            <MyComponent/>
+
         </>
     </Spin>
 }

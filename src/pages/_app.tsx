@@ -7,9 +7,6 @@ import Script from "next/script";
 import {useRouter} from "next/router";
 import Head from 'next/head';
 import "flexlayout-react/style/light.css";
-import 'handsontable/styles/handsontable.css';
-import 'handsontable/styles/ht-theme-main.css';
-import 'handsontable/styles/ht-theme-horizon.css';
 
 
 

@@ -939,7 +939,7 @@ export const projectDetailUnit = {
     maker: '',
     item: '',
     spec: '',
-    quantity: 0,
+    quantity: '',
     unitPrice: '',
     currencyUnit: '',
     deliveryDate: '',
