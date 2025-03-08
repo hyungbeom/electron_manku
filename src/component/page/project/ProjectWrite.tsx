@@ -66,7 +66,7 @@ function ProjectWrite({managerList = [], copyPageInfo = {}}) {
 
     const adminParams = {
         managerAdminId: userInfo['adminId'],
-        createBy: userInfo['name'],
+        createdBy: userInfo['name'],
         managerAdminName: userInfo['name'],
         writtenDate: moment().format('YYYY-MM-DD'),
     }
@@ -94,14 +94,29 @@ function ProjectWrite({managerList = [], copyPageInfo = {}}) {
 
     useEffect(() => {
         if (copyPageInfo['project_write'] && !isEmptyObj(copyPageInfo['project_write'])) {
+            setInfo(infoInit)
             setTableData(commonFunc.repeatObject(projectInfo['write']['defaultData'], 100))
         } else {
-            console.log({...copyPageInfo['project_write'], ...adminParams, writtenDate: moment().format('YYYY-MM-DD')},'{...copyPageInfo[\'project_write\'], ...adminParams, writtenDate: moment().format(\'YYYY-MM-DD\')}:')
             setInfo({...copyPageInfo['project_write'], ...adminParams, writtenDate: moment().format('YYYY-MM-DD')});
             setTableData(copyPageInfo['project_write'][listType])
         }
 
     }, [copyPageInfo['project_write']]);
+
+    console.log(info,'::')
+    useEffect(() => {
+        const result = Object.keys(info).map(v => `#${v}`)
+        const test = `${result.join(',')}`;
+        const elements = infoRef.current.querySelectorAll(test);
+
+
+        elements.forEach(element => {
+            if (element.id !== 'managerAdminId') {
+                element.value = info[element.id]
+            }
+        });
+    }, [info]);
+
 
     // const onGridReady = (params) => {
     //
@@ -170,8 +185,8 @@ function ProjectWrite({managerList = [], copyPageInfo = {}}) {
         }
         // console.log(bowl,'bowl')
         bowl['managerAdminId'] = info['managerAdminId'];
-       const findMember = memberList.find(v=> v.adminId === info['managerAdminId']);
-       console.log(findMember,'ss')
+        const findMember = memberList.find(v => v.adminId === info['managerAdminId']);
+        console.log(findMember, 'ss')
         bowl['managerAdminName'] = findMember['name'];
 
 
@@ -270,9 +285,9 @@ function ProjectWrite({managerList = [], copyPageInfo = {}}) {
                         <TopBoxCard title={''} grid={'150px 150px 150px'}>
                             {inputForm({
                                 title: '작성자',
-                                id: 'createBy',
+                                id: 'createdBy',
                                 disabled: true,
-                                defaultValue: info['createBy']
+                                defaultValue: info['createdBy']
                             })}
                             {datePickerForm({
                                 title: '작성일자',

@@ -1,5 +1,5 @@
 import Card from "antd/lib/card/Card";
-import React from "react";
+import React, {useRef} from "react";
 import Button from "antd/lib/button";
 import {
     CopyOutlined,
@@ -131,6 +131,37 @@ export function MainCard({children, title, list, mini = null, setMini = Function
     </Card>
 }
 
+
+export const InputForm = ({
+                              title,
+                              id,
+                              placeholder = '',
+                              suffix = null,
+                              handleKeyPress = function () {
+                              },
+                              value = '',
+                              validate = true,
+                              size = 'small',
+                              fontSize = 12
+                          }: any) => {
+
+
+
+    return <div style={{fontSize: fontSize, paddingBottom: 10}}>
+        <div style={{paddingBottom: fontSize / 2, fontWeight: 700}}>{title}</div>
+        {/*@ts-ignored*/}
+        <input placeholder={placeholder}
+
+               id={id}
+               size={size}
+               onKeyDown={handleKeyPress}
+               // suffix={suffix}
+               // style={{fontSize: 12, border : '1px solid lightGray'}}
+        />
+    </div>
+}
+
+
 export const inputForm = ({
                               title,
                               id,
@@ -138,23 +169,24 @@ export const inputForm = ({
                               suffix = null,
                               handleKeyPress = function () {
                               },
-                              defaultValue = '',
+                              value = '',
                               validate = true,
                               size = 'small',
                               fontSize = 12
                           }: any) => {
 
 
+
     return <div style={{fontSize: fontSize, paddingBottom: 10}}>
         <div style={{paddingBottom: fontSize / 2, fontWeight: 700}}>{title}</div>
         {/*@ts-ignored*/}
-        <Input placeholder={placeholder}
+        <input placeholder={placeholder}
+
                id={id}
-               defaultValue={defaultValue}
                size={size}
                onKeyDown={handleKeyPress}
-               suffix={suffix}
-               style={{borderColor: validate ? '' : 'red', fontSize: 12}}
+            // suffix={suffix}
+            style={{fontSize: 12, border : `1px solid ${validate ? 'lightGray' : 'red'}`}}
         />
     </div>
 }
@@ -215,19 +247,8 @@ export const datePickerForm = ({title, id, disabled = false, defaultValue}) => {
     return <div style={{fontSize: 12, paddingBottom: 10}}>
         <div style={{paddingBottom: 5.5, fontWeight : 700}}>{title}</div>
         {/*@ts-ignore*/}
-        <DatePicker  style={{width: '100%', fontSize: 11}}
-                    className="custom-datepicker"
-                    disabledDate={commonManage.disabledDate}
-                     defaultValue={moment(defaultValue).isValid() ? moment(defaultValue) : null}
-            // onChange={(e, d) => onChange({
-                    //     target: {
-                    //         id: id,
-                    //         value: d
-                    //     }
-                    // })
-                    // }
-                    disabled={disabled}
-                    id={id} size={'small'}/>
+
+        <input type="date" id={id}/>
     </div>
 }
 
@@ -309,16 +330,12 @@ export const textAreaForm = ({
                                  placeHolder = '',
                                  maxLength = 1000
                              }) => {
-    return <div style={{fontSize: 12, paddingBottom: 10}}>
+    return <div style={{fontSize: 12, paddingBottom: 5}}>
         <div style={{paddingBottom: 5, fontWeight: 700}}>{title}</div>
-        <TextArea style={{resize: 'none', fontSize: 12}} rows={rows} id={id}
+        <textarea style={{resize: 'none', fontSize: 12, }} rows={rows} id={id}
                   disabled={disabled}
-                  defaultValue={defaultValue}
                   className="custom-textarea"
-                  size={'small'}
                   placeholder={placeHolder}
-                  showCount
-                  maxLength={maxLength}
         />
     </div>
 }

@@ -869,6 +869,7 @@ export const searchOrderInitial = {
 
 
 export const projectWriteInitial = {
+    createdBy: '',
     managerAdminName: '',
     managerAdminId: null,
     writtenDate: moment().format('YYYY-MM-DD'),

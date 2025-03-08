@@ -5,7 +5,16 @@ import {ModalInitList, projectWriteInitial} from "@/utils/initialList";
 import message from "antd/lib/message";
 import TableGrid from "@/component/tableGrid";
 import SearchInfoModal from "@/component/SearchAgencyModal";
-import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, tooltipInfo, TopBoxCard} from "@/utils/commonForm";
+import {
+    BoxCard,
+    datePickerForm,
+    InputForm,
+    inputForm,
+    MainCard,
+    textAreaForm,
+    tooltipInfo,
+    TopBoxCard
+} from "@/utils/commonForm";
 import {useRouter} from "next/router";
 import {commonFunc, commonManage, fileManage, gridManage} from "@/utils/commonManage";
 import _ from "lodash";
@@ -21,13 +30,20 @@ import 'react-splitter-layout/lib/index.css';
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import Select from "antd/lib/select";
 import {projectInfo} from "@/utils/column/ProjectInfo";
+import Table from "@/component/util/Table";
 
 
 const listType = 'projectDetailList'
-export default function ProjectUpdate({dataInfo = {projectDetail: [], attachmentFileList: []}, updateKey = {}, getCopyPage = null}) {
+export default function ProjectUpdate({
+
+                                          updateKey = {},
+                                          getCopyPage = null
+                                      }) {
+    const infoRef = useRef<any>(null)
+    const tableRef = useRef(null);
 
     const [memberList, setMemberList] = useState([]);
-
+    const [validate, setValidate] = useState({documentNumberFull: true});
     useEffect(() => {
         getMemberList();
     }, []);
@@ -57,16 +73,15 @@ export default function ProjectUpdate({dataInfo = {projectDetail: [], attachment
     const gridRef = useRef(null);
     const router = useRouter();
     const userInfo = useAppSelector((state) => state.user);
-    const infoInit = dataInfo?.projectDetail
-    const infoInitFile = dataInfo?.attachmentFileList
+
 
     const [info, setInfo] = useState<any>({})
-    const [fileList, setFileList] = useState(fileManage.getFormatFiles(infoInitFile));
+    const [fileList, setFileList] = useState([]);
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
-    const [originFileList, setOriginFileList] = useState(infoInitFile);
+    const [originFileList, setOriginFileList] = useState([]);
     const [loading, setLoading] = useState(false);
-
+    const [tableData, setTableData] = useState([]);
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('project_write');
@@ -77,7 +92,6 @@ export default function ProjectUpdate({dataInfo = {projectDetail: [], attachment
 
     function onResizeChange() {
         setSizes(groupRef.current.getLayout())
-
     }
 
     const handleMouseUp = () => {
@@ -93,20 +107,34 @@ export default function ProjectUpdate({dataInfo = {projectDetail: [], attachment
         };
     }, []);
 
-    const onGridReady = async (params) => {
-        gridRef.current = params.api;
-    };
 
     useEffect(() => {
         setLoading(true)
         getDataInfo().then(v => {
             const {projectDetail, attachmentFileList} = v;
             setFileList(fileManage.getFormatFiles(attachmentFileList))
-            setInfo(projectDetail)
-            initInfo(projectDetail[listType]);
+            setInfo(projectDetail);
+            projectDetail[listType] = [...projectDetail[listType], ...commonFunc.repeatObject(projectInfo['write']['defaultData'], 100 - projectDetail[listType].length)]
+            setTableData(projectDetail[listType]);
+
             setLoading(false)
         })
     }, [updateKey['project_update']])
+
+
+    useEffect(() => {
+        const result = Object.keys(projectWriteInitial).map(v => `#${v}`)
+        const test = `${result.join(',')}`;
+        const elements = infoRef.current.querySelectorAll(test);
+
+
+        elements.forEach(element => {
+            if (element.id === 'managerAdminId') {
+                return false;
+            }
+            element.value = info[element.id]
+        });
+    }, [info]);
 
     async function getDataInfo() {
         const result = await getData.post('project/getProjectDetail', {
@@ -114,11 +142,6 @@ export default function ProjectUpdate({dataInfo = {projectDetail: [], attachment
             "documentNumberFull": ""
         });
         return result?.data?.entity;
-    }
-
-    function initInfo(data) {
-
-        gridManage.resetData(gridRef, data)
     }
 
 
@@ -130,10 +153,9 @@ export default function ProjectUpdate({dataInfo = {projectDetail: [], attachment
                 case 'agencyCode' :
                 case 'customerName' :
                 case 'maker' :
-                    await findCodeInfo(e, setInfo, openModal)
+                    // await findCodeInfo(e, setInfo, openModal)
                     break;
             }
-
         }
     }
 
@@ -141,27 +163,65 @@ export default function ProjectUpdate({dataInfo = {projectDetail: [], attachment
         commonManage.openModal(e, setIsModalOpen)
     }
 
-    function onChange(e) {
-        let bowl = {};
-        bowl[e.target.id] = e.target.value;
-        commonManage.onChange(e, setInfo)
-    }
+    // function onChange(e) {
+    //     let bowl = {};
+    //     bowl[e.target.id] = e.target.value;
+    //     commonManage.onChange(e, setInfo)
+    // }
+
+
+    const filterEmptyObjects = (data, excludeFields = []) => {
+        if (data.length === 0) return [];
+
+        return data.slice(0, -1).filter((obj) => {
+            // ✅ excludeFields의 모든 필드가 '' 또는 null 또는 undefined이면 제거
+            const isEmpty = excludeFields.every(field =>
+                obj[field] === '' || obj[field] === null || obj[field] === undefined
+            );
+
+            return !isEmpty; // 값이 하나라도 있으면 유지
+        });
+    };
 
     async function saveFunc() {
-        gridRef.current.clearFocusedCell();
-        if (!info['documentNumberFull']) {
+        const result = Object.keys(projectWriteInitial).map(v => `#${v}`)
+        const test = `${result.join(',')}`;
+        const elements = infoRef.current.querySelectorAll(test);
+
+        let bowl = {}
+        for (let element of elements) {
+            bowl[element.id] = element.value
+        }
+
+
+        bowl['managerAdminId'] = info['managerAdminId'];
+        const findMember = memberList.find(v => v.adminId === info['managerAdminId']);
+        bowl['managerAdminName'] = findMember['name'];
+
+        const hotInstance = tableRef.current?.hotInstance;
+        const rawData = hotInstance?.getData(); // 이중 배열 형태
+        const formattedData = rawData.map(row => {
+            return Object.keys(projectInfo['write']['defaultData']).reduce((acc, key, index) => {
+                acc[key] = row[index] || "";
+                return acc;
+            }, {});
+        });
+        const list = filterEmptyObjects(formattedData, ['model', 'item', 'maker'])
+        if (!bowl['documentNumberFull']) {
+            setValidate(v => {
+                return {...v, documentNumberFull: false}
+            })
             return message.warn('프로젝트 번호가 누락되었습니다.')
         }
-        const list = gridManage.getAllData(gridRef);
+
 
         if (!list.length) {
             return message.warn('하위 데이터 1개 이상이여야 합니다');
         }
-
         setLoading(true)
         const formData: any = new FormData();
 
-        commonManage.setInfoFormData(info, formData, listType, list)
+        commonManage.setInfoFormData(bowl, formData, listType, list)
         commonManage.getUploadList(fileRef, formData)
         commonManage.deleteUploadList(fileRef, formData, originFileList)
         formData.delete('createdDate')
@@ -176,7 +236,7 @@ export default function ProjectUpdate({dataInfo = {projectDetail: [], attachment
             await getAttachmentFileList({
                 data: {
                     "relatedType": "PROJECT",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
-                    "relatedId": infoInit['projectId']
+                    "relatedId": updateKey['project_update']
                 }
             }).then(v => {
                 window.opener?.postMessage('update', window.location.origin);
@@ -191,29 +251,45 @@ export default function ProjectUpdate({dataInfo = {projectDetail: [], attachment
     }
 
     function copyPage() {
-        const totalList = gridManage.getAllData(gridRef)
-        let copyInfo = _.cloneDeep(info);
 
-        copyInfo[listType] = [...totalList, ...commonFunc.repeatObject(projectInfo['write']['defaultData'], 100 - totalList.length)]
-        copyInfo['writtenDate'] = moment().format('YYYY-MM-DD')
+        const totalList = tableRef.current.getSourceData();
+        totalList.pop();
 
-        console.log(copyInfo[listType],'copyInfo[listType]')
-        getCopyPage('project_write',copyInfo)
-        // router.push(`/project_write?${query}`)
+        console.log(totalList, 'totalList:')
+
+
+        const result = Object.keys(projectWriteInitial).map(v => `#${v}`)
+        const test = `${result.join(',')}`;
+        const elements = infoRef.current.querySelectorAll(test);
+
+        let copyInfo = {}
+        for (let element of elements) {
+            copyInfo[element.id] = element.value
+        }
+
+
+        copyInfo['managerAdminId'] = info['managerAdminId'];
+        const findMember = memberList.find(v => v.adminId === info['managerAdminId']);
+        copyInfo['managerAdminName'] = findMember['name'];
+
+        console.log(copyInfo,'copyInfo::')
+        copyInfo[listType] = [...totalList, ...commonFunc.repeatObject(projectInfo['write']['defaultData'], 100 - totalList.length)];
+
+        getCopyPage('project_write', copyInfo)
     }
 
     function clearAll() {
-        setInfo(v => {
-            return {
-                ...projectWriteInitial,
-                documentNumberFull: v.documentNumberFull,
-                writtenDate: v.writtenDate,
-                createdBy: v.createdBy,
-                managerAdminName: v.managerAdminName,
-                managerAdminId: v?.managerAdminId ? v?.managerAdminId : 0
-            }
-        });
-        gridManage.deleteAll(gridRef)
+        // setInfo(v => {
+        //     return {
+        //         ...projectWriteInitial,
+        //         documentNumberFull: v.documentNumberFull,
+        //         writtenDate: v.writtenDate,
+        //         createdBy: v.createdBy,
+        //         managerAdminName: v.managerAdminName,
+        //         managerAdminId: v?.managerAdminId ? v?.managerAdminId : 0
+        //     }
+        // });
+        // gridManage.deleteAll(gridRef)
     }
 
     const onCChange = (value: string, e: any) => {
@@ -222,46 +298,42 @@ export default function ProjectUpdate({dataInfo = {projectDetail: [], attachment
         })
     };
 
-
-
     return <Spin spinning={loading} tip={'프로젝트 수정중...'}>
-        <SearchInfoModal info={info} setInfo={setInfo}
-                         open={isModalOpen}
-                         gridRef={gridRef}
-                         setIsModalOpen={setIsModalOpen}/>
+        {/*<SearchInfoModal info={info} setInfo={setInfo}*/}
+        {/*                 open={isModalOpen}*/}
+        {/*                 gridRef={gridRef}*/}
+        {/*                 setIsModalOpen={setIsModalOpen}/>*/}
 
         <>
-            <div style={{
+            <div ref={infoRef} style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '430px' : '65px'} calc(100vh - ${mini ? 560 : 195}px)`,
+                gridTemplateRows: `${mini ? '450px' : '65px'} calc(100vh - ${mini ? 560 : 195}px)`,
+                rowGap: 10,
                 columnGap: 5
             }}>
-
                 <MainCard title={'프로젝트 수정'} list={[
-                    {name: '수정', func: saveFunc, type: 'primary'},
+                    {name: '저장', func: saveFunc, type: 'primary'},
                     {name: '초기화', func: clearAll, type: 'danger'},
                     {name: '복제', func: copyPage, type: 'default'}
                 ]} mini={mini} setMini={setMini}>
 
                     {mini ? <div>
-                            <TopBoxCard>
+                            <TopBoxCard title={''} grid={'150px 150px 150px'}>
                                 {inputForm({
                                     title: '작성자',
                                     id: 'createdBy',
                                     disabled: true,
-                                    onChange: onChange,
-                                    data: info
                                 })}
                                 {datePickerForm({
                                     title: '작성일자',
                                     id: 'writtenDate',
                                     disabled: true,
-                                    onChange: onChange,
-                                    data: info
+                                    defaultValue: info['writtenDate']
                                 })}
                                 <div>
-                                    <div style={{fontSize: 12}}>담당자</div>
-                                    <Select style={{width: '100%', fontSize: 12, marginTop: 5}} size={'small'}
+                                    <div style={{fontSize: 12, fontWeight: 700}}>담당자</div>
+                                    <Select id={'managerAdminId'} style={{width: '100%', fontSize: 12, marginTop: 5}}
+                                            size={'small'}
                                             showSearch
                                             value={info['managerAdminId']}
                                             placeholder="Select a person"
@@ -272,103 +344,110 @@ export default function ProjectUpdate({dataInfo = {projectDetail: [], attachment
                                 </div>
 
                             </TopBoxCard>
-                            <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 3, paddingTop: 3}}>
-                                <Panel defaultSize={sizes[0]} minSize={10} maxSize={100} onResize={onResizeChange}>
-                                    <BoxCard title={'프로젝트 정보'} tooltip={tooltipInfo('readProejct')}>
-                                        {inputForm({
-                                            title: 'Project No.',
-                                            id: 'documentNumberFull',
-                                            onChange: onChange,
-                                            data: info,
-                                            disabled: true
-                                    })}
-                                    {inputForm({
-                                        title: '프로젝트 제목',
-                                        id: 'projectTitle',
-                                        placeholder: '매입처 담당자 입력 필요',
-                                        onChange: onChange,
-                                        data: info
-                                    })}
-                                    {datePickerForm({title: '마감일자', id: 'dueDate', onChange: onChange, data: info})}
-                                </BoxCard>
-                            </Panel>
-                            <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[1]} minSize={10} maxSize={100} onResize={onResizeChange}>
-                            <BoxCard title={'고객사 정보'} tooltip={tooltipInfo('customer')}>
-                                {inputForm({
-                                    title: '고객사명',
-                                    id: 'customerName',
-                                    suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
-                                        (e) => {
-                                            e.stopPropagation();
-                                            openModal('customerName');
-                                        }
-                                    }/>, onChange: onChange, data: info, handleKeyPress: handleKeyPress
-                                })}
-                                {inputForm({
-                                    title: '고객사 담당자명',
-                                    id: 'customerManagerName',
-                                    onChange: onChange,
-                                    data: info
-                                })}
-                                {inputForm({
-                                    title: '담당자 연락처',
-                                    id: 'customerManagerPhone',
-                                    onChange: onChange,
-                                    data: info
-                                })}
-                                {inputForm({
-                                    title: '담당자 이메일',
-                                    id: 'customerManagerEmail',
-                                    onChange: onChange,
-                                    data: info
-                                })}
-                            </BoxCard>
-                            </Panel>
-                            <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[2]} minSize={10} maxSize={100} onResize={onResizeChange}>
-                            <BoxCard title={'ETC'} tooltip={tooltipInfo('etc')}>
 
-                                {textAreaForm({title: '비고란', rows: 2, id: 'remarks', onChange: onChange, data: info})}
-                                {textAreaForm({
-                                    title: '지시사항',
-                                    rows: 2,
-                                    id: 'instructions',
-                                    onChange: onChange,
-                                    data: info
-                                })}
-                                {textAreaForm({
-                                    title: '특이사항',
-                                    rows: 2,
-                                    id: 'specialNotes',
-                                    onChange: onChange,
-                                    data: info
-                                })}
-                            </BoxCard>
-                            </Panel>
-                            <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[3]} minSize={10} maxSize={100} onResize={onResizeChange}>
-                            <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}
-                                     disabled={!userInfo['microsoftId']}>
-                                {/*@ts-ignored*/}
-                                <div style={{overFlowY: "auto", maxHeight: 300}}>
-                                    <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                     numb={5}/>
-                                </div>
-                            </BoxCard>
-                            </Panel>
-                        </PanelGroup>
-                    </div>
+
+                            <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 3, paddingTop: 5}}>
+                                <Panel defaultSize={sizes[0]} minSize={10} maxSize={100} onResize={onResizeChange}>
+                                    <BoxCard title={'프로젝트 정보'} tooltip={tooltipInfo('readProject')}>
+                                        {inputForm({
+                                            title: 'PROJECT NO.🔴',
+                                            id: 'documentNumberFull',
+                                            placeholder: '필수입력',
+                                            defaultValue: info['documentNumberFull'],
+                                            validate: validate['documentNumberFull']
+                                        })}
+                                        {inputForm({
+                                            title: '프로젝트 제목',
+                                            id: 'projectTitle',
+                                            defaultValue: info['projectTitle']
+
+                                        })}
+                                        {datePickerForm({title: '마감일자', id: 'dueDate', defaultValue: info['dueDate']})}
+                                    </BoxCard>
+                                </Panel>
+                                <PanelResizeHandle/>
+                                <Panel defaultSize={sizes[1]} minSize={10} maxSize={100}>
+                                    <BoxCard title={'고객사 정보'} tooltip={tooltipInfo('customer')}>
+                                        {inputForm({
+                                            title: '고객사명',
+                                            id: 'customerName',
+
+                                            suffix: <span style={{cursor: 'pointer'}} onClick={
+                                                (e) => {
+                                                    e.stopPropagation();
+                                                    openModal('customerName');
+                                                }
+                                            }>🔍</span>, handleKeyPress: handleKeyPress
+                                        })}
+                                        {inputForm({
+                                            title: '고객사 담당자명',
+                                            id: 'customerManagerName',
+
+                                        })}
+                                        {inputForm({
+                                            title: '담당자 전화번호',
+                                            id: 'customerManagerPhone',
+
+                                        })}
+                                        {/*{inputForm({*/}
+                                        {/*    title: '담당자 전화번호',*/}
+                                        {/*    id: 'customerManagerPhone',*/}
+                                        {/*    defaultValue: info['customerManagerPhone'],*/}
+                                        {/*})}*/}
+                                        {inputForm({
+                                            title: '담당자 이메일',
+                                            id: 'customerManagerEmail'
+                                        })}
+                                    </BoxCard>
+                                </Panel>
+                                <PanelResizeHandle/>
+                                <Panel defaultSize={sizes[2]} minSize={25} maxSize={100}>
+                                    <BoxCard title={'기타 정보'} tooltip={tooltipInfo('etc')}>
+                                        {textAreaForm({
+                                            title: '비고란',
+                                            rows: 2,
+                                            id: 'remarks',
+                                            defaultValue: info['remarks'],
+                                        })}
+                                        {textAreaForm({
+                                            title: '지시사항',
+                                            rows: 2,
+                                            id: 'instructions',
+                                            defaultValue: info['instructions'],
+                                        })}
+                                        {textAreaForm({
+                                            title: '특이사항',
+                                            rows: 2,
+                                            id: 'specialNotes',
+                                            defaultValue: info['specialNotes'],
+                                        })}
+                                    </BoxCard>
+                                </Panel>
+                                <PanelResizeHandle/>
+                                <Panel defaultSize={sizes[3]} minSize={15} maxSize={100}>
+                                    <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}
+                                             disabled={!userInfo['microsoftId']}>
+                                        {/*@ts-ignored*/}
+                                        <div style={{overFlowY: "auto", maxHeight: 300}}>
+                                            <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
+                                                             numb={5}/>
+                                        </div>
+                                    </BoxCard>
+                                </Panel>
+                            </PanelGroup>
+                        </div>
                         : <></>}
                 </MainCard>
 
-                <TableGrid
-                    gridRef={gridRef}
-                    onGridReady={onGridReady}
-                    columns={projectWriteColumn}
-                    type={'write'}
-                    funcButtons={['projectUpload', 'addProjectRow', 'delete', 'print']}
-                />
+                <Table data={tableData} column={projectInfo['write']} funcButtons={['print']} ref={tableRef}/>
+                {/*<TableGrid*/}
+                {/*    gridRef={gridRef}*/}
+                {/*    onGridReady={onGridReady}*/}
+                {/*    columns={projectWriteColumn}*/}
+                {/*    type={'write'}*/}
+                {/*    funcButtons={['projectUpload', 'addProjectRow', 'delete', 'print']}*/}
+                {
+                    /*/>*/}
             </div>
         </>
     </Spin>

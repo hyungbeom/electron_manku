@@ -336,3 +336,16 @@ input, textarea {
     spellcheck: false;
     -webkit-text-security: none;
 }
+
+input, textarea {
+    border: 1px solid #ccc; /* 기본 테두리 */
+    transition: border 0.3s ease-in-out;
+    outline: none;
+    width : 100%;
+    padding-left : 7px;
+}
+
+input:focus, textarea:focus {
+    border: 1px solid #007bff; /* 파란색 테두리 */
+
+}
