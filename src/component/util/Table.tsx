@@ -1,187 +1,206 @@
+import {HyperFormula} from 'hyperformula';
+import {HotTable} from '@handsontable/react-wrapper';
+import {registerAllModules} from 'handsontable/registry';
 import 'handsontable/styles/handsontable.css';
 import 'handsontable/styles/ht-theme-main.css';
-import 'handsontable/styles/ht-theme-horizon.css';
-import { registerAllModules } from "handsontable/registry";
-import HotTable, { HotColumn } from "@handsontable/react-wrapper";
-import { useEffect, useMemo, useRef } from "react";
-import moment from "moment";
+import {forwardRef, memo, useEffect, useImperativeHandle, useMemo, useRef, useState} from "react";
+import Handsontable from "handsontable";
+import renderers = Handsontable.renderers;
+import moment from "moment/moment";
+import {tableButtonList} from "@/utils/commonForm";
+import {projectInfo} from "@/utils/column/ProjectInfo";
 
+// register Handsontable's modules
 registerAllModules();
 
-const Table = ({ data = new Array(100).fill({}), column, type = '' }) => {
-    const hotRef = useRef(null);
+const currencyRenderer = (instance, td, row, col, prop, value, cellProperties) => {
+    if (typeof value === 'number') {
+        if (prop === "marginRate") {
+            td.textContent = (value * 100).toFixed(2) + "%"; // 🔥 marginRate 값을 자동 변환 (0.00%)
+        } else {
+            td.textContent = value.toLocaleString(); // 쉼표 포함된 숫자로 변환
+        }
+    } else {
+        td.textContent = value || ''; // 값이 없으면 빈 문자열 처리
+    }
+};
+
+const Table = forwardRef(({data = new Array(100).fill({}), column, type = '', funcButtons}: any, ref) => {
+
+    const hotRef = useRef(null)
+
+    useImperativeHandle(ref, () => ({
+        hotInstance: hotRef.current?.hotInstance, // Handsontable 인스턴스 접근
+        getData: () => hotRef.current?.hotInstance?.getData(), // 현재 테이블 데이터 가져오기
+        getSourceData: () => hotRef.current?.hotInstance?.getSourceData(), // 현재 테이블 데이터 가져오기
+        setData: (newData) => hotRef.current?.hotInstance?.loadData(newData), // 테이블 데이터 업데이트
+        forceRender: () => hotRef.current?.hotInstance?.render(), // 강제 렌더링
+    }));
+
+
+
+    const tableContainerRef = useRef(null);
+    const [tableHeight, setTableHeight] = useState(400); // 기본값 설정
+
+    const updateTableHeight = () => {
+        if (tableContainerRef.current) {
+            const parentHeight = tableContainerRef.current.clientHeight;
+            setTableHeight(parentHeight - 10); // 🔥 부모 높이에서 약간 여유 공간 확보
+        }
+    };
+
+    useEffect(() => {
+        updateTableHeight(); // 최초 실행 시 테이블 크기 설정
+        window.addEventListener("resize", updateTableHeight); // 창 크기 변경 감지
+
+        return () => {
+            window.removeEventListener("resize", updateTableHeight); // 이벤트 해제
+        };
+    }, []);
+
+
+    const tableData = useMemo(() => {
+        function reorderObjectsArray(dataArray: Record<string, any>[], keyOrder: string[]) {
+            return dataArray.map(data => {
+                return keyOrder.reduce((acc, key) => {
+                    acc[key] = data[key] !== undefined ? data[key] : ""; // 키가 없으면 빈 문자열
+                    return acc;
+                }, {} as Record<string, any>);
+            });
+        }
+        const reorderedDataArray = reorderObjectsArray(data, Object.keys(column['defaultData']));
+
+        let calcData: any = reorderedDataArray.map(column['excelExpert']);
+
+        calcData.push(column['totalList'])
+
+        return calcData
+    }, [data])
 
     useEffect(() => {
         if (!hotRef.current?.hotInstance) return;
         hotRef.current.hotInstance.useTheme('ht-theme-main');
         hotRef.current.hotInstance.render();
+
     }, []);
 
-    // ✅ 초기 데이터 변환 (쉼표 추가 + 숫자 변환)
-    const dataList = useMemo(() => {
-        if (type !== 'project_write') return data;
 
-        return data.map((v) => ({
-            ...v,
-            quantity: v?.quantity ? v?.quantity.toLocaleString() : '',
-            unitPrice: v?.unitPrice ? v?.unitPrice.toLocaleString() : '',
-            purchasePrice: v?.purchasePrice ? v?.purchasePrice.toLocaleString() : '',
-            total: !isNaN(v?.quantity * v?.unitPrice) ? (v?.quantity * v?.unitPrice).toLocaleString() : '',
-            totalPurchase: !isNaN(v?.quantity * v?.purchasePrice) ? (v?.quantity * v?.purchasePrice).toLocaleString() : '',
-        }));
-    }, [data]);
+    const afterRenderer = (td, row, col, prop, value) => {
+        if (["unitPrice", "total", "totalPurchase", "purchasePrice"].includes(prop)) {
+            td.style.textAlign = "right"; // 우측 정렬
 
-    // ✅ 개별 행의 `total`, `totalPurchase` 즉시 업데이트
-    const updateRowTotal = (row) => {
-        if (!hotRef.current) return;
-        const hotInstance = hotRef.current.hotInstance;
-
-        const quantity = parseFloat(hotInstance.getDataAtCell(row, column.columnList.findIndex(c => c.data === "quantity"))?.toString().replace(/,/g, "") || 0);
-        const unitPrice = parseFloat(hotInstance.getDataAtCell(row, column.columnList.findIndex(c => c.data === "unitPrice"))?.toString().replace(/,/g, "") || 0);
-        const purchasePrice = parseFloat(hotInstance.getDataAtCell(row, column.columnList.findIndex(c => c.data === "purchasePrice"))?.toString().replace(/,/g, "") || 0);
-
-        const total = quantity * unitPrice;
-        const totalPurchase = quantity * purchasePrice;
-
-        hotInstance.batch(() => {
-            hotInstance.setDataAtCell(row, column.columnList.findIndex(c => c.data === "total"), total.toLocaleString(), "updateSum");
-            hotInstance.setDataAtCell(row, column.columnList.findIndex(c => c.data === "totalPurchase"), totalPurchase.toLocaleString(), "updateSum");
-        });
-    };
-
-    // ✅ 전체 합계를 계산하여 합계 행 업데이트
-    const updateTotalSum = () => {
-        if (!hotRef.current) return;
-        const hotInstance = hotRef.current.hotInstance;
-        const lastRow = hotInstance.countRows() - 1; // 마지막 행(합계 행)
-
-        let sum = { quantity: 0, unitPrice: 0, purchasePrice: 0, total: 0, totalPurchase: 0 };
-
-        for (let i = 0; i < lastRow; i++) {
-            for (const key in sum) {
-                const colIndex = column.columnList.findIndex(c => c.data === key);
-                const cellValue = hotInstance.getDataAtCell(i, colIndex);
-                const numericValue = cellValue ? parseFloat(cellValue.toString().replace(/,/g, "")) : 0;
-                sum[key] += isNaN(numericValue) ? 0 : numericValue;
-            }
-        }
-
-        hotInstance.batch(() => {
-            for (const key in sum) {
-                const colIndex = column.columnList.findIndex(c => c.data === key);
-                hotInstance.setDataAtCell(lastRow, colIndex, sum[key].toLocaleString(), "updateSum");
-            }
-        });
-    };
-
-    // ✅ afterChange 핸들러 (개별 행 업데이트 + 합계 업데이트)
-    let debounceTimer;
-    const handleAfterChange = (changes, source) => {
-        if (!hotRef.current || source === "loadData" || source === "updateSum") return;
-
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => {
-            changes?.forEach(([row, prop]) => {
-                if (["quantity", "unitPrice", "purchasePrice"].includes(prop)) {
-                    updateRowTotal(row); // 개별 행의 `total`, `totalPurchase` 즉시 업데이트
+            if (["total", "totalPurchase"].includes(prop)) {
+                if (value === 0 || isNaN(value)) {
+                    td.textContent = ""; // 🔥 0 또는 NaN이면 빈 문자열 적용
+                } else {
+                    td.textContent = value?.toLocaleString(); // 🔢 숫자는 쉼표 추가
                 }
-            });
-            updateTotalSum(); // 합계 행 업데이트
-        }, 100);
-    };
+                td.style.color = "#ff4d4f"; // 🔴 원하는 컬럼에 직접 스타일 적용
+                td.style.fontWeight = "bold"; // 텍스트 굵게
+            }
 
-    const getCellStyle = (row, col, prop) => {
-        if (prop === "total" || prop === 'totalPurchase') {
-            return {className: "htRedText"}; // 🔥 total 컬럼에 빨간색 스타일 적용
-        }
-        if (prop === "unitPrice" || prop === 'purchasePrice' || prop === 'purchasePrice'|| prop === 'quantity') {
-            return {className: "priceText"};
         }
     };
 
-    const handleDblClick = (e, coords, TD) => {
+    const handleBeforeChange = (changes) => {
         if (!hotRef.current) return;
 
-        const hotInstance = hotRef.current.hotInstance;
-        const colIndexUnit = column.columnList.findIndex(c => c.data === "unit");
-        const colIndexCurrency = column.columnList.findIndex(c => c.data === "currencyUnit");
-        const colIndexRequestDeliveryDate = column.columnList.findIndex(c => c.data === "requestDeliveryDate");
-
-        if (coords.col === colIndexUnit || coords.col === colIndexCurrency || coords.col === colIndexRequestDeliveryDate) {
-        }
-        const rowData = hotInstance.getSourceDataAtRow(coords.row);
-
-
-        if(e.target.className === 'colHeader'){
-            return false;
-        }
-
-        if (coords.col === colIndexUnit && (!rowData?.unit || rowData?.unit === '')) {
-            hotInstance?.setDataAtCell(coords.row, coords.col, "ea", "update");
-        }
-
-        if (coords.col === colIndexCurrency && (!rowData?.currencyUnit || rowData?.currencyUnit === '')) {
-            hotInstance?.setDataAtCell(coords.row, coords.col, "KRW", "update");
-        }
-
-        if (coords.col === colIndexRequestDeliveryDate && (!rowData?.requestDeliveryDate || rowData?.requestDeliveryDate === '')) {
-            hotInstance?.setDataAtCell(coords.row, coords.col, moment().format('YYYY-MM-DD'), "update");
-        }
-
+        changes.forEach(([row, prop, oldValue, newValue]) => {
+            if (prop === "marginRate" && newValue !== null && newValue !== undefined) {
+                let numericValue = parseFloat(newValue);
+                if (!isNaN(numericValue)) {
+                    changes[0][3] = numericValue / 100; // 🔥 사용자가 `5` 입력 시 `0.05`로 변환
+                }
+            }
+        });
     };
-
-
 
 
     return (
-        <HotTable
-            ref={hotRef}
-            data={dataList}
-            height={400}
-            stretchH="all"
-            colWidths={[160, 220, 220, 200, 80, 80, 60, 120, 120, 120, 120, 90, 60, 160, 130, 130, 180, 160, 120, 180]}
+        <div ref={tableContainerRef} className="table-container">
+            <div style={{display: 'flex', justifyContent: 'end'}}>
 
-            colHeaders={column['column']}
-            columns={column['columnList']}
-            contextMenu={[
-                'copy',
-                '---------',
-                'row_above',
-                'row_below',
-                'remove_row',
-                '---------',
-                'alignment',
-                'make_read_only',
-                'clear_column',
-            ]} // ✅ `"undo"`, `"redo"` 제거하여 우클릭 메뉴에서 안 보이도록 설정
-            afterChange={handleAfterChange}
-            hiddenColumns={{ indicators: true }}
-            fixedRowsBottom={1} // ✅ 마지막 행(합계) 고정
-            manualColumnMove={true}
-            // multiColumnSorting={true}
-            undo={null}
-            navigableHeaders={true}
-            afterOnCellMouseDown={handleDblClick}
-            rowHeaders={true}
-            headerClassName="htLeft"
-            manualRowMove={true}
-            autoWrapRow={true}
-            autoWrapCol={true}
-            manualRowResize={true}
-            manualColumnResize={true}
+                <div style={{display: 'flex', gap: 5, paddingBottom: 0}}>
+                    {funcButtons?.map(v => tableButtonList(v, hotRef))}
+                </div>
+            </div>
+            <HotTable
+                style={{
+                    border: '1px solid #ebebed',
+                    boxShadow: '0px 6px 12px rgba(0, 0, 0, 0.07)'
+                }}
+                ref={hotRef}
+                data={tableData}
+                formulas={{
+                    engine: HyperFormula,
+                }}
+                colWidths={column['columnWidth']}
 
-            cells={(row, col, prop) => getCellStyle(row, col, prop)}
-            licenseKey="non-commercial-and-evaluation"
-        >
-            {column['columnList'].map(v => (
-                <HotColumn key={v.data} data={v.data} type={v.type} readOnly={v.readOnly} source={v.source}
-                           strict={false} allowInvalid={false} filter={false}
-                           dateFormat={v.type === "date" ? "YYYY-MM-DD" : undefined}
-                           numericFormat={v.data === "marginRate" ? { pattern: "0.00%", suffix: "%" } : undefined}
-                           correctFormat={v.type === "date" ? true : undefined} />
-            ))}
-        </HotTable>
+
+                colHeaders={column["column"]}
+                fixedRowsBottom={1}
+                stretchH="all"
+                height={tableHeight}
+                autoWrapRow={true}
+                autoWrapCol={true}
+                beforeChange={handleBeforeChange} // 🔥 사용자 입력값 변환
+                manualColumnMove={false}
+                multiColumnSorting={column["type"] === "read"}
+                navigableHeaders={true}
+                afterGetRowHeader={(row, TH) => {
+                    const hotInstance = hotRef.current.hotInstance;
+                    const totalRows = hotInstance.countRows();
+                    const fixedBottomRows = hotInstance.getSettings().fixedRowsBottom;
+
+                    // 하단 고정 행의 인덱스를 숨김
+                    if (row >= totalRows - fixedBottomRows) {
+                        TH.innerHTML = "";
+                    }
+                }}
+                afterGetColHeader={(col, TH) => {
+                    const headerText = column["column"][col]; // 컬럼 이름 가져오기
+                    if (["Model", "Item", "Maker"].includes(headerText)) {
+                        TH.classList.add("redHeader"); // 🔥 특정 컬럼 제목만 빨간색 적용
+                    } else {
+                        TH.classList.add("allHeader"); // 🔥 특정 컬럼 제목만 빨간색 적용
+                    }
+                }}
+                rowHeaders={true}
+
+
+                headerClassName="htLeft"
+                manualRowMove={true}
+                manualRowResize={true}
+                manualColumnResize={true}
+                outsideClickDeselects={false}
+                // 🔥 특정 컬럼에 스타일 적용 (수정)
+
+                cells={(row, col, prop) => {
+                    const totalRowIndex = data.length; // 🔥 마지막 행의 인덱스
+                    if (row === totalRowIndex) {
+                        return {readOnly: true}; // 🔥 마지막 행은 읽기 전용
+                    }
+                }}
+                columns={column["columnList"].map(col => {
+                    return ({
+                        data: col.data,
+                        type: col.type,
+                        source: col.source,
+                        strict: false,
+                        allowInvalid: false,
+                        allowHtml: true,
+                        dateFormat: col.type === "date" ? "YYYY-MM-DD" : undefined,
+                        correctFormat: col.data === "marginRate" ? true : undefined, // 🔥 숫자가 올바른 형식이 아니면 자동 수정
+                        numericFormat: col.data === "marginRate" ? {pattern: "0.00%", suffix: "%"} : undefined, // 🔥 소수점 둘째 자리 고정 + % 유지
+                        renderer: col.data.includes("Price") || col.data.includes("total") ? currencyRenderer : undefined,
+                        readOnly: col.readOnly,
+                    })
+                })}
+                afterRenderer={afterRenderer} // 🔥 특정 컬럼에 스타일 직접 적용
+                licenseKey="non-commercial-and-evaluation"
+            />
+        </div>
     );
-};
+});
 
-export default Table;
+export default memo(Table);

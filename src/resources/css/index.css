@@ -261,16 +261,78 @@ body {
     white-space: pre-wrap !important; /* ✅ 줄바꿈 적용 */
     word-break: break-word; /* ✅ 긴 단어도 자동 줄바꿈 */
 }
+/* 🔥 빨간색 텍스트 적용 */
 .htRedText {
     color: red !important;
-    text-align: right;
+    font-weight: bold;
 }
 
-.priceText {
-    text-align: right;
+/* 🔥 숫자 컬럼 우측 정렬 + 빨간색 */
+.htRightText {
+    text-align: right !important;
+    color: red !important;
+    font-weight: bold;
 }
 .colHeader {
     font-weight:700;
     /*color: gray;*/
 }
+.table-wrapper {
 
+    width: 100%;
+    height: calc(100vh - 250px); /* 🔥 부모 요소가 화면 높이에 따라 조정 */
+    min-height: 300px; /* 최소 높이 설정 */
+    display: flex;
+    flex-direction: column;
+
+}
+
+
+/* 🔥 Autocomplete 드롭다운 필드의 화살표(▼) 표시 */
+.handsontable .htAutocompleteEditor {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+/* 🔥 Handsontable의 드롭다운 화살표(▼) 강제 표시 */
+.handsontable .htAutocompleteArrow {
+    display: inline-block !important;
+    width: 12px;
+    height: 12px;
+    background-color: transparent;
+    border-top: 6px solid black; /* 🔥 ▼ 화살표 */
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+/* 🔥 드롭다운 화살표(▼)가 숨겨진 경우 다시 표시 */
+.handsontable .htAutocompleteEditor .htDropdownMenu {
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* 🔥 Autocomplete 필드의 입력창과 화살표가 정렬되도록 설정 */
+.handsontable .handsontableInput {
+    padding-right: 20px !important;
+}
+
+/* 🔥 특정 컬럼(Model, Item, Maker)의 헤더만 빨간색으로 설정 */
+.redHeader {
+    color: orangered !important;
+    font-size: 10px;
+}
+/* 🔥 특정 컬럼(Model, Item, Maker)의 헤더만 빨간색으로 설정 */
+.htLeft {
+    font-size: 8px !important;
+}
+
+input, textarea {
+    spellcheck: false;
+    -webkit-text-security: none;
+}

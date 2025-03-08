@@ -22,7 +22,7 @@ export default function SearchInfoModal({
 
                                             setValidate = null,
                                             type = '',
-                                            gridRef,
+                                            gridRef = null,
                                             compProps
                                         }: any) {
 

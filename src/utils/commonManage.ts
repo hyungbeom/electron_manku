@@ -20,47 +20,22 @@ gridManage.getSelectRows = function (gridRef) {
 }
 
 
-gridManage.exportSelectedRowsToExcel = function (gridRef, title) {
-    if (gridRef.current) {
-        // 체크된 행 데이터 가져오기
-        const selectedRows = gridRef.current.getSelectedRows();
+gridManage.exportSelectedRowsToExcel = function (hotRef, title) {
+    const hot = hotRef.current?.hotInstance;
+    const exportPlugin = hot?.getPlugin('exportFile');
 
-        if (selectedRows.length === 0) {
-            message.error('선택된 행이 없습니다.');
-            return;
-        }
-
-        // 컬럼 정의와 필드 정보 가져오기
-        const columns = gridRef.current.getAllDisplayedColumns();
-        const headers = columns.map((col) => col.getColDef().headerName); // 컬럼 헤더
-        const fields = columns.map((col) => col.getColDef().field); // 컬럼 필드
-        // 데이터와 컬럼 순서를 매핑하여 정리
-        const worksheetData = [
-            headers, // 헤더 추가
-            ...selectedRows.map((row) =>
-                fields.map((field) => row[field] || '') // 필드 순서에 맞는 데이터 매핑
-            ),
-        ];
-
-
-        // Excel 워크시트 생성
-        const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
-
-        // 컬럼 너비 설정
-        const columnWidths = columns.map((col) => {
-            const width = col.getActualWidth(); // Ag-Grid의 실제 너비
-            return {wpx: width}; // 너비를 픽셀 단위로 설정
-        });
-        worksheet['!cols'] = columnWidths;
-
-        // 워크북 생성 및 다운로드
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, title);
-        XLSX.writeFile(workbook, `${title}.xlsx`);
-
-    } else {
-        console.warn('GridRef or API is not available.');
-    }
+    exportPlugin?.downloadFile('csv', {
+        bom: false,
+        columnDelimiter: ',',
+        columnHeaders: true,
+        exportHiddenColumns: true,
+        exportHiddenRows: true,
+        fileExtension: 'csv',
+        filename: 'Handsontable-CSV-file_[YYYY]-[MM]-[DD]',
+        mimeType: 'text/csv',
+        rowDelimiter: '\r\n',
+        rowHeaders: true,
+    });
 };
 
 

@@ -36,7 +36,7 @@ import {tableCodeDomesticAgencyWriteColumns} from "@/utils/columnList";
 
 const {RangePicker} = DatePicker
 const {Option} = Select
-
+import {v4 as uuid} from 'uuid';
 
 export const numbFormatter = (value) => `₩ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 
@@ -48,7 +48,8 @@ export function TopBoxCard({children, title = '', grid = '1fr 1fr 1fr 1fr'}) {
     return <Card size={'small'} title={title}
                  style={{
                      fontSize: 13,
-                     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
+                     border: '1px solid #bae7ff',
+
                  }}>
         <div style={{
             display: 'grid',
@@ -69,21 +70,27 @@ export function BoxCard({children, title = null, tooltip = '', disabled = false}
 
     }
     const defaultStyle = {
-        height : '100%',
+        height: '100%',
 
         // boxShadow: '0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(0, 0, 0, 0.02)'
     }
+
+
     // <InfoCircleOutlined />
     // @ts-ignore
-    return <Card style={defaultStyle} size={'small'}
-                 title={title ? <div style={{display: 'flex', justifyContent: 'space-between', fontSize: 12}}>
+    return <Card style={{
+        border: '1px solid #bae7ff',
+        height : '100%'
+    }} size={'small'}
+                 headStyle={{backgroundColor: '#bae7ff'}}
+                 title={title ? <div style={{display: 'flex', justifyContent: 'space-between', fontSize: 13}}>
                      <span>{title}</span>
                      <Tooltip style={{fontSize: 12}} title={<div style={{fontSize: 12}}>{tooltip}</div>} color={'cyan'}
-                              key={'cyan'}>
+                              key={uuid()}>
                          <InfoCircleOutlined style={{cursor: 'pointer'}}/>
                      </Tooltip>
                  </div> : null}>
-         {/*@ts-ignore*/}
+        {/*@ts-ignore*/}
         <div style={disabled ? disabledStyle : defaultStyle}>
             {children}
         </div>
@@ -93,46 +100,57 @@ export function BoxCard({children, title = null, tooltip = '', disabled = false}
 
 export function MainCard({children, title, list, mini = null, setMini = Function()}) {
 
-    return <Card size={'small'} title={
-        <div style={{display: 'flex', justifyContent: 'space-between'}}>
-            <div style={{fontSize: 13, fontWeight: 550}}>{title}</div>
-            <div style={{
-                display: 'grid',
-                gridTemplateColumns: `${'1fr '.repeat(list.length)}auto`.trim(),
-                columnGap: 8
-            }}>
+    return <Card size={'small'} style={{
+        border: '1px solid #bae7ff',
+        marginTop: 3,
+        borderRadius: 5,
+        boxShadow: '0px 6px 12px rgba(0, 0, 0, 0.07)'
+    }}
+                 headStyle={{backgroundColor: '#bae7ff'}}
+                 title={
+                     <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                         <div style={{fontSize: 15, fontWeight: 700}}>{title}</div>
+                         <div style={{
+                             display: 'grid',
+                             gridTemplateColumns: `${'1fr '.repeat(list.length)}auto`.trim(),
+                             columnGap: 8
+                         }}>
 
-                {list.map(v => <Tooltip title={v.title} placement={v.place} color={'cyan'} key={'cyan'}><Button
-                    type={v.type} style={{fontSize: 11}} size={'small'}
-                    onClick={v.func}>{v?.prefix}{v.name}</Button></Tooltip>)}
+                             {list.map(v => <Tooltip title={v.title} placement={v.place} color={'cyan'}
+                                                     key={uuid()}><Button
+                                 type={v.type} style={{fontSize: 11}} size={'small'}
+                                 onClick={v.func}>{v?.prefix}{v.name}</Button></Tooltip>)}
 
-                {mini !== null ? <span style={{fontSize: 20, cursor: 'pointer', marginTop: -5}}
-                                       onClick={() => setMini(v => !v)}> {!mini ?
-                    <DownCircleFilled/> : <UpCircleFilled/>}</span> : <></>}
-            </div>
-        </div>
-    }>
+                             {mini !== null ? <span style={{fontSize: 20, cursor: 'pointer', marginTop: -5}}
+                                                    onClick={() => setMini(v => !v)}> {!mini ?
+                                 <DownCircleFilled/> : <UpCircleFilled/>}</span> : <></>}
+                         </div>
+                     </div>
+                 }>
         {children}
     </Card>
 }
 
 export const inputForm = ({
-                            value = '',  title, id, disabled = false, placeHolder = '', suffix = null, onChange = function () {
-    }, handleKeyPress = function () {
-    }, data
-                              , validate = true,
+                              title,
+                              id,
+                              placeholder = '',
+                              suffix = null,
+                              handleKeyPress = function () {
+                              },
+                              defaultValue = '',
+                              validate = true,
                               size = 'small',
                               fontSize = 12
                           }: any) => {
 
-    let bowl = data;
+
     return <div style={{fontSize: fontSize, paddingBottom: 10}}>
-        <div style={{paddingBottom: fontSize / 2}}>{title}</div>
+        <div style={{paddingBottom: fontSize / 2, fontWeight: 700}}>{title}</div>
         {/*@ts-ignored*/}
-        <Input placeHolder={placeHolder}
+        <Input placeholder={placeholder}
                id={id}
-               value={value ? value : bowl[id]} disabled={disabled}
-               onChange={onChange}
+               defaultValue={defaultValue}
                size={size}
                onKeyDown={handleKeyPress}
                suffix={suffix}
@@ -162,7 +180,7 @@ export const inputPasswordForm = ({
     return <div style={{fontSize: fontSize, paddingBottom: 10}}>
         <div style={{paddingBottom: fontSize / 2}}>{title}</div>
         {/*@ts-ignored*/}
-        <Password placeHolder={placeHolder}
+        <Password placeholder={placeHolder}
 
                   id={id}
                   value={bowl[id]} disabled={disabled}
@@ -192,21 +210,22 @@ export const rangePickerForm = ({
 }
 
 
-export const datePickerForm = ({title, id, disabled = false, onChange, data}) => {
-    let bowl = data;
+export const datePickerForm = ({title, id, disabled = false, defaultValue}) => {
+
     return <div style={{fontSize: 12, paddingBottom: 10}}>
-        <div style={{paddingBottom: 5.5}}>{title}</div>
+        <div style={{paddingBottom: 5.5, fontWeight : 700}}>{title}</div>
         {/*@ts-ignore*/}
-        <DatePicker value={moment(bowl[id]).isValid() ? moment(bowl[id]) : ''} style={{width: '100%', fontSize: 11}}
+        <DatePicker  style={{width: '100%', fontSize: 11}}
                     className="custom-datepicker"
                     disabledDate={commonManage.disabledDate}
-                    onChange={(e, d) => onChange({
-                        target: {
-                            id: id,
-                            value: d
-                        }
-                    })
-                    }
+                     defaultValue={moment(defaultValue).isValid() ? moment(defaultValue) : null}
+            // onChange={(e, d) => onChange({
+                    //     target: {
+                    //         id: id,
+                    //         value: d
+                    //     }
+                    // })
+                    // }
                     disabled={disabled}
                     id={id} size={'small'}/>
     </div>
@@ -281,12 +300,21 @@ export const selectBoxForm = ({title, id, disabled = false, data, onChange, list
     </div>
 }
 
-export const textAreaForm = ({value='', title, id, rows = 5, disabled = false, onChange, data, placeHolder = '', maxLength = 1000}) => {
+export const textAreaForm = ({
+                                 defaultValue = '',
+                                 title,
+                                 id,
+                                 rows = 5,
+                                 disabled = false,
+                                 placeHolder = '',
+                                 maxLength = 1000
+                             }) => {
     return <div style={{fontSize: 12, paddingBottom: 10}}>
-        <div style={{paddingBottom: 5}}>{title}</div>
-        <TextArea style={{resize: 'none', fontSize: 12}} rows={rows} id={id} value={value ? value : data[id]} disabled={disabled}
+        <div style={{paddingBottom: 5, fontWeight: 700}}>{title}</div>
+        <TextArea style={{resize: 'none', fontSize: 12}} rows={rows} id={id}
+                  disabled={disabled}
+                  defaultValue={defaultValue}
                   className="custom-textarea"
-                  onChange={onChange}
                   size={'small'}
                   placeholder={placeHolder}
                   showCount
@@ -328,29 +356,30 @@ export const tooltipInfo = (type: any) => {
 
 export const tableButtonList = (type: any, gridRef?: any) => {
 
+    console.log(gridRef.current,'gridRef:')
     const downloadExcel = async () => {
         gridManage.exportSelectedRowsToExcel(gridRef, '조회리스트')
     };
 
     function deleteList() {
-        const list = commonManage.getUnCheckList(gridRef);
-        gridManage.resetData(gridRef, list);
+        // const list = commonManage.getUnCheckList(gridRef);
+        // gridManage.resetData(gridRef, list);
     }
 
     function addRow() {
-        const agencyCode: any = document.getElementById('agencyCode')
-
-        const newRow = {...estimateRequestDetailUnit};
-        newRow['currency'] = commonManage.changeCurr(agencyCode.value)
-        gridRef.current.applyTransaction({add: [newRow]});
+        // const agencyCode: any = document.getElementById('agencyCode')
+        //
+        // const newRow = {...estimateRequestDetailUnit};
+        // newRow['currency'] = commonManage.changeCurr(agencyCode.value)
+        // gridRef.current.applyTransaction({add: [newRow]});
     }
 
     function addEstimateRow() {
-        const agencyCode: any = document.getElementById('agencyCode')
-
-        const newRow = {...estimateDetailUnit};
-        newRow['currency'] = commonManage.changeCurr(agencyCode.value)
-        gridRef.current.applyTransaction({add: [newRow]});
+        // const agencyCode: any = document.getElementById('agencyCode')
+        //
+        // const newRow = {...estimateDetailUnit};
+        // newRow['currency'] = commonManage.changeCurr(agencyCode.value)
+        // gridRef.current.applyTransaction({add: [newRow]});
     }
 
     function addOrderRow() {
@@ -381,11 +410,6 @@ export const tableButtonList = (type: any, gridRef?: any) => {
                 <SaveOutlined/>추가
             </Button>
 
-        case 'daUpload' :
-            return <ExcelUpload gridRef={gridRef} list={tableCodeDomesticAgencyWriteColumns}/>
-        case 'storeUpload' :
-            return <ExcelUpload gridRef={gridRef} list={storeWriteList}/>
-
 
         case 'storeAdd' :
             return <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
@@ -393,9 +417,7 @@ export const tableButtonList = (type: any, gridRef?: any) => {
                 <SaveOutlined/>추가
             </Button>
 
-        // ===================================================================
-        case 'estimateUpload' :
-            return <ExcelUpload gridRef={gridRef} list={estimateWriteList}/>
+
         case 'estimateAdd' :
             return <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
                            onClick={addEstimateRow}>
@@ -405,38 +427,19 @@ export const tableButtonList = (type: any, gridRef?: any) => {
 
 
 
-        // =======================================================
-        case 'orderUpload' :
-            return <ExcelUpload gridRef={gridRef} list={orderWriteList}/>
         case 'orderAdd' :
             return <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
                            onClick={addOrderRow}>
                 <SaveOutlined/>추가
             </Button>
         // =======================================================
-        case 'projectUpload' :
-            return <ExcelUpload gridRef={gridRef} list={projectWriteList}/>
+
         case 'upload' :
-            return <ExcelUpload gridRef={gridRef} list={reqWriteList}/>
-        case 'add' :
-            return <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
-                           onClick={addRow}>
-                <SaveOutlined/>추가
-            </Button>
-        case 'addProjectRow' :
-            return <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
-                           onClick={addProjectRow}>
-                <SaveOutlined/>추가
-            </Button>
-        case 'delete' :
             // @ts-ignored
-            return <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
-                           onClick={deleteList}>
-                <CopyOutlined/>삭제
-            </Button>
+            return <ExcelUpload ref={gridRef} />
         case 'print' :
             return <Button
-                size={'small'} style={{fontSize: 11}} onClick={downloadExcel}>
+                size={'small'} style={{fontSize: 11, backgroundColor : '#3bc381'}} onClick={downloadExcel}>
                 <FileExcelOutlined/>Excel 다운로드
             </Button>
 

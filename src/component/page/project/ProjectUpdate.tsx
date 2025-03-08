@@ -7,7 +7,7 @@ import TableGrid from "@/component/tableGrid";
 import SearchInfoModal from "@/component/SearchAgencyModal";
 import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, tooltipInfo, TopBoxCard} from "@/utils/commonForm";
 import {useRouter} from "next/router";
-import {commonManage, fileManage, gridManage} from "@/utils/commonManage";
+import {commonFunc, commonManage, fileManage, gridManage} from "@/utils/commonManage";
 import _ from "lodash";
 import {getAttachmentFileList, updateProject} from "@/utils/api/mainApi";
 import {findCodeInfo} from "@/utils/api/commonApi";
@@ -20,6 +20,7 @@ import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import 'react-splitter-layout/lib/index.css';
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import Select from "antd/lib/select";
+import {projectInfo} from "@/utils/column/ProjectInfo";
 
 
 const listType = 'projectDetailList'
@@ -191,10 +192,12 @@ export default function ProjectUpdate({dataInfo = {projectDetail: [], attachment
 
     function copyPage() {
         const totalList = gridManage.getAllData(gridRef)
-        let copyInfo = _.cloneDeep(info)
-        copyInfo[listType] = totalList
+        let copyInfo = _.cloneDeep(info);
+
+        copyInfo[listType] = [...totalList, ...commonFunc.repeatObject(projectInfo['write']['defaultData'], 100 - totalList.length)]
         copyInfo['writtenDate'] = moment().format('YYYY-MM-DD')
 
+        console.log(copyInfo[listType],'copyInfo[listType]')
         getCopyPage('project_write',copyInfo)
         // router.push(`/project_write?${query}`)
     }

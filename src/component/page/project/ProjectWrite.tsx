@@ -1,16 +1,10 @@
-import React, {useEffect, useRef, useState} from "react";
-import {FileSearchOutlined} from "@ant-design/icons";
-import {projectWriteColumn} from "@/utils/columnList";
-import {estimateDetailUnit, ModalInitList, projectDetailUnit, projectWriteInitial} from "@/utils/initialList";
-import message from "antd/lib/message";
-import TableGrid from "@/component/tableGrid";
+import React, {memo, useEffect, useRef, useState} from "react";
+import {ModalInitList, projectDetailUnit, projectWriteInitial} from "@/utils/initialList";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
-import SearchInfoModal from "@/component/SearchAgencyModal";
 import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, tooltipInfo, TopBoxCard} from "@/utils/commonForm";
 import {useRouter} from "next/router";
-import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
+import {commonFunc, commonManage} from "@/utils/commonManage";
 import _ from "lodash";
-import {saveProject} from "@/utils/api/mainApi";
 import {findCodeInfo} from "@/utils/api/commonApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import Spin from "antd/lib/spin";
@@ -23,10 +17,13 @@ import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 import {getData} from "@/manage/function/api";
 import Table from "@/component/util/Table";
 import {projectInfo} from "@/utils/column/ProjectInfo";
+import message from "antd/lib/message";
+import {saveProject} from "@/utils/api/mainApi";
 
 
 const listType = 'projectDetailList'
-export default function ProjectWrite({managerList = [], copyPageInfo = {}}) {
+
+function ProjectWrite({managerList = [], copyPageInfo = {}}) {
 
     const [memberList, setMemberList] = useState([]);
 
@@ -57,10 +54,11 @@ export default function ProjectWrite({managerList = [], copyPageInfo = {}}) {
 
 
     const groupRef = useRef<any>(null)
+    const infoRef = useRef<any>(null)
 
 
     const fileRef = useRef(null);
-    // const gridRef = useRef(null);
+    const tableRef = useRef(null);
     const copyInit = _.cloneDeep(projectWriteInitial)
     const copyUnitInit = _.cloneDeep(projectDetailUnit)
 
@@ -80,7 +78,7 @@ export default function ProjectWrite({managerList = [], copyPageInfo = {}}) {
     }
 
 
-    const [info, setInfo] = useState<any>(infoInit)
+    // const [info, setInfo] = useState<any>(infoInit)
     const [validate, setValidate] = useState({documentNumberFull: true});
 
     const [mini, setMini] = useState(true);
@@ -91,18 +89,18 @@ export default function ProjectWrite({managerList = [], copyPageInfo = {}}) {
 
 
     const [tableData, setTableData] = useState([]);
+    const [info, setInfo] = useState(infoInit);
+
 
     useEffect(() => {
-                if(copyPageInfo['project_write'] && !isEmptyObj(copyPageInfo['project_write'])){
-                    setInfo(infoInit);
-                    setTableData(commonFunc.repeatObject(projectInfo['write']['defaultData'], 100))
-                    // gridManage.resetData(gridRef,commonFunc.repeatObject(projectDetailUnit, 10))
-                }else{
-                    setInfo({...copyPageInfo['project_write'], ...adminParams, writtenDate: moment().format('YYYY-MM-DD')});
-                    const arr = new Array(  100 - copyPageInfo['project_write'][listType].length).fill('');
-                    setTableData([...copyPageInfo['project_write'][listType], ...arr])
-                    // gridManage.resetData(gridRef, copyPageInfo['project_write'][listType])
-                }
+        if (copyPageInfo['project_write'] && !isEmptyObj(copyPageInfo['project_write'])) {
+            setTableData(commonFunc.repeatObject(projectInfo['write']['defaultData'], 100))
+        } else {
+            console.log({...copyPageInfo['project_write'], ...adminParams, writtenDate: moment().format('YYYY-MM-DD')},'{...copyPageInfo[\'project_write\'], ...adminParams, writtenDate: moment().format(\'YYYY-MM-DD\')}:')
+            setInfo({...copyPageInfo['project_write'], ...adminParams, writtenDate: moment().format('YYYY-MM-DD')});
+            setTableData(copyPageInfo['project_write'][listType])
+        }
+
     }, [copyPageInfo['project_write']]);
 
     // const onGridReady = (params) => {
@@ -143,41 +141,73 @@ export default function ProjectWrite({managerList = [], copyPageInfo = {}}) {
         commonManage.openModal(e, setIsModalOpen)
     }
 
-    function onChange(e) {
-        if (e.target.id === 'documentNumberFull') {
-            setValidate(v => {
-                return {...v, documentNumberFull: true}
-            })
-        }
+    function onChange(e: any) {
         commonManage.onChange(e, setInfo)
     }
 
-    // async function saveFunc() {
-    //     gridRef.current.clearFocusedCell();
-    //     if (!info['documentNumberFull']) {
-    //         setValidate(v => {
-    //             return {...v, documentNumberFull: false}
-    //         })
-    //         return message.warn('프로젝트 번호가 누락되었습니다.')
-    //     }
-    //     const list = gridManage.getAllData(gridRef);
-    //
-    //     if (!list.length) {
-    //         return message.warn('하위 데이터 1개 이상이여야 합니다');
-    //     }
-    //
-    //
-    //     setLoading(true)
-    //     const formData: any = new FormData();
-    //     commonManage.setInfoFormData(info, formData, listType, list)
-    //     commonManage.getUploadList(fileRef, formData);
-    //
-    //
-    //     formData.delete('createdDate')
-    //     formData.delete('modifiedDate')
-    //
-    //     await saveProject({data: formData, router: router, returnFunc: returnFunc})
-    // }
+    const filterEmptyObjects = (data, excludeFields = []) => {
+        if (data.length === 0) return [];
+
+        return data.slice(0, -1).filter((obj) => {
+            // ✅ excludeFields의 모든 필드가 '' 또는 null 또는 undefined이면 제거
+            const isEmpty = excludeFields.every(field =>
+                obj[field] === '' || obj[field] === null || obj[field] === undefined
+            );
+
+            return !isEmpty; // 값이 하나라도 있으면 유지
+        });
+    };
+
+    async function saveFunc() {
+
+        const result = Object.keys(infoInit).map(v => `#${v}`)
+        const test = `${result.join(',')}`;
+        const elements = infoRef.current.querySelectorAll(test);
+
+        let bowl = {}
+        for (let element of elements) {
+            bowl[element.id] = element.value
+        }
+        // console.log(bowl,'bowl')
+        bowl['managerAdminId'] = info['managerAdminId'];
+       const findMember = memberList.find(v=> v.adminId === info['managerAdminId']);
+       console.log(findMember,'ss')
+        bowl['managerAdminName'] = findMember['name'];
+
+
+        const hotInstance = tableRef.current?.hotInstance;
+        const rawData = hotInstance?.getData(); // 이중 배열 형태
+        const formattedData = rawData.map(row => {
+            return Object.keys(projectInfo['write']['defaultData']).reduce((acc, key, index) => {
+                acc[key] = row[index] || "";
+                return acc;
+            }, {});
+        });
+        const list = filterEmptyObjects(formattedData, ['model', 'item', 'maker'])
+
+        if (!bowl['documentNumberFull']) {
+            setValidate(v => {
+                return {...v, documentNumberFull: false}
+            })
+            return message.warn('프로젝트 번호가 누락되었습니다.')
+        }
+
+
+        if (!list.length) {
+            return message.warn('하위 데이터 1개 이상이여야 합니다');
+        }
+
+        setLoading(true)
+        const formData: any = new FormData();
+        commonManage.setInfoFormData(bowl, formData, listType, list)
+        commonManage.getUploadList(fileRef, formData);
+
+
+        formData.delete('createdDate')
+        formData.delete('modifiedDate')
+
+        await saveProject({data: formData, router: router, returnFunc: returnFunc})
+    }
 
     function returnFunc(e) {
         if (e === -20001) {
@@ -185,7 +215,6 @@ export default function ProjectWrite({managerList = [], copyPageInfo = {}}) {
                 return {documentNumberFull: false}
             })
         }
-        window.opener?.postMessage('write', window.location.origin);
         setLoading(false)
 
     }
@@ -205,55 +234,56 @@ export default function ProjectWrite({managerList = [], copyPageInfo = {}}) {
     };
 
 
-
-
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('project_write');
         return savedSizes ? JSON.parse(savedSizes) : [15, 15, 40, 30]; // 기본값 [50, 50, 50]
     };
+
     function onResizeChange() {
         setSizes(groupRef.current.getLayout())
     }
+
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
 
+    console.log(info['createBy'], 'info[\'createBy\']:')
     return <Spin spinning={loading} tip={'프로젝트 등록중...'}>
         <PanelSizeUtil groupRef={groupRef} setSizes={setSizes} storage={'project_write'}/>
         {/*<SearchInfoModal info={info} setInfo={setInfo}*/}
         {/*                 open={isModalOpen}*/}
-        {/*                 gridRef={gridRef}*/}
+
         {/*                 setValidate={setValidate}*/}
         {/*                 setIsModalOpen={setIsModalOpen}/>*/}
 
-        <div style={{
+        <div ref={infoRef} style={{
             display: 'grid',
-            gridTemplateRows: `${mini ? '440px' : '65px'} calc(100vh - ${mini ? 570 : 195}px)`,
+            gridTemplateRows: `${mini ? '450px' : '65px'} calc(100vh - ${mini ? 560 : 195}px)`,
+            rowGap: 10,
             columnGap: 5
         }}>
             <MainCard title={'프로젝트 등록'} list={[
-                // {name: '저장', func: saveFunc, type: 'primary'},
+                {name: '저장', func: saveFunc, type: 'primary'},
                 {name: '초기화', func: clearAll, type: 'danger'}
             ]} mini={mini} setMini={setMini}>
 
                 {mini ? <div>
-                        <TopBoxCard title={''} grid={'1fr 1fr 1fr 1fr'}>
+                        <TopBoxCard title={''} grid={'150px 150px 150px'}>
                             {inputForm({
                                 title: '작성자',
                                 id: 'createBy',
                                 disabled: true,
-                                onChange: onChange,
-                                data: info
+                                defaultValue: info['createBy']
                             })}
                             {datePickerForm({
                                 title: '작성일자',
                                 id: 'writtenDate',
                                 disabled: true,
-                                onChange: onChange,
-                                data: info
+                                defaultValue: info['writtenDate']
                             })}
                             <div>
-                                <div style={{fontSize : 12}}>담당자</div>
-                                <Select style={{width: '100%', fontSize : 12, marginTop : 5}} size={'small'}
+                                <div style={{fontSize: 12, fontWeight: 700}}>담당자</div>
+                                <Select id={'managerAdminId'} style={{width: '100%', fontSize: 12, marginTop: 5}}
+                                        size={'small'}
                                         showSearch
                                         value={info['managerAdminId']}
                                         placeholder="Select a person"
@@ -266,24 +296,22 @@ export default function ProjectWrite({managerList = [], copyPageInfo = {}}) {
                         </TopBoxCard>
 
 
-                        <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 3, paddingTop: 3}}>
+                        <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 3, paddingTop: 5}}>
                             <Panel defaultSize={sizes[0]} minSize={10} maxSize={100} onResize={onResizeChange}>
                                 <BoxCard title={'프로젝트 정보'} tooltip={tooltipInfo('readProject')}>
                                     {inputForm({
-                                        title: 'PROJECT NO.',
+                                        title: 'PROJECT NO.🔴',
                                         id: 'documentNumberFull',
-                                        onChange: onChange,
-                                        data: info,
-                                        validate: validate['documentNumberFull']
+                                        placeholder: '필수입력',
+                                        defaultValue: info['documentNumberFull']
                                     })}
                                     {inputForm({
                                         title: '프로젝트 제목',
                                         id: 'projectTitle',
-                                        placeholder: '매입처 담당자 입력 필요',
-                                        onChange: onChange,
-                                        data: info
+                                        defaultValue: info['projectTitle']
+
                                     })}
-                                    {datePickerForm({title: '마감일자', id: 'dueDate', onChange: onChange, data: info})}
+                                    {datePickerForm({title: '마감일자', id: 'dueDate', defaultValue: info['dueDate']})}
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
@@ -292,30 +320,30 @@ export default function ProjectWrite({managerList = [], copyPageInfo = {}}) {
                                     {inputForm({
                                         title: '고객사명',
                                         id: 'customerName',
-                                        suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
+                                        defaultValue: info['customerName'],
+
+                                        suffix: <span style={{cursor: 'pointer'}} onClick={
                                             (e) => {
                                                 e.stopPropagation();
                                                 openModal('customerName');
                                             }
-                                        }/>, onChange: onChange, data: info, handleKeyPress: handleKeyPress
+                                        }>🔍</span>, handleKeyPress: handleKeyPress
                                     })}
                                     {inputForm({
                                         title: '고객사 담당자명',
                                         id: 'customerManagerName',
-                                        onChange: onChange,
-                                        data: info
+                                        defaultValue: info['customerManagerName']
+
                                     })}
                                     {inputForm({
                                         title: '담당자 전화번호',
                                         id: 'customerManagerPhone',
-                                        onChange: onChange,
-                                        data: info
+                                        defaultValue: info['customerManagerPhone'],
                                     })}
                                     {inputForm({
                                         title: '담당자 이메일',
                                         id: 'customerManagerEmail',
-                                        onChange: onChange,
-                                        data: info
+                                        defaultValue: info['customerManagerEmail'],
                                     })}
                                 </BoxCard>
                             </Panel>
@@ -326,22 +354,19 @@ export default function ProjectWrite({managerList = [], copyPageInfo = {}}) {
                                         title: '비고란',
                                         rows: 2,
                                         id: 'remarks',
-                                        onChange: onChange,
-                                        data: info
+                                        defaultValue: info['remarks'],
                                     })}
                                     {textAreaForm({
                                         title: '지시사항',
                                         rows: 2,
                                         id: 'instructions',
-                                        onChange: onChange,
-                                        data: info
+                                        defaultValue: info['instructions'],
                                     })}
                                     {textAreaForm({
                                         title: '특이사항',
                                         rows: 2,
                                         id: 'specialNotes',
-                                        onChange: onChange,
-                                        data: info
+                                        defaultValue: info['specialNotes'],
                                     })}
                                 </BoxCard>
                             </Panel>
@@ -361,16 +386,10 @@ export default function ProjectWrite({managerList = [], copyPageInfo = {}}) {
                     : <></>}
             </MainCard>
 
-            {/*<TableGrid*/}
-            {/*    gridRef={gridRef}*/}
-            {/*    columns={projectWriteColumn}*/}
-            {/*    onGridReady={onGridReady}*/}
-            {/*    type={'write'}*/}
-            {/*    funcButtons={['projectUpload', 'addProjectRow', 'delete', 'print']}*/}
-            {/*/>*/}
-
-            <Table data={tableData} column={projectInfo['write']} type={'project_write'}/>
+            <Table data={tableData} column={projectInfo['write']} funcButtons={['print']} ref={tableRef}/>
         </div>
     </Spin>
 }
 
+
+export default memo(ProjectWrite)
