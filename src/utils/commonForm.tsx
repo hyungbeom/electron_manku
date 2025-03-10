@@ -247,7 +247,7 @@ export const rangePickerForm = ({
 }
 
 
-export const datePickerForm = ({title, id, disabled = false}) => {
+export const datePickerForm = ({title, id, disabled = false, onChange = null, data = null}) => {
 
     return <div style={{fontSize: 12, paddingBottom: 10}}>
         <div style={{paddingBottom: 5.5, fontWeight: 700}}>{title}</div>
