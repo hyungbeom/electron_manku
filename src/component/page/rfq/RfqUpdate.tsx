@@ -129,13 +129,15 @@ export default function RqfUpdate({updateKey = {}, getCopyPage = null, managerLi
 
 
         const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
-        infoData['managerAdminName'] = findMember['name'];
-        if (!infoData['agencyCode']) {
-            const dom = infoRef.current.querySelector('#agencyCode');
-            dom.style.borderColor = 'red'
-            return message.warn('매입처 코드가 누락되었습니다.')
+        if(findMember){
+            infoData['managerAdminName'] = findMember['name'];
         }
 
+        if (!infoData['agencyCode']) {
+            const dom = infoRef.current.querySelector('#agencyCode');
+            dom.style.borderColor = 'red';
+            return message.warn('매입처 코드가 누락되었습니다.');
+        }
 
         const tableList = tableRef.current?.getSourceData();
 
@@ -153,8 +155,8 @@ export default function RqfUpdate({updateKey = {}, getCopyPage = null, managerLi
         }, formData, listType, filterTableList)
         commonManage.getUploadList(fileRef, formData);
         commonManage.deleteUploadList(fileRef, formData, originFileList)
-        formData.delete('createdDate')
-        formData.delete('modifiedDate')
+        formData.delete('createdDate');
+        formData.delete('modifiedDate');
         await updateRfq({data: formData, returnFunc: returnFunc})
     }
 
