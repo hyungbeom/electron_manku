@@ -80,7 +80,7 @@ export function BoxCard({children, title = null, tooltip = '', disabled = false}
     // @ts-ignore
     return <Card style={{
         border: '1px solid #bae7ff',
-        height : '100%'
+        height: '100%'
     }} size={'small'}
                  headStyle={{backgroundColor: '#bae7ff'}}
                  title={title ? <div style={{display: 'flex', justifyContent: 'space-between', fontSize: 13}}>
@@ -146,7 +146,6 @@ export const InputForm = ({
                           }: any) => {
 
 
-
     return <div style={{fontSize: fontSize, paddingBottom: 10}}>
         <div style={{paddingBottom: fontSize / 2, fontWeight: 700}}>{title}</div>
         {/*@ts-ignored*/}
@@ -155,8 +154,8 @@ export const InputForm = ({
                id={id}
                size={size}
                onKeyDown={handleKeyPress}
-               // suffix={suffix}
-               // style={{fontSize: 12, border : '1px solid lightGray'}}
+            // suffix={suffix}
+            // style={{fontSize: 12, border : '1px solid lightGray'}}
         />
     </div>
 }
@@ -169,25 +168,31 @@ export const inputForm = ({
                               suffix = null,
                               handleKeyPress = function () {
                               },
-                              value = '',
+                              onChange = null,
+                              data = null,
                               validate = true,
                               size = 'small',
+                              disabled = false,
                               fontSize = 12
                           }: any) => {
-
 
 
     return <div style={{fontSize: fontSize, paddingBottom: 10}}>
         <div style={{paddingBottom: fontSize / 2, fontWeight: 700}}>{title}</div>
         {/*@ts-ignored*/}
-        <input placeholder={placeholder}
-
-               id={id}
-               size={size}
-               onKeyDown={handleKeyPress}
-            // suffix={suffix}
-            style={{fontSize: 12, border : `1px solid ${validate ? 'lightGray' : 'red'}`}}
-        />
+        <div style={{display : 'flex'}}>
+            <input placeholder={placeholder}
+                   id={id}
+                   size={size}
+                   disabled={disabled}
+                   value={data ? data[id] : null}
+                   onKeyDown={handleKeyPress}
+                   onChange={onChange}
+                // suffix={suffix}
+                   style={{fontSize: 12, border: `1px solid ${validate ? 'lightGray' : 'red'}`}}
+            />
+            <span style={{marginLeft : -22, paddingTop : 2}}>{suffix}</span>
+        </div>
     </div>
 }
 
@@ -232,23 +237,23 @@ export const rangePickerForm = ({
                                 }: any) => {
     let bowl = data;
     return <div style={{fontSize: 12, paddingBottom: 10}}>
-        <div style={{paddingBottom: 3, fontSize: 11}}>{title}</div>
+        <div style={{paddingBottom: 5.5, fontSize: 12, fontWeight : 700}}>{title}</div>
         <RangePicker className={'custom-rangepicker'} value={[moment(bowl[id][0]), moment(bowl[id][1])]} id={id}
                      size={'small'} disabled={disabled}
-                     onChange={(e, d) => onChange({target: {id: id, value: d}})} style={{width: '100%',}}/>
+                     onChange={(e, d) => onChange({target: {id: id, value: d}})} style={{width: '100%',height : 24}}/>
     </div>
 
 
 }
 
 
-export const datePickerForm = ({title, id, disabled = false, defaultValue}) => {
+export const datePickerForm = ({title, id, disabled = false}) => {
 
     return <div style={{fontSize: 12, paddingBottom: 10}}>
-        <div style={{paddingBottom: 5.5, fontWeight : 700}}>{title}</div>
+        <div style={{paddingBottom: 5.5, fontWeight: 700}}>{title}</div>
         {/*@ts-ignore*/}
 
-        <input type="date" id={id}/>
+        <input type="date" id={id} disabled={disabled}/>
     </div>
 }
 
@@ -272,7 +277,7 @@ export const inputNumberForm = ({
 
     return <div style={{fontSize: 12, paddingBottom: 10}}>
         <div style={{paddingBottom: 4}}>{title}</div>
-        <InputNumber id={id} value={bowl[id]} disabled={disabled}
+        <InputNumber id={id} disabled={disabled}
                      style={{width: '100%'}}
                      formatter={formatter}
                      parser={parser}
@@ -332,7 +337,7 @@ export const textAreaForm = ({
                              }) => {
     return <div style={{fontSize: 12, paddingBottom: 5}}>
         <div style={{paddingBottom: 5, fontWeight: 700}}>{title}</div>
-        <textarea style={{resize: 'none', fontSize: 12, }} rows={rows} id={id}
+        <textarea style={{resize: 'none', fontSize: 12,}} rows={rows} id={id}
                   disabled={disabled}
                   className="custom-textarea"
                   placeholder={placeHolder}
@@ -373,7 +378,7 @@ export const tooltipInfo = (type: any) => {
 
 export const tableButtonList = (type: any, gridRef?: any) => {
 
-    console.log(gridRef.current,'gridRef:')
+    console.log(gridRef.current, 'gridRef:')
     const downloadExcel = async () => {
         gridManage.exportSelectedRowsToExcel(gridRef, '조회리스트')
     };
@@ -442,8 +447,6 @@ export const tableButtonList = (type: any, gridRef?: any) => {
             </Button>
 
 
-
-
         case 'orderAdd' :
             return <Button type={'primary'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
                            onClick={addOrderRow}>
@@ -453,10 +456,10 @@ export const tableButtonList = (type: any, gridRef?: any) => {
 
         case 'upload' :
             // @ts-ignored
-            return <ExcelUpload ref={gridRef} />
+            return <ExcelUpload ref={gridRef}/>
         case 'print' :
             return <Button
-                size={'small'} style={{fontSize: 11, backgroundColor : '#3bc381'}} onClick={downloadExcel}>
+                size={'small'} style={{fontSize: 11, backgroundColor: '#3bc381'}} onClick={downloadExcel}>
                 <FileExcelOutlined/>Excel 다운로드
             </Button>
 

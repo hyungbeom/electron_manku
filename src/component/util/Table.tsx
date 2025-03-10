@@ -42,40 +42,28 @@ const Table = forwardRef(({data = new Array(100).fill({}), column, type = '', fu
     const tableContainerRef = useRef(null);
     const [tableHeight, setTableHeight] = useState(400); // 기본값 설정
 
-    const updateTableHeight = () => {
-        if (tableContainerRef.current) {
-            const parentHeight = tableContainerRef.current.clientHeight;
-            setTableHeight(parentHeight - 10); // 🔥 부모 높이에서 약간 여유 공간 확보
-        }
-    };
 
     useEffect(() => {
-        updateTableHeight(); // 최초 실행 시 테이블 크기 설정
-        window.addEventListener("resize", updateTableHeight); // 창 크기 변경 감지
-
-        return () => {
-            window.removeEventListener("resize", updateTableHeight); // 이벤트 해제
-        };
+        let resizeObserver;
+        if (tableContainerRef.current) {
+            resizeObserver = new ResizeObserver(() => {
+                requestAnimationFrame(() => {
+                    setTableHeight(tableContainerRef.current.clientHeight - 10);
+                });
+            });
+            resizeObserver.observe(tableContainerRef.current);
+        }
+        return () => resizeObserver?.disconnect();
     }, []);
 
 
     const tableData = useMemo(() => {
-        function reorderObjectsArray(dataArray: Record<string, any>[], keyOrder: string[]) {
-            return dataArray.map(data => {
-                return keyOrder.reduce((acc, key) => {
-                    acc[key] = data[key] !== undefined ? data[key] : ""; // 키가 없으면 빈 문자열
-                    return acc;
-                }, {} as Record<string, any>);
-            });
-        }
-        const reorderedDataArray = reorderObjectsArray(data, Object.keys(column['defaultData']));
-
-        let calcData: any = reorderedDataArray.map(column['excelExpert']);
-
-        calcData.push(column['totalList'])
-
-        return calcData
-    }, [data])
+        const keyOrder = Object.keys(column['defaultData']);
+        return data
+            .map((item) => keyOrder.reduce((acc, key) => ({ ...acc, [key]: item[key] ?? "" }), {}))
+            .map(column['excelExpert'])
+            .concat(column['totalList']); // `push` 대신 `concat` 사용
+    }, [data, column]);
 
     useEffect(() => {
         if (!hotRef.current?.hotInstance) return;
@@ -86,10 +74,10 @@ const Table = forwardRef(({data = new Array(100).fill({}), column, type = '', fu
 
 
     const afterRenderer = (td, row, col, prop, value) => {
-        if (["unitPrice", "total", "totalPurchase", "purchasePrice"].includes(prop)) {
+        if (["unitPrice", 'totalNet',"total",'net', "totalPurchase", "purchasePrice"].includes(prop)) {
             td.style.textAlign = "right"; // 우측 정렬
 
-            if (["total", "totalPurchase"].includes(prop)) {
+            if (['totalNet',"total", "totalPurchase"].includes(prop)) {
                 if (value === 0 || isNaN(value)) {
                     td.textContent = ""; // 🔥 0 또는 NaN이면 빈 문자열 적용
                 } else {
@@ -102,19 +90,20 @@ const Table = forwardRef(({data = new Array(100).fill({}), column, type = '', fu
         }
     };
 
-    const handleBeforeChange = (changes) => {
-        if (!hotRef.current) return;
 
-        changes.forEach(([row, prop, oldValue, newValue]) => {
-            if (prop === "marginRate" && newValue !== null && newValue !== undefined) {
-                let numericValue = parseFloat(newValue);
-                if (!isNaN(numericValue)) {
-                    changes[0][3] = numericValue / 100; // 🔥 사용자가 `5` 입력 시 `0.05`로 변환
+    function afterChange(changes, source) {
+        if (source === "edit") {
+            changes.forEach(([row, prop, oldValue, newValue]) => {
+                if (prop === "content" && newValue === "회신") {
+
+                    hotRef.current.hotInstance.suspendExecution(); // ⚠️ 자동 계산 방지
+                    hotRef.current.hotInstance.setDataAtCell(row, 8, moment().format('YYYY-MM-DD')); // replyDate 컬럼 업데이트
+                     hotRef.current.hotInstance.resumeExecution(); // ✅ 다시 계산 시작
+
                 }
-            }
-        });
-    };
-
+            });
+        }
+    }
 
     return (
         <div ref={tableContainerRef} className="table-container">
@@ -143,7 +132,6 @@ const Table = forwardRef(({data = new Array(100).fill({}), column, type = '', fu
                 height={tableHeight}
                 autoWrapRow={true}
                 autoWrapCol={true}
-                beforeChange={handleBeforeChange} // 🔥 사용자 입력값 변환
                 manualColumnMove={false}
                 multiColumnSorting={column["type"] === "read"}
                 navigableHeaders={true}
@@ -181,6 +169,8 @@ const Table = forwardRef(({data = new Array(100).fill({}), column, type = '', fu
                         return {readOnly: true}; // 🔥 마지막 행은 읽기 전용
                     }
                 }}
+
+                afterChange={afterChange}
                 columns={column["columnList"].map(col => {
                     return ({
                         data: col.data,

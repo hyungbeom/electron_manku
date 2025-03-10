@@ -1,3 +1,5 @@
+import moment from "moment";
+
 export const projectInfo = {
     write: {
         columnWidth: [160, 220, 220, 200, 55, 65, 45, 120, 120, 120, 120, 70, 45, 160, 130, 130, 180, 160, 120, 180],
@@ -69,5 +71,209 @@ export const projectInfo = {
             totalPurchase: '=SUM(K1:K100)',
         },
         type: 'write'
-    }
+    },
+    defaultInfo : {
+        managerAdminId: null,
+        writtenDate: moment().format('YYYY-MM-DD'),
+        documentNumberFull: '',
+        projectTitle: '',
+        dueDate: '',
+        customerName: '',
+        customerManagerName: '',
+        customerManagerPhone: '',
+        customerManagerEmail: '',
+        remarks: '',
+        instructions: '',
+        specialNotes: '',
+    },
+};
+
+
+
+
+export const rfqInfo = {
+    write: {
+        columnWidth: [220, 45, 45, 55, 120,120, 45, 75, 75, 150],
+        column: [ 'Model', '수량','단위','CURR','매입 단가','매입총액','납기','회신여부','회신일','비고'],
+        columnList: [
+            {data: "model", type: "text"},
+            {data: "quantity", type: "numeric"},
+            {
+                data: "unit",
+                type: "autocomplete",
+                source: ['ea', 'Set', 'Pack', 'Can', 'Box', 'MOQ', 'Meter', 'Feet', 'Inch', 'Roll', 'g', 'kg', 'oz']
+            },
+            {data: "currency", type: "autocomplete", source: ['KRW', 'USD', 'EUR', 'JPY', 'GBP']},
+            {data: "net", type: "numeric"},
+            {data: "totalNet", type: "numeric", readOnly: true},
+            {data: "deliveryDate", type: "numeric"},
+            {data: "content", type: "autocomplete", source: ['미회신', '회신', '정보부족', '한국대리점', 'MOQ', 'OEM', '단종', '견적포기', '입찰마감', '견적불가', '기타']},
+            {data: "replyDate", type: "date"},
+            {data: "remarks", type: "numeric"},
+
+        ],
+        defaultData: {
+            "model": '',             // Model
+            "quantity": '',           // 수량
+            "unit": "ea",            // 단위
+            "currency": "",       // CURR
+            "net": '',                // 매입단가
+            "totalNet": '',                // 매입단가
+            "serialNumber": '',       // 항목 순서 (1부터 시작)
+            "deliveryDate": '',      // 납기
+            "content": "",       // 내용
+            "replyDate": '',         // 회신일
+            "remarks": ""            // 비고
+        },
+        excelExpert: (v, i) => {
+            v['totalNet'] = `=B${i + 1}*E${i + 1}`
+            return v
+        },
+        totalList: {
+            "model": '',             // Model
+            "quantity": '=SUM(B1:B100)',           // 수량
+            "unit": "ea",            // 단위
+            "currency": "",       // CURR
+            "net": '=SUM(E1:E100)',                // 매입단가
+            "totalNet": '=SUM(F1:F100)',                // 매입단가
+            "serialNumber": '',       // 항목 순서 (1부터 시작)
+            "deliveryDate": '',      // 납기
+            "content": "",       // 내용
+            "replyDate": '',         // 회신일
+            "remarks": ""            // 비고
+        },
+        type: 'write'
+    },
+    defaultInfo : {
+        createdBy: '',
+        managerAdminName: '',
+        managerAdminId: null,
+
+        writtenDate: moment().format('YYYY-MM-DD'),
+
+        documentNumberFull: '',   // ====== api 통해서 가져와야 함?
+        rfqNo: '',
+        projectTitle: '',
+// ====================================
+        agencyCode: '',
+        agencyName: '',
+        agencyManagerName: '',
+        agencyManagerEmail: '',
+        agencyManagerId: '',
+        dueDate: '',
+        agencyType: '',
+        // ======================
+        customerCode: '', //없어도 되는것
+        customerName: '',
+        managerName: '',
+        phoneNumber: '',
+        faxNumber: '',
+        customerManagerEmail: '',
+
+        // ======================
+        maker: '',
+        item: '',
+        instructions: '',
+        uploadType: 0,
+
+        remarks: '',
+        endUser: '',
+
+
+    },
+};
+
+
+
+
+
+
+
+export const estimateInfo = {
+    write: {
+        columnWidth: [220, 45, 45, 55, 120,120, 45, 75, 75, 150],
+        column: [ 'Model', '수량','단위','CURR','매입 단가','매입총액','납기','회신여부','회신일','비고'],
+        columnList: [
+            {data: "model", type: "text"},
+            {data: "quantity", type: "numeric"},
+            {
+                data: "unit",
+                type: "autocomplete",
+                source: ['ea', 'Set', 'Pack', 'Can', 'Box', 'MOQ', 'Meter', 'Feet', 'Inch', 'Roll', 'g', 'kg', 'oz']
+            },
+            {data: "currency", type: "autocomplete", source: ['KRW', 'USD', 'EUR', 'JPY', 'GBP']},
+            {data: "net", type: "numeric"},
+            {data: "totalNet", type: "numeric", readOnly: true},
+            {data: "deliveryDate", type: "numeric"},
+            {data: "content", type: "autocomplete", source: ['미회신', '회신', '정보부족', '한국대리점', 'MOQ', 'OEM', '단종', '견적포기', '입찰마감', '견적불가', '기타']},
+            {data: "replyDate", type: "date"},
+            {data: "remarks", type: "numeric"},
+
+        ],
+        defaultData: {
+            "model": "",   // Model
+            "quantity": '',                  // 수량
+            "unit": "",                   // 단위
+            "currency": '',          // CURR
+            "net": '',                 // 매입단가
+            "unitPrice": '',           // 단가
+            "amount": '',               // 금액
+            "serialNumber": ''           // 견적의뢰 내역 순서 (1부터 시작)
+        },
+        excelExpert: (v, i) => {
+            v['totalNet'] = `=B${i + 1}*E${i + 1}`
+            return v
+        },
+        totalList: {
+            "model": '',             // Model
+            "quantity": '=SUM(B1:B100)',           // 수량
+            "unit": "ea",            // 단위
+            "currency": "",       // CURR
+            "net": '=SUM(E1:E100)',                // 매입단가
+            "totalNet": '=SUM(F1:F100)',                // 매입단가
+            "serialNumber": '',       // 항목 순서 (1부터 시작)
+            "deliveryDate": '',      // 납기
+            "content": "",       // 내용
+            "replyDate": '',         // 회신일
+            "remarks": ""            // 비고
+        },
+        type: 'write'
+    },
+    defaultInfo : {
+        createdBy: '',
+        managerAdminName: '',
+        managerAdminId: null,
+
+        writtenDate: moment().format('YYYY-MM-DD'),
+
+        documentNumberFull: '',   // ====== api 통해서 가져와야 함?
+        rfqNo: '',
+        projectTitle: '',
+// ====================================
+        agencyCode: '',
+        agencyName: '',
+        agencyManagerName: '',
+        agencyManagerEmail: '',
+        agencyManagerId: '',
+        dueDate: '',
+        agencyType: '',
+        // ======================
+        customerCode: '', //없어도 되는것
+        customerName: '',
+        managerName: '',
+        phoneNumber: '',
+        faxNumber: '',
+        customerManagerEmail: '',
+
+        // ======================
+        maker: '',
+        item: '',
+        instructions: '',
+        uploadType: 0,
+
+        remarks: '',
+        endUser: '',
+
+
+    },
 };

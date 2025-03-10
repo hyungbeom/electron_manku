@@ -262,13 +262,14 @@ body {
     word-break: break-word; /* ✅ 긴 단어도 자동 줄바꿈 */
 }
 /* 🔥 빨간색 텍스트 적용 */
-.htRedText {
+.ht-red {
     color: red !important;
+    text-align: right;
     font-weight: bold;
 }
 
 /* 🔥 숫자 컬럼 우측 정렬 + 빨간색 */
-.htRightText {
+.ht-right-align {
     text-align: right !important;
     color: red !important;
     font-weight: bold;

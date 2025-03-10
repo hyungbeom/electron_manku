@@ -4,13 +4,142 @@ import {dateFormat, rfqReadColumns} from "@/utils/columnList";
 import message from "antd/lib/message";
 import {jsPDF} from "jspdf";
 import html2canvas from "html2canvas";
+import {getData} from "@/manage/function/api";
 
 export const commonManage: any = {}
 export const apiManage: any = {}
 export const commonFunc: any = {}
-export const commonCalc: any = {}
+export const tableManage: any = {}
 export const gridManage: any = {}
 export const fileManage: any = {}
+
+
+
+
+
+// =========================================================================================
+// =========================================================================================
+// =========================================================================================
+// =========================================================================================
+// =========================================================================================
+// =========================================================================================
+// =========================================================================================
+// =========================================================================================
+// =========================================================================================
+// =========================================================================================
+
+
+commonManage.getMemberList =  async function () {
+    // @ts-ignore
+    const v = await getData.post('admin/getAdminList', {
+        "searchText": null, // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
+        "searchAuthority": null, // 1: 일반, 0: 관리자
+        "page": 1,
+        "limit": -1
+    });
+    return v.data.entity.adminList;
+}
+
+
+/**
+ * @description info정보를 가지고오는 function
+ * @param infoRef 페이지의 input-dom들을 감싸고있는 container dom에 연결된 ref
+ * @param obj info 기본정보를 가지고 있는 object가 보통
+ */
+commonManage.getInfo =  function (infoRef, obj){
+    const result = Object.keys(obj).map(v => `#${v}`)
+    const test = `${result.join(',')}`;
+    const elements = infoRef.current.querySelectorAll(test);
+
+    let bowl = {}
+    for (let element of elements) {
+        bowl[element.id] = element.value
+    }
+
+    return bowl;
+}
+
+
+
+/**
+ * @description 입력정보를 초기화 하는 기능 function
+ * @param infoRef 페이지의 input-dom들을 감싸고있는 container dom에 연결된 ref
+ * @param obj input 초기화 할 key : value(초기값) 리스트
+ * @param adminId 로그인 user의 managerAdminId 에 해당하는 adminId
+ */
+commonManage.setInfo =  function (infoRef, obj, adminId?){
+    const result = Object.keys(obj).map(v => `#${v}`)
+    const test = `${result.join(',')}`;
+
+    if(test) {
+        const elements = infoRef.current.querySelectorAll(test);
+
+        elements.forEach(element => {
+            if (element.id === 'managerAdminId' && !isNaN(adminId)) {
+                element.value = parseInt(adminId)
+            } else {
+                element.value = obj[element.id]
+            }
+        });
+    }
+}
+
+
+/**
+ *
+ * @param data 대표적으로 tableData 가 될것이다.(or 비슷한 유형의 데이터)
+ * @param excludeFields 유효하지않는 값인지 판단할 key-list (한개라도 유효하면 return)
+ */
+commonManage.filterEmptyObjects =  function(data, excludeFields = []){
+    if (data.length === 0) return [];
+    return data.slice(0, -1).filter((obj) => {
+        const isEmpty = excludeFields.every(field =>
+            obj[field] === '' || obj[field] === null || obj[field] === undefined
+        );
+        return !isEmpty;
+    });
+};
+
+
+
+
+commonManage.filterEmptyObjects =  function(data, excludeFields = []){
+    if (data.length === 0) return [];
+    return data.slice(0, -1).filter((obj) => {
+        const isEmpty = excludeFields.every(field =>
+            obj[field] === '' || obj[field] === null || obj[field] === undefined
+        );
+        return !isEmpty;
+    });
+};
+
+
+
+/**
+ * @description 객체를 원하는만큼 복사하는 로직(주로 테이블 100-Row 맞추는 용도로 사용)
+ * @param item 기본 key : value table-data 기본값
+ * @param numb 객체를 만들 갯수
+ */
+commonFunc.repeatObject = function (item, numb) {
+    return Array.from({length: numb}, () => ({...item}));
+}
+
+
+// =========================================================================================
+// =========================================================================================
+// =========================================================================================
+// =========================================================================================
+// =========================================================================================
+// =========================================================================================
+// =========================================================================================
+// =========================================================================================
+
+
+
+
+
+
+
 
 
 gridManage.getSelectRows = function (gridRef) {
@@ -499,9 +628,7 @@ commonManage.changeCurr = function (value) {
     }
 }
 
-commonFunc.repeatObject = function (item, numb) {
-    return Array.from({length: numb}, () => ({...item}));
-}
+
 commonFunc.validateInput = function (id) {
     const inputElement = document.getElementById(id);
     if (inputElement) {
@@ -720,3 +847,4 @@ commonManage.splitDataWithSequenceNumber = function (data, firstLimit = 20, next
 
     return result;
 }
+

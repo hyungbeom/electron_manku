@@ -16,11 +16,12 @@ import {commonManage, gridManage} from "@/utils/commonManage";
 
 export default function SearchInfoModal({
                                             info,
+                                            infoRef,
                                             setInfo,
                                             open,
                                             setIsModalOpen,
 
-                                            setValidate = null,
+
                                             type = '',
                                             gridRef = null,
                                             compProps
@@ -39,20 +40,31 @@ export default function SearchInfoModal({
     useEffect(() => {
         if (open) {
             const firstTrueKey = Object.keys(open).find(key => open[key]);
+            const dom = infoRef.current.querySelector(`#${firstTrueKey}`);
+            switch (firstTrueKey) {
+                case 'customerName' :
+                    searchFunc(firstTrueKey, dom.value)
+                    break;
+            }
             setOpenCheck(firstTrueKey);
             if (!firstTrueKey) {
                 setList([]);
-                // setCode('')
-            } else {
-                if (firstTrueKey === 'customerName' && info.customerInfoList) {
-                    searchFunc(firstTrueKey, info[firstTrueKey]);
-                    setCode(info[firstTrueKey])
-
-                } else {
-                    searchFunc(firstTrueKey, info[firstTrueKey]);
-                    setCode(info[firstTrueKey])
-                }
+            }else{
+                        searchFunc(firstTrueKey, dom.value);
+                        setCode(dom.value)
             }
+            // } else {
+            //     const dom = infoRef.current.querySelector(`#${firstTrueKey}`);
+            //     if (firstTrueKey === 'customerName' && info.customerInfoList) {
+            //
+            //         searchFunc(firstTrueKey, dom.value);
+            //         setCode(info[firstTrueKey])
+            //
+            //     } else {
+            //         searchFunc(firstTrueKey, info[firstTrueKey]);
+            //         setCode(info[firstTrueKey])
+            //     }
+            // }
         }
     }, [open, info])
 
@@ -232,7 +244,7 @@ export default function SearchInfoModal({
                            onKeyDown={handleKeyPress}
                            placeholder={modalList[openCheck]?.placeholder}
                            id={'agencyCode'} value={code}
-                           onChange={(e: any) => setCode(e.target.value)}></Input>
+                           onChange={(e: any) => setCode(e.target.value)}/>
                     <Button onClick={() => searchFunc(openCheck, code)}>조회</Button>
                 </div>
 
@@ -240,25 +252,22 @@ export default function SearchInfoModal({
                              onCellClicked={async (e) => {
                                  switch (openCheck) {
                                      case 'customerName' :
-                                         setInfo(v => {
-                                             return {
-                                                 ...v,
-                                                 phoneNumber: e.data.directTel,
-                                                 customerManagerEmail: e.data.email,
-                                                 customerManagerName: e.data.managerName,
-                                                 customerManagerPhone: e.data.directTel,
-                                                 customerCode: e.data.customerCode,
-                                                 paymentTerms: e.data.paymentMethod ? e.data.paymentMethod : '발주시 50% / 납품시 50%',
-                                                 ...e.data
-                                             }
-                                         });
+                                         commonManage.setInfo(infoRef, {
+                                             phoneNumber: e.data.directTel,
+                                             customerName: e.data.customerName,
+                                             customerManagerEmail: e.data.email,
+                                             customerManagerName: e.data.managerName,
+                                             faxNumber: e.data.faxNumber,
+                                             managerName: e.data.managerName,
+                                             customerManagerPhone: e.data.directTel,
+                                             customerCode: e.data.customerCode,
+                                             paymentTerms: e.data.paymentMethod ? e.data.paymentMethod : '발주시 50% / 납품시 50%',
+                                         })
                                          break;
                                      case 'maker' :
-                                         setInfo(v => {
-
-                                             return {
-                                                 ...v, ...e.data, maker: e.data.makerName
-                                             }
+                                         commonManage.setInfo(infoRef, {
+                                             maker: e.data.makerName,
+                                             item: e.data.item
                                          })
                                          break;
                                      case 'orderList' :
@@ -288,19 +297,18 @@ export default function SearchInfoModal({
                                              }
                                          }).then(data => {
 
-                                             setInfo(v => {
-                                                 return {
-                                                     ...v,
-                                                     // documentNumberFull: data,
+                                                 commonManage.setInfo(infoRef, {
                                                      agencyManagerId: e.data.agencyId,
                                                      agencyCode: e.data.agencyCode,
                                                      agencyName: e.data.agencyName,
                                                      agencyManagerName: e.data.managerName,
                                                      agencyManagerEmail: e.data.email,
                                                      agencyManagerPhoneNumber: e.data.phoneNumber
-                                                 }
-                                             });
-                                             gridManage.updateAllFields(gridRef, 'currency', commonManage.changeCurr(e.data.agencyCode))
+                                                 })
+                                             const dom = infoRef.current.querySelector('#agencyCode');
+                                             dom.style.borderColor = ''
+                                             // commonManage.changeCurr(e.data.agencyCode)
+                                             // gridManage.updateAllFields(gridRef, 'currency', commonManage.changeCurr(e.data.agencyCode))
 
                                          })
 

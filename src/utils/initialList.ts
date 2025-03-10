@@ -22,13 +22,13 @@ export const makerRegistInitial = {
 
 export const estimateDetailUnit = {
     "model": "",   // Model
-    "quantity": 0,                  // 수량
-    "unit": "EA",                   // 단위
-    "currency": null,          // CURR
-    "net": 0,                 // 매입단가
-    "unitPrice": 0,           // 단가
-    "amount": 0,               // 금액
-    "serialNumber": 1           // 견적의뢰 내역 순서 (1부터 시작)
+    "quantity": '',                  // 수량
+    "unit": "",                   // 단위
+    "currency": '',          // CURR
+    "net": '',                 // 매입단가
+    "unitPrice": '',           // 단가
+    "amount": '',               // 금액
+    "serialNumber": ''           // 견적의뢰 내역 순서 (1부터 시작)
 }
 
 export const estimateWriteInitial = {

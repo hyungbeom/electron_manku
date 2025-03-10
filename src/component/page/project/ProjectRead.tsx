@@ -97,7 +97,7 @@ export default function ProjectRead({getPropertyId, getCopyPage}) {
 
         <div style={{
             display: 'grid',
-            gridTemplateRows: `${mini ? '350px' : '65px'} calc(100vh - ${mini ? 480 : 195}px)`,
+            gridTemplateRows: `${mini ? '365px' : '65px'} calc(100vh - ${mini ? 495 : 195}px)`,
         }}>
             <MainCard title={'프로젝트 조회'} list={[
                 {name: '조회', func: searchInfo, type: 'primary'},
@@ -233,8 +233,7 @@ export default function ProjectRead({getPropertyId, getCopyPage}) {
                        getPropertyId={getPropertyId}
                        gridRef={gridRef}
                        onGridReady={onGridReady}
-                       columns={projectReadColumn}
-                       funcButtons={['print']}/>
+                       columns={projectReadColumn}/>
 
         </div>
 

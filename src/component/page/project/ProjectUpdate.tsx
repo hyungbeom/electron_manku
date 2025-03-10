@@ -1,28 +1,12 @@
 import React, {useEffect, useRef, useState} from "react";
-import {FileSearchOutlined} from "@ant-design/icons";
-import {projectWriteColumn} from "@/utils/columnList";
 import {ModalInitList, projectWriteInitial} from "@/utils/initialList";
 import message from "antd/lib/message";
-import TableGrid from "@/component/tableGrid";
-import SearchInfoModal from "@/component/SearchAgencyModal";
-import {
-    BoxCard,
-    datePickerForm,
-    InputForm,
-    inputForm,
-    MainCard,
-    textAreaForm,
-    tooltipInfo,
-    TopBoxCard
-} from "@/utils/commonForm";
+import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, tooltipInfo, TopBoxCard} from "@/utils/commonForm";
 import {useRouter} from "next/router";
-import {commonFunc, commonManage, fileManage, gridManage} from "@/utils/commonManage";
-import _ from "lodash";
+import {commonFunc, commonManage, fileManage} from "@/utils/commonManage";
 import {getAttachmentFileList, updateProject} from "@/utils/api/mainApi";
-import {findCodeInfo} from "@/utils/api/commonApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {getData} from "@/manage/function/api";
-import moment from "moment";
 import Spin from "antd/lib/spin";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 
@@ -31,6 +15,8 @@ import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import Select from "antd/lib/select";
 import {projectInfo} from "@/utils/column/ProjectInfo";
 import Table from "@/component/util/Table";
+import {findCodeInfo} from "@/utils/api/commonApi";
+import SearchInfoModal from "@/component/SearchAgencyModal";
 
 
 const listType = 'projectDetailList'
@@ -75,7 +61,7 @@ export default function ProjectUpdate({
     const userInfo = useAppSelector((state) => state.user);
 
 
-    const [info, setInfo] = useState<any>({})
+    const [info, setInfo] = useState<any>(projectWriteInitial)
     const [fileList, setFileList] = useState([]);
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
@@ -113,6 +99,7 @@ export default function ProjectUpdate({
         getDataInfo().then(v => {
             const {projectDetail, attachmentFileList} = v;
             setFileList(fileManage.getFormatFiles(attachmentFileList))
+            setOriginFileList(attachmentFileList)
             setInfo(projectDetail);
             projectDetail[listType] = [...projectDetail[listType], ...commonFunc.repeatObject(projectInfo['write']['defaultData'], 100 - projectDetail[listType].length)]
             setTableData(projectDetail[listType]);
@@ -123,18 +110,10 @@ export default function ProjectUpdate({
 
 
     useEffect(() => {
-        const result = Object.keys(projectWriteInitial).map(v => `#${v}`)
-        const test = `${result.join(',')}`;
-        const elements = infoRef.current.querySelectorAll(test);
-
-
-        elements.forEach(element => {
-            if (element.id === 'managerAdminId') {
-                return false;
-            }
-            element.value = info[element.id]
-        });
+        commonManage.setInfo(infoRef, info);
     }, [info]);
+
+
 
     async function getDataInfo() {
         const result = await getData.post('project/getProjectDetail', {
@@ -153,7 +132,7 @@ export default function ProjectUpdate({
                 case 'agencyCode' :
                 case 'customerName' :
                 case 'maker' :
-                    // await findCodeInfo(e, setInfo, openModal)
+                    await findCodeInfo(e, setInfo, openModal)
                     break;
             }
         }
@@ -163,66 +142,30 @@ export default function ProjectUpdate({
         commonManage.openModal(e, setIsModalOpen)
     }
 
-    // function onChange(e) {
-    //     let bowl = {};
-    //     bowl[e.target.id] = e.target.value;
-    //     commonManage.onChange(e, setInfo)
-    // }
 
-
-    const filterEmptyObjects = (data, excludeFields = []) => {
-        if (data.length === 0) return [];
-
-        return data.slice(0, -1).filter((obj) => {
-            // ✅ excludeFields의 모든 필드가 '' 또는 null 또는 undefined이면 제거
-            const isEmpty = excludeFields.every(field =>
-                obj[field] === '' || obj[field] === null || obj[field] === undefined
-            );
-
-            return !isEmpty; // 값이 하나라도 있으면 유지
-        });
-    };
 
     async function saveFunc() {
-        const result = Object.keys(projectWriteInitial).map(v => `#${v}`)
-        const test = `${result.join(',')}`;
-        const elements = infoRef.current.querySelectorAll(test);
+        let infoData = commonManage.getInfo(infoRef, projectWriteInitial);
 
-        let bowl = {}
-        for (let element of elements) {
-            bowl[element.id] = element.value
-        }
-
-
-        bowl['managerAdminId'] = info['managerAdminId'];
-        const findMember = memberList.find(v => v.adminId === info['managerAdminId']);
-        bowl['managerAdminName'] = findMember['name'];
-
-        const hotInstance = tableRef.current?.hotInstance;
-        const rawData = hotInstance?.getData(); // 이중 배열 형태
-        const formattedData = rawData.map(row => {
-            return Object.keys(projectInfo['write']['defaultData']).reduce((acc, key, index) => {
-                acc[key] = row[index] || "";
-                return acc;
-            }, {});
-        });
-        const list = filterEmptyObjects(formattedData, ['model', 'item', 'maker'])
-        if (!bowl['documentNumberFull']) {
-            setValidate(v => {
-                return {...v, documentNumberFull: false}
-            })
+        const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
+        infoData['managerAdminName'] = findMember['name'];
+        if (!infoData['documentNumberFull']) {
+            const dom = infoRef.current.querySelector('#documentNumberFull');
+            dom.style.borderColor = 'red'
             return message.warn('프로젝트 번호가 누락되었습니다.')
         }
 
+        const tableList = tableRef.current?.getSourceData();
 
-        if (!list.length) {
+        const filterTableList = commonManage.filterEmptyObjects(tableList, ['model', 'item', 'maker'])
+        if (!filterTableList.length) {
             return message.warn('하위 데이터 1개 이상이여야 합니다');
         }
+
         setLoading(true)
         const formData: any = new FormData();
-
-        commonManage.setInfoFormData(bowl, formData, listType, list)
-        commonManage.getUploadList(fileRef, formData)
+        commonManage.setInfoFormData(infoData, formData, listType, filterTableList)
+        commonManage.getUploadList(fileRef, formData);
         commonManage.deleteUploadList(fileRef, formData, originFileList)
         formData.delete('createdDate')
         formData.delete('modifiedDate')
@@ -272,7 +215,6 @@ export default function ProjectUpdate({
         const findMember = memberList.find(v => v.adminId === info['managerAdminId']);
         copyInfo['managerAdminName'] = findMember['name'];
 
-        console.log(copyInfo,'copyInfo::')
         copyInfo[listType] = [...totalList, ...commonFunc.repeatObject(projectInfo['write']['defaultData'], 100 - totalList.length)];
 
         getCopyPage('project_write', copyInfo)
@@ -299,10 +241,10 @@ export default function ProjectUpdate({
     };
 
     return <Spin spinning={loading} tip={'프로젝트 수정중...'}>
-        {/*<SearchInfoModal info={info} setInfo={setInfo}*/}
-        {/*                 open={isModalOpen}*/}
-        {/*                 gridRef={gridRef}*/}
-        {/*                 setIsModalOpen={setIsModalOpen}/>*/}
+        <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
+                         open={isModalOpen}
+
+                         setIsModalOpen={setIsModalOpen}/>
 
         <>
             <div ref={infoRef} style={{
@@ -312,7 +254,7 @@ export default function ProjectUpdate({
                 columnGap: 5
             }}>
                 <MainCard title={'프로젝트 수정'} list={[
-                    {name: '저장', func: saveFunc, type: 'primary'},
+                    {name: '수정', func: saveFunc, type: 'primary'},
                     {name: '초기화', func: clearAll, type: 'danger'},
                     {name: '복제', func: copyPage, type: 'default'}
                 ]} mini={mini} setMini={setMini}>
@@ -327,22 +269,26 @@ export default function ProjectUpdate({
                                 {datePickerForm({
                                     title: '작성일자',
                                     id: 'writtenDate',
-                                    disabled: true,
-                                    defaultValue: info['writtenDate']
+                                    disabled: true
                                 })}
                                 <div>
-                                    <div style={{fontSize: 12, fontWeight: 700}}>담당자</div>
-                                    <Select id={'managerAdminId'} style={{width: '100%', fontSize: 12, marginTop: 5}}
-                                            size={'small'}
-                                            showSearch
-                                            value={info['managerAdminId']}
-                                            placeholder="Select a person"
-                                            optionFilterProp="label"
-                                            onChange={onCChange}
-                                            options={options}
-                                    />
+                                    <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>담당자</div>
+                                    <select name="languages" id="managerAdminId"
+                                            style={{
+                                                outline: 'none',
+                                                border: '1px solid lightGray',
+                                                height: 22,
+                                                width: '100%',
+                                                fontSize: 12,
+                                                paddingBottom: 0.5
+                                            }}>
+                                        {
+                                            options.map(v => {
+                                                return <option value={v.value}>{v.label}</option>
+                                            })
+                                        }
+                                    </select>
                                 </div>
-
                             </TopBoxCard>
 
 
@@ -350,7 +296,7 @@ export default function ProjectUpdate({
                                 <Panel defaultSize={sizes[0]} minSize={10} maxSize={100} onResize={onResizeChange}>
                                     <BoxCard title={'프로젝트 정보'} tooltip={tooltipInfo('readProject')}>
                                         {inputForm({
-                                            title: 'PROJECT NO.🔴',
+                                            title: 'PROJECT NO.',
                                             id: 'documentNumberFull',
                                             placeholder: '필수입력',
                                             defaultValue: info['documentNumberFull'],
@@ -362,7 +308,7 @@ export default function ProjectUpdate({
                                             defaultValue: info['projectTitle']
 
                                         })}
-                                        {datePickerForm({title: '마감일자', id: 'dueDate', defaultValue: info['dueDate']})}
+                                        {datePickerForm({title: '마감일자', id: 'dueDate'})}
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>
@@ -371,6 +317,7 @@ export default function ProjectUpdate({
                                         {inputForm({
                                             title: '고객사명',
                                             id: 'customerName',
+
 
                                             suffix: <span style={{cursor: 'pointer'}} onClick={
                                                 (e) => {

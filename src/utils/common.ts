@@ -157,28 +157,28 @@ export const estimateWriteInitial = {
     ]
 }
 
-export const estimateInfo = {
-    documentNumberFull : {type : 'input', title : 'INQUERY No.', size : 50},
-    writtenDate : {type : 'datePicker', title : '작성일', size : 50},
-    agencyCode : {type : 'searchInput', title : '대리점코드', size : 50},
-    customerCode : {type : 'input', title : 'CUSTOMER 코드', size : 50},
-    customerName : {type : 'searchInput', title : '상호명', size : 50},
-    managerName : {type : 'input', title : '담당자', size : 50},
-    phoneNumber : {type : 'input', title : '연락처', size : 50},
-    faxNumber : {type : 'input', title : '팩스번호', size : 50},
-    validityPeriod : {type : 'selectBox', title : '유효기간', boxList :['견적 발행 후 10일간', '견적 발행 후 30일간'], size : 50},
-    paymentTerms : {type : 'selectBox', title : '결제조건', boxList : ['발주시50% / 납품시 50%', '납품시 현금결제', '정기결제'], size : 50},
-    shippingTerms : {type : 'selectBox', title : '운송조건', boxList : ['귀사도착도', '화물 & 택배비별도'], size : 50},
-    exchangeRate : {type : 'input', title : '환율', size : 50},
-    estimateManager : {type : 'input', title : '담당자', size : 50},
-    email : {type : 'input', title : '이메일', size : 50},
-    managerPhoneNumber : {type : 'input', title : '연락처', size : 50},
-    managerFaxNumber : {type : 'input', title : '팩스번호', size : 50},
-    maker : {type : 'input', title : 'maker', size : 50},
-    item : {type : 'input', title : 'item', size : 50},
-    delivery : {type : 'input', title : 'delivery', size : 50},
-    remarks : {type : 'inputArea', title : '비고란', size : 100},
-}
+// export const estimateInfo = {
+//     documentNumberFull : {type : 'input', title : 'INQUERY No.', size : 50},
+//     writtenDate : {type : 'datePicker', title : '작성일', size : 50},
+//     agencyCode : {type : 'searchInput', title : '대리점코드', size : 50},
+//     customerCode : {type : 'input', title : 'CUSTOMER 코드', size : 50},
+//     customerName : {type : 'searchInput', title : '상호명', size : 50},
+//     managerName : {type : 'input', title : '담당자', size : 50},
+//     phoneNumber : {type : 'input', title : '연락처', size : 50},
+//     faxNumber : {type : 'input', title : '팩스번호', size : 50},
+//     validityPeriod : {type : 'selectBox', title : '유효기간', boxList :['견적 발행 후 10일간', '견적 발행 후 30일간'], size : 50},
+//     paymentTerms : {type : 'selectBox', title : '결제조건', boxList : ['발주시50% / 납품시 50%', '납품시 현금결제', '정기결제'], size : 50},
+//     shippingTerms : {type : 'selectBox', title : '운송조건', boxList : ['귀사도착도', '화물 & 택배비별도'], size : 50},
+//     exchangeRate : {type : 'input', title : '환율', size : 50},
+//     estimateManager : {type : 'input', title : '담당자', size : 50},
+//     email : {type : 'input', title : '이메일', size : 50},
+//     managerPhoneNumber : {type : 'input', title : '연락처', size : 50},
+//     managerFaxNumber : {type : 'input', title : '팩스번호', size : 50},
+//     maker : {type : 'input', title : 'maker', size : 50},
+//     item : {type : 'input', title : 'item', size : 50},
+//     delivery : {type : 'input', title : 'delivery', size : 50},
+//     remarks : {type : 'inputArea', title : '비고란', size : 100},
+// }
 
 
 

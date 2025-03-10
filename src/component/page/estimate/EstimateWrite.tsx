@@ -32,12 +32,17 @@ import {getData} from "@/manage/function/api";
 import Select from "antd/lib/select";
 import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 import moment from "moment";
+import {estimateInfo, rfqInfo} from "@/utils/column/ProjectInfo";
+import Table from "@/component/util/Table";
 
 
 const listType = 'estimateDetailList'
 export default function EstimateWrite({ copyPageInfo = {}}) {
+    const groupRef = useRef<any>(null)
 
     const [memberList, setMemberList] = useState([]);
+    const [tableData, setTableData] = useState([]);
+
 
     useEffect(() => {
         getMemberList();
@@ -64,7 +69,9 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
 
     const pdfRef = useRef(null);
     const fileRef = useRef(null);
-    const gridRef = useRef(null);
+    const tableRef = useRef(null);
+    const infoRef = useRef<any>(null)
+
     const router = useRouter();
 
     const [ready, setReady] = useState(false);
@@ -96,24 +103,25 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
     const [loading, setLoading] = useState(false);
 
 
-    const onGridReady = (params) => {
-        gridRef.current = params.api;
-        setInfo(isEmptyObj(copyPageInfo['estimate_write'])?copyPageInfo['estimate_write'] : infoInit);
-        params.api.applyTransaction({add: copyPageInfo['estimate_write'][listType] ? copyPageInfo['estimate_write'][listType] : commonFunc.repeatObject(estimateDetailUnit, 10)});
-        setReady(true)
-    };
+
 
     useEffect(() => {
-        if(ready) {
-            if(copyPageInfo['estimate_write'] && !isEmptyObj(copyPageInfo['estimate_write'])){
-                setInfo(infoInit);
-                gridManage.resetData(gridRef,commonFunc.repeatObject(estimateDetailUnit, 10))
-            }else{
-                setInfo({...copyPageInfo['estimate_write'], ...adminParams, writtenDate: moment().format('YYYY-MM-DD')});
-                gridManage.resetData(gridRef, copyPageInfo['estimate_write'][listType])
-            }
+
+        if (!isEmptyObj(copyPageInfo['estimate_write'])) {
+            // copyPageInfo 가 없을시
+            setInfo(infoInit)
+            setTableData(commonFunc.repeatObject(estimateInfo['write']['defaultData'], 100))
+        } else {
+            // copyPageInfo 가 있을시(==>보통 수정페이지에서 복제시)
+            // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting
+            setInfo({...copyPageInfo['estimate_write'], ...adminParams, writtenDate: moment().format('YYYY-MM-DD')});
+            setTableData(copyPageInfo['estimate_write'][listType])
         }
     }, [copyPageInfo['estimate_write']]);
+
+
+
+
 
     async function handleKeyPress(e) {
 
@@ -267,15 +275,15 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
 
     return  <div style={{overflow : 'hidden'}}><Spin spinning={loading} tip={'견적서 등록중...'}>
 
-        <SearchInfoModal info={info} setInfo={setInfo}
-                         open={isModalOpen}
-                         gridRef={gridRef}
-                         setIsModalOpen={setIsModalOpen} type={'ESTIMATE'}/>
+        {/*<SearchInfoModal info={info} setInfo={setInfo}*/}
+        {/*                 open={isModalOpen}*/}
+        {/*                 gridRef={gridRef}*/}
+        {/*                 setIsModalOpen={setIsModalOpen} type={'ESTIMATE'}/>*/}
 
         <>
-            <div style={{
+            <div ref={infoRef} style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '500px' : '65px'} calc(100vh - ${mini ? 605 : 195}px)`,
+                gridTemplateRows: `${mini ? '515px' : '65px'} calc(100vh - ${mini ? 615 : 195}px)`,
                 overflowY: 'hidden',
                 columnGap: 5
             }}>
@@ -284,33 +292,35 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
                     {name: '초기화', func: clearAll, type: 'danger'}
                 ]} mini={mini} setMini={setMini}>
                     {mini ? <div>
-                            <TopBoxCard grid={'1fr 0.6fr 0.6fr 1fr 1fr 1fr 1fr'}>
+                            <TopBoxCard grid={'100px 70px 70px 150px 110px 110px 300px'}>
                                 {datePickerForm({
                                     title: '작성일',
                                     id: 'writtenDate',
-                                    disabled: true,
-                                    onChange: onChange,
-                                    data: info
+                                    disabled: true
                                 })}
                                 {inputForm({title: '작성자', id: 'createdBy', disabled: true, onChange: onChange, data: info})}
                                 <div>
-                                    <div style={{paddingBottom: 4.5, fontSize : 12}}>담당자</div>
-                                    <Select style={{width: '100%', fontSize : 12}} size={'small'}
-                                            showSearch
-                                            value={info['managerAdminId']}
-                                            placeholder="Select a person"
-                                            optionFilterProp="label"
-                                            onChange={onCChange}
-                                            options={options}
-                                    />
+                                    <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>담당자</div>
+                                    <select name="languages" id="managerAdminId"
+                                            style={{
+                                                outline: 'none',
+                                                border: '1px solid lightGray',
+                                                height: 22,
+                                                width: '100%',
+                                                fontSize: 12,
+                                                paddingBottom: 0.5
+                                            }}>
+                                        {
+                                            options.map(v => {
+                                                return <option value={v.value}>{v.label}</option>
+                                            })
+                                        }
+                                    </select>
                                 </div>
                                 {/*{inputForm({title: '담당자', id: 'managerAdminName', onChange: onChange, data: info})}*/}
                                 {inputForm({
                                     title: 'Inquiry No.',
                                     id: 'documentNumberFull',
-                                    placeholder: '폴더생성 규칙 유의',
-                                    onChange: onChange,
-                                    data: info,
 
                                     suffix:
                                         <RetweetOutlined style={{cursor: 'pointer'}} onClick={
@@ -325,7 +335,7 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
                                                         type: 'ESTIMATE'
                                                     }
                                                 })
-                                                onChange({target: {id: 'documentNumberFull', value: returnDocumentNumb}})
+                                                // onChange({target: {id: 'documentNumberFull', value: returnDocumentNumb}})
                                             }
                                         }/>
                                 })}
@@ -334,10 +344,10 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
                                     title: '연결 INQUIRY No.',
                                     id: 'connectDocumentNumberFull',
                                     suffix: <DownloadOutlined style={{cursor: 'pointer'}}/>
-                                    , onChange: onChange, data: info, handleKeyPress: handleKeyPress
+                                    , handleKeyPress: handleKeyPress
                                 })}
-                                {inputForm({title: 'RFQ No.', id: 'rfqNo', onChange: onChange, data: info})}
-                                {inputForm({title: '프로젝트 제목', id: 'projectTitle', onChange: onChange, data: info})}
+                                {inputForm({title: 'RFQ No.', id: 'rfqNo'})}
+                                {inputForm({title: '프로젝트 제목', id: 'projectTitle'})}
                             </TopBoxCard>
 
 
@@ -358,35 +368,29 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
                                                 openModal('agencyCode');
                                             }
                                         }/>,
-                                        onChange: onChange,
+
                                         handleKeyPress: handleKeyPress,
-                                        data: info,
+
 
                                     })}
                                     {inputForm({
                                         title: '매입처명',
                                         id: 'agencyName',
-                                        onChange: onChange,
-                                        data: info,
+
 
                                     })}
                                     {inputForm({
                                         title: '담당자',
                                         id: 'agencyManagerName',
-                                        onChange: onChange,
-                                        data: info,
+
                                     })}
                                     {inputForm({
                                         title: '매입처이메일',
-                                        id: 'agencyManagerEmail',
-                                        onChange: onChange,
-                                        data: info
+                                        id: 'agencyManagerEmail'
                                     })}
                                     {inputForm({
                                         title: '연락처',
-                                        id: 'agencyManagerPhoneNumber',
-                                        onChange: onChange,
-                                        data: info
+                                        id: 'agencyManagerPhoneNumber'
                                     })}
                                 </BoxCard>
 
@@ -399,31 +403,27 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
                                                 e.stopPropagation();
                                                 openModal('customerName');
                                             }
-                                        }/>, onChange: onChange, handleKeyPress: handleKeyPress, data: info
+                                        }/>,  handleKeyPress: handleKeyPress,
                                     })}
                                     {inputForm({
                                         title: '담당자명',
                                         id: 'managerName',
-                                        onChange: onChange,
-                                        data: info
+
                                     })}
                                     {inputForm({
                                         title: '연락처',
                                         id: 'phoneNumber',
-                                        onChange: onChange,
-                                        data: info
+
                                     })}
                                     {inputForm({
                                         title: '팩스',
                                         id: 'faxNumber',
-                                        onChange: onChange,
-                                        data: info
+
                                     })}
                                     {inputForm({
                                         title: '이메일',
                                         id: 'customerManagerEmail',
-                                        onChange: onChange,
-                                        data: info
+
                                     })}
                                 </BoxCard>
 
@@ -452,15 +452,13 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
                                     {inputNumberForm({
                                         title: '납기',
                                         id: 'delivery',
-                                        onChange: onChange,
-                                        data: info,
+
                                         addonAfter: <span style={{fontSize: 11}}>주</span>
                                     })}
                                     {inputNumberForm({
                                         title: '환율',
                                         id: 'exchangeRate',
-                                        onChange: onChange,
-                                        data: info,
+
                                         step: 0.01,
                                     })}
                                 </BoxCard>
@@ -484,10 +482,9 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
                                         title: '지시사항',
                                         rows: 5,
                                         id: 'instructions',
-                                        onChange: onChange,
-                                        data: info
+
                                     })}
-                                    {textAreaForm({title: '비고란', rows: 5, id: 'remarks', onChange: onChange, data: info})}
+                                    {textAreaForm({title: '비고란', rows: 5, id: 'remarks'})}
                                 </BoxCard>
                                 <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
                                     {/*@ts-ignored*/}
@@ -500,17 +497,18 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
                         </div>
                         : <></>}
                 </MainCard>
-                <TableGrid
-                    setInfo={setInfo}
-                    gridRef={gridRef}
-                    columns={tableEstimateWriteColumns}
-                    type={'write'}
-                    onGridReady={onGridReady}
-                    funcButtons={['estimateUpload', 'estimateAdd', 'delete', 'print']}
-                />
+                {/*<TableGrid*/}
+                {/*    setInfo={setInfo}*/}
+                {/*    gridRef={gridRef}*/}
+                {/*    columns={tableEstimateWriteColumns}*/}
+                {/*    type={'write'}*/}
+                {/*    onGridReady={onGridReady}*/}
+                {/*    funcButtons={['estimateUpload', 'estimateAdd', 'delete', 'print']}*/}
+                {/*/>*/}
+                <Table data={tableData} column={estimateInfo['write']} funcButtons={['print']} ref={tableRef}/>
             </div>
         </>
-        {ready && <EstimatePaper data={info} pdfRef={pdfRef} gridRef={gridRef}/>}
+        {/*{ready && <EstimatePaper data={info} pdfRef={pdfRef} gridRef={gridRef}/>}*/}
     </Spin></div>
 }
 

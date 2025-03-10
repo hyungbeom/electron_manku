@@ -300,7 +300,7 @@ export function DriveUploadComp({fileList, setFileList, fileRef, numb = 0, uploa
                 maxCount={13}
             >
 
-                {uploadType ? <Button style={{fontSize: 11, marginTop: 6}} size={'small'} icon={<UploadOutlined/>}
+                {uploadType ? <Button style={{fontSize: 11, }} size={'small'} icon={<UploadOutlined/>}
                                       type={'primary'}>Upload</Button> : <></>}
 
             </Upload>
