@@ -117,23 +117,23 @@ export default function Contact(){
                         size: 'large'
                     })}
                 </div>
-                <div style={{paddingTop: 20}}>
-                    {textAreaForm({
-                        title: '문의내용*',
-                        id: 'remark',
-                        onChange: onChange,
-                        data: info
-                    })}
-                </div>
-                <div style={{paddingTop: 20}}>
-                    {inputForm({
-                        title: '파일 또는 사진 첨부',
-                        id: 'attachFile',
-                        onChange: onChange,
-                        data: info,
-                        size: 'large'
-                    })}
-                </div>
+                {/*<div style={{paddingTop: 20}}>*/}
+                {/*    {textAreaForm({*/}
+                {/*        title: '문의내용*',*/}
+                {/*        id: 'remark',*/}
+                {/*        onChange: onChange,*/}
+                {/*        data: info*/}
+                {/*    })}*/}
+                {/*</div>*/}
+                {/*<div style={{paddingTop: 20}}>*/}
+                {/*    {inputForm({*/}
+                {/*        title: '파일 또는 사진 첨부',*/}
+                {/*        id: 'attachFile',*/}
+                {/*        onChange: onChange,*/}
+                {/*        data: info,*/}
+                {/*        size: 'large'*/}
+                {/*    })}*/}
+                {/*</div>*/}
 
                 <div style={{margin: '30px auto', textAlign: 'center'}}>
                     <img src={'/homepage/send_button.png'} style={{cursor: 'pointer', width: '8vw'}} alt=""/>

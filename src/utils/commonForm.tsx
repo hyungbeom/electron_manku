@@ -327,12 +327,13 @@ export const selectBoxForm = ({title, id, disabled = false, data, onChange, list
 }
 
 export const textAreaForm = ({
-                                 data = '',
+                                 data = null,
                                  title,
                                  id,
                                  rows = 5,
                                  disabled = false,
                                  placeHolder = '',
+    onchange = null,
                                  maxLength = 1000
                              }) => {
     return <div style={{fontSize: 12, paddingBottom: 5}}>
