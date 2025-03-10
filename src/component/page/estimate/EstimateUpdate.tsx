@@ -107,18 +107,6 @@ export default function EstimateUpdate({
         params.api.applyTransaction({add: dataInfo?.estimateDetail[listType]});
     };
 
-    // useEffect(() => {
-    //     setLoading(true)
-    //     getDataInfo().then(v => {
-    //         const {estimateDetail, attachmentFileList} = v;
-    //         setFileList(fileManage.getFormatFiles(attachmentFileList))
-    //         setInfo(estimateDetail)
-    //         setLoading(false)
-    //
-    //     })
-    //     // setLoading(false)
-    // }, [updateKey['estimate_update']])
-
     useEffect(() => {
         setLoading(true)
         getDataInfo().then(v => {
@@ -127,7 +115,7 @@ export default function EstimateUpdate({
             setOriginFileList(attachmentFileList)
             setInfo({
                 ...estimateDetail,
-                uploadType: 0,
+                uploadType: 3,
                 managerAdminId: estimateDetail['managerAdminId'] ? estimateDetail['managerAdminId'] : ''
             })
             console.log(estimateDetail[listType],'???')

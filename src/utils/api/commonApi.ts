@@ -158,7 +158,6 @@ export const findOrderDocumentInfo = async (event, setInfo, setTableData?, manag
             const newDate = date.add(parseInt(delivery), 'weeks');
 
             const countryNumb = commonManage.changeCurr(agencyCode);
-            console.log(countryNumb, 'countryNumb:')
             setInfo(v => {
                     return {
                         ...v, ...result?.data?.entity?.estimateDetail,
@@ -178,7 +177,6 @@ export const findOrderDocumentInfo = async (event, setInfo, setTableData?, manag
             );
 
             setTableData([...result?.data?.entity?.estimateDetail?.estimateDetailList,...commonFunc.repeatObject(orderInfo['write']['defaultData'], 100 - result?.data?.entity?.estimateDetail?.estimateDetailList.length)])
-
 
             // gridManage.resetData(gridRef, detailList)
 

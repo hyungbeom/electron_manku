@@ -74,11 +74,11 @@ export default function RqfUpdate({updateKey = {}, getCopyPage = null, managerLi
         getDataInfo().then(v => {
             const {estimateRequestDetail, attachmentFileList} = v;
             setFileList(fileManage.getFormatFiles(attachmentFileList));
-            setOriginFileList(attachmentFileList)
+            setOriginFileList(attachmentFileList);
             setInfo({
                 ...estimateRequestDetail,
                 uploadType: 0,
-                managerAdminName: estimateRequestDetail['managerAdminName'] ? estimateRequestDetail['managerAdminName'] : estimateRequestDetail['createdBy']
+                managerAdminId: estimateRequestDetail['managerAdminId'] ? estimateRequestDetail['managerAdminId'] : estimateRequestDetail['createdBy']
             })
             estimateRequestDetail[listType] = [...estimateRequestDetail[listType], ...commonFunc.repeatObject(rfqInfo['write']['defaultData'], 100 - estimateRequestDetail[listType].length)]
 
@@ -145,9 +145,12 @@ export default function RqfUpdate({updateKey = {}, getCopyPage = null, managerLi
         }
 
 
-        setLoading(true)
+        setLoading(true);
         const formData: any = new FormData();
-        commonManage.setInfoFormData(infoData, formData, listType, filterTableList)
+        commonManage.setInfoFormData({
+            ...infoData,
+            estimateRequestId: updateKey['rfq_update']
+        }, formData, listType, filterTableList)
         commonManage.getUploadList(fileRef, formData);
         commonManage.deleteUploadList(fileRef, formData, originFileList)
         formData.delete('createdDate')
@@ -156,8 +159,9 @@ export default function RqfUpdate({updateKey = {}, getCopyPage = null, managerLi
     }
 
     async function returnFunc(e) {
-        if (e) {
 
+
+        if (e) {
             await getAttachmentFileList({
                 data: {
                     "relatedType": "ESTIMATE_REQUEST",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
@@ -169,9 +173,9 @@ export default function RqfUpdate({updateKey = {}, getCopyPage = null, managerLi
                 setOriginFileList(list)
                 setLoading(false)
             })
-        } else {
-            setLoading(false)
         }
+        setLoading(false)
+
     }
 
     function clearAll() {

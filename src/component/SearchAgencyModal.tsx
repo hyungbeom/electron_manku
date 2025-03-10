@@ -13,7 +13,6 @@ import Drawer from "antd/lib/drawer";
 import {commonManage, gridManage} from "@/utils/commonManage";
 
 
-
 export default function SearchInfoModal({
                                             info,
                                             infoRef,
@@ -49,9 +48,9 @@ export default function SearchInfoModal({
             setOpenCheck(firstTrueKey);
             if (!firstTrueKey) {
                 setList([]);
-            }else{
-                        searchFunc(firstTrueKey, dom.value);
-                        setCode(dom.value)
+            } else {
+                searchFunc(firstTrueKey, dom.value);
+                setCode(dom.value)
             }
             // } else {
             //     const dom = infoRef.current.querySelector(`#${firstTrueKey}`);
@@ -297,14 +296,15 @@ export default function SearchInfoModal({
                                              }
                                          }).then(data => {
 
-                                                 commonManage.setInfo(infoRef, {
-                                                     agencyManagerId: e.data.agencyId,
-                                                     agencyCode: e.data.agencyCode,
-                                                     agencyName: e.data.agencyName,
-                                                     agencyManagerName: e.data.managerName,
-                                                     agencyManagerEmail: e.data.email,
-                                                     agencyManagerPhoneNumber: e.data.phoneNumber
-                                                 })
+                                             console.log(e?.data?.managerName, ' e?.data?.managerName:')
+                                             commonManage.setInfo(infoRef, {
+                                                 agencyManagerId: commonManage.checkValue(e.data.agencyId),
+                                                 agencyCode: commonManage.checkValue(e.data.agencyCode),
+                                                 agencyName: commonManage.checkValue(e.data.agencyName),
+                                                 agencyManagerName: commonManage.checkValue(e?.data?.managerName),
+                                                 agencyManagerEmail: commonManage.checkValue(e.data.email),
+                                                 agencyManagerPhoneNumber: commonManage.checkValue(e.data.phoneNumber)
+                                             })
                                              const dom = infoRef.current.querySelector('#agencyCode');
                                              dom.style.borderColor = ''
                                              // commonManage.changeCurr(e.data.agencyCode)

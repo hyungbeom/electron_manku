@@ -14,10 +14,10 @@ import {
     tooltipInfo,
     TopBoxCard
 } from "@/utils/commonForm";
-import {commonFunc, commonManage} from "@/utils/commonManage";
+import {commonFunc, commonManage, fileManage} from "@/utils/commonManage";
 import _ from "lodash";
 import {findCodeInfo} from "@/utils/api/commonApi";
-import {saveRfq} from "@/utils/api/mainApi";
+import {getAttachmentFileList, saveRfq} from "@/utils/api/mainApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {getData} from "@/manage/function/api";
 import moment from "moment";
@@ -76,6 +76,7 @@ export default function RqfWrite({copyPageInfo = {}}) {
         createBy: userInfo['name'],
 
     }
+
 
     const infoInit = {
         ...copyInit,
@@ -168,11 +169,23 @@ export default function RqfWrite({copyPageInfo = {}}) {
         formData.delete('createdDate')
         formData.delete('modifiedDate')
 
-        await saveRfq({data: formData}).then(v => {
-
+        await saveRfq({data: formData}).then(async v => {
+            const {documentNumberFull, estimateRequestId} = v;
             const dom = infoRef.current.querySelector('#documentNumberFull');
-            dom.value = v
-            setLoading(false);
+            dom.value = documentNumberFull
+
+                await getAttachmentFileList({
+                    data: {
+                        "relatedType": "ESTIMATE_REQUEST",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
+                        "relatedId": estimateRequestId
+                    }
+                }).then(v => {
+                    const list = fileManage.getFormatFiles(v);
+                    setFileList(list)
+                    setLoading(false)
+                })
+
+            setLoading(false)
         })
     }
 

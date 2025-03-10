@@ -14,7 +14,7 @@ export const saveRfq = async ({data}) => {
     return await getFormData.post('estimate/addEstimateRequest', data).then(v => {
         if (v.data.code === 1) {
             msg.success('저장되었습니다.');
-            return v.data.entity.documentNumberFull
+            return v.data.entity
         }
 
     }, err => {

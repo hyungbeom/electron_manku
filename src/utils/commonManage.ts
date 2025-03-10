@@ -56,6 +56,9 @@ commonManage.getInfo = function (infoRef, obj) {
     return bowl;
 }
 
+commonManage.checkValue = function (value) {
+    return value ? value : ''
+}
 
 /**
  * @description 입력정보를 초기화 하는 기능 function

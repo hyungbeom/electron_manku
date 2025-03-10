@@ -111,7 +111,7 @@ export const rfqInfo = {
                 source: ['미회신', '회신', '정보부족', '한국대리점', 'MOQ', 'OEM', '단종', '견적포기', '입찰마감', '견적불가', '기타']
             },
             {data: "replyDate", type: "date"},
-            {data: "remarks", type: "numeric"},
+            {data: "remarks", type: "text"},
 
         ],
         defaultData: {

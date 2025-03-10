@@ -87,8 +87,8 @@ export default function OrderUpdate({updateKey, getCopyPage}) {
             setOriginFileList(attachmentFileList);
             setInfo({
                 ...orderDetail,
-
-                managerAdminName: orderDetail['managerAdminName'] ? orderDetail['managerAdminName'] : orderDetail['createdBy']
+                uploadType: 4,
+                managerAdminId: orderDetail['managerAdminId'] ? orderDetail['managerAdminId'] : ''
             })
             orderDetail[listType] = [...orderDetail[listType], ...commonFunc.repeatObject(orderInfo['write']['defaultData'], 100 - orderDetail[listType].length)]
 
@@ -99,7 +99,6 @@ export default function OrderUpdate({updateKey, getCopyPage}) {
     }, [updateKey['order_update']])
 
     useEffect(() => {
-        console.log(info,'info:')
         commonManage.setInfo(infoRef, info);
     }, [info]);
 
@@ -145,7 +144,7 @@ export default function OrderUpdate({updateKey, getCopyPage}) {
         if (e) {
             await getAttachmentFileList({
                 data: {
-                    "relatedType": "ORDER",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
+                    "relatedType": "ESTIMATE",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
                     "relatedId": info['orderId']
                 }
             }).then(v => {
