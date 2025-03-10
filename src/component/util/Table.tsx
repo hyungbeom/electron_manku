@@ -73,10 +73,10 @@ const Table = forwardRef(({data = new Array(100).fill({}), column, type = '', fu
 
 
     const afterRenderer = (td, row, col, prop, value) => {
-        if (["unitPrice", 'totalNet', "total", 'net', "totalPurchase", "purchasePrice"].includes(prop)) {
+        if (["unitPrice", 'totalNet', "total", 'net', "totalPurchase", "purchasePrice",'quantity', 'receivedQuantity','unreceivedQuantity'].includes(prop)) {
             td.style.textAlign = "right"; // 우측 정렬
-
-            if (['totalNet', "total", "totalPurchase"].includes(prop)) {
+            td.style.color = "black"; // 텍스트 굵게
+            if (['totalNet', "total", "totalPurchase",'net', 'unitPrice'].includes(prop)) {
                 if (value === 0 || isNaN(value)) {
                     td.textContent = ""; // 🔥 0 또는 NaN이면 빈 문자열 적용
                 } else {
@@ -84,7 +84,7 @@ const Table = forwardRef(({data = new Array(100).fill({}), column, type = '', fu
                 }
             }
 
-            if (["total"].includes(prop)) {
+            if (["total","totalPurchase", 'totalNet'].includes(prop)) {
                 if (value === 0 || isNaN(value)) {
                     td.textContent = ""; // 🔥 0 또는 NaN이면 빈 문자열 적용
                 } else {
@@ -93,9 +93,7 @@ const Table = forwardRef(({data = new Array(100).fill({}), column, type = '', fu
                 if (row === 100) {
 
                 }
-                td.style.color = "#ff4d4f"; // 🔴 원하는 컬럼에 직접 스타일 적용
-                td.style.fontWeight = "bold"; // 텍스트 굵게
-            } else if (["totalPurchase", 'totalNet'].includes(prop)) {
+
                 td.style.fontWeight = "bold"; // 텍스트 굵게
             }
 
