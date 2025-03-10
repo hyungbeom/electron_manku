@@ -199,9 +199,28 @@ export default function OrderUpdate({updateKey, getCopyPage}) {
 
 
     function copyPage() {
-        const totalList = gridManage.getAllData(gridRef)
-        let copyInfo = _.cloneDeep(info)
-        copyInfo[listType] = totalList
+
+        const totalList = tableRef.current.getSourceData();
+        totalList.pop();
+
+
+        const result = Object.keys(orderInfo['defaultInfo']).map(v => `#${v}`)
+        const test = `${result.join(',')}`;
+        const elements = infoRef.current.querySelectorAll(test);
+
+        let copyInfo = {}
+        for (let element of elements) {
+            copyInfo[element.id] = element.value
+        }
+
+        const dom = infoRef.current.querySelector('#managerAdminId');
+
+        copyInfo['managerAdminId'] = parseInt(dom.value);
+        const findMember = memberList.find(v => v.adminId === parseInt(dom.value));
+
+        copyInfo['managerAdminName'] = findMember['name'];
+
+        copyInfo[listType] = [...totalList, ...commonFunc.repeatObject(orderInfo['write']['defaultData'], 100 - totalList.length)];
 
         getCopyPage('order_write', copyInfo)
     }
@@ -271,15 +290,22 @@ export default function OrderUpdate({updateKey, getCopyPage}) {
                                 })}
 
                                 <div>
-                                    <div style={{fontSize: 12}}>담당자</div>
-                                    <Select style={{width: '100%', marginTop: 4, fontSize: 12}} size={'small'}
-                                            showSearch
-                                            value={info['estimateManager']}
-                                            placeholder="Select a person"
-                                            optionFilterProp="label"
-                                            onChange={onCChange}
-                                            options={options}
-                                    />
+                                    <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>담당자</div>
+                                    <select name="languages" id="managerAdminId"
+                                            style={{
+                                                outline: 'none',
+                                                border: '1px solid lightGray',
+                                                height: 22,
+                                                width: '100%',
+                                                fontSize: 12,
+                                                paddingBottom: 0.5
+                                            }}>
+                                        {
+                                            options.map(v => {
+                                                return <option value={v.value}>{v.label}</option>
+                                            })
+                                        }
+                                    </select>
                                 </div>
 
 

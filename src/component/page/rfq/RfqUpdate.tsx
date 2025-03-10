@@ -212,7 +212,6 @@ export default function RqfUpdate({updateKey = {}, getCopyPage = null, managerLi
 
         copyInfo[listType] = [...totalList, ...commonFunc.repeatObject(rfqInfo['write']['defaultData'], 100 - totalList.length)];
 
-        console.log(copyInfo, 'copyInfo:')
         getCopyPage('rfq_write', copyInfo)
     }
 
