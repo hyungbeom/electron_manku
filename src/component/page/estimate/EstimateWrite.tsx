@@ -189,6 +189,7 @@ export default function EstimateWrite({copyPageInfo = {}}) {
                         delete result?.data?.entity?.estimateRequestList[0]?.adminId
                         delete result?.data?.entity?.estimateRequestList[0]?.createdBy
 
+                        console.log(result.data.entity.estimateRequestList[0],'::')
                         commonManage.setInfo(infoRef, {
                             ...result.data.entity.estimateRequestList[0],
                             documentNumberFull: src.data.code === 1 ? src.data.entity.newDocumentNumberFull : '',
@@ -250,8 +251,8 @@ export default function EstimateWrite({copyPageInfo = {}}) {
         await saveEstimate({data: formData, router: router, returnFunc: returnFunc})
     }
 
-    function returnFunc(code, msg) {
-        if (code === -20001) {
+    function returnFunc(e, msg) {
+        if (!e) {
             const inputElement = infoRef.current.querySelector('#documentNumberFull')
             if (inputElement) {
                 inputElement.style.border = "1px solid red"; // 빨간색 테두리
@@ -259,8 +260,6 @@ export default function EstimateWrite({copyPageInfo = {}}) {
                 inputElement.focus();
             }
             commonFunc.validateInput('documentNumberFull')
-            message.error(msg)
-        } else {
             message.error(msg)
         }
         setLoading(false)

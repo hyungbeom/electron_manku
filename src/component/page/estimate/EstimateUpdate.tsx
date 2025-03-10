@@ -544,7 +544,7 @@ export default function EstimateUpdate({
                                     }/>
                                     , handleKeyPress: handleKeyPress
                                 })}
-                                {inputForm({title: 'Item', id: 'item', onChange: onChange, data: info})}
+                                {inputForm({title: 'Item', id: 'item'})}
                             </BoxCard>
                             <BoxCard title={'ETC'}>
                                 {textAreaForm({

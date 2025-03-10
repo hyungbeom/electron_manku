@@ -146,7 +146,7 @@ export default function RfqRead({getPropertyId, getCopyPage}) {
             <>
                 <div style={{
                     display: 'grid',
-                    gridTemplateRows: `${mini ? 250 : 65}px calc(100vh - ${mini ? 380 : 195}px)`,
+                    gridTemplateRows: `${mini ? 270 : 65}px calc(100vh - ${mini ? 400 : 195}px)`,
                     columnGap: 5
                 }}>
                     <MainCard title={'견적의뢰 조회'} list={[

@@ -185,7 +185,7 @@ export const inputForm = ({
                    id={id}
                    size={size}
                    disabled={disabled}
-                   value={data ? data[id] : null}
+
                    onKeyDown={handleKeyPress}
                    onChange={onChange}
                 // suffix={suffix}

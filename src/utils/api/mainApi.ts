@@ -74,15 +74,12 @@ export const deleteRfq = async ({
 // =================================================================================================
 export const saveEstimate = async ({data, router, returnFunc}) => {
     return await getFormData.post('estimate/addEstimate', data).then(v => {
-        const {code} = v.data
-        const msg = v.data.message
+        const {code, message} = v.data
         if (code === 1) {
             window.opener?.postMessage('write', window.location.origin);
             msg.success('저장되었습니다.');
-            return v
-        } else {
-            returnFunc(code, msg)
         }
+        returnFunc(code === 1, message)
     });
 };
 
