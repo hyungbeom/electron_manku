@@ -29,7 +29,7 @@ import {estimateInfo, rfqInfo} from "@/utils/column/ProjectInfo";
 import Table from "@/component/util/Table";
 
 const listType = 'estimateRequestDetailList'
-export default function RqfWrite({copyPageInfo = {}}) {
+export default function RqfWrite({copyPageInfo = {}, notificationAlert = null}) {
     const groupRef = useRef<any>(null)
 
     const [memberList, setMemberList] = useState([]);
@@ -169,8 +169,8 @@ export default function RqfWrite({copyPageInfo = {}}) {
         formData.delete('createdDate')
         formData.delete('modifiedDate')
 
-        await saveRfq({data: formData}).then(async v => {
-            const {documentNumberFull, estimateRequestId} = v;
+        await saveRfq({data: formData}).then(async (v:any) => {
+            const {documentNumberFull, estimateRequestId} = v.data;
             const dom = infoRef.current.querySelector('#documentNumberFull');
             dom.value = documentNumberFull
 
@@ -185,6 +185,7 @@ export default function RqfWrite({copyPageInfo = {}}) {
                     setLoading(false)
                 })
 
+            notificationAlert('success', '저장되었습니다.')
             setLoading(false)
         })
     }

@@ -49,6 +49,7 @@ import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {getData} from "@/manage/function/api";
 import StoreUpdate from "@/component/page/store/StoreUpdate";
 import {useRouter} from "next/router";
+import {notification} from "antd";
 
 
 function findTitleByKey(data, key) {
@@ -70,6 +71,16 @@ function findTitleByKey(data, key) {
 
 
 export default function Main() {
+    const [api, contextHolder] = notification.useNotification();
+
+    const openNotificationWithIcon = (type, title='', description='') => {
+        api.open({
+            message: 'Notification Title',
+            description: 'This is the content of the notification. This is the content of the notification. This is the content of the notification.',
+            icon : <span>fasdf</span>
+        });
+    };
+
     const layoutRef = useRef<any>(null);
 
     const userInfo = useAppSelector((state) => state.user);
@@ -252,10 +263,13 @@ export default function Main() {
 
     const factory = (node: TabNode) => {
         const componentKey = node.getComponent();
-        return <div style={{padding: '0px 5px 0px 5px'}}>{tabComponents[componentKey]?.component}</div>;
+        return <div style={{padding: '0px 5px 0px 5px'}}>
+            {/*{tabComponents[componentKey]?.component}*/}
+            {React.cloneElement(tabComponents[componentKey].component, {notificationAlert : openNotificationWithIcon})}
+        </div>;
     };
 
-
+    // openNotificationWithIcon
     function addTab(selectedKey) {
         const updatedLayout = _.cloneDeep(tabs);
         const firstObject = updatedLayout.layout.children[0];
@@ -339,6 +353,7 @@ export default function Main() {
 
     return (
         <LayoutComponent>
+            {contextHolder}
             <div style={{display: "grid", gridTemplateColumns: "205px auto"}}>
                 <div style={{
                     borderRight: "1px solid lightGray",

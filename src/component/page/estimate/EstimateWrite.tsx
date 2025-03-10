@@ -11,7 +11,7 @@ import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import TableGrid from "@/component/tableGrid";
 import {useRouter} from "next/router";
 import SearchInfoModal from "@/component/SearchAgencyModal";
-import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
+import {commonFunc, commonManage, fileManage, gridManage} from "@/utils/commonManage";
 import {
     BoxCard,
     datePickerForm,
@@ -24,7 +24,7 @@ import {
 } from "@/utils/commonForm";
 import _ from "lodash";
 import {findCodeInfo, findDocumentInfo} from "@/utils/api/commonApi";
-import {checkInquiryNo, saveEstimate} from "@/utils/api/mainApi";
+import {checkInquiryNo, getAttachmentFileList, saveEstimate} from "@/utils/api/mainApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import Spin from "antd/lib/spin";
 import EstimatePaper from "@/component/견적서/EstimatePaper";
@@ -38,6 +38,7 @@ import Table from "@/component/util/Table";
 
 const listType = 'estimateDetailList'
 export default function EstimateWrite({copyPageInfo = {}}) {
+
     const groupRef = useRef<any>(null)
 
     const [memberList, setMemberList] = useState([]);
@@ -248,10 +249,29 @@ export default function EstimateWrite({copyPageInfo = {}}) {
         formData.delete('createdDate')
         formData.delete('modifiedDate')
 
-        await saveEstimate({data: formData, router: router, returnFunc: returnFunc})
+        await saveEstimate({data: formData}).then(v=>{
+            const {code, message, entity} = v;
+            console.log(code,':code::')
+            console.log(message,':message::')
+            console.log(entity?.estimateId,':entity::')
+
+            // await getAttachmentFileList({
+            //     data: {
+            //         "relatedType": "ESTIMATE",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
+            //         "relatedId": estimateRequestId
+            //     }
+            // }).then(v => {
+            //     const list = fileManage.getFormatFiles(v);
+            //     setFileList(list)
+            //     setLoading(false)
+            // })
+            setLoading(false)
+        })
+
+
     }
 
-    function returnFunc(e, msg) {
+    async function returnFunc(e, msg) {
         if (!e) {
             const inputElement = infoRef.current.querySelector('#documentNumberFull')
             if (inputElement) {
@@ -262,6 +282,10 @@ export default function EstimateWrite({copyPageInfo = {}}) {
             commonFunc.validateInput('documentNumberFull')
             message.error(msg)
         }
+
+
+
+
         setLoading(false)
     }
 
@@ -280,11 +304,10 @@ export default function EstimateWrite({copyPageInfo = {}}) {
 
     return <div style={{overflow: 'hidden'}}><Spin spinning={loading} tip={'견적서 등록중...'}>
 
-        {/*<SearchInfoModal info={info} setInfo={setInfo}*/}
-        {/*                 open={isModalOpen}*/}
-        {/*                 gridRef={gridRef}*/}
-        {/*                 setIsModalOpen={setIsModalOpen} type={'ESTIMATE'}/>*/}
+        <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
+                         open={isModalOpen}
 
+                         setIsModalOpen={setIsModalOpen}/>
         <>
             <div ref={infoRef} style={{
                 display: 'grid',

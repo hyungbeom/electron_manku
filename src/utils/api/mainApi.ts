@@ -1,6 +1,5 @@
 import {getData, getFormData} from "@/manage/function/api";
 import msg from "antd/lib/message";
-import {commonFunc} from "@/utils/commonManage";
 
 export const checkInquiryNo = async ({data}) => {
     return await getData.post('estimate/getNewDocumentNumberFull', data).then(v => {
@@ -12,10 +11,10 @@ export const checkInquiryNo = async ({data}) => {
 
 export const saveRfq = async ({data}) => {
     return await getFormData.post('estimate/addEstimateRequest', data).then(v => {
-        if (v.data.code === 1) {
-            msg.success('저장되었습니다.');
-            return v.data.entity
-        }
+
+        const {code, message, entity} = v.data
+            return {code : code, msg : message, data :entity}
+
 
     }, err => {
 
@@ -72,14 +71,10 @@ export const deleteRfq = async ({
 
 
 // =================================================================================================
-export const saveEstimate = async ({data, router, returnFunc}) => {
+export const saveEstimate = async ({data}) => {
     return await getFormData.post('estimate/addEstimate', data).then(v => {
-        const {code, message} = v.data
-        if (code === 1) {
-            window.opener?.postMessage('write', window.location.origin);
-            msg.success('저장되었습니다.');
-        }
-        returnFunc(code === 1, message)
+
+        return v.data
     });
 };
 

@@ -5,6 +5,7 @@ import message from "antd/lib/message";
 import {jsPDF} from "jspdf";
 import html2canvas from "html2canvas";
 import {getData} from "@/manage/function/api";
+import {notification} from "antd";
 
 export const commonManage: any = {}
 export const apiManage: any = {}
@@ -24,6 +25,20 @@ export const fileManage: any = {}
 // =========================================================================================
 // =========================================================================================
 // =========================================================================================
+
+commonManage.notification = async function () {
+    const [api, contextHolder] = notification.useNotification();
+
+    const openNotificationWithIcon = (type) => {
+        api[type]({
+            message: 'Notification Title',
+            description:
+                'This is the content of the notification. This is the content of the notification. This is the content of the notification.',
+        });
+    };
+
+}
+
 
 
 commonManage.getMemberList = async function () {
