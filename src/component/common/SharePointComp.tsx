@@ -4,7 +4,7 @@ import Input from "antd/lib/input";
 import {UploadOutlined} from "@ant-design/icons";
 import React, {useEffect, useRef, useState} from "react";
 
-export function DriveUploadComp({fileList, setFileList, fileRef,  uploadType = true, infoRef}) {
+export function DriveUploadComp({fileList, setFileList, fileRef,  uploadType = true, infoRef, numb = null}) {
     const fileInputRef = useRef(null);
 
     const [editingFileId, setEditingFileId] = useState(null); // 수정 중인 파일 ID
