@@ -25,7 +25,7 @@ import Spin from "antd/lib/spin";
 import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
-import {rfqInfo} from "@/utils/column/ProjectInfo";
+import {estimateInfo, rfqInfo} from "@/utils/column/ProjectInfo";
 import Table from "@/component/util/Table";
 
 const listType = 'estimateRequestDetailList'
@@ -65,7 +65,7 @@ export default function RqfWrite({copyPageInfo = {}}) {
     const infoRef = useRef<any>(null)
 
 
-    const copyInit = _.cloneDeep(rfqWriteInitial)
+    const copyInit = _.cloneDeep(rfqInfo['defaultInfo'])
 
 
     const userInfo = useAppSelector((state) => state.user);
@@ -94,7 +94,6 @@ export default function RqfWrite({copyPageInfo = {}}) {
 
 
     useEffect(() => {
-
         if (!isEmptyObj(copyPageInfo['rfq_write'])) {
             // copyPageInfo 가 없을시
             setInfo(infoInit)
@@ -440,20 +439,8 @@ export default function RqfWrite({copyPageInfo = {}}) {
                                 <Panel defaultSize={sizes[4]} minSize={10} maxSize={100} onResize={onResizeChange}>
                                     <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}
                                              disabled={!userInfo['microsoftId']}>
-                                        {/*@ts-ignored*/}
-                                        <div style={{overFlowY: "auto", maxHeight: 300}}>
-                                            <div style={{width: 100, float: 'right'}}>
-                                                {selectBoxForm({
-                                                    title: '', id: 'uploadType', onChange: onChange, data: info, list: [
-                                                        {value: 0, label: '요청자료'},
-                                                        {value: 1, label: '첨부파일'},
-                                                        {value: 2, label: '업체회신자료'}
-                                                    ]
-                                                })}
-                                            </div>
-                                            <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                             numb={info['uploadType']}/>
-                                        </div>
+                                            <DriveUploadComp fileList={fileList} setFileList={setFileList}
+                                                             fileRef={fileRef} infoRef={infoRef}/>
                                     </BoxCard>
                                 </Panel>
                             </PanelGroup>

@@ -1,37 +1,24 @@
 import React, {useEffect, useRef, useState} from "react";
 import {ClearOutlined, FileSearchOutlined, SaveOutlined} from "@ant-design/icons";
-import {subRfqWriteColumn} from "@/utils/columnList";
 import message from "antd/lib/message";
 import {getData} from "@/manage/function/api";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
-import TableGrid from "@/component/tableGrid";
 import SearchInfoModal from "@/component/SearchAgencyModal";
-import {
-    BoxCard,
-    datePickerForm,
-    inputForm,
-    MainCard,
-    selectBoxForm,
-    textAreaForm,
-    tooltipInfo,
-    TopBoxCard
-} from "@/utils/commonForm";
+import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, tooltipInfo, TopBoxCard} from "@/utils/commonForm";
 import {commonFunc, commonManage, fileManage, gridManage} from "@/utils/commonManage";
 import {findCodeInfo} from "@/utils/api/commonApi";
 import {getAttachmentFileList, updateRfq} from "@/utils/api/mainApi";
-import {projectWriteInitial, rfqWriteInitial} from "@/utils/initialList";
-import _ from "lodash";
+import {rfqWriteInitial} from "@/utils/initialList";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {useRouter} from "next/router";
-import Select from "antd/lib/select";
 import Spin from "antd/lib/spin";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import Table from "@/component/util/Table";
-import {projectInfo, rfqInfo} from "@/utils/column/ProjectInfo";
+import {rfqInfo} from "@/utils/column/ProjectInfo";
 
 const listType = 'estimateRequestDetailList'
 export default function RqfUpdate({updateKey = {}, getCopyPage = null, managerList = []}) {
@@ -207,7 +194,6 @@ export default function RqfUpdate({updateKey = {}, getCopyPage = null, managerLi
         totalList.pop();
 
 
-
         const result = Object.keys(rfqInfo['defaultInfo']).map(v => `#${v}`)
         const test = `${result.join(',')}`;
         const elements = infoRef.current.querySelectorAll(test);
@@ -226,7 +212,7 @@ export default function RqfUpdate({updateKey = {}, getCopyPage = null, managerLi
 
         copyInfo[listType] = [...totalList, ...commonFunc.repeatObject(rfqInfo['write']['defaultData'], 100 - totalList.length)];
 
-        console.log(copyInfo,'copyInfo:')
+        console.log(copyInfo, 'copyInfo:')
         getCopyPage('rfq_write', copyInfo)
     }
 
@@ -467,27 +453,9 @@ export default function RqfUpdate({updateKey = {}, getCopyPage = null, managerLi
                                 <Panel defaultSize={sizes[4]} minSize={10} maxSize={100} onResize={onResizeChange}>
                                     <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}
                                              disabled={!userInfo['microsoftId']}>
-                                        {/*@ts-ignored*/}
-                                        <div style={{overFlowY: "auto", maxHeight: 300, display : 'flex', justifyContent : 'space-between'}}>
-
-                                            <DriveUploadComp fileList={fileList} setFileList={setFileList}
-                                                             fileRef={fileRef}
-                                                             numb={info['uploadType']}/>
-
-                                            <select name="languages" id="uploadType"
-                                                    style={{
-                                                        outline: 'none',
-                                                        border: '1px solid lightGray',
-                                                        height: 25,
-                                                        width: '50%',
-                                                        fontSize: 12
-                                                    }}>
-                                                <option value={0}>{'요청자료'}</option>
-                                                <option value={1}>{'첨부파일'}</option>
-                                                <option value={2}>{'업체회신자료'}</option>
-                                            </select>
-
-                                        </div>
+                                        <DriveUploadComp fileList={fileList} setFileList={setFileList}
+                                                         fileRef={fileRef}
+                                                         infoRef={infoRef}/>
                                     </BoxCard>
                                 </Panel>
                             </PanelGroup>

@@ -4,7 +4,7 @@ import Input from "antd/lib/input";
 import {UploadOutlined} from "@ant-design/icons";
 import React, {useEffect, useRef, useState} from "react";
 
-export function DriveUploadComp({fileList, setFileList, fileRef, numb = 0, uploadType = true}) {
+export function DriveUploadComp({fileList, setFileList, fileRef,  uploadType = true, infoRef}) {
     const fileInputRef = useRef(null);
 
     const [editingFileId, setEditingFileId] = useState(null); // 수정 중인 파일 ID
@@ -135,9 +135,11 @@ export function DriveUploadComp({fileList, setFileList, fileRef, numb = 0, uploa
         // 중복 파일 처리
         const updatedFileList = fileList.map(f => {
             if (f.uid === file.uid) {
+
+                const dom = infoRef.current.querySelector('#uploadType');
                 // 현재 numb 그룹 내의 파일 이름에서 번호 추출
                 const existingNumbers = fileList
-                    .filter(file => file.name.startsWith(`0${numb}.`)) // 현재 numb 그룹만 필터링
+                    .filter(file => file.name.startsWith(`0${dom.value}.`)) // 현재 numb 그룹만 필터링
                     .map(file => {
                         const match = file.name.match(/^0\d+\.(\d+)/); // 번호 추출
                         return match ? parseInt(match[1], 10) : null;
@@ -160,10 +162,11 @@ export function DriveUploadComp({fileList, setFileList, fileRef, numb = 0, uploa
                 const match = f.name.match(/^0\d+\.\d+\s(.+)$/); // 규칙 이후의 이름 추출
                 const originalName = match ? match[1] : f.name; // 기존 이름 유지
 
+
                 // 이름 수정된 파일 반환 (originFileObj 유지)
                 return {
                     ...f,
-                    name: `0${numb}.${newNumber} ${originalName}`,
+                    name: `0${parseInt(dom.value)}.${newNumber} ${originalName}`,
                     originFileObj: f.originFileObj, // 기존 originFileObj 유지
                 };
             }
@@ -300,8 +303,27 @@ export function DriveUploadComp({fileList, setFileList, fileRef, numb = 0, uploa
                 maxCount={13}
             >
 
-                {uploadType ? <Button style={{fontSize: 11, }} size={'small'} icon={<UploadOutlined/>}
-                                      type={'primary'}>Upload</Button> : <></>}
+                {uploadType ? <div style={{display : 'flex', justifyContent : 'space-between'}}>
+                    <Button style={{fontSize: 11,}} size={'small'} icon={<UploadOutlined/>} type={'primary'}>Upload</Button>
+                    <select onClick={e=>{
+                        e.preventDefault();
+                        e.stopPropagation()
+                    }} name="languages" id="uploadType"
+                            style={{
+                                outline: 'none',
+                                border: '1px solid lightGray',
+                                height: 25,
+                                fontSize: 12,
+                                width  :120,
+                                marginLeft : 30
+                            }}>
+                        <option value={0}>{'요청자료'}</option>
+                        <option value={1}>{'첨부파일'}</option>
+                        <option value={2}>{'업체회신자료'}</option>
+                        <option value={3}>{'견적서자료'}</option>
+                        <option value={4}>{'발주서자료'}</option>
+                    </select>
+                </div> : <></>}
 
             </Upload>
         </>

@@ -37,7 +37,7 @@ import Table from "@/component/util/Table";
 
 
 const listType = 'estimateDetailList'
-export default function EstimateWrite({ copyPageInfo = {}}) {
+export default function EstimateWrite({copyPageInfo = {}}) {
     const groupRef = useRef<any>(null)
 
     const [memberList, setMemberList] = useState([]);
@@ -76,7 +76,7 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
 
     const [ready, setReady] = useState(false);
 
-    const copyInit = _.cloneDeep(estimateWriteInitial);
+    const copyInit = _.cloneDeep(estimateInfo['defaultInfo']);
     const copyUnitInit = _.cloneDeep(estimateDetailUnit);
 
     const userInfo = useAppSelector((state) => state.user);
@@ -103,10 +103,21 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
     const [loading, setLoading] = useState(false);
 
 
-
+    // useEffect(() => {
+    //
+    //     if (!isEmptyObj(copyPageInfo['estimate_write'])) {
+    //         // copyPageInfo 가 없을시
+    //         setInfo(infoInit)
+    //         setTableData(commonFunc.repeatObject(estimateInfo['write']['defaultData'], 100))
+    //     } else {
+    //         // copyPageInfo 가 있을시(==>보통 수정페이지에서 복제시)
+    //         // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting
+    //         setInfo({...copyPageInfo['estimate_write'], ...adminParams, writtenDate: moment().format('YYYY-MM-DD')});
+    //         setTableData(copyPageInfo['estimate_write'][listType])
+    //     }
+    // }, [copyPageInfo['estimate_write']]);
 
     useEffect(() => {
-
         if (!isEmptyObj(copyPageInfo['estimate_write'])) {
             // copyPageInfo 가 없을시
             setInfo(infoInit)
@@ -114,13 +125,18 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
         } else {
             // copyPageInfo 가 있을시(==>보통 수정페이지에서 복제시)
             // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting
-            setInfo({...copyPageInfo['estimate_write'], ...adminParams, writtenDate: moment().format('YYYY-MM-DD')});
+            setInfo({
+                ...copyPageInfo['estimate_write'], ...adminParams,
+                documentNumberFull: '',
+                writtenDate: moment().format('YYYY-MM-DD')
+            });
             setTableData(copyPageInfo['estimate_write'][listType])
         }
     }, [copyPageInfo['estimate_write']]);
 
-
-
+    useEffect(() => {
+        commonManage.setInfo(infoRef, info, userInfo['adminId']);
+    }, [info, memberList]);
 
 
     async function handleKeyPress(e) {
@@ -162,29 +178,42 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
                         "limit": -1
                     });
 
-
+                    const dom = infoRef.current.querySelector('#connectDocumentNumberFull');
                     // const result = await findDocumentInfo(e, setInfo);
                     await getData.post('estimate/generateDocumentNumberFull', {
                         type: 'ESTIMATE',
-                        documentNumberFull: info.connectDocumentNumberFull.toUpperCase()
+                        documentNumberFull: dom.value.toUpperCase()
                     }).then(src => {
 
                         delete result?.data?.entity?.estimateRequestList[0]?.adminId
-                        setInfo(v => {
-                            return {
-                                ...result.data.entity.estimateRequestList[0],
-                                managerAdminName: v.managerAdminName,
-                                connectDocumentNumberFull: v.connectDocumentNumberFull.toUpperCase(),
-                                documentNumberFull: src.data.code === 1 ? src.data.entity.newDocumentNumberFull : v.documentNumberFull,
-                                validityPeriod: '견적 발행 후 10일간',
-                                paymentTerms: '발주시 50% / 납품시 50%',
-                                shippingTerms: '귀사도착도',
-                                writtenDate : moment().format('YYYY-MM-DD'),
-                                ...adminParams
-                            }
-                        });
+                        delete result?.data?.entity?.estimateRequestList[0]?.createdBy
+
+                        commonManage.setInfo(infoRef, {
+                            ...result.data.entity.estimateRequestList[0],
+                            documentNumberFull: src.data.code === 1 ? src.data.entity.newDocumentNumberFull : '',
+                            validityPeriod: '견적 발행 후 10일간',
+                            paymentTerms: '발주시 50% / 납품시 50%',
+                            shippingTerms: '귀사도착도',
+                            writtenDate: moment().format('YYYY-MM-DD'),
+                        })
+
+                        // setInfo(v => {
+                        //     return {
+                        //         ...result.data.entity.estimateRequestList[0],
+                        //         managerAdminName: v.managerAdminName,
+                        //         connectDocumentNumberFull: v.connectDocumentNumberFull.toUpperCase(),
+                        //         documentNumberFull: src.data.code === 1 ? src.data.entity.newDocumentNumberFull : v.documentNumberFull,
+                        //         validityPeriod: '견적 발행 후 10일간',
+                        //         paymentTerms: '발주시 50% / 납품시 50%',
+                        //         shippingTerms: '귀사도착도',
+                        //         writtenDate: moment().format('YYYY-MM-DD'),
+                        //         ...adminParams
+                        //     }
+                        // });
                     });
-                    gridManage.resetData(gridRef, result.data.entity.estimateRequestList);
+
+                    setTableData(  [...result.data.entity.estimateRequestList, ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 100 - result.data.entity.estimateRequestList.length)])
+                    // gridManage.resetData(gridRef, result.data.entity.estimateRequestList);
                     break;
             }
         }
@@ -201,52 +230,43 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
     }
 
     async function saveFunc() {
+        let infoData = commonManage.getInfo(infoRef, infoInit);
+        const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
+        infoData['managerAdminName'] = findMember['name'];
 
-        gridRef.current.clearFocusedCell();
-        const list = gridManage.getAllData(gridRef);
-        setInfo(v => {
-            return {...v, estimateDetailList: list}
-        })
 
-        if (!info['documentNumberFull']) {
+        if (!infoData['managerAdminId']) {
+            return message.warn('담당자가 누락되었습니다.')
+        }
 
+        if (!infoData['documentNumberFull']) {
             return message.warn('Inquiry No. 정보가 누락되었습니다.')
         }
 
-        if (!info['agencyCode']) {
+        if (!infoData['agencyCode']) {
             return message.warn('매입처 코드가 누락되었습니다.')
         }
+        const tableList = tableRef.current?.getSourceData();
 
-        const filterList = list.filter(v => !!v.model);
-
-        if (!filterList.length) {
-            return message.warn('유효한 하위 데이터 1개 이상이여야 합니다');
+        const filterTableList = commonManage.filterEmptyObjects(tableList, ['model', 'item', 'maker'])
+        if (!filterTableList.length) {
+            return message.warn('하위 데이터 1개 이상이여야 합니다');
         }
 
+        setLoading(true)
         const formData: any = new FormData();
-
-        commonManage.setInfoFormData(info, formData, listType, filterList)
-        const resultCount = commonManage.getUploadList(fileRef, formData)
-
-
+        commonManage.setInfoFormData(infoData, formData, listType, filterTableList)
+        commonManage.getUploadList(fileRef, formData);
         formData.delete('createdDate')
         formData.delete('modifiedDate')
 
-
-        const pdf = await commonManage.getPdfCreate(pdfRef);
-        const result = await commonManage.getPdfFile(pdf, info.documentNumberFull);
-        formData.append(`attachmentFileList[${resultCount}].attachmentFile`, result);
-        formData.append(`attachmentFileList[${resultCount}].fileName`, `03.${resultCount + 1} ${result.name}`);
-
-        setLoading(true)
-
         await saveEstimate({data: formData, router: router, returnFunc: returnFunc})
-        setLoading(false)
+
     }
 
     function returnFunc(code, msg) {
         if (code === -20001) {
-            const inputElement = document.getElementById("documentNumberFull");
+            const inputElement = infoRef.current.querySelector('#documentNumberFull')
             if (inputElement) {
                 inputElement.style.border = "1px solid red"; // 빨간색 테두리
                 inputElement.style.boxShadow = "none"; // 그림자 제거
@@ -263,7 +283,7 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
 
     function clearAll() {
         setInfo({...infoInit});
-        gridManage.deleteAll(gridRef);
+        // gridManage.deleteAll(gridRef);
     }
 
     const onCChange = (value: string, e: any) => {
@@ -273,7 +293,7 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
     };
 
 
-    return  <div style={{overflow : 'hidden'}}><Spin spinning={loading} tip={'견적서 등록중...'}>
+    return <div style={{overflow: 'hidden'}}><Spin spinning={loading} tip={'견적서 등록중...'}>
 
         {/*<SearchInfoModal info={info} setInfo={setInfo}*/}
         {/*                 open={isModalOpen}*/}
@@ -340,7 +360,6 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
                                         }/>
                                 })}
                                 {inputForm({
-                                    placeholder: '폴더생성 규칙 유의',
                                     title: '연결 INQUIRY No.',
                                     id: 'connectDocumentNumberFull',
                                     suffix: <DownloadOutlined style={{cursor: 'pointer'}}/>
@@ -353,7 +372,7 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
 
                             <div style={{
                                 display: 'grid',
-                                gridTemplateColumns: "150px 200px 200px 180px 200px 200px",
+                                gridTemplateColumns: "150px 200px 200px 180px 200px 250px",
                                 gap: 10,
                                 paddingTop: 10
                             }}>
@@ -403,7 +422,7 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
                                                 e.stopPropagation();
                                                 openModal('customerName');
                                             }
-                                        }/>,  handleKeyPress: handleKeyPress,
+                                        }/>, handleKeyPress: handleKeyPress,
                                     })}
                                     {inputForm({
                                         title: '담당자명',
@@ -489,8 +508,7 @@ export default function EstimateWrite({ copyPageInfo = {}}) {
                                 <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
                                     {/*@ts-ignored*/}
                                     <div style={{overFlowY: "auto", maxHeight: 300}}>
-                                        <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                         numb={3}/>
+                                        <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef} infoRef={infoRef}/>
                                     </div>
                                 </BoxCard>
                             </div>

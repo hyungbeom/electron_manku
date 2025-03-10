@@ -131,7 +131,7 @@ export default function RfqMailSend({getPropertyId}) {
         <>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '195px' : '65px'} calc(100vh - ${mini ? 325 : 195}px)`,
+                gridTemplateRows: `${mini ? '210px' : '65px'} calc(100vh - ${mini ? 340 : 195}px)`,
                 columnGap: 5
             }}>
                 <MainCard title={'견적의뢰 메일전송'} list={[

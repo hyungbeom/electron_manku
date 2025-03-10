@@ -19,10 +19,10 @@ import {
     inputNumberForm,
     MainCard,
     selectBoxForm,
-    textAreaForm,
+    textAreaForm, tooltipInfo,
     TopBoxCard
 } from "@/utils/commonForm";
-import {commonManage, fileManage, gridManage} from "@/utils/commonManage";
+import {commonFunc, commonManage, fileManage, gridManage} from "@/utils/commonManage";
 import {findCodeInfo, findDocumentInfo} from "@/utils/api/commonApi";
 import {getAttachmentFileList, updateEstimate} from "@/utils/api/mainApi";
 import _ from "lodash";
@@ -33,6 +33,7 @@ import {jsPDF} from "jspdf";
 import html2canvas from "html2canvas";
 import Select from "antd/lib/select";
 import EstimatePaper from "@/component/견적서/EstimatePaper";
+import {rfqInfo} from "@/utils/column/ProjectInfo";
 
 const listType = 'estimateDetailList'
 export default function EstimateUpdate({
@@ -73,6 +74,8 @@ export default function EstimateUpdate({
     //     createdBy: userInfo['name'],
     //     managerAdminName: userInfo['name']
     // }
+    const infoRef = useRef<any>(null)
+    const tableRef = useRef(null);
 
 
     const pdfRef = useRef(null);
@@ -91,7 +94,7 @@ export default function EstimateUpdate({
 
     const [fileList, setFileList] = useState(fileManage.getFormatFiles(infoInitFile));
     const [originFileList, setOriginFileList] = useState(infoInitFile);
-
+    const [tableData, setTableData] = useState([]);
 
     const [loading, setLoading] = useState(false);
 
@@ -109,12 +112,31 @@ export default function EstimateUpdate({
             const {estimateDetail, attachmentFileList} = v;
             setFileList(fileManage.getFormatFiles(attachmentFileList))
             setInfo(estimateDetail)
-            gridManage.resetData(gridRef, estimateDetail[listType])
             setLoading(false)
 
         })
         // setLoading(false)
     }, [updateKey['estimate_update']])
+
+    useEffect(() => {
+        setLoading(true)
+        getDataInfo().then(v => {
+            const {estimateDetail, attachmentFileList} = v;
+            setFileList(fileManage.getFormatFiles(attachmentFileList));
+            setOriginFileList(attachmentFileList)
+            setInfo({
+                ...estimateDetail,
+                uploadType: 0,
+                managerAdminName: estimateDetail['managerAdminName'] ? estimateDetail['managerAdminName'] : estimateDetail['createdBy']
+            })
+            estimateDetail[listType] = [...estimateDetail[listType], ...commonFunc.repeatObject(rfqInfo['write']['defaultData'], 100 - estimateDetail[listType].length)]
+
+            setTableData(estimateDetail[listType]);
+
+            setLoading(false)
+        })
+    }, [updateKey['estimate_update']])
+
 
     async function getDataInfo() {
         return await getData.post('estimate/getEstimateDetail', {
@@ -125,7 +147,6 @@ export default function EstimateUpdate({
         })
     }
 
-    console.log(info,'info')
 
     async function handleKeyPress(e) {
         if (e.key === 'Enter') {
@@ -302,14 +323,14 @@ export default function EstimateUpdate({
 
     return <Spin spinning={loading} tip={'견적의뢰 수정중...'}>
         {/*@ts-ignore*/}
-        <SearchInfoModal info={info} setInfo={setInfo}
-                         open={isModalOpen}
-                         type={'ESTIMATE'}
-                         gridRef={gridRef}
-                         setIsModalOpen={setIsModalOpen}/>
+        {/*<SearchInfoModal info={info} setInfo={setInfo}*/}
+        {/*                 open={isModalOpen}*/}
+        {/*                 type={'ESTIMATE'}*/}
+        {/*                 gridRef={gridRef}*/}
+        {/*                 setIsModalOpen={setIsModalOpen}/>*/}
         <EstimateModal/>
         <>
-            <div style={{
+            <div ref={infoRef} style={{
                 display: 'grid',
                 gridTemplateRows: `${mini ? '510px' : '65px'} calc(100vh - ${mini ? 640 : 195}px)`,
                 columnGap: 5
@@ -326,9 +347,7 @@ export default function EstimateUpdate({
                             {datePickerForm({
                                 title: '작성일',
                                 id: 'writtenDate',
-                                disabled: true,
-                                onChange: onChange,
-                                data: info
+                                disabled: true
                             })}
                             {inputForm({title: '작성자', id: 'createdBy', disabled: true, onChange: onChange, data: info})}
                             {/*{inputForm({title: '담당자', id: 'managerAdminName', onChange: onChange, data: info})}*/}
@@ -346,9 +365,7 @@ export default function EstimateUpdate({
                             {inputForm({
                                 title: 'Inquiry No.',
                                 id: 'documentNumberFull',
-                                placeholder: '폴더생성 규칙 유의',
-                                onChange: onChange,
-                                data: info, disabled: true
+                                placeholder: '폴더생성 규칙 유의'
                             })}
 
                             {inputForm({title: 'RFQ No.', id: 'rfqNo', onChange: onChange, data: info})}
@@ -372,33 +389,23 @@ export default function EstimateUpdate({
                                             openModal('agencyCode');
                                         }
                                     }/>,
-                                    onChange: onChange,
-                                    data: info,
                                     handleKeyPress: handleKeyPress
                                 })}
                                 {inputForm({
                                     title: '매입처명',
-                                    id: 'agencyName',
-                                    onChange: onChange,
-                                    data: info
+                                    id: 'agencyName'
                                 })}
                                 {inputForm({
                                     title: '담당자',
-                                    id: 'agencyManagerName',
-                                    onChange: onChange,
-                                    data: info
+                                    id: 'agencyManagerName'
                                 })}
                                 {inputForm({
                                     title: '매입처이메일',
-                                    id: 'agencyManagerEmail',
-                                    onChange: onChange,
-                                    data: info
+                                    id: 'agencyManagerEmail'
                                 })}
                                 {inputForm({
                                     title: '연락처',
-                                    id: 'agencyManagerPhoneNumber',
-                                    onChange: onChange,
-                                    data: info
+                                    id: 'agencyManagerPhoneNumber'
                                 })}
                             </BoxCard>
 
@@ -411,31 +418,23 @@ export default function EstimateUpdate({
                                             e.stopPropagation();
                                             openModal('customerName');
                                         }
-                                    }/>, onChange: onChange, data: info, handleKeyPress: handleKeyPress
+                                    }/>,  handleKeyPress: handleKeyPress
                                 })}
                                 {inputForm({
                                     title: '담당자',
-                                    id: 'managerName',
-                                    onChange: onChange,
-                                    data: info
+                                    id: 'managerName'
                                 })}
                                 {inputForm({
                                     title: '연락처',
-                                    id: 'phoneNumber',
-                                    onChange: onChange,
-                                    data: info
+                                    id: 'phoneNumber'
                                 })}
                                 {inputForm({
                                     title: '팩스',
-                                    id: 'faxNumber',
-                                    onChange: onChange,
-                                    data: info
+                                    id: 'faxNumber'
                                 })}
                                 {inputForm({
                                     title: '이메일',
-                                    id: 'customerManagerEmail',
-                                    onChange: onChange,
-                                    data: info
+                                    id: 'customerManagerEmail'
                                 })}
                             </BoxCard>
 
@@ -464,15 +463,13 @@ export default function EstimateUpdate({
                                 {inputNumberForm({
                                     title: '납기',
                                     id: 'delivery',
-                                    onChange: onChange,
-                                    data: info,
+
                                     addonAfter: <span style={{fontSize: 11}}>주</span>
                                 })}
                                 {inputNumberForm({
                                     title: '환율',
                                     id: 'exchangeRate',
-                                    onChange: onChange,
-                                    data: info,
+
                                     step: 0.01
                                 })}
                             </BoxCard>
@@ -486,7 +483,7 @@ export default function EstimateUpdate({
                                             openModal('maker');
                                         }
                                     }/>
-                                    , onChange: onChange, data: info, handleKeyPress: handleKeyPress
+                                    ,  handleKeyPress: handleKeyPress
                                 })}
                                 {inputForm({title: 'Item', id: 'item', onChange: onChange, data: info})}
                             </BoxCard>
@@ -494,18 +491,15 @@ export default function EstimateUpdate({
                                 {textAreaForm({
                                     title: '지시사항',
                                     rows: 6,
-                                    id: 'instructions',
-                                    onChange: onChange,
-                                    data: info
+                                    id: 'instructions'
                                 })}
-                                {textAreaForm({title: '비고란', rows: 5, id: 'remarks', onChange: onChange, data: info})}
+                                {textAreaForm({title: '비고란', rows: 5, id: 'remarks'})}
                             </BoxCard>
-                            <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
-                                {/*@ts-ignored*/}
-                                <div style={{overFlowY: "auto", maxHeight: 300}}>
-                                    <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                     numb={3}/>
-                                </div>
+                            <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}
+                                     disabled={!userInfo['microsoftId']}>
+                                <DriveUploadComp fileList={fileList} setFileList={setFileList}
+                                                 fileRef={fileRef}
+                                                 infoRef={infoRef}/>
                             </BoxCard>
                         </div>
                     </div> : <></>}

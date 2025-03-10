@@ -14,9 +14,6 @@ export const gridManage: any = {}
 export const fileManage: any = {}
 
 
-
-
-
 // =========================================================================================
 // =========================================================================================
 // =========================================================================================
@@ -29,7 +26,7 @@ export const fileManage: any = {}
 // =========================================================================================
 
 
-commonManage.getMemberList =  async function () {
+commonManage.getMemberList = async function () {
     // @ts-ignore
     const v = await getData.post('admin/getAdminList', {
         "searchText": null, // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
@@ -46,7 +43,7 @@ commonManage.getMemberList =  async function () {
  * @param infoRef 페이지의 input-dom들을 감싸고있는 container dom에 연결된 ref
  * @param obj info 기본정보를 가지고 있는 object가 보통
  */
-commonManage.getInfo =  function (infoRef, obj){
+commonManage.getInfo = function (infoRef, obj) {
     const result = Object.keys(obj).map(v => `#${v}`)
     const test = `${result.join(',')}`;
     const elements = infoRef.current.querySelectorAll(test);
@@ -60,21 +57,21 @@ commonManage.getInfo =  function (infoRef, obj){
 }
 
 
-
 /**
  * @description 입력정보를 초기화 하는 기능 function
  * @param infoRef 페이지의 input-dom들을 감싸고있는 container dom에 연결된 ref
  * @param obj input 초기화 할 key : value(초기값) 리스트
  * @param adminId 로그인 user의 managerAdminId 에 해당하는 adminId
  */
-commonManage.setInfo =  function (infoRef, obj, adminId?){
+commonManage.setInfo = function (infoRef, obj, adminId?) {
     const result = Object.keys(obj).map(v => `#${v}`)
     const test = `${result.join(',')}`;
 
-    if(test) {
+    if (test) {
         const elements = infoRef.current.querySelectorAll(test);
 
         elements.forEach(element => {
+
             if (element.id === 'managerAdminId' && !isNaN(adminId)) {
                 element.value = parseInt(adminId)
             } else {
@@ -90,7 +87,7 @@ commonManage.setInfo =  function (infoRef, obj, adminId?){
  * @param data 대표적으로 tableData 가 될것이다.(or 비슷한 유형의 데이터)
  * @param excludeFields 유효하지않는 값인지 판단할 key-list (한개라도 유효하면 return)
  */
-commonManage.filterEmptyObjects =  function(data, excludeFields = []){
+commonManage.filterEmptyObjects = function (data, excludeFields = []) {
     if (data.length === 0) return [];
     return data.slice(0, -1).filter((obj) => {
         const isEmpty = excludeFields.every(field =>
@@ -101,9 +98,7 @@ commonManage.filterEmptyObjects =  function(data, excludeFields = []){
 };
 
 
-
-
-commonManage.filterEmptyObjects =  function(data, excludeFields = []){
+commonManage.filterEmptyObjects = function (data, excludeFields = []) {
     if (data.length === 0) return [];
     return data.slice(0, -1).filter((obj) => {
         const isEmpty = excludeFields.every(field =>
@@ -112,7 +107,6 @@ commonManage.filterEmptyObjects =  function(data, excludeFields = []){
         return !isEmpty;
     });
 };
-
 
 
 /**
@@ -133,13 +127,6 @@ commonFunc.repeatObject = function (item, numb) {
 // =========================================================================================
 // =========================================================================================
 // =========================================================================================
-
-
-
-
-
-
-
 
 
 gridManage.getSelectRows = function (gridRef) {
