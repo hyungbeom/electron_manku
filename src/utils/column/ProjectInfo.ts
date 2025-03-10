@@ -72,7 +72,7 @@ export const projectInfo = {
         },
         type: 'write'
     },
-    defaultInfo : {
+    defaultInfo: {
         managerAdminId: null,
         writtenDate: moment().format('YYYY-MM-DD'),
         documentNumberFull: '',
@@ -89,12 +89,10 @@ export const projectInfo = {
 };
 
 
-
-
 export const rfqInfo = {
     write: {
-        columnWidth: [220, 45, 45, 55, 120,120, 45, 75, 75, 150],
-        column: [ 'Model', '수량','단위','CURR','매입 단가','매입총액','납기','회신여부','회신일','비고'],
+        columnWidth: [220, 45, 45, 55, 120, 120, 45, 75, 75, 150],
+        column: ['Model', '수량', '단위', 'CURR', '매입 단가', '매입총액', '납기', '회신여부', '회신일', '비고'],
         columnList: [
             {data: "model", type: "text"},
             {data: "quantity", type: "numeric"},
@@ -107,7 +105,11 @@ export const rfqInfo = {
             {data: "net", type: "numeric"},
             {data: "totalNet", type: "numeric", readOnly: true},
             {data: "deliveryDate", type: "numeric"},
-            {data: "content", type: "autocomplete", source: ['미회신', '회신', '정보부족', '한국대리점', 'MOQ', 'OEM', '단종', '견적포기', '입찰마감', '견적불가', '기타']},
+            {
+                data: "content",
+                type: "autocomplete",
+                source: ['미회신', '회신', '정보부족', '한국대리점', 'MOQ', 'OEM', '단종', '견적포기', '입찰마감', '견적불가', '기타']
+            },
             {data: "replyDate", type: "date"},
             {data: "remarks", type: "numeric"},
 
@@ -144,7 +146,7 @@ export const rfqInfo = {
         },
         type: 'write'
     },
-    defaultInfo : {
+    defaultInfo: {
         createdBy: '',
         managerAdminName: '',
         managerAdminId: null,
@@ -184,15 +186,10 @@ export const rfqInfo = {
 };
 
 
-
-
-
-
-
 export const estimateInfo = {
     write: {
-        columnWidth: [220, 45, 45, 55, 120,120, 45, 75, 75, 150],
-        column: [ 'Model', '수량','단위','CURR','매출 단가','매출 총액','매입 단가','매입총액' ,'마진율',],
+        columnWidth: [250, 40, 40, 45, 120, 120, 120, 120, 120, 50],
+        column: ['Model', '수량', '단위', 'CURR', '매출 단가', '매출 총액', '매입 단가', '매입총액', '마진율'],
         columnList: [
             {data: "model", type: "text"},
             {data: "quantity", type: "numeric"},
@@ -205,7 +202,7 @@ export const estimateInfo = {
             {data: "unitPrice", type: "numeric"},
             {data: "total", type: "numeric", readOnly: true},
             {data: "net", type: "numeric"},
-            {data: "totalNet", type:"numeric", readOnly: true},
+            {data: "totalNet", type: "numeric", readOnly: true},
             {data: "marginRate", type: "text"},
 
         ],
@@ -222,18 +219,18 @@ export const estimateInfo = {
             v['totalNet'] = `=B${i + 1}*G${i + 1}`
             return v
         },
-        totalList:  {
+        totalList: {
             "model": "",   // Model
             "quantity": '=SUM(B1:B100)',                  // 수량
             "unit": "",                   // 단위
             "currency": '',          // CURR
-            "unitPrice":  '=SUM(E1:E100)',           // 단가
-            "total":  '=SUM(F1:F100)',           // 단가
-            "net":  '=SUM(G1:G100)',                 // 매입단가
+            "unitPrice": '=SUM(E1:E100)',           // 단가
+            "total": '=SUM(F1:F100)',           // 단가
+            "net": '=SUM(G1:G100)',                 // 매입단가
             "totalNet": '=SUM(H1:H100)',                 // 매입단가
             "marginRate": ''                 // 매입단가
 
-            }
+        }
         ,
         // totalList: {
         //     "model": '',             // Model
@@ -250,7 +247,7 @@ export const estimateInfo = {
         // },
         type: 'write'
     },
-    defaultInfo : {
+    defaultInfo: {
         createdBy: '',
         managerAdminName: '',
         managerAdminId: null,
@@ -265,7 +262,7 @@ export const estimateInfo = {
         "managerName": "",      // 담당자
         "phoneNumber": "",  // 연락처
         "faxNumber": "",                // 팩스번호
-        "validityPeriod":'견적 발행 후 10일간',    // 유효기간
+        "validityPeriod": '견적 발행 후 10일간',    // 유효기간
         "paymentTerms": '발주시 50% / 납품시 50%',                // 결제조건
         "shippingTerms": '귀사도착도',             // 운송조건
         "exchangeRate": "",                  // 환율
@@ -278,7 +275,7 @@ export const estimateInfo = {
         "delivery": null,    // 납기
         "remarks": "",          // 비고란
         "currencyUnit": "",          // 비고란
-        'count' : 0,
+        'count': 0,
         uploadType: 3
     },
 };

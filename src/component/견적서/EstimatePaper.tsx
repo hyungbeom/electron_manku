@@ -7,6 +7,8 @@ import TextArea from "antd/lib/input/TextArea";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {getData} from "@/manage/function/api";
 import InputNumber from "antd/lib/input-number";
+import {estimateInfo} from "@/utils/column/ProjectInfo";
+import message from "antd/lib/message";
 
 const getTextAreaValues = (ref) => {
     if (ref?.current) {
@@ -20,56 +22,79 @@ const getTextAreaValues = (ref) => {
     return [];
 };
 
-const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any) => {
+const EstimatePaper = ({infoRef, pdfRef, pdfSubRef, tableRef, memberList = []}: any) => {
 
     const [info, setInfo] = useState<any>([]);
 
     const [splitData, setSplitData] = useState([])
 
     useEffect(() => {
-        const totalList = gridManage.getAllData(gridRef);
-        const filterTotalList = totalList.filter(v => !!v.model)
+        let infoData = commonManage.getInfo(infoRef, estimateInfo['defaultInfo']);
+        const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
+        infoData['managerAdminName'] = findMember['name'];
+
+                setInfo([
+                    {title: '견적일자', value: infoData.writtenDate, id: 'writtenDate'},
+                    {title: '담당자', value: findMember?.name, id: 'name'},
+                    {title: '견적서 No', value: infoData.documentNumberFull, id: 'documentNumberFull'},
+                    {title: '연락처', value: findMember?.contactNumber, id: 'contactNumber'},
+                    {title: '고객사', value: infoData.customerName, id: 'customerName'},
+                    {title: 'E-mail', value: findMember?.email, id: 'email'},
+                    {title: '담당자', value: infoData.managerName, id: 'customerManagerName'},
+                    {title: '유효기간', value: infoData.validityPeriod, id: 'validityPeriod'},
+                    {title: '연락처', value: infoData.phoneNumber, id: 'customerManagerPhone'},
+                    {title: '결제조건', value: infoData.paymentTerms, id: 'paymentTerms'},
+                    {title: 'E-mail', value: infoData.customerManagerEmail, id: 'customerManagerEmail'},
+                    {title: '납기', value: infoData.delivery, id: 'delivery'},
+                    {title: 'Fax', value: infoData.faxNumber, id: 'faxNumber'},
+                    {title: '납품조건', value: infoData.shippingTerms, id: 'shippingTerms'},
+                ])
+        const tableList = tableRef.current?.getSourceData();
+
+        // const totalList = gridManage.getAllData(gridRef);
+        const filterTotalList = tableList.filter(v => !!v.model)
+        console.log(filterTotalList,'infoData:')
         const result = commonManage.splitDataWithSequenceNumber(filterTotalList, 9, 30);
         setSplitData(result)
-    }, [data, gridRef.current])
+    }, [])
 
 
-    async function getInfo() {
-        return await getData.post('admin/getAdminList', {
-            "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
-            "searchAuthority": null,    // 1: 일반, 0: 관리자
-            "page": 1,
-            "limit": -1
-        }).then(v => {
-            return v
-        })
-    }
+    // async function getInfo() {
+    //     return await getData.post('admin/getAdminList', {
+    //         "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
+    //         "searchAuthority": null,    // 1: 일반, 0: 관리자
+    //         "page": 1,
+    //         "limit": -1
+    //     }).then(v => {
+    //         return v
+    //     })
+    // }
 
-    useEffect(() => {
-        getInfo().then(v => {
-            const findObj = v.data.entity.adminList.find(src => src.adminId === data.managerAdminId);
-
-
-            setInfo([
-                {title: '견적일자', value: data.writtenDate, id: 'writtenDate'},
-                {title: '담당자', value: findObj?.name, id: 'name'},
-                {title: '견적서 No', value: data.documentNumberFull, id: 'documentNumberFull'},
-                {title: '연락처', value: findObj?.contactNumber, id: 'contactNumber'},
-                {title: '고객사', value: data.customerName, id: 'customerName'},
-                {title: 'E-mail', value: findObj?.email, id: 'email'},
-                {title: '담당자', value: data.customerManagerName, id: 'customerManagerName'},
-                {title: '유효기간', value: data.validityPeriod, id: 'validityPeriod'},
-                {title: '연락처', value: data.customerManagerPhone, id: 'customerManagerPhone'},
-                {title: '결제조건', value: data.paymentTerms, id: 'paymentTerms'},
-                {title: 'E-mail', value: data.customerManagerEmail, id: 'customerManagerEmail'},
-                {title: '납기', value: data.delivery, id: 'delivery'},
-                {title: 'Fax', value: data.faxNumber, id: 'faxNumber'},
-                {title: '납품조건', value: data.shippingTerms, id: 'shippingTerms'},
-            ])
-        })
-
-
-    }, [data])
+    // useEffect(() => {
+    //     getInfo().then(v => {
+    //         const findObj = v.data.entity.adminList.find(src => src.adminId === data.managerAdminId);
+    //
+    //
+    //         setInfo([
+    //             {title: '견적일자', value: data.writtenDate, id: 'writtenDate'},
+    //             {title: '담당자', value: findObj?.name, id: 'name'},
+    //             {title: '견적서 No', value: data.documentNumberFull, id: 'documentNumberFull'},
+    //             {title: '연락처', value: findObj?.contactNumber, id: 'contactNumber'},
+    //             {title: '고객사', value: data.customerName, id: 'customerName'},
+    //             {title: 'E-mail', value: findObj?.email, id: 'email'},
+    //             {title: '담당자', value: data.customerManagerName, id: 'customerManagerName'},
+    //             {title: '유효기간', value: data.validityPeriod, id: 'validityPeriod'},
+    //             {title: '연락처', value: data.customerManagerPhone, id: 'customerManagerPhone'},
+    //             {title: '결제조건', value: data.paymentTerms, id: 'paymentTerms'},
+    //             {title: 'E-mail', value: data.customerManagerEmail, id: 'customerManagerEmail'},
+    //             {title: '납기', value: data.delivery, id: 'delivery'},
+    //             {title: 'Fax', value: data.faxNumber, id: 'faxNumber'},
+    //             {title: '납품조건', value: data.shippingTerms, id: 'shippingTerms'},
+    //         ])
+    //     })
+    //
+    //
+    // }, [data])
 
     const RowTotal = ({defaultValue, id}) => {
 
@@ -402,7 +427,7 @@ const EstimatePaper = ({data, pdfRef, pdfSubRef, gridRef, position = false}: any
                         <th style={{
                             borderTop: '1px solid lightGray', backgroundColor: '#ebf6f7', border: '1px solid lightGray',
                             borderLeft: 'none', borderRight: 'none'
-                        }}>{data?.maker ? data?.maker : '-'}</th>
+                        }}>{info?.maker ? info?.maker : '-'}</th>
                         <th style={{
                             backgroundColor: '#ebf6f7',
                             borderTop: '1px solid lightGray', border: '1px solid lightGray',

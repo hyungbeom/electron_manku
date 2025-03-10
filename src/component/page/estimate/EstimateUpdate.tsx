@@ -33,7 +33,8 @@ import {jsPDF} from "jspdf";
 import html2canvas from "html2canvas";
 import Select from "antd/lib/select";
 import EstimatePaper from "@/component/견적서/EstimatePaper";
-import {rfqInfo} from "@/utils/column/ProjectInfo";
+import {estimateInfo, rfqInfo} from "@/utils/column/ProjectInfo";
+import Table from "@/component/util/Table";
 
 const listType = 'estimateDetailList'
 export default function EstimateUpdate({
@@ -106,17 +107,17 @@ export default function EstimateUpdate({
         params.api.applyTransaction({add: dataInfo?.estimateDetail[listType]});
     };
 
-    useEffect(() => {
-        setLoading(true)
-        getDataInfo().then(v => {
-            const {estimateDetail, attachmentFileList} = v;
-            setFileList(fileManage.getFormatFiles(attachmentFileList))
-            setInfo(estimateDetail)
-            setLoading(false)
-
-        })
-        // setLoading(false)
-    }, [updateKey['estimate_update']])
+    // useEffect(() => {
+    //     setLoading(true)
+    //     getDataInfo().then(v => {
+    //         const {estimateDetail, attachmentFileList} = v;
+    //         setFileList(fileManage.getFormatFiles(attachmentFileList))
+    //         setInfo(estimateDetail)
+    //         setLoading(false)
+    //
+    //     })
+    //     // setLoading(false)
+    // }, [updateKey['estimate_update']])
 
     useEffect(() => {
         setLoading(true)
@@ -127,8 +128,9 @@ export default function EstimateUpdate({
             setInfo({
                 ...estimateDetail,
                 uploadType: 0,
-                managerAdminName: estimateDetail['managerAdminName'] ? estimateDetail['managerAdminName'] : estimateDetail['createdBy']
+                managerAdminId: estimateDetail['managerAdminId'] ? estimateDetail['managerAdminId'] : ''
             })
+            console.log(estimateDetail[listType],'???')
             estimateDetail[listType] = [...estimateDetail[listType], ...commonFunc.repeatObject(rfqInfo['write']['defaultData'], 100 - estimateDetail[listType].length)]
 
             setTableData(estimateDetail[listType]);
@@ -136,6 +138,10 @@ export default function EstimateUpdate({
             setLoading(false)
         })
     }, [updateKey['estimate_update']])
+
+    useEffect(() => {
+        commonManage.setInfo(infoRef, info);
+    }, [info]);
 
 
     async function getDataInfo() {
@@ -177,25 +183,34 @@ export default function EstimateUpdate({
 
 
     async function saveFunc() {
-        gridRef.current.clearFocusedCell();
-        const list = gridManage.getAllData(gridRef)
-        const filterList = list.filter(v => !!v.model);
-        if (!filterList.length) {
-            return message.warn('유효한 하위 데이터 1개 이상이여야 합니다')
-        }
-        if (!info['agencyCode']) {
+
+        let infoData = commonManage.getInfo(infoRef, estimateInfo['defaultInfo']);
+        const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
+        infoData['managerAdminName'] = findMember['name'];
+        if (!infoData['agencyCode']) {
+            const dom = infoRef.current.querySelector('#agencyCode');
+            dom.style.borderColor = 'red'
             return message.warn('매입처 코드가 누락되었습니다.')
         }
 
+        const tableList = tableRef.current?.getSourceData();
+
+        const filterTableList = commonManage.filterEmptyObjects(tableList, ['model', 'item', 'maker'])
+        if (!filterTableList.length) {
+            return message.warn('하위 데이터 1개 이상이여야 합니다');
+        }
+
+
         setLoading(true)
         const formData: any = new FormData();
-
-        commonManage.setInfoFormData(info, formData, listType, filterList)
+        commonManage.setInfoFormData(infoData, formData, listType, filterTableList)
         commonManage.getUploadList(fileRef, formData);
         commonManage.deleteUploadList(fileRef, formData, originFileList)
+        formData.delete('createdDate')
+        formData.delete('modifiedDate')
 
         await updateEstimate({data: formData, returnFunc: returnFunc});
-        setLoading(false)
+
     }
 
     async function returnFunc(e) {
@@ -217,12 +232,31 @@ export default function EstimateUpdate({
     }
 
     function copyPage() {
-        const totalList = gridManage.getAllData(gridRef)
-        let copyInfo = _.cloneDeep(info)
-        copyInfo[listType] = totalList
+        const totalList = tableRef.current.getSourceData();
+        totalList.pop();
+
+
+        const result = Object.keys(estimateInfo['defaultInfo']).map(v => `#${v}`)
+        const test = `${result.join(',')}`;
+        const elements = infoRef.current.querySelectorAll(test);
+
+        let copyInfo = {}
+        for (let element of elements) {
+            copyInfo[element.id] = element.value
+        }
+
+        const dom = infoRef.current.querySelector('#managerAdminId');
+
+        copyInfo['managerAdminId'] = parseInt(dom.value);
+        const findMember = memberList.find(v => v.adminId === parseInt(dom.value));
+
+        if(findMember?.name){
+            copyInfo['managerAdminName'] = findMember['name'];
+        }
+
+        copyInfo[listType] = [...totalList, ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 100 - totalList.length)];
 
         getCopyPage('estimate_write', copyInfo)
-
     }
 
 
@@ -233,11 +267,16 @@ export default function EstimateUpdate({
 
 
     async function printEstimate() {
-        const list = gridManage.getAllData(gridRef)
-        if (!list.length) {
+        let infoData = commonManage.getInfo(infoRef, estimateInfo['defaultInfo']);
+        const tableList = tableRef.current?.getSourceData();
+
+        const filterTableList = commonManage.filterEmptyObjects(tableList, ['model', 'item', 'maker'])
+
+
+        if (!filterTableList.length) {
             return message.warn('하위 데이터 1개 이상이여야 합니다')
         }
-        if(!info['managerAdminName']){
+        if(!infoData['managerAdminId']){
             return message.warn('담당자를 선택해주세요')
         }
         setIsPrintModalOpen(true)
@@ -311,7 +350,7 @@ export default function EstimateUpdate({
             width={1050}
             footer={null}
             onOk={() => setIsPrintModalOpen(false)}>
-            <EstimatePaper data={info} pdfRef={pdfRef} pdfSubRef={pdfSubRef} gridRef={gridRef} position={true}/>
+            <EstimatePaper infoRef={infoRef} pdfRef={pdfRef} pdfSubRef={pdfSubRef} tableRef={tableRef} position={true} memberList={memberList}/>
         </Modal>
     }
 
@@ -352,15 +391,22 @@ export default function EstimateUpdate({
                             {inputForm({title: '작성자', id: 'createdBy', disabled: true, onChange: onChange, data: info})}
                             {/*{inputForm({title: '담당자', id: 'managerAdminName', onChange: onChange, data: info})}*/}
                             <div>
-                                <div style={{paddingBottom: 4.5, fontSize: 12}}>담당자</div>
-                                <Select style={{width: '100%', fontSize: 12}} size={'small'}
-                                        showSearch
-                                        value={info['managerAdminId']}
-                                        placeholder="Select a person"
-                                        optionFilterProp="label"
-                                        onChange={onCChange}
-                                        options={options}
-                                />
+                                <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>담당자</div>
+                                <select name="languages" id="managerAdminId"
+                                        style={{
+                                            outline: 'none',
+                                            border: '1px solid lightGray',
+                                            height: 22,
+                                            width: '100%',
+                                            fontSize: 12,
+                                            paddingBottom: 0.5
+                                        }}>
+                                    {
+                                        options.map(v => {
+                                            return <option value={v.value}>{v.label}</option>
+                                        })
+                                    }
+                                </select>
                             </div>
                             {inputForm({
                                 title: 'Inquiry No.',
@@ -439,38 +485,62 @@ export default function EstimateUpdate({
                             </BoxCard>
 
                             <BoxCard title={'운송 정보'}>
-                                {selectBoxForm({
-                                    title: '유효기간', id: 'validityPeriod', list: [
-                                        {value: '견적 발행 후 10일간', label: '견적 발행 후 10일간'},
-                                        {value: '견적 발행 후 30일간', label: '견적 발행 후 30일간'},
-                                    ], onChange: onChange, data: info
-                                })}
-                                {selectBoxForm({
-                                    title: '결제조건', id: 'paymentTerms', list: [
-                                        {value: '발주시 50% / 납품시 50%', label: '발주시 50% / 납품시 50%'},
-                                        {value: '현금결제', label: '현금결제'},
-                                        {value: '선수금', label: '선수금'},
-                                        {value: '정기 결제', label: '정기 결제'},
-                                    ], onChange: onChange, data: info
-                                })}
+                                <div>
+                                    <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>유효기간</div>
+                                    <select name="languages" id="validityPeriod"
+                                            style={{
+                                                outline: 'none',
+                                                border: '1px solid lightGray',
+                                                height: 22,
+                                                width: '100%',
+                                                fontSize: 12,
+                                                paddingBottom: 0.5
+                                            }}>
+                                        <option value={'견적 발행 후 10일간'}>견적 발행 후 10일간</option>
+                                        <option value={'견적 발행 후 30일간'}>견적 발행 후 30일간</option>
+                                    </select>
+                                </div>
+                                <div style={{paddingTop: 10}}>
+                                    <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>결제조건</div>
+                                    <select name="languages" id="paymentTerms"
+                                            style={{
+                                                outline: 'none',
+                                                border: '1px solid lightGray',
+                                                height: 22,
+                                                width: '100%',
+                                                fontSize: 12,
+                                                paddingBottom: 0.5
+                                            }}>
+                                        <option value={'발주시 50% / 납품시 50%'}>발주시 50% / 납품시 50%</option>
+                                        <option value={'현금결제'}>현금결제</option>
+                                        <option value={'선수금'}>선수금</option>
+                                        <option value={'정기결제'}>정기결제</option>
+                                    </select>
+                                </div>
 
-                                {selectBoxForm({
-                                    title: '운송조건', id: 'shippingTerms', list: [
-                                        {value: '귀사도착도', label: '귀사도착도'},
-                                        {value: '화물 및 택배비 별도', label: '화물 및 택배비 별도'},
-                                    ], onChange: onChange, data: info
-                                })}
-                                {inputNumberForm({
+                                <div style={{paddingTop: 10, paddingBottom : 10}}>
+                                    <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>운송조건</div>
+                                    <select name="languages" id="shippingTerms"
+                                            style={{
+                                                outline: 'none',
+                                                border: '1px solid lightGray',
+                                                height: 22,
+                                                width: '100%',
+                                                fontSize: 12,
+                                                paddingBottom: 0.5
+                                            }}>
+                                        <option value={'귀사도착도'}>귀사도착도</option>
+                                        <option value={'화물 및 택배비 별도'}>화물 및 택배비 별도</option>
+                                    </select>
+                                </div>
+
+                                {inputForm({
                                     title: '납기',
-                                    id: 'delivery',
-
-                                    addonAfter: <span style={{fontSize: 11}}>주</span>
+                                    id: 'delivery'
                                 })}
-                                {inputNumberForm({
+                                {inputForm({
                                     title: '환율',
-                                    id: 'exchangeRate',
-
-                                    step: 0.01
+                                    id: 'exchangeRate'
                                 })}
                             </BoxCard>
                             <BoxCard title={'Maker 정보'}>
@@ -483,7 +553,7 @@ export default function EstimateUpdate({
                                             openModal('maker');
                                         }
                                     }/>
-                                    ,  handleKeyPress: handleKeyPress
+                                    , handleKeyPress: handleKeyPress
                                 })}
                                 {inputForm({title: 'Item', id: 'item', onChange: onChange, data: info})}
                             </BoxCard>
@@ -505,43 +575,9 @@ export default function EstimateUpdate({
                     </div> : <></>}
                 </MainCard>
 
-                <TableGrid
-                    gridRef={gridRef}
-                    onGridReady={onGridReady}
-                    columns={tableEstimateWriteColumns}
-                    type={'write'}
-                    funcButtons={['estimateUpload', 'estimateAdd', 'delete', 'print']}
-                />
+                <Table data={tableData} column={estimateInfo['write']} funcButtons={['print']} ref={tableRef}/>
             </div>
         </>
 
     </Spin>
 }
-
-export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
-
-    const {estimateId} = ctx.query;
-
-    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
-
-    if (codeInfo < 0) {
-        return {
-            redirect: {
-                destination: '/',
-                permanent: false,
-            },
-        };
-    } else {
-        store.dispatch(setUserInfo(userInfo));
-
-        const result = await getData.post('estimate/getEstimateDetail', {
-            estimateId: estimateId,
-            documentNumberFull: ""
-        });
-
-        const dataInfo = result?.data?.entity;
-        return {
-            props: {dataInfo: dataInfo ? dataInfo : null}
-        }
-    }
-})

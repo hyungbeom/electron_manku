@@ -130,6 +130,7 @@ export default function EstimateWrite({copyPageInfo = {}}) {
                 documentNumberFull: '',
                 writtenDate: moment().format('YYYY-MM-DD')
             });
+            console.log(copyPageInfo['estimate_write'],'s:::')
             setTableData(copyPageInfo['estimate_write'][listType])
         }
     }, [copyPageInfo['estimate_write']]);
@@ -196,23 +197,9 @@ export default function EstimateWrite({copyPageInfo = {}}) {
                             shippingTerms: '귀사도착도',
                             writtenDate: moment().format('YYYY-MM-DD'),
                         })
-
-                        // setInfo(v => {
-                        //     return {
-                        //         ...result.data.entity.estimateRequestList[0],
-                        //         managerAdminName: v.managerAdminName,
-                        //         connectDocumentNumberFull: v.connectDocumentNumberFull.toUpperCase(),
-                        //         documentNumberFull: src.data.code === 1 ? src.data.entity.newDocumentNumberFull : v.documentNumberFull,
-                        //         validityPeriod: '견적 발행 후 10일간',
-                        //         paymentTerms: '발주시 50% / 납품시 50%',
-                        //         shippingTerms: '귀사도착도',
-                        //         writtenDate: moment().format('YYYY-MM-DD'),
-                        //         ...adminParams
-                        //     }
-                        // });
                     });
 
-                    setTableData(  [...result.data.entity.estimateRequestList, ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 100 - result.data.entity.estimateRequestList.length)])
+                    setTableData([...result.data.entity.estimateRequestList, ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 100 - result.data.entity.estimateRequestList.length)])
                     // gridManage.resetData(gridRef, result.data.entity.estimateRequestList);
                     break;
             }
@@ -261,7 +248,6 @@ export default function EstimateWrite({copyPageInfo = {}}) {
         formData.delete('modifiedDate')
 
         await saveEstimate({data: formData, router: router, returnFunc: returnFunc})
-
     }
 
     function returnFunc(code, msg) {
@@ -508,7 +494,8 @@ export default function EstimateWrite({copyPageInfo = {}}) {
                                 <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
                                     {/*@ts-ignored*/}
                                     <div style={{overFlowY: "auto", maxHeight: 300}}>
-                                        <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef} infoRef={infoRef}/>
+                                        <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
+                                                         infoRef={infoRef}/>
                                     </div>
                                 </BoxCard>
                             </div>

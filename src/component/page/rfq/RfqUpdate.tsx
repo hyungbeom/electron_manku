@@ -469,38 +469,3 @@ export default function RqfUpdate({updateKey = {}, getCopyPage = null, managerLi
         </>
     </Spin>
 }
-
-export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
-
-    const {query} = ctx;
-
-    const {estimateRequestId} = query;
-
-    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
-
-    if (codeInfo < 0) {
-        return {
-            redirect: {
-                destination: '/',
-                permanent: false,
-            },
-        };
-    }
-    store.dispatch(setUserInfo(userInfo));
-
-    const managerData = await getData.post('admin/getAdminList', {
-        "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
-        "searchAuthority": null,    // 1: 일반, 0: 관리자
-        "page": 1,
-        "limit": -1
-    });
-    const list = managerData?.data?.entity?.adminList;
-    const result = await getData.post('estimate/getEstimateRequestDetail', {
-        "estimateRequestId": estimateRequestId
-    });
-    const dataInfo = result?.data?.entity;
-    return {
-        props: {dataInfo: dataInfo ? dataInfo : null, managerList: list}
-    }
-
-})
