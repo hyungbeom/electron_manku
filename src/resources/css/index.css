@@ -330,6 +330,7 @@ body {
 }
 /* 🔥 특정 컬럼(Model, Item, Maker)의 헤더만 빨간색으로 설정 */
 .htLeft {
+    background-color: #bae7ff;
     font-size: 8px !important;
 }
 

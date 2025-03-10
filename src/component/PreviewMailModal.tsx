@@ -262,8 +262,6 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
                         {textAreaForm({
                             title: '발신 내용',
                             id: 'contents',
-                            value: src.contents,
-                            onChange: e => onChange(e, idx),
                             data: info,
                             maxLength: 10000,
                             rows: 15

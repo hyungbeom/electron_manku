@@ -38,7 +38,6 @@ const Table = forwardRef(({data = new Array(100).fill({}), column, type = '', fu
     }));
 
 
-
     const tableContainerRef = useRef(null);
     const [tableHeight, setTableHeight] = useState(400); // 기본값 설정
 
@@ -60,7 +59,7 @@ const Table = forwardRef(({data = new Array(100).fill({}), column, type = '', fu
     const tableData = useMemo(() => {
         const keyOrder = Object.keys(column['defaultData']);
         return data
-            .map((item) => keyOrder.reduce((acc, key) => ({ ...acc, [key]: item[key] ?? "" }), {}))
+            .map((item) => keyOrder.reduce((acc, key) => ({...acc, [key]: item[key] ?? ""}), {}))
             .map(column['excelExpert'])
             .concat(column['totalList']); // `push` 대신 `concat` 사용
     }, [data, column]);
@@ -74,18 +73,32 @@ const Table = forwardRef(({data = new Array(100).fill({}), column, type = '', fu
 
 
     const afterRenderer = (td, row, col, prop, value) => {
-        if (["unitPrice", 'totalNet',"total",'net', "totalPurchase", "purchasePrice"].includes(prop)) {
+        if (["unitPrice", 'totalNet', "total", 'net', "totalPurchase", "purchasePrice"].includes(prop)) {
             td.style.textAlign = "right"; // 우측 정렬
 
-            if (['totalNet',"total", "totalPurchase"].includes(prop)) {
+            if (['totalNet', "total", "totalPurchase"].includes(prop)) {
                 if (value === 0 || isNaN(value)) {
                     td.textContent = ""; // 🔥 0 또는 NaN이면 빈 문자열 적용
                 } else {
                     td.textContent = value?.toLocaleString(); // 🔢 숫자는 쉼표 추가
                 }
+            }
+
+            if (["total"].includes(prop)) {
+                if (value === 0 || isNaN(value)) {
+                    td.textContent = ""; // 🔥 0 또는 NaN이면 빈 문자열 적용
+                } else {
+                    td.textContent = value?.toLocaleString(); // 🔢 숫자는 쉼표 추가
+                }
+                if (row === 100) {
+
+                }
                 td.style.color = "#ff4d4f"; // 🔴 원하는 컬럼에 직접 스타일 적용
                 td.style.fontWeight = "bold"; // 텍스트 굵게
+            } else if (["totalPurchase", 'totalNet'].includes(prop)) {
+                td.style.fontWeight = "bold"; // 텍스트 굵게
             }
+
 
         }
     };
@@ -98,7 +111,7 @@ const Table = forwardRef(({data = new Array(100).fill({}), column, type = '', fu
 
                     hotRef.current.hotInstance.suspendExecution(); // ⚠️ 자동 계산 방지
                     hotRef.current.hotInstance.setDataAtCell(row, 8, moment().format('YYYY-MM-DD')); // replyDate 컬럼 업데이트
-                     hotRef.current.hotInstance.resumeExecution(); // ✅ 다시 계산 시작
+                    hotRef.current.hotInstance.resumeExecution(); // ✅ 다시 계산 시작
 
                 }
             });
@@ -147,8 +160,8 @@ const Table = forwardRef(({data = new Array(100).fill({}), column, type = '', fu
                 }}
                 afterGetColHeader={(col, TH) => {
                     const headerText = column["column"][col]; // 컬럼 이름 가져오기
-                    if (["Model", "Item", "Maker"].includes(headerText)) {
-                        TH.classList.add("redHeader"); // 🔥 특정 컬럼 제목만 빨간색 적용
+                    if (["매출 총액", '매입 총액'].includes(headerText)) {
+                        // TH.classList.add("redHeader"); // 🔥 특정 컬럼 제목만 빨간색 적용
                     } else {
                         TH.classList.add("allHeader"); // 🔥 특정 컬럼 제목만 빨간색 적용
                     }

@@ -181,7 +181,7 @@ export const findOrderDocumentInfo = async (event, setInfo, gridRef?, managerLis
                 return {...v, receivedQuantity: 0}
             })
 
-            gridManage.resetData(gridRef, detailList)
+            // gridManage.resetData(gridRef, detailList)
 
         }
     }
