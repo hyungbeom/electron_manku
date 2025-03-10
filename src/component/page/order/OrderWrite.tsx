@@ -111,7 +111,6 @@ export default function OrderWrite({dataInfo = [],  copyPageInfo}) {
         if (!isEmptyObj(copyPageInfo['order_write'])) {
             // copyPageInfo 가 없을시
             setInfo(infoInit);
-            console.log(infoInit,'infoInit')
             setTableData(commonFunc.repeatObject(orderInfo['write']['defaultData'], 100))
         } else {
             // copyPageInfo 가 있을시(==>보통 수정페이지에서 복제시)
@@ -131,7 +130,7 @@ export default function OrderWrite({dataInfo = [],  copyPageInfo}) {
         if (e.key === 'Enter') {
             switch (e.target.id) {
                 case 'ourPoNo' :
-                    await findOrderDocumentInfo(e, setInfo, gridRef, memberList)
+                    await findOrderDocumentInfo(e, setInfo, setTableData, memberList)
                     break;
                 case 'agencyCode' :
                     await findCodeInfo(e, setInfo, openModal, '')

@@ -411,6 +411,7 @@ export default function EstimateUpdate({
                             {inputForm({
                                 title: 'Inquiry No.',
                                 id: 'documentNumberFull',
+                                disabled : true,
                                 placeholder: '폴더생성 규칙 유의'
                             })}
 

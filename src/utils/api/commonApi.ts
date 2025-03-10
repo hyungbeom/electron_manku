@@ -3,8 +3,9 @@ import message from "antd/lib/message";
 import {modalList} from "@/utils/initialList";
 import moment from "moment/moment";
 import {checkInquiryNo} from "@/utils/api/mainApi";
-import {commonManage, gridManage} from "@/utils/commonManage";
+import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
 import {inputForm} from "@/utils/commonForm";
+import {orderInfo} from "@/utils/column/ProjectInfo";
 
 
 export const findCodeInfo = async (event, setInfo, openModal, type?, setValidate?) => {
@@ -136,7 +137,7 @@ export const findEstDocumentInfo = async (event, setInfo) => {
 };
 
 
-export const findOrderDocumentInfo = async (event, setInfo, gridRef?, managerList?) => {
+export const findOrderDocumentInfo = async (event, setInfo, setTableData?, managerList?) => {
 
     const result = await getData.post('estimate/getEstimateDetail', {
         "estimateId": null,
@@ -176,10 +177,8 @@ export const findOrderDocumentInfo = async (event, setInfo, gridRef?, managerLis
                 }
             );
 
+            setTableData([...result?.data?.entity?.estimateDetail?.estimateDetailList,...commonFunc.repeatObject(orderInfo['write']['defaultData'], 100 - result?.data?.entity?.estimateDetail?.estimateDetailList.length)])
 
-            const detailList = result?.data?.entity?.estimateDetail?.estimateDetailList.map(v => {
-                return {...v, receivedQuantity: 0}
-            })
 
             // gridManage.resetData(gridRef, detailList)
 
