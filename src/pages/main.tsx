@@ -46,12 +46,9 @@ import OverseasCustomerUpdate from "@/component/page/data/customer/overseas/Over
 import DomesticCustomerRead from "@/component/page/data/customer/domestic/DomesticCustomerRead";
 import DomesticCustomerUpdate from "@/component/page/data/customer/domestic/DomesticCustomerUpdate";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
-import {getData} from "@/manage/function/api";
 import StoreUpdate from "@/component/page/store/StoreUpdate";
 import {useRouter} from "next/router";
-import {commonManage} from "@/utils/commonManage";
 import notification from "antd/lib/notification";
-
 
 
 function findTitleByKey(data, key) {
@@ -74,17 +71,18 @@ function findTitleByKey(data, key) {
 
 export default function Main() {
 
-        const [api, contextHolder] = notification.useNotification();
+    const [api, contextHolder] = notification.useNotification();
 
-        const openNotificationWithIcon = (type, title, description, onClick) => {
-            api[type]({
-                message:title,
-                description:
-                description,
-                onClick: onClick
-            });
-        };
-
+    const openNotificationWithIcon = (type, title, description, onClick, style?) => {
+        api[type]({
+            message: title,
+            description:
+            description,
+            onClick: onClick,
+            duration: 5,
+            style : style
+        });
+    };
 
 
     const layoutRef = useRef<any>(null);
@@ -160,7 +158,7 @@ export default function Main() {
             setSelectMenu(result?.title);
         }
 
-        if(event?.event === 'select'){
+        if (event?.event === 'select') {
             let copyObject = _.cloneDeep(copyPageInfo);
             copyObject[selectedKey] = {};
             setCopyPageInfo(copyObject);
@@ -178,7 +176,7 @@ export default function Main() {
         }
     };
     const tabComponents = {
-        project_write: {name: "프로젝트 등록", component: <ProjectWrite copyPageInfo={copyPageInfo}/>},
+        project_write: {name: "프로젝트 등록", component: <ProjectWrite getPropertyId={getPropertyId} copyPageInfo={copyPageInfo}/>},
         project_read: {
             name: "프로젝트 조회",
             component: <ProjectRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>
@@ -203,7 +201,7 @@ export default function Main() {
 
         store_write: {name: "입고 등록", component: <StoreWrite copyPageInfo={copyPageInfo}/>},
         store_read: {name: "입고 조회", component: <StoreRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>},
-        store_update: {name: "입고 수정", component: <StoreUpdate updateKey={updateKey} getCopyPage={getCopyPage} />},
+        store_update: {name: "입고 수정", component: <StoreUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
 
         delivery_write: {name: "배송 등록", component: <DeliveryWrite copyPageInfo={copyPageInfo}/>},
         delivery_read: {
@@ -226,7 +224,10 @@ export default function Main() {
             name: "국내매입처 조회",
             component: <DomesticAgencyRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>
         },
-        domestic_agency_update: {name: "국내매입처 수정", component: <DomesticAgencyUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
+        domestic_agency_update: {
+            name: "국내매입처 수정",
+            component: <DomesticAgencyUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>
+        },
 
         overseas_agency_write: {name: "해외매입처 등록", component: <OverseasAgencyWrite copyPageInfo={copyPageInfo}/>},
         overseas_agency_read: {
@@ -262,7 +263,10 @@ export default function Main() {
         maker_update: {name: "메이커 수정", component: <MakerUpdate updateKey={updateKey}/>},
 
 
-        hcode_read: {name: "HS CODE 조회", component: <HcodeRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>},
+        hcode_read: {
+            name: "HS CODE 조회",
+            component: <HcodeRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>
+        },
 
     };
 
@@ -271,7 +275,7 @@ export default function Main() {
         const componentKey = node.getComponent();
         return <div style={{padding: '0px 5px 0px 5px'}}>
             {/*{tabComponents[componentKey]?.component}*/}
-            {React.cloneElement(tabComponents[componentKey].component, {notificationAlert : openNotificationWithIcon})}
+            {React.cloneElement(tabComponents[componentKey].component, {notificationAlert: openNotificationWithIcon})}
 
         </div>;
     };
@@ -385,10 +389,10 @@ export default function Main() {
                     }}>
 
                         {introMenulist.map(v => {
-                            if(v.title === '시스템관리' && userInfo.authority === 0){
+                            if (v.title === '시스템관리' && userInfo.authority === 0) {
                                 return false;
                             }
-                            return <div >
+                            return <div>
                                 <div style={{
                                     border: '1px solid lightGray',
                                     width: 70,
@@ -397,7 +401,7 @@ export default function Main() {
                                     display: 'flex',
                                     justifyContent: 'center',
                                     alignItems: 'center',
-                                    margin : '0px auto'
+                                    margin: '0px auto'
                                 }}>
                                     <div style={{fontSize: 40, color: v.color}}>
                                         {v.icon}
@@ -410,11 +414,11 @@ export default function Main() {
                                     {v.children.map(src => {
                                         return <div style={{color: v.color, paddingTop: 3}} onClick={() => {
 
-                                            if(src.key === 'accept_member'){
+                                            if (src.key === 'accept_member') {
                                                 router.push('/manage')
-                                            }else if(src.key === 'data_log'){
+                                            } else if (src.key === 'data_log') {
                                                 router.push('/logData')
-                                            }else{
+                                            } else {
                                                 onSelect([src.key])
                                             }
                                         }}>{src.name}</div>

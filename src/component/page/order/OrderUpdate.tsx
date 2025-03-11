@@ -295,7 +295,7 @@ export default function OrderUpdate({updateKey, getCopyPage}) {
                                             style={{
                                                 outline: 'none',
                                                 border: '1px solid lightGray',
-                                                height: 22,
+                                                height: 23,
                                                 width: '100%',
                                                 fontSize: 12,
                                                 paddingBottom: 0.5

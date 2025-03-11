@@ -304,7 +304,7 @@ export default function OrderWrite({dataInfo = [], copyPageInfo}) {
                                         style={{
                                             outline: 'none',
                                             border: '1px solid lightGray',
-                                            height: 22,
+                                            height: 23,
                                             width: '100%',
                                             fontSize: 12,
                                             paddingBottom: 0.5
@@ -375,7 +375,7 @@ export default function OrderWrite({dataInfo = [], copyPageInfo}) {
                                             style={{
                                                 outline: 'none',
                                                 border: '1px solid lightGray',
-                                                height: 22,
+                                                height: 23,
                                                 width: '100%',
                                                 fontSize: 12,
                                                 paddingBottom: 0.5

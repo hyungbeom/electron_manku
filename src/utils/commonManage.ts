@@ -730,11 +730,14 @@ commonManage.getUploadList = function (fileRef, formData) {
     const fileNodes = uploadContainer.querySelectorAll(".ant-upload-list-item-name");
     const fileNames = Array.from(fileNodes).map((node: any) => node.textContent.trim());
 
+    console.log(fileNames,'fileNames::')
     let count = 0
     fileRef.current.fileList.forEach((item, index) => {
         if (item?.originFileObj) {
+            console.log(index,'index:::')
+            console.log(fileNames[index],'fileNames[index]:::')
             formData.append(`attachmentFileList[${count}].attachmentFile`, item.originFileObj);
-            formData.append(`attachmentFileList[${count}].fileName`, fileNames[index].replace(/\s+/g, ""));
+            formData.append(`attachmentFileList[${count}].fileName`, fileNames[index]?.replace(/\s+/g, ""));
             count += 1;
         }
     });

@@ -253,7 +253,7 @@ export default function RqfWrite({copyPageInfo = {}}) {
 
 
                     {mini ? <div>
-                            <TopBoxCard title={''} grid={'100px 70px 70px 110px 110px 300px'}>
+                            <TopBoxCard title={''} grid={'100px 80px 80px 110px 110px 300px'}>
                                 {datePickerForm({
                                     title: '작성일',
                                     id: 'writtenDate',
@@ -269,7 +269,7 @@ export default function RqfWrite({copyPageInfo = {}}) {
                                             style={{
                                                 outline: 'none',
                                                 border: '1px solid lightGray',
-                                                height: 22,
+                                                height: 23,
                                                 width: '100%',
                                                 fontSize: 12,
                                                 paddingBottom: 0.5

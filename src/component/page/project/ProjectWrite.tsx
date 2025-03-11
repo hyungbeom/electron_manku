@@ -23,7 +23,7 @@ import SearchInfoModal from "@/component/SearchAgencyModal";
 
 const listType = 'projectDetailList'
 
-function ProjectWrite({copyPageInfo = {},notificationAlert = null}) {
+function ProjectWrite({copyPageInfo = {},notificationAlert = null, getPropertyId}) {
 
     const [memberList, setMemberList] = useState([]);
 
@@ -155,12 +155,14 @@ function ProjectWrite({copyPageInfo = {},notificationAlert = null}) {
             console.log(dom.value,'data:')
             notificationAlert('success','프로젝트 등록완료',
                 <>
-                    <div>{dom.value} 프로젝트가 등록이 완료되었습니다</div>
-                    <div>{moment().format('HH:mm:ss')}</div>
+                    <div>Project No. : {dom.value}</div>
+                    <div>등록일자 : {moment().format('HH:mm:ss')}</div>
                 </>
                 , function () {
-                    alert('성공')
-            })
+                    getPropertyId('project_update', data?.projectId)
+            },
+                {cursor : 'pointer'}
+            )
             await getAttachmentFileList({
                 data: {
                     "relatedType": "PROJECT",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
@@ -222,15 +224,15 @@ function ProjectWrite({copyPageInfo = {},notificationAlert = null}) {
             ]} mini={mini} setMini={setMini}>
 
                 {mini ? <div>
-                        <TopBoxCard title={''} grid={'130px 130px 130px'}>
-                            {inputForm({
-                                title: '작성자',
-                                id: 'createdBy',
-                                disabled: true,
-                            })}
+                        <TopBoxCard title={''} grid={'100px 80px 80px'}>
                             {datePickerForm({
                                 title: '작성일자',
                                 id: 'writtenDate',
+                                disabled: true,
+                            })}
+                            {inputForm({
+                                title: '작성자',
+                                id: 'createdBy',
                                 disabled: true,
                             })}
                             <div>
@@ -239,7 +241,7 @@ function ProjectWrite({copyPageInfo = {},notificationAlert = null}) {
                                         style={{
                                             outline: 'none',
                                             border: '1px solid lightGray',
-                                            height: 22,
+                                            height: 23,
                                             width: '100%',
                                             fontSize: 12,
                                             paddingBottom: 0.5
@@ -259,9 +261,8 @@ function ProjectWrite({copyPageInfo = {},notificationAlert = null}) {
                             <Panel defaultSize={sizes[0]} minSize={10} maxSize={100} onResize={onResizeChange}>
                                 <BoxCard title={'프로젝트 정보'} tooltip={tooltipInfo('readProject')}>
                                     {inputForm({
-                                        title: 'PROJECT NO.',
+                                        title: 'Project No.',
                                         id: 'documentNumberFull',
-                                        placeholder: '필수입력',
                                         onChange: onChange
                                     })}
                                     {inputForm({
