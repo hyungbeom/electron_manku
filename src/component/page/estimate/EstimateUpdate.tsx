@@ -118,7 +118,6 @@ export default function EstimateUpdate({
                 uploadType: 3,
                 managerAdminId: estimateDetail['managerAdminId'] ? estimateDetail['managerAdminId'] : ''
             })
-            console.log(estimateDetail[listType],'???')
             estimateDetail[listType] = [...estimateDetail[listType], ...commonFunc.repeatObject(rfqInfo['write']['defaultData'], 100 - estimateDetail[listType].length)]
 
             setTableData(estimateDetail[listType]);

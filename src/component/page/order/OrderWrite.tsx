@@ -20,7 +20,7 @@ import {
     textAreaForm,
     TopBoxCard
 } from "@/utils/commonForm";
-import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
+import {commonFunc, commonManage, fileManage, gridManage} from "@/utils/commonManage";
 import _ from "lodash";
 import {findCodeInfo, findOrderDocumentInfo} from "@/utils/api/commonApi";
 import {saveOrder} from "@/utils/api/mainApi";
@@ -40,14 +40,14 @@ import SearchInfoModal from "@/component/SearchAgencyModal";
 
 
 const listType = 'orderDetailList'
-export default function OrderWrite({dataInfo = [],  copyPageInfo}) {
+export default function OrderWrite({dataInfo = [], copyPageInfo}) {
     const tableRef = useRef(null);
     const infoRef = useRef<any>(null)
 
 
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
     const [memberList, setMemberList] = useState([]);
-
+    const [originFileList, setOriginFileList] = useState([]);
     useEffect(() => {
         getMemberList();
     }, []);
@@ -106,7 +106,6 @@ export default function OrderWrite({dataInfo = [],  copyPageInfo}) {
     const [info, setInfo] = useState<any>(infoInit)
 
 
-
     useEffect(() => {
         if (!isEmptyObj(copyPageInfo['order_write'])) {
             // copyPageInfo 가 없을시
@@ -130,7 +129,42 @@ export default function OrderWrite({dataInfo = [],  copyPageInfo}) {
         if (e.key === 'Enter') {
             switch (e.target.id) {
                 case 'ourPoNo' :
-                    await findOrderDocumentInfo(e, setInfo, setTableData, memberList)
+                    await getData.post('estimate/getEstimateDetail', {
+                        "estimateId": '',
+                        documentNumberFull: e.target.value.toUpperCase()
+                    }).then(async v => {
+                        if (v.data.code === 1) {
+                            console.log(v.data?.entity, 'v.data?.entity:')
+                            const {attachmentFileList, estimateDetail} = v.data?.entity
+                            setFileList(fileManage.getFormatFiles(attachmentFileList))
+                            setOriginFileList(attachmentFileList)
+                            const dom = infoRef.current.querySelector('#ourPoNo');
+                            // const result = await findDocumentInfo(e, setInfo);
+                            await getData.post('estimate/generateDocumentNumberFull', {
+                                type: 'ORDER',
+                                documentNumberFull: dom.value.toUpperCase()
+                            }).then(src => {
+
+                                // delete result?.data?.entity?.estimateRequestList[0]?.adminId
+                                // delete result?.data?.entity?.estimateRequestList[0]?.createdBy
+
+                                commonManage.setInfo(infoRef, {
+                                    ...estimateDetail,
+                                    documentNumberFull: src.data.code === 1 ? src.data.entity.newDocumentNumberFull : '',
+                                    validityPeriod: '견적 발행 후 10일간',
+                                    paymentTerms: '발주시 50% / 납품시 50%',
+                                    shippingTerms: '귀사도착도',
+                                    writtenDate: moment().format('YYYY-MM-DD'),
+                                })
+                                setTableData([...estimateDetail['estimateDetailList'], ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 100 - estimateDetail['estimateDetailList'].length)])
+                            });
+
+
+                        }
+                    })
+
+
+                    // await findOrderDocumentInfo(e, setInfo, setTableData, memberList)
                     break;
                 case 'agencyCode' :
                     await findCodeInfo(e, setInfo, openModal, '')
@@ -150,30 +184,30 @@ export default function OrderWrite({dataInfo = [],  copyPageInfo}) {
 
 
     async function saveFunc() {
-        let infoData = commonManage.getInfo(infoRef, infoInit);
-        const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
-        infoData['managerAdminName'] = findMember['name'];
-
-
-        gridRef.current.clearFocusedCell();
-        if (!info['documentNumberFull']) {
-            setValidate(v => {
-                return {...v, documentNumberFull: false}
-            })
-            return message.warn('발주서 PO no를 입력하셔야 합니다.')
-        }
-        const list = gridManage.getAllData(gridRef)
-        if (!list.length) {
-            return message.warn('하위 데이터 1개 이상이여야 합니다')
-        }
-
-        setLoading(true)
-        const formData: any = new FormData();
-
-        commonManage.setInfoFormData(info, formData, listType, list)
-        commonManage.getUploadList(fileRef, formData)
-        await saveOrder({data: formData, router: router, returnFunc: returnFunc})
-        setLoading(false)
+        // let infoData = commonManage.getInfo(infoRef, infoInit);
+        // const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
+        // infoData['managerAdminName'] = findMember['name'];
+        //
+        //
+        // gridRef.current.clearFocusedCell();
+        // if (!info['documentNumberFull']) {
+        //     setValidate(v => {
+        //         return {...v, documentNumberFull: false}
+        //     })
+        //     return message.warn('발주서 PO no를 입력하셔야 합니다.')
+        // }
+        // const list = gridManage.getAllData(gridRef)
+        // if (!list.length) {
+        //     return message.warn('하위 데이터 1개 이상이여야 합니다')
+        // }
+        //
+        // setLoading(true)
+        // const formData: any = new FormData();
+        //
+        // commonManage.setInfoFormData(info, formData, listType, list)
+        // commonManage.getUploadList(fileRef, formData)
+        // await saveOrder({data: formData, router: router, returnFunc: returnFunc})
+        // setLoading(false)
     }
 
     function returnFunc(code, msg) {
@@ -226,7 +260,8 @@ export default function OrderWrite({dataInfo = [],  copyPageInfo}) {
 
                          setIsModalOpen={setIsModalOpen}/>
         <>
-            {isModalOpen['event2'] && <PrintPo data={info} gridRef={gridRef} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>}
+            {isModalOpen['event2'] &&
+                <PrintPo data={info} gridRef={gridRef} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>}
             <div ref={infoRef} style={{
                 display: 'grid',
                 gridTemplateRows: `${mini ? '500px' : '65px'} calc(100vh - ${mini ? 630 : 195}px)`,

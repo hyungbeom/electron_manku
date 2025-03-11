@@ -43,7 +43,7 @@ export default function EstimateWrite({copyPageInfo = {}}) {
 
     const [memberList, setMemberList] = useState([]);
     const [tableData, setTableData] = useState([]);
-
+    const [originFileList, setOriginFileList] = useState([]);
 
     useEffect(() => {
         getMemberList();
@@ -103,21 +103,6 @@ export default function EstimateWrite({copyPageInfo = {}}) {
 
     const [loading, setLoading] = useState(false);
 
-
-    // useEffect(() => {
-    //
-    //     if (!isEmptyObj(copyPageInfo['estimate_write'])) {
-    //         // copyPageInfo 가 없을시
-    //         setInfo(infoInit)
-    //         setTableData(commonFunc.repeatObject(estimateInfo['write']['defaultData'], 100))
-    //     } else {
-    //         // copyPageInfo 가 있을시(==>보통 수정페이지에서 복제시)
-    //         // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting
-    //         setInfo({...copyPageInfo['estimate_write'], ...adminParams, writtenDate: moment().format('YYYY-MM-DD')});
-    //         setTableData(copyPageInfo['estimate_write'][listType])
-    //     }
-    // }, [copyPageInfo['estimate_write']]);
-
     useEffect(() => {
         if (!isEmptyObj(copyPageInfo['estimate_write'])) {
             // copyPageInfo 가 없을시
@@ -131,7 +116,6 @@ export default function EstimateWrite({copyPageInfo = {}}) {
                 documentNumberFull: '',
                 writtenDate: moment().format('YYYY-MM-DD')
             });
-            console.log(copyPageInfo['estimate_write'],'s:::')
             setTableData(copyPageInfo['estimate_write'][listType])
         }
     }, [copyPageInfo['estimate_write']]);
@@ -152,56 +136,39 @@ export default function EstimateWrite({copyPageInfo = {}}) {
                     await findCodeInfo(e, setInfo, openModal, 'ESTIMATE')
                     break;
                 case 'connectDocumentNumberFull' :
+                   await getData.post('estimate/getEstimateRequestDetail', {
+                        "estimateRequestId": '',
+                        documentNumberFull: e.target.value.toUpperCase()
+                    }).then(async v => {
+                        if(v.data.code === 1){
+                            const {attachmentFileList, estimateRequestDetail} = v.data?.entity
+                            setFileList(fileManage.getFormatFiles(attachmentFileList))
+                            setOriginFileList(attachmentFileList)
+                            const dom = infoRef.current.querySelector('#connectDocumentNumberFull');
+                            // const result = await findDocumentInfo(e, setInfo);
+                            await getData.post('estimate/generateDocumentNumberFull', {
+                                type: 'ESTIMATE',
+                                documentNumberFull: dom.value.toUpperCase()
+                            }).then(src => {
+
+                                // delete result?.data?.entity?.estimateRequestList[0]?.adminId
+                                // delete result?.data?.entity?.estimateRequestList[0]?.createdBy
+
+                                commonManage.setInfo(infoRef, {
+                                    ...estimateRequestDetail,
+                                    documentNumberFull: src.data.code === 1 ? src.data.entity.newDocumentNumberFull : '',
+                                    validityPeriod: '견적 발행 후 10일간',
+                                    paymentTerms: '발주시 50% / 납품시 50%',
+                                    shippingTerms: '귀사도착도',
+                                    writtenDate: moment().format('YYYY-MM-DD'),
+                                })
+                                setTableData([...estimateRequestDetail['estimateRequestDetailList'], ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 100 - estimateRequestDetail['estimateRequestDetailList'].length)])
+                            });
 
 
-                    const result = await getData.post('estimate/getEstimateRequestList', {
-                        "searchStartDate": "",              // 작성일자 시작일
-                        "searchEndDate": "",                // 작성일자 종료일
-                        "searchDocumentNumber": e.target.value.toUpperCase(),         // 문서번호
-                        "searchCustomerName": "",           // 거래처명
-                        "searchMaker": "",                  // Maker
-                        "searchModel": "",                  // Model
-                        "searchItem": "",                   // Item
-                        "searchCreatedBy": "",              // 등록직원명
-                        "searchRfqNo": "",                  // 견적의뢰 RFQ No
-                        "searchProjectTitle": "",           // 프로젝트 제목
-                        "searchEndUser": "",                // End User
-                        "searchStartDueDate": "",           // 마감일 검색 시작일
-                        "searchEndDueDate": "",             // 마감일 검색 종료일
-                        "searchAgencyManagerName": "",      // 대리점 담당자 이름
-                        "searchAgencyName": "",             // 대리점 명
+                        }
+                   })
 
-                        // 메일 전송 목록 검색 필드 추가 2024.11.28
-                        "searchSentStatus": null,              // 전송 여부 1: 전송, 2: 미전송
-                        "searchReplyStatus": null,             // 회신 여부 1: 회신, 2: 미회신
-                        "searchAgencyCode": "",          // 대리점코드 검색
-
-                        "page": 1,
-                        "limit": -1
-                    });
-
-                    const dom = infoRef.current.querySelector('#connectDocumentNumberFull');
-                    // const result = await findDocumentInfo(e, setInfo);
-                    await getData.post('estimate/generateDocumentNumberFull', {
-                        type: 'ESTIMATE',
-                        documentNumberFull: dom.value.toUpperCase()
-                    }).then(src => {
-
-                        delete result?.data?.entity?.estimateRequestList[0]?.adminId
-                        delete result?.data?.entity?.estimateRequestList[0]?.createdBy
-
-                        console.log(result.data.entity.estimateRequestList[0],'::')
-                        commonManage.setInfo(infoRef, {
-                            ...result.data.entity.estimateRequestList[0],
-                            documentNumberFull: src.data.code === 1 ? src.data.entity.newDocumentNumberFull : '',
-                            validityPeriod: '견적 발행 후 10일간',
-                            paymentTerms: '발주시 50% / 납품시 50%',
-                            shippingTerms: '귀사도착도',
-                            writtenDate: moment().format('YYYY-MM-DD'),
-                        })
-                    });
-
-                    setTableData([...result.data.entity.estimateRequestList, ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 100 - result.data.entity.estimateRequestList.length)])
                     // gridManage.resetData(gridRef, result.data.entity.estimateRequestList);
                     break;
             }
@@ -246,6 +213,8 @@ export default function EstimateWrite({copyPageInfo = {}}) {
         const formData: any = new FormData();
         commonManage.setInfoFormData(infoData, formData, listType, filterTableList)
         commonManage.getUploadList(fileRef, formData);
+        commonManage.deleteUploadList(fileRef, formData, originFileList)
+
         formData.delete('createdDate')
         formData.delete('modifiedDate')
 
@@ -261,6 +230,7 @@ export default function EstimateWrite({copyPageInfo = {}}) {
                 }).then(v => {
                     const list = fileManage.getFormatFiles(v);
                     setFileList(list)
+                    setOriginFileList(v)
                     setLoading(false)
                 })
                 message.success(msg);

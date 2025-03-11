@@ -329,7 +329,7 @@ export function DriveUploadComp({
                                 position : "absolute",
                                 right : 15,
                                 float: 'right',
-                                width: '30%'
+                                width: '50%'
                             }}>
                         <option value={0}>{'요청자료'}</option>
                         <option value={1}>{'첨부파일'}</option>
