@@ -99,12 +99,14 @@ export default function ProjectRead({getPropertyId, getCopyPage, notificationAle
                             삭제되었습니다
                         </div>
                         {/*<div>프로젝트 제목 - {selectedRows[0].projectTitle} `${selectedRows.length > 1 ? ('외' + (selectedRows.length - 1)) + '개' : ''}`가 삭제되었습니다 </div>*/}
-                        <div>삭제일자 : {moment().format('HH:mm:ss')}</div>
+                        <div>삭제일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
                     , function () {
                     },
                 )
                 searchInfo(true)
+            }else{
+                message.error(v.message)
             }
         })
     }

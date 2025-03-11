@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import {CopyOutlined} from "@ant-design/icons";
+import {CopyOutlined, ExclamationCircleOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
 import {rfqReadColumns} from "@/utils/columnList";
 import {estimateRequestDetailUnit, subRfqReadInitial} from "@/utils/initialList";
@@ -14,9 +14,11 @@ import Spin from "antd/lib/spin";
 import ReceiveComponent from "@/component/ReceiveComponent";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
+import Popconfirm from "antd/lib/popconfirm";
+import moment from "moment/moment";
 
 
-export default function RfqRead({getPropertyId, getCopyPage}) {
+export default function RfqRead({getPropertyId, getCopyPage, notificationAlert = null}:any) {
 
     const groupRef = useRef<any>(null)
 
@@ -91,7 +93,34 @@ export default function RfqRead({getPropertyId, getCopyPage}) {
             estimateRequestId: 'estimateRequestId',
             estimateRequestDetailId: 'estimateRequestDetailId'
         });
-        await deleteRfq({data: {deleteList: deleteList}, returnFunc: searchInfo});
+        const selectedRows = gridRef.current.getSelectedRows();
+
+        await deleteRfq({data: {deleteList: deleteList}}).then((v:any)=>{
+
+            if(v.code === 1){
+                searchInfo();
+                notificationAlert('error', '프로젝트 삭제완료',
+                    <>
+                        <div>Inquiry No.
+                            - {selectedRows[0]?.documentNumberFull} {selectedRows.length > 1 ? ('외' + " " + (selectedRows.length - 1) + '개') : ''} 이(가)
+                            삭제되었습니다
+                        </div>
+                        {/*<div>프로젝트 제목 - {selectedRows[0].projectTitle} `${selectedRows.length > 1 ? ('외' + (selectedRows.length - 1)) + '개' : ''}`가 삭제되었습니다 </div>*/}
+                        <div>삭제일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                    },
+                )
+            }else{
+                message.error(v.message)
+            }
+        })
+
+
+
+
+
+
 
     }
 
@@ -183,10 +212,14 @@ export default function RfqRead({getPropertyId, getCopyPage}) {
                     </MainCard>
 
                     {/*@ts-ignored*/}
-                    <TableGrid deleteComp={<Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
-                                                   onClick={deleteList}>
-                        <CopyOutlined/>삭제
-                    </Button>}
+                    <TableGrid deleteComp={       <Popconfirm
+                        title="삭제하시겠습니까?"
+                        onConfirm={deleteList}
+                        icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
+
+                        {/*@ts-ignored*/}
+                        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}>삭제</Button>
+                    </Popconfirm>}
                                totalRow={totalRow}
                                getPropertyId={getPropertyId}
                                gridRef={gridRef}

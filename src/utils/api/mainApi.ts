@@ -52,13 +52,10 @@ export const deleteRfq = async ({
     }
                                 }) => {
 
-    await getData.post('estimate/deleteEstimateRequestDetails', data).then(v => {
-        if (v.data.code === 1) {
-            msg.success('삭제되었습니다.');
-        } else {
-            msg.error('오류가 발생하였습니다. 다시 시도해주세요.')
-        }
-        returnFunc(v.data.code === 1);
+    return await getData.post('estimate/deleteEstimateRequestDetails', data).then(v => {
+
+        return v.data
+
     }, err => msg.error(err))
 };
 
@@ -204,14 +201,9 @@ export const deleteEstimate = async ({
     }
                                      }) => {
 
-    await getData.post('estimate/deleteEstimateDetails', data).then(v => {
-        const code = v.data.code;
-        if (code === 1) {
-            msg.success('삭제되었습니다.')
-        } else {
-            msg.error('오류가 발생하였습니다. 다시 시도해주세요.')
-        }
-        returnFunc(code === 1);
+    return await getData.post('estimate/deleteEstimateDetails', data).then(v => {
+
+        return v.data
     }, err => msg.error(err))
 };
 
@@ -291,14 +283,8 @@ export const deleteOrder = async ({
     }
                                   }) => {
 
-    await getData.post('order/deleteOrderDetails', data).then(v => {
-        const code = v.data.code;
-        if (code === 1) {
-            msg.success('삭제되었습니다.')
-        } else {
-            msg.error('오류가 발생하였습니다. 다시 시도해주세요.')
-        }
-        returnFunc(code === 1);
+    return await getData.post('order/deleteOrderDetails', data).then(v => {
+        return v.data
     }, err => msg.error(err))
 };
 

@@ -1,35 +1,25 @@
 import React, {useEffect, useRef, useState} from "react";
-import LayoutComponent from "@/component/LayoutComponent";
 import {tableEstimateReadColumns} from "@/utils/columnList";
-import {
-    estimateDetailUnit,
-    estimateReadInitial,
-    estimateRequestDetailUnit,
-    subRfqReadInitial
-} from "@/utils/initialList";
-import {wrapper} from "@/store/store";
-import initialServerRouter from "@/manage/function/initialServerRouter";
-import {setUserInfo} from "@/store/user/userSlice";
+import {estimateDetailUnit, estimateReadInitial} from "@/utils/initialList";
 import Button from "antd/lib/button";
-import {CopyOutlined, FileExcelOutlined} from "@ant-design/icons";
+import {CopyOutlined, ExclamationCircleOutlined, FileExcelOutlined} from "@ant-design/icons";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
-import {deleteEstimate, searchEstimate, searchRfq} from "@/utils/api/mainApi";
+import {deleteEstimate, searchEstimate} from "@/utils/api/mainApi";
 import _ from "lodash";
 import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
 import {BoxCard, inputForm, MainCard, rangePickerForm, selectBoxForm} from "@/utils/commonForm";
 import Spin from "antd/lib/spin";
-import ReceiveComponent from "@/component/ReceiveComponent";
 import {useRouter} from "next/router";
-import {getData} from "@/manage/function/api";
-import EstimateTotalWrite from "@/component/page/estimate/EstimateTotalWrite";
 import PrintIntegratedEstimate from "@/component/printIntegratedEstimate";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
+import Popconfirm from "antd/lib/popconfirm";
+import moment from "moment";
 
 
-export default function EstimateRead({getPropertyId, getCopyPage}) {
+export default function EstimateRead({getPropertyId, getCopyPage, notificationAlert = null}:any) {
     const groupRef = useRef<any>(null)
     const router = useRouter();
     const countRef = useRef(1);
@@ -94,7 +84,7 @@ export default function EstimateRead({getPropertyId, getCopyPage}) {
     }
 
     async function moveRouter() {
-        getCopyPage('estimate_write', {estimateDetailList : commonFunc.repeatObject(estimateDetailUnit, 10)})
+        getCopyPage('estimate_write', {estimateDetailList: commonFunc.repeatObject(estimateDetailUnit, 10)})
 
     }
 
@@ -109,7 +99,26 @@ export default function EstimateRead({getPropertyId, getCopyPage}) {
             estimateDetailId: 'estimateDetailId'
         });
         setLoading(true);
-        await deleteEstimate({data: {deleteList: deleteList}, returnFunc: searchInfo});
+        const selectedRows = gridRef.current.getSelectedRows();
+        await deleteEstimate({data: {deleteList: deleteList}}).then(v=>{
+            if(v.code === 1){
+                searchInfo(true);
+                notificationAlert('error', '프로젝트 삭제완료',
+                    <>
+                        <div>Inquiry No.
+                            - {selectedRows[0]?.documentNumberFull} {selectedRows.length > 1 ? ('외' + " " + (selectedRows.length - 1) + '개') : ''} 이(가)
+                            삭제되었습니다
+                        </div>
+                        {/*<div>프로젝트 제목 - {selectedRows[0].projectTitle} `${selectedRows.length > 1 ? ('외' + (selectedRows.length - 1)) + '개' : ''}`가 삭제되었습니다 </div>*/}
+                        <div>삭제일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                    },
+                )
+            }else{
+                message.error(v.message)
+            }
+        })
     }
 
 
@@ -147,91 +156,87 @@ export default function EstimateRead({getPropertyId, getCopyPage}) {
                           ]}
                           mini={mini} setMini={setMini}>
                     {mini ? <div>
-                        <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
-                            <Panel defaultSize={sizes[0]} minSize={5}>
-                            <BoxCard title={''}>
-                                {rangePickerForm({title: '작성일자', id: 'searchDate', onChange: onChange, data: info})}
-                                {selectBoxForm({
-                                    title: '주문 여부', id: 'searchType', onChange: onChange, data: info, list: [
-                                        {value: 0, label: '전체'},
-                                        {value: 1, label: '주문'},
-                                        {value: 2, label: '미주문'}
-                                    ]
-                                })}
+                            <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
+                                <Panel defaultSize={sizes[0]} minSize={5}>
+                                    <BoxCard title={''}>
+                                        {rangePickerForm({title: '작성일자', id: 'searchDate', onChange: onChange, data: info})}
+                                        {selectBoxForm({
+                                            title: '주문 여부', id: 'searchType', onChange: onChange, data: info, list: [
+                                                {value: 0, label: '전체'},
+                                                {value: 1, label: '주문'},
+                                                {value: 2, label: '미주문'}
+                                            ]
+                                        })}
 
-                            </BoxCard>
-                            </Panel>
-                            <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[1]} minSize={5}>
-                            <BoxCard title={''}>
+                                    </BoxCard>
+                                </Panel>
+                                <PanelResizeHandle/>
+                                <Panel defaultSize={sizes[1]} minSize={5}>
+                                    <BoxCard title={''}>
 
-                                {inputForm({
-                                    title: '문서번호', id: 'searchDocumentNumber',
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
-                                {inputForm({
-                                    title: '등록직원명', id: 'searchCreatedBy',
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
-                                {inputForm({
-                                    title: '고객사명', id: 'searchCustomerName',
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
+                                        {inputForm({
+                                            title: '문서번호', id: 'searchDocumentNumber',
+                                            onChange: onChange,
+                                            handleKeyPress: handleKeyPress,
+                                            data: info
+                                        })}
+                                        {inputForm({
+                                            title: '등록직원명', id: 'searchCreatedBy',
+                                            onChange: onChange,
+                                            handleKeyPress: handleKeyPress,
+                                            data: info
+                                        })}
+                                        {inputForm({
+                                            title: '고객사명', id: 'searchCustomerName',
+                                            onChange: onChange,
+                                            handleKeyPress: handleKeyPress,
+                                            data: info
+                                        })}
 
-                            </BoxCard>
+                                    </BoxCard>
 
-                            </Panel>
+                                </Panel>
+                                <PanelResizeHandle/>
+                                <Panel defaultSize={sizes[2]} minSize={5}>
+                                    <BoxCard title={''}>
 
-                            <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[2]} minSize={5}>
-                            <BoxCard title={''}>
+                                        {inputForm({
+                                            title: 'Maker', id: 'searchMaker',
+                                            onChange: onChange,
+                                            handleKeyPress: handleKeyPress,
+                                            data: info
+                                        })}
+                                        {inputForm({
+                                            title: 'Model', id: 'searchModel',
+                                            onChange: onChange,
+                                            handleKeyPress: handleKeyPress,
+                                            data: info
+                                        })}
+                                        {inputForm({
+                                            title: 'Item', id: 'searchItem',
+                                            onChange: onChange,
+                                            handleKeyPress: handleKeyPress,
+                                            data: info
+                                        })}
 
-                                {inputForm({
-                                    title: 'Maker', id: 'searchMaker',
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
-                                {inputForm({
-                                    title: 'Model', id: 'searchModel',
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
-                                {inputForm({
-                                    title: 'Item', id: 'searchItem',
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
-
-                            </BoxCard>
-                            </Panel>
-                            <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[3]} minSize={5}>
-                            </Panel>
-                        </PanelGroup>
+                                    </BoxCard>
+                                </Panel>
+                                <PanelResizeHandle/>
+                                <Panel defaultSize={sizes[3]} minSize={5}>
+                                </Panel>
+                            </PanelGroup>
                         </div>
                         : <></>}
                 </MainCard>
                 {/*@ts-ignored*/}
-                <TableGrid deleteComp={<><Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
-                                               onClick={deleteList}>
-                    <CopyOutlined/>삭제
-                </Button>
-                    <Button type={'primary'} size={'small'}
-                            style={{backgroundColor: 'green', border: 'none', fontSize: 11, marginLeft: 5,}}
-                            onClick={printEstimate}>
-                        <FileExcelOutlined/>통합 견적서 발행
-                    </Button>
+                <TableGrid deleteComp={ <Popconfirm
+                    title="삭제하시겠습니까?"
+                    onConfirm={deleteList}
+                    icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
 
-                </>
+                    {/*@ts-ignored*/}
+                    <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}>삭제</Button>
+                </Popconfirm>
                 }
                            totalRow={totalRow}
                            getPropertyId={getPropertyId}
