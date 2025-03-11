@@ -290,6 +290,7 @@ export default function Main() {
             type: "tab",
             name: tabComponents[selectedKey].name,
             component: selectedKey,
+            enableRename: false
         };
 
         const remainingObjects = updatedLayout.layout.children.slice(1);
@@ -431,7 +432,7 @@ export default function Main() {
                     </div>
                 </div>}
 
-                <Layout model={model} factory={factory} onModelChange={onLayoutChange} ref={layoutRef}/>
+                <Layout model={model} factory={factory} onModelChange={onLayoutChange} ref={layoutRef} enab/>
 
             </div>
 
