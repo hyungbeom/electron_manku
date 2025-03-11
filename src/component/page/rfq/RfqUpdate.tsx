@@ -246,34 +246,29 @@ export default function RqfUpdate({
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('rfq_write');
-        return savedSizes ? JSON.parse(savedSizes) : [25, 25, 25, 25, 25]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [25, 25, 25, 25, 0]; // 기본값 [50, 50, 50]
     };
-
-    function onResizeChange() {
-        setSizes(groupRef.current.getLayout())
-    }
 
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
 
-    return <Spin spinning={loading} tip={'견적의뢰 수정중...'}>
-        <PanelSizeUtil groupRef={groupRef} setSizes={setSizes} storage={'rfq_write'}/>
+    return <Spin spinning={loading}>
+        <PanelSizeUtil groupRef={groupRef}  storage={'rfq_update'}/>
         <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
                          open={isModalOpen}
 
                          setIsModalOpen={setIsModalOpen}/>
 
-
         <>
             <div ref={infoRef} style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? 510 : 65}px calc(100vh - ${mini ? 640 : 195}px)`,
-                columnGap: 5
+                gridTemplateRows: `${mini ? 495 : 65}px calc(100vh - ${mini ? 590 : 195}px)`,
+                rowGap: 10,
             }}>
 
-                <MainCard title={'견적의뢰 수정'} list={[
+                <MainCard title={'견적의뢰 작성'} list={[
                     {
-                        name: '수정',
+                        name: '저장',
                         func: saveFunc,
                         type: 'primary',
                         title: '입력한 견적의뢰 내용을 저장합니다.',
@@ -285,13 +280,12 @@ export default function RqfUpdate({
                         type: 'danger',
                         title: '필드에 입력한 모든 정보들을 초기화 합니다.',
                         prefix: <ClearOutlined/>
-                    },
-                    {name: '복제', func: copyPage, type: 'default'}
+                    }
                 ]} mini={mini} setMini={setMini}>
 
 
                     {mini ? <div>
-                            <TopBoxCard title={''} grid={'110px 110px 150px 150px 150px 350px'}>
+                            <TopBoxCard title={''} grid={'100px 80px 80px 110px 110px 300px'}>
                                 {datePickerForm({
                                     title: '작성일',
                                     id: 'writtenDate',
@@ -300,7 +294,7 @@ export default function RqfUpdate({
                                     // data: info
                                 })}
 
-                                {inputForm({title: '작성자', id: 'createdBy', disabled: true, onChange: onChange, data: info})}
+                                {inputForm({title: '작성자', id: 'createBy', disabled: true, onChange: onChange, data: info})}
                                 <div>
                                     <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>담당자</div>
                                     <select name="languages" id="managerAdminId"
@@ -342,8 +336,8 @@ export default function RqfUpdate({
 
                                 })}
                             </TopBoxCard>
-                            <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 3, paddingTop: 3}}>
-                                <Panel defaultSize={sizes[0]} minSize={10} maxSize={100} onResize={onResizeChange}>
+                            <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
+                                <Panel defaultSize={sizes[0]} minSize={5}>
                                     <BoxCard title={'매입처 정보'} tooltip={tooltipInfo('agency')}>
                                         {inputForm({
                                             title: '매입처코드',
@@ -384,7 +378,7 @@ export default function RqfUpdate({
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>
-                                <Panel defaultSize={sizes[1]} minSize={10} maxSize={100} onResize={onResizeChange}>
+                                <Panel defaultSize={sizes[1]} minSize={5}>
                                     <BoxCard title={'고객사 정보'} tooltip={tooltipInfo('customer')}>
                                         {inputForm({
                                             title: '고객사명',
@@ -427,7 +421,7 @@ export default function RqfUpdate({
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>
-                                <Panel defaultSize={sizes[2]} minSize={10} maxSize={100} onResize={onResizeChange}>
+                                <Panel defaultSize={sizes[2]} minSize={5}>
                                     <BoxCard title={'Maker 정보'} tooltip={tooltipInfo('maker')}>
                                         {inputForm({
                                             title: 'Maker',
@@ -459,7 +453,7 @@ export default function RqfUpdate({
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>
-                                <Panel defaultSize={sizes[3]} minSize={10} maxSize={100} onResize={onResizeChange}>
+                                <Panel defaultSize={sizes[3]} minSize={5}>
                                     <BoxCard title={'ETC'} tooltip={tooltipInfo('etc')}>
                                         {inputForm({
                                             title: 'End User',
@@ -478,13 +472,16 @@ export default function RqfUpdate({
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>
-                                <Panel defaultSize={sizes[4]} minSize={10} maxSize={100} onResize={onResizeChange}>
+                                <Panel defaultSize={sizes[4]} minSize={5}>
                                     <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}
                                              disabled={!userInfo['microsoftId']}>
+
                                         <DriveUploadComp fileList={fileList} setFileList={setFileList}
-                                                         fileRef={fileRef}
-                                                         infoRef={infoRef}/>
+                                                         fileRef={fileRef} infoRef={infoRef} UploadHeight={290}/>
                                     </BoxCard>
+                                </Panel>
+                                <PanelResizeHandle/>
+                                <Panel defaultSize={sizes[5]} minSize={0}>
                                 </Panel>
                             </PanelGroup>
                         </div>
@@ -493,7 +490,6 @@ export default function RqfUpdate({
 
                 <Table data={tableData} column={rfqInfo['write']} funcButtons={['print']} ref={tableRef}/>
             </div>
-
         </>
     </Spin>
 }

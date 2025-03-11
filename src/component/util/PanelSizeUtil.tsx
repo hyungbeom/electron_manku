@@ -1,11 +1,10 @@
 import {useEffect, useState} from "react";
 
-export default function PanelSizeUtil({groupRef, setSizes, storage}){
+export default function PanelSizeUtil({groupRef, storage}){
 
 
     const handleMouseUp = () => {
         if (groupRef.current) {
-            setSizes(groupRef.current.getLayout())
             localStorage.setItem(storage, JSON.stringify(groupRef.current.getLayout()));
         }
     };

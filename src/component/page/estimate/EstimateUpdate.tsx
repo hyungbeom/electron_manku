@@ -1,15 +1,10 @@
 import React, {useEffect, useRef, useState} from "react";
-import {FileSearchOutlined} from "@ant-design/icons";
-import {tableEstimateWriteColumns} from "@/utils/columnList";
+import {DownloadOutlined, RetweetOutlined} from "@ant-design/icons";
 import {ModalInitList} from "@/utils/initialList";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
 import {getData} from "@/manage/function/api";
-import {wrapper} from "@/store/store";
-import initialServerRouter from "@/manage/function/initialServerRouter";
-import {setUserInfo} from "@/store/user/userSlice";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
-import TableGrid from "@/component/tableGrid";
 import {useRouter} from "next/router";
 import SearchInfoModal from "@/component/SearchAgencyModal";
 import {
@@ -18,23 +13,22 @@ import {
     inputForm,
     inputNumberForm,
     MainCard,
-    selectBoxForm,
-    textAreaForm, tooltipInfo,
+    textAreaForm,
     TopBoxCard
 } from "@/utils/commonForm";
 import {commonFunc, commonManage, fileManage, gridManage} from "@/utils/commonManage";
 import {findCodeInfo, findDocumentInfo} from "@/utils/api/commonApi";
-import {getAttachmentFileList, updateEstimate} from "@/utils/api/mainApi";
-import _ from "lodash";
+import {checkInquiryNo, getAttachmentFileList, updateEstimate} from "@/utils/api/mainApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import Spin from "antd/lib/spin";
 import Modal from "antd/lib/modal/Modal";
 import {jsPDF} from "jspdf";
 import html2canvas from "html2canvas";
-import Select from "antd/lib/select";
 import EstimatePaper from "@/component/견적서/EstimatePaper";
 import {estimateInfo, rfqInfo} from "@/utils/column/ProjectInfo";
 import Table from "@/component/util/Table";
+import PanelSizeUtil from "@/component/util/PanelSizeUtil";
+import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 
 const listType = 'estimateDetailList'
 export default function EstimateUpdate({
@@ -43,6 +37,19 @@ export default function EstimateUpdate({
 
                                            getCopyPage = null
                                        }) {
+
+    const groupRef = useRef<any>(null)
+
+
+    const getSavedSizes = () => {
+        const savedSizes = localStorage.getItem('estimate_write');
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 20]; // 기본값 [50, 50, 50]
+    };
+
+
+    const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
+
+
     const [memberList, setMemberList] = useState([]);
 
     useEffect(() => {
@@ -98,8 +105,6 @@ export default function EstimateUpdate({
     const [tableData, setTableData] = useState([]);
 
     const [loading, setLoading] = useState(false);
-
-
 
 
     const onGridReady = (params) => {
@@ -238,7 +243,7 @@ export default function EstimateUpdate({
         copyInfo['managerAdminId'] = parseInt(dom.value);
         const findMember = memberList.find(v => v.adminId === parseInt(dom.value));
 
-        if(findMember?.name){
+        if (findMember?.name) {
             copyInfo['managerAdminName'] = findMember['name'];
         }
 
@@ -264,7 +269,7 @@ export default function EstimateUpdate({
         if (!filterTableList.length) {
             return message.warn('하위 데이터 1개 이상이여야 합니다')
         }
-        if(!infoData['managerAdminId']){
+        if (!infoData['managerAdminId']) {
             return message.warn('담당자를 선택해주세요')
         }
         setIsPrintModalOpen(true)
@@ -338,148 +343,45 @@ export default function EstimateUpdate({
             width={1050}
             footer={null}
             onOk={() => setIsPrintModalOpen(false)}>
-            <EstimatePaper infoRef={infoRef} pdfRef={pdfRef} pdfSubRef={pdfSubRef} tableRef={tableRef} position={true} memberList={memberList}/>
+            <EstimatePaper infoRef={infoRef} pdfRef={pdfRef} pdfSubRef={pdfSubRef} tableRef={tableRef} position={true}
+                           memberList={memberList}/>
         </Modal>
     }
 
-    const onCChange = (value: string, e: any) => {
-        setInfo(v => {
-            return {...v, managerAdminId: e.adminId, managerAdminName: e.name}
-        })
-    };
+    function clearAll() {
+        setInfo({...infoInit});
+        // gridManage.deleteAll(gridRef);
+    }
 
-    return <Spin spinning={loading} tip={'견적의뢰 수정중...'}>
-        {/*@ts-ignore*/}
-        {/*<SearchInfoModal info={info} setInfo={setInfo}*/}
-        {/*                 open={isModalOpen}*/}
-        {/*                 type={'ESTIMATE'}*/}
-        {/*                 gridRef={gridRef}*/}
-        {/*                 setIsModalOpen={setIsModalOpen}/>*/}
+    return <div style={{overflow: 'hidden'}}><Spin spinning={loading}>
+        <PanelSizeUtil groupRef={groupRef} storage={'estimate_update'}/>
+        <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
+                         open={isModalOpen}
+
+                         setIsModalOpen={setIsModalOpen}/>
         <EstimateModal/>
         <>
             <div ref={infoRef} style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '510px' : '65px'} calc(100vh - ${mini ? 640 : 195}px)`,
-                columnGap: 5
+                gridTemplateRows: `${mini ? '500px' : '65px'} calc(100vh - ${mini ? 595 : 195}px)`,
+                overflowY: 'hidden',
+                rowGap: 10,
             }}>
-
-                <MainCard title={'견적서 수정'} list={[
-                    {name: '견적서 출력', func: printEstimate, type: 'default'},
-                    {name: '수정', func: saveFunc, type: 'primary'},
-                    {name: '복제', func: copyPage, type: 'default'},
+                <MainCard title={'견적서 작성'} list={[
+                    {name: '저장', func: saveFunc, type: 'primary'},
+                    {name: '초기화', func: clearAll, type: 'danger'}
                 ]} mini={mini} setMini={setMini}>
-
                     {mini ? <div>
-                        <TopBoxCard grid={'100px 70px 70px 150px 110px 300px'}>
-                            {datePickerForm({
-                                title: '작성일',
-                                id: 'writtenDate',
-                                disabled: true
-                            })}
-                            {inputForm({title: '작성자', id: 'createdBy', disabled: true, onChange: onChange, data: info})}
-                            {/*{inputForm({title: '담당자', id: 'managerAdminName', onChange: onChange, data: info})}*/}
-                            <div>
-                                <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>담당자</div>
-                                <select name="languages" id="managerAdminId"
-                                        style={{
-                                            outline: 'none',
-                                            border: '1px solid lightGray',
-                                            height: 23,
-                                            width: '100%',
-                                            fontSize: 12,
-                                            paddingBottom: 0.5
-                                        }}>
-                                    {
-                                        options.map(v => {
-                                            return <option value={v.value}>{v.label}</option>
-                                        })
-                                    }
-                                </select>
-                            </div>
-                            {inputForm({
-                                title: 'Inquiry No.',
-                                id: 'documentNumberFull',
-                                disabled : true,
-                                placeholder: '폴더생성 규칙 유의'
-                            })}
-
-                            {inputForm({title: 'RFQ No.', id: 'rfqNo', onChange: onChange, data: info})}
-                            {inputForm({title: '프로젝트 제목', id: 'projectTitle', onChange: onChange, data: info})}
-                        </TopBoxCard>
-
-                        <div style={{
-                            display: 'grid',
-                            gridTemplateColumns: "180px 200px 200px 180px 1fr 300px",
-                            gridColumnGap: 10,
-                            paddingTop: 10
-                        }}>
-
-                            <BoxCard title={'매입처 정보'}>
-                                {inputForm({
-                                    title: '매입처코드',
-                                    id: 'agencyCode',
-                                    suffix: <span style={{cursor: 'pointer'}} onClick={
-                                        (e) => {
-                                            e.stopPropagation();
-                                            openModal('agencyCode');
-                                        }
-                                    }>🔍</span>,
-
-                                    handleKeyPress: handleKeyPress
+                            <TopBoxCard grid={'100px 70px 70px 150px 150px 110px 300px'}>
+                                {datePickerForm({
+                                    title: '작성일',
+                                    id: 'writtenDate',
+                                    disabled: true
                                 })}
-                                {inputForm({
-                                    title: '매입처명',
-                                    id: 'agencyName'
-                                })}
-                                {inputForm({
-                                    title: '담당자',
-                                    id: 'agencyManagerName'
-                                })}
-                                {inputForm({
-                                    title: '매입처이메일',
-                                    id: 'agencyManagerEmail'
-                                })}
-                                {inputForm({
-                                    title: '연락처',
-                                    id: 'agencyManagerPhoneNumber'
-                                })}
-                            </BoxCard>
-
-                            <BoxCard title={'고객사 정보'}>
-                                {inputForm({
-                                    title: '고객사명',
-                                    id: 'customerName',
-                                    suffix: <span style={{cursor: 'pointer'}} onClick={
-                                        (e) => {
-                                            e.stopPropagation();
-                                            openModal('customerName');
-                                        }
-                                    }>🔍</span>,
-
-                                    handleKeyPress: handleKeyPress
-                                })}
-                                {inputForm({
-                                    title: '담당자',
-                                    id: 'managerName'
-                                })}
-                                {inputForm({
-                                    title: '연락처',
-                                    id: 'phoneNumber'
-                                })}
-                                {inputForm({
-                                    title: '팩스',
-                                    id: 'faxNumber'
-                                })}
-                                {inputForm({
-                                    title: '이메일',
-                                    id: 'customerManagerEmail'
-                                })}
-                            </BoxCard>
-
-                            <BoxCard title={'운송 정보'}>
+                                {inputForm({title: '작성자', id: 'createdBy', disabled: true, onChange: onChange, data: info})}
                                 <div>
-                                    <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>유효기간</div>
-                                    <select name="languages" id="validityPeriod"
+                                    <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>담당자</div>
+                                    <select name="languages" id="managerAdminId"
                                             style={{
                                                 outline: 'none',
                                                 border: '1px solid lightGray',
@@ -488,88 +390,250 @@ export default function EstimateUpdate({
                                                 fontSize: 12,
                                                 paddingBottom: 0.5
                                             }}>
-                                        <option value={'견적 발행 후 10일간'}>견적 발행 후 10일간</option>
-                                        <option value={'견적 발행 후 30일간'}>견적 발행 후 30일간</option>
-                                    </select>
-                                </div>
-                                <div style={{paddingTop: 10}}>
-                                    <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>결제조건</div>
-                                    <select name="languages" id="paymentTerms"
-                                            style={{
-                                                outline: 'none',
-                                                border: '1px solid lightGray',
-                                                height: 23,
-                                                width: '100%',
-                                                fontSize: 12,
-                                                paddingBottom: 0.5
-                                            }}>
-                                        <option value={'발주시 50% / 납품시 50%'}>발주시 50% / 납품시 50%</option>
-                                        <option value={'현금결제'}>현금결제</option>
-                                        <option value={'선수금'}>선수금</option>
-                                        <option value={'정기결제'}>정기결제</option>
-                                    </select>
-                                </div>
-
-                                <div style={{paddingTop: 10, paddingBottom : 10}}>
-                                    <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>운송조건</div>
-                                    <select name="languages" id="shippingTerms"
-                                            style={{
-                                                outline: 'none',
-                                                border: '1px solid lightGray',
-                                                height: 23,
-                                                width: '100%',
-                                                fontSize: 12,
-                                                paddingBottom: 0.5
-                                            }}>
-                                        <option value={'귀사도착도'}>귀사도착도</option>
-                                        <option value={'화물 및 택배비 별도'}>화물 및 택배비 별도</option>
-                                    </select>
-                                </div>
-
-                                {inputForm({
-                                    title: '납기',
-                                    id: 'delivery'
-                                })}
-                                {inputForm({
-                                    title: '환율',
-                                    id: 'exchangeRate'
-                                })}
-                            </BoxCard>
-                            <BoxCard title={'Maker 정보'}>
-                                {inputForm({
-                                    title: 'Maker',
-                                    id: 'maker',
-                                    suffix: <span style={{cursor: 'pointer'}} onClick={
-                                        (e) => {
-                                            e.stopPropagation();
-                                            openModal('maker');
+                                        {
+                                            options.map(v => {
+                                                return <option value={v.value}>{v.label}</option>
+                                            })
                                         }
-                                    }>🔍</span>,
-                                    handleKeyPress: handleKeyPress
-                                })}
-                                {inputForm({title: 'Item', id: 'item'})}
-                            </BoxCard>
-                            <BoxCard title={'ETC'}>
-                                {textAreaForm({
-                                    title: '지시사항',
-                                    rows: 6,
-                                    id: 'instructions'
-                                })}
-                                {textAreaForm({title: '비고란', rows: 5, id: 'remarks'})}
-                            </BoxCard>
-                            <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}
-                                     disabled={!userInfo['microsoftId']}>
-                                <DriveUploadComp fileList={fileList} setFileList={setFileList}
-                                                 fileRef={fileRef}
-                                                 infoRef={infoRef}/>
-                            </BoxCard>
-                        </div>
-                    </div> : <></>}
-                </MainCard>
+                                    </select>
+                                </div>
+                                {/*{inputForm({title: '담당자', id: 'managerAdminName', onChange: onChange, data: info})}*/}
+                                {inputForm({
+                                    title: 'Inquiry No.',
+                                    id: 'documentNumberFull',
 
+                                    suffix:
+                                        <RetweetOutlined style={{cursor: 'pointer'}} onClick={
+                                            async (e) => {
+                                                e.stopPropagation();
+                                                if (!info['agencyCode']) {
+                                                    return message.warn('매입처코드를 선택해주세요')
+                                                }
+                                                const returnDocumentNumb = await checkInquiryNo({
+                                                    data: {
+                                                        agencyCode: info['agencyCode'],
+                                                        type: 'ESTIMATE'
+                                                    }
+                                                })
+                                                // onChange({target: {id: 'documentNumberFull', value: returnDocumentNumb}})
+                                            }
+                                        }/>
+                                })}
+                                {inputForm({
+                                    title: '연결 INQUIRY No.',
+                                    id: 'connectDocumentNumberFull',
+                                    suffix: <DownloadOutlined style={{cursor: 'pointer'}}/>
+                                    , handleKeyPress: handleKeyPress
+                                })}
+                                {inputForm({title: 'RFQ No.', id: 'rfqNo'})}
+                                {inputForm({title: '프로젝트 제목', id: 'projectTitle'})}
+                            </TopBoxCard>
+
+
+                            <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
+                                <Panel defaultSize={sizes[0]} minSize={5}>
+                                    <BoxCard title={'매입처 정보'}>
+                                        {inputForm({
+                                            title: '매입처코드',
+                                            id: 'agencyCode',
+                                            suffix: <span style={{cursor: 'pointer'}} onClick={
+                                                (e) => {
+                                                    e.stopPropagation();
+                                                    openModal('agencyCode');
+                                                }
+                                            }>🔍</span>,
+
+
+                                            handleKeyPress: handleKeyPress,
+
+
+                                        })}
+                                        {inputForm({
+                                            title: '매입처명',
+                                            id: 'agencyName',
+
+
+                                        })}
+                                        {inputForm({
+                                            title: '담당자',
+                                            id: 'agencyManagerName',
+
+                                        })}
+                                        {inputForm({
+                                            title: '매입처이메일',
+                                            id: 'agencyManagerEmail'
+                                        })}
+                                        {inputForm({
+                                            title: '연락처',
+                                            id: 'agencyManagerPhoneNumber'
+                                        })}
+                                    </BoxCard>
+                                </Panel>
+                                <PanelResizeHandle/>
+                                <Panel defaultSize={sizes[1]} minSize={5}>
+                                    <BoxCard title={'고객사 정보'}>
+                                        {inputForm({
+                                            title: '고객사명',
+                                            id: 'customerName',
+                                            suffix: <span style={{cursor: 'pointer'}} onClick={
+                                                (e) => {
+                                                    e.stopPropagation();
+                                                    openModal('customerName');
+                                                }
+                                            }>🔍</span>,
+
+
+                                            handleKeyPress: handleKeyPress,
+                                        })}
+                                        {inputForm({
+                                            title: '담당자명',
+                                            id: 'managerName',
+
+                                        })}
+                                        {inputForm({
+                                            title: '연락처',
+                                            id: 'phoneNumber',
+
+                                        })}
+                                        {inputForm({
+                                            title: '팩스',
+                                            id: 'faxNumber',
+
+                                        })}
+                                        {inputForm({
+                                            title: '이메일',
+                                            id: 'customerManagerEmail',
+
+                                        })}
+                                    </BoxCard>
+                                </Panel>
+                                <PanelResizeHandle/>
+                                <Panel defaultSize={sizes[2]} minSize={5}>
+                                    <BoxCard title={'운송 정보'}>
+                                        <div>
+                                            <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 6}}>유효기간</div>
+                                            <select name="languages" id="validityPeriod"
+                                                    style={{
+                                                        outline: 'none',
+                                                        border: '1px solid lightGray',
+                                                        height: 23,
+                                                        width: '100%',
+                                                        fontSize: 12,
+                                                        paddingBottom: 0.5
+                                                    }}>
+                                                <option value={'견적 발행 후 10일간'}>견적 발행 후 10일간</option>
+                                                <option value={'견적 발행 후 30일간'}>견적 발행 후 30일간</option>
+                                            </select>
+                                        </div>
+                                        <div style={{paddingTop: 10}}>
+                                            <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 6}}>결제조건</div>
+                                            <select name="languages" id="paymentTerms"
+                                                    style={{
+                                                        outline: 'none',
+                                                        border: '1px solid lightGray',
+                                                        height: 23,
+                                                        width: '100%',
+                                                        fontSize: 12,
+                                                        paddingBottom: 0.5
+                                                    }}>
+                                                <option value={'발주시 50% / 납품시 50%'}>발주시 50% / 납품시 50%</option>
+                                                <option value={'현금결제'}>현금결제</option>
+                                                <option value={'선수금'}>선수금</option>
+                                                <option value={'정기결제'}>정기결제</option>
+                                            </select>
+                                        </div>
+
+                                        <div style={{paddingTop: 10, paddingBottom: 10}}>
+                                            <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 6}}>운송조건</div>
+                                            <select name="languages" id="shippingTerms"
+                                                    style={{
+                                                        outline: 'none',
+                                                        border: '1px solid lightGray',
+                                                        height: 23,
+                                                        width: '100%',
+                                                        fontSize: 12,
+                                                        paddingBottom: 0.5
+                                                    }}>
+                                                <option value={'귀사도착도'}>귀사도착도</option>
+                                                <option value={'화물 및 택배비 별도'}>화물 및 택배비 별도</option>
+                                            </select>
+                                        </div>
+
+                                        {inputNumberForm({
+                                            title: '납기',
+                                            id: 'delivery',
+                                            min: 0,
+                                            max: 10,
+                                            addonAfter: '주'
+                                        })}
+                                        {inputNumberForm({
+                                            title: '환율',
+                                            id: 'exchangeRate',
+                                            min: 0,
+                                            step: 0.01,
+                                        })}
+
+
+                                    </BoxCard>
+                                </Panel>
+                                <PanelResizeHandle/>
+                                <Panel defaultSize={sizes[3]} minSize={5}>
+                                    <BoxCard title={'Maker 정보'}>
+                                        {inputForm({
+                                            title: 'Maker',
+                                            id: 'maker',
+                                            suffix: <span style={{cursor: 'pointer'}} onClick={
+                                                (e) => {
+                                                    e.stopPropagation();
+                                                    openModal('maker');
+                                                }
+                                            }>🔍</span>,
+
+                                            onChange: onChange, handleKeyPress: handleKeyPress, data: info
+                                        })}
+                                        {inputForm({title: 'Item', id: 'item', onChange: onChange, data: info})}
+                                    </BoxCard>
+                                </Panel>
+                                <PanelResizeHandle/>
+                                <Panel defaultSize={sizes[4]} minSize={5}>
+                                    <BoxCard title={'ETC'}>
+                                        {textAreaForm({
+                                            title: '지시사항',
+                                            rows: 5,
+                                            id: 'instructions',
+
+                                        })}
+                                        {textAreaForm({title: '비고란', rows: 5, id: 'remarks'})}
+                                    </BoxCard>
+                                </Panel>
+                                <PanelResizeHandle/>
+                                <Panel defaultSize={sizes[5]} minSize={5}>
+                                    <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
+                                        {/*@ts-ignored*/}
+                                        <div style={{overFlowY: "auto", maxHeight: 300}}>
+                                            <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
+                                                             infoRef={infoRef}/>
+                                        </div>
+                                    </BoxCard>
+                                </Panel>
+                                <PanelResizeHandle/>
+                                <Panel></Panel>
+                            </PanelGroup>
+
+                        </div>
+                        : <></>}
+                </MainCard>
+                {/*<TableGrid*/}
+                {/*    setInfo={setInfo}*/}
+                {/*    gridRef={gridRef}*/}
+                {/*    columns={tableEstimateWriteColumns}*/}
+                {/*    type={'write'}*/}
+                {/*    onGridReady={onGridReady}*/}
+                {/*    funcButtons={['estimateUpload', 'estimateAdd', 'delete', 'print']}*/}
+                {/*/>*/}
                 <Table data={tableData} column={estimateInfo['write']} funcButtons={['print']} ref={tableRef}/>
             </div>
         </>
-
-    </Spin>
+        {/*{ready && <EstimatePaper data={info} pdfRef={pdfRef} gridRef={gridRef}/>}*/}
+    </Spin></div>
 }

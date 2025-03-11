@@ -388,12 +388,10 @@ export default function OrderWrite({dataInfo = [], copyPageInfo}) {
                                 </div>
                                 {inputForm({
                                     title: '납기',
-                                    id: 'deliveryTerms',
-                                    onChange: onChange,
-                                    data: info
+                                    id: 'deliveryTerms'
                                 })}
-                                {inputForm({title: 'Maker', id: 'maker', onChange: onChange, data: info})}
-                                {inputForm({title: 'Item', id: 'item', onChange: onChange, data: info})}
+                                {inputForm({title: 'Maker', id: 'maker'})}
+                                {inputForm({title: 'Item', id: 'item'})}
                                 {datePickerForm({title: '예상 입고일', id: 'delivery'})}
                             </BoxCard>
 
@@ -411,9 +409,7 @@ export default function OrderWrite({dataInfo = [], copyPageInfo}) {
                         </div>
                     </div> : null}
                 </MainCard>
-
                 <Table data={tableData} column={orderInfo['write']} funcButtons={['print']} ref={tableRef}/>
-
             </div>
         </>
     </Spin>

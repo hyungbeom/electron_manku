@@ -20,7 +20,7 @@ import {rfqInfo} from "@/utils/column/ProjectInfo";
 import Table from "@/component/util/Table";
 
 const listType = 'estimateRequestDetailList'
-export default function RqfWrite({copyPageInfo = {},notificationAlert = null, getPropertyId}:any) {
+export default function RqfWrite({copyPageInfo = {}, notificationAlert = null, getPropertyId}: any) {
     const groupRef = useRef<any>(null)
 
     const [memberList, setMemberList] = useState([]);
@@ -162,9 +162,9 @@ export default function RqfWrite({copyPageInfo = {},notificationAlert = null, ge
         await saveRfq({data: formData}).then(async (v: any) => {
             const dom = infoRef.current.querySelector('#documentNumberFull');
 
-            if(v.code === 1){
+            if (v.code === 1) {
                 const {documentNumberFull, estimateRequestId} = v.data;
-                notificationAlert('success','견적의뢰 등록완료',
+                notificationAlert('success', '견적의뢰 등록완료',
                     <>
                         <div>Project No. : {documentNumberFull}</div>
                         <div>등록일자 : {moment().format('HH:mm:ss')}</div>
@@ -172,7 +172,7 @@ export default function RqfWrite({copyPageInfo = {},notificationAlert = null, ge
                     , function () {
                         getPropertyId('rfq_update', estimateRequestId)
                     },
-                    {cursor : 'pointer'}
+                    {cursor: 'pointer'}
                 )
 
 
@@ -224,7 +224,7 @@ export default function RqfWrite({copyPageInfo = {},notificationAlert = null, ge
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('rfq_write');
-        return savedSizes ? JSON.parse(savedSizes) : [25, 25, 25, 25, 25]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [25, 25, 25, 25, 0]; // 기본값 [50, 50, 50]
     };
 
     function onResizeChange() {
@@ -234,8 +234,8 @@ export default function RqfWrite({copyPageInfo = {},notificationAlert = null, ge
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
 
-    return <Spin spinning={loading} tip={'견적의뢰 등록중...'}>
-        <PanelSizeUtil groupRef={groupRef} setSizes={setSizes} storage={'rfq_write'}/>
+    return <Spin spinning={loading}>
+        <PanelSizeUtil groupRef={groupRef}  storage={'rfq_write'}/>
         <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
                          open={isModalOpen}
 
@@ -244,8 +244,8 @@ export default function RqfWrite({copyPageInfo = {},notificationAlert = null, ge
         <>
             <div ref={infoRef} style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? 510 : 65}px calc(100vh - ${mini ? 600 : 195}px)`,
-                columnGap: 5
+                gridTemplateRows: `${mini ? 495 : 65}px calc(100vh - ${mini ? 590 : 195}px)`,
+                rowGap: 10,
             }}>
 
                 <MainCard title={'견적의뢰 작성'} list={[
@@ -318,8 +318,8 @@ export default function RqfWrite({copyPageInfo = {},notificationAlert = null, ge
 
                                 })}
                             </TopBoxCard>
-                            <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 3, paddingTop: 3}}>
-                                <Panel defaultSize={sizes[0]} minSize={10} maxSize={100} onResize={onResizeChange}>
+                            <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
+                                <Panel defaultSize={sizes[0]} minSize={5}>
                                     <BoxCard title={'매입처 정보'} tooltip={tooltipInfo('agency')}>
                                         {inputForm({
                                             title: '매입처코드',
@@ -360,7 +360,7 @@ export default function RqfWrite({copyPageInfo = {},notificationAlert = null, ge
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>
-                                <Panel defaultSize={sizes[1]} minSize={10} maxSize={100} onResize={onResizeChange}>
+                                <Panel defaultSize={sizes[1]} minSize={5}>
                                     <BoxCard title={'고객사 정보'} tooltip={tooltipInfo('customer')}>
                                         {inputForm({
                                             title: '고객사명',
@@ -403,7 +403,7 @@ export default function RqfWrite({copyPageInfo = {},notificationAlert = null, ge
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>
-                                <Panel defaultSize={sizes[2]} minSize={10} maxSize={100} onResize={onResizeChange}>
+                                <Panel defaultSize={sizes[2]} minSize={5}>
                                     <BoxCard title={'Maker 정보'} tooltip={tooltipInfo('maker')}>
                                         {inputForm({
                                             title: 'Maker',
@@ -435,7 +435,7 @@ export default function RqfWrite({copyPageInfo = {},notificationAlert = null, ge
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>
-                                <Panel defaultSize={sizes[3]} minSize={10} maxSize={100} onResize={onResizeChange}>
+                                <Panel defaultSize={sizes[3]} minSize={5}>
                                     <BoxCard title={'ETC'} tooltip={tooltipInfo('etc')}>
                                         {inputForm({
                                             title: 'End User',
@@ -454,13 +454,16 @@ export default function RqfWrite({copyPageInfo = {},notificationAlert = null, ge
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>
-                                <Panel defaultSize={sizes[4]} minSize={10} maxSize={100} onResize={onResizeChange}>
+                                <Panel defaultSize={sizes[4]} minSize={5}>
                                     <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}
                                              disabled={!userInfo['microsoftId']}>
 
                                         <DriveUploadComp fileList={fileList} setFileList={setFileList}
                                                          fileRef={fileRef} infoRef={infoRef} UploadHeight={290}/>
                                     </BoxCard>
+                                </Panel>
+                                <PanelResizeHandle/>
+                                <Panel defaultSize={sizes[5]} minSize={0}>
                                 </Panel>
                             </PanelGroup>
                         </div>

@@ -265,6 +265,13 @@ body {
 .htCore td {
     white-space: pre-wrap !important; /* ✅ 줄바꿈 적용 */
     word-break: break-word; /* ✅ 긴 단어도 자동 줄바꿈 */
+    font-size: 12px !important; /* 원하는 크기로 조정 */
+    padding: 2px 10px !important; /* 패딩 줄이기 (선택 사항) */
+}
+.handsontableInput {
+    font-size: 8px !important;
+    padding: 4px 10px !important;
+    line-height: normal !important; /* 줄 간격 유지 */
 }
 /* 🔥 빨간색 텍스트 적용 */
 .ht-red {
@@ -299,34 +306,12 @@ body {
     position: relative !important;
     display: flex !important;
     align-items: center !important;
+    z-index: 9999999;
 }
 
-/* 🔥 Handsontable의 드롭다운 화살표(▼) 강제 표시 */
-.handsontable .htAutocompleteArrow {
-    display: inline-block !important;
-    width: 12px;
-    height: 12px;
-    background-color: transparent;
-    border-top: 6px solid black; /* 🔥 ▼ 화살표 */
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none;
-}
 
-/* 🔥 드롭다운 화살표(▼)가 숨겨진 경우 다시 표시 */
-.handsontable .htAutocompleteEditor .htDropdownMenu {
-    visibility: visible !important;
-    opacity: 1 !important;
-}
 
-/* 🔥 Autocomplete 필드의 입력창과 화살표가 정렬되도록 설정 */
-.handsontable .handsontableInput {
-    padding-right: 20px !important;
-}
+
 
 /* 🔥 특정 컬럼(Model, Item, Maker)의 헤더만 빨간색으로 설정 */
 .redHeader {
@@ -371,4 +356,24 @@ input[type="number"]::-webkit-inner-spin-button {
 .ant-upload-list {
     /*max-height: 265px;*/
     /*overflow-y: auto;*/
+}
+
+.ag-header {
+    background-color: #bae7ff !important;
+}
+
+#hot-container {
+    height: 100vh; /* 또는 100% (부모 요소가 높이를 가지고 있어야 함) */
+    width: 100%;
+}
+
+/* 컬럼 헤더 높이 줄이기 */
+.ht_clone_top th {
+    height: 15px !important; /* 원하는 높이로 조절 */
+    line-height: 10px !important;
+}
+
+/* 컬럼 헤더 폰트 크기 조절 */
+.ht_clone_top .colHeader {
+    font-size: 12px !important; /* 원하는 크기로 조절 */
 }

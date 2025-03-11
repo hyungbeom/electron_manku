@@ -83,7 +83,7 @@ export default function ProjectRead({getPropertyId, getCopyPage}) {
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('project_read');
-        return savedSizes ? JSON.parse(savedSizes) : [25, 25, 25, 25]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [25, 25, 25, 25,0]; // 기본값 [50, 50, 50]
     };
     function onResizeChange() {
         setSizes(groupRef.current.getLayout())
@@ -92,7 +92,7 @@ export default function ProjectRead({getPropertyId, getCopyPage}) {
 
 
     return <Spin spinning={loading} tip={'프로젝트 조회중...'}>
-        <PanelSizeUtil groupRef={groupRef} setSizes={setSizes} storage={'project_read'}/>
+        <PanelSizeUtil groupRef={groupRef} storage={'project_read'}/>
         <ReceiveComponent searchInfo={searchInfo}/>
 
         <div style={{
@@ -107,8 +107,8 @@ export default function ProjectRead({getPropertyId, getCopyPage}) {
 
                 {mini ? <div>
 
-                    <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 3, paddingTop: 3}}>
-                        <Panel defaultSize={sizes[0]} minSize={10} maxSize={100} onResize={onResizeChange}>
+                    <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
+                        <Panel defaultSize={sizes[0]} minSize={5}>
                             <BoxCard title={'기본정보'} grid={"150px 250px 150px 1fr"}>
                                 {rangePickerForm({title: '작성일자', id: 'searchDate', onChange: onChange, data: info})}
                                 {inputForm({
@@ -128,7 +128,7 @@ export default function ProjectRead({getPropertyId, getCopyPage}) {
                             </BoxCard>
                         </Panel>
                         <PanelResizeHandle/>
-                        <Panel defaultSize={sizes[1]} minSize={10} maxSize={100} onResize={onResizeChange}>
+                        <Panel defaultSize={sizes[1]} minSize={5}>
                             <BoxCard title={'프로젝트 정보'} tooltip={tooltipInfo('readProject')}>
                                 {inputForm({
                                     title: 'Project No.',
@@ -154,7 +154,7 @@ export default function ProjectRead({getPropertyId, getCopyPage}) {
                             </BoxCard>
                         </Panel>
                         <PanelResizeHandle/>
-                        <Panel defaultSize={sizes[2]} minSize={10} maxSize={100} onResize={onResizeChange}>
+                        <Panel defaultSize={sizes[2]} minSize={5}>
                             <BoxCard title={'매입처 정보'} tooltip={tooltipInfo('readAgency')}>
                                 {inputForm({
                                     title: '매입처명',
@@ -187,7 +187,7 @@ export default function ProjectRead({getPropertyId, getCopyPage}) {
                             </BoxCard>
                         </Panel>
                         <PanelResizeHandle/>
-                        <Panel defaultSize={sizes[3]} minSize={10} maxSize={100} onResize={onResizeChange}>
+                        <Panel defaultSize={sizes[3]} minSize={5}>
                             <BoxCard title={'고객사 정보'} tooltip={tooltipInfo('readCustomer')}>
                                 {inputForm({
                                     title: '고객사명',
@@ -219,6 +219,8 @@ export default function ProjectRead({getPropertyId, getCopyPage}) {
                                 })}
                             </BoxCard>
                         </Panel>
+                        <PanelResizeHandle/>
+                        <Panel></Panel>
                     </PanelGroup>
                     </div>
                     : <></>}

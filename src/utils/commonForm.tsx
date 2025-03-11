@@ -45,8 +45,9 @@ export const numbParser = (value) => value.replace(/₩\s?|(,*)/g, '')
 
 export function TopBoxCard({children, title = '', grid = '1fr 1fr 1fr 1fr'}) {
 
-    return <Card size={'small'} title={title}
+    return <Card  size={'small'} title={title}
                  style={{
+                    height : 70,
                      fontSize: 13,
                      border: '1px solid #bae7ff',
 
@@ -177,14 +178,14 @@ export const inputForm = ({
                           }: any) => {
 
 
-    function onchange(e){
+    function onchange(e) {
         e.target.style.borderColor = ''
     }
 
     return <div style={{fontSize: fontSize, paddingBottom: 10}}>
         <div style={{paddingBottom: fontSize / 2, fontWeight: 700}}>{title}</div>
         {/*@ts-ignored*/}
-        <div style={{display : 'flex'}}>
+        <div style={{display: 'flex'}}>
             <input placeholder={placeholder}
                    id={id}
                    size={size}
@@ -195,7 +196,7 @@ export const inputForm = ({
                 // suffix={suffix}
                    style={{fontSize: 12, border: `1px solid ${validate ? 'lightGray' : 'red'}`}}
             />
-            <span style={{marginLeft : -22, paddingTop : 2}}>{suffix}</span>
+            <span style={{marginLeft: -22, paddingTop: 1.5}}>{suffix}</span>
         </div>
     </div>
 }
@@ -241,10 +242,10 @@ export const rangePickerForm = ({
                                 }: any) => {
     let bowl = data;
     return <div style={{fontSize: 12, paddingBottom: 10}}>
-        <div style={{paddingBottom: 5.5, fontSize: 12, fontWeight : 700}}>{title}</div>
+        <div style={{paddingBottom: 5.5, fontSize: 12, fontWeight: 700}}>{title}</div>
         <RangePicker className={'custom-rangepicker'} value={[moment(bowl[id][0]), moment(bowl[id][1])]} id={id}
                      size={'small'} disabled={disabled}
-                     onChange={(e, d) => onChange({target: {id: id, value: d}})} style={{width: '100%',height : 24}}/>
+                     onChange={(e, d) => onChange({target: {id: id, value: d}})} style={{width: '100%', height: 24}}/>
     </div>
 
 
@@ -280,22 +281,17 @@ export const inputNumberForm = ({
 
 
     return <div style={{fontSize: 12, paddingBottom: 10}}>
-        <div style={{paddingBottom: 4, fontWeight : 700}}>{title}</div>
-        <div style={{display : 'flex'}}>
-        <input type={'number'} id={id} disabled={disabled}
-                     style={{width: '100%', marginTop : 3}}
-                     // formatter={formatter}
-                     // parser={parser}
-                     step={step}
-                     // onChange={e => onChange({target: {id: id, value: e}})}
-                     // size={'small'}
-                     placeholder={placeholder}
-                     // addonAfter={addonAfter}
-                     min={min}
-                     max={max}
+        <div style={{paddingBottom: 4, fontWeight: 700}}>{title}</div>
+        <div style={{display: 'flex'}}>
+            <input type={'number'} id={id} disabled={disabled}
+                   style={{width: '100%', marginTop: 3}}
+                   step={step}
+                   placeholder={placeholder}
+                   min={min}
+                   max={max}
 
-        />
-            <span style={{marginLeft : -20, paddingTop : 2, fontWeight : 700}}>{addonAfter}</span>
+            />
+            <span style={{marginLeft: -20, paddingTop: 5, fontWeight: 700}}>{addonAfter}</span>
         </div>
     </div>
 }
@@ -347,7 +343,7 @@ export const textAreaForm = ({
     return <div style={{fontSize: 12, paddingBottom: 5}}>
         <div style={{paddingBottom: 5, fontWeight: 700}}>{title}</div>
         <textarea style={{resize: 'none', fontSize: 12,}} rows={rows} id={id}
-                 value={data ? data[id] : null}
+                  value={data ? data[id] : null}
                   disabled={disabled}
                   className="custom-textarea"
                   placeholder={placeHolder}

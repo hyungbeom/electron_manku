@@ -13,17 +13,6 @@ import {projectInfo} from "@/utils/column/ProjectInfo";
 // register Handsontable's modules
 registerAllModules();
 
-const currencyRenderer = (instance, td, row, col, prop, value, cellProperties) => {
-    if (typeof value === 'number') {
-        if (prop === "marginRate") {
-            td.textContent = (value * 100).toFixed(2) + "%"; // 🔥 marginRate 값을 자동 변환 (0.00%)
-        } else {
-            td.textContent = value.toLocaleString(); // 쉼표 포함된 숫자로 변환
-        }
-    } else {
-        td.textContent = value || ''; // 값이 없으면 빈 문자열 처리
-    }
-};
 
 const Table = forwardRef(({data = new Array(100).fill({}), column, type = '', funcButtons}: any, ref) => {
 
@@ -39,21 +28,6 @@ const Table = forwardRef(({data = new Array(100).fill({}), column, type = '', fu
 
 
     const tableContainerRef = useRef(null);
-    const [tableHeight, setTableHeight] = useState(400); // 기본값 설정
-
-
-    useEffect(() => {
-        let resizeObserver;
-        if (tableContainerRef.current) {
-            resizeObserver = new ResizeObserver(() => {
-                requestAnimationFrame(() => {
-                    setTableHeight(tableContainerRef.current.clientHeight - 25);
-                });
-            });
-            resizeObserver.observe(tableContainerRef.current);
-        }
-        return () => resizeObserver?.disconnect();
-    }, []);
 
 
     const tableData = useMemo(() => {
@@ -135,17 +109,17 @@ const Table = forwardRef(({data = new Array(100).fill({}), column, type = '', fu
                     engine: HyperFormula,
                 }}
                 colWidths={column['columnWidth']}
-
+                height={'calc(100% - 25px)'}
 
                 colHeaders={column["column"]}
                 fixedRowsBottom={1}
                 stretchH="all"
-                height={tableHeight}
                 autoWrapRow={true}
                 autoWrapCol={true}
                 manualColumnMove={false}
                 multiColumnSorting={column["type"] === "read"}
                 navigableHeaders={true}
+
                 afterGetRowHeader={(row, TH) => {
                     const hotInstance = hotRef.current.hotInstance;
                     const totalRows = hotInstance.countRows();
@@ -155,6 +129,7 @@ const Table = forwardRef(({data = new Array(100).fill({}), column, type = '', fu
                     if (row >= totalRows - fixedBottomRows) {
                         TH.innerHTML = "";
                     }
+
                 }}
                 afterGetColHeader={(col, TH) => {
                     const headerText = column["column"][col]; // 컬럼 이름 가져오기
@@ -181,6 +156,7 @@ const Table = forwardRef(({data = new Array(100).fill({}), column, type = '', fu
                     }
                 }}
 
+
                 afterChange={afterChange}
                 columns={column["columnList"].map(col => {
                     return ({
@@ -191,9 +167,8 @@ const Table = forwardRef(({data = new Array(100).fill({}), column, type = '', fu
                         allowInvalid: false,
                         allowHtml: true,
                         dateFormat: col.type === "date" ? "YYYY-MM-DD" : undefined,
-                        correctFormat: col.data === "marginRate" ? true : undefined, // 🔥 숫자가 올바른 형식이 아니면 자동 수정
+                        // correctFormat: col.data === "marginRate" ? true : undefined, // 🔥 숫자가 올바른 형식이 아니면 자동 수정
                         numericFormat: col.data === "marginRate" ? {pattern: "0.00%", suffix: "%"} : undefined, // 🔥 소수점 둘째 자리 고정 + % 유지
-                        renderer: col.data.includes("Price") || col.data.includes("total") ? currencyRenderer : undefined,
                         readOnly: col.readOnly,
                     })
                 })}

@@ -336,6 +336,9 @@ export function DriveUploadComp({
                         <option value={2}>{'업체회신자료'}</option>
                         <option value={3}>{'견적서자료'}</option>
                         <option value={4}>{'발주서자료'}</option>
+                        <option value={5}>{'프로젝트자료'}</option>
+                        <option value={6}>{'세금계산서'}</option>
+                        <option value={7}>{'기타'}</option>
                     </select>
                 </div>
 

@@ -406,9 +406,9 @@ const TableGrid = ({
             </div> : <></>}
 
             <div>
-                <div style={{width: '100%', display: 'flex', justifyContent: 'space-between', margin: '10px 0'}}>
-                    <div style={{fontWeight: 500, paddingLeft : 15}}>LIST &nbsp;&nbsp;    {type === 'read' ?<span style={{fontSize: 12}}>검색결과(<span
-                        style={{color: 'orangered'}}>{totalRow}</span>건)</span> : <></>}</div>
+                <div style={{width: '100%', display: 'flex', justifyContent: 'space-between', padding : '15px 0px 5px 0px'}}>
+                    <div style={{fontWeight: 500, paddingLeft : 3}}>{type === 'read' ?<span style={{fontSize: 12}}>검색결과 (<span
+                        style={{color: 'orangered'}}>{totalRow}</span> 건)</span> : <></>}</div>
 
                     <div style={{display: 'flex', alignItems: 'end', gap: 7}}>
                         <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
@@ -445,13 +445,6 @@ const TableGrid = ({
                     gridOptions={{
                         loadThemeGoogleFonts: true,
                         onCellClicked: onCellClicked,
-                        getRowStyle: (params) => {
-                            // 짝수 행에만 스타일 적용
-                            if (params.node.rowIndex % 2 === 1) {
-                                return {backgroundColor: "#f5f5f5"}; // 옅은 갈색
-                            }
-                            return null; // 기본 스타일 유지
-                        },
                         onCellValueChanged: (event) => {
                             if (setInfo) {
                                 setInfo(v => {

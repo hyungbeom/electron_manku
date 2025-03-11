@@ -1,4 +1,5 @@
 import { app, BrowserWindow, ipcMain, Menu, dialog } from 'electron';
+import {winax} from 'winax'
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -12,6 +13,7 @@ app.whenReady().then(async () => {
     if (app.isPackaged) {
         checkForUpdates();
     }
+
 });
 
 const __filename = fileURLToPath(import.meta.url);

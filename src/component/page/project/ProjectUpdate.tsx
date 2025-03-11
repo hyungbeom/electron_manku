@@ -17,6 +17,7 @@ import Table from "@/component/util/Table";
 import {findCodeInfo} from "@/utils/api/commonApi";
 import SearchInfoModal from "@/component/SearchAgencyModal";
 import moment from "moment/moment";
+import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 
 
 const listType = 'projectDetailList'
@@ -71,18 +72,18 @@ export default function ProjectUpdate({
     const [tableData, setTableData] = useState([]);
 
     const getSavedSizes = () => {
-        const savedSizes = localStorage.getItem('project_write');
-        return savedSizes ? JSON.parse(savedSizes) : [15, 15, 40, 30]; // 기본값 [50, 50, 50]
+
+        const savedSizes = localStorage.getItem('project_update');
+        console.log(savedSizes,':::')
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20,0]; // 기본값 [50, 50, 50]
     };
 
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
-    function onResizeChange() {
-        setSizes(groupRef.current.getLayout())
-    }
+
 
     const handleMouseUp = () => {
-        setSizes(groupRef.current.getLayout())
+        setSizes(groupRef.current.getLayout());
         localStorage.setItem('project_write', JSON.stringify(groupRef.current.getLayout()));
     };
     useEffect(() => {
@@ -94,7 +95,6 @@ export default function ProjectUpdate({
         };
     }, []);
 
-
     useEffect(() => {
         setLoading(true)
         getDataInfo().then(v => {
@@ -104,7 +104,6 @@ export default function ProjectUpdate({
             setInfo(projectDetail);
             projectDetail[listType] = [...projectDetail[listType], ...commonFunc.repeatObject(projectInfo['write']['defaultData'], 100 - projectDetail[listType].length)]
             setTableData(projectDetail[listType]);
-
             setLoading(false)
         })
     }, [updateKey['project_update']])
@@ -254,6 +253,7 @@ export default function ProjectUpdate({
     };
 
     return <Spin spinning={loading}>
+        <PanelSizeUtil groupRef={groupRef}  storage={'project_update'}/>
         <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
                          open={isModalOpen}
 
@@ -262,14 +262,13 @@ export default function ProjectUpdate({
         <>
             <div ref={infoRef} style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '450px' : '65px'} calc(100vh - ${mini ? 560 : 195}px)`,
+                gridTemplateRows: `${mini ? '440px' : '65px'} calc(100vh - ${mini ? 535 : 195}px)`,
                 rowGap: 10,
                 columnGap: 5
             }}>
-                <MainCard title={'프로젝트 수정'} list={[
-                    {name: '수정', func: saveFunc, type: 'primary'},
-                    {name: '초기화', func: clearAll, type: 'danger'},
-                    {name: '복제', func: copyPage, type: 'default'}
+                <MainCard title={'프로젝트 등록'} list={[
+                    {name: '저장', func: saveFunc, type: 'primary'},
+                    {name: '초기화', func: clearAll, type: 'danger'}
                 ]} mini={mini} setMini={setMini}>
 
                     {mini ? <div>
@@ -277,7 +276,7 @@ export default function ProjectUpdate({
                                 {datePickerForm({
                                     title: '작성일자',
                                     id: 'writtenDate',
-                                    disabled: true
+                                    disabled: true,
                                 })}
                                 {inputForm({
                                     title: '작성자',
@@ -305,32 +304,27 @@ export default function ProjectUpdate({
                             </TopBoxCard>
 
 
-                            <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 3, paddingTop: 5}}>
-                                <Panel defaultSize={sizes[0]} minSize={10} maxSize={100} onResize={onResizeChange}>
+                            <PanelGroup ref={groupRef} className={'ground'} direction="horizontal"
+                                        style={{gap: 0.5, paddingTop: 3}}>
+                                <Panel defaultSize={sizes[0]} minSize={5}>
                                     <BoxCard title={'프로젝트 정보'} tooltip={tooltipInfo('readProject')}>
                                         {inputForm({
-                                            title: 'PROJECT NO.',
+                                            title: 'Project No.',
                                             id: 'documentNumberFull',
-                                            placeholder: '필수입력',
-                                            defaultValue: info['documentNumberFull'],
-                                            validate: validate['documentNumberFull']
                                         })}
                                         {inputForm({
                                             title: '프로젝트 제목',
                                             id: 'projectTitle',
-                                            defaultValue: info['projectTitle']
-
                                         })}
                                         {datePickerForm({title: '마감일자', id: 'dueDate'})}
                                     </BoxCard>
                                 </Panel>
-                                <PanelResizeHandle/>
-                                <Panel defaultSize={sizes[1]} minSize={10} maxSize={100}>
+                                <PanelResizeHandle id={'resize'} className={'ground'}/>
+                                <Panel defaultSize={sizes[1]} minSize={5}>
                                     <BoxCard title={'고객사 정보'} tooltip={tooltipInfo('customer')}>
                                         {inputForm({
                                             title: '고객사명',
                                             id: 'customerName',
-
 
                                             suffix: <span style={{cursor: 'pointer'}} onClick={
                                                 (e) => {
@@ -342,44 +336,34 @@ export default function ProjectUpdate({
                                         {inputForm({
                                             title: '고객사 담당자명',
                                             id: 'customerManagerName',
-
                                         })}
                                         {inputForm({
                                             title: '담당자 전화번호',
                                             id: 'customerManagerPhone',
-
                                         })}
-                                        {/*{inputForm({*/}
-                                        {/*    title: '담당자 전화번호',*/}
-                                        {/*    id: 'customerManagerPhone',*/}
-                                        {/*    defaultValue: info['customerManagerPhone'],*/}
-                                        {/*})}*/}
                                         {inputForm({
                                             title: '담당자 이메일',
-                                            id: 'customerManagerEmail'
+                                            id: 'customerManagerEmail',
                                         })}
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>
-                                <Panel defaultSize={sizes[2]} minSize={25} maxSize={100}>
+                                <Panel defaultSize={sizes[2]} minSize={5}>
                                     <BoxCard title={'기타 정보'} tooltip={tooltipInfo('etc')}>
                                         {textAreaForm({
                                             title: '비고란',
                                             rows: 2,
                                             id: 'remarks',
-                                            defaultValue: info['remarks'],
                                         })}
                                         {textAreaForm({
                                             title: '지시사항',
                                             rows: 2,
                                             id: 'instructions',
-                                            defaultValue: info['instructions'],
                                         })}
                                         {textAreaForm({
                                             title: '특이사항',
                                             rows: 2,
                                             id: 'specialNotes',
-                                            defaultValue: info['specialNotes'],
                                         })}
                                     </BoxCard>
                                 </Panel>
@@ -394,20 +378,14 @@ export default function ProjectUpdate({
                                         </div>
                                     </BoxCard>
                                 </Panel>
+                                <PanelResizeHandle/>
+                                <Panel defaultSize={sizes[4]} minSize={0}></Panel>
                             </PanelGroup>
                         </div>
                         : <></>}
                 </MainCard>
 
-                <Table data={tableData} column={projectInfo['write']} funcButtons={['print']} ref={tableRef}/>
-                {/*<TableGrid*/}
-                {/*    gridRef={gridRef}*/}
-                {/*    onGridReady={onGridReady}*/}
-                {/*    columns={projectWriteColumn}*/}
-                {/*    type={'write'}*/}
-                {/*    funcButtons={['projectUpload', 'addProjectRow', 'delete', 'print']}*/}
-                {
-                    /*/>*/}
+                <Table data={tableData} column={projectInfo['write']} funcButtons={['print']} ref={tableRef} />
             </div>
         </>
     </Spin>

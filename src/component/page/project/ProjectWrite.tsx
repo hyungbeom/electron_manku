@@ -191,12 +191,9 @@ function ProjectWrite({copyPageInfo = {},notificationAlert = null, getPropertyId
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('project_write');
-        return savedSizes ? JSON.parse(savedSizes) : [15, 15, 40, 30]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20,0]; // 기본값 [50, 50, 50]
     };
 
-    function onResizeChange() {
-        setSizes(groupRef.current.getLayout())
-    }
 
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
@@ -207,16 +204,16 @@ function ProjectWrite({copyPageInfo = {},notificationAlert = null, getPropertyId
     }
 
     return <Spin spinning={loading}>
-        <PanelSizeUtil groupRef={groupRef} setSizes={setSizes} storage={'project_write'}/>
+        <PanelSizeUtil groupRef={groupRef} storage={'project_write'}/>
         <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
                          open={isModalOpen}
                          setIsModalOpen={setIsModalOpen}/>
 
         <div ref={infoRef} style={{
             display: 'grid',
-            gridTemplateRows: `${mini ? '450px' : '65px'} calc(100vh - ${mini ? 560 : 195}px)`,
+            gridTemplateRows: `${mini ? '440px' : '65px'} calc(100vh - ${mini ? 535 : 195}px)`,
             rowGap: 10,
-            columnGap: 5
+
         }}>
             <MainCard title={'프로젝트 등록'} list={[
                 {name: '저장', func: saveFunc, type: 'primary'},
@@ -253,17 +250,15 @@ function ProjectWrite({copyPageInfo = {},notificationAlert = null, getPropertyId
                                     }
                                 </select>
                             </div>
-
                         </TopBoxCard>
 
 
-                        <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 3, paddingTop: 5}}>
-                            <Panel defaultSize={sizes[0]} minSize={10} maxSize={100} onResize={onResizeChange}>
+                        <PanelGroup ref={groupRef} className={'ground'} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
+                            <Panel defaultSize={sizes[0]} minSize={5} >
                                 <BoxCard title={'프로젝트 정보'} tooltip={tooltipInfo('readProject')}>
                                     {inputForm({
                                         title: 'Project No.',
-                                        id: 'documentNumberFull',
-                                        onChange: onChange
+                                        id: 'documentNumberFull'
                                     })}
                                     {inputForm({
                                         title: '프로젝트 제목',
@@ -272,8 +267,8 @@ function ProjectWrite({copyPageInfo = {},notificationAlert = null, getPropertyId
                                     {datePickerForm({title: '마감일자', id: 'dueDate'})}
                                 </BoxCard>
                             </Panel>
-                            <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[1]} minSize={10} maxSize={100}>
+                            <PanelResizeHandle id={'resize'} className={'ground'} />
+                            <Panel defaultSize={sizes[1]} minSize={5} >
                                 <BoxCard title={'고객사 정보'} tooltip={tooltipInfo('customer')}>
                                     {inputForm({
                                         title: '고객사명',
@@ -301,7 +296,7 @@ function ProjectWrite({copyPageInfo = {},notificationAlert = null, getPropertyId
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[2]} minSize={25} maxSize={100}>
+                            <Panel defaultSize={sizes[2]} minSize={5} >
                                 <BoxCard title={'기타 정보'} tooltip={tooltipInfo('etc')}>
                                     {textAreaForm({
                                         title: '비고란',
@@ -331,6 +326,8 @@ function ProjectWrite({copyPageInfo = {},notificationAlert = null, getPropertyId
                                     </div>
                                 </BoxCard>
                             </Panel>
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[4]} minSize={0} ></Panel>
                         </PanelGroup>
                     </div>
                     : <></>}
