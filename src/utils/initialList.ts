@@ -197,10 +197,10 @@ export const tableOrderWriteInitial = {
 
 
 export const subRfqReadInitial = {
-    "searchDate": [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],   // front 사용
+    "searchDate": [moment().subtract(6, 'months').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],   // front 사용
     "searchEstimateRequestId": "",      // 견적의뢰 Id
     "searchType": "0",                   // 검색조건 1: 회신, 2: 미회신
-    "searchStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),              // 작성일자 시작일
+    "searchStartDate": moment().subtract(6, 'months').format('YYYY-MM-DD'),              // 작성일자 시작일
     "searchEndDate":moment().format('YYYY-MM-DD'),                // 작성일자 종료일
     "searchDocumentNumber": "",         // 문서번호
     "searchCustomerName": "",           // 고객사명
@@ -248,9 +248,9 @@ export const subRfqReadMailInitial = {
 }
 
 export const estimateReadInitial = {
-    searchDate: [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
+    searchDate: [moment().subtract(6, 'months').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
     "searchType": 0,                   // 검색조건 1: 회신, 2: 미회신
-    searchStartDate: moment().subtract(1, 'years').format('YYYY-MM-DD'),              // 작성일자 시작일
+    searchStartDate: moment().subtract(6, 'months').format('YYYY-MM-DD'),              // 작성일자 시작일
     searchEndDate: moment().format('YYYY-MM-DD'),                // 작성일자 종료일
     "searchDocumentNumber": "",         // 문서번호
     "searchCustomerName": "",           // 고객사명
@@ -462,8 +462,8 @@ export const tableOrderReadInitial = {
 }
 
 export const orderReadInitial = {
-    "searchDate": [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],              // 작성일자 시작일
-    searchStartDate: moment().subtract(1, 'years').format('YYYY-MM-DD'),
+    "searchDate": [moment().subtract(6, 'months').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],              // 작성일자 시작일
+    searchStartDate: moment().subtract(6, 'months').format('YYYY-MM-DD'),
     searchEndDate: moment().format('YYYY-MM-DD'),
     "searchDocumentNumber": "",         // 문서번호
     "searchCustomerName": "",           // 고객사명

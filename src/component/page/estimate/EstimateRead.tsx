@@ -51,55 +51,12 @@ export default function EstimateRead({getPropertyId, getCopyPage}) {
             params.api.applyTransaction({add: v.data});
             setTotalRow(v.pageInfo.totalRow)
         })
-
-        // 그리드 로드 후 스크롤 이벤트 추가
-        setTimeout(() => {
-            const gridElement = document.querySelector(".ag-body-viewport");
-            if (gridElement) {
-                gridElement.addEventListener("scroll", handleScroll);
-            }
-        }, 100);
     };
+
     useEffect(() => {
-        infoRef.current = info
+        // infoRef.current = info
     }, [info]);
 
-    const handleScroll = async () => {
-        const gridElement = document.querySelector(".ag-body-viewport");
-        if (!gridElement) return;
-
-        const {scrollTop, scrollHeight, clientHeight} = gridElement;
-        const atBottom = scrollHeight - scrollTop <= clientHeight + 1; // 소수점 오차 보정
-
-        if (atBottom) {
-            if (countRef.current) {
-                countRef.current += 1; // countRef를 직접 수정
-
-                setLoading(true);
-
-
-                await getData.post('estimate/getEstimateList', {...infoRef.current, page: countRef.current}).then(v => {
-                    if (!v.data.entity.pageInfo.isNextPage) {
-                        countRef.current = 0;
-                    } else {
-                        gridRef.current.applyTransaction({add: v.data.entity.estimateRequestList ? v.data.entity.estimateRequestList : []});
-                    }
-                    setLoading(false)
-                })
-                setLoading(false)
-            }
-        }
-    };
-
-    useEffect(() => {
-        return () => {
-            // 컴포넌트 언마운트 시 스크롤 이벤트 제거
-            const gridElement = document.querySelector(".ag-body-viewport");
-            if (gridElement) {
-                gridElement.removeEventListener("scroll", handleScroll);
-            }
-        };
-    }, []);
 
     function handleKeyPress(e) {
         if (e.key === 'Enter') {
