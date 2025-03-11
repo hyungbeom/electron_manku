@@ -23,7 +23,7 @@ import {
 import {commonFunc, commonManage, fileManage, gridManage} from "@/utils/commonManage";
 import _ from "lodash";
 import {findCodeInfo, findOrderDocumentInfo} from "@/utils/api/commonApi";
-import {saveOrder} from "@/utils/api/mainApi";
+import {getAttachmentFileList, saveOrder} from "@/utils/api/mainApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {getData} from "@/manage/function/api";
 import Spin from "antd/lib/spin";
@@ -129,24 +129,22 @@ export default function OrderWrite({dataInfo = [], copyPageInfo}) {
         if (e.key === 'Enter') {
             switch (e.target.id) {
                 case 'ourPoNo' :
+                    setLoading(true)
                     await getData.post('estimate/getEstimateDetail', {
                         "estimateId": '',
                         documentNumberFull: e.target.value.toUpperCase()
                     }).then(async v => {
                         if (v.data.code === 1) {
                             console.log(v.data?.entity, 'v.data?.entity:')
-                            const {attachmentFileList, estimateDetail} = v.data?.entity
-                            setFileList(fileManage.getFormatFiles(attachmentFileList))
-                            setOriginFileList(attachmentFileList)
+                            const {estimateDetail} = v.data?.entity
+                            setFileList([])
+                            setOriginFileList([])
                             const dom = infoRef.current.querySelector('#ourPoNo');
                             // const result = await findDocumentInfo(e, setInfo);
                             await getData.post('estimate/generateDocumentNumberFull', {
                                 type: 'ORDER',
                                 documentNumberFull: dom.value.toUpperCase()
                             }).then(src => {
-
-                                // delete result?.data?.entity?.estimateRequestList[0]?.adminId
-                                // delete result?.data?.entity?.estimateRequestList[0]?.createdBy
 
                                 commonManage.setInfo(infoRef, {
                                     ...estimateDetail,
@@ -156,11 +154,15 @@ export default function OrderWrite({dataInfo = [], copyPageInfo}) {
                                     shippingTerms: '귀사도착도',
                                     writtenDate: moment().format('YYYY-MM-DD'),
                                 })
-                                setTableData([...estimateDetail['estimateDetailList'], ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 100 - estimateDetail['estimateDetailList'].length)])
-                            });
-
-
+                                setTableData([...estimateDetail?.estimateDetailList, ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 100 - estimateDetail?.estimateDetailList.length)])
+                            },err=>console.log('???'));
+                            setLoading(false)
+                        }else{
+                            setLoading(false)
                         }
+                    },err =>{
+                        console.log(err,':::err:::')
+                        setLoading(false)
                     })
 
 
@@ -184,42 +186,53 @@ export default function OrderWrite({dataInfo = [], copyPageInfo}) {
 
 
     async function saveFunc() {
-        // let infoData = commonManage.getInfo(infoRef, infoInit);
-        // const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
-        // infoData['managerAdminName'] = findMember['name'];
-        //
-        //
-        // gridRef.current.clearFocusedCell();
-        // if (!info['documentNumberFull']) {
-        //     setValidate(v => {
-        //         return {...v, documentNumberFull: false}
-        //     })
-        //     return message.warn('발주서 PO no를 입력하셔야 합니다.')
-        // }
-        // const list = gridManage.getAllData(gridRef)
-        // if (!list.length) {
-        //     return message.warn('하위 데이터 1개 이상이여야 합니다')
-        // }
-        //
-        // setLoading(true)
-        // const formData: any = new FormData();
-        //
-        // commonManage.setInfoFormData(info, formData, listType, list)
-        // commonManage.getUploadList(fileRef, formData)
-        // await saveOrder({data: formData, router: router, returnFunc: returnFunc})
-        // setLoading(false)
+
+        let infoData = commonManage.getInfo(infoRef, infoInit);
+        const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
+        infoData['managerAdminName'] = findMember['name'];
+
+        if (!infoData['documentNumberFull']) {
+            return message.warn('Inquiry No. 정보가 누락되었습니다.')
+        }
+        const tableList = tableRef.current?.getSourceData();
+
+        const filterTableList = commonManage.filterEmptyObjects(tableList, ['model', 'item', 'maker'])
+        if (!filterTableList.length) {
+            return message.warn('하위 데이터 1개 이상이여야 합니다');
+        }
+
+        setLoading(true)
+        const formData: any = new FormData();
+        commonManage.setInfoFormData(infoData, formData, listType, filterTableList)
+        commonManage.getUploadList(fileRef, formData);
+        commonManage.deleteUploadList(fileRef, formData, originFileList)
+
+        formData.delete('createdDate')
+        formData.delete('modifiedDate')
+
+        await saveOrder({data: formData, router: router, returnFunc: returnFunc})
+        setLoading(false)
     }
 
-    function returnFunc(code, msg) {
-        if (code === -20001) {
-            message.error('발주서 PO no가 중복되었습니다.');
-            setValidate(v => {
-                return {...v, documentNumberFull: false}
+    async function returnFunc(code, msg, data) {
+        if(code === 1){
+
+            await getAttachmentFileList({
+                data: {
+                    "relatedType": "ORDER",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
+                    "relatedId": data?.orderId
+                }
+            }).then(v => {
+                const list = fileManage.getFormatFiles(v);
+                setFileList(list)
+                setOriginFileList(v)
+                setLoading(false)
             })
-        } else {
+            setLoading(false)
+        }else{
             message.error(msg);
+            setLoading(false)
         }
-        setLoading(false)
     }
 
     function clearAll() {
@@ -254,7 +267,7 @@ export default function OrderWrite({dataInfo = [], copyPageInfo}) {
         commonManage.openModal(e, setIsModalOpen)
     }
 
-    return <Spin spinning={loading} tip={'발주서 등록중...'}>
+    return <Spin spinning={loading} tip={'LOADING'}>
         <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
                          open={isModalOpen}
 

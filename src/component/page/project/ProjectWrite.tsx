@@ -3,7 +3,7 @@ import {ModalInitList, projectWriteInitial} from "@/utils/initialList";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, tooltipInfo, TopBoxCard} from "@/utils/commonForm";
 import {useRouter} from "next/router";
-import {commonFunc, commonManage} from "@/utils/commonManage";
+import {commonFunc, commonManage, fileManage} from "@/utils/commonManage";
 import _ from "lodash";
 import {findCodeInfo} from "@/utils/api/commonApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
@@ -17,13 +17,13 @@ import {getData} from "@/manage/function/api";
 import Table from "@/component/util/Table";
 import {projectInfo} from "@/utils/column/ProjectInfo";
 import message from "antd/lib/message";
-import {saveProject} from "@/utils/api/mainApi";
+import {getAttachmentFileList, saveProject} from "@/utils/api/mainApi";
 import SearchInfoModal from "@/component/SearchAgencyModal";
 
 
 const listType = 'projectDetailList'
 
-function ProjectWrite({copyPageInfo = {}}) {
+function ProjectWrite({copyPageInfo = {},notificationAlert = null}) {
 
     const [memberList, setMemberList] = useState([]);
 
@@ -149,9 +149,32 @@ function ProjectWrite({copyPageInfo = {}}) {
         await saveProject({data: formData, router: router, returnFunc: returnFunc})
     }
 
-    function returnFunc(e) {
+    async function returnFunc(e, data) {
+        const dom = infoRef.current.querySelector('#documentNumberFull');
+        if(e === 1){
+            console.log(dom.value,'data:')
+            notificationAlert('success','프로젝트 등록완료',
+                <>
+                    <div>{dom.value} 프로젝트가 등록이 완료되었습니다</div>
+                    <div>{moment().format('HH:mm:ss')}</div>
+                </>
+                , function () {
+                    alert('성공')
+            })
+            await getAttachmentFileList({
+                data: {
+                    "relatedType": "PROJECT",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
+                    "relatedId": data?.projectId
+                }
+            }).then(v => {
+                const list = fileManage.getFormatFiles(v);
+                setFileList(list)
+                setLoading(false)
+            })
+
+            setLoading(false)
+        }
         if (e === -20001) {
-            const dom = infoRef.current.querySelector('#documentNumberFull');
             dom.style.borderColor = 'red'
         }
         setLoading(false)
@@ -181,7 +204,7 @@ function ProjectWrite({copyPageInfo = {}}) {
         }
     }
 
-    return <Spin spinning={loading} tip={'프로젝트 등록중...'}>
+    return <Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} setSizes={setSizes} storage={'project_write'}/>
         <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
                          open={isModalOpen}

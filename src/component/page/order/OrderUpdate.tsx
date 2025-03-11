@@ -83,6 +83,7 @@ export default function OrderUpdate({updateKey, getCopyPage}) {
         setLoading(true)
         getDataInfo().then(v => {
             const {orderDetail, attachmentFileList} = v;
+            console.log(attachmentFileList,'attachmentFileList:')
             setFileList(fileManage.getFormatFiles(attachmentFileList));
             setOriginFileList(attachmentFileList);
             setInfo({

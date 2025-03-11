@@ -76,11 +76,12 @@ export default function Main() {
 
         const [api, contextHolder] = notification.useNotification();
 
-        const openNotificationWithIcon = (type, title, description) => {
+        const openNotificationWithIcon = (type, title, description, onClick) => {
             api[type]({
                 message:title,
                 description:
                 description,
+                onClick: onClick
             });
         };
 

@@ -182,10 +182,9 @@ export default function ProjectUpdate({
                     "relatedId": updateKey['project_update']
                 }
             }).then(v => {
-                window.opener?.postMessage('update', window.location.origin);
                 const list = fileManage.getFormatFiles(v);
                 setFileList(list)
-                setOriginFileList(list)
+                // setOriginFileList(list)
                 setLoading(false);
             })
         } else {
@@ -240,7 +239,7 @@ export default function ProjectUpdate({
         })
     };
 
-    return <Spin spinning={loading} tip={'프로젝트 수정중...'}>
+    return <Spin spinning={loading}>
         <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
                          open={isModalOpen}
 

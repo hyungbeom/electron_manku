@@ -8,13 +8,13 @@ export function DriveUploadComp({
                                     fileList,
                                     setFileList,
                                     fileRef,
-                                    uploadType = true,
                                     infoRef = null,
                                     numb = null,
                                     UploadHeight = 300
                                 }) {
     const fileInputRef = useRef(null);
 
+    const uploadTypeRef= useRef(null);
     const [editingFileId, setEditingFileId] = useState(null); // 수정 중인 파일 ID
     const [tempFileName, setTempFileName] = useState(""); // 임시 파일 이름 저장
     const [fileExtension, setFileExtension] = useState(""); // 파일 확장자 저장
@@ -144,10 +144,10 @@ export function DriveUploadComp({
         const updatedFileList = fileList.map(f => {
             if (f.uid === file.uid) {
 
-                const dom = infoRef.current.querySelector('#uploadType');
+
                 // 현재 numb 그룹 내의 파일 이름에서 번호 추출
                 const existingNumbers = fileList
-                    .filter(file => file.name.startsWith(`0${dom.value}.`)) // 현재 numb 그룹만 필터링
+                    .filter(file => file.name.startsWith(`0${uploadTypeRef.current.value}.`)) // 현재 numb 그룹만 필터링
                     .map(file => {
                         const match = file.name.match(/^0\d+\.(\d+)/); // 번호 추출
                         return match ? parseInt(match[1], 10) : null;
@@ -174,7 +174,7 @@ export function DriveUploadComp({
                 // 이름 수정된 파일 반환 (originFileObj 유지)
                 return {
                     ...f,
-                    name: `0${parseInt(dom.value)}.${newNumber} ${originalName}`,
+                    name: `0${parseInt(uploadTypeRef.current.value)}.${newNumber} ${originalName}`,
                     originFileObj: f.originFileObj, // 기존 originFileObj 유지
                 };
             }
@@ -314,10 +314,10 @@ export function DriveUploadComp({
                 maxCount={13}
             >
 
-                {uploadType ? <div style={{width: '100%', display: 'flex', backgroundColor : 'white', height : 25, position : 'absolute', justifyContent : 'space-between', top :40, left  : 0, zIndex : 10}}>
+                <div style={{width: '100%', display: 'flex', backgroundColor : 'white', height : 25, position : 'absolute', justifyContent : 'space-between', top :40, left  : 0, zIndex : 10}}>
                     <Button style={{fontSize: 11, left : 10}} size={'small'}
                             icon={<UploadOutlined/>} type={'primary'}>Upload</Button>
-                    <select onClick={e => {
+                    <select ref={uploadTypeRef} onClick={e => {
                         e.preventDefault();
                         e.stopPropagation()
                     }} name="languages" id="uploadType"
@@ -337,7 +337,7 @@ export function DriveUploadComp({
                         <option value={3}>{'견적서자료'}</option>
                         <option value={4}>{'발주서자료'}</option>
                     </select>
-                </div> : <></>}
+                </div>
 
             </Upload>
         </div>

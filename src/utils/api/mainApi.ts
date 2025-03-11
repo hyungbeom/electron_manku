@@ -13,7 +13,7 @@ export const saveRfq = async ({data}) => {
     return await getFormData.post('estimate/addEstimateRequest', data).then(v => {
 
         const {code, message, entity} = v.data
-            return {code : code, msg : message, data :entity}
+        return {code: code, msg: message, data: entity}
 
 
     }, err => {
@@ -93,13 +93,8 @@ export const saveRemittance = async ({data, router}) => {
 
 export const saveProject = async ({data, router, returnFunc}) => {
     await getFormData.post('project/addProject', data).then(v => {
-        const {code, message} = v.data;
-        if (code === 1) {
-            msg.success('저장되었습니다.')
-        } else {
-            msg.warning(message)
-        }
-        returnFunc(code)
+        const {code, message, entity} = v.data;
+        returnFunc(code, entity)
     });
 };
 export const saveStore = async ({data, router}) => {
@@ -281,15 +276,8 @@ export const deleteOrderStatusDetails = async ({
 
 export const saveOrder = async ({data, router, returnFunc}) => {
     await getFormData.post('order/addOrder', data).then(v => {
-        const {code} = v.data
-        const msg = v.data.message
-        if (code === 1) {
-            window.opener?.postMessage('write', window.location.origin);
-            msg.success('저장되었습니다')
-            // router.push(`/order_update?orderId=${v.data.entity.orderId}`)
-        } else {
-            returnFunc(code, msg)
-        }
+        const {code, message, entity} = v.data
+        returnFunc(code, message, entity);
     });
 };
 
