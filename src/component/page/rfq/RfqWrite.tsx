@@ -1,19 +1,10 @@
 import React, {useEffect, useRef, useState} from "react";
 import {ClearOutlined, FileSearchOutlined, SaveOutlined} from "@ant-design/icons";
-import {ModalInitList, rfqWriteInitial} from "@/utils/initialList";
+import {ModalInitList} from "@/utils/initialList";
 import message from "antd/lib/message";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import SearchInfoModal from "@/component/SearchAgencyModal";
-import {
-    BoxCard,
-    datePickerForm,
-    inputForm,
-    MainCard,
-    selectBoxForm,
-    textAreaForm,
-    tooltipInfo,
-    TopBoxCard
-} from "@/utils/commonForm";
+import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, tooltipInfo, TopBoxCard} from "@/utils/commonForm";
 import {commonFunc, commonManage, fileManage} from "@/utils/commonManage";
 import _ from "lodash";
 import {findCodeInfo} from "@/utils/api/commonApi";
@@ -25,7 +16,7 @@ import Spin from "antd/lib/spin";
 import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
-import {estimateInfo, rfqInfo} from "@/utils/column/ProjectInfo";
+import {rfqInfo} from "@/utils/column/ProjectInfo";
 import Table from "@/component/util/Table";
 
 const listType = 'estimateRequestDetailList'
@@ -168,22 +159,22 @@ export default function RqfWrite({copyPageInfo = {}}) {
         formData.delete('createdDate')
         formData.delete('modifiedDate')
 
-        await saveRfq({data: formData}).then(async (v:any) => {
+        await saveRfq({data: formData}).then(async (v: any) => {
             const {documentNumberFull, estimateRequestId} = v.data;
             const dom = infoRef.current.querySelector('#documentNumberFull');
             dom.value = documentNumberFull
 
-                await getAttachmentFileList({
-                    data: {
-                        "relatedType": "ESTIMATE_REQUEST",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
-                        "relatedId": estimateRequestId
-                    }
-                }).then(v => {
-                    const list = fileManage.getFormatFiles(v);
-                    console.log(list, 'list:::')
-                    setFileList(list)
-                    setLoading(false)
-                })
+            await getAttachmentFileList({
+                data: {
+                    "relatedType": "ESTIMATE_REQUEST",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
+                    "relatedId": estimateRequestId
+                }
+            }).then(v => {
+                const list = fileManage.getFormatFiles(v);
+                console.log(list, 'list:::')
+                setFileList(list)
+                setLoading(false)
+            })
 
             setLoading(false)
         })
@@ -452,8 +443,8 @@ export default function RqfWrite({copyPageInfo = {}}) {
                                 <Panel defaultSize={sizes[4]} minSize={10} maxSize={100} onResize={onResizeChange}>
                                     <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}
                                              disabled={!userInfo['microsoftId']}>
-                                            <DriveUploadComp fileList={fileList} setFileList={setFileList}
-                                                             fileRef={fileRef} infoRef={infoRef}/>
+                                        <DriveUploadComp fileList={fileList} setFileList={setFileList}
+                                                         fileRef={fileRef} infoRef={infoRef}/>
                                     </BoxCard>
                                 </Panel>
                             </PanelGroup>
