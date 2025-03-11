@@ -79,7 +79,7 @@ export default function Main() {
             description:
             description,
             onClick: onClick,
-            duration: 5,
+            duration: 10,
             style : style
         });
     };

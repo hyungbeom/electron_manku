@@ -140,13 +140,13 @@ export const updateRemittance = async ({data, router}) => {
 
 export const updateProject = async ({data, router, returnFunc}) => {
     await getFormData.post('project/updateProject', data).then(v => {
-        const code = v.data.code;
+        const {code, message} = v.data;
         if (code) {
             msg.success('저장되었습니다.')
         } else {
             msg.error('저장에 실패하였습니다.')
         }
-        returnFunc(code === 1);
+        returnFunc(code, message);
     });
 };
 

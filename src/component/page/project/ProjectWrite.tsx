@@ -23,7 +23,7 @@ import SearchInfoModal from "@/component/SearchAgencyModal";
 
 const listType = 'projectDetailList'
 
-function ProjectWrite({copyPageInfo = {},notificationAlert = null, getPropertyId}) {
+function ProjectWrite({copyPageInfo = {},notificationAlert = null, getPropertyId}:any) {
 
     const [memberList, setMemberList] = useState([]);
 

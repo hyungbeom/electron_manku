@@ -16,6 +16,7 @@ import {projectInfo} from "@/utils/column/ProjectInfo";
 import Table from "@/component/util/Table";
 import {findCodeInfo} from "@/utils/api/commonApi";
 import SearchInfoModal from "@/component/SearchAgencyModal";
+import moment from "moment/moment";
 
 
 const listType = 'projectDetailList'
@@ -23,7 +24,7 @@ export default function ProjectUpdate({
 
                                           updateKey = {},
                                           getCopyPage = null,
-                                          notificationAlert = null, getPropertyId
+                                          notificationAlert = null, getPropertyId = null
                                       }) {
     const infoRef = useRef<any>(null)
     const tableRef = useRef(null);
@@ -173,8 +174,21 @@ export default function ProjectUpdate({
         await updateProject({data: formData, router: router, returnFunc: returnFunc})
     }
 
-    async function returnFunc(e) {
-        if (e) {
+    async function returnFunc(code, msg) {
+        if (code === 1) {
+            const dom = infoRef.current.querySelector('#documentNumberFull');
+            notificationAlert('success','프로젝트 수정완료',
+                <>
+                    <div>Project No. : {dom.value}</div>
+                    <div>등록일자 : {moment().format('HH:mm:ss')}</div>
+                </>
+                , function () {
+                    getPropertyId('project_update', updateKey['project_update'])
+                },
+                {cursor : 'pointer'}
+            )
+
+
             await getAttachmentFileList({
                 data: {
                     "relatedType": "PROJECT",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
@@ -187,6 +201,7 @@ export default function ProjectUpdate({
                 setLoading(false);
             })
         } else {
+            message.warning(msg)
             setLoading(false)
         }
     }
