@@ -303,7 +303,24 @@ export default function OrderUpdate({updateKey, getCopyPage}) {
                                             width: '100%',
                                             fontSize: 12,
                                             paddingBottom: 0.5
-                                        }}>
+                                        }}
+                                        onChange={e => {
+                                            const member = memberList.find(v => v.adminId === parseInt(e.target.value))
+
+                                            if (member) {
+                                                const {name, faxNumber, contactNumber, email} = member;
+
+                                                const sendObj ={
+                                                    managerId : name,
+                                                    managerPhoneNumber : contactNumber,
+                                                    managerFaxNumber : faxNumber,
+                                                    managerEmail : email
+                                                }
+                                                commonManage.setInfo(infoRef, sendObj);
+                                            }
+                                        }}
+
+                                >
                                     {
                                         options.map(v => {
                                             return <option value={v.value}>{v.label}</option>
@@ -346,10 +363,8 @@ export default function OrderUpdate({updateKey, getCopyPage}) {
                             <Panel defaultSize={sizes[1]} minSize={5}>
                                 <BoxCard title={'담당자 정보'}>
                                     {inputForm({title: '작성자', id: 'managerId', onChange: onChange, data: info})}
-                                    {/*{inputForm({title: 'TEL', id: 'managerPhoneNumber', onChange: onChange, data: info})}*/}
                                     {inputForm({title: 'TEL', id: 'managerPhoneNumber'})}
                                     {inputForm({title: 'Fax', id: 'managerFaxNumber'})}
-
                                     {inputForm({title: 'E-Mail', id: 'managerEmail'})}
                                 </BoxCard>
                             </Panel>

@@ -42,14 +42,14 @@ import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 
 
 const listType = 'orderDetailList'
-export default function OrderWrite({copyPageInfo, notificationAlert = null, getPropertyId}:any) {
+export default function OrderWrite({copyPageInfo, notificationAlert = null, getPropertyId}: any) {
     const groupRef = useRef<any>(null)
     const tableRef = useRef(null);
     const infoRef = useRef<any>(null)
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('order_write');
-        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20,0]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 0]; // 기본값 [50, 50, 50]
     };
 
 
@@ -155,7 +155,7 @@ export default function OrderWrite({copyPageInfo, notificationAlert = null, getP
                                 documentNumberFull: dom.value.toUpperCase()
                             }).then(src => {
 
-                                console.log(estimateDetail,'estimateDetail::')
+                                console.log(estimateDetail, 'estimateDetail::')
                                 commonManage.setInfo(infoRef, {
                                     ...estimateDetail,
                                     documentNumberFull: src.data.code === 1 ? src.data.entity.newDocumentNumberFull : '',
@@ -269,7 +269,6 @@ export default function OrderWrite({copyPageInfo, notificationAlert = null, getP
     }
 
 
-
     function printPo() {
         setIsModalOpen({event1: false, event2: true});
     }
@@ -280,7 +279,7 @@ export default function OrderWrite({copyPageInfo, notificationAlert = null, getP
     }
 
     return <Spin spinning={loading} tip={'LOADING'}>
-        <PanelSizeUtil groupRef={groupRef}  storage={'order_write'}/>
+        <PanelSizeUtil groupRef={groupRef} storage={'order_write'}/>
         <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
                          open={isModalOpen}
 
@@ -313,7 +312,21 @@ export default function OrderWrite({copyPageInfo, notificationAlert = null, getP
                             {inputForm({title: '작성자', id: 'createdBy', disabled: true})}
                             <div>
                                 <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>담당자</div>
-                                <select name="languages" id="managerAdminId"
+                                <select name="languages" id="managerAdminId" onChange={e => {
+                                    const member = memberList.find(v => v.adminId === parseInt(e.target.value))
+
+                                    if (member) {
+                                        const {name, faxNumber, contactNumber, email} = member;
+
+                                        const sendObj ={
+                                            managerId : name,
+                                            managerPhoneNumber : contactNumber,
+                                            managerFaxNumber : faxNumber,
+                                            managerEmail : email
+                                        }
+                                        commonManage.setInfo(infoRef, sendObj);
+                                    }
+                                }}
                                         style={{
                                             outline: 'none',
                                             border: '1px solid lightGray',
@@ -416,8 +429,8 @@ export default function OrderWrite({copyPageInfo, notificationAlert = null, getP
                             <Panel defaultSize={sizes[4]} minSize={5}>
                                 <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
 
-                                        <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                         infoRef={infoRef}/>
+                                    <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
+                                                     infoRef={infoRef}/>
 
                                 </BoxCard>
                             </Panel>
