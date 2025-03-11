@@ -348,13 +348,13 @@ export default function RqfUpdate({
                                         {inputForm({
                                             title: '매입처코드',
                                             id: 'agencyCode',
-                                            suffix: <FileSearchOutlined style={{cursor: 'pointer'}}
-                                                                        onClick={
-                                                                            (e) => {
-                                                                                e.stopPropagation();
-                                                                                openModal('agencyCode');
-                                                                            }
-                                                                        }/>,
+                                            suffix: <span style={{cursor: 'pointer'}} onClick={
+                                                (e) => {
+                                                    e.stopPropagation();
+                                                    openModal('agencyCode');
+                                                }
+                                            }>🔍</span>,
+
                                             onChange: onChange,
                                             handleKeyPress: handleKeyPress,
                                             // data: info
@@ -389,13 +389,13 @@ export default function RqfUpdate({
                                         {inputForm({
                                             title: '고객사명',
                                             id: 'customerName',
-                                            suffix: <FileSearchOutlined style={{cursor: 'pointer'}}
-                                                                        onClick={
-                                                                            (e) => {
-                                                                                e.stopPropagation();
-                                                                                openModal('customerName');
-                                                                            }
-                                                                        }/>,
+                                            suffix: <span style={{cursor: 'pointer'}} onClick={
+                                                (e) => {
+                                                    e.stopPropagation();
+                                                    openModal('customerName');
+                                                }
+                                            }>🔍</span>,
+
                                             // onChange: onChange,
                                             handleKeyPress: handleKeyPress,
                                             // data: info
@@ -432,13 +432,13 @@ export default function RqfUpdate({
                                         {inputForm({
                                             title: 'Maker',
                                             id: 'maker',
-                                            suffix: <FileSearchOutlined style={{cursor: 'pointer'}}
-                                                                        onClick={
-                                                                            (e) => {
-                                                                                e.stopPropagation();
-                                                                                openModal('maker');
-                                                                            }
-                                                                        }/>,
+                                            suffix: <span style={{cursor: 'pointer'}} onClick={
+                                                (e) => {
+                                                    e.stopPropagation();
+                                                    openModal('maker');
+                                                }
+                                            }>🔍</span>,
+
                                             // onChange: onChange,
                                             handleKeyPress: handleKeyPress,
                                             // data: info
