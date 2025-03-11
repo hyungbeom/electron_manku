@@ -418,12 +418,13 @@ export default function EstimateUpdate({
                                 {inputForm({
                                     title: '매입처코드',
                                     id: 'agencyCode',
-                                    suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
+                                    suffix: <span style={{cursor: 'pointer'}} onClick={
                                         (e) => {
                                             e.stopPropagation();
                                             openModal('agencyCode');
                                         }
-                                    }/>,
+                                    }>🔍</span>,
+
                                     handleKeyPress: handleKeyPress
                                 })}
                                 {inputForm({
@@ -448,12 +449,14 @@ export default function EstimateUpdate({
                                 {inputForm({
                                     title: '고객사명',
                                     id: 'customerName',
-                                    suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
+                                    suffix: <span style={{cursor: 'pointer'}} onClick={
                                         (e) => {
                                             e.stopPropagation();
                                             openModal('customerName');
                                         }
-                                    }/>,  handleKeyPress: handleKeyPress
+                                    }>🔍</span>,
+
+                                    handleKeyPress: handleKeyPress
                                 })}
                                 {inputForm({
                                     title: '담당자',
@@ -536,13 +539,13 @@ export default function EstimateUpdate({
                                 {inputForm({
                                     title: 'Maker',
                                     id: 'maker',
-                                    suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
+                                    suffix: <span style={{cursor: 'pointer'}} onClick={
                                         (e) => {
                                             e.stopPropagation();
                                             openModal('maker');
                                         }
-                                    }/>
-                                    , handleKeyPress: handleKeyPress
+                                    }>🔍</span>,
+                                    handleKeyPress: handleKeyPress
                                 })}
                                 {inputForm({title: 'Item', id: 'item'})}
                             </BoxCard>

@@ -344,12 +344,12 @@ export default function OrderWrite({dataInfo = [], copyPageInfo}) {
                                 {inputForm({
                                     title: '매입처코드',
                                     id: 'agencyCode',
-                                    suffix: <FileSearchOutlined style={{cursor: 'pointer'}} onClick={
+                                    suffix: <span style={{cursor: 'pointer'}} onClick={
                                         (e) => {
                                             e.stopPropagation();
                                             openModal('agencyCode');
                                         }
-                                    }/>,
+                                    }>🔍</span>,
 
                                     handleKeyPress: handleKeyPress,
 

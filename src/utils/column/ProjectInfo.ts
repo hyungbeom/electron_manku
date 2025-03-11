@@ -364,7 +364,7 @@ export const orderInfo = {
         "managerPhoneNumber": "",  // Tel
         "managerFaxNumber": "",      // E-Mail
         "managerEmail": "",   // Fax
-        "paymentTerms": 'By in advance T/T',    // Payment Terms
+        "paymentTerms": '발주시 50% / 납품시 50%',    // Payment Terms
         "deliveryTerms": "",              // 납기 Terms
         "maker": "",                    // Maker
         "item": "",                       // Item
