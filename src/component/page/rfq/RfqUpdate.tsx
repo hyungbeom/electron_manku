@@ -73,6 +73,7 @@ export default function RqfUpdate({updateKey = {}, getCopyPage = null, managerLi
         setLoading(true)
         getDataInfo().then(v => {
             const {estimateRequestDetail, attachmentFileList} = v;
+            console.log(attachmentFileList,'fileManage.getFormatFiles(attachmentFileList):')
             setFileList(fileManage.getFormatFiles(attachmentFileList));
             setOriginFileList(attachmentFileList);
             setInfo({

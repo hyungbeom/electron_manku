@@ -134,7 +134,7 @@ export const rfqInfo = {
         totalList: {
             "model": '',             // Model
             "quantity": '=SUM(B1:B100)',           // 수량
-            "unit": "ea",            // 단위
+            "unit": "",            // 단위
             "currency": "",       // CURR
             "net": '=SUM(E1:E100)',                // 매입단가
             "totalNet": '=SUM(F1:F100)',                // 매입단가

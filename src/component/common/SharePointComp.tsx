@@ -303,19 +303,22 @@ export function DriveUploadComp({fileList, setFileList, fileRef,  uploadType = t
                 maxCount={13}
             >
 
-                {uploadType ? <div style={{display : 'flex', justifyContent : 'space-between'}}>
+                {uploadType ? <div style={{width : '100%', display : 'flex'}}>
                     <Button style={{fontSize: 11,}} size={'small'} icon={<UploadOutlined/>} type={'primary'}>Upload</Button>
                     <select onClick={e=>{
                         e.preventDefault();
                         e.stopPropagation()
                     }} name="languages" id="uploadType"
                             style={{
+                                position : 'absolute',
+                                right : 0,
+                                // top : 0,
                                 outline: 'none',
                                 border: '1px solid lightGray',
                                 height: 25,
                                 fontSize: 12,
-                                width  :120,
-                                marginLeft : 30
+                                float : 'right',
+                                width : '30%'
                             }}>
                         <option value={0}>{'요청자료'}</option>
                         <option value={1}>{'첨부파일'}</option>
