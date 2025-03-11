@@ -281,7 +281,7 @@ export default function OrderUpdate({updateKey, getCopyPage}) {
                         <BoxCard title={''}>
                             <div style={{
                                 display: 'grid',
-                                gridTemplateColumns: '1fr 0.6fr 1fr 1fr 1fr',
+                                gridTemplateColumns: '100px 70px 70px 150px 150px 150px',
                                 maxWidth: 900,
                                 minWidth: 600,
                                 columnGap: 15
@@ -323,13 +323,13 @@ export default function OrderUpdate({updateKey, getCopyPage}) {
                                 {/*{inputForm({title: '담당자', id: 'managerAdminName'})}*/}
 
                                 {inputForm({
-                                    title: 'PO No.',
+                                    title: '발주서 Po No.',
                                     id: 'documentNumberFull',
                                     onChange: onChange,
                                     disabled: true,
                                     data: info
                                 })}
-                                {inputForm({title: '고객사 PO no', id: 'yourPoNo'})}
+                                {inputForm({title: '고객사 Po no', id: 'yourPoNo'})}
                             </div>
                         </BoxCard>
 

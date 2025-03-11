@@ -290,7 +290,7 @@ export default function OrderWrite({dataInfo = [], copyPageInfo}) {
 
                     {mini ? <div>
 
-                        <TopBoxCard title={''} grid={'1fr 0.6fr 0.6fr 1fr 1fr 1fr'}>
+                        <TopBoxCard grid={'100px 70px 70px 150px 150px 150px'}>
                             {datePickerForm({
                                 title: '작성일',
                                 id: 'writtenDate',
@@ -324,13 +324,13 @@ export default function OrderWrite({dataInfo = [], copyPageInfo}) {
                                 handleKeyPress: handleKeyPress
                             })}
                             {inputForm({
-                                title: '발주서 PO no',
+                                title: '발주서 Po no',
                                 id: 'documentNumberFull',
 
                                 validate: validate['documentNumberFull']
                             })}
 
-                            {inputForm({title: '고객사 PO no', id: 'yourPoNo', onChange: onChange, data: info})}
+                            {inputForm({title: '고객사 Po no', id: 'yourPoNo', onChange: onChange, data: info})}
                         </TopBoxCard>
 
                         <div style={{
