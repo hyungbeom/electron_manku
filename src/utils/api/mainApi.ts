@@ -64,7 +64,7 @@ export const deleteRfq = async ({
 
 
 // =================================================================================================
-export const saveEstimate = async ({data}) => {
+export const    saveEstimate = async ({data}) => {
     return await getFormData.post('estimate/addEstimate', data).then(v => {
 
         return v.data
@@ -134,11 +134,6 @@ export const updateRemittance = async ({data, router}) => {
 export const updateProject = async ({data, router, returnFunc}) => {
     await getFormData.post('project/updateProject', data).then(v => {
         const {code, message} = v.data;
-        if (code) {
-            msg.success('저장되었습니다.')
-        } else {
-            msg.error('저장에 실패하였습니다.')
-        }
         returnFunc(code, message);
     });
 };
@@ -146,14 +141,8 @@ export const updateProject = async ({data, router, returnFunc}) => {
 
 export const updateEstimate = async ({data, returnFunc}) => {
     await getFormData.post('estimate/updateEstimate', data).then(v => {
-        const code = v.data.code;
-        if (code) {
-            window.opener?.postMessage('write', window.location.origin);
-            msg.success('수정되었습니다.')
-        } else {
-            msg.error('수정에 실패하였습니다.')
-        }
-        returnFunc(code === 1);
+
+        returnFunc(v.data);
     }, err => console.log(err, '::::'));
 };
 
@@ -187,13 +176,8 @@ export const deleteProjectList = async ({
     }
                                         }) => {
 
-    await getData.post('project/deleteProjectDetails', data).then(v => {
-        if (v.data.code === 1) {
-            msg.success('삭제되었습니다.')
-        } else {
-            msg.error('오류가 발생하였습니다. 다시 시도해주세요.')
-        }
-        returnFunc(v.data.code === 1);
+  return  await getData.post('project/deleteProjectDetails', data).then(v => {
+        return v.data
     }, err => msg.error(err))
 };
 

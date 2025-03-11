@@ -30,7 +30,6 @@ export default function RfqRead({getPropertyId, getCopyPage}) {
     const onGridReady = async (params) => {
         gridRef.current = params.api;
         await searchRfq({data: subRfqReadInitial}).then(v => {
-            console.log(v,':::')
             const {data, pageInfo} = v;
             setTotalRow(pageInfo.totalRow)
 
@@ -219,7 +218,7 @@ export default function RfqRead({getPropertyId, getCopyPage}) {
                                columns={rfqReadColumns}
                                onGridReady={onGridReady}
                                type={'read'}
-                               funcButtons={['print']}/>
+                               funcButtons={['agPrint']}/>
                 </div>
             </>
         </Spin>

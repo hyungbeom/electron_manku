@@ -30,13 +30,12 @@ import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 
 
 const listType = 'estimateDetailList'
-export default function EstimateWrite({copyPageInfo = {}}) {
+export default function EstimateWrite({copyPageInfo = {}, notificationAlert = null, getPropertyId}:any) {
 
     const groupRef = useRef<any>(null)
 
     const [memberList, setMemberList] = useState([]);
     const [tableData, setTableData] = useState([]);
-    const [originFileList, setOriginFileList] = useState([]);
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('estimate_write');
         return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 20]; // 기본값 [50, 50, 50]
@@ -144,7 +143,6 @@ export default function EstimateWrite({copyPageInfo = {}}) {
                         if (v.data.code === 1) {
                             const {attachmentFileList, estimateRequestDetail} = v.data?.entity
                             setFileList(fileManage.getFormatFiles(attachmentFileList))
-                            setOriginFileList(attachmentFileList)
                             const dom = infoRef.current.querySelector('#connectDocumentNumberFull');
                             // const result = await findDocumentInfo(e, setInfo);
                             await getData.post('estimate/generateDocumentNumberFull', {
@@ -214,14 +212,13 @@ export default function EstimateWrite({copyPageInfo = {}}) {
         const formData: any = new FormData();
         commonManage.setInfoFormData(infoData, formData, listType, filterTableList)
         commonManage.getUploadList(fileRef, formData);
-        commonManage.deleteUploadList(fileRef, formData, originFileList)
 
         formData.delete('createdDate')
         formData.delete('modifiedDate')
 
         await saveEstimate({data: formData}).then(async v => {
             const {code, message: msg, entity} = v;
-
+            const dom = infoRef.current.querySelector('#documentNumberFull');
             if (code === 1) {
                 await getAttachmentFileList({
                     data: {
@@ -231,13 +228,30 @@ export default function EstimateWrite({copyPageInfo = {}}) {
                 }).then(v => {
                     const list = fileManage.getFormatFiles(v);
                     setFileList(list)
-                    setOriginFileList(v)
+                    notificationAlert('success', '견적서 등록완료',
+                        <>
+                            <div>Inquiry No. : {dom.value}</div>
+                            <div>Log : {moment().format('HH:mm:ss')}</div>
+                        </>
+                        , function () {
+                            getPropertyId('estimate_update', entity?.estimateId)
+                        },
+                        {cursor: 'pointer'}
+                    )
                     setLoading(false)
                 })
-                message.success(msg);
             } else {
+                notificationAlert('error', '작업실패',
+                    <>
+                        <div>Inquiry No. : {dom.value}</div>
+                        <div>Log : {moment().format('HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                        alert('관리자 로그 페이지 참고')
+                    },
+                    {cursor: 'pointer'}
+                )
                 setLoading(false)
-                message.warning(msg);
             }
         })
     }

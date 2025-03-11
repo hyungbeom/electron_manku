@@ -358,6 +358,7 @@ export const orderInfo = {
         "agencyCode": "",  // Messrs
         "agencyName": "",  // Messrs
         "customerName": "",          // 고객사명
+        agencyManagerName : '',
         "customerId": 0,          // 고객사명
         "estimateManager": "",            // 견적서담당자
         "managerID": "",                 // Responsibility

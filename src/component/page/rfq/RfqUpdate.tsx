@@ -1,10 +1,7 @@
 import React, {useEffect, useRef, useState} from "react";
-import {ClearOutlined, FileSearchOutlined, SaveOutlined} from "@ant-design/icons";
+import {ClearOutlined, SaveOutlined} from "@ant-design/icons";
 import message from "antd/lib/message";
 import {getData} from "@/manage/function/api";
-import {wrapper} from "@/store/store";
-import initialServerRouter from "@/manage/function/initialServerRouter";
-import {setUserInfo} from "@/store/user/userSlice";
 import SearchInfoModal from "@/component/SearchAgencyModal";
 import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, tooltipInfo, TopBoxCard} from "@/utils/commonForm";
 import {commonFunc, commonManage, fileManage, gridManage} from "@/utils/commonManage";
@@ -79,7 +76,7 @@ export default function RqfUpdate({
         setLoading(true)
         getDataInfo().then(v => {
             const {estimateRequestDetail, attachmentFileList} = v;
-            console.log(attachmentFileList, 'fileManage.getFormatFiles(attachmentFileList):')
+            console.log(estimateRequestDetail, 'fileManage.getFormatFiles(attachmentFileList):')
             setFileList(fileManage.getFormatFiles(attachmentFileList));
             setOriginFileList(attachmentFileList);
             setInfo({
@@ -173,7 +170,8 @@ export default function RqfUpdate({
         if (v.code === 1) {
 
             const dom = infoRef.current.querySelector('#documentNumberFull');
-            notificationAlert('success', '견적의뢰 등록완료',
+            console.log(updateKey['rfq_update'],'updateKey[\'rfq_update\']::')
+            notificationAlert('success', '견적의뢰 수정완료',
                 <>
                     <div>Project No. : {dom.value}</div>
                     <div>등록일자 : {moment().format('HH:mm:ss')}</div>
@@ -196,7 +194,7 @@ export default function RqfUpdate({
                 setOriginFileList(list)
                 setLoading(false)
             })
-        }else{
+        } else {
             message.warning(v.message)
         }
         setLoading(false)
@@ -253,7 +251,7 @@ export default function RqfUpdate({
 
 
     return <Spin spinning={loading}>
-        <PanelSizeUtil groupRef={groupRef}  storage={'rfq_update'}/>
+        <PanelSizeUtil groupRef={groupRef} storage={'rfq_update'}/>
         <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
                          open={isModalOpen}
 
@@ -294,7 +292,7 @@ export default function RqfUpdate({
                                     // data: info
                                 })}
 
-                                {inputForm({title: '작성자', id: 'createBy', disabled: true, onChange: onChange, data: info})}
+                                {inputForm({title: '작성자', id: 'createdBy', disabled: true, onChange: onChange, data: info})}
                                 <div>
                                     <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>담당자</div>
                                     <select name="languages" id="managerAdminId"

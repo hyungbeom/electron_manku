@@ -104,9 +104,8 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
             const {output, documentNumbers} = generateFormattedOutputWithDocumentNumbers(Object.values(src))
 
 
-            console.log(Object.values(src)[0][0],'??')
             return {
-                agencyManagerName:agencyManagerName,
+                agencyManagerName: agencyManagerName,
                 agencyManagerEmail: agencyManagerEmail,
                 agencyManagerId: agencyManagerId,
                 sendName: userInfo.name,
@@ -186,9 +185,9 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
         })
 
         await getData.post('estimate/sendMailEstimateRequests', {mailList: list}).then(v => {
-            if(v.data.code === 1){
+            if (v.data.code === 1) {
                 message.success(v.data.message);
-            }else{
+            } else {
                 message.warning(v.data.message);
             }
             setIsModalOpen(false)
@@ -238,6 +237,7 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
 
                 {info?.map((src, idx) => {
 
+                    console.log(src['contents'], ':::')
                     return <div>
                         <div>
 
@@ -245,7 +245,7 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
                                 title: '수신자 이메일',
                                 id: 'agencyManagerEmail',
                                 onChange: e => onChange(e, idx),
-                                data: info,
+                                data: src,
                                 value: src.agencyManagerEmail,
                                 size: 'middle',
                             })}</div>
@@ -253,7 +253,7 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
                             title: '메일 제목',
                             id: 'title',
                             onChange: e => onChange(e, idx),
-                            data: info,
+                            data: src,
                             value: src.title,
                             size: 'middle'
                         })}
@@ -262,7 +262,8 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
                         {textAreaForm({
                             title: '발신 내용',
                             id: 'contents',
-                            data: info,
+                            data: src,
+                            onChange: e => onChange(e, idx),
                             maxLength: 10000,
                             rows: 15
                         })}
@@ -290,7 +291,7 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
                             })
                             }
                         </Card>
-                        <div style={{borderBottom: '1px solid lightGray', marginBottom: 50, paddingTop : 20}}/>
+                        <div style={{borderBottom: '1px solid lightGray', marginBottom: 50, paddingTop: 20}}/>
                     </div>
                 })}
             </div>

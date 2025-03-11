@@ -72,14 +72,11 @@ export default function ProjectUpdate({
     const [tableData, setTableData] = useState([]);
 
     const getSavedSizes = () => {
-
         const savedSizes = localStorage.getItem('project_update');
-        console.log(savedSizes,':::')
-        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20,0]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 0]; // 기본값 [50, 50, 50]
     };
 
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
-
 
 
     const handleMouseUp = () => {
@@ -102,7 +99,8 @@ export default function ProjectUpdate({
             setFileList(fileManage.getFormatFiles(attachmentFileList))
             setOriginFileList(attachmentFileList)
             setInfo(projectDetail);
-            projectDetail[listType] = [...projectDetail[listType], ...commonFunc.repeatObject(projectInfo['write']['defaultData'], 100 - projectDetail[listType].length)]
+            projectDetail[listType] = [...projectDetail[listType], ...commonFunc.repeatObject(projectInfo['write']['defaultData'], 100 - projectDetail[listType].length)];
+            console.log(projectDetail[listType],'projectDetail[listType]:')
             setTableData(projectDetail[listType]);
             setLoading(false)
         })
@@ -176,17 +174,6 @@ export default function ProjectUpdate({
     async function returnFunc(code, msg) {
         if (code === 1) {
             const dom = infoRef.current.querySelector('#documentNumberFull');
-            notificationAlert('success','프로젝트 수정완료',
-                <>
-                    <div>Project No. : {dom.value}</div>
-                    <div>등록일자 : {moment().format('HH:mm:ss')}</div>
-                </>
-                , function () {
-                    getPropertyId('project_update', updateKey['project_update'])
-                },
-                {cursor : 'pointer'}
-            )
-
 
             await getAttachmentFileList({
                 data: {
@@ -196,7 +183,17 @@ export default function ProjectUpdate({
             }).then(v => {
                 const list = fileManage.getFormatFiles(v);
                 setFileList(list)
-                // setOriginFileList(list)
+                setOriginFileList(v)
+                notificationAlert('success', '프로젝트 수정완료',
+                    <>
+                        <div>Project No. : {dom.value}</div>
+                        <div>Log : {moment().format('HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                        getPropertyId('project_update', updateKey['project_update'])
+                    },
+                    {cursor: 'pointer'}
+                )
                 setLoading(false);
             })
         } else {
@@ -209,8 +206,6 @@ export default function ProjectUpdate({
 
         const totalList = tableRef.current.getSourceData();
         totalList.pop();
-
-        console.log(totalList, 'totalList:')
 
 
         const result = Object.keys(projectWriteInitial).map(v => `#${v}`)
@@ -233,27 +228,14 @@ export default function ProjectUpdate({
     }
 
     function clearAll() {
-        // setInfo(v => {
-        //     return {
-        //         ...projectWriteInitial,
-        //         documentNumberFull: v.documentNumberFull,
-        //         writtenDate: v.writtenDate,
-        //         createdBy: v.createdBy,
-        //         managerAdminName: v.managerAdminName,
-        //         managerAdminId: v?.managerAdminId ? v?.managerAdminId : 0
-        //     }
-        // });
-        // gridManage.deleteAll(gridRef)
+        // info 데이터 초기화
+        commonManage.setInfo(infoRef, projectInfo['defaultInfo'], userInfo['adminId']);
+        setTableData(commonFunc.repeatObject(projectInfo['write']['defaultData'], 100))
+
     }
 
-    const onCChange = (value: string, e: any) => {
-        setInfo(v => {
-            return {...v, managerAdminId: e.adminId, managerAdminName: e.name}
-        })
-    };
-
     return <Spin spinning={loading}>
-        <PanelSizeUtil groupRef={groupRef}  storage={'project_update'}/>
+        <PanelSizeUtil groupRef={groupRef} storage={'project_update'}/>
         <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
                          open={isModalOpen}
 
@@ -266,9 +248,10 @@ export default function ProjectUpdate({
                 rowGap: 10,
                 columnGap: 5
             }}>
-                <MainCard title={'프로젝트 등록'} list={[
-                    {name: '저장', func: saveFunc, type: 'primary'},
-                    {name: '초기화', func: clearAll, type: 'danger'}
+                <MainCard title={'프로젝트 수정'} list={[
+                    {name: '수정', func: saveFunc, type: 'primary'},
+                    {name: '초기화', func: clearAll, type: 'danger'},
+                    {name: '복제', func: copyPage, type: ''}
                 ]} mini={mini} setMini={setMini}>
 
                     {mini ? <div>
@@ -371,11 +354,8 @@ export default function ProjectUpdate({
                                 <Panel defaultSize={sizes[3]} minSize={15} maxSize={100}>
                                     <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}
                                              disabled={!userInfo['microsoftId']}>
-                                        {/*@ts-ignored*/}
-                                        <div style={{overFlowY: "auto", maxHeight: 300}}>
-                                            <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                             numb={5}/>
-                                        </div>
+
+                                            <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}/>
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>
@@ -385,7 +365,7 @@ export default function ProjectUpdate({
                         : <></>}
                 </MainCard>
 
-                <Table data={tableData} column={projectInfo['write']} funcButtons={['print']} ref={tableRef} />
+                <Table data={tableData} column={projectInfo['write']} funcButtons={['print']} ref={tableRef}/>
             </div>
         </>
     </Spin>

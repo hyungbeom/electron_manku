@@ -50,7 +50,7 @@ const Table = forwardRef(({data = new Array(100).fill({}), column, type = '', fu
         if (["unitPrice", 'totalNet', "total", 'net', "totalPurchase", "purchasePrice",'quantity', 'receivedQuantity','unreceivedQuantity'].includes(prop)) {
             td.style.textAlign = "right"; // 우측 정렬
             td.style.color = "black"; // 텍스트 굵게
-            if (['totalNet', "total", "totalPurchase",'net', 'unitPrice'].includes(prop)) {
+            if (['totalNet', "total", "totalPurchase",'net', 'unitPrice','purchasePrice'].includes(prop)) {
                 if (value === 0 || isNaN(value)) {
                     td.textContent = ""; // 🔥 0 또는 NaN이면 빈 문자열 적용
                 } else {
@@ -168,7 +168,7 @@ const Table = forwardRef(({data = new Array(100).fill({}), column, type = '', fu
                         allowHtml: true,
                         dateFormat: col.type === "date" ? "YYYY-MM-DD" : undefined,
                         // correctFormat: col.data === "marginRate" ? true : undefined, // 🔥 숫자가 올바른 형식이 아니면 자동 수정
-                        numericFormat: col.data === "marginRate" ? {pattern: "0.00%", suffix: "%"} : undefined, // 🔥 소수점 둘째 자리 고정 + % 유지
+                        numericFormat: col.data === "marginRate" ? {pattern: "0%", suffix: "%"} : undefined, // 🔥 소수점 둘째 자리 고정 + % 유지
                         readOnly: col.readOnly,
                     })
                 })}

@@ -80,7 +80,7 @@ export default function Main() {
             description,
             onClick: onClick,
             duration: 10,
-            style : style
+            style: style
         });
     };
 
@@ -181,7 +181,7 @@ export default function Main() {
             name: "프로젝트 조회",
             component: <ProjectRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>
         },
-        project_update: {name: "프로젝트 수정", component: <ProjectUpdate  updateKey={updateKey} getCopyPage={getCopyPage}/>},
+        project_update: {name: "프로젝트 수정", component: <ProjectUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
 
         rfq_write: {name: "견적의뢰 등록", component: <RfqWrite copyPageInfo={copyPageInfo}/>},
         rfq_read: {name: "견적의뢰 조회", component: <RfqRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>},
@@ -270,12 +270,14 @@ export default function Main() {
 
     };
 
-    // openNotificationWithIcon
     const factory = (node: TabNode) => {
         const componentKey = node.getComponent();
         return <div style={{padding: '0px 5px 0px 5px'}}>
             {/*{tabComponents[componentKey]?.component}*/}
-            {React.cloneElement(tabComponents[componentKey].component, {notificationAlert: openNotificationWithIcon, getPropertyId : getPropertyId})}
+            {React.cloneElement(tabComponents[componentKey].component, {
+                notificationAlert: openNotificationWithIcon,
+                getPropertyId: getPropertyId
+            })}
 
         </div>;
     };

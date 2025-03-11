@@ -2,7 +2,7 @@ import React, {useRef, useState} from "react";
 import {projectReadColumn} from "@/utils/columnList";
 import {projectDetailUnit, projectReadInitial} from "@/utils/initialList";
 import Button from "antd/lib/button";
-import {CopyOutlined} from "@ant-design/icons";
+import {CopyOutlined, ExclamationCircleOutlined} from "@ant-design/icons";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
 import {deleteProjectList, searchProject} from "@/utils/api/mainApi";
@@ -13,8 +13,10 @@ import Spin from "antd/lib/spin";
 import ReceiveComponent from "@/component/ReceiveComponent";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
+import Popconfirm from "antd/lib/popconfirm";
+import moment from "moment";
 
-export default function ProjectRead({getPropertyId, getCopyPage}) {
+export default function ProjectRead({getPropertyId, getCopyPage, notificationAlert = null}) {
 
     const groupRef = useRef<any>(null)
 
@@ -30,6 +32,7 @@ export default function ProjectRead({getPropertyId, getCopyPage}) {
     const onGridReady = async (params) => {
         gridRef.current = params.api;
         await searchProject({data: projectReadInitial}).then(v => {
+            console.log(v.data, 'v.data:')
             params.api.applyTransaction({add: v.data})
             setTotalRow(v.pageInfo.totalRow)
         })
@@ -56,19 +59,6 @@ export default function ProjectRead({getPropertyId, getCopyPage}) {
         }, e => setLoading(false))
     }
 
-    async function deleteList() {
-        if (gridRef.current.getSelectedRows().length < 1) {
-            return message.error('삭제할 데이터를 선택해주세요.')
-        }
-        setLoading(true)
-        const deleteList = gridManage.getFieldDeleteList(gridRef, {
-            projectId: 'projectId',
-            projectDetailId: 'projectDetailId'
-        });
-        await deleteProjectList({data: {deleteList: deleteList}, returnFunc: searchInfo});
-
-    }
-
 
     function clearAll() {
         setInfo(copyInit)
@@ -80,16 +70,44 @@ export default function ProjectRead({getPropertyId, getCopyPage}) {
     }
 
 
-
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('project_read');
-        return savedSizes ? JSON.parse(savedSizes) : [25, 25, 25, 25,0]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [25, 25, 25, 25, 0]; // 기본값 [50, 50, 50]
     };
-    function onResizeChange() {
-        setSizes(groupRef.current.getLayout())
-    }
+
+
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
+    async function confirm() {
+        if (gridRef.current.getSelectedRows().length < 1) {
+            return message.error('삭제할 데이터를 선택해주세요.')
+        }
+        setLoading(true)
+        const deleteList = gridManage.getFieldDeleteList(gridRef, {
+            projectId: 'projectId',
+            projectDetailId: 'projectDetailId'
+        });
+
+        const selectedRows = gridRef.current.getSelectedRows();
+
+        await deleteProjectList({data: {deleteList: deleteList}}).then(v => {
+            if (v.code === 1) {
+                notificationAlert('error', '프로젝트 삭제완료',
+                    <>
+                        <div>프로젝트 제목
+                            - {selectedRows[0].projectTitle} {selectedRows.length > 1 ? ('외' + " " + (selectedRows.length - 1) + '개') : ''} 이(가)
+                            삭제되었습니다
+                        </div>
+                        {/*<div>프로젝트 제목 - {selectedRows[0].projectTitle} `${selectedRows.length > 1 ? ('외' + (selectedRows.length - 1)) + '개' : ''}`가 삭제되었습니다 </div>*/}
+                        <div>삭제일자 : {moment().format('HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                    },
+                )
+                searchInfo(true)
+            }
+        })
+    }
 
     return <Spin spinning={loading} tip={'프로젝트 조회중...'}>
         <PanelSizeUtil groupRef={groupRef} storage={'project_read'}/>
@@ -107,134 +125,142 @@ export default function ProjectRead({getPropertyId, getCopyPage}) {
 
                 {mini ? <div>
 
-                    <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
-                        <Panel defaultSize={sizes[0]} minSize={5}>
-                            <BoxCard title={'기본정보'} grid={"150px 250px 150px 1fr"}>
-                                {rangePickerForm({title: '작성일자', id: 'searchDate', onChange: onChange, data: info})}
-                                {inputForm({
-                                    title: '작성자',
-                                    id: 'searchCreatedBy',
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
-                                {inputForm({
-                                    title: '담당자',
-                                    id: 'searchManagerAdminName',
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
-                            </BoxCard>
-                        </Panel>
-                        <PanelResizeHandle/>
-                        <Panel defaultSize={sizes[1]} minSize={5}>
-                            <BoxCard title={'프로젝트 정보'} tooltip={tooltipInfo('readProject')}>
-                                {inputForm({
-                                    title: 'Project No.',
-                                    id: 'searchDocumentNumberFull',
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
-                                {inputForm({
-                                    title: '프로젝트 제목',
-                                    id: 'searchProjectTitle',
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
-                                {inputForm({
-                                    title: 'Inquiry No.',
-                                    id: 'searchConnectInquiryNo',
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
-                            </BoxCard>
-                        </Panel>
-                        <PanelResizeHandle/>
-                        <Panel defaultSize={sizes[2]} minSize={5}>
-                            <BoxCard title={'매입처 정보'} tooltip={tooltipInfo('readAgency')}>
-                                {inputForm({
-                                    title: '매입처명',
-                                    id: 'searchAgencyName',
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
-                                {inputForm({
-                                    title: '매입처 담당자명',
-                                    id: 'searchAgencyManagerName',
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
-                                {inputForm({
-                                    title: '담당자 연락처',
-                                    id: 'searchAgencyManagerPhone',
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
-                                {inputForm({
-                                    title: '담당자 이메일',
-                                    id: 'searchAgencyManagerEmail',
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
-                            </BoxCard>
-                        </Panel>
-                        <PanelResizeHandle/>
-                        <Panel defaultSize={sizes[3]} minSize={5}>
-                            <BoxCard title={'고객사 정보'} tooltip={tooltipInfo('readCustomer')}>
-                                {inputForm({
-                                    title: '고객사명',
-                                    id: 'searchCustomerName',
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
-                                {inputForm({
-                                    title: '고객사 담당자명',
-                                    id: 'searchCustomerManagerName',
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
-                                {inputForm({
-                                    title: '담당자 연락처',
-                                    id: 'searchCustomerPhone',
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
-                                {inputForm({
-                                    title: '담당자 이메일',
-                                    id: 'searchCustomerEmail',
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
-                            </BoxCard>
-                        </Panel>
-                        <PanelResizeHandle/>
-                        <Panel></Panel>
-                    </PanelGroup>
+                        <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
+                            <Panel defaultSize={sizes[0]} minSize={5}>
+                                <BoxCard title={'기본정보'} grid={"150px 250px 150px 1fr"}>
+                                    {rangePickerForm({title: '작성일자', id: 'searchDate', onChange: onChange, data: info})}
+                                    {inputForm({
+                                        title: '작성자',
+                                        id: 'searchCreatedBy',
+                                        onChange: onChange,
+                                        handleKeyPress: handleKeyPress,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: '담당자',
+                                        id: 'searchManagerAdminName',
+                                        onChange: onChange,
+                                        handleKeyPress: handleKeyPress,
+                                        data: info
+                                    })}
+                                </BoxCard>
+                            </Panel>
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[1]} minSize={5}>
+                                <BoxCard title={'프로젝트 정보'} tooltip={tooltipInfo('readProject')}>
+                                    {inputForm({
+                                        title: 'Project No.',
+                                        id: 'searchDocumentNumberFull',
+                                        onChange: onChange,
+                                        handleKeyPress: handleKeyPress,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: '프로젝트 제목',
+                                        id: 'searchProjectTitle',
+                                        onChange: onChange,
+                                        handleKeyPress: handleKeyPress,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: 'Inquiry No.',
+                                        id: 'searchConnectInquiryNo',
+                                        onChange: onChange,
+                                        handleKeyPress: handleKeyPress,
+                                        data: info
+                                    })}
+                                </BoxCard>
+                            </Panel>
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[2]} minSize={5}>
+                                <BoxCard title={'매입처 정보'} tooltip={tooltipInfo('readAgency')}>
+                                    {inputForm({
+                                        title: '매입처명',
+                                        id: 'searchAgencyName',
+                                        onChange: onChange,
+                                        handleKeyPress: handleKeyPress,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: '매입처 담당자명',
+                                        id: 'searchAgencyManagerName',
+                                        onChange: onChange,
+                                        handleKeyPress: handleKeyPress,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: '담당자 연락처',
+                                        id: 'searchAgencyManagerPhone',
+                                        onChange: onChange,
+                                        handleKeyPress: handleKeyPress,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: '담당자 이메일',
+                                        id: 'searchAgencyManagerEmail',
+                                        onChange: onChange,
+                                        handleKeyPress: handleKeyPress,
+                                        data: info
+                                    })}
+                                </BoxCard>
+                            </Panel>
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[3]} minSize={5}>
+                                <BoxCard title={'고객사 정보'} tooltip={tooltipInfo('readCustomer')}>
+                                    {inputForm({
+                                        title: '고객사명',
+                                        id: 'searchCustomerName',
+                                        onChange: onChange,
+                                        handleKeyPress: handleKeyPress,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: '고객사 담당자명',
+                                        id: 'searchCustomerManagerName',
+                                        onChange: onChange,
+                                        handleKeyPress: handleKeyPress,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: '담당자 연락처',
+                                        id: 'searchCustomerPhone',
+                                        onChange: onChange,
+                                        handleKeyPress: handleKeyPress,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: '담당자 이메일',
+                                        id: 'searchCustomerEmail',
+                                        onChange: onChange,
+                                        handleKeyPress: handleKeyPress,
+                                        data: info
+                                    })}
+                                </BoxCard>
+                            </Panel>
+                            <PanelResizeHandle/>
+                            <Panel></Panel>
+                        </PanelGroup>
                     </div>
                     : <></>}
             </MainCard>
 
             {/*@ts-ignored*/}
-            <TableGrid deleteComp={<Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
-                                           onClick={deleteList}>
-                <CopyOutlined/>삭제
-            </Button>}
+            <TableGrid deleteComp={
+
+                <Popconfirm
+                    title="삭제하시겠습니까?"
+                    onConfirm={confirm}
+                    icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
+
+                    {/*@ts-ignored*/}
+                    <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}>삭제</Button>
+                </Popconfirm>
+            }
                        totalRow={totalRow}
                        getPropertyId={getPropertyId}
                        gridRef={gridRef}
                        onGridReady={onGridReady}
+                       funcButtons={['agPrint']}
                        columns={projectReadColumn}/>
 
         </div>

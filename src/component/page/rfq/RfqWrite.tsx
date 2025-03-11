@@ -64,7 +64,7 @@ export default function RqfWrite({copyPageInfo = {}, notificationAlert = null, g
     const adminParams = {
         managerAdminId: userInfo['adminId'],
         managerAdminName: userInfo['name'],
-        createBy: userInfo['name'],
+        createdBy: userInfo['name'],
 
     }
 
@@ -276,7 +276,7 @@ export default function RqfWrite({copyPageInfo = {}, notificationAlert = null, g
                                     // data: info
                                 })}
 
-                                {inputForm({title: '작성자', id: 'createBy', disabled: true, onChange: onChange, data: info})}
+                                {inputForm({title: '작성자', id: 'createdBy', disabled: true, onChange: onChange, data: info})}
                                 <div>
                                     <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>담당자</div>
                                     <select name="languages" id="managerAdminId"

@@ -2863,7 +2863,7 @@ export const projectReadColumn = [
         minWidth: 150,
     }, {
         headerName: '고객사 담당자명',
-        field: 'customerName',
+        field: 'customerManagerName',
         minWidth: 150,
     }, {
         headerName: '마감 일자',
@@ -2888,7 +2888,7 @@ export const projectReadColumn = [
         minWidth: 150,
     }, {
         headerName: '단위',
-        field: 'spec',
+        field: 'unit',
         minWidth: 150,
     }, {
         headerName: '수량',

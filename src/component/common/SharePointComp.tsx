@@ -313,7 +313,7 @@ export function DriveUploadComp({
                 maxCount={13}
             >
 
-                <div style={{width: '100%', display: 'flex', backgroundColor : 'white', height : 25, position : 'absolute', justifyContent : 'space-between', top :40, left  : 0, zIndex : 10}}>
+                <div style={{width: '100%', display: 'flex', backgroundColor : 'white', height : 25, position : 'absolute', justifyContent : 'space-between', top :45, left  : 0, zIndex : 10}}>
                     <Button style={{fontSize: 11, left : 10}} size={'small'}
                             icon={<UploadOutlined/>} type={'primary'}>Upload</Button>
                     <select ref={uploadTypeRef} onClick={e => {

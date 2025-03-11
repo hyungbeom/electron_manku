@@ -43,7 +43,7 @@ export default function OrderUpdate({updateKey, getCopyPage}) {
     const [memberList, setMemberList] = useState([]);
     const [tableData, setTableData] = useState([]);
     const getSavedSizes = () => {
-        const savedSizes = localStorage.getItem('estimate_write');
+        const savedSizes = localStorage.getItem('order_update');
         return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20,0]; // 기본값 [50, 50, 50]
     };
 
@@ -95,7 +95,7 @@ export default function OrderUpdate({updateKey, getCopyPage}) {
         setLoading(true)
         getDataInfo().then(v => {
             const {orderDetail, attachmentFileList} = v;
-            console.log(attachmentFileList,'attachmentFileList:')
+            console.log(orderDetail,'attachmentFileList:')
             setFileList(fileManage.getFormatFiles(attachmentFileList));
             setOriginFileList(attachmentFileList);
             setInfo({
@@ -339,7 +339,7 @@ export default function OrderUpdate({updateKey, getCopyPage}) {
                                     })}
                                     {inputForm({title: '매입처명', id: 'agencyName'})}
                                     {inputForm({title: '매입처 관리번호', id: 'attnTo'})}
-                                    {inputForm({title: '담당자', id: 'attnTo'})}
+                                    {inputForm({title: '담당자', id: 'agencyManagerName'})}
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>

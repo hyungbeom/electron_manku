@@ -45,9 +45,9 @@ export const numbParser = (value) => value.replace(/₩\s?|(,*)/g, '')
 
 export function TopBoxCard({children, title = '', grid = '1fr 1fr 1fr 1fr'}) {
 
-    return <Card  size={'small'} title={title}
+    return <Card size={'small'} title={title}
                  style={{
-                    height : 70,
+                     height: 70,
                      fontSize: 13,
                      border: '1px solid #bae7ff',
 
@@ -180,6 +180,9 @@ export const inputForm = ({
 
     function onchange(e) {
         e.target.style.borderColor = ''
+        if (onChange) {
+            onChange(e)
+        }
     }
 
     return <div style={{fontSize: fontSize, paddingBottom: 10}}>
@@ -190,7 +193,7 @@ export const inputForm = ({
                    id={id}
                    size={size}
                    disabled={disabled}
-
+                   value={data ? data[id] : null}
                    onKeyDown={handleKeyPress}
                    onChange={onchange}
                 // suffix={suffix}
@@ -340,12 +343,21 @@ export const textAreaForm = ({
                                  maxLength = 1000,
                                  defaultValue = null
                              }) => {
+
+    function change(e){
+        if(onChange){
+            onChange(e)
+        }
+    }
+
+
     return <div style={{fontSize: 12, paddingBottom: 5}}>
         <div style={{paddingBottom: 5, fontWeight: 700}}>{title}</div>
         <textarea style={{resize: 'none', fontSize: 12,}} rows={rows} id={id}
                   value={data ? data[id] : null}
                   disabled={disabled}
                   className="custom-textarea"
+                  onChange={change}
                   placeholder={placeHolder}
         />
     </div>
@@ -384,9 +396,16 @@ export const tooltipInfo = (type: any) => {
 
 export const tableButtonList = (type: any, gridRef?: any) => {
 
-    console.log(gridRef.current, 'gridRef:')
     const downloadExcel = async () => {
         gridManage.exportSelectedRowsToExcel(gridRef, '조회리스트')
+    };
+
+    const agDownloadExcel = async () => {
+        console.log(gridRef.current, 'check')
+        gridRef.current.exportDataAsCsv({
+            fileName: "조회리스트.csv",
+            onlySelected: true, // ✅ 선택된 행만 내보내기
+        });
     };
 
     function deleteList() {
@@ -466,6 +485,11 @@ export const tableButtonList = (type: any, gridRef?: any) => {
         case 'print' :
             return <Button
                 size={'small'} style={{fontSize: 11, backgroundColor: '#3bc381'}} onClick={downloadExcel}>
+                <FileExcelOutlined/>Excel 다운로드
+            </Button>
+        case 'agPrint' :
+            return <Button
+                size={'small'} style={{fontSize: 11, backgroundColor: '#3bc381'}} onClick={agDownloadExcel}>
                 <FileExcelOutlined/>Excel 다운로드
             </Button>
 

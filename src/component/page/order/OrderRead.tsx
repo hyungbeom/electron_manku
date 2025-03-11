@@ -168,8 +168,8 @@ export default function OrderRead({getPropertyId, getCopyPage}) {
                            gridRef={gridRef}
                            onGridReady={onGridReady}
                            columns={tableOrderReadColumns}
-                           funcButtons={['print']}
-                />
+                           funcButtons={['agPrint']}/>
+
 
             </div>
         </>

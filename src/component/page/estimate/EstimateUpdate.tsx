@@ -25,18 +25,20 @@ import Modal from "antd/lib/modal/Modal";
 import {jsPDF} from "jspdf";
 import html2canvas from "html2canvas";
 import EstimatePaper from "@/component/견적서/EstimatePaper";
-import {estimateInfo, rfqInfo} from "@/utils/column/ProjectInfo";
+import {estimateInfo, projectInfo, rfqInfo} from "@/utils/column/ProjectInfo";
 import Table from "@/component/util/Table";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
+import moment from "moment/moment";
 
 const listType = 'estimateDetailList'
 export default function EstimateUpdate({
                                            dataInfo = {estimateDetail: [], attachmentFileList: []},
                                            updateKey = {},
 
-                                           getCopyPage = null
-                                       }) {
+                                           getCopyPage = null,
+                                           notificationAlert = null, getPropertyId
+                                       }:any) {
 
     const groupRef = useRef<any>(null)
 
@@ -116,6 +118,7 @@ export default function EstimateUpdate({
         setLoading(true)
         getDataInfo().then(v => {
             const {estimateDetail, attachmentFileList} = v;
+            console.log(estimateDetail,'estimateDetail:')
             setFileList(fileManage.getFormatFiles(attachmentFileList));
             setOriginFileList(attachmentFileList)
             setInfo({
@@ -206,8 +209,9 @@ export default function EstimateUpdate({
 
     }
 
-    async function returnFunc(e) {
-        if (e) {
+    async function returnFunc(v) {
+        const dom = infoRef.current.querySelector('#documentNumberFull');
+        if (v.code === 1) {
             await getAttachmentFileList({
                 data: {
                     "relatedType": "ESTIMATE",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
@@ -216,10 +220,31 @@ export default function EstimateUpdate({
             }).then(v => {
                 const list = fileManage.getFormatFiles(v);
                 setFileList(list)
-                setOriginFileList(list)
+                setOriginFileList(list);
+                console.log(v.entity?.estimateId,'v.entity?.estimateId??')
+                notificationAlert('success', '견적서 수정완료',
+                    <>
+                        <div>Inquiry No. : {dom.value}</div>
+                        <div>Log : {moment().format('HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                        getPropertyId('estimate_update', updateKey['estimate_update'])
+                    },
+                    {cursor: 'pointer'}
+                )
                 setLoading(false)
             })
         } else {
+            notificationAlert('error', '작업실패',
+                <>
+                    <div>Inquiry No. : {dom.value}</div>
+                    <div>Log : {moment().format('HH:mm:ss')}</div>
+                </>
+                , function () {
+                    alert('관리자 로그 페이지 참고')
+                },
+                {cursor: 'pointer'}
+            )
             setLoading(false)
         }
     }
@@ -349,8 +374,9 @@ export default function EstimateUpdate({
     }
 
     function clearAll() {
-        setInfo({...infoInit});
-        // gridManage.deleteAll(gridRef);
+        // info 데이터 초기화
+        commonManage.setInfo(infoRef, estimateInfo['defaultInfo'], userInfo['adminId']);
+        setTableData(commonFunc.repeatObject(estimateInfo['write']['defaultData'], 100))
     }
 
     return <div style={{overflow: 'hidden'}}><Spin spinning={loading}>
@@ -368,7 +394,8 @@ export default function EstimateUpdate({
                 rowGap: 10,
             }}>
                 <MainCard title={'견적서 수정'} list={[
-                    {name: '저장', func: saveFunc, type: 'primary'},
+                    {name: '견적서 출력', func: printEstimate, type: 'default'},
+                    {name: '수정', func: saveFunc, type: 'primary'},
                     {name: '초기화', func: clearAll, type: 'danger'}
                 ]} mini={mini} setMini={setMini}>
                     {mini ? <div>
@@ -401,30 +428,8 @@ export default function EstimateUpdate({
                                 {inputForm({
                                     title: 'Inquiry No.',
                                     id: 'documentNumberFull',
-
-                                    suffix:
-                                        <RetweetOutlined style={{cursor: 'pointer'}} onClick={
-                                            async (e) => {
-                                                e.stopPropagation();
-                                                if (!info['agencyCode']) {
-                                                    return message.warn('매입처코드를 선택해주세요')
-                                                }
-                                                const returnDocumentNumb = await checkInquiryNo({
-                                                    data: {
-                                                        agencyCode: info['agencyCode'],
-                                                        type: 'ESTIMATE'
-                                                    }
-                                                })
-                                                // onChange({target: {id: 'documentNumberFull', value: returnDocumentNumb}})
-                                            }
-                                        }/>
+                                    disabled : true
                                 })}
-                                {/*{inputForm({*/}
-                                {/*    title: '연결 INQUIRY No.',*/}
-                                {/*    id: 'connectDocumentNumberFull',*/}
-                                {/*    suffix: <DownloadOutlined style={{cursor: 'pointer'}}/>*/}
-                                {/*    , handleKeyPress: handleKeyPress*/}
-                                {/*})}*/}
                                 {inputForm({title: 'RFQ No.', id: 'rfqNo'})}
                                 {inputForm({title: '프로젝트 제목', id: 'projectTitle'})}
                             </TopBoxCard>

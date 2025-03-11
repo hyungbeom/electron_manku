@@ -42,13 +42,13 @@ import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 
 
 const listType = 'orderDetailList'
-export default function OrderWrite({dataInfo = [], copyPageInfo}) {
+export default function OrderWrite({dataInfo = [], copyPageInfo, notificationAlert = null, getPropertyId}) {
     const groupRef = useRef<any>(null)
     const tableRef = useRef(null);
     const infoRef = useRef<any>(null)
 
     const getSavedSizes = () => {
-        const savedSizes = localStorage.getItem('estimate_write');
+        const savedSizes = localStorage.getItem('order_write');
         return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20,0]; // 기본값 [50, 50, 50]
     };
 
@@ -155,6 +155,7 @@ export default function OrderWrite({dataInfo = [], copyPageInfo}) {
                                 documentNumberFull: dom.value.toUpperCase()
                             }).then(src => {
 
+                                console.log(estimateDetail,'estimateDetail::')
                                 commonManage.setInfo(infoRef, {
                                     ...estimateDetail,
                                     documentNumberFull: src.data.code === 1 ? src.data.entity.newDocumentNumberFull : '',
@@ -224,6 +225,7 @@ export default function OrderWrite({dataInfo = [], copyPageInfo}) {
     }
 
     async function returnFunc(code, msg, data) {
+        const dom = infoRef.current.querySelector('#documentNumberFull');
         if (code === 1) {
 
             await getAttachmentFileList({
@@ -234,12 +236,30 @@ export default function OrderWrite({dataInfo = [], copyPageInfo}) {
             }).then(v => {
                 const list = fileManage.getFormatFiles(v);
                 setFileList(list)
-                setOriginFileList(v)
+                notificationAlert('success', '발주서 등록완료',
+                    <>
+                        <div>Inquiry No. : {dom.value}</div>
+                        <div>Log : {moment().format('HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                        getPropertyId('order_update', data?.orderId)
+                    },
+                    {cursor: 'pointer'}
+                )
                 setLoading(false)
             })
             setLoading(false)
         } else {
-            message.error(msg);
+            notificationAlert('success', '작업실패',
+                <>
+                    <div>Inquiry No. : {dom.value}</div>
+                    <div>Log : {moment().format('HH:mm:ss')}</div>
+                </>
+                , function () {
+                    alert('작업 로그 페이지 참고')
+                },
+                {cursor: 'pointer'}
+            )
             setLoading(false)
         }
     }
@@ -249,22 +269,6 @@ export default function OrderWrite({dataInfo = [], copyPageInfo}) {
     }
 
 
-    const onCChange = (value: string, e: any) => {
-        const findValue = memberList.find(v => v.adminId === value)
-        console.log(findValue, 'value:')
-        setInfo(v => {
-            return {
-                ...v,
-                managerAdminId: e.adminId,
-                estimateManager: findValue.name,
-                managerAdminName: e.name,
-                managerId: findValue.name,
-                managerPhoneNumber: findValue.contactNumber,
-                managerFaxNumber: findValue.faxNumber,
-                managerEmail: findValue.email
-            }
-        })
-    };
 
     function printPo() {
         setIsModalOpen({event1: false, event2: true});
@@ -359,7 +363,7 @@ export default function OrderWrite({dataInfo = [], copyPageInfo}) {
                                     })}
                                     {inputForm({title: '매입처명', id: 'agencyName'})}
                                     {inputForm({title: '매입처 관리번호', id: 'attnTo'})}
-                                    {inputForm({title: '담당자', id: 'attnTo'})}
+                                    {inputForm({title: '담당자', id: 'agencyManagerName'})}
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>

@@ -126,7 +126,7 @@ export default function EstimateRead({getPropertyId, getCopyPage}) {
         <>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '260px' : '65px'} calc(100vh - ${mini ? 390 : 195}px)`,
+                gridTemplateRows: `${mini ? '270px' : '65px'} calc(100vh - ${mini ? 400 : 195}px)`,
                 columnGap: 5
             }}>
                 <MainCard title={'견적서 조회'}
@@ -214,8 +214,8 @@ export default function EstimateRead({getPropertyId, getCopyPage}) {
                            gridRef={gridRef}
                            onGridReady={onGridReady}
                            columns={tableEstimateReadColumns}
-                           funcButtons={['print']}
-                />
+                           funcButtons={['agPrint']}/>
+
 
             </div>
         </>

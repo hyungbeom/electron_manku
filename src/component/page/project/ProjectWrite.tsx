@@ -23,7 +23,7 @@ import SearchInfoModal from "@/component/SearchAgencyModal";
 
 const listType = 'projectDetailList'
 
-function ProjectWrite({copyPageInfo = {},notificationAlert = null, getPropertyId}:any) {
+function ProjectWrite({copyPageInfo = {}, notificationAlert = null, getPropertyId}: any) {
 
     const [memberList, setMemberList] = useState([]);
 
@@ -151,18 +151,7 @@ function ProjectWrite({copyPageInfo = {},notificationAlert = null, getPropertyId
 
     async function returnFunc(e, data) {
         const dom = infoRef.current.querySelector('#documentNumberFull');
-        if(e === 1){
-
-            notificationAlert('success','프로젝트 등록완료',
-                <>
-                    <div>Project No. : {dom.value}</div>
-                    <div>등록일자 : {moment().format('HH:mm:ss')}</div>
-                </>
-                , function () {
-                    getPropertyId('project_update', data?.projectId)
-            },
-                {cursor : 'pointer'}
-            )
+        if (e === 1) {
             await getAttachmentFileList({
                 data: {
                     "relatedType": "PROJECT",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
@@ -171,6 +160,16 @@ function ProjectWrite({copyPageInfo = {},notificationAlert = null, getPropertyId
             }).then(v => {
                 const list = fileManage.getFormatFiles(v);
                 setFileList(list)
+                notificationAlert('success', '프로젝트 등록완료',
+                    <>
+                        <div>Project No. : {dom.value}</div>
+                        <div>Log : {moment().format('HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                        getPropertyId('project_update', data?.projectId)
+                    },
+                    {cursor: 'pointer'}
+                )
                 setLoading(false)
             })
 
@@ -191,17 +190,11 @@ function ProjectWrite({copyPageInfo = {},notificationAlert = null, getPropertyId
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('project_write');
-        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20,0]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 0]; // 기본값 [50, 50, 50]
     };
 
 
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
-
-    function onChange(e) {
-        if (e.target.id === 'documentNumberFull') {
-            e.target.style.borderColor = ''
-        }
-    }
 
     return <Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'project_write'}/>
@@ -253,8 +246,9 @@ function ProjectWrite({copyPageInfo = {},notificationAlert = null, getPropertyId
                         </TopBoxCard>
 
 
-                        <PanelGroup ref={groupRef} className={'ground'} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
-                            <Panel defaultSize={sizes[0]} minSize={5} >
+                        <PanelGroup ref={groupRef} className={'ground'} direction="horizontal"
+                                    style={{gap: 0.5, paddingTop: 3}}>
+                            <Panel defaultSize={sizes[0]} minSize={5}>
                                 <BoxCard title={'프로젝트 정보'} tooltip={tooltipInfo('readProject')}>
                                     {inputForm({
                                         title: 'Project No.',
@@ -267,8 +261,8 @@ function ProjectWrite({copyPageInfo = {},notificationAlert = null, getPropertyId
                                     {datePickerForm({title: '마감일자', id: 'dueDate'})}
                                 </BoxCard>
                             </Panel>
-                            <PanelResizeHandle id={'resize'} className={'ground'} />
-                            <Panel defaultSize={sizes[1]} minSize={5} >
+                            <PanelResizeHandle id={'resize'} className={'ground'}/>
+                            <Panel defaultSize={sizes[1]} minSize={5}>
                                 <BoxCard title={'고객사 정보'} tooltip={tooltipInfo('customer')}>
                                     {inputForm({
                                         title: '고객사명',
@@ -296,7 +290,7 @@ function ProjectWrite({copyPageInfo = {},notificationAlert = null, getPropertyId
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[2]} minSize={5} >
+                            <Panel defaultSize={sizes[2]} minSize={5}>
                                 <BoxCard title={'기타 정보'} tooltip={tooltipInfo('etc')}>
                                     {textAreaForm({
                                         title: '비고란',
@@ -319,15 +313,13 @@ function ProjectWrite({copyPageInfo = {},notificationAlert = null, getPropertyId
                             <Panel defaultSize={sizes[3]} minSize={15} maxSize={100}>
                                 <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}
                                          disabled={!userInfo['microsoftId']}>
-                                    {/*@ts-ignored*/}
-                                    <div style={{overFlowY: "auto", maxHeight: 300}}>
-                                        <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                         numb={5}/>
-                                    </div>
+
+                                        <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}/>
+
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[4]} minSize={0} ></Panel>
+                            <Panel defaultSize={sizes[4]} minSize={0}></Panel>
                         </PanelGroup>
                     </div>
                     : <></>}
