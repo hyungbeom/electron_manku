@@ -110,7 +110,7 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
                 agencyManagerId: agencyManagerId,
                 sendName: userInfo.name,
                 detailList: Object.values(src),
-                title: 'Inquiry ' + formatDocumentNumbers(documentNumbers),
+                title: 'RFQ' + formatDocumentNumbers(documentNumbers),
                 contents: `${agencyManagerName}  \n\n아래 진행 부탁 드립니다.\n\n` + output
             }
         })
