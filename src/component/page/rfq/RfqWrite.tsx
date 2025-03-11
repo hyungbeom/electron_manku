@@ -29,7 +29,7 @@ import {estimateInfo, rfqInfo} from "@/utils/column/ProjectInfo";
 import Table from "@/component/util/Table";
 
 const listType = 'estimateRequestDetailList'
-export default function RqfWrite({copyPageInfo = {}, notificationAlert = null}) {
+export default function RqfWrite({copyPageInfo = {}}) {
     const groupRef = useRef<any>(null)
 
     const [memberList, setMemberList] = useState([]);
@@ -76,7 +76,6 @@ export default function RqfWrite({copyPageInfo = {}, notificationAlert = null}) 
         createBy: userInfo['name'],
 
     }
-
 
     const infoInit = {
         ...copyInit,
@@ -181,11 +180,11 @@ export default function RqfWrite({copyPageInfo = {}, notificationAlert = null}) 
                     }
                 }).then(v => {
                     const list = fileManage.getFormatFiles(v);
+                    console.log(list, 'list:::')
                     setFileList(list)
                     setLoading(false)
                 })
 
-            notificationAlert('success', '저장되었습니다.')
             setLoading(false)
         })
     }
