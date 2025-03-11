@@ -343,7 +343,6 @@ export const textAreaForm = ({
                                  maxLength = 1000,
                                  defaultValue = null
                              }) => {
-
     function change(e){
         if(onChange){
             onChange(e)

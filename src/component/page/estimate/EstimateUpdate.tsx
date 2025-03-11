@@ -594,9 +594,9 @@ export default function EstimateUpdate({
                                                 }
                                             }>🔍</span>,
 
-                                            onChange: onChange, handleKeyPress: handleKeyPress, data: info
+                                         handleKeyPress: handleKeyPress
                                         })}
-                                        {inputForm({title: 'Item', id: 'item', onChange: onChange, data: info})}
+                                        {inputForm({title: 'Item', id: 'item'})}
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>

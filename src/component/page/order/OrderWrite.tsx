@@ -370,7 +370,6 @@ export default function OrderWrite({dataInfo = [], copyPageInfo, notificationAle
                             <Panel defaultSize={sizes[1]} minSize={5}>
                                 <BoxCard title={'담당자 정보'}>
                                     {inputForm({title: '작성자', id: 'managerId', onChange: onChange, data: info})}
-                                    {/*{inputForm({title: 'TEL', id: 'managerPhoneNumber', onChange: onChange, data: info})}*/}
                                     {inputForm({title: 'TEL', id: 'managerPhoneNumber'})}
                                     {inputForm({title: 'Fax', id: 'managerFaxNumber'})}
 
