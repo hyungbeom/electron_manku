@@ -367,12 +367,12 @@ export default function EstimateUpdate({
                 overflowY: 'hidden',
                 rowGap: 10,
             }}>
-                <MainCard title={'견적서 작성'} list={[
+                <MainCard title={'견적서 수정'} list={[
                     {name: '저장', func: saveFunc, type: 'primary'},
                     {name: '초기화', func: clearAll, type: 'danger'}
                 ]} mini={mini} setMini={setMini}>
                     {mini ? <div>
-                            <TopBoxCard grid={'100px 70px 70px 150px 150px 110px 300px'}>
+                            <TopBoxCard grid={'100px 70px 70px 120px 120px 300px'}>
                                 {datePickerForm({
                                     title: '작성일',
                                     id: 'writtenDate',
@@ -419,12 +419,12 @@ export default function EstimateUpdate({
                                             }
                                         }/>
                                 })}
-                                {inputForm({
-                                    title: '연결 INQUIRY No.',
-                                    id: 'connectDocumentNumberFull',
-                                    suffix: <DownloadOutlined style={{cursor: 'pointer'}}/>
-                                    , handleKeyPress: handleKeyPress
-                                })}
+                                {/*{inputForm({*/}
+                                {/*    title: '연결 INQUIRY No.',*/}
+                                {/*    id: 'connectDocumentNumberFull',*/}
+                                {/*    suffix: <DownloadOutlined style={{cursor: 'pointer'}}/>*/}
+                                {/*    , handleKeyPress: handleKeyPress*/}
+                                {/*})}*/}
                                 {inputForm({title: 'RFQ No.', id: 'rfqNo'})}
                                 {inputForm({title: '프로젝트 제목', id: 'projectTitle'})}
                             </TopBoxCard>

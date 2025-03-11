@@ -228,7 +228,6 @@ export function DriveUploadComp({
     return (
         <div style={{
 
-            maxHeight: UploadHeight,  // 최대 높이 설정
             overflowY: "auto",   // 세로 스크롤 추가
         }}>
 
