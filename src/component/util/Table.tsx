@@ -47,7 +47,7 @@ const Table = forwardRef(({data = new Array(100).fill({}), column, type = '', fu
         if (tableContainerRef.current) {
             resizeObserver = new ResizeObserver(() => {
                 requestAnimationFrame(() => {
-                    setTableHeight(tableContainerRef.current.clientHeight - 10);
+                    setTableHeight(tableContainerRef.current.clientHeight - 25);
                 });
             });
             resizeObserver.observe(tableContainerRef.current);
@@ -117,7 +117,7 @@ const Table = forwardRef(({data = new Array(100).fill({}), column, type = '', fu
     }
 
     return (
-        <div ref={tableContainerRef} className="table-container">
+        <div ref={tableContainerRef} className="table-container" style={{width : '100%', overflowX : 'auto'}}>
             <div style={{display: 'flex', justifyContent: 'end'}}>
 
                 <div style={{display: 'flex', gap: 5, paddingBottom: 0}}>

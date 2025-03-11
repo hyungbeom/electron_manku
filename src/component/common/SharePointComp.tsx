@@ -4,7 +4,15 @@ import Input from "antd/lib/input";
 import {UploadOutlined} from "@ant-design/icons";
 import React, {useEffect, useRef, useState} from "react";
 
-export function DriveUploadComp({fileList, setFileList, fileRef,  uploadType = true, infoRef = null, numb = null}) {
+export function DriveUploadComp({
+                                    fileList,
+                                    setFileList,
+                                    fileRef,
+                                    uploadType = true,
+                                    infoRef = null,
+                                    numb = null,
+                                    UploadHeight = 300
+                                }) {
     const fileInputRef = useRef(null);
 
     const [editingFileId, setEditingFileId] = useState(null); // 수정 중인 파일 ID
@@ -190,7 +198,6 @@ export function DriveUploadComp({fileList, setFileList, fileRef,  uploadType = t
     };
 
 
-
     const handleDrop = (event) => {
         event.preventDefault();
         setIsDragging(false);
@@ -201,7 +208,7 @@ export function DriveUploadComp({fileList, setFileList, fileRef,  uploadType = t
         if (droppedFiles.length > 0) {
             const newFileList = [
                 ...fileList,
-                ...droppedFiles.map((file:any) => ({
+                ...droppedFiles.map((file: any) => ({
                     uid: file.name + "_" + Date.now(),
                     name: file.name,
                     originFileObj: file,
@@ -218,9 +225,12 @@ export function DriveUploadComp({fileList, setFileList, fileRef,  uploadType = t
     };
 
 
-
     return (
-        <>
+        <div style={{
+
+            maxHeight: UploadHeight,  // 최대 높이 설정
+            overflowY: "auto",   // 세로 스크롤 추가
+        }}>
 
             <input
                 type="file"
@@ -231,34 +241,35 @@ export function DriveUploadComp({fileList, setFileList, fileRef,  uploadType = t
                 onChange={handleFileSelect}
             />
 
-            {isDragging ?<div
-                style={{
-                    position: 'absolute',
-                    height: '100%',
-                    border: isDragging ? `2px solid #1677FF` : '',
-                    backgroundColor: isDragging ? `#1890ffb5` : '',
-                    top: 0,
-                    left: 0,
-                    width: '100%'
-                }}
-                onDrop={(e) => {
-                    e.preventDefault();
-                    handleDrop(e)
-                }}
+            {isDragging ? <div
+                    style={{
+                        position: 'absolute',
+                        height: '100%',
+                        border: isDragging ? `2px solid #1677FF` : '',
+                        backgroundColor: isDragging ? `#1890ffb5` : '',
+                        top: 0,
+                        left: 0,
+                        width: '100%'
+                    }}
+                    onDrop={(e) => {
+                        e.preventDefault();
+                        handleDrop(e)
+                    }}
                 >
-                <div style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: "center",
-                    height: '100%',
-                    color: 'white',
-                    fontSize: 18,
-                    fontWeight: 600
-                }}>파일을 올려주세요
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: "center",
+                        height: '100%',
+                        color: 'white',
+                        fontSize: 18,
+                        fontWeight: 600
+                    }}>파일을 올려주세요
+                    </div>
                 </div>
-            </div>
-             : <></>}
+                : <></>}
             <Upload
+
 
                 fileList={fileList} // 상태 기반의 파일 리스트
                 onChange={fileChange} // 파일 리스트 업데이트
@@ -282,7 +293,7 @@ export function DriveUploadComp({fileList, setFileList, fileRef,  uploadType = t
                             {editingFileId === file.uid ? (
                                 <div style={{display: "flex", alignItems: "center"}}>
                                     <Input
-                                        style={{paddingLeft: 20, flex: 1}}
+                                        style={{paddingLeft: 20,}}
                                         size="small"
                                         value={tempFileName}
                                         autoFocus
@@ -303,22 +314,22 @@ export function DriveUploadComp({fileList, setFileList, fileRef,  uploadType = t
                 maxCount={13}
             >
 
-                {uploadType ? <div style={{width : '100%', display : 'flex'}}>
-                    <Button style={{fontSize: 11,}} size={'small'} icon={<UploadOutlined/>} type={'primary'}>Upload</Button>
-                    <select onClick={e=>{
+                {uploadType ? <div style={{width: '100%', display: 'flex', backgroundColor : 'white', height : 25, position : 'absolute', justifyContent : 'space-between', top :40, left  : 0, zIndex : 10}}>
+                    <Button style={{fontSize: 11, left : 10}} size={'small'}
+                            icon={<UploadOutlined/>} type={'primary'}>Upload</Button>
+                    <select onClick={e => {
                         e.preventDefault();
                         e.stopPropagation()
                     }} name="languages" id="uploadType"
                             style={{
-                                position : 'absolute',
-                                right : 0,
-                                // top : 0,
                                 outline: 'none',
                                 border: '1px solid lightGray',
                                 height: 25,
                                 fontSize: 12,
-                                float : 'right',
-                                width : '30%'
+                                position : "absolute",
+                                right : 15,
+                                float: 'right',
+                                width: '30%'
                             }}>
                         <option value={0}>{'요청자료'}</option>
                         <option value={1}>{'첨부파일'}</option>
@@ -329,6 +340,6 @@ export function DriveUploadComp({fileList, setFileList, fileRef,  uploadType = t
                 </div> : <></>}
 
             </Upload>
-        </>
+        </div>
     );
 }

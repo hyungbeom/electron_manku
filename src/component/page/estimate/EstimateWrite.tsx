@@ -249,23 +249,25 @@ export default function EstimateWrite({copyPageInfo = {}}) {
         formData.delete('createdDate')
         formData.delete('modifiedDate')
 
-        await saveEstimate({data: formData}).then(v=>{
-            const {code, message, entity} = v;
-            console.log(code,':code::')
-            console.log(message,':message::')
-            console.log(entity?.estimateId,':entity::')
+        await saveEstimate({data: formData}).then(async v=>{
+            const {code, message : msg, entity} = v;
 
-            // await getAttachmentFileList({
-            //     data: {
-            //         "relatedType": "ESTIMATE",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
-            //         "relatedId": estimateRequestId
-            //     }
-            // }).then(v => {
-            //     const list = fileManage.getFormatFiles(v);
-            //     setFileList(list)
-            //     setLoading(false)
-            // })
-            setLoading(false)
+            if(code === 1){
+                await getAttachmentFileList({
+                    data: {
+                        "relatedType": "ESTIMATE",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
+                        "relatedId": entity?.estimateId
+                    }
+                }).then(v => {
+                    const list = fileManage.getFormatFiles(v);
+                    setFileList(list)
+                    setLoading(false)
+                })
+                message.success(msg);
+            }else{
+                setLoading(false)
+                message.warning(msg);
+            }
         })
 
 

@@ -230,7 +230,7 @@ export default function RqfWrite({copyPageInfo = {}}) {
         <>
             <div ref={infoRef} style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? 510 : 65}px calc(100vh - ${mini ? 640 : 195}px)`,
+                gridTemplateRows: `${mini ? 510 : 65}px calc(100vh - ${mini ? 600 : 195}px)`,
                 columnGap: 5
             }}>
 
@@ -443,8 +443,9 @@ export default function RqfWrite({copyPageInfo = {}}) {
                                 <Panel defaultSize={sizes[4]} minSize={10} maxSize={100} onResize={onResizeChange}>
                                     <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}
                                              disabled={!userInfo['microsoftId']}>
+
                                         <DriveUploadComp fileList={fileList} setFileList={setFileList}
-                                                         fileRef={fileRef} infoRef={infoRef}/>
+                                                         fileRef={fileRef} infoRef={infoRef} UploadHeight={290}/>
                                     </BoxCard>
                                 </Panel>
                             </PanelGroup>
