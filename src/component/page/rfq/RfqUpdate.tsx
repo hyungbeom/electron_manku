@@ -19,9 +19,15 @@ import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import Table from "@/component/util/Table";
 import {rfqInfo} from "@/utils/column/ProjectInfo";
+import moment from "moment/moment";
 
 const listType = 'estimateRequestDetailList'
-export default function RqfUpdate({updateKey = {}, getCopyPage = null, managerList = []}) {
+export default function RqfUpdate({
+                                      updateKey = {},
+                                      getCopyPage = null,
+                                      notificationAlert = null,
+                                      getPropertyId = null
+                                  }: any) {
     const groupRef = useRef<any>(null)
     const infoRef = useRef<any>(null)
     const tableRef = useRef(null);
@@ -73,7 +79,7 @@ export default function RqfUpdate({updateKey = {}, getCopyPage = null, managerLi
         setLoading(true)
         getDataInfo().then(v => {
             const {estimateRequestDetail, attachmentFileList} = v;
-            console.log(attachmentFileList,'fileManage.getFormatFiles(attachmentFileList):')
+            console.log(attachmentFileList, 'fileManage.getFormatFiles(attachmentFileList):')
             setFileList(fileManage.getFormatFiles(attachmentFileList));
             setOriginFileList(attachmentFileList);
             setInfo({
@@ -130,7 +136,7 @@ export default function RqfUpdate({updateKey = {}, getCopyPage = null, managerLi
 
 
         const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
-        if(findMember){
+        if (findMember) {
             infoData['managerAdminName'] = findMember['name'];
         }
 
@@ -161,10 +167,24 @@ export default function RqfUpdate({updateKey = {}, getCopyPage = null, managerLi
         await updateRfq({data: formData, returnFunc: returnFunc})
     }
 
-    async function returnFunc(e) {
+    async function returnFunc(v) {
 
 
-        if (e) {
+        if (v.code === 1) {
+
+            const dom = infoRef.current.querySelector('#documentNumberFull');
+            notificationAlert('success', '견적의뢰 등록완료',
+                <>
+                    <div>Project No. : {dom.value}</div>
+                    <div>등록일자 : {moment().format('HH:mm:ss')}</div>
+                </>
+                , function () {
+                    getPropertyId('rfq_update', updateKey['rfq_update'])
+                },
+                {cursor: 'pointer'}
+            )
+
+
             await getAttachmentFileList({
                 data: {
                     "relatedType": "ESTIMATE_REQUEST",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
@@ -176,6 +196,8 @@ export default function RqfUpdate({updateKey = {}, getCopyPage = null, managerLi
                 setOriginFileList(list)
                 setLoading(false)
             })
+        }else{
+            message.warning(v.message)
         }
         setLoading(false)
 

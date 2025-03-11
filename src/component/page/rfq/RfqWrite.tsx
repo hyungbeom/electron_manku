@@ -20,7 +20,7 @@ import {rfqInfo} from "@/utils/column/ProjectInfo";
 import Table from "@/component/util/Table";
 
 const listType = 'estimateRequestDetailList'
-export default function RqfWrite({copyPageInfo = {}}) {
+export default function RqfWrite({copyPageInfo = {},notificationAlert = null, getPropertyId}:any) {
     const groupRef = useRef<any>(null)
 
     const [memberList, setMemberList] = useState([]);
@@ -160,21 +160,35 @@ export default function RqfWrite({copyPageInfo = {}}) {
         formData.delete('modifiedDate')
 
         await saveRfq({data: formData}).then(async (v: any) => {
-            const {documentNumberFull, estimateRequestId} = v.data;
             const dom = infoRef.current.querySelector('#documentNumberFull');
-            dom.value = documentNumberFull
 
-            await getAttachmentFileList({
-                data: {
-                    "relatedType": "ESTIMATE_REQUEST",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
-                    "relatedId": estimateRequestId
-                }
-            }).then(v => {
-                const list = fileManage.getFormatFiles(v);
-                console.log(list, 'list:::')
-                setFileList(list)
-                setLoading(false)
-            })
+            if(v.code === 1){
+                const {documentNumberFull, estimateRequestId} = v.data;
+                notificationAlert('success','견적의뢰 등록완료',
+                    <>
+                        <div>Project No. : {documentNumberFull}</div>
+                        <div>등록일자 : {moment().format('HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                        getPropertyId('rfq_update', estimateRequestId)
+                    },
+                    {cursor : 'pointer'}
+                )
+
+
+                await getAttachmentFileList({
+                    data: {
+                        "relatedType": "ESTIMATE_REQUEST",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
+                        "relatedId": estimateRequestId
+                    }
+                }).then(v => {
+                    const list = fileManage.getFormatFiles(v);
+                    setFileList(list)
+                    setLoading(false)
+                })
+
+            }
+
 
             setLoading(false)
         })

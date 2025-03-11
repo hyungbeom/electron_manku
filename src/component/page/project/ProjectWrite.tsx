@@ -152,7 +152,7 @@ function ProjectWrite({copyPageInfo = {},notificationAlert = null, getPropertyId
     async function returnFunc(e, data) {
         const dom = infoRef.current.querySelector('#documentNumberFull');
         if(e === 1){
-            console.log(dom.value,'data:')
+
             notificationAlert('success','프로젝트 등록완료',
                 <>
                     <div>Project No. : {dom.value}</div>

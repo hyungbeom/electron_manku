@@ -24,14 +24,7 @@ export const saveRfq = async ({data}) => {
 
 export const updateRfq = async ({data, returnFunc}) => {
     await getFormData.post('estimate/updateEstimateRequest', data).then(v => {
-        const code = v.data.code;
-        if (code === 1) {
-            msg.success('저장되었습니다.')
-            window.opener?.postMessage('write', window.location.origin);
-        } else {
-            msg.error('저장에 실패하였습니다.')
-        }
-        returnFunc(code === 1);
+        returnFunc(v.data);
     }, err => msg.error(err))
 };
 
