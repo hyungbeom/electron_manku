@@ -276,15 +276,15 @@ function ProjectWrite({copyPageInfo = {}, notificationAlert = null, getPropertyI
                                         }>🔍</span>, handleKeyPress: handleKeyPress
                                     })}
                                     {inputForm({
-                                        title: '고객사 담당자명',
+                                        title: '담당자명',
                                         id: 'customerManagerName',
                                     })}
                                     {inputForm({
-                                        title: '담당자 전화번호',
+                                        title: '전화번호',
                                         id: 'customerManagerPhone',
                                     })}
                                     {inputForm({
-                                        title: '담당자 이메일',
+                                        title: '이메일',
                                         id: 'customerManagerEmail',
                                     })}
                                 </BoxCard>

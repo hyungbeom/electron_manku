@@ -432,7 +432,7 @@ export default function Main() {
                     </div>
                 </div>}
 
-                <Layout model={model} factory={factory} onModelChange={onLayoutChange} ref={layoutRef} enab/>
+                <Layout model={model} factory={factory} onModelChange={onLayoutChange} ref={layoutRef} />
 
             </div>
 
