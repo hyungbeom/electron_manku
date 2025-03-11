@@ -29,7 +29,7 @@ import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 
 const listType = 'orderStatusDetailList'
 
-export default function StoreWrite({copyPageInfo}) {
+export default function StoreWrite({copyPageInfo,notificationAlert = null, getPropertyId}:any) {
     const [ready, setReady] = useState(false);
     const router = useRouter();
 
@@ -235,8 +235,8 @@ export default function StoreWrite({copyPageInfo}) {
         <>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '425px' : '65px'} calc(100vh - ${mini ? 555 : 195}px)`,
-                columnGap: 5
+                gridTemplateRows: `${mini ? '390px' : '65px'} calc(100vh - ${mini ? 530 : 195}px)`,
+                rowGap: 10,
             }}>
 
                 <MainCard title={'입고 등록'} list={[
@@ -245,7 +245,7 @@ export default function StoreWrite({copyPageInfo}) {
                 ]} mini={mini} setMini={setMini}>
 
                     {mini ? <div>
-                            <TopBoxCard title={'기본 정보'} grid={'1fr 1fr 1fr 1fr'}>
+                            <TopBoxCard grid={'120px 1fr 1fr 1fr'}>
                                 {inputForm({title: 'B/L No.', id: 'blNo', onChange: onChange, data: info})}
                                 {inputForm({title: '운수사명', id: 'carrierName', onChange: onChange, data: info})}
                                 {datePickerForm({title: '입고일자', id: 'arrivalDate', onChange: onChange, data: info})}

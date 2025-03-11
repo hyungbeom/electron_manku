@@ -12,10 +12,12 @@ import {BoxCard, inputForm, MainCard, rangePickerForm} from "@/utils/commonForm"
 import {useRouter} from "next/router";
 import ReceiveComponent from "@/component/ReceiveComponent";
 import Spin from "antd/lib/spin";
+import PanelSizeUtil from "@/component/util/PanelSizeUtil";
+import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 
 
 export default function OrderRead({getPropertyId, getCopyPage}) {
-    const router = useRouter();
+    const groupRef = useRef<any>(null)
 
     const gridRef = useRef(null);
     const copyInit = _.cloneDeep(orderReadInitial)
@@ -33,6 +35,14 @@ export default function OrderRead({getPropertyId, getCopyPage}) {
         })
     };
 
+    const getSavedSizes = () => {
+        const savedSizes = localStorage.getItem('order_read');
+        console.log(JSON.parse(savedSizes),'JSON.parse(savedSizes)::')
+        return savedSizes ? JSON.parse(savedSizes) : [25, 25, 25, 0]; // 기본값 [50, 50, 50]
+    };
+
+
+    const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
     function handleKeyPress(e) {
         if (e.key === 'Enter') {
@@ -86,12 +96,12 @@ export default function OrderRead({getPropertyId, getCopyPage}) {
 
 
     return <Spin spinning={loading} tip={'견적서 조회중...'}>
+        <PanelSizeUtil groupRef={groupRef} storage={'order_read'}/>
         <ReceiveComponent searchInfo={searchInfo}/>
         <>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '260px' : '65px'} calc(100vh - ${mini ? 390 : 195}px)`,
-                columnGap: 5
+                gridTemplateRows: `${mini ? '270px' : '65px'} calc(100vh - ${mini ? 400 : 195}px)`,
             }}>
                 <MainCard title={'발주서 조회'}
                           list={[{name: '조회', func: searchInfo, type: 'primary'},
@@ -99,9 +109,9 @@ export default function OrderRead({getPropertyId, getCopyPage}) {
                               {name: '신규생성', func: moveRouter}]}
                           mini={mini} setMini={setMini}>
 
-                    {mini ? <div
-                            style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1.5fr', width: '100%', columnGap: 20}}>
-
+                    {mini ? <div>
+                        <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
+                            <Panel defaultSize={sizes[0]} minSize={5}>
                             <BoxCard title={''}>
                                 {rangePickerForm({title: '발주일자', id: 'searchDate', onChange: onChange, data: info})}
                                 {inputForm({
@@ -112,6 +122,10 @@ export default function OrderRead({getPropertyId, getCopyPage}) {
                                     data: info
                                 })}
                             </BoxCard>
+                            </Panel>
+                            <PanelResizeHandle/>
+
+                            <Panel defaultSize={sizes[1]} minSize={5}>
                             <BoxCard title={''}>
                                 {inputForm({
                                     title: '견적서 담당자',
@@ -128,6 +142,10 @@ export default function OrderRead({getPropertyId, getCopyPage}) {
                                     data: info
                                 })}
                             </BoxCard>
+                            </Panel>
+
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[2]} minSize={5}>
                             <BoxCard title={''}>
 
 
@@ -153,7 +171,11 @@ export default function OrderRead({getPropertyId, getCopyPage}) {
                                     data: info
                                 })}
                             </BoxCard>
-
+                            </Panel>
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[3]} minSize={5}>
+                            </Panel>
+                        </PanelGroup>
                         </div>
                         : <></>}
                 </MainCard>

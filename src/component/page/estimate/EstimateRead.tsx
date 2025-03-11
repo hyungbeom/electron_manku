@@ -25,10 +25,12 @@ import {getData} from "@/manage/function/api";
 import EstimateTotalWrite from "@/component/page/estimate/EstimateTotalWrite";
 import PrintIntegratedEstimate from "@/component/printIntegratedEstimate";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
+import PanelSizeUtil from "@/component/util/PanelSizeUtil";
+import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 
 
 export default function EstimateRead({getPropertyId, getCopyPage}) {
-
+    const groupRef = useRef<any>(null)
     const router = useRouter();
     const countRef = useRef(1);
     const infoRef = useRef(null);
@@ -56,6 +58,14 @@ export default function EstimateRead({getPropertyId, getCopyPage}) {
     useEffect(() => {
         // infoRef.current = info
     }, [info]);
+
+    const getSavedSizes = () => {
+        const savedSizes = localStorage.getItem('estimate_read');
+        return savedSizes ? JSON.parse(savedSizes) : [25, 25, 25, 0]; // 기본값 [50, 50, 50]
+    };
+
+
+    const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
 
     function handleKeyPress(e) {
@@ -118,7 +128,7 @@ export default function EstimateRead({getPropertyId, getCopyPage}) {
     }
 
     return <Spin spinning={loading} tip={'견적서 조회중...'}>
-        <ReceiveComponent searchInfo={searchInfo}/>
+        <PanelSizeUtil groupRef={groupRef} storage={'estimate_read'}/>
         {selectedRow.length > 0 &&
             <PrintIntegratedEstimate data={selectedRow} isModalOpen={isModalOpen} userInfo={userInfo}
                                      setIsModalOpen={setIsModalOpen}/>
@@ -127,7 +137,7 @@ export default function EstimateRead({getPropertyId, getCopyPage}) {
             <div style={{
                 display: 'grid',
                 gridTemplateRows: `${mini ? '270px' : '65px'} calc(100vh - ${mini ? 400 : 195}px)`,
-                columnGap: 5
+                // columnGap: 5
             }}>
                 <MainCard title={'견적서 조회'}
                           list={[
@@ -136,8 +146,9 @@ export default function EstimateRead({getPropertyId, getCopyPage}) {
                               {name: '신규생성', func: moveRouter}
                           ]}
                           mini={mini} setMini={setMini}>
-                    {mini ? <div
-                            style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1.5fr', width: '100%', columnGap: 20}}>
+                    {mini ? <div>
+                        <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
+                            <Panel defaultSize={sizes[0]} minSize={5}>
                             <BoxCard title={''}>
                                 {rangePickerForm({title: '작성일자', id: 'searchDate', onChange: onChange, data: info})}
                                 {selectBoxForm({
@@ -149,6 +160,9 @@ export default function EstimateRead({getPropertyId, getCopyPage}) {
                                 })}
 
                             </BoxCard>
+                            </Panel>
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[1]} minSize={5}>
                             <BoxCard title={''}>
 
                                 {inputForm({
@@ -171,6 +185,11 @@ export default function EstimateRead({getPropertyId, getCopyPage}) {
                                 })}
 
                             </BoxCard>
+
+                            </Panel>
+
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[2]} minSize={5}>
                             <BoxCard title={''}>
 
                                 {inputForm({
@@ -193,6 +212,11 @@ export default function EstimateRead({getPropertyId, getCopyPage}) {
                                 })}
 
                             </BoxCard>
+                            </Panel>
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[3]} minSize={5}>
+                            </Panel>
+                        </PanelGroup>
                         </div>
                         : <></>}
                 </MainCard>

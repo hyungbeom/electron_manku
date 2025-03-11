@@ -42,7 +42,7 @@ import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 
 
 const listType = 'orderDetailList'
-export default function OrderWrite({dataInfo = [], copyPageInfo, notificationAlert = null, getPropertyId}) {
+export default function OrderWrite({copyPageInfo, notificationAlert = null, getPropertyId}:any) {
     const groupRef = useRef<any>(null)
     const tableRef = useRef(null);
     const infoRef = useRef<any>(null)
