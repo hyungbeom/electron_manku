@@ -269,7 +269,7 @@ export default function OrderUpdate({updateKey, getCopyPage}) {
                          setIsModalOpen={setIsModalOpen}/>
         <>
             {isModalOpen['event2'] &&
-                <PrintPo data={info} gridRef={gridRef} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>}
+                <PrintPo data={info}  isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>}
             <div ref={infoRef} style={{
                 display: 'grid',
                 gridTemplateRows: `${mini ? '495px' : '65px'} calc(100vh - ${mini ? 590 : 195}px)`,
@@ -279,7 +279,8 @@ export default function OrderUpdate({updateKey, getCopyPage}) {
                     {name: '거래명세표 출력', func: null, type: 'default'},
                     {name: '발주서 출력', func: printPo, type: 'default'},
                     {name: '저장', func: saveFunc, type: 'primary'},
-                    {name: '초기화', func: clearAll, type: 'danger'}
+                    {name: '초기화', func: clearAll, type: 'danger'},
+                    {name: '복제', func: copyPage, type: ''}
                 ]} mini={mini} setMini={setMini}>
 
 

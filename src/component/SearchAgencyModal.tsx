@@ -40,6 +40,7 @@ export default function SearchInfoModal({
         if (open) {
             const firstTrueKey = Object.keys(open).find(key => open[key]);
             const dom = infoRef.current.querySelector(`#${firstTrueKey}`);
+            console.log(firstTrueKey, 'dom:')
             switch (firstTrueKey) {
                 case 'customerName' :
                     searchFunc(firstTrueKey, dom.value)
@@ -47,6 +48,8 @@ export default function SearchInfoModal({
             }
             setOpenCheck(firstTrueKey);
             if (!firstTrueKey) {
+                setList([]);
+            } else if(firstTrueKey === 'event2') {
                 setList([]);
             } else {
                 searchFunc(firstTrueKey, dom.value);

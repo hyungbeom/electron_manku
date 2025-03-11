@@ -1,36 +1,17 @@
 import React, {useEffect, useRef, useState} from "react";
-import LayoutComponent from "@/component/LayoutComponent";
-import {DownloadOutlined, FileSearchOutlined} from "@ant-design/icons";
-import {tableOrderWriteColumn,} from "@/utils/columnList";
-import {estimateDetailUnit, estimateRequestDetailUnit, orderDetailUnit, orderWriteInitial} from "@/utils/initialList";
+import {DownloadOutlined} from "@ant-design/icons";
 import message from "antd/lib/message";
-import {wrapper} from "@/store/store";
-import initialServerRouter from "@/manage/function/initialServerRouter";
-import {setUserInfo} from "@/store/user/userSlice";
-import Select from "antd/lib/select";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {useRouter} from "next/router";
-import TableGrid from "@/component/tableGrid";
-import {
-    BoxCard,
-    datePickerForm,
-    inputForm,
-    MainCard,
-    selectBoxForm,
-    textAreaForm,
-    TopBoxCard
-} from "@/utils/commonForm";
-import {commonFunc, commonManage, fileManage, gridManage} from "@/utils/commonManage";
+import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, TopBoxCard} from "@/utils/commonForm";
+import {commonFunc, commonManage, fileManage} from "@/utils/commonManage";
 import _ from "lodash";
-import {findCodeInfo, findOrderDocumentInfo} from "@/utils/api/commonApi";
+import {findCodeInfo} from "@/utils/api/commonApi";
 import {getAttachmentFileList, saveOrder} from "@/utils/api/mainApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {getData} from "@/manage/function/api";
 import Spin from "antd/lib/spin";
-import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-import FormItem from "antd/lib/form/FormItem";
-import Input from "antd/lib/input";
 import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 import PrintPo from "@/component/printPo";
 import moment from "moment/moment";
@@ -286,7 +267,7 @@ export default function OrderWrite({copyPageInfo, notificationAlert = null, getP
                          setIsModalOpen={setIsModalOpen}/>
         <>
             {isModalOpen['event2'] &&
-                <PrintPo data={info} gridRef={gridRef} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>}
+                <PrintPo data={info} infoRef={infoRef} tableRef={tableRef} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} memberList={memberList}/>}
             <div ref={infoRef} style={{
                 display: 'grid',
                 gridTemplateRows: `${mini ? '495px' : '65px'} calc(100vh - ${mini ? 590 : 195}px)`,
@@ -354,7 +335,7 @@ export default function OrderWrite({copyPageInfo, notificationAlert = null, getP
 
                             })}
 
-                            {inputForm({title: '고객사 Po no', id: 'yourPoNo', onChange: onChange, data: info})}
+                            {inputForm({title: '고객사 Po no', id: 'yourPoNo'})}
                         </TopBoxCard>
 
                         <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>

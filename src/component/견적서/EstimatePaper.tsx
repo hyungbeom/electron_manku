@@ -114,7 +114,7 @@ const EstimatePaper = ({infoRef, pdfRef, pdfSubRef, tableRef, memberList = []}: 
         return <thead>
         <tr style={{fontWeight: 'bold', height: 30}}>
             <th colSpan={3} style={{
-                width: '7%',
+                width: '6%',
                 border: '1px solid lightGray',
                 borderLeft: 'none',
                 fontSize: 12,

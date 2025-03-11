@@ -8,6 +8,7 @@ import {getData} from "@/manage/function/api";
 import {amountFormat} from "@/utils/columnList";
 import Select from "antd/lib/select";
 import InputNumber from "antd/lib/input-number";
+import {estimateInfo, orderInfo} from "@/utils/column/ProjectInfo";
 
 
 const getTextAreaValues = (ref) => {
@@ -23,7 +24,7 @@ const getTextAreaValues = (ref) => {
 };
 
 
-export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
+export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, infoRef, memberList=[]}) {
 
     const pdfRef = useRef<any>();
     const pdfSubRef = useRef<any>();
@@ -44,9 +45,12 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
     }
 
     useEffect(() => {
-        const totalList = gridManage.getAllData(gridRef)
-        const splitData = commonManage.splitDataWithSequenceNumber(totalList, 23, 36);
-        setSplitData(splitData)
+        const tableList = tableRef.current?.getSourceData();
+
+        const filterTotalList = tableList.filter(v => !!v.model)
+        console.log(filterTotalList, 'infoData:')
+        const result = commonManage.splitDataWithSequenceNumber(filterTotalList, 28, 30);
+        setSplitData(result)
     }, [data])
 
     const generatePDF = async (printMode = false) => {
@@ -93,27 +97,43 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
     }
 
     useEffect(() => {
-        getInfo().then(v => {
-            const findObj = v.data.entity.adminList.find(src => src.adminId === data.managerAdminId);
 
-            console.log(data, 'data:')
 
+        let infoData = commonManage.getInfo(infoRef,orderInfo['defaultInfo']);
+        const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
+        infoData['managerAdminName'] = findMember['name'];
+
+        console.log(infoData,'infoData')
+            // {title: 'Our REFQ NO.', value: data.ourPoNo, id: 'ourPoNo'},
+            // {title: 'Responsibility', value: findObj?.name, id: 'name'},
+            // {title: 'Your REFQ NO.', value: data.yourPoNo, id: 'yourPoNo'},
+            // {title: 'TEL', value: findObj?.contactNumber, id: 'contactNumber'},
+            // {title: 'Messrs', value: data.agencyCode, id: 'agencyCode'},
+            // {title: 'E-mail', value: findObj?.email, id: 'email'},
+            // {title: 'Attn To.', value: data.attnTo, id: 'attnTo'},
+            // {title: '', value: '', id: ''},
+            // {title: 'Payment Terms', value: data.paymentTerms, id: 'paymentTerms'},
+            // {title: '', value: '', id: 'faxNumber'},
+            // {title: 'Delivery Terms', value: data.deliveryTerms, id: 'deliveryTerms'},
+            // {title: '', value: '', id: 'shippingTerms'},
+
+            console.log(infoData?.yourPoNo,':::')
             setInfo([
-                {title: 'Our REFQ NO.', value: data.ourPoNo, id: 'ourPoNo'},
-                {title: 'Responsibility', value: findObj?.name, id: 'name'},
-                {title: 'Your REFQ NO.', value: data.yourPoNo, id: 'yourPoNo'},
-                {title: 'TEL', value: findObj?.contactNumber, id: 'contactNumber'},
-                {title: 'Messrs', value: data.agencyCode, id: 'agencyCode'},
-                {title: 'E-mail', value: findObj?.email, id: 'email'},
-                {title: 'Attn To.', value: data.attnTo, id: 'attnTo'},
-                {title: '', value: '', id: ''},
-                {title: 'Payment Terms', value: data.paymentTerms, id: 'paymentTerms'},
-                {title: 'Packing', value: '???', id: 'faxNumber'},
-                {title: 'Delivery Terms', value: data.deliveryTerms, id: 'deliveryTerms'},
-                {title: 'Inspection', value: '???', id: 'shippingTerms'},
+                {title: '수신처', value: data.ourPoNo, id: 'ourPoNo'},
+                {title: '발주일자', value: findMember?.name, id: 'name'},
+                {title: '담당자', value: data.yourPoNo, id: 'yourPoNo'},
+                {title: '발주번호', value: infoData?.documentNumberFull, id: 'contactNumber'},
+                {title: '납품조건', value: data.agencyCode, id: 'agencyCode'},
+                {title: '귀사견적', value: infoData?.yourPoNo, id: 'email'},
+                {title: '결제조건.', value: infoData?.paymentTerms, id: 'attnTo'},
+                {title: '담당자', value: findMember?.name, id: ''},
+                {title: '납기조건', value: data.paymentTerms, id: 'paymentTerms'},
+                {title: '연락처', value:  findMember?.contactNumber, id: 'faxNumber'},
+                {title: '', value : '', id: 'deliveryTerms'},
+                {title: 'E-Mail', value: findMember?.email, id: 'shippingTerms'},
 
             ])
-        })
+
 
 
     }, [data])
@@ -121,9 +141,10 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
     const RowTotal = ({defaultValue, id}) => {
 
 
-        return <Input value={amountFormat(defaultValue)}
-                      style={{border: 'none', textAlign: 'right', direction: 'rtl'}} id={id} name={id}
-                      prefix={<span style={{paddingLeft: 10}}>₩</span>}/>
+        return <div style={{display: 'flex', justifyContent: 'space-between', padding: '0px 5px'}}><span
+            style={{fontSize: 14, padding: 5}}>₩</span>
+            <Input value={amountFormat(defaultValue)}
+                   style={{border: 'none', width: '100%', textAlign: 'right'}} id={id} name={id}/></div>
     }
 
     const NumberInputForm = ({defaultValue, id, setInfo}) => {
@@ -154,10 +175,15 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
                                         style={{border: 'none', textAlign: 'right', direction: 'rtl', width: '90%'}}
                                         name={id}
                                         prefix={<span style={{paddingLeft: 10}}>₩</span>}/> :
-            <div style={{fontSize: 14, padding: 10}}
+            <div style={{fontSize: 14, display: 'flex', justifyContent: 'space-between', padding: '0px 10px'}}
                  onClick={() => {
                      setToggle(true);
-                 }}>{amountFormat(defaultValue)} ₩</div>}</>
+                 }}>
+
+                <span>₩</span>
+                {amountFormat(defaultValue)}
+
+            </div>}</>
     }
     const Model = ({v, refList, setSplitData}) => {
         const [toggle, setToggle] = useState(false);
@@ -245,24 +271,25 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
         }, [info]);
 
 
-        return <thead>
-        <tr>
+        return <thead style={{height : 30}}>
+        <tr style={{height : 30}}>
             <th colSpan={2} style={{
 
                 border: 'none',
                 textAlign: 'left',
                 paddingLeft: 10,
-                borderBottom: '1px solid lightGray', fontSize: 12
+                borderBottom: '1px solid lightGray', fontSize: 12,
+                borderRight: '1px solid lightGray',
 
             }}>
-                <div style={{width: 30, borderRight: '1px solid lightGray'}}>{i + 1}</div>
+                <div>{i + 1}</div>
             </th>
-            <th style={{borderBottom: '1px solid lightGray', textAlign: 'left', fontSize: 12}}>
+            <th colSpan={2} style={{borderBottom: '1px solid lightGray', textAlign: 'left', fontSize: 12}}>
                 <Model v={v} refList={[pdfRef, pdfSubRef]} setSplitData={setSplitData}/>
             </th>
             <th style={{
                 ...headerStyle,
-                width: 60,
+                width: '5%',
                 textAlign: 'right',
                 fontWeight: 'lighter',
                 fontSize: 12,
@@ -275,12 +302,12 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
                        })}
                        style={{
                            border: 'none',
-                           backgroundColor: '#ebf6f7',
                            textAlign: 'right',
                            padding: 0
                        }}/>
             </th>
             <th style={{
+                width: '5%',
                 borderBottom: '1px solid lightGray',
                 fontSize: 12,
                 borderLeft: '1px solid lightGray'
@@ -321,6 +348,25 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
                     defaultValue={info.quantity * Number(info?.unitPrice ? info?.unitPrice : '')}
                     id={'amount'}/>
             </th>
+            <th style={{
+                ...headerStyle,
+                width: '5%',
+                textAlign: 'right',
+                fontWeight: 'lighter',
+                fontSize: 12,
+                borderLeft: '1px solid lightGray'
+            }}>
+                <Input value={info['quantity']}
+                       name={'quantity'}
+                       onChange={e => setInfo(v => {
+                           return {...v, quantity: e.target.value}
+                       })}
+                       style={{
+                           border: 'none',
+                           textAlign: 'right',
+                           padding: 0
+                       }}/>
+            </th>
         </tr>
         </thead>
     }
@@ -340,7 +386,7 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
                         fontSize: 11,
                         marginRight: 10
                     }}>
-                        PDF
+                    PDF
                     </button>
                     {/*@ts-ignore*/}
                     <button onClick={() => generatePDF(true)} style={{
@@ -378,7 +424,7 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
 
                 <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                     <div style={{width: '40%'}}>
-                        <img src={'/manku_ci_black_text.png'} width={60} style={{paddingTop: 25, float: 'left'}}
+                        <img src={'/manku_ci_black_text.png'} width={50} style={{paddingTop: 5, float: 'left'}}
                              alt=""/>
                         <div style={{float: 'left', fontSize: 11, paddingLeft: 20}}>
                             <div>(주) 만쿠무역</div>
@@ -389,27 +435,19 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
                         </div>
                     </div>
 
-                    <div style={{
-                        fontSize: 40,
-                        fontWeight: 700,
-                        textAlign : 'center'
-                    }}>       {data.agencyCode.toUpperCase().includes('K') ? '발주서' :
-                        <span> Purchase < br/> Order</span>}</div>
+                    <div style={{fontSize: 40, fontWeight: 700}}>발주서</div>
                     <div style={{width: '40%'}}>
-                        <img src={'/manku_stamp_ko.png'} style={{float: 'right'}} width={220} alt=""/>
+                        <img src={'/manku_stamp_ko.png'} style={{float: 'right'}} width={180} alt=""/>
                     </div>
                 </div>
 
-                <div style={{padding: 20, borderTop: '2px solid #71d1df', textAlign: 'center', marginTop: 20}}>
-                    (주) 만쿠무역은 세계 각지의 공급처를 통해 원하시는 부품 및 산업자재를 저렵하게 공급합니다.
-                </div>
+                <div style={{padding: 5, borderTop: '2px solid #71d1df', textAlign: 'center', marginTop: 5}}></div>
                 <div style={{
                     fontFamily: 'Arial, sans-serif',
                     display: 'grid',
                     gridTemplateColumns: '1fr 1fr',
-                    gridTemplateRows: '40px 40px 40px 40px 40px 40px 40px',
+                    gridTemplateRows: '35px 35px 35px 35px 35px 35px 35px',
                     alignItems: 'center',
-                    paddingTop: 20
                 }}>
                     {info?.map((v: any, index) => {
 
@@ -454,56 +492,59 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
                     style={{
                         width: '100%',
                         borderCollapse: 'collapse',
-                        margin: '20px 0',
+
                         textAlign: 'center',
                         // border: '1px solid lightGray',
                         // borderLeft: 'none',
                         // borderRight: 'none'
                     }}>
                     <thead>
-                    <tr style={{backgroundColor: '#ebf6f7', fontWeight: 'bold'}}>
-                        <th colSpan={3} style={{width: '55%'}}>Specification</th>
-                        <th style={{textAlign: 'right', borderLeft: '1px solid lightGray', paddingRight: 10}}>Qty</th>
-                        <th style={{textAlign: 'left', paddingLeft: 10, borderLeft: '1px solid lightGray'}}>Unit</th>
-                        <th style={{borderLeft: '1px solid lightGray'}}>Unit Price</th>
-                        <th style={{borderLeft: '1px solid lightGray'}}>Amount</th>
+                    <tr style={{backgroundColor: '#ebf6f7', fontWeight: 'bold', height : 35}}>
+                        <th>No</th>
+                        <th colSpan={3} style={{borderLeft: '1px solid lightGray'}}>Specification</th>
+                        <th colSpan={2} style={{width : '5%',textAlign: 'center', borderLeft: '1px solid lightGray', paddingRight: 10}}>Q`ty</th>
+                        <th style={{width : '15%', textAlign: 'center', borderLeft: '1px solid lightGray'}}>단가</th>
+                        <th style={{width : '15%',borderLeft: '1px solid lightGray'}}>총액</th>
+                        <th style={{width : '15%',borderLeft: '1px solid lightGray'}}>Other</th>
                     </tr>
                     </thead>
 
 
                     <thead>
-                    <tr style={{fontWeight: 'bold', height: 50}}>
-                        <th colSpan={2} style={{
-                            width: '7%',
+                    <tr style={{fontWeight: 'bold', height: 35}}>
+                        <th style={{
+                            width: '6%',
                             border: '1px solid lightGray',
                             borderLeft: 'none',
                             fontSize: 12,
-                            backgroundColor: '#ebf6f7'
+                            backgroundColor: '#EBF6F7'
                         }}>Maker
                         </th>
-                        <th style={{
-                            borderTop: '1px solid lightGray', backgroundColor: '#ebf6f7', border: '1px solid lightGray',
-                            borderLeft: 'none', borderRight: 'none'
+                        <th colSpan={3} style={{
+                            backgroundColor: '#EBF6F7',
+                            borderTop: '1px solid lightGray', border: '1px solid lightGray',
+                            textAlign : 'left',paddingLeft : 10,
+                            borderLeft: 'none', borderRight: 'none', fontSize : 12
                         }}>{data?.maker ? data?.maker : '-'}</th>
+                        <th colSpan={2}  style={{
+                            backgroundColor: '#EBF6F7',
+                            borderTop: '1px solid lightGray', border: '1px solid lightGray',
+                            borderRight: 'none'
+                        }}></th>
+
                         <th style={{
-                            backgroundColor: '#ebf6f7',
+                            backgroundColor: '#EBF6F7',
                             borderTop: '1px solid lightGray', border: '1px solid lightGray',
                             borderRight: 'none'
                         }}></th>
                         <th style={{
-                            backgroundColor: '#ebf6f7',
-                            borderTop: '1px solid lightGray',
-                            border: '1px solid lightGray',
+                            backgroundColor: '#EBF6F7',
+                            borderTop: '1px solid lightGray', border: '1px solid lightGray',
                             borderRight: 'none'
                         }}></th>
                         <th style={{
+                            backgroundColor: '#EBF6F7',
                             borderTop: '1px solid lightGray', border: '1px solid lightGray',
-                            backgroundColor: '#ebf6f7',
-                            borderRight: 'none'
-                        }}></th>
-                        <th style={{
-                            borderTop: '1px solid lightGray', border: '1px solid lightGray',
-                            backgroundColor: '#ebf6f7',
                             borderRight: 'none'
                         }}></th>
                     </tr>
@@ -513,7 +554,7 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
                             <RowContent v={v} i={i}/>
                         </>
                     })}
-
+                    <TotalCalc/>
                     {/*{splitData.length === 1 ? <TotalCalc/> : <></>}*/}
                 </table>
                 <div style={{flexGrow: 1}}/>
@@ -687,12 +728,83 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, gridRef}) {
         ;
 }
 
+const TotalCalc = () => {
+
+
+    return <thead>
+    <tr style={{fontWeight: 'bold', height: 30}}>
+        <th colSpan={3} style={{
+            width: '6%',
+            border: '1px solid lightGray',
+            borderLeft: 'none',
+            fontSize: 12,
+        }}>
+        </th>
+
+        <th style={{
+            borderTop: '1px solid lightGray', border: '1px solid lightGray',
+            borderRight: 'none'
+        }}>
+
+        </th>
+        <th style={{
+            borderTop: '1px solid lightGray',
+            border: '1px solid lightGray',
+            borderRight: 'none'
+        }}>
+            <div id={'total_quantity'} style={{textAlign: 'right', paddingRight: 5, fontSize: 13.5}}></div>
+
+        </th>
+        <th style={{
+            borderTop: '1px solid lightGray', border: '1px solid lightGray',
+            borderRight: 'none'
+        }}>
+            <div style={{textAlign: 'center', fontSize: 13.5}}>
+                <div id={'total_unit'} style={{textAlign: 'left', fontSize: 13.5, paddingLeft: 12}}></div>
+
+            </div>
+        </th>
+        <th style={{
+            borderTop: '1px solid lightGray', border: '1px solid lightGray',
+            borderRight: 'none'
+        }}>
+            <div style={{display: 'flex', justifyContent: 'space-between', fontSize: 13.5, padding: '0px 10px'}}>
+                <div style={{textAlign: 'left'}}>₩</div>
+                <div id={'total_unit_price'}></div>
+
+
+
+            </div>
+        </th>
+        <th style={{
+            borderTop: '1px solid lightGray', border: '1px solid lightGray',
+            borderRight: '1px solid lightGray'
+        }}>
+            <div style={{display: 'flex', justifyContent: 'space-between', fontSize: 13.5, padding: '0px 10px'}}>
+                <div style={{textAlign: 'left'}}>₩</div>
+                <div style={{paddingRight: 5}} id={'total_amount'}></div>
+
+
+            </div>
+        </th>
+        <th colSpan={3} style={{
+            border: '1px solid lightGray',
+            borderRight: 'none',
+            fontSize: 12,
+        }}>
+        </th>
+    </tr>
+    </thead>
+}
+
 
 const headerStyle: any = {
-    backgroundColor: '#ebf6f7',
+
     borderBottom: '1px solid lightGray',
-    fontWeight: 'bold',
-    fontSize: 11,
+    fontWeight:
+        'bold',
+    fontSize:
+        11,
     padding: 12,
     textAlign: 'left',
     width: 100
