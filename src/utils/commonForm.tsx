@@ -177,6 +177,10 @@ export const inputForm = ({
                           }: any) => {
 
 
+    function onchange(e){
+        e.target.style.borderColor = ''
+    }
+
     return <div style={{fontSize: fontSize, paddingBottom: 10}}>
         <div style={{paddingBottom: fontSize / 2, fontWeight: 700}}>{title}</div>
         {/*@ts-ignored*/}
@@ -187,7 +191,7 @@ export const inputForm = ({
                    disabled={disabled}
 
                    onKeyDown={handleKeyPress}
-                   onChange={onChange}
+                   onChange={onchange}
                 // suffix={suffix}
                    style={{fontSize: 12, border: `1px solid ${validate ? 'lightGray' : 'red'}`}}
             />

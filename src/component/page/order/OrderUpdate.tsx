@@ -28,7 +28,7 @@ import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import Select from "antd/lib/select";
 import Spin from "antd/lib/spin";
-import {orderInfo, rfqInfo} from "@/utils/column/ProjectInfo";
+import {estimateInfo, orderInfo, rfqInfo} from "@/utils/column/ProjectInfo";
 import Table from "@/component/util/Table";
 
 const listType = 'orderDetailList'
@@ -123,20 +123,31 @@ export default function OrderUpdate({updateKey, getCopyPage}) {
     }
 
     async function saveFunc() {
-        gridRef.current.clearFocusedCell();
-        const list = gridManage.getAllData(gridRef)
-        if (!list.length) {
-            return message.warn('하위 데이터 1개 이상이여야 합니다')
+        let infoData = commonManage.getInfo(infoRef, estimateInfo['defaultInfo']);
+        const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
+        infoData['managerAdminName'] = findMember['name'];
+        infoData['orderId'] = updateKey['order_update']
+        if (!infoData['agencyCode']) {
+            const dom = infoRef.current.querySelector('#agencyCode');
+            dom.style.borderColor = 'red'
+            return message.warn('매입처 코드가 누락되었습니다.')
         }
+
+        const tableList = tableRef.current?.getSourceData();
+
+        const filterTableList = commonManage.filterEmptyObjects(tableList, ['model', 'item', 'maker'])
+        if (!filterTableList.length) {
+            return message.warn('하위 데이터 1개 이상이여야 합니다');
+        }
+
+
         setLoading(true)
         const formData: any = new FormData();
-        commonManage.setInfoFormData(info, formData, listType, list)
+        commonManage.setInfoFormData(infoData, formData, listType, filterTableList)
         commonManage.getUploadList(fileRef, formData);
         commonManage.deleteUploadList(fileRef, formData, originFileList)
-
         formData.delete('createdDate')
         formData.delete('modifiedDate')
-
 
         await updateOrder({data: formData, returnFunc: returnFunc})
     }
@@ -145,7 +156,7 @@ export default function OrderUpdate({updateKey, getCopyPage}) {
         if (e) {
             await getAttachmentFileList({
                 data: {
-                    "relatedType": "ESTIMATE",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
+                    "relatedType": "ORDER",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
                     "relatedId": info['orderId']
                 }
             }).then(v => {

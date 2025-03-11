@@ -12,7 +12,6 @@ import {useAppSelector} from "@/utils/common/function/reduxHooks";
 
 import 'react-splitter-layout/lib/index.css';
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
-import Select from "antd/lib/select";
 import {projectInfo} from "@/utils/column/ProjectInfo";
 import Table from "@/component/util/Table";
 import {findCodeInfo} from "@/utils/api/commonApi";
@@ -23,7 +22,8 @@ const listType = 'projectDetailList'
 export default function ProjectUpdate({
 
                                           updateKey = {},
-                                          getCopyPage = null
+                                          getCopyPage = null,
+                                          notificationAlert = null, getPropertyId
                                       }) {
     const infoRef = useRef<any>(null)
     const tableRef = useRef(null);
@@ -114,7 +114,6 @@ export default function ProjectUpdate({
     }, [info]);
 
 
-
     async function getDataInfo() {
         const result = await getData.post('project/getProjectDetail', {
             "projectId": updateKey['project_update'],
@@ -143,11 +142,11 @@ export default function ProjectUpdate({
     }
 
 
-
     async function saveFunc() {
         let infoData = commonManage.getInfo(infoRef, projectWriteInitial);
 
         const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
+        infoData['projectId'] = updateKey['project_update']
         infoData['managerAdminName'] = findMember['name'];
         if (!infoData['documentNumberFull']) {
             const dom = infoRef.current.querySelector('#documentNumberFull');
@@ -259,16 +258,16 @@ export default function ProjectUpdate({
                 ]} mini={mini} setMini={setMini}>
 
                     {mini ? <div>
-                            <TopBoxCard title={''} grid={'150px 150px 150px'}>
-                                {inputForm({
-                                    title: '작성자',
-                                    id: 'createdBy',
-                                    disabled: true,
-                                })}
+                            <TopBoxCard title={''} grid={'100px 80px 80px'}>
                                 {datePickerForm({
                                     title: '작성일자',
                                     id: 'writtenDate',
                                     disabled: true
+                                })}
+                                {inputForm({
+                                    title: '작성자',
+                                    id: 'createdBy',
+                                    disabled: true,
                                 })}
                                 <div>
                                     <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>담당자</div>

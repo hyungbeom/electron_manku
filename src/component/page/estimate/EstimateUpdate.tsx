@@ -174,6 +174,7 @@ export default function EstimateUpdate({
         let infoData = commonManage.getInfo(infoRef, estimateInfo['defaultInfo']);
         const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
         infoData['managerAdminName'] = findMember['name'];
+        infoData['estimateId'] = updateKey['estimate_update']
         if (!infoData['agencyCode']) {
             const dom = infoRef.current.querySelector('#agencyCode');
             dom.style.borderColor = 'red'

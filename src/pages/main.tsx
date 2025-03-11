@@ -176,12 +176,12 @@ export default function Main() {
         }
     };
     const tabComponents = {
-        project_write: {name: "프로젝트 등록", component: <ProjectWrite getPropertyId={getPropertyId} copyPageInfo={copyPageInfo}/>},
+        project_write: {name: "프로젝트 등록", component: <ProjectWrite copyPageInfo={copyPageInfo}/>},
         project_read: {
             name: "프로젝트 조회",
             component: <ProjectRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>
         },
-        project_update: {name: "프로젝트 수정", component: <ProjectUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
+        project_update: {name: "프로젝트 수정", component: <ProjectUpdate  updateKey={updateKey} getCopyPage={getCopyPage}/>},
 
         rfq_write: {name: "견적의뢰 등록", component: <RfqWrite copyPageInfo={copyPageInfo}/>},
         rfq_read: {name: "견적의뢰 조회", component: <RfqRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>},
@@ -275,7 +275,7 @@ export default function Main() {
         const componentKey = node.getComponent();
         return <div style={{padding: '0px 5px 0px 5px'}}>
             {/*{tabComponents[componentKey]?.component}*/}
-            {React.cloneElement(tabComponents[componentKey].component, {notificationAlert: openNotificationWithIcon})}
+            {React.cloneElement(tabComponents[componentKey].component, {notificationAlert: openNotificationWithIcon, getPropertyId : getPropertyId})}
 
         </div>;
     };
