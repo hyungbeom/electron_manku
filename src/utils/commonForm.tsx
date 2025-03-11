@@ -269,27 +269,30 @@ export const inputNumberForm = ({
                                     parser = null,
                                     step = 1,
                                     addonAfter = '',
-                                    min = -99999,
-                                    max = 99999,
+                                    min = 1,
+                                    max = 10000,
                                 }: any) => {
     let bowl = data;
 
 
     return <div style={{fontSize: 12, paddingBottom: 10}}>
-        <div style={{paddingBottom: 4}}>{title}</div>
-        <InputNumber id={id} disabled={disabled}
-                     style={{width: '100%'}}
-                     formatter={formatter}
-                     parser={parser}
+        <div style={{paddingBottom: 4, fontWeight : 700}}>{title}</div>
+        <div style={{display : 'flex'}}>
+        <input type={'number'} id={id} disabled={disabled}
+                     style={{width: '100%', marginTop : 3}}
+                     // formatter={formatter}
+                     // parser={parser}
                      step={step}
-                     onChange={e => onChange({target: {id: id, value: e}})}
-                     size={'small'}
+                     // onChange={e => onChange({target: {id: id, value: e}})}
+                     // size={'small'}
                      placeholder={placeholder}
-                     addonAfter={addonAfter}
+                     // addonAfter={addonAfter}
                      min={min}
                      max={max}
 
         />
+            <span style={{marginLeft : -20, paddingTop : 2, fontWeight : 700}}>{addonAfter}</span>
+        </div>
     </div>
 }
 

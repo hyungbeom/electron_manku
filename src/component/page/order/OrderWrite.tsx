@@ -150,6 +150,11 @@ export default function OrderWrite({dataInfo = [],  copyPageInfo}) {
 
 
     async function saveFunc() {
+        let infoData = commonManage.getInfo(infoRef, infoInit);
+        const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
+        infoData['managerAdminName'] = findMember['name'];
+
+
         gridRef.current.clearFocusedCell();
         if (!info['documentNumberFull']) {
             setValidate(v => {

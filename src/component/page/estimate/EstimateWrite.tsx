@@ -297,12 +297,6 @@ export default function EstimateWrite({copyPageInfo = {}}) {
         // gridManage.deleteAll(gridRef);
     }
 
-    const onCChange = (value: string, e: any) => {
-        setInfo(v => {
-            return {...v, managerAdminId: e.adminId, managerAdminName: e.name}
-        })
-    };
-
 
     return <div style={{overflow: 'hidden'}}><Spin spinning={loading} tip={'견적서 등록중...'}>
 
@@ -457,39 +451,70 @@ export default function EstimateWrite({copyPageInfo = {}}) {
                                 </BoxCard>
 
                                 <BoxCard title={'운송 정보'}>
-                                    {selectBoxForm({
-                                        title: '유효기간', id: 'validityPeriod', list: [
-                                            {value: '견적 발행 후 10일간', label: '견적 발행 후 10일간'},
-                                            {value: '견적 발행 후 30일간', label: '견적 발행 후 30일간'},
-                                        ], onChange: onChange, data: info
-                                    })}
-                                    {selectBoxForm({
-                                        title: '결제조건', id: 'paymentTerms', list: [
-                                            {value: '발주시 50% / 납품시 50%', label: '발주시 50% / 납품시 50%'},
-                                            {value: '현금결제', label: '현금결제'},
-                                            {value: '선수금', label: '선수금'},
-                                            {value: '정기 결제', label: '정기 결제'},
-                                        ], onChange: onChange, data: info
-                                    })}
+                                    <div>
+                                        <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 6}}>유효기간</div>
+                                        <select name="languages" id="validityPeriod"
+                                                style={{
+                                                    outline: 'none',
+                                                    border: '1px solid lightGray',
+                                                    height: 22,
+                                                    width: '100%',
+                                                    fontSize: 12,
+                                                    paddingBottom: 0.5
+                                                }}>
+                                            <option value={'견적 발행 후 10일간'}>견적 발행 후 10일간</option>
+                                            <option value={'견적 발행 후 30일간'}>견적 발행 후 30일간</option>
+                                        </select>
+                                    </div>
+                                    <div style={{paddingTop: 10}}>
+                                        <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 6}}>결제조건</div>
+                                        <select name="languages" id="paymentTerms"
+                                                style={{
+                                                    outline: 'none',
+                                                    border: '1px solid lightGray',
+                                                    height: 22,
+                                                    width: '100%',
+                                                    fontSize: 12,
+                                                    paddingBottom: 0.5
+                                                }}>
+                                            <option value={'발주시 50% / 납품시 50%'}>발주시 50% / 납품시 50%</option>
+                                            <option value={'현금결제'}>현금결제</option>
+                                            <option value={'선수금'}>선수금</option>
+                                            <option value={'정기결제'}>정기결제</option>
+                                        </select>
+                                    </div>
 
-                                    {selectBoxForm({
-                                        title: '운송조건', id: 'shippingTerms', list: [
-                                            {value: '귀사도착도', label: '귀사도착도'},
-                                            {value: '화물 및 택배비 별도', label: '화물 및 택배비 별도'},
-                                        ], onChange: onChange, data: info
-                                    })}
+                                    <div style={{paddingTop: 10, paddingBottom: 10}}>
+                                        <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 6}}>운송조건</div>
+                                        <select name="languages" id="shippingTerms"
+                                                style={{
+                                                    outline: 'none',
+                                                    border: '1px solid lightGray',
+                                                    height: 22,
+                                                    width: '100%',
+                                                    fontSize: 12,
+                                                    paddingBottom: 0.5
+                                                }}>
+                                            <option value={'귀사도착도'}>귀사도착도</option>
+                                            <option value={'화물 및 택배비 별도'}>화물 및 택배비 별도</option>
+                                        </select>
+                                    </div>
+
                                     {inputNumberForm({
                                         title: '납기',
                                         id: 'delivery',
-
-                                        addonAfter: <span style={{fontSize: 11}}>주</span>
+                                        min : 0,
+                                        max : 10,
+                                        addonAfter: '주'
                                     })}
                                     {inputNumberForm({
                                         title: '환율',
                                         id: 'exchangeRate',
-
+                                        min : 0,
                                         step: 0.01,
                                     })}
+
+
                                 </BoxCard>
 
                                 <BoxCard title={'Maker 정보'}>
