@@ -286,7 +286,7 @@ export default function EstimateWrite({copyPageInfo = {}}) {
                     {name: '초기화', func: clearAll, type: 'danger'}
                 ]} mini={mini} setMini={setMini}>
                     {mini ? <div>
-                            <TopBoxCard grid={'100px 70px 70px 150px 110px 110px 300px'}>
+                            <TopBoxCard grid={'100px 70px 70px 150px 150px 110px 300px'}>
                                 {datePickerForm({
                                     title: '작성일',
                                     id: 'writtenDate',

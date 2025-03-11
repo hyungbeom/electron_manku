@@ -370,7 +370,7 @@ export default function EstimateUpdate({
                 ]} mini={mini} setMini={setMini}>
 
                     {mini ? <div>
-                        <TopBoxCard grid={'1fr 0.6fr 0.6fr 1fr 1fr 1fr 1fr'}>
+                        <TopBoxCard grid={'100px 70px 70px 150px 110px 300px'}>
                             {datePickerForm({
                                 title: '작성일',
                                 id: 'writtenDate',
