@@ -49,6 +49,8 @@ import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {getData} from "@/manage/function/api";
 import StoreUpdate from "@/component/page/store/StoreUpdate";
 import {useRouter} from "next/router";
+import {commonManage} from "@/utils/commonManage";
+import notification from "antd/lib/notification";
 
 
 
@@ -71,6 +73,17 @@ function findTitleByKey(data, key) {
 
 
 export default function Main() {
+
+        const [api, contextHolder] = notification.useNotification();
+
+        const openNotificationWithIcon = (type, title, description) => {
+            api[type]({
+                message:title,
+                description:
+                description,
+            });
+        };
+
 
 
     const layoutRef = useRef<any>(null);
@@ -252,11 +265,12 @@ export default function Main() {
 
     };
 
-
+    // openNotificationWithIcon
     const factory = (node: TabNode) => {
         const componentKey = node.getComponent();
         return <div style={{padding: '0px 5px 0px 5px'}}>
-            {tabComponents[componentKey]?.component}
+            {/*{tabComponents[componentKey]?.component}*/}
+            {React.cloneElement(tabComponents[componentKey].component, {notificationAlert : openNotificationWithIcon})}
 
         </div>;
     };
@@ -344,6 +358,7 @@ export default function Main() {
 
     return (
         <LayoutComponent>
+            {contextHolder}
             <div style={{display: "grid", gridTemplateColumns: "205px auto"}}>
                 <div style={{
                     borderRight: "1px solid lightGray",
