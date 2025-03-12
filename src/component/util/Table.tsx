@@ -96,8 +96,8 @@ const Table = forwardRef(({data = new Array(100).fill({}), column, type = '', fu
             const colName = hotRef.current.hotInstance.getColHeader(colIndex);
             const cellValue = hotRef.current.hotInstance.getDataAtCell(coords.row, coords.col); // ✅ 데이터 가져오기
 
-            console.log(cellValue,'cellValue：')
-            console.log(colName,'colName：')
+            console.log(cellValue, 'cellValue：')
+            console.log(colName, 'colName：')
             if (colName === "관련링크") { // ✅ 특정 컬럼인지 확인
 
                 if (typeof cellValue === "string" && cellValue.startsWith("http")) {
@@ -107,13 +107,22 @@ const Table = forwardRef(({data = new Array(100).fill({}), column, type = '', fu
             if (colName === '단위') {
                 hotRef.current.hotInstance.setDataAtCell(coords.row, coords.col, "ea");
             }
-            if(colName === '화폐단위'){
+            if (colName === '화폐단위') {
                 hotRef.current.hotInstance.setDataAtCell(coords.row, coords.col, "KRW");
             }
-            if(colName === '납품기한'){
+            if (colName === '납품기한') {
                 hotRef.current.hotInstance.setDataAtCell(coords.row, coords.col, moment().format('YYYY-MM-DD'));
-            } if(colName === 'CURR'){
+            }
+            if (colName === 'CURR') {
                 hotRef.current.hotInstance.setDataAtCell(coords.row, coords.col, moment().format('YYYY-MM-DD'));
+            }
+            if (colName === '회신여부') {
+                const  contentColIndex = hotRef.current.hotInstance.getColHeader().indexOf("content");
+                hotRef.current.hotInstance.setDataAtCell(coords.row, coords.col, '회신');
+                if (contentColIndex !== -1) {
+                    // ✅ 같은 행의 "content" 셀 값 변경
+                    hotRef.current.hotInstance.setDataAtCell(coords.row, contentColIndex, moment().format('YYYY-MM-DD'));
+                }
             }
 
         }
