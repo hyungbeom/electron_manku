@@ -145,7 +145,9 @@ export default function OrderWrite({copyPageInfo, notificationAlert = null, getP
                                     shippingTerms: '귀사도착도',
                                     writtenDate: moment().format('YYYY-MM-DD'),
                                 })
-                                setTableData([...estimateDetail?.estimateDetailList, ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 100 - estimateDetail?.estimateDetailList.length)])
+                                if(estimateDetail) {
+                                    setTableData([...estimateDetail?.estimateDetailList, ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 100 - estimateDetail?.estimateDetailList.length)])
+                                }
                             }, err => console.log('???'));
                             setLoading(false)
                         } else {
@@ -160,6 +162,7 @@ export default function OrderWrite({copyPageInfo, notificationAlert = null, getP
                     // await findOrderDocumentInfo(e, setInfo, setTableData, memberList)
                     break;
                 case 'agencyCode' :
+
                     await findCodeInfo(e, setInfo, openModal, '')
                     break;
             }
@@ -267,7 +270,8 @@ export default function OrderWrite({copyPageInfo, notificationAlert = null, getP
                          setIsModalOpen={setIsModalOpen}/>
         <>
             {isModalOpen['event2'] &&
-                <PrintPo data={info} infoRef={infoRef} tableRef={tableRef} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} memberList={memberList}/>}
+                <PrintPo data={info} infoRef={infoRef} tableRef={tableRef} isModalOpen={isModalOpen}
+                         setIsModalOpen={setIsModalOpen} memberList={memberList}/>}
             <div ref={infoRef} style={{
                 display: 'grid',
                 gridTemplateRows: `${mini ? '495px' : '65px'} calc(100vh - ${mini ? 590 : 195}px)`,
@@ -299,11 +303,11 @@ export default function OrderWrite({copyPageInfo, notificationAlert = null, getP
                                     if (member) {
                                         const {name, faxNumber, contactNumber, email} = member;
 
-                                        const sendObj ={
-                                            managerId : name,
-                                            managerPhoneNumber : contactNumber,
-                                            managerFaxNumber : faxNumber,
-                                            managerEmail : email
+                                        const sendObj = {
+                                            managerId: name,
+                                            managerPhoneNumber: contactNumber,
+                                            managerFaxNumber: faxNumber,
+                                            managerEmail: email
                                         }
                                         commonManage.setInfo(infoRef, sendObj);
                                     }

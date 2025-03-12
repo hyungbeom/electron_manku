@@ -269,7 +269,7 @@ export default function OrderUpdate({updateKey, getCopyPage}) {
                          setIsModalOpen={setIsModalOpen}/>
         <>
             {isModalOpen['event2'] &&
-                <PrintPo data={info}  isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>}
+                <PrintPo data={info} infoRef={infoRef} tableRef={tableRef}  isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} memberList={memberList}/>}
             <div ref={infoRef} style={{
                 display: 'grid',
                 gridTemplateRows: `${mini ? '495px' : '65px'} calc(100vh - ${mini ? 590 : 195}px)`,

@@ -141,6 +141,7 @@ export default function EstimateWrite({copyPageInfo = {}, notificationAlert = nu
                         documentNumberFull: e.target.value.toUpperCase()
                     }).then(async v => {
                         if (v.data.code === 1) {
+                            console.log(v.data,'v.data:::::')
                             const {attachmentFileList, estimateRequestDetail} = v.data?.entity
                             setFileList(fileManage.getFormatFiles(attachmentFileList))
                             const dom = infoRef.current.querySelector('#connectDocumentNumberFull');
@@ -161,8 +162,12 @@ export default function EstimateWrite({copyPageInfo = {}, notificationAlert = nu
                                     shippingTerms: '귀사도착도',
                                     writtenDate: moment().format('YYYY-MM-DD'),
                                 })
-                                setTableData([...estimateRequestDetail['estimateRequestDetailList'], ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 100 - estimateRequestDetail['estimateRequestDetailList'].length)])
-                            });
+
+                                if(estimateRequestDetail) {
+                                    setTableData([...estimateRequestDetail['estimateRequestDetailList'], ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 100 - estimateRequestDetail['estimateRequestDetailList'].length)])
+                                }
+
+                        });
 
 
                         }
