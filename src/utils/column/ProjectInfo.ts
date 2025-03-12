@@ -92,7 +92,7 @@ export const projectInfo = {
 export const rfqInfo = {
     write: {
         columnWidth: [220, 45, 45, 55, 120, 120, 45, 75, 75, 150],
-        column: ['Model', '수량', '단위', 'CURR', '매입 단가', '매입 총액', '납기', '회신여부', '회신일', '비고'],
+        column: ['Model', '수량', '단위', '화폐단위', '매입 단가', '매입 총액', '납기', '회신여부', '회신일', '비고'],
         columnList: [
             {data: "model", type: "text"},
             {data: "quantity", type: "numeric"},
@@ -189,7 +189,7 @@ export const rfqInfo = {
 export const estimateInfo = {
     write: {
         columnWidth: [250, 40, 40, 45, 120, 120, 120, 120, 120, 50],
-        column: ['Model', '수량', '단위', 'CURR', '매출 단가', '매출 총액', '매입 단가', '매입 총액', '마진율'],
+        column: ['Model', '수량', '단위', '화폐단위', '매출 단가', '매출 총액', '매입 단가', '매입 총액', '마진율'],
         columnList: [
             {data: "model", type: "text"},
             {data: "quantity", type: "numeric"},
@@ -291,7 +291,7 @@ export const orderInfo = {
             '입고',
             '미 입고',
             '단위',
-            'CURR',
+            '화폐단위',
             '매입 단가',
             '매입 총액',
             '매출 단가',

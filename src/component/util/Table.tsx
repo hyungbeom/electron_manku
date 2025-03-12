@@ -47,10 +47,10 @@ const Table = forwardRef(({data = new Array(100).fill({}), column, type = '', fu
 
 
     const afterRenderer = (td, row, col, prop, value) => {
-        if (["unitPrice", 'totalNet', "total", 'net', "totalPurchase", "purchasePrice",'quantity', 'receivedQuantity','unreceivedQuantity'].includes(prop)) {
+        if (["unitPrice", 'totalNet', "total", 'net', "totalPurchase", "purchasePrice", 'quantity', 'receivedQuantity', 'unreceivedQuantity'].includes(prop)) {
             td.style.textAlign = "right"; // 우측 정렬
             td.style.color = "black"; // 텍스트 굵게
-            if (['totalNet', "total", "totalPurchase",'net', 'unitPrice','purchasePrice'].includes(prop)) {
+            if (['totalNet', "total", "totalPurchase", 'net', 'unitPrice', 'purchasePrice'].includes(prop)) {
                 if (value === 0 || isNaN(value)) {
                     td.textContent = ""; // 🔥 0 또는 NaN이면 빈 문자열 적용
                 } else {
@@ -58,7 +58,7 @@ const Table = forwardRef(({data = new Array(100).fill({}), column, type = '', fu
                 }
             }
 
-            if (["total","totalPurchase", 'totalNet'].includes(prop)) {
+            if (["total", "totalPurchase", 'totalNet'].includes(prop)) {
                 if (value === 0 || isNaN(value)) {
                     td.textContent = ""; // 🔥 0 또는 NaN이면 빈 문자열 적용
                 } else {
@@ -90,8 +90,37 @@ const Table = forwardRef(({data = new Array(100).fill({}), column, type = '', fu
         }
     }
 
+    function relatedLink(event, coords) {
+        if (event.ctrlKey) { // ✅ Ctrl 키가 눌렸는지 확인
+            const colIndex = coords.col;
+            const colName = hotRef.current.hotInstance.getColHeader(colIndex);
+            const cellValue = hotRef.current.hotInstance.getDataAtCell(coords.row, coords.col); // ✅ 데이터 가져오기
+
+            console.log(cellValue,'cellValue：')
+            console.log(colName,'colName：')
+            if (colName === "관련링크") { // ✅ 특정 컬럼인지 확인
+
+                if (typeof cellValue === "string" && cellValue.startsWith("http")) {
+                    window.open(cellValue, "_blank"); // ✅ 새 탭에서 URL 열기
+                }
+            }
+            if (colName === '단위') {
+                hotRef.current.hotInstance.setDataAtCell(coords.row, coords.col, "ea");
+            }
+            if(colName === '화폐단위'){
+                hotRef.current.hotInstance.setDataAtCell(coords.row, coords.col, "KRW");
+            }
+            if(colName === '납품기한'){
+                hotRef.current.hotInstance.setDataAtCell(coords.row, coords.col, moment().format('YYYY-MM-DD'));
+            } if(colName === 'CURR'){
+                hotRef.current.hotInstance.setDataAtCell(coords.row, coords.col, moment().format('YYYY-MM-DD'));
+            }
+
+        }
+    }
+
     return (
-        <div ref={tableContainerRef} className="table-container" style={{width : '100%', overflowX : 'auto'}}>
+        <div ref={tableContainerRef} className="table-container" style={{width: '100%', overflowX: 'auto'}}>
             <div style={{display: 'flex', justifyContent: 'end'}}>
 
                 <div style={{display: 'flex', gap: 5, paddingBottom: 0}}>
@@ -119,7 +148,7 @@ const Table = forwardRef(({data = new Array(100).fill({}), column, type = '', fu
                 manualColumnMove={false}
                 multiColumnSorting={column["type"] === "read"}
                 navigableHeaders={true}
-
+                afterOnCellMouseDown={relatedLink}
                 afterGetRowHeader={(row, TH) => {
                     const hotInstance = hotRef.current.hotInstance;
                     const totalRows = hotInstance.countRows();
