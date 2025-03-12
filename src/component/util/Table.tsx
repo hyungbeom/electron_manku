@@ -9,12 +9,19 @@ import renderers = Handsontable.renderers;
 import moment from "moment/moment";
 import {tableButtonList} from "@/utils/commonForm";
 import {projectInfo} from "@/utils/column/ProjectInfo";
+import {commonManage} from "@/utils/commonManage";
 
 // register Handsontable's modules
 registerAllModules();
 
 
-const Table = forwardRef(({data = new Array(100).fill({}), column, type = '', funcButtons}: any, ref) => {
+const Table = forwardRef(({
+                              data = new Array(100).fill({}),
+                              column,
+                              type = '',
+                              funcButtons,
+                              infoRef = null
+                          }: any, ref) => {
 
     const hotRef = useRef(null)
 
@@ -96,8 +103,6 @@ const Table = forwardRef(({data = new Array(100).fill({}), column, type = '', fu
             const colName = hotRef.current.hotInstance.getColHeader(colIndex);
             const cellValue = hotRef.current.hotInstance.getDataAtCell(coords.row, coords.col); // ✅ 데이터 가져오기
 
-            console.log(cellValue, 'cellValue：')
-            console.log(colName, 'colName：')
             if (colName === "관련링크") { // ✅ 특정 컬럼인지 확인
 
                 if (typeof cellValue === "string" && cellValue.startsWith("http")) {
@@ -108,7 +113,12 @@ const Table = forwardRef(({data = new Array(100).fill({}), column, type = '', fu
                 hotRef.current.hotInstance.setDataAtCell(coords.row, coords.col, "ea");
             }
             if (colName === '화폐단위') {
-                hotRef.current.hotInstance.setDataAtCell(coords.row, coords.col, "KRW");
+                const dom = infoRef.current.querySelector('#agencyCode');
+                if (dom) {
+                    hotRef.current.hotInstance.setDataAtCell(coords.row, coords.col, commonManage.changeCurr(dom.value));
+                } else {
+                    hotRef.current.hotInstance.setDataAtCell(coords.row, coords.col, "KRW");
+                }
             }
             if (colName === '납품기한') {
                 hotRef.current.hotInstance.setDataAtCell(coords.row, coords.col, moment().format('YYYY-MM-DD'));
@@ -117,7 +127,7 @@ const Table = forwardRef(({data = new Array(100).fill({}), column, type = '', fu
                 hotRef.current.hotInstance.setDataAtCell(coords.row, coords.col, moment().format('YYYY-MM-DD'));
             }
             if (colName === '회신여부') {
-                const  contentColIndex = hotRef.current.hotInstance.getColHeader().indexOf("content");
+                const contentColIndex = hotRef.current.hotInstance.getColHeader().indexOf("content");
                 hotRef.current.hotInstance.setDataAtCell(coords.row, coords.col, '회신');
                 if (contentColIndex !== -1) {
                     // ✅ 같은 행의 "content" 셀 값 변경
@@ -128,6 +138,30 @@ const Table = forwardRef(({data = new Array(100).fill({}), column, type = '', fu
         }
     }
 
+    function afterColumnResize(column, newSize) {
+        if (hotRef.current) {
+
+            const totalColumns  =hotRef.current.hotInstance.countCols();
+            const columnWidths = [];
+
+            for (let col = 0; col < totalColumns; col++) {
+                columnWidths.push(hotRef.current.hotInstance.getColWidth(col) || null);
+            }
+
+            localStorage.setItem(type, JSON.stringify(columnWidths));
+        }
+    }
+
+    // 🔹 1. 컬럼 넓이를 `localStorage`에서 불러오기
+    const getStoredColumnWidths = () => {
+        const storedWidths = localStorage.getItem(type);
+        console.log(storedWidths,'storedWidths:')
+        return storedWidths ? JSON.parse(storedWidths) : column["columnWidth"]; // 저장된 값이 없으면 기본값 사용
+    };
+
+    const storedColumnWidths = useMemo(() => {
+        return getStoredColumnWidths()
+    }, [type]);
     return (
         <div ref={tableContainerRef} className="table-container" style={{width: '100%', overflowX: 'auto'}}>
             <div style={{display: 'flex', justifyContent: 'end'}}>
@@ -146,7 +180,7 @@ const Table = forwardRef(({data = new Array(100).fill({}), column, type = '', fu
                 formulas={{
                     engine: HyperFormula,
                 }}
-                colWidths={column['columnWidth']}
+                colWidths={storedColumnWidths}
                 height={'calc(100% - 25px)'}
 
                 colHeaders={column["column"]}
@@ -194,7 +228,7 @@ const Table = forwardRef(({data = new Array(100).fill({}), column, type = '', fu
                     }
                 }}
 
-
+                afterColumnResize={afterColumnResize}
                 afterChange={afterChange}
                 columns={column["columnList"].map(col => {
                     return ({

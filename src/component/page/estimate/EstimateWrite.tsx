@@ -538,15 +538,8 @@ export default function EstimateWrite({copyPageInfo = {}, notificationAlert = nu
                         </div>
                         : <></>}
                 </MainCard>
-                {/*<TableGrid*/}
-                {/*    setInfo={setInfo}*/}
-                {/*    gridRef={gridRef}*/}
-                {/*    columns={tableEstimateWriteColumns}*/}
-                {/*    type={'write'}*/}
-                {/*    onGridReady={onGridReady}*/}
-                {/*    funcButtons={['estimateUpload', 'estimateAdd', 'delete', 'print']}*/}
-                {/*/>*/}
-                <Table data={tableData} column={estimateInfo['write']} funcButtons={['print']} ref={tableRef}/>
+
+                <Table data={tableData} column={estimateInfo['write']} funcButtons={['print']} ref={tableRef} type={'estimate_write_column'}/>
             </div>
         </>
         {/*{ready && <EstimatePaper data={info} pdfRef={pdfRef} gridRef={gridRef}/>}*/}

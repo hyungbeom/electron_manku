@@ -112,17 +112,6 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
     let message = ''
 
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
-    if (userInfo) {  // 조건을 좀 더 직관적으로 변경
-        return {
-            redirect: {
-                destination: '/main',
-                permanent: false,
-            },
-        };
-    }
-
-    store.dispatch(setUserInfo(userInfo));
-
 
     const {query} = ctx; // URL 쿼리 파라미터
     const {code, redirect_to} = query;
@@ -131,6 +120,7 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
         const codeVerifier = getCookie(ctx, "code_verifier");
 
 
+        console.log(codeVerifier,'vvvvvvvvvvvvvvv')
         try {
             const v = await getData.post('account/microsoftLogin', {
                 authorizationCode: code,
@@ -138,6 +128,7 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
                 redirectUri: process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://manku.progist.co.kr'
             });
 
+            console.log(v,'vvvvvvvvvvvvvvv')
             const codeCheck = v?.data?.code
 
             if (codeCheck === 1) {
@@ -162,12 +153,25 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
             console.error("Microsoft Login failed:", error);
             // 필요시 로그인 실패 처리를 할 수 있습니다.
         }
+    } else if (userInfo) {  // 조건을 좀 더 직관적으로 변경
+
+        if (codeInfo >= 0) {  // 조건을 좀 더 직관적으로 변경
+            return {
+                redirect: {
+                    destination: '/main',
+                    permanent: false,
+                },
+            };
+        }
+
+        store.dispatch(setUserInfo(userInfo));
+
+    }else{
+
+        return {
+            props: {message: message},
+        };
     }
-
-
-    return {
-        props: {message: message},
-    };
 
 
 });

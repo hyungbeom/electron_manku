@@ -342,8 +342,6 @@ export default function RqfWrite({copyPageInfo = {}, notificationAlert = null, g
                                                     openModal('agencyCode');
                                                 }
                                             }>🔍</span>,
-
-                                            onChange: onChange,
                                             handleKeyPress: handleKeyPress,
                                             // data: info
                                         })}
@@ -482,7 +480,7 @@ export default function RqfWrite({copyPageInfo = {}, notificationAlert = null, g
                         : <></>}
                 </MainCard>
 
-                <Table data={tableData} column={rfqInfo['write']} funcButtons={['print']} ref={tableRef}/>
+                <Table data={tableData} column={rfqInfo['write']} funcButtons={['print']} ref={tableRef} infoRef={infoRef} type={'rfq_write_column'}/>
             </div>
         </>
     </Spin>

@@ -508,7 +508,7 @@ export default function RqfUpdate({
                         : <></>}
                 </MainCard>
 
-                <Table data={tableData} column={rfqInfo['write']} funcButtons={['print']} ref={tableRef}/>
+                <Table data={tableData} column={rfqInfo['write']} funcButtons={['print']} ref={tableRef} type={'rfq_write_column'}/>
             </div>
         </>
     </Spin>

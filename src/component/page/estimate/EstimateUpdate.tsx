@@ -636,7 +636,7 @@ export default function EstimateUpdate({
                 {/*    onGridReady={onGridReady}*/}
                 {/*    funcButtons={['estimateUpload', 'estimateAdd', 'delete', 'print']}*/}
                 {/*/>*/}
-                <Table data={tableData} column={estimateInfo['write']} funcButtons={['print']} ref={tableRef}/>
+                <Table data={tableData} column={estimateInfo['write']} funcButtons={['print']} ref={tableRef} type={'estimate_write_column'}/>
             </div>
         </>
         {/*{ready && <EstimatePaper data={info} pdfRef={pdfRef} gridRef={gridRef}/>}*/}

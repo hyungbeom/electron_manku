@@ -340,7 +340,7 @@ function ProjectWrite({copyPageInfo = {}, notificationAlert = null, getPropertyI
                     : <></>}
             </MainCard>
 
-            <Table data={tableData} column={projectInfo['write']} funcButtons={['print']} ref={tableRef}/>
+            <Table data={tableData} column={projectInfo['write']} funcButtons={['print']} ref={tableRef} type={'project_write_column'}/>
         </div>
     </Spin>
 }

@@ -486,7 +486,7 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, notifica
 
                     </div> : null}
                 </MainCard>
-                <Table data={tableData} column={orderInfo['write']} funcButtons={['print']} ref={tableRef}/>
+                <Table data={tableData} column={orderInfo['write']} funcButtons={['print']} ref={tableRef} type={'order_write_column'}/>
             </div>
         </>
     </Spin>
