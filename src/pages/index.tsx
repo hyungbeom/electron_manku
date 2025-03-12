@@ -112,7 +112,7 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
     let message = ''
 
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
-    if (codeInfo >= 0) {  // 조건을 좀 더 직관적으로 변경
+    if (userInfo) {  // 조건을 좀 더 직관적으로 변경
         return {
             redirect: {
                 destination: '/main',

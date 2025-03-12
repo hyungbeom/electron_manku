@@ -1,5 +1,4 @@
 import { app, BrowserWindow, ipcMain, Menu, dialog } from 'electron';
-import {winax} from 'winax'
 import path from 'path';
 import { fileURLToPath } from 'url';
 

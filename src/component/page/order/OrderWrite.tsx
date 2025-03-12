@@ -338,7 +338,7 @@ export default function OrderWrite({copyPageInfo, notificationAlert = null, getP
                                             paddingBottom: 0.5
                                         }}>
                                     {
-                                        options.map(v => {
+                                        options?.map(v => {
                                             return <option value={v.value}>{v.label}</option>
                                         })
                                     }

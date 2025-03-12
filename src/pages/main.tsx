@@ -388,7 +388,6 @@ export default function Main() {
                     />
                 </div>
                 {!tabCounts && <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                    <div style={{fontSize : 50}}>보이나요 혁구님~~~~~~~~~</div>
                     <div style={{
                         display: 'grid',
                         gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr',
@@ -457,7 +456,8 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
 
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
-    if (codeInfo < 0) {
+    console.log(userInfo,'userInfo:')
+    if (!userInfo) {
         return {
             redirect: {
                 destination: '/',

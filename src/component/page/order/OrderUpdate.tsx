@@ -389,7 +389,7 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, notifica
 
                                 >
                                     {
-                                        options.map(v => {
+                                        options?.map(v => {
                                             return <option value={v.value}>{v.label}</option>
                                         })
                                     }

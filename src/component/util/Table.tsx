@@ -154,7 +154,7 @@ const Table = forwardRef(({data = new Array(100).fill({}), column, type = '', fu
                 stretchH="all"
                 autoWrapRow={true}
                 autoWrapCol={true}
-                manualColumnMove={false}
+                manualColumnMove={true}
                 multiColumnSorting={column["type"] === "read"}
                 navigableHeaders={true}
                 afterOnCellMouseDown={relatedLink}

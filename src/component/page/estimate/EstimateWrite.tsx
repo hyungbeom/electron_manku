@@ -61,7 +61,7 @@ export default function EstimateWrite({copyPageInfo = {}, notificationAlert = nu
         })
     }
 
-    const options = memberList.map((item) => ({
+    const options = memberList?.map((item) => ({
         ...item,
         value: item.adminId,
         label: item.name,
@@ -306,7 +306,7 @@ export default function EstimateWrite({copyPageInfo = {}, notificationAlert = nu
                                                 paddingBottom: 0.5
                                             }}>
                                         {
-                                            options.map(v => {
+                                            options?.map(v => {
                                                 return <option value={v.value}>{v.label}</option>
                                             })
                                         }

@@ -1,6 +1,7 @@
 import axios from "axios";
-import {getCookie} from "@/manage/function/cookie";
+import {getCookie, removeCookie} from "@/manage/function/cookie";
 import https from 'https';
+import message from "antd/lib/message";
 
 
 //DEV
@@ -70,3 +71,37 @@ getData.interceptors.request.use((config) => {
 
     return config;
 });
+
+const responseInterceptor = (response) => {
+    const status = response.status;
+    const responseData = response.data;
+
+
+    if (responseData.code = -10006) {
+        removeCookie(null, 'token');
+        message.error("다른기기에서 로그인이 감지 되었습니다.");
+        window.location.href = "/";
+    }
+
+    return response; // 정상적인 응답 반환
+};
+
+// ✅ 에러 응답 인터셉터 (HTTP 오류 코드 처리)
+const errorInterceptor = (error) => {
+    console.log(error,'error:')
+    if (error.response) {
+        const status = error.response.status;
+
+        if (status === 401 || status === 403) {
+            alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
+            window.location.href = "/login"; // ✅ 로그인 페이지로 이동
+        } else if (status === 500) {
+            alert("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+        }
+    }
+
+    return Promise.reject(error);
+};
+
+
+getData.interceptors.response.use(responseInterceptor, errorInterceptor);
