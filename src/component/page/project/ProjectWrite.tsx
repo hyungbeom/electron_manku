@@ -19,6 +19,7 @@ import {projectInfo} from "@/utils/column/ProjectInfo";
 import message from "antd/lib/message";
 import {getAttachmentFileList, saveProject} from "@/utils/api/mainApi";
 import SearchInfoModal from "@/component/SearchAgencyModal";
+import useEventListener from "@/utils/common/function/UseEventListener";
 
 
 const listType = 'projectDetailList'
@@ -193,8 +194,14 @@ function ProjectWrite({copyPageInfo = {}, notificationAlert = null, getPropertyI
         return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 0]; // 기본값 [50, 50, 50]
     };
 
-
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
+
+
+    useEventListener('contextmenu', (e: any) => {
+        e.preventDefault()
+    }, typeof window !== 'undefined' ? document : null)
+
+
 
     return <Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'project_write'}/>
