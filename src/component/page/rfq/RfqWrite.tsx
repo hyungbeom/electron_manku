@@ -164,7 +164,7 @@ export default function RqfWrite({copyPageInfo = {}, notificationAlert = null, g
             const dom = infoRef.current.querySelector('#documentNumberFull');
 
             if (v.code === 1) {
-                const {documentNumberFull, estimateRequestId} = v.data;
+                const {documentNumberFull, estimateRequestId} = v.entity;
                 notificationAlert('success', '💾견적의뢰 등록완료',
                     <>
                         <div>Project No. : {documentNumberFull}</div>

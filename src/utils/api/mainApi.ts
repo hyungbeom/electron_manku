@@ -12,10 +12,7 @@ export const checkInquiryNo = async ({data}) => {
 export const saveRfq = async ({data}) => {
     return await getFormData.post('estimate/addEstimateRequest', data).then(v => {
 
-        const {code, message, entity} = v.data
-        return {code: code, msg: message, data: entity}
-
-
+return v.data
     }, err => {
 
         console.log(err)
