@@ -259,6 +259,7 @@ export const estimateInfo = {
         "agencyManagerPhoneNumber": "",
         "customerCode": "",             // CUSTOMER 코드
         "customerName": "",    // 상호명
+        "customerManagerEmail": "",    // 상호명
         "managerName": "",      // 담당자
         "phoneNumber": "",  // 연락처
         "faxNumber": "",                // 팩스번호
@@ -273,6 +274,7 @@ export const estimateInfo = {
         "maker": "",      // Maker
         "item": "",      // Item
         "delivery": null,    // 납기
+        "instructions": "",          // 지시사항
         "remarks": "",          // 비고란
         "currencyUnit": "",          // 비고란
         'count': 0,
@@ -301,14 +303,14 @@ export const orderInfo = {
             {data: "model", type: "text"},
             {data: "quantity", type: "numeric"},
             {data: "receivedQuantity", type: "numeric"},
-            {data: "unreceivedQuantity", type: "numeric"},
+            {data: "unreceivedQuantity", type: "numeric", readOnly : true},
             {data: "unit", type: "autocomplete", source:  ['ea', 'Set', 'Pack', 'Can', 'Box', 'MOQ', 'Meter', 'Feet', 'Inch', 'Roll', 'g', 'kg', 'oz']},
             {data: "currency", type: "autocomplete", source: ['KRW', 'USD', 'EUR', 'JPY', 'GBP']},
             {data: "net", type: "numeric"},
             {data: "total", type: "numeric"},
             {data: "unitPrice", type: "numeric"},
             {data: "totalNet", type: "numeric"},
-            {data: "hscode", type: "text"},
+            {data: "hsCode", type: "text"},
 
         ],
         defaultData:  {

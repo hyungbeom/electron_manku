@@ -27,10 +27,11 @@ import {estimateInfo} from "@/utils/column/ProjectInfo";
 import Table from "@/component/util/Table";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
+import useEventListener from "@/utils/common/function/UseEventListener";
 
 
 const listType = 'estimateDetailList'
-export default function EstimateWrite({copyPageInfo = {}, notificationAlert = null, getPropertyId}:any) {
+export default function EstimateWrite({copyPageInfo = {}, notificationAlert = null, getPropertyId, layoutRef}:any) {
 
     const groupRef = useRef<any>(null)
 
@@ -200,6 +201,8 @@ export default function EstimateWrite({copyPageInfo = {}, notificationAlert = nu
         }
 
         if (!infoData['documentNumberFull']) {
+            const dom = infoRef.current.querySelector('#documentNumberFull');
+            dom.style.borderColor = 'red'
             return message.warn('Inquiry No. 정보가 누락되었습니다.')
         }
 
@@ -268,6 +271,17 @@ export default function EstimateWrite({copyPageInfo = {}, notificationAlert = nu
         // gridManage.deleteAll(gridRef);
     }
 
+    useEventListener('keydown', (e: any) => {
+        if (e.ctrlKey && e.key === "s") {
+            e.preventDefault();
+            console.log(layoutRef.current,'layoutRef.current:')
+            const model = layoutRef.current.props.model;
+            const activeTab = model.getActiveTabset()?.getSelectedNode();
+            if(activeTab?.renderedName === '견적서 등록'){
+                saveFunc()
+            }
+        }
+    }, typeof window !== 'undefined' ? document : null)
 
     return <div style={{overflow: 'hidden'}}><Spin spinning={loading} >
         <PanelSizeUtil groupRef={groupRef}  storage={'estimate_write'}/>

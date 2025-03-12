@@ -113,7 +113,7 @@ const Table = forwardRef(({
                 hotRef.current.hotInstance.setDataAtCell(coords.row, coords.col, "ea");
             }
             if (colName === '화폐단위') {
-                const dom = infoRef.current.querySelector('#agencyCode');
+                const dom = infoRef?.current?.querySelector('#agencyCode');
                 if (dom) {
                     hotRef.current.hotInstance.setDataAtCell(coords.row, coords.col, commonManage.changeCurr(dom.value));
                 } else {

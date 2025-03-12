@@ -109,11 +109,6 @@ export default function EstimateUpdate({
     const [loading, setLoading] = useState(false);
 
 
-    const onGridReady = (params) => {
-        gridRef.current = params.api;
-        params.api.applyTransaction({add: dataInfo?.estimateDetail[listType]});
-    };
-
     useEffect(() => {
         setLoading(true)
         getDataInfo().then(v => {
