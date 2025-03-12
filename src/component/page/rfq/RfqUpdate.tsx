@@ -17,13 +17,15 @@ import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import Table from "@/component/util/Table";
 import {rfqInfo} from "@/utils/column/ProjectInfo";
 import moment from "moment/moment";
+import useEventListener from "@/utils/common/function/UseEventListener";
 
 const listType = 'estimateRequestDetailList'
 export default function RqfUpdate({
                                       updateKey = {},
                                       getCopyPage = null,
                                       notificationAlert = null,
-                                      getPropertyId = null
+                                      getPropertyId = null,
+                                      layoutRef
                                   }: any) {
     const groupRef = useRef<any>(null)
     const infoRef = useRef<any>(null)
@@ -171,10 +173,10 @@ export default function RqfUpdate({
 
             const dom = infoRef.current.querySelector('#documentNumberFull');
             console.log(updateKey['rfq_update'],'updateKey[\'rfq_update\']::')
-            notificationAlert('success', '견적의뢰 수정완료',
+            notificationAlert('success', '💾견적의뢰 수정완료',
                 <>
                     <div>Project No. : {dom.value}</div>
-                    <div>등록일자 : {moment().format('HH:mm:ss')}</div>
+                    <div>등록일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                 </>
                 , function () {
                     getPropertyId('rfq_update', updateKey['rfq_update'])
@@ -250,6 +252,19 @@ export default function RqfUpdate({
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
 
+    useEventListener('keydown', (e: any) => {
+        if (e.ctrlKey && e.key === "s") {
+            e.preventDefault();
+            console.log(layoutRef.current,'layoutRef.current:')
+            const model = layoutRef.current.props.model;
+            const activeTab = model.getActiveTabset()?.getSelectedNode();
+            if(activeTab?.renderedName === '견적의뢰 수정'){
+                saveFunc()
+            }
+        }
+    }, typeof window !== 'undefined' ? document : null)
+
+
     return <Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'rfq_update'}/>
         <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
@@ -264,7 +279,7 @@ export default function RqfUpdate({
                 rowGap: 10,
             }}>
 
-                <MainCard title={'견적의뢰 작성'} list={[
+                <MainCard title={'견적의뢰 수정'} list={[
                     {
                         name: '저장',
                         func: saveFunc,
@@ -275,6 +290,13 @@ export default function RqfUpdate({
                     {
                         name: '초기화',
                         func: clearAll,
+                        type: 'danger',
+                        title: '필드에 입력한 모든 정보들을 초기화 합니다.',
+                        prefix: <ClearOutlined/>
+                    },
+                    {
+                        name: '복제',
+                        func: copyPage,
                         type: 'danger',
                         title: '필드에 입력한 모든 정보들을 초기화 합니다.',
                         prefix: <ClearOutlined/>

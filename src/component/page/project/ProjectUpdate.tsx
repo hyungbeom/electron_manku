@@ -18,6 +18,7 @@ import {findCodeInfo} from "@/utils/api/commonApi";
 import SearchInfoModal from "@/component/SearchAgencyModal";
 import moment from "moment/moment";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
+import useEventListener from "@/utils/common/function/UseEventListener";
 
 
 const listType = 'projectDetailList'
@@ -25,8 +26,9 @@ export default function ProjectUpdate({
 
                                           updateKey = {},
                                           getCopyPage = null,
-                                          notificationAlert = null, getPropertyId = null
-                                      }) {
+                                          notificationAlert = null, getPropertyId = null,
+                                          layoutRef
+                                      }:any) {
     const infoRef = useRef<any>(null)
     const tableRef = useRef(null);
 
@@ -184,10 +186,10 @@ export default function ProjectUpdate({
                 const list = fileManage.getFormatFiles(v);
                 setFileList(list)
                 setOriginFileList(v)
-                notificationAlert('success', '프로젝트 수정완료',
+                notificationAlert('success', '💾프로젝트 수정완료',
                     <>
                         <div>Project No. : {dom.value}</div>
-                        <div>Log : {moment().format('HH:mm:ss')}</div>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
                     , function () {
                         getPropertyId('project_update', updateKey['project_update'])
@@ -233,6 +235,18 @@ export default function ProjectUpdate({
         setTableData(commonFunc.repeatObject(projectInfo['write']['defaultData'], 100))
 
     }
+
+    useEventListener('keydown', (e: any) => {
+        if (e.ctrlKey && e.key === "s") {
+            e.preventDefault();
+            console.log(layoutRef.current,'layoutRef.current:')
+            const model = layoutRef.current.props.model;
+            const activeTab = model.getActiveTabset()?.getSelectedNode();
+            if(activeTab?.renderedName === '프로젝트 수정'){
+                saveFunc()
+            }
+        }
+    }, typeof window !== 'undefined' ? document : null)
 
     return <Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'project_update'}/>

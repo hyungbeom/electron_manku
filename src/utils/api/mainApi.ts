@@ -252,15 +252,8 @@ export const saveOrder = async ({data, router, returnFunc}) => {
 
 
 export const updateOrder = async ({data, returnFunc}) => {
-    await getFormData.post('order/updateOrder', data).then(v => {
-        const code = v.data.code;
-        if (code === 1) {
-            window.opener?.postMessage('write', window.location.origin);
-            msg.success('수정되었습니다')
-        } else {
-            msg.error('수정에 실패하였습니다.')
-        }
-        returnFunc(code === 1);
+    return await getFormData.post('order/updateOrder', data).then(v => {
+       return v.data
     });
 };
 

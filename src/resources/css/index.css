@@ -377,3 +377,13 @@ input[type="number"]::-webkit-inner-spin-button {
 .ht_clone_top .colHeader {
     font-size: 12px !important; /* 원하는 크기로 조절 */
 }
+/* 기본 탭 스타일 */
+.flexlayout__tab {
+    transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+/* 활성화된 탭 스타일 */
+.active-tab {
+    background-color: #e6f6ff !important; /* 파란색 배경 */
+
+}

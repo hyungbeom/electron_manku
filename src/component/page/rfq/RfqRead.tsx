@@ -99,7 +99,7 @@ export default function RfqRead({getPropertyId, getCopyPage, notificationAlert =
 
             if(v.code === 1){
                 searchInfo();
-                notificationAlert('error', '프로젝트 삭제완료',
+                notificationAlert('success', '🗑️견적의뢰 삭제완료',
                     <>
                         <div>Inquiry No.
                             - {selectedRows[0]?.documentNumberFull} {selectedRows.length > 1 ? ('외' + " " + (selectedRows.length - 1) + '개') : ''} 이(가)

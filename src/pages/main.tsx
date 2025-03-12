@@ -72,7 +72,7 @@ function findTitleByKey(data, key) {
 export default function Main() {
 
     const [api, contextHolder] = notification.useNotification();
-
+    const [activeTabId, setActiveTabId] = useState<string | null>(null);
     const openNotificationWithIcon = (type, title, description, onClick, style?) => {
         api[type]({
             message: title,
@@ -272,11 +272,12 @@ export default function Main() {
 
     const factory = (node: TabNode) => {
         const componentKey = node.getComponent();
-        return <div style={{padding: '0px 5px 0px 5px'}}>
+        return <div style={{padding: '0px 5px 0px 5px'}} className={`tab-content ${node.getId() === activeTabId ? "active-tab" : ""}`}>
             {/*{tabComponents[componentKey]?.component}*/}
             {React.cloneElement(tabComponents[componentKey].component, {
                 notificationAlert: openNotificationWithIcon,
-                getPropertyId: getPropertyId
+                getPropertyId: getPropertyId,
+                layoutRef : layoutRef
             })}
 
         </div>;
@@ -330,6 +331,9 @@ export default function Main() {
         setCount(v => v + 1)
         setTabs(model.toJson())
         setModel(action);
+        const activeTab = model.getActiveTabset()?.getSelectedNode();
+        setActiveTabId(activeTab ? activeTab.getId() : null);
+
     }
 
     const getRootKeys = (data) => data.map((node) => node.key);
@@ -432,7 +436,14 @@ export default function Main() {
                     </div>
                 </div>}
 
-                <Layout model={model} factory={factory} onModelChange={onLayoutChange} ref={layoutRef} />
+                <Layout model={model} factory={factory} onModelChange={onLayoutChange} ref={layoutRef}
+                        onRenderTab={(node, renderValues:any) => {
+                            // ✅ 활성화된 탭이면 CSS 클래스 추가
+                            if (node.getId() === activeTabId) {
+                                renderValues.className = "active-tab"; // ✅ 동적으로 클래스 추가
+                            }
+                        }}
+                />
 
             </div>
 

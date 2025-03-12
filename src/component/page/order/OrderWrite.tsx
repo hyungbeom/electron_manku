@@ -20,10 +20,11 @@ import Table from "@/component/util/Table";
 import SearchInfoModal from "@/component/SearchAgencyModal";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
+import useEventListener from "@/utils/common/function/UseEventListener";
 
 
 const listType = 'orderDetailList'
-export default function OrderWrite({copyPageInfo, notificationAlert = null, getPropertyId}: any) {
+export default function OrderWrite({copyPageInfo, notificationAlert = null, getPropertyId, layoutRef}: any) {
     const groupRef = useRef<any>(null)
     const tableRef = useRef(null);
     const infoRef = useRef<any>(null)
@@ -116,6 +117,20 @@ export default function OrderWrite({copyPageInfo, notificationAlert = null, getP
     }, [info, memberList]);
 
 
+
+    useEventListener('keydown', (e: any) => {
+        if (e.ctrlKey && e.key === "s") {
+            e.preventDefault();
+            console.log(layoutRef.current,'layoutRef.current:')
+            const model = layoutRef.current.props.model;
+            const activeTab = model.getActiveTabset()?.getSelectedNode();
+            if(activeTab?.renderedName === '발주서 등록'){
+                saveFunc()
+            }
+        }
+    }, typeof window !== 'undefined' ? document : null)
+
+
     async function handleKeyPress(e) {
         if (e.key === 'Enter') {
             switch (e.target.id) {
@@ -186,6 +201,8 @@ export default function OrderWrite({copyPageInfo, notificationAlert = null, getP
         infoData['managerAdminName'] = findMember['name'];
 
         if (!infoData['documentNumberFull']) {
+            const dom = infoRef.current.querySelector('#documentNumberFull');
+            dom.style.borderColor = 'red'
             return message.warn('Inquiry No. 정보가 누락되었습니다.')
         }
         const tableList = tableRef.current?.getSourceData();
@@ -220,10 +237,10 @@ export default function OrderWrite({copyPageInfo, notificationAlert = null, getP
             }).then(v => {
                 const list = fileManage.getFormatFiles(v);
                 setFileList(list)
-                notificationAlert('success', '발주서 등록완료',
+                notificationAlert('success', '💾발주서 등록완료',
                     <>
                         <div>Inquiry No. : {dom.value}</div>
-                        <div>Log : {moment().format('HH:mm:ss')}</div>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
                     , function () {
                         getPropertyId('order_update', data?.orderId)
@@ -234,10 +251,10 @@ export default function OrderWrite({copyPageInfo, notificationAlert = null, getP
             })
             setLoading(false)
         } else {
-            notificationAlert('success', '작업실패',
+            notificationAlert('error', '⚠️작업실패',
                 <>
                     <div>Inquiry No. : {dom.value}</div>
-                    <div>Log : {moment().format('HH:mm:ss')}</div>
+                    <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                 </>
                 , function () {
                     alert('작업 로그 페이지 참고')

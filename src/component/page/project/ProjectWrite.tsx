@@ -24,7 +24,7 @@ import useEventListener from "@/utils/common/function/UseEventListener";
 
 const listType = 'projectDetailList'
 
-function ProjectWrite({copyPageInfo = {}, notificationAlert = null, getPropertyId}: any) {
+function ProjectWrite({copyPageInfo = {}, notificationAlert = null, getPropertyId, layoutRef}: any) {
 
     const [memberList, setMemberList] = useState([]);
 
@@ -161,10 +161,10 @@ function ProjectWrite({copyPageInfo = {}, notificationAlert = null, getPropertyI
             }).then(v => {
                 const list = fileManage.getFormatFiles(v);
                 setFileList(list)
-                notificationAlert('success', '프로젝트 등록완료',
+                notificationAlert('success', '💾프로젝트 등록완료',
                     <>
                         <div>Project No. : {dom.value}</div>
-                        <div>Log : {moment().format('HH:mm:ss')}</div>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
                     , function () {
                         getPropertyId('project_update', data?.projectId)
@@ -197,8 +197,16 @@ function ProjectWrite({copyPageInfo = {}, notificationAlert = null, getPropertyI
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
 
-    useEventListener('contextmenu', (e: any) => {
-        e.preventDefault()
+    useEventListener('keydown', (e: any) => {
+        if (e.ctrlKey && e.key === "s") {
+            e.preventDefault();
+            console.log(layoutRef.current,'layoutRef.current:')
+            const model = layoutRef.current.props.model;
+            const activeTab = model.getActiveTabset()?.getSelectedNode();
+            if(activeTab?.renderedName === '프로젝트 등록'){
+                saveFunc()
+            }
+        }
     }, typeof window !== 'undefined' ? document : null)
 
 

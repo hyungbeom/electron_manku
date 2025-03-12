@@ -233,10 +233,10 @@ export default function EstimateWrite({copyPageInfo = {}, notificationAlert = nu
                 }).then(v => {
                     const list = fileManage.getFormatFiles(v);
                     setFileList(list)
-                    notificationAlert('success', '견적서 등록완료',
+                    notificationAlert('success', '💾견적서 등록완료',
                         <>
                             <div>Inquiry No. : {dom.value}</div>
-                            <div>Log : {moment().format('HH:mm:ss')}</div>
+                            <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                         </>
                         , function () {
                             getPropertyId('estimate_update', entity?.estimateId)
@@ -246,10 +246,10 @@ export default function EstimateWrite({copyPageInfo = {}, notificationAlert = nu
                     setLoading(false)
                 })
             } else {
-                notificationAlert('error', '작업실패',
+                notificationAlert('error', '⚠️작업실패',
                     <>
                         <div>Inquiry No. : {dom.value}</div>
-                        <div>Log : {moment().format('HH:mm:ss')}</div>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
                     , function () {
                         alert('관리자 로그 페이지 참고')

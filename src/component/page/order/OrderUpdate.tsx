@@ -34,9 +34,11 @@ import SearchInfoModal from "@/component/SearchAgencyModal";
 import {DownloadOutlined} from "@ant-design/icons";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
+import useEventListener from "@/utils/common/function/UseEventListener";
+import moment from "moment";
 
 const listType = 'orderDetailList'
-export default function OrderUpdate({updateKey, getCopyPage}) {
+export default function OrderUpdate({updateKey, getCopyPage, layoutRef, notificationAlert, getPropertyId}:any) {
     const groupRef = useRef<any>(null)
     const infoRef = useRef<any>(null)
     const tableRef = useRef(null);
@@ -161,11 +163,60 @@ export default function OrderUpdate({updateKey, getCopyPage}) {
         formData.delete('createdDate')
         formData.delete('modifiedDate')
 
-        await updateOrder({data: formData, returnFunc: returnFunc})
+        await updateOrder({data: formData, returnFunc: returnFunc}).then(async v=>{
+            const dom = infoRef.current.querySelector('#documentNumberFull');
+
+            if(v.code === 1){
+                notificationAlert('success', '💾발주서 수정완료',
+                    <>
+                        <div>Inquiry No. : {dom.value}</div>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                        getPropertyId('order_update', updateKey['order_update'])
+                    },
+                    {cursor: 'pointer'}
+                )
+                await getAttachmentFileList({
+                    data: {
+                        "relatedType": "ORDER",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
+                        "relatedId": info['orderId']
+                    }
+                }).then(v => {
+                    const list = fileManage.getFormatFiles(v);
+                    setFileList(list)
+                    setOriginFileList(list)
+                    setLoading(false)
+                })
+            } else {
+                notificationAlert('error', '⚠️작업실패',
+                    <>
+                        <div>Inquiry No. : {dom.value}</div>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                        getPropertyId('order_update', updateKey['order_update'])
+                    },
+                    {cursor: 'pointer'}
+                )
+                setLoading(false)
+            }
+        })
     }
 
     async function returnFunc(e) {
+        const dom = infoRef.current.querySelector('#documentNumberFull');
         if (e) {
+            notificationAlert('success', '💾발주서 수정완료',
+                <>
+                    <div>Inquiry No. : {dom.value}</div>
+                    <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                </>
+                , function () {
+                    getPropertyId('order_update', updateKey['order_update'])
+                },
+                {cursor: 'pointer'}
+            )
             await getAttachmentFileList({
                 data: {
                     "relatedType": "ORDER",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
@@ -260,6 +311,21 @@ export default function OrderUpdate({updateKey, getCopyPage}) {
     function openModal(e) {
         commonManage.openModal(e, setIsModalOpen)
     }
+
+
+
+    useEventListener('keydown', (e: any) => {
+        if (e.ctrlKey && e.key === "s") {
+            e.preventDefault();
+            console.log(layoutRef.current,'layoutRef.current:')
+            const model = layoutRef.current.props.model;
+            const activeTab = model.getActiveTabset()?.getSelectedNode();
+            if(activeTab?.renderedName === '발주서 수정'){
+                saveFunc()
+            }
+        }
+    }, typeof window !== 'undefined' ? document : null)
+
 
     return <Spin spinning={loading} tip={'LOADING'}>
         <PanelSizeUtil groupRef={groupRef}  storage={'order_update'}/>

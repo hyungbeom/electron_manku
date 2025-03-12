@@ -222,10 +222,10 @@ export default function EstimateUpdate({
                 setFileList(list)
                 setOriginFileList(list);
                 console.log(v.entity?.estimateId,'v.entity?.estimateId??')
-                notificationAlert('success', '견적서 수정완료',
+                notificationAlert('success', '💾견적서 수정완료',
                     <>
                         <div>Inquiry No. : {dom.value}</div>
-                        <div>Log : {moment().format('HH:mm:ss')}</div>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
                     , function () {
                         getPropertyId('estimate_update', updateKey['estimate_update'])
@@ -235,10 +235,10 @@ export default function EstimateUpdate({
                 setLoading(false)
             })
         } else {
-            notificationAlert('error', '작업실패',
+            notificationAlert('error', '⚠️작업실패',
                 <>
                     <div>Inquiry No. : {dom.value}</div>
-                    <div>Log : {moment().format('HH:mm:ss')}</div>
+                    <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                 </>
                 , function () {
                     alert('관리자 로그 페이지 참고')

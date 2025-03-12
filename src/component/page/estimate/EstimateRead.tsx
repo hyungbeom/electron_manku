@@ -103,7 +103,7 @@ export default function EstimateRead({getPropertyId, getCopyPage, notificationAl
         await deleteEstimate({data: {deleteList: deleteList}}).then(v=>{
             if(v.code === 1){
                 searchInfo(true);
-                notificationAlert('error', '프로젝트 삭제완료',
+                notificationAlert('success', '🗑️프로젝트 삭제완료',
                     <>
                         <div>Inquiry No.
                             - {selectedRows[0]?.documentNumberFull} {selectedRows.length > 1 ? ('외' + " " + (selectedRows.length - 1) + '개') : ''} 이(가)

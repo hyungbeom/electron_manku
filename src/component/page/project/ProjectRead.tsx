@@ -92,7 +92,7 @@ export default function ProjectRead({getPropertyId, getCopyPage, notificationAle
 
         await deleteProjectList({data: {deleteList: deleteList}}).then(v => {
             if (v.code === 1) {
-                notificationAlert('error', '프로젝트 삭제완료',
+                notificationAlert('success', '🗑️프로젝트 삭제완료',
                     <>
                         <div>프로젝트 제목
                             - {selectedRows[0].projectTitle} {selectedRows.length > 1 ? ('외' + " " + (selectedRows.length - 1) + '개') : ''} 이(가)

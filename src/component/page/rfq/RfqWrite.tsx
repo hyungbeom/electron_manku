@@ -18,9 +18,10 @@ import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {rfqInfo} from "@/utils/column/ProjectInfo";
 import Table from "@/component/util/Table";
+import useEventListener from "@/utils/common/function/UseEventListener";
 
 const listType = 'estimateRequestDetailList'
-export default function RqfWrite({copyPageInfo = {}, notificationAlert = null, getPropertyId}: any) {
+export default function RqfWrite({copyPageInfo = {}, notificationAlert = null, getPropertyId, layoutRef}: any) {
     const groupRef = useRef<any>(null)
 
     const [memberList, setMemberList] = useState([]);
@@ -164,10 +165,10 @@ export default function RqfWrite({copyPageInfo = {}, notificationAlert = null, g
 
             if (v.code === 1) {
                 const {documentNumberFull, estimateRequestId} = v.data;
-                notificationAlert('success', '견적의뢰 등록완료',
+                notificationAlert('success', '💾견적의뢰 등록완료',
                     <>
                         <div>Project No. : {documentNumberFull}</div>
-                        <div>등록일자 : {moment().format('HH:mm:ss')}</div>
+                        <div>등록일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
                     , function () {
                         getPropertyId('rfq_update', estimateRequestId)
@@ -233,6 +234,17 @@ export default function RqfWrite({copyPageInfo = {}, notificationAlert = null, g
 
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
+    useEventListener('keydown', (e: any) => {
+        if (e.ctrlKey && e.key === "s") {
+            e.preventDefault();
+            console.log(layoutRef.current,'layoutRef.current:')
+            const model = layoutRef.current.props.model;
+            const activeTab = model.getActiveTabset()?.getSelectedNode();
+            if(activeTab?.renderedName === '견적의뢰 등록'){
+                saveFunc()
+            }
+        }
+    }, typeof window !== 'undefined' ? document : null)
 
     return <Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef}  storage={'rfq_write'}/>
