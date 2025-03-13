@@ -10,6 +10,7 @@ import {orderInfo} from "@/utils/column/ProjectInfo";
 
 export const findCodeInfo = async (event, setInfo, openModal, infoRef?) => {
 
+
     getData.post(modalList[event.target.id]?.url, {
         "searchType": "1",
         "searchText": event.target.value,       // 대리점코드 or 대리점 상호명

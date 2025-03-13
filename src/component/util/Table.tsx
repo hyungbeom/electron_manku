@@ -171,6 +171,50 @@ const Table = forwardRef(({
             td.innerText = value || "";
         }
     };
+
+
+    const iconRenderer = (instance, td, row, col, prop, value, cellProperties) => {
+        td.innerHTML = ""; // 기존 내용 초기화
+        td.style.position = "relative"; // 셀 내부에서 상대 위치 지정
+        td.style.overflow = "visible"; // 아이콘이 잘리지 않도록 설정
+
+        const totalColumns = instance.countCols(); // 전체 컬럼 개수
+        if (col === totalColumns - 1) {
+            // 🔥 마지막 열이면 아이콘 추가 X
+            td.innerText = value || "";
+            return td;
+        }
+
+        // 🔹 기존 텍스트 추가
+        const textNode = document.createElement("span");
+        textNode.innerText = value || ""; // 값이 없으면 빈 문자열
+        textNode.style.display = "inline-block";
+        textNode.style.paddingRight = "20px"; // 아이콘과 텍스트 간격 확보
+
+        // 🔹 아이콘 추가 (ℹ️ - 정보 아이콘)
+        const icon:any = document.createElement("span");
+        icon.innerHTML = "🔍"; // 텍스트 아이콘
+        icon.style.position = "absolute";
+        icon.style.opacity = 0.7;
+        icon.style.right = "5px"; // 🔥 우측에 고정
+        icon.style.top = "50%";
+        icon.style.transform = "translateY(-50%)"; // 수직 중앙 정렬
+        icon.style.cursor = "pointer";
+        icon.style.color = "#007bff"; // 아이콘 색상
+        icon.style.fontSize = "14px";
+
+        icon.addEventListener("click", (event) => {
+            event.stopPropagation(); // 셀 클릭 이벤트 방지
+            alert(`문의번호: ${value}`);
+        });
+
+        // 🔹 요소 추가
+        td.appendChild(textNode);
+        td.appendChild(icon);
+
+        return td;
+    };
+
     return (
         <div ref={tableContainerRef} className="table-container" style={{width: '100%', overflowX: 'auto'}}>
             <div style={{display: 'flex', justifyContent: 'end'}}>
@@ -222,7 +266,6 @@ const Table = forwardRef(({
                 }}
                 rowHeaders={true}
 
-
                 headerClassName="htLeft"
                 manualRowMove={true}
                 manualRowResize={true}
@@ -239,6 +282,7 @@ const Table = forwardRef(({
 
                 afterColumnResize={afterColumnResize}
                 afterChange={afterChange}
+
                 columns={column["columnList"].map(col => {
                     return ({
                         data: col.data,
@@ -250,7 +294,7 @@ const Table = forwardRef(({
                         dateFormat: col.type === "date" ? "YYYY-MM-DD" : undefined,
                         // correctFormat: col.data === "marginRate" ? true : undefined, // 🔥 숫자가 올바른 형식이 아니면 자동 수정
                         numericFormat: col.data === "marginRate" ? {pattern: "0.00%", suffix: "%"} : undefined, // 🔥 소수점 둘째 자리 고정 + % 유지
-                        renderer: col.data === "marginRate" ? percentRenderer : col.type, // 🔥 커스텀 렌더러 적용
+                        renderer: col.data === "marginRate" ? percentRenderer : (col.data === 'connectInquiryNo' ? iconRenderer : col.type), // 🔥 커스텀 렌더러 적용
                         readOnly: col.readOnly,
                     })
                 })}

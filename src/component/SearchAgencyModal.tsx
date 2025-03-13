@@ -44,6 +44,7 @@ export default function SearchInfoModal({
             switch (firstTrueKey) {
                 case 'customerName' :
                 case 'agencyCode' :
+                case 'maker' :
                     searchFunc(firstTrueKey, dom.value)
                     setCode(dom.value)
 
@@ -75,7 +76,6 @@ export default function SearchInfoModal({
     }, [open, info])
 
     useEffect(() => {
-        // setCode(info);
     }, [info])
 
     async function searchFunc(v, text) {
