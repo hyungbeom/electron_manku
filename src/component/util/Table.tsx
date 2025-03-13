@@ -187,8 +187,8 @@ const Table = forwardRef(({
         td.style.position = "relative"; // 셀 내부에서 상대 위치 지정
         td.style.overflow = "visible"; // 아이콘이 잘리지 않도록 설정
 
-        const totalColumns = instance.countCols(); // 전체 컬럼 개수
-        if (col === totalColumns - 1) {
+        const totalColumns = instance.countRows(); // 전체 컬럼 개수
+        if (row === totalColumns - 1) {
             // 🔥 마지막 열이면 아이콘 추가 X
             td.innerText = value || "";
             return td;
