@@ -81,7 +81,7 @@ export const saveRemittance = async ({data, router}) => {
 export const saveProject = async ({data, router, returnFunc}) => {
     await getFormData.post('project/addProject', data).then(v => {
         const {code, message, entity} = v.data;
-        returnFunc(code, entity)
+        returnFunc(code, entity, message)
     });
 };
 export const saveStore = async ({data, router}) => {

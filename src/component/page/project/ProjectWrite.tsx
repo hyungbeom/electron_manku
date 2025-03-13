@@ -21,6 +21,7 @@ import {getAttachmentFileList, saveProject} from "@/utils/api/mainApi";
 import SearchInfoModal from "@/component/SearchAgencyModal";
 import useEventListener from "@/utils/common/function/UseEventListener";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
+import {RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
 
 
 const listType = 'projectDetailList'
@@ -151,7 +152,7 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         await saveProject({data: formData, router: router, returnFunc: returnFunc})
     }
 
-    async function returnFunc(e, data) {
+    async function returnFunc(e, data, msg) {
         const dom = infoRef.current.querySelector('#documentNumberFull');
         if (e === 1) {
             await getAttachmentFileList({
@@ -176,9 +177,11 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
             })
 
             setLoading(false)
-        }
-        if (e === -20001) {
+        } else if (e === -20001) {
             dom.style.borderColor = 'red'
+            message.error(msg)
+        }else{
+            message.error(msg)
         }
         setLoading(false)
     }
@@ -225,11 +228,11 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
 
         }}>
             <MainCard title={'프로젝트 등록'} list={[
-                {name: '저장', func: saveFunc, type: 'primary'},
-                {name: '초기화', func: clearAll, type: 'danger'}
+                {name: <div><SaveOutlined style={{paddingRight : 8}} />저장</div>, func: saveFunc, type: 'primary'},
+                {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'}
             ]} mini={mini} setMini={setMini}>
 
-                {mini ? <div>
+            {mini ? <div>
                         <TopBoxCard title={''} grid={'100px 80px 80px'}>
                             {datePickerForm({
                                 title: '작성일자',
