@@ -30,22 +30,15 @@ export const findCodeInfo = async (event, setInfo, openModal, infoRef?) => {
             switch (event.target.id) {
                 case 'agencyCode' : {
                     const {agencyId, agencyCode, agencyName, currencyUnit, email, managerName, phoneNumber} = data[0];
-                    // console.log(data[0],'data[0]:')
-                    // const returnDocumentNumb = await checkInquiryNo({data: {agencyCode: agencyCode, type: type}})
-                    setInfo(v => {
-                        return {
-                            ...v,
-                            // documentNumberFull: type === 'ESTIMATE' ? v.documentNumberFull : returnDocumentNumb,
-                            agencyId: agencyId,
-                            agencyCode: agencyCode,
-                            agencyName: commonManage.checkValue(agencyName),
-                            agencyManagerName: commonManage.checkValue(managerName),
-                            agencyManagerEmail: commonManage.checkValue(email),
-                            currencyUnit: commonManage.checkValue(currencyUnit),
-                            agencyManagerPhoneNumber: commonManage.checkValue(phoneNumber)
-                        }
-                    });
-
+                    commonManage.setInfo(infoRef, {
+                        agencyId: agencyId,
+                        agencyCode: agencyCode,
+                        agencyName: commonManage.checkValue(agencyName),
+                        agencyManagerName: commonManage.checkValue(managerName),
+                        agencyManagerEmail: commonManage.checkValue(email),
+                        currencyUnit: commonManage.checkValue(currencyUnit),
+                        agencyManagerPhoneNumber: commonManage.checkValue(phoneNumber)
+                    })
                 }
 
                     break;
