@@ -37,11 +37,11 @@ export const findCodeInfo = async (event, setInfo, openModal, type?, setValidate
                             // documentNumberFull: type === 'ESTIMATE' ? v.documentNumberFull : returnDocumentNumb,
                             agencyId: agencyId,
                             agencyCode: agencyCode,
-                            agencyName: agencyName,
-                            agencyManagerName: managerName,
-                            agencyManagerEmail: email,
-                            currencyUnit: currencyUnit,
-                            agencyManagerPhoneNumber: phoneNumber
+                            agencyName: commonManage.checkValue(agencyName),
+                            agencyManagerName: commonManage.checkValue(managerName),
+                            agencyManagerEmail: commonManage.checkValue(email),
+                            currencyUnit: commonManage.checkValue(currencyUnit),
+                            agencyManagerPhoneNumber: commonManage.checkValue(phoneNumber)
                         }
                     });
 

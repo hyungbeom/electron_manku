@@ -114,7 +114,7 @@ export default function EstimateUpdate({
         setLoading(true)
         getDataInfo().then(v => {
             const {estimateDetail, attachmentFileList} = v;
-            console.log(estimateDetail,'estimateDetail:')
+            console.log(estimateDetail,'estissmateDetail:')
             setFileList(fileManage.getFormatFiles(attachmentFileList));
             setOriginFileList(attachmentFileList)
             setInfo({

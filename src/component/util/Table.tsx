@@ -36,8 +36,6 @@ const Table = forwardRef(({
 
     const tableContainerRef = useRef(null);
 
-    console.log(data, 'tableData:')
-
     const tableData = useMemo(() => {
         const keyOrder = Object.keys(column['defaultData']);
         return data

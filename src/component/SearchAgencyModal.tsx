@@ -299,7 +299,6 @@ export default function SearchInfoModal({
                                              }
                                          }).then(data => {
 
-                                             console.log(e?.data?.managerName, ' e?.data?.managerName:')
                                              commonManage.setInfo(infoRef, {
                                                  agencyManagerId: commonManage.checkValue(e.data.agencyId),
                                                  agencyCode: commonManage.checkValue(e.data.agencyCode),
