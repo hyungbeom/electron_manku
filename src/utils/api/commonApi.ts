@@ -39,6 +39,10 @@ export const findCodeInfo = async (event, setInfo, openModal, infoRef?) => {
                         currencyUnit: commonManage.checkValue(currencyUnit),
                         agencyManagerPhoneNumber: commonManage.checkValue(phoneNumber)
                     })
+
+
+
+
                 }
 
                     break;
@@ -59,14 +63,13 @@ export const findCodeInfo = async (event, setInfo, openModal, infoRef?) => {
 
                 case 'maker' :
                     const {makerName, item, instructions} = data[0];
-                    setInfo(v => {
-                        return {
-                            ...v,
-                            maker: makerName,
-                            item: item,
-                            instructions: instructions,
-                        }
+                    commonManage.setInfo(infoRef, {
+                        maker: makerName,
+                        item: item,
+                        instructions: instructions,
                     })
+
+
                     break;
 
             }

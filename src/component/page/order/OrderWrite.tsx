@@ -180,7 +180,7 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
                     break;
                 case 'agencyCode' :
 
-                    await findCodeInfo(e, setInfo, openModal, '')
+                    await findCodeInfo(e, setInfo, openModal, infoRef)
                     break;
             }
         }

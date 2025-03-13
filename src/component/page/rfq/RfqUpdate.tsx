@@ -126,7 +126,7 @@ export default function RqfUpdate({
                 case 'agencyCode' :
                 case 'customerName' :
                 case 'maker' :
-                    await findCodeInfo(e, setInfo, openModal, '')
+                    await findCodeInfo(e, setInfo, openModal, infoRef)
                     break;
             }
         }

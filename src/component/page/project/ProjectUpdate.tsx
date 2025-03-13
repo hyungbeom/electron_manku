@@ -131,7 +131,7 @@ export default function ProjectUpdate({
                 case 'agencyCode' :
                 case 'customerName' :
                 case 'maker' :
-                    await findCodeInfo(e, setInfo, openModal)
+                    await findCodeInfo(e, setInfo, openModal, infoRef)
                     break;
             }
         }

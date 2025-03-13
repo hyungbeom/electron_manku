@@ -73,6 +73,7 @@ commonManage.setInfo = function (infoRef, obj, adminId?) {
     const result = Object.keys(obj).map(v => `#${v}`)
     const test = `${result.join(',')}`;
 
+    console.log(test,'::::')
     if (test) {
         const elements = infoRef.current.querySelectorAll(test);
 

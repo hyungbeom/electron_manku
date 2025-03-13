@@ -117,7 +117,7 @@ export default function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: 
                 case 'agencyCode' :
                 case 'customerName' :
                 case 'maker' :
-                    await findCodeInfo(e, setInfo, openModal, '')
+                    await findCodeInfo(e, setInfo, openModal, infoRef)
                     break;
             }
         }
@@ -279,6 +279,8 @@ export default function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: 
                     }
                 ]} mini={mini} setMini={setMini}>
 
+                    <div id={'agencyId'}/>
+                    <div id={'agencyManagerPhoneNumber'}/>
 
                     {mini ? <div>
                             <TopBoxCard title={''} grid={'100px 80px 80px 110px 110px 300px'}>

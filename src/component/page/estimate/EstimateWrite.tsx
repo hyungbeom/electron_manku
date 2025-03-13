@@ -143,7 +143,7 @@ export default function EstimateWrite({copyPageInfo = {},  getPropertyId, layout
                 case 'agencyCode' :
                 case 'customerName' :
                 case 'maker' :
-                    await findCodeInfo(e, setInfo, openModal, 'ESTIMATE')
+                    await findCodeInfo(e, setInfo, openModal, infoRef)
                     break;
                 case 'connectDocumentNumberFull' :
                     await getData.post('estimate/getEstimateRequestDetail', {
