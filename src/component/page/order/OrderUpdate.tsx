@@ -329,10 +329,10 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
 
     return <Spin spinning={loading} tip={'LOADING'}>
         <PanelSizeUtil groupRef={groupRef}  storage={'order_update'}/>
-        <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
-                         open={isModalOpen}
+        {(isModalOpen['event1'] || isModalOpen['event2'] )&&<SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
+                          open={isModalOpen}
 
-                         setIsModalOpen={setIsModalOpen}/>
+                          setIsModalOpen={setIsModalOpen}/>}
         <>
             {isModalOpen['event3'] &&
                 <PrintPo data={info} infoRef={infoRef} tableRef={tableRef}  isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} memberList={memberList}/>}

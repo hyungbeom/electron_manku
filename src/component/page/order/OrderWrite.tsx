@@ -39,7 +39,7 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
 
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
-    const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
+    const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false, event3: false});
     const [memberList, setMemberList] = useState([]);
     const [originFileList, setOriginFileList] = useState([]);
     useEffect(() => {
@@ -273,7 +273,7 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
 
 
     function printPo() {
-        setIsModalOpen({event1: false, event2: true});
+        setIsModalOpen({event1: false, event2: false, event3: true});
     }
 
 
@@ -283,12 +283,12 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
 
     return <Spin spinning={loading} tip={'LOADING'}>
         <PanelSizeUtil groupRef={groupRef} storage={'order_write'}/>
-        <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
-                         open={isModalOpen}
+        {(isModalOpen['event1'] || isModalOpen['event2'] )&&<SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
+                                                                             open={isModalOpen}
 
-                         setIsModalOpen={setIsModalOpen}/>
+                                                                             setIsModalOpen={setIsModalOpen}/>}
         <>
-            {isModalOpen['event2'] &&
+            {isModalOpen['event3'] &&
                 <PrintPo data={info} infoRef={infoRef} tableRef={tableRef} isModalOpen={isModalOpen}
                          setIsModalOpen={setIsModalOpen} memberList={memberList}/>}
             <div ref={infoRef} style={{
