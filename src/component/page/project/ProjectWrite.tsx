@@ -113,7 +113,7 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                 case 'agencyCode' :
                 case 'customerName' :
                 case 'maker' :
-                    await findCodeInfo(e, setInfo, openModal)
+                    await findCodeInfo(e, setInfo, openModal, infoRef)
                     break;
             }
         }

@@ -8,7 +8,7 @@ import {inputForm} from "@/utils/commonForm";
 import {orderInfo} from "@/utils/column/ProjectInfo";
 
 
-export const findCodeInfo = async (event, setInfo, openModal, type?, setValidate?) => {
+export const findCodeInfo = async (event, setInfo, openModal, infoRef?) => {
 
     getData.post(modalList[event.target.id]?.url, {
         "searchType": "1",
@@ -46,28 +46,21 @@ export const findCodeInfo = async (event, setInfo, openModal, type?, setValidate
                     });
 
                 }
-                    if (setValidate) {
-                        setValidate(v => {
-                            return {...v, agencyCode: true, documentNumberFull: true}
-                        })
 
-                    }
                     break;
                 case 'customerName' :
                     const {customerName, managerName, directTel, faxNumber, email, paymentMethod} = data[0];
-                    console.log(paymentMethod, 'customerName~~~~')
-                    setInfo(v => {
-                        return {
-                            ...v,
-                            customerName: customerName,
-                            managerName: managerName,
-                            phoneNumber: directTel,
-                            faxNumber: faxNumber,
-                            customerManagerEmail: email,
-                            paymentTerms: paymentMethod ? paymentMethod : '발주시 50% / 납품시 50%',
-
-                        }
+                    commonManage.setInfo(infoRef, {
+                        phoneNumber: directTel,
+                        customerName: customerName,
+                        customerManagerEmail: email,
+                        customerManagerName: managerName,
+                        faxNumber: faxNumber,
+                        managerName: managerName,
+                        customerManagerPhone: directTel,
+                        paymentTerms: paymentMethod ? paymentMethod : '발주시 50% / 납품시 50%',
                     })
+
                     break;
 
                 case 'maker' :
