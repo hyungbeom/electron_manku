@@ -166,7 +166,7 @@ const Table = forwardRef(({
 
     const percentRenderer = (instance, td, row, col, prop, value, cellProperties) => {
         if (typeof value === "number") {
-            td.innerText = `${value.toFixed(2)}%`; // 🔥 100 곱하지 않고 그대로 % 붙이기
+            td.innerText = `${value}%`; // 🔥 100 곱하지 않고 그대로 % 붙이기
         } else {
             td.innerText = value || "";
         }
@@ -293,7 +293,7 @@ const Table = forwardRef(({
                         allowHtml: true,
                         dateFormat: col.type === "date" ? "YYYY-MM-DD" : undefined,
                         // correctFormat: col.data === "marginRate" ? true : undefined, // 🔥 숫자가 올바른 형식이 아니면 자동 수정
-                        numericFormat: col.data === "marginRate" ? {pattern: "0.00%", suffix: "%"} : undefined, // 🔥 소수점 둘째 자리 고정 + % 유지
+                        numericFormat: col.data === "marginRate" ? {pattern: "0%", suffix: "%"} : undefined, // 🔥 소수점 둘째 자리 고정 + % 유지
                         renderer: col.data === "marginRate" ? percentRenderer : (col.data === 'connectInquiryNo' ? iconRenderer : col.type), // 🔥 커스텀 렌더러 적용
                         readOnly: col.readOnly,
                     })
