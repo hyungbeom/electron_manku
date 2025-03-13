@@ -1010,109 +1010,99 @@ export const rfqReadColumns = [
         maxWidth: 120,
     },
     {
-        headerName: '고객사',
-        children: [
-            {
-                headerName: '고객사명',
-                field: 'customerName',
-                minWidth: 100,
-                maxWidth: 120,
-                // cellStyle: { backgroundColor: "#f4e7d5" }
-            },
-            {
-                headerName: '담당자',
-                field: 'managerName',
-                minWidth: 100,
-                maxWidth: 120,
-            },
-            {
-                headerName: '연락처',
-                field: 'phoneNumber',
-                minWidth: 100,
-                maxWidth: 120,
-            },
-        ]
+        headerName: '고객사명',
+        field: 'customerName',
+        minWidth: 100,
+        maxWidth: 120,
+        // cellStyle: { backgroundColor: "#f4e7d5" }
+    },
+    {
+        headerName: '담당자',
+        field: 'managerName',
+        minWidth: 100,
+        maxWidth: 120,
+    },
+    {
+        headerName: '연락처',
+        field: 'phoneNumber',
+        minWidth: 100,
+        maxWidth: 120,
     },
 
     {
-        headerName: '물품',
-        children: [
-            {
-                headerName: 'Maker',
-                field: 'maker',
-                minWidth: 200,
-            },
-            {
-                headerName: 'Item',
-                field: 'item',
-                minWidth: 200,
-            },
-            {
-                headerName: 'Model',
-                field: 'model',
-                minWidth: 200,
-                cellStyle: {
-                    "white-space": "pre-wrap", // ✅ 줄바꿈 유지
-                    "overflow": "hidden",     // ✅ 넘치는 부분 숨김
-                },
-                onCellClicked: handleCellClick, // ✅ 셀 클릭 시 처리
-                onCellMouseOut: handleCellMouseOut, // ✅ 셀 밖으로 이동 시 처리
-            },
-            {
-                headerName: '수량',
-                field: 'quantity',
-                minWidth: 60,
-                maxWidth: 120,
-                valueFormatter: numberFormat,
-            },
-            {
-                headerName: '단위',
-                field: 'unit',
-                minWidth: 60,
-                maxWidth: 120,
-                cellEditor: 'agSelectCellEditor',
-                cellEditorParams: {
-                    values: ['ea', 'Set', 'Pack', 'Can', 'Box', 'MOQ', 'Meter', 'Feet', 'Inch', 'Roll', 'g', 'kg', 'oz', '직접입력'],
-                }
-            },
-            {
-                headerName: 'CURR',
-                field: 'currency',
-                minWidth: 60,
-                maxWidth: 120,
-                cellEditor: 'agSelectCellEditor',
-                cellEditorParams: {
-                    values: ['KRW', 'EUR', 'JPY', 'USD', 'GBP',],
-                }
-            },
-            {
-                headerName: '매입 단가',
-                field: 'net',
-                minWidth: 60,
-                maxWidth: 120,
-                valueFormatter: params => commonManage.calcFloat(params, 2),
-                cellStyle: {textAlign: 'right'}
-            },
-            {
-                headerName: '납기',
-                field: 'deliveryDate',
-                minWidth: 100,
-                maxWidth: 120,
-                cellEditor: 'agDateCellEditor',
-                cellEditorParams: {
-                    min: '2023-01-01',
-                    max: '2028-12-31',
-                }
-            },
+        headerName: 'Maker',
+        field: 'maker',
+        minWidth: 200,
+    },
+    {
+        headerName: 'Item',
+        field: 'item',
+        minWidth: 200,
+    },
+    {
+        headerName: 'Model',
+        field: 'model',
+        minWidth: 200,
+        cellStyle: {
+            "white-space": "pre-wrap", // ✅ 줄바꿈 유지
+            "overflow": "hidden",     // ✅ 넘치는 부분 숨김
+        },
+        onCellClicked: handleCellClick, // ✅ 셀 클릭 시 처리
+        onCellMouseOut: handleCellMouseOut, // ✅ 셀 밖으로 이동 시 처리
+    },
+    {
+        headerName: '수량',
+        field: 'quantity',
+        minWidth: 60,
+        maxWidth: 120,
+        valueFormatter: numberFormat,
+    },
+    {
+        headerName: '단위',
+        field: 'unit',
+        minWidth: 60,
+        maxWidth: 120,
+        cellEditor: 'agSelectCellEditor',
+        cellEditorParams: {
+            values: ['ea', 'Set', 'Pack', 'Can', 'Box', 'MOQ', 'Meter', 'Feet', 'Inch', 'Roll', 'g', 'kg', 'oz', '직접입력'],
+        }
+    },
+    {
+        headerName: 'CURR',
+        field: 'currency',
+        minWidth: 60,
+        maxWidth: 120,
+        cellEditor: 'agSelectCellEditor',
+        cellEditorParams: {
+            values: ['KRW', 'EUR', 'JPY', 'USD', 'GBP',],
+        }
+    },
+    {
+        headerName: '매입 단가',
+        field: 'net',
+        minWidth: 60,
+        maxWidth: 120,
+        valueFormatter: params => commonManage.calcFloat(params, 2),
+        cellStyle: {textAlign: 'right'}
+    },
+    {
+        headerName: '납기',
+        field: 'deliveryDate',
+        minWidth: 100,
+        maxWidth: 120,
+        cellEditor: 'agDateCellEditor',
+        cellEditorParams: {
+            min: '2023-01-01',
+            max: '2028-12-31',
+        }
+    },
 
-            {
-                headerName: '회신여부',
-                field: 'content',
-                minWidth: 120,
-                maxWidth: 120,
-                // cellStyle: { backgroundColor: "#f4e7d5" }
-            },
-        ]
+    {
+        headerName: '회신여부',
+        field: 'content',
+        minWidth: 120,
+        maxWidth: 120,
+        // cellStyle: { backgroundColor: "#f4e7d5" }
     },
 
 
