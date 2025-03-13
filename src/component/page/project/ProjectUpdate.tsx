@@ -237,30 +237,18 @@ export default function ProjectUpdate({
 
     }
 
-    const [isKeyDown, setIsKeyDown] = useState(false);
+
 
     useEventListener('keydown', (e: any) => {
-        e.preventDefault();
         if (e.ctrlKey && e.key === "s") {
-            if (!isKeyDown) { // ✅ 처음 눌렀을 때만 실행
-                setIsKeyDown(true);
-                const model = layoutRef.current.props.model;
-                const activeTab = model.getActiveTabset()?.getSelectedNode();
-                if(activeTab?.renderedName === '프로젝트 수정'){
-                    saveFunc()
-                }
+            e.preventDefault();
+            const model = layoutRef.current.props.model;
+            const activeTab = model.getActiveTabset()?.getSelectedNode();
+            if(activeTab?.renderedName === '발주서 수정'){
+                saveFunc()
             }
-
         }
     }, typeof window !== 'undefined' ? document : null)
-
-
-    useEventListener('keyup', (e: any) => {
-        if (e.key === "s") {
-            setIsKeyDown(false);
-        }
-    }, typeof window !== 'undefined' ? document : null)
-
 
     return <Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'project_update'}/>
