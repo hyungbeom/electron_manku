@@ -21,7 +21,7 @@ import moment from "moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 
 
-export default function HcodeRead({getPropertyId}) {
+export default function HcodeRead({getPropertyId, getCopyPage}) {
     const notificationAlert = useNotificationAlert();
     const gridRef = useRef(null);
     const [mini, setMini] = useState(true);
