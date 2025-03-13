@@ -9,7 +9,7 @@ import renderers = Handsontable.renderers;
 import moment from "moment/moment";
 import {tableButtonList} from "@/utils/commonForm";
 import {projectInfo} from "@/utils/column/ProjectInfo";
-import {commonManage} from "@/utils/commonManage";
+import {commonFunc, commonManage} from "@/utils/commonManage";
 import EstimateListModal from "@/component/EstimateListModal";
 import OrderListModal from "@/component/OrderListModal";
 import Button from "antd/lib/button";
@@ -313,7 +313,7 @@ const Table = forwardRef(({
         if (!file) return;
 
         const reader = new FileReader();
-        reader.onload = (e) => {
+        reader.onload = (e:any) => {
             const data = new Uint8Array(e.target.result);
             const workbook = XLSX.read(data, { type: "array" });
             const sheetName = workbook.SheetNames[0]; // 첫 번째 시트 선택
@@ -331,7 +331,7 @@ const Table = forwardRef(({
             const dateColumns = ["requestDeliveryDate", 'replyDate'];
 
             // ✅ 컬럼 매핑 (엑셀 헤더 → 내부 객체 키값)
-            const excelHeaders = rawData[0]; // 첫 번째 행 (엑셀의 원래 컬럼명)
+            const excelHeaders:any = rawData[0]; // 첫 번째 행 (엑셀의 원래 컬럼명)
             const mappedHeaders = excelHeaders.map(header =>
                 Object.keys(column['mapping']).find(key => column['mapping'][key] === header) || header
             );
@@ -357,10 +357,21 @@ const Table = forwardRef(({
 
             console.log('!!!!!!!!!!!!!')
             console.log(formattedData)
-            console.log('!!!!!!!!!!!!!')
+            const instance = hotRef.current.hotInstance;
+            const currentList = instance.getSourceData();
+            const filterList = currentList.filter(v=> !!v?.model || v?.connectInquiryNo)
+            const filterList2 = formattedData.filter(v=> !!v?.model || v?.connectInquiryNo)
+            console.log(filterList,'!!!!!!!!!!!!!')
+            console.log(filterList2,'!!!!!!!!!!!!!')
+
+            const count = filterList.length + filterList2.length
 
             // ✅ 변환된 데이터를 계산 및 저장
-            const resultlist = calcData(formattedData);
+            const resultlist = calcData([...filterList, ...filterList2, ...commonFunc.repeatObject(column['defaultData'], 100 - count)]);
+
+            console.log(resultlist,'resultlist:')
+            // setTableData(commonFunc.repeatObject(column['defaultData'], 100 - count))
+
             setTableData(resultlist);
         };
 
