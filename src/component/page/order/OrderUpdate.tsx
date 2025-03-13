@@ -89,7 +89,7 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
 
     const [mini, setMini] = useState(true);
     const [customerData, setCustomerData] = useState<any>(printEstimateInitial)
-    const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false});
+    const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false, event3: false});
     const [fileList, setFileList] = useState();
     const [originFileList, setOriginFileList] = useState();
     const [loading, setLoading] = useState(false);
@@ -99,7 +99,6 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
         setLoading(true)
         getDataInfo().then(v => {
             const {orderDetail, attachmentFileList} = v;
-            console.log(orderDetail,'attachmentFialeList:')
             setFileList(fileManage.getFormatFiles(attachmentFileList));
             setOriginFileList(attachmentFileList);
             setInfo({
@@ -107,7 +106,6 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
                 uploadType: 4,
                 managerAdminId: orderDetail['managerAdminId'] ? orderDetail['managerAdminId'] : ''
             })
-            console.log(orderDetail,'orderDetail[listType]:')
             orderDetail[listType] = [...orderDetail[listType], ...commonFunc.repeatObject(orderInfo['write']['defaultData'], 100 - orderDetail[listType].length)]
 
             setTableData(orderDetail[listType]);
@@ -238,11 +236,11 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
 
     async function printTransactionStatement() {
         await searchCustomer();
-        setIsModalOpen({event1: true, event2: false});
+        setIsModalOpen({event1: true, event2: false, event3: false});
     }
 
     function printPo() {
-        setIsModalOpen({event1: false, event2: true});
+        setIsModalOpen({event1: false, event2: false, event3: true});
     }
 
     async function searchCustomer() {
@@ -320,7 +318,6 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
     useEventListener('keydown', (e: any) => {
         if (e.ctrlKey && e.key === "s") {
             e.preventDefault();
-            console.log(layoutRef.current,'layoutRef.current:')
             const model = layoutRef.current.props.model;
             const activeTab = model.getActiveTabset()?.getSelectedNode();
             if(activeTab?.renderedName === '발주서 수정'){
@@ -337,7 +334,7 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
 
                          setIsModalOpen={setIsModalOpen}/>
         <>
-            {isModalOpen['event2'] &&
+            {isModalOpen['event3'] &&
                 <PrintPo data={info} infoRef={infoRef} tableRef={tableRef}  isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} memberList={memberList}/>}
             <div ref={infoRef} style={{
                 display: 'grid',
@@ -456,6 +453,7 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
                                             <option value={'현금결제'}>현금결제</option>
                                             <option value={'선수금'}>선수금</option>
                                             <option value={'정기결제'}>정기결제</option>
+                                            <option value={'By in advance T/T'} style={{color : 'lightGray'}}>By in advance T/T</option>
                                         </select>
                                     </div>
                                     {inputForm({

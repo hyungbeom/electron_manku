@@ -294,7 +294,7 @@ const EstimatePaper = ({infoRef, pdfRef, pdfSubRef, tableRef, memberList = [], c
                         </div>
                     </div>
 
-                    <div style={{fontSize: 40, fontWeight: 700}}>견적서</div>
+                    <div style={{fontSize: 38, fontWeight: 700}}>견&nbsp;&nbsp;&nbsp;&nbsp;적&nbsp;&nbsp;&nbsp;&nbsp;서</div>
                     <div style={{width: '40%'}}>
                         <img src={'/manku_stamp_ko.png'} style={{float: 'right'}} width={180} alt=""/>
                     </div>

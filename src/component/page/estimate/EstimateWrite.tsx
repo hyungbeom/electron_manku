@@ -269,6 +269,10 @@ export default function EstimateWrite({copyPageInfo = {},  getPropertyId, layout
                     )
                     setLoading(false)
                 })
+            } else if(code === -20001){
+                dom.style.borderColor = 'red';
+                message.error(msg);
+                setLoading(false)
             } else {
                 notificationAlert('error', '⚠️작업실패',
                     <>

@@ -403,11 +403,11 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
                     </button>
                 </div>
             </div>}
-            onCancel={() => setIsModalOpen({event1: false, event2: false})}
-            open={isModalOpen?.event2}
+            onCancel={() => setIsModalOpen({event1: false, event2: false, event3: false})}
+            open={isModalOpen?.event3}
             width={1100}
             footer={null}
-            onOk={() => setIsModalOpen({event1: false, event2: false})}
+            onOk={() => setIsModalOpen({event1: false, event2: false, event3: false})}
         >
             <div ref={pdfRef} style={{
                 width: '1000px',  // A4 가로
