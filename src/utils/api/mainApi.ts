@@ -12,7 +12,7 @@ export const checkInquiryNo = async ({data}) => {
 export const saveRfq = async ({data}) => {
     return await getFormData.post('estimate/addEstimateRequest', data).then(v => {
 
-return v.data
+        return v.data
     }, err => {
 
         console.log(err)
@@ -58,7 +58,7 @@ export const deleteRfq = async ({
 
 
 // =================================================================================================
-export const    saveEstimate = async ({data}) => {
+export const saveEstimate = async ({data}) => {
     return await getFormData.post('estimate/addEstimate', data).then(v => {
 
         return v.data
@@ -170,7 +170,7 @@ export const deleteProjectList = async ({
     }
                                         }) => {
 
-  return  await getData.post('project/deleteProjectDetails', data).then(v => {
+    return await getData.post('project/deleteProjectDetails', data).then(v => {
         return v.data
     }, err => msg.error(err))
 };
@@ -250,7 +250,7 @@ export const saveOrder = async ({data, router, returnFunc}) => {
 
 export const updateOrder = async ({data, returnFunc}) => {
     return await getFormData.post('order/updateOrder', data).then(v => {
-       return v.data
+        return v.data
     });
 };
 
@@ -278,19 +278,10 @@ export const deleteOrder = async ({
     }, err => msg.error(err))
 };
 
-export const deleteHsCodeList = async ({
-                                           data, returnFunc = function (e) {
-    }
-                                       }) => {
+export const deleteHsCodeList = async ({data,}) => {
 
-    await getData.post('hsCode/deleteHsCodes', data).then(v => {
-        const code = v.data.code;
-        if (code === 1) {
-            msg.success('삭제되었습니다.')
-        } else {
-            msg.error('오류가 발생하였습니다. 다시 시도해주세요.')
-        }
-        returnFunc(code === 1);
+    return await getData.post('hsCode/deleteHsCodes', data).then(v => {
+        return v.data
     }, err => msg.error(err))
 };
 

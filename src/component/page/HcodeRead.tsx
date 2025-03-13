@@ -14,11 +14,15 @@ import TableGrid from "@/component/tableGrid";
 import {inputForm, MainCard, TopBoxCard} from "@/utils/commonForm";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import Spin from "antd/lib/spin";
-import {CopyOutlined} from "@ant-design/icons";
+import {CopyOutlined, ExclamationCircleOutlined} from "@ant-design/icons";
 import {deleteHsCodeList, searchHSCode, searchMaker} from "@/utils/api/mainApi";
+import Popconfirm from "antd/lib/popconfirm";
+import moment from "moment";
+import {useNotificationAlert} from "@/component/util/NoticeProvider";
 
 
 export default function HcodeRead({getPropertyId, getCopyPage}) {
+    const notificationAlert = useNotificationAlert();
     const gridRef = useRef(null);
     const [mini, setMini] = useState(true);
 
@@ -92,7 +96,6 @@ export default function HcodeRead({getPropertyId, getCopyPage}) {
 
 
 
-
     async function deleteList() {
         if (gridRef.current.getSelectedRows().length < 1) {
             return message.error('삭제할 데이터를 선택해주세요.')
@@ -101,7 +104,24 @@ export default function HcodeRead({getPropertyId, getCopyPage}) {
 
         const selectedRows = gridRef.current.getSelectedRows();
         const deleteList = selectedRows.map(v => v.hsCodeId)
-        await deleteHsCodeList({data: {hsCodeIdList: deleteList}, returnFunc: searchInfo});
+        await deleteHsCodeList({data: {hsCodeIdList: deleteList}}).then(v=>{
+            console.log(v,'v:::::')
+            if(v.code === 1){
+                searchInfo(true);
+                notificationAlert('success', '🗑️발주서 삭제완료',
+                    <>
+                        <div>Inquiry No.
+                            - {selectedRows[0]?.documentNumberFull} {selectedRows.length > 1 ? ('외' + " " + (selectedRows.length - 1) + '개') : ''} 이(가)
+                            삭제되었습니다
+                        </div>
+                        {/*<div>프로젝트 제목 - {selectedRows[0].projectTitle} `${selectedRows.length > 1 ? ('외' + (selectedRows.length - 1)) + '개' : ''}`가 삭제되었습니다 </div>*/}
+                        <div>삭제일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                    },
+                )
+            }
+        })
     }
 
     function clearAll() {
@@ -160,15 +180,20 @@ export default function HcodeRead({getPropertyId, getCopyPage}) {
                     </> : null}
                 </MainCard>
                 {/*@ts-ignored*/}
-                <TableGrid deleteComp={<Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
-                                               onClick={deleteList}>
-                    <CopyOutlined/>삭제
-                </Button>}
+                <TableGrid deleteComp={<Popconfirm
+                    title="삭제하시겠습니까?"
+                    onConfirm={deleteList}
+                    icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
+
+                    {/*@ts-ignored*/}
+                    <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}>삭제</Button>
+                </Popconfirm>
+                }
                            totalRow={totalRow}
                            gridRef={gridRef}
                            columns={tableCodeReadColumns}
                            onGridReady={onGridReady}
-                           funcButtons={['hsDelete', 'print']}/>
+                           funcButtons={['agPrint']}/>
             </div>
         </>
     </Spin>
