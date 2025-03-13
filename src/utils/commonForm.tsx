@@ -86,10 +86,6 @@ export function BoxCard({children, title = null, tooltip = '', disabled = false}
                  headStyle={{backgroundColor: '#bae7ff'}}
                  title={title ? <div style={{display: 'flex', justifyContent: 'space-between', fontSize: 13}}>
                      <span>{title}</span>
-                     <Tooltip style={{fontSize: 12}} title={<div style={{fontSize: 12}}>{tooltip}</div>} color={'cyan'}
-                              key={uuid()}>
-                         <InfoCircleOutlined style={{cursor: 'pointer'}}/>
-                     </Tooltip>
                  </div> : null}>
         {/*@ts-ignore*/}
         <div style={disabled ? disabledStyle : defaultStyle}>
@@ -343,8 +339,8 @@ export const textAreaForm = ({
                                  maxLength = 1000,
                                  defaultValue = null
                              }) => {
-    function change(e){
-        if(onChange){
+    function change(e) {
+        if (onChange) {
             onChange(e)
         }
     }
