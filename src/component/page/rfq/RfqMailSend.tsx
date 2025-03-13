@@ -15,12 +15,15 @@ import {commonManage, gridManage} from "@/utils/commonManage";
 import {useRouter} from "next/router";
 import Spin from "antd/lib/spin";
 import Button from "antd/lib/button";
-import {CopyOutlined} from "@ant-design/icons";
+import {CopyOutlined, ExclamationCircleOutlined} from "@ant-design/icons";
 import {getData} from "@/manage/function/api";
+import {useNotificationAlert} from "@/component/util/NoticeProvider";
+import Popconfirm from "antd/lib/popconfirm";
+import moment from "moment";
 
 
-export default function RfqMailSend({getPropertyId}) {
-
+export default function RfqMailSend({getPropertyId}:any) {
+    const notificationAlert = useNotificationAlert();
     const gridRef = useRef(null);
     const [mini, setMini] = useState(true);
     const copyInit = _.cloneDeep(subRfqReadMailInitial)
@@ -121,7 +124,34 @@ export default function RfqMailSend({getPropertyId}) {
             estimateRequestId: 'estimateRequestId',
             estimateRequestDetailId: 'estimateRequestDetailId'
         });
-        await deleteRfq({data: {deleteList: deleteList}, returnFunc: searchInfo});
+        const selectedRows = gridRef.current.getSelectedRows();
+
+        await deleteRfq({data: {deleteList: deleteList}}).then((v:any)=>{
+
+            if(v.code === 1){
+                searchInfo();
+                notificationAlert('success', '🗑️견적의뢰 삭제완료',
+                    <>
+                        <div>Inquiry No.
+                            - {selectedRows[0]?.documentNumberFull} {selectedRows.length > 1 ? ('외' + " " + (selectedRows.length - 1) + '개') : ''} 이(가)
+                            삭제되었습니다
+                        </div>
+                        {/*<div>프로젝트 제목 - {selectedRows[0].projectTitle} `${selectedRows.length > 1 ? ('외' + (selectedRows.length - 1)) + '개' : ''}`가 삭제되었습니다 </div>*/}
+                        <div>삭제일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                    },
+                )
+            }else{
+                message.error(v.message)
+            }
+        })
+
+
+
+
+
+
 
     }
 
@@ -192,10 +222,14 @@ export default function RfqMailSend({getPropertyId}) {
                         : <></>}
                 </MainCard>
                 {/*@ts-ignored*/}
-                <TableGrid deleteComp={<Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
-                                               onClick={deleteList}>
-                    <CopyOutlined/>삭제
-                </Button>}
+                <TableGrid deleteComp={    <Popconfirm
+                    title="삭제하시겠습니까?"
+                    onConfirm={deleteList}
+                    icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
+
+                    {/*@ts-ignored*/}
+                    <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}>삭제</Button>
+                </Popconfirm>}
                            totalRow={totalRow}
                            getPropertyId={getPropertyId}
                            gridRef={gridRef}

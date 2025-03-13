@@ -20,12 +20,13 @@ import message from "antd/lib/message";
 import {getAttachmentFileList, saveProject} from "@/utils/api/mainApi";
 import SearchInfoModal from "@/component/SearchAgencyModal";
 import useEventListener from "@/utils/common/function/UseEventListener";
+import {useNotificationAlert} from "@/component/util/NoticeProvider";
 
 
 const listType = 'projectDetailList'
 
-function ProjectWrite({copyPageInfo = {}, notificationAlert = null, getPropertyId, layoutRef}: any) {
-
+function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
+    const notificationAlert = useNotificationAlert();
     const [memberList, setMemberList] = useState([]);
 
     useEffect(() => {
@@ -200,18 +201,18 @@ function ProjectWrite({copyPageInfo = {}, notificationAlert = null, getPropertyI
     useEventListener('keydown', (e: any) => {
         if (e.ctrlKey && e.key === "s") {
             e.preventDefault();
-            console.log(layoutRef.current,'layoutRef.current:')
+            console.log(layoutRef.current, 'layoutRef.current:')
             const model = layoutRef.current.props.model;
             const activeTab = model.getActiveTabset()?.getSelectedNode();
-            if(activeTab?.renderedName === '프로젝트 등록'){
+            if (activeTab?.renderedName === '프로젝트 등록') {
                 saveFunc()
             }
         }
     }, typeof window !== 'undefined' ? document : null)
 
 
-
     return <Spin spinning={loading}>
+
         <PanelSizeUtil groupRef={groupRef} storage={'project_write'}/>
         <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
                          open={isModalOpen}
@@ -329,7 +330,7 @@ function ProjectWrite({copyPageInfo = {}, notificationAlert = null, getPropertyI
                                 <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}
                                          disabled={!userInfo['microsoftId']}>
 
-                                        <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}/>
+                                    <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}/>
 
                                 </BoxCard>
                             </Panel>
@@ -340,10 +341,12 @@ function ProjectWrite({copyPageInfo = {}, notificationAlert = null, getPropertyI
                     : <></>}
             </MainCard>
 
-            <Table data={tableData} column={projectInfo['write']} funcButtons={['print']} ref={tableRef} type={'project_write_column'}/>
+            <Table data={tableData} column={projectInfo['write']} funcButtons={['print']} ref={tableRef}
+                   type={'project_write_column'}/>
         </div>
     </Spin>
 }
 
 
 export default memo(ProjectWrite)
+

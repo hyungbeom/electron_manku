@@ -28,11 +28,12 @@ import Table from "@/component/util/Table";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import useEventListener from "@/utils/common/function/UseEventListener";
+import {useNotificationAlert} from "@/component/util/NoticeProvider";
 
 
 const listType = 'estimateDetailList'
-export default function EstimateWrite({copyPageInfo = {}, notificationAlert = null, getPropertyId, layoutRef}:any) {
-
+export default function EstimateWrite({copyPageInfo = {},  getPropertyId, layoutRef}:any) {
+    const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
 
     const [memberList, setMemberList] = useState([]);
@@ -517,10 +518,9 @@ export default function EstimateWrite({copyPageInfo = {}, notificationAlert = nu
                                                     openModal('maker');
                                                 }
                                             }>🔍</span>,
-
-                                            onChange: onChange, handleKeyPress: handleKeyPress, data: info
+                                            handleKeyPress: handleKeyPress
                                         })}
-                                        {inputForm({title: 'Item', id: 'item', onChange: onChange, data: info})}
+                                        {inputForm({title: 'Item', id: 'item'})}
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>

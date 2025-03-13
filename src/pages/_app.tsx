@@ -7,6 +7,7 @@ import Script from "next/script";
 import {useRouter} from "next/router";
 import Head from 'next/head';
 import "flexlayout-react/style/light.css";
+import {NoticeProvider} from "@/component/util/NoticeProvider";
 
 
 
@@ -37,8 +38,9 @@ function App({Component, pageProps = {title: ''}, ...rest}: any) {
             <meta property="og:url" content="https://manku.progist.co.kr/homepage"/>
         </Head>
         <Provider store={store}>
-
+            <NoticeProvider>
             <Component {...pageProps} />
+            </NoticeProvider>
         </Provider>
     </>
 

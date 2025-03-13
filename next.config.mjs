@@ -26,7 +26,6 @@ const nextConfig = {
 
 // withTM을 사용하여 필요한 모듈을 추가한 nextConfig를 내보냄
 export default withTM([
-    'antd',
     'rc-util',         // rc-util을 포함하여 트랜스파일
     'xlsx',
     'flexlayout-react',

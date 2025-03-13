@@ -36,9 +36,11 @@ import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import useEventListener from "@/utils/common/function/UseEventListener";
 import moment from "moment";
+import {useNotificationAlert} from "@/component/util/NoticeProvider";
 
 const listType = 'orderDetailList'
-export default function OrderUpdate({updateKey, getCopyPage, layoutRef, notificationAlert, getPropertyId}:any) {
+export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}:any) {
+    const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
     const infoRef = useRef<any>(null)
     const tableRef = useRef(null);
@@ -97,7 +99,7 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, notifica
         setLoading(true)
         getDataInfo().then(v => {
             const {orderDetail, attachmentFileList} = v;
-            console.log(orderDetail,'attachmentFileList:')
+            console.log(orderDetail,'attachmentFialeList:')
             setFileList(fileManage.getFormatFiles(attachmentFileList));
             setOriginFileList(attachmentFileList);
             setInfo({
@@ -105,6 +107,7 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, notifica
                 uploadType: 4,
                 managerAdminId: orderDetail['managerAdminId'] ? orderDetail['managerAdminId'] : ''
             })
+            console.log(orderDetail,'orderDetail[listType]:')
             orderDetail[listType] = [...orderDetail[listType], ...commonFunc.repeatObject(orderInfo['write']['defaultData'], 100 - orderDetail[listType].length)]
 
             setTableData(orderDetail[listType]);

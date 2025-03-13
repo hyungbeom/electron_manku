@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {memo, useEffect, useRef, useState} from "react";
 import {tableEstimateReadColumns} from "@/utils/columnList";
 import {estimateDetailUnit, estimateReadInitial} from "@/utils/initialList";
 import Button from "antd/lib/button";
@@ -17,9 +17,11 @@ import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import Popconfirm from "antd/lib/popconfirm";
 import moment from "moment";
+import {useNotificationAlert} from "@/component/util/NoticeProvider";
 
 
-export default function EstimateRead({getPropertyId, getCopyPage, notificationAlert = null}:any) {
+function EstimateRead({getPropertyId, getCopyPage, }:any) {
+    const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
     const router = useRouter();
     const countRef = useRef(1);
@@ -251,3 +253,4 @@ export default function EstimateRead({getPropertyId, getCopyPage, notificationAl
     </Spin>
 }
 
+export default memo(EstimateRead);

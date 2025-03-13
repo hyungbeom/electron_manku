@@ -19,9 +19,11 @@ import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {rfqInfo} from "@/utils/column/ProjectInfo";
 import Table from "@/component/util/Table";
 import useEventListener from "@/utils/common/function/UseEventListener";
+import {useNotificationAlert} from "@/component/util/NoticeProvider";
 
 const listType = 'estimateRequestDetailList'
-export default function RqfWrite({copyPageInfo = {}, notificationAlert = null, getPropertyId, layoutRef}: any) {
+export default function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
+    const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
 
     const [memberList, setMemberList] = useState([]);

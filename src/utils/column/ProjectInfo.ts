@@ -203,7 +203,7 @@ export const estimateInfo = {
             {data: "total", type: "numeric", readOnly: true},
             {data: "net", type: "numeric"},
             {data: "totalNet", type: "numeric", readOnly: true},
-            {data: "marginRate", type: "text"},
+            {data: "marginRate", type: "numeric"},
 
         ],
         defaultData: {
@@ -213,6 +213,7 @@ export const estimateInfo = {
             "currency": '',          // CURR
             "net": '',                 // 매입단가
             "unitPrice": '',           // 단가
+            "marginRate": '',           // 단가
         },
         excelExpert: (v, i) => {
             v['total'] = `=B${i + 1}*E${i + 1}`
@@ -254,12 +255,15 @@ export const estimateInfo = {
         "writtenDate": moment().format('YYYY-MM-DD'),    // 작성일
         "documentNumberFull": "", // Inquiry No.
         "agencyCode": "",            // 대리점코드
+        "agencyName": "",
         "agencyManagerName": "",
         "agencyManagerEmail": "",
+        "deliveryTerms": "",
         "agencyManagerPhoneNumber": "",
         "customerCode": "",             // CUSTOMER 코드
         "customerName": "",    // 상호명
         "customerManagerEmail": "",    // 상호명
+        "managerEmail": "",    // 상호명
         "managerName": "",      // 담당자
         "phoneNumber": "",  // 연락처
         "faxNumber": "",                // 팩스번호
@@ -278,6 +282,7 @@ export const estimateInfo = {
         "remarks": "",          // 비고란
         "currencyUnit": "",          // 비고란
         'count': 0,
+        attnTo : '',
         uploadType: 3
     },
 };

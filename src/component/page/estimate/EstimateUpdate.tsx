@@ -30,16 +30,17 @@ import Table from "@/component/util/Table";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import moment from "moment/moment";
+import useEventListener from "@/utils/common/function/UseEventListener";
+import {useNotificationAlert} from "@/component/util/NoticeProvider";
 
 const listType = 'estimateDetailList'
 export default function EstimateUpdate({
                                            dataInfo = {estimateDetail: [], attachmentFileList: []},
                                            updateKey = {},
 
-                                           getCopyPage = null,
-                                           notificationAlert = null, getPropertyId
+                                           getCopyPage = null, getPropertyId,layoutRef
                                        }:any) {
-
+    const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
 
 
@@ -121,8 +122,8 @@ export default function EstimateUpdate({
                 uploadType: 3,
                 managerAdminId: estimateDetail['managerAdminId'] ? estimateDetail['managerAdminId'] : ''
             })
+            console.log(estimateDetail,'estimateDetail:')
             estimateDetail[listType] = [...estimateDetail[listType], ...commonFunc.repeatObject(rfqInfo['write']['defaultData'], 100 - estimateDetail[listType].length)]
-
             setTableData(estimateDetail[listType]);
 
             setLoading(false)
@@ -347,6 +348,20 @@ export default function EstimateUpdate({
         document.body.innerHTML = originalContents;
         location.reload();
     }
+
+
+    useEventListener('keydown', (e: any) => {
+        if (e.ctrlKey && e.key === "s") {
+            e.preventDefault();
+            const model = layoutRef.current.props.model;
+            const activeTab = model.getActiveTabset()?.getSelectedNode();
+            if(activeTab?.renderedName === '견적서 수정'){
+                saveFunc()
+            }
+        }
+    }, typeof window !== 'undefined' ? document : null)
+
+
 
     function EstimateModal() {
         return <Modal

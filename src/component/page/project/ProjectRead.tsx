@@ -2,7 +2,7 @@ import React, {useRef, useState} from "react";
 import {projectReadColumn} from "@/utils/columnList";
 import {projectDetailUnit, projectReadInitial} from "@/utils/initialList";
 import Button from "antd/lib/button";
-import {CopyOutlined, ExclamationCircleOutlined} from "@ant-design/icons";
+import {ExclamationCircleOutlined} from "@ant-design/icons";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
 import {deleteProjectList, searchProject} from "@/utils/api/mainApi";
@@ -15,9 +15,10 @@ import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import Popconfirm from "antd/lib/popconfirm";
 import moment from "moment";
+import {useNotificationAlert} from "@/component/util/NoticeProvider";
 
-export default function ProjectRead({getPropertyId, getCopyPage, notificationAlert = null}) {
-
+export default function ProjectRead({getPropertyId, getCopyPage}) {
+    const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
 
     const gridRef = useRef(null);
@@ -32,7 +33,6 @@ export default function ProjectRead({getPropertyId, getCopyPage, notificationAle
     const onGridReady = async (params) => {
         gridRef.current = params.api;
         await searchProject({data: projectReadInitial}).then(v => {
-            console.log(v.data, 'v.data:')
             params.api.applyTransaction({add: v.data})
             setTotalRow(v.pageInfo.totalRow)
         })
@@ -105,7 +105,7 @@ export default function ProjectRead({getPropertyId, getCopyPage, notificationAle
                     },
                 )
                 searchInfo(true)
-            }else{
+            } else {
                 message.error(v.message)
             }
         })
@@ -175,7 +175,7 @@ export default function ProjectRead({getPropertyId, getCopyPage, notificationAle
                             </Panel>
                             <PanelResizeHandle/>
                             <Panel defaultSize={sizes[2]} minSize={5}>
-                                <BoxCard  tooltip={tooltipInfo('readAgency')}>
+                                <BoxCard tooltip={tooltipInfo('readAgency')}>
                                     {inputForm({
                                         title: '매입처명',
                                         id: 'searchAgencyName',

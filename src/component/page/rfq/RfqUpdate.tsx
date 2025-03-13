@@ -18,15 +18,17 @@ import Table from "@/component/util/Table";
 import {rfqInfo} from "@/utils/column/ProjectInfo";
 import moment from "moment/moment";
 import useEventListener from "@/utils/common/function/UseEventListener";
+import {useNotificationAlert} from "@/component/util/NoticeProvider";
 
 const listType = 'estimateRequestDetailList'
 export default function RqfUpdate({
                                       updateKey = {},
                                       getCopyPage = null,
-                                      notificationAlert = null,
                                       getPropertyId = null,
                                       layoutRef
                                   }: any) {
+
+    const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
     const infoRef = useRef<any>(null)
     const tableRef = useRef(null);

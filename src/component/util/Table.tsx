@@ -36,6 +36,7 @@ const Table = forwardRef(({
 
     const tableContainerRef = useRef(null);
 
+    console.log(data, 'tableData:')
 
     const tableData = useMemo(() => {
         const keyOrder = Object.keys(column['defaultData']);
@@ -105,8 +106,10 @@ const Table = forwardRef(({
 
             if (colName === "관련링크") { // ✅ 특정 컬럼인지 확인
 
-                if (typeof cellValue === "string" && cellValue.startsWith("http")) {
-                    window.open(cellValue, "_blank"); // ✅ 새 탭에서 URL 열기
+                if (typeof cellValue === "string" && (cellValue.includes('http') || cellValue.includes('www'))) {
+                    const fixedUrl = cellValue.startsWith("http://") || cellValue.startsWith("https://") ? cellValue : `https://${cellValue}`;
+
+                    window.open(fixedUrl, "_blank"); // ✅ 새 탭에서 URL 열기
                 }
             }
             if (colName === '단위') {
@@ -141,7 +144,7 @@ const Table = forwardRef(({
     function afterColumnResize(column, newSize) {
         if (hotRef.current) {
 
-            const totalColumns  =hotRef.current.hotInstance.countCols();
+            const totalColumns = hotRef.current.hotInstance.countCols();
             const columnWidths = [];
 
             for (let col = 0; col < totalColumns; col++) {
@@ -155,13 +158,21 @@ const Table = forwardRef(({
     // 🔹 1. 컬럼 넓이를 `localStorage`에서 불러오기
     const getStoredColumnWidths = () => {
         const storedWidths = localStorage.getItem(type);
-        console.log(storedWidths,'storedWidths:')
+        console.log(storedWidths, 'storedWidths:')
         return storedWidths ? JSON.parse(storedWidths) : column["columnWidth"]; // 저장된 값이 없으면 기본값 사용
     };
 
     const storedColumnWidths = useMemo(() => {
         return getStoredColumnWidths()
     }, [type]);
+
+    const percentRenderer = (instance, td, row, col, prop, value, cellProperties) => {
+        if (typeof value === "number") {
+            td.innerText = `${value.toFixed(2)}%`; // 🔥 100 곱하지 않고 그대로 % 붙이기
+        } else {
+            td.innerText = value || "";
+        }
+    };
     return (
         <div ref={tableContainerRef} className="table-container" style={{width: '100%', overflowX: 'auto'}}>
             <div style={{display: 'flex', justifyContent: 'end'}}>
@@ -240,10 +251,12 @@ const Table = forwardRef(({
                         allowHtml: true,
                         dateFormat: col.type === "date" ? "YYYY-MM-DD" : undefined,
                         // correctFormat: col.data === "marginRate" ? true : undefined, // 🔥 숫자가 올바른 형식이 아니면 자동 수정
-                        numericFormat: col.data === "marginRate" ? {pattern: "0%", suffix: "%"} : undefined, // 🔥 소수점 둘째 자리 고정 + % 유지
+                        numericFormat: col.data === "marginRate" ? {pattern: "0.00%", suffix: "%"} : undefined, // 🔥 소수점 둘째 자리 고정 + % 유지
+                        renderer: col.data === "marginRate" ? percentRenderer : col.type, // 🔥 커스텀 렌더러 적용
                         readOnly: col.readOnly,
                     })
                 })}
+
                 afterRenderer={afterRenderer} // 🔥 특정 컬럼에 스타일 직접 적용
                 licenseKey="non-commercial-and-evaluation"
             />

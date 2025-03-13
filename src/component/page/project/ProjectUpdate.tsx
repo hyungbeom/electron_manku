@@ -19,16 +19,17 @@ import SearchInfoModal from "@/component/SearchAgencyModal";
 import moment from "moment/moment";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import useEventListener from "@/utils/common/function/UseEventListener";
+import {useNotificationAlert} from "@/component/util/NoticeProvider";
 
 
 const listType = 'projectDetailList'
 export default function ProjectUpdate({
 
                                           updateKey = {},
-                                          getCopyPage = null,
-                                          notificationAlert = null, getPropertyId = null,
+                                          getCopyPage = null, getPropertyId = null,
                                           layoutRef
                                       }:any) {
+    const notificationAlert = useNotificationAlert();
     const infoRef = useRef<any>(null)
     const tableRef = useRef(null);
 
@@ -141,6 +142,7 @@ export default function ProjectUpdate({
         commonManage.openModal(e, setIsModalOpen)
     }
 
+    const compareRef = useRef();
 
     async function saveFunc() {
         let infoData = commonManage.getInfo(infoRef, projectWriteInitial);
@@ -236,17 +238,30 @@ export default function ProjectUpdate({
 
     }
 
+    const [isKeyDown, setIsKeyDown] = useState(false);
+
     useEventListener('keydown', (e: any) => {
+        e.preventDefault();
         if (e.ctrlKey && e.key === "s") {
-            e.preventDefault();
-            console.log(layoutRef.current,'layoutRef.current:')
-            const model = layoutRef.current.props.model;
-            const activeTab = model.getActiveTabset()?.getSelectedNode();
-            if(activeTab?.renderedName === '프로젝트 수정'){
-                saveFunc()
+            if (!isKeyDown) { // ✅ 처음 눌렀을 때만 실행
+                setIsKeyDown(true);
+                const model = layoutRef.current.props.model;
+                const activeTab = model.getActiveTabset()?.getSelectedNode();
+                if(activeTab?.renderedName === '프로젝트 수정'){
+                    saveFunc()
+                }
             }
+
         }
     }, typeof window !== 'undefined' ? document : null)
+
+
+    useEventListener('keyup', (e: any) => {
+        if (e.key === "s") {
+            setIsKeyDown(false);
+        }
+    }, typeof window !== 'undefined' ? document : null)
+
 
     return <Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'project_update'}/>

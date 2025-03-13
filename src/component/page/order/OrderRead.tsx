@@ -16,9 +16,11 @@ import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import Popconfirm from "antd/lib/popconfirm";
 import moment from "moment/moment";
+import {useNotificationAlert} from "@/component/util/NoticeProvider";
 
 
-export default function OrderRead({getPropertyId, getCopyPage, notificationAlert = null}:any) {
+export default function OrderRead({getPropertyId, getCopyPage}:any) {
+    const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
 
     const gridRef = useRef(null);

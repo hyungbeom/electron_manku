@@ -21,10 +21,12 @@ import SearchInfoModal from "@/component/SearchAgencyModal";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import useEventListener from "@/utils/common/function/UseEventListener";
+import {useNotificationAlert} from "@/component/util/NoticeProvider";
 
 
 const listType = 'orderDetailList'
-export default function OrderWrite({copyPageInfo, notificationAlert = null, getPropertyId, layoutRef}: any) {
+export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
+    const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
     const tableRef = useRef(null);
     const infoRef = useRef<any>(null)

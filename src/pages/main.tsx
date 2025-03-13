@@ -2,7 +2,7 @@ import LayoutComponent from "@/component/LayoutComponent";
 import {wrapper} from "@/store/store";
 import React, {useEffect, useMemo, useRef, useState} from "react";
 import {DownOutlined} from "@ant-design/icons";
-import {Actions, Layout, Model, TabNode} from "flexlayout-react";
+import {Actions, DockLocation, Layout, Model, TabNode} from "flexlayout-react";
 import Tree from "antd/lib/tree/Tree";
 import ProjectWrite from "@/component/page/project/ProjectWrite";
 import ProjectRead from "@/component/page/project/ProjectRead";
@@ -48,7 +48,7 @@ import DomesticCustomerUpdate from "@/component/page/data/customer/domestic/Dome
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import StoreUpdate from "@/component/page/store/StoreUpdate";
 import {useRouter} from "next/router";
-import notification from "antd/lib/notification";
+import {notification} from "antd";
 
 
 function findTitleByKey(data, key) {
@@ -70,19 +70,20 @@ function findTitleByKey(data, key) {
 
 
 export default function Main() {
+    const modelRef = useRef(Model.fromJson({
+        global: {},
+        borders: [],
+        layout: {
+            type: "row",
+            weight: 100,
+            children: [{ type: "tabset", weight: 50, children: [] }],
+        },
+    }));
 
-    const [api, contextHolder] = notification.useNotification();
+
+
     const [activeTabId, setActiveTabId] = useState<string | null>(null);
-    const openNotificationWithIcon = (type, title, description, onClick, style?) => {
-        api[type]({
-            message: title,
-            description:
-            description,
-            onClick: onClick,
-            duration: 10,
-            style: style
-        });
-    };
+
 
 
     const layoutRef = useRef<any>(null);
@@ -90,36 +91,17 @@ export default function Main() {
     const userInfo = useAppSelector((state) => state.user);
     const router = useRouter();
     const [selectMenu, setSelectMenu] = useState('')
-    const [count, setCount] = useState(0)
-    const [tabs, setTabs] = useState({
-        global: {},
-        borders: [],
-        layout: {
-            type: "row",
-            weight: 100,
-            children: [
-                {
-                    type: "tabset",
-                    weight: 50,
-                    children: [],
-                },
-            ],
-        },
-    });
 
-    const [model, setModel] = useState<any>(Model.fromJson(tabs));
 
     const tabCounts = useMemo(() => {
         let tabCount = 0;
-
-
-        model.visitNodes((node) => {
+        modelRef.current.visitNodes((node) => {
             if (node.getType() === "tab") {
                 tabCount++;
             }
         });
-        return tabCount
-    }, [count]);
+        return tabCount;
+    }, [modelRef.current.toJson()]); // 🔥 model이 변경될 때만 실행
 
     const [updateKey, setUpdateKey] = useState({})
     const [copyPageInfo, setCopyPageInfo] = useState({})
@@ -143,36 +125,40 @@ export default function Main() {
     const onSelect = (selectedKeys, event?) => {
         const selectedKey = selectedKeys[0];
 
-        const result = model.toJson().layout.children.map((v) => {
-            return v.children.map((src) => src.component);
-        });
-
+        // 🔥 modelRef.current 사용하여 불필요한 JSON 변환 제거
+        const existingTabs = modelRef.current.getRoot().getChildren().flatMap(tabset =>
+            tabset.getChildren().map((tab:any) => tab.getComponent())
+        );
 
         const title = findTitleByKey(treeData, selectedKey);
 
         if (title) {
-            setSelectMenu(title);
-            updateSelectTab();
+            if (selectMenu !== title) {
+                setSelectMenu(title);
+                updateSelectTab();
+            }
         } else {
-            const result = updateList.find(v => v.key === selectedKey)
-            setSelectMenu(result?.title);
+            const result = updateList.find(v => v.key === selectedKey);
+            if (result?.title && selectMenu !== result.title) {
+                setSelectMenu(result.title);
+            }
         }
 
-        if (event?.event === 'select') {
-            let copyObject = _.cloneDeep(copyPageInfo);
-            copyObject[selectedKey] = {};
-            setCopyPageInfo(copyObject);
+        // if (event?.event === 'select') {
+            // 🔥 useRef 활용하여 불필요한 리렌더링 방지
+            if (!copyPageInfo[selectedKey]) {
+                setCopyPageInfo(prev => ({ ...prev, [selectedKey]: {} }));
+            }
+        // }
+
+        // 🔥 이미 존재하는 탭이면 추가하지 않음
+        if (existingTabs.includes(selectedKey)) {
+            return;
         }
 
-
-        if (result.flat().includes(selectedKey)) {
-            return; // 이미 존재하면 추가하지 않음
-        }
-
-
-        // 선택한 항목이 등록된 탭인지 확인
+        // 선택한 항목이 등록된 탭인지 확인 후 추가
         if (tabComponents[selectedKey]) {
-            addTab(selectedKey)
+            addTab(selectedKey);
         }
     };
     const tabComponents = {
@@ -272,69 +258,69 @@ export default function Main() {
 
     const factory = (node: TabNode) => {
         const componentKey = node.getComponent();
-        return <div style={{padding: '0px 5px 0px 5px'}} className={`tab-content ${node.getId() === activeTabId ? "active-tab" : ""}`}>
+        return <div style={{padding: '0px 5px 0px 5px'}}
+                    className={`tab-content ${node.getId() === activeTabId ? "active-tab" : ""}`}>
             {/*{tabComponents[componentKey]?.component}*/}
             {React.cloneElement(tabComponents[componentKey].component, {
-                notificationAlert: openNotificationWithIcon,
                 getPropertyId: getPropertyId,
-                layoutRef : layoutRef
+                layoutRef: layoutRef
             })}
-
         </div>;
     };
 
-    function addTab(selectedKey) {
-        const updatedLayout = _.cloneDeep(tabs);
-        const firstObject = updatedLayout.layout.children[0];
+    const addTab = (selectedKey) => {
+        if (!tabComponents[selectedKey]) return;
 
-        let newTab = {
+        const model = modelRef.current;
+        if (!model || !(model instanceof Model)) {
+            console.error("❌ modelRef.current가 Model 인스턴스가 아닙니다!", model);
+            return;
+        }
+
+        const rootNode = model.getRoot();
+        const tabset = rootNode.getChildren()[0]; // 첫 번째 tabset 가져오기
+        if (!tabset) return;
+
+        // 🔥 이미 존재하는 탭인지 확인
+        // @ts-ignored
+        const existingTabs = tabset.getChildren().map(tab => tab.getComponent());
+        if (existingTabs.includes(selectedKey)) {
+            return; // 이미 있으면 추가하지 않음
+        }
+
+        // 새로운 탭 추가
+        const newTab = {
             type: "tab",
             name: tabComponents[selectedKey].name,
             component: selectedKey,
-            enableRename: false
+            enableRename: false,
         };
 
-        const remainingObjects = updatedLayout.layout.children.slice(1);
-
-        updatedLayout.layout.children = [
-            {
-                ...firstObject,
-                children: [...firstObject.children, newTab],
-            },
-            ...remainingObjects,
-        ];
-
-        const updatedModel = Model.fromJson(updatedLayout);
-        setModel(updatedModel);
-        setTabs(updatedLayout);
-    }
-
+        // 🔥 올바른 DockLocation 객체 사용
+        model.doAction(Actions.addNode(newTab, tabset.getId(), DockLocation.CENTER, -1, true));
+    };
     useEffect(() => {
         updateSelectTab();
-    }, [selectMenu, model, updateKey]);
+    }, [selectMenu]);
 
-    function updateSelectTab() {
-        const rootNode = model.getRoot();
+    const updateSelectTab = () => {
+        const rootNode = modelRef.current.getRoot();
         const tabsets = rootNode.getChildren();
         for (const tabset of tabsets) {
-            const tabs = tabset.getChildren();
+            const tabs:any = tabset.getChildren();
             for (const tab of tabs) {
                 if (tab.getName() === selectMenu) {
-                    model.doAction(Actions.selectTab(tab.getId()));
+                    modelRef.current.doAction(Actions.selectTab(tab.getId()));
                 }
             }
         }
-    }
+    };
 
-
-    function onLayoutChange(action: any) {
-        setCount(v => v + 1)
-        setTabs(model.toJson())
-        setModel(action);
-        const activeTab = model.getActiveTabset()?.getSelectedNode();
+    const onLayoutChange = (action: any) => {
+        modelRef.current = action;
+        const activeTab = modelRef.current.getActiveTabset()?.getSelectedNode();
         setActiveTabId(activeTab ? activeTab.getId() : null);
-
-    }
+    };
 
     const getRootKeys = (data) => data.map((node) => node.key);
 
@@ -366,11 +352,8 @@ export default function Main() {
             ),
             children: node.children ? transformTreeData(node.children) : undefined,
         }));
-
-
     return (
         <LayoutComponent>
-            {contextHolder}
             <div style={{display: "grid", gridTemplateColumns: "205px auto"}}>
                 <div style={{
                     borderRight: "1px solid lightGray",
@@ -436,12 +419,30 @@ export default function Main() {
                     </div>
                 </div>}
 
-                <Layout model={model} factory={factory} onModelChange={onLayoutChange} ref={layoutRef}
-                        onRenderTab={(node, renderValues:any) => {
+                {/*<Layout model={model} factory={factory} onModelChange={onLayoutChange} ref={layoutRef}*/}
+                <Layout model={modelRef.current} factory={factory} onModelChange={onLayoutChange} ref={layoutRef}
+                        onRenderTab={(node, renderValues: any) => {
                             // ✅ 활성화된 탭이면 CSS 클래스 추가
                             if (node.getId() === activeTabId) {
                                 renderValues.className = "active-tab"; // ✅ 동적으로 클래스 추가
                             }
+                            renderValues.content = (
+                                <span
+
+                                    onMouseDown={(event) => {
+                                        if (event.button === 1) { // 🔥 가운데 버튼 클릭 감지
+                                            event.preventDefault(); // 기본 동작 방지 (브라우저 탭 닫힘 방지)
+                                            event.stopPropagation(); // 🔥 이벤트 버블링 방지 (다른 핸들러로 전달되지 않도록)
+
+                                            if (modelRef.current) {
+                                                modelRef.current.doAction(Actions.deleteTab(node.getId())); // ✅ 탭 삭제
+                                            }
+                                        }
+                                    }}
+                                >
+        {node.getName()}
+      </span>
+                            );
                         }}
                 />
 
