@@ -160,7 +160,7 @@ export default function OverseasAgencyRead({ getPropertyId, getCopyPage}) {
                            gridRef={gridRef}
                            columns={tableCodeOverseasPurchaseColumns}
                            onGridReady={onGridReady}
-                           funcButtons={['print']}
+                           funcButtons={['agPrint']}
                 />
             </div>
         </>

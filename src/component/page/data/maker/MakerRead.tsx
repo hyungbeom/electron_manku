@@ -8,6 +8,9 @@ import {inputForm, MainCard, radioForm} from "@/utils/commonForm";
 import {searchDomesticCustomer, searchMaker, searchOrder} from "@/utils/api/mainApi";
 import {gridManage} from "@/utils/commonManage";
 import Spin from "antd/lib/spin";
+import Popconfirm from "antd/lib/popconfirm";
+import {ExclamationCircleOutlined} from "@ant-design/icons";
+import Button from "antd/lib/button";
 
 export default function MakerRead({getPropertyId, getCopyPage}) {
     const gridRef = useRef(null);
@@ -84,7 +87,7 @@ export default function MakerRead({getPropertyId, getCopyPage}) {
 
     }
 
-    return  <Spin spinning={loading} tip={'메이커 조회중...'}>
+    return  <Spin spinning={loading}>
         <div style={{
             display: 'grid',
             gridTemplateRows: `${mini ? '120px' : '65px'} calc(100vh - ${mini ? 250 : 195}px)`,
@@ -126,12 +129,21 @@ export default function MakerRead({getPropertyId, getCopyPage}) {
 
             {/*@ts-ignored*/}
             <TableGrid
+                deleteComp={<Popconfirm
+                    title="삭제하시겠습니까?"
+                    onConfirm={deleteList}
+                    icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
+
+                    {/*@ts-ignored*/}
+                    <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}>삭제</Button>
+                </Popconfirm>
+                }
                 totalRow={totalRow}
                 getPropertyId={getPropertyId}
                 gridRef={gridRef}
                 columns={makerColumn}
                 onGridReady={onGridReady}
-                funcButtons={['print']}
+                funcButtons={['agPrint']}
             />
         </div>
     </Spin>

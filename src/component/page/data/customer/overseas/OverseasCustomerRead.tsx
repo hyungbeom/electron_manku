@@ -139,7 +139,7 @@ export default function OverseasCustomerRead({getPropertyId, getCopyPage}) {
                 gridRef={gridRef}
                 onGridReady={onGridReady}
                 columns={tableCodeOverseasSalesColumns}
-                funcButtons={['print']}
+                funcButtons={['agPrint']}
             />
             overseasCustomerList
         </div>

@@ -160,7 +160,7 @@ export default function DeliveryRead({getPropertyId, getCopyPage}) {
                            columns={delilveryReadColumn}
                            onGridReady={onGridReady}
                            type={'read'}
-                           funcButtons={['print']}
+                           funcButtons={['agPrint']}
                 />
             </div>
         </>

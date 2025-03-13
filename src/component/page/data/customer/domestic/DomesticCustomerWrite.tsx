@@ -23,13 +23,19 @@ import TextArea from "antd/lib/input/TextArea";
 import _ from "lodash";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import {BoxCard, datePickerForm, inputForm, MainCard, selectBoxForm, textAreaForm} from "@/utils/commonForm";
+import Table from "@/component/util/Table";
+import {DCWInfo, projectInfo} from "@/utils/column/ProjectInfo";
 
 
 export default function DomesticCustomerWrite({dataInfo = {customerManagerList : []}, copyPageInfo}) {
     const gridRef = useRef(null);
+    const groupRef = useRef<any>(null)
+    const infoRef = useRef<any>(null)
+    const tableRef = useRef(null);
+
 
     const [mini, setMini] = useState(true);
-
+    const [tableData, setTableData] = useState([]);
 
     const copyInit = _.cloneDeep(codeDomesticSalesWriteInitial)
     const adminParams = {}
@@ -116,88 +122,90 @@ export default function DomesticCustomerWrite({dataInfo = {customerManagerList :
                     gridTemplateColumns: "180px 200px 1fr 240px",
                 }}>
                     <BoxCard title={'INQUIRY & PO no'}>
-                        {inputForm({title: '코드(약칭)', id: 'customerCode', onChange: onChange, data: info})}
-                        {inputForm({title: '지역', id: 'customerRegion', onChange: onChange, data: info})}
-                        {inputForm({title: '업태', id: 'businessType', onChange: onChange, data: info})}
-                        {inputForm({title: '종목', id: 'businessItem', onChange: onChange, data: info})}
-                        {inputForm({title: '대표자', id: 'representative', onChange: onChange, data: info})}
+                        {inputForm({title: '코드(약칭)', id: 'customerCode'})}
+                        {inputForm({title: '지역', id: 'customerRegion'})}
+                        {inputForm({title: '업태', id: 'businessType'})}
+                        {inputForm({title: '종목', id: 'businessItem'})}
+                        {inputForm({title: '대표자', id: 'representative'})}
                     </BoxCard>
 
                     <BoxCard title={'INQUIRY & PO no'}>
-                        {inputForm({title: '거래시작일', id: 'tradeStartDate', onChange: onChange, data: info})}
-                        {inputForm({title: '상호', id: 'customerName', onChange: onChange, data: info})}
-                        {inputForm({title: '주소', id: 'address', onChange: onChange, data: info})}
-                        {inputForm({title: '홈페이지', id: 'homepage', onChange: onChange, data: info})}
-                        {inputForm({title: '연락처', id: 'customerTel', onChange: onChange, data: info})}
-                        {inputForm({title: '팩스번호', id: 'customerFax', onChange: onChange, data: info})}
+                        {inputForm({title: '거래시작일', id: 'tradeStartDate'})}
+                        {inputForm({title: '상호', id: 'customerName'})}
+                        {inputForm({title: '주소', id: 'address'})}
+                        {inputForm({title: '홈페이지', id: 'homepage'})}
+                        {inputForm({title: '연락처', id: 'customerTel'})}
+                        {inputForm({title: '팩스번호', id: 'customerFax'})}
                     </BoxCard>
 
 
                     <BoxCard title={'INQUIRY & PO no'}>
-                        {inputForm({title: '사업자번호', id: 'businessRegistrationNumber', onChange: onChange, data: info})}
-                        {textAreaForm({title: '업체확인사항', id: 'companyVerify', onChange: onChange, data: info})}
-                        {textAreaForm({title: '비고란', id: 'remarks', onChange: onChange, data: info})}
+                        {inputForm({title: '사업자번호', id: 'businessRegistrationNumber'})}
+                        {textAreaForm({title: '업체확인사항', id: 'companyVerify'})}
+                        {textAreaForm({title: '비고란', id: 'remarks'})}
                     </BoxCard>
                     <BoxCard title={'INQUIRY & PO no'}>
-                        {selectBoxForm({
-                            title: '화물운송료', id: 'uploadType', onChange: onChange, data: info, list: [
-                                {value: '화물 선불', label: '화물 선불'},
-                                {value: '화물 후불', label: '화물 후불'},
-                                {value: '택배 선불', label: '택배 선불'},
-                                {value: '택배 후불', label: '택배 후불'},
-                            ]
-                        })}
-                        {inputForm({title: '화물지점', id: 'freightBranch', onChange: onChange, data: info})}
-                        {selectBoxForm({
-                            title: '결제방법', id: 'paymentMethod', onChange: onChange, data: info, list: [
-                                {value: '현금 결제', label: '현금 결제'},
-                                {value: '선수금', label: '선수금'},
-                                {value: '정기 결제', label: '정기 결제'},
-                            ]
-                        })}
-                        {selectBoxForm({
-                            title: '업체형태', id: 'dealerType', onChange: onChange, data: info, list:[
-                                {value: '딜러', label: '딜러'},
-                                {value: '제조', label: '제조'}
-                            ]
-                        })}
-                        {inputForm({title: '만쿠담당자', id: 'mankuTradeManager', onChange: onChange, data: info})}
+                        <div style={{paddingTop: 10, paddingBottom: 10}}>
+                            <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 6}}>화물운송료</div>
+                            <select name="languages" id="shippingTerms"
+                                    style={{
+                                        outline: 'none',
+                                        border: '1px solid lightGray',
+                                        height: 23,
+                                        width: '100%',
+                                        fontSize: 12,
+                                        paddingBottom: 0.5
+                                    }}>
+                                <option value={'화물 선불'}>화물 선불</option>
+                                <option value={'화물 후불'}>화물 후불</option>
+                                <option value={'택배 선불'}>택배 선불</option>
+                                <option value={'택배 후불'}>택배 후불</option>
+                            </select>
+                        </div>
+                        {inputForm({title: '화물지점', id: 'freightBranch'})}
+                        <div style={{ paddingBottom: 10}}>
+                            <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 6}}>결제방법</div>
+                            <select name="languages" id="shippingTerms"
+                                    style={{
+                                        outline: 'none',
+                                        border: '1px solid lightGray',
+                                        height: 23,
+                                        width: '100%',
+                                        fontSize: 12,
+                                        paddingBottom: 0.5
+                                    }}>
+                                <option value={'현금 결제'}>현금 결제</option>
+                                <option value={'선수금'}>선수금</option>
+                                <option value={'정기 결제'}>정기 결제</option>
+                                <option value={'택배 후불'}>택배 후불</option>
+                            </select>
+                        </div>
+                        <div style={{paddingTop: 5, paddingBottom: 10}}>
+                            <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 6}}>업체형태</div>
+                            <select name="languages" id="shippingTerms"
+                                    style={{
+                                        outline: 'none',
+                                        border: '1px solid lightGray',
+                                        height: 23,
+                                        width: '100%',
+                                        fontSize: 12,
+                                        paddingBottom: 0.5
+                                    }}>
+
+                                <option value={'딜러'}>딜러</option>
+                                <option value={'제조'}>택배 후불</option>
+                            </select>
+                        </div>
+                        <div style={{paddingTop : 5}}>
+                        {inputForm({title: '만쿠담당자', id: 'mankuTradeManager'})}
+                        </div>
                     </BoxCard>
                 </div> : null}
             </MainCard>
-            <TableGrid
-                gridRef={gridRef}
-                columns={tableCodeDomesticWriteColumn}
-                onGridReady={onGridReady}
-                type={'write'}
-                funcButtons={['orderUpload', 'orderAdd', 'delete', 'print']}
-            />
+
+            <Table data={tableData} column={DCWInfo['write']} funcButtons={['print']} ref={tableRef}
+                   type={'DCW_column'}/>
 
         </div>
     </>
 }
-
-// @ts-ignore
-export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
-    const {query} = ctx;
-
-    let param = {}
-
-    const {userInfo} = await initialServerRouter(ctx, store);
-    const cookies = nookies.get(ctx)
-    if (!userInfo) {
-        return {
-            redirect: {
-                destination: '/', // 리다이렉트할 경로
-                permanent: false, // true면 301 리다이렉트, false면 302 리다이렉트
-            },
-        };
-    }
-
-    store.dispatch(setUserInfo(userInfo));
-    if (query?.data) {
-        const data = JSON.parse(decodeURIComponent(query.data));
-        return {props: {dataInfo: data}}
-    }
-
-})

@@ -14,12 +14,19 @@ import Search from "antd/lib/input/Search";
 import message from "antd/lib/message";
 import * as XLSX from "xlsx";
 import Button from "antd/lib/button";
-import {CopyOutlined, EditOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
+import {
+    CopyOutlined,
+    EditOutlined,
+    ExclamationCircleOutlined,
+    FileExcelOutlined,
+    SearchOutlined
+} from "@ant-design/icons";
 import {useRouter} from "next/router";
 import {inputForm, MainCard, radioForm} from "@/utils/commonForm";
 import {searchDomesticAgency, searchDomesticCustomer} from "@/utils/api/mainApi";
 import {gridManage} from "@/utils/commonManage";
 import Spin from "antd/lib/spin";
+import Popconfirm from "antd/lib/popconfirm";
 
 export default function DomesticCustomerRead({ getPropertyId, getCopyPage}) {
     const gridRef = useRef(null);
@@ -58,8 +65,8 @@ export default function DomesticCustomerRead({ getPropertyId, getCopyPage}) {
 
 
     async function deleteList() {
-        const api = gridRef.current.api;
-        console.log(api.getSelectedRows(), ':::')
+        const api = gridRef.current;
+
 
         if (api.getSelectedRows().length < 1) {
             message.error('삭제할 데이터를 선택해주세요.')
@@ -67,14 +74,16 @@ export default function DomesticCustomerRead({ getPropertyId, getCopyPage}) {
             for (const item of api.getSelectedRows()) {
                 const response = await getData.post('customer/deleteCustomer', {
                     customerId: item.customerId
-                });
-                console.log(response)
-                if (response.data.code === 1) {
-                    message.success('삭제되었습니다.')
-                    window.location.reload();
-                } else {
-                    message.error('오류가 발생하였습니다. 다시 시도해주세요.')
-                }
+                }).then(v=>{
+                    if (v.data.code === 1) {
+                        message.success('삭제되었습니다.')
+
+                    } else {
+                        message.error(v.data.message)
+                    }
+
+                })
+
             }
         }
     }
@@ -154,49 +163,25 @@ export default function DomesticCustomerRead({ getPropertyId, getCopyPage}) {
                 </div> : <></>}
             </MainCard>
             <TableGrid
+
+                deleteComp={<Popconfirm
+                    title="삭제하시겠습니까?"
+                    onConfirm={deleteList}
+                    icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
+
+                    {/*@ts-ignored*/}
+                    <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}>삭제</Button>
+                </Popconfirm>
+                }
+
                 totalRow={totalRow}
                 getPropertyId={getPropertyId}
                 gridRef={gridRef}
                 onGridReady={onGridReady}
                 columns={tableCodeDomesticSalesColumns}
-                funcButtons={['print']}
+                funcButtons={['agPrint']}
             />
 
         </div>
     </Spin>
 }
-
-// @ts-ignore
-export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
-
-
-    let param = {}
-
-    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
-
-    const result = await getData.post('customer/getCustomerList', {
-        "searchType": "1",      // 1: 코드, 2: 상호명, 3: Maker
-        "searchText": "",
-        "page": 1,
-        "limit": -1
-    });
-
-    if (userInfo) {
-        store.dispatch(setUserInfo(userInfo));
-    }
-    if (codeInfo !== 1) {
-        param = {
-            redirect: {
-                destination: '/', // 리다이렉트할 대상 페이지
-                permanent: false, // true로 설정하면 301 영구 리다이렉트, false면 302 임시 리다이렉트
-            },
-        };
-    } else {
-       const list = result?.data?.entity?.customerList;
-        param = {
-            props: {dataInfo: list ?? null}
-        }
-    }
-
-    return param
-})

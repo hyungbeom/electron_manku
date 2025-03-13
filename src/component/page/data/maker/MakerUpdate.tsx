@@ -39,7 +39,6 @@ export default function MakerUpdate({dataInfo={}, updateKey}) {
 
 
     function copyPage() {
-
         let copyInfo = _.cloneDeep(info)
 
         const query = `data=${encodeURIComponent(JSON.stringify(copyInfo))}`;

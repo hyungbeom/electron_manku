@@ -154,7 +154,7 @@ export default function DomesticAgencyUpdate({getPropertyId, getCopyPage}) {
                            gridRef={gridRef}
                            columns={tableCodeDomesticPurchaseColumns}
                            onGridReady={onGridReady}
-                           funcButtons={['print']}
+                           funcButtons={['agPrint']}
                 />
 
             </div>

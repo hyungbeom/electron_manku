@@ -28,7 +28,7 @@ export const updateList = [
     {title : '국내고객사 수정', key : 'domestic_customer_update'},
     {title : '해외고객사 수정', key : 'overseas_customer_update'},
     {title : '메이커 수정', key : 'maker_update'},
-    {title : 'HS CODE 수정', key : 'hcode_update'},
+    {title : 'HS CODE 수정', key : 'hscode_update'},
 ]
 
 export const treeData = [
@@ -115,7 +115,7 @@ export const treeData = [
                     {title: "메이커 조회", key: 'maker_read'}
                 ]
             },
-            {title: "HS CODE 조회", key: "hcode_read"},
+            {title: "HS CODE 조회", key: "hscode_read"},
         ],
     },
 ];
@@ -184,7 +184,7 @@ export const introMenulist = [
             key: 'overseas_customer_read'
         }, {name: '메이커 조회', key: 'maker_read'}, {
             name: 'HS CODE',
-            key: 'hcode_read'
+            key: 'hscode_read'
         }]
     },   {
         icon: <SettingOutlined />, color: 'black',

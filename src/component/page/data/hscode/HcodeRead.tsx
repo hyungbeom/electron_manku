@@ -21,7 +21,7 @@ import moment from "moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 
 
-export default function HcodeRead({getPropertyId, getCopyPage}) {
+export default function HcodeRead({getPropertyId}) {
     const notificationAlert = useNotificationAlert();
     const gridRef = useRef(null);
     const [mini, setMini] = useState(true);
@@ -55,7 +55,14 @@ export default function HcodeRead({getPropertyId, getCopyPage}) {
         await getData.post('hsCode/addHsCode', info).then(v => {
             const code = v.data.code;
             if (code === 1) {
-                message.success('등록되었습니다.')
+                notificationAlert('success', '💾HS-CODE 등록완료',
+                    <>
+                        <div>Item : {info['item']}</div>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    ,null,
+                    {}
+                )
             } else {
                 message.error('등록에 실패하였습니다.')
             }
@@ -193,6 +200,7 @@ export default function HcodeRead({getPropertyId, getCopyPage}) {
                            gridRef={gridRef}
                            columns={tableCodeReadColumns}
                            onGridReady={onGridReady}
+                           getPropertyId={getPropertyId}
                            funcButtons={['agPrint']}/>
             </div>
         </>

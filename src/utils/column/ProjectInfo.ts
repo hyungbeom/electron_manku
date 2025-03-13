@@ -495,3 +495,76 @@ export const storeInfo = {
         orderStatusDetailList: []
     },
 };
+
+
+
+export const DCWInfo = {
+    write: {
+        columnWidth: [220,50, 50, 50,45],
+        column: [
+            '담당자',
+            '연락처',
+            '팩스번호',
+            '휴대폰번호',
+            '이메일',
+            '비고'
+        ],
+        columnList: [
+            {data: "managerName", type: "text"},
+            {data: "directTel", type: "numeric"},
+            {data: "faxNumber", type: "numeric"},
+            {data: "mobileNumber", type: "numeric", readOnly : true},
+            {data: "email", type: "autocomplete", source:  ['ea', 'Set', 'Pack', 'Can', 'Box', 'MOQ', 'Meter', 'Feet', 'Inch', 'Roll', 'g', 'kg', 'oz']},
+            {data: "remarks", type: "autocomplete", source: ['KRW', 'USD', 'EUR', 'JPY', 'GBP']},
+
+
+        ],
+        defaultData:  {
+            "managerName": "",
+            "directTel": "",
+            "faxNumber": "",
+            "mobileNumber": "",
+            "email": "",
+            "remarks": ""
+        },
+        excelExpert: (v, i) => {
+            v['amount'] = `=H${i + 1} -C${i + 1}`
+            v['total'] = `=B${i + 1}*G${i + 1}`
+            v['totalNet'] = `=B${i + 1}*I${i + 1}`
+            return v
+        },
+        totalList: {
+            "model": "",           // Model
+            "quantity": '=SUM(B1:B100)',              // 수량
+            "receivedQuantity": '=SUM(C1:C100)',
+            "unreceivedQuantity": '=SUM(D1:D100)',
+            "unit": '',               // 단위
+            "currency": '',
+            "net": '=SUM(G1:G100)',            // 매입단가
+            "total": '=SUM(H1:H100)',            // 매입단가
+            "unitPrice": '=SUM(I1:I100)',
+            "totalNet": '=SUM(J1:J100)',            // 매입단가
+            "hscode": '',
+        },
+
+        type: 'write'
+    },
+    defaultInfo:  {
+        createdBy: '',
+        managerAdminName: '',
+        managerAdminId: null,
+        blNo: "",              // BL No.
+        carrierName: "",        // 운수사명
+        arrivalDate: '',    // 입고일자
+        tariff: null,          // 관세
+        vatAmount: null,              // 부가세
+        shippingFee: null,            // 운임비
+        total: null,
+        totalVat: null,
+        saleTotal: null,
+        saleVatTotal: null,
+        operationIncome: null,
+        orderStatusDetailList: []
+    },
+};
+

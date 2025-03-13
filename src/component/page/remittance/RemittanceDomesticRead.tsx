@@ -177,7 +177,7 @@ export default function RemittanceDomesticRead({getPropertyId, getCopyPage}) {
                            gridRef={gridRef}
                            columns={remittanceReadColumn}
                            onGridReady={onGridReady}
-                           funcButtons={['print']}
+                           funcButtons={['agPrint']}
                 />
             </div>
         </>

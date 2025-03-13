@@ -32,7 +32,7 @@ import RemittanceDomesticUpdate from "@/component/page/remittance/RemittanceDome
 import MakerWrite from "@/component/page/data/maker/MakerWrite";
 import MakerRead from "@/component/page/data/maker/MakerRead";
 import MakerUpdate from "@/component/page/data/maker/MakerUpdate";
-import HcodeRead from "@/component/page/HcodeRead";
+import HcodeRead from "@/component/page/data/hscode/HcodeRead";
 import DomesticAgencyWrite from "@/component/page/data/agency/domestic/DomesticAgencyWrite";
 import DomesticAgencyUpdate from "@/component/page/data/agency/domestic/DomesticAgencyUpdate";
 import DomesticAgencyRead from "@/component/page/data/agency/domestic/DomesticAgencyRead";
@@ -249,10 +249,11 @@ export default function Main() {
         maker_update: {name: "메이커 수정", component: <MakerUpdate updateKey={updateKey}/>},
 
 
-        hcode_read: {
+        hscode_read: {
             name: "HS CODE 조회",
             component: <HcodeRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>
         },
+
 
     };
 
