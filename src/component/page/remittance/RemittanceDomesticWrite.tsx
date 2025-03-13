@@ -26,9 +26,12 @@ import SearchInfoModal from "@/component/SearchAgencyModal";
 import {FileSearchOutlined} from "@ant-design/icons";
 
 
-export default function RemittanceDomesticWrite({dataInfo =[],copyPageInfo}) {
+export default function RemittanceDomesticWrite({dataInfo = [], copyPageInfo}) {
     const fileRef = useRef(null);
     const copyInit = _.cloneDeep(remittanceDomesticInitial)
+    const groupRef = useRef<any>(null)
+    const tableRef = useRef(null);
+    const infoRef = useRef<any>(null)
 
     const router = useRouter();
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
@@ -46,6 +49,7 @@ export default function RemittanceDomesticWrite({dataInfo =[],copyPageInfo}) {
     const [fileList, setFileList] = useState([]);
 
     const [loading, setLoading] = useState(false);
+
     function onChange(e) {
         commonManage.onChange(e, setInfo)
     }
@@ -74,66 +78,103 @@ export default function RemittanceDomesticWrite({dataInfo =[],copyPageInfo}) {
     }
 
     return <>
-        <>
-            <SearchInfoModal info={info} setInfo={setInfo}
+        <div style={{height : 'calc(100vh - 90px)'}}>
+            <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
                              open={isModalOpen}
                              setIsModalOpen={setIsModalOpen}/>
+
 
             <MainCard title={'국내 송금 등록'} list={[
                 {name: '저장', func: saveFunc, type: 'primary'},
                 {name: '초기화', func: clearAll, type: 'danger'}
             ]}>
+                <div ref={infoRef}>
+                    <TopBoxCard grid={'250px 200px 200px 200px'}>
+                        {inputForm({
+                            title: 'Inquiry No.',
+                            id: 'connectInquiryNo',
+                            onChange: onChange,
+                            data: info,
+                            disabled: true,
+                            suffix: <FileSearchOutlined style={{cursor: 'pointer', color: 'black'}} onClick={
+                                (e) => {
+                                    e.stopPropagation();
+                                    openModal('orderSubList');
+                                }
+                            }/>
+                        })}
+                        {inputForm({title: '고객사명', id: 'customerName', onChange: onChange, data: info})}
+                        {inputForm({title: '매입처명', id: 'agencyName', onChange: onChange, data: info})}
+                        {inputForm({
+                            title: '담당자',
+                            id: 'managerAdminName',
+                            onChange: onChange,
+                            data: info,
+                            disabled: true
+                        })}
+                    </TopBoxCard>
+
+                    <div style={{display: 'grid', gridTemplateColumns: "1fr 1fr 1fr 1fr", paddingTop : 5}}>
+
+                        <BoxCard title={'송금정보'}>
+                            {datePickerForm({title: '송금요청일자', id: 'requestDate', onChange: onChange, data: info})}
+                            {datePickerForm({title: '송금지정일자', id: 'assignedDate', onChange: onChange, data: info})}
+                        </BoxCard>
+
+                        <BoxCard title={'확인정보'}>
+                            <div>송금여부</div>
+                            <Radio.Group id={'isSend'} defaultValue={'X'} disabled={true}>
+                                <Radio value={'O'}>O</Radio>
+                                <Radio value={'X'}>X</Radio>
+                            </Radio.Group>
+                            <div>계산서 발행여부</div>
+                            <Radio.Group id={'isInvoice'} defaultValue={'X'} disabled={true}>
+                                <Radio value={'O'}>O</Radio>
+                                <Radio value={'X'}>X</Radio>
+                            </Radio.Group>
+                        </BoxCard>
 
 
-                <TopBoxCard title={'기본 정보'} grid={'250px 200px 200px 200px'}>
-                    {inputForm({title: 'Inquiry No.', id: 'connectInquiryNo', onChange: onChange, data: info,  disabled:true,  suffix: <FileSearchOutlined style={{cursor: 'pointer', color : 'black'}} onClick={
-                            (e) => {
-                                e.stopPropagation();
-                                openModal('orderSubList');
-                            }
-                        }/> })}
-                    {inputForm({title: '고객사명', id: 'customerName', onChange: onChange, data: info})}
-                    {inputForm({title: '매입처명', id: 'agencyName', onChange: onChange, data: info})}
-                    {inputForm({title: '담당자', id: 'managerAdminName', onChange: onChange, data: info, disabled: true})}
-                </TopBoxCard>
+                        <BoxCard title={'금액정보'}>
+                            {inputNumberForm({
+                                title: '공급가액',
+                                id: 'supplyAmount',
+                                onChange: onChange,
+                                data: info,
+                                formatter: numbFormatter,
+                                parser: numbParser
+                            })}
+                            {inputNumberForm({
+                                title: '부가세',
+                                id: 'surtax',
+                                disabled: true,
+                                onChange: onChange,
+                                data: info,
+                                formatter: numbFormatter,
+                                parser: numbParser
+                            })}
+                            {inputNumberForm({
+                                title: '합계',
+                                id: 'total',
+                                disabled: true,
+                                onChange: onChange,
+                                data: info,
+                                formatter: numbFormatter,
+                                parser: numbParser
+                            })}
+                        </BoxCard>
 
-                <div style={{display: 'grid', gridTemplateColumns: "1fr 1fr 1fr 1fr"}}>
-
-                    <BoxCard title={'송금정보'}>
-                        {datePickerForm({title: '송금요청일자', id: 'requestDate', onChange: onChange, data: info})}
-                        {datePickerForm({title: '송금지정일자', id: 'assignedDate', onChange: onChange, data: info})}
-                    </BoxCard>
-
-                    <BoxCard title={'확인정보'}>
-                        <div>송금여부</div>
-                        <Radio.Group id={'isSend'} defaultValue={'X'} disabled={true}>
-                            <Radio value={'O'}>O</Radio>
-                            <Radio value={'X'}>X</Radio>
-                        </Radio.Group>
-                        <div>계산서 발행여부</div>
-                        <Radio.Group id={'isInvoice'} defaultValue={'X'} disabled={true}>
-                            <Radio value={'O'}>O</Radio>
-                            <Radio value={'X'}>X</Radio>
-                        </Radio.Group>
-                    </BoxCard>
-
-
-                    <BoxCard title={'금액정보'}>
-                        {inputNumberForm({title: '공급가액', id: 'supplyAmount', onChange: onChange, data: info, formatter : numbFormatter, parser:numbParser})}
-                        {inputNumberForm({title: '부가세', id: 'surtax', disabled: true, onChange: onChange, data: info, formatter : numbFormatter, parser:numbParser})}
-                        {inputNumberForm({title: '합계', id: 'total', disabled: true, onChange: onChange, data: info, formatter : numbFormatter, parser:numbParser})}
-                    </BoxCard>
-
-                    <BoxCard title={'드라이브 목록'}   disabled={!userInfo['microsoftId']}>
-                        {/*@ts-ignored*/}
-                        <div style={{overFlowY: "auto", maxHeight: 300}}>
-                            <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                             numb={0}/>
-                        </div>
-                    </BoxCard>
+                        <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
+                            {/*@ts-ignored*/}
+                            <div style={{overFlowY: "auto", maxHeight: 300}}>
+                                <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
+                                                 numb={0}/>
+                            </div>
+                        </BoxCard>
+                    </div>
                 </div>
             </MainCard>
-        </>
+        </div>
     </>
 }
 

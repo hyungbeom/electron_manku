@@ -43,18 +43,22 @@ export default function SearchInfoModal({
             console.log(firstTrueKey, 'dom:')
             switch (firstTrueKey) {
                 case 'customerName' :
+                case 'agencyCode' :
                     searchFunc(firstTrueKey, dom.value)
+                    setCode(dom.value)
+
                     break;
             }
             setOpenCheck(firstTrueKey);
-            if (!firstTrueKey) {
-                setList([]);
-            } else if(firstTrueKey === 'event2') {
-                setList([]);
-            } else {
-                searchFunc(firstTrueKey, dom.value);
-                setCode(dom.value)
-            }
+            // if (!firstTrueKey) {
+            //     setList([]);
+            // } else if(firstTrueKey === 'event2') {
+            //     setList([]);
+            //     setCode(dom.value)
+            // } else {
+            //     searchFunc(firstTrueKey, dom.value);
+            //     setCode(dom.value)
+            // }
             // } else {
             //     const dom = infoRef.current.querySelector(`#${firstTrueKey}`);
             //     if (firstTrueKey === 'customerName' && info.customerInfoList) {
@@ -71,7 +75,7 @@ export default function SearchInfoModal({
     }, [open, info])
 
     useEffect(() => {
-        setCode(info);
+        // setCode(info);
     }, [info])
 
     async function searchFunc(v, text) {
@@ -197,6 +201,7 @@ export default function SearchInfoModal({
     const onClose = () => {
         setOpen(false);
     };
+
 
 
     return <>

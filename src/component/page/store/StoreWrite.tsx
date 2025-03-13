@@ -26,6 +26,10 @@ import OrderListModal from "@/component/OrderListModal";
 import {saveProject, saveStore} from "@/utils/api/mainApi";
 import {useRouter} from "next/router";
 import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
+import Table from "@/component/util/Table";
+import {orderInfo, storeInfo} from "@/utils/column/ProjectInfo";
+import {getData} from "@/manage/function/api";
+import moment from "moment";
 
 const listType = 'orderStatusDetailList'
 
@@ -34,13 +38,48 @@ export default function StoreWrite({copyPageInfo,notificationAlert = null, getPr
     const router = useRouter();
 
     const gridRef = useRef(null);
+    const groupRef = useRef<any>(null)
+    const tableRef = useRef(null);
+    const infoRef = useRef<any>(null)
+
+    const getSavedSizes = () => {
+        const savedSizes = localStorage.getItem('order_write');
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 0]; // 기본값 [50, 50, 50]
+    };
+
+
+    const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
+    const [memberList, setMemberList] = useState([]);
+    const [tableData, setTableData] = useState([]);
+    useEffect(() => {
+        getMemberList();
+    }, []);
+
+
+    async function getMemberList() {
+        // @ts-ignore
+        return await getData.post('admin/getAdminList', {
+            "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
+            "searchAuthority": null,    // 1: 일반, 0: 관리자
+            "page": 1,
+            "limit": -1
+        }).then(v => {
+            setMemberList(v?.data?.entity?.adminList)
+        })
+    }
+
+    const options = memberList?.map((item) => ({
+        ...item,
+        value: item.adminId,
+        label: item.name,
+    }));
 
     const copyInit = _.cloneDeep(storeWriteInitial)
 
     const userInfo = useAppSelector((state) => state.user);
 
     const infoInit = {
-        ...copyInit,
+        ...storeInfo['defaultInfo'],
         managerAdminId: userInfo['adminId'],
         managerAdminName: userInfo['name'],
     }
@@ -72,6 +111,18 @@ export default function StoreWrite({copyPageInfo,notificationAlert = null, getPr
         }
     }, [copyPageInfo['store_write'],ready]);
 
+    useEffect(() => {
+        if (!isEmptyObj(copyPageInfo['store_write'])) {
+            // copyPageInfo 가 없을시
+            setInfo(infoInit);
+            setTableData(commonFunc.repeatObject(orderInfo['write']['defaultData'], 100))
+        } else {
+            // copyPageInfo 가 있을시(==>보통 수정페이지에서 복제시)
+            // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting
+            setInfo({...copyPageInfo['store_write'], writtenDate: moment().format('YYYY-MM-DD')});
+            setTableData(copyPageInfo['store_write'][listType])
+        }
+    }, [copyPageInfo['store_write']]);
 
 
     function getTotalTableValue() {
@@ -260,27 +311,15 @@ export default function StoreWrite({copyPageInfo,notificationAlert = null, getPr
                                     {inputNumberForm({
                                         title: '부가세',
                                         id: 'vatAmount',
-                                        onChange: onChange,
-                                        data: info,
-                                        formatter: numbFormatter,
-                                        parser: numbParser
                                     })}
                                     {inputNumberForm({
                                         title: '관세',
                                         id: 'tariff',
                                         placeholder: '매입처 담당자 입력 필요',
-                                        onChange: onChange,
-                                        data: info,
-                                        formatter: numbFormatter,
-                                        parser: numbParser
                                     })}
                                     {inputNumberForm({
                                         title: '운임비',
                                         id: 'shippingFee',
-                                        onChange: onChange,
-                                        data: info,
-                                        formatter: numbFormatter,
-                                        parser: numbParser
                                     })}
                                 </BoxCard>
                                 <BoxCard title={'매입금액 정보'}>
@@ -289,19 +328,12 @@ export default function StoreWrite({copyPageInfo,notificationAlert = null, getPr
                                         title: '합계',
                                         id: 'total',
                                         disabled: true,
-                                        onChange: onChange,
-                                        data: info,
-                                        formatter: numbFormatter,
-                                        parser: numbParser
                                     })}
                                     {inputNumberForm({
                                         title: '합계 (VAT포함)',
                                         id: 'totalVat',
                                         disabled: true,
-                                        onChange: onChange,
-                                        data: info,
-                                        formatter: numbFormatter,
-                                        parser: numbParser
+
                                     })}
                                 </BoxCard>
 
@@ -311,8 +343,6 @@ export default function StoreWrite({copyPageInfo,notificationAlert = null, getPr
                                         title: '판매금액합계',
                                         id: 'saleTotal',
                                         disabled: true,
-                                        onChange: onChange,
-                                        data: info,
                                         formatter: numbFormatter,
                                         parser: numbParser
                                     })}
@@ -320,8 +350,6 @@ export default function StoreWrite({copyPageInfo,notificationAlert = null, getPr
                                         title: '판매금액 합계 (VAT포함)',
                                         id: 'saleVatTotal',
                                         disabled: true,
-                                        onChange: onChange,
-                                        data: info,
                                         formatter: numbFormatter,
                                         parser: numbParser
                                     })}
@@ -329,8 +357,6 @@ export default function StoreWrite({copyPageInfo,notificationAlert = null, getPr
                                         title: '영업이익금',
                                         id: 'operationIncome',
                                         disabled: true,
-                                        onChange: onChange,
-                                        data: info,
                                         formatter: numbFormatter,
                                         parser: numbParser
                                     })}
@@ -341,41 +367,8 @@ export default function StoreWrite({copyPageInfo,notificationAlert = null, getPr
                         : <></>}
                 </MainCard>
 
-                {/*@ts-ignored*/}
-                <TableGrid deleteComp={  <Button onClick={showModal} type={'dash'} size={'small'} style={{marginLeft: 5, fontSize : 11}}>
-                    <SaveOutlined/>발주서 조회
-                </Button>}
-                    gridRef={gridRef}
-                    columns={storeWriteColumn}
-                    onGridReady={onGridReady}
-                    type={'write'}
-                    funcButtons={['storeUpload', 'orderSelect',  'delete', 'print']}
-                    onCellEditingStopped={onCellEditingStopped}
-                />
+                <Table data={tableData} column={storeInfo['write']} funcButtons={['print']} ref={tableRef} type={'order_write_column'}/>
             </div>
         </>
     </>
 }
-
-// @ts-ignored
-export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
-    const {query} = ctx;
-
-    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
-
-    if (codeInfo < 0) {
-        return {
-            redirect: {
-                destination: '/',
-                permanent: false,
-            },
-        };
-    }
-
-    store.dispatch(setUserInfo(userInfo));
-
-    if (query?.data) {
-        const data = JSON.parse(decodeURIComponent(query.data));
-        return {props: {dataInfo: data}}
-    }
-})

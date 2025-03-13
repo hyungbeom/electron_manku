@@ -108,7 +108,7 @@ export const findDocumentInfo = async (event, setInfo) => {
         "page": 1,
         "limit": 20
     });
-    console.log(result, ':::')
+
     return result?.data?.entity?.orderList;
 };
 

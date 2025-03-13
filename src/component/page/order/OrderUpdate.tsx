@@ -23,7 +23,7 @@ import PrintTransactionModal from "@/component/printTransaction";
 import {commonFunc, commonManage, fileManage, gridManage} from "@/utils/commonManage";
 import {getAttachmentFileList, updateOrder} from "@/utils/api/mainApi";
 import _ from "lodash";
-import {findEstDocumentInfo} from "@/utils/api/commonApi";
+import {findCodeInfo, findEstDocumentInfo} from "@/utils/api/commonApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import Select from "antd/lib/select";
@@ -262,8 +262,9 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
         if (e.key === 'Enter') {
 
             switch (e.target.id) {
-                case 'documentNumberFull' :
-                    await findEstDocumentInfo(e, setInfo)
+                case 'agencyCode' :
+
+                    await findCodeInfo(e, setInfo, openModal, '')
                     break;
             }
         }
@@ -329,7 +330,7 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
 
     return <Spin spinning={loading} tip={'LOADING'}>
         <PanelSizeUtil groupRef={groupRef}  storage={'order_update'}/>
-        {(isModalOpen['event1'] || isModalOpen['event2'] )&&<SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
+        {(isModalOpen['agencyCode'] ||isModalOpen['event1'] || isModalOpen['event2'] )&&<SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
                           open={isModalOpen}
 
                           setIsModalOpen={setIsModalOpen}/>}

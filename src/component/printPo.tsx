@@ -117,7 +117,9 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
             // {title: 'Delivery Terms', value: data.deliveryTerms, id: 'deliveryTerms'},
             // {title: '', value: '', id: 'shippingTerms'},
 
-            console.log(infoData?.yourPoNo,':::')
+
+        const lang = infoData.agencyCode.startsWith("k");
+
             setInfo([
                 {title: '수신처', value: data.ourPoNo, id: 'ourPoNo'},
                 {title: '발주일자', value: findMember?.name, id: 'name'},

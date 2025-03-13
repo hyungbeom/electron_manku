@@ -382,3 +382,115 @@ export const orderInfo = {
         uploadType: 4
     },
 };
+
+
+
+export const storeInfo = {
+    write: {
+        columnWidth: [220,50, 50, 50,45, 50, 120, 120, 120,120,80, 50, 50, 50, 50, 50, 50, 50, 50, 50],
+        column: [
+            "Inquiry No.",
+            "세부항목 번호",
+            "매입처명",
+            "고객사명",
+            "환율",
+            "발주일자",
+            "송금일자",
+            "수량",
+            "금액",
+            "환폐단위",
+            "원화환산금액",
+            "수수료",
+            "판매금액",
+            "판매금액(VAT 포함)",
+            "입고일자",
+            "출고일자",
+            "계산서 발행일자",
+            "결제 여부",
+            "선수금",
+            "비고"
+        ],
+        columnList: [
+            {data: "orderDocumentNumberFull", type: "text"},
+            {data: "itemDetailNo", type: "numeric"},
+            {data: "agencyName", type: "numeric"},
+            {data: "customerName", type: "numeric", readOnly : true},
+            {data: "exchangeRate", type: "autocomplete", source:  ['ea', 'Set', 'Pack', 'Can', 'Box', 'MOQ', 'Meter', 'Feet', 'Inch', 'Roll', 'g', 'kg', 'oz']},
+            {data: "orderDate", type: "autocomplete", source: ['KRW', 'USD', 'EUR', 'JPY', 'GBP']},
+            {data: "remittanceDate", type: "numeric"},
+            {data: "receivedQuantity", type: "numeric"},
+            {data: "amount", type: "numeric"},
+            {data: "currencyUnit", type: "numeric"},
+            {data: "returnAmount", type: "numeric"},
+            {data: "commissionFee", type: "text"},
+            {data: "salesAmount", type: "text"},
+            {data: "salesAmountVat", type: "text"},
+            {data: "receiptDate", type: "text"},
+            {data: "deliveryDate", type: "text"},
+            {data: "", type: "text"},
+            {data: "paymentStatus", type: "text"},
+            {data: "advancePayment", type: "text"},
+            {data: "remarks", type: "text"},
+
+        ],
+        defaultData:  {
+            "orderDocumentNumberFull": "",
+            "itemDetailNo": "",
+            "agencyName": "",
+            "customerName": "",
+            "exchangeRate": "",
+            "orderDate": "",
+            "remittanceDate": "",
+            "amount": "",
+            "currencyUnit": "",
+            "returnAmount": "",
+            "commissionFee": "",
+            "salesAmount": "",
+            "salesAmountVat": "",
+            "receiptDate": "",
+            "deliveryDate": "",
+            "": "",
+            "paymentStatus": "",
+            "advancePayment": "",
+            "remarks": ""
+        },
+        excelExpert: (v, i) => {
+            v['amount'] = `=H${i + 1} -C${i + 1}`
+            v['total'] = `=B${i + 1}*G${i + 1}`
+            v['totalNet'] = `=B${i + 1}*I${i + 1}`
+            return v
+        },
+        totalList: {
+            "model": "",           // Model
+            "quantity": '=SUM(B1:B100)',              // 수량
+            "receivedQuantity": '=SUM(C1:C100)',
+            "unreceivedQuantity": '=SUM(D1:D100)',
+            "unit": '',               // 단위
+            "currency": '',
+            "net": '=SUM(G1:G100)',            // 매입단가
+            "total": '=SUM(H1:H100)',            // 매입단가
+            "unitPrice": '=SUM(I1:I100)',
+            "totalNet": '=SUM(J1:J100)',            // 매입단가
+            "hscode": '',
+        },
+
+        type: 'write'
+    },
+    defaultInfo:  {
+        createdBy: '',
+        managerAdminName: '',
+        managerAdminId: null,
+        blNo: "",              // BL No.
+        carrierName: "",        // 운수사명
+        arrivalDate: '',    // 입고일자
+        tariff: null,          // 관세
+        vatAmount: null,              // 부가세
+        shippingFee: null,            // 운임비
+        total: null,
+        totalVat: null,
+        saleTotal: null,
+        saleVatTotal: null,
+        operationIncome: null,
+        orderStatusDetailList: []
+    },
+};
