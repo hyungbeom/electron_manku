@@ -734,8 +734,6 @@ commonManage.getUploadList = function (fileRef, formData) {
     let count = 0
     fileRef.current.fileList.forEach((item, index) => {
         if (item?.originFileObj) {
-            console.log(index,'index:::')
-            console.log(fileNames[index],'fileNames[index]:::')
             formData.append(`attachmentFileList[${count}].attachmentFile`, item.originFileObj);
             formData.append(`attachmentFileList[${count}].fileName`, fileNames[index]?.replace(/\s+/g, ""));
             count += 1;
@@ -784,19 +782,38 @@ commonManage.removeInvalid = function (obj) {
     return obj;
 }
 
-commonManage.getPdfCreate = async function (pdfRef) {
-    const element = pdfRef.current;
-
-    // HTML 캡처 후 PDF 생성
-    const canvas = await html2canvas(element, {scale: 1, useCORS: true});
-    const imgData = canvas.toDataURL("image/jpeg", 0.98);
+commonManage.getPdfCreate = async function (pdfRef, pdfSubRef) {
     const pdf = new jsPDF("portrait", "px", "a4");
-
     const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+    const padding = 30; // 좌우 여백 설정
+    const contentWidth = pdfWidth - padding * 2; // 실제 이미지 너비
 
-    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+    // ✅ 높이가 0이 아닌 요소만 필터링
+    const elements = Array.from(pdfSubRef.current.children).filter(
+        (el: any) => el.offsetHeight > 0 && el.innerHTML.trim() !== ""
+    );
 
+    if (pdfRef.current) {
+        const firstCanvas = await html2canvas(pdfRef.current, {scale: 1, useCORS: true});
+        const firstImgData = firstCanvas.toDataURL("image/jpeg");
+        const firstImgProps = pdf.getImageProperties(firstImgData);
+        const firstImgHeight = (firstImgProps.height * pdfWidth) / firstImgProps.width;
+        pdf.addImage(firstImgData, "PNG", 0, 20, pdfWidth, firstImgHeight);
+
+
+    }
+
+    for (let i = 0; i < elements.length; i++) {
+        const element: any = elements[i];
+        const firstCanvas = await html2canvas(element, {scale: 2, useCORS: true});
+        const firstImgData = firstCanvas.toDataURL("image/jpeg");
+        const firstImgProps = pdf.getImageProperties(firstImgData);
+        const firstImgHeight = (firstImgProps.height * pdfWidth) / firstImgProps.width;
+
+        pdf.addPage();
+        pdf.addImage(firstImgData, "PNG", 0, 0, pdfWidth, firstImgHeight);
+
+    }
     return pdf
 }
 

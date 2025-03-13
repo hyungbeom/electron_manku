@@ -29,6 +29,9 @@ import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import useEventListener from "@/utils/common/function/UseEventListener";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
+import EstimatePaper from "@/component/견적서/EstimatePaper";
+import {jsPDF} from "jspdf";
+import html2canvas from "html2canvas";
 
 
 const listType = 'estimateDetailList'
@@ -36,6 +39,7 @@ export default function EstimateWrite({copyPageInfo = {},  getPropertyId, layout
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
 
+    const [count, setCount] = useState(0);
     const [memberList, setMemberList] = useState([]);
     const [tableData, setTableData] = useState([]);
     const getSavedSizes = () => {
@@ -71,6 +75,7 @@ export default function EstimateWrite({copyPageInfo = {},  getPropertyId, layout
 
 
     const pdfRef = useRef(null);
+    const pdfSubRef = useRef(null);
     const fileRef = useRef(null);
     const tableRef = useRef(null);
     const infoRef = useRef<any>(null)
@@ -124,6 +129,9 @@ export default function EstimateWrite({copyPageInfo = {},  getPropertyId, layout
 
     useEffect(() => {
         commonManage.setInfo(infoRef, info, userInfo['adminId']);
+        if(memberList.length){
+            setReady(true)
+        }
     }, [info, memberList]);
 
 
@@ -191,7 +199,11 @@ export default function EstimateWrite({copyPageInfo = {},  getPropertyId, layout
         commonManage.onChange(e, setInfo)
     }
 
+    const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+
     async function saveFunc() {
+        setCount(v=>v + 1)
         let infoData = commonManage.getInfo(infoRef, infoInit);
         const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
         infoData['managerAdminName'] = findMember['name'];
@@ -218,9 +230,17 @@ export default function EstimateWrite({copyPageInfo = {},  getPropertyId, layout
         }
 
         setLoading(true)
+        await delay(300); // 0.3초 대기 후 실행
         const formData: any = new FormData();
+
+        const pdf = await commonManage.getPdfCreate(pdfRef, pdfSubRef)
+        const result = await commonManage.getPdfFile(pdf, infoData['documentNumberFull'])
+
         commonManage.setInfoFormData(infoData, formData, listType, filterTableList)
-        commonManage.getUploadList(fileRef, formData);
+        const resultCount = commonManage.getUploadList(fileRef, formData);
+
+        formData.append(`attachmentFileList[${resultCount}].attachmentFile`, result);
+        formData.append(`attachmentFileList[${resultCount}].fileName`, `03.${resultCount + 1} ${result.name}`);
 
         formData.delete('createdDate')
         formData.delete('modifiedDate')
@@ -556,6 +576,8 @@ export default function EstimateWrite({copyPageInfo = {},  getPropertyId, layout
                 <Table data={tableData} column={estimateInfo['write']} funcButtons={['print']} ref={tableRef} type={'estimate_write_column'}/>
             </div>
         </>
+        {ready &&<EstimatePaper infoRef={infoRef} pdfRef={pdfRef} pdfSubRef={pdfSubRef} tableRef={tableRef} position={false}
+                        memberList={memberList} count={count}/>}
         {/*{ready && <EstimatePaper data={info} pdfRef={pdfRef} gridRef={gridRef}/>}*/}
     </Spin></div>
 }

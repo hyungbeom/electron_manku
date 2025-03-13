@@ -22,7 +22,7 @@ const getTextAreaValues = (ref) => {
     return [];
 };
 
-const EstimatePaper = ({infoRef, pdfRef, pdfSubRef, tableRef, memberList = []}: any) => {
+const EstimatePaper = ({infoRef, pdfRef, pdfSubRef, tableRef, memberList = [], count=0, position = true}: any) => {
 
     const [info, setInfo] = useState<any>([]);
     const [originInfo, setOriginInfo] = useState<any>({maker: ''});
@@ -56,9 +56,9 @@ const EstimatePaper = ({infoRef, pdfRef, pdfSubRef, tableRef, memberList = []}: 
 
         const filterTotalList = tableList.filter(v => !!v.model)
         console.log(filterTotalList, 'infoData:')
-        const result = commonManage.splitDataWithSequenceNumber(filterTotalList, 28, 30);
+        const result = commonManage.splitDataWithSequenceNumber(filterTotalList, 10, 30);
         setSplitData(result)
-    }, [])
+    }, [count])
 
 
     const RowTotal = ({defaultValue, id}) => {
@@ -268,7 +268,7 @@ const EstimatePaper = ({infoRef, pdfRef, pdfSubRef, tableRef, memberList = []}: 
 
     return (
         <div
-            // style={{position : 'absolute', top : 0, zIndex : -100}}
+            style={!position ? {position : 'absolute', top : 0, zIndex : -100} : {}}
         >
 
             <div ref={pdfRef} style={{
