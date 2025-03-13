@@ -239,8 +239,7 @@ const TableGrid = ({
     }, typeof window !== 'undefined' ? document : null)
 
 
-    function
-    getSelectedRows(ref) {
+    function getSelectedRows(ref) {
         if (ref.current) {
             const selectedRows = ref.current.getSelectedRows();
 
@@ -338,12 +337,17 @@ const TableGrid = ({
 
     }
 
+    function setLoadEstimateLists(){
+
+    }
+
+
     return (
         <>
             <HsCodeListModal isModalOpen={isModalOpen['hsCode']} setIsModalOpen={setIsModalOpen}
                              getRows={selectHsCode}/>
             <EstimateListModal isModalOpen={isModalOpen['estimate']} setIsModalOpen={setIsModalOpen}
-                               getRows={getSelectedRows}/>
+                               getRows={getSelectedRows} />
             <AgencyListModal isModalOpen={isModalOpen['agency']} setIsModalOpen={setIsModalOpen}
                              getRows={getAgencyInfo}/>
             {page.x ? <div style={{

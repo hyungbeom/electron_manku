@@ -3,13 +3,14 @@ import {HotTable} from '@handsontable/react-wrapper';
 import {registerAllModules} from 'handsontable/registry';
 import 'handsontable/styles/handsontable.css';
 import 'handsontable/styles/ht-theme-main.css';
-import {forwardRef, memo, useEffect, useImperativeHandle, useMemo, useRef, useState} from "react";
+import React, {forwardRef, memo, useEffect, useImperativeHandle, useMemo, useRef, useState} from "react";
 import Handsontable from "handsontable";
 import renderers = Handsontable.renderers;
 import moment from "moment/moment";
 import {tableButtonList} from "@/utils/commonForm";
 import {projectInfo} from "@/utils/column/ProjectInfo";
 import {commonManage} from "@/utils/commonManage";
+import EstimateListModal from "@/component/EstimateListModal";
 
 // register Handsontable's modules
 registerAllModules();
@@ -23,8 +24,9 @@ const Table = forwardRef(({
                               infoRef = null
                           }: any, ref) => {
 
+    const rowRef = useRef(null)
     const hotRef = useRef(null)
-
+    const [isModalOpen, setIsModalOpen] = useState({estimate: false, agency: false});
     useImperativeHandle(ref, () => ({
         hotInstance: hotRef.current?.hotInstance, // Handsontable 인스턴스 접근
         getData: () => hotRef.current?.hotInstance?.getData(), // 현재 테이블 데이터 가져오기
@@ -33,16 +35,23 @@ const Table = forwardRef(({
         forceRender: () => hotRef.current?.hotInstance?.render(), // 강제 렌더링
     }));
 
-
+    const hyperformulaInstance = HyperFormula.buildEmpty(); // HyperFormula 엔진 생성
     const tableContainerRef = useRef(null);
 
-    const tableData = useMemo(() => {
+    const [tableData, setTableData] = useState([])
+
+
+    useEffect(() => {
+        setTableData(calcData(data))
+    }, [data, column]);
+
+    function calcData(sourceData) {
         const keyOrder = Object.keys(column['defaultData']);
-        return data
+        return sourceData
             .map((item) => keyOrder.reduce((acc, key) => ({...acc, [key]: item[key] ?? ""}), {}))
             .map(column['excelExpert'])
             .concat(column['totalList']); // `push` 대신 `concat` 사용
-    }, [data, column]);
+    }
 
     useEffect(() => {
         if (!hotRef.current?.hotInstance) return;
@@ -192,7 +201,7 @@ const Table = forwardRef(({
         textNode.style.paddingRight = "20px"; // 아이콘과 텍스트 간격 확보
 
         // 🔹 아이콘 추가 (ℹ️ - 정보 아이콘)
-        const icon:any = document.createElement("span");
+        const icon: any = document.createElement("span");
         icon.innerHTML = "🔍"; // 텍스트 아이콘
         icon.style.position = "absolute";
         icon.style.opacity = 0.7;
@@ -205,7 +214,11 @@ const Table = forwardRef(({
 
         icon.addEventListener("click", (event) => {
             event.stopPropagation(); // 셀 클릭 이벤트 방지
-            alert(`문의번호: ${value}`);
+            rowRef.current = {row: row, col: col, prop: prop, value: value}
+
+            setIsModalOpen(v => {
+                return {...v, estimate: true}
+            });
         });
 
         // 🔹 요소 추가
@@ -215,6 +228,42 @@ const Table = forwardRef(({
         return td;
     };
 
+
+    function getSelectedRows(ref) {
+        if (ref.current) {
+            const selectedRows = ref.current.getSelectedRows();
+            const instance = hotRef.current.hotInstance;
+            if (selectedRows.length) {
+                const list = selectedRows.map(v => {
+                    return {
+                        ...v,
+                        connectInquiryNo: v.documentNumberFull,
+                        currencyUnit: v.currency,
+                        spec: v.unit,
+                        agencyManagerPhone: v.agencyManagerPhoneNumber
+                    }
+                })
+
+                const currentList = instance.getSourceData();
+                const {row, col} = rowRef.current;
+
+
+
+                list.forEach((v, i) => {
+                    v['total'] = `=G${row + i + 1}*H${row + i + 1}`
+                    v['totalPurchase'] = `=G${row + i}*J${row + i}`
+                    currentList[row + i] = v
+                })
+
+               const resultlist = calcData(currentList);
+                setTableData(resultlist)
+            }
+        } else {
+            console.warn('Grid API is not available.');
+            return [];
+        }
+    }
+
     return (
         <div ref={tableContainerRef} className="table-container" style={{width: '100%', overflowX: 'auto'}}>
             <div style={{display: 'flex', justifyContent: 'end'}}>
@@ -223,6 +272,8 @@ const Table = forwardRef(({
                     {funcButtons?.map(v => tableButtonList(v, hotRef))}
                 </div>
             </div>
+            <EstimateListModal isModalOpen={isModalOpen['estimate']} setIsModalOpen={setIsModalOpen}
+                               getRows={getSelectedRows}/>
             <HotTable
                 style={{
                     border: '1px solid #ebebed',
@@ -265,7 +316,6 @@ const Table = forwardRef(({
                     }
                 }}
                 rowHeaders={true}
-
                 headerClassName="htLeft"
                 manualRowMove={true}
                 manualRowResize={true}
