@@ -3,7 +3,7 @@ import moment from "moment";
 export const projectInfo = {
     write: {
         columnWidth: [160, 220, 220, 200, 55, 65, 45, 120, 120, 120, 120, 70, 45, 160, 130, 130, 180, 160, 120, 180],
-        column: ['연결 Inquiry No.', 'Model', 'Maker', 'Item', '마진율', '단위', '수량', '매출 단가', '매출 총액', '매입 단가', '매입 총액', '화폐단위', '납기', '매입처명', '매입처 당담자명', '매입처 연락처', '매입처 이메일', '관련링크', '납품기한', '비고'],
+        column: ['연결 Inquiry No.', 'Model', 'Maker', 'Item', '마진율', '단위', '수량', '매출 단가', '매출 총액', '매입 단가', '매입 총액', '화폐단위', '납기', '매입처명', '매입처 담당자명', '매입처 연락처', '매입처 이메일', '관련링크', '납품기한', '비고'],
         columnList: [
             {data: "connectInquiryNo", type: "text"},
             {data: "model", type: "text"},
@@ -51,6 +51,28 @@ export const projectInfo = {
             "relatedLink": "",
             "requestDeliveryDate": "",
             "remarks": ""
+        },
+        mapping: {
+            "connectInquiryNo": "연결 Inquiry No.",
+            "model": "Model",
+            "maker": "Maker",
+            "item": "Item",
+            "marginRate": "마진율",
+            "unit": "단위",
+            "quantity": "수량",
+            "unitPrice": "매출 단가",
+            "total": "매출 총액",
+            "purchasePrice": "매입 단가",
+            "totalPurchase": "매입 총액",
+            "currencyUnit": "화폐단위",
+            "deliveryDate": "납기",
+            "agencyName": "매입처명",
+            "agencyManagerName": "매입처 담당자명",
+            "agencyManagerPhone": "매입처 연락처",
+            "agencyManagerEmail": "매입처 이메일",
+            "relatedLink": "관련링크",
+            "requestDeliveryDate": "납품기한",
+            "remarks": "비고"
         },
         excelExpert: (v, i) => {
             v['total'] = `=G${i + 1}*H${i + 1}`
@@ -126,6 +148,18 @@ export const rfqInfo = {
             "content": "",       // 내용
             "replyDate": '',         // 회신일
             "remarks": ""            // 비고
+        }, mapping: {
+            "model": 'Model',             // Model
+            "quantity": '수량',           // 수량
+            "unit": "단위",            // 단위
+            "currency": "화폐단위",       // CURR
+            "net": '매입 단가',                // 매입단가
+            "totalNet": '매입 총액',                // 매입단가
+            "serialNumber": '',       // 항목 순서 (1부터 시작)
+            "deliveryDate": '납기',      // 납기
+            "content": "회신여부",       // 내용
+            "replyDate": '회신일',         // 회신일
+            "remarks": "비고"            // 비고
         },
         excelExpert: (v, i) => {
             v['totalNet'] = `=B${i + 1}*E${i + 1}`
@@ -214,6 +248,18 @@ export const estimateInfo = {
             "net": '',                 // 매입단가
             "unitPrice": '',           // 단가
             "marginRate": '',           // 단가
+        }, mapping: {
+            "model": "Model",   // Model
+            "quantity": '수량',                  // 수량
+            "unit": "단위",                   // 단위
+            "currency": '화폐단위',          // CURR
+            "unitPrice": '매출 단가',
+                     // 매입단가
+            "total": '매출 총액',                 // 매입단가
+            "net": '매입 단가',
+            // 단가
+            "totalNet": '매입 총액',           // 단가
+            "marginRate": '마진율',           // 단가
         },
         excelExpert: (v, i) => {
             v['total'] = `=B${i + 1}*E${i + 1}`
@@ -231,21 +277,8 @@ export const estimateInfo = {
             "totalNet": '=SUM(H1:H100)',                 // 매입단가
             "marginRate": ''                 // 매입단가
 
-        }
-        ,
-        // totalList: {
-        //     "model": '',             // Model
-        //     "quantity": '=SUM(B1:B100)',           // 수량
-        //     "unit": "ea",            // 단위
-        //     "currency": "",       // CURR
-        //     "net": '=SUM(E1:E100)',                // 매입단가
-        //     "totalNet": '=SUM(F1:F100)',                // 매입단가
-        //     "serialNumber": '',       // 항목 순서 (1부터 시작)
-        //     "deliveryDate": '',      // 납기
-        //     "content": "",       // 내용
-        //     "replyDate": '',         // 회신일
-        //     "remarks": ""            // 비고
-        // },
+        },
+
         type: 'write'
     },
     defaultInfo: {
@@ -282,18 +315,17 @@ export const estimateInfo = {
         "remarks": "",          // 비고란
         "currencyUnit": "",          // 비고란
         'count': 0,
-        attnTo : '',
+        attnTo: '',
         uploadType: 3
     },
 };
 
 
-
-
 export const orderInfo = {
     write: {
-        columnWidth: [220,50, 50, 50,45, 50, 120, 120, 120,120,80],
-        column: ['Model',
+        columnWidth: [220, 50, 50, 50, 45, 50, 120, 120, 120, 120, 80],
+        column: [
+            'Model',
             '주문',
             '입고',
             '미 입고',
@@ -308,8 +340,12 @@ export const orderInfo = {
             {data: "model", type: "text"},
             {data: "quantity", type: "numeric"},
             {data: "receivedQuantity", type: "numeric"},
-            {data: "unreceivedQuantity", type: "numeric", readOnly : true},
-            {data: "unit", type: "autocomplete", source:  ['ea', 'Set', 'Pack', 'Can', 'Box', 'MOQ', 'Meter', 'Feet', 'Inch', 'Roll', 'g', 'kg', 'oz']},
+            {data: "unreceivedQuantity", type: "numeric", readOnly: true},
+            {
+                data: "unit",
+                type: "autocomplete",
+                source: ['ea', 'Set', 'Pack', 'Can', 'Box', 'MOQ', 'Meter', 'Feet', 'Inch', 'Roll', 'g', 'kg', 'oz']
+            },
             {data: "currency", type: "autocomplete", source: ['KRW', 'USD', 'EUR', 'JPY', 'GBP']},
             {data: "net", type: "numeric"},
             {data: "total", type: "numeric"},
@@ -318,7 +354,7 @@ export const orderInfo = {
             {data: "hsCode", type: "text"},
 
         ],
-        defaultData:  {
+        defaultData: {
             "model": "",           // Model
             "quantity": '',              // 수량
             "receivedQuantity": '',
@@ -331,6 +367,19 @@ export const orderInfo = {
             "unitPrice": '',
             "totalNet": '',
             "hscode": '',
+        },mapping: {
+            "model": "Model",           // Model
+            "quantity": '주문',              // 수량
+            "receivedQuantity": '입고',
+            "unreceivedQuantity": '미 입고',
+            "unit": '단위',               // 단위
+            "currency": '화폐단위',
+            "net": '매입 단가',            // 매입단가
+            "total": '매입 총액',            // 매입단가
+
+            "unitPrice": '매출 단가',
+            "totalNet": '매출 총액',
+            "hscode": 'HS-CODE',
         },
         excelExpert: (v, i) => {
             v['unreceivedQuantity'] = `=B${i + 1} -C${i + 1}`
@@ -354,8 +403,8 @@ export const orderInfo = {
 
         type: 'write'
     },
-    defaultInfo:  {
-        attnTo : '',
+    defaultInfo: {
+        attnTo: '',
         createdBy: '',
         managerAdminName: '',
         managerAdminId: null,
@@ -366,7 +415,7 @@ export const orderInfo = {
         "agencyCode": "",  // Messrs
         "agencyName": "",  // Messrs
         "customerName": "",          // 고객사명
-        agencyManagerName : '',
+        agencyManagerName: '',
         "customerId": 0,          // 고객사명
         "estimateManager": "",            // 견적서담당자
         "managerID": "",                 // Responsibility
@@ -385,10 +434,9 @@ export const orderInfo = {
 };
 
 
-
 export const storeInfo = {
     write: {
-        columnWidth: [220,50, 50, 50,45, 50, 120, 120, 120,120,80, 50, 50, 50, 50, 50, 50, 50, 50, 50],
+        columnWidth: [220, 50, 50, 50, 45, 50, 120, 120, 120, 120, 80, 50, 50, 50, 50, 50, 50, 50, 50, 50],
         column: [
             "Inquiry No.",
             "세부항목 번호",
@@ -415,11 +463,15 @@ export const storeInfo = {
             {data: "orderDocumentNumberFull", type: "text"},
             {data: "itemDetailNo", type: "numeric"},
             {data: "agencyName", type: "numeric"},
-            {data: "customerName", type: "numeric", readOnly : true},
-            {data: "exchangeRate", type: "autocomplete", source:  ['ea', 'Set', 'Pack', 'Can', 'Box', 'MOQ', 'Meter', 'Feet', 'Inch', 'Roll', 'g', 'kg', 'oz']},
+            {data: "customerName", type: "numeric", readOnly: true},
+            {
+                data: "exchangeRate",
+                type: "autocomplete",
+                source: ['ea', 'Set', 'Pack', 'Can', 'Box', 'MOQ', 'Meter', 'Feet', 'Inch', 'Roll', 'g', 'kg', 'oz']
+            },
             {data: "orderDate", type: "autocomplete", source: ['KRW', 'USD', 'EUR', 'JPY', 'GBP']},
             {data: "remittanceDate", type: "numeric"},
-            {data: "receivedQuantity", type: "numeric"},
+            {data: "quantity", type: "numeric"},
             {data: "amount", type: "numeric"},
             {data: "currencyUnit", type: "numeric"},
             {data: "returnAmount", type: "numeric"},
@@ -432,9 +484,8 @@ export const storeInfo = {
             {data: "paymentStatus", type: "text"},
             {data: "advancePayment", type: "text"},
             {data: "remarks", type: "text"},
-
         ],
-        defaultData:  {
+        defaultData: {
             "orderDocumentNumberFull": "",
             "itemDetailNo": "",
             "agencyName": "",
@@ -442,6 +493,7 @@ export const storeInfo = {
             "exchangeRate": "",
             "orderDate": "",
             "remittanceDate": "",
+            "quantity": "",
             "amount": "",
             "currencyUnit": "",
             "returnAmount": "",
@@ -477,7 +529,7 @@ export const storeInfo = {
 
         type: 'write'
     },
-    defaultInfo:  {
+    defaultInfo: {
         createdBy: '',
         managerAdminName: '',
         managerAdminId: null,
@@ -497,10 +549,9 @@ export const storeInfo = {
 };
 
 
-
 export const DCWInfo = {
     write: {
-        columnWidth: [220,50, 50, 50,45],
+        columnWidth: [220, 50, 50, 50, 45],
         column: [
             '담당자',
             '연락처',
@@ -513,13 +564,17 @@ export const DCWInfo = {
             {data: "managerName", type: "text"},
             {data: "directTel", type: "numeric"},
             {data: "faxNumber", type: "numeric"},
-            {data: "mobileNumber", type: "numeric", readOnly : true},
-            {data: "email", type: "autocomplete", source:  ['ea', 'Set', 'Pack', 'Can', 'Box', 'MOQ', 'Meter', 'Feet', 'Inch', 'Roll', 'g', 'kg', 'oz']},
+            {data: "mobileNumber", type: "numeric", readOnly: true},
+            {
+                data: "email",
+                type: "autocomplete",
+                source: ['ea', 'Set', 'Pack', 'Can', 'Box', 'MOQ', 'Meter', 'Feet', 'Inch', 'Roll', 'g', 'kg', 'oz']
+            },
             {data: "remarks", type: "autocomplete", source: ['KRW', 'USD', 'EUR', 'JPY', 'GBP']},
 
 
         ],
-        defaultData:  {
+        defaultData: {
             "managerName": "",
             "directTel": "",
             "faxNumber": "",
@@ -549,7 +604,7 @@ export const DCWInfo = {
 
         type: 'write'
     },
-    defaultInfo:  {
+    defaultInfo: {
         createdBy: '',
         managerAdminName: '',
         managerAdminId: null,

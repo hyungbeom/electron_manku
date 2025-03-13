@@ -91,14 +91,6 @@ export default function StoreWrite({copyPageInfo,notificationAlert = null, getPr
 
 
 
-
-    const onGridReady = (params) => {
-        gridRef.current = params.api;
-        setInfo(isEmptyObj(copyPageInfo['store_write'])?copyPageInfo['store_write'] : infoInit);
-        params.api.applyTransaction({add: copyPageInfo['store_write'][listType] ? copyPageInfo['store_write'][listType] : []});
-        setReady(true)
-    };
-
     useEffect(() => {
         if(ready) {
             if(copyPageInfo['store_write'] && !isEmptyObj(copyPageInfo['store_write'])){
@@ -296,10 +288,11 @@ export default function StoreWrite({copyPageInfo,notificationAlert = null, getPr
                 ]} mini={mini} setMini={setMini}>
 
                     {mini ? <div>
-                            <TopBoxCard grid={'120px 1fr 1fr 1fr'}>
-                                {inputForm({title: 'B/L No.', id: 'blNo', onChange: onChange, data: info})}
-                                {inputForm({title: '운수사명', id: 'carrierName', onChange: onChange, data: info})}
-                                {datePickerForm({title: '입고일자', id: 'arrivalDate', onChange: onChange, data: info})}
+                            <TopBoxCard grid={'100px 120px 120px'}>
+                                {datePickerForm({title: '입고일자', id: 'arrivalDate'})}
+                                {inputForm({title: '운수사명', id: 'carrierName'})}
+                                {inputForm({title: 'B/L No.', id: 'blNo'})}
+
                             </TopBoxCard>
                             <div style={{
                                 display: 'grid',
@@ -343,22 +336,16 @@ export default function StoreWrite({copyPageInfo,notificationAlert = null, getPr
                                         title: '판매금액합계',
                                         id: 'saleTotal',
                                         disabled: true,
-                                        formatter: numbFormatter,
-                                        parser: numbParser
                                     })}
                                     {inputNumberForm({
                                         title: '판매금액 합계 (VAT포함)',
                                         id: 'saleVatTotal',
-                                        disabled: true,
-                                        formatter: numbFormatter,
-                                        parser: numbParser
+                                        disabled: true
                                     })}
                                     {inputNumberForm({
                                         title: '영업이익금',
                                         id: 'operationIncome',
-                                        disabled: true,
-                                        formatter: numbFormatter,
-                                        parser: numbParser
+                                        disabled: true
                                     })}
                                 </BoxCard>
 

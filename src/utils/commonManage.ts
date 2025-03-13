@@ -148,7 +148,7 @@ gridManage.exportSelectedRowsToExcel = function (hotRef, title) {
     const exportPlugin = hot?.getPlugin('exportFile');
 
     exportPlugin?.downloadFile('csv', {
-        bom: false,
+        bom: true,
         columnDelimiter: ',',
         columnHeaders: true,
         exportHiddenColumns: true,

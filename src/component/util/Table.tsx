@@ -11,7 +11,9 @@ import {tableButtonList} from "@/utils/commonForm";
 import {projectInfo} from "@/utils/column/ProjectInfo";
 import {commonManage} from "@/utils/commonManage";
 import EstimateListModal from "@/component/EstimateListModal";
-
+import OrderListModal from "@/component/OrderListModal";
+import Button from "antd/lib/button";
+import * as XLSX from 'xlsx';
 // register Handsontable's modules
 registerAllModules();
 
@@ -21,10 +23,12 @@ const Table = forwardRef(({
                               column,
                               type = '',
                               funcButtons,
-                              infoRef = null
+                              infoRef = null,
                           }: any, ref) => {
 
     const rowRef = useRef(null)
+    const fileInputRef = useRef(null); // 파일 업로드 input 참조
+
     const hotRef = useRef(null)
     const [isModalOpen, setIsModalOpen] = useState({estimate: false, agency: false});
     useImperativeHandle(ref, () => ({
@@ -216,8 +220,14 @@ const Table = forwardRef(({
             event.stopPropagation(); // 셀 클릭 이벤트 방지
             rowRef.current = {row: row, col: col, prop: prop, value: value}
 
+            console.log(prop ,'prop ')
             setIsModalOpen(v => {
-                return {...v, estimate: true}
+                if (prop === 'orderDocumentNumberFull') {
+                    return {...v, order: true}
+                }else{
+                    return {...v, estimate: true}
+                }
+
             });
         });
 
@@ -248,14 +258,13 @@ const Table = forwardRef(({
                 const {row, col} = rowRef.current;
 
 
-
                 list.forEach((v, i) => {
                     v['total'] = `=G${row + i + 1}*H${row + i + 1}`
                     v['totalPurchase'] = `=G${row + i}*J${row + i}`
                     currentList[row + i] = v
                 })
 
-               const resultlist = calcData(currentList);
+                const resultlist = calcData(currentList);
                 setTableData(resultlist)
             }
         } else {
@@ -264,21 +273,123 @@ const Table = forwardRef(({
         }
     }
 
+
+    function getSelectedRows2(ref) {
+        if (ref.current) {
+            const selectedRows = ref.current.getSelectedRows();
+            const instance = hotRef.current.hotInstance;
+            if (selectedRows.length) {
+                const list = selectedRows.map(v => {
+                    return {
+                        ...v,
+                        orderDocumentNumberFull: v.documentNumberFull,
+                        currencyUnit: v.currency,
+                        spec: v.unit,
+                        agencyManagerPhone: v.agencyManagerPhoneNumber
+                    }
+                })
+
+                const currentList = instance.getSourceData();
+                const {row, col} = rowRef.current;
+
+
+                list.forEach((v, i) => {
+                    v['total'] = `=G${row + i + 1}*H${row + i + 1}`
+                    v['totalPurchase'] = `=G${row + i}*J${row + i}`
+                    currentList[row + i] = v
+                })
+
+                const resultlist = calcData(currentList);
+                setTableData(resultlist)
+            }
+        } else {
+            console.warn('Grid API is not available.');
+            return [];
+        }
+    }
+
+    function handleFileUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: "array" });
+            const sheetName = workbook.SheetNames[0]; // 첫 번째 시트 선택
+            const sheet = workbook.Sheets[sheetName];
+
+            // 1. 배열 형태로 변환 (첫 번째 행을 헤더로 사용)
+            const rawData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+            if (rawData.length === 0) {
+                console.error("빈 데이터입니다.");
+                return;
+            }
+
+            // ✅ 날짜 변환이 필요한 컬럼 지정
+            const dateColumns = ["requestDeliveryDate", 'replyDate'];
+
+            // ✅ 컬럼 매핑 (엑셀 헤더 → 내부 객체 키값)
+            const excelHeaders = rawData[0]; // 첫 번째 행 (엑셀의 원래 컬럼명)
+            const mappedHeaders = excelHeaders.map(header =>
+                Object.keys(column['mapping']).find(key => column['mapping'][key] === header) || header
+            );
+
+            // ✅ 데이터를 새로운 키값으로 매핑 & 날짜 변환 적용
+            let formattedData = rawData.slice(1).map((row) =>
+                mappedHeaders.reduce((obj, key, index) => {
+                    let value = row[index] ?? ""; // 값이 없으면 빈 문자열 처리
+
+                    // ✅ 날짜 컬럼이면 변환 적용
+                    if (dateColumns.includes(key) && typeof value === "number" && value > 10000) {
+                        const date = XLSX.SSF.parse_date_code(value);
+                        value = `${date.y}-${String(date.m).padStart(2, "0")}-${String(date.d).padStart(2, "0")}`;
+                    }
+
+                    obj[key] = value;
+                    return obj;
+                }, {})
+            );
+
+            // ✅ 최대 100개 데이터만 유지
+            formattedData = formattedData.slice(0, 100);
+
+            console.log('!!!!!!!!!!!!!')
+            console.log(formattedData)
+            console.log('!!!!!!!!!!!!!')
+
+            // ✅ 변환된 데이터를 계산 및 저장
+            const resultlist = calcData(formattedData);
+            setTableData(resultlist);
+        };
+
+        reader.readAsArrayBuffer(file);
+        event.target.value = "";
+    }
+
+    function upload(){
+        fileInputRef.current.click();
+    }
     return (
         <div ref={tableContainerRef} className="table-container" style={{width: '100%', overflowX: 'auto'}}>
             <div style={{display: 'flex', justifyContent: 'end'}}>
-
+                <input type="file" accept=".xlsx, .xls, .csv" onChange={handleFileUpload}   ref={fileInputRef}    style={{ display: "none" }}/>
                 <div style={{display: 'flex', gap: 5, paddingBottom: 0}}>
+                    <Button size={'small'} onClick={upload}>업로드</Button>
                     {funcButtons?.map(v => tableButtonList(v, hotRef))}
                 </div>
             </div>
             <EstimateListModal isModalOpen={isModalOpen['estimate']} setIsModalOpen={setIsModalOpen}
                                getRows={getSelectedRows}/>
+            <OrderListModal isModalOpen={isModalOpen['order']} setIsModalOpen={setIsModalOpen}
+                            getRows={getSelectedRows2}/>
             <HotTable
                 style={{
                     border: '1px solid #ebebed',
                     boxShadow: '0px 6px 12px rgba(0, 0, 0, 0.07)'
                 }}
+
                 ref={hotRef}
                 data={tableData}
                 formulas={{
@@ -290,6 +401,7 @@ const Table = forwardRef(({
                 colHeaders={column["column"]}
                 fixedRowsBottom={1}
                 stretchH="all"
+
                 autoWrapRow={true}
                 autoWrapCol={true}
                 manualColumnMove={true}
@@ -344,7 +456,7 @@ const Table = forwardRef(({
                         dateFormat: col.type === "date" ? "YYYY-MM-DD" : undefined,
                         // correctFormat: col.data === "marginRate" ? true : undefined, // 🔥 숫자가 올바른 형식이 아니면 자동 수정
                         numericFormat: col.data === "marginRate" ? {pattern: "0%", suffix: "%"} : undefined, // 🔥 소수점 둘째 자리 고정 + % 유지
-                        renderer: col.data === "marginRate" ? percentRenderer : (col.data === 'connectInquiryNo' ? iconRenderer : col.type), // 🔥 커스텀 렌더러 적용
+                        renderer: col.data === "marginRate" ? percentRenderer : ((col.data === 'orderDocumentNumberFull' || col.data === 'connectInquiryNo') ? iconRenderer : col.type), // 🔥 커스텀 렌더러 적용
                         readOnly: col.readOnly,
                     })
                 })}

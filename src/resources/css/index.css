@@ -387,3 +387,13 @@ input[type="number"]::-webkit-inner-spin-button {
     background-color: #e6f6ff !important; /* 파란색 배경 */
 
 }
+
+.htCore td {
+    max-height: 80px !important; /* 4줄 높이 */
+    overflow: hidden !important;
+    white-space: pre-wrap !important;
+}
+.htCore td.htDimmed {
+    max-height: none !important; /* 선택 시 높이 제한 해제 */
+    overflow: visible !important;
+}
