@@ -4,11 +4,10 @@ import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import Checkbox from "antd/lib/checkbox/Checkbox";
 import Card from "antd/lib/card/Card";
 import {getData} from "@/manage/function/api";
-import Input from "antd/lib/input";
 import _ from "lodash";
-import Button from "antd/lib/button";
-import {inputForm, MainCard, textAreaForm, TopBoxCard} from "@/utils/commonForm";
+import {inputForm, textAreaForm} from "@/utils/commonForm";
 import message from "antd/lib/message";
+import {MinusCircleOutlined, PlusSquareOutlined} from "@ant-design/icons";
 
 
 function formatDocumentNumbers(documentNumbersArray) {
@@ -110,7 +109,8 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
                 agencyManagerId: agencyManagerId,
                 sendName: userInfo.name,
                 detailList: Object.values(src),
-                title: 'RFQ' + formatDocumentNumbers(documentNumbers),
+                ccList: [],
+                title: 'RFQ ' + formatDocumentNumbers(documentNumbers),
                 contents: `${agencyManagerName}  \n\n아래 진행 부탁 드립니다.\n\n` + output
             }
         })
@@ -118,39 +118,39 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
         setInfo(list)
     }, [data])
 
+    function isValidEmail(email) {
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        return emailRegex.test(email);
+    }
+
 
     async function sendMail() {
-
-
         const result = info.map((v, idx) => {
 
             let sumDiv = ''
             let detailList = []
-            let firstResult = v.detailList.map(source => {
 
+            const searchDom = document.getElementById(`cc_${idx}`)
 
-                {
-                    source.forEach((data: any, index) => {
-                        sumDiv += `<tr style="font-weight : bold; height : 30px" >
-                            <th style="border : 1px solid lightgrey width: 40px; border-top: none">${index + 1})</th>
-                            <th style="border : 1px solid lightgrey; border-top: none; white-space: pre-wrap; word-wrap: break-word; overflow-wrap: break-word;text-align: left; font-weight: 500;">  ${data.model.replace(/\n/g, '<br>')}</th>
-                            <th style="border : 1px solid lightgrey; width: 100px;border-top: none;font-weight: 500;">---- ${data.quantity} ${data.unit}</th>
-                        </tr>`
-                        detailList.push(data.estimateRequestDetailId)
-                    })
+            const list = searchDom.querySelectorAll('input')
+
+            let bowl = []
+
+            let checked = false;
+            list.forEach(v => {
+                if (isValidEmail(v.value)) {
+                    bowl.push(v.value)
+                } else {
+                    checked = true
+                    v.style.borderColor = 'red'
                 }
-
-                let sendDom = `<thead>
-                <div>${source[0].documentNumberFull}</div>
-                <div>Maker : ${source[0].maker}</div>
-                <div>Item : ${source[0].item}</div>
-                <div>Model :</div>
-                  <table style="border : 1px solid lightgrey">
-                                    <thead>${sumDiv}</thead></table>
-            </div>`
-                sumDiv = ''
-                return sendDom;
             })
+
+            if (checked) {
+                message.error('올바른 형식의 이메일이 아닙니다.')
+                return false;
+            }
+
 
             return {
                 email: v.agencyManagerEmail,
@@ -159,7 +159,7 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
                 estimateRequestDetailIdList: detailList,
                 content: v.contents,
                 subject: v.title,
-                ccList: null
+                ccList: bowl
             }
         })
 
@@ -227,6 +227,38 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
         }
     }
 
+
+    const SubSend = ({idx}) => {
+
+        const [count, setCount] = useState([])
+
+        return <div id={`cc_${idx}`}>
+            <div style={{paddingBottom : 10}}>참조</div>
+            {count.map((src,numb) => {
+                return <div style={{width: '100%', display : 'flex'}}>
+                    <input type="text" style={{width: '50%', marginTop : 3}} onChange={e => {
+
+                        e.target.style.border = ''
+                    }}/>
+                    <MinusCircleOutlined style={{color : 'red', fontSize : 15, fontWeight : 700, paddingLeft : 5, cursor : 'pointer', opacity : 0.7}} onClick={()=>{
+                        setCount(v=>{
+                            let copyArr = [...v]
+                            copyArr.splice(numb, 1)
+                            return copyArr
+                        })
+                    }}/>
+                </div>
+            })}
+
+            <span style={{color: 'blue', cursor : 'pointer'}} onClick={() => {
+                setCount(v => {
+                    return [...v, '']
+                })
+            }}>추가<PlusSquareOutlined /></span>
+        </div>
+    }
+
+
     return <>
         <Modal okText={'메일 전송'} width={700} cancelText={'취소'} onOk={sendMail}
                title={<div style={{lineHeight: 2.5, fontWeight: 550}}>견적의뢰 메일 발송</div>} open={isModalOpen}
@@ -237,10 +269,9 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
 
                 {info?.map((src, idx) => {
 
-                    console.log(src['contents'], ':::')
+
                     return <div>
                         <div>
-
                             {inputForm({
                                 title: '수신자 이메일',
                                 id: 'agencyManagerEmail',
@@ -249,14 +280,18 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
                                 value: src.agencyManagerEmail,
                                 size: 'middle',
                             })}</div>
-                        {inputForm({
-                            title: '메일 제목',
-                            id: 'title',
-                            onChange: e => onChange(e, idx),
-                            data: src,
-                            value: src.title,
-                            size: 'middle'
-                        })}
+                        <SubSend idx={idx}/>
+
+                        <div style={{paddingTop: 15}}>
+                            {inputForm({
+                                title: '메일 제목',
+                                id: 'title',
+                                onChange: e => onChange(e, idx),
+                                data: src,
+                                value: src.title,
+                                size: 'middle'
+                            })}
+                        </div>
 
 
                         {textAreaForm({
