@@ -437,7 +437,7 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
                         </div>
                     </div>
 
-                    <div style={{fontSize: 40, fontWeight: 700}}>발주서</div>
+                    <div style={{fontSize: 38, fontWeight: 700}}>발&nbsp;&nbsp;&nbsp;&nbsp;주&nbsp;&nbsp;&nbsp;&nbsp;서</div>
                     <div style={{width: '40%'}}>
                         <img src={'/manku_stamp_ko.png'} style={{float: 'right'}} width={180} alt=""/>
                     </div>
