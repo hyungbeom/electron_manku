@@ -355,6 +355,7 @@ export const orderInfo = {
         type: 'write'
     },
     defaultInfo:  {
+        attnTo : '',
         createdBy: '',
         managerAdminName: '',
         managerAdminId: null,

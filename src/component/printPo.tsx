@@ -24,7 +24,7 @@ const getTextAreaValues = (ref) => {
 };
 
 
-export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, infoRef, memberList=[]}) {
+export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, infoRef, memberList=[], count= 0}) {
 
     const pdfRef = useRef<any>();
     const pdfSubRef = useRef<any>();
@@ -103,42 +103,51 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
         const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
         infoData['managerAdminName'] = findMember['name'];
 
-        console.log(infoData,'infoData')
-            // {title: 'Our REFQ NO.', value: data.ourPoNo, id: 'ourPoNo'},
-            // {title: 'Responsibility', value: findObj?.name, id: 'name'},
-            // {title: 'Your REFQ NO.', value: data.yourPoNo, id: 'yourPoNo'},
-            // {title: 'TEL', value: findObj?.contactNumber, id: 'contactNumber'},
-            // {title: 'Messrs', value: data.agencyCode, id: 'agencyCode'},
-            // {title: 'E-mail', value: findObj?.email, id: 'email'},
-            // {title: 'Attn To.', value: data.attnTo, id: 'attnTo'},
-            // {title: '', value: '', id: ''},
-            // {title: 'Payment Terms', value: data.paymentTerms, id: 'paymentTerms'},
-            // {title: '', value: '', id: 'faxNumber'},
-            // {title: 'Delivery Terms', value: data.deliveryTerms, id: 'deliveryTerms'},
-            // {title: '', value: '', id: 'shippingTerms'},
+
+        const dom = infoRef.current.querySelector('#agencyCode');
+        const lang = dom.value.startsWith("K");
 
 
-        const lang = infoData.agencyCode.startsWith("k");
+            setInfo(
+                lang ?
 
-            setInfo([
-                {title: '수신처', value: data.ourPoNo, id: 'ourPoNo'},
-                {title: '발주일자', value: findMember?.name, id: 'name'},
-                {title: '담당자', value: data.yourPoNo, id: 'yourPoNo'},
-                {title: '발주번호', value: infoData?.documentNumberFull, id: 'contactNumber'},
-                {title: '납품조건', value: data.agencyCode, id: 'agencyCode'},
-                {title: '귀사견적', value: infoData?.yourPoNo, id: 'email'},
-                {title: '결제조건.', value: infoData?.paymentTerms, id: 'attnTo'},
-                {title: '담당자', value: findMember?.name, id: ''},
-                {title: '납기조건', value: data.paymentTerms, id: 'paymentTerms'},
-                {title: '연락처', value:  findMember?.contactNumber, id: 'faxNumber'},
-                {title: '', value : '', id: 'deliveryTerms'},
-                {title: 'E-Mail', value: findMember?.email, id: 'shippingTerms'},
+                        [
+                        {title: '수신처', value: infoData.agencyName, id: 'ourPoNo'},
+                        {title: '발주일자', value: '예상입고일 + 납기?', id: 'name'},
+                        {title: '담당자', value: infoData.agencyManagerName, id: 'agencyManagerName'},
+                        {title: '발주번호', value: infoData?.documentNumberFull, id: 'contactNumber'},
+                        {title: '납품조건', value: data.agencyCode, id: 'agencyCode'},
+                        {title: '귀사견적', value: infoData?.yourPoNo, id: 'yourPoNo'},
+                        {title: '결제조건.', value: infoData?.paymentTerms, id: 'attnTo'},
+                        {title: '담당자', value: findMember?.name, id: ''},
+                        {title: '납기조건', value: infoData?.deliveryTerms, id: 'deliveryTerms'},
+                        {title: '연락처', value:  findMember?.contactNumber, id: 'faxNumber'},
+                        {title: '', value : '', id: 'deliveryTerms'},
+                        {title: 'E-Mail', value: findMember?.email, id: 'shippingTerms'},
 
-            ])
+                    ]
+
+                    : [
+                    {title: 'MESSER', value: infoData.agencyName, id: 'ourPoNo'},
+                    {title: 'DATE', value: infoData.writtenDate, id: 'writtenDate'},
+                    {title: 'ATTN', value: infoData.attnTo, id: 'attnTo'},
+                    {title: 'Contact Person', value: infoData.managerAdminName, id: 'ourPoNo'},
+                    {title: 'YOUT OFFER NO.', value: infoData.yourPoNo, id: 'ourPoNo'},
+                    {title: 'TEL', value: infoData.managerPhoneNumber, id: 'ourPoNo'},
+                    {title: 'MANKU No.', value: infoData.documentNumberFull, id: 'ourPoNo'},
+                    {title: 'E-mail', value: infoData.managerEmail, id: 'ourPoNo'},
+                    {title: 'Delivery', value: infoData.deliveryTerms, id: 'ourPoNo'},
+                    {title: 'HS-code', value: 'list 첫번재값? or input 추가?', id: 'hscode'},
+                    {title: 'Incoterms', value: '', id: 'incoterms'},
+                    {title: '', value: '', id: ''},
+                    {title: 'Payment', value: infoData.paymentTerms, id: 'ourPoNo'},
+                ]
+
+            )
 
 
 
-    }, [data])
+    }, [data, count])
 
     const RowTotal = ({defaultValue, id}) => {
 
@@ -161,7 +170,7 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
         };
 
         function blur() {
-            console.log('!!')
+
             setToggle(false)
         }
 
@@ -220,6 +229,7 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
                 style={{
                     width: 480,
                     textAlign: "left",
+                    paddingLeft : 10,
                     fontSize: 12,
                     whiteSpace: "normal",
                     wordBreak: "break-word",
@@ -278,7 +288,7 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
             <th colSpan={2} style={{
 
                 border: 'none',
-                textAlign: 'left',
+                textAlign: 'center',
                 paddingLeft: 10,
                 borderBottom: '1px solid lightGray', fontSize: 12,
                 borderRight: '1px solid lightGray',
@@ -358,11 +368,7 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
                 fontSize: 12,
                 borderLeft: '1px solid lightGray'
             }}>
-                <Input value={info['quantity']}
-                       name={'quantity'}
-                       onChange={e => setInfo(v => {
-                           return {...v, quantity: e.target.value}
-                       })}
+                <Input
                        style={{
                            border: 'none',
                            textAlign: 'right',
@@ -373,6 +379,10 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
         </thead>
     }
 
+    function chechLang(){
+        const dom = infoRef.current.querySelector('#agencyCode');
+        return dom.value.startsWith("K");
+    }
     return (
         <Modal
             title={<div style={{width: '100%', display: "flex", justifyContent: 'space-between', alignItems: 'center'}}>
@@ -448,16 +458,16 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
                     fontFamily: 'Arial, sans-serif',
                     display: 'grid',
                     gridTemplateColumns: '1fr 1fr',
-                    gridTemplateRows: '35px 35px 35px 35px 35px 35px 35px',
+                    gridTemplateRows: '35px 35px 35px 35px 35px 35px 35px 35px',
                     alignItems: 'center',
                 }}>
                     {info?.map((v: any, index) => {
 
                             return <div style={{
                                 display: 'grid',
-                                gridTemplateColumns: '125px 1fr',
+                                gridTemplateColumns: '135px 1fr',
                                 alignItems: 'center',
-                                fontSize: 15
+                                fontSize: 14
                             }}>
 
                                 <div style={{alignItems: 'center', fontWeight: 600}}>{v.title} <span
@@ -505,8 +515,12 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
                         <th>No</th>
                         <th colSpan={3} style={{borderLeft: '1px solid lightGray'}}>Specification</th>
                         <th colSpan={2} style={{width : '5%',textAlign: 'center', borderLeft: '1px solid lightGray', paddingRight: 10}}>Q`ty</th>
-                        <th style={{width : '15%', textAlign: 'center', borderLeft: '1px solid lightGray'}}>단가</th>
-                        <th style={{width : '15%',borderLeft: '1px solid lightGray'}}>총액</th>
+                        <th style={{width : '15%', textAlign: 'center', borderLeft: '1px solid lightGray'}}>{
+                            chechLang() ?'단가' : 'Unit Price'
+                        }</th>
+                        <th style={{width : '15%',borderLeft: '1px solid lightGray'}}>{
+                            chechLang() ?'총액' : 'Amount'
+                        }</th>
                         <th style={{width : '15%',borderLeft: '1px solid lightGray'}}>Other</th>
                     </tr>
                     </thead>
@@ -519,33 +533,33 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
                             border: '1px solid lightGray',
                             borderLeft: 'none',
                             fontSize: 12,
-                            backgroundColor: '#EBF6F7'
+
                         }}>Maker
                         </th>
                         <th colSpan={3} style={{
-                            backgroundColor: '#EBF6F7',
+
                             borderTop: '1px solid lightGray', border: '1px solid lightGray',
                             textAlign : 'left',paddingLeft : 10,
                             borderLeft: 'none', borderRight: 'none', fontSize : 12
                         }}>{data?.maker ? data?.maker : '-'}</th>
                         <th colSpan={2}  style={{
-                            backgroundColor: '#EBF6F7',
+
                             borderTop: '1px solid lightGray', border: '1px solid lightGray',
                             borderRight: 'none'
                         }}></th>
 
                         <th style={{
-                            backgroundColor: '#EBF6F7',
+
                             borderTop: '1px solid lightGray', border: '1px solid lightGray',
                             borderRight: 'none'
                         }}></th>
                         <th style={{
-                            backgroundColor: '#EBF6F7',
+
                             borderTop: '1px solid lightGray', border: '1px solid lightGray',
                             borderRight: 'none'
                         }}></th>
                         <th style={{
-                            backgroundColor: '#EBF6F7',
+
                             borderTop: '1px solid lightGray', border: '1px solid lightGray',
                             borderRight: 'none'
                         }}></th>

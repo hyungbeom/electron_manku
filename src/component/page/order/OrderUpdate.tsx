@@ -88,6 +88,7 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
     const [info, setInfo] = useState<any>(orderInfo['defaultInfo'])
 
     const [mini, setMini] = useState(true);
+    const [count, setCount] = useState(0);
     const [customerData, setCustomerData] = useState<any>(printEstimateInitial)
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false, event3: false});
     const [fileList, setFileList] = useState();
@@ -237,6 +238,7 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
 
 
     function printPo() {
+        setCount(v=> v + 1)
         setIsModalOpen({event1: false, event2: false, event3: true});
     }
 
@@ -336,7 +338,7 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
                           setIsModalOpen={setIsModalOpen}/>}
         <>
             {isModalOpen['event3'] &&
-                <PrintPo data={info} infoRef={infoRef} tableRef={tableRef}  isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} memberList={memberList}/>}
+                <PrintPo data={info} infoRef={infoRef} tableRef={tableRef}  isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} memberList={memberList} count={count}/>}
             <div ref={infoRef} style={{
                 display: 'grid',
                 gridTemplateRows: `${mini ? '495px' : '65px'} calc(100vh - ${mini ? 590 : 195}px)`,
