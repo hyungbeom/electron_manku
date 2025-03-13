@@ -281,6 +281,11 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
         commonManage.openModal(e, setIsModalOpen)
     }
 
+
+    async function printTransactionStatement() {
+        alert('쉐어포인트 자동저장')
+    }
+
     return <Spin spinning={loading} tip={'LOADING'}>
         <PanelSizeUtil groupRef={groupRef} storage={'order_write'}/>
         {(isModalOpen['event1'] || isModalOpen['event2'] )&&<SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
@@ -297,7 +302,7 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
                 rowGap: 10,
             }}>
                 <MainCard title={'발주서 작성'} list={[
-                    {name: '거래명세표 출력', func: null, type: 'default'},
+                    {name: '거래명세표 출력', func: printTransactionStatement, type: 'default'},
                     {name: '발주서 출력', func: printPo, type: 'default'},
                     {name: '저장', func: saveFunc, type: 'primary'},
                     {name: '초기화', func: clearAll, type: 'danger'}

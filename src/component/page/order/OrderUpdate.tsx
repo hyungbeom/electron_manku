@@ -234,10 +234,7 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
         }
     }
 
-    async function printTransactionStatement() {
-        await searchCustomer();
-        setIsModalOpen({event1: true, event2: false, event3: false});
-    }
+
 
     function printPo() {
         setIsModalOpen({event1: false, event2: false, event3: true});
@@ -326,6 +323,9 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
         }
     }, typeof window !== 'undefined' ? document : null)
 
+    async function printTransactionStatement() {
+       alert('쉐어포인트 자동저장')
+    }
 
     return <Spin spinning={loading} tip={'LOADING'}>
         <PanelSizeUtil groupRef={groupRef}  storage={'order_update'}/>
@@ -342,7 +342,7 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
                 rowGap: 10,
             }}>
                 <MainCard title={'발주서 수정'} list={[
-                    {name: '거래명세표 출력', func: null, type: 'default'},
+                    {name: '거래명세표 출력', func: printTransactionStatement, type: 'default'},
                     {name: '발주서 출력', func: printPo, type: 'default'},
                     {name: '저장', func: saveFunc, type: 'primary'},
                     {name: '초기화', func: clearAll, type: 'danger'},

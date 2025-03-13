@@ -24,10 +24,9 @@ import {useNotificationAlert} from "@/component/util/NoticeProvider";
 
 const listType = 'projectDetailList'
 export default function ProjectUpdate({
-
                                           updateKey = {},
-                                          getCopyPage = null, getPropertyId = null,
-                                          layoutRef
+
+                                          getCopyPage = null, getPropertyId,layoutRef
                                       }:any) {
     const notificationAlert = useNotificationAlert();
     const infoRef = useRef<any>(null)
@@ -84,7 +83,7 @@ export default function ProjectUpdate({
 
     const handleMouseUp = () => {
         setSizes(groupRef.current.getLayout());
-        localStorage.setItem('project_write', JSON.stringify(groupRef.current.getLayout()));
+        localStorage.setItem('project_update', JSON.stringify(groupRef.current.getLayout()));
     };
     useEffect(() => {
         window.addEventListener('pointerup', handleMouseUp);
@@ -103,7 +102,6 @@ export default function ProjectUpdate({
             setOriginFileList(attachmentFileList)
             setInfo(projectDetail);
             projectDetail[listType] = [...projectDetail[listType], ...commonFunc.repeatObject(projectInfo['write']['defaultData'], 100 - projectDetail[listType].length)];
-            console.log(projectDetail[listType],'projectDetail[listType]:')
             setTableData(projectDetail[listType]);
             setLoading(false)
         })
@@ -111,6 +109,7 @@ export default function ProjectUpdate({
 
 
     useEffect(() => {
+
         commonManage.setInfo(infoRef, info);
     }, [info]);
 
@@ -308,7 +307,7 @@ export default function ProjectUpdate({
                                             }}>
                                         {
                                             options?.map(v => {
-                                                return <option value={v.value}>{v.label}</option>
+                                                return <option  key={v.value} value={v.value}>{v.label}</option>
                                             })
                                         }
                                     </select>
@@ -323,6 +322,7 @@ export default function ProjectUpdate({
                                         {inputForm({
                                             title: 'Project No.',
                                             id: 'documentNumberFull',
+                                            disabled : true
                                         })}
                                         {inputForm({
                                             title: '프로젝트 제목',
