@@ -105,6 +105,7 @@ const TableGrid = ({
 
         if (type === 'read') {
 
+            console.log(e.data,'e.data::::')
             if (e.data.orderStatusId){
                 getPropertyId('store_update', e.data.orderStatusId)
             }

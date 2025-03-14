@@ -258,7 +258,7 @@ export const datePickerForm = ({title, id, disabled = false, onChange = null, da
         <div style={{paddingBottom: 5.5, fontWeight: 700}}>{title}</div>
         {/*@ts-ignore*/}
 
-        <input type="date" id={id} disabled={disabled}/>
+        <input type="date" id={id} disabled={disabled}      value={data ? data[id] : null} />
     </div>
 }
 
@@ -279,6 +279,9 @@ export const inputNumberForm = ({
                                 }: any) => {
     let bowl = data;
 
+    function onChanges(e){
+        onChange(e)
+    }
 
     return <div style={{fontSize: 12, paddingBottom: 10}}>
         <div style={{paddingBottom: 4, fontWeight: 700}}>{title}</div>
@@ -286,7 +289,9 @@ export const inputNumberForm = ({
             <input type={'number'} id={id} disabled={disabled}
                    style={{width: '100%', marginTop: 3}}
                    step={step}
+                   value={data ? data[id] : null}
                    placeholder={placeholder}
+                   onChange={onChanges}
                    min={min}
                    max={max}
 

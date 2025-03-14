@@ -77,6 +77,7 @@ export default function RemittanceDomesticWrite({dataInfo = [], copyPageInfo}:an
         commonManage.openModal(e, setIsModalOpen)
     }
 
+    console.log(info,'')
     return <>
         <div style={{height : 'calc(100vh - 90px)'}}>
             <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
@@ -99,7 +100,7 @@ export default function RemittanceDomesticWrite({dataInfo = [], copyPageInfo}:an
                             suffix: <FileSearchOutlined style={{cursor: 'pointer', color: 'black'}} onClick={
                                 (e) => {
                                     e.stopPropagation();
-                                    openModal('orderSubList');
+                                    openModal('connectInquiryNo');
                                 }
                             }/>
                         })}
@@ -123,12 +124,12 @@ export default function RemittanceDomesticWrite({dataInfo = [], copyPageInfo}:an
 
                         <BoxCard title={'확인정보'}>
                             <div>송금여부</div>
-                            <Radio.Group id={'isSend'} defaultValue={'X'} disabled={true}>
+                            <Radio.Group id={'isSend'} value={'X'} >
                                 <Radio value={'O'}>O</Radio>
                                 <Radio value={'X'}>X</Radio>
                             </Radio.Group>
                             <div>계산서 발행여부</div>
-                            <Radio.Group id={'isInvoice'} defaultValue={'X'} disabled={true}>
+                            <Radio.Group id={'isInvoice'} value={'X'}>
                                 <Radio value={'O'}>O</Radio>
                                 <Radio value={'X'}>X</Radio>
                             </Radio.Group>
@@ -163,39 +164,9 @@ export default function RemittanceDomesticWrite({dataInfo = [], copyPageInfo}:an
                                 parser: numbParser
                             })}
                         </BoxCard>
-
-                        <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
-                            {/*@ts-ignored*/}
-                            <div style={{overFlowY: "auto", maxHeight: 300}}>
-                                <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                 numb={0}/>
-                            </div>
-                        </BoxCard>
                     </div>
                 </div>
             </MainCard>
         </div>
     </>
 }
-
-
-// @ts-ignore
-export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
-    const {query} = ctx;
-    const {userInfo} = await initialServerRouter(ctx, store);
-
-    if (!userInfo) {
-        return {
-            redirect: {
-                destination: '/', // 리다이렉트할 경로
-                permanent: false, // true면 301 리다이렉트, false면 302 리다이렉트
-            },
-        };
-    }
-    store.dispatch(setUserInfo(userInfo));
-
-    if (query?.data) {
-        const data = JSON.parse(decodeURIComponent(query.data));
-        return {props: {dataInfo: data}}
-    }
-})

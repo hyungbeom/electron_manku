@@ -45,6 +45,7 @@ export default function SearchInfoModal({
                 case 'customerName' :
                 case 'agencyCode' :
                 case 'maker' :
+                case 'connectInquiryNo' :
                     searchFunc(firstTrueKey, dom.value)
                     setCode(dom.value)
 
@@ -287,7 +288,7 @@ export default function SearchInfoModal({
                                              }
                                          })
                                          break;
-                                     case 'orderSubList' :
+                                     case 'connectInquiryNo' :
                                          setInfo(v => {
                                              return {
                                                  ...v, ...e.data,

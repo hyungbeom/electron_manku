@@ -1,130 +1,86 @@
 import React, {useEffect, useRef, useState} from "react";
-import Input from "antd/lib/input/Input";
-import DatePicker from "antd/lib/date-picker";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import {getData} from "@/manage/function/api";
-import moment from "moment";
 import message from "antd/lib/message";
-import {BoxCard, MainCard, TopBoxCard} from "@/utils/commonForm";
-import {DriveUploadComp} from "@/component/common/SharePointComp";
+import {
+    BoxCard,
+    datePickerForm,
+    inputForm,
+    inputNumberForm,
+    MainCard,
+    numbFormatter,
+    numbParser,
+    TopBoxCard
+} from "@/utils/commonForm";
 import Radio from "antd/lib/radio";
-import InputNumber from "antd/lib/input-number";
-import {commonManage, fileManage} from "@/utils/commonManage";
+import {commonFunc, commonManage, fileManage} from "@/utils/commonManage";
 import {updateRemittance} from "@/utils/api/mainApi";
 import {useRouter} from "next/router";
 import _ from "lodash";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
+import {projectInfo} from "@/utils/column/ProjectInfo";
+import moment from "moment/moment";
+import {useNotificationAlert} from "@/component/util/NoticeProvider";
+import {DriveUploadComp} from "@/component/common/SharePointComp";
 
 export default function RemittanceDomesticUpdate({
-                                                     dataInfo = {remittanceDetail: [], attachmentFileList: []},
                                                      updateKey
-                                                 }) {
+                                                 }:any) {
+
+
     const userInfo = useAppSelector((state) => state.user);
-
-    const infoInit = dataInfo?.remittanceDetail
-    const infoFileInit = dataInfo?.attachmentFileList
-
     const fileRef = useRef(null);
+    const infoRef = useRef(null);
+    const notificationAlert = useNotificationAlert();
     const router = useRouter();
+    const [fileList, setFileList] = useState(fileManage.getFormatFiles([]));
+    const [originFileList, setOriginFileList] = useState([]);
+    const [loading, setLoading] = useState(false)
+    const [info, setInfo] = useState({})
 
 
-    const [info, setInfo] = useState(infoInit)
-    const [mini, setMini] = useState(true);
 
-    const [fileList, setFileList] = useState(fileManage.getFormatFiles(infoFileInit));
-    const [originFileList, setOriginFileList] = useState(infoFileInit);
-    const [loading, setLoading] = useState(false);
+
+
+    async function getDataInfo() {
+        const result = await getData.post('remittance/getRemittanceDetail', {
+            "remittanceId": updateKey['remittance_domestic_update']
+        });
+        return result?.data?.entity;
+    }
+
     useEffect(() => {
-        setInfo((v: any) => {
-            return {
-                ...v,
-                surtax: Math.round(v.supplyAmount * 0.1),
-                total: v.supplyAmount + Math.round(v.supplyAmount * 0.1)
-            }
+        setLoading(true)
+        getDataInfo().then(v => {
+            const {remittanceDetail, attachmentFileList} = v;
+
+            setFileList(fileManage.getFormatFiles(attachmentFileList))
+            setOriginFileList(fileManage.getFormatFiles(attachmentFileList))
+
+            let copyData = _.cloneDeep(remittanceDetail);
+            copyData['surtax'] = copyData['supplyAmount'] * 0.1
+            copyData['total'] = copyData['supplyAmount'] * 0.1 + parseFloat(remittanceDetail['supplyAmount'])
+
+            setInfo(copyData);
+
+            setLoading(false)
         })
-    }, [infoInit])
-    console.log(info, 'info:')
-
-    const inputForm = ({title, id, disabled = false, suffix = null, placeholder = ''}) => {
-        let bowl = info;
-
-        return <div>
-            <div>{title}</div>
-            <Input id={id} value={bowl[id]} disabled={disabled}
-                   onChange={onChange}
-                   size={'small'}
-                // onKeyDown={handleKeyPress}
-                   placeholder={placeholder}
-                   suffix={suffix}
-            />
-        </div>
-    }
+    }, [updateKey['project_update']])
 
 
-    const inputNumberForm = ({title, id, disabled = false, placeholder = ''}) => {
-        let bowl = info;
 
+    // useEffect(() => {
+    //     setInfo((v: any) => {
+    //         return {
+    //             ...v,
+    //             surtax: Math.round(v.supplyAmount * 0.1),
+    //             total: v.supplyAmount + Math.round(v.supplyAmount * 0.1)
+    //         }
+    //     })
+    // }, [infoInit])
 
-        return <div>
-            <div>{title}</div>
-            <InputNumber id={id} value={bowl[id]} disabled={disabled}
-                         style={{width: '100%'}}
-                         onBlur={() => console.log('!!!')}
-                         formatter={(value) =>
-                             `₩ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                         }
-                         parser={(value) => value.replace(/₩\s?|(,*)/g, '')}
-                         onChange={value => {
-
-                             setInfo(v => {
-                                 return {
-                                     ...v,
-                                     supplyAmount: value,
-                                     surtax: Math.round(value * 0.1),
-                                     total: value + Math.round(value * 0.1)
-                                 }
-                             })
-                         }}
-                         size={'small'}
-                         placeholder={placeholder}
-            />
-        </div>
-    }
-
-    const radioForm = ({title, id, disabled = false}) => {
-        let bowl = info;
-
-        return <>
-            <div>{title}</div>
-            <Radio.Group id={id} value={info[id]} disabled={disabled}
-                         onChange={e => {
-                             e.target['id'] = id
-                             onChange(e);
-                         }}>
-                <Radio value={'O'}>O</Radio>
-                <Radio value={'X'}>X</Radio>
-            </Radio.Group>
-        </>
-    }
-
-    const datePickerForm = ({title, id, disabled = false}) => {
-        return <div>
-            <div>{title}</div>
-            {/*@ts-ignore*/}
-            <DatePicker value={moment(info[id]).isValid() ? moment(info[id]) : ''} style={{width: '100%'}}
-                        onChange={(date) => onChange({
-                            target: {
-                                id: id,
-                                value: moment(date).format('YYYY-MM-DD')
-                            }
-                        })
-                        }
-                        disabled={disabled}
-                        id={id} size={'small'}/>
-        </div>
-    }
 
     function onChange(e) {
         commonManage.onChange(e, setInfo)
@@ -153,7 +109,6 @@ export default function RemittanceDomesticUpdate({
         formData.delete('modifiedDate')
 
         await updateRemittance({data: formData, router: router})
-
     }
 
     function clearAll() {
@@ -167,7 +122,8 @@ export default function RemittanceDomesticUpdate({
     }
 
     return <>
-        <>
+        <div style={{height: 'calc(100vh - 90px)'}}>
+
 
             <MainCard title={'국내 송금 수정'} list={[
                 {name: '수정', func: saveFunc, type: 'primary'},
@@ -175,70 +131,85 @@ export default function RemittanceDomesticUpdate({
                 {name: '복제', func: copyPage, type: 'default'}
             ]}>
 
+                <div ref={infoRef}>
+                    <TopBoxCard grid={'250px 200px 200px 200px'}>
+                        {inputForm({
+                            title: 'Inquiry No.',
+                            id: 'connectInquiryNo',
+                            onChange: onChange,
+                            data: info,
+                            disabled: true
+                        })}
+                        {inputForm({title: '고객사명', id: 'customerName', onChange: onChange, data: info})}
+                        {inputForm({title: '매입처명', id: 'agencyName', onChange: onChange, data: info})}
+                        {inputForm({
+                            title: '담당자',
+                            id: 'managerAdminName',
+                            onChange: onChange,
+                            data: info,
+                            disabled: true
+                        })}
+                    </TopBoxCard>
 
-                <TopBoxCard title={'기본 정보'} grid={'250px 200px 200px 200px'}>
-                    {inputForm({title: 'Inquiry No.', id: 'connectInquiryNo'})}
-                    {inputForm({title: '고객사명', id: 'customerName'})}
-                    {inputForm({title: '매입처명', id: 'agencyName'})}
-                    {inputForm({title: '담당자', id: 'managerAdminName', disabled: true})}
-                </TopBoxCard>
+                    <div style={{display: 'grid', gridTemplateColumns: "1fr 1fr 1fr 1fr", paddingTop: 5}}>
 
-                <div style={{display: 'grid', gridTemplateColumns: "250px 250px 250px 350px"}}>
+                        <BoxCard title={'송금정보'}>
+                            {datePickerForm({title: '송금요청일자', id: 'requestDate', onChange: onChange, data: info})}
+                            {datePickerForm({title: '송금지정일자', id: 'assignedDate', onChange: onChange, data: info})}
+                        </BoxCard>
 
-                    <BoxCard title={'송금정보'}>
-                        {datePickerForm({title: '송금요청일자', id: 'requestDate'})}
-                        {datePickerForm({title: '송금지정일자', id: 'assignedDate'})}
-                    </BoxCard>
+                        <BoxCard title={'확인정보'}>
+                            <div>송금여부</div>
+                            <Radio.Group id={'isSend'} value={'X'}>
+                                <Radio value={'O'}>O</Radio>
+                                <Radio value={'X'}>X</Radio>
+                            </Radio.Group>
+                            <div>계산서 발행여부</div>
+                            <Radio.Group id={'isInvoice'} value={'X'}>
+                                <Radio value={'O'}>O</Radio>
+                                <Radio value={'X'}>X</Radio>
+                            </Radio.Group>
+                        </BoxCard>
 
-                    <BoxCard title={'확인정보'}>
-                        {radioForm({title: '송금여부', id: 'isSend'})}
-                        {radioForm({title: '계산서 발행여부', id: 'isInvoice'})}
-                    </BoxCard>
 
-                    <BoxCard title={'금액정보'}>
-                        {inputNumberForm({title: '공급가액', id: 'supplyAmount'})}
-                        {inputNumberForm({title: '부가세', id: 'surtax', disabled: true})}
-                        {inputNumberForm({title: '합계', id: 'total', disabled: true})}
-                    </BoxCard>
-
-                    <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
-                        {/*@ts-ignored*/}
-                        <div style={{overFlowY: "auto", maxHeight: 300}}>
-                            <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}/>
-                        </div>
-                    </BoxCard>
+                        <BoxCard title={'금액정보'}>
+                            {inputNumberForm({
+                                title: '공급가액',
+                                id: 'supplyAmount',
+                                onChange: onChange,
+                                data: info,
+                                formatter: numbFormatter,
+                                parser: numbParser
+                            })}
+                            {inputNumberForm({
+                                title: '부가세',
+                                id: 'surtax',
+                                disabled: true,
+                                onChange: onChange,
+                                data: info,
+                                formatter: numbFormatter,
+                                parser: numbParser
+                            })}
+                            {inputNumberForm({
+                                title: '합계',
+                                id: 'total',
+                                disabled: true,
+                                onChange: onChange,
+                                data: info,
+                                formatter: numbFormatter,
+                                parser: numbParser
+                            })}
+                        </BoxCard>
+                        <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
+                            {/*@ts-ignored*/}
+                            <div style={{overFlowY: "auto", maxHeight: 300}}>
+                                <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
+                                                 infoRef={infoRef}/>
+                            </div>
+                        </BoxCard>
+                    </div>
                 </div>
             </MainCard>
-        </>
+        </div>
     </>
 }
-
-
-// @ts-ignore
-export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
-
-    const {query} = ctx;
-
-    const {remittanceId} = query;
-
-    const {userInfo} = await initialServerRouter(ctx, store);
-
-    if (!userInfo) {
-        return {
-            redirect: {
-                destination: '/', // 리다이렉트할 경로
-                permanent: false, // true면 301 리다이렉트, false면 302 리다이렉트
-            },
-        };
-    }
-
-    store.dispatch(setUserInfo(userInfo));
-
-    const result = await getData.post('remittance/getRemittanceDetail', {
-        remittanceId: remittanceId
-    });
-
-    return {
-        props: {dataInfo: result.data.entity, remittanceId: remittanceId}
-    }
-})

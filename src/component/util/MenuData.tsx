@@ -84,7 +84,7 @@ export const treeData = [
 
         children: [
             {title: "국내", key: "remittance_domestic",     children: [
-                    {title: "국내송금 등록", key: "remittance_domestic_write",        disabled : true,},
+                    {title: "국내송금 등록", key: "remittance_domestic_write"},
                     {title: "국내송금 조회", key: "remittance_domestic_read",        }
                 ]},
             {title: "해외", key: "remittance_overseas",  children: [

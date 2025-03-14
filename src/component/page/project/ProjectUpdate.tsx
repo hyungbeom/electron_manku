@@ -96,7 +96,6 @@ export default function ProjectUpdate({
 
 
     useEffect(() => {
-
         commonManage.setInfo(infoRef, info);
     }, [info]);
 

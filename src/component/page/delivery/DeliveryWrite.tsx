@@ -92,18 +92,3 @@ export default function DeliveryWrite() {
         </>
     </>
 }
-
-
-// @ts-ignore
-export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
-    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
-
-    if (codeInfo < 0) {
-        return {
-            redirect: {
-                destination: '/',
-                permanent: false,
-            },
-        };
-    }
-})
