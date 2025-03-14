@@ -736,7 +736,7 @@ commonManage.getUploadList = function (fileRef, formData) {
     fileRef.current.fileList.forEach((item, index) => {
         if (item?.originFileObj) {
             formData.append(`attachmentFileList[${count}].attachmentFile`, item.originFileObj);
-            formData.append(`attachmentFileList[${count}].fileName`, fileNames[index]?.replace(/\s+/g, ""));
+            formData.append(`attachmentFileList[${count}].fileName`, fileNames[index]);
             count += 1;
         }
     });
