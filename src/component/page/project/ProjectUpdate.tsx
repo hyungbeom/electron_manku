@@ -241,7 +241,6 @@ export default function ProjectUpdate({
         <PanelSizeUtil groupRef={groupRef} storage={'project_update'}/>
         <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
                          open={isModalOpen}
-
                          setIsModalOpen={setIsModalOpen}/>
 
         <>
@@ -249,7 +248,6 @@ export default function ProjectUpdate({
                 display: 'grid',
                 gridTemplateRows: `${mini ? '440px' : '65px'} calc(100vh - ${mini ? 535 : 195}px)`,
                 rowGap: 10,
-                columnGap: 5
             }}>
                 <MainCard title={'프로젝트 수정'} list={[
                     {name: '수정', func: saveFunc, type: 'primary'},

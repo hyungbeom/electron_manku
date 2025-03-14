@@ -99,7 +99,7 @@ export const treeData = [
         children: [
             {
                 title: "매입처", key: "agency",children: [
-                    {title: "국내매입처 등록", key: "domestic_agency_write",disabled : true},
+                    {title: "국내매입처 등록", key: "domestic_agency_write"},
                     {title: "국내매입처 조회", key: "domestic_agency_read"},
                     {title: "해외매입처 등록", key: "overseas_agency_write"},
                     {title: "해외매입처 조회", key: "overseas_agency_read"},

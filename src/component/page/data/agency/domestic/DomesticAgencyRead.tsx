@@ -6,7 +6,7 @@ import {setUserInfo} from "@/store/user/userSlice";
 import LayoutComponent from "@/component/LayoutComponent";
 
 import Button from "antd/lib/button";
-import {CopyOutlined,} from "@ant-design/icons";
+import {CopyOutlined, ExclamationCircleOutlined,} from "@ant-design/icons";
 import message from "antd/lib/message";
 
 import {tableCodeDomesticPurchaseColumns,} from "@/utils/columnList";
@@ -17,11 +17,14 @@ import {inputForm, MainCard, selectBoxForm} from "@/utils/commonForm";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import Spin from "antd/lib/spin";
 import ReceiveComponent from "@/component/ReceiveComponent";
-import {searchDomesticAgency} from "@/utils/api/mainApi";
+import {deleteProjectList, searchDomesticAgency} from "@/utils/api/mainApi";
+import Popconfirm from "antd/lib/popconfirm";
+import moment from "moment/moment";
+import {useNotificationAlert} from "@/component/util/NoticeProvider";
 
 
 export default function DomesticAgencyUpdate({getPropertyId, getCopyPage}) {
-
+    const notificationAlert = useNotificationAlert();
     const gridRef = useRef(null);
     const copyInit = _.cloneDeep(codeDomesticAgencyWriteInitial)
 
@@ -104,6 +107,42 @@ export default function DomesticAgencyUpdate({getPropertyId, getCopyPage}) {
         getCopyPage('domestic_agency_write', {orderDetailList: []})
     }
 
+
+
+    async function confirm() {
+        if (gridRef.current.getSelectedRows().length < 1) {
+            return message.error('삭제할 데이터를 선택해주세요.')
+        }
+        setLoading(true)
+
+
+        const list = gridRef.current.getSelectedRows()
+        const filterList = list.map(v => parseInt(v.agencyId));
+
+
+
+        await deleteProjectList({data: {agencyIdList: filterList}}).then(v => {
+            if (v.code === 1) {
+                searchInfo(true)
+                notificationAlert('success', '🗑️국내매입처 삭제완료',
+                    <>
+                        <div>매입처 상호
+                            - {list[0].agencyName} {list.length > 1 ? ('외' + " " + (list.length - 1) + '개') : ''} 이(가)
+                            삭제되었습니다
+                        </div>
+                        {/*<div>프로젝트 제목 - {selectedRows[0].projectTitle} `${selectedRows.length > 1 ? ('외' + (selectedRows.length - 1)) + '개' : ''}`가 삭제되었습니다 </div>*/}
+                        <div>삭제일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                    },
+                )
+            } else {
+                message.error(v.message)
+            }
+        })
+
+    }
+
     return <Spin spinning={loading}>
         <ReceiveComponent searchInfo={searchInfo}/>
         <>
@@ -145,10 +184,17 @@ export default function DomesticAgencyUpdate({getPropertyId, getCopyPage}) {
                 </MainCard>
 
                 {/*@ts-ignored*/}
-                <TableGrid deleteComp={<Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
-                                               onClick={deleteList}>
-                    <CopyOutlined/>삭제
-                </Button>}
+                <TableGrid deleteComp={
+
+                    <Popconfirm
+                        title="삭제하시겠습니까?"
+                        onConfirm={confirm}
+                        icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
+
+                        {/*@ts-ignored*/}
+                        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}>삭제</Button>
+                    </Popconfirm>
+                }
                            totalRow={totalRow}
                            getPropertyId={getPropertyId}
                            gridRef={gridRef}

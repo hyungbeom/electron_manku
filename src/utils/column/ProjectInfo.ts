@@ -831,3 +831,67 @@ export const OAInfo = {
     },
 };
 
+
+
+
+export const DAInfo = {
+    write: {
+        columnWidth: [220, 50, 50, 50, 45, 50, 50, 50],
+        column: [
+            "담당자",
+            "연락처",
+            "팩스번호",
+            "이메일",
+            "주소",
+            "국가대리점",
+            "휴대폰",
+            "비고"
+        ],
+        columnList: [
+            {data: "managerName", type: "text"},
+            {data: "phoneNumber", type: "text"},
+            {data: "faxNumber", type: "text"},
+            {data: "email", type: "text"},
+            {data: "address", type: "text"},
+            {data: "countryAgency", type: "text"},
+            {data: "mobilePhone", type: "text"},
+            {data: "remarks", type: "text"}
+        ],
+        defaultData: {
+            "managerName": "",
+            "phoneNumber": "",
+            "faxNumber": "",
+            "email": "",
+            "address": "",
+            "remarks": "",
+            "countryAgency": "",
+            "mobilePhone": "",
+        },
+        excelExpert: (v, i) => {
+            return v
+        },
+        totalList: {},
+
+        type: 'write'
+    },
+    defaultInfo: {
+        "agencyCode": "",                      // 코드(약칭)
+        "agencyName": "",       // 상호
+        "dealerType": "",               // 딜러/제조
+        "grade": "",                             // 등급
+        "margin": null,                           // 마진
+        "homepage": "",   // 홈페이지
+        "item": "",                        // Item
+        "tradeStartDate": "",               // 거래 시작일
+        "currencyUnit": "",                        // 화폐단위
+        "manager": "",                     // 담당자
+        "bankAccountNumber": "",            // Account No
+        "country": "",                             // 국가
+        "ftaNumber": "",                      // FTA No
+        "intermediaryBank": "",        // 송금중개은행
+        "address": "",  // 주소
+        "ibanCode": "",           // IBan Code
+        "swiftCode": "",                      // Swift Code
+    },
+};
+

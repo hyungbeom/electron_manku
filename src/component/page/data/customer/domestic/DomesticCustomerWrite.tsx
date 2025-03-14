@@ -91,6 +91,8 @@ export default function DomesticCustomerWrite({copyPageInfo, getPropertyId}) {
                 message.error('저장에 실패하였습니다.')
             }
         });
+
+
     }
 
 

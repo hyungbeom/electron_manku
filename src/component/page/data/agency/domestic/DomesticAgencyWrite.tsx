@@ -1,37 +1,40 @@
-import React, {useRef, useState} from "react";
-import LayoutComponent from "@/component/LayoutComponent";
+import React, {useEffect, useRef, useState} from "react";
 import message from "antd/lib/message";
-import {tableCodeDomesticAgencyWriteColumns,} from "@/utils/columnList";
 import {codeDomesticAgencyWriteInitial,} from "@/utils/initialList";
-import TableGrid from "@/component/tableGrid";
-import initialServerRouter from "@/manage/function/initialServerRouter";
-import {setUserInfo} from "@/store/user/userSlice";
-import {wrapper} from "@/store/store";
-import {
-    BoxCard,
-    datePickerForm,
-    inputForm,
-    inputNumberForm,
-    MainCard,
-    selectBoxForm,
-    tooltipInfo
-} from "@/utils/commonForm";
-import {gridManage} from "@/utils/commonManage";
+import {BoxCard, datePickerForm, inputForm, inputNumberForm, MainCard} from "@/utils/commonForm";
+import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
 import _ from "lodash";
 import {saveDomesticAgency} from "@/utils/api/mainApi";
 import {useRouter} from "next/router";
-import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
+import PanelSizeUtil from "@/component/util/PanelSizeUtil";
+import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
+import Table from "@/component/util/Table";
+import {DAInfo, projectInfo} from "@/utils/column/ProjectInfo";
+import {useNotificationAlert} from "@/component/util/NoticeProvider";
+import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
+import moment from "moment/moment";
 import {getData} from "@/manage/function/api";
 
-
-export default function DomesticAgencyWrite({dataInfo={orderDetailList : []}, copyPageInfo}) {
+const listType = 'agencyManagerList'
+export default function DomesticAgencyWrite({copyPageInfo, getPropertyId}:any) {
+    const notificationAlert = useNotificationAlert();
+    const infoRef = useRef<any>(null)
+    const tableRef = useRef(null);
+    const groupRef = useRef<any>(null)
     const router = useRouter();
-    const fileRef = useRef(null);
     const gridRef = useRef(null);
 
+
+    const getSavedSizes = () => {
+        const savedSizes = localStorage.getItem('domestic_agency_update');
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 0]; // 기본값 [50, 50, 50]
+    };
+
+    const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
+
     const [mini, setMini] = useState(true);
-    const [fileList, setFileList] = useState([]);
+    const [tableData, setTableData] = useState([]);
     const userInfo = useAppSelector((state) => state.user);
 
     const copyInit = _.cloneDeep(codeDomesticAgencyWriteInitial)
@@ -42,35 +45,54 @@ export default function DomesticAgencyWrite({dataInfo={orderDetailList : []}, co
         ...copyInit,
         ...adminParams
     }
-    const [info, setInfo] = useState<any>({...copyInit, ...dataInfo, ...adminParams})
-
-    const onGridReady = (params) => {
-        gridRef.current = params.api;
-        const result = dataInfo?.orderDetailList;
-        params.api.applyTransaction({add: result ? result : []});
-    };
+    const [info, setInfo] = useState<any>({...copyInit, ...adminParams})
 
 
-    function onChange(e) {
 
-        let bowl = {}
-        bowl[e.target.id] = e.target.value;
 
-        setInfo(v => {
-            return {...v, ...bowl}
-        })
-    }
+    useEffect(() => {
+
+        if (!isEmptyObj(copyPageInfo['domestic_agency_write'])) {
+            // copyPageInfo 가 없을시
+            setInfo(infoInit)
+            setTableData(commonFunc.repeatObject(DAInfo['write']['defaultData'], 100))
+        } else {
+            // copyPageInfo 가 있을시(==>보통 수정페이지에서 복제시)
+            // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting
+            setInfo(copyPageInfo['project_write']);
+            setTableData(copyPageInfo['project_write'][listType])
+        }
+    }, [copyPageInfo['domestic_agency_write']]);
+
 
     async function saveFunc() {
-        gridRef.current.clearFocusedCell();
+        const dom = infoRef.current.querySelector('#agencyName');
+        let infoData = commonManage.getInfo(infoRef, infoInit);
+        const tableList = tableRef.current?.getSourceData();
 
-        if (!info['agencyCode']) {
-            return message.error('코드(약칭)이 누락되었습니다.')
+        const filterTableList = commonManage.filterEmptyObjects(tableList, ['managerName'])
+        if (!filterTableList.length) {
+            return message.warn('하위 데이터 1개 이상이여야 합니다');
         }
-
-        const list = gridManage.getAllData(gridRef);
-
-        await saveDomesticAgency({data: {...info,agencyManagerList : list }, router: router})
+        infoData[listType] = filterTableList
+        await getData.post('agency/addAgency', infoData).then(v => {
+            if (v.data.code === 1) {
+                console.log(v.data,'v.data:')
+                notificationAlert('success', '💾해외 고객사 등록완료',
+                    <>
+                        <div>상호 : {dom.value}</div>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    ,
+                    function () {
+                        getPropertyId('domestic_agency_update', v.data?.entity?.agencyId)
+                    },
+                    {cursor: 'pointer'}
+                )
+            } else {
+                message.error('저장에 실패하였습니다.')
+            }
+        });
 
     }
 
@@ -117,92 +139,93 @@ export default function DomesticAgencyWrite({dataInfo={orderDetailList : []}, co
 
 
     return <>
-        <div style={{
+        <div ref={infoRef} style={{
             display: 'grid',
-            gridTemplateRows: `${mini ? '350px' : '65px'} calc(100vh - ${mini ? 480 : 195}px)`,
-            columnGap: 5
+            gridTemplateRows: `${mini ? '440px' : '65px'} calc(100vh - ${mini ? 535 : 195}px)`,
+            rowGap: 10,
         }}>
+            <PanelSizeUtil groupRef={groupRef} storage={'domestic_agency_update'}/>
             <MainCard title={'국내 매입처 등록'} list={[
                 {name: '저장', func: saveFunc, type: 'primary'},
                 {name: '초기화', func: clearAll, type: 'danger'}
             ]} mini={mini} setMini={setMini}>
 
-                {mini ? <div style={{
-                        display: 'grid',
-                        gridTemplateColumns: '180px 200px 200px 1fr 300px',
-                        columnGap: 10
-                    }}>
-                        <BoxCard title={'매입처 정보'}>
-                            {inputForm({title: '코드(약칭)', id: 'agencyCode', onChange: onChange, data: info})}
-                            {inputForm({title: '상호', id: 'agencyName', onChange: onChange, data: info})}
-                            {inputForm({title: '사업자번호', id: 'businessRegistrationNumber', onChange: onChange, data: info})}
-                            {inputForm({title: '계좌번호', id: 'bankAccountNumber', onChange: onChange, data: info, suffix : <span onClick={()=>{
-                                   // await getData.post('/real_name', { data: "example" }, { baseURL: 'https://openapi.openbanking.or.kr/v2.0/inquiry' })
-                                }}>click</span>})}
-                        </BoxCard>
-                        <BoxCard title={'Maker'}>
-                            {inputForm({title: 'Maker', id: 'maker', onChange: onChange, data: info})}
-                            {inputForm({title: 'Item', id: 'item', onChange: onChange, data: info})}
-                            {inputForm({title: '홈페이지', id: 'homepage', onChange: onChange, data: info})}
-                        </BoxCard>
-                        <BoxCard title={'ETC'}>
-                            {datePickerForm({title: '거래시작일', id: 'tradeStartDate', onChange: onChange, data: info})}
-                            {selectBoxForm({
-                                title: '딜러/제조', id: 'dealerType', onChange: onChange, data: info, list: [
-                                    {value: '딜러', label: '딜러'},
-                                    {value: '제조', label: '제조'},
-                                ]
-                            })} {selectBoxForm({
-                            title: '등급', id: 'grade', onChange: onChange, data: info, list: [
-                                {value: 'A', label: 'A'},
-                                {value: 'B', label: 'B'},
-                                {value: 'C', label: 'C'},
-                                {value: 'D', label: 'D'},
-                            ]
-                        })}
-                            {inputNumberForm({title: '마진', id: 'margin', onChange: onChange, data: info, addonAfter: <span style={{fontSize : 11}}>%</span>  })}
-                        </BoxCard>
-                        <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')} disabled={!userInfo['microsoftId']}>
-                            {/*@ts-ignored*/}
-                            <div style={{overFlowY: "auto", maxHeight: 300}}>
-                                <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                 numb={5}/>
-                            </div>
-                        </BoxCard>
+                {mini ? <div>
+
+                        <PanelGroup ref={groupRef} className={'ground'} direction="horizontal"
+                                    style={{gap: 0.5, paddingTop: 3}}>
+                            <Panel defaultSize={sizes[0]} minSize={5}>
+                                <BoxCard title={'매입처 정보'}>
+                                    {inputForm({
+                                        title: '코드(약칭)',
+                                        id: 'agencyCode'
+                                    })}
+                                    {inputForm({title: '상호', id: 'agencyName'})}
+                                    {inputForm({title: '사업자번호', id: 'businessRegistrationNumber'})}
+                                    {inputForm({title: '계좌번호', id: 'bankAccountNumber'})}
+                                </BoxCard>
+                            </Panel>
+                            <PanelResizeHandle id={'resize'} className={'ground'}/>
+                            <Panel defaultSize={sizes[1]} minSize={5}>
+                                <BoxCard title={'Maker'}>
+                                    {inputForm({title: 'Maker', id: 'maker'})}
+                                    {inputForm({title: 'Item', id: 'item'})}
+                                    {inputForm({title: '홈페이지', id: 'homepage'})}
+                                </BoxCard>
+                            </Panel>
+                            <PanelResizeHandle id={'resize'} className={'ground'}/>
+                            <Panel defaultSize={sizes[2]} minSize={5}>
+                                <BoxCard title={'ETC'}>
+                                    {datePickerForm({title: '거래시작일', id: 'tradeStartDate'})}
+                                    <div>
+                                        <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>달러/제조</div>
+                                        <select name="languages" id="dealerType"
+                                                style={{
+                                                    outline: 'none',
+                                                    border: '1px solid lightGray',
+                                                    height: 23,
+                                                    width: '100%',
+                                                    fontSize: 12,
+                                                    paddingBottom: 0.5
+                                                }}>
+                                            <option value={'달러'}>달러</option>
+                                            <option value={'제조'}>제조</option>
+                                        </select>
+                                    </div>
+
+                                    <div style={{padding: '10px 0px'}}>
+                                        <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>등급</div>
+                                        <select name="languages" id="grade"
+                                                style={{
+                                                    outline: 'none',
+                                                    border: '1px solid lightGray',
+                                                    height: 23,
+                                                    width: '100%',
+                                                    fontSize: 12,
+                                                    paddingBottom: 0.5
+                                                }}>
+                                            <option value={'A'}>A</option>
+                                            <option value={'B'}>B</option>
+                                            <option value={'C'}>C</option>
+                                            <option value={'D'}>D</option>
+
+                                        </select>
+                                    </div>
+
+                                    {inputNumberForm({title: '마진', id: 'margin', suffix: '%'})}
+                                </BoxCard>
+                            </Panel>
+                            <PanelResizeHandle id={'resize'} className={'ground'}/>
+                            <Panel defaultSize={sizes[3]} minSize={5}>
+                            </Panel>
+                        </PanelGroup>
                     </div>
                     : <></>}
             </MainCard>
-            <TableGrid
-                gridRef={gridRef}
-                columns={tableCodeDomesticAgencyWriteColumns}
-                onGridReady={onGridReady}
-                type={'write'}
-                funcButtons={['daUpload', 'agencyDomesticAdd', 'delete', 'print']}
 
-            />
+            <Table data={tableData} column={DAInfo['write']} funcButtons={['print']} ref={tableRef}
+                   type={'domestic_agency_update_column'}/>
 
         </div>
     </>
 }
-
-// @ts-ignore
-export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
-    const {query} = ctx;
-
-
-    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
-    if (codeInfo < 0) {
-        return {
-            redirect: {
-                destination: '/',
-                permanent: false,
-            },
-        };
-    }
-    store.dispatch(setUserInfo(userInfo));
-    if (query?.data) {
-        const data = JSON.parse(decodeURIComponent(query.data));
-        return {props: {dataInfo: data}}
-    }
-
-})
