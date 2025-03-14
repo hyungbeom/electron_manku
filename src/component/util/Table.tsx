@@ -384,6 +384,29 @@ const Table = forwardRef(({
     }
 
 
+    const currencyRenderer = (instance, td, row, col, prop, value, cellProperties) => {
+        const rowData = instance.getSourceDataAtRow(row);
+        const currencyValue = rowData?.currencyUnit || "KRW"; // 기본값 KRW
+
+
+
+        // ✅ 포맷 적용할 대상 컬럼인지 확인
+        const targetColumns = ["unitPrice", "total", "purchasePrice", "totalPurchase"];
+
+        if (targetColumns.includes(prop)) {
+            // 🔥 USD면 소수점 2자리, KRW면 정수로 변환
+            const formattedValue =
+                currencyValue === "USD" ? parseFloat(value).toFixed(2) : parseInt(value, 10);
+
+            console.log(formattedValue,'currencyValue::1')
+            // 🔥 Handsontable의 기본 숫자 렌더러 적용
+            // Handsontable.renderers.NumericRenderer(instance, td, row, col, prop, formattedValue, cellProperties);
+            td.innerText = formattedValue;
+        } else {
+            // 그 외 컬럼은 기본 렌더러 유지
+            Handsontable.renderers.TextRenderer(instance, td, row, col, prop, value, cellProperties);
+        }
+    };
 
     return (
         <div ref={tableContainerRef} className="table-container" style={{width: '100%', overflowX: 'auto'}}>
@@ -470,7 +493,7 @@ const Table = forwardRef(({
                         dateFormat: col.type === "date" ? "YYYY-MM-DD" : undefined,
                         // correctFormat: col.data === "marginRate" ? true : undefined, // 🔥 숫자가 올바른 형식이 아니면 자동 수정
                         numericFormat: col.data === "marginRate" ? {pattern: "0%", suffix: "%"} : undefined, // 🔥 소수점 둘째 자리 고정 + % 유지
-                        renderer: col.data === "marginRate" ? percentRenderer : ((col.data === 'orderDocumentNumberFull' || col.data === 'connectInquiryNo') ? iconRenderer : col.type), // 🔥 커스텀 렌더러 적용
+                        renderer: col.data === "marginRate" ? percentRenderer : ((col.data === 'orderDocumentNumberFull' || col.data === 'connectInquiryNo') ? iconRenderer :( col.data === 'unitPrice' ? currencyRenderer : col.type)), // 🔥 커스텀 렌더러 적용
                         readOnly: col.readOnly,
                         filter : false
                     })
