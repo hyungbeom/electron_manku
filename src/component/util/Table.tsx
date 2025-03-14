@@ -382,6 +382,9 @@ const Table = forwardRef(({
     function upload(){
         fileInputRef.current.click();
     }
+
+
+
     return (
         <div ref={tableContainerRef} className="table-container" style={{width: '100%', overflowX: 'auto'}}>
             <div style={{display: 'flex', justifyContent: 'end'}}>
@@ -469,6 +472,7 @@ const Table = forwardRef(({
                         numericFormat: col.data === "marginRate" ? {pattern: "0%", suffix: "%"} : undefined, // 🔥 소수점 둘째 자리 고정 + % 유지
                         renderer: col.data === "marginRate" ? percentRenderer : ((col.data === 'orderDocumentNumberFull' || col.data === 'connectInquiryNo') ? iconRenderer : col.type), // 🔥 커스텀 렌더러 적용
                         readOnly: col.readOnly,
+                        filter : false
                     })
                 })}
 
