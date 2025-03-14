@@ -117,7 +117,8 @@ export default function DomesticCustomerRead({ getPropertyId, getCopyPage}) {
     }
 
     function moveRouter() {
-        getCopyPage('domestic_customer_write', {orderDetailList : []})
+
+        getCopyPage('domestic_customer_write',{})
     }
     function handleKeyPress(e) {
         if (e.key === 'Enter') {

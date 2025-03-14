@@ -137,11 +137,12 @@ const TableGrid = ({
                 getPropertyId('domestic_agency_update', e.data.agencyCode)
             }
             if (e.data.overseasAgencyId)
-                getPropertyId('overseas_agency_update', e.data.agencyCode)
+                getPropertyId('overseas_agency_update', e.data.overseasAgencyId)
             if (e.data.customerId)
                 getPropertyId('domestic_customer_update', e.data.customerCode)
-            if (e.data.overseasCustomerId)
-                getPropertyId('overseas_customer_update', e.data.customerCode)
+            if (e.data.overseasCustomerId) {
+                getPropertyId('overseas_customer_update', e.data.overseasCustomerId)
+            }
             if (e.data.officialDocumentId)
                 getPropertyId('code_diploma_update', e.data.officialDocumentId)
         }
@@ -221,8 +222,8 @@ const TableGrid = ({
 
 
     const handleSelectionChanged = () => {
-        const selectedRows = gridRef.current.getSelectedRows(); // 체크된 행 가져오기
 
+        const selectedRows = gridRef.current.getSelectedRows(); // 체크된 행 가져오기
         const totals = commonFunc.sumCalc(selectedRows);
         setPinnedBottomRowData([totals]);
     };
@@ -337,8 +338,8 @@ const TableGrid = ({
 
     }
 
-    function setLoadEstimateLists(){
-
+    function isRowSelectable(rowNode){
+        return rowNode.displayed;
     }
 
 
@@ -439,6 +440,7 @@ const TableGrid = ({
                     defaultColDef={defaultColDef}
                     columnDefs={columns}
                     onCellContextMenu={handleCellRightClick}
+                    isRowSelectable={isRowSelectable}
                     // paginationPageSize={1000}
                     // paginationPageSizeSelector={[100, 500, 1000]}
                     // pagination={true}

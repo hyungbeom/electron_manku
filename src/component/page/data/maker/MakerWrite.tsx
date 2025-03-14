@@ -12,15 +12,17 @@ import message from "antd/lib/message";
 import {makerWriteInitial,} from "@/utils/initialList";
 import Input from "antd/lib/input/Input";
 import TextArea from "antd/lib/input/TextArea";
-import {commonManage} from "@/utils/commonManage";
+import {commonFunc, commonManage} from "@/utils/commonManage";
 import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, tooltipInfo} from "@/utils/commonForm";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import moment from "moment/moment";
+import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
+import {projectInfo} from "@/utils/column/ProjectInfo";
 
-export default function MakerWrite({copyPageInfo}) {
+export default function MakerWrite({getPropertyId, copyPageInfo}:any) {
     const notificationAlert = useNotificationAlert();
     const [info, setInfo] = useState(makerWriteInitial);
     const groupRef = useRef<any>(null)
@@ -34,6 +36,16 @@ export default function MakerWrite({copyPageInfo}) {
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
 
+    useEffect(() => {
+
+        if (!isEmptyObj(copyPageInfo['maker_write'])) {
+            setInfo(makerWriteInitial)
+        } else {
+            setInfo(copyPageInfo['maker_write']);
+        }
+    }, [copyPageInfo['maker_write']]);
+
+
     function onChange(e) {
         commonManage.onChange(e, setInfo)
     }
@@ -41,14 +53,16 @@ export default function MakerWrite({copyPageInfo}) {
     async function saveFunc() {
 
         await getData.post('maker/addMaker', info).then(v => {
-            console.log(info, 'v.data:')
             if (v.data.code === 1) {
                 notificationAlert('success', '💾Maker 등록완료',
                     <>
                         <div>Maker : {info['makerName']}</div>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
-                    , null,
+                    , function () {
+
+                        getPropertyId('maker_update', v.data.entity.makerId)
+                    },
                     {cursor: 'pointer'}
                 )
             } else {

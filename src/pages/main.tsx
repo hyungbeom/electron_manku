@@ -162,96 +162,95 @@ export default function Main() {
         }
     };
     const tabComponents = {
-        project_write: {name: "프로젝트 등록", component: <ProjectWrite copyPageInfo={copyPageInfo}/>},
+        project_write: {name: "프로젝트 등록", component: <ProjectWrite/>},
         project_read: {
             name: "프로젝트 조회",
-            component: <ProjectRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>
+            component: <ProjectRead getPropertyId={getPropertyId} />
         },
-        project_update: {name: "프로젝트 수정", component: <ProjectUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
+        project_update: {name: "프로젝트 수정", component: <ProjectUpdate updateKey={updateKey} />},
 
-        rfq_write: {name: "견적의뢰 등록", component: <RfqWrite copyPageInfo={copyPageInfo}/>},
-        rfq_read: {name: "견적의뢰 조회", component: <RfqRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>},
-        rfq_update: {name: "견적의뢰 수정", component: <RqfUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
+        rfq_write: {name: "견적의뢰 등록", component: <RfqWrite/>},
+        rfq_read: {name: "견적의뢰 조회", component: <RfqRead getPropertyId={getPropertyId} />},
+        rfq_update: {name: "견적의뢰 수정", component: <RqfUpdate updateKey={updateKey} />},
         rfq_mail_send: {name: "메일전송", component: <RfqMailSend getPropertyId={getPropertyId}/>},
 
-        estimate_write: {name: "견적서 등록", component: <EstimateWrite copyPageInfo={copyPageInfo}/>},
+        estimate_write: {name: "견적서 등록", component: <EstimateWrite/>},
         estimate_read: {
             name: "견적서 조회",
-            component: <EstimateRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>
+            component: <EstimateRead getPropertyId={getPropertyId} />
         },
-        estimate_update: {name: "견적서 수정", component: <EstimateUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
+        estimate_update: {name: "견적서 수정", component: <EstimateUpdate updateKey={updateKey} />},
 
-        order_write: {name: "발주서 등록", component: <OrderWrite copyPageInfo={copyPageInfo}/>},
-        order_read: {name: "발주서 조회", component: <OrderRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>},
-        order_update: {name: "발주서 수정", component: <OrderUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
+        order_write: {name: "발주서 등록", component: <OrderWrite/>},
+        order_read: {name: "발주서 조회", component: <OrderRead getPropertyId={getPropertyId} />},
+        order_update: {name: "발주서 수정", component: <OrderUpdate updateKey={updateKey} />},
 
-        store_write: {name: "입고 등록", component: <StoreWrite copyPageInfo={copyPageInfo}/>},
-        store_read: {name: "입고 조회", component: <StoreRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>},
-        store_update: {name: "입고 수정", component: <StoreUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>},
+        store_write: {name: "입고 등록", component: <StoreWrite/>},
+        store_read: {name: "입고 조회", component: <StoreRead getPropertyId={getPropertyId} />},
+        store_update: {name: "입고 수정", component: <StoreUpdate updateKey={updateKey} />},
 
-        delivery_write: {name: "배송 등록", component: <DeliveryWrite copyPageInfo={copyPageInfo}/>},
+        delivery_write: {name: "배송 등록", component: <DeliveryWrite/>},
         delivery_read: {
             name: "배송 조회",
-            component: <DeliveryRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>
+            component: <DeliveryRead getPropertyId={getPropertyId} />
         },
         delivery_update: {name: "배송 수정", component: <DeliveryUpdate updateKey={updateKey}/>},
 
 
-        remittance_domestic_write: {name: "국내송금 등록", component: <RemittanceDomesticWrite copyPageInfo={copyPageInfo}/>},
+        remittance_domestic_write: {name: "국내송금 등록", component: <RemittanceDomesticWrite/>},
         remittance_domestic_read: {
             name: "국내송금 조회",
-            component: <RemittanceDomesticRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>
+            component: <RemittanceDomesticRead getPropertyId={getPropertyId} />
         },
         remittance_domestic_update: {name: "국내송금 수정", component: <RemittanceDomesticUpdate updateKey={updateKey}/>},
 
 
-        domestic_agency_write: {name: "국내매입처 등록", component: <DomesticAgencyWrite copyPageInfo={copyPageInfo}/>},
+        domestic_agency_write: {name: "국내매입처 등록", component: <DomesticAgencyWrite/>},
         domestic_agency_read: {
             name: "국내매입처 조회",
-            component: <DomesticAgencyRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>
+            component: <DomesticAgencyRead getPropertyId={getPropertyId} />
         },
         domestic_agency_update: {
             name: "국내매입처 수정",
-            component: <DomesticAgencyUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>
+            component: <DomesticAgencyUpdate updateKey={updateKey} />
         },
 
-        overseas_agency_write: {name: "해외매입처 등록", component: <OverseasAgencyWrite copyPageInfo={copyPageInfo}/>},
+        overseas_agency_write: {name: "해외매입처 등록", component: <OverseasAgencyWrite/>},
         overseas_agency_read: {
             name: "해외매입처 조회",
-            component: <OverseasAgencyRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>
+            component: <OverseasAgencyRead getPropertyId={getPropertyId} />
         },
         overseas_agency_update: {
             name: "해외매입처 수정",
-            component: <OverseasAgencyUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>
+            component: <OverseasAgencyUpdate updateKey={updateKey} />
         },
 
 
-        domestic_customer_write: {name: "국내고객사 등록", component: <DomesticCustomerWrite copyPageInfo={copyPageInfo}/>},
+        domestic_customer_write: {name: "국내고객사 등록", component: <DomesticCustomerWrite/>},
         domestic_customer_read: {
             name: "국내고객사 조회",
-            component: <DomesticCustomerRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>
+            component: <DomesticCustomerRead getPropertyId={getPropertyId} />
         },
         domestic_customer_update: {name: "국내고객사 수정", component: <DomesticCustomerUpdate updateKey={updateKey}/>},
 
-        overseas_customer_write: {name: "해외고객사 등록", component: <OverseasCustomerWrite copyPageInfo={copyPageInfo}/>},
+        overseas_customer_write: {name: "해외고객사 등록", component: <OverseasCustomerWrite/>},
         overseas_customer_read: {
-            name: "해외고객사 조회", component: <OverseasCustomerRead getPropertyId={getPropertyId}
-                                                               getCopyPage={getCopyPage}/>
+            name: "해외고객사 조회", component: <OverseasCustomerRead getPropertyId={getPropertyId}/>
         },
         overseas_customer_update: {
             name: "해외고객사 수정",
-            component: <OverseasCustomerUpdate updateKey={updateKey} getCopyPage={getCopyPage}/>
+            component: <OverseasCustomerUpdate updateKey={updateKey} />
         },
 
 
-        maker_write: {name: "메이커 등록", component: <MakerWrite copyPageInfo={copyPageInfo}/>},
-        maker_read: {name: "메이커 조회", component: <MakerRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>},
-        maker_update: {name: "메이커 수정", component: <MakerUpdate updateKey={updateKey}/>},
+        maker_write: {name: "메이커 등록", component: <MakerWrite/>},
+        maker_read: {name: "메이커 조회", component: <MakerRead getPropertyId={getPropertyId} />},
+        maker_update: {name: "메이커 수정", component: <MakerUpdate updateKey={updateKey} />},
 
 
         hscode_read: {
             name: "HS CODE 조회",
-            component: <HcodeRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>
+            component: <HcodeRead getPropertyId={getPropertyId}/>
         },
 
 
@@ -264,7 +263,9 @@ export default function Main() {
             {/*{tabComponents[componentKey]?.component}*/}
             {React.cloneElement(tabComponents[componentKey].component, {
                 getPropertyId: getPropertyId,
-                layoutRef: layoutRef
+                copyPageInfo: copyPageInfo,
+                layoutRef: layoutRef,
+                getCopyPage:getCopyPage
             })}
         </div>;
     };

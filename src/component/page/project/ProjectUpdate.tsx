@@ -33,7 +33,6 @@ export default function ProjectUpdate({
     const tableRef = useRef(null);
 
     const [memberList, setMemberList] = useState([]);
-    const [validate, setValidate] = useState({documentNumberFull: true});
     useEffect(() => {
         getMemberList();
     }, []);
@@ -60,7 +59,6 @@ export default function ProjectUpdate({
     const groupRef = useRef<any>(null)
 
     const fileRef = useRef(null);
-    const gridRef = useRef(null);
     const router = useRouter();
     const userInfo = useAppSelector((state) => state.user);
 
@@ -81,18 +79,7 @@ export default function ProjectUpdate({
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
 
-    const handleMouseUp = () => {
-        setSizes(groupRef.current.getLayout());
-        localStorage.setItem('project_update', JSON.stringify(groupRef.current.getLayout()));
-    };
-    useEffect(() => {
-        window.addEventListener('pointerup', handleMouseUp);
 
-        // 컴포넌트 언마운트 시 이벤트 리스너 제거
-        return () => {
-            window.removeEventListener('pointerup', handleMouseUp);
-        };
-    }, []);
 
     useEffect(() => {
         setLoading(true)

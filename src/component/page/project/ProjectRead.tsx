@@ -92,6 +92,7 @@ export default function ProjectRead({getPropertyId, getCopyPage}) {
 
         await deleteProjectList({data: {deleteList: deleteList}}).then(v => {
             if (v.code === 1) {
+                searchInfo(true)
                 notificationAlert('success', '🗑️프로젝트 삭제완료',
                     <>
                         <div>프로젝트 제목
@@ -104,7 +105,6 @@ export default function ProjectRead({getPropertyId, getCopyPage}) {
                     , function () {
                     },
                 )
-                searchInfo(true)
             } else {
                 message.error(v.message)
             }

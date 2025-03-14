@@ -1,20 +1,23 @@
 import React, {useRef, useState} from "react";
-import {getData} from "@/manage/function/api";
+import {getFormData} from "@/manage/function/api";
 
 import {makerColumn,} from "@/utils/columnList";
 import {codeDomesticPurchaseInitial, orderReadInitial,} from "@/utils/initialList";
 import TableGrid from "@/component/tableGrid";
 import {inputForm, MainCard, radioForm} from "@/utils/commonForm";
-import {searchDomesticCustomer, searchMaker, searchOrder} from "@/utils/api/mainApi";
+import {searchMaker} from "@/utils/api/mainApi";
 import {gridManage} from "@/utils/commonManage";
 import Spin from "antd/lib/spin";
 import Popconfirm from "antd/lib/popconfirm";
 import {ExclamationCircleOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
+import moment from "moment/moment";
+import {useNotificationAlert} from "@/component/util/NoticeProvider";
+import message from "antd/lib/message";
 
 export default function MakerRead({getPropertyId, getCopyPage}) {
     const gridRef = useRef(null);
-
+    const notificationAlert = useNotificationAlert();
     const [info, setInfo] = useState(codeDomesticPurchaseInitial);
     const [mini, setMini] = useState(true);
     const [totalRow, setTotalRow] = useState(0);
@@ -36,8 +39,6 @@ export default function MakerRead({getPropertyId, getCopyPage}) {
     }
 
 
-
-
     function onChange(e) {
 
         let bowl = {}
@@ -47,7 +48,6 @@ export default function MakerRead({getPropertyId, getCopyPage}) {
             return {...v, ...bowl}
         })
     }
-
 
 
     async function searchInfo(e) {
@@ -64,7 +64,7 @@ export default function MakerRead({getPropertyId, getCopyPage}) {
                     "limit": -1
                 }
             }).then(v => {
-                console.log(info,'v.data:')
+                console.log(info, 'v.data:')
                 gridManage.resetData(gridRef, v.data);
                 setTotalRow(v.pageInfo.totalRow)
                 setLoading(false)
@@ -79,15 +79,35 @@ export default function MakerRead({getPropertyId, getCopyPage}) {
     }
 
     async function moveRouter() {
-        getCopyPage('maker_write', {orderDetailList: []})
+        getCopyPage('maker_write', {})
 
     }
 
-    function deleteList() {
-
+    async function deleteList() {
+        const list = gridRef.current.getSelectedRows()
+        const filterList = list.map(v => v.makerId);
+        await getFormData.post('maker/deleteMakers', {makerIdList: filterList}).then(v => {
+            console.log(list, 'list:')
+            if (v.data.code === 1) {
+                searchInfo(true)
+                notificationAlert('success', '🗑️Maker 삭제완료',
+                    <>
+                        <div>Maker
+                            - {list[0].makerName} {list.length > 1 ? ('외' + " " + (list.length - 1) + '개') : ''} 이(가)
+                            삭제되었습니다
+                        </div>
+                        {/*<div>프로젝트 제목 - {selectedRows[0].projectTitle} `${selectedRows.length > 1 ? ('외' + (selectedRows.length - 1)) + '개' : ''}`가 삭제되었습니다 </div>*/}
+                        <div>삭제일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , null,
+                )
+            } else {
+                message.error(v.data.message)
+            }
+        })
     }
 
-    return  <Spin spinning={loading}>
+    return <Spin spinning={loading}>
         <div style={{
             display: 'grid',
             gridTemplateRows: `${mini ? '120px' : '65px'} calc(100vh - ${mini ? 250 : 195}px)`,
@@ -117,7 +137,7 @@ export default function MakerRead({getPropertyId, getCopyPage}) {
                             title: '',
                             id: 'searchText',
                             onChange: onChange,
-                            handleKeyPress : handleKeyPress,
+                            handleKeyPress: handleKeyPress,
                             data: info,
                             size: 'middle'
                         })}

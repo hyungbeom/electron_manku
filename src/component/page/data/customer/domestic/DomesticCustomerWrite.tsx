@@ -1,33 +1,22 @@
 import React, {useEffect, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
-import LayoutComponent from "@/component/LayoutComponent";
-import Card from "antd/lib/card/Card";
-import Button from "antd/lib/button";
-import {
-    CopyOutlined, DownCircleFilled, RetweetOutlined, SaveOutlined, UpCircleFilled,
-} from "@ant-design/icons";
 import message from "antd/lib/message";
-import {tableCodeDomesticWriteColumn,} from "@/utils/columnList";
-import {codeDomesticSalesWriteInitial, orderWriteInitial,} from "@/utils/initialList";
-import TableGrid from "@/component/tableGrid";
-import {useRouter} from "next/router";
+import {codeDomesticSalesWriteInitial,} from "@/utils/initialList";
 import moment from "moment/moment";
-import DatePicker from "antd/lib/date-picker";
-import Input from "antd/lib/input/Input";
-import Select from "antd/lib/select";
-import initialServerRouter from "@/manage/function/initialServerRouter";
-import nookies from "nookies";
-import {setUserInfo} from "@/store/user/userSlice";
-import {wrapper} from "@/store/store";
-import TextArea from "antd/lib/input/TextArea";
 import _ from "lodash";
-import {commonManage, gridManage} from "@/utils/commonManage";
-import {BoxCard, datePickerForm, inputForm, MainCard, selectBoxForm, textAreaForm} from "@/utils/commonForm";
+import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
+import {BoxCard, inputForm, MainCard, textAreaForm} from "@/utils/commonForm";
 import Table from "@/component/util/Table";
-import {DCWInfo, projectInfo} from "@/utils/column/ProjectInfo";
+import {DCInfo, DCWInfo} from "@/utils/column/ProjectInfo";
+import PanelSizeUtil from "@/component/util/PanelSizeUtil";
+import {RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
+import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
+import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
+import {useNotificationAlert} from "@/component/util/NoticeProvider";
 
-
-export default function DomesticCustomerWrite({dataInfo = {customerManagerList : []}, copyPageInfo}) {
+const listType = 'customerManagerList'
+export default function DomesticCustomerWrite({copyPageInfo, getPropertyId}) {
+    const notificationAlert = useNotificationAlert();
     const gridRef = useRef(null);
     const groupRef = useRef<any>(null)
     const infoRef = useRef<any>(null)
@@ -46,37 +35,62 @@ export default function DomesticCustomerWrite({dataInfo = {customerManagerList :
     }
 
 
-
-    const [info, setInfo] = useState<any>({...copyInit, ...dataInfo, ...adminParams})
-
+    const [info, setInfo] = useState<any>({...copyInit, ...adminParams})
 
 
-    const onGridReady = (params) => {
-        gridRef.current = params.api;
-        const result = dataInfo?.customerManagerList;
-        params.api.applyTransaction({add: result ? result : []});
+    const getSavedSizes = () => {
+        const savedSizes = localStorage.getItem('overseas_customer_write');
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 0]; // 기본값 [50, 50, 50]
     };
 
+    const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
-    function onChange(e) {
-        commonManage.onChange(e, setInfo)
-    }
+    useEffect(() => {
+        if (!isEmptyObj(copyPageInfo['domestic_customer_write'])) {
+            // copyPageInfo 가 없을시
+            setInfo(infoInit)
+            setTableData(commonFunc.repeatObject(DCInfo['write']['defaultData'], 100))
+        } else {
+
+            // copyPageInfo 가 있을시(==>보통 수정페이지에서 복제시)
+            // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting
+            setInfo(copyPageInfo['domestic_customer_write']);
+            setTableData(copyPageInfo['domestic_customer_write'][listType])
+        }
+    }, [copyPageInfo['domestic_customer_write']]);
+
+    useEffect(() => {
+        commonManage.setInfo(infoRef, info);
+    }, [info]);
+
 
     async function saveFunc() {
-        const copyData = {...info}
-        copyData['tradeStartDate'] = moment(info['tradeStartDate']).format('YYYY-MM-DD');
+        const dom = infoRef.current.querySelector('#customerName');
+        let infoData = commonManage.getInfo(infoRef, infoInit);
+        const tableList = tableRef.current?.getSourceData();
 
-        await getData.post('customer/addCustomer', copyData).then(v => {
+        const filterTableList = commonManage.filterEmptyObjects(tableList, ['managerName'])
+        if (!filterTableList.length) {
+            return message.warn('하위 데이터 1개 이상이여야 합니다');
+        }
+        infoData[listType] = filterTableList
+        await getData.post('customer/addCustomer', infoData).then(v => {
             if (v.data.code === 1) {
-                message.success('저장되었습니다.')
-                setInfo(codeDomesticSalesWriteInitial);
-                deleteList()
-                window.location.href = '/code_domestic_customer'
+                notificationAlert('success', '💾국내 고객사 등록완료',
+                    <>
+                        <div>상호 : {dom.value}</div>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    ,
+                    function () {
+                        getPropertyId('overseas_customer_update', v.data?.entity?.customerId)
+                    },
+                    {cursor: 'pointer'}
+                )
             } else {
                 message.error('저장에 실패하였습니다.')
             }
         });
-
     }
 
 
@@ -109,97 +123,109 @@ export default function DomesticCustomerWrite({dataInfo = {customerManagerList :
     return <>
         <div style={{
             display: 'grid',
-            gridTemplateRows: `${mini ? '460px' : '65px'} calc(100vh - ${mini ? 590 : 195}px)`,
-            columnGap: 5
+            gridTemplateRows: `${mini ? '480px' : '65px'} calc(100vh - ${mini ? 575 : 160}px)`,
+            rowGap: 10,
         }}>
+            <PanelSizeUtil groupRef={groupRef} storage={'domestic_customer_write'}/>
             <MainCard title={'국내 고객사 등록'} list={[
-                {name: '저장', func: saveFunc, type: 'primary'},
-                {name: '초기화', func: clearAll, type: 'default'},
+                {name: <div><SaveOutlined style={{paddingRight: 8}}/>저장</div>, func: saveFunc, type: 'primary'},
+                {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'}
             ]} mini={mini} setMini={setMini}>
 
-                {mini ?  <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: "180px 200px 1fr 240px",
-                }}>
-                    <BoxCard title={'INQUIRY & PO no'}>
-                        {inputForm({title: '코드(약칭)', id: 'customerCode'})}
-                        {inputForm({title: '지역', id: 'customerRegion'})}
-                        {inputForm({title: '업태', id: 'businessType'})}
-                        {inputForm({title: '종목', id: 'businessItem'})}
-                        {inputForm({title: '대표자', id: 'representative'})}
-                    </BoxCard>
+                {mini ? <div ref={infoRef}>
+                    <PanelGroup ref={groupRef} className={'ground'} direction="horizontal"
+                                style={{gap: 0.5, paddingTop: 3}}>
+                        <Panel defaultSize={sizes[0]} minSize={5}>
+                            <BoxCard title={'INQUIRY & PO no'}>
+                                {inputForm({title: '코드(약칭)', id: 'customerCode'})}
+                                {inputForm({title: '지역', id: 'customerRegion'})}
+                                {inputForm({title: '업태', id: 'businessType'})}
+                                {inputForm({title: '종목', id: 'businessItem'})}
+                                {inputForm({title: '대표자', id: 'representative'})}
+                            </BoxCard>
+                        </Panel>
+                        <PanelResizeHandle/>
+                        <Panel defaultSize={sizes[1]} minSize={5}>
+                            <BoxCard title={'INQUIRY & PO no'}>
+                                {inputForm({title: '거래시작일', id: 'tradeStartDate'})}
+                                {inputForm({title: '상호', id: 'customerName'})}
+                                {inputForm({title: '주소', id: 'address'})}
+                                {inputForm({title: '홈페이지', id: 'homepage'})}
+                                {inputForm({title: '연락처', id: 'customerTel'})}
+                                {inputForm({title: '팩스번호', id: 'customerFax'})}
+                            </BoxCard>
+                        </Panel>
+                        <PanelResizeHandle/>
+                        <Panel defaultSize={sizes[2]} minSize={5}>
+                            <BoxCard title={'INQUIRY & PO no'}>
+                                {inputForm({title: '사업자번호', id: 'businessRegistrationNumber'})}
+                                {textAreaForm({title: '업체확인사항', id: 'companyVerify'})}
+                                {textAreaForm({title: '비고란', id: 'remarks'})}
+                            </BoxCard>
+                        </Panel>
+                        <PanelResizeHandle/>
+                        <Panel defaultSize={sizes[3]} minSize={5}>
+                            <BoxCard title={'INQUIRY & PO no'}>
+                                <div style={{paddingTop: 10, paddingBottom: 15}}>
+                                    <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 6}}>화물운송료</div>
+                                    <select name="languages" id="shippingTerms"
+                                            style={{
+                                                outline: 'none',
+                                                border: '1px solid lightGray',
+                                                height: 23,
+                                                width: '100%',
+                                                fontSize: 12,
+                                                paddingBottom: 0.5
+                                            }}>
+                                        <option value={'화물 선불'}>화물 선불</option>
+                                        <option value={'화물 후불'}>화물 후불</option>
+                                        <option value={'택배 선불'}>택배 선불</option>
+                                        <option value={'택배 후불'}>택배 후불</option>
+                                    </select>
+                                </div>
+                                {inputForm({title: '화물지점', id: 'freightBranch'})}
+                                <div>
+                                    <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 6}}>결제방법</div>
+                                    <select name="languages" id="shippingTerms"
+                                            style={{
+                                                outline: 'none',
+                                                border: '1px solid lightGray',
+                                                height: 23,
+                                                width: '100%',
+                                                fontSize: 12,
+                                                paddingBottom: 0.5
+                                            }}>
+                                        <option value={'현금 결제'}>현금 결제</option>
+                                        <option value={'선수금'}>선수금</option>
+                                        <option value={'정기 결제'}>정기 결제</option>
+                                        <option value={'택배 후불'}>택배 후불</option>
+                                    </select>
+                                </div>
+                                <div style={{paddingTop: 15, paddingBottom: 10}}>
+                                    <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 6}}>업체형태</div>
+                                    <select name="languages" id="shippingTerms"
+                                            style={{
+                                                outline: 'none',
+                                                border: '1px solid lightGray',
+                                                height: 23,
+                                                width: '100%',
+                                                fontSize: 12,
+                                                paddingBottom: 0.5
+                                            }}>
 
-                    <BoxCard title={'INQUIRY & PO no'}>
-                        {inputForm({title: '거래시작일', id: 'tradeStartDate'})}
-                        {inputForm({title: '상호', id: 'customerName'})}
-                        {inputForm({title: '주소', id: 'address'})}
-                        {inputForm({title: '홈페이지', id: 'homepage'})}
-                        {inputForm({title: '연락처', id: 'customerTel'})}
-                        {inputForm({title: '팩스번호', id: 'customerFax'})}
-                    </BoxCard>
-
-
-                    <BoxCard title={'INQUIRY & PO no'}>
-                        {inputForm({title: '사업자번호', id: 'businessRegistrationNumber'})}
-                        {textAreaForm({title: '업체확인사항', id: 'companyVerify'})}
-                        {textAreaForm({title: '비고란', id: 'remarks'})}
-                    </BoxCard>
-                    <BoxCard title={'INQUIRY & PO no'}>
-                        <div style={{paddingTop: 10, paddingBottom: 10}}>
-                            <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 6}}>화물운송료</div>
-                            <select name="languages" id="shippingTerms"
-                                    style={{
-                                        outline: 'none',
-                                        border: '1px solid lightGray',
-                                        height: 23,
-                                        width: '100%',
-                                        fontSize: 12,
-                                        paddingBottom: 0.5
-                                    }}>
-                                <option value={'화물 선불'}>화물 선불</option>
-                                <option value={'화물 후불'}>화물 후불</option>
-                                <option value={'택배 선불'}>택배 선불</option>
-                                <option value={'택배 후불'}>택배 후불</option>
-                            </select>
-                        </div>
-                        {inputForm({title: '화물지점', id: 'freightBranch'})}
-                        <div style={{ paddingBottom: 10}}>
-                            <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 6}}>결제방법</div>
-                            <select name="languages" id="shippingTerms"
-                                    style={{
-                                        outline: 'none',
-                                        border: '1px solid lightGray',
-                                        height: 23,
-                                        width: '100%',
-                                        fontSize: 12,
-                                        paddingBottom: 0.5
-                                    }}>
-                                <option value={'현금 결제'}>현금 결제</option>
-                                <option value={'선수금'}>선수금</option>
-                                <option value={'정기 결제'}>정기 결제</option>
-                                <option value={'택배 후불'}>택배 후불</option>
-                            </select>
-                        </div>
-                        <div style={{paddingTop: 5, paddingBottom: 10}}>
-                            <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 6}}>업체형태</div>
-                            <select name="languages" id="shippingTerms"
-                                    style={{
-                                        outline: 'none',
-                                        border: '1px solid lightGray',
-                                        height: 23,
-                                        width: '100%',
-                                        fontSize: 12,
-                                        paddingBottom: 0.5
-                                    }}>
-
-                                <option value={'딜러'}>딜러</option>
-                                <option value={'제조'}>택배 후불</option>
-                            </select>
-                        </div>
-                        <div style={{paddingTop : 5}}>
-                        {inputForm({title: '만쿠담당자', id: 'mankuTradeManager'})}
-                        </div>
-                    </BoxCard>
+                                        <option value={'딜러'}>딜러</option>
+                                        <option value={'제조'}>택배 후불</option>
+                                    </select>
+                                </div>
+                                <div style={{paddingTop: 5}}>
+                                    {inputForm({title: '만쿠담당자', id: 'mankuTradeManager'})}
+                                </div>
+                            </BoxCard>
+                        </Panel>
+                        <PanelResizeHandle/>
+                        <Panel defaultSize={sizes[4]} minSize={5}>
+                        </Panel>
+                    </PanelGroup>
                 </div> : null}
             </MainCard>
 

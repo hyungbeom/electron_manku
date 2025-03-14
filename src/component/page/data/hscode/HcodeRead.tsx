@@ -112,7 +112,6 @@ export default function HcodeRead({getPropertyId, getCopyPage}) {
         const selectedRows = gridRef.current.getSelectedRows();
         const deleteList = selectedRows.map(v => v.hsCodeId)
         await deleteHsCodeList({data: {hsCodeIdList: deleteList}}).then(v=>{
-            console.log(v,'v:::::')
             if(v.code === 1){
                 searchInfo(true);
                 notificationAlert('success', '🗑️발주서 삭제완료',

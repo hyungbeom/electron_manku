@@ -2356,16 +2356,26 @@ export const tableCodeDomesticWriteColumn = [
 
 export const tableCodeOverseasSalesColumns = [
     {
+        headerName: "", // 컬럼 제목
+        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
+        checkboxSelection: true, // 각 행에 체크박스 추가
+        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
+        cellStyle: {textAlign: "center"}, // 스타일 설정
+        maxWidth: 45, // 컬럼 너비
+        pinned: "left", // 왼쪽에 고정
+        filter: false
+    },
+    {
         headerName: '코드',
-        field: 'agencyCode',
+        field: 'customerCode',
     },
     {
         headerName: '상호',
-        field: 'agencyName',
+        field: 'customerName',
     },
     {
         headerName: '지역',
-        field: 'region',
+        field: 'customerRegion',
     },
     {
         headerName: '거래시작일',
@@ -2378,10 +2388,6 @@ export const tableCodeOverseasSalesColumns = [
     {
         headerName: '팩스번호',
         field: 'faxNumber',
-    },
-    {
-        headerName: '우편번호',
-        field: 'postalCode',
     },
     {
         headerName: '주소',
@@ -2415,11 +2421,7 @@ export const tableCodeOverseasSalesColumns = [
     },
     {
         headerName: 'FTANo',
-        field: 'ftaNo',
-    },
-    {
-        headerName: '업체확인사항',
-        field: 'checkList',
+        field: 'ftaNumber',
     },
     {
         headerName: '작성자',
@@ -2428,14 +2430,21 @@ export const tableCodeOverseasSalesColumns = [
     {
         headerName: '등록일자',
         field: 'createdDate',
+        valueFormatter: (params) => {
+            return moment(params.value).isValid() ? dateFormat(params) : ''
+        }
     },
     {
         headerName: '수정자',
         field: 'modifiedBy',
+
     },
     {
         headerName: '수정일자',
         field: 'modifiedDate',
+        valueFormatter: (params) => {
+            return moment(params.value).isValid() ? dateFormat(params) : ''
+        }
     },
 
 ];

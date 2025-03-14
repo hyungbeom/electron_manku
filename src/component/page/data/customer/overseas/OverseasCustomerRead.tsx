@@ -14,13 +14,23 @@ import Search from "antd/lib/input/Search";
 import message from "antd/lib/message";
 import * as XLSX from "xlsx";
 import Button from "antd/lib/button";
-import {CopyOutlined, EditOutlined, FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
+import {
+    CopyOutlined,
+    EditOutlined,
+    ExclamationCircleOutlined,
+    FileExcelOutlined,
+    SearchOutlined
+} from "@ant-design/icons";
 import {useRouter} from "next/router";
 import {inputForm, MainCard, radioForm} from "@/utils/commonForm";
 import {commonFunc, gridManage} from "@/utils/commonManage";
-import {searchDomesticCustomer, searchOverseasCustomer} from "@/utils/api/mainApi";
+import {deleteProjectList, searchDomesticCustomer, searchOverseasCustomer} from "@/utils/api/mainApi";
+import Popconfirm from "antd/lib/popconfirm";
+import moment from "moment/moment";
+import {useNotificationAlert} from "@/component/util/NoticeProvider";
 
 export default function OverseasCustomerRead({getPropertyId, getCopyPage}) {
+    const notificationAlert = useNotificationAlert();
     const gridRef = useRef(null);
     const router = useRouter();
 
@@ -46,7 +56,6 @@ export default function OverseasCustomerRead({getPropertyId, getCopyPage}) {
     };
 
 
-
     function onChange(e) {
 
         let bowl = {}
@@ -56,7 +65,6 @@ export default function OverseasCustomerRead({getPropertyId, getCopyPage}) {
             return {...v, ...bowl}
         })
     }
-
 
 
     async function searchInfo(e) {
@@ -73,7 +81,7 @@ export default function OverseasCustomerRead({getPropertyId, getCopyPage}) {
                     "limit": -1
                 }
             }).then(v => {
-                console.log(info,'v.data:')
+                console.log(v.data, 'v.data:')
                 gridManage.resetData(gridRef, v.data);
                 setTotalRow(v.pageInfo.totalRow)
                 setLoading(false)
@@ -87,14 +95,49 @@ export default function OverseasCustomerRead({getPropertyId, getCopyPage}) {
     }
 
     function moveRouter() {
-        getCopyPage('overseas_customer_write', {estimateDetailList : []})
+        getCopyPage('overseas_customer_write', {})
 
     }
+
     function handleKeyPress(e) {
         if (e.key === 'Enter') {
             searchInfo(true)
         }
     }
+
+    async function confirm() {
+        if (gridRef.current.getSelectedRows().length < 1) {
+            return message.error('삭제할 데이터를 선택해주세요.')
+        }
+
+        const selectedRows = gridRef.current.getSelectedRows();
+        const list = gridRef.current.getSelectedRows()
+        const filterList = list.map(v => v.overseasCustomerId);
+
+        setLoading(true)
+        await getData.post('customer/deleteOverseasCustomers', {
+            overseasCustomerIdList: filterList
+        }).then(v => {
+            if (v.data.code === 1) {
+                searchInfo(true)
+                notificationAlert('success', '🗑️해외고객사 삭제완료',
+                    <>
+                        <div>상호
+                            - {selectedRows[0]?.customerName} {selectedRows.length > 1 ? ('외' + " " + (selectedRows.length - 1) + '개') : ''} 이(가)
+                            삭제되었습니다
+                        </div>
+                        {/*<div>프로젝트 제목 - {selectedRows[0].projectTitle} `${selectedRows.length > 1 ? ('외' + (selectedRows.length - 1)) + '개' : ''}`가 삭제되었습니다 </div>*/}
+                        <div>삭제일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , null,
+                )
+            } else {
+                message.error(v.data.message)
+            }
+        })
+    }
+
+
     return <>
         <div style={{
             display: 'grid',
@@ -134,6 +177,18 @@ export default function OverseasCustomerRead({getPropertyId, getCopyPage}) {
                 </div> : <></>}
             </MainCard>
             <TableGrid
+                deleteComp={
+
+                    <Popconfirm
+                        title="삭제하시겠습니까?"
+                        onConfirm={confirm}
+                        icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
+
+                        {/*@ts-ignored*/}
+                        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}>삭제</Button>
+                    </Popconfirm>
+                }
+
                 totalRow={totalRow}
                 getPropertyId={getPropertyId}
                 gridRef={gridRef}
@@ -141,7 +196,6 @@ export default function OverseasCustomerRead({getPropertyId, getCopyPage}) {
                 columns={tableCodeOverseasSalesColumns}
                 funcButtons={['agPrint']}
             />
-            overseasCustomerList
         </div>
     </>
 }

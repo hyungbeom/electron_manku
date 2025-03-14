@@ -632,3 +632,202 @@ export const DCWInfo = {
     },
 };
 
+
+
+export const OCInfo = {
+    write: {
+        columnWidth: [220, 50, 50, 50, 45],
+        column: [
+            '담당자',
+            '연락처',
+            '팩스번호',
+            '휴대폰번호',
+            '이메일',
+            '비고'
+        ],
+        columnList: [
+            {data: "managerName", type: "text"},
+            {data: "directTel", type: "text"},
+            {data: "faxNumber", type: "text"},
+            {data: "mobileNumber", type: "text"},
+            {data: "email", type: "text"},
+            {data: "remarks", type: "text"},
+        ],
+        defaultData: {
+            "managerName": "",
+            "directTel": "",
+            "faxNumber": "",
+            "mobileNumber": "",
+            "email": "",
+            "remarks": ""
+        },
+        excelExpert: (v, i) => {
+            return v
+        },
+        totalList: {
+            "managerName": "",
+            "directTel": "",
+            "faxNumber": "",
+            "mobileNumber": "",
+            "email": "",
+            "remarks": ""
+        },
+
+        type: 'write'
+    },
+    defaultInfo: {
+        "customerCode": "",
+        "customerName": "",
+        "tradeStartDate": "",
+        "phoneNumber": "",
+        "customerRegion": "",
+        "homepage": "",
+        "faxNumber": "",
+        "currencyUnit": "",
+        "manager": "",
+        "ftaNumber": "",
+        "customerType": "",
+        "address": "",
+        "mankuTradeManager": "",
+        "remarks": "",
+        "companyVerification": "",
+    },
+};
+
+
+
+
+export const DCInfo = {
+    write: {
+        columnWidth: [220, 50, 50, 50, 45],
+        column: [
+            '담당자',
+            '연락처',
+            '팩스번호',
+            '휴대폰번호',
+            '이메일',
+            '비고'
+        ],
+        columnList: [
+            {data: "managerName", type: "text"},
+            {data: "directTel", type: "text"},
+            {data: "faxNumber", type: "text"},
+            {data: "mobileNumber", type: "text"},
+            {data: "email", type: "text"},
+            {data: "remarks", type: "text"},
+        ],
+        defaultData: {
+            "managerName": "",
+            "directTel": "",
+            "faxNumber": "",
+            "mobileNumber": "",
+            "email": "",
+            "remarks": ""
+        },
+        excelExpert: (v, i) => {
+            return v
+        },
+        totalList: {
+            "managerName": "",
+            "directTel": "",
+            "faxNumber": "",
+            "mobileNumber": "",
+            "email": "",
+            "remarks": ""
+        },
+
+        type: 'write'
+    },
+    defaultInfo: {
+        "customerCode": "",
+        "customerName": "",
+        "customerRegion": "",
+        "tradeStartDate": "",
+        "customerTel": "",
+        "customerFax": "",
+        "homepage": "",
+        "zipCode": "",
+        "address": "",
+        "businessRegistrationNumber": "",
+        "customerType": "",
+        "remarks": "",
+        "mankuTradeManager": "",
+        "companyVerify": "",
+        "freightCharge": "화물 후불",
+        "freightBranch": "",
+        "paymentMethod": "현금 결제",
+        "companyType": "딜러",
+        "createdBy": "",
+        "createdDate": "",
+        "modifiedBy": "",
+        "modifiedDate": "",
+        "representative": "",
+        "businessType": "",
+        "businessItem": "",
+    },
+};
+
+
+
+
+export const OAInfo = {
+    write: {
+        columnWidth: [220, 50, 50, 50, 45, 50, 50, 50],
+        column: [
+            "담당자",
+            "연락처",
+            "팩스번호",
+            "이메일",
+            "주소",
+            "국가대리점",
+            "휴대폰",
+            "비고"
+        ],
+        columnList: [
+            {data: "managerName", type: "text"},
+            {data: "phoneNumber", type: "text"},
+            {data: "faxNumber", type: "text"},
+            {data: "email", type: "text"},
+            {data: "address", type: "text"},
+            {data: "countryAgency", type: "text"},
+            {data: "mobilePhone", type: "text"},
+            {data: "remarks", type: "text"}
+        ],
+        defaultData: {
+            "managerName": "string",
+            "phoneNumber": "string",
+            "faxNumber": "string",
+            "email": "string",
+            "address": "string",
+            "remarks": "string",
+            "countryAgency": "string",
+            "mobilePhone": "string",
+        },
+        excelExpert: (v, i) => {
+            return v
+        },
+        totalList: {},
+
+        type: 'write'
+    },
+    defaultInfo: {
+        "agencyCode": "",                      // 코드(약칭)
+        "agencyName": "",       // 상호
+        "dealerType": "",               // 딜러/제조
+        "grade": "",                             // 등급
+        "margin": null,                           // 마진
+        "homepage": "",   // 홈페이지
+        "item": "",                        // Item
+        "tradeStartDate": "",               // 거래 시작일
+        "currencyUnit": "",                        // 화폐단위
+        "manager": "",                     // 담당자
+        "bankAccountNumber": "",            // Account No
+        "country": "",                             // 국가
+        "ftaNumber": "",                      // FTA No
+        "intermediaryBank": "",        // 송금중개은행
+        "address": "",  // 주소
+        "ibanCode": "",           // IBan Code
+        "swiftCode": "",                      // Swift Code
+    },
+};
+

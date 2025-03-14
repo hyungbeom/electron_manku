@@ -681,7 +681,7 @@ export const codeOverseasSalesWriteInitial = {
     "customerRegion": "",
     "homepage": "",
     "faxNumber": "",
-    "currencyUnit": "USD",
+    "currencyUnit": "",
     "manager": "",
     "ftaNumber": "",
     "customerType": "",

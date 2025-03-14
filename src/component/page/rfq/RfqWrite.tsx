@@ -230,9 +230,6 @@ export default function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: 
         return savedSizes ? JSON.parse(savedSizes) : [25, 25, 25, 25, 0]; // 기본값 [50, 50, 50]
     };
 
-    function onResizeChange() {
-        setSizes(groupRef.current.getLayout())
-    }
 
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 

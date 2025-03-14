@@ -100,26 +100,26 @@ export const treeData = [
             {
                 title: "매입처", key: "agency",children: [
                     {title: "국내매입처 등록", key: "domestic_agency_write",disabled : true},
-                    {title: "국내매입처 조회", key: "domestic_agency_read",disabled : true},
-                    {title: "해외매입처 등록", key: "overseas_agency_write",disabled : true},
-                    {title: "해외매입처 조회", key: "overseas_agency_read",disabled : true},
+                    {title: "국내매입처 조회", key: "domestic_agency_read"},
+                    {title: "해외매입처 등록", key: "overseas_agency_write"},
+                    {title: "해외매입처 조회", key: "overseas_agency_read"},
                 ]
             },
             {
                 title: "고객사", key: "customer", children: [
-                    {title: "국내고객사 등록", key: "domestic_customer_write",disabled : true},
-                    {title: "국내고객사 조회", key: "domestic_customer_read",disabled : true},
-                    {title: "해외고객사 등록", key: "overseas_customer_write",disabled : true},
-                    {title: "해외고객사 조회", key: "overseas_customer_read",disabled : true},
+                    {title: "국내고객사 등록", key: "domestic_customer_write"},
+                    {title: "국내고객사 조회", key: "domestic_customer_read"},
+                    {title: "해외고객사 등록", key: "overseas_customer_write"},
+                    {title: "해외고객사 조회", key: "overseas_customer_read"},
                 ]
             },
             {
                 title: "메이커", key: "maker", children: [
-                    {title: "메이커 등록", key: "maker_write",disabled : true},
-                    {title: "메이커 조회", key: 'maker_read',disabled : true}
+                    {title: "메이커 등록", key: "maker_write"},
+                    {title: "메이커 조회", key: 'maker_read'}
                 ]
             },
-            {title: "HS CODE 조회", key: "hscode_read",disabled : true},
+            {title: "HS CODE 조회", key: "hscode_read"},
         ],
     },
 ];

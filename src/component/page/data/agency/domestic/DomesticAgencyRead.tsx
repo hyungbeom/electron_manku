@@ -104,7 +104,7 @@ export default function DomesticAgencyUpdate({getPropertyId, getCopyPage}) {
         getCopyPage('domestic_agency_write', {orderDetailList: []})
     }
 
-    return <Spin spinning={loading} tip={'국내 매입처 조회중...'}>
+    return <Spin spinning={loading}>
         <ReceiveComponent searchInfo={searchInfo}/>
         <>
 

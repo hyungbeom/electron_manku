@@ -37,6 +37,7 @@ import {tableCodeDomesticAgencyWriteColumns} from "@/utils/columnList";
 const {RangePicker} = DatePicker
 const {Option} = Select
 import {v4 as uuid} from 'uuid';
+import message from "antd/lib/message";
 
 export const numbFormatter = (value) => `₩ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 
@@ -396,7 +397,10 @@ export const tableButtonList = (type: any, gridRef?: any) => {
     };
 
     const agDownloadExcel = async () => {
-        console.log(gridRef.current, 'check')
+        const list = gridRef.current.getSelectedRows()
+        if(!list.length){
+            return message.warning('1개이상의 데이터를 선택해주세요')
+        }
         gridRef.current.exportDataAsCsv({
             fileName: "조회리스트.csv",
             onlySelected: true, // ✅ 선택된 행만 내보내기
