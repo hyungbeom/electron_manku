@@ -11,7 +11,6 @@ import {getAttachmentFileList, saveOrder} from "@/utils/api/mainApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {getData} from "@/manage/function/api";
 import Spin from "antd/lib/spin";
-import "react-phone-input-2/lib/style.css";
 import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 import PrintPo from "@/component/printPo";
 import moment from "moment/moment";
