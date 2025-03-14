@@ -400,7 +400,7 @@ const Table = forwardRef(({
 
             console.log(formattedValue,'currencyValue::1')
             // 🔥 Handsontable의 기본 숫자 렌더러 적용
-            // Handsontable.renderers.NumericRenderer(instance, td, row, col, prop, formattedValue, cellProperties);
+            Handsontable.renderers.NumericRenderer(instance, td, row, col, prop, formattedValue, cellProperties);
             td.innerText = formattedValue;
         } else {
             // 그 외 컬럼은 기본 렌더러 유지
