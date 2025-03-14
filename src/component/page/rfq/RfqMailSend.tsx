@@ -1,10 +1,6 @@
-import React, {useEffect, useRef, useState} from "react";
-import LayoutComponent from "@/component/LayoutComponent";
+import React, {useRef, useState} from "react";
 import {rfqReadColumns} from "@/utils/columnList";
-import {subRfqReadInitial, subRfqReadMailInitial} from "@/utils/initialList";
-import {wrapper} from "@/store/store";
-import initialServerRouter from "@/manage/function/initialServerRouter";
-import {setUserInfo} from "@/store/user/userSlice";
+import {subRfqReadMailInitial} from "@/utils/initialList";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
 import {BoxCard, inputForm, MainCard, rangePickerForm, selectBoxForm} from "@/utils/commonForm";
@@ -12,17 +8,16 @@ import {deleteRfq, searchRfq} from "@/utils/api/mainApi";
 import PreviewMailModal from "@/component/PreviewMailModal";
 import _ from "lodash";
 import {commonManage, gridManage} from "@/utils/commonManage";
-import {useRouter} from "next/router";
 import Spin from "antd/lib/spin";
 import Button from "antd/lib/button";
-import {CopyOutlined, ExclamationCircleOutlined} from "@ant-design/icons";
+import {ExclamationCircleOutlined} from "@ant-design/icons";
 import {getData} from "@/manage/function/api";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import Popconfirm from "antd/lib/popconfirm";
 import moment from "moment";
 
 
-export default function RfqMailSend({getPropertyId}:any) {
+export default function RfqMailSend({getPropertyId}: any) {
     const notificationAlert = useNotificationAlert();
     const gridRef = useRef(null);
     const [mini, setMini] = useState(true);
@@ -42,7 +37,7 @@ export default function RfqMailSend({getPropertyId}:any) {
         gridRef.current = params.api;
 
 
-        await searchRfq({data: subRfqReadMailInitial}).then(v=>{
+        await searchRfq({data: subRfqReadMailInitial}).then(v => {
             setTotalRow(v.pageInfo.totalRow);
             params.api.applyTransaction({add: v.data});
         })
@@ -62,8 +57,9 @@ export default function RfqMailSend({getPropertyId}:any) {
         const copyData: any = {...info}
         setLoading(true)
         await searchRfq({
-            data: {...copyData, page : 1, limit : -1}
+            data: {...copyData, page: 1, limit: -1}
         }).then(v => {
+            console.log(v.data,'v.data:')
             gridManage.resetData(gridRef, v.data);
             setTotalRow(v.pageInfo.totalRow)
             setLoading(false)
@@ -126,9 +122,9 @@ export default function RfqMailSend({getPropertyId}:any) {
         });
         const selectedRows = gridRef.current.getSelectedRows();
 
-        await deleteRfq({data: {deleteList: deleteList}}).then((v:any)=>{
+        await deleteRfq({data: {deleteList: deleteList}}).then((v: any) => {
 
-            if(v.code === 1){
+            if (v.code === 1) {
                 searchInfo();
                 notificationAlert('success', '🗑️견적의뢰 삭제완료',
                     <>
@@ -142,15 +138,10 @@ export default function RfqMailSend({getPropertyId}:any) {
                     , function () {
                     },
                 )
-            }else{
+            } else {
                 message.error(v.message)
             }
         })
-
-
-
-
-
 
 
     }
@@ -222,7 +213,7 @@ export default function RfqMailSend({getPropertyId}:any) {
                         : <></>}
                 </MainCard>
                 {/*@ts-ignored*/}
-                <TableGrid deleteComp={    <Popconfirm
+                <TableGrid deleteComp={<Popconfirm
                     title="삭제하시겠습니까?"
                     onConfirm={deleteList}
                     icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
