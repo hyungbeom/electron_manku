@@ -30,7 +30,6 @@ const TableGrid = ({
                        },
                        deleteComp = <></>,
                        setInfo = null,
-                       onRowClicked = null,
                        getPropertyId = null,
                        totalRow = 0
                    }: any) => {
@@ -343,6 +342,10 @@ const TableGrid = ({
     }
 
 
+    function onRowClicked(params){
+        const isSelected = params.node.isSelected(); // 현재 선택 상태 확인
+        params.node.setSelected(!isSelected); // 선택 상태 변경 (토글)
+    }
     return (
         <>
             <HsCodeListModal isModalOpen={isModalOpen['hsCode']} setIsModalOpen={setIsModalOpen}

@@ -1,12 +1,10 @@
 import React, {useEffect, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
-import LayoutComponent from "@/component/LayoutComponent";
 import message from "antd/lib/message";
 import {tableCodeDomesticAgencyWriteColumns,} from "@/utils/columnList";
 import {codeDomesticAgencyWriteInitial,} from "@/utils/initialList";
 import TableGrid from "@/component/tableGrid";
 import {useRouter} from "next/router";
-import moment from "moment/moment";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import {wrapper} from "@/store/store";
@@ -169,42 +167,3 @@ export default function DomesticAgencyUpdate({updateKey, getCopyPage}) {
         </div>
     </>
 }
-
-// @ts-ignore
-export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
-
-
-    let param = {}
-
-
-    const {query} = ctx;
-
-    // 특정 쿼리 파라미터 가져오기
-    const {agencyCode} = query; // 예: /page?id=123&name=example
-
-    const {userInfo} = await initialServerRouter(ctx, store);
-
-    if (!userInfo) {
-        return {
-            redirect: {
-                destination: '/', // 리다이렉트할 경로
-                permanent: false, // true면 301 리다이렉트, false면 302 리다이렉트
-            },
-        };
-    }
-
-    store.dispatch(setUserInfo(userInfo));
-
-    const result = await getData.post('agency/getAgencyList', {
-        searchType: 1,
-        searchText: agencyCode,
-        page: 1,
-        limit: 1,
-    });
-
-
-    const list = result?.data?.entity?.agencyList[0];
-    return {
-        props: {dataInfo: list ?? []}
-    }
-})
