@@ -11,23 +11,7 @@ import Space from "antd/lib/space";
 export default function LayoutComponent({children}) {
 
     const router = useRouter();
-
-
-
     return <>
-
-        {/*<div style={{*/}
-        {/*    backgroundColor: '#f5f5f5',*/}
-        {/*    width: '100%',*/}
-        {/*    borderBottom: '1px solid lightGray',*/}
-        {/*    display: 'flex'*/}
-        {/*}}>*/}
-        {/*    <Menu onClick={onClick}*/}
-        {/*          selectedKeys={null} mode="horizontal" items={items}*/}
-        {/*          style={{width: '100%', fontSize: 10}} className="custom-menu"/>*/}
-        {/*    <UserMenu/>*/}
-        {/*</div>*/}
-
         <Content>
             <div style={{
                 border: '1px solid lightGray',
@@ -37,7 +21,8 @@ export default function LayoutComponent({children}) {
                 alignItems: 'center',
                 padding: '0px 30px 0px 10px'
             }}>
-                <div style={{display: 'flex', alignItems: 'center', cursor : 'pointer'}} onClick={()=>router.push('/main')}>
+                <div style={{display: 'flex', alignItems: 'center', cursor: 'pointer'}}
+                     onClick={() => router.push('/main')}>
                     <img src="/installer-icon.ico" width={35} alt=""/>
                     <div style={{fontSize: 20, fontWeight: 500, paddingLeft: 5}}>MANKU</div>
                 </div>
@@ -66,42 +51,38 @@ export function UserMenu() {
     const items: any = [
         {
             key: '1',
-            label: 'My Account',
-            disabled: true,
+            label: <span onClick={() => {
+                router.push('/myaccount');
+            }}>MY ACCOUNT
+            </span>
+        }, {
+            key: '2',
+            label: <span onClick={() => {
+                router.push('/todoList');
+            }}>TODO LIST
+            </span>
         },
         {
             type: 'divider',
         },
         {
-            key: '2',
+            key: '3',
             label: <span onClick={() => {
                 removeCookie(null, 'token');
                 router.push('/');
-            }}><LogoutOutlined style={{color: 'red', paddingRight: 5}}/>Logout</span>
+            }}><LogoutOutlined style={{color: 'red', paddingRight: 5}}/>
+                Logout
+            </span>
         },
-        userInfo.authority === 1 &&  {
+        userInfo.authority === 1 && {
             key: '4',
-            label: <span  onClick={() => {
+            label: <span onClick={() => {
                 router.push('/manage');
-            }}><SettingOutlined style={{ paddingRight: 5}}/>관리자</span>
+            }}><SettingOutlined style={{paddingRight: 5}}/>관리자</span>
         },
     ];
     const router = useRouter();
-    // const items = [
-    //     {
-    //         label: <div style={{width: 100}}>마이페이지</div>,
-    //         key: '1',
-    //         icon: <UserOutlined/>,
-    //     },
-    //     {
-    //         label: <div style={{width: 100, color: 'red'}} onClick={() => {
-    //             removeCookie(null, 'token')
-    //             router.push('/')
-    //         }}>로그아웃</div>,
-    //         key: '2',
-    //         icon: <LogoutOutlined style={{color: 'red'}}/>
-    //     }
-    // ];
+
     return <Dropdown menu={{items}}>
         <Space>
             <div style={{display: 'flex',}}>
