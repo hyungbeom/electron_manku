@@ -227,7 +227,9 @@ export default function RfqRead({getPropertyId, getCopyPage, }:any) {
                                columns={rfqReadColumns}
                                onGridReady={onGridReady}
                                type={'read'}
-                               funcButtons={['agPrint']}/>
+                               funcButtons={['agPrint']}
+                               reply={true}
+                    />
                 </div>
             </>
         </Spin>

@@ -227,6 +227,7 @@ export default function RfqMailSend({getPropertyId}: any) {
                            onGridReady={onGridReady}
                            columns={rfqReadColumns}
                            funcButtons={['agPrint']}
+                           reply={true}
                 />
             </div>
         </>

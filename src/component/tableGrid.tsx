@@ -31,7 +31,8 @@ const TableGrid = ({
                        deleteComp = <></>,
                        setInfo = null,
                        getPropertyId = null,
-                       totalRow = 0
+                       totalRow = 0,
+                        reply = false
                    }: any) => {
 
 
@@ -453,7 +454,7 @@ const TableGrid = ({
                     pinnedBottomRowData={pinnedBottomRowData}
                     onSelectionChanged={handleSelectionChanged} // 선택된 행 변경 이벤트
                     getRowStyle={(params) => {
-                        if (params.data?.replyStatus !== 0) {
+                        if (params.data?.replyStatus !== 0 && reply) {
                             return { color: 'blue'}; // 글씨 색상 변경
                         }
                         return null;
