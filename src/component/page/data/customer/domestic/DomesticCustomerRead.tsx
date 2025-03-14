@@ -28,7 +28,7 @@ import {gridManage} from "@/utils/commonManage";
 import Spin from "antd/lib/spin";
 import Popconfirm from "antd/lib/popconfirm";
 
-export default function DomesticCustomerRead({ getPropertyId, getCopyPage}) {
+export default function DomesticCustomerRead({ getPropertyId, getCopyPage}:any) {
     const gridRef = useRef(null);
     const router = useRouter();
 

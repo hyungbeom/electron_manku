@@ -15,7 +15,7 @@ import moment from "moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 
 const listType = 'overseasCustomerManagerList'
-export default function OverseasCustomerUpdate({ updateKey, getCopyPage}) {
+export default function OverseasCustomerUpdate({ updateKey, getCopyPage}:any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
     const infoRef = useRef<any>(null)

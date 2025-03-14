@@ -16,7 +16,7 @@ import {DAInfo, projectInfo} from "@/utils/column/ProjectInfo";
 
 
 const listType = 'agencyManagerList'
-export default function DomesticAgencyUpdate({updateKey, getCopyPage}) {
+export default function DomesticAgencyUpdate({updateKey, getCopyPage}:any) {
     const notificationAlert = useNotificationAlert();
     const infoRef = useRef<any>(null)
     const tableRef = useRef(null);

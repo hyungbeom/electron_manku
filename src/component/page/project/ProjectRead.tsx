@@ -17,7 +17,7 @@ import Popconfirm from "antd/lib/popconfirm";
 import moment from "moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 
-export default function ProjectRead({getPropertyId, getCopyPage}) {
+export default function ProjectRead({getPropertyId, getCopyPage}:any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
 

@@ -30,7 +30,7 @@ import Spin from "antd/lib/spin";
 
 const listType = 'orderStatusDetailList'
 
-export default function StoreUpdate({updateKey, getCopyPage}) {
+export default function StoreUpdate({updateKey, getCopyPage}:any) {
     const router = useRouter();
 
     const gridRef = useRef(null);

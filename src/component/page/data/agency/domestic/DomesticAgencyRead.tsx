@@ -23,7 +23,7 @@ import moment from "moment/moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 
 
-export default function DomesticAgencyUpdate({getPropertyId, getCopyPage}) {
+export default function DomesticAgencyUpdate({getPropertyId, getCopyPage}:any) {
     const notificationAlert = useNotificationAlert();
     const gridRef = useRef(null);
     const copyInit = _.cloneDeep(codeDomesticAgencyWriteInitial)

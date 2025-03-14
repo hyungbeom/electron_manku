@@ -16,7 +16,7 @@ import message from "antd/lib/message";
 import Spin from "antd/lib/spin";
 import ReceiveComponent from "@/component/ReceiveComponent";
 
-export default function DeliveryRead({getPropertyId, getCopyPage}) {
+export default function DeliveryRead({getPropertyId, getCopyPage}:any) {
     const router = useRouter();
 
     const gridRef = useRef(null);

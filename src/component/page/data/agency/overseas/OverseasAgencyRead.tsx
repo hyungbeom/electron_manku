@@ -17,7 +17,7 @@ import ReceiveComponent from "@/component/ReceiveComponent";
 import {searchDomesticAgency, searchOverseasAgency} from "@/utils/api/mainApi";
 
 
-export default function OverseasAgencyRead({ getPropertyId, getCopyPage}) {
+export default function OverseasAgencyRead({ getPropertyId, getCopyPage}:any) {
 
     const gridRef = useRef(null);
     const router = useRouter();

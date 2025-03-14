@@ -15,7 +15,7 @@ import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 
 const listType = 'customerManagerList'
-export default function DomesticCustomerWrite({copyPageInfo, getPropertyId}) {
+export default function DomesticCustomerWrite({copyPageInfo, getPropertyId}:any) {
     const notificationAlert = useNotificationAlert();
     const gridRef = useRef(null);
     const groupRef = useRef<any>(null)

@@ -20,7 +20,7 @@ import Spin from "antd/lib/spin";
 import ReceiveComponent from "@/component/ReceiveComponent";
 
 const {RangePicker} = DatePicker
-export default function RemittanceDomesticRead({getPropertyId, getCopyPage}) {
+export default function RemittanceDomesticRead({getPropertyId, getCopyPage}:any) {
 
     const gridRef = useRef(null);
     const copyInit = _.cloneDeep(remittanceDomesticSearchInitial)
@@ -184,28 +184,3 @@ export default function RemittanceDomesticRead({getPropertyId, getCopyPage}) {
     </Spin>
 }
 
-
-// @ts-ignore
-export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
-
-
-    const {userInfo} = await initialServerRouter(ctx, store);
-
-    if (!userInfo) {
-        return {
-            redirect: {
-                destination: '/', // 리다이렉트할 경로
-                permanent: false, // true면 301 리다이렉트, false면 302 리다이렉트
-            },
-        };
-    }
-
-    store.dispatch(setUserInfo(userInfo));
-
-    const result = await getData.post('remittance/getRemittanceList', remittanceDomesticSearchInitial);
-
-    const returnValue = result?.data?.entity?.remittanceList;
-    return {
-        props: {dataInfo: returnValue ? returnValue : null}
-    }
-})

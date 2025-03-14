@@ -13,7 +13,7 @@ import message from "antd/lib/message";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {wrapper} from "@/store/store";
 
-export default function DeliveryWrite({copyPageInfo}) {
+export default function DeliveryWrite() {
 
     const router = useRouter();
 

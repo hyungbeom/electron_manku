@@ -165,34 +165,34 @@ export default function Main() {
         project_write: {name: "프로젝트 등록", component: <ProjectWrite/>},
         project_read: {
             name: "프로젝트 조회",
-            component: <ProjectRead getPropertyId={getPropertyId} />
+            component: <ProjectRead   />
         },
         project_update: {name: "프로젝트 수정", component: <ProjectUpdate updateKey={updateKey} />},
 
         rfq_write: {name: "견적의뢰 등록", component: <RfqWrite/>},
-        rfq_read: {name: "견적의뢰 조회", component: <RfqRead getPropertyId={getPropertyId} />},
+        rfq_read: {name: "견적의뢰 조회", component: <RfqRead   />},
         rfq_update: {name: "견적의뢰 수정", component: <RqfUpdate updateKey={updateKey} />},
-        rfq_mail_send: {name: "메일전송", component: <RfqMailSend getPropertyId={getPropertyId}/>},
+        rfq_mail_send: {name: "메일전송", component: <RfqMailSend  />},
 
         estimate_write: {name: "견적서 등록", component: <EstimateWrite/>},
         estimate_read: {
             name: "견적서 조회",
-            component: <EstimateRead getPropertyId={getPropertyId} />
+            component: <EstimateRead   />
         },
         estimate_update: {name: "견적서 수정", component: <EstimateUpdate updateKey={updateKey} />},
 
         order_write: {name: "발주서 등록", component: <OrderWrite/>},
-        order_read: {name: "발주서 조회", component: <OrderRead getPropertyId={getPropertyId} />},
+        order_read: {name: "발주서 조회", component: <OrderRead   />},
         order_update: {name: "발주서 수정", component: <OrderUpdate updateKey={updateKey} />},
 
         store_write: {name: "입고 등록", component: <StoreWrite/>},
-        store_read: {name: "입고 조회", component: <StoreRead getPropertyId={getPropertyId} />},
+        store_read: {name: "입고 조회", component: <StoreRead   />},
         store_update: {name: "입고 수정", component: <StoreUpdate updateKey={updateKey} />},
 
         delivery_write: {name: "배송 등록", component: <DeliveryWrite/>},
         delivery_read: {
             name: "배송 조회",
-            component: <DeliveryRead getPropertyId={getPropertyId} />
+            component: <DeliveryRead   />
         },
         delivery_update: {name: "배송 수정", component: <DeliveryUpdate updateKey={updateKey}/>},
 
@@ -200,7 +200,7 @@ export default function Main() {
         remittance_domestic_write: {name: "국내송금 등록", component: <RemittanceDomesticWrite/>},
         remittance_domestic_read: {
             name: "국내송금 조회",
-            component: <RemittanceDomesticRead getPropertyId={getPropertyId} />
+            component: <RemittanceDomesticRead   />
         },
         remittance_domestic_update: {name: "국내송금 수정", component: <RemittanceDomesticUpdate updateKey={updateKey}/>},
 
@@ -208,7 +208,7 @@ export default function Main() {
         domestic_agency_write: {name: "국내매입처 등록", component: <DomesticAgencyWrite/>},
         domestic_agency_read: {
             name: "국내매입처 조회",
-            component: <DomesticAgencyRead getPropertyId={getPropertyId} />
+            component: <DomesticAgencyRead   />
         },
         domestic_agency_update: {
             name: "국내매입처 수정",
@@ -218,7 +218,7 @@ export default function Main() {
         overseas_agency_write: {name: "해외매입처 등록", component: <OverseasAgencyWrite/>},
         overseas_agency_read: {
             name: "해외매입처 조회",
-            component: <OverseasAgencyRead getPropertyId={getPropertyId} />
+            component: <OverseasAgencyRead   />
         },
         overseas_agency_update: {
             name: "해외매입처 수정",
@@ -229,13 +229,13 @@ export default function Main() {
         domestic_customer_write: {name: "국내고객사 등록", component: <DomesticCustomerWrite/>},
         domestic_customer_read: {
             name: "국내고객사 조회",
-            component: <DomesticCustomerRead getPropertyId={getPropertyId} />
+            component: <DomesticCustomerRead   />
         },
         domestic_customer_update: {name: "국내고객사 수정", component: <DomesticCustomerUpdate updateKey={updateKey}/>},
 
         overseas_customer_write: {name: "해외고객사 등록", component: <OverseasCustomerWrite/>},
         overseas_customer_read: {
-            name: "해외고객사 조회", component: <OverseasCustomerRead getPropertyId={getPropertyId}/>
+            name: "해외고객사 조회", component: <OverseasCustomerRead  />
         },
         overseas_customer_update: {
             name: "해외고객사 수정",
@@ -244,13 +244,13 @@ export default function Main() {
 
 
         maker_write: {name: "메이커 등록", component: <MakerWrite/>},
-        maker_read: {name: "메이커 조회", component: <MakerRead getPropertyId={getPropertyId} />},
+        maker_read: {name: "메이커 조회", component: <MakerRead   />},
         maker_update: {name: "메이커 수정", component: <MakerUpdate updateKey={updateKey} />},
 
 
         hscode_read: {
             name: "HS CODE 조회",
-            component: <HcodeRead getPropertyId={getPropertyId}/>
+            component: <HcodeRead  />
         },
 
 

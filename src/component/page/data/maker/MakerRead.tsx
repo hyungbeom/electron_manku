@@ -15,7 +15,7 @@ import moment from "moment/moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import message from "antd/lib/message";
 
-export default function MakerRead({getPropertyId, getCopyPage}) {
+export default function MakerRead({getPropertyId, getCopyPage}:any) {
     const gridRef = useRef(null);
     const notificationAlert = useNotificationAlert();
     const [info, setInfo] = useState(codeDomesticPurchaseInitial);

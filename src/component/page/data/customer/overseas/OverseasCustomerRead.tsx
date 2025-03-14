@@ -29,7 +29,7 @@ import Popconfirm from "antd/lib/popconfirm";
 import moment from "moment/moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 
-export default function OverseasCustomerRead({getPropertyId, getCopyPage}) {
+export default function OverseasCustomerRead({getPropertyId, getCopyPage}:any) {
     const notificationAlert = useNotificationAlert();
     const gridRef = useRef(null);
     const router = useRouter();
