@@ -211,7 +211,7 @@ export default function EstimateUpdate({
             await getAttachmentFileList({
                 data: {
                     "relatedType": "ESTIMATE",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
-                    "relatedId": infoInit['estimateId']
+                    "relatedId": updateKey['estimate_update']
                 }
             }).then(v => {
                 const list = fileManage.getFormatFiles(v);
