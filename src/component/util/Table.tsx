@@ -408,6 +408,8 @@ const Table = forwardRef(({
         }
     };
 
+
+
     return (
         <div ref={tableContainerRef} className="table-container" style={{width: '100%', overflowX: 'auto'}}>
             <div style={{display: 'flex', justifyContent: 'end'}}>

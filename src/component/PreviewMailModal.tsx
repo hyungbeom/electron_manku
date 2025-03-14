@@ -8,6 +8,8 @@ import _ from "lodash";
 import {inputForm, textAreaForm} from "@/utils/commonForm";
 import message from "antd/lib/message";
 import {MinusCircleOutlined, PlusSquareOutlined} from "@ant-design/icons";
+import {useNotificationAlert} from "@/component/util/NoticeProvider";
+import moment from "moment/moment";
 
 
 function formatDocumentNumbers(documentNumbersArray) {
@@ -93,7 +95,7 @@ function generateFormattedOutputWithDocumentNumbers(data) {
 
 export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fileList}) {
     const userInfo = useAppSelector((state) => state.user);
-
+    const notificationAlert = useNotificationAlert();
     const [info, setInfo] = useState<any>();
     const [checkList, setCheckList] = useState<any>([]);
     useEffect(() => {
@@ -129,6 +131,14 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
 
             let sumDiv = ''
             let detailList = []
+
+            v.detailList.map(source => {
+                {
+                    source.forEach((data: any, index) => {
+                        detailList.push(data.estimateRequestDetailId)
+                    })
+                }
+            })
 
             const searchDom = document.getElementById(`cc_${idx}`)
 
@@ -186,7 +196,17 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
 
         await getData.post('estimate/sendMailEstimateRequests', {mailList: list}).then(v => {
             if (v.data.code === 1) {
-                message.success(v.data.message);
+
+                console.log(info['title'],'info:')
+                notificationAlert('success', '💾메일전송 완료',
+                    <>
+                        <div>{info[0]['title']} {info.length > 1 ? ('외' + (info.length -1) + '건이 발송 완료되었습니다.') : ''} </div>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    ,null,
+                    {}
+                )
+                // message.success(v.data.message);
             } else {
                 message.warning(v.data.message);
             }
