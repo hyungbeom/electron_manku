@@ -38,7 +38,7 @@ export default function ETC({info, setInfo}) {
     };
 
     return <>
-        <TopBoxCard title={'기본 정보'} grid={'1fr 1fr 1fr 1fr 1fr 1fr'}>
+        <TopBoxCard  grid={'1fr 1fr 1fr 1fr 1fr 1fr'}>
             {datePickerForm({title: '출고일자', id: 'deliveryDate', onChange: onChange, data: info})}
             {inputForm({
                 title: '연결 Inquiry No.',

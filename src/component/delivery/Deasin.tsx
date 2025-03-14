@@ -16,12 +16,9 @@ import {DownloadOutlined} from "@ant-design/icons";
 export default function Deasin({info, setInfo}){
 
 
-    const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
 
 
-    function openModal(e) {
-        commonManage.openModal(e, setIsModalOpen)
-    }
+
     function onChange(e) {
         commonManage.onChange(e, setInfo)
     }
@@ -51,11 +48,7 @@ export default function Deasin({info, setInfo}){
     };
 
     return <>
-        <SearchInfoModal info={info} setInfo={setInfo}
-                         open={isModalOpen}
-                         setIsModalOpen={setIsModalOpen}/>
-
-        <TopBoxCard title={'기본 정보'} grid={'1fr 1fr 0.6fr 1fr 1fr 1fr'}>
+        <TopBoxCard  grid={'1fr 1fr 0.6fr 1fr 1fr 1fr'}>
             {datePickerForm({title: '출고일자', id: 'deliveryDate', onChange:onChange, data : info})}
             {inputForm({
                 title: '연결 Inquiry No.',
