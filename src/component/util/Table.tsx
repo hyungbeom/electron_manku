@@ -5,15 +5,14 @@ import 'handsontable/styles/handsontable.css';
 import 'handsontable/styles/ht-theme-main.css';
 import React, {forwardRef, memo, useEffect, useImperativeHandle, useMemo, useRef, useState} from "react";
 import Handsontable from "handsontable";
-import renderers = Handsontable.renderers;
 import moment from "moment/moment";
 import {tableButtonList} from "@/utils/commonForm";
-import {projectInfo} from "@/utils/column/ProjectInfo";
 import {commonFunc, commonManage} from "@/utils/commonManage";
 import EstimateListModal from "@/component/EstimateListModal";
 import OrderListModal from "@/component/OrderListModal";
 import Button from "antd/lib/button";
 import * as XLSX from 'xlsx';
+import {UploadOutlined} from "@ant-design/icons";
 // register Handsontable's modules
 registerAllModules();
 
@@ -96,14 +95,25 @@ const Table = forwardRef(({
 
 
     function afterChange(changes, source) {
-        if (source === "edit") {
+        if (source === "edit" || source === "Checkbox") {
             changes.forEach(([row, prop, oldValue, newValue]) => {
                 if (prop === "content" && newValue === "회신") {
-
                     hotRef.current.hotInstance.suspendExecution(); // ⚠️ 자동 계산 방지
                     hotRef.current.hotInstance.setDataAtCell(row, 8, moment().format('YYYY-MM-DD')); // replyDate 컬럼 업데이트
                     hotRef.current.hotInstance.resumeExecution(); // ✅ 다시 계산 시작
-
+                }
+                if (prop === 'calcCheck') {
+                    let data = [...hotRef.current.hotInstance.getSourceData()]
+                    if (newValue) {
+                        data[row].totalPurchase = `= (H${row + 1} * K${row + 1}) + M${row + 1}`;
+                        data[row].unitPrice = `= (L${row + 1} / H${row + 1}) +  ((L${row + 1} / H${row + 1}) * (F${row + 1} / 100))`;
+                        data[row].total = `=H${row + 1}*I${row + 1}`;
+                    } else {
+                        data[row].totalPurchase = `= (H${row + 1} * K${row + 1}) + M${row + 1}`;
+                        data[row].unitPrice = `=H${row + 1}`;
+                        data[row].total = `=H${row + 1}*I${row + 1}`;
+                    }
+                    setTableData(data);
                 }
             });
         }
@@ -220,11 +230,11 @@ const Table = forwardRef(({
             event.stopPropagation(); // 셀 클릭 이벤트 방지
             rowRef.current = {row: row, col: col, prop: prop, value: value}
 
-            console.log(prop ,'prop ')
+            console.log(prop, 'prop ')
             setIsModalOpen(v => {
                 if (prop === 'orderDocumentNumberFull') {
                     return {...v, order: true}
-                }else{
+                } else {
                     return {...v, estimate: true}
                 }
 
@@ -313,14 +323,14 @@ const Table = forwardRef(({
         if (!file) return;
 
         const reader = new FileReader();
-        reader.onload = (e:any) => {
+        reader.onload = (e: any) => {
             const data = new Uint8Array(e.target.result);
-            const workbook = XLSX.read(data, { type: "array" });
+            const workbook = XLSX.read(data, {type: "array"});
             const sheetName = workbook.SheetNames[0]; // 첫 번째 시트 선택
             const sheet = workbook.Sheets[sheetName];
 
             // 1. 배열 형태로 변환 (첫 번째 행을 헤더로 사용)
-            const rawData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+            const rawData = XLSX.utils.sheet_to_json(sheet, {header: 1});
 
             if (rawData.length === 0) {
                 console.error("빈 데이터입니다.");
@@ -331,7 +341,7 @@ const Table = forwardRef(({
             const dateColumns = ["requestDeliveryDate", 'replyDate'];
 
             // ✅ 컬럼 매핑 (엑셀 헤더 → 내부 객체 키값)
-            const excelHeaders:any = rawData[0]; // 첫 번째 행 (엑셀의 원래 컬럼명)
+            const excelHeaders: any = rawData[0]; // 첫 번째 행 (엑셀의 원래 컬럼명)
             const mappedHeaders = excelHeaders.map(header =>
                 Object.keys(column['mapping']).find(key => column['mapping'][key] === header) || header
             );
@@ -359,17 +369,17 @@ const Table = forwardRef(({
             console.log(formattedData)
             const instance = hotRef.current.hotInstance;
             const currentList = instance.getSourceData();
-            const filterList = currentList.filter(v=> !!v?.model || v?.connectInquiryNo)
-            const filterList2 = formattedData.filter(v=> !!v?.model || v?.connectInquiryNo)
-            console.log(filterList,'!!!!!!!!!!!!!')
-            console.log(filterList2,'!!!!!!!!!!!!!')
+            const filterList = currentList.filter(v => !!v?.model || v?.connectInquiryNo)
+            const filterList2 = formattedData.filter(v => !!v?.model || v?.connectInquiryNo)
+            console.log(filterList, '!!!!!!!!!!!!!')
+            console.log(filterList2, '!!!!!!!!!!!!!')
 
             const count = filterList.length + filterList2.length
 
             // ✅ 변환된 데이터를 계산 및 저장
             const resultlist = calcData([...filterList, ...filterList2, ...commonFunc.repeatObject(column['defaultData'], 100 - count)]);
 
-            console.log(resultlist,'resultlist:')
+            console.log(resultlist, 'resultlist:')
             // setTableData(commonFunc.repeatObject(column['defaultData'], 100 - count))
 
             setTableData(resultlist);
@@ -379,7 +389,7 @@ const Table = forwardRef(({
         event.target.value = "";
     }
 
-    function upload(){
+    function upload() {
         fileInputRef.current.click();
     }
 
@@ -387,7 +397,6 @@ const Table = forwardRef(({
     const currencyRenderer = (instance, td, row, col, prop, value, cellProperties) => {
         const rowData = instance.getSourceDataAtRow(row);
         const currencyValue = rowData?.currencyUnit || "KRW"; // 기본값 KRW
-
 
 
         // ✅ 포맷 적용할 대상 컬럼인지 확인
@@ -398,7 +407,6 @@ const Table = forwardRef(({
             const formattedValue =
                 currencyValue === "USD" ? parseFloat(value).toFixed(2) : parseInt(value, 10);
 
-            console.log(formattedValue,'currencyValue::1')
             // 🔥 Handsontable의 기본 숫자 렌더러 적용
             Handsontable.renderers.NumericRenderer(instance, td, row, col, prop, formattedValue, cellProperties);
             td.innerText = formattedValue;
@@ -409,13 +417,13 @@ const Table = forwardRef(({
     };
 
 
-
     return (
         <div ref={tableContainerRef} className="table-container" style={{width: '100%', overflowX: 'auto'}}>
             <div style={{display: 'flex', justifyContent: 'end'}}>
-                <input type="file" accept=".xlsx, .xls, .csv" onChange={handleFileUpload}   ref={fileInputRef}    style={{ display: "none" }}/>
+                <input type="file" accept=".xlsx, .xls, .csv" onChange={handleFileUpload} ref={fileInputRef}
+                       style={{display: "none"}}/>
                 <div style={{display: 'flex', gap: 5, paddingBottom: 0}}>
-                    <Button size={'small'} onClick={upload}>업로드</Button>
+                    <Button style={{fontSize: 11}} size={'small'} onClick={upload}><UploadOutlined/>업로드</Button>
                     {funcButtons?.map(v => tableButtonList(v, hotRef))}
                 </div>
             </div>
@@ -495,9 +503,9 @@ const Table = forwardRef(({
                         dateFormat: col.type === "date" ? "YYYY-MM-DD" : undefined,
                         // correctFormat: col.data === "marginRate" ? true : undefined, // 🔥 숫자가 올바른 형식이 아니면 자동 수정
                         numericFormat: col.data === "marginRate" ? {pattern: "0%", suffix: "%"} : undefined, // 🔥 소수점 둘째 자리 고정 + % 유지
-                        renderer: col.data === "marginRate" ? percentRenderer : ((col.data === 'orderDocumentNumberFull' || col.data === 'connectInquiryNo') ? iconRenderer :( col.data === 'unitPrice' ? currencyRenderer : col.type)), // 🔥 커스텀 렌더러 적용
+                        renderer: col.data === "marginRate" ? percentRenderer : ((col.data === 'orderDocumentNumberFull' || col.data === 'connectInquiryNo') ? iconRenderer : (col.data === 'unitPrice' ? currencyRenderer : col.type)), // 🔥 커스텀 렌더러 적용
                         readOnly: col.readOnly,
-                        filter : false
+                        filter: false
                     })
                 })}
 

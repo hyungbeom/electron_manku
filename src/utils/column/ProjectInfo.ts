@@ -2,13 +2,14 @@ import moment from "moment";
 
 export const projectInfo = {
     write: {
-        columnWidth: [160, 220, 220, 200, 55, 65, 45, 120, 120, 120, 120, 70, 45, 160, 130, 130, 180, 160, 120, 180],
-        column: ['연결 Inquiry No.', 'Model', 'Maker', 'Item', '마진율', '단위', '수량', '매출 단가', '매출 총액', '매입 단가', '매입 총액', '화폐단위', '납기', '매입처명', '매입처 담당자명', '매입처 연락처', '매입처 이메일', '관련링크', '납품기한', '비고'],
+        columnWidth: [160, 220, 220, 200, 55, 55, 65, 45, 120, 120, 120, 120, 80, 45, 160, 130, 130, 180, 160, 120, 180],
+        column: ['연결 Inquiry No.', 'Model', 'Maker', 'Item','수식', '마진율', '단위', '수량', '매출 단가', '매출 총액', '매입 단가', '매입 총액','배송비', '화폐단위', '납기', '매입처명', '매입처 담당자명', '매입처 연락처', '매입처 이메일', '관련링크', '납품기한', '비고'],
         columnList: [
             {data: "connectInquiryNo", type: "text"},
             {data: "model", type: "text"},
             {data: "maker", type: "text"},
             {data: "item", type: "text"},
+            {data: "calcCheck", type: "checkbox"},
             {data: "marginRate", type: "numeric"},
             {
                 data: "unit",
@@ -20,6 +21,7 @@ export const projectInfo = {
             {data: "total", type: "numeric", readOnly: true},
             {data: "purchasePrice", type: "numeric"},
             {data: "totalPurchase", type: "numeric", readOnly: true},
+            {data: "deliveryPrice", type: "numeric"},
             {data: "currencyUnit", type: "autocomplete", source: ['KRW', 'USD', 'EUR', 'JPY', 'GBP']},
             {data: "deliveryDate", type: "numeric"},
             {data: "agencyName", type: "text"},
@@ -35,6 +37,7 @@ export const projectInfo = {
             "model": "",
             "maker": "",
             "item": "",
+            "calcCheck": "",
             "marginRate": "",
             "unit": "",
             "quantity": '',
@@ -42,6 +45,7 @@ export const projectInfo = {
             "total": "",
             "purchasePrice": '',
             "totalPurchase": "",
+            "deliveryPrice": "",
             "currencyUnit": "",
             "deliveryDate": "",
             "agencyName": "",
@@ -57,6 +61,7 @@ export const projectInfo = {
             "model": "Model",
             "maker": "Maker",
             "item": "Item",
+            "calcCheck": "수식",
             "marginRate": "마진율",
             "unit": "단위",
             "quantity": "수량",
@@ -64,6 +69,7 @@ export const projectInfo = {
             "total": "매출 총액",
             "purchasePrice": "매입 단가",
             "totalPurchase": "매입 총액",
+            "deliveryPrice": "배송비",
             "currencyUnit": "화폐단위",
             "deliveryDate": "납기",
             "agencyName": "매입처명",
@@ -75,8 +81,9 @@ export const projectInfo = {
             "remarks": "비고"
         },
         excelExpert: (v, i) => {
-            v['total'] = `=G${i + 1}*H${i + 1}`
-            v['totalPurchase'] = `=G${i + 1}*J${i + 1}`
+            v['total'] =`=H${i + 1}*I${i + 1}`
+            v['totalPurchase'] = `= (H${i + 1} * K${i + 1}) + M${i + 1}`
+            v['unitPrice'] = `= (L${i + 1} / H${i + 1})`
             return v
         },
         totalList: {
@@ -84,13 +91,15 @@ export const projectInfo = {
             model: '',
             maker: '',
             item: '',
+            calcCheck: '',
             marginRate: '',
             unit: '',
-            quantity: '=SUM(G1:G100)',
-            unitPrice: '=SUM(H1:H100)',
-            total: '=SUM(I1:I100)',
-            purchasePrice: '=SUM(J1:J100)',
-            totalPurchase: '=SUM(K1:K100)',
+            quantity: '=SUM(H1:H100)',
+            unitPrice: '=SUM(I1:I100)',
+            total: '=SUM(J1:J100)',
+            purchasePrice: '=SUM(K1:K100)',
+            totalPurchase: '=SUM(L1:L100)',
+            deliveryPrice: '=SUM(M1:M100)',
         },
         type: 'write'
     },
