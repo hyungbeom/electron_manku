@@ -372,36 +372,16 @@ export default function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutR
                                     </select>
                                 </div>
                                 {/*{inputForm({title: '담당자', id: 'managerAdminName', onChange: onChange, data: info})}*/}
+
                                 {inputForm({
-                                    title: 'Inquiry No.',
-                                    id: 'documentNumberFull',
-                                     handleKeyPress: handleKeyPress,
-                                    suffix:
-                                        <RetweetOutlined style={{cursor: 'pointer'}} onClick={
-                                            async (e) => {
-                                                e.stopPropagation();
-                                                const dom = infoRef.current.querySelector('#agencyCode');
-                                                const dom2 = infoRef.current.querySelector('#documentNumberFull');
-                                                console.log(dom.value)
-                                                if (!dom.value) {
-                                                    return message.warn('매입처코드를 선택해주세요')
-                                                }
-                                                const returnDocumentNumb = await checkInquiryNo({
-                                                    data: {
-                                                        agencyCode: dom.value,
-                                                        type: 'ESTIMATE'
-                                                    }
-                                                })
-                                                dom2.value = returnDocumentNumb
-                                                // onChange({target: {id: 'documentNumberFull', value: returnDocumentNumb}})
-                                            }
-                                        }/>
-                                })}
-                                {inputForm({
-                                    title: '연결 INQUIRY No.',
+                                    title: '의뢰자료 No.',
                                     id: 'connectDocumentNumberFull',
                                     suffix: <DownloadOutlined style={{cursor: 'pointer'}}/>
                                     , handleKeyPress: handleKeyPress
+                                })}
+                                {inputForm({
+                                    title: '만쿠견적서 No.',
+                                    id: 'documentNumberFull'
                                 })}
                                 {inputForm({title: 'RFQ No.', id: 'rfqNo'})}
                                 {inputForm({title: '프로젝트 제목', id: 'projectTitle'})}

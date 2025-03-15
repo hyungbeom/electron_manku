@@ -177,7 +177,7 @@ export default function RqfUpdate({
             console.log(updateKey['rfq_update'],'updateKey[\'rfq_update\']::')
             notificationAlert('success', '💾견적의뢰 수정완료',
                 <>
-                    <div>Project No. : {dom.value}</div>
+                    <div>의뢰자료 No. : {dom.value}</div>
                     <div>등록일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                 </>
                 , function () {
@@ -336,7 +336,7 @@ export default function RqfUpdate({
                                     </select>
                                 </div>
                                 {inputForm({
-                                    title: 'Inquiry No.',
+                                    title: '의뢰자료 No.',
                                     id: 'documentNumberFull',
                                     // onChange: onChange,
                                     // data: info,

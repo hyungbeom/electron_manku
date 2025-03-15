@@ -96,11 +96,20 @@ const Table = forwardRef(({
 
     function afterChange(changes, source) {
         if (source === "edit" || source === "Checkbox") {
-            changes.forEach(([row, prop, oldValue, newValue]) => {
+            changes.forEach((change, index) => {
+                const [row, prop, oldValue, newValue] = change; // 구조 분해 할당
                 if (prop === "content" && newValue === "회신") {
                     hotRef.current.hotInstance.suspendExecution(); // ⚠️ 자동 계산 방지
                     hotRef.current.hotInstance.setDataAtCell(row, 8, moment().format('YYYY-MM-DD')); // replyDate 컬럼 업데이트
                     hotRef.current.hotInstance.resumeExecution(); // ✅ 다시 계산 시작
+                }
+                if (prop === 'unitPrice') {
+                    const propIndex = change.indexOf('unitPrice'); // 'unitPrice'의 인덱스 찾기
+                    const newValueIndex = propIndex + 2; // newValue 위치 (prop + 2)
+
+                    if (newValueIndex < change.length && change[newValueIndex] !== undefined) {
+                        changes[index][newValueIndex] = parseFloat(change[newValueIndex]).toFixed(2); // ✅ 소수점 2자리 변환
+                    }
                 }
                 if (prop === 'calcCheck') {
                     let data = [...hotRef.current.hotInstance.getSourceData()]
@@ -365,14 +374,11 @@ const Table = forwardRef(({
             // ✅ 최대 100개 데이터만 유지
             formattedData = formattedData.slice(0, 100);
 
-            console.log('!!!!!!!!!!!!!')
             console.log(formattedData)
             const instance = hotRef.current.hotInstance;
             const currentList = instance.getSourceData();
             const filterList = currentList.filter(v => !!v?.model || v?.connectInquiryNo)
             const filterList2 = formattedData.filter(v => !!v?.model || v?.connectInquiryNo)
-            console.log(filterList, '!!!!!!!!!!!!!')
-            console.log(filterList2, '!!!!!!!!!!!!!')
 
             const count = filterList.length + filterList2.length
 
@@ -487,6 +493,10 @@ const Table = forwardRef(({
                     if (row === totalRowIndex) {
                         return {readOnly: true}; // 🔥 마지막 행은 읽기 전용
                     }
+
+                    if(prop === 'unitPrice'|| prop === 'total' || prop === 'net' || prop === 'totalNet'){
+                        return { numericFormat: { pattern: '0,0.00' } };
+                    }
                 }}
 
                 afterColumnResize={afterColumnResize}
@@ -502,7 +512,7 @@ const Table = forwardRef(({
                         allowHtml: true,
                         dateFormat: col.type === "date" ? "YYYY-MM-DD" : undefined,
                         // correctFormat: col.data === "marginRate" ? true : undefined, // 🔥 숫자가 올바른 형식이 아니면 자동 수정
-                        numericFormat: col.data === "marginRate" ? {pattern: "0%", suffix: "%"} : undefined, // 🔥 소수점 둘째 자리 고정 + % 유지
+                        numericFormat: col.data === "marginRate" ? {pattern: "0%", suffix: "%"} : ( col.data === "unitPrice" ? {pattern:'0,0.00', suffix: "%"}:           undefined), // 🔥 소수점 둘째 자리 고정 + % 유지
                         renderer: col.data === "marginRate" ? percentRenderer : ((col.data === 'orderDocumentNumberFull' || col.data === 'connectInquiryNo') ? iconRenderer : (col.data === 'unitPrice' ? currencyRenderer : col.type)), // 🔥 커스텀 렌더러 적용
                         readOnly: col.readOnly,
                         filter: false

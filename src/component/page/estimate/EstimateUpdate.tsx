@@ -436,7 +436,7 @@ export default function EstimateUpdate({
                                 </div>
                                 {/*{inputForm({title: '담당자', id: 'managerAdminName', onChange: onChange, data: info})}*/}
                                 {inputForm({
-                                    title: 'Inquiry No.',
+                                    title: '만쿠견적서 No.',
                                     id: 'documentNumberFull',
                                     disabled : true
                                 })}

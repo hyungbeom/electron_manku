@@ -375,7 +375,7 @@ export const orderInfo = {
 
             "unitPrice": '',
             "totalNet": '',
-            "hscode": '',
+            "hsCode": '',
         },mapping: {
             "model": "Model",           // Model
             "quantity": '주문',              // 수량

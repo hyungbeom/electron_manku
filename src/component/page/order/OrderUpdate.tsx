@@ -399,12 +399,12 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
                                 </select>
                             </div>
                             {inputForm({
-                                title: '발주서 Po no',
+                                title: '만쿠발주서 No',
                                 id: 'documentNumberFull',
                                 disabled : true
                             })}
 
-                            {inputForm({title: '고객사 Po no', id: 'yourPoNo',})}
+                            {inputForm({title: '고객사발주서 No', id: 'yourPoNo'})}
                         </TopBoxCard>
 
                         <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>

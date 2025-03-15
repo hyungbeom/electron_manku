@@ -167,9 +167,15 @@ export default function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: 
 
             if (v.code === 1) {
                 const {documentNumberFull, estimateRequestId} = v.entity;
+                console.log(documentNumberFull,'documentNumberFull:')
+
+                const dom:any = document.getElementById('documentNumberFull')
+                if(dom){
+                    dom.value = documentNumberFull;
+                }
                 notificationAlert('success', '💾견적의뢰 등록완료',
                     <>
-                        <div>Project No. : {documentNumberFull}</div>
+                        <div>의뢰자료 No. : {documentNumberFull}</div>
                         <div>등록일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
                     , function () {
@@ -309,7 +315,7 @@ export default function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: 
                                     </select>
                                 </div>
                                 {inputForm({
-                                    title: 'Inquiry No.',
+                                    title: '의뢰자료 No.',
                                     id: 'documentNumberFull',
                                     // onChange: onChange,
                                     // data: info,

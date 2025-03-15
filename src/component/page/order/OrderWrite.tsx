@@ -353,18 +353,17 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
                                 </select>
                             </div>
                             {inputForm({
-                                title: '연결 Inquiry No.',
+                                title: '만쿠견적서 No.',
                                 id: 'ourPoNo',
                                 suffix: <DownloadOutlined style={{cursor: 'pointer'}}/>,
                                 handleKeyPress: handleKeyPress
                             })}
                             {inputForm({
-                                title: '발주서 Po no',
+                                title: '만쿠발주서 No',
                                 id: 'documentNumberFull',
-
                             })}
 
-                            {inputForm({title: '고객사 Po no', id: 'yourPoNo'})}
+                            {inputForm({title: '고객사발주서 No', id: 'yourPoNo'})}
                         </TopBoxCard>
 
                         <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>

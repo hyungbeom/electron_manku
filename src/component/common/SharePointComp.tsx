@@ -325,19 +325,20 @@ export function DriveUploadComp({
                                 border: '1px solid lightGray',
                                 height: 25,
                                 fontSize: 12,
-                                position : "absolute",
-                                right : 15,
+                                position: "absolute",
+                                right: 15,
                                 float: 'right',
                                 width: '40%'
                             }}>
                         <option value={0}>{'요청자료'}</option>
-                        <option value={1}>{'첨부파일'}</option>
-                        <option value={2}>{'업체회신자료'}</option>
+                        <option value={1}>{'업체회신자료'}</option>
+                        <option value={2}>{'첨부파일'}</option>
                         <option value={3}>{'견적서자료'}</option>
                         <option value={4}>{'발주서자료'}</option>
                         <option value={5}>{'프로젝트자료'}</option>
-                        <option value={6}>{'세금계산서'}</option>
-                        <option value={7}>{'기타'}</option>
+                        <option value={6}>{'매입자료'}</option>
+                        <option value={7}>{'매출자료'}</option>
+                        <option value={8}>{'기타'}</option>
                     </select>
                 </div>
 

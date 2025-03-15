@@ -48,7 +48,6 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
         const tableList = tableRef.current?.getSourceData();
 
         const filterTotalList = tableList.filter(v => !!v.model)
-        console.log(filterTotalList, 'infoData:')
         const result = commonManage.splitDataWithSequenceNumber(filterTotalList, 28, 30);
         setSplitData(result)
     }, [data])
@@ -107,6 +106,7 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
         const dom = infoRef.current.querySelector('#agencyCode');
         const lang = dom.value.startsWith("K");
 
+        console.log(splitData,':::')
 
             setInfo(
                 lang ?
@@ -132,12 +132,12 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
                     {title: 'DATE', value: infoData.writtenDate, id: 'writtenDate'},
                     {title: 'ATTN', value: infoData.attnTo, id: 'attnTo'},
                     {title: 'Contact Person', value: infoData.managerAdminName, id: 'ourPoNo'},
-                    {title: 'YOUT OFFER NO.', value: infoData.yourPoNo, id: 'ourPoNo'},
+                    {title: 'YOUR OFFER NO.', value: infoData.yourPoNo, id: 'ourPoNo'},
                     {title: 'TEL', value: infoData.managerPhoneNumber, id: 'ourPoNo'},
                     {title: 'MANKU No.', value: infoData.documentNumberFull, id: 'ourPoNo'},
                     {title: 'E-mail', value: infoData.managerEmail, id: 'ourPoNo'},
                     {title: 'Delivery', value: infoData.deliveryTerms, id: 'ourPoNo'},
-                    {title: 'HS-code', value: 'list 첫번재값? or input 추가?', id: 'hscode'},
+                    {title: 'HS-code', value : splitData.length ? splitData[0][0]?.hsCode : '', id: 'hscode'},
                     {title: 'Incoterms', value: '', id: 'incoterms'},
                     {title: '', value: '', id: ''},
                     {title: 'Payment', value: infoData.paymentTerms, id: 'ourPoNo'},
@@ -147,7 +147,7 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
 
 
 
-    }, [data, count])
+    }, [data, count, splitData])
 
     const RowTotal = ({defaultValue, id}) => {
 
