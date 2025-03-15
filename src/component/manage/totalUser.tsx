@@ -58,7 +58,7 @@ export default function TotalUser(){
                         "adminId": data['adminId'],
                         "authority": text === 1 ? 0 : 1
                     })
-                    await getData.post('admin/approvalAdmin', {
+                    await getData.post('admin/updateAdmin', {
                         ...data,
                         "adminId": data['adminId'],
                         "authority": text === 1 ? 0 : 1
