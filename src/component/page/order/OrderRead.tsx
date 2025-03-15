@@ -8,7 +8,7 @@ import message from "antd/lib/message";
 import {deleteOrder, searchOrder} from "@/utils/api/mainApi";
 import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
 import _ from "lodash";
-import {BoxCard, inputForm, MainCard, rangePickerForm} from "@/utils/commonForm";
+import {BoxCard, inputForm, MainCard, rangePickerForm, selectBoxForm} from "@/utils/commonForm";
 import {useRouter} from "next/router";
 import ReceiveComponent from "@/component/ReceiveComponent";
 import Spin from "antd/lib/spin";
@@ -137,13 +137,21 @@ export default function OrderRead({getPropertyId, getCopyPage}:any) {
                             <Panel defaultSize={sizes[0]} minSize={5}>
                             <BoxCard title={''}>
                                 {rangePickerForm({title: '발주일자', id: 'searchDate', onChange: onChange, data: info})}
+                                {selectBoxForm({
+                                    title: '입고 여부', id: '', onChange: onChange, data: info, list: [
+                                        {value: 0, label: '전체'},
+                                        {value: 1, label: '입고'},
+                                        {value: 2, label: '미입고'}
+                                    ]
+                                })}
                                 {inputForm({
-                                    title: '문서번호',
-                                    id: 'searchDocumentNumber',
+                                    title: '등록직원명', id: '',
                                     onChange: onChange,
                                     handleKeyPress: handleKeyPress,
-                                    data: info
+                                    data: info,
+                                    placeholder : 'DB연결 필요'
                                 })}
+
                             </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
@@ -151,8 +159,8 @@ export default function OrderRead({getPropertyId, getCopyPage}:any) {
                             <Panel defaultSize={sizes[1]} minSize={5}>
                             <BoxCard title={''}>
                                 {inputForm({
-                                    title: '견적서 담당자',
-                                    id: 'searchEstimateManager',
+                                    title: '문서번호',
+                                    id: 'searchDocumentNumber',
                                     onChange: onChange,
                                     handleKeyPress: handleKeyPress,
                                     data: info
@@ -164,6 +172,15 @@ export default function OrderRead({getPropertyId, getCopyPage}:any) {
                                     handleKeyPress: handleKeyPress,
                                     data: info
                                 })}
+
+                                {inputForm({
+                                    title: '만쿠담당자',
+                                    id: 'searchEstimateManager',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+
                             </BoxCard>
                             </Panel>
 
@@ -180,15 +197,15 @@ export default function OrderRead({getPropertyId, getCopyPage}:any) {
                                     data: info
                                 })}
                                 {inputForm({
-                                    title: 'Model',
-                                    id: 'searchModel',
+                                    title: 'Item',
+                                    id: 'searchItem',
                                     onChange: onChange,
                                     handleKeyPress: handleKeyPress,
                                     data: info
                                 })}
                                 {inputForm({
-                                    title: 'Item',
-                                    id: 'searchItem',
+                                    title: 'Model',
+                                    id: 'searchModel',
                                     onChange: onChange,
                                     handleKeyPress: handleKeyPress,
                                     data: info

@@ -169,7 +169,12 @@ function EstimateRead({getPropertyId, getCopyPage, }:any) {
                                                 {value: 2, label: '미주문'}
                                             ]
                                         })}
-
+                                        {inputForm({
+                                            title: '등록직원명', id: 'searchCreatedBy',
+                                            onChange: onChange,
+                                            handleKeyPress: handleKeyPress,
+                                            data: info
+                                        })}
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>
@@ -182,19 +187,20 @@ function EstimateRead({getPropertyId, getCopyPage, }:any) {
                                             handleKeyPress: handleKeyPress,
                                             data: info
                                         })}
-                                        {inputForm({
-                                            title: '등록직원명', id: 'searchCreatedBy',
-                                            onChange: onChange,
-                                            handleKeyPress: handleKeyPress,
-                                            data: info
-                                        })}
+
                                         {inputForm({
                                             title: '고객사명', id: 'searchCustomerName',
                                             onChange: onChange,
                                             handleKeyPress: handleKeyPress,
                                             data: info
                                         })}
-
+                                        {inputForm({
+                                            title: '고객사담당자', id: '',
+                                            onChange: onChange,
+                                            handleKeyPress: handleKeyPress,
+                                            data: info,
+                                            placeHolder : '백엔드 연동 해야함'
+                                        })}
                                     </BoxCard>
 
                                 </Panel>
@@ -209,18 +215,17 @@ function EstimateRead({getPropertyId, getCopyPage, }:any) {
                                             data: info
                                         })}
                                         {inputForm({
-                                            title: 'Model', id: 'searchModel',
-                                            onChange: onChange,
-                                            handleKeyPress: handleKeyPress,
-                                            data: info
-                                        })}
-                                        {inputForm({
                                             title: 'Item', id: 'searchItem',
                                             onChange: onChange,
                                             handleKeyPress: handleKeyPress,
                                             data: info
                                         })}
-
+                                        {inputForm({
+                                            title: 'Model', id: 'searchModel',
+                                            onChange: onChange,
+                                            handleKeyPress: handleKeyPress,
+                                            data: info
+                                        })}
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>

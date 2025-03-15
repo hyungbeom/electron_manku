@@ -418,12 +418,12 @@ export default function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutR
 
                                         })}
                                         {inputForm({
-                                            title: '매입처이메일',
-                                            id: 'agencyManagerEmail'
-                                        })}
-                                        {inputForm({
                                             title: '연락처',
                                             id: 'agencyManagerPhoneNumber'
+                                        })}
+                                        {inputForm({
+                                            title: '이메일',
+                                            id: 'agencyManagerEmail'
                                         })}
                                     </BoxCard>
                                 </Panel>
@@ -454,13 +454,13 @@ export default function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutR
 
                                         })}
                                         {inputForm({
-                                            title: '팩스',
-                                            id: 'faxNumber',
+                                            title: '이메일',
+                                            id: 'customerManagerEmail',
 
                                         })}
                                         {inputForm({
-                                            title: '이메일',
-                                            id: 'customerManagerEmail',
+                                            title: '팩스',
+                                            id: 'faxNumber',
 
                                         })}
                                     </BoxCard>

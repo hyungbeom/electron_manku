@@ -5,7 +5,7 @@ import {rfqReadColumns} from "@/utils/columnList";
 import {estimateRequestDetailUnit, subRfqReadInitial} from "@/utils/initialList";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
-import {BoxCard, inputForm, MainCard, rangePickerForm} from "@/utils/commonForm";
+import {BoxCard, inputForm, MainCard, rangePickerForm, selectBoxForm} from "@/utils/commonForm";
 import _ from "lodash";
 import {deleteRfq, searchRfq} from "@/utils/api/mainApi";
 import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
@@ -156,6 +156,19 @@ export default function RfqRead({getPropertyId, getCopyPage, }:any) {
                                 <Panel defaultSize={sizes[0]} minSize={5}>
                             <BoxCard>
                                 {rangePickerForm({title: '작성일자', id: 'searchDate', onChange: onChange, data: info})}
+                                {selectBoxForm({
+                                    title: '회신 여부', id: 'searchReplyStatus', onChange: onChange, data: info, list: [
+                                        {value: 0, label: '전체'},
+                                        {value: 1, label: '회신'},
+                                        {value: 2, label: '미회신'}
+                                    ]
+                                })}
+                                {inputForm({
+                                    title: '등록직원명', id: 'searchCreatedBy',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
                             </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>
@@ -168,17 +181,19 @@ export default function RfqRead({getPropertyId, getCopyPage, }:any) {
                                     data: info
                                 })}
                                 {inputForm({
-                                    title: '등록직원명', id: 'searchCreatedBy',
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
-                                {inputForm({
                                     title: '고객사명', id: 'searchCustomerName',
                                     onChange: onChange,
                                     handleKeyPress: handleKeyPress,
                                     data: info
                                 })}
+                                {inputForm({
+                                    title: '고객사담당자', id: '',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info,
+                                    placeHolder : '백엔드 연동 해야함'
+                                })}
+
                             </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>
@@ -191,13 +206,13 @@ export default function RfqRead({getPropertyId, getCopyPage, }:any) {
                                     data: info
                                 })}
                                 {inputForm({
-                                    title: 'Model', id: 'searchModel',
+                                    title: 'Item', id: 'searchItem',
                                     onChange: onChange,
                                     handleKeyPress: handleKeyPress,
                                     data: info
                                 })}
                                 {inputForm({
-                                    title: 'Item', id: 'searchItem',
+                                    title: 'Model', id: 'searchModel',
                                     onChange: onChange,
                                     handleKeyPress: handleKeyPress,
                                     data: info

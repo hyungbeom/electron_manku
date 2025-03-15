@@ -364,7 +364,7 @@ export const radioForm = ({title, id, disabled = false, data, onChange, list}) =
 export const selectBoxForm = ({title, id, disabled = false, data, onChange, list, size = 'small', fontSize = 12}) => {
 
     return <div style={{}}>
-        <div style={{fontSize: 12, paddingBottom: 6}}>{title}</div>
+        <div style={{fontSize: 12, paddingBottom: 6, fontWeight : 700}}>{title}</div>
         {/*@ts-ignore*/}
         <Select className="custom-select" id={id} size={size}
                 value={!isNaN(parseInt(data[id])) ? parseInt(data[id]) : data[id]}
