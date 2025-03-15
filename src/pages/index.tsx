@@ -119,8 +119,6 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
     if (code) {
         const codeVerifier = getCookie(ctx, "code_verifier");
 
-
-        console.log(codeVerifier,'vvvvvvvvvvvvvvv')
         try {
             const v = await getData.post('account/microsoftLogin', {
                 authorizationCode: code,

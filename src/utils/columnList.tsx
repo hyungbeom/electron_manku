@@ -2413,11 +2413,11 @@ export const tableCodeOverseasSalesColumns = [
     },
     {
         headerName: '만쿠담당자',
-        field: 'managerName',
+        field: 'mankuTradeManager',
     },
     {
         headerName: '고객사담당자',
-        field: 'customerManager',
+        field: 'manager',
     },
     {
         headerName: 'FTANo',

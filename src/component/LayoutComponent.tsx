@@ -53,13 +53,13 @@ export function UserMenu() {
             key: '1',
             label: <span onClick={() => {
                 router.push('/myaccount');
-            }}>MY ACCOUNT
+            }}>My Account
             </span>
         }, {
             key: '2',
             label: <span onClick={() => {
                 router.push('/todoList');
-            }}>TODO LIST
+            }}>Todo List
             </span>
         },
         {

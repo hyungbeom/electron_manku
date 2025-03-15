@@ -7,20 +7,44 @@ import {inputAntdForm, inputForm, inputPasswordForm} from "@/utils/commonForm";
 import Button from "antd/lib/button";
 import {commonManage} from "@/utils/commonManage";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
+import {getData} from "@/manage/function/api";
+import {useNotificationAlert} from "@/component/util/NoticeProvider";
+import moment from "moment";
+import Spin from "antd/lib/spin";
 
 export default function myaccount() {
+    const notificationAlert = useNotificationAlert();
+
     const userInfo = useAppSelector((state) => state.user);
 
-
     const [info, setInfo] = useState(userInfo);
-
+    const [loading, setLoading] = useState(false);
 
     function onChange(e) {
         commonManage.onChange(e, setInfo)
     }
 
+    function saveFunc(){
+        setLoading(true)
+        getData.post('admin/updateAdmin',info).then(v=>{
+            notificationAlert('success', '💾개인정보 수정완료',
+                <>
+                    <div>개인정보 수정이 완료되었습니다.</div>
+                    <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                </>
+                ,null,
+                {}
+            )
+            setLoading(false)
+
+        }, err=>{
+            setLoading(false)
+        })
+
+    }
 
     return <LayoutComponent>
+        <Spin spinning={loading}>
         <div style={{maxWidth: 500, margin: '0px auto'}}>
             <div style={{fontSize: 30, fontWeight: 500, textAlign: 'center', padding: '50px 0px 30px 0px'}}>개인정보 수정
             </div>
@@ -29,13 +53,12 @@ export default function myaccount() {
             {inputAntdForm({
                 title: 'ID',
                 id: 'adminName',
+                disabled : true,
                 onChange: onChange,
                 data: info,
                 placeHolder: '아이디를 입력해 주세요',
                 size: 'large'
             })}
-
-
 
             {inputAntdForm({
                 title: 'NAME',
@@ -84,7 +107,7 @@ export default function myaccount() {
             })}
 
 
-            <Button type={'primary'} size={'large'} style={{
+            <Button onClick={saveFunc} type={'primary'} size={'large'} style={{
                 margin: '30px auto',
                 width: '100%',
                 height: 40,
@@ -95,6 +118,7 @@ export default function myaccount() {
                 수 정
             </Button>
         </div>
+        </Spin>
     </LayoutComponent>
 }
 
