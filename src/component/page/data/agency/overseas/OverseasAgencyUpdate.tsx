@@ -31,7 +31,7 @@ import _ from "lodash";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import Table from "@/component/util/Table";
-import {DCInfo, OAInfo} from "@/utils/column/ProjectInfo";
+import {DCInfo, OAInfo, OCInfo} from "@/utils/column/ProjectInfo";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 
 const listType = 'overseasAgencyManagerList'
@@ -73,14 +73,13 @@ export default function OverseasAgencyUpdate({ updateKey, getCopyPage}:any) {
     }
 
     useEffect(() => {
-        // setLoading(true)
+        setLoading(true)
         getDataInfo().then(v => {
-            console.log(v,':::::')
-            // const {customerDetail} = v;
-            // setInfo(customerDetail);
-            // customerDetail[listType] = [...customerDetail[listType], ...commonFunc.repeatObject(DCInfo['write']['defaultData'], 100 - customerDetail[listType].length)];
-            // setTableData(customerDetail[listType]);
-            // setLoading(false)
+            const {overseasAgencyDetail} = v;
+            overseasAgencyDetail[listType] = [...overseasAgencyDetail[listType], ...commonFunc.repeatObject(OCInfo['write']['defaultData'], 100 - overseasAgencyDetail[listType].length)];
+            setInfo(overseasAgencyDetail)
+            setTableData(overseasAgencyDetail[listType]);
+            setLoading(false)
         })
     }, [updateKey['overseas_agency_update']])
 
@@ -120,14 +119,14 @@ export default function OverseasAgencyUpdate({ updateKey, getCopyPage}:any) {
         const query = `data=${encodeURIComponent(JSON.stringify(copyInfo))}`;
         router.push(`/data/agency/overseas/agency_write?${query}`)
     }
-    return <Spin spinning={loading} tip={'견적의뢰 등록중...'}>
+    return <Spin spinning={loading}>
         <div style={{
             display: 'grid',
             gridTemplateRows: `${mini ? '365px' : '65px'} calc(100vh - ${mini ? 460 : 160}px)`,
             rowGap: 10
         }}>
             <PanelSizeUtil groupRef={groupRef} storage={'overseas_agency_write'}/>
-            <MainCard title={'해외 매입처 등록'} list={[
+            <MainCard title={'해외 매입처'} list={[
                 {name: '저장', func: saveFunc, type: 'primary'},
                 {name: '초기화', func: clearAll, type: 'danger'}
             ]} mini={mini} setMini={setMini}>

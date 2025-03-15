@@ -41,9 +41,9 @@ export default function DomesticAgencyUpdate({updateKey, getCopyPage}:any) {
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
     async function getDataInfo() {
-        const result = await getData.post('agency/getAgencyList', {
-            "agencyId": parseInt(updateKey['domestic_agency_update']),
-            "documentNumberFull": ""
+        const result = await getData.post('agency/getAgencyDetail', {
+            "agencyId": updateKey['domestic_agency_update'],
+            "agencyCode": ""
         });
         console.log(result,':::')
         return result?.data?.entity;
@@ -52,7 +52,7 @@ export default function DomesticAgencyUpdate({updateKey, getCopyPage}:any) {
     useEffect(() => {
         // setLoading(true)
         getDataInfo().then(v => {
-            console.log(v,'::')
+            console.log(v,'::asd')
             // const {projectDetail, attachmentFileList} = v;
             // setFileList(fileManage.getFormatFiles(attachmentFileList))
             // setOriginFileList(attachmentFileList)
@@ -65,7 +65,6 @@ export default function DomesticAgencyUpdate({updateKey, getCopyPage}:any) {
 
 
     useEffect(() => {
-
         commonManage.setInfo(infoRef, info);
     }, [info]);
 
