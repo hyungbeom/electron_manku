@@ -35,7 +35,7 @@ import html2canvas from "html2canvas";
 
 
 const listType = 'estimateDetailList'
-export default function EstimateWrite({copyPageInfo = {},  getPropertyId, layoutRef}:any) {
+export default function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
 
@@ -46,7 +46,6 @@ export default function EstimateWrite({copyPageInfo = {},  getPropertyId, layout
         const savedSizes = localStorage.getItem('estimate_write');
         return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 20]; // 기본값 [50, 50, 50]
     };
-
 
 
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
@@ -129,7 +128,7 @@ export default function EstimateWrite({copyPageInfo = {},  getPropertyId, layout
 
     useEffect(() => {
         commonManage.setInfo(infoRef, info, userInfo['adminId']);
-        if(memberList.length){
+        if (memberList.length) {
             setReady(true)
         }
     }, [info, memberList]);
@@ -145,13 +144,36 @@ export default function EstimateWrite({copyPageInfo = {},  getPropertyId, layout
                 case 'maker' :
                     await findCodeInfo(e, setInfo, openModal, infoRef)
                     break;
+                case 'documentNumberFull' :
+                    const dom = infoRef.current.querySelector('#agencyCode');
+                    const dom2 = infoRef.current.querySelector('#documentNumberFull');
+
+                    if (!dom.value) {
+                        return message.warn('매입처코드를 선택해주세요')
+                    }
+                    setLoading(true)
+                    await getData.post('estimate/getNewDocumentNumberFull', {
+                            agencyCode: dom.value,
+                            type: 'ESTIMATE'
+                        }).then(v=>{
+                       if(v.data.code === 1){
+                           dom2.value = v.data.entity.newDocumentNumberFull;
+                       }else{
+                            message.error(v.data.message)
+                       }
+                        setLoading(false)
+                    }, err=>setLoading(false))
+
+
+                    break;
+
                 case 'connectDocumentNumberFull' :
+                    setLoading(true)
                     await getData.post('estimate/getEstimateRequestDetail', {
                         "estimateRequestId": '',
                         documentNumberFull: e.target.value.toUpperCase()
                     }).then(async v => {
                         if (v.data.code === 1) {
-                            console.log(v.data,'v.data:::::')
                             const {attachmentFileList, estimateRequestDetail} = v.data?.entity
                             setFileList(fileManage.getFormatFiles(attachmentFileList))
                             const dom = infoRef.current.querySelector('#connectDocumentNumberFull');
@@ -161,25 +183,25 @@ export default function EstimateWrite({copyPageInfo = {},  getPropertyId, layout
                                 documentNumberFull: dom.value.toUpperCase()
                             }).then(src => {
 
-                                // delete result?.data?.entity?.estimateRequestList[0]?.adminId
-                                // delete result?.data?.entity?.estimateRequestList[0]?.createdBy
+                                    commonManage.setInfo(infoRef, {
+                                        ...estimateRequestDetail,
+                                        documentNumberFull: src.data.code === 1 ? src.data.entity.newDocumentNumberFull : '',
+                                        validityPeriod: '견적 발행 후 10일간',
+                                        paymentTerms: '발주시 50% / 납품시 50%',
+                                        shippingTerms: '귀사도착도',
+                                        writtenDate: moment().format('YYYY-MM-DD'),
+                                    })
 
-                                commonManage.setInfo(infoRef, {
-                                    ...estimateRequestDetail,
-                                    documentNumberFull: src.data.code === 1 ? src.data.entity.newDocumentNumberFull : '',
-                                    validityPeriod: '견적 발행 후 10일간',
-                                    paymentTerms: '발주시 50% / 납품시 50%',
-                                    shippingTerms: '귀사도착도',
-                                    writtenDate: moment().format('YYYY-MM-DD'),
-                                })
-
-                                if(estimateRequestDetail) {
-                                    setTableData([...estimateRequestDetail['estimateRequestDetailList'], ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 100 - estimateRequestDetail['estimateRequestDetailList'].length)])
-                                }
-
-                        });
+                                    if (estimateRequestDetail) {
+                                        setTableData([...estimateRequestDetail['estimateRequestDetailList'], ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 100 - estimateRequestDetail['estimateRequestDetailList'].length)])
+                                    }
+                                setLoading(false)
+                                }, err => setLoading(false)
+                            );
 
 
+                        }else{
+                            setLoading(false)
                         }
                     })
 
@@ -203,7 +225,7 @@ export default function EstimateWrite({copyPageInfo = {},  getPropertyId, layout
 
 
     async function saveFunc() {
-        setCount(v=>v + 1)
+        setCount(v => v + 1)
         let infoData = commonManage.getInfo(infoRef, infoInit);
         const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
         infoData['managerAdminName'] = findMember['name'];
@@ -269,7 +291,7 @@ export default function EstimateWrite({copyPageInfo = {},  getPropertyId, layout
                     )
                     setLoading(false)
                 })
-            } else if(code === -20001){
+            } else if (code === -20001) {
                 dom.style.borderColor = 'red';
                 message.error(msg);
                 setLoading(false)
@@ -290,7 +312,6 @@ export default function EstimateWrite({copyPageInfo = {},  getPropertyId, layout
     }
 
 
-
     function clearAll() {
         setInfo({...infoInit});
         // gridManage.deleteAll(gridRef);
@@ -299,17 +320,16 @@ export default function EstimateWrite({copyPageInfo = {},  getPropertyId, layout
     useEventListener('keydown', (e: any) => {
         if (e.ctrlKey && e.key === "s") {
             e.preventDefault();
-            console.log(layoutRef.current,'layoutRef.current:')
             const model = layoutRef.current.props.model;
             const activeTab = model.getActiveTabset()?.getSelectedNode();
-            if(activeTab?.renderedName === '견적서 등록'){
+            if (activeTab?.renderedName === '견적서 등록') {
                 saveFunc()
             }
         }
     }, typeof window !== 'undefined' ? document : null)
 
-    return <div style={{overflow: 'hidden'}}><Spin spinning={loading} >
-        <PanelSizeUtil groupRef={groupRef}  storage={'estimate_write'}/>
+    return <div style={{overflow: 'hidden'}}><Spin spinning={loading}>
+        <PanelSizeUtil groupRef={groupRef} storage={'estimate_write'}/>
         <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
                          open={isModalOpen}
 
@@ -355,20 +375,24 @@ export default function EstimateWrite({copyPageInfo = {},  getPropertyId, layout
                                 {inputForm({
                                     title: 'Inquiry No.',
                                     id: 'documentNumberFull',
-
+                                     handleKeyPress: handleKeyPress,
                                     suffix:
                                         <RetweetOutlined style={{cursor: 'pointer'}} onClick={
                                             async (e) => {
                                                 e.stopPropagation();
-                                                if (!info['agencyCode']) {
+                                                const dom = infoRef.current.querySelector('#agencyCode');
+                                                const dom2 = infoRef.current.querySelector('#documentNumberFull');
+                                                console.log(dom.value)
+                                                if (!dom.value) {
                                                     return message.warn('매입처코드를 선택해주세요')
                                                 }
                                                 const returnDocumentNumb = await checkInquiryNo({
                                                     data: {
-                                                        agencyCode: info['agencyCode'],
+                                                        agencyCode: dom.value,
                                                         type: 'ESTIMATE'
                                                     }
                                                 })
+                                                dom2.value = returnDocumentNumb
                                                 // onChange({target: {id: 'documentNumberFull', value: returnDocumentNumb}})
                                             }
                                         }/>
@@ -385,7 +409,7 @@ export default function EstimateWrite({copyPageInfo = {},  getPropertyId, layout
 
 
                             <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
-                                <Panel defaultSize={sizes[0]} minSize={5} >
+                                <Panel defaultSize={sizes[0]} minSize={5}>
                                     <BoxCard title={'매입처 정보'}>
                                         {inputForm({
                                             title: '매입처코드',
@@ -424,7 +448,7 @@ export default function EstimateWrite({copyPageInfo = {},  getPropertyId, layout
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>
-                                <Panel defaultSize={sizes[1]} minSize={5} >
+                                <Panel defaultSize={sizes[1]} minSize={5}>
                                     <BoxCard title={'고객사 정보'}>
                                         {inputForm({
                                             title: '고객사명',
@@ -462,7 +486,7 @@ export default function EstimateWrite({copyPageInfo = {},  getPropertyId, layout
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>
-                                <Panel defaultSize={sizes[2]} minSize={5} >
+                                <Panel defaultSize={sizes[2]} minSize={5}>
                                     <BoxCard title={'운송 정보'}>
                                         <div>
                                             <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 6}}>유효기간</div>
@@ -531,7 +555,7 @@ export default function EstimateWrite({copyPageInfo = {},  getPropertyId, layout
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>
-                                <Panel defaultSize={sizes[3]} minSize={5} >
+                                <Panel defaultSize={sizes[3]} minSize={5}>
                                     <BoxCard title={'Maker 정보'}>
                                         {inputForm({
                                             title: 'Maker',
@@ -548,7 +572,7 @@ export default function EstimateWrite({copyPageInfo = {},  getPropertyId, layout
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>
-                                <Panel defaultSize={sizes[4]} minSize={5} >
+                                <Panel defaultSize={sizes[4]} minSize={5}>
                                     <BoxCard title={'ETC'}>
                                         {textAreaForm({
                                             title: '지시사항',
@@ -560,7 +584,7 @@ export default function EstimateWrite({copyPageInfo = {},  getPropertyId, layout
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>
-                                <Panel defaultSize={sizes[5]} minSize={5} >
+                                <Panel defaultSize={sizes[5]} minSize={5}>
                                     <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
                                         {/*@ts-ignored*/}
                                         <div style={{overFlowY: "auto", maxHeight: 300}}>
@@ -577,11 +601,13 @@ export default function EstimateWrite({copyPageInfo = {},  getPropertyId, layout
                         : <></>}
                 </MainCard>
 
-                <Table data={tableData} column={estimateInfo['write']} funcButtons={['print']} ref={tableRef} type={'estimate_write_column'}/>
+                <Table data={tableData} column={estimateInfo['write']} funcButtons={['print']} ref={tableRef}
+                       type={'estimate_write_column'}/>
             </div>
         </>
-        {ready &&<EstimatePaper infoRef={infoRef} pdfRef={pdfRef} pdfSubRef={pdfSubRef} tableRef={tableRef} position={false}
-                        memberList={memberList} count={count}/>}
+        {ready &&
+            <EstimatePaper infoRef={infoRef} pdfRef={pdfRef} pdfSubRef={pdfSubRef} tableRef={tableRef} position={false}
+                           memberList={memberList} count={count}/>}
         {/*{ready && <EstimatePaper data={info} pdfRef={pdfRef} gridRef={gridRef}/>}*/}
     </Spin></div>
 }

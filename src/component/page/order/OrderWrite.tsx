@@ -118,14 +118,13 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
     }, [info, memberList]);
 
 
-
     useEventListener('keydown', (e: any) => {
         if (e.ctrlKey && e.key === "s") {
             e.preventDefault();
-            console.log(layoutRef.current,'layoutRef.current:')
+            console.log(layoutRef.current, 'layoutRef.current:')
             const model = layoutRef.current.props.model;
             const activeTab = model.getActiveTabset()?.getSelectedNode();
-            if(activeTab?.renderedName === '발주서 등록'){
+            if (activeTab?.renderedName === '발주서 등록') {
                 saveFunc()
             }
         }
@@ -136,6 +135,9 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
         if (e.key === 'Enter') {
             switch (e.target.id) {
                 case 'ourPoNo' :
+                    if (!e.target.value) {
+                       return message.warn('연결 Inqruiy No.를 입력해주세요 ')
+                    }
                     setLoading(true)
                     await getData.post('estimate/getEstimateDetail', {
                         "estimateId": '',
@@ -152,7 +154,6 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
                                 documentNumberFull: dom.value.toUpperCase()
                             }).then(src => {
 
-                                console.log(estimateDetail, 'estimateDetail::')
                                 commonManage.setInfo(infoRef, {
                                     ...estimateDetail,
                                     documentNumberFull: src.data.code === 1 ? src.data.entity.newDocumentNumberFull : '',
@@ -161,11 +162,11 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
                                     shippingTerms: '귀사도착도',
                                     writtenDate: moment().format('YYYY-MM-DD'),
                                 })
-                                if(estimateDetail) {
+                                if (estimateDetail) {
                                     setTableData([...estimateDetail?.estimateDetailList, ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 100 - estimateDetail?.estimateDetailList.length)])
                                 }
-                            }, err => console.log('???'));
-                            setLoading(false)
+                                setLoading(false)
+                            }, err =>         setLoading(false));
                         } else {
                             setLoading(false)
                         }
@@ -173,7 +174,6 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
                         console.log(err, ':::err:::')
                         setLoading(false)
                     })
-
 
                     // await findOrderDocumentInfo(e, setInfo, setTableData, memberList)
                     break;
@@ -285,13 +285,14 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
         alert('쉐어포인트 자동저장')
     }
 
-    console.log(isModalOpen,'isModalOpen:')
+    console.log(isModalOpen, 'isModalOpen:')
     return <Spin spinning={loading} tip={'LOADING'}>
         <PanelSizeUtil groupRef={groupRef} storage={'order_write'}/>
-        {(isModalOpen['event1']  || isModalOpen['agencyCode'] || isModalOpen['event2'] )&&<SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
-                                                                             open={isModalOpen}
+        {(isModalOpen['event1'] || isModalOpen['agencyCode'] || isModalOpen['event2']) &&
+            <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
+                             open={isModalOpen}
 
-                                                                             setIsModalOpen={setIsModalOpen}/>}
+                             setIsModalOpen={setIsModalOpen}/>}
         <>
             {isModalOpen['event3'] &&
                 <PrintPo data={info} infoRef={infoRef} tableRef={tableRef} isModalOpen={isModalOpen}
@@ -449,7 +450,8 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
 
                     </div> : null}
                 </MainCard>
-                <Table data={tableData} column={orderInfo['write']} funcButtons={['print']} ref={tableRef} type={'order_write_column'}/>
+                <Table data={tableData} column={orderInfo['write']} funcButtons={['print']} ref={tableRef}
+                       type={'order_write_column'}/>
             </div>
         </>
     </Spin>
