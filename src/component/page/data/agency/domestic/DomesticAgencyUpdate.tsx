@@ -13,6 +13,8 @@ import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import Table from "@/component/util/Table";
 import {DAInfo, projectInfo} from "@/utils/column/ProjectInfo";
+import Spin from "antd/lib/spin";
+import moment from "moment";
 
 
 const listType = 'agencyManagerList'
@@ -31,7 +33,7 @@ export default function DomesticAgencyUpdate({updateKey, getCopyPage}:any) {
     const [info, setInfo] = useState<any>(codeDomesticAgencyWriteInitial)
     const [validate, setValidate] = useState({agencyCode: true});
     const [tableData, setTableData] = useState([]);
-
+    const [loading, setLoading] = useState<any>(false)
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('domestic_agency_update');
@@ -45,21 +47,19 @@ export default function DomesticAgencyUpdate({updateKey, getCopyPage}:any) {
             "agencyId": updateKey['domestic_agency_update'],
             "agencyCode": ""
         });
-        console.log(result,':::')
         return result?.data?.entity;
     }
 
     useEffect(() => {
-        // setLoading(true)
+        setLoading(true)
         getDataInfo().then(v => {
             console.log(v,'::asd')
-            // const {projectDetail, attachmentFileList} = v;
-            // setFileList(fileManage.getFormatFiles(attachmentFileList))
-            // setOriginFileList(attachmentFileList)
-            // setInfo(projectDetail);
-            // projectDetail[listType] = [...projectDetail[listType], ...commonFunc.repeatObject(projectInfo['write']['defaultData'], 100 - projectDetail[listType].length)];
-            // setTableData(projectDetail[listType]);
-            // setLoading(false)
+            const {agencyDetail, attachmentFileList} = v;
+
+            setInfo(agencyDetail);
+            agencyDetail[listType] = [...agencyDetail[listType], ...commonFunc.repeatObject(DAInfo['write']['defaultData'], 100 - agencyDetail[listType].length)];
+            setTableData(agencyDetail[listType]);
+            setLoading(false)
         })
     }, [updateKey['domestic_agency_update']])
 
@@ -71,29 +71,38 @@ export default function DomesticAgencyUpdate({updateKey, getCopyPage}:any) {
 
 
     async function saveFunc() {
-        gridRef.current.clearFocusedCell();
-        const list = gridManage.getAllData(gridRef)
-        if (!info['agencyCode']) {
-            setValidate(v => {
-                return {...v, agencyCode: false}
-            })
-            return message.warn('코드(약칭)을 입력하셔야 합니다.')
-        }
-        if (!list.length) {
-            return message.warn('하위 데이터 1개 이상이여야 합니다')
-        }
-        const totalList = gridManage.getAllData(gridRef)
-        let copyInfo = _.cloneDeep(info)
-        copyInfo[listType] = totalList
+        const dom = infoRef.current.querySelector('#agencyCode');
+        let infoData = commonManage.getInfo(infoRef, DAInfo['defaultInfo']);
+        infoData['overseas_agency_update'] = updateKey['overseas_agency_update']
 
-        await getData.post('agency/updateAgency', copyInfo).then(v => {
+        if(!infoData['agencyCode']){
+            return message.error('코드(약칭)이 누락되었습니다.')
+        }
+
+
+        const tableList = tableRef.current?.getSourceData();
+
+        const filterTableList = commonManage.filterEmptyObjects(tableList, ['managerName','phoneNumber'])
+        if (!filterTableList.length) {
+            return message.warn('하위 데이터 1개 이상이여야 합니다');
+        }
+        // console.log(filterTableList,'infoData::')
+        // setLoading(true)
+        infoData[listType] = filterTableList;
+        infoData['agencyId'] = updateKey['domestic_agency_update']
+        await getData.post('agency/updateAgency', {data : infoData}).then(v => {
             if (v.data.code === 1) {
-                window.opener?.postMessage('write', window.location.origin);
-                message.success('수정되었습니다.')
+                notificationAlert('success', '💾국내매입처 수정완료',
+                    <>
+                        <div>코드 : {dom.value}</div>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    ,null,
+                )
             } else {
                 message.error('저장에 실패하였습니다.')
             }
-        });
+        })
 
     }
 
@@ -112,7 +121,7 @@ export default function DomesticAgencyUpdate({updateKey, getCopyPage}:any) {
         router.push(`/data/agency/domestic/agency_write?${query}`)
     }
 
-    return <>
+    return <Spin spinning={loading}>
         <div ref={infoRef} style={{
             display: 'grid',
             gridTemplateRows: `${mini ? '440px' : '65px'} calc(100vh - ${mini ? 535 : 195}px)`,
@@ -202,5 +211,5 @@ export default function DomesticAgencyUpdate({updateKey, getCopyPage}:any) {
             <Table data={tableData} column={DAInfo['write']} funcButtons={['print']} ref={tableRef} type={'domestic_agency_update_column'}/>
 
         </div>
-    </>
+    </Spin>
 }

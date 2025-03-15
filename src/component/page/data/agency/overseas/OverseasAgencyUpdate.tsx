@@ -49,7 +49,7 @@ export default function OverseasAgencyUpdate({ updateKey, getCopyPage}:any) {
 
 
     const getSavedSizes = () => {
-        const savedSizes = localStorage.getItem('overseas_agency_write');
+        const savedSizes = localStorage.getItem('overseas_agency_update');
         return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 0]; // 기본값 [50, 50, 50]
     };
 
@@ -93,12 +93,38 @@ export default function OverseasAgencyUpdate({ updateKey, getCopyPage}:any) {
     }
 
     async function saveFunc() {
+        const dom = infoRef.current.querySelector('#agencyCode');
+        let infoData = commonManage.getInfo(infoRef, OAInfo['defaultInfo']);
+        infoData['overseas_agency_update'] = updateKey['overseas_agency_update']
 
-        if(!info['agencyCode']){
+        if(!infoData['agencyCode']){
             return message.error('코드(약칭)이 누락되었습니다.')
         }
-        setLoading(true)
-        await updateDomesticAgency({data : info, returnFunc : returnFunc})
+
+
+        const tableList = tableRef.current?.getSourceData();
+
+        const filterTableList = commonManage.filterEmptyObjects(tableList, ['managerName','phoneNumber'])
+        if (!filterTableList.length) {
+            return message.warn('하위 데이터 1개 이상이여야 합니다');
+        }
+        // console.log(filterTableList,'infoData::')
+        // setLoading(true)
+        infoData[listType] = filterTableList;
+        infoData['overseasAgencyId'] = updateKey['overseas_agency_update']
+        await getData.post('agency/updateOverseasAgency', {data : infoData}).then(v => {
+            if (v.data.code === 1) {
+                notificationAlert('success', '💾해외매입처 수정완료',
+                    <>
+                        <div>코드 : {dom.value}</div>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    ,null,
+                )
+            } else {
+                message.error('저장에 실패하였습니다.')
+            }
+        })
     }
 
     function returnFunc(){
@@ -125,9 +151,9 @@ export default function OverseasAgencyUpdate({ updateKey, getCopyPage}:any) {
             gridTemplateRows: `${mini ? '365px' : '65px'} calc(100vh - ${mini ? 460 : 160}px)`,
             rowGap: 10
         }}>
-            <PanelSizeUtil groupRef={groupRef} storage={'overseas_agency_write'}/>
+            <PanelSizeUtil groupRef={groupRef} storage={'overseas_agency_update'}/>
             <MainCard title={'해외 매입처'} list={[
-                {name: '저장', func: saveFunc, type: 'primary'},
+                {name: '수정', func: saveFunc, type: 'primary'},
                 {name: '초기화', func: clearAll, type: 'danger'}
             ]} mini={mini} setMini={setMini}>
 

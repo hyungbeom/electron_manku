@@ -347,15 +347,9 @@ export const saveDomesticAgency = async ({data, router}: any) => {
 
 export const updateDomesticAgency = async ({data, returnFunc}: any) => {
 
-    getData.post('agency/updateOverseasAgency', data).then(v => {
-        const code = v.data.code;
-        if (code === 1) {
-            window.opener?.postMessage('write', window.location.origin);
-            msg.success('수정되었습니다.')
-        } else {
-            msg.error('실패하였습니다.')
-        }
-        returnFunc();
+   return await getData.post('agency/updateOverseasAgency', data).then(v => {
+        console.log(v,'???')
+       return v.data
     })
 
 };
