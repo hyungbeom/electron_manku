@@ -76,7 +76,7 @@ const EstimatePaper = ({infoRef, pdfRef, pdfSubRef, tableRef, memberList = [], c
 
         const handleChange = (e) => {
             setInfo(v => {
-                return {...v, unitPrice: e}
+                return {...v, net: e}
             })
         };
 
@@ -101,10 +101,8 @@ const EstimatePaper = ({infoRef, pdfRef, pdfSubRef, tableRef, memberList = [], c
                  onClick={() => {
                      setToggle(true);
                  }}>
-
                 <span>₩</span>
                 {amountFormat(defaultValue)}
-
             </div>}</>
     }
 
@@ -158,20 +156,20 @@ const EstimatePaper = ({infoRef, pdfRef, pdfSubRef, tableRef, memberList = [], c
     }
 
     const RowContent = ({v, i}) => {
-        const [info, setInfo] = useState({quantity: v.quantity, unit: v.unit, unitPrice: v.unitPrice})
+        const [info, setInfo] = useState({quantity: v.quantity, unit: v.unit, net: v.net})
 
         useEffect(() => {
             const totalQuantity = Array.from(document.getElementsByName("quantity"))
                 .reduce((sum, input: any) => sum + (parseFloat(input.value) || 0), 0);
 
-            const totalPrice = Array.from(document.getElementsByName("unitPrice"))
+            const totalPrice = Array.from(document.getElementsByName("net"))
                 .reduce((sum, input: any) => sum + (Number(input.value.replace(/,/g, "")) || 0), 0);
 
             const totalAmount = Array.from(document.getElementsByName("amount"))
                 .reduce((sum, input: any) => sum + (Number(input.value.replace(/,/g, "")) || 0), 0);
 
 
-            const resultNum = Number(info?.unitPrice ? info?.unitPrice : '');
+            const resultNum = Number(info?.net ? info?.net : '');
 
             if (document.getElementById("total_amount")) {
                 document.getElementById("total_amount").textContent = amountFormat(totalAmount);
@@ -249,7 +247,7 @@ const EstimatePaper = ({infoRef, pdfRef, pdfSubRef, tableRef, memberList = [], c
                 fontSize: 12,
                 borderLeft: '1px solid lightGray',
             }}>
-                <NumberInputForm defaultValue={info?.unitPrice} id={'unitPrice'} setInfo={setInfo}/>
+                <NumberInputForm defaultValue={info?.net} id={'net'} setInfo={setInfo}/>
             </th>
 
             <th style={{
@@ -259,7 +257,7 @@ const EstimatePaper = ({infoRef, pdfRef, pdfSubRef, tableRef, memberList = [], c
                 borderBottom: '1px solid lightGray'
             }}>
                 <RowTotal
-                    defaultValue={info.quantity * Number(info?.unitPrice ? info?.unitPrice : '')}
+                    defaultValue={info.quantity * Number(info?.net ? info?.net : '')}
                     id={'amount'}/>
             </th>
         </tr>
@@ -678,7 +676,7 @@ const DataTable = ({src, indexNumber, refList, splitData, setSplitData}) => {
                     fontSize: 12,
                     borderLeft: '1px solid lightGray'
                 }}>
-                    <Input value={amountFormat(v.unitPrice)} style={{border: 'none'}}
+                    <Input value={amountFormat(v.net)} style={{border: 'none'}}
                            suffix={'₩'}/>
                 </th>
 
@@ -687,7 +685,7 @@ const DataTable = ({src, indexNumber, refList, splitData, setSplitData}) => {
                     textAlign: 'right', fontWeight: 'lighter', fontSize: 12,
                     borderLeft: '1px solid lightGray'
                 }}>
-                    <Input value={amountFormat(v.quantity * v.unitPrice)}
+                    <Input value={amountFormat(v.quantity * v.net)}
                            style={{border: 'none'}} suffix={'₩'}/>
                 </th>
             </tr>

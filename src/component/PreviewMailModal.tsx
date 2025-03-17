@@ -180,11 +180,11 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
             return {
                 ...v, content: info[0].agencyCode.startsWith('K') ? `<div><div>${v.content}</div>
 <div style="padding-top: 200px">
-    <div style="font-size: 15px; font-weight: 800;">${name} ${position}(${englishName})/${position}</div>
+    <div style="font-size: 15px; font-weight: 800;">${name} ${position}(${englishName})/${department}</div>
     <div style="font-weight: normal;">Mobile ${contactNumber}</div>
-    <div style="color: #56cbdb; font-weight: 500;">Manku Trading Co., Ltd.</div>
-    <div style="font-weight: 500;">B- 211#, Garden Five Works, 52, Chungmin- ro , Songpa-gu, Seoul, South Korea</div>
-    <div style="font-weight: 500;">Post Code 05854</div>
+    <div style="color: #56cbdb; font-weight: 500;">주식회사 만쿠무역(Manku Trading)</div>
+    <div style="font-weight: 500;">서울시 송파구 충민로 52 가든파이브 웍스 B동 211,212호</div>
+    <div style="font-weight: 500;">Post Code 05839</div>
     <div style="text-decoration: underline;">Tel: +82/2-465-7838</div>
     <div style="text-decoration: underline;">Fax: +82/2-465-7839</div>
     <a href="https://www.manku.co.kr" style="text-decoration: none; color: inherit;">www.manku.co.kr</a>
@@ -197,7 +197,7 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
     <div style="font-size: 15px; font-weight: 800;">Mobile : ${contactNumber}</div>
     <div style="color: #56cbdb; font-weight: 500;">Manku Trading Co., Ltd.</div>
     <div style="font-weight: 500;">B- 211#, Garden Five Works, 52, Chungmin- ro , Songpa-gu, Seoul, South Korea</div>
-    <div style="font-weight: 500;">Post Code 05854</div>
+    <div style="font-weight: 500;">Post Code 05839</div>
     <div style="text-decoration: underline;">Tel: +82/2-465-7838</div>
 
     <div style="text-decoration: underline;">Fax: +82/2-465-7839</div>
