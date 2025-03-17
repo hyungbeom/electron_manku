@@ -171,7 +171,7 @@ export const deleteProjectList = async ({
     }
                                         }) => {
 
-    return await getData.post('agency/deleteAgencies', data).then(v => {
+    return await getData.post('project/deleteProjectDetails', data).then(v => {
         return v.data
     }, err => msg.error(err))
 };

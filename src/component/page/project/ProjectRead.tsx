@@ -88,6 +88,7 @@ export default function ProjectRead({getPropertyId, getCopyPage}:any) {
             projectDetailId: 'projectDetailId'
         });
 
+        console.log(deleteList,':::')
         const selectedRows = gridRef.current.getSelectedRows();
 
         await deleteProjectList({data: {deleteList: deleteList}}).then(v => {

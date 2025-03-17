@@ -278,7 +278,6 @@ const Table = forwardRef(({
                 const currentList = instance.getSourceData();
                 const {row, col} = rowRef.current;
 
-
                 list.forEach((v, i) => {
                     v['total'] = `=G${row + i + 1}*H${row + i + 1}`
                     v['totalPurchase'] = `=G${row + i}*J${row + i}`
