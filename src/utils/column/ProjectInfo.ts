@@ -133,8 +133,8 @@ export const rfqInfo = {
                 source: ['ea', 'Set', 'Pack', 'Can', 'Box', 'MOQ', 'Meter', 'Feet', 'Inch', 'Roll', 'g', 'kg', 'oz']
             },
             {data: "currencyUnit", type: "autocomplete", source: ['KRW', 'USD', 'EUR', 'JPY', 'GBP']},
-            {data: "unitPrice", type: "numeric"},
-            {data: "total", type: "numeric", readOnly: true},
+            {data: "unitPrice", type: "text", pattern : {pattern : 0.00}},
+            {data: "total", type: "text", readOnly: true},
             {data: "deliveryDate", type: "numeric"},
             {
                 data: "content",

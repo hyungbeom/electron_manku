@@ -130,7 +130,6 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
     async function sendMail() {
         const result = info.map((v, idx) => {
 
-            let sumDiv = ''
             let detailList = []
 
             v.detailList.map(source => {
@@ -162,7 +161,6 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
                 return false;
             }
 
-
             return {
                 email: v.agencyManagerEmail,
                 name: v.sendName,
@@ -175,8 +173,6 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
         })
 
         const {name, contactNumber, position, englishName, department} = userInfo;
-        console.log(userInfo,'userInfo::')
-        console.log(englishName,'englishName::')
         const list = result.map(v => {
             v.content = v.content.replace(/\n/g, "<br>");
             return {
@@ -191,11 +187,8 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
     <div style="text-decoration: underline;">Fax: +82/2-465-7839</div>
     <a href="https://www.manku.co.kr" style="text-decoration: none; color: inherit;">www.manku.co.kr</a>
 </div>
-</div>` :
-
-                    `<div><div>${v.content}</div>
+</div>` : `<div><div>${v.content}</div>
 <div style="padding-top: 200px">
-
     <div style="font-size: 15px; font-weight: 800;">${englishName}</div>
     <div style="color: #56cbdb; font-weight: 500;">Manku Trading Co., Ltd.</div>
     <div style="font-weight: 500;">B- 211#, Garden Five Works, 52, Chungmin- ro , Songpa-gu, Seoul, South Korea</div>

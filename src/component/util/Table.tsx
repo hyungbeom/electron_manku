@@ -108,9 +108,7 @@ const Table = forwardRef(({
                     const propIndex = change.indexOf('unitPrice'); // 'unitPrice'의 인덱스 찾기
                     const newValueIndex = propIndex + 2; // newValue 위치 (prop + 2)
 
-                    if (newValueIndex < change.length && change[newValueIndex] !== undefined) {
-                        changes[index][newValueIndex] = parseFloat(change[newValueIndex]).toFixed(2); // ✅ 소수점 2자리 변환
-                    }
+                    changes[index][newValueIndex] = parseFloat(change[newValueIndex]).toFixed(2); // ✅ 소수점 2자리 변환
                 }
                 if (prop === 'calcCheck') {
                     let data = [...hotRef.current.hotInstance.getSourceData()]
@@ -527,7 +525,7 @@ const Table = forwardRef(({
                         allowHtml: true,
                         dateFormat: col.type === "date" ? "YYYY-MM-DD" : undefined,
                         // correctFormat: col.data === "marginRate" ? true : undefined, // 🔥 숫자가 올바른 형식이 아니면 자동 수정
-                        numericFormat: col.data === "marginRate" ? {pattern: "0%", suffix: "%"} : ( col.data === "unitPrice" ? {pattern:'0,0.00', suffix: "%"}:           undefined), // 🔥 소수점 둘째 자리 고정 + % 유지
+                        numericFormat: col.data === "marginRate" ? {pattern: "0%", suffix: "%"} : ( col.data.includes('rice') ? {pattern:'0,00'}:           undefined), // 🔥 소수점 둘째 자리 고정 + % 유지
                         renderer: col.data === "marginRate" ? percentRenderer : ((col.data === 'orderDocumentNumberFull' || col.data === 'connectInquiryNo'|| col.data === 'hsCode') ? iconRenderer : ((col.data === 'unitPrice') ? currencyRenderer : col.type)), // 🔥 커스텀 렌더러 적용
                         readOnly: col.readOnly,
                         filter: false
