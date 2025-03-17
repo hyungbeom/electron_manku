@@ -59,9 +59,7 @@ export default function RfqMailSend({getPropertyId}: any) {
         await searchRfq({
             data: {...copyData, page: 1, limit: -1}
         }).then(v => {
-            console.log(v.data,'v.data:')
             gridManage.resetData(gridRef, v.data);
-            setTotalRow(v.pageInfo.totalRow)
             setLoading(false)
             gridRef.current.ensureIndexVisible(0)
         })
@@ -202,10 +200,10 @@ export default function RfqMailSend({getPropertyId}: any) {
                                     ]
                                 })}
                                 {selectBoxForm({
-                                    title: '회신 여부', id: 'searchReplyStatus', onChange: onChange, data: info, list: [
-                                        {value: 0, label: '전체'},
-                                        {value: 1, label: '회신'},
-                                        {value: 2, label: '미회신'}
+                                    title: '회신 여부', id: 'searchContent', onChange: onChange, data: info, list: [
+                                        {value: '', label: '전체'},
+                                        {value: '회신', label: '회신'},
+                                        {value: '미회신', label: '미회신'}
                                     ]
                                 })}
                             </BoxCard>

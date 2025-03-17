@@ -239,7 +239,7 @@ export const subRfqReadMailInitial = {
 
     // 메일 전송 목록 검색 필드 추가 2024.11.28
     "searchSentStatus": 2,              // 전송 여부 1: 전송, 2: 미전송
-    "searchReplyStatus": 0,             // 회신 여부 1: 회신, 2: 미회신
+    "searchReplyStatus": '',             // 회신 여부 1: 회신, 2: 미회신
     "searchAgencyCode": "",          // 대리점코드 검색
 
     "page": 1,

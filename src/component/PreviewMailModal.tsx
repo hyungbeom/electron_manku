@@ -173,7 +173,7 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
             }
         })
 
-        const {name, contactNumber} = userInfo;
+        const {name, contactNumber, position} = userInfo;
 
         const list = result.map(v => {
             v.content = v.content.replace(/\n/g, "<br>");
