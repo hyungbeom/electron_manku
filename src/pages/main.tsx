@@ -1,6 +1,6 @@
 import LayoutComponent from "@/component/LayoutComponent";
 import {wrapper} from "@/store/store";
-import React, {useEffect, useMemo, useRef, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {DownOutlined} from "@ant-design/icons";
 import {Actions, DockLocation, Layout, Model, TabNode} from "flexlayout-react";
 import Tree from "antd/lib/tree/Tree";
@@ -98,26 +98,24 @@ export default function Main() {
             }
         });
         return tabCount;
-    }, [modelRef.current.toJson()]); // 🔥 model이 변경될 때만 실행
+    }, [modelRef.current]); // 🔥 model이 변경될 때만 실행
 
     const [updateKey, setUpdateKey] = useState({})
     const [copyPageInfo, setCopyPageInfo] = useState({})
 
-    function getPropertyId(key, id) {
+    const getPropertyId = useCallback((key, id) => {
         let copyObject = _.cloneDeep(updateKey);
         copyObject[key] = id;
         setUpdateKey(copyObject);
         onSelect([key]);
-    }
+    }, [updateKey]);
 
-
-    function getCopyPage(page, v) {
+    const getCopyPage = useCallback((page, v) => {
         let copyObject = _.cloneDeep(copyPageInfo);
         copyObject[page] = v;
         setCopyPageInfo(copyObject);
-        console.log('check')
-        onSelect([page])
-    }
+        onSelect([page]);
+    }, [copyPageInfo]);
 
     const onSelect = (selectedKeys, event?) => {
         const selectedKey = selectedKeys[0];
@@ -158,7 +156,7 @@ export default function Main() {
             addTab(selectedKey);
         }
     };
-    const tabComponents = {
+    const tabComponents = useMemo(() => ({
         project_write: {name: "프로젝트 등록", component: <ProjectWrite/>},
         project_read: {
             name: "프로젝트 조회",
@@ -251,7 +249,7 @@ export default function Main() {
         },
 
 
-    };
+    }), [updateKey]);
 
     const factory = (node: TabNode) => {
         const componentKey = node.getComponent();
@@ -298,20 +296,22 @@ export default function Main() {
         // 🔥 올바른 DockLocation 객체 사용
         model.doAction(Actions.addNode(newTab, tabset.getId(), DockLocation.CENTER, -1, true));
     };
+
     useEffect(() => {
-        updateSelectTab();
+        if (selectMenu) {
+            updateSelectTab();
+        }
     }, [selectMenu]);
 
     const updateSelectTab = () => {
         const rootNode = modelRef.current.getRoot();
-        const tabsets = rootNode.getChildren();
-        for (const tabset of tabsets) {
-            const tabs: any = tabset.getChildren();
-            for (const tab of tabs) {
-                if (tab.getName() === selectMenu) {
-                    modelRef.current.doAction(Actions.selectTab(tab.getId()));
-                }
-            }
+        const tabset = rootNode.getChildren()[0]; // 첫 번째 tabset 가져오기
+
+        if (!tabset) return;
+
+        const selectedTab = tabset.getChildren().find((tab:any) => tab.getName() === selectMenu);
+        if (selectedTab) {
+            modelRef.current.doAction(Actions.selectTab(selectedTab.getId()));
         }
     };
 
@@ -351,6 +351,18 @@ export default function Main() {
             ),
             children: node.children ? transformTreeData(node.children) : undefined,
         }));
+
+    const handleMiddleClick = useCallback((event, node) => {
+        if (event.button === 1) { // 🔥 마우스 가운데 버튼 감지
+            event.preventDefault();
+            event.stopPropagation();
+
+            if (modelRef.current) {
+                modelRef.current.doAction(Actions.deleteTab(node.getId()));
+            }
+        }
+    }, []);
+
     return (
         <LayoutComponent>
             <div style={{display: "grid", gridTemplateColumns: "205px auto"}}>
@@ -420,26 +432,13 @@ export default function Main() {
 
                 {/*<Layout model={model} factory={factory} onModelChange={onLayoutChange} ref={layoutRef}*/}
                 <Layout model={modelRef.current} factory={factory} onModelChange={onLayoutChange} ref={layoutRef}
-                        onRenderTab={(node, renderValues: any) => {
-                            // ✅ 활성화된 탭이면 CSS 클래스 추가
-                            if (node.getId() === activeTabId) {
-                                renderValues.className = "active-tab"; // ✅ 동적으로 클래스 추가
-                            }
+                        onRenderTab={(node, renderValues) => {
+                            // @ts-ignored
+                            renderValues.className = node.getId() === activeTabId ? "active-tab" : "";
                             renderValues.content = (
-                                <span
-                                    onMouseDown={(event) => {
-                                        if (event.button === 1) { // 🔥 가운데 버튼 클릭 감지
-                                            event.preventDefault(); // 기본 동작 방지 (브라우저 탭 닫힘 방지)
-                                            event.stopPropagation(); // 🔥 이벤트 버블링 방지 (다른 핸들러로 전달되지 않도록)
-
-                                            if (modelRef.current) {
-                                                modelRef.current.doAction(Actions.deleteTab(node.getId())); // ✅ 탭 삭제
-                                            }
-                                        }
-                                    }}
-                                >
-        {node.getName()}
-      </span>
+                                <span onMouseDown={(event) => handleMiddleClick(event, node)}>
+                    {node.getName()}
+                </span>
                             );
                         }}
                 />
