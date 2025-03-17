@@ -23,6 +23,7 @@ export default function joint({code}) {
         passwordConfirm: '',
         name: '',
         englishName: '',
+        department: '',
         position: '',
         email: '',
         contactNumber: '',
@@ -67,7 +68,7 @@ export default function joint({code}) {
 
     async function getSignUp() {
 
-        if(!query?.code) {
+        if (!query?.code) {
 
             if (!info['adminName']) {
                 return message.warn('아이디를 입력해주세요')
@@ -110,7 +111,10 @@ export default function joint({code}) {
 
 
     return <>
-        <div style={{padding : '30px 0px 0px 30px'}}><ArrowLeftOutlined style={{fontSize : 20, cursor : 'pointer'}} onClick={()=>{router.push('/')}}/></div>
+        <div style={{padding: '30px 0px 0px 30px'}}><ArrowLeftOutlined style={{fontSize: 20, cursor: 'pointer'}}
+                                                                       onClick={() => {
+                                                                           router.push('/')
+                                                                       }}/></div>
         <div style={{maxWidth: 500, margin: '0px auto'}}>
             <div style={{fontSize: 30, fontWeight: 500, textAlign: 'center', padding: '50px 0px 30px 0px'}}>SIGN UP
             </div>
@@ -163,11 +167,19 @@ export default function joint({code}) {
                 size: 'middle'
             })}
             {inputForm({
+                title: 'DEPARTMENT',
+                id: 'department',
+                onChange: onChange,
+                data: info,
+                placeHolder: '부서를 입력해 주세요',
+                size: 'middle'
+            })}
+            {inputForm({
                 title: 'POSITION',
                 id: 'position',
                 onChange: onChange,
                 data: info,
-                placeHolder: '부서를를 입력해 주세요',
+                placeHolder: '직책를 입력해 주세요',
                 size: 'middle'
             })}
 

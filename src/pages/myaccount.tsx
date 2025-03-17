@@ -17,6 +17,7 @@ export default function myaccount() {
 
     const userInfo = useAppSelector((state) => state.user);
 
+    console.log(userInfo,'??')
     const [info, setInfo] = useState(userInfo);
     const [loading, setLoading] = useState(false);
 
@@ -77,11 +78,19 @@ export default function myaccount() {
                 size: 'middle'
             })}
             {inputAntdForm({
+                title: 'DEPARTMENT',
+                id: 'department',
+                onChange: onChange,
+                data: info,
+                placeHolder: '부서를를 입력해 주세요',
+                size: 'middle'
+            })}
+     {inputAntdForm({
                 title: 'POSITION',
                 id: 'position',
                 onChange: onChange,
                 data: info,
-                placeHolder: '부서를를 입력해 주세요',
+                placeHolder: '잭책를 입력해 주세요',
                 size: 'middle'
             })}
 
