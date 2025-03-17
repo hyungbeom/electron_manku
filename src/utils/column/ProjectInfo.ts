@@ -132,9 +132,9 @@ export const rfqInfo = {
                 type: "autocomplete",
                 source: ['ea', 'Set', 'Pack', 'Can', 'Box', 'MOQ', 'Meter', 'Feet', 'Inch', 'Roll', 'g', 'kg', 'oz']
             },
-            {data: "currency", type: "autocomplete", source: ['KRW', 'USD', 'EUR', 'JPY', 'GBP']},
-            {data: "net", type: "numeric"},
-            {data: "totalNet", type: "numeric", readOnly: true},
+            {data: "currencyUnit", type: "autocomplete", source: ['KRW', 'USD', 'EUR', 'JPY', 'GBP']},
+            {data: "unitPrice", type: "numeric"},
+            {data: "total", type: "numeric", readOnly: true},
             {data: "deliveryDate", type: "numeric"},
             {
                 data: "content",
@@ -149,9 +149,9 @@ export const rfqInfo = {
             "model": '',             // Model
             "quantity": '',           // 수량
             "unit": "",            // 단위
-            "currency": "",       // CURR
-            "net": '',                // 매입단가
-            "totalNet": '',                // 매입단가
+            "currencyUnit": "",       // CURR
+            "unitPrice": '',                // 매입단가
+            "total": '',                // 매입단가
             "serialNumber": '',       // 항목 순서 (1부터 시작)
             "deliveryDate": '',      // 납기
             "content": "",       // 내용
@@ -171,7 +171,7 @@ export const rfqInfo = {
             "remarks": "비고"            // 비고
         },
         excelExpert: (v, i) => {
-            v['totalNet'] = `=B${i + 1}*E${i + 1}`
+            v['total'] = `=B${i + 1}*E${i + 1}`
             return v
         },
         totalList: {
@@ -179,8 +179,8 @@ export const rfqInfo = {
             "quantity": '=SUM(B1:B100)',           // 수량
             "unit": "",            // 단위
             "currency": "",       // CURR
-            "net": '=SUM(E1:E100)',                // 매입단가
-            "totalNet": '=SUM(F1:F100)',                // 매입단가
+            "unitPrice": '=SUM(E1:E100)',                // 매입단가
+            "total": '=SUM(F1:F100)',                // 매입단가
             "serialNumber": '',       // 항목 순서 (1부터 시작)
             "deliveryDate": '',      // 납기
             "content": "",       // 내용
@@ -241,11 +241,11 @@ export const estimateInfo = {
                 type: "autocomplete",
                 source: ['ea', 'Set', 'Pack', 'Can', 'Box', 'MOQ', 'Meter', 'Feet', 'Inch', 'Roll', 'g', 'kg', 'oz']
             },
-            {data: "currency", type: "autocomplete", source: ['KRW', 'USD', 'EUR', 'JPY', 'GBP']},
-            {data: "unitPrice", type: "numeric"},
-            {data: "total", type: "numeric", readOnly: true},
+            {data: "currencyUnit", type: "autocomplete", source: ['KRW', 'USD', 'EUR', 'JPY', 'GBP']},
             {data: "net", type: "numeric"},
             {data: "totalNet", type: "numeric", readOnly: true},
+            {data: "unitPrice", type: "numeric"},
+            {data: "total", type: "numeric", readOnly: true},
             {data: "marginRate", type: "numeric"},
 
         ],
@@ -253,37 +253,36 @@ export const estimateInfo = {
             "model": "",   // Model
             "quantity": '',                  // 수량
             "unit": "",                   // 단위
-            "currency": '',          // CURR
+            "currencyUnit": '',          // CURR
             "net": '',                 // 매입단가
             "unitPrice": '',           // 단가
             "marginRate": '',           // 단가
         }, mapping: {
             "model": "Model",   // Model
             "quantity": '수량',                  // 수량
+            "net": '매출 단가',
+            // 단가
+            "totalNet": '매출 총액',           // 단가
             "unit": "단위",                   // 단위
             "currency": '화폐단위',          // CURR
-            "unitPrice": '매출 단가',
-                     // 매입단가
-            "total": '매출 총액',                 // 매입단가
-            "net": '매입 단가',
-            // 단가
-            "totalNet": '매입 총액',           // 단가
+            "unitPrice": '매입 단가',
+            "total": '매입 총액',                 // 매입단가
             "marginRate": '마진율',           // 단가
         },
         excelExpert: (v, i) => {
-            v['total'] = `=B${i + 1}*E${i + 1}`
-            v['totalNet'] = `=B${i + 1}*G${i + 1}`
+            v['totalNet'] = `=B${i + 1}*E${i + 1}`
+            v['total'] = `=B${i + 1}*G${i + 1}`
             return v
         },
         totalList: {
             "model": "",   // Model
             "quantity": '=SUM(B1:B100)',                  // 수량
             "unit": "",                   // 단위
-            "currency": '',          // CURR
-            "unitPrice": '=SUM(E1:E100)',           // 단가
-            "total": '=SUM(F1:F100)',           // 단가
-            "net": '=SUM(G1:G100)',                 // 매입단가
-            "totalNet": '=SUM(H1:H100)',                 // 매입단가
+            "currencyUnit": '',          // CURR
+            "net": '=SUM(E1:G100)',                 // 매입단가
+            "totalNet": '=SUM(F1:H100)',                 // 매입단가
+            "unitPrice": '=SUM(G1:E100)',           // 단가
+            "total": '=SUM(H1:F100)',           // 단가
             "marginRate": ''                 // 매입단가
 
         },

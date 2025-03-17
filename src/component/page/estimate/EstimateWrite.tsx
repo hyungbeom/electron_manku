@@ -183,6 +183,7 @@ export default function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutR
                                 documentNumberFull: dom.value.toUpperCase()
                             }).then(src => {
 
+                                console.log(estimateRequestDetail,'estimateRequestDetail:')
                                     commonManage.setInfo(infoRef, {
                                         ...estimateRequestDetail,
                                         documentNumberFull: src.data.code === 1 ? src.data.entity.newDocumentNumberFull : '',

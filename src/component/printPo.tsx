@@ -24,7 +24,7 @@ const getTextAreaValues = (ref) => {
 };
 
 
-export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, infoRef, memberList=[], count= 0}) {
+export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, infoRef, memberList = [], count = 0}) {
 
     const pdfRef = useRef<any>();
     const pdfSubRef = useRef<any>();
@@ -98,36 +98,33 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
     useEffect(() => {
 
 
-        let infoData = commonManage.getInfo(infoRef,orderInfo['defaultInfo']);
+        let infoData = commonManage.getInfo(infoRef, orderInfo['defaultInfo']);
         const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
         infoData['managerAdminName'] = findMember['name'];
-
 
         const dom = infoRef.current.querySelector('#agencyCode');
         const lang = dom.value.startsWith("K");
 
-        console.log(splitData,':::')
+        setInfo(
+            lang ?
 
-            setInfo(
-                lang ?
+                [
+                    {title: '수신처', value: infoData.agencyName, id: 'ourPoNo'},
+                    {title: '발주일자', value: '예상입고일 + 납기?', id: 'name'},
+                    {title: '담당자', value: infoData.agencyManagerName, id: 'agencyManagerName'},
+                    {title: '발주번호', value: infoData?.documentNumberFull, id: 'contactNumber'},
+                    {title: '납품조건', value: data.agencyCode, id: 'agencyCode'},
+                    {title: '귀사견적', value: infoData?.yourPoNo, id: 'yourPoNo'},
+                    {title: '결제조건.', value: infoData?.paymentTerms, id: 'attnTo'},
+                    {title: '담당자', value: findMember?.name, id: ''},
+                    {title: '납기조건', value: infoData?.deliveryTerms, id: 'deliveryTerms'},
+                    {title: '연락처', value: findMember?.contactNumber, id: 'faxNumber'},
+                    {title: '', value: '', id: 'deliveryTerms'},
+                    {title: 'E-Mail', value: findMember?.email, id: 'shippingTerms'},
 
-                        [
-                        {title: '수신처', value: infoData.agencyName, id: 'ourPoNo'},
-                        {title: '발주일자', value: '예상입고일 + 납기?', id: 'name'},
-                        {title: '담당자', value: infoData.agencyManagerName, id: 'agencyManagerName'},
-                        {title: '발주번호', value: infoData?.documentNumberFull, id: 'contactNumber'},
-                        {title: '납품조건', value: data.agencyCode, id: 'agencyCode'},
-                        {title: '귀사견적', value: infoData?.yourPoNo, id: 'yourPoNo'},
-                        {title: '결제조건.', value: infoData?.paymentTerms, id: 'attnTo'},
-                        {title: '담당자', value: findMember?.name, id: ''},
-                        {title: '납기조건', value: infoData?.deliveryTerms, id: 'deliveryTerms'},
-                        {title: '연락처', value:  findMember?.contactNumber, id: 'faxNumber'},
-                        {title: '', value : '', id: 'deliveryTerms'},
-                        {title: 'E-Mail', value: findMember?.email, id: 'shippingTerms'},
+                ]
 
-                    ]
-
-                    : [
+                : [
                     {title: 'MESSER', value: infoData.agencyName, id: 'ourPoNo'},
                     {title: 'DATE', value: infoData.writtenDate, id: 'writtenDate'},
                     {title: 'ATTN', value: infoData.agencyManagerName, id: 'attnTo'},
@@ -137,14 +134,12 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
                     {title: 'MANKU No.', value: infoData.documentNumberFull, id: 'ourPoNo'},
                     {title: 'E-mail', value: infoData.managerEmail, id: 'ourPoNo'},
                     {title: 'Delivery', value: infoData.deliveryTerms, id: 'ourPoNo'},
-                    {title: 'HS-code', value : splitData.length ? splitData[0][0]?.hsCode : '', id: 'hscode'},
+                    {title: 'HS-code', value: splitData.length ? splitData[0][0]?.hsCode : '', id: 'hscode'},
                     {title: 'Incoterms', value: '', id: 'incoterms'},
                     {title: '', value: '', id: ''},
                     {title: 'Payment', value: infoData.paymentTerms, id: 'ourPoNo'},
                 ]
-
-            )
-
+        )
 
 
     }, [data, count, splitData])
@@ -229,7 +224,7 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
                 style={{
                     width: 480,
                     textAlign: "left",
-                    paddingLeft : 10,
+                    paddingLeft: 10,
                     fontSize: 12,
                     whiteSpace: "normal",
                     wordBreak: "break-word",
@@ -283,8 +278,8 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
         }, [info]);
 
 
-        return <thead style={{height : 30}}>
-        <tr style={{height : 30}}>
+        return <thead style={{height: 30}}>
+        <tr style={{height: 30}}>
             <th colSpan={2} style={{
 
                 border: 'none',
@@ -333,7 +328,7 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
                             })
                         }}
                 >
-                    {['EA', 'SET', 'M', 'FEET', 'ROLL', 'BOX', 'G', 'KG', 'PACK', 'INCH', 'MOQ'].map(v => {
+                    {['ea', 'Set', 'Pack', 'Can', 'Box', 'MOQ', 'Meter', 'Feet', 'Inch', 'Roll', 'g', 'kg', 'oz'].map(v => {
                         // @ts-ignored
                         return <Option style={{fontSize: 11}} value={v}>{v}</Option>
                     })}
@@ -369,20 +364,21 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
                 borderLeft: '1px solid lightGray'
             }}>
                 <Input
-                       style={{
-                           border: 'none',
-                           textAlign: 'right',
-                           padding: 0
-                       }}/>
+                    style={{
+                        border: 'none',
+                        textAlign: 'right',
+                        padding: 0
+                    }}/>
             </th>
         </tr>
         </thead>
     }
 
-    function chechLang(){
+    function chechLang() {
         const dom = infoRef.current.querySelector('#agencyCode');
         return dom.value.startsWith("K");
     }
+
     return (
         <Modal
             title={<div style={{width: '100%', display: "flex", justifyContent: 'space-between', alignItems: 'center'}}>
@@ -398,7 +394,7 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
                         fontSize: 11,
                         marginRight: 10
                     }}>
-                    PDF
+                        PDF
                     </button>
                     {/*@ts-ignore*/}
                     <button onClick={() => generatePDF(true)} style={{
@@ -439,15 +435,30 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
                         <img src={'/manku_ci_black_text.png'} width={50} style={{paddingTop: 5, float: 'left'}}
                              alt=""/>
                         <div style={{float: 'left', fontSize: 11, paddingLeft: 20}}>
-                            <div>(주) 만쿠무역</div>
-                            <div>Manku Trading Co., Ltd</div>
-                            <div>서울시 송파구 충민로 52 가든파이브웍스</div>
-                            <div> B동 2층 211호, 212호</div>
-                            <div>Tel : 02-465-7838, Fax : 02-465-7839</div>
+
+                            {infoRef.current.querySelector('#agencyCode').value.startsWith('K') ? <>
+                                <div>(주) 만쿠무역</div>
+                                <div>Manku Trading Co., Ltd</div>
+                                <div>서울시 송파구 충민로 52 가든파이브웍스</div>
+                                <div> B동 2층 211호, 212호</div>
+                                <div>Tel : 02-465-7838, Fax : 02-465-7839</div>
+                            </> : <>
+                                <div>Manku Trading Co.,Ltd</div>
+                                <div>B- 211#, Garden Five Works, 52,</div>
+                                <div>Chungmin-ro,</div>
+                                <div>Songpa-gu, Seoul, South Korea</div>
+                                <div>Postal Code 05839</div>
+                            </>
+                            }
                         </div>
                     </div>
 
-                    <div style={{fontSize: 38, fontWeight: 700, textAlign : 'center'}}>{chechLang() ?<>발&nbsp;&nbsp;&nbsp;&nbsp;주&nbsp;&nbsp;&nbsp;&nbsp;서</> : <>PURCHASE ORDER</> } </div>
+                    <div style={{
+                        fontSize: 38,
+                        fontWeight: 700,
+                        textAlign: 'center'
+                    }}>{chechLang() ? <>발&nbsp;&nbsp;&nbsp;&nbsp;주&nbsp;&nbsp;&nbsp;&nbsp;서</> : <>PURCHASE
+                        ORDER</>} </div>
                     <div style={{width: '40%'}}>
                         <img src={'/manku_stamp_ko.png'} style={{float: 'right'}} width={180} alt=""/>
                     </div>
@@ -511,17 +522,23 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
                         // borderRight: 'none'
                     }}>
                     <thead>
-                    <tr style={{backgroundColor: '#ebf6f7', fontWeight: 'bold', height : 35}}>
+                    <tr style={{backgroundColor: '#ebf6f7', fontWeight: 'bold', height: 35}}>
                         <th>No</th>
                         <th colSpan={3} style={{borderLeft: '1px solid lightGray'}}>Specification</th>
-                        <th colSpan={2} style={{width : '5%',textAlign: 'center', borderLeft: '1px solid lightGray', paddingRight: 10}}>Q`ty</th>
-                        <th style={{width : '15%', textAlign: 'center', borderLeft: '1px solid lightGray'}}>{
-                            chechLang() ?'단가' : 'Unit Price'
+                        <th colSpan={2} style={{
+                            width: '5%',
+                            textAlign: 'center',
+                            borderLeft: '1px solid lightGray',
+                            paddingRight: 10
+                        }}>Q`ty
+                        </th>
+                        <th style={{width: '15%', textAlign: 'center', borderLeft: '1px solid lightGray'}}>{
+                            chechLang() ? '단가' : 'Unit Price'
                         }</th>
-                        <th style={{width : '15%',borderLeft: '1px solid lightGray'}}>{
-                            chechLang() ?'총액' : 'Amount'
+                        <th style={{width: '15%', borderLeft: '1px solid lightGray'}}>{
+                            chechLang() ? '총액' : 'Amount'
                         }</th>
-                        <th style={{width : '15%',borderLeft: '1px solid lightGray'}}>Other</th>
+                        <th style={{width: '15%', borderLeft: '1px solid lightGray'}}>Other</th>
                     </tr>
                     </thead>
 
@@ -539,10 +556,10 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
                         <th colSpan={3} style={{
 
                             borderTop: '1px solid lightGray', border: '1px solid lightGray',
-                            textAlign : 'left',paddingLeft : 10,
-                            borderLeft: 'none', borderRight: 'none', fontSize : 12
+                            textAlign: 'left', paddingLeft: 10,
+                            borderLeft: 'none', borderRight: 'none', fontSize: 12
                         }}>{data?.maker ? data?.maker : '-'}</th>
-                        <th colSpan={2}  style={{
+                        <th colSpan={2} style={{
 
                             borderTop: '1px solid lightGray', border: '1px solid lightGray',
                             borderRight: 'none'
@@ -584,14 +601,30 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
                         lineHeight: 1.7,
                         borderTop: '1px solid black',
                     }}>
-                    <div>· 금일 환율 기준으로 2%이상 인상될 시 , 단가가 인상될 수 있습니다.</div>
-                    <div>· 러-우전쟁 및 COVID-19 장기화로 납기 변동성이 큰 시기입니다. 납기 지연이 발생할 수 있는 점 양해 부탁드립니다.</div>
-                    <div>· 의뢰하신 Model로 기준한 견적이며, 견적 수량 전량 구입시 가격입니다. (긴급 납기시 담당자와 협의 가능합니다.)</div>
-                    <div>· 계좌번호: (기업은행)069-118428-04-010/(주)만쿠무역.</div>
-                    <div>· 성적서 및 품질보증서는 별도입니다.</div>
-                </div>
+                    {
+                        infoRef.current.querySelector('#agencyCode').value.startsWith('K') ? <>
+                            <div>· 금일 환율 기준으로 2%이상 인상될 시 , 단가가 인상될 수 있습니다.</div>
+                            <div>· 러-우전쟁 및 COVID-19 장기화로 납기 변동성이 큰 시기입니다. 납기 지연이 발생할 수 있는 점 양해 부탁드립니다.</div>
+                            <div>· 의뢰하신 Model로 기준한 견적이며, 견적 수량 전량 구입시 가격입니다. (긴급 납기시 담당자와 협의 가능합니다.)</div>
+                            <div>· 계좌번호: (기업은행)069-118428-04-010/(주)만쿠무역.</div>
+                            <div>· 성적서 및 품질보증서는 별도입니다.</div>
+                        </> : <>
+                            <div> * For the invoice* Please indicate few things as below:</div>
+                            <div>1. HS Code 6 Digit</div>
+                            <div>2. Indication of Country of Origin</div>
+                            <div>It has to be written into the remark of every Invoice every time.</div>
+                            <div>And your name, your signature and date of signature have to be put in under the
+                                sentence as well.
+                            </div>
+                            <div>* Please give us Order confirmation. (Advise us if we should pay your bank charge as
+                                well.)
+                            </div>
+                        </>
+                    }
+                        </div>
 
-                <div style={{textAlign: 'center'}}>- 1 -</div>
+                        <div style={{textAlign: 'center'}}>- 1 -
+                </div>
             </div>
 
             <div ref={pdfSubRef}>
@@ -787,7 +820,6 @@ const TotalCalc = () => {
             <div style={{display: 'flex', justifyContent: 'space-between', fontSize: 13.5, padding: '0px 10px'}}>
                 <div style={{textAlign: 'left'}}>₩</div>
                 <div id={'total_unit_price'}></div>
-
 
 
             </div>

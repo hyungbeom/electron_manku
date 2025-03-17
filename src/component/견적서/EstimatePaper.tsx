@@ -235,7 +235,7 @@ const EstimatePaper = ({infoRef, pdfRef, pdfSubRef, tableRef, memberList = [], c
                             })
                         }}
                 >
-                    {['EA', 'SET', 'M', 'FEET', 'ROLL', 'BOX', 'G', 'KG', 'PACK', 'INCH', 'MOQ'].map(v => {
+                    {['ea', 'Set', 'Pack', 'Can', 'Box', 'MOQ', 'Meter', 'Feet', 'Inch', 'Roll', 'g', 'kg', 'oz'].map(v => {
                         // @ts-ignored
                         return <Option style={{fontSize: 11}} value={v}>{v}</Option>
                     })}
@@ -665,7 +665,7 @@ const DataTable = ({src, indexNumber, refList, splitData, setSplitData}) => {
                     <Select value={amountFormat(v.unit)}
                             style={{border: 'none'}}
                             bordered={false} suffixIcon={null}>
-                        {['EA', 'SET', 'M', 'FEET', 'ROLL', 'BOX', 'G', 'KG', 'PACK', 'INCH', 'MOQ'].map(v => {
+                        {['ea', 'Set', 'Pack', 'Can', 'Box', 'MOQ', 'Meter', 'Feet', 'Inch', 'Roll', 'g', 'kg', 'oz'].map(v => {
                             // @ts-ignored
                             return <Option style={{fontSize: 11}} value={v}>{v}</Option>
                         })}

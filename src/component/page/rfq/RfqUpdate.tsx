@@ -79,19 +79,20 @@ export default function RqfUpdate({
     useEffect(() => {
         setLoading(true)
         getDataInfo().then(v => {
-            const {estimateRequestDetail, attachmentFileList} = v;
-            console.log(estimateRequestDetail, 'fileManage.getFormatFiles(attachmentFileList):')
-            setFileList(fileManage.getFormatFiles(attachmentFileList));
-            setOriginFileList(attachmentFileList);
-            setInfo({
-                ...estimateRequestDetail,
-                uploadType: 0,
-                managerAdminId: estimateRequestDetail['managerAdminId'] ? estimateRequestDetail['managerAdminId'] : estimateRequestDetail['createdBy']
-            })
-            estimateRequestDetail[listType] = [...estimateRequestDetail[listType], ...commonFunc.repeatObject(rfqInfo['write']['defaultData'], 100 - estimateRequestDetail[listType].length)]
+          if(v) {
+              const {estimateRequestDetail, attachmentFileList} = v;
+              console.log(estimateRequestDetail,'estimateRequestasdDetail::')
+              setFileList(fileManage.getFormatFiles(attachmentFileList));
+              setOriginFileList(attachmentFileList);
+              setInfo({
+                  ...estimateRequestDetail,
+                  uploadType: 0,
+                  managerAdminId: estimateRequestDetail['managerAdminId'] ? estimateRequestDetail['managerAdminId'] : estimateRequestDetail['createdBy']
+              })
+              estimateRequestDetail[listType] = [...estimateRequestDetail[listType], ...commonFunc.repeatObject(rfqInfo['write']['defaultData'], 100 - estimateRequestDetail[listType].length)]
 
-            setTableData(estimateRequestDetail[listType]);
-
+              setTableData(estimateRequestDetail[listType]);
+          }
             setLoading(false)
         })
     }, [updateKey['rfq_update']])

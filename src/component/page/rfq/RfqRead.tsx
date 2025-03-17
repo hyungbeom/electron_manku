@@ -158,7 +158,7 @@ export default function RfqRead({getPropertyId, getCopyPage, }:any) {
                                 {rangePickerForm({title: '작성일자', id: 'searchDate', onChange: onChange, data: info})}
                                 {selectBoxForm({
                                     title: '회신 여부', id: 'searchReplyStatus', onChange: onChange, data: info, list: [
-                                        {value: 0, label: '전체'},
+                                        {value: '', label: '전체'},
                                         {value: 1, label: '회신'},
                                         {value: 2, label: '미회신'}
                                     ]
