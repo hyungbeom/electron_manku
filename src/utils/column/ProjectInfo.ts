@@ -3,7 +3,7 @@ import moment from "moment";
 export const projectInfo = {
     write: {
         columnWidth: [160, 220, 220, 200, 55, 55, 65, 45, 120, 120, 120, 120, 80, 45, 160, 130, 130, 180, 160, 120, 180],
-        column: ['연결 Inquiry No.', 'Model', 'Maker', 'Item','수식', '마진율', '단위', '수량', '매출 단가', '매출 총액', '매입 단가', '매입 총액','배송비', '화폐단위', '납기', '매입처명', '매입처 담당자명', '매입처 연락처', '매입처 이메일', '관련링크', '납품기한', '비고'],
+        column: ['연결 Inquiry No.', 'Model', 'Maker', 'Item','수식', '마진율', '단위', '수량', '매출 단가', '매출 총액', '매입 단가', '매입 총액','배송비', '화폐단위', '납기(weeks)', '매입처명', '매입처 담당자명', '매입처 연락처', '매입처 이메일', '관련링크', '납품기한', '비고'],
         columnList: [
             {data: "connectInquiryNo", type: "text"},
             {data: "model", type: "text"},
@@ -71,7 +71,7 @@ export const projectInfo = {
             "totalPurchase": "매입 총액",
             "deliveryPrice": "배송비",
             "currencyUnit": "화폐단위",
-            "deliveryDate": "납기",
+            "deliveryDate": "납기(weeks)",
             "agencyName": "매입처명",
             "agencyManagerName": "매입처 담당자명",
             "agencyManagerPhone": "매입처 연락처",
@@ -123,7 +123,7 @@ export const projectInfo = {
 export const rfqInfo = {
     write: {
         columnWidth: [220, 45, 45, 55, 120, 120, 45, 75, 75, 150],
-        column: ['Model', '수량', '단위', '화폐단위', '매입 단가', '매입 총액', '납기', '회신여부', '회신일', '비고'],
+        column: ['Model', '수량', '단위', '화폐단위', '매입 단가', '매입 총액', '납기(weeks)', '회신여부', '회신일', '비고'],
         columnList: [
             {data: "model", type: "text"},
             {data: "quantity", type: "numeric"},
@@ -165,7 +165,7 @@ export const rfqInfo = {
             "net": '매입 단가',                // 매입단가
             "totalNet": '매입 총액',                // 매입단가
             "serialNumber": '',       // 항목 순서 (1부터 시작)
-            "deliveryDate": '납기',      // 납기
+            "deliveryDate": '납기(weeks)',      // 납기
             "content": "회신여부",       // 내용
             "replyDate": '회신일',         // 회신일
             "remarks": "비고"            // 비고
@@ -279,10 +279,10 @@ export const estimateInfo = {
             "quantity": '=SUM(B1:B100)',                  // 수량
             "unit": "",                   // 단위
             "currencyUnit": '',          // CURR
-            "net": '=SUM(E1:G100)',                 // 매입단가
-            "totalNet": '=SUM(F1:H100)',                 // 매입단가
-            "unitPrice": '=SUM(G1:E100)',           // 단가
-            "total": '=SUM(H1:F100)',           // 단가
+            "net": '=SUM(E1:E100)',                 // 매입단가
+            "totalNet": '=SUM(F1:F100)',                 // 매입단가
+            "unitPrice": '=SUM(G1:G100)',           // 단가
+            "total": '=SUM(H1:H100)',           // 단가
             "marginRate": ''                 // 매입단가
 
         },

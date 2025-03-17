@@ -12,7 +12,8 @@ export const NoticeProvider = ({ children }) => {
             description: description,
             onClick: onClick,
             duration: 10,
-            style: style
+            style: style,
+            placement: "bottomLeft"
         });
     };
 

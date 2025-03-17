@@ -48,7 +48,6 @@ import DomesticCustomerUpdate from "@/component/page/data/customer/domestic/Dome
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import StoreUpdate from "@/component/page/store/StoreUpdate";
 import {useRouter} from "next/router";
-import {notification} from "antd";
 
 
 function findTitleByKey(data, key) {
@@ -76,14 +75,12 @@ export default function Main() {
         layout: {
             type: "row",
             weight: 100,
-            children: [{ type: "tabset", weight: 50, children: [] }],
+            children: [{type: "tabset", weight: 50, children: []}],
         },
     }));
 
 
-
     const [activeTabId, setActiveTabId] = useState<string | null>(null);
-
 
 
     const layoutRef = useRef<any>(null);
@@ -127,7 +124,7 @@ export default function Main() {
 
         // 🔥 modelRef.current 사용하여 불필요한 JSON 변환 제거
         const existingTabs = modelRef.current.getRoot().getChildren().flatMap(tabset =>
-            tabset.getChildren().map((tab:any) => tab.getComponent())
+            tabset.getChildren().map((tab: any) => tab.getComponent())
         );
 
         const title = findTitleByKey(treeData, selectedKey);
@@ -145,10 +142,10 @@ export default function Main() {
         }
 
         // if (event?.event === 'select') {
-            // 🔥 useRef 활용하여 불필요한 리렌더링 방지
-            if (!copyPageInfo[selectedKey]) {
-                setCopyPageInfo(prev => ({ ...prev, [selectedKey]: {} }));
-            }
+        // 🔥 useRef 활용하여 불필요한 리렌더링 방지
+        if (!copyPageInfo[selectedKey]) {
+            setCopyPageInfo(prev => ({...prev, [selectedKey]: {}}));
+        }
         // }
 
         // 🔥 이미 존재하는 탭이면 추가하지 않음
@@ -165,34 +162,34 @@ export default function Main() {
         project_write: {name: "프로젝트 등록", component: <ProjectWrite/>},
         project_read: {
             name: "프로젝트 조회",
-            component: <ProjectRead   />
+            component: <ProjectRead/>
         },
-        project_update: {name: "프로젝트 수정", component: <ProjectUpdate updateKey={updateKey} />},
+        project_update: {name: "프로젝트 수정", component: <ProjectUpdate updateKey={updateKey}/>},
 
         rfq_write: {name: "견적의뢰 등록", component: <RfqWrite/>},
-        rfq_read: {name: "견적의뢰 조회", component: <RfqRead   />},
-        rfq_update: {name: "견적의뢰 수정", component: <RqfUpdate updateKey={updateKey} />},
-        rfq_mail_send: {name: "메일전송", component: <RfqMailSend  />},
+        rfq_read: {name: "견적의뢰 조회", component: <RfqRead/>},
+        rfq_update: {name: "견적의뢰 수정", component: <RqfUpdate updateKey={updateKey}/>},
+        rfq_mail_send: {name: "메일전송", component: <RfqMailSend/>},
 
         estimate_write: {name: "견적서 등록", component: <EstimateWrite/>},
         estimate_read: {
             name: "견적서 조회",
-            component: <EstimateRead   />
+            component: <EstimateRead/>
         },
-        estimate_update: {name: "견적서 수정", component: <EstimateUpdate updateKey={updateKey} />},
+        estimate_update: {name: "견적서 수정", component: <EstimateUpdate updateKey={updateKey}/>},
 
         order_write: {name: "발주서 등록", component: <OrderWrite/>},
-        order_read: {name: "발주서 조회", component: <OrderRead   />},
-        order_update: {name: "발주서 수정", component: <OrderUpdate updateKey={updateKey} />},
+        order_read: {name: "발주서 조회", component: <OrderRead/>},
+        order_update: {name: "발주서 수정", component: <OrderUpdate updateKey={updateKey}/>},
 
         store_write: {name: "입고 등록", component: <StoreWrite/>},
-        store_read: {name: "입고 조회", component: <StoreRead   />},
-        store_update: {name: "입고 수정", component: <StoreUpdate updateKey={updateKey} />},
+        store_read: {name: "입고 조회", component: <StoreRead/>},
+        store_update: {name: "입고 수정", component: <StoreUpdate updateKey={updateKey}/>},
 
         delivery_write: {name: "배송 등록", component: <DeliveryWrite/>},
         delivery_read: {
             name: "배송 조회",
-            component: <DeliveryRead   />
+            component: <DeliveryRead/>
         },
         delivery_update: {name: "배송 수정", component: <DeliveryUpdate updateKey={updateKey}/>},
 
@@ -200,7 +197,7 @@ export default function Main() {
         remittance_domestic_write: {name: "국내송금 등록", component: <RemittanceDomesticWrite/>},
         remittance_domestic_read: {
             name: "국내송금 조회",
-            component: <RemittanceDomesticRead   />
+            component: <RemittanceDomesticRead/>
         },
         remittance_domestic_update: {name: "국내송금 수정", component: <RemittanceDomesticUpdate updateKey={updateKey}/>},
 
@@ -208,49 +205,49 @@ export default function Main() {
         domestic_agency_write: {name: "국내매입처 등록", component: <DomesticAgencyWrite/>},
         domestic_agency_read: {
             name: "국내매입처 조회",
-            component: <DomesticAgencyRead   />
+            component: <DomesticAgencyRead/>
         },
         domestic_agency_update: {
             name: "국내매입처 수정",
-            component: <DomesticAgencyUpdate updateKey={updateKey} />
+            component: <DomesticAgencyUpdate updateKey={updateKey}/>
         },
 
         overseas_agency_write: {name: "해외매입처 등록", component: <OverseasAgencyWrite/>},
         overseas_agency_read: {
             name: "해외매입처 조회",
-            component: <OverseasAgencyRead   />
+            component: <OverseasAgencyRead/>
         },
         overseas_agency_update: {
             name: "해외매입처 수정",
-            component: <OverseasAgencyUpdate updateKey={updateKey} />
+            component: <OverseasAgencyUpdate updateKey={updateKey}/>
         },
 
 
         domestic_customer_write: {name: "국내고객사 등록", component: <DomesticCustomerWrite/>},
         domestic_customer_read: {
             name: "국내고객사 조회",
-            component: <DomesticCustomerRead   />
+            component: <DomesticCustomerRead/>
         },
         domestic_customer_update: {name: "국내고객사 수정", component: <DomesticCustomerUpdate updateKey={updateKey}/>},
 
         overseas_customer_write: {name: "해외고객사 등록", component: <OverseasCustomerWrite/>},
         overseas_customer_read: {
-            name: "해외고객사 조회", component: <OverseasCustomerRead  />
+            name: "해외고객사 조회", component: <OverseasCustomerRead/>
         },
         overseas_customer_update: {
             name: "해외고객사 수정",
-            component: <OverseasCustomerUpdate updateKey={updateKey} />
+            component: <OverseasCustomerUpdate updateKey={updateKey}/>
         },
 
 
         maker_write: {name: "메이커 등록", component: <MakerWrite/>},
-        maker_read: {name: "메이커 조회", component: <MakerRead   />},
-        maker_update: {name: "메이커 수정", component: <MakerUpdate updateKey={updateKey} />},
+        maker_read: {name: "메이커 조회", component: <MakerRead/>},
+        maker_update: {name: "메이커 수정", component: <MakerUpdate updateKey={updateKey}/>},
 
 
         hscode_read: {
             name: "HS CODE 조회",
-            component: <HcodeRead  />
+            component: <HcodeRead/>
         },
 
 
@@ -265,7 +262,7 @@ export default function Main() {
                 getPropertyId: getPropertyId,
                 copyPageInfo: copyPageInfo,
                 layoutRef: layoutRef,
-                getCopyPage:getCopyPage
+                getCopyPage: getCopyPage
             })}
         </div>;
     };
@@ -309,7 +306,7 @@ export default function Main() {
         const rootNode = modelRef.current.getRoot();
         const tabsets = rootNode.getChildren();
         for (const tabset of tabsets) {
-            const tabs:any = tabset.getChildren();
+            const tabs: any = tabset.getChildren();
             for (const tab of tabs) {
                 if (tab.getName() === selectMenu) {
                     modelRef.current.doAction(Actions.selectTab(tab.getId()));
@@ -430,7 +427,6 @@ export default function Main() {
                             }
                             renderValues.content = (
                                 <span
-
                                     onMouseDown={(event) => {
                                         if (event.button === 1) { // 🔥 가운데 버튼 클릭 감지
                                             event.preventDefault(); // 기본 동작 방지 (브라우저 탭 닫힘 방지)
