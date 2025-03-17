@@ -183,7 +183,7 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
     <div style="font-size: 15px; font-weight: 800;">${name} ${position}(${englishName})/${position}</div>
     <div style="font-weight: normal;">Mobile ${contactNumber}</div>
     <div style="color: #56cbdb; font-weight: 500;">Manku Trading Co., Ltd.</div>
-    <div style="font-weight: 500;">B-802#, 114, Beobwon-ro, Songpa-gu, Seoul, Republic of Korea</div>
+    <div style="font-weight: 500;">B- 211#, Garden Five Works, 52, Chungmin- ro , Songpa-gu, Seoul, South Korea</div>
     <div style="font-weight: 500;">Post Code 05854</div>
     <div style="text-decoration: underline;">Tel: +82/2-465-7838</div>
     <div style="text-decoration: underline;">Fax: +82/2-465-7839</div>
@@ -208,24 +208,24 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
 
         })
 
-        // await getData.post('estimate/sendMailEstimateRequests', {mailList: list}).then(v => {
-        //     if (v.data.code === 1) {
-        //
-        //         console.log(info['title'],'info:')
-        //         notificationAlert('success', '💾메일전송 완료',
-        //             <>
-        //                 <div>{info[0]['title']} {info.length > 1 ? ('외' + (info.length -1) + '건이 발송 완료되었습니다.') : ''} </div>
-        //                 <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
-        //             </>
-        //             ,null,
-        //             {}
-        //         )
-        //         // message.success(v.data.message);
-        //     } else {
-        //         message.warning(v.data.message);
-        //     }
-        //     setIsModalOpen(false)
-        // }, err => console.log(err, '::::err'))
+        await getData.post('estimate/sendMailEstimateRequests', {mailList: list}).then(v => {
+            if (v.data.code === 1) {
+
+                console.log(info['title'],'info:')
+                notificationAlert('success', '💾메일전송 완료',
+                    <>
+                        <div>{info[0]['title']} {info.length > 1 ? ('외' + (info.length -1) + '건이 발송 완료되었습니다.') : ''} </div>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    ,null,
+                    {}
+                )
+                // message.success(v.data.message);
+            } else {
+                message.warning(v.data.message);
+            }
+            setIsModalOpen(false)
+        }, err => console.log(err, '::::err'))
     }
 
     function preview(e, data) {
