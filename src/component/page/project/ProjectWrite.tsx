@@ -292,7 +292,7 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                     {datePickerForm({title: '마감일자', id: 'dueDate'})}
                                 </BoxCard>
                             </Panel>
-                            <PanelResizeHandle id={'resize'} className={'ground'}/>
+                            <PanelResizeHandle/>
                             <Panel defaultSize={sizes[1]} minSize={5}>
                                 <BoxCard title={'고객사 정보'} tooltip={tooltipInfo('customer')}>
                                     {inputForm({

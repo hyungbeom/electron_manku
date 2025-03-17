@@ -108,7 +108,7 @@ export default function MakerWrite({getPropertyId, copyPageInfo}:any) {
                         })}
                     </BoxCard>
                 </Panel>
-                <PanelResizeHandle id={'resize'} className={'ground'}/>
+                <PanelResizeHandle/>
                 <Panel defaultSize={sizes[1]} minSize={5}>
                     <BoxCard title={'담당자 정보'} tooltip={tooltipInfo('customer')}>
                         {inputForm({

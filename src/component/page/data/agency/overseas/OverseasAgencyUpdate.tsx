@@ -169,7 +169,7 @@ export default function OverseasAgencyUpdate({ updateKey, getCopyPage}:any) {
                                     {inputForm({title: '아이템', id: 'item'})}
                                 </BoxCard>
                             </Panel>
-                            <PanelResizeHandle id={'resize'} className={'ground'}/>
+                            <PanelResizeHandle/>
                             <Panel defaultSize={sizes[1]} minSize={5}>
                                 <BoxCard title={'매입처 정보'}>
                                     {inputForm({title: '딜러/제조', id: 'dealerType'})}
@@ -184,7 +184,7 @@ export default function OverseasAgencyUpdate({ updateKey, getCopyPage}:any) {
                                     {inputNumberForm({title: '마진', id: 'margin', suffix: '%'})}
                                 </BoxCard>
                             </Panel>
-                            <PanelResizeHandle id={'resize'} className={'ground'}/>
+                            <PanelResizeHandle/>
                             <Panel defaultSize={sizes[2]} minSize={5}>
                                 <BoxCard title={'ETC'}>
                                     {inputForm({title: '송금중개은행', id: 'intermediaryBank'})}
@@ -194,7 +194,7 @@ export default function OverseasAgencyUpdate({ updateKey, getCopyPage}:any) {
                                 </BoxCard>
                             </Panel>
 
-                            <PanelResizeHandle id={'resize'} className={'ground'}/>
+                            <PanelResizeHandle/>
                             <Panel defaultSize={sizes[3]} minSize={5}>
                                 <BoxCard title={'ETC'}>
                                     {inputForm({title: '국가', id: 'country',})}
@@ -203,7 +203,7 @@ export default function OverseasAgencyUpdate({ updateKey, getCopyPage}:any) {
                                     {inputForm({title: 'FTA NO', id: 'ftaNumber'})}
                                 </BoxCard>
                             </Panel>
-                            <PanelResizeHandle id={'resize'} className={'ground'}/>
+                            <PanelResizeHandle  />
                             <Panel defaultSize={sizes[4]} minSize={5}>
                                 <BoxCard title={'ETC'}>
                                     {datePickerForm({title: '거래시작일', id: 'tradeStartDate'})}
@@ -211,7 +211,7 @@ export default function OverseasAgencyUpdate({ updateKey, getCopyPage}:any) {
                                     {inputForm({title: '홈페이지', id: 'homepage'})}
                                 </BoxCard>
                             </Panel>
-                            <PanelResizeHandle id={'resize'} className={'ground'}/>
+                            <PanelResizeHandle />
                             <Panel defaultSize={sizes[5]} minSize={5}>
                             </Panel>
                         </PanelGroup>

@@ -165,7 +165,7 @@ export default function DomesticAgencyWrite({copyPageInfo, getPropertyId}:any) {
                                     {inputForm({title: '계좌번호', id: 'bankAccountNumber'})}
                                 </BoxCard>
                             </Panel>
-                            <PanelResizeHandle id={'resize'} className={'ground'}/>
+                            <PanelResizeHandle/>
                             <Panel defaultSize={sizes[1]} minSize={5}>
                                 <BoxCard title={'Maker'}>
                                     {inputForm({title: 'Maker', id: 'maker'})}
@@ -173,7 +173,7 @@ export default function DomesticAgencyWrite({copyPageInfo, getPropertyId}:any) {
                                     {inputForm({title: '홈페이지', id: 'homepage'})}
                                 </BoxCard>
                             </Panel>
-                            <PanelResizeHandle id={'resize'} className={'ground'}/>
+                            <PanelResizeHandle/>
                             <Panel defaultSize={sizes[2]} minSize={5}>
                                 <BoxCard title={'ETC'}>
                                     {datePickerForm({title: '거래시작일', id: 'tradeStartDate'})}
@@ -215,7 +215,7 @@ export default function DomesticAgencyWrite({copyPageInfo, getPropertyId}:any) {
                                     {inputNumberForm({title: '마진', id: 'margin', suffix: '%'})}
                                 </BoxCard>
                             </Panel>
-                            <PanelResizeHandle id={'resize'} className={'ground'}/>
+                            <PanelResizeHandle/>
                             <Panel defaultSize={sizes[3]} minSize={5}>
                             </Panel>
                         </PanelGroup>
