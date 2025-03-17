@@ -139,13 +139,21 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         const tableList = tableRef.current?.getSourceData();
 
         const filterTableList = commonManage.filterEmptyObjects(tableList, ['model', 'item', 'maker'])
-        if (!filterTableList.length) {
+
+        const resultFilterTableList =  filterTableList.map(v=>{
+                return {
+                    ...v, unitPrice : isNaN(v.unitPrice) ? '' : v.unitPrice,  purchasePrice : isNaN(v.purchasePrice) ? '' : v.purchasePrice
+                }
+
+        })
+        console.log(resultFilterTableList,'resultFilterTableList::')
+        if (!resultFilterTableList.length) {
             return message.warn('하위 데이터 1개 이상이여야 합니다');
         }
 
         setLoading(true)
         const formData: any = new FormData();
-        commonManage.setInfoFormData(infoData, formData, listType, filterTableList)
+        commonManage.setInfoFormData(infoData, formData, listType, resultFilterTableList)
         commonManage.getUploadList(fileRef, formData);
         formData.delete('createdDate')
         formData.delete('modifiedDate')
@@ -204,7 +212,6 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     useEventListener('keydown', (e: any) => {
         if (e.ctrlKey && e.key === "s") {
             e.preventDefault();
-            console.log(layoutRef.current, 'layoutRef.current:')
             const model = layoutRef.current.props.model;
             const activeTab = model.getActiveTabset()?.getSelectedNode();
             if (activeTab?.renderedName === '프로젝트 등록') {
@@ -344,7 +351,7 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                     : <></>}
             </MainCard>
 
-            <Table data={tableData} column={projectInfo['write']} funcButtons={['print']} ref={tableRef}
+            <Table data={tableData} column={projectInfo['write']} funcButtons={['print']} ref={tableRef} infoRef={infoRef}
                    type={'project_write_column'}/>
         </div>
     </Spin>

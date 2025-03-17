@@ -144,13 +144,21 @@ export default function ProjectUpdate({
         const tableList = tableRef.current?.getSourceData();
 
         const filterTableList = commonManage.filterEmptyObjects(tableList, ['model', 'item', 'maker'])
-        if (!filterTableList.length) {
+
+        const resultFilterTableList =  filterTableList.map(v=>{
+            return {
+                ...v, unitPrice : isNaN(v.unitPrice) ? '' : v.unitPrice,  purchasePrice : isNaN(v.purchasePrice) ? '' : v.purchasePrice
+            }
+
+        })
+
+        if (!resultFilterTableList.length) {
             return message.warn('하위 데이터 1개 이상이여야 합니다');
         }
 
         setLoading(true)
         const formData: any = new FormData();
-        commonManage.setInfoFormData(infoData, formData, listType, filterTableList)
+        commonManage.setInfoFormData(infoData, formData, listType, resultFilterTableList)
         commonManage.getUploadList(fileRef, formData);
         commonManage.deleteUploadList(fileRef, formData, originFileList)
         formData.delete('createdDate')

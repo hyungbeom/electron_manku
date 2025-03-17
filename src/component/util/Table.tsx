@@ -119,7 +119,7 @@ const Table = forwardRef(({
                         data[row].total = `=H${row + 1}*I${row + 1}`;
                     } else {
                         data[row].totalPurchase = `= (H${row + 1} * K${row + 1}) + M${row + 1}`;
-                        data[row].unitPrice = `=H${row + 1}`;
+                        // data[row].unitPrice = `=H${row + 1}`;
                         data[row].total = `=H${row + 1}*I${row + 1}`;
                     }
                     setTableData(data);

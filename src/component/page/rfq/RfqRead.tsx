@@ -187,11 +187,10 @@ export default function RfqRead({getPropertyId, getCopyPage, }:any) {
                                     data: info
                                 })}
                                 {inputForm({
-                                    title: '고객사담당자', id: '',
+                                    title: '고객사담당자', id: 'searchManagerName',
                                     onChange: onChange,
                                     handleKeyPress: handleKeyPress,
-                                    data: info,
-                                    placeHolder : '백엔드 연동 해야함'
+                                    data: info
                                 })}
 
                             </BoxCard>

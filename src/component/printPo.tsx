@@ -130,9 +130,9 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
                     : [
                     {title: 'MESSER', value: infoData.agencyName, id: 'ourPoNo'},
                     {title: 'DATE', value: infoData.writtenDate, id: 'writtenDate'},
-                    {title: 'ATTN', value: infoData.attnTo, id: 'attnTo'},
+                    {title: 'ATTN', value: infoData.agencyManagerName, id: 'attnTo'},
                     {title: 'Contact Person', value: infoData.managerAdminName, id: 'ourPoNo'},
-                    {title: 'YOUR OFFER NO.', value: infoData.yourPoNo, id: 'ourPoNo'},
+                    {title: 'YOUR OFFER NO.', value: infoData.attnTo, id: 'ourPoNo'},
                     {title: 'TEL', value: infoData.managerPhoneNumber, id: 'ourPoNo'},
                     {title: 'MANKU No.', value: infoData.documentNumberFull, id: 'ourPoNo'},
                     {title: 'E-mail', value: infoData.managerEmail, id: 'ourPoNo'},

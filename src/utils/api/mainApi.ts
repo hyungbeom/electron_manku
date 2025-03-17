@@ -39,6 +39,7 @@ export const getAttachmentFileList = async ({data}) => {
 
 export const searchRfq = async ({data}) => {
     const result = await getData.post('estimate/getEstimateRequestList', data);
+    console.log(result?.data,'result?.data:')
     const {estimateRequestList, pageInfo} = result?.data?.entity
     return {data: estimateRequestList, pageInfo: pageInfo}
 };

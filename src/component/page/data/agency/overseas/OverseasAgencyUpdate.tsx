@@ -111,8 +111,9 @@ export default function OverseasAgencyUpdate({ updateKey, getCopyPage}:any) {
         // console.log(filterTableList,'infoData::')
         // setLoading(true)
         infoData[listType] = filterTableList;
-        infoData['overseasAgencyId'] = updateKey['overseas_agency_update']
-        await getData.post('agency/updateOverseasAgency', {data : infoData}).then(v => {
+        infoData['overseasAgencyId'] = updateKey['overseas_agency_update'];
+        console.log(infoData,'infoData:::')
+        await getData.post('agency/updateOverseasAgency',  infoData).then(v => {
             if (v.data.code === 1) {
                 notificationAlert('success', '💾해외매입처 수정완료',
                     <>

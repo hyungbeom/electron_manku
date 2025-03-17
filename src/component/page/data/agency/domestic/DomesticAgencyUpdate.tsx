@@ -90,7 +90,7 @@ export default function DomesticAgencyUpdate({updateKey, getCopyPage}:any) {
         // setLoading(true)
         infoData[listType] = filterTableList;
         infoData['agencyId'] = updateKey['domestic_agency_update']
-        await getData.post('agency/updateAgency', {data : infoData}).then(v => {
+        await getData.post('agency/updateAgency', infoData).then(v => {
             if (v.data.code === 1) {
                 notificationAlert('success', '💾국내매입처 수정완료',
                     <>

@@ -138,14 +138,14 @@ export default function OrderRead({getPropertyId, getCopyPage}:any) {
                             <BoxCard title={''}>
                                 {rangePickerForm({title: '발주일자', id: 'searchDate', onChange: onChange, data: info})}
                                 {selectBoxForm({
-                                    title: '입고 여부', id: '', onChange: onChange, data: info, list: [
-                                        {value: 0, label: '전체'},
-                                        {value: 1, label: '입고'},
-                                        {value: 2, label: '미입고'}
+                                    title: '입고 여부', id: 'searchStockStatus', onChange: onChange, data: info, list: [
+                                        {value: '', label: '전체'},
+                                        {value: '입고', label: '입고'},
+                                        {value: '미입고', label: '미입고'}
                                     ]
                                 })}
                                 {inputForm({
-                                    title: '등록직원명', id: '',
+                                    title: '등록직원명', id: 'searchManagerName',
                                     onChange: onChange,
                                     handleKeyPress: handleKeyPress,
                                     data: info,

@@ -286,7 +286,7 @@ export default function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: 
                     <div id={'agencyManagerPhoneNumber'}/>
 
                     {mini ? <div>
-                            <TopBoxCard title={''} grid={'100px 80px 80px 110px 110px 300px'}>
+                            <TopBoxCard title={''} grid={'100px 80px 80px 110px 110px 110px 300px'}>
                                 {datePickerForm({
                                     title: '작성일',
                                     id: 'writtenDate',
@@ -321,6 +321,10 @@ export default function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: 
                                     // data: info,
                                     disabled: true,
                                     placeHolder: '자동생성'
+                                })}
+                                {datePickerForm({
+                                    title: '마감일자(예상)', id: 'dueDate'
+                                    // , onChange: onChange, data: info
                                 })}
                                 {inputForm({
                                     title: 'RFQ No.',
@@ -365,15 +369,20 @@ export default function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: 
                                             // data: info
                                         })}
                                         {inputForm({
+                                            title: '연락처',
+                                            id: '',
+                                            // onChange: onChange,
+                                            // data: info
+                                            placeholder : '데이터매핑 필요'
+                                        })}
+                                        {inputForm({
                                             title: '이메일',
                                             id: 'agencyManagerEmail',
                                             // onChange: onChange,
                                             // data: info
                                         })}
-                                        {datePickerForm({
-                                            title: '마감일자(예상)', id: 'dueDate'
-                                            // , onChange: onChange, data: info
-                                        })}
+
+
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>

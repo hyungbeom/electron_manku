@@ -14,7 +14,7 @@ export function DriveUploadComp({
                                 }) {
     const fileInputRef = useRef(null);
 
-    const uploadTypeRef= useRef(null);
+    const uploadTypeRef = useRef(null);
     const [editingFileId, setEditingFileId] = useState(null); // 수정 중인 파일 ID
     const [tempFileName, setTempFileName] = useState(""); // 임시 파일 이름 저장
     const [fileExtension, setFileExtension] = useState(""); // 파일 확장자 저장
@@ -203,21 +203,64 @@ export function DriveUploadComp({
         setIsDragging(false);
         setDragCounter(0);
 
+
         // 파일 읽기
         const droppedFiles = Array.from(event.dataTransfer.files);
+
+
         if (droppedFiles.length > 0) {
+            const file = droppedFiles.map((file: any) => ({
+                uid: file.name + "_" + Date.now(),
+                name: file.name,
+                originFileObj: file,
+                type: file.type,
+            }))
             const newFileList = [
                 ...fileList,
-                ...droppedFiles.map((file: any) => ({
-                    uid: file.name + "_" + Date.now(),
-                    name: file.name,
-                    originFileObj: file,
-                    type: file.type,
-                })),
+                ...file,
             ];
 
-            setFileList(newFileList);
+            const updatedFileList = newFileList.map(f => {
+                if (f.uid === file[0].uid) {
 
+
+                    // 현재 numb 그룹 내의 파일 이름에서 번호 추출
+                    const existingNumbers = newFileList
+                        .filter(file => file.name.startsWith(`0${uploadTypeRef.current.value}.`)) // 현재 numb 그룹만 필터링
+                        .map(file => {
+                            const match = file.name.match(/^0\d+\.(\d+)/); // 번호 추출
+                            return match ? parseInt(match[1], 10) : null;
+                        })
+                        .filter(num => num !== null) // 유효한 번호만 필터링
+                        .sort((a, b) => a - b); // 번호 정렬
+
+                    // 첫 번째 빈 번호 찾기
+                    let newNumber = 1;
+                    for (let i = 0; i < existingNumbers.length; i++) {
+                        if (existingNumbers[i] !== i + 1) {
+                            newNumber = i + 1;
+                            break;
+                        } else {
+                            newNumber = existingNumbers.length + 1;
+                        }
+                    }
+
+                    // 기존 이름의 나머지 부분 추출
+                    const match = f.name.match(/^0\d+\.\d+\s(.+)$/); // 규칙 이후의 이름 추출
+                    const originalName = match ? match[1] : f.name; // 기존 이름 유지
+
+
+                    // 이름 수정된 파일 반환 (originFileObj 유지)
+                    return {
+                        ...f,
+                        name: `0${parseInt(uploadTypeRef.current.value)}.${newNumber} ${originalName}`,
+                        originFileObj: f.originFileObj, // 기존 originFileObj 유지
+                    };
+                }
+                return f; // 다른 파일은 그대로 유지
+            });
+
+            setFileList(updatedFileList)
             if (fileRef.current) {
                 fileRef.current.fileList = newFileList;
             }
@@ -313,8 +356,18 @@ export function DriveUploadComp({
                 maxCount={13}
             >
 
-                <div style={{width: '100%', display: 'flex', backgroundColor : 'white', height : 25, position : 'absolute', justifyContent : 'space-between', top :45, left  : 0, zIndex : 10}}>
-                    <Button style={{fontSize: 11, left : 10}} size={'small'}
+                <div style={{
+                    width: '100%',
+                    display: 'flex',
+                    backgroundColor: 'white',
+                    height: 25,
+                    position: 'absolute',
+                    justifyContent: 'space-between',
+                    top: 45,
+                    left: 0,
+                    zIndex: 10
+                }}>
+                    <Button style={{fontSize: 11, left: 10}} size={'small'}
                             icon={<UploadOutlined/>} type={'primary'}>Upload</Button>
                     <select ref={uploadTypeRef} onClick={e => {
                         e.preventDefault();

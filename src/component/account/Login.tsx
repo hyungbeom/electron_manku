@@ -8,6 +8,7 @@ import {getData} from "@/manage/function/api";
 import {setCookies} from "@/manage/function/cookie";
 import message from "antd/lib/message";
 import LoginButton from "@/component/Sample";
+import {DownCircleFilled, UpCircleFilled} from "@ant-design/icons";
 
 export default function Login() {
     const router = useRouter();
@@ -48,18 +49,24 @@ export default function Login() {
         }
     }
 
+    const [adminLogin, setAdminLogin] = useState(false);
+    console.log(adminLogin,'adminLogin:')
     return <>
-        <Input id={'adminName'} value={info['adminName']} onChange={infoChange} style={{borderRadius: 5}}
-               placeholder={'input your id'}/>
-        <Password id={'password'} value={info['password']} onKeyDown={handleKeyPressDoc} onChange={infoChange}
-                  style={{borderRadius: 5}}
-                  placeholder={'input your password'}/>
-        <div style={{textAlign: 'left'}}>
-            <Checkbox style={{color: 'gray'}}>아이디저장</Checkbox>
-        </div>
-
-        <Button type={'primary'} style={{height: '100%', borderRadius: 5}} onClick={getLogin}>LOGIN</Button>
-        <div style={{textAlign: 'center'}}>or</div>
+        <Button style={{borderRadius : 5}} onClick={()=>{
+            setAdminLogin(v=> !v)
+        }}>일반유저 로그인 {!adminLogin? <DownCircleFilled/> : <UpCircleFilled />}</Button>
+        {adminLogin ? <>
+            <Input id={'adminName'} value={info['adminName']} onChange={infoChange} style={{borderRadius: 5}}
+                   placeholder={'input your id'}/>
+            <Password id={'password'} value={info['password']} onKeyDown={handleKeyPressDoc} onChange={infoChange}
+                      style={{borderRadius: 5}}
+                      placeholder={'input your password'}/>
+            <div style={{textAlign: 'left'}}>
+                <Checkbox style={{color: 'gray'}}>아이디저장</Checkbox>
+            </div>
+            <Button type={'primary'} style={{height: '100%', borderRadius: 5}} onClick={getLogin}>LOGIN</Button>
+            <div style={{textAlign: 'center'}}>or</div>
+        </> : <></>}
         <LoginButton/>
     </>
 }

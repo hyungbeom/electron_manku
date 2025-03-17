@@ -465,8 +465,10 @@ export const orderReadInitial = {
     "searchDate": [moment().subtract(6, 'months').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],              // 작성일자 시작일
     searchStartDate: moment().subtract(6, 'months').format('YYYY-MM-DD'),
     searchEndDate: moment().format('YYYY-MM-DD'),
+    searchStockStatus : '전체',
     "searchDocumentNumber": "",         // 문서번호
     "searchCustomerName": "",           // 고객사명
+    searchManagerName : '',
     "searchMaker": "",                  // Maker
     "searchModel": "",                  // Model
     "searchItem": "",                   // Item
