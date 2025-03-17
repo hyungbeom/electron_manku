@@ -12,7 +12,7 @@ const nextConfig = {
     },
     reactStrictMode: false,
     experimental: {
-        reactRefresh: false,
+
     },
     images: {
         unoptimized: true,
