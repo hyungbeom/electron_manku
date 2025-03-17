@@ -145,7 +145,7 @@ export default function OrderRead({getPropertyId, getCopyPage}:any) {
                                     ]
                                 })}
                                 {inputForm({
-                                    title: '등록직원명', id: 'searchManagerName',
+                                    title: '등록직원명', id: 'searchCreatedBy',
                                     onChange: onChange,
                                     handleKeyPress: handleKeyPress,
                                     data: info,
@@ -175,7 +175,7 @@ export default function OrderRead({getPropertyId, getCopyPage}:any) {
 
                                 {inputForm({
                                     title: '만쿠담당자',
-                                    id: 'searchEstimateManager',
+                                    id: 'searchManagerAdminName',
                                     onChange: onChange,
                                     handleKeyPress: handleKeyPress,
                                     data: info

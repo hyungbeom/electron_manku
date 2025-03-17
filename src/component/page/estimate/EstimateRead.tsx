@@ -67,12 +67,14 @@ function EstimateRead({getPropertyId, getCopyPage, }:any) {
     }
 
     function onChange(e) {
+        console.log(e,'::')
         commonManage.onChange(e, setInfo)
     }
 
 
     async function searchInfo(e) {
         const copyData: any = {...info}
+        console.log(copyData,'::::')
         if (e) {
             setLoading(true)
             await searchEstimate({data: copyData}).then(v => {
@@ -195,7 +197,7 @@ function EstimateRead({getPropertyId, getCopyPage, }:any) {
                                             data: info
                                         })}
                                         {inputForm({
-                                            title: '고객사담당자', id: '',
+                                            title: '고객사담당자', id: 'searchManagerName',
                                             onChange: onChange,
                                             handleKeyPress: handleKeyPress,
                                             data: info,

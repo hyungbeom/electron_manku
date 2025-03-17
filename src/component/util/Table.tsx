@@ -13,6 +13,7 @@ import OrderListModal from "@/component/OrderListModal";
 import Button from "antd/lib/button";
 import * as XLSX from 'xlsx';
 import {UploadOutlined} from "@ant-design/icons";
+import HsCodeListModal from "@/component/HsCodeListModal";
 // register Handsontable's modules
 registerAllModules();
 
@@ -239,10 +240,11 @@ const Table = forwardRef(({
             event.stopPropagation(); // 셀 클릭 이벤트 방지
             rowRef.current = {row: row, col: col, prop: prop, value: value}
 
-            console.log(prop, 'prop ')
             setIsModalOpen(v => {
                 if (prop === 'orderDocumentNumberFull') {
                     return {...v, order: true}
+                }else if(prop === 'hsCode'){
+                    return {...v, hsCode: true}
                 } else {
                     return {...v, estimate: true}
                 }
@@ -293,6 +295,18 @@ const Table = forwardRef(({
     }
 
 
+    function getSelectedRows3(data) {
+        console.log(data,':?:')
+        const instance = hotRef.current.hotInstance;
+        const currentList = instance.getSourceData();
+        // console.log(currentList)
+        currentList[rowRef.current['row']] = {...currentList[rowRef.current['row']], hsCode : data.hsCode}
+                setTableData(currentList)
+        // } else {
+        //     console.warn('Grid API is not available.');
+        //     return [];
+        // }
+    }
     function getSelectedRows2(ref) {
         if (ref.current) {
             const selectedRows = ref.current.getSelectedRows();
@@ -437,6 +451,8 @@ const Table = forwardRef(({
                                getRows={getSelectedRows}/>
             <OrderListModal isModalOpen={isModalOpen['order']} setIsModalOpen={setIsModalOpen}
                             getRows={getSelectedRows2}/>
+            <HsCodeListModal isModalOpen={isModalOpen['hsCode']} setIsModalOpen={setIsModalOpen}
+                            getRows={getSelectedRows3}/>
             <HotTable
                 style={{
                     border: '1px solid #ebebed',
@@ -513,7 +529,7 @@ const Table = forwardRef(({
                         dateFormat: col.type === "date" ? "YYYY-MM-DD" : undefined,
                         // correctFormat: col.data === "marginRate" ? true : undefined, // 🔥 숫자가 올바른 형식이 아니면 자동 수정
                         numericFormat: col.data === "marginRate" ? {pattern: "0%", suffix: "%"} : ( col.data === "unitPrice" ? {pattern:'0,0.00', suffix: "%"}:           undefined), // 🔥 소수점 둘째 자리 고정 + % 유지
-                        renderer: col.data === "marginRate" ? percentRenderer : ((col.data === 'orderDocumentNumberFull' || col.data === 'connectInquiryNo') ? iconRenderer : (col.data === 'unitPrice' ? currencyRenderer : col.type)), // 🔥 커스텀 렌더러 적용
+                        renderer: col.data === "marginRate" ? percentRenderer : ((col.data === 'orderDocumentNumberFull' || col.data === 'connectInquiryNo'|| col.data === 'hsCode') ? iconRenderer : ((col.data === 'unitPrice') ? currencyRenderer : col.type)), // 🔥 커스텀 렌더러 적용
                         readOnly: col.readOnly,
                         filter: false
                     })

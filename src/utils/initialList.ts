@@ -252,6 +252,7 @@ export const estimateReadInitial = {
     "searchType": 0,                   // 검색조건 1: 회신, 2: 미회신
     searchStartDate: moment().subtract(6, 'months').format('YYYY-MM-DD'),              // 작성일자 시작일
     searchEndDate: moment().format('YYYY-MM-DD'),                // 작성일자 종료일
+    "searchManagerName": "",         // 문서번호
     "searchDocumentNumber": "",         // 문서번호
     "searchCustomerName": "",           // 고객사명
     "searchMaker": "",                  // Maker
@@ -467,7 +468,9 @@ export const orderReadInitial = {
     searchEndDate: moment().format('YYYY-MM-DD'),
     searchStockStatus : '전체',
     "searchDocumentNumber": "",         // 문서번호
+    "searchManagerAdminName ": "",           // 고객사명
     "searchCustomerName": "",           // 고객사명
+    searchCreatedBy : '',
     searchManagerName : '',
     "searchMaker": "",                  // Maker
     "searchModel": "",                  // Model

@@ -19,6 +19,7 @@ import moment from "moment";
 const TableGrid = ({
                        gridRef,
                        columns,
+    getRowInfo = null,
                        onGridReady = function () {
                        },
                        tempFunc = function () {
@@ -345,8 +346,15 @@ const TableGrid = ({
 
 
     function onRowClicked(params){
+
         const isSelected = params.node.isSelected(); // 현재 선택 상태 확인
         params.node.setSelected(!isSelected); // 선택 상태 변경 (토글)
+
+
+        if(getRowInfo){
+            console.log(params?.data,'::??')
+            getRowInfo(params?.data)
+        }
     }
     return (
         <>

@@ -43,8 +43,8 @@ export default function HsCodeListModal({isModalOpen, setIsModalOpen, getRows}) 
     };
 
 
-    function onRowClicked(e){
-        getRows(e.data);
+    function onRowClicked(e, data){
+        getRows(e);
         handleCancel();
     }
 
@@ -55,7 +55,7 @@ export default function HsCodeListModal({isModalOpen, setIsModalOpen, getRows}) 
                 gridRef={gridRef}
                 onGridReady={onGridReady}
                 columns={subTableCodeReadColumns}
-                onRowClicked={onRowClicked}
+                getRowInfo={onRowClicked}
                 type={'read'}
                 funcButtons={null}
             />

@@ -139,8 +139,13 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         const tableList = tableRef.current?.getSourceData();
 
         const filterTableList = commonManage.filterEmptyObjects(tableList, ['model', 'item', 'maker'])
-
+        const emptyQuantity = filterTableList.filter(v=> !v.quantity)
+        if(emptyQuantity.length){
+            return message.error('수량을 입력해야 합니다.')
+        }
         const resultFilterTableList =  filterTableList.map(v=>{
+            delete v.total;
+            delete v.totalPurchase;
                 return {
                     ...v, unitPrice : isNaN(v.unitPrice) ? '' : v.unitPrice,  purchasePrice : isNaN(v.purchasePrice) ? '' : v.purchasePrice
                 }

@@ -154,7 +154,10 @@ export default function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: 
         if (!filterTableList.length) {
             return message.warn('하위 데이터 1개 이상이여야 합니다');
         }
-
+        const emptyQuantity = filterTableList.filter(v=> !v.quantity)
+        if(emptyQuantity.length){
+            return message.error('수량을 입력해야 합니다.')
+        }
         setLoading(true)
         const formData: any = new FormData();
         commonManage.setInfoFormData(infoData, formData, listType, filterTableList)
