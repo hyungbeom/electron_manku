@@ -22,6 +22,7 @@ export default function joint({code}) {
         password: '',
         passwordConfirm: '',
         name: '',
+        englishName: '',
         position: '',
         email: '',
         contactNumber: '',
@@ -150,6 +151,15 @@ export default function joint({code}) {
                 onChange: onChange,
                 data: info,
                 placeHolder: '이름를 입력해 주세요',
+                size: 'middle'
+            })}
+
+            {inputForm({
+                title: 'NAME(english)',
+                id: 'englishName',
+                onChange: onChange,
+                data: info,
+                placeHolder: '영문 이름를 입력해 주세요',
                 size: 'middle'
             })}
             {inputForm({

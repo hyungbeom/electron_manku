@@ -100,12 +100,13 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
     const [checkList, setCheckList] = useState<any>([]);
     useEffect(() => {
         const list = Object.values(data).map(src => {
-            const {agencyManagerName, agencyManagerEmail, agencyManagerId} = Object.values(src)[0][0];
+            const {agencyManagerName, agencyManagerEmail, agencyManagerId, agencyCode} = Object.values(src)[0][0];
 
             const {output, documentNumbers} = generateFormattedOutputWithDocumentNumbers(Object.values(src))
 
 
             return {
+                agencyCode: agencyCode,
                 agencyManagerName: agencyManagerName,
                 agencyManagerEmail: agencyManagerEmail,
                 agencyManagerId: agencyManagerId,
@@ -174,11 +175,24 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
         })
 
         const {name, contactNumber, position} = userInfo;
-
         const list = result.map(v => {
             v.content = v.content.replace(/\n/g, "<br>");
             return {
-                ...v, content: `<div><div>${v.content}</div>
+                ...v, content: info[0].agencyCode.startsWith('K') ? `<div><div>${v.content}</div>
+<div style="padding-top: 200px">
+    <div style="font-size: 15px; font-weight: 800;">${name}</div>
+    <div style="font-weight: normal;">President</div>
+    <div style="color: #56cbdb; font-weight: 500;">Manku Trading Co., Ltd.</div>
+    <div style="font-weight: 500;">B-802#, 114, Beobwon-ro, Songpa-gu, Seoul, Republic of Korea</div>
+    <div style="font-weight: 500;">Post Code 05854</div>
+    <div style="text-decoration: underline;">Tel: +82/2-465-7838</div>
+    <div style="text-decoration: underline;">HP: +82/${contactNumber}</div>
+    <div style="text-decoration: underline;">Fax: +82/2-465-7839</div>
+    <a href="https://www.manku.co.kr" style="text-decoration: none; color: inherit;">www.manku.co.kr</a>
+</div>
+</div>` :
+
+                    `<div><div>${v.content}</div>
 <div style="padding-top: 200px">
     <div style="font-size: 15px; font-weight: 800;">${name}</div>
     <div style="font-weight: normal;">President</div>
@@ -192,26 +206,27 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
 </div>
 </div>`
             }
+
         })
 
-        await getData.post('estimate/sendMailEstimateRequests', {mailList: list}).then(v => {
-            if (v.data.code === 1) {
-
-                console.log(info['title'],'info:')
-                notificationAlert('success', '💾메일전송 완료',
-                    <>
-                        <div>{info[0]['title']} {info.length > 1 ? ('외' + (info.length -1) + '건이 발송 완료되었습니다.') : ''} </div>
-                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
-                    </>
-                    ,null,
-                    {}
-                )
-                // message.success(v.data.message);
-            } else {
-                message.warning(v.data.message);
-            }
-            setIsModalOpen(false)
-        }, err => console.log(err, '::::err'))
+        // await getData.post('estimate/sendMailEstimateRequests', {mailList: list}).then(v => {
+        //     if (v.data.code === 1) {
+        //
+        //         console.log(info['title'],'info:')
+        //         notificationAlert('success', '💾메일전송 완료',
+        //             <>
+        //                 <div>{info[0]['title']} {info.length > 1 ? ('외' + (info.length -1) + '건이 발송 완료되었습니다.') : ''} </div>
+        //                 <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+        //             </>
+        //             ,null,
+        //             {}
+        //         )
+        //         // message.success(v.data.message);
+        //     } else {
+        //         message.warning(v.data.message);
+        //     }
+        //     setIsModalOpen(false)
+        // }, err => console.log(err, '::::err'))
     }
 
     function preview(e, data) {

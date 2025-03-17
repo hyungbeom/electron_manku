@@ -69,6 +69,14 @@ export default function myaccount() {
                 size: 'middle'
             })}
             {inputAntdForm({
+                title: 'NAME(english)',
+                id: 'englishName',
+                onChange: onChange,
+                data: info,
+                placeHolder: '이름를 입력해 주세요',
+                size: 'middle'
+            })}
+            {inputAntdForm({
                 title: 'POSITION',
                 id: 'position',
                 onChange: onChange,
