@@ -384,19 +384,25 @@ export default function RqfUpdate({
                                             // data: info
                                         })}
                                         {inputForm({
-                                            title: '매입처명',
+                                            title: '회사명',
                                             id: 'agencyName',
                                             // onChange: onChange,
                                             // data: info
                                         })}
                                         {inputForm({
-                                            title: '매입처담당자',
+                                            title: '담당자',
                                             id: 'agencyManagerName',
                                             // onChange: onChange,
                                             // data: info
                                         })}
                                         {inputForm({
-                                            title: '매입처이메일',
+                                            title: '연락처',
+                                            id: 'agencyTel',
+                                            // onChange: onChange,
+                                            // data: info
+                                        })}    
+                                        {inputForm({
+                                            title: '이메일',
                                             id: 'agencyManagerEmail',
                                             // onChange: onChange,
                                             // data: info

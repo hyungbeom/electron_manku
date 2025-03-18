@@ -114,7 +114,7 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
                 detailList: Object.values(src),
                 ccList: [],
                 title: 'RFQ ' + formatDocumentNumbers(documentNumbers),
-                contents: `${agencyManagerName}  \n\n아래 진행 부탁 드립니다.\n\n` + output
+                contents: `${agencyManagerName ?agencyManagerName : '직접입력'}  \n\n아래 진행 부탁 드립니다.\n\n` + output
             }
         })
 

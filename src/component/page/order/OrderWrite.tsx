@@ -386,8 +386,8 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
 
 
                                     })}
-                                    {inputForm({title: '매입처명', id: 'agencyName'})}
-                                    {inputForm({title: '매입처 관리번호', id: 'attnTo'})}
+                                    {inputForm({title: '회사명', id: 'agencyName'})}
+                                    {inputForm({title: '관리번호', id: 'attnTo'})}
                                     {inputForm({title: '담당자', id: 'agencyManagerName'})}
                                 </BoxCard>
                             </Panel>

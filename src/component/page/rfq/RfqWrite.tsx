@@ -360,10 +360,9 @@ export default function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: 
                                         })}
                                         {inputForm({
                                             title: '연락처',
-                                            id: '',
+                                            id: 'agencyTel',
                                             // onChange: onChange,
                                             // data: info
-                                            placeholder : '데이터매핑 필요'
                                         })}
                                         {inputForm({
                                             title: '이메일',

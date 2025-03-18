@@ -4,7 +4,7 @@ import https from 'https';
 
 
 //DEV
-export const API_URL = 'http://175.125.92.183:8081/api';
+export const API_URL = 'https://manku.progist.co.kr/api';
 
 // 1. 공통 Axios 인스턴스 생성
 const agent = new https.Agent({

@@ -192,6 +192,7 @@ export const rfqInfo = {
     defaultInfo: {
         createdBy: '',
         managerAdminName: '',
+        agencyTel: '',
         managerAdminId: null,
 
         writtenDate: moment().format('YYYY-MM-DD'),
@@ -291,6 +292,7 @@ export const estimateInfo = {
     },
     defaultInfo: {
         createdBy: '',
+        agencyTel: '',
         managerAdminName: '',
         managerAdminId: null,
         "writtenDate": moment().format('YYYY-MM-DD'),    // 작성일

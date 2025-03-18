@@ -402,7 +402,7 @@ export default function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutR
 
                                         })}
                                         {inputForm({
-                                            title: '매입처명',
+                                            title: '회사명',
                                             id: 'agencyName',
 
 
@@ -414,7 +414,7 @@ export default function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutR
                                         })}
                                         {inputForm({
                                             title: '연락처',
-                                            id: 'agencyManagerPhoneNumber'
+                                            id: 'agencyTel'
                                         })}
                                         {inputForm({
                                             title: '이메일',
