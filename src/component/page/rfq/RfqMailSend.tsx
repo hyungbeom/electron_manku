@@ -164,7 +164,24 @@ export default function RfqMailSend({getPropertyId}: any) {
                             style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1.5fr', width: '100%', columnGap: 20}}>
 
                             <BoxCard title={''}>
-                                {rangePickerForm({title: '작성일자', id: 'searchDate', onChange: onChange, data: info})}
+                                <div style={{display: 'grid', gridTemplateColumns: '1fr 80px', gap: 10}}>
+                                    {rangePickerForm({
+                                        title: '작성일자',
+                                        id: 'searchDate',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                    <Button size={'small'} style={{fontSize: 12, marginTop: 25}} onClick={() => {
+                                        setInfo(v => {
+                                            return {
+                                                ...v,
+                                                searchDate: [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
+                                                "searchStartDate": moment().format('YYYY-MM-DD'),              // 작성일자 시작일
+                                                "searchEndDate": moment().format('YYYY-MM-DD'),                // 작성일자 종료일
+                                            }
+                                        })
+                                    }}>오늘</Button>
+                                </div>
                                 {inputForm({
                                     title: '문서번호', id: 'searchDocumentNumber',
                                     onChange: onChange,

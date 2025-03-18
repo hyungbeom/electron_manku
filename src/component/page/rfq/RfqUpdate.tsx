@@ -311,7 +311,7 @@ export default function RqfUpdate({
 
 
                     {mini ? <div>
-                            <TopBoxCard title={''} grid={'100px 80px 80px 110px 110px 300px'}>
+                            <TopBoxCard title={''} grid={'100px 80px 80px 110px 110px 110px 300px'}>
                                 {datePickerForm({
                                     title: '작성일',
                                     id: 'writtenDate',
@@ -346,6 +346,10 @@ export default function RqfUpdate({
                                     // data: info,
                                     disabled: true,
                                     placeHolder: '자동생성'
+                                })}
+                                {datePickerForm({
+                                    title: '마감일자(예상)', id: 'dueDate'
+                                    // , onChange: onChange, data: info
                                 })}
                                 {inputForm({
                                     title: 'RFQ No.',
@@ -396,10 +400,6 @@ export default function RqfUpdate({
                                             id: 'agencyManagerEmail',
                                             // onChange: onChange,
                                             // data: info
-                                        })}
-                                        {datePickerForm({
-                                            title: '마감일자(예상)', id: 'dueDate'
-                                            // , onChange: onChange, data: info
                                         })}
                                     </BoxCard>
                                 </Panel>

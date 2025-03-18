@@ -172,7 +172,7 @@ export default function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: 
                 const {documentNumberFull, estimateRequestId} = v.entity;
 
 
-                const dom:any = document.getElementById('documentNumberFull')
+                console.log(documentNumberFull,'check')
                 if(dom){
                     dom.value = documentNumberFull;
                 }
