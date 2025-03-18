@@ -144,9 +144,19 @@ const Table = forwardRef(({
             if (colName === '단위') {
                 hotRef.current.hotInstance.setDataAtCell(coords.row, coords.col, "ea");
             }
+            if (colName === '수량') {
+                hotRef.current.hotInstance.setDataAtCell(coords.row, coords.col, 1);
+            }
+            if (colName === '납기(weeks)') {
+                hotRef.current.hotInstance.setDataAtCell(coords.row, coords.col, 1);
+            }
+            if (colName === '회신일') {
+                hotRef.current.hotInstance.setDataAtCell(coords.row, coords.col, moment().format('YYYY-MM-DD'));
+            }
             if (colName === '화폐단위') {
                 const dom = infoRef?.current?.querySelector('#agencyCode');
                 if (dom) {
+
                     hotRef.current.hotInstance.setDataAtCell(coords.row, coords.col, commonManage.changeCurr(dom.value));
                 } else {
                     hotRef.current.hotInstance.setDataAtCell(coords.row, coords.col, "KRW");
@@ -434,6 +444,24 @@ const Table = forwardRef(({
     };
 
 
+
+    const handleBeforePaste = (data, coords) => {
+        const hotInstance = hotRef.current.hotInstance;
+
+        coords.forEach(({ startCol }) => {
+            const columnConfig = hotInstance.getSettings().columns[startCol];
+
+            if (columnConfig?.type === "numeric") {
+                for (let i = 0; i < data.length; i++) {
+                    for (let j = 0; j < data[i].length; j++) {
+                        data[i][j] = data[i][j].replace(/,/g, ""); // 쉼표 제거
+                    }
+                }
+            }
+        });
+    };
+
+
     return (
         <div ref={tableContainerRef} className="table-container" style={{width: '100%', overflowX: 'auto'}}>
             <div style={{display: 'flex', justifyContent: 'end'}}>
@@ -532,6 +560,7 @@ const Table = forwardRef(({
                     })
                 })}
 
+                beforePaste={handleBeforePaste}
                 afterRenderer={afterRenderer} // 🔥 특정 컬럼에 스타일 직접 적용
                 licenseKey="non-commercial-and-evaluation"
             />

@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import {ClearOutlined, FileSearchOutlined, SaveOutlined} from "@ant-design/icons";
+import {ClearOutlined, FileSearchOutlined, RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
 import {ModalInitList} from "@/utils/initialList";
 import message from "antd/lib/message";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
@@ -256,20 +256,8 @@ export default function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: 
             }}>
 
                 <MainCard title={'견적의뢰 작성'} list={[
-                    {
-                        name: '저장',
-                        func: saveFunc,
-                        type: 'primary',
-                        title: '입력한 견적의뢰 내용을 저장합니다.',
-                        prefix: <SaveOutlined/>
-                    },
-                    {
-                        name: '초기화',
-                        func: clearAll,
-                        type: 'danger',
-                        title: '필드에 입력한 모든 정보들을 초기화 합니다.',
-                        prefix: <ClearOutlined/>
-                    }
+                    {name: <div><SaveOutlined style={{paddingRight : 8}} />저장</div>, func: saveFunc, type: 'primary'},
+                    {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'}
                 ]} mini={mini} setMini={setMini}>
 
                     <div id={'agencyId'}/>

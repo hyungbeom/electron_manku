@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import {ClearOutlined, SaveOutlined} from "@ant-design/icons";
+import {ClearOutlined, CopyOutlined, FormOutlined, RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
 import message from "antd/lib/message";
 import {getData} from "@/manage/function/api";
 import SearchInfoModal from "@/component/SearchAgencyModal";
@@ -286,27 +286,9 @@ export default function RqfUpdate({
             }}>
 
                 <MainCard title={'견적의뢰 수정'} list={[
-                    {
-                        name: '저장',
-                        func: saveFunc,
-                        type: 'primary',
-                        title: '입력한 견적의뢰 내용을 저장합니다.',
-                        prefix: <SaveOutlined/>
-                    },
-                    {
-                        name: '초기화',
-                        func: clearAll,
-                        type: 'danger',
-                        title: '필드에 입력한 모든 정보들을 초기화 합니다.',
-                        prefix: <ClearOutlined/>
-                    },
-                    {
-                        name: '복제',
-                        func: copyPage,
-                        type: 'danger',
-                        title: '필드에 입력한 모든 정보들을 초기화 합니다.',
-                        prefix: <ClearOutlined/>
-                    }
+                    {name: <div><FormOutlined style={{paddingRight: 8}}/>수정</div>, func: saveFunc, type: 'primary'},
+                    {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'},
+                    {name: <div><CopyOutlined style={{paddingRight: 8}}/>복제</div>, func: copyPage, type: ''}
                 ]} mini={mini} setMini={setMini}>
 
 

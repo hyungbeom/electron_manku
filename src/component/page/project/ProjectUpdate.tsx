@@ -20,6 +20,7 @@ import moment from "moment/moment";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import useEventListener from "@/utils/common/function/UseEventListener";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
+import {CopyOutlined, FormOutlined, RadiusSettingOutlined, SearchOutlined} from "@ant-design/icons";
 
 
 const listType = 'projectDetailList'
@@ -264,9 +265,9 @@ export default function ProjectUpdate({
                 rowGap: 10,
             }}>
                 <MainCard title={'프로젝트 수정'} list={[
-                    {name: '수정', func: saveFunc, type: 'primary'},
-                    {name: '초기화', func: clearAll, type: 'danger'},
-                    {name: '복제', func: copyPage, type: ''}
+                    {name: <div><FormOutlined style={{paddingRight: 8}}/>수정</div>, func: saveFunc, type: 'primary'},
+                    {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'},
+                    {name: <div><CopyOutlined style={{paddingRight: 8}}/>복제</div>, func: copyPage, type: ''}
                 ]} mini={mini} setMini={setMini}>
 
                     {mini ? <div>

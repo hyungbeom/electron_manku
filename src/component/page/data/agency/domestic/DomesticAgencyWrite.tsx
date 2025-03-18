@@ -15,6 +15,7 @@ import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 import moment from "moment/moment";
 import {getData} from "@/manage/function/api";
+import {RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
 
 const listType = 'agencyManagerList'
 export default function DomesticAgencyWrite({copyPageInfo, getPropertyId}:any) {
@@ -146,8 +147,8 @@ export default function DomesticAgencyWrite({copyPageInfo, getPropertyId}:any) {
         }}>
             <PanelSizeUtil groupRef={groupRef} storage={'domestic_agency_update'}/>
             <MainCard title={'국내 매입처 등록'} list={[
-                {name: '저장', func: saveFunc, type: 'primary'},
-                {name: '초기화', func: clearAll, type: 'danger'}
+                {name: <div><SaveOutlined style={{paddingRight : 8}}/>저장</div>, func: saveFunc, type: 'primary'},
+                {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'}
             ]} mini={mini} setMini={setMini}>
 
                 {mini ? <div>

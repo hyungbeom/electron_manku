@@ -1,5 +1,11 @@
 import React, {useEffect, useRef, useState} from "react";
-import {CopyOutlined, ExclamationCircleOutlined} from "@ant-design/icons";
+import {
+    CopyOutlined,
+    ExclamationCircleOutlined,
+    RadiusSettingOutlined,
+    SaveOutlined,
+    SearchOutlined
+} from "@ant-design/icons";
 import Button from "antd/lib/button";
 import {rfqReadColumns} from "@/utils/columnList";
 import {estimateRequestDetailUnit, subRfqReadInitial} from "@/utils/initialList";
@@ -39,8 +45,6 @@ export default function RfqRead({getPropertyId, getCopyPage,}: any) {
         await searchRfq({data: subRfqReadInitial}).then(v => {
             const {data, pageInfo} = v;
             setTotalRow(pageInfo.totalRow)
-
-            console.log(data,'data:::')
             params.api.applyTransaction({add: data});
         })
     };
@@ -143,9 +147,9 @@ export default function RfqRead({getPropertyId, getCopyPage,}: any) {
                     // rowGap : 10
                 }}>
                     <MainCard title={'견적의뢰 조회'} list={[
-                        {name: '조회', func: searchInfo, type: 'primary'},
-                        {name: '초기화', func: clearAll, type: 'danger'},
-                        {name: '신규작성', func: moveRegist, type: 'default'}
+                        {name: <div><SearchOutlined style={{paddingRight: 8}}/>조회</div>, func: searchInfo, type: 'primary'},
+                        {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'},
+                        {name: <div><SaveOutlined style={{paddingRight : 8}} />신규작성</div>, func: moveRegist, type: ''},
                     ]} mini={mini} setMini={setMini}>
                         {mini ? <div>
                             <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>

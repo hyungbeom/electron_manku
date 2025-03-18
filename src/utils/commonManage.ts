@@ -536,8 +536,6 @@ commonManage.changeCurr = function (value) {
             return 'JPY'
         case "ETF":
             return 'GBP'
-        case "ETF":
-            return 'GBP'
 
         case "CZY":
         case "CIN":

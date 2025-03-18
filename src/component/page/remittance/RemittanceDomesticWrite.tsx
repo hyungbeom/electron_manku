@@ -23,7 +23,7 @@ import {commonManage} from "@/utils/commonManage";
 import {saveRemittance} from "@/utils/api/mainApi";
 import {useRouter} from "next/router";
 import SearchInfoModal from "@/component/SearchAgencyModal";
-import {FileSearchOutlined} from "@ant-design/icons";
+import {FileSearchOutlined, RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
 
 
 export default function RemittanceDomesticWrite({dataInfo = [], copyPageInfo}:any) {
@@ -85,8 +85,8 @@ export default function RemittanceDomesticWrite({dataInfo = [], copyPageInfo}:an
 
 
             <MainCard title={'국내 송금 등록'} list={[
-                {name: '저장', func: saveFunc, type: 'primary'},
-                {name: '초기화', func: clearAll, type: 'danger'}
+                {name: <div><SaveOutlined style={{paddingRight : 8}}/>저장</div>, func: saveFunc, type: 'primary'},
+                {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'}
             ]}>
                 <div ref={infoRef}>
                     <TopBoxCard grid={'250px 200px 200px 200px'}>

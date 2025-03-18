@@ -2,7 +2,7 @@ import React, {useRef, useState} from "react";
 import {projectReadColumn} from "@/utils/columnList";
 import {projectDetailUnit, projectReadInitial} from "@/utils/initialList";
 import Button from "antd/lib/button";
-import {ExclamationCircleOutlined} from "@ant-design/icons";
+import {ExclamationCircleOutlined, RadiusSettingOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
 import {deleteProjectList, searchProject} from "@/utils/api/mainApi";
@@ -121,9 +121,9 @@ export default function ProjectRead({getPropertyId, getCopyPage}:any) {
             gridTemplateRows: `${mini ? '335px' : '65px'} calc(100vh - ${mini ? 495 : 195}px)`,
         }}>
             <MainCard title={'프로젝트 조회'} list={[
-                {name: '조회', func: searchInfo, type: 'primary'},
-                {name: '초기화', func: clearAll, type: 'danger'},
-                {name: '신규작성', func: moveRegist, type: 'default'}
+                {name: <div><SearchOutlined style={{paddingRight: 8}}/>조회</div>, func: searchInfo, type: 'primary'},
+                {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'},
+                {name: <div><SaveOutlined style={{paddingRight : 8}} />신규작성</div>, func: moveRegist, type: ''},
             ]} mini={mini} setMini={setMini}>
 
                 {mini ? <div>

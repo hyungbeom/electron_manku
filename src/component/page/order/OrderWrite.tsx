@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import {DownloadOutlined} from "@ant-design/icons";
+import {DownloadOutlined, RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
 import message from "antd/lib/message";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {useRouter} from "next/router";
@@ -308,8 +308,8 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
                 <MainCard title={'발주서 작성'} list={[
                     {name: '거래명세표 출력', func: printTransactionStatement, type: 'default'},
                     {name: '발주서 출력', func: printPo, type: 'default'},
-                    {name: '저장', func: saveFunc, type: 'primary'},
-                    {name: '초기화', func: clearAll, type: 'danger'}
+                    {name: <div><SaveOutlined style={{paddingRight : 8}}/>저장</div>, func: saveFunc, type: 'primary'},
+                    {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'}
                 ]} mini={mini} setMini={setMini}>
 
 

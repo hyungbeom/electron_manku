@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import {DownloadOutlined, RetweetOutlined} from "@ant-design/icons";
+import {CopyOutlined, DownloadOutlined, FormOutlined, RadiusSettingOutlined, RetweetOutlined} from "@ant-design/icons";
 import {ModalInitList} from "@/utils/initialList";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
@@ -406,9 +406,10 @@ export default function EstimateUpdate({
                 rowGap: 10,
             }}>
                 <MainCard title={'견적서 수정'} list={[
-                    {name: '견적서 출력', func: printEstimate, type: 'default'},
-                    {name: '수정', func: saveFunc, type: 'primary'},
-                    {name: '초기화', func: clearAll, type: 'danger'}
+                    {name: <div>견적서 출력</div>, func: printEstimate, type: ''},
+                    {name: <div><FormOutlined style={{paddingRight: 8}}/>수정</div>, func: saveFunc, type: 'primary'},
+                    {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'},
+                    {name: <div><CopyOutlined style={{paddingRight: 8}}/>복제</div>, func: copyPage, type: ''}
                 ]} mini={mini} setMini={setMini}>
                     {mini ? <div>
                             <TopBoxCard grid={'100px 70px 70px 120px 120px 300px'}>

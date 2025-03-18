@@ -7,7 +7,7 @@ import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
 
 import Button from "antd/lib/button";
-import {RetweetOutlined, SaveOutlined} from "@ant-design/icons";
+import {RadiusSettingOutlined, RetweetOutlined, SaveOutlined} from "@ant-design/icons";
 import message from "antd/lib/message";
 import {makerWriteInitial,} from "@/utils/initialList";
 import Input from "antd/lib/input/Input";
@@ -75,8 +75,8 @@ export default function MakerWrite({getPropertyId, copyPageInfo}:any) {
     return <div ref={infoRef}>
         <PanelSizeUtil groupRef={groupRef} storage={'maker_write'}/>
         <MainCard title={'메이커 등록'} list={[
-            {name: '저장', func: saveFunc, type: 'primary'},
-            {name: '초기화', func: null, type: 'danger'}
+            {name: <div><SaveOutlined style={{paddingRight : 8}}/>저장</div>, func: saveFunc, type: 'primary'},
+            {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: '', type: 'danger'}
         ]}>
             <PanelGroup ref={groupRef} className={'ground'} direction="horizontal"
                         style={{gap: 0.5, paddingTop: 3}}>

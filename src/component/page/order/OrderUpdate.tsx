@@ -31,7 +31,7 @@ import Spin from "antd/lib/spin";
 import {estimateInfo, orderInfo, rfqInfo} from "@/utils/column/ProjectInfo";
 import Table from "@/component/util/Table";
 import SearchInfoModal from "@/component/SearchAgencyModal";
-import {DownloadOutlined} from "@ant-design/icons";
+import {CopyOutlined, DownloadOutlined, FormOutlined, RadiusSettingOutlined} from "@ant-design/icons";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import useEventListener from "@/utils/common/function/UseEventListener";
@@ -348,11 +348,12 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
                 rowGap: 10,
             }}>
                 <MainCard title={'발주서 수정'} list={[
-                    {name: '거래명세표 출력', func: printTransactionStatement, type: 'default'},
-                    {name: '발주서 출력', func: printPo, type: 'default'},
-                    {name: '저장', func: saveFunc, type: 'primary'},
-                    {name: '초기화', func: clearAll, type: 'danger'},
-                    {name: '복제', func: copyPage, type: ''}
+                    {name: <div>거래명세표 출력</div>, func: printTransactionStatement, type: ''},
+                    {name: <div>발주서 출력</div>, func: printPo, type: ''},
+                    {name: <div><FormOutlined style={{paddingRight: 8}}/>수정</div>, func: saveFunc, type: 'primary'},
+                    {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'},
+                    {name: <div><CopyOutlined style={{paddingRight: 8}}/>복제</div>, func: copyPage, type: ''}
+
                 ]} mini={mini} setMini={setMini}>
 
 

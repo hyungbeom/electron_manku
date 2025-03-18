@@ -1,5 +1,11 @@
 import React, {useRef, useState} from "react";
-import {CopyOutlined, ExclamationCircleOutlined} from "@ant-design/icons";
+import {
+    CopyOutlined,
+    ExclamationCircleOutlined,
+    RadiusSettingOutlined,
+    SaveOutlined,
+    SearchOutlined
+} from "@ant-design/icons";
 import Button from "antd/lib/button";
 import {tableOrderReadColumns} from "@/utils/columnList";
 import {orderDetailUnit, orderReadInitial} from "@/utils/initialList";
@@ -127,9 +133,11 @@ export default function OrderRead({getPropertyId, getCopyPage}:any) {
                 gridTemplateRows: `${mini ? '270px' : '65px'} calc(100vh - ${mini ? 400 : 195}px)`,
             }}>
                 <MainCard title={'발주서 조회'}
-                          list={[{name: '조회', func: searchInfo, type: 'primary'},
-                              {name: '초기화', func: clearAll, type: 'danger'},
-                              {name: '신규생성', func: moveRouter}]}
+                          list={[
+                              {name: <div><SearchOutlined style={{paddingRight: 8}}/>조회</div>, func: searchInfo, type: 'primary'},
+                              {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'},
+                              {name: <div><SaveOutlined style={{paddingRight : 8}} />신규작성</div>, func: moveRouter, type: ''},
+                          ]}
                           mini={mini} setMini={setMini}>
 
                     {mini ? <div>

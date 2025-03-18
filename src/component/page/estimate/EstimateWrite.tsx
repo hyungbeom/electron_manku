@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import {DownloadOutlined, RetweetOutlined} from "@ant-design/icons";
+import {DownloadOutlined, RadiusSettingOutlined, RetweetOutlined, SaveOutlined} from "@ant-design/icons";
 import {estimateDetailUnit, ModalInitList} from "@/utils/initialList";
 import message from "antd/lib/message";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
@@ -337,8 +337,8 @@ export default function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutR
                 rowGap: 10,
             }}>
                 <MainCard title={'견적서 작성'} list={[
-                    {name: '저장', func: saveFunc, type: 'primary'},
-                    {name: '초기화', func: clearAll, type: 'danger'}
+                    {name: <div><SaveOutlined style={{paddingRight : 8}} />저장</div>, func: saveFunc, type: 'primary'},
+                    {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'}
                 ]} mini={mini} setMini={setMini}>
                     {mini ? <div>
                             <TopBoxCard grid={'100px 70px 70px 120px 120px 120px 300px'}>

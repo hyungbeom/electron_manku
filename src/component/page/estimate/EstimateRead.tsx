@@ -2,7 +2,13 @@ import React, {memo, useEffect, useRef, useState} from "react";
 import {tableEstimateReadColumns} from "@/utils/columnList";
 import {estimateDetailUnit, estimateReadInitial} from "@/utils/initialList";
 import Button from "antd/lib/button";
-import {CopyOutlined, ExclamationCircleOutlined, FileExcelOutlined} from "@ant-design/icons";
+import {
+    CopyOutlined,
+    ExclamationCircleOutlined,
+    FileExcelOutlined,
+    RadiusSettingOutlined, SaveOutlined,
+    SearchOutlined
+} from "@ant-design/icons";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
 import {deleteEstimate, searchEstimate} from "@/utils/api/mainApi";
@@ -154,16 +160,34 @@ function EstimateRead({getPropertyId, getCopyPage, }:any) {
             }}>
                 <MainCard title={'견적서 조회'}
                           list={[
-                              {name: '조회', func: searchInfo, type: 'primary'},
-                              {name: '초기화', func: clearAll, type: 'danger'},
-                              {name: '신규생성', func: moveRouter}
+                              {name: <div><SearchOutlined style={{paddingRight: 8}}/>조회</div>, func: searchInfo, type: 'primary'},
+                              {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'},
+                              {name: <div><SaveOutlined style={{paddingRight : 8}} />신규작성</div>, func: moveRouter, type: ''},
                           ]}
                           mini={mini} setMini={setMini}>
                     {mini ? <div>
                             <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
                                 <Panel defaultSize={sizes[0]} minSize={5}>
                                     <BoxCard title={''}>
-                                        {rangePickerForm({title: '작성일자', id: 'searchDate', onChange: onChange, data: info})}
+                                        <div style={{display: 'grid', gridTemplateColumns: '1fr 80px', gap: 10}}>
+                                            {rangePickerForm({
+                                                title: '작성일자',
+                                                id: 'searchDate',
+                                                onChange: onChange,
+                                                data: info
+                                            })}
+                                            <Button size={'small'} style={{fontSize: 12, marginTop: 25}}
+                                                    onClick={() => {
+                                                        setInfo(v => {
+                                                            return {
+                                                                ...v,
+                                                                searchDate: [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
+                                                                "searchStartDate": moment().format('YYYY-MM-DD'),              // 작성일자 시작일
+                                                                "searchEndDate": moment().format('YYYY-MM-DD'),                // 작성일자 종료일
+                                                            }
+                                                        })
+                                                    }}>오늘</Button>
+                                        </div>
                                         {selectBoxForm({
                                             title: '주문 여부', id: 'searchType', onChange: onChange, data: info, list: [
                                                 {value: 0, label: '전체'},
@@ -182,7 +206,6 @@ function EstimateRead({getPropertyId, getCopyPage, }:any) {
                                 <PanelResizeHandle/>
                                 <Panel defaultSize={sizes[1]} minSize={5}>
                                     <BoxCard title={''}>
-
                                         {inputForm({
                                             title: '문서번호', id: 'searchDocumentNumber',
                                             onChange: onChange,

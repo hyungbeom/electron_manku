@@ -12,6 +12,7 @@ import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 import moment from "moment/moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
+import {RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
 
 const listType = 'overseasAgencyManagerList'
 
@@ -140,8 +141,8 @@ export default function OverseasAgencyWrite({copyPageInfo, getPropertyId}: any) 
         }}>
             <PanelSizeUtil groupRef={groupRef} storage={'overseas_agency_write'}/>
             <MainCard title={'해외 매입처 등록'} list={[
-                {name: '저장', func: saveFunc, type: 'primary'},
-                {name: '초기화', func: clearAll, type: 'danger'}
+                {name: <div><SaveOutlined style={{paddingRight : 8}}/>저장</div>, func: saveFunc, type: 'primary'},
+                {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'}
             ]} mini={mini} setMini={setMini}>
 
 

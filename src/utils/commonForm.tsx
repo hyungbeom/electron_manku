@@ -110,14 +110,12 @@ export function MainCard({children, title, list, mini = null, setMini = Function
                          <div style={{fontSize: 15, fontWeight: 700}}>{title}</div>
                          <div style={{
                              display: 'grid',
-                             gridTemplateColumns: `${'1fr '.repeat(list.length)}auto`.trim(),
+                             gridTemplateColumns: `${'0.1fr '.repeat(list.length)}auto`.trim(),
                              columnGap: 8
                          }}>
-
-                             {list.map(v => <Tooltip title={v.title} placement={v.place} color={'cyan'}
-                                                     key={uuid()}><Button
+                             {list.map(v => <Button
                                  type={v.type} style={{fontSize: 11}} size={'small'}
-                                 onClick={v.func}>{v?.prefix}{v.name}</Button></Tooltip>)}
+                                 onClick={v.func}>{v?.prefix}{v.name}</Button>)}
 
                              {mini !== null ? <span style={{fontSize: 20, cursor: 'pointer', marginTop: -5}}
                                                     onClick={() => setMini(v => !v)}> {!mini ?
