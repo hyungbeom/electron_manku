@@ -29,7 +29,6 @@ export default function SearchMakerModal({makerData, info, setInfo, isModalOpen,
 
     async function saveFunc() {
 
-        console.log(writeData, 'writeData')
 
         let api = '';
 

@@ -59,7 +59,7 @@ export default function OverseasAgencyRead({ getPropertyId, getCopyPage}:any) {
 
     async function deleteList() {
         const api = gridRef.current.api;
-        console.log(api.getSelectedRows(), ':::')
+
 
         if (api.getSelectedRows().length < 1) {
             message.error('삭제할 데이터를 선택해주세요.')

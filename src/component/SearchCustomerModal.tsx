@@ -14,7 +14,7 @@ export default function SearchCustomerModal({customerData, info, setInfo, isModa
     const [customer, setCustomer] = useState(info);
     const [openCheck, setOpenCheck] = useState('')
 
-    console.log(info, "info")
+
 
     // useEffect(() => {
     //     searchFunc();
@@ -49,7 +49,7 @@ export default function SearchCustomerModal({customerData, info, setInfo, isModa
         });
         setData(result?.data?.entity?.customerList)
 
-        console.log(data,'고객사')
+
     }
 
     function handleKeyPress(e){

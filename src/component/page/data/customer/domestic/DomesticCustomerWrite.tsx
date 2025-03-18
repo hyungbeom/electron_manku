@@ -111,7 +111,7 @@ export default function DomesticCustomerWrite({copyPageInfo, getPropertyId}:any)
 
         let copyData = {...info}
         copyData['customerManagerList'] = uncheckedData;
-        console.log(copyData, 'copyData::')
+
         setInfo(copyData);
 
     }

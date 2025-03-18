@@ -17,7 +17,7 @@ export default function myaccount() {
 
     const userInfo = useAppSelector((state) => state.user);
 
-    console.log(userInfo,'??')
+
     const [info, setInfo] = useState(userInfo);
     const [loading, setLoading] = useState(false);
 

@@ -123,7 +123,7 @@ export default function DomesticCustomerUpdate({updateKey, getCopyPage}:any) {
 
         let copyData = {...info}
         copyData['customerManagerList'] = uncheckedData;
-        console.log(copyData, 'copyData::')
+
         setInfo(copyData);
 
     }

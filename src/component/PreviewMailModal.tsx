@@ -206,7 +206,7 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
         await getData.post('estimate/sendMailEstimateRequests', {mailList: list}).then(v => {
             if (v.data.code === 1) {
 
-                console.log(info['title'],'info:')
+
                 notificationAlert('success', '💾메일전송 완료',
                     <>
                         <div>{info[0]['title']} {info.length > 1 ? ('외' + (info.length -1) + '건이 발송 완료되었습니다.') : ''} </div>

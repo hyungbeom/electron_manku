@@ -84,7 +84,7 @@ export const findCodeInfo = async (event, setInfo, openModal, infoRef?) => {
 
 export const findDocumentInfo = async (event, setInfo) => {
 
-    console.log(event.target.value, 'event.target.value:')
+
 
     const result = await getData.post('order/getOrderList', {
         "searchStartDate": "",          // 발주일자 검색 시작일

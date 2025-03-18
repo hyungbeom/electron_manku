@@ -68,7 +68,7 @@ export default function OverseasAgencyUpdate({ updateKey, getCopyPage}:any) {
             "overseasAgencyId": updateKey['overseas_agency_update'],
             "overseasAgencyCode": ""
         });
-        console.log(result,'result:')
+
         return result?.data?.entity;
     }
 

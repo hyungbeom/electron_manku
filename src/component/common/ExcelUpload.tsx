@@ -10,7 +10,7 @@ import {v4 as uuid} from 'uuid';
 export function ExcelUpload({ref, list}) {
     const excelRef: any = useRef();
 
-    console.log(ref,'refref:12')
+
 
     function onChange(e: React.ChangeEvent<HTMLInputElement>) {
         const file = e.target.files?.[0]; // 파일 선택

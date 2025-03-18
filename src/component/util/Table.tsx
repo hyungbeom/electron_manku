@@ -187,7 +187,7 @@ const Table = forwardRef(({
     // 🔹 1. 컬럼 넓이를 `localStorage`에서 불러오기
     const getStoredColumnWidths = () => {
         const storedWidths = localStorage.getItem(type);
-        console.log(storedWidths, 'storedWidths:')
+
         return storedWidths ? JSON.parse(storedWidths) : column["columnWidth"]; // 저장된 값이 없으면 기본값 사용
     };
 

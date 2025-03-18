@@ -126,7 +126,7 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
                 redirectUri: process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://manku.progist.co.kr'
             });
 
-            console.log(v,'vvvvvvvvvvvvvvv')
+
             const codeCheck = v?.data?.code
 
             if (codeCheck === 1) {

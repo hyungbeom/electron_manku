@@ -212,7 +212,7 @@ export const subRfqReadInitial = {
     "searchMobileNumber": "",           // 담당자 연락처
     "searchBiddingNumber": "",          // 입찰번호(미완성)
     "searchSentStatus": 0,              // 전송 여부 1: 전송, 2: 미전송
-    "searchContent": '미회신',             // 회신 여부 1: 회신, 2: 미회신
+    "searchContent": '',             // 회신 여부 1: 회신, 2: 미회신
     "searchAgencyCode": "",          // 대리점코드 검색
 
     "page": 1,

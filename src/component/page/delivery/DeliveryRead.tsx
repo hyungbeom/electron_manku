@@ -44,7 +44,7 @@ export default function DeliveryRead({getPropertyId, getCopyPage}:any) {
         if (e.key === 'Enter') {
             // 체크된 행 데이터 가져오기
             const selectedRows = gridRef.current.getSelectedRows();
-            console.log(selectedRows, 'selectedRows:')
+
             searchInfo()
         }
     }

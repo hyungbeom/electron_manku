@@ -60,7 +60,7 @@ export default function TableModal({title, initialData, dataInfo, setInfoList, l
         setIsModalOpen(false);
         itemId && setItemId(null);
         setDetailList(initialData);
-        console.log(detailList, 'detailList')
+
     };
 
     async function getListFunc(listType, itemId){

@@ -103,7 +103,7 @@ export default function DomesticCustomerRead({ getPropertyId, getCopyPage}:any) 
                     "limit": -1
                 }
             }).then(v => {
-                console.log(info,'v.data:')
+
                 gridManage.resetData(gridRef, v.data);
                 setTotalRow(v.pageInfo.totalRow)
                 setLoading(false)

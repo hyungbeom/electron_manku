@@ -39,7 +39,7 @@ export const getAttachmentFileList = async ({data}) => {
 
 export const searchRfq = async ({data}) => {
     const result = await getData.post('estimate/getEstimateRequestList', data);
-    console.log(result?.data,'result?.data:')
+
     const {estimateRequestList, pageInfo} = result?.data?.entity
     return {data: estimateRequestList, pageInfo: pageInfo}
 };
@@ -349,7 +349,7 @@ export const saveDomesticAgency = async ({data, router}: any) => {
 export const updateDomesticAgency = async ({data, returnFunc}: any) => {
 
    return await getData.post('agency/updateOverseasAgency', data).then(v => {
-        console.log(v,'???')
+
        return v.data
     })
 

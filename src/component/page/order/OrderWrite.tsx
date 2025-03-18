@@ -121,7 +121,7 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
     useEventListener('keydown', (e: any) => {
         if (e.ctrlKey && e.key === "s") {
             e.preventDefault();
-            console.log(layoutRef.current, 'layoutRef.current:')
+
             const model = layoutRef.current.props.model;
             const activeTab = model.getActiveTabset()?.getSelectedNode();
             if (activeTab?.renderedName === '발주서 등록') {
@@ -288,7 +288,7 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
         alert('쉐어포인트 자동저장')
     }
 
-    console.log(isModalOpen, 'isModalOpen:')
+
     return <Spin spinning={loading} tip={'LOADING'}>
         <PanelSizeUtil groupRef={groupRef} storage={'order_write'}/>
         {(isModalOpen['event1'] || isModalOpen['agencyCode'] || isModalOpen['event2']) &&

@@ -19,7 +19,7 @@ import moment from "moment/moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 
 
-export default function RfqRead({getPropertyId, getCopyPage, }:any) {
+export default function RfqRead({getPropertyId, getCopyPage,}: any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
 
@@ -96,9 +96,9 @@ export default function RfqRead({getPropertyId, getCopyPage, }:any) {
         });
         const selectedRows = gridRef.current.getSelectedRows();
 
-        await deleteRfq({data: {deleteList: deleteList}}).then((v:any)=>{
+        await deleteRfq({data: {deleteList: deleteList}}).then((v: any) => {
 
-            if(v.code === 1){
+            if (v.code === 1) {
                 searchInfo();
                 notificationAlert('success', '🗑️견적의뢰 삭제완료',
                     <>
@@ -112,15 +112,10 @@ export default function RfqRead({getPropertyId, getCopyPage, }:any) {
                     , function () {
                     },
                 )
-            }else{
+            } else {
                 message.error(v.message)
             }
         })
-
-
-
-
-
 
 
     }
@@ -144,7 +139,7 @@ export default function RfqRead({getPropertyId, getCopyPage, }:any) {
                 <div style={{
                     display: 'grid',
                     gridTemplateRows: `${mini ? 270 : 65}px calc(100vh - ${mini ? 400 : 195}px)`,
-                   // rowGap : 10
+                    // rowGap : 10
                 }}>
                     <MainCard title={'견적의뢰 조회'} list={[
                         {name: '조회', func: searchInfo, type: 'primary'},
@@ -154,69 +149,84 @@ export default function RfqRead({getPropertyId, getCopyPage, }:any) {
                         {mini ? <div>
                             <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
                                 <Panel defaultSize={sizes[0]} minSize={5}>
-                            <BoxCard>
-                                {rangePickerForm({title: '작성일자', id: 'searchDate', onChange: onChange, data: info})}
-                                {selectBoxForm({
-                                    title: '회신 여부', id: 'searchContent', onChange: onChange, data: info, list: [
-                                        {value: '', label: '전체'},
-                                        {value: '회신', label: '회신'},
-                                        {value: '미회신', label: '미회신'}
-                                    ]
-                                })}
-                                {inputForm({
-                                    title: '등록직원명', id: 'searchCreatedBy',
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
-                            </BoxCard>
+                                    <BoxCard>
+                                        <div style={{display : 'grid', gridTemplateColumns : '1fr 80px', gap : 10}}>
+                                            {rangePickerForm({
+                                                title: '작성일자',
+                                                id: 'searchDate',
+                                                onChange: onChange,
+                                                data: info
+                                            })}
+                                            <Button size={'small'} style={{fontSize : 12, marginTop : 25}} onClick={()=>{
+                                                setInfo(v=>{
+                                                    return {...v, searchDate : [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
+                                                        "searchStartDate": moment().format('YYYY-MM-DD'),              // 작성일자 시작일
+                                                        "searchEndDate":moment().format('YYYY-MM-DD'),                // 작성일자 종료일
+                                                    }
+                                                })
+                                            }}>오늘</Button>
+                                        </div>
+                                        {selectBoxForm({
+                                            title: '회신 여부', id: 'searchContent', onChange: onChange, data: info, list: [
+                                                {value: '', label: '전체'},
+                                                {value: '회신', label: '회신'},
+                                                {value: '미회신', label: '미회신'}
+                                            ]
+                                        })}
+                                        {inputForm({
+                                            title: '등록직원명', id: 'searchCreatedBy',
+                                            onChange: onChange,
+                                            handleKeyPress: handleKeyPress,
+                                            data: info
+                                        })}
+                                    </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>
                                 <Panel defaultSize={sizes[1]} minSize={5}>
-                            <BoxCard>
-                                {inputForm({
-                                    title: '문서번호', id: 'searchDocumentNumber',
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
-                                {inputForm({
-                                    title: '고객사명', id: 'searchCustomerName',
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
-                                {inputForm({
-                                    title: '고객사담당자', id: 'searchManagerName',
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
+                                    <BoxCard>
+                                        {inputForm({
+                                            title: '문서번호', id: 'searchDocumentNumber',
+                                            onChange: onChange,
+                                            handleKeyPress: handleKeyPress,
+                                            data: info
+                                        })}
+                                        {inputForm({
+                                            title: '고객사명', id: 'searchCustomerName',
+                                            onChange: onChange,
+                                            handleKeyPress: handleKeyPress,
+                                            data: info
+                                        })}
+                                        {inputForm({
+                                            title: '고객사담당자', id: 'searchManagerName',
+                                            onChange: onChange,
+                                            handleKeyPress: handleKeyPress,
+                                            data: info
+                                        })}
 
-                            </BoxCard>
+                                    </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>
                                 <Panel defaultSize={sizes[2]} minSize={5}>
-                            <BoxCard>
-                                {inputForm({
-                                    title: 'Maker', id: 'searchMaker',
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
-                                {inputForm({
-                                    title: 'Item', id: 'searchItem',
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
-                                {inputForm({
-                                    title: 'Model', id: 'searchModel',
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
-                            </BoxCard>
+                                    <BoxCard>
+                                        {inputForm({
+                                            title: 'Maker', id: 'searchMaker',
+                                            onChange: onChange,
+                                            handleKeyPress: handleKeyPress,
+                                            data: info
+                                        })}
+                                        {inputForm({
+                                            title: 'Item', id: 'searchItem',
+                                            onChange: onChange,
+                                            handleKeyPress: handleKeyPress,
+                                            data: info
+                                        })}
+                                        {inputForm({
+                                            title: 'Model', id: 'searchModel',
+                                            onChange: onChange,
+                                            handleKeyPress: handleKeyPress,
+                                            data: info
+                                        })}
+                                    </BoxCard>
                                 </Panel>
 
                                 <PanelResizeHandle/>
@@ -227,7 +237,7 @@ export default function RfqRead({getPropertyId, getCopyPage, }:any) {
                     </MainCard>
 
                     {/*@ts-ignored*/}
-                    <TableGrid deleteComp={       <Popconfirm
+                    <TableGrid deleteComp={<Popconfirm
                         title="삭제하시겠습니까?"
                         onConfirm={deleteList}
                         icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>

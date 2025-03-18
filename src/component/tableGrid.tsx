@@ -101,13 +101,10 @@ const TableGrid = ({
     };
 
 
-    const option = 'width=1300,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no'
-    const openType = '_blank'
     const handleDoubleClicked = (e) => {
 
         if (type === 'read') {
 
-            console.log(e.data,'e.data::::')
             if (e.data.orderStatusId){
                 getPropertyId('store_update', e.data.orderStatusId)
             }
@@ -173,7 +170,7 @@ const TableGrid = ({
 
         if (e.column.colId === 'actualQuantity' || e.column.colId === 'expectQuantity') {
             const {orderDetailId, actualQuantity, expectQuantity} = e.data;
-            console.log(expectQuantity,'expectQuantity:')
+
             const copyData = _.cloneDeep(exQuantity);
             const findObj = copyData.find(v => v.orderDetailId === orderDetailId)
 
@@ -303,7 +300,7 @@ const TableGrid = ({
         const rowNode = event.node; // 🔍 현재 선택된 행 가져오기
 
         if (headerName === '') {
-            console.log(`🔹 "${headerName}" 열 클릭됨 → 체크박스 토글`);
+
 
             // 🔄 현재 체크박스 상태 반전 (on/off)
             const isSelected = rowNode.isSelected();
@@ -332,7 +329,7 @@ const TableGrid = ({
                         colKey: field
                     });
 
-                    console.log(`"${field}" 컬럼이 "aa"로 변경되었습니다.`);
+
                 }
 
             }
@@ -352,7 +349,7 @@ const TableGrid = ({
 
 
         if(getRowInfo){
-            console.log(params?.data,'::??')
+
             getRowInfo(params?.data)
         }
     }

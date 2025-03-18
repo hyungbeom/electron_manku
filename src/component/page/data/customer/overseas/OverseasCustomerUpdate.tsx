@@ -36,7 +36,7 @@ export default function OverseasCustomerUpdate({ updateKey, getCopyPage}:any) {
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
     async function getDataInfo() {
-        console.log(updateKey['overseas_customer_update'],'???')
+
         const result = await getData.post('customer/getOverseasCustomerDetail', {
             "overseasCustomerId": updateKey['overseas_customer_update'],
             "overseasCustomerCode": ""
@@ -104,7 +104,7 @@ export default function OverseasCustomerUpdate({ updateKey, getCopyPage}:any) {
 
         let copyData = {...info}
         copyData['customerManagerList'] = uncheckedData;
-        console.log(copyData, 'copyData::')
+
         setInfo(copyData);
 
     }

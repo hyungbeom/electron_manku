@@ -10,7 +10,6 @@ export default function TotalUser(){
     const [list, setList] = useState([])
 
     useEffect(()=>{
-        console.log('!!!')
         async function getList() {
             const result = await getData.post('admin/getAdminList', {
                 "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
@@ -53,11 +52,6 @@ export default function TotalUser(){
                     <Tag color={text ? 'blue' : 'red'}
                 onClick={async ()=>{
 
-                    console.log({
-                        ...data,
-                        "adminId": data['adminId'],
-                        "authority": text === 1 ? 0 : 1
-                    })
                     await getData.post('admin/updateAdmin', {
                         ...data,
                         "adminId": data['adminId'],
@@ -70,7 +64,6 @@ export default function TotalUser(){
                                 "page": 1,
                                 "limit": -1
                             });
-                            console.log(result?.data?.entity?.adminList,'result?.data?.entity?.adminList:')
                             setList(result?.data?.entity?.adminList)
                         }
                     })

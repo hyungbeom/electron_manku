@@ -64,7 +64,7 @@ export default function MakerRead({getPropertyId, getCopyPage}:any) {
                     "limit": -1
                 }
             }).then(v => {
-                console.log(info, 'v.data:')
+
                 gridManage.resetData(gridRef, v.data);
                 setTotalRow(v.pageInfo.totalRow)
                 setLoading(false)
@@ -87,7 +87,7 @@ export default function MakerRead({getPropertyId, getCopyPage}:any) {
         const list = gridRef.current.getSelectedRows()
         const filterList = list.map(v => v.makerId);
         await getFormData.post('maker/deleteMakers', {makerIdList: filterList}).then(v => {
-            console.log(list, 'list:')
+
             if (v.data.code === 1) {
                 searchInfo(true)
                 notificationAlert('success', '🗑️Maker 삭제완료',

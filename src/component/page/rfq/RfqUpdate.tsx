@@ -81,7 +81,7 @@ export default function RqfUpdate({
         getDataInfo().then(v => {
           if(v) {
               const {estimateRequestDetail, attachmentFileList} = v;
-              console.log(estimateRequestDetail,'estimateRequesasdtasdDetail::')
+
               setFileList(fileManage.getFormatFiles(attachmentFileList));
               setOriginFileList(attachmentFileList);
               setInfo({

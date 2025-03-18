@@ -77,7 +77,6 @@ export default function RemittanceDomesticWrite({dataInfo = [], copyPageInfo}:an
         commonManage.openModal(e, setIsModalOpen)
     }
 
-    console.log(info,'')
     return <>
         <div style={{height : 'calc(100vh - 90px)'}}>
             <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}

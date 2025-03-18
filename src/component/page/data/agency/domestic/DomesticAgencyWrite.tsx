@@ -77,7 +77,7 @@ export default function DomesticAgencyWrite({copyPageInfo, getPropertyId}:any) {
         infoData[listType] = filterTableList
         await getData.post('agency/addAgency', infoData).then(v => {
             if (v.data.code === 1) {
-                console.log(v.data,'v.data:')
+
                 notificationAlert('success', '💾해외 고객사 등록완료',
                     <>
                         <div>상호 : {dom.value}</div>

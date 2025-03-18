@@ -40,7 +40,7 @@ export default function SearchInfoModal({
         if (open) {
             const firstTrueKey = Object.keys(open).find(key => open[key]);
             const dom = infoRef.current.querySelector(`#${firstTrueKey}`);
-            console.log(firstTrueKey, 'dom:')
+
             switch (firstTrueKey) {
                 case 'customerName' :
                 case 'agencyCode' :
@@ -120,7 +120,7 @@ export default function SearchInfoModal({
         e.event.preventDefault();
 
 
-        console.log(e.data, 'customerId')
+
         setPage({x: clientX, y: clientY})
 
 

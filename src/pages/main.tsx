@@ -106,6 +106,7 @@ export default function Main() {
     function getPropertyId(key, id) {
         let copyObject = _.cloneDeep(updateKey);
         copyObject[key] = id;
+
         setUpdateKey(copyObject);
         onSelect([key]);
     }
@@ -150,6 +151,31 @@ export default function Main() {
 
         // 🔥 이미 존재하는 탭이면 추가하지 않음
         if (existingTabs.includes(selectedKey)) {
+            const model = modelRef.current;
+            const allNodes = model.getRoot().getChildren();
+
+            let targetNode = null;
+            const findTab = (nodes) => {
+                for (const node of nodes) {
+                    if (node.getType() === "tab" && node.getName() === tabComponents[selectedKey].name) {
+                        targetNode = node;
+                        break;
+                    }
+                    if (node.getChildren) {
+                        findTab(node.getChildren()); // 재귀적으로 탐색
+                    }
+                }
+            };
+            findTab(allNodes);
+
+            console.log(targetNode)
+
+            if (targetNode) {
+
+                console.log(targetNode.getId(),'targetNode.getId():')
+                model.doAction(Actions.selectTab(targetNode.getId()));
+                // layoutRef.current?.update(); // 리렌더링 없이 UI 업데이트
+            }
             return;
         }
 

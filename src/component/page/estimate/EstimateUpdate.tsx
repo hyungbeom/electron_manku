@@ -121,7 +121,7 @@ export default function EstimateUpdate({
                 uploadType: 3,
                 managerAdminId: estimateDetail['managerAdminId'] ? estimateDetail['managerAdminId'] : ''
             })
-            console.log(estimateDetail,'estimateDetail:')
+
             estimateDetail[listType] = [...estimateDetail[listType], ...commonFunc.repeatObject(rfqInfo['write']['defaultData'], 100 - estimateDetail[listType].length)]
             setTableData(estimateDetail[listType]);
 
@@ -219,7 +219,7 @@ export default function EstimateUpdate({
                 const list = fileManage.getFormatFiles(v);
                 setFileList(list)
                 setOriginFileList(list);
-                console.log(v.entity?.estimateId,'v.entity?.estimateId??')
+
                 notificationAlert('success', '💾견적서 수정완료',
                     <>
                         <div>Inquiry No. : {dom.value}</div>

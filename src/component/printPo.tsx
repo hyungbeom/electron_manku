@@ -629,7 +629,7 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
 
             <div ref={pdfSubRef}>
                 {splitData.map((v, idx) => {
-                    console.log(v, 'splitData[idx].length:')
+
                     if (!!idx) {
                         return <div style={{borderTop: '1px solid lightGray', padding: '50px 20px'}}>
                             <div style={{

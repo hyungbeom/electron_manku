@@ -16,7 +16,7 @@ function SignUpButton() {
         const { code } = query;
 
         if (code) {
-            console.log('성공?!')
+
             // 백엔드 API Route로 인증 코드 전달
             // sendCodeToBackend(code);
         }

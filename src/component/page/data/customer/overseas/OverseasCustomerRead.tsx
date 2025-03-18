@@ -50,7 +50,7 @@ export default function OverseasCustomerRead({getPropertyId, getCopyPage}:any) {
                 "limit": -1
             }
         }).then(v => {
-            console.log(v.data,'v.data:')
+
             params.api.applyTransaction({add: v.data});
             setTotalRow(v.pageInfo.totalRow)
         })
@@ -81,7 +81,7 @@ export default function OverseasCustomerRead({getPropertyId, getCopyPage}:any) {
                     "limit": -1
                 }
             }).then(v => {
-                console.log(v.data, 'v.data:')
+
                 gridManage.resetData(gridRef, v.data);
                 setTotalRow(v.pageInfo.totalRow)
                 setLoading(false)

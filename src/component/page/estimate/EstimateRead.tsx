@@ -67,14 +67,14 @@ function EstimateRead({getPropertyId, getCopyPage, }:any) {
     }
 
     function onChange(e) {
-        console.log(e,'::')
+
         commonManage.onChange(e, setInfo)
     }
 
 
     async function searchInfo(e) {
         const copyData: any = {...info}
-        console.log(copyData,'::::')
+
         if (e) {
             setLoading(true)
             await searchEstimate({data: copyData}).then(v => {

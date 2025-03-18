@@ -66,7 +66,7 @@ export default function OverseasAgencyWrite({copyPageInfo, getPropertyId}: any) 
         let infoData = commonManage.getInfo(infoRef, infoInit);
         const tableList = tableRef.current?.getSourceData();
 
-        console.log(tableList,'tableList:')
+
         const filterTableList = commonManage.filterEmptyObjects(tableList, ['managerName'])
         if (!filterTableList.length) {
             return message.warn('하위 데이터 1개 이상이여야 합니다');

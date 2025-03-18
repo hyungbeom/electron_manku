@@ -41,7 +41,7 @@ export default function OrderRead({getPropertyId, getCopyPage}:any) {
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('order_read');
-        console.log(JSON.parse(savedSizes),'JSON.parse(savedSizes)::')
+
         return savedSizes ? JSON.parse(savedSizes) : [25, 25, 25, 0]; // 기본값 [50, 50, 50]
     };
 
@@ -148,8 +148,7 @@ export default function OrderRead({getPropertyId, getCopyPage}:any) {
                                     title: '등록직원명', id: 'searchCreatedBy',
                                     onChange: onChange,
                                     handleKeyPress: handleKeyPress,
-                                    data: info,
-                                    placeholder : 'DB연결 필요'
+                                    data: info
                                 })}
 
                             </BoxCard>

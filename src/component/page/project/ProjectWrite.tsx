@@ -151,7 +151,7 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                 }
 
         })
-        console.log(resultFilterTableList,'resultFilterTableList::')
+
         if (!resultFilterTableList.length) {
             return message.warn('하위 데이터 1개 이상이여야 합니다');
         }
