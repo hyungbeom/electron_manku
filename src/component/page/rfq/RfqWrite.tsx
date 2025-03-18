@@ -171,8 +171,7 @@ export default function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: 
             if (v.code === 1) {
                 const {documentNumberFull, estimateRequestId} = v.entity;
 
-
-                console.log(documentNumberFull,'check')
+                setFileList([])
                 if(dom){
                     dom.value = documentNumberFull;
                 }
@@ -186,18 +185,6 @@ export default function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: 
                     },
                     {cursor: 'pointer'}
                 )
-
-
-                await getAttachmentFileList({
-                    data: {
-                        "relatedType": "ESTIMATE_REQUEST",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
-                        "relatedId": estimateRequestId
-                    }
-                }).then(v => {
-                    const list = fileManage.getFormatFiles(v);
-                    setFileList(list)
-                    setLoading(false)
-                })
 
             }
 

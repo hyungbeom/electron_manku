@@ -175,7 +175,7 @@ export default function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutR
                     }).then(async v => {
                         if (v.data.code === 1) {
                             const {attachmentFileList, estimateRequestDetail} = v.data?.entity
-                            setFileList(fileManage.getFormatFiles(attachmentFileList))
+                            // setFileList(fileManage.getFormatFiles(attachmentFileList))
                             const dom = infoRef.current.querySelector('#connectDocumentNumberFull');
                             // const result = await findDocumentInfo(e, setInfo);
                             await getData.post('estimate/generateDocumentNumberFull', {
@@ -274,26 +274,18 @@ export default function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutR
             const {code, message: msg, entity} = v;
             const dom = infoRef.current.querySelector('#documentNumberFull');
             if (code === 1) {
-                await getAttachmentFileList({
-                    data: {
-                        "relatedType": "ESTIMATE",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
-                        "relatedId": entity?.estimateId
-                    }
-                }).then(v => {
-                    const list = fileManage.getFormatFiles(v);
-                    setFileList(list)
-                    notificationAlert('success', '💾견적서 등록완료',
-                        <>
-                            <div>Inquiry No. : {dom.value}</div>
-                            <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
-                        </>
-                        , function () {
-                            getPropertyId('estimate_update', entity?.estimateId)
-                        },
-                        {cursor: 'pointer'}
-                    )
-                    setLoading(false)
-                })
+                setFileList([])
+                notificationAlert('success', '💾견적서 등록완료',
+                    <>
+                        <div>Inquiry No. : {dom.value}</div>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                        getPropertyId('estimate_update', entity?.estimateId)
+                    },
+                    {cursor: 'pointer'}
+                )
+                setLoading(false)
             } else if (code === -20001) {
                 dom.style.borderColor = 'red';
                 message.error(msg);
