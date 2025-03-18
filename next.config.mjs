@@ -4,7 +4,6 @@ import {config} from 'dotenv';
 
 config();
 
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     env: {
@@ -13,6 +12,7 @@ const nextConfig = {
     reactStrictMode: false,
     experimental: {
 
+        // updateReadReplyStatus 2(e) 가 아닌것만
     },
     images: {
         unoptimized: true,
@@ -23,7 +23,6 @@ const nextConfig = {
     },
 };
 
-
 // withTM을 사용하여 필요한 모듈을 추가한 nextConfig를 내보냄
 export default withTM([
     'rc-util',         // rc-util을 포함하여 트랜스파일
@@ -31,5 +30,4 @@ export default withTM([
     'flexlayout-react',
     'react-splitter-layout',
     '@handsontable/react-wrapper'
-
 ])(nextConfig);
