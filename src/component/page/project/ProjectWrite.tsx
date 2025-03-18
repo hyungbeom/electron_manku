@@ -168,27 +168,17 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     async function returnFunc(e, data, msg) {
         const dom = infoRef.current.querySelector('#documentNumberFull');
         if (e === 1) {
-            await getAttachmentFileList({
-                data: {
-                    "relatedType": "PROJECT",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
-                    "relatedId": data?.projectId
-                }
-            }).then(v => {
-                const list = fileManage.getFormatFiles(v);
-                setFileList(list)
-                notificationAlert('success', '💾프로젝트 등록완료',
-                    <>
-                        <div>Project No. : {dom.value}</div>
-                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
-                    </>
-                    , function () {
-                        getPropertyId('project_update', data?.projectId)
-                    },
-                    {cursor: 'pointer'}
-                )
-                setLoading(false)
-            })
-
+            setFileList([])
+            notificationAlert('success', '💾프로젝트 등록완료',
+                <>
+                    <div>Project No. : {dom.value}</div>
+                    <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                </>
+                , function () {
+                    getPropertyId('project_update', data?.projectId)
+                },
+                {cursor: 'pointer'}
+            )
             setLoading(false)
         } else if (e === -20001) {
             dom.style.borderColor = 'red'
