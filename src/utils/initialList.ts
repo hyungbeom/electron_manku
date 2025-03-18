@@ -221,9 +221,10 @@ export const subRfqReadInitial = {
 
 export const subRfqReadMailInitial = {
 
-    "searchDate": [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],   // front 사용
-    "searchStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),              // 작성일자 시작일
-    "searchEndDate": moment().format('YYYY-MM-DD'),                // 작성일자 종료일
+    "searchDate": [moment().subtract(6, 'months').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],   // front 사용
+
+    "searchStartDate": moment().subtract(6, 'months').format('YYYY-MM-DD'),              // 작성일자 시작일
+    "searchEndDate":moment().format('YYYY-MM-DD'),                // 작성일자 종료일         // 작성일자 종료일
     "searchDocumentNumber": "",         // 문서번호
     "searchCustomerName": "",           // 고객사명
     "searchMaker": "",                  // Maker

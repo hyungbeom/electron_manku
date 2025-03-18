@@ -40,6 +40,7 @@ export default function RfqRead({getPropertyId, getCopyPage,}: any) {
             const {data, pageInfo} = v;
             setTotalRow(pageInfo.totalRow)
 
+            console.log(data,'data:::')
             params.api.applyTransaction({add: data});
         })
     };
