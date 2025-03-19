@@ -392,8 +392,8 @@ export const orderInfo = {
         },
         excelExpert: (v, i) => {
             v['unreceivedQuantity'] = `=B${i + 1} -C${i + 1}`
-            v['total'] = `=B${i + 1}*G${i + 1}`
-            v['totalNet'] = `=B${i + 1}*I${i + 1}`
+            v['total'] = `=B${i + 1}*I${i + 1}`
+            v['totalNet'] = `=B${i + 1}*G${i + 1}`
             return v
         },
         totalList: {

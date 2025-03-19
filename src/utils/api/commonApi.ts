@@ -29,6 +29,7 @@ export const findCodeInfo = async (event, setInfo, openModal, infoRef?) => {
         } else if (size === 1) {
             switch (event.target.id) {
                 case 'agencyCode' : {
+                    // K79
                     const {agencyId, agencyCode, agencyName, currencyUnit, email, managerName, phoneNumber} = data[0];
                     commonManage.setInfo(infoRef, {
                         agencyId: agencyId,
