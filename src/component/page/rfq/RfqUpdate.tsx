@@ -90,7 +90,7 @@ export default function RqfUpdate({
                   uploadType: 0,
                   managerAdminId: estimateRequestDetail['managerAdminId'] ? estimateRequestDetail['managerAdminId'] : estimateRequestDetail['createdBy']
               })
-              estimateRequestDetail[listType] = [...estimateRequestDetail[listType], ...commonFunc.repeatObject(rfqInfo['write']['defaultData'], 100 - estimateRequestDetail[listType].length)]
+              estimateRequestDetail[listType] = [...estimateRequestDetail[listType], ...commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000 - estimateRequestDetail[listType].length)]
 
               setTableData(estimateRequestDetail[listType]);
           }

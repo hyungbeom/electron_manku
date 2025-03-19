@@ -52,6 +52,7 @@ import CompanyAccount from "@/component/CompanyAccount";
 import CompanyAccountUpdate from "@/component/CompanyAccountUpdate";
 import CompanyAccountWrite from "@/component/CompanyAccountWrite";
 import {getData} from "@/manage/function/api";
+import moment from "moment/moment";
 
 
 function findTitleByKey(data, key) {
@@ -123,8 +124,9 @@ export default function Main({alarm}) {
                         console.log(v.entity.calendarCategoryList,'::!!')
                         const {categoryId, displayName, isSubscribed}  = v.entity.calendarCategoryList[0];
                         console.log(categoryId,'categoryId:')
-                        getData.post('schedule/getCalendarEventList', {categoryId:categoryId, date : '2025-03-04'}).then(src=>{
+                        getData.post('schedule/getCalendarEventList', {categoryId:categoryId, date : moment().format('YYYY-MM-DD')}).then(src=>{
                             if(src.data.code === 1){
+                                const {} = src;
                                 console.log(src,':::')
                             }
                         })

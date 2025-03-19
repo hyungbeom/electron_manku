@@ -176,11 +176,11 @@ export const rfqInfo = {
         },
         totalList: {
             "model": '',             // Model
-            "quantity": '=SUM(B1:B100)',           // 수량
+            "quantity": '=SUM(B1:B1000)',           // 수량
             "unit": "",            // 단위
             "currency": "",       // CURR
-            "unitPrice": '=SUM(E1:E100)',                // 매입단가
-            "total": '=SUM(F1:F100)',                // 매입단가
+            "unitPrice": '=SUM(E1:E1000)',                // 매입단가
+            "total": '=SUM(F1:F1000)',                // 매입단가
             "serialNumber": '',       // 항목 순서 (1부터 시작)
             "deliveryDate": '',      // 납기
             "content": "",       // 내용
