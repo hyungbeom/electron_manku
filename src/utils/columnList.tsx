@@ -1262,7 +1262,7 @@ export const tableOrderReadColumns = [
     },
     {
         headerName: '매입 단가',
-        field: 'net',
+        field: 'unitPrice',
         align: 'center',
         minWidth: 40,
         valueFormatter: numberFormat,
@@ -1325,8 +1325,8 @@ export const tableOrderReadColumns = [
     },
     {
         headerName: '매출 단가',
-        field: 'unitPrice',
-        key: 'unitPrice',
+        field: 'net',
+        key: 'net',
         align: 'center',
         minWidth: 50,
         valueFormatter: numberFormat,
@@ -1339,8 +1339,8 @@ export const tableOrderReadColumns = [
         align: 'center',
         minWidth: 60,
         valueFormatter: (params) => {
-            const {quantity, unitPrice} = params.data;
-            return Math.floor(quantity * unitPrice).toLocaleString();
+            const {quantity, net} = params.data;
+            return Math.floor(quantity * net).toLocaleString();
         },
         cellStyle: {textAlign: 'right'}
     },
