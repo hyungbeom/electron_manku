@@ -304,11 +304,12 @@ export default function SearchInfoModal({
                                                  type: type
                                              }
                                          }).then(data => {
-
+                                             // agencyTel
                                              commonManage.setInfo(infoRef, {
                                                  agencyManagerId: commonManage.checkValue(e.data.agencyId),
                                                  agencyCode: commonManage.checkValue(e.data.agencyCode),
                                                  agencyName: commonManage.checkValue(e.data.agencyName),
+                                                 agencyTel: commonManage.checkValue(e.data.phoneNumber),
                                                  agencyManagerName: commonManage.checkValue(e?.data?.managerName),
                                                  agencyManagerEmail: commonManage.checkValue(e.data.email),
                                                  agencyManagerPhoneNumber: commonManage.checkValue(e.data.phoneNumber)

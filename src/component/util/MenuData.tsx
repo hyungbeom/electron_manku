@@ -29,6 +29,7 @@ export const updateList = [
     {title : '해외고객사 수정', key : 'overseas_customer_update'},
     {title : '메이커 수정', key : 'maker_update'},
     {title : 'HS CODE 수정', key : 'hscode_update'},
+    {title : '회사계정관리 수정', key : 'company_account_update'},
 ]
 
 export const treeData = [
@@ -119,7 +120,16 @@ export const treeData = [
                     {title: "메이커 조회", key: 'maker_read'}
                 ]
             },
+            {
+                title: "회사계정관리", key: "company_account", children: [
+                    {title: "회사계정관리 등록", key: "company_account_write"},
+                    {title: "회사계정관리 조회", key: "company_account_read"},
+                ]
+            },
+
             {title: "HS CODE 조회", key: "hscode_read"},
+
+
         ],
     },
 ];

@@ -824,7 +824,7 @@ export const tableEstimateReadColumns = [
     },
     {
         headerName: '매출 단가',
-        field: 'unitPrice',
+        field: 'net',
         minWidth: 70,
         cellDataType: 'number',
         valueFormatter: numberFormat,
@@ -835,7 +835,18 @@ export const tableEstimateReadColumns = [
         field: 'amount',
         minWidth: 70,
         cellDataType: 'number',
-        valueFormatter: numberFormat,
+        valueFormatter: (params) => {
+            if (params.node.rowPinned) {
+                // 고정 행 (푸터)에서는 원래 값을 그대로 반환
+                return params.value !== undefined ? params.value.toLocaleString() : '0';
+            }
+            const {quantity, net} = params.data;
+            const quantitys = !isNaN(quantity) ? quantity : 0
+            const copyQuantity = !isNaN(net) ? net : 0
+            console.log(copyQuantity,'copyQuantity：：')
+            // console.log(quantity, receivedQuantity,'quantity, receivedQuantity:')
+            return (quantitys * copyQuantity).toLocaleString()
+        },
         cellStyle: {textAlign: 'right'}
     },    {
         headerName: '납기',
@@ -1272,7 +1283,16 @@ export const tableOrderReadColumns = [
         key: 'receivedQuantity',
         align: 'center',
         minWidth: 70,
-        valueFormatter: numberFormat,
+        valueFormatter: (params) => {
+            if (params.node.rowPinned) {
+                // 고정 행 (푸터)에서는 원래 값을 그대로 반환
+                return params.value !== undefined ? params.value.toLocaleString() : '0';
+            }
+            const {quantity, receivedQuantity} = params.data;
+            return params.value !== undefined ? params.value.toLocaleString() : '0';
+            // return !isNaN(quantity - receivedQuantity) ? (quantity - receivedQuantity).toLocaleString('en-US') : null
+
+        },
         cellStyle: {textAlign: 'right'}
     },
     {
@@ -1287,7 +1307,11 @@ export const tableOrderReadColumns = [
                 return params.value !== undefined ? params.value.toLocaleString() : '0';
             }
             const {quantity, receivedQuantity} = params.data;
-            return !isNaN(quantity - receivedQuantity) ? (quantity - receivedQuantity).toLocaleString('en-US') : null
+            const quantitys = !isNaN(quantity) ? quantity : 0
+            const copyQuantity = !isNaN(receivedQuantity) ? receivedQuantity : 0
+            console.log(copyQuantity,'copyQuantity：：')
+            // console.log(quantity, receivedQuantity,'quantity, receivedQuantity:')
+            return quantitys - copyQuantity
         },
         cellStyle: {textAlign: 'right'}
         // valueFormatter: (params) => {
@@ -2522,6 +2546,46 @@ export const tableCodeReadColumns = [
         field: 'hsCode',
     },
 ]
+
+
+
+
+export const tableCompanyAccountColumns = [
+
+    {
+        headerName: "", // 컬럼 제목
+        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
+        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
+        checkboxSelection: true, // 각 행에 체크박스 추가
+        cellStyle: {textAlign: "center"}, // 스타일 설정
+        maxWidth: 45, // 컬럼 너비
+        pinned: "left", // 왼쪽에 고정
+        filter: false
+    }, {
+        pinned: 'left',
+        headerName: '회사이름',
+        field: 'companyName',
+        maxWidth: 250
+    },
+    {
+        headerName: '홈페이지',
+        field: 'homepage',
+    },
+    {
+        headerName: '아이디',
+        field: 'userName',
+    },
+    {
+        headerName: '비밀번호',
+        field: 'password',
+    },
+    {
+        headerName: '비고',
+        field: 'remarks',
+    },
+]
+
+
 
 export const subTableCodeReadColumns = [
 

@@ -116,6 +116,7 @@ export default function EstimateUpdate({
             const {estimateDetail, attachmentFileList} = v;
             setFileList(fileManage.getFormatFiles(attachmentFileList));
             setOriginFileList(attachmentFileList)
+            console.log(estimateDetail,'estimateDetail:')
             setInfo({
                 ...estimateDetail,
                 uploadType: 3,

@@ -48,6 +48,8 @@ import DomesticCustomerUpdate from "@/component/page/data/customer/domestic/Dome
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import StoreUpdate from "@/component/page/store/StoreUpdate";
 import {useRouter} from "next/router";
+import CompanyAccount from "@/component/CompanyAccount";
+import ComapnyAccountUpdate from "@/component/ComapnyAccountUpdate";
 
 
 function findTitleByKey(data, key) {
@@ -274,6 +276,15 @@ export default function Main() {
         hscode_read: {
             name: "HS CODE 조회",
             component: <HcodeRead/>
+        },
+
+        company_account_read: {
+            name: "회사계정관리 조회",
+            component: <CompanyAccount/>
+        },
+        company_account_update: {
+            name: "회사계정관리 수정",
+            component: <ComapnyAccountUpdate updateKey={updateKey}/>
         },
 
 

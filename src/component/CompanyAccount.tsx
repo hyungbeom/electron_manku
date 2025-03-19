@@ -1,27 +1,23 @@
 import React, {useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
-import {wrapper} from "@/store/store";
-import initialServerRouter from "@/manage/function/initialServerRouter";
-import {setUserInfo} from "@/store/user/userSlice";
-import LayoutComponent from "@/component/LayoutComponent";
 
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
 
-import {tableCodeReadColumns,} from "@/utils/columnList";
+import {tableCompanyAccountColumns,} from "@/utils/columnList";
 import {codeSaveInitial, orderReadInitial,} from "@/utils/initialList";
 import TableGrid from "@/component/tableGrid";
 import {inputForm, MainCard, TopBoxCard} from "@/utils/commonForm";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import Spin from "antd/lib/spin";
-import {CopyOutlined, ExclamationCircleOutlined, RadiusSettingOutlined, SearchOutlined} from "@ant-design/icons";
-import {deleteHsCodeList, searchHSCode, searchMaker} from "@/utils/api/mainApi";
+import {ExclamationCircleOutlined, RadiusSettingOutlined, SearchOutlined} from "@ant-design/icons";
+import {deleteHsCodeList, searchHSCode} from "@/utils/api/mainApi";
 import Popconfirm from "antd/lib/popconfirm";
 import moment from "moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 
 
-export default function HcodeRead({getPropertyId, getCopyPage}:any) {
+export default function CompanyAccount({getPropertyId, getCopyPage}: any) {
     const notificationAlert = useNotificationAlert();
     const gridRef = useRef(null);
     const [mini, setMini] = useState(true);
@@ -37,10 +33,28 @@ export default function HcodeRead({getPropertyId, getCopyPage}:any) {
 
     const onGridReady = async (params) => {
         gridRef.current = params.api;
-        await searchHSCode({data: orderReadInitial}).then(v => {
-            params.api.applyTransaction({add: v.data});
-            setTotalRow(v.pageInfo.totalRow)
+        getData.post('company/getCompanyAccountList', {
+            "page": 1,
+            "limit": -1,
+            "searchCompanyName": "",
+            "searchHomepage": ""
+        }).then(v => {
+
+            const {code, entity} = v.data
+            console.log(code,'::')
+            if (code === 1) {
+                const {pageInfo, companyAccountList} = entity;
+                setTotalRow(pageInfo.totalRow)
+                params.api.applyTransaction({add: companyAccountList});
+            } else {
+                params.api.applyTransaction({add: []});
+            }
         })
+
+        // await searchHSCode({data: orderReadInitial}).then(v => {
+        //     params.api.applyTransaction({add: v.data});
+        //     setTotalRow(v.pageInfo.totalRow)
+        // })
     };
 
 
@@ -55,12 +69,12 @@ export default function HcodeRead({getPropertyId, getCopyPage}:any) {
         await getData.post('hsCode/addHsCode', info).then(v => {
             const code = v.data.code;
             if (code === 1) {
-                notificationAlert('success', '💾HS-CODE 등록완료',
+                notificationAlert('success', '💾회사계정 등록완료',
                     <>
                         <div>Item : {info['item']}</div>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
-                    ,null,
+                    , null,
                     {}
                 )
             } else {
@@ -83,24 +97,26 @@ export default function HcodeRead({getPropertyId, getCopyPage}:any) {
         if (e) {
             setLoading(true)
 
-
-            await searchHSCode({
-                data: {
-                    "searchText": info['item'] ? info['item'] : info['hsCode'],
-                    "page": 1,
-                    "limit": -1
-                }
+            getData.post('company/getCompanyAccountList', {
+                "page": 1,
+                "limit": -1,
+                "searchCompanyName": info['searchCompanyName'],
+                "searchHomepage": info['searchHomepage']
             }).then(v => {
-                gridManage.resetData(gridRef, v.data);
-                setTotalRow(v.pageInfo.totalRow)
+                const {code, entity} = v.data
+                if (code === 1) {
+                    const {pageInfo, companyAccountList} = entity;
+                    setTotalRow(pageInfo.totalRow)
+                    gridManage.resetData(gridRef, companyAccountList);
+                } else {
+                    gridManage.resetData(gridRef, []);
+                }
                 setLoading(false)
-            })
+            }, err => setLoading(false))
+
         }
         setLoading(false)
     }
-
-
-
 
 
     async function deleteList() {
@@ -111,8 +127,8 @@ export default function HcodeRead({getPropertyId, getCopyPage}:any) {
 
         const selectedRows = gridRef.current.getSelectedRows();
         const deleteList = selectedRows.map(v => v.hsCodeId)
-        await deleteHsCodeList({data: {hsCodeIdList: deleteList}}).then(v=>{
-            if(v.code === 1){
+        await deleteHsCodeList({data: {hsCodeIdList: deleteList}}).then(v => {
+            if (v.code === 1) {
                 searchInfo(true);
                 notificationAlert('success', '🗑️발주서 삭제완료',
                     <>
@@ -120,7 +136,6 @@ export default function HcodeRead({getPropertyId, getCopyPage}:any) {
                             - {selectedRows[0]?.documentNumberFull} {selectedRows.length > 1 ? ('외' + " " + (selectedRows.length - 1) + '개') : ''} 이(가)
                             삭제되었습니다
                         </div>
-                        {/*<div>프로젝트 제목 - {selectedRows[0].projectTitle} `${selectedRows.length > 1 ? ('외' + (selectedRows.length - 1)) + '개' : ''}`가 삭제되었습니다 </div>*/}
                         <div>삭제일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
                     , function () {
@@ -152,36 +167,31 @@ export default function HcodeRead({getPropertyId, getCopyPage}:any) {
                 gridTemplateRows: `${mini ? '150px' : '65px'} calc(100vh - ${mini ? 280 : 195}px)`,
                 columnGap: 5
             }}>
-                <MainCard title={'HS-CODE 조회'} list={[
+                <MainCard title={'회사계정 관리'} list={[
                     {name: <div><SearchOutlined style={{paddingRight: 8}}/>조회</div>, func: searchInfo, type: 'primary'},
-                    {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'},
+                    {
+                        name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>,
+                        func: clearAll,
+                        type: 'danger'
+                    },
                 ]} mini={mini} setMini={setMini}>
                     {mini ? <>
                         <TopBoxCard title={''} grid={"150px 250px 80px 1fr"}>
                             {inputForm({
-                                title: 'Item',
-                                id: 'item',
+                                title: '회사이름',
+                                id: 'searchCompanyName',
                                 onChange: onChange,
-                                handleKeyPress : handleKeyPress,
+                                handleKeyPress: handleKeyPress,
                                 data: info
                             })}
                             {inputForm({
-                                title: 'HSCODE',
-                                id: 'hsCode',
+                                title: '홈페이지',
+                                id: 'searchHomepage',
                                 onChange: onChange,
-                                handleKeyPress : handleKeyPress,
+                                handleKeyPress: handleKeyPress,
                                 data: info
                             })}
-                            {/*하단정렬*/}
-                            <div style={{
-                                display: 'flex',
-                                justifyContent: 'flex-end',
-                                flexDirection: 'column',
-                                marginBottom: 10
-                            }}>
-                                <Button size={'small'} style={{fontSize: 11}} type={'primary'}
-                                        onClick={saveFunc}>추가</Button>
-                            </div>
+
                         </TopBoxCard>
                     </> : null}
                 </MainCard>
@@ -197,7 +207,7 @@ export default function HcodeRead({getPropertyId, getCopyPage}:any) {
                 }
                            totalRow={totalRow}
                            gridRef={gridRef}
-                           columns={tableCodeReadColumns}
+                           columns={tableCompanyAccountColumns}
                            onGridReady={onGridReady}
                            getPropertyId={getPropertyId}
                            funcButtons={['agPrint']}/>

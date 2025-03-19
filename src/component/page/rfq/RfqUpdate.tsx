@@ -84,6 +84,7 @@ export default function RqfUpdate({
 
               setFileList(fileManage.getFormatFiles(attachmentFileList));
               setOriginFileList(attachmentFileList);
+              // replyStatus
               setInfo({
                   ...estimateRequestDetail,
                   uploadType: 0,

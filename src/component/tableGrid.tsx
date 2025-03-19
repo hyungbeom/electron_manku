@@ -105,7 +105,6 @@ const TableGrid = ({
 
         if (type === 'read') {
 
-            console.log(e.data,'!!!')
             if (e.data.orderStatusId){
                 getPropertyId('store_update', e.data.orderStatusId)
             }
@@ -145,6 +144,9 @@ const TableGrid = ({
             }
             if (e.data.officialDocumentId)
                 getPropertyId('code_diploma_update', e.data.officialDocumentId)
+            if (e.data.companyAccountId) {
+                getPropertyId('company_account_update', e.data)
+            }
         }
 
         if (type === 'hsCode') {
