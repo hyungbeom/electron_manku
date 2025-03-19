@@ -184,7 +184,7 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
                     // await findOrderDocumentInfo(e, setInfo, setTableData, memberList)
                     break;
                 case 'agencyCode' :
-
+                case 'customerName' :
                     await findCodeInfo(e, setInfo, openModal, infoRef)
                     break;
             }
@@ -422,12 +422,12 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
                                     })}
                                     {inputForm({
                                         title: '담당자명',
-                                        id: 'managerName',
+                                        id: 'customerManagerName',
 
                                     })}
                                     {inputForm({
                                         title: '연락처',
-                                        id: 'phoneNumber',
+                                        id: 'customerManagerPhoneNumber',
 
                                     })}
                                     {inputForm({
@@ -437,7 +437,7 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
                                     })}
                                     {inputForm({
                                         title: '팩스',
-                                        id: 'faxNumber',
+                                        id: 'customerManagerFaxNumber',
 
                                     })}
                                 </BoxCard>

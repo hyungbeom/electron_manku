@@ -251,7 +251,7 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
 
             switch (e.target.id) {
                 case 'agencyCode' :
-
+                case 'customerName' :
                     await findCodeInfo(e, setInfo, openModal, infoRef)
                     break;
             }
