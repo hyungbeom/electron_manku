@@ -9,6 +9,7 @@ import {amountFormat} from "@/utils/columnList";
 import Select from "antd/lib/select";
 import InputNumber from "antd/lib/input-number";
 import {estimateInfo, orderInfo} from "@/utils/column/ProjectInfo";
+import moment from "moment/moment";
 
 
 const getTextAreaValues = (ref) => {
@@ -105,12 +106,20 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
         const dom = infoRef.current.querySelector('#agencyCode');
         const lang = dom.value.startsWith("K");
 
+        let totalDate = ''
+        let date = moment(infoData['delivery']); // 기준 날짜
+        totalDate = infoData['delivery']
+        if(!isNaN(infoData['deliveryTerms'])){
+            console.log('숫자')
+            let newDate = date.add(infoData['deliveryTerms'], 'weeks'); // 주 단위 추가
+            totalDate = newDate.format('YYYY-MM-DD')
+        }
         setInfo(
             lang ?
 
                 [
                     {title: '수신처', value: infoData.agencyName, id: 'ourPoNo'},
-                    {title: '발주일자', value: '예상입고일 + 납기?', id: 'name'},
+                    {title: '발주일자', value: totalDate, id: 'name'},
                     {title: '담당자', value: infoData.agencyManagerName, id: 'agencyManagerName'},
                     {title: '발주번호', value: infoData?.documentNumberFull, id: 'contactNumber'},
                     {title: '납품조건', value: data.agencyCode, id: 'agencyCode'},

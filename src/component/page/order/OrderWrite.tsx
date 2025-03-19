@@ -136,7 +136,7 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
             switch (e.target.id) {
                 case 'ourPoNo' :
                     if (!e.target.value) {
-                       return message.warn('연결 Inqruiy No.를 입력해주세요 ')
+                        return message.warn('연결 Inqruiy No.를 입력해주세요 ')
                     }
                     setLoading(true)
                     await getData.post('estimate/getEstimateDetail', {
@@ -154,9 +154,13 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
                                 documentNumberFull: dom.value.toUpperCase()
                             }).then(src => {
 
-                                console.log(estimateDetail,'estimateDetail:')
+                                const manager = estimateDetail.managerAdminId;
+                                const findManager = memberList.find(v => v.adminId === manager)
+                                delete estimateDetail.createdBy
+                                delete estimateDetail.managerAdminId
                                 commonManage.setInfo(infoRef, {
                                     ...estimateDetail,
+                                    estimateManager: findManager?.name,
                                     documentNumberFull: src.data.code === 1 ? src.data.entity.newDocumentNumberFull : '',
                                     validityPeriod: '견적 발행 후 10일간',
                                     paymentTerms: '발주시 50% / 납품시 50%',
@@ -168,7 +172,7 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
                                     setTableData([...estimateDetail?.estimateDetailList, ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000 - estimateDetail?.estimateDetailList.length)])
                                 }
                                 setLoading(false)
-                            }, err =>         setLoading(false));
+                            }, err => setLoading(false));
                         } else {
                             setLoading(false)
                         }
@@ -214,8 +218,8 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
         if (!filterTableList.length) {
             return message.warn('하위 데이터 1개 이상이여야 합니다');
         }
-        const emptyQuantity = filterTableList.filter(v=> !v.quantity)
-        if(emptyQuantity.length){
+        const emptyQuantity = filterTableList.filter(v => !v.quantity)
+        if (emptyQuantity.length) {
             return message.error('수량을 입력해야 합니다.')
         }
         setLoading(true)
@@ -310,8 +314,12 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
                 <MainCard title={'발주서 작성'} list={[
                     {name: '거래명세표 출력', func: printTransactionStatement, type: 'default'},
                     {name: '발주서 출력', func: printPo, type: 'default'},
-                    {name: <div><SaveOutlined style={{paddingRight : 8}}/>저장</div>, func: saveFunc, type: 'primary'},
-                    {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'}
+                    {name: <div><SaveOutlined style={{paddingRight: 8}}/>저장</div>, func: saveFunc, type: 'primary'},
+                    {
+                        name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>,
+                        func: clearAll,
+                        type: 'danger'
+                    }
                 ]} mini={mini} setMini={setMini}>
 
 
@@ -393,6 +401,46 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
                                     {inputForm({title: '담당자', id: 'agencyManagerName'})}
                                 </BoxCard>
                             </Panel>
+                            <PanelResizeHandle/>
+
+                            <Panel defaultSize={sizes[0]} minSize={5}>
+                                <BoxCard title={'고객사 정보'}>
+                                    {inputForm({
+                                        title: '고객사명',
+                                        id: 'customerName',
+                                        suffix: <span style={{cursor: 'pointer'}} onClick={
+                                            (e) => {
+                                                e.stopPropagation();
+                                                openModal('customerName');
+                                            }
+                                        }>🔍</span>,
+
+
+                                        handleKeyPress: handleKeyPress,
+                                    })}
+                                    {inputForm({
+                                        title: '담당자명',
+                                        id: 'managerName',
+
+                                    })}
+                                    {inputForm({
+                                        title: '연락처',
+                                        id: 'phoneNumber',
+
+                                    })}
+                                    {inputForm({
+                                        title: '이메일',
+                                        id: 'customerManagerEmail',
+
+                                    })}
+                                    {inputForm({
+                                        title: '팩스',
+                                        id: 'faxNumber',
+
+                                    })}
+                                </BoxCard>
+                            </Panel>
+
                             <PanelResizeHandle/>
                             <Panel defaultSize={sizes[1]} minSize={5}>
                                 <BoxCard title={'담당자 정보'}>

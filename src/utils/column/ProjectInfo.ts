@@ -416,6 +416,9 @@ export const orderInfo = {
         createdBy: '',
         managerAdminName: '',
         managerAdminId: null,
+        customerManagerPhoneNumber : '',
+        customerManagerEmail : '',
+        customerManagerFaxNumber : '',
         "ourPoNo": "",    //  PO No
         "documentNumberFull": "",    // Our PO No
         "writtenDate": moment().format('YYYY-MM-DD'),

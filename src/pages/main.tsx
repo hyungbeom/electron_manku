@@ -171,8 +171,6 @@ export default function Main() {
             };
             findTab(allNodes);
 
-            console.log(targetNode)
-
             if (targetNode) {
 
                 model.doAction(Actions.selectTab(targetNode.getId()));

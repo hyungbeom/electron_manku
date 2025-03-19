@@ -25,7 +25,7 @@ import moment from "moment/moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 
 
-export default function OrderRead({getPropertyId, getCopyPage}:any) {
+export default function OrderRead({getPropertyId, getCopyPage}: any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
 
@@ -37,6 +37,7 @@ export default function OrderRead({getPropertyId, getCopyPage}:any) {
     const [totalRow, setTotalRow] = useState(0);
     const [loading, setLoading] = useState(false);
 
+
     const onGridReady = async (params) => {
         gridRef.current = params.api;
         await searchOrder({data: orderReadInitial}).then(v => {
@@ -45,9 +46,9 @@ export default function OrderRead({getPropertyId, getCopyPage}:any) {
         })
     };
 
+
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('order_read');
-
         return savedSizes ? JSON.parse(savedSizes) : [25, 25, 25, 0]; // 기본값 [50, 50, 50]
     };
 
@@ -92,8 +93,8 @@ export default function OrderRead({getPropertyId, getCopyPage}:any) {
         });
         setLoading(true);
         const selectedRows = gridRef.current.getSelectedRows();
-        await deleteOrder({data: {deleteList: deleteList}}).then(v=>{
-            if(v.code === 1){
+        await deleteOrder({data: {deleteList: deleteList}}).then(v => {
+            if (v.code === 1) {
                 searchInfo(true);
                 notificationAlert('success', '🗑️발주서 삭제완료',
                     <>
@@ -107,7 +108,7 @@ export default function OrderRead({getPropertyId, getCopyPage}:any) {
                     , function () {
                     },
                 )
-            }else{
+            } else {
                 message.error(v.message)
             }
         })
@@ -134,100 +135,112 @@ export default function OrderRead({getPropertyId, getCopyPage}:any) {
             }}>
                 <MainCard title={'발주서 조회'}
                           list={[
-                              {name: <div><SearchOutlined style={{paddingRight: 8}}/>조회</div>, func: searchInfo, type: 'primary'},
-                              {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'},
-                              {name: <div><SaveOutlined style={{paddingRight : 8}} />신규작성</div>, func: moveRouter, type: ''},
+                              {
+                                  name: <div><SearchOutlined style={{paddingRight: 8}}/>조회</div>,
+                                  func: searchInfo,
+                                  type: 'primary'
+                              },
+                              {
+                                  name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>,
+                                  func: clearAll,
+                                  type: 'danger'
+                              },
+                              {
+                                  name: <div><SaveOutlined style={{paddingRight: 8}}/>신규작성</div>,
+                                  func: moveRouter,
+                                  type: ''
+                              },
                           ]}
                           mini={mini} setMini={setMini}>
 
                     {mini ? <div>
-                        <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
-                            <Panel defaultSize={sizes[0]} minSize={5}>
-                            <BoxCard title={''}>
-                                {rangePickerForm({title: '발주일자', id: 'searchDate', onChange: onChange, data: info})}
-                                {selectBoxForm({
-                                    title: '입고 여부', id: 'searchStockStatus', onChange: onChange, data: info, list: [
-                                        {value: '', label: '전체'},
-                                        {value: '입고', label: '입고'},
-                                        {value: '미입고', label: '미입고'}
-                                    ]
-                                })}
-                                {inputForm({
-                                    title: '등록직원명', id: 'searchCreatedBy',
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
+                            <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
+                                <Panel defaultSize={sizes[0]} minSize={5}>
+                                    <BoxCard title={''}>
+                                        {rangePickerForm({title: '발주일자', id: 'searchDate', onChange: onChange, data: info})}
+                                        {selectBoxForm({
+                                            title: '입고 여부', id: 'searchStockStatus', onChange: onChange, data: info, list: [
+                                                {value: '', label: '전체'},
+                                                {value: '입고', label: '입고'},
+                                                {value: '미입고', label: '미입고'}
+                                            ]
+                                        })}
+                                        {inputForm({
+                                            title: '등록직원명', id: 'searchCreatedBy',
+                                            onChange: onChange,
+                                            handleKeyPress: handleKeyPress,
+                                            data: info
+                                        })}
 
-                            </BoxCard>
-                            </Panel>
-                            <PanelResizeHandle/>
+                                    </BoxCard>
+                                </Panel>
+                                <PanelResizeHandle/>
 
-                            <Panel defaultSize={sizes[1]} minSize={5}>
-                            <BoxCard title={''}>
-                                {inputForm({
-                                    title: '문서번호',
-                                    id: 'searchDocumentNumber',
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
-                                {inputForm({
-                                    title: '고객사명',
-                                    id: 'searchCustomerName',
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
+                                <Panel defaultSize={sizes[1]} minSize={5}>
+                                    <BoxCard title={''}>
+                                        {inputForm({
+                                            title: '문서번호',
+                                            id: 'searchDocumentNumber',
+                                            onChange: onChange,
+                                            handleKeyPress: handleKeyPress,
+                                            data: info
+                                        })}
+                                        {inputForm({
+                                            title: '고객사명',
+                                            id: 'searchCustomerName',
+                                            onChange: onChange,
+                                            handleKeyPress: handleKeyPress,
+                                            data: info
+                                        })}
 
-                                {inputForm({
-                                    title: '만쿠담당자',
-                                    id: 'searchManagerAdminName',
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
+                                        {inputForm({
+                                            title: '만쿠담당자',
+                                            id: 'searchManagerAdminName',
+                                            onChange: onChange,
+                                            handleKeyPress: handleKeyPress,
+                                            data: info
+                                        })}
 
-                            </BoxCard>
-                            </Panel>
+                                    </BoxCard>
+                                </Panel>
 
-                            <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[2]} minSize={5}>
-                            <BoxCard title={''}>
+                                <PanelResizeHandle/>
+                                <Panel defaultSize={sizes[2]} minSize={5}>
+                                    <BoxCard title={''}>
 
 
-                                {inputForm({
-                                    title: 'Maker',
-                                    id: 'searchMaker',
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
-                                {inputForm({
-                                    title: 'Item',
-                                    id: 'searchItem',
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
-                                {inputForm({
-                                    title: 'Model',
-                                    id: 'searchModel',
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
-                            </BoxCard>
-                            </Panel>
-                            <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[3]} minSize={5}>
-                            </Panel>
-                        </PanelGroup>
+                                        {inputForm({
+                                            title: 'Maker',
+                                            id: 'searchMaker',
+                                            onChange: onChange,
+                                            handleKeyPress: handleKeyPress,
+                                            data: info
+                                        })}
+                                        {inputForm({
+                                            title: 'Item',
+                                            id: 'searchItem',
+                                            onChange: onChange,
+                                            handleKeyPress: handleKeyPress,
+                                            data: info
+                                        })}
+                                        {inputForm({
+                                            title: 'Model',
+                                            id: 'searchModel',
+                                            onChange: onChange,
+                                            handleKeyPress: handleKeyPress,
+                                            data: info
+                                        })}
+                                    </BoxCard>
+                                </Panel>
+                                <PanelResizeHandle/>
+                                <Panel defaultSize={sizes[3]} minSize={5}>
+                                </Panel>
+                            </PanelGroup>
                         </div>
                         : <></>}
                 </MainCard>
                 {/*@ts-ignored*/}
-                <TableGrid deleteComp={ <Popconfirm
+                <TableGrid deleteComp={<Popconfirm
                     title="삭제하시겠습니까?"
                     onConfirm={deleteList}
                     icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>

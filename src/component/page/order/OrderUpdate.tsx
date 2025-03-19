@@ -1,37 +1,20 @@
 import React, {useEffect, useRef, useState} from "react";
-import LayoutComponent from "@/component/LayoutComponent";
-import {orderWriteInitial, printEstimateInitial,} from "@/utils/initialList";
+import {printEstimateInitial,} from "@/utils/initialList";
 import message from "antd/lib/message";
 import {getData} from "@/manage/function/api";
-import {wrapper} from "@/store/store";
-import initialServerRouter from "@/manage/function/initialServerRouter";
-import {setUserInfo} from "@/store/user/userSlice";
 import {useRouter} from "next/router";
-import {
-    BoxCard,
-    datePickerForm,
-    inputForm,
-    MainCard,
-    selectBoxForm,
-    textAreaForm,
-    tooltipInfo, TopBoxCard
-} from "@/utils/commonForm";
-import TableGrid from "@/component/tableGrid";
-import {tableOrderWriteColumn} from "@/utils/columnList";
+import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, TopBoxCard} from "@/utils/commonForm";
 import PrintPo from "@/component/printPo";
-import PrintTransactionModal from "@/component/printTransaction";
 import {commonFunc, commonManage, fileManage, gridManage} from "@/utils/commonManage";
 import {getAttachmentFileList, updateOrder} from "@/utils/api/mainApi";
-import _ from "lodash";
-import {findCodeInfo, findEstDocumentInfo} from "@/utils/api/commonApi";
+import {findCodeInfo} from "@/utils/api/commonApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
-import Select from "antd/lib/select";
 import Spin from "antd/lib/spin";
-import {estimateInfo, orderInfo, rfqInfo} from "@/utils/column/ProjectInfo";
+import {estimateInfo, orderInfo} from "@/utils/column/ProjectInfo";
 import Table from "@/component/util/Table";
 import SearchInfoModal from "@/component/SearchAgencyModal";
-import {CopyOutlined, DownloadOutlined, FormOutlined, RadiusSettingOutlined} from "@ant-design/icons";
+import {CopyOutlined, FormOutlined, RadiusSettingOutlined} from "@ant-design/icons";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import useEventListener from "@/utils/common/function/UseEventListener";
@@ -39,7 +22,7 @@ import moment from "moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 
 const listType = 'orderDetailList'
-export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}:any) {
+export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
     const infoRef = useRef<any>(null)
@@ -48,7 +31,7 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
     const [tableData, setTableData] = useState([]);
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('order_update');
-        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20,0]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 0]; // 기본값 [50, 50, 50]
     };
 
 
@@ -102,6 +85,7 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
             const {orderDetail, attachmentFileList} = v;
             setFileList(fileManage.getFormatFiles(attachmentFileList));
             setOriginFileList(attachmentFileList);
+            console.log(orderDetail, 'orderDetail:')
             setInfo({
                 ...orderDetail,
                 uploadType: 4,
@@ -155,8 +139,8 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
         if (!filterTableList.length) {
             return message.warn('하위 데이터 1개 이상이여야 합니다');
         }
-        const emptyQuantity = filterTableList.filter(v=> !v.quantity)
-        if(emptyQuantity.length){
+        const emptyQuantity = filterTableList.filter(v => !v.quantity)
+        if (emptyQuantity.length) {
             return message.error('수량을 입력해야 합니다.')
         }
 
@@ -168,10 +152,10 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
         formData.delete('createdDate')
         formData.delete('modifiedDate')
 
-        await updateOrder({data: formData, returnFunc: returnFunc}).then(async v=>{
+        await updateOrder({data: formData, returnFunc: returnFunc}).then(async v => {
             const dom = infoRef.current.querySelector('#documentNumberFull');
 
-            if(v.code === 1){
+            if (v.code === 1) {
                 notificationAlert('success', '💾발주서 수정완료',
                     <>
                         <div>Inquiry No. : {dom.value}</div>
@@ -239,9 +223,8 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
     }
 
 
-
     function printPo() {
-        setCount(v=> v + 1)
+        setCount(v => v + 1)
         setIsModalOpen({event1: false, event2: false, event3: true});
     }
 
@@ -304,9 +287,6 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
     }
 
 
-
-
-
     function clearAll() {
         // setInfo({...infoInit});
     }
@@ -317,31 +297,32 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
     }
 
 
-
     useEventListener('keydown', (e: any) => {
         if (e.ctrlKey && e.key === "s") {
             e.preventDefault();
             const model = layoutRef.current.props.model;
             const activeTab = model.getActiveTabset()?.getSelectedNode();
-            if(activeTab?.renderedName === '발주서 수정'){
+            if (activeTab?.renderedName === '발주서 수정') {
                 saveFunc()
             }
         }
     }, typeof window !== 'undefined' ? document : null)
 
     async function printTransactionStatement() {
-       alert('쉐어포인트 자동저장')
+        alert('쉐어포인트 자동저장')
     }
 
     return <Spin spinning={loading} tip={'LOADING'}>
-        <PanelSizeUtil groupRef={groupRef}  storage={'order_update'}/>
-        {(isModalOpen['agencyCode'] ||isModalOpen['event1'] || isModalOpen['event2'] )&&<SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
-                          open={isModalOpen}
+        <PanelSizeUtil groupRef={groupRef} storage={'order_update'}/>
+        {(isModalOpen['agencyCode'] || isModalOpen['event1'] || isModalOpen['event2']) &&
+            <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
+                             open={isModalOpen}
 
-                          setIsModalOpen={setIsModalOpen}/>}
+                             setIsModalOpen={setIsModalOpen}/>}
         <>
             {isModalOpen['event3'] &&
-                <PrintPo data={info} infoRef={infoRef} tableRef={tableRef}  isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} memberList={memberList} count={count}/>}
+                <PrintPo data={info} infoRef={infoRef} tableRef={tableRef} isModalOpen={isModalOpen}
+                         setIsModalOpen={setIsModalOpen} memberList={memberList} count={count}/>}
             <div ref={infoRef} style={{
                 display: 'grid',
                 gridTemplateRows: `${mini ? '495px' : '65px'} calc(100vh - ${mini ? 590 : 195}px)`,
@@ -351,7 +332,11 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
                     {name: <div>거래명세표 출력</div>, func: printTransactionStatement, type: ''},
                     {name: <div>발주서 출력</div>, func: printPo, type: ''},
                     {name: <div><FormOutlined style={{paddingRight: 8}}/>수정</div>, func: saveFunc, type: 'primary'},
-                    {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'},
+                    {
+                        name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>,
+                        func: clearAll,
+                        type: 'danger'
+                    },
                     {name: <div><CopyOutlined style={{paddingRight: 8}}/>복제</div>, func: copyPage, type: ''}
 
                 ]} mini={mini} setMini={setMini}>
@@ -384,11 +369,11 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
                                             if (member) {
                                                 const {name, faxNumber, contactNumber, email} = member;
 
-                                                const sendObj ={
-                                                    managerId : name,
-                                                    managerPhoneNumber : contactNumber,
-                                                    managerFaxNumber : faxNumber,
-                                                    managerEmail : email
+                                                const sendObj = {
+                                                    managerId: name,
+                                                    managerPhoneNumber: contactNumber,
+                                                    managerFaxNumber: faxNumber,
+                                                    managerEmail: email
                                                 }
                                                 commonManage.setInfo(infoRef, sendObj);
                                             }
@@ -405,7 +390,7 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
                             {inputForm({
                                 title: '만쿠발주서 No',
                                 id: 'documentNumberFull',
-                                disabled : true
+                                disabled: true
                             })}
 
                             {inputForm({title: '고객사발주서 No', id: 'yourPoNo'})}
@@ -431,6 +416,44 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
                                     {inputForm({title: '회사명', id: 'agencyName'})}
                                     {inputForm({title: '관리번호', id: 'attnTo'})}
                                     {inputForm({title: '담당자', id: 'agencyManagerName'})}
+                                </BoxCard>
+                            </Panel>
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[0]} minSize={5}>
+                                <BoxCard title={'고객사 정보'}>
+                                    {inputForm({
+                                        title: '고객사명',
+                                        id: 'customerName',
+                                        suffix: <span style={{cursor: 'pointer'}} onClick={
+                                            (e) => {
+                                                e.stopPropagation();
+                                                openModal('customerName');
+                                            }
+                                        }>🔍</span>,
+
+
+                                        handleKeyPress: handleKeyPress,
+                                    })}
+                                    {inputForm({
+                                        title: '담당자명',
+                                        id: 'customerManagerName',
+
+                                    })}
+                                    {inputForm({
+                                        title: '연락처',
+                                        id: 'customerManagerPhoneNumber',
+
+                                    })}
+                                    {inputForm({
+                                        title: '이메일',
+                                        id: 'customerManagerEmail',
+
+                                    })}
+                                    {inputForm({
+                                        title: '팩스',
+                                        id: 'customerManagerFaxNumber',
+
+                                    })}
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
@@ -460,7 +483,9 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
                                             <option value={'현금결제'}>현금결제</option>
                                             <option value={'선수금'}>선수금</option>
                                             <option value={'정기결제'}>정기결제</option>
-                                            <option value={'By in advance T/T'} style={{color : 'lightGray'}}>By in advance T/T</option>
+                                            <option value={'By in advance T/T'} style={{color: 'lightGray'}}>By in
+                                                advance T/T
+                                            </option>
                                         </select>
                                     </div>
                                     {inputForm({
@@ -494,7 +519,8 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
 
                     </div> : null}
                 </MainCard>
-                <Table data={tableData} column={orderInfo['write']} funcButtons={['print']} ref={tableRef} type={'order_write_column'}/>
+                <Table data={tableData} column={orderInfo['write']} funcButtons={['print']} ref={tableRef}
+                       type={'order_write_column'}/>
             </div>
         </>
     </Spin>
