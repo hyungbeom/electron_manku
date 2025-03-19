@@ -219,15 +219,12 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     return <Spin spinning={loading}>
 
         <PanelSizeUtil groupRef={groupRef} storage={'project_write'}/>
-        <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
-                         open={isModalOpen}
-                         setIsModalOpen={setIsModalOpen}/>
+        <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo} open={isModalOpen} setIsModalOpen={setIsModalOpen}/>
 
         <div ref={infoRef} style={{
             display: 'grid',
             gridTemplateRows: `${mini ? '440px' : '65px'} calc(100vh - ${mini ? 535 : 195}px)`,
-            rowGap: 10,
-
+            rowGap: 10
         }}>
             <MainCard title={'프로젝트 등록'} list={[
                 {name: <div><SaveOutlined style={{paddingRight : 8}} />저장</div>, func: saveFunc, type: 'primary'},
@@ -346,8 +343,7 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                     : <></>}
             </MainCard>
 
-            <Table data={tableData} column={projectInfo['write']} funcButtons={['print']} ref={tableRef} infoRef={infoRef}
-                   type={'project_write_column'}/>
+            <Table data={tableData} column={projectInfo['write']} funcButtons={['print']} ref={tableRef} infoRef={infoRef} type={'project_write_column'}/>
         </div>
     </Spin>
 }

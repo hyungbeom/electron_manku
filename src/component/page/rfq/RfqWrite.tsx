@@ -34,6 +34,7 @@ export default function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: 
         getMemberList();
     }, []);
 
+
     async function getMemberList() {
         // @ts-ignore
         return await getData.post('admin/getAdminList', {
@@ -86,8 +87,9 @@ export default function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: 
 
     const [loading, setLoading] = useState(false);
 
-
     useEffect(() => {
+
+
         if (!isEmptyObj(copyPageInfo['rfq_write'])) {
             // copyPageInfo 가 없을시
             setInfo(infoInit)

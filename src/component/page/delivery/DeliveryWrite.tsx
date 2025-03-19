@@ -14,7 +14,7 @@ import initialServerRouter from "@/manage/function/initialServerRouter";
 import {wrapper} from "@/store/store";
 import {RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
 
-export default function DeliveryWrite() {
+export default function DeliveryWrite({copyPageInfo}) {
 
     const router = useRouter();
 

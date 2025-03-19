@@ -116,11 +116,11 @@ export default function Main() {
 
 
     function getCopyPage(page, v) {
+        onSelect([page])
         let copyObject = _.cloneDeep(copyPageInfo);
         copyObject[page] = v;
         setCopyPageInfo(copyObject);
-        console.log('check')
-        onSelect([page])
+
     }
 
     const onSelect = (selectedKeys, event?) => {
@@ -175,7 +175,6 @@ export default function Main() {
 
             if (targetNode) {
 
-                console.log(targetNode.getId(),'targetNode.getId():')
                 model.doAction(Actions.selectTab(targetNode.getId()));
                 // layoutRef.current?.update(); // 리렌더링 없이 UI 업데이트
             }
@@ -195,27 +194,27 @@ export default function Main() {
         },
         project_update: {name: "프로젝트 수정", component: <ProjectUpdate updateKey={updateKey}/>},
 
-        rfq_write: {name: "견적의뢰 등록", component: <RfqWrite/>},
+        rfq_write: {name: "견적의뢰 등록", component: <RfqWrite copyPageInfo={copyPageInfo}/>},
         rfq_read: {name: "견적의뢰 조회", component: <RfqRead/>},
         rfq_update: {name: "견적의뢰 수정", component: <RqfUpdate updateKey={updateKey}/>},
         rfq_mail_send: {name: "메일전송", component: <RfqMailSend/>},
 
-        estimate_write: {name: "견적서 등록", component: <EstimateWrite/>},
+        estimate_write: {name: "견적서 등록", component: <EstimateWrite copyPageInfo={copyPageInfo}/>},
         estimate_read: {
             name: "견적서 조회",
             component: <EstimateRead/>
         },
         estimate_update: {name: "견적서 수정", component: <EstimateUpdate updateKey={updateKey}/>},
 
-        order_write: {name: "발주서 등록", component: <OrderWrite/>},
+        order_write: {name: "발주서 등록", component: <OrderWrite copyPageInfo={copyPageInfo}/>},
         order_read: {name: "발주서 조회", component: <OrderRead/>},
         order_update: {name: "발주서 수정", component: <OrderUpdate updateKey={updateKey}/>},
 
-        store_write: {name: "입고 등록", component: <StoreWrite/>},
+        store_write: {name: "입고 등록", component: <StoreWrite copyPageInfo={copyPageInfo}/>},
         store_read: {name: "입고 조회", component: <StoreRead/>},
         store_update: {name: "입고 수정", component: <StoreUpdate updateKey={updateKey}/>},
 
-        delivery_write: {name: "배송 등록", component: <DeliveryWrite/>},
+        delivery_write: {name: "배송 등록", component: <DeliveryWrite copyPageInfo={copyPageInfo}/>},
         delivery_read: {
             name: "배송 조회",
             component: <DeliveryRead/>
@@ -223,7 +222,7 @@ export default function Main() {
         delivery_update: {name: "배송 수정", component: <DeliveryUpdate updateKey={updateKey}/>},
 
 
-        remittance_domestic_write: {name: "국내송금 등록", component: <RemittanceDomesticWrite/>},
+        remittance_domestic_write: {name: "국내송금 등록", component: <RemittanceDomesticWrite copyPageInfo={copyPageInfo}/>},
         remittance_domestic_read: {
             name: "국내송금 조회",
             component: <RemittanceDomesticRead/>
@@ -231,7 +230,7 @@ export default function Main() {
         remittance_domestic_update: {name: "국내송금 수정", component: <RemittanceDomesticUpdate updateKey={updateKey}/>},
 
 
-        domestic_agency_write: {name: "국내매입처 등록", component: <DomesticAgencyWrite/>},
+        domestic_agency_write: {name: "국내매입처 등록", component: <DomesticAgencyWrite copyPageInfo={copyPageInfo}/>},
         domestic_agency_read: {
             name: "국내매입처 조회",
             component: <DomesticAgencyRead/>
@@ -241,7 +240,7 @@ export default function Main() {
             component: <DomesticAgencyUpdate updateKey={updateKey}/>
         },
 
-        overseas_agency_write: {name: "해외매입처 등록", component: <OverseasAgencyWrite/>},
+        overseas_agency_write: {name: "해외매입처 등록", component: <OverseasAgencyWrite copyPageInfo={copyPageInfo}/>},
         overseas_agency_read: {
             name: "해외매입처 조회",
             component: <OverseasAgencyRead/>
@@ -252,14 +251,14 @@ export default function Main() {
         },
 
 
-        domestic_customer_write: {name: "국내고객사 등록", component: <DomesticCustomerWrite/>},
+        domestic_customer_write: {name: "국내고객사 등록", component: <DomesticCustomerWrite copyPageInfo={copyPageInfo}/>},
         domestic_customer_read: {
             name: "국내고객사 조회",
             component: <DomesticCustomerRead/>
         },
         domestic_customer_update: {name: "국내고객사 수정", component: <DomesticCustomerUpdate updateKey={updateKey}/>},
 
-        overseas_customer_write: {name: "해외고객사 등록", component: <OverseasCustomerWrite/>},
+        overseas_customer_write: {name: "해외고객사 등록", component: <OverseasCustomerWrite copyPageInfo={copyPageInfo}/>},
         overseas_customer_read: {
             name: "해외고객사 조회", component: <OverseasCustomerRead/>
         },
@@ -269,7 +268,7 @@ export default function Main() {
         },
 
 
-        maker_write: {name: "메이커 등록", component: <MakerWrite/>},
+        maker_write: {name: "메이커 등록", component: <MakerWrite copyPageInfo={copyPageInfo}/>},
         maker_read: {name: "메이커 조회", component: <MakerRead/>},
         maker_update: {name: "메이커 수정", component: <MakerUpdate updateKey={updateKey}/>},
 
@@ -289,7 +288,7 @@ export default function Main() {
         },
         company_account_write: {
             name: "회사계정관리 등록",
-            component: <CompanyAccountWrite/>
+            component: <CompanyAccountWrite copyPageInfo={copyPageInfo}/>
         },
 
 
@@ -302,7 +301,6 @@ export default function Main() {
             {/*{tabComponents[componentKey]?.component}*/}
             {React.cloneElement(tabComponents[componentKey].component, {
                 getPropertyId: getPropertyId,
-                copyPageInfo: copyPageInfo,
                 layoutRef: layoutRef,
                 getCopyPage: getCopyPage
             })}
