@@ -265,9 +265,11 @@ export default function SearchInfoModal({
                                              customerName: e.data.customerName,
                                              customerManagerEmail: e.data.email,
                                              customerManagerName: e.data.managerName,
+                                             customerManagerFaxNumber: e.data.faxNumber,
                                              faxNumber: e.data.faxNumber,
                                              managerName: e.data.managerName,
                                              customerManagerPhone: e.data.directTel,
+                                             customerManagerPhoneNumber: e.data.directTel,
                                              customerCode: e.data.customerCode,
                                              paymentTerms: e.data.paymentMethod ? e.data.paymentMethod : '발주시 50% / 납품시 50%',
                                          })

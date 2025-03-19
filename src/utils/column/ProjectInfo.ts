@@ -416,6 +416,7 @@ export const orderInfo = {
         createdBy: '',
         managerAdminName: '',
         managerAdminId: null,
+        customerManagerName : '',
         customerManagerPhoneNumber : '',
         customerManagerEmail : '',
         customerManagerFaxNumber : '',
