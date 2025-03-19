@@ -91,6 +91,7 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
 
     useEffect(() => {
 
+        console.log(copyPageInfo['project_write'],'copyPageInfo[\'project_write\']:')
         if (!isEmptyObj(copyPageInfo['project_write'])) {
             // copyPageInfo 가 없을시
             setInfo(infoInit)

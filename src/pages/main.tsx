@@ -185,7 +185,7 @@ export default function Main() {
         }
     };
     const tabComponents = {
-        project_write: {name: "프로젝트 등록", component: <ProjectWrite/>},
+        project_write: {name: "프로젝트 등록", component: <ProjectWrite copyPageInfo={copyPageInfo}/>},
         project_read: {
             name: "프로젝트 조회",
             component: <ProjectRead/>
