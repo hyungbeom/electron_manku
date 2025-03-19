@@ -294,10 +294,12 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
         alert('쉐어포인트 자동저장')
     }
 
+    console.log(isModalOpen,'isModalOpen::')
+
 
     return <Spin spinning={loading} tip={'LOADING'}>
         <PanelSizeUtil groupRef={groupRef} storage={'order_write'}/>
-        {(isModalOpen['event1'] || isModalOpen['agencyCode'] || isModalOpen['event2']) &&
+        {(isModalOpen['event1'] || isModalOpen['agencyCode'] || isModalOpen['event2'] || isModalOpen['customerName']) &&
             <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
                              open={isModalOpen}
 

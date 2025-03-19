@@ -314,7 +314,7 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
 
     return <Spin spinning={loading} tip={'LOADING'}>
         <PanelSizeUtil groupRef={groupRef} storage={'order_update'}/>
-        {(isModalOpen['agencyCode'] || isModalOpen['event1'] || isModalOpen['event2']) &&
+        {(isModalOpen['agencyCode'] || isModalOpen['event1'] || isModalOpen['event2']|| isModalOpen['customerName']) &&
             <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
                              open={isModalOpen}
 
