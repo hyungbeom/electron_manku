@@ -51,6 +51,7 @@ import {useRouter} from "next/router";
 import CompanyAccount from "@/component/CompanyAccount";
 import CompanyAccountUpdate from "@/component/CompanyAccountUpdate";
 import CompanyAccountWrite from "@/component/CompanyAccountWrite";
+import {getData} from "@/manage/function/api";
 
 
 function findTitleByKey(data, key) {
@@ -71,7 +72,7 @@ function findTitleByKey(data, key) {
 }
 
 
-export default function Main() {
+export default function Main({alarm}) {
     const modelRef = useRef(Model.fromJson({
         global: {},
         borders: [],
@@ -112,6 +113,40 @@ export default function Main() {
 
         setUpdateKey(copyObject);
         onSelect([key]);
+    }
+
+    useEffect(() => {
+        if (alarm) {
+            getCalendar().then(v => {
+                if(v.code === 1){
+                    if(v.entity.calendarCategoryList.length){
+                        console.log(v.entity.calendarCategoryList,'::!!')
+                        const {categoryId, displayName, isSubscribed}  = v.entity.calendarCategoryList[0];
+                        console.log(categoryId,'categoryId:')
+                        getData.post('schedule/getCalendarEventList', {categoryId:categoryId, date : '2025-03-04'}).then(src=>{
+                            if(src.data.code === 1){
+                                console.log(src,':::')
+                            }
+                        })
+
+                    }
+
+
+
+
+                }else{
+
+                }
+            })
+        }
+    }, [alarm]);
+
+
+    async function getCalendar() {
+        return await getData.post('schedule/getCalendarCategoryList').then(v => {
+            return v.data;
+        })
+
     }
 
 
@@ -493,6 +528,7 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
 
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
+    const {first} = ctx.query;
     if (!userInfo) {
         return {
             redirect: {
@@ -503,4 +539,6 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
     } else {
         store.dispatch(setUserInfo(userInfo));
     }
+
+    return {props: {alarm: first === 'true'}}
 })

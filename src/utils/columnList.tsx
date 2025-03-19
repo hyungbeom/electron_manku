@@ -174,7 +174,7 @@ export const dateFormat = (params) => {
 };
 
 export const numberFormat = (params) => {
-    return Math.floor(params.value).toLocaleString();
+    return params.value.toLocaleString();
 };
 
 export const amountFormat = (params) => {
@@ -1340,7 +1340,9 @@ export const tableOrderReadColumns = [
         minWidth: 60,
         valueFormatter: (params) => {
             const {quantity, net} = params.data;
-            return Math.floor(quantity * net).toLocaleString();
+            console.log(quantity,'quantity::')
+            console.log(net,'net::')
+            return (quantity * net).toLocaleString()
         },
         cellStyle: {textAlign: 'right'}
     },

@@ -405,7 +405,7 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
                             </Panel>
                             <PanelResizeHandle/>
 
-                            <Panel defaultSize={sizes[0]} minSize={5}>
+                            <Panel defaultSize={sizes[1]} minSize={5}>
                                 <BoxCard title={'고객사 정보'}>
                                     {inputForm({
                                         title: '고객사명',
@@ -444,7 +444,7 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
                             </Panel>
 
                             <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[1]} minSize={5}>
+                            <Panel defaultSize={sizes[2]} minSize={5}>
                                 <BoxCard title={'담당자 정보'}>
                                     {inputForm({title: '작성자', id: 'managerId', onChange: onChange, data: info})}
                                     {inputForm({title: 'TEL', id: 'managerPhoneNumber'})}
@@ -454,7 +454,7 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[2]} minSize={5}>
+                            <Panel defaultSize={sizes[3]} minSize={5}>
                                 <BoxCard title={'세부사항'}>
                                     <div style={{paddingBottom: 10}}>
                                         <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>결제조건</div>
@@ -483,14 +483,14 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[3]} minSize={5}>
+                            <Panel defaultSize={sizes[4]} minSize={5}>
                                 <BoxCard title={'ETC'}>
                                     {inputForm({title: '견적서담당자', id: 'estimateManager'})}
                                     {textAreaForm({title: '비고란', rows: 9, id: 'remarks'})}
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[4]} minSize={5}>
+                            <Panel defaultSize={sizes[5]} minSize={5}>
                                 <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
 
                                     <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
@@ -499,7 +499,8 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[5]} minSize={5}></Panel>
+                            <Panel defaultSize={0} minSize={0}>
+                            </Panel>
                         </PanelGroup>
 
                     </div> : null}

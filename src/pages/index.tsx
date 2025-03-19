@@ -135,7 +135,7 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
                     setCookies(ctx, 'token', accessToken);
                     return {
                         redirect: {
-                            destination: '/main',
+                            destination: '/main?first=true',
                         },
                     };
                 }
@@ -156,7 +156,7 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
         if (codeInfo >= 0) {  // 조건을 좀 더 직관적으로 변경
             return {
                 redirect: {
-                    destination: '/main',
+                    destination: '/main?first=true',
                     permanent: false,
                 },
             };

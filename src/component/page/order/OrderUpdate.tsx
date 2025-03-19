@@ -511,7 +511,8 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[5]} minSize={5}></Panel>
+                            <Panel defaultSize={0} minSize={0}>
+                            </Panel>
                         </PanelGroup>
 
                     </div> : null}
