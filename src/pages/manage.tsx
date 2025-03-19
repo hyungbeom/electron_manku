@@ -11,6 +11,7 @@ import ApproveUser from "@/component/manage/approveUser";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {getCookie} from "@/manage/function/cookie";
 import {useEffect, useState} from "react";
+import HistoryPage from "@/component/manage/HistoryPage";
 
 export default function Manage(any) {
 
@@ -42,6 +43,11 @@ export default function Manage(any) {
             key: '2',
             label: '승인 대기 사용자',
             children: <ApproveUser memberList={memberList}/>,
+        },
+        {
+            key: '3',
+            label: '작업이력 목록',
+            children: <HistoryPage/>,
         },
     ];
 

@@ -137,7 +137,6 @@ export default function RqfUpdate({
     async function saveFunc() {
         let infoData = commonManage.getInfo(infoRef, rfqInfo['defaultInfo']);
 
-
         const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
         if (findMember) {
             infoData['managerAdminName'] = findMember['name'];
@@ -179,7 +178,6 @@ export default function RqfUpdate({
         if (v.code === 1) {
 
             const dom = infoRef.current.querySelector('#documentNumberFull');
-            console.log(updateKey['rfq_update'],'updateKey[\'rfq_update\']::')
             notificationAlert('success', '💾견적의뢰 수정완료',
                 <>
                     <div>의뢰자료 No. : {dom.value}</div>
@@ -207,7 +205,6 @@ export default function RqfUpdate({
             message.warning(v.message)
         }
         setLoading(false)
-
     }
 
     function clearAll() {
