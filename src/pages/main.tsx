@@ -49,7 +49,8 @@ import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import StoreUpdate from "@/component/page/store/StoreUpdate";
 import {useRouter} from "next/router";
 import CompanyAccount from "@/component/CompanyAccount";
-import ComapnyAccountUpdate from "@/component/ComapnyAccountUpdate";
+import CompanyAccountUpdate from "@/component/CompanyAccountUpdate";
+import CompanyAccountWrite from "@/component/CompanyAccountWrite";
 
 
 function findTitleByKey(data, key) {
@@ -284,7 +285,11 @@ export default function Main() {
         },
         company_account_update: {
             name: "회사계정관리 수정",
-            component: <ComapnyAccountUpdate updateKey={updateKey}/>
+            component: <CompanyAccountUpdate updateKey={updateKey}/>
+        },
+        company_account_write: {
+            name: "회사계정관리 등록",
+            component: <CompanyAccountWrite/>
         },
 
 

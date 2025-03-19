@@ -11,7 +11,7 @@ import moment from "moment";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 
-export default function ComapnyAccountUpdate({updateKey, getCopyPage}:any) {
+export default function CompanyAccountUpdate({updateKey, getCopyPage}:any) {
     const notificationAlert = useNotificationAlert();
     const router = useRouter();
     const [info, setInfo] = useState<any>({
@@ -72,7 +72,7 @@ export default function ComapnyAccountUpdate({updateKey, getCopyPage}:any) {
 
     return <>
         <PanelSizeUtil groupRef={groupRef} storage={'company_account_update'}/>
-        <MainCard title={'메이커 수정'} list={[
+        <MainCard title={'회사계정관리 수정'} list={[
             {name: '수정', func: saveFunc, type: 'primary'},
             {name: '초기화', func: clearAll, type: 'danger'},
             {name: '복제', func: copyPage, type: 'default'},
