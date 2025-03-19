@@ -145,7 +145,7 @@ export default function DomesticCustomerUpdate({updateKey, getCopyPage}:any) {
 
         copyInfo['customerId'] = updateKey['domestic_customer_update']
 
-        copyInfo[listType] = [...totalList, ...commonFunc.repeatObject(DCInfo['write']['defaultData'], 100 - totalList.length)];
+        copyInfo[listType] = [...totalList, ...commonFunc.repeatObject(DCInfo['write']['defaultData'], 1000 - totalList.length)];
 
         getCopyPage('domestic_customer_write', copyInfo)
     }

@@ -79,7 +79,7 @@ export default function DomesticAgencyWrite({copyPageInfo, getPropertyId}:any) {
         await getData.post('agency/addAgency', infoData).then(v => {
             if (v.data.code === 1) {
 
-                notificationAlert('success', '💾해외 고객사 등록완료',
+                notificationAlert('success', '💾국내매입처 등록완료',
                     <>
                         <div>상호 : {dom.value}</div>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>

@@ -123,7 +123,7 @@ export default function EstimateUpdate({
                 managerAdminId: estimateDetail['managerAdminId'] ? estimateDetail['managerAdminId'] : ''
             })
 
-            estimateDetail[listType] = [...estimateDetail[listType], ...commonFunc.repeatObject(rfqInfo['write']['defaultData'], 100 - estimateDetail[listType].length)]
+            estimateDetail[listType] = [...estimateDetail[listType], ...commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000 - estimateDetail[listType].length)]
             setTableData(estimateDetail[listType]);
 
             setLoading(false)
@@ -271,7 +271,7 @@ export default function EstimateUpdate({
             copyInfo['managerAdminName'] = findMember['name'];
         }
 
-        copyInfo[listType] = [...totalList, ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 100 - totalList.length)];
+        copyInfo[listType] = [...totalList, ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000 - totalList.length)];
 
         getCopyPage('estimate_write', copyInfo)
     }
@@ -389,7 +389,7 @@ export default function EstimateUpdate({
     function clearAll() {
         // info 데이터 초기화
         commonManage.setInfo(infoRef, estimateInfo['defaultInfo'], userInfo['adminId']);
-        setTableData(commonFunc.repeatObject(estimateInfo['write']['defaultData'], 100))
+        setTableData(commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000))
     }
 
     return <div style={{overflow: 'hidden'}}><Spin spinning={loading}>

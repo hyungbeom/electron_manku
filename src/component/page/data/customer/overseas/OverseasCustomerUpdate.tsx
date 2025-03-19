@@ -49,7 +49,7 @@ export default function OverseasCustomerUpdate({ updateKey, getCopyPage}:any) {
         getDataInfo().then(v => {
             const {overseasCustomerDetail} = v;
             setInfo(overseasCustomerDetail);
-            overseasCustomerDetail[listType] = [...overseasCustomerDetail[listType], ...commonFunc.repeatObject(OCInfo['write']['defaultData'], 100 - overseasCustomerDetail[listType].length)];
+            overseasCustomerDetail[listType] = [...overseasCustomerDetail[listType], ...commonFunc.repeatObject(OCInfo['write']['defaultData'], 1000 - overseasCustomerDetail[listType].length)];
             setTableData(overseasCustomerDetail[listType]);
             setLoading(false)
         })

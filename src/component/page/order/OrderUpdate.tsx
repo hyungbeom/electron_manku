@@ -107,7 +107,7 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
                 uploadType: 4,
                 managerAdminId: orderDetail['managerAdminId'] ? orderDetail['managerAdminId'] : ''
             })
-            orderDetail[listType] = [...orderDetail[listType], ...commonFunc.repeatObject(orderInfo['write']['defaultData'], 100 - orderDetail[listType].length)]
+            orderDetail[listType] = [...orderDetail[listType], ...commonFunc.repeatObject(orderInfo['write']['defaultData'], 1000 - orderDetail[listType].length)]
 
             setTableData(orderDetail[listType]);
 
@@ -298,7 +298,7 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
 
         copyInfo['managerAdminName'] = findMember['name'];
 
-        copyInfo[listType] = [...totalList, ...commonFunc.repeatObject(orderInfo['write']['defaultData'], 100 - totalList.length)];
+        copyInfo[listType] = [...totalList, ...commonFunc.repeatObject(orderInfo['write']['defaultData'], 1000 - totalList.length)];
 
         getCopyPage('order_write', copyInfo)
     }

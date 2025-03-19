@@ -19,7 +19,7 @@ registerAllModules();
 
 
 const Table = forwardRef(({
-                              data = new Array(100).fill({}),
+                              data = new Array(1000).fill({}),
                               column,
                               type = '',
                               funcButtons,
@@ -83,7 +83,7 @@ const Table = forwardRef(({
                 } else {
                     td.textContent = value?.toLocaleString(); // 🔢 숫자는 쉼표 추가
                 }
-                if (row === 100) {
+                if (row === 1000) {
 
                 }
 
@@ -393,7 +393,7 @@ const Table = forwardRef(({
             );
 
             // ✅ 최대 100개 데이터만 유지
-            formattedData = formattedData.slice(0, 100);
+            formattedData = formattedData.slice(0, 1000);
 
             console.log(formattedData)
             const instance = hotRef.current.hotInstance;
@@ -404,7 +404,7 @@ const Table = forwardRef(({
             const count = filterList.length + filterList2.length
 
             // ✅ 변환된 데이터를 계산 및 저장
-            const resultlist = calcData([...filterList, ...filterList2, ...commonFunc.repeatObject(column['defaultData'], 100 - count)]);
+            const resultlist = calcData([...filterList, ...filterList2, ...commonFunc.repeatObject(column['defaultData'], 1000 - count)]);
 
             console.log(resultlist, 'resultlist:')
             // setTableData(commonFunc.repeatObject(column['defaultData'], 100 - count))

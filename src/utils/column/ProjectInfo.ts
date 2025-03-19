@@ -94,12 +94,12 @@ export const projectInfo = {
             calcCheck: '',
             marginRate: '',
             unit: '',
-            quantity: '=SUM(H1:H100)',
-            unitPrice: '=SUM(I1:I100)',
-            total: '=SUM(J1:J100)',
-            purchasePrice: '=SUM(K1:K100)',
-            totalPurchase: '=SUM(L1:L100)',
-            deliveryPrice: '=SUM(M1:M100)',
+            quantity: '=SUM(H1:H1000)',
+            unitPrice: '=SUM(K1:K1000)',
+            total: '=SUM(L1:L1000)',
+            purchasePrice: '=SUM(I1:I1000)',
+            totalPurchase: '=SUM(J1:J1000)',
+            deliveryPrice: '=SUM(M1:M1000)',
         },
         type: 'write'
     },
@@ -385,7 +385,6 @@ export const orderInfo = {
             "currency": '화폐단위',
             "net": '매입 단가',            // 매입단가
             "total": '매입 총액',            // 매입단가
-
             "unitPrice": '매출 단가',
             "totalNet": '매출 총액',
             "hscode": 'HS-CODE',

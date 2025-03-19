@@ -103,7 +103,7 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
         if (!isEmptyObj(copyPageInfo['order_write'])) {
             // copyPageInfo 가 없을시
             setInfo(infoInit);
-            setTableData(commonFunc.repeatObject(orderInfo['write']['defaultData'], 100))
+            setTableData(commonFunc.repeatObject(orderInfo['write']['defaultData'], 1000))
         } else {
             // copyPageInfo 가 있을시(==>보통 수정페이지에서 복제시)
             // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting
@@ -165,7 +165,7 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
                                 })
 
                                 if (estimateDetail) {
-                                    setTableData([...estimateDetail?.estimateDetailList, ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 100 - estimateDetail?.estimateDetailList.length)])
+                                    setTableData([...estimateDetail?.estimateDetailList, ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000 - estimateDetail?.estimateDetailList.length)])
                                 }
                                 setLoading(false)
                             }, err =>         setLoading(false));
