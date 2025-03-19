@@ -1080,7 +1080,7 @@ export const rfqReadColumns = [
     },
     {
         headerName: 'CURR',
-        field: 'currency',
+        field: 'currencyUnit',
         minWidth: 60,
         maxWidth: 120,
         cellEditor: 'agSelectCellEditor',
@@ -1090,10 +1090,10 @@ export const rfqReadColumns = [
     },
     {
         headerName: '매입 단가',
-        field: 'net',
+        field: 'unitPrice',
         minWidth: 60,
         maxWidth: 120,
-        valueFormatter: params => commonManage.calcFloat(params, 2),
+        valueFormatter: params => !isNaN(params?.value) ? params?.value?.toLocaleString() : 0,
         cellStyle: {textAlign: 'right'}
     },
     {
