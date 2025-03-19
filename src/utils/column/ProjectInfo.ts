@@ -357,10 +357,10 @@ export const orderInfo = {
                 source: ['ea', 'Set', 'Pack', 'Can', 'Box', 'MOQ', 'Meter', 'Feet', 'Inch', 'Roll', 'g', 'kg', 'oz']
             },
             {data: "currency", type: "autocomplete", source: ['KRW', 'USD', 'EUR', 'JPY', 'GBP']},
-            {data: "net", type: "numeric"},
-            {data: "total", type: "numeric"},
             {data: "unitPrice", type: "numeric"},
             {data: "totalNet", type: "numeric"},
+            {data: "net", type: "numeric"},
+            {data: "total", type: "numeric"},
             {data: "hsCode", type: "text"},
 
         ],
@@ -371,11 +371,10 @@ export const orderInfo = {
             "unreceivedQuantity": '',
             "unit": '',               // 단위
             "currency": '',
-            "net": '',            // 매입단가
-            "total": '',            // 매입단가
-
             "unitPrice": '',
             "totalNet": '',
+            "net": '',            // 매입단가
+            "total": '',            // 매입단가
             "hsCode": '',
         },mapping: {
             "model": "Model",           // Model

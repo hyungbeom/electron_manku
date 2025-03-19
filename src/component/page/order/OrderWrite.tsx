@@ -154,6 +154,7 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
                                 documentNumberFull: dom.value.toUpperCase()
                             }).then(src => {
 
+                                console.log(estimateDetail,'estimateDetail:')
                                 commonManage.setInfo(infoRef, {
                                     ...estimateDetail,
                                     documentNumberFull: src.data.code === 1 ? src.data.entity.newDocumentNumberFull : '',
@@ -162,6 +163,7 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
                                     shippingTerms: '귀사도착도',
                                     writtenDate: moment().format('YYYY-MM-DD'),
                                 })
+
                                 if (estimateDetail) {
                                     setTableData([...estimateDetail?.estimateDetailList, ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 100 - estimateDetail?.estimateDetailList.length)])
                                 }
