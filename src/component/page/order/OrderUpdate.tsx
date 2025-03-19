@@ -85,16 +85,13 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
             const {orderDetail, attachmentFileList} = v;
             setFileList(fileManage.getFormatFiles(attachmentFileList));
             setOriginFileList(attachmentFileList);
-            console.log(orderDetail, 'orderDetail:')
             setInfo({
                 ...orderDetail,
                 uploadType: 4,
                 managerAdminId: orderDetail['managerAdminId'] ? orderDetail['managerAdminId'] : ''
             })
             orderDetail[listType] = [...orderDetail[listType], ...commonFunc.repeatObject(orderInfo['write']['defaultData'], 1000 - orderDetail[listType].length)]
-
             setTableData(orderDetail[listType]);
-
             setLoading(false)
         })
     }, [updateKey['order_update']])
