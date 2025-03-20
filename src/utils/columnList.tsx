@@ -174,7 +174,7 @@ export const dateFormat = (params) => {
 };
 
 export const numberFormat = (params) => {
-    return params.value.toLocaleString();
+    return params?.value?.toLocaleString();
 };
 
 export const amountFormat = (params) => {
