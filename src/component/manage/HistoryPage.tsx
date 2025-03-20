@@ -12,18 +12,15 @@ const columns = [
         title: '작업자',
         dataIndex: 'adminName',
         key: 'adminName',
-    },
-    {
+    },{
         title: '카테고리',
         dataIndex: 'category',
         key: 'category',
-    },
-    {
+    },{
         title: '작업일자',
         dataIndex: 'createdDate',
         key: 'createdDate',
         render: (text) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
-
     }
 
 ];

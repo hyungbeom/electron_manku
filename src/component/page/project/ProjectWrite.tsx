@@ -233,61 +233,73 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
             ]} mini={mini} setMini={setMini}>
 
             {mini ? <div>
-                        <TopBoxCard title={''} grid={'100px 80px 80px'}>
-                            {datePickerForm({
-                                title: '작성일자',
-                                id: 'writtenDate',
-                                disabled: true,
+                <TopBoxCard title={''} grid={'100px 80px 80px'}>
+                    {datePickerForm({
+                        title: '작성일자',
+                        id: 'writtenDate',
+                        disabled: true,
+                    })}
+                    {inputForm({
+                        title: '작성자',
+                        id: 'createdBy',
+                        disabled: true,
+                    })}
+                    <div>
+                        <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>담당자</div>
+                        <select name="languages" id="managerAdminId"
+                                style={{
+                                    outline: 'none',
+                                    border: '1px solid lightGray',
+                                    height: 23,
+                                    width: '100%',
+                                    fontSize: 12,
+                                    paddingBottom: 0.5
+                                }}>
+                            {
+                                options?.map(v => {
+                                    return <option value={v.value}>{v.label}</option>
+                                })
+                            }
+                        </select>
+
+                    </div>
+
+
+
+                </TopBoxCard>
+
+
+                <PanelGroup ref={groupRef} className={'ground'} direction="horizontal"
+                            style={{gap: 0.5, paddingTop: 3}}>
+                    <Panel defaultSize={sizes[0]} minSize={5}>
+                        <BoxCard title={'프로젝트 정보'} tooltip={tooltipInfo('readProject')}>
+                            {inputForm({
+                                title: 'Project No.',
+                                id: 'documentNumberFull'
                             })}
                             {inputForm({
-                                title: '작성자',
-                                id: 'createdBy',
-                                disabled: true,
+                                title: '프로젝트 제목',
+                                id: 'projectTitle',
                             })}
-                            <div>
-                                <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>담당자</div>
-                                <select name="languages" id="managerAdminId"
-                                        style={{
-                                            outline: 'none',
-                                            border: '1px solid lightGray',
-                                            height: 23,
-                                            width: '100%',
-                                            fontSize: 12,
-                                            paddingBottom: 0.5
-                                        }}>
-                                    {
-                                        options?.map(v => {
-                                            return <option value={v.value}>{v.label}</option>
-                                        })
-                                    }
-                                </select>
-                            </div>
-                        </TopBoxCard>
+                            {datePickerForm({title: '마감일자', id: 'dueDate'})}
+                            <label htmlFor="fruits">Choose a fruit or type your own:</label>
+                            <input list="fruit-options" id="fruits" name="fruits"/>
+                            <datalist id="fruit-options">
+                                <option value="Apple"/>
+                                <option value="Banana"/>
+                                <option value="Cherry"/>
+                                <option value="Grapes"/>
+                            </datalist>
+                        </BoxCard>
+                    </Panel>
+                    <PanelResizeHandle/>
+                    <Panel defaultSize={sizes[1]} minSize={5}>
+                        <BoxCard title={'고객사 정보'} tooltip={tooltipInfo('customer')}>
+                            {inputForm({
+                                title: '고객사명',
+                                id: 'customerName',
 
-
-                        <PanelGroup ref={groupRef} className={'ground'} direction="horizontal"
-                                    style={{gap: 0.5, paddingTop: 3}}>
-                            <Panel defaultSize={sizes[0]} minSize={5}>
-                                <BoxCard title={'프로젝트 정보'} tooltip={tooltipInfo('readProject')}>
-                                    {inputForm({
-                                        title: 'Project No.',
-                                        id: 'documentNumberFull'
-                                    })}
-                                    {inputForm({
-                                        title: '프로젝트 제목',
-                                        id: 'projectTitle',
-                                    })}
-                                    {datePickerForm({title: '마감일자', id: 'dueDate'})}
-                                </BoxCard>
-                            </Panel>
-                            <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[1]} minSize={5}>
-                                <BoxCard title={'고객사 정보'} tooltip={tooltipInfo('customer')}>
-                                    {inputForm({
-                                        title: '고객사명',
-                                        id: 'customerName',
-
-                                        suffix: <span style={{cursor: 'pointer'}} onClick={
+                                suffix: <span style={{cursor: 'pointer'}} onClick={
                                             (e) => {
                                                 e.stopPropagation();
                                                 openModal('customerName');
