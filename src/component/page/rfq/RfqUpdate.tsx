@@ -161,6 +161,7 @@ export default function RqfUpdate({
 
         setLoading(true);
         const formData: any = new FormData();
+
         commonManage.setInfoFormData({
             ...infoData,
             estimateRequestId: updateKey['rfq_update']

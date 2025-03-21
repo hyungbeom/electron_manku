@@ -710,6 +710,7 @@ commonManage.setInfoFormData = function (info, formData, listType, list?) {
 }
 commonManage.setInfoDetailFormData = function (formData, listType, list?) {
 
+    console.log(list,':::')
     list.forEach((detail, index) => {
         Object.keys(detail).forEach((key) => {
             if (!(key == 'orderDate' || key === 'orderProcessing' || key === 'order')) {

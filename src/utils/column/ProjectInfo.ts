@@ -156,7 +156,8 @@ export const rfqInfo = {
             "deliveryDate": '',      // 납기
             "content": "",       // 내용
             "replyDate": '',         // 회신일
-            "remarks": ""            // 비고
+            "remarks": ""       ,     // 비고
+            "estimateRequestDetailId": ""            // 비고
         }, mapping: {
             "model": 'Model',             // Model
             "quantity": '수량',           // 수량
