@@ -48,7 +48,7 @@ export default function PrintTransactionModal({data, customerData, isModalOpen, 
     }, [data]);
 
 
-    const InputUnit = ({id}) => {
+    const InputUnit = ({id, size = 'middle'}) => {
         const inputRef = useRef<any>()
         const [toggle, setToggle] = useState(false);
 
@@ -61,8 +61,9 @@ export default function PrintTransactionModal({data, customerData, isModalOpen, 
 
         }, [toggle]);
 
-        return <Input ref={inputRef} defaultValue={info[id]}
-                      style={{width: '100%', border: toggle ? '' : 'none', fontWeight: 550}} onBlur={blur}/>
+        // @ts-ignore
+        return <Input ref={inputRef} defaultValue={info[id]} size={size}
+                      style={{width: '100%', border: toggle ? '' : 'none', fontWeight: 550, fontSize : 12}} onBlur={blur}/>
     }
 
     // @ts-ignore
@@ -233,10 +234,10 @@ export default function PrintTransactionModal({data, customerData, isModalOpen, 
             <table style={{width: 900, fontSize: 11}}>
                 <thead>
                 <tr>
-                    <th style={headerStyle}>NO</th>
+                    <th style={{...headerStyle, width : 25}}>NO</th>
                     <th style={headerStyle}>날짜</th>
                     <th style={headerStyle}>품목</th>
-                    <th style={headerStyle}>수량</th>
+                    <th style={{...headerStyle, width : 25}}>수량</th>
                     <th style={headerStyle}>단가</th>
                     <th style={headerStyle}>공급가액</th>
                     <th style={headerStyle}>세액</th>
@@ -246,8 +247,8 @@ export default function PrintTransactionModal({data, customerData, isModalOpen, 
                 <thead>
                 {data?.map((v, i) => {
                     return <tr>
-                        <th style={cellStyle}>{i + 1}</th>
-                        <th style={cellStyle}>이거 어디 데이터지? 직접입력인가?</th>
+                        <th style={{...cellStyle, width : 5}}>{i + 1}</th>
+                        <th style={{...cellStyle, width : 60}}><InputUnit id={'writtenDate'}/></th>
                         <th style={cellStyle}>{v.model}</th>
                         <th style={{...cellStyle, textAlign: 'right'}}>{v.quantity}</th>
                         <th style={{...cellStyle, textAlign: 'right'}}>{amountFormat(v.net)}</th>
