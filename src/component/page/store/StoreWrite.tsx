@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {memo, useEffect, useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
 import {CopyOutlined, SaveOutlined} from "@ant-design/icons";
 import {storeWriteColumn} from "@/utils/columnList";
@@ -33,7 +33,8 @@ import moment from "moment";
 
 const listType = 'orderStatusDetailList'
 
-export default function StoreWrite({copyPageInfo,notificationAlert = null, getPropertyId}:any) {
+
+function StoreWrite({copyPageInfo,notificationAlert = null, getPropertyId}:any) {
     const [ready, setReady] = useState(false);
     const router = useRouter();
 
@@ -359,3 +360,7 @@ export default function StoreWrite({copyPageInfo,notificationAlert = null, getPr
         </>
     </>
 }
+
+export default memo(StoreWrite, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

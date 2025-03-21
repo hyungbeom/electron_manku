@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {memo, useRef, useState} from "react";
 import {searchOrderInitial} from "@/utils/initialList";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
@@ -16,7 +16,8 @@ import message from "antd/lib/message";
 import Spin from "antd/lib/spin";
 import ReceiveComponent from "@/component/ReceiveComponent";
 
-export default function DeliveryRead({getPropertyId, getCopyPage}:any) {
+
+function DeliveryRead({getPropertyId, getCopyPage}:any) {
     const router = useRouter();
 
     const gridRef = useRef(null);
@@ -166,3 +167,7 @@ export default function DeliveryRead({getPropertyId, getCopyPage}:any) {
         </>
     </Spin>
 }
+
+export default memo(DeliveryRead, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

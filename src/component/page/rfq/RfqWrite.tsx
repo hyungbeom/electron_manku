@@ -29,6 +29,7 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     const [memberList, setMemberList] = useState([]);
     const [tableData, setTableData] = useState([]);
 
+    console.log('!!!!!!!!!!!!!!!!!!!!!! RFQ_WRITE!!')
 
     useEffect(() => {
         getMemberList();
@@ -234,7 +235,6 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     useEventListener('keydown', (e: any) => {
         if (e.ctrlKey && e.key === "s") {
             e.preventDefault();
-            console.log(layoutRef.current,'layoutRef.current:')
             const model = layoutRef.current.props.model;
             const activeTab = model.getActiveTabset()?.getSelectedNode();
             if(activeTab?.renderedName === '견적의뢰 등록'){
@@ -481,4 +481,6 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     </Spin>
 }
 
-export default memo(RqfWrite)
+export default memo(RqfWrite, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

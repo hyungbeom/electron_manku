@@ -17,7 +17,7 @@ import Popconfirm from "antd/lib/popconfirm";
 import moment from "moment";
 
 
-export function RfqMailSend({getPropertyId}: any) {
+function RfqMailSend({getPropertyId}: any) {
     const notificationAlert = useNotificationAlert();
     const gridRef = useRef(null);
     const [mini, setMini] = useState(true);
@@ -250,4 +250,6 @@ export function RfqMailSend({getPropertyId}: any) {
     </Spin>
 }
 
-export default memo(RfqMailSend);
+export default memo(RfqMailSend, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {memo, useRef, useState} from "react";
 import {
     CopyOutlined,
     ExclamationCircleOutlined,
@@ -25,7 +25,7 @@ import moment from "moment/moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 
 
-export default function OrderRead({getPropertyId, getCopyPage}: any) {
+function OrderRead({getPropertyId, getCopyPage}: any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
 
@@ -264,3 +264,7 @@ export default function OrderRead({getPropertyId, getCopyPage}: any) {
     </Spin>
 }
 
+
+export default memo(OrderRead, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {memo, useEffect, useRef, useState} from "react";
 import {
     CopyOutlined,
     DeleteOutlined,
@@ -39,12 +39,13 @@ import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import moment from "moment/moment";
 import useEventListener from "@/utils/common/function/UseEventListener";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
+import _ from "lodash";
+import {Actions} from "flexlayout-react";
 
 const listType = 'estimateDetailList'
-export default function EstimateUpdate({
+function EstimateUpdate({
                                            dataInfo = {estimateDetail: [], attachmentFileList: []},
                                            updateKey = {},
-                                           setCloseTab,
                                            getCopyPage = null, getPropertyId,layoutRef
                                        }:any) {
     const notificationAlert = useNotificationAlert();
@@ -410,7 +411,7 @@ export default function EstimateUpdate({
         getData.post('estimate/deleteEstimate',{estimateId : updateKey['estimate_update']}).then(v=>{
             const {code, message} = v.data;
             if(code === 1){
-                setCloseTab('estimate_update', 'estimate_read')
+
                 notificationAlert('success', '🗑️견적서 삭제완료',
                     <>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
@@ -418,6 +419,14 @@ export default function EstimateUpdate({
                     ,null,
                     {cursor: 'pointer'}
                 )
+                const {model} = layoutRef.current.props;
+                getCopyPage('estimate_read', {})
+                const targetNode = model.getRoot().getChildren()[0]?.getChildren()
+                    .find((node: any) => node.getType() === "tab" && node.getComponent() === 'estimate_update');
+
+                if (targetNode) {
+                    model.doAction(Actions.deleteTab(targetNode.getId())); // ✅ 기존 로직 유지
+                }
             }else{
                 message.error(v?.data?.message)
             }
@@ -681,3 +690,6 @@ export default function EstimateUpdate({
         {/*{ready && <EstimatePaper data={info} pdfRef={pdfRef} gridRef={gridRef}/>}*/}
     </Spin></div>
 }
+export default memo(EstimateUpdate, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

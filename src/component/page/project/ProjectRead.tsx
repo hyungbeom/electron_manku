@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {memo, useRef, useState} from "react";
 import {projectReadColumn} from "@/utils/columnList";
 import {projectDetailUnit, projectReadInitial} from "@/utils/initialList";
 import Button from "antd/lib/button";
@@ -17,7 +17,7 @@ import Popconfirm from "antd/lib/popconfirm";
 import moment from "moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 
-export default function ProjectRead({getPropertyId, getCopyPage}:any) {
+function ProjectRead({getPropertyId, getCopyPage}: any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
 
@@ -122,8 +122,12 @@ export default function ProjectRead({getPropertyId, getCopyPage}:any) {
         }}>
             <MainCard title={'프로젝트 조회'} list={[
                 {name: <div><SearchOutlined style={{paddingRight: 8}}/>조회</div>, func: searchInfo, type: 'primary'},
-                {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'},
-                {name: <div><SaveOutlined style={{paddingRight : 8}} />신규작성</div>, func: moveRegist, type: ''},
+                {
+                    name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>,
+                    func: clearAll,
+                    type: 'danger'
+                },
+                {name: <div><SaveOutlined style={{paddingRight: 8}}/>신규작성</div>, func: moveRegist, type: ''},
             ]} mini={mini} setMini={setMini}>
 
                 {mini ? <div>
@@ -272,3 +276,6 @@ export default function ProjectRead({getPropertyId, getCopyPage}:any) {
     </Spin>
 }
 
+export default memo(ProjectRead, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

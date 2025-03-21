@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {memo, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
 import {deliveryDaehanInitial,} from "@/utils/initialList";
 import {getData} from "@/manage/function/api";
@@ -13,8 +13,10 @@ import message from "antd/lib/message";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {wrapper} from "@/store/store";
 import {RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
+import _ from "lodash";
+import StoreRead from "@/component/page/store/StoreRead";
 
-export default function DeliveryWrite({copyPageInfo}) {
+function DeliveryWrite({copyPageInfo}) {
 
     const router = useRouter();
 
@@ -93,3 +95,6 @@ export default function DeliveryWrite({copyPageInfo}) {
         </>
     </>
 }
+export default memo(DeliveryWrite, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

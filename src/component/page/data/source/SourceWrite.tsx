@@ -22,7 +22,7 @@ import moment from "moment/moment";
 import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 import {projectInfo} from "@/utils/column/ProjectInfo";
 
-export default function SourceWrite({getPropertyId, copyPageInfo}:any) {
+export default function SourceWrite({copyPageInfo, getPropertyId, layoutRef}:any) {
     const notificationAlert = useNotificationAlert();
     const [info, setInfo] = useState(sourceWriteInitial);
     const groupRef = useRef<any>(null)

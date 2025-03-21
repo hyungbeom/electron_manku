@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {memo, useEffect, useRef, useState} from "react";
 import {DownloadOutlined, RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
 import message from "antd/lib/message";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
@@ -24,7 +24,7 @@ import {useNotificationAlert} from "@/component/util/NoticeProvider";
 
 
 const listType = 'orderDetailList'
-export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
+function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
     const tableRef = useRef(null);
@@ -531,3 +531,8 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
         </>
     </Spin>
 }
+
+
+export default memo(OrderWrite, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

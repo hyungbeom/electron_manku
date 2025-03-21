@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {memo, useEffect, useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
 import {CopyOutlined, SaveOutlined} from "@ant-design/icons";
 import {storeReadColumn, storeWriteColumn} from "@/utils/columnList";
@@ -27,10 +27,11 @@ import {saveStore, updateStore} from "@/utils/api/mainApi";
 import {useRouter} from "next/router";
 import {getData} from "@/manage/function/api";
 import Spin from "antd/lib/spin";
+import StoreRead from "@/component/page/store/StoreRead";
 
 const listType = 'orderStatusDetailList'
 
-export default function StoreUpdate({updateKey, getCopyPage}:any) {
+function StoreUpdate({updateKey, getCopyPage}:any) {
     const router = useRouter();
 
     const gridRef = useRef(null);
@@ -412,3 +413,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
     }
 
 })
+
+export default memo(StoreUpdate, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

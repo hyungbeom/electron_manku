@@ -1,17 +1,10 @@
-import React, {useEffect, useRef, useState} from "react";
-import {
-    ClearOutlined,
-    CopyOutlined,
-    DeleteOutlined,
-    FormOutlined,
-    RadiusSettingOutlined,
-    SaveOutlined
-} from "@ant-design/icons";
+import React, {memo, useEffect, useRef, useState} from "react";
+import {CopyOutlined, DeleteOutlined, FormOutlined, RadiusSettingOutlined} from "@ant-design/icons";
 import message from "antd/lib/message";
 import {getData} from "@/manage/function/api";
 import SearchInfoModal from "@/component/SearchAgencyModal";
 import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, tooltipInfo, TopBoxCard} from "@/utils/commonForm";
-import {commonFunc, commonManage, fileManage, gridManage} from "@/utils/commonManage";
+import {commonFunc, commonManage, fileManage} from "@/utils/commonManage";
 import {findCodeInfo} from "@/utils/api/commonApi";
 import {getAttachmentFileList, updateRfq} from "@/utils/api/mainApi";
 import {rfqWriteInitial} from "@/utils/initialList";
@@ -26,15 +19,17 @@ import {rfqInfo} from "@/utils/column/ProjectInfo";
 import moment from "moment/moment";
 import useEventListener from "@/utils/common/function/UseEventListener";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
+import _ from "lodash";
+import {Actions} from "flexlayout-react";
 
 const listType = 'estimateRequestDetailList'
-export default function RqfUpdate({
-                                      updateKey = {},
-                                      getCopyPage = null,
-                                      getPropertyId = null,
-                                      setCloseTab,
-                                      layoutRef
-                                  }: any) {
+
+function RqfUpdate({
+                       updateKey = {},
+                       getCopyPage = null,
+                       getPropertyId = null,
+                       layoutRef
+                   }: any) {
 
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
@@ -59,6 +54,7 @@ export default function RqfUpdate({
         })
     }
 
+    console.log('!!!!!!!!!!!!!!!!!!!!!! RFQ_Update!!')
 
     const options = memberList?.map((item) => ({
         ...item,
@@ -87,21 +83,21 @@ export default function RqfUpdate({
     useEffect(() => {
         setLoading(true)
         getDataInfo().then(v => {
-          if(v) {
-              const {estimateRequestDetail, attachmentFileList} = v;
+            if (v) {
+                const {estimateRequestDetail, attachmentFileList} = v;
 
-              setFileList(fileManage.getFormatFiles(attachmentFileList));
-              setOriginFileList(attachmentFileList);
-              // replyStatus
-              setInfo({
-                  ...estimateRequestDetail,
-                  uploadType: 0,
-                  managerAdminId: estimateRequestDetail['managerAdminId'] ? estimateRequestDetail['managerAdminId'] : estimateRequestDetail['createdBy']
-              })
-              estimateRequestDetail[listType] = [...estimateRequestDetail[listType], ...commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000 - estimateRequestDetail[listType].length)]
+                setFileList(fileManage.getFormatFiles(attachmentFileList));
+                setOriginFileList(attachmentFileList);
+                // replyStatus
+                setInfo({
+                    ...estimateRequestDetail,
+                    uploadType: 0,
+                    managerAdminId: estimateRequestDetail['managerAdminId'] ? estimateRequestDetail['managerAdminId'] : estimateRequestDetail['createdBy']
+                })
+                estimateRequestDetail[listType] = [...estimateRequestDetail[listType], ...commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000 - estimateRequestDetail[listType].length)]
 
-              setTableData(estimateRequestDetail[listType]);
-          }
+                setTableData(estimateRequestDetail[listType]);
+            }
             setLoading(false)
         })
     }, [updateKey['rfq_update']])
@@ -162,8 +158,8 @@ export default function RqfUpdate({
         if (!filterTableList.length) {
             return message.warn('하위 데이터 1개 이상이여야 합니다');
         }
-        const emptyQuantity = filterTableList.filter(v=> !v.quantity)
-        if(emptyQuantity.length){
+        const emptyQuantity = filterTableList.filter(v => !v.quantity)
+        if (emptyQuantity.length) {
             return message.error('수량을 입력해야 합니다.')
         }
 
@@ -268,27 +264,35 @@ export default function RqfUpdate({
     useEventListener('keydown', (e: any) => {
         if (e.ctrlKey && e.key === "s") {
             e.preventDefault();
-            console.log(layoutRef.current,'layoutRef.current:')
             const model = layoutRef.current.props.model;
             const activeTab = model.getActiveTabset()?.getSelectedNode();
-            if(activeTab?.renderedName === '견적의뢰 수정'){
+            if (activeTab?.renderedName === '견적의뢰 수정') {
                 saveFunc()
             }
         }
     }, typeof window !== 'undefined' ? document : null)
 
-    function deleteFunc(){
-        getData.post('estimate/deleteEstimateRequest',{estimateRequestId : updateKey['rfq_update']}).then(v=>{
+    function deleteFunc() {
+
+        getData.post('estimate/deleteEstimateRequest', {estimateRequestId: updateKey['rfq_update']}).then(v => {
             const {code, message} = v.data;
-            if(code === 1){
-                setCloseTab('rfq_update', ' rfq_read')
+            if (code === 1) {
                 notificationAlert('success', '🗑️견적의뢰 삭제완료',
                     <>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
-                    ,null,
+                    , null,
                     {cursor: 'pointer'}
                 )
+
+                const {model} = layoutRef.current.props;
+                getCopyPage('rfq_read', {})
+                const targetNode = model.getRoot().getChildren()[0]?.getChildren()
+                    .find((node: any) => node.getType() === "tab" && node.getComponent() === 'rfq_update');
+
+                if (targetNode) {
+                    model.doAction(Actions.deleteTab(targetNode.getId())); // ✅ 기존 로직 유지
+                }
             }
         })
     }
@@ -311,7 +315,11 @@ export default function RqfUpdate({
                 <MainCard title={'견적의뢰 수정'} list={[
                     {name: <div><FormOutlined style={{paddingRight: 8}}/>수정</div>, func: saveFunc, type: 'primary'},
                     {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: deleteFunc, type: ''},
-                    {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'},
+                    {
+                        name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>,
+                        func: clearAll,
+                        type: 'danger'
+                    },
                     {name: <div><CopyOutlined style={{paddingRight: 8}}/>복제</div>, func: copyPage, type: ''}
                 ]} mini={mini} setMini={setMini}>
 
@@ -406,7 +414,7 @@ export default function RqfUpdate({
                                             id: 'agencyTel',
                                             // onChange: onChange,
                                             // data: info
-                                        })}    
+                                        })}
                                         {inputForm({
                                             title: '이메일',
                                             id: 'agencyManagerEmail',
@@ -526,8 +534,13 @@ export default function RqfUpdate({
                         : <></>}
                 </MainCard>
 
-                <Table data={tableData} column={rfqInfo['write']} funcButtons={['print']} ref={tableRef} type={'rfq_write_column'} infoRef={infoRef}/>
+                <Table data={tableData} column={rfqInfo['write']} funcButtons={['print']} ref={tableRef}
+                       type={'rfq_write_column'} infoRef={infoRef}/>
             </div>
         </>
     </Spin>
 }
+
+export default memo(RqfUpdate, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

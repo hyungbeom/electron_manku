@@ -18,7 +18,7 @@ import moment from "moment/moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 
 
-function RfqRead({getPropertyId, getCopyPage,}: any) {
+function RfqRead({getPropertyId, getCopyPage}: any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
 
@@ -38,10 +38,15 @@ function RfqRead({getPropertyId, getCopyPage,}: any) {
         await searchRfq({data: subRfqReadInitial}).then(v => {
             const {data, pageInfo} = v;
             setTotalRow(pageInfo.totalRow)
-            console.log(data,'data:')
+
             params.api.applyTransaction({add: data});
         })
     };
+
+    useEffect(() => {
+        searchInfo()
+    }, []);
+
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('rfq_read');
@@ -259,5 +264,6 @@ function RfqRead({getPropertyId, getCopyPage,}: any) {
         </Spin>
     </>
 }
-
-export default memo(RfqRead)
+export default memo(RfqRead, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {memo, useRef, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
 import {estimateDetailUnit, orderReadInitial, storeRealInitial} from "@/utils/initialList";
 import {wrapper} from "@/store/store";
@@ -16,8 +16,10 @@ import {useRouter} from "next/router";
 import message from "antd/lib/message";
 import Spin from "antd/lib/spin";
 import ReceiveComponent from "@/component/ReceiveComponent";
+import StoreWrite from "@/component/page/store/StoreWrite";
 
-export default function StoreRead({ getPropertyId, getCopyPage}:any) {
+
+function StoreRead({ getPropertyId, getCopyPage}:any) {
     const router = useRouter();
 
     const gridRef = useRef(null);
@@ -191,3 +193,7 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
         }
     }
 })
+
+export default memo(StoreRead, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

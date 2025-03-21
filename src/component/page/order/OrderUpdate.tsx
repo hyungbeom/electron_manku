@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {memo, useEffect, useRef, useState} from "react";
 import {printEstimateInitial,} from "@/utils/initialList";
 import message from "antd/lib/message";
 import {getData} from "@/manage/function/api";
@@ -21,9 +21,12 @@ import useEventListener from "@/utils/common/function/UseEventListener";
 import moment from "moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import PrintTransactionModal from "@/component/printTransaction";
+import _ from "lodash";
 
 const listType = 'orderDetailList'
-export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId, setCloseTab}: any) {
+
+
+function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId, setCloseTab}: any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
     const infoRef = useRef<any>(null)
@@ -569,3 +572,6 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
     </Spin>
 }
 
+export default memo(OrderUpdate, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

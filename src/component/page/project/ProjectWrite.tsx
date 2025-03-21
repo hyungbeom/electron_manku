@@ -46,6 +46,7 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         })
     }
 
+    console.log('!!!ProjectWrite')
 
     const options = memberList?.map((item) => ({
         ...item,
@@ -362,5 +363,6 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
 }
 
 
-export default memo(ProjectWrite)
-
+export default memo(ProjectWrite, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

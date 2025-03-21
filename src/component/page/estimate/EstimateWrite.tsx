@@ -587,4 +587,6 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     </Spin></div>
 }
 
-export default memo(EstimateWrite)
+export default memo(EstimateWrite, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

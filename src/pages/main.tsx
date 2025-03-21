@@ -1,6 +1,6 @@
 import LayoutComponent from "@/component/LayoutComponent";
 import {wrapper} from "@/store/store";
-import React, {useEffect, useMemo, useRef, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {DownOutlined} from "@ant-design/icons";
 import {Actions, DockLocation, Layout, Model, TabNode} from "flexlayout-react";
 import Tree from "antd/lib/tree/Tree";
@@ -96,42 +96,25 @@ export default function Main({alarm}) {
     const userInfo = useAppSelector((state) => state.user);
     const router = useRouter();
     const [selectMenu, setSelectMenu] = useState('')
+    const [tabCounts, setTabCounts] = useState(0);
 
+    useEffect(() => {
+        let count = 0;
+        modelRef.current.visitNodes((node) => {
+            if (node.getType() === "tab") {
+                count++;
+            }
+        });
+        setTabCounts(count);
+    }, [activeTabId]);
 
 
     const [updateKey, setUpdateKey] = useState({})
     const [copyPageInfo, setCopyPageInfo] = useState({})
-
-    function setCloseTab(a, b) {
-        onSelect([b]);
-        const model = modelRef.current;
-        const allNodes = model.getRoot().getChildren();
-
-        let targetNode = null;
-        const findTab = (nodes) => {
-            for (const node of nodes) {
-                if (node.getType() === "tab" && node.getName() === tabComponents[a].name) {
-                    targetNode = node;
-                    break;
-                }
-                if (node.getChildren) {
-                    findTab(node.getChildren()); // 재귀적으로 탐색
-                }
-            }
-        };
-        findTab(allNodes);
+    const [count, setCount] = useState(0)
 
 
-        model.doAction(Actions.deleteTab(targetNode.getId()));
-    }
 
-    function getPropertyId(key, id) {
-        let copyObject = _.cloneDeep(updateKey);
-        copyObject[key] = id;
-
-        setUpdateKey(copyObject);
-        onSelect([key]);
-    }
 
     useEffect(() => {
         if (alarm) {
@@ -165,32 +148,25 @@ export default function Main({alarm}) {
         return await getData.post('schedule/getCalendarCategoryList').then(v => {
             return v.data;
         })
-
     }
 
 
-    function getCopyPage(page, v) {
-        onSelect([page])
-        let copyObject = _.cloneDeep(copyPageInfo);
-        copyObject[page] = v;
-        setCopyPageInfo(copyObject);
 
-    }
-
-    const onSelect = (selectedKeys, event?) => {
+    const onSelect = useCallback((selectedKeys) => {
         const selectedKey = selectedKeys[0];
 
-        const existingTabs = modelRef.current.getRoot()
-            .getChildren()[0]
-            .getChildren()
-            .map((tab:any) => tab.getComponent());
 
+        // 🔥 modelRef.current 사용하여 불필요한 JSON 변환 제거
+        const existingTabs = modelRef.current.getRoot().getChildren().flatMap(tabset =>
+            tabset.getChildren().map((tab: any) => tab.getComponent())
+        );
 
         const title = findTitleByKey(treeData, selectedKey);
 
         if (title) {
             if (selectMenu !== title) {
                 setSelectMenu(title);
+                // updateSelectTab();
             }
         } else {
             const result = updateList.find(v => v.key === selectedKey);
@@ -206,7 +182,10 @@ export default function Main({alarm}) {
         }
         // }
 
+        console.log(existingTabs,'what????')
+        console.log(selectedKey,'selectedKey????')
         // 🔥 이미 존재하는 탭이면 추가하지 않음
+        console.log(existingTabs.includes(selectedKey),'existingTabs.includes(selectedKey)')
         if (existingTabs.includes(selectedKey)) {
             const model = modelRef.current;
             const allNodes = model.getRoot().getChildren();
@@ -226,7 +205,6 @@ export default function Main({alarm}) {
             findTab(allNodes);
 
             if (targetNode) {
-
                 model.doAction(Actions.selectTab(targetNode.getId()));
                 // layoutRef.current?.update(); // 리렌더링 없이 UI 업데이트
             }
@@ -237,30 +215,64 @@ export default function Main({alarm}) {
         if (tabComponents[selectedKey]) {
             addTab(selectedKey);
         }
-    };
+    }, [count]);
+
+    const getPropertyId = useCallback((key, id) => {
+        setUpdateKey(prev => ({
+            ...prev,
+            [key]: id
+        }));
+        onSelect([key]);
+
+    }, [onSelect]); // ✅ updateKey를 직접 참조하지 않음
+
+    const getCopyPage = useCallback((page, v) => {
+        onSelect([page]); // ✅ onSelect도 useCallback으로 감싸야 함
+        setCopyPageInfo(prev => ({
+            ...prev,
+            [page]: v
+        }));
+    }, [onSelect, setCopyPageInfo]); // ✅ 의존성 배열 추가
+
+    const setCloseTab = useCallback((tabKey, targetKey) => {
+        onSelect([targetKey]); // ✅ 기존 로직 유지
+        const model = modelRef.current;
+        const targetNode = model.getRoot().getChildren()[0]?.getChildren()
+            .find((node:any) => node.getType() === "tab" && node.getComponent() === tabComponents[tabKey]?.name);
+
+        if (targetNode) {
+            model.doAction(Actions.deleteTab(targetNode.getId())); // ✅ 기존 로직 유지
+        }
+    }, [onSelect]); // ✅ 의존성 배열 관리
+
     const tabComponents = {
-        project_write: {name: "프로젝트 등록", component: <ProjectWrite copyPageInfo={copyPageInfo}/>},
+
+        project_write: {name: "프로젝트 등록", component: <ProjectWrite copyPageInfo={copyPageInfo} getPropertyId={getPropertyId} layoutRef={layoutRef}/>},
         project_read: {
             name: "프로젝트 조회",
-            component: <ProjectRead/>
+            component: <ProjectRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>
         },
-        project_update: {name: "프로젝트 수정", component: <ProjectUpdate updateKey={updateKey} setCloseTab={setCloseTab}/>},
+        project_update: {name: "프로젝트 수정", component: <ProjectUpdate updateKey={updateKey} getCopyPage={getCopyPage} getPropertyId={getPropertyId} layoutRef={layoutRef}/>},
 
-        rfq_write: {name: "견적의뢰 등록", component: <RfqWrite copyPageInfo={copyPageInfo}/>},
-        rfq_read: {name: "견적의뢰 조회", component: <RfqRead/>},
-        rfq_update: {name: "견적의뢰 수정", component: <RqfUpdate updateKey={updateKey}/>},
-        rfq_mail_send: {name: "메일전송", component: <RfqMailSend/>},
 
-        estimate_write: {name: "견적서 등록", component: <EstimateWrite copyPageInfo={copyPageInfo}/>},
+        rfq_write: {name: "견적의뢰 등록", component: <RfqWrite copyPageInfo={copyPageInfo} getPropertyId={getPropertyId} layoutRef={layoutRef}/>},
+        rfq_read: {name: "견적의뢰 조회", component: <RfqRead getPropertyId={getPropertyId} getCopyPage={getCopyPage} />},
+        rfq_update: {name: "견적의뢰 수정", component: <RqfUpdate updateKey={updateKey} getCopyPage={getCopyPage} getPropertyId={getPropertyId} layoutRef={layoutRef}/>},
+
+
+
+        rfq_mail_send: {name: "메일전송", component: <RfqMailSend getPropertyId={getPropertyId}/>},
+
+        estimate_write: {name: "견적서 등록", component: <EstimateWrite copyPageInfo={copyPageInfo} getPropertyId={getPropertyId} layoutRef={layoutRef}/>},
         estimate_read: {
             name: "견적서 조회",
-            component: <EstimateRead/>
+            component: <EstimateRead getPropertyId={getPropertyId} getCopyPage={getCopyPage} />
         },
-        estimate_update: {name: "견적서 수정", component: <EstimateUpdate updateKey={updateKey}/>},
+        estimate_update: {name: "견적서 수정", component: <EstimateUpdate updateKey={updateKey} getCopyPage={getCopyPage} getPropertyId={getPropertyId} layoutRef={layoutRef}/>},
 
-        order_write: {name: "발주서 등록", component: <OrderWrite copyPageInfo={copyPageInfo}/>},
-        order_read: {name: "발주서 조회", component: <OrderRead/>},
-        order_update: {name: "발주서 수정", component: <OrderUpdate updateKey={updateKey}/>},
+        order_write: {name: "발주서 등록", component: <OrderWrite copyPageInfo={copyPageInfo} getPropertyId={getPropertyId} layoutRef={layoutRef}/>},
+        order_read: {name: "발주서 조회", component: <OrderRead getPropertyId={getPropertyId} getCopyPage={getCopyPage} />},
+        order_update: {name: "발주서 수정", component: <OrderUpdate updateKey={updateKey} getCopyPage={getCopyPage} getPropertyId={getPropertyId} layoutRef={layoutRef}/>},
 
         store_write: {name: "입고 등록", component: <StoreWrite copyPageInfo={copyPageInfo}/>},
         store_read: {name: "입고 조회", component: <StoreRead/>},
@@ -362,13 +374,13 @@ export default function Main({alarm}) {
         const componentKey = node.getComponent();
         return <div style={{padding: '0px 5px 0px 5px'}}
                     className={`tab-content ${node.getId() === activeTabId ? "active-tab" : ""}`}>
-            {/*{tabComponents[componentKey]?.component}*/}
-            {React.cloneElement(tabComponents[componentKey].component, {
-                setCloseTab: setCloseTab,
-                getPropertyId: getPropertyId,
-                layoutRef: layoutRef,
-                getCopyPage: getCopyPage
-            })}
+            {tabComponents[componentKey]?.component}
+            {/*{React.cloneElement(tabComponents[componentKey].component, {*/}
+            {/*    setCloseTab: setCloseTab,*/}
+            {/*    getPropertyId: getPropertyId,*/}
+            {/*    layoutRef: layoutRef,*/}
+            {/*    getCopyPage: getCopyPage*/}
+            {/*})}*/}
         </div>;
     };
 
@@ -399,7 +411,7 @@ export default function Main({alarm}) {
             component: selectedKey,
             enableRename: false,
         };
-
+        setCount(v=> v + 1)
         // 🔥 올바른 DockLocation 객체 사용
         model.doAction(Actions.addNode(newTab, tabset.getId(), DockLocation.CENTER, -1, true));
     };
@@ -474,7 +486,7 @@ export default function Main({alarm}) {
                         onExpand={onExpand}
                     />
                 </div>
-                {!activeTabId && <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                {!tabCounts && <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
                     <div style={{
                         display: 'grid',
                         gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr',

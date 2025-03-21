@@ -843,7 +843,6 @@ export const tableEstimateReadColumns = [
             const {quantity, net} = params.data;
             const quantitys = !isNaN(quantity) ? quantity : 0
             const copyQuantity = !isNaN(net) ? net : 0
-            console.log(copyQuantity,'copyQuantity：：')
             // console.log(quantity, receivedQuantity,'quantity, receivedQuantity:')
             return (quantitys * copyQuantity).toLocaleString()
         },
@@ -1309,7 +1308,6 @@ export const tableOrderReadColumns = [
             const {quantity, receivedQuantity} = params.data;
             const quantitys = !isNaN(quantity) ? quantity : 0
             const copyQuantity = !isNaN(receivedQuantity) ? receivedQuantity : 0
-            console.log(copyQuantity,'copyQuantity：：')
             // console.log(quantity, receivedQuantity,'quantity, receivedQuantity:')
             return quantitys - copyQuantity
         },

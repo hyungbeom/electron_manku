@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {memo, useEffect, useRef, useState} from "react";
 import {ModalInitList, projectWriteInitial} from "@/utils/initialList";
 import message from "antd/lib/message";
 import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, tooltipInfo, TopBoxCard} from "@/utils/commonForm";
@@ -21,13 +21,16 @@ import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import useEventListener from "@/utils/common/function/UseEventListener";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import {CopyOutlined, DeleteOutlined, FormOutlined, RadiusSettingOutlined, SearchOutlined} from "@ant-design/icons";
+import {Actions} from "flexlayout-react";
+import _ from "lodash";
 
 
 const listType = 'projectDetailList'
-export default function ProjectUpdate({
+function ProjectUpdate({
                                           updateKey = {},
-                                          setCloseTab ,
-                                          getCopyPage = null, getPropertyId,layoutRef
+                                          getCopyPage = null,
+                                          getPropertyId = null,
+                                          layoutRef
                                       }:any) {
     const notificationAlert = useNotificationAlert();
     const infoRef = useRef<any>(null)
@@ -243,7 +246,7 @@ export default function ProjectUpdate({
         getData.post('project/deleteProject',{projectId : updateKey['project_update']}).then(v=>{
            const {code, message} = v.data;
            if(code === 1){
-               setCloseTab('project_update', 'project_read')
+
                notificationAlert('success', '🗑️프로젝트 삭제완료',
                    <>
                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
@@ -251,6 +254,14 @@ export default function ProjectUpdate({
                    ,null,
                    {cursor: 'pointer'}
                )
+               const {model} = layoutRef.current.props;
+               getCopyPage('project_read', {})
+               const targetNode = model.getRoot().getChildren()[0]?.getChildren()
+                   .find((node: any) => node.getType() === "tab" && node.getComponent() === 'project_update');
+
+               if (targetNode) {
+                   model.doAction(Actions.deleteTab(targetNode.getId())); // ✅ 기존 로직 유지
+               }
            }
         })
     }
@@ -261,7 +272,7 @@ export default function ProjectUpdate({
             e.preventDefault();
             const model = layoutRef.current.props.model;
             const activeTab = model.getActiveTabset()?.getSelectedNode();
-            if(activeTab?.renderedName === '발주서 수정'){
+            if(activeTab?.renderedName === '프로젝트 수정'){
                 saveFunc()
             }
         }
@@ -403,3 +414,8 @@ export default function ProjectUpdate({
         </>
     </Spin>
 }
+
+
+export default memo(ProjectUpdate, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

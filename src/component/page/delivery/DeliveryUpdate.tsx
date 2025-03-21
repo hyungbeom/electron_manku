@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {memo, useEffect, useState} from "react";
 import LayoutComponent from "@/component/LayoutComponent";
 import {deliveryDaehanInitial,} from "@/utils/initialList";
 import {getData} from "@/manage/function/api";
@@ -13,9 +13,13 @@ import initialServerRouter from "@/manage/function/initialServerRouter";
 import {wrapper} from "@/store/store";
 import message from "antd/lib/message";
 import {fileManage, gridManage} from "@/utils/commonManage";
+import _ from "lodash";
+import DeliveryRead from "@/component/page/delivery/DeliveryRead";
 
 
-export default function DeliveryUpdate({updateKey})
+
+
+function DeliveryUpdate({updateKey})
 {
 
     const [tabNumb, setTabNumb] = useState('')
@@ -146,3 +150,7 @@ export const getServerSideProps = wrapper.getStaticProps((store: any) => async (
 
     return param
 })
+
+export default memo(DeliveryUpdate, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

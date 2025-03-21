@@ -283,4 +283,6 @@ function EstimateRead({getPropertyId, getCopyPage, }:any) {
     </Spin>
 }
 
-export default memo(EstimateRead);
+export default memo(EstimateRead, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});
