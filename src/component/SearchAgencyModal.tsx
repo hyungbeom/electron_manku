@@ -258,6 +258,7 @@ export default function SearchInfoModal({
 
                 <AgGridReact containerStyle={{height: '93%', width: '100%'}} theme={tableTheme}
                              onCellClicked={async (e) => {
+
                                  switch (openCheck) {
                                      case 'customerName' :
                                          commonManage.setInfo(infoRef, {
@@ -277,7 +278,8 @@ export default function SearchInfoModal({
                                      case 'maker' :
                                          commonManage.setInfo(infoRef, {
                                              maker: e.data.makerName,
-                                             item: e.data.item
+                                             item: e.data.item,
+                                             instructions: e.data.instructions,
                                          })
                                          break;
                                      case 'orderList' :
