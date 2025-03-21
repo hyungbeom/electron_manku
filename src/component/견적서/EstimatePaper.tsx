@@ -114,7 +114,7 @@ const EstimatePaper = ({infoRef, pdfRef, pdfSubRef, tableRef, memberList = [], c
             <th colSpan={3} style={{
                 width: '6%',
                 border: '1px solid lightGray',
-                borderLeft: 'none',
+                // borderLeft: 'none',
                 fontSize: 12,
             }}>
             </th>
@@ -128,7 +128,7 @@ const EstimatePaper = ({infoRef, pdfRef, pdfSubRef, tableRef, memberList = [], c
             <th style={{
                 borderTop: '1px solid lightGray',
                 border: '1px solid lightGray',
-                borderRight: 'none'
+                // borderRight: 'none'
             }}>
                 <div id={'total_unit'} style={{textAlign: 'left', fontSize: 13.5, paddingLeft: 12}}></div>
             </th>
@@ -142,7 +142,7 @@ const EstimatePaper = ({infoRef, pdfRef, pdfSubRef, tableRef, memberList = [], c
             </th>
             <th style={{
                 borderTop: '1px solid lightGray', border: '1px solid lightGray',
-                borderRight: 'none'
+                // borderRight: 'none'
             }}>
                 <div style={{display: 'flex', justifyContent: 'space-between', fontSize: 13.5, padding: '0px 10px'}}>
                     <div style={{textAlign: 'left'}}>₩</div>
@@ -276,7 +276,7 @@ const EstimatePaper = ({infoRef, pdfRef, pdfSubRef, tableRef, memberList = [], c
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
-                padding : '0px 20px'
+                padding: '0px 20px'
             }}>
 
                 <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
@@ -292,7 +292,8 @@ const EstimatePaper = ({infoRef, pdfRef, pdfSubRef, tableRef, memberList = [], c
                         </div>
                     </div>
 
-                    <div style={{fontSize: 38, fontWeight: 700}}>견&nbsp;&nbsp;&nbsp;&nbsp;적&nbsp;&nbsp;&nbsp;&nbsp;서</div>
+                    <div style={{fontSize: 38, fontWeight: 700}}>견&nbsp;&nbsp;&nbsp;&nbsp;적&nbsp;&nbsp;&nbsp;&nbsp;서
+                    </div>
                     <div style={{width: '40%'}}>
                         <img src={'/manku_stamp_ko.png'} style={{float: 'right'}} width={180} alt=""/>
                     </div>
@@ -427,22 +428,50 @@ const EstimatePaper = ({infoRef, pdfRef, pdfSubRef, tableRef, memberList = [], c
                         </>
                     })}
 
-                    {splitData.length === 1 ? <TotalCalc/> : <></>}
+                    {/*{splitData.length === 1 ? <TotalCalc/> : <></>}*/}
                 </table>
                 <div style={{flexGrow: 1}}/>
                 {/* 여백 자동 확장하여 아래로 밀어줌 */}
 
+                <table
+                    style={{
+                        width: '100%',
+                        borderCollapse: 'collapse',
+                        margin: '20px 0',
+                        textAlign: 'center',
+                        // border: '1px solid lightGray',
+                        // borderLeft: 'none',
+                        // borderRight: 'none'
+                    }}>
+                    <thead style={{   visibility : 'hidden'}}>
+                    <tr style={{backgroundColor: '#ebf6f7', fontWeight: 'bold', height: 35}}>
+                        <th colSpan={3} style={{width: '48%'}}>Specification</th>
+                        <th colSpan={2}
+                            style={{
+                                width: '9%',
+                                textAlign: 'center',
+                                // borderLeft: '1px solid lightGray',
+                                paddingRight: 10
+                            }}>Q`ty
+                        </th>
+                        {/*<th style={{textAlign: 'left', paddingLeft: 10, borderLeft: '1px solid lightGray'}}>Unit</th>*/}
+                        <th style={{width: '20%'}}>Unit Price</th>
+                        <th style={{width: '20%'}}>Amount</th>
+                    </tr>
+                    </thead>
 
+                    {splitData.length === 1 ? <TotalCalc/> : <></>}
+                </table>
                 <div
                     style={{
-                        paddingTop : 10,
+                        paddingTop: 10,
                         // padding: '30px 20px',
                         fontSize: 12,
                         lineHeight: 1.7,
                         borderTop: '1px solid black',
                     }}>
                     <div>· 의뢰하실 Model로 기준한 견적입니다.</div>
-                    <div>· 계좌번호 :  (기업은행)069-118428-04-010/만쿠무역</div>
+                    <div>· 계좌번호 : (기업은행)069-118428-04-010/만쿠무역</div>
                     <div>· 긴급 납기시 담당자와 협의가능합니다.</div>
                 </div>
 

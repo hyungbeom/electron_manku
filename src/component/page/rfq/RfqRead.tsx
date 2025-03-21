@@ -1,11 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import {
-    CopyOutlined,
-    ExclamationCircleOutlined,
-    RadiusSettingOutlined,
-    SaveOutlined,
-    SearchOutlined
-} from "@ant-design/icons";
+import {ExclamationCircleOutlined, RadiusSettingOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
 import {rfqReadColumns} from "@/utils/columnList";
 import {estimateRequestDetailUnit, subRfqReadInitial} from "@/utils/initialList";
@@ -17,7 +11,6 @@ import {deleteRfq, searchRfq} from "@/utils/api/mainApi";
 import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
 import {useRouter} from "next/router";
 import Spin from "antd/lib/spin";
-import ReceiveComponent from "@/component/ReceiveComponent";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import Popconfirm from "antd/lib/popconfirm";
@@ -75,8 +68,9 @@ export default function RfqRead({getPropertyId, getCopyPage,}: any) {
     }
 
     async function searchInfo() {
-        const copyData: any = {...info}
-        setLoading(true)
+        let copyData: any = {...info}
+        setLoading(true);
+        copyData['searchDocumentNumber'] = copyData?.searchDocumentNumber.replace(/\s/g, "").toUpperCase();
         await searchRfq({
             data: copyData
         }).then(v => {

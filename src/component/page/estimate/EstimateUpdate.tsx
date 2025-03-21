@@ -648,14 +648,6 @@ export default function EstimateUpdate({
                         </div>
                         : <></>}
                 </MainCard>
-                {/*<TableGrid*/}
-                {/*    setInfo={setInfo}*/}
-                {/*    gridRef={gridRef}*/}
-                {/*    columns={tableEstimateWriteColumns}*/}
-                {/*    type={'write'}*/}
-                {/*    onGridReady={onGridReady}*/}
-                {/*    funcButtons={['estimateUpload', 'estimateAdd', 'delete', 'print']}*/}
-                {/*/>*/}
                 <Table data={tableData} column={estimateInfo['write']} funcButtons={['print']} ref={tableRef} type={'estimate_write_column'}/>
             </div>
         </>

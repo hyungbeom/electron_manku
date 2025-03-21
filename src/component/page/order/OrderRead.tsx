@@ -70,6 +70,7 @@ export default function OrderRead({getPropertyId, getCopyPage}: any) {
         const copyData: any = {...info}
         if (e) {
             setLoading(true);
+            copyData['searchDocumentNumber'] = copyData?.searchDocumentNumber.replace(/\s/g, "").toUpperCase();
             await searchOrder({data: {...copyData, "page": 1, "limit": -1}}).then(v => {
                 gridManage.resetData(gridRef, v.data);
                 setTotalRow(v.pageInfo.totalRow)

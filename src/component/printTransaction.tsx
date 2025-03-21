@@ -6,6 +6,9 @@ import {amountFormat} from "@/utils/columnList";
 import Input from "antd/lib/input/Input";
 import moment from "moment";
 import {getData} from "@/manage/function/api";
+import {commonManage, gridManage} from "@/utils/commonManage";
+import {orderInfo} from "@/utils/column/ProjectInfo";
+import {searchDomesticCustomer} from "@/utils/api/mainApi";
 
 const cellStyle = {
 
@@ -21,92 +24,24 @@ const headerStyle = {
     whiteSpace: 'nowrap'
 };
 
-export default function PrintTransactionModal({data, customerData, isModalOpen, setIsModalOpen}) {
-
-    const {receiveComp, list} = customerData
-
-    const pdfRef = useRef();
-
-    let totalAmount = 0;
-    let totalVat = 0;
-
-    const today = new Date();
-    const formattedDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
-
-    function formattedNumber(number) {
-
-        return number?.toLocaleString();
-    }
+export default function PrintTransactionModal({data, customerData, isModalOpen, setIsModalOpen, infoRef}) {
 
 
 
-    const handleDownloadPDF = async () => {
-        const element = pdfRef.current;
-
-        const pdf = new jsPDF("portrait", "px", "a4");
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = pdf.internal.pageSize.getHeight();
-        const bottomMargin = 20; // 하단 여백 (단위: px)
-
-        const canvas = await html2canvas(element, {scale: 1.5, useCORS: true});
-        const imgData = canvas.toDataURL("image/jpeg", 0.7);
-
-        // Calculate image dimensions and split pages
-        const imgProps = pdf.getImageProperties(imgData);
-        const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
-        let heightLeft = imgHeight;
-        let position = 0;
-
-        // Add first page
-        pdf.addImage(imgData, "PNG", 0, position, pdfWidth, imgHeight);
-        heightLeft -= (pdfHeight - bottomMargin);
-
-        // Add additional pages if necessary
-        while (heightLeft > 0) {
-            position -= (pdfHeight - bottomMargin);
-            pdf.addPage();
-            pdf.addImage(imgData, "PNG", 0, position, pdfWidth, imgHeight);
-            heightLeft -= (pdfHeight - bottomMargin);
-        }
-
-        pdf.save(`${data.documentNumberFull}_견적서.pdf`);
-    };
-
-
-    const handlePrint = () => {
-        const printStyles = `
-            @media print {
-                @page {
-                    size: A4;
-                    margin: 20mm;
-                }
-                .page-break {
-                    break-before: always;
-                }
-                .printable-content {
-                    page-break-inside: avoid;
-                }
-            }
-        `;
-
-        const styleSheet = document.createElement("style");
-        styleSheet.type = "text/css";
-        styleSheet.innerText = printStyles;
-        document.head.appendChild(styleSheet);
-
-        window.print();
-
-        document.head.removeChild(styleSheet);
-    };
 
     const [info, setInfo] = useState({writtenDate: moment().format('YYYY-MM-DD')});
+    const [total, setTotal] = useState({net : 0, total : 0, subTotal : 0});
+    const [titleInfo, setTitleInfo] = useState({
+        businessRegistrationNumber: '',
+        customerName: '',
+        representative: '',
+        address: '',
+        businessItem: '',
+        businessType: '',
+        customerTel: '',
+    });
 
-    async function getCustomerInfo(){
-        await getData.post('api/customer/getCustomerDetail', {
-            "customerId": 0,
-            "customerCode": "string"
-        })
-    }
+
 
     useEffect(() => {
 
@@ -114,11 +49,11 @@ export default function PrintTransactionModal({data, customerData, isModalOpen, 
 
 
     const InputUnit = ({id}) => {
-        const inputRef= useRef<any>()
+        const inputRef = useRef<any>()
         const [toggle, setToggle] = useState(false);
 
 
-        function blur(){
+        function blur() {
             setToggle(false)
         }
 
@@ -126,8 +61,44 @@ export default function PrintTransactionModal({data, customerData, isModalOpen, 
 
         }, [toggle]);
 
+        return <Input ref={inputRef} defaultValue={info[id]}
+                      style={{width: '100%', border: toggle ? '' : 'none', fontWeight: 550}} onBlur={blur}/>
+    }
 
-        return <Input ref={inputRef} defaultValue={info[id]} style={{width: '100%', border : toggle ? '' : 'none', fontWeight: 550 }} onBlur={blur}/>
+    // @ts-ignore
+    useEffect( () => {
+        loadData()
+    }, [isModalOpen]);
+
+    async function loadData(){
+        let infoData = commonManage.getInfo(infoRef, orderInfo['defaultInfo']);
+
+        console.log(infoData, 'infoData[\'customerName\']:')
+        await searchDomesticCustomer({
+            data: {
+                "searchType": 2,      // 1: 코드, 2: 상호명, 3: Maker
+                "searchText": infoData['customerName'],
+                "page": 1,
+                "limit": -1
+            }
+        }).then(v => {
+            setTitleInfo(v?.data[0])
+            // gridManage.resetData(gridRef, v.data);
+        })
+
+        let copyTotal = {...total}
+
+        data.forEach(v => {
+
+            copyTotal['net'] += !isNaN(v.net) ? v.net : 0
+            copyTotal['total'] += !isNaN(v.net) ? v.net * v.quantity : 0
+            copyTotal['subTotal'] += !isNaN(v.net) ? (v.net * v.quantity) * 0.1 : 0
+        })
+        setTotal(copyTotal)
+        setInfo(v => {
+            return {...infoData, writtenDate: moment().format('YYYY-MM-DD')}
+        })
+
     }
 
     return (
@@ -139,8 +110,15 @@ export default function PrintTransactionModal({data, customerData, isModalOpen, 
             onOk={() => setIsModalOpen({event1: false, event2: false})}>
 
             <div style={{textAlign: 'center', fontSize: 30, fontWeight: 'bold'}}>거래명세표</div>
-            <div style={{textAlign: 'center', fontSize: 14, fontWeight: 'bold', paddingTop: 20, display: 'flex', justifyContent : 'center'}}>
-                <div style={{alignItems: 'center', display: 'flex', justifyContent : 'center'}}>거래일자 :</div>
+            <div style={{
+                textAlign: 'center',
+                fontSize: 14,
+                fontWeight: 'bold',
+                paddingTop: 20,
+                display: 'flex',
+                justifyContent: 'center'
+            }}>
+                <div style={{alignItems: 'center', display: 'flex', justifyContent: 'center'}}>거래일자 :</div>
                 <div style={{width: 100, alignItems: 'center'}}><InputUnit id={'writtenDate'}/></div>
             </div>
             <div style={{display: 'flex', gap: 5, justifyContent: 'center', width: 900, paddingTop: 30}}>
@@ -212,40 +190,40 @@ export default function PrintTransactionModal({data, customerData, isModalOpen, 
                         <thead>
                         <tr>
                             <th style={headerStyle}>등록번호</th>
-                            <th style={cellStyle} colSpan={3}>714-87-01453</th>
+                            <th style={cellStyle} colSpan={3}>{titleInfo?.businessRegistrationNumber}</th>
                         </tr>
                         </thead>
                         <thead>
                         <tr>
                             <th style={headerStyle}>상호</th>
-                            <th style={cellStyle}>주식회사 만쿠무역</th>
+                            <th style={cellStyle}>{titleInfo?.customerName}</th>
                             <th style={headerStyle}>대표자</th>
-                            <th style={cellStyle}>김민국</th>
+                            <th style={cellStyle}>{titleInfo?.representative}</th>
                         </tr>
                         </thead>
                         <thead>
                         <tr>
                             <th style={headerStyle}>주소</th>
                             <th style={cellStyle} colSpan={3}>
-                                <div>서울 송파구 충미로 52 가든파이브웍스</div>
-                                <div>B동 2층 211호, 212호</div>
+                                <div>{titleInfo?.address}</div>
+
                             </th>
                         </tr>
                         </thead>
                         <thead>
                         <tr>
                             <th style={headerStyle}>업태</th>
-                            <th style={cellStyle}>전기사업, 중기및 난방, 건설업, 도매 및 소매업</th>
+                            <th style={cellStyle}>{titleInfo?.businessType}</th>
                             <th style={headerStyle}>종목</th>
-                            <th style={cellStyle}>무역, 기계자재</th>
+                            <th style={cellStyle}>{titleInfo?.businessItem}</th>
                         </tr>
                         </thead>
                         <thead>
                         <tr>
                             <th style={headerStyle}>담당자</th>
-                            <th style={cellStyle}>신단비</th>
+                            <th style={cellStyle}></th>
                             <th style={headerStyle}>연락처</th>
-                            <th style={cellStyle}>02-465-7838</th>
+                            <th style={cellStyle}>{titleInfo?.customerTel}</th>
                         </tr>
                         </thead>
                     </table>
@@ -266,16 +244,16 @@ export default function PrintTransactionModal({data, customerData, isModalOpen, 
                 </tr>
                 </thead>
                 <thead>
-                {list?.map((v, i) => {
+                {data?.map((v, i) => {
                     return <tr>
                         <th style={cellStyle}>{i + 1}</th>
                         <th style={cellStyle}>이거 어디 데이터지? 직접입력인가?</th>
                         <th style={cellStyle}>{v.model}</th>
-                        <th style={cellStyle}>{v.quantity}</th>
-                        <th style={cellStyle}>{amountFormat(v.unitPrice)}</th>
-                        <th style={cellStyle}>{amountFormat(v.unitPrice * v.quantity)}</th>
-                        <th style={cellStyle}>{amountFormat((v.unitPrice * v.quantity) * 0.1)}</th>
-                        <th style={cellStyle}>비고값 안가져오는거같음?</th>
+                        <th style={{...cellStyle, textAlign: 'right'}}>{v.quantity}</th>
+                        <th style={{...cellStyle, textAlign: 'right'}}>{amountFormat(v.net)}</th>
+                        <th style={{...cellStyle, textAlign: 'right'}}>{!isNaN(v.net * v.quantity) ? amountFormat(v.net * v.quantity) : ''}</th>
+                        <th style={{...cellStyle, textAlign: 'right'}}>{!isNaN(v.net * v.quantity) ?  amountFormat((v.net * v.quantity) * 0.1) : ''}</th>
+                        <th style={cellStyle}></th>
                     </tr>
                 })
                 }
@@ -285,15 +263,15 @@ export default function PrintTransactionModal({data, customerData, isModalOpen, 
                 <thead>
                 <tr>
                     <th style={headerStyle}>공급가액</th>
-                    <th style={cellStyle}>46,500,000</th>
+                    <th style={cellStyle}>{(total?.total).toLocaleString()}</th>
                     <th style={headerStyle}>세액</th>
-                    <th style={cellStyle}>46,500,000</th>
+                    <th style={cellStyle}>{(total?.subTotal).toLocaleString()}</th>
                     <th style={headerStyle}>합계</th>
-                    <th style={cellStyle}>46,500,000</th>
+                    <th style={cellStyle}>{((total?.total) + (total?.subTotal)).toLocaleString()}</th>
                     <th style={headerStyle}>미수금</th>
-                    <th style={cellStyle}>미수금 정보?</th>
+                    <th style={cellStyle}></th>
                     <th style={headerStyle}>인수자</th>
-                    <th style={cellStyle}>{data.managerAdminName}</th>
+                    <th style={cellStyle}></th>
                 </tr>
                 </thead>
             </table>

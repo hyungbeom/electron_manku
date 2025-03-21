@@ -20,6 +20,7 @@ import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import useEventListener from "@/utils/common/function/UseEventListener";
 import moment from "moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
+import PrintTransactionModal from "@/component/printTransaction";
 
 const listType = 'orderDetailList'
 export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
@@ -306,20 +307,25 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
     }, typeof window !== 'undefined' ? document : null)
 
     async function printTransactionStatement() {
-        alert('쉐어포인트 자동저장')
+        setIsModalOpen(v =>{return {...v, event1 : true}})
     }
 
     return <Spin spinning={loading} tip={'LOADING'}>
         <PanelSizeUtil groupRef={groupRef} storage={'order_update'}/>
-        {(isModalOpen['agencyCode'] || isModalOpen['event1'] || isModalOpen['event2']|| isModalOpen['customerName']) &&
+        {(isModalOpen['agencyCode'] || isModalOpen['customerName']) &&
             <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
                              open={isModalOpen}
 
                              setIsModalOpen={setIsModalOpen}/>}
         <>
+
             {isModalOpen['event3'] &&
                 <PrintPo data={info} infoRef={infoRef} tableRef={tableRef} isModalOpen={isModalOpen}
                          setIsModalOpen={setIsModalOpen} memberList={memberList} count={count}/>}
+            {isModalOpen['event1'] &&
+             <PrintTransactionModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}
+                                    customerData={customerData} data={commonManage.filterEmptyObjects(tableData, ['model', 'item', 'maker'])} infoRef={infoRef}  />}
+
             <div ref={infoRef} style={{
                 display: 'grid',
                 gridTemplateRows: `${mini ? '495px' : '65px'} calc(100vh - ${mini ? 590 : 195}px)`,

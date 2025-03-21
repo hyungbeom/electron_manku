@@ -80,7 +80,7 @@ function EstimateRead({getPropertyId, getCopyPage, }:any) {
 
     async function searchInfo(e) {
         const copyData: any = {...info}
-
+        copyData['searchDocumentNumber'] = copyData?.searchDocumentNumber.replace(/\s/g, "").toUpperCase();
         if (e) {
             setLoading(true)
             await searchEstimate({data: copyData}).then(v => {

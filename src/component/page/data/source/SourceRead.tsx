@@ -102,8 +102,7 @@ export default function SourceRead({getPropertyId, getCopyPage}: any) {
                 searchInfo(true);
                 notificationAlert('success', '🗑️ 삭제완료',
                     <>
-                        <div>삭제되었습니다
-                        </div>
+                        <div>삭제되었습니다</div>
                         <div>삭제일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
                     , function () {
