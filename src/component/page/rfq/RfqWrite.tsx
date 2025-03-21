@@ -10,7 +10,7 @@ import _ from "lodash";
 import {findCodeInfo} from "@/utils/api/commonApi";
 import {getAttachmentFileList, saveRfq} from "@/utils/api/mainApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
-import {getData} from "@/manage/function/api";
+import {getData, getFormData} from "@/manage/function/api";
 import moment from "moment";
 import Spin from "antd/lib/spin";
 import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
@@ -168,7 +168,7 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         formData.delete('createdDate')
         formData.delete('modifiedDate')
 
-        await saveRfq({data: formData}).then(async (v: any) => {
+        await getFormData.post('estimate/addEstimateRequest', formData).then(async (v: any) => {
             const dom = infoRef.current.querySelector('#documentNumberFull');
 
             if (v.code === 1) {
@@ -188,12 +188,11 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                     },
                     {cursor: 'pointer'}
                 )
-
+                setLoading(false)
+            }else{
+                setLoading(false)
             }
-
-
-            setLoading(false)
-        })
+        },err=>setLoading(false))
     }
 
 

@@ -87,10 +87,12 @@ function RqfUpdate({
                 setFileList(fileManage.getFormatFiles(attachmentFileList));
                 setOriginFileList(attachmentFileList);
                 // replyStatus
+                console.log(estimateRequestDetail,'estimateRequestDetail:')
                 setInfo({
                     ...estimateRequestDetail,
                     uploadType: 0,
-                    managerAdminId: estimateRequestDetail['managerAdminId'] ? estimateRequestDetail['managerAdminId'] : estimateRequestDetail['createdBy']
+                    managerAdminId: estimateRequestDetail['managerAdminId'] ? estimateRequestDetail['managerAdminId'] : '',
+                    managerAdminName: estimateRequestDetail['managerAdminName'] ? estimateRequestDetail['managerAdminName'] : ''
                 })
                 estimateRequestDetail[listType] = [...estimateRequestDetail[listType], ...commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000 - estimateRequestDetail[listType].length)]
 

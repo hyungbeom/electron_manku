@@ -1,12 +1,5 @@
 import React, {memo, useEffect, useRef, useState} from "react";
-import {
-    CopyOutlined,
-    DeleteOutlined,
-    DownloadOutlined,
-    FormOutlined,
-    RadiusSettingOutlined,
-    RetweetOutlined
-} from "@ant-design/icons";
+import {CopyOutlined, DeleteOutlined, FormOutlined, RadiusSettingOutlined} from "@ant-design/icons";
 import {ModalInitList} from "@/utils/initialList";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
@@ -25,14 +18,14 @@ import {
 } from "@/utils/commonForm";
 import {commonFunc, commonManage, fileManage, gridManage} from "@/utils/commonManage";
 import {findCodeInfo, findDocumentInfo} from "@/utils/api/commonApi";
-import {checkInquiryNo, getAttachmentFileList, updateEstimate} from "@/utils/api/mainApi";
+import {getAttachmentFileList, updateEstimate} from "@/utils/api/mainApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import Spin from "antd/lib/spin";
 import Modal from "antd/lib/modal/Modal";
 import {jsPDF} from "jspdf";
 import html2canvas from "html2canvas";
 import EstimatePaper from "@/component/견적서/EstimatePaper";
-import {estimateInfo, projectInfo, rfqInfo} from "@/utils/column/ProjectInfo";
+import {estimateInfo, rfqInfo} from "@/utils/column/ProjectInfo";
 import Table from "@/component/util/Table";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
@@ -43,11 +36,12 @@ import _ from "lodash";
 import {Actions} from "flexlayout-react";
 
 const listType = 'estimateDetailList'
+
 function EstimateUpdate({
-                                           dataInfo = {estimateDetail: [], attachmentFileList: []},
-                                           updateKey = {},
-                                           getCopyPage = null, getPropertyId,layoutRef
-                                       }:any) {
+                            dataInfo = {estimateDetail: [], attachmentFileList: []},
+                            updateKey = {},
+                            getCopyPage = null, getPropertyId, layoutRef
+                        }: any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
 
@@ -124,11 +118,12 @@ function EstimateUpdate({
             const {estimateDetail, attachmentFileList} = v;
             setFileList(fileManage.getFormatFiles(attachmentFileList));
             setOriginFileList(attachmentFileList)
-            console.log(estimateDetail,'estimateDetail:')
+            console.log(estimateDetail, 'estimateDetail:')
             setInfo({
                 ...estimateDetail,
                 uploadType: 3,
-                managerAdminId: estimateDetail['managerAdminId'] ? estimateDetail['managerAdminId'] : ''
+                managerAdminId: estimateDetail['managerAdminId'] ? estimateDetail['managerAdminId'] : '',
+                managerAdminName: estimateDetail['managerAdminName'] ? estimateDetail['managerAdminName'] : ''
             })
 
             estimateDetail[listType] = [...estimateDetail[listType], ...commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000 - estimateDetail[listType].length)]
@@ -199,8 +194,8 @@ function EstimateUpdate({
         if (!filterTableList.length) {
             return message.warn('하위 데이터 1개 이상이여야 합니다');
         }
-        const emptyQuantity = filterTableList.filter(v=> !v.quantity)
-        if(emptyQuantity.length){
+        const emptyQuantity = filterTableList.filter(v => !v.quantity)
+        if (emptyQuantity.length) {
             return message.error('수량을 입력해야 합니다.')
         }
 
@@ -372,12 +367,11 @@ function EstimateUpdate({
             e.preventDefault();
             const model = layoutRef.current.props.model;
             const activeTab = model.getActiveTabset()?.getSelectedNode();
-            if(activeTab?.renderedName === '견적서 수정'){
+            if (activeTab?.renderedName === '견적서 수정') {
                 saveFunc()
             }
         }
     }, typeof window !== 'undefined' ? document : null)
-
 
 
     function EstimateModal() {
@@ -407,17 +401,17 @@ function EstimateUpdate({
     }
 
 
-    function deleteFunc(){
+    function deleteFunc() {
         setLoading(true)
-        getData.post('estimate/deleteEstimate',{estimateId : updateKey['estimate_update']}).then(v=>{
+        getData.post('estimate/deleteEstimate', {estimateId: updateKey['estimate_update']}).then(v => {
             const {code, message} = v.data;
-            if(code === 1){
+            if (code === 1) {
 
                 notificationAlert('success', '🗑️견적서 삭제완료',
                     <>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
-                    ,null,
+                    , null,
                     {cursor: 'pointer'}
                 )
                 const {model} = layoutRef.current.props;
@@ -429,11 +423,11 @@ function EstimateUpdate({
                     model.doAction(Actions.deleteTab(targetNode.getId())); // ✅ 기존 로직 유지
                 }
                 setLoading(false)
-            }else{
+            } else {
                 message.error(v?.data?.message)
                 setLoading(false)
             }
-        },err=>   setLoading(false))
+        }, err => setLoading(false))
     }
 
     return <div style={{overflow: 'hidden'}}><Spin spinning={loading}>
@@ -454,7 +448,11 @@ function EstimateUpdate({
                     {name: <div>견적서 출력</div>, func: printEstimate, type: ''},
                     {name: <div><FormOutlined style={{paddingRight: 8}}/>수정</div>, func: saveFunc, type: 'primary'},
                     {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: deleteFunc, type: ''},
-                    {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'},
+                    {
+                        name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>,
+                        func: clearAll,
+                        type: 'danger'
+                    },
                     {name: <div><CopyOutlined style={{paddingRight: 8}}/>복제</div>, func: copyPage, type: ''}
                 ]} mini={mini} setMini={setMini}>
                     {mini ? <div>
@@ -487,7 +485,7 @@ function EstimateUpdate({
                                 {inputForm({
                                     title: '만쿠견적서 No.',
                                     id: 'documentNumberFull',
-                                    disabled : true
+                                    disabled: true
                                 })}
                                 {inputForm({title: 'RFQ No.', id: 'rfqNo'})}
                                 {inputForm({title: '프로젝트 제목', id: 'projectTitle'})}
@@ -653,7 +651,7 @@ function EstimateUpdate({
                                                 }
                                             }>🔍</span>,
 
-                                         handleKeyPress: handleKeyPress
+                                            handleKeyPress: handleKeyPress
                                         })}
                                         {inputForm({title: 'Item', id: 'item'})}
                                     </BoxCard>
@@ -687,12 +685,14 @@ function EstimateUpdate({
                         </div>
                         : <></>}
                 </MainCard>
-                <Table data={tableData} column={estimateInfo['write']} funcButtons={['print']} ref={tableRef} type={'estimate_write_column'}/>
+                <Table data={tableData} column={estimateInfo['write']} funcButtons={['print']} ref={tableRef}
+                       type={'estimate_write_column'}/>
             </div>
         </>
         {/*{ready && <EstimatePaper data={info} pdfRef={pdfRef} gridRef={gridRef}/>}*/}
     </Spin></div>
 }
+
 export default memo(EstimateUpdate, (prevProps, nextProps) => {
     return _.isEqual(prevProps, nextProps);
 });
