@@ -38,7 +38,8 @@ export const findCodeInfo = async (event, setInfo, openModal, infoRef?) => {
                         agencyManagerName: commonManage.checkValue(managerName),
                         agencyManagerEmail: commonManage.checkValue(email),
                         currencyUnit: commonManage.checkValue(currencyUnit),
-                        agencyManagerPhoneNumber: commonManage.checkValue(phoneNumber)
+                        agencyManagerPhoneNumber: commonManage.checkValue(phoneNumber),
+                        agencyTel: commonManage.checkValue(phoneNumber)
                     })
 
 
