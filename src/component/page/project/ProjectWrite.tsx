@@ -282,14 +282,14 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                 id: 'projectTitle',
                             })}
                             {datePickerForm({title: '마감일자', id: 'dueDate'})}
-                            <label htmlFor="fruits">Choose a fruit or type your own:</label>
-                            <input list="fruit-options" id="fruits" name="fruits"/>
-                            <datalist id="fruit-options">
-                                <option value="Apple"/>
-                                <option value="Banana"/>
-                                <option value="Cherry"/>
-                                <option value="Grapes"/>
-                            </datalist>
+                            {/*<label htmlFor="fruits">Choose a fruit or type your own:</label>*/}
+                            {/*<input list="fruit-options" id="fruits" name="fruits"/>*/}
+                            {/*<datalist id="fruit-options">*/}
+                            {/*    <option value="Apple"/>*/}
+                            {/*    <option value="Banana"/>*/}
+                            {/*    <option value="Cherry"/>*/}
+                            {/*    <option value="Grapes"/>*/}
+                            {/*</datalist>*/}
                         </BoxCard>
                     </Panel>
                     <PanelResizeHandle/>
