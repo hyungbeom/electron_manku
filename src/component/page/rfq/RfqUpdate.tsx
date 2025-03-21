@@ -244,7 +244,7 @@ export default function RqfUpdate({
 
         copyInfo['managerAdminName'] = findMember['name'];
 
-        copyInfo[listType] = [...totalList, ...commonFunc.repeatObject(rfqInfo['write']['defaultData'], 100 - totalList.length)];
+        copyInfo[listType] = [...totalList, ...commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000 - totalList.length)];
 
         getCopyPage('rfq_write', copyInfo)
     }

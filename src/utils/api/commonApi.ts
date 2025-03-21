@@ -167,7 +167,7 @@ export const findOrderDocumentInfo = async (event, setInfo, setTableData?, manag
                 }
             );
 
-            setTableData([...result?.data?.entity?.estimateDetail?.estimateDetailList,...commonFunc.repeatObject(orderInfo['write']['defaultData'], 100 - result?.data?.entity?.estimateDetail?.estimateDetailList.length)])
+            setTableData([...result?.data?.entity?.estimateDetail?.estimateDetailList,...commonFunc.repeatObject(orderInfo['write']['defaultData'], 1000 - result?.data?.entity?.estimateDetail?.estimateDetailList.length)])
 
             // gridManage.resetData(gridRef, detailList)
 

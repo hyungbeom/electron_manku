@@ -66,7 +66,7 @@ export default function DomesticCustomerUpdate({updateKey, getCopyPage}:any) {
         getDataInfo().then(v => {
             const {customerDetail} = v;
             setInfo(customerDetail);
-            customerDetail[listType] = [...customerDetail[listType], ...commonFunc.repeatObject(DCInfo['write']['defaultData'], 100 - customerDetail[listType].length)];
+            customerDetail[listType] = [...customerDetail[listType], ...commonFunc.repeatObject(DCInfo['write']['defaultData'], 1000 - customerDetail[listType].length)];
             setTableData(customerDetail[listType]);
             setLoading(false)
         })

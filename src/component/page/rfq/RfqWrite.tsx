@@ -199,7 +199,7 @@ export default function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: 
     function clearAll() {
         // info 데이터 초기화
         commonManage.setInfo(infoRef, rfqInfo['defaultInfo'], userInfo['adminId']);
-        setTableData(commonFunc.repeatObject(rfqInfo['write']['defaultData'], 100))
+        setTableData(commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000))
     }
 
 

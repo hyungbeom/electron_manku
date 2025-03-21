@@ -89,7 +89,7 @@ export default function ProjectUpdate({
             setFileList(fileManage.getFormatFiles(attachmentFileList))
             setOriginFileList(attachmentFileList)
             setInfo(projectDetail);
-            projectDetail[listType] = [...projectDetail[listType], ...commonFunc.repeatObject(projectInfo['write']['defaultData'], 100 - projectDetail[listType].length)];
+            projectDetail[listType] = [...projectDetail[listType], ...commonFunc.repeatObject(projectInfo['write']['defaultData'], 1000 - projectDetail[listType].length)];
             setTableData(projectDetail[listType]);
             setLoading(false)
         })
@@ -227,7 +227,7 @@ export default function ProjectUpdate({
         const findMember = memberList.find(v => v.adminId === info['managerAdminId']);
         copyInfo['managerAdminName'] = findMember['name'];
 
-        copyInfo[listType] = [...totalList, ...commonFunc.repeatObject(projectInfo['write']['defaultData'], 100 - totalList.length)];
+        copyInfo[listType] = [...totalList, ...commonFunc.repeatObject(projectInfo['write']['defaultData'], 1000 - totalList.length)];
 
         getCopyPage('project_write', copyInfo)
     }
@@ -235,7 +235,7 @@ export default function ProjectUpdate({
     function clearAll() {
         // info 데이터 초기화
         commonManage.setInfo(infoRef, projectInfo['defaultInfo'], userInfo['adminId']);
-        setTableData(commonFunc.repeatObject(projectInfo['write']['defaultData'], 100))
+        setTableData(commonFunc.repeatObject(projectInfo['write']['defaultData'], 1000))
 
     }
 

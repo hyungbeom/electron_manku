@@ -194,7 +194,7 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     function clearAll() {
         // info 데이터 초기화
         commonManage.setInfo(infoRef, projectInfo['defaultInfo'], userInfo['adminId']);
-        setTableData(commonFunc.repeatObject(projectInfo['write']['defaultData'], 100))
+        setTableData(commonFunc.repeatObject(projectInfo['write']['defaultData'], 1000))
     }
 
     const getSavedSizes = () => {

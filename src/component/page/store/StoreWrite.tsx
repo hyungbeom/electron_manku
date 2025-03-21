@@ -107,7 +107,7 @@ export default function StoreWrite({copyPageInfo,notificationAlert = null, getPr
         if (!isEmptyObj(copyPageInfo['store_write'])) {
             // copyPageInfo 가 없을시
             setInfo(infoInit);
-            setTableData(commonFunc.repeatObject(orderInfo['write']['defaultData'], 100))
+            setTableData(commonFunc.repeatObject(orderInfo['write']['defaultData'], 1000))
         } else {
             // copyPageInfo 가 있을시(==>보통 수정페이지에서 복제시)
             // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting

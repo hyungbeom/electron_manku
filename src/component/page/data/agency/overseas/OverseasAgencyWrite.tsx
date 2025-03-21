@@ -49,7 +49,7 @@ export default function OverseasAgencyWrite({copyPageInfo, getPropertyId}: any) 
         if (!isEmptyObj(copyPageInfo['overseas_agency_write'])) {
             // copyPageInfo 가 없을시
             setInfo(infoInit)
-            setTableData(commonFunc.repeatObject(OAInfo['write']['defaultData'], 100))
+            setTableData(commonFunc.repeatObject(OAInfo['write']['defaultData'], 1000))
         } else {
             // copyPageInfo 가 있을시(==>보통 수정페이지에서 복제시)
             // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting

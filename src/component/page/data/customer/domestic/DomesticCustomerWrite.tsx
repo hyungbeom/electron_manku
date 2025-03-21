@@ -49,7 +49,7 @@ export default function DomesticCustomerWrite({copyPageInfo, getPropertyId}:any)
         if (!isEmptyObj(copyPageInfo['domestic_customer_write'])) {
             // copyPageInfo 가 없을시
             setInfo(infoInit)
-            setTableData(commonFunc.repeatObject(DCInfo['write']['defaultData'], 100))
+            setTableData(commonFunc.repeatObject(DCInfo['write']['defaultData'], 1000))
         } else {
 
             // copyPageInfo 가 있을시(==>보통 수정페이지에서 복제시)

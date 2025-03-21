@@ -57,7 +57,7 @@ export default function DomesticAgencyUpdate({updateKey, getCopyPage}:any) {
             const {agencyDetail, attachmentFileList} = v;
 
             setInfo(agencyDetail);
-            agencyDetail[listType] = [...agencyDetail[listType], ...commonFunc.repeatObject(DAInfo['write']['defaultData'], 100 - agencyDetail[listType].length)];
+            agencyDetail[listType] = [...agencyDetail[listType], ...commonFunc.repeatObject(DAInfo['write']['defaultData'], 1000 - agencyDetail[listType].length)];
             setTableData(agencyDetail[listType]);
             setLoading(false)
         })

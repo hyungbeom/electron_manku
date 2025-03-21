@@ -76,7 +76,7 @@ export default function OverseasAgencyUpdate({ updateKey, getCopyPage}:any) {
         setLoading(true)
         getDataInfo().then(v => {
             const {overseasAgencyDetail} = v;
-            overseasAgencyDetail[listType] = [...overseasAgencyDetail[listType], ...commonFunc.repeatObject(OCInfo['write']['defaultData'], 100 - overseasAgencyDetail[listType].length)];
+            overseasAgencyDetail[listType] = [...overseasAgencyDetail[listType], ...commonFunc.repeatObject(OCInfo['write']['defaultData'], 1000 - overseasAgencyDetail[listType].length)];
             setInfo(overseasAgencyDetail)
             setTableData(overseasAgencyDetail[listType]);
             setLoading(false)
