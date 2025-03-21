@@ -5,7 +5,7 @@ import {commonManage, gridManage} from "@/utils/commonManage";
 import moment from "moment/moment";
 import message from "antd/lib/message";
 import {deleteHsCodeList} from "@/utils/api/mainApi";
-import {codeSaveInitial} from "@/utils/initialList";
+import {codeSaveInitial, SourceReadInitial} from "@/utils/initialList";
 import Spin from "antd/lib/spin";
 import {inputForm, MainCard, TopBoxCard} from "@/utils/commonForm";
 import {ExclamationCircleOutlined, RadiusSettingOutlined, SearchOutlined} from "@ant-design/icons";
@@ -20,9 +20,9 @@ export default function SourceRead({getPropertyId, getCopyPage}: any) {
     const [mini, setMini] = useState(true);
 
     const [info, setInfo] = useState({
-        searchText: '',
-        item: '',
-        hsCode: ''
+        searchMaker: '',
+        searchModel: '',
+        searchLocation: ''
     })
 
     const [totalRow, setTotalRow] = useState(0);
@@ -33,7 +33,9 @@ export default function SourceRead({getPropertyId, getCopyPage}: any) {
         getData.post('inventory/getInventoryList', {
             "page": 1,
             "limit": -1,
-            "searchText": ""
+            "searchMaker": "",
+            "searchModel": "",
+            "searchLocation": ""
         }).then(v => {
 
             const {code, entity} = v.data
@@ -58,55 +60,27 @@ export default function SourceRead({getPropertyId, getCopyPage}: any) {
     }
 
 
-    async function saveFunc() {
-
-        setLoading(true);
-        await getData.post('hsCode/addHsCode', info).then(v => {
-            const code = v.data.code;
-            if (code === 1) {
-                notificationAlert('success', '💾회사계정 등록완료',
-                    <>
-                        <div>Item : {info['item']}</div>
-                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
-                    </>
-                    , null,
-                    {}
-                )
-            } else {
-                message.error('등록에 실패하였습니다.')
-            }
-            returnFunc(code === 1)
-        })
-    }
-
-    function returnFunc(e) {
-        setLoading(e)
-        if (e) {
-            searchInfo();
-        }
-    }
-
 
     async function searchInfo(e?) {
 
         if (e) {
             setLoading(true)
 
-            getData.post('company/getCompanyAccountList', {
+            getData.post('inventory/getInventoryList', {
                 "page": 1,
                 "limit": -1,
-                "searchCompanyName": info['searchCompanyName'],
-                "searchHomepage": info['searchHomepage']
+                ...info
             }).then(v => {
+
                 const {code, entity} = v.data
                 if (code === 1) {
-                    const {pageInfo, companyAccountList} = entity;
+                    const {pageInfo, inventoryList} = entity;
                     setTotalRow(pageInfo.totalRow)
-                    gridManage.resetData(gridRef, companyAccountList);
+                    gridManage.resetData(gridRef, inventoryList);
+
                 } else {
                     gridManage.resetData(gridRef, []);
                 }
-                setLoading(false)
             }, err => setLoading(false))
 
         }
@@ -141,7 +115,7 @@ export default function SourceRead({getPropertyId, getCopyPage}: any) {
     }
 
     function clearAll() {
-        setInfo(codeSaveInitial)
+        setInfo(SourceReadInitial)
         gridRef.current.deselectAll();
     }
 
@@ -171,22 +145,28 @@ export default function SourceRead({getPropertyId, getCopyPage}: any) {
                     },
                 ]} mini={mini} setMini={setMini}>
                     {mini ? <>
-                        <TopBoxCard title={''} grid={"150px 250px 80px 1fr"}>
+                        <TopBoxCard title={''} grid={"150px 250px 100px 1fr"}>
                             {inputForm({
-                                title: '회사이름',
-                                id: 'searchCompanyName',
+                                title: 'Maker',
+                                id: 'searchMaker',
                                 onChange: onChange,
                                 handleKeyPress: handleKeyPress,
                                 data: info
                             })}
                             {inputForm({
-                                title: '홈페이지',
-                                id: 'searchHomepage',
+                                title: 'Model',
+                                id: 'searchModel',
                                 onChange: onChange,
                                 handleKeyPress: handleKeyPress,
                                 data: info
                             })}
-
+                            {inputForm({
+                                title: '위치',
+                                id: 'searchLocation',
+                                onChange: onChange,
+                                handleKeyPress: handleKeyPress,
+                                data: info
+                            })}
                         </TopBoxCard>
                     </> : null}
                 </MainCard>

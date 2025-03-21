@@ -564,6 +564,14 @@ export const codeSaveInitial = {
     item: '',
     hsCode: ''
 }
+
+export const SourceReadInitial = {
+    searchMaker: '',
+    searchModel: '',
+    searchLocation: ''
+}
+
+
 export const codeReadInitial = {
     "searchText": "",         // 문서번호
     "page": 1,
