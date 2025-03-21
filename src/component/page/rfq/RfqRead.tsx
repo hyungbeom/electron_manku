@@ -133,7 +133,7 @@ export default function RfqRead({getPropertyId, getCopyPage,}: any) {
     }
 
     function moveRegist() {
-        getCopyPage('rfq_write', {estimateRequestDetailList: commonFunc.repeatObject(estimateRequestDetailUnit, 10)})
+        getCopyPage('rfq_write', {estimateRequestDetailList: commonFunc.repeatObject(estimateRequestDetailUnit, 1000)})
     }
 
 

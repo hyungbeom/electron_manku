@@ -66,7 +66,7 @@ export default function ProjectRead({getPropertyId, getCopyPage}:any) {
     }
 
     function moveRegist() {
-        getCopyPage('project_write', {projectDetailList: commonFunc.repeatObject(projectDetailUnit, 10)})
+        getCopyPage('project_write', {projectDetailList: commonFunc.repeatObject(projectDetailUnit, 1000)})
     }
 
 

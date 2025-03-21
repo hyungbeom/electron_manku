@@ -121,7 +121,7 @@ export default function OrderRead({getPropertyId, getCopyPage}: any) {
     }
 
     async function moveRouter() {
-        getCopyPage('order_write', {orderDetailList: commonFunc.repeatObject(orderDetailUnit, 10)})
+        getCopyPage('order_write', {orderDetailList: commonFunc.repeatObject(orderDetailUnit, 1000)})
     }
 
 

@@ -94,7 +94,7 @@ function EstimateRead({getPropertyId, getCopyPage, }:any) {
     }
 
     async function moveRouter() {
-        getCopyPage('estimate_write', {estimateDetailList: commonFunc.repeatObject(estimateDetailUnit, 10)})
+        getCopyPage('estimate_write', {estimateDetailList: commonFunc.repeatObject(estimateDetailUnit, 1000)})
 
     }
 

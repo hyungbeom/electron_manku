@@ -42,7 +42,6 @@ export default function PrintIntegratedEstimate({ data, isModalOpen, userInfo, s
     }
 
     const handleDownloadPDF = async () => {
-        console.log('!!!')
         const element = pdfRef.current;
         const canvas = await html2canvas(element, { scale: 1.5, useCORS: true });
         const imgData = canvas.toDataURL("image/jpeg", 0.7);
@@ -570,6 +569,5 @@ export default function PrintIntegratedEstimate({ data, isModalOpen, userInfo, s
                 </div>
             </div>
         </Modal>
-    )
-        ;
+    );
 }
