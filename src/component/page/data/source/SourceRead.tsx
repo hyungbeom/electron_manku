@@ -30,7 +30,7 @@ export default function SourceRead({getPropertyId, getCopyPage}: any) {
 
     const onGridReady = async (params) => {
         gridRef.current = params.api;
-        getData.post('inventory/getInventoryListForAdd', {
+        getData.post('inventory/getInventoryList', {
             "page": 1,
             "limit": -1,
             "searchText": ""

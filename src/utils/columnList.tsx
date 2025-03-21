@@ -2575,15 +2575,15 @@ export const tableSourceColumns = [
     },
     {
         headerName: '잔량',
-        field: 'receivedQuantity',
+        field: 'remainingQuantity',
     },
     {
         headerName: '출고',
-        field: 'password',
+        field: 'shippedQuantity',
     },
     {
         headerName: '합계',
-        field: 'total',
+        field: 'totalQuantity',
     },
     {
         headerName: '위치',
