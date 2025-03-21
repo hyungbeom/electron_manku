@@ -794,8 +794,8 @@ commonManage.getPdfCreate = async function (pdfRef, pdfSubRef) {
     );
 
     if (pdfRef.current) {
-        const firstCanvas = await html2canvas(pdfRef.current, {scale: 1, useCORS: true});
-        const firstImgData = firstCanvas.toDataURL("image/jpeg");
+        const firstCanvas = await html2canvas(pdfRef.current, {scale: 1.5, useCORS: true});
+        const firstImgData = firstCanvas.toDataURL("image/jpeg", 0.7);
         const firstImgProps = pdf.getImageProperties(firstImgData);
         const firstImgHeight = (firstImgProps.height * pdfWidth) / firstImgProps.width;
         pdf.addImage(firstImgData, "PNG", 0, 20, pdfWidth, firstImgHeight);
@@ -805,8 +805,8 @@ commonManage.getPdfCreate = async function (pdfRef, pdfSubRef) {
 
     for (let i = 0; i < elements.length; i++) {
         const element: any = elements[i];
-        const firstCanvas = await html2canvas(element, {scale: 2, useCORS: true});
-        const firstImgData = firstCanvas.toDataURL("image/jpeg");
+        const firstCanvas = await html2canvas(element, {scale: 1.5, useCORS: true});
+        const firstImgData = firstCanvas.toDataURL("image/jpeg", 0.7);
         const firstImgProps = pdf.getImageProperties(firstImgData);
         const firstImgHeight = (firstImgProps.height * pdfWidth) / firstImgProps.width;
 

@@ -12,8 +12,8 @@ export default function PrintDiploma({ data, isModalOpen, setIsModalOpen }) {
 
     const handleDownloadPDF = async () => {
         const element = pdfRef.current;
-        const canvas = await html2canvas(element, { scale: 2 });
-        const imgData = canvas.toDataURL("image/png");
+        const canvas = await html2canvas(element, { scale: 1.5, useCORS: true});
+        const imgData = canvas.toDataURL("image/jpeg", 0.7);
 
         const pdf = new jsPDF("portrait", "px", "a4");
         const pdfWidth = pdf.internal.pageSize.getWidth();

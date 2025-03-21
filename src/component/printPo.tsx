@@ -58,8 +58,9 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
         const pdfWidth = pdf.internal.pageSize.getWidth();
 
         if (pdfRef.current) {
-            const firstCanvas = await html2canvas(pdfRef.current, {scale: 2});
-            const firstImgData = firstCanvas.toDataURL("image/png");
+            const firstCanvas = await html2canvas(pdfRef.current, {scale: 1.5, useCORS: true});
+
+            const firstImgData = firstCanvas.toDataURL("image/jpeg", 0.7);
             const firstImgProps = pdf.getImageProperties(firstImgData);
             const firstImgHeight = (firstImgProps.height * pdfWidth) / firstImgProps.width;
             pdf.addImage(firstImgData, "PNG", 0, 0, pdfWidth, firstImgHeight);
@@ -68,8 +69,8 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
         const elements = pdfSubRef.current.children;
         for (let i = 0; i < elements.length; i++) {
             const element = elements[i];
-            const canvas = await html2canvas(element, {scale: 2});
-            const imgData = canvas.toDataURL("image/png");
+            const canvas = await html2canvas(element, {scale: 1.5, useCORS: true});
+            const imgData = canvas.toDataURL("image/jpeg", 0.7);
             const imgProps = pdf.getImageProperties(imgData);
             const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
             pdf.addPage();

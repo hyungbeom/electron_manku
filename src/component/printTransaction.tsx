@@ -48,8 +48,8 @@ export default function PrintTransactionModal({data, customerData, isModalOpen, 
         const pdfHeight = pdf.internal.pageSize.getHeight();
         const bottomMargin = 20; // 하단 여백 (단위: px)
 
-        const canvas = await html2canvas(element, {scale: 2});
-        const imgData = canvas.toDataURL("image/png");
+        const canvas = await html2canvas(element, {scale: 1.5, useCORS: true});
+        const imgData = canvas.toDataURL("image/jpeg", 0.7);
 
         // Calculate image dimensions and split pages
         const imgProps = pdf.getImageProperties(imgData);

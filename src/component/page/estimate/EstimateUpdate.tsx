@@ -329,7 +329,7 @@ export default function EstimateUpdate({
         for (let i = 0; i < elements.length; i++) {
             const element: any = elements[i];
             const firstCanvas = await html2canvas(element, {scale: 1.5, useCORS: true});
-            const firstImgData = firstCanvas.toDataURL("image/png", 0.7);
+            const firstImgData = firstCanvas.toDataURL("image/jpeg", 0.7);
             const firstImgProps = pdf.getImageProperties(firstImgData);
             const firstImgHeight = (firstImgProps.height * pdfWidth) / firstImgProps.width;
 
