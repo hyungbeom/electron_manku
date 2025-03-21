@@ -13,6 +13,7 @@ import OrderListModal from "@/component/OrderListModal";
 import Button from "antd/lib/button";
 import * as XLSX from 'xlsx';
 import {UploadOutlined} from "@ant-design/icons";
+import 'pikaday/css/pikaday.css';
 import HsCodeListModal from "@/component/HsCodeListModal";
 // register Handsontable's modules
 registerAllModules();
@@ -544,6 +545,8 @@ const Table = forwardRef(({
                 afterChange={afterChange}
 
                 columns={column["columnList"].map(col => {
+                    const isDate = col.type === "date";
+
                     return ({
                         data: col.data,
                         type: col.type,
@@ -556,7 +559,15 @@ const Table = forwardRef(({
                         numericFormat: col.data === "marginRate" ? {pattern: "0%", suffix: "%"} : ( col.data.includes('rice') ? {pattern:'0,00'}:           undefined), // 🔥 소수점 둘째 자리 고정 + % 유지
                         renderer: col.data === "marginRate" ? percentRenderer : ((col.data === 'orderDocumentNumberFull' || col.data === 'connectInquiryNo'|| col.data === 'hsCode') ? iconRenderer : ((col.data === 'unitPrice') ? currencyRenderer : col.type)), // 🔥 커스텀 렌더러 적용
                         readOnly: col.readOnly,
-                        filter: false
+                        filter: false,
+                        ...(isDate && {
+                            datepickerConfig: {
+                                position: "top left",
+                                bound: true,
+                                reposition: false,
+                                container: document.body, // 💡 추가해보세요
+                            },
+                        }),
                     })
                 })}
 

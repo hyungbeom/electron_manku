@@ -1,5 +1,12 @@
 import React, {useEffect, useRef, useState} from "react";
-import {ClearOutlined, CopyOutlined, FormOutlined, RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
+import {
+    ClearOutlined,
+    CopyOutlined,
+    DeleteOutlined,
+    FormOutlined,
+    RadiusSettingOutlined,
+    SaveOutlined
+} from "@ant-design/icons";
 import message from "antd/lib/message";
 import {getData} from "@/manage/function/api";
 import SearchInfoModal from "@/component/SearchAgencyModal";
@@ -25,6 +32,7 @@ export default function RqfUpdate({
                                       updateKey = {},
                                       getCopyPage = null,
                                       getPropertyId = null,
+                                      setCloseTab,
                                       layoutRef
                                   }: any) {
 
@@ -269,6 +277,22 @@ export default function RqfUpdate({
         }
     }, typeof window !== 'undefined' ? document : null)
 
+    function deleteFunc(){
+        getData.post('estimate/deleteEstimateRequest',{estimateRequestId : updateKey['rfq_update']}).then(v=>{
+            const {code, message} = v.data;
+            if(code === 1){
+                setCloseTab('rfq_update', ' rfq_read')
+                notificationAlert('success', '🗑️견적의뢰 삭제완료',
+                    <>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    ,null,
+                    {cursor: 'pointer'}
+                )
+            }
+        })
+    }
+
 
     return <Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'rfq_update'}/>
@@ -286,6 +310,7 @@ export default function RqfUpdate({
 
                 <MainCard title={'견적의뢰 수정'} list={[
                     {name: <div><FormOutlined style={{paddingRight: 8}}/>수정</div>, func: saveFunc, type: 'primary'},
+                    {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: deleteFunc, type: ''},
                     {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'},
                     {name: <div><CopyOutlined style={{paddingRight: 8}}/>복제</div>, func: copyPage, type: ''}
                 ]} mini={mini} setMini={setMini}>

@@ -14,7 +14,7 @@ import Spin from "antd/lib/spin";
 import {estimateInfo, orderInfo} from "@/utils/column/ProjectInfo";
 import Table from "@/component/util/Table";
 import SearchInfoModal from "@/component/SearchAgencyModal";
-import {CopyOutlined, FormOutlined, RadiusSettingOutlined} from "@ant-design/icons";
+import {CopyOutlined, DeleteOutlined, FormOutlined, RadiusSettingOutlined} from "@ant-design/icons";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import useEventListener from "@/utils/common/function/UseEventListener";
@@ -23,7 +23,7 @@ import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import PrintTransactionModal from "@/component/printTransaction";
 
 const listType = 'orderDetailList'
-export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
+export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId, setCloseTab}: any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
     const infoRef = useRef<any>(null)
@@ -310,6 +310,27 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
         setIsModalOpen(v =>{return {...v, event1 : true}})
     }
 
+
+
+    function deleteFunc(){
+        getData.post('order/deleteOrder',{orderId : updateKey['order_update']}).then(v=>{
+            const {code, message} = v.data;
+            if(code === 1){
+                setCloseTab('order_update', 'order_read')
+                notificationAlert('success', '🗑️발주서 삭제완료',
+                    <>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    ,null,
+                    {cursor: 'pointer'}
+                )
+            }else{
+                message.error(v?.data?.message)
+            }
+        })
+    }
+
+
     return <Spin spinning={loading} tip={'LOADING'}>
         <PanelSizeUtil groupRef={groupRef} storage={'order_update'}/>
         {(isModalOpen['agencyCode'] || isModalOpen['customerName']) &&
@@ -335,6 +356,7 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
                     {name: <div>거래명세표 출력</div>, func: printTransactionStatement, type: ''},
                     {name: <div>발주서 출력</div>, func: printPo, type: ''},
                     {name: <div><FormOutlined style={{paddingRight: 8}}/>수정</div>, func: saveFunc, type: 'primary'},
+                    {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: deleteFunc, type: ''},
                     {
                         name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>,
                         func: clearAll,

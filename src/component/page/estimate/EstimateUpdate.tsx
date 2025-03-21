@@ -1,5 +1,12 @@
 import React, {useEffect, useRef, useState} from "react";
-import {CopyOutlined, DownloadOutlined, FormOutlined, RadiusSettingOutlined, RetweetOutlined} from "@ant-design/icons";
+import {
+    CopyOutlined,
+    DeleteOutlined,
+    DownloadOutlined,
+    FormOutlined,
+    RadiusSettingOutlined,
+    RetweetOutlined
+} from "@ant-design/icons";
 import {ModalInitList} from "@/utils/initialList";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
@@ -37,7 +44,7 @@ const listType = 'estimateDetailList'
 export default function EstimateUpdate({
                                            dataInfo = {estimateDetail: [], attachmentFileList: []},
                                            updateKey = {},
-
+                                           setCloseTab,
                                            getCopyPage = null, getPropertyId,layoutRef
                                        }:any) {
     const notificationAlert = useNotificationAlert();
@@ -398,6 +405,25 @@ export default function EstimateUpdate({
         setTableData(commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000))
     }
 
+
+    function deleteFunc(){
+        getData.post('estimate/deleteEstimate',{estimateId : updateKey['estimate_update']}).then(v=>{
+            const {code, message} = v.data;
+            if(code === 1){
+                setCloseTab('estimate_update', 'estimate_read')
+                notificationAlert('success', '🗑️견적서 삭제완료',
+                    <>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    ,null,
+                    {cursor: 'pointer'}
+                )
+            }else{
+                message.error(v?.data?.message)
+            }
+        })
+    }
+
     return <div style={{overflow: 'hidden'}}><Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'estimate_update'}/>
         <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
@@ -415,6 +441,7 @@ export default function EstimateUpdate({
                 <MainCard title={'견적서 수정'} list={[
                     {name: <div>견적서 출력</div>, func: printEstimate, type: ''},
                     {name: <div><FormOutlined style={{paddingRight: 8}}/>수정</div>, func: saveFunc, type: 'primary'},
+                    {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: deleteFunc, type: ''},
                     {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'},
                     {name: <div><CopyOutlined style={{paddingRight: 8}}/>복제</div>, func: copyPage, type: ''}
                 ]} mini={mini} setMini={setMini}>
