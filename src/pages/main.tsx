@@ -98,15 +98,6 @@ export default function Main({alarm}) {
     const [selectMenu, setSelectMenu] = useState('')
 
 
-    const tabCounts = useMemo(() => {
-        let tabCount = 0;
-        modelRef.current.visitNodes((node) => {
-            if (node.getType() === "tab") {
-                tabCount++;
-            }
-        });
-        return tabCount;
-    }, [modelRef.current.toJson()]); // 🔥 model이 변경될 때만 실행
 
     const [updateKey, setUpdateKey] = useState({})
     const [copyPageInfo, setCopyPageInfo] = useState({})
@@ -132,11 +123,6 @@ export default function Main({alarm}) {
 
 
         model.doAction(Actions.deleteTab(targetNode.getId()));
-        // let copyObject = _.cloneDeep(updateKey);
-        // copyObject[key] = id;
-
-        // setUpdateKey(copyObject);
-        // onSelect([key]);
     }
 
     function getPropertyId(key, id) {
@@ -194,17 +180,17 @@ export default function Main({alarm}) {
     const onSelect = (selectedKeys, event?) => {
         const selectedKey = selectedKeys[0];
 
-        // 🔥 modelRef.current 사용하여 불필요한 JSON 변환 제거
-        const existingTabs = modelRef.current.getRoot().getChildren().flatMap(tabset =>
-            tabset.getChildren().map((tab: any) => tab.getComponent())
-        );
+        const existingTabs = modelRef.current.getRoot()
+            .getChildren()[0]
+            .getChildren()
+            .map((tab:any) => tab.getComponent());
+
 
         const title = findTitleByKey(treeData, selectedKey);
 
         if (title) {
             if (selectMenu !== title) {
                 setSelectMenu(title);
-                updateSelectTab();
             }
         } else {
             const result = updateList.find(v => v.key === selectedKey);
@@ -417,21 +403,21 @@ export default function Main({alarm}) {
         // 🔥 올바른 DockLocation 객체 사용
         model.doAction(Actions.addNode(newTab, tabset.getId(), DockLocation.CENTER, -1, true));
     };
-    useEffect(() => {
-        updateSelectTab();
-    }, [selectMenu]);
+    // useEffect(() => {
+    //     updateSelectTab();
+    // }, [selectMenu]);
 
     const updateSelectTab = () => {
-        const rootNode = modelRef.current.getRoot();
-        const tabsets = rootNode.getChildren();
-        for (const tabset of tabsets) {
-            const tabs: any = tabset.getChildren();
-            for (const tab of tabs) {
-                if (tab.getName() === selectMenu) {
-                    modelRef.current.doAction(Actions.selectTab(tab.getId()));
-                }
-            }
-        }
+        // const rootNode = modelRef.current.getRoot();
+        // const tabsets = rootNode.getChildren();
+        // for (const tabset of tabsets) {
+        //     const tabs: any = tabset.getChildren();
+        //     for (const tab of tabs) {
+        //         if (tab.getName() === selectMenu) {
+        //             modelRef.current.doAction(Actions.selectTab(tab.getId()));
+        //         }
+        //     }
+        // }
     };
 
     const onLayoutChange = (action: any) => {
@@ -488,7 +474,7 @@ export default function Main({alarm}) {
                         onExpand={onExpand}
                     />
                 </div>
-                {!tabCounts && <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                {!activeTabId && <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
                     <div style={{
                         display: 'grid',
                         gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr',
