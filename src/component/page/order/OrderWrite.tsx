@@ -158,9 +158,14 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
                                 const findManager = memberList.find(v => v.adminId === manager)
                                 delete estimateDetail.createdBy
                                 delete estimateDetail.managerAdminId
+                                console.log(estimateDetail,'estimateDetail:')
                                 commonManage.setInfo(infoRef, {
                                     ...estimateDetail,
                                     estimateManager: findManager?.name,
+                                    customerManagerName:estimateDetail.managerName,
+                                    customerManagerPhoneNumber:estimateDetail.phoneNumber,
+                                    customerManagerEmail:estimateDetail.faxNumber,
+                                    customerManagerFaxNumber:estimateDetail?.email ? estimateDetail?.email : '',
                                     documentNumberFull: src.data.code === 1 ? src.data.entity.newDocumentNumberFull : '',
                                     validityPeriod: '견적 발행 후 10일간',
                                     paymentTerms: '발주시 50% / 납품시 50%',
