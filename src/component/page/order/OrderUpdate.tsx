@@ -22,11 +22,12 @@ import moment from "moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import PrintTransactionModal from "@/component/printTransaction";
 import _ from "lodash";
+import {Actions} from "flexlayout-react";
 
 const listType = 'orderDetailList'
 
 
-function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId, setCloseTab}: any) {
+function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
     const infoRef = useRef<any>(null)
@@ -331,10 +332,11 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId, setClose
 
 
     function deleteFunc() {
+        setLoading(true)
         getData.post('order/deleteOrder', {orderId: updateKey['order_update']}).then(v => {
             const {code, message} = v.data;
             if (code === 1) {
-                setCloseTab('order_update', 'order_read')
+
                 notificationAlert('success', '🗑️발주서 삭제완료',
                     <>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
@@ -342,10 +344,20 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId, setClose
                     , null,
                     {cursor: 'pointer'}
                 )
+                const {model} = layoutRef.current.props;
+                getCopyPage('order_read', {})
+                const targetNode = model.getRoot().getChildren()[0]?.getChildren()
+                    .find((node: any) => node.getType() === "tab" && node.getComponent() === 'order_update');
+
+                if (targetNode) {
+                    model.doAction(Actions.deleteTab(targetNode.getId())); // ✅ 기존 로직 유지
+                }
+                setLoading(false)
             } else {
                 message.error(v?.data?.message)
+                setLoading(false)
             }
-        })
+        },err=>                setLoading(false))
     }
 
 

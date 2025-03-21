@@ -54,8 +54,6 @@ function RqfUpdate({
         })
     }
 
-    console.log('!!!!!!!!!!!!!!!!!!!!!! RFQ_Update!!')
-
     const options = memberList?.map((item) => ({
         ...item,
         value: item.adminId,

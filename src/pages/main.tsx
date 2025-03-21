@@ -52,7 +52,6 @@ import CompanyAccount from "@/component/CompanyAccount";
 import CompanyAccountUpdate from "@/component/CompanyAccountUpdate";
 import CompanyAccountWrite from "@/component/CompanyAccountWrite";
 import {getData} from "@/manage/function/api";
-import moment from "moment/moment";
 import SourceRead from "@/component/page/data/source/SourceRead";
 import SourceWrite from "@/component/page/data/source/SourceWrite";
 import SourceUpdate from "@/component/page/data/source/SourceUpdate";
@@ -95,7 +94,6 @@ export default function Main({alarm}) {
 
     const userInfo = useAppSelector((state) => state.user);
     const router = useRouter();
-    const [selectMenu, setSelectMenu] = useState('')
     const [tabCounts, setTabCounts] = useState(0);
 
     useEffect(() => {
@@ -111,37 +109,6 @@ export default function Main({alarm}) {
 
     const [updateKey, setUpdateKey] = useState({})
     const [copyPageInfo, setCopyPageInfo] = useState({})
-    const [count, setCount] = useState(0)
-
-
-
-
-    useEffect(() => {
-        if (alarm) {
-            getCalendar().then(v => {
-                if(v.code === 1){
-                    if(v.entity.calendarCategoryList.length){
-                        console.log(v.entity.calendarCategoryList,'::!!')
-                        const {categoryId, displayName, isSubscribed}  = v.entity.calendarCategoryList[0];
-                        console.log(categoryId,'categoryId:')
-                        getData.post('schedule/getCalendarEventList', {categoryId:categoryId, date : moment().format('YYYY-MM-DD')}).then(src=>{
-                            if(src.data.code === 1){
-                                const {} = src;
-                                console.log(src,':::')
-                            }
-                        })
-
-                    }
-
-
-
-
-                }else{
-
-                }
-            })
-        }
-    }, [alarm]);
 
 
     async function getCalendar() {
@@ -161,61 +128,39 @@ export default function Main({alarm}) {
             tabset.getChildren().map((tab: any) => tab.getComponent())
         );
 
-        const title = findTitleByKey(treeData, selectedKey);
-
-        if (title) {
-            if (selectMenu !== title) {
-                setSelectMenu(title);
-                // updateSelectTab();
-            }
-        } else {
-            const result = updateList.find(v => v.key === selectedKey);
-            if (result?.title && selectMenu !== result.title) {
-                setSelectMenu(result.title);
-            }
-        }
-
-        // if (event?.event === 'select') {
         // 🔥 useRef 활용하여 불필요한 리렌더링 방지
         if (!copyPageInfo[selectedKey]) {
             setCopyPageInfo(prev => ({...prev, [selectedKey]: {}}));
         }
-        // }
 
-        console.log(existingTabs,'what????')
-        console.log(selectedKey,'selectedKey????')
-        // 🔥 이미 존재하는 탭이면 추가하지 않음
-        console.log(existingTabs.includes(selectedKey),'existingTabs.includes(selectedKey)')
         if (existingTabs.includes(selectedKey)) {
             const model = modelRef.current;
-            const allNodes = model.getRoot().getChildren();
 
-            let targetNode = null;
-            const findTab = (nodes) => {
-                for (const node of nodes) {
-                    if (node.getType() === "tab" && node.getName() === tabComponents[selectedKey].name) {
-                        targetNode = node;
-                        break;
-                    }
-                    if (node.getChildren) {
-                        findTab(node.getChildren()); // 재귀적으로 탐색
-                    }
-                }
-            };
-            findTab(allNodes);
-
+            const targetNode = model.getRoot().getChildren()[0]?.getChildren()
+                .find((node: any) => node.getType() === "tab" && node.getComponent() === selectedKey);
             if (targetNode) {
                 model.doAction(Actions.selectTab(targetNode.getId()));
                 // layoutRef.current?.update(); // 리렌더링 없이 UI 업데이트
             }
             return;
-        }
+        }else{
+          if(!selectedKey){
+              return false;
+          }
+            const newTab = {
+                type: "tab",
+                name: tabComponents[selectedKey].name,
+                component: selectedKey,
+                enableRename: false,
+            };
+            const rootNode = modelRef.current.getRoot();
+            const tabset = rootNode.getChildren()[0]; // 첫 번째 tabset 가져오기
+            // 🔥 올바른 DockLocation 객체 사용
+            modelRef.current.doAction(Actions.addNode(newTab, tabset.getId(), DockLocation.CENTER, -1, true));
 
-        // 선택한 항목이 등록된 탭인지 확인 후 추가
-        if (tabComponents[selectedKey]) {
-            addTab(selectedKey);
+            // addTab(selectedKey);
         }
-    }, [count]);
+    }, []);
 
     const getPropertyId = useCallback((key, id) => {
         setUpdateKey(prev => ({
@@ -223,6 +168,7 @@ export default function Main({alarm}) {
             [key]: id
         }));
         onSelect([key]);
+
 
     }, [onSelect]); // ✅ updateKey를 직접 참조하지 않음
 
@@ -247,7 +193,7 @@ export default function Main({alarm}) {
 
     const tabComponents = {
 
-        project_write: {name: "프로젝트 등록", component: <ProjectWrite copyPageInfo={copyPageInfo} getPropertyId={getPropertyId} layoutRef={layoutRef}/>},
+        project_write: {name: "프로젝트 등록", component: <ProjectWrite copyPageInfo={copyPageInfo['project_write']} getPropertyId={getPropertyId} layoutRef={layoutRef}/>},
         project_read: {
             name: "프로젝트 조회",
             component: <ProjectRead getPropertyId={getPropertyId} getCopyPage={getCopyPage}/>
@@ -255,22 +201,20 @@ export default function Main({alarm}) {
         project_update: {name: "프로젝트 수정", component: <ProjectUpdate updateKey={updateKey} getCopyPage={getCopyPage} getPropertyId={getPropertyId} layoutRef={layoutRef}/>},
 
 
-        rfq_write: {name: "견적의뢰 등록", component: <RfqWrite copyPageInfo={copyPageInfo} getPropertyId={getPropertyId} layoutRef={layoutRef}/>},
+        rfq_write: {name: "견적의뢰 등록", component: <RfqWrite copyPageInfo={copyPageInfo['rfq_write']} getPropertyId={getPropertyId} layoutRef={layoutRef}/>},
         rfq_read: {name: "견적의뢰 조회", component: <RfqRead getPropertyId={getPropertyId} getCopyPage={getCopyPage} />},
         rfq_update: {name: "견적의뢰 수정", component: <RqfUpdate updateKey={updateKey} getCopyPage={getCopyPage} getPropertyId={getPropertyId} layoutRef={layoutRef}/>},
 
-
-
         rfq_mail_send: {name: "메일전송", component: <RfqMailSend getPropertyId={getPropertyId}/>},
 
-        estimate_write: {name: "견적서 등록", component: <EstimateWrite copyPageInfo={copyPageInfo} getPropertyId={getPropertyId} layoutRef={layoutRef}/>},
+        estimate_write: {name: "견적서 등록", component: <EstimateWrite copyPageInfo={copyPageInfo['estimate_write']} getPropertyId={getPropertyId} layoutRef={layoutRef}/>},
         estimate_read: {
             name: "견적서 조회",
             component: <EstimateRead getPropertyId={getPropertyId} getCopyPage={getCopyPage} />
         },
         estimate_update: {name: "견적서 수정", component: <EstimateUpdate updateKey={updateKey} getCopyPage={getCopyPage} getPropertyId={getPropertyId} layoutRef={layoutRef}/>},
 
-        order_write: {name: "발주서 등록", component: <OrderWrite copyPageInfo={copyPageInfo} getPropertyId={getPropertyId} layoutRef={layoutRef}/>},
+        order_write: {name: "발주서 등록", component: <OrderWrite copyPageInfo={copyPageInfo['order_write']} getPropertyId={getPropertyId} layoutRef={layoutRef}/>},
         order_read: {name: "발주서 조회", component: <OrderRead getPropertyId={getPropertyId} getCopyPage={getCopyPage} />},
         order_update: {name: "발주서 수정", component: <OrderUpdate updateKey={updateKey} getCopyPage={getCopyPage} getPropertyId={getPropertyId} layoutRef={layoutRef}/>},
 
@@ -411,7 +355,6 @@ export default function Main({alarm}) {
             component: selectedKey,
             enableRename: false,
         };
-        setCount(v=> v + 1)
         // 🔥 올바른 DockLocation 객체 사용
         model.doAction(Actions.addNode(newTab, tabset.getId(), DockLocation.CENTER, -1, true));
     };

@@ -327,7 +327,9 @@ export const inputNumberForm = ({
     let bowl = data;
 
     function onChanges(e){
-        onChange(e)
+        if(onChange) {
+            onChange(e)
+        }
     }
 
     return <div style={{fontSize: 12, paddingBottom: 10}}>

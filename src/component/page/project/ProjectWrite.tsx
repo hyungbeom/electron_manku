@@ -92,18 +92,17 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
 
     useEffect(() => {
 
-        console.log(copyPageInfo['project_write'],'copyPageInfo[\'project_write\']:')
-        if (!isEmptyObj(copyPageInfo['project_write'])) {
+        if (!isEmptyObj(copyPageInfo)) {
             // copyPageInfo 가 없을시
             setInfo(infoInit)
             setTableData(commonFunc.repeatObject(projectInfo['write']['defaultData'], 1000))
         } else {
             // copyPageInfo 가 있을시(==>보통 수정페이지에서 복제시)
             // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting
-            setInfo({...copyPageInfo['project_write'], ...adminParams, writtenDate: moment().format('YYYY-MM-DD')});
-            setTableData(copyPageInfo['project_write'][listType])
+            setInfo({...copyPageInfo, ...adminParams, writtenDate: moment().format('YYYY-MM-DD')});
+            setTableData(copyPageInfo[listType])
         }
-    }, [copyPageInfo['project_write']]);
+    }, [copyPageInfo]);
 
 
     useEffect(() => {

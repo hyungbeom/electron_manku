@@ -408,6 +408,7 @@ function EstimateUpdate({
 
 
     function deleteFunc(){
+        setLoading(true)
         getData.post('estimate/deleteEstimate',{estimateId : updateKey['estimate_update']}).then(v=>{
             const {code, message} = v.data;
             if(code === 1){
@@ -427,10 +428,12 @@ function EstimateUpdate({
                 if (targetNode) {
                     model.doAction(Actions.deleteTab(targetNode.getId())); // ✅ 기존 로직 유지
                 }
+                setLoading(false)
             }else{
                 message.error(v?.data?.message)
+                setLoading(false)
             }
-        })
+        },err=>   setLoading(false))
     }
 
     return <div style={{overflow: 'hidden'}}><Spin spinning={loading}>
