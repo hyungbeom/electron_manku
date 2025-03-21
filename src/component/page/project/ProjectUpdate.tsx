@@ -20,13 +20,13 @@ import moment from "moment/moment";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import useEventListener from "@/utils/common/function/UseEventListener";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
-import {CopyOutlined, FormOutlined, RadiusSettingOutlined, SearchOutlined} from "@ant-design/icons";
+import {CopyOutlined, DeleteOutlined, FormOutlined, RadiusSettingOutlined, SearchOutlined} from "@ant-design/icons";
 
 
 const listType = 'projectDetailList'
 export default function ProjectUpdate({
                                           updateKey = {},
-
+                                          setCloseTab ,
                                           getCopyPage = null, getPropertyId,layoutRef
                                       }:any) {
     const notificationAlert = useNotificationAlert();
@@ -239,6 +239,21 @@ export default function ProjectUpdate({
 
     }
 
+    function deleteFunc(){
+        getData.post('project/deleteProject',{projectId : updateKey['project_update']}).then(v=>{
+           const {code, message} = v.data;
+           if(code === 1){
+               setCloseTab('project_update', 'project_read')
+               notificationAlert('success', '🗑️프로젝트 삭제완료',
+                   <>
+                       <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                   </>
+                   ,null,
+                   {cursor: 'pointer'}
+               )
+           }
+        })
+    }
 
 
     useEventListener('keydown', (e: any) => {
@@ -266,6 +281,7 @@ export default function ProjectUpdate({
             }}>
                 <MainCard title={'프로젝트 수정'} list={[
                     {name: <div><FormOutlined style={{paddingRight: 8}}/>수정</div>, func: saveFunc, type: 'primary'},
+                    {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: deleteFunc, type: ''},
                     {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'},
                     {name: <div><CopyOutlined style={{paddingRight: 8}}/>복제</div>, func: copyPage, type: ''}
                 ]} mini={mini} setMini={setMini}>

@@ -35,7 +35,7 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
     let unit = '';
     let currency = '';
 
-    const [splitData, setSplitData] = useState([]);
+    const [splitData, setSplitData] = useState([[]]);
     const [info, setInfo] = useState([]);
 
     const today = new Date();
@@ -156,10 +156,16 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
 
     const RowTotal = ({defaultValue, id}) => {
 
+        const currency = splitData[0][0]?.currency ? splitData[0][0]?.currency : 'KRW';
+        let result = Math.round(defaultValue * 100) / 100;
+        let valueData = !isNaN(result) ? amountFormat(result.toFixed(2)) : ''
+        if(commonManage.changeCurr(currency) === 'KRW' || commonManage.changeCurr(currency) === 'JPY'){
+            valueData=   !isNaN(result) ? amountFormat(result) : ''
+        }
 
         return <div style={{display: 'flex', justifyContent: 'space-between', padding: '0px 5px'}}><span
-            style={{fontSize: 14, padding: 5}}>₩</span>
-            <Input value={amountFormat(defaultValue)}
+            style={{fontSize: 12, padding: 5}}>{splitData[0][0]?.currency ? splitData[0][0]?.currency : 'KRW'}</span>
+            <Input value={valueData}
                    style={{border: 'none', width: '100%', textAlign: 'right'}} id={id} name={id}/></div>
     }
 
@@ -190,13 +196,13 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
                                         parser={(value) => value.replace(/[^0-9]/g, '')}
                                         style={{border: 'none', textAlign: 'right', direction: 'rtl', width: '90%'}}
                                         name={id}
-                                        prefix={<span style={{paddingLeft: 10}}>₩</span>}/> :
+                                        prefix={<span style={{paddingLeft: 10}}>{splitData[0][0]?.currency ? splitData[0][0]?.currency : 'KRW'}</span>}/> :
             <div style={{fontSize: 14, display: 'flex', justifyContent: 'space-between', padding: '0px 10px'}}
                  onClick={() => {
                      setToggle(true);
                  }}>
 
-                <span>₩</span>
+                <span style={{fontSize : 12, paddingTop : 2}}>{splitData[0][0]?.currency ? splitData[0][0]?.currency : 'KRW'}</span>
                 {amountFormat(defaultValue)}
 
             </div>}</>
@@ -362,7 +368,7 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
                 borderBottom: '1px solid lightGray'
             }}>
                 <RowTotal
-                    defaultValue={info.quantity * Number(info?.unitPrice ? info?.unitPrice : '')}
+                    defaultValue={parseFloat(info.quantity) * parseFloat(info?.unitPrice)}
                     id={'amount'}/>
             </th>
             <th style={{
@@ -597,7 +603,7 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
                             <RowContent v={v} i={i}/>
                         </>
                     })}
-                    <TotalCalc/>
+                    <TotalCalc splitData={splitData}/>
                     {/*{splitData.length === 1 ? <TotalCalc/> : <></>}*/}
                 </table>
                 <div style={{flexGrow: 1}}/>
@@ -787,7 +793,7 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
         ;
 }
 
-const TotalCalc = () => {
+const TotalCalc = ({splitData = [[]]}) => {
 
 
     return <thead>
@@ -828,7 +834,7 @@ const TotalCalc = () => {
             borderRight: 'none'
         }}>
             <div style={{display: 'flex', justifyContent: 'space-between', fontSize: 13.5, padding: '0px 10px'}}>
-                <div style={{textAlign: 'left'}}>₩</div>
+                <div style={{textAlign: 'left'}}></div>
                 <div id={'total_unit_price'}></div>
 
 
@@ -839,7 +845,7 @@ const TotalCalc = () => {
             borderRight: '1px solid lightGray'
         }}>
             <div style={{display: 'flex', justifyContent: 'space-between', fontSize: 13.5, padding: '0px 10px'}}>
-                <div style={{textAlign: 'left'}}>₩</div>
+                <div style={{textAlign: 'left'}}>{splitData[0][0]?.currency ? splitData[0][0]?.currency : 'KRW'}</div>
                 <div style={{paddingRight: 5}} id={'total_amount'}></div>
 
 

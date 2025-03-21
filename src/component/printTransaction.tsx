@@ -249,8 +249,8 @@ export default function PrintTransactionModal({data, customerData, isModalOpen, 
                     return <tr>
                         <th style={{...cellStyle, width : 5}}>{i + 1}</th>
                         <th style={{...cellStyle, width : 60}}><InputUnit id={'writtenDate'}/></th>
-                        <th style={cellStyle}>{v.model}</th>
-                        <th style={{...cellStyle, textAlign: 'right'}}>{v.quantity}</th>
+                        <th style={{...cellStyle, whiteSpace : 'normal', textAlign : 'left'}}>{v.model}</th>
+                        <th style={{...cellStyle, textAlign: 'center'}}>{v.quantity}</th>
                         <th style={{...cellStyle, textAlign: 'right'}}>{amountFormat(v.net)}</th>
                         <th style={{...cellStyle, textAlign: 'right'}}>{!isNaN(v.net * v.quantity) ? amountFormat(v.net * v.quantity) : ''}</th>
                         <th style={{...cellStyle, textAlign: 'right'}}>{!isNaN(v.net * v.quantity) ?  amountFormat((v.net * v.quantity) * 0.1) : ''}</th>

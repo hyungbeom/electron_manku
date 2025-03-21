@@ -111,6 +111,34 @@ export default function Main({alarm}) {
     const [updateKey, setUpdateKey] = useState({})
     const [copyPageInfo, setCopyPageInfo] = useState({})
 
+    function setCloseTab(a, b) {
+        onSelect([b]);
+        const model = modelRef.current;
+        const allNodes = model.getRoot().getChildren();
+
+        let targetNode = null;
+        const findTab = (nodes) => {
+            for (const node of nodes) {
+                if (node.getType() === "tab" && node.getName() === tabComponents[a].name) {
+                    targetNode = node;
+                    break;
+                }
+                if (node.getChildren) {
+                    findTab(node.getChildren()); // 재귀적으로 탐색
+                }
+            }
+        };
+        findTab(allNodes);
+
+
+        model.doAction(Actions.deleteTab(targetNode.getId()));
+        // let copyObject = _.cloneDeep(updateKey);
+        // copyObject[key] = id;
+
+        // setUpdateKey(copyObject);
+        // onSelect([key]);
+    }
+
     function getPropertyId(key, id) {
         let copyObject = _.cloneDeep(updateKey);
         copyObject[key] = id;
@@ -230,7 +258,7 @@ export default function Main({alarm}) {
             name: "프로젝트 조회",
             component: <ProjectRead/>
         },
-        project_update: {name: "프로젝트 수정", component: <ProjectUpdate updateKey={updateKey}/>},
+        project_update: {name: "프로젝트 수정", component: <ProjectUpdate updateKey={updateKey} setCloseTab={setCloseTab}/>},
 
         rfq_write: {name: "견적의뢰 등록", component: <RfqWrite copyPageInfo={copyPageInfo}/>},
         rfq_read: {name: "견적의뢰 조회", component: <RfqRead/>},
@@ -350,6 +378,7 @@ export default function Main({alarm}) {
                     className={`tab-content ${node.getId() === activeTabId ? "active-tab" : ""}`}>
             {/*{tabComponents[componentKey]?.component}*/}
             {React.cloneElement(tabComponents[componentKey].component, {
+                setCloseTab: setCloseTab,
                 getPropertyId: getPropertyId,
                 layoutRef: layoutRef,
                 getCopyPage: getCopyPage
