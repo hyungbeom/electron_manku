@@ -74,11 +74,17 @@ export default function SourceUpdate({updateKey, getCopyPage}:any) {
     }
 
 
+    function clearAll(){
+        setInfo(v=>{
+            return {...v, inventoryId : updateKey['source_update'].key}
+        })
+    }
+
     return <div ref={infoRef}>
         <PanelSizeUtil groupRef={groupRef} storage={'source_write'}/>
         <MainCard title={'재고등록 등록'} list={[
             {name: <div><SaveOutlined style={{paddingRight : 8}}/>저장</div>, func: saveFunc, type: 'primary'},
-            {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: '', type: 'danger'}
+            {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'}
         ]}>
             <PanelGroup ref={groupRef} className={'ground'} direction="horizontal"
                         style={{gap: 0.5, paddingTop: 3}}>
