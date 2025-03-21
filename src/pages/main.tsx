@@ -53,6 +53,7 @@ import CompanyAccountUpdate from "@/component/CompanyAccountUpdate";
 import CompanyAccountWrite from "@/component/CompanyAccountWrite";
 import {getData} from "@/manage/function/api";
 import moment from "moment/moment";
+import SourceRead from "@/component/page/data/source/SourceRead";
 
 
 function findTitleByKey(data, key) {
@@ -326,6 +327,18 @@ export default function Main({alarm}) {
             component: <CompanyAccountWrite copyPageInfo={copyPageInfo}/>
         },
 
+        source_read: {
+            name: "재고관리 조회",
+            component: <SourceRead/>
+        },
+        source_update: {
+            name: "재고관리 수정",
+            component: <CompanyAccountUpdate updateKey={updateKey}/>
+        },
+        source_write: {
+            name: "재고관리 등록",
+            component: <CompanyAccountWrite copyPageInfo={copyPageInfo}/>
+        },
 
     };
 

@@ -2552,6 +2552,50 @@ export const tableCodeReadColumns = [
 
 
 
+export const tableSourceColumns = [
+
+    {
+        headerName: "", // 컬럼 제목
+        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
+        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
+        checkboxSelection: true, // 각 행에 체크박스 추가
+        cellStyle: {textAlign: "center"}, // 스타일 설정
+        maxWidth: 45, // 컬럼 너비
+        pinned: "left", // 왼쪽에 고정
+        filter: false
+    }, {
+        pinned: 'left',
+        headerName: 'Maker',
+        field: 'maker',
+        maxWidth: 250
+    },
+    {
+        headerName: 'Model',
+        field: 'model',
+    },
+    {
+        headerName: '잔량',
+        field: 'receivedQuantity',
+    },
+    {
+        headerName: '출고',
+        field: 'password',
+    },
+    {
+        headerName: '합계',
+        field: 'total',
+    },
+    {
+        headerName: '위치',
+        field: 'location',
+    },
+]
+
+
+
+
+
+
 export const tableCompanyAccountColumns = [
 
     {

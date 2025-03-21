@@ -126,6 +126,12 @@ export const treeData = [
                     {title: "회사계정관리 조회", key: "company_account_read"},
                 ]
             },
+            {
+                title: "재고관리", key: "source", children: [
+                    {title: "재고관리 등록", key: "source_write"},
+                    {title: "재고관리 조회", key: "source_read"},
+                ]
+            },
 
             {title: "HS CODE 조회", key: "hscode_read"},
 
