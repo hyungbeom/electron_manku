@@ -158,14 +158,14 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
                                 const findManager = memberList.find(v => v.adminId === manager)
                                 delete estimateDetail.createdBy
                                 delete estimateDetail.managerAdminId
-                                console.log(estimateDetail,'estimateDetail:')
+                                console.log(estimateDetail, 'estimateDetail:')
                                 commonManage.setInfo(infoRef, {
                                     ...estimateDetail,
                                     estimateManager: findManager?.name,
-                                    customerManagerName:estimateDetail.managerName,
-                                    customerManagerPhoneNumber:estimateDetail.phoneNumber,
-                                    customerManagerEmail:estimateDetail.faxNumber,
-                                    customerManagerFaxNumber:estimateDetail?.email ? estimateDetail?.email : '',
+                                    customerManagerName: estimateDetail.managerName,
+                                    customerManagerPhoneNumber: estimateDetail.phoneNumber,
+                                    customerManagerEmail: estimateDetail.faxNumber,
+                                    customerManagerFaxNumber: estimateDetail?.email ? estimateDetail?.email : '',
                                     documentNumberFull: src.data.code === 1 ? src.data.entity.newDocumentNumberFull : '',
                                     validityPeriod: '견적 발행 후 10일간',
                                     paymentTerms: '발주시 50% / 납품시 50%',
@@ -281,7 +281,22 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
     }
 
     function clearAll() {
-        setInfo({...infoInit});
+
+        const {createdBy, documentNumberFull, managerAdminId, managerAdminName, uploadType, writtenDate} = info
+        setLoading(true)
+        setTableData(commonFunc.repeatObject(orderInfo['write']['defaultData'], 1000))
+        setInfo({
+            ...orderInfo['defaultInfo'],
+            createdBy: createdBy,
+            documentNumberFull: documentNumberFull,
+            managerAdminId: managerAdminId,
+            managerAdminName: managerAdminName,
+            uploadType: uploadType,
+            writtenDate: writtenDate,
+            managerId: ''
+        });
+        setLoading(false)
+
     }
 
 
@@ -299,7 +314,7 @@ export default function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any
         alert('쉐어포인트 자동저장')
     }
 
-    console.log(isModalOpen,'isModalOpen::')
+    console.log(isModalOpen, 'isModalOpen::')
 
 
     return <Spin spinning={loading} tip={'LOADING'}>

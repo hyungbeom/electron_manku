@@ -86,7 +86,6 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
             const {orderDetail, attachmentFileList} = v;
             setFileList(fileManage.getFormatFiles(attachmentFileList));
             setOriginFileList(attachmentFileList);
-            console.log(orderDetail,'asd::::')
             setInfo({
                 ...orderDetail,
                 uploadType: 4,
@@ -287,7 +286,21 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
 
 
     function clearAll() {
-        // setInfo({...infoInit});
+
+        const {createdBy, documentNumberFull, managerAdminId, managerAdminName, uploadType, writtenDate} = info
+        setLoading(true)
+        setTableData(commonFunc.repeatObject(orderInfo['write']['defaultData'], 1000))
+        setInfo({
+            ...orderInfo['defaultInfo'],
+            createdBy: createdBy,
+            documentNumberFull: documentNumberFull,
+            managerAdminId: managerAdminId,
+            managerAdminName: managerAdminName,
+            uploadType: uploadType,
+            writtenDate: writtenDate,
+            managerId: ''
+        });
+        setLoading(false)
     }
 
 
@@ -308,31 +321,32 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
     }, typeof window !== 'undefined' ? document : null)
 
     async function printTransactionStatement() {
-        setIsModalOpen(v =>{return {...v, event1 : true}})
+        setIsModalOpen(v => {
+            return {...v, event1: true}
+        })
     }
 
 
-
-    function deleteFunc(){
-        getData.post('order/deleteOrder',{orderId : updateKey['order_update']}).then(v=>{
+    function deleteFunc() {
+        getData.post('order/deleteOrder', {orderId: updateKey['order_update']}).then(v => {
             const {code, message} = v.data;
-            if(code === 1){
+            if (code === 1) {
                 setCloseTab('order_update', 'order_read')
                 notificationAlert('success', '🗑️발주서 삭제완료',
                     <>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
-                    ,null,
+                    , null,
                     {cursor: 'pointer'}
                 )
-            }else{
+            } else {
                 message.error(v?.data?.message)
             }
         })
     }
 
 
-    return <Spin spinning={loading} tip={'LOADING'}>
+    return <Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'order_update'}/>
         {(isModalOpen['agencyCode'] || isModalOpen['customerName']) &&
             <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
@@ -345,8 +359,10 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
                 <PrintPo data={info} infoRef={infoRef} tableRef={tableRef} isModalOpen={isModalOpen}
                          setIsModalOpen={setIsModalOpen} memberList={memberList} count={count}/>}
             {isModalOpen['event1'] &&
-             <PrintTransactionModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}
-                                    customerData={customerData} data={commonManage.filterEmptyObjects(tableData, ['model', 'item', 'maker'])} infoRef={infoRef}  />}
+                <PrintTransactionModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}
+                                       customerData={customerData}
+                                       data={commonManage.filterEmptyObjects(tableData, ['model', 'item', 'maker'])}
+                                       infoRef={infoRef}/>}
 
             <div ref={infoRef} style={{
                 display: 'grid',

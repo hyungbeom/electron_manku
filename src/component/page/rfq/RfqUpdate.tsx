@@ -227,7 +227,7 @@ export default function RqfUpdate({
                 managerAdminId: v?.managerAdminId ? v?.managerAdminId : 0
             }
         });
-        gridManage.deleteAll(gridRef)
+        setTableData(commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000))
     }
 
     function copyPage() {
