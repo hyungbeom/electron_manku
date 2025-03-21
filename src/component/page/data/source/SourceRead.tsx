@@ -96,14 +96,13 @@ export default function SourceRead({getPropertyId, getCopyPage}: any) {
 
         const selectedRows = gridRef.current.getSelectedRows();
         const deleteList = selectedRows.map(v => v.hsCodeId)
+
         await deleteHsCodeList({data: {hsCodeIdList: deleteList}}).then(v => {
             if (v.code === 1) {
                 searchInfo(true);
-                notificationAlert('success', '🗑️발주서 삭제완료',
+                notificationAlert('success', '🗑️ 삭제완료',
                     <>
-                        <div>Inquiry No.
-                            - {selectedRows[0]?.documentNumberFull} {selectedRows.length > 1 ? ('외' + " " + (selectedRows.length - 1) + '개') : ''} 이(가)
-                            삭제되었습니다
+                        <div>삭제되었습니다
                         </div>
                         <div>삭제일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
@@ -136,7 +135,7 @@ export default function SourceRead({getPropertyId, getCopyPage}: any) {
                 gridTemplateRows: `${mini ? '150px' : '65px'} calc(100vh - ${mini ? 280 : 195}px)`,
                 columnGap: 5
             }}>
-                <MainCard title={'회사계정 관리'} list={[
+                <MainCard title={'재고관리 조회'} list={[
                     {name: <div><SearchOutlined style={{paddingRight: 8}}/>조회</div>, func: searchInfo, type: 'primary'},
                     {
                         name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>,

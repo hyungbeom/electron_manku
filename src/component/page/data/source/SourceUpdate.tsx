@@ -60,15 +60,15 @@ export default function SourceUpdate({updateKey, getCopyPage}:any) {
         await getData.post('inventory/updateInventory', info).then(v => {
             if (v.data.code === 1) {
 
-                notificationAlert('success', '💾메이커 수정완료',
+                notificationAlert('success', '💾재고 수정완료',
                     <>
-                        <div>Maker : {info['makerName']}</div>
+                        <div>Inventory : {info['maker']}</div>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
                     , null,
                 )
             } else {
-                message.error('저장에 실패하였습니다.')
+                message.error('수정에 실패하였습니다.')
             }
         });
     }
@@ -82,8 +82,8 @@ export default function SourceUpdate({updateKey, getCopyPage}:any) {
 
     return <div ref={infoRef}>
         <PanelSizeUtil groupRef={groupRef} storage={'source_write'}/>
-        <MainCard title={'재고등록 등록'} list={[
-            {name: <div><SaveOutlined style={{paddingRight : 8}}/>저장</div>, func: saveFunc, type: 'primary'},
+        <MainCard title={'재고관리 수정'} list={[
+            {name: <div><SaveOutlined style={{paddingRight : 8}}/>수정</div>, func: saveFunc, type: 'primary'},
             {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'}
         ]}>
             <PanelGroup ref={groupRef} className={'ground'} direction="horizontal"

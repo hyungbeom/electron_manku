@@ -60,8 +60,6 @@ export default function SourceWrite({getPropertyId, copyPageInfo}:any) {
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
                     , function () {
-
-                        getPropertyId('maker_update', v.data.entity.makerId)
                     },
                     {cursor: 'pointer'}
                 )
@@ -74,7 +72,7 @@ export default function SourceWrite({getPropertyId, copyPageInfo}:any) {
 
     return <div ref={infoRef}>
         <PanelSizeUtil groupRef={groupRef} storage={'source_write'}/>
-        <MainCard title={'재고등록 등록'} list={[
+        <MainCard title={'재고관리 등록'} list={[
             {name: <div><SaveOutlined style={{paddingRight : 8}}/>저장</div>, func: saveFunc, type: 'primary'},
             {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: '', type: 'danger'}
         ]}>
