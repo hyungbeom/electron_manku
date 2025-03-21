@@ -143,6 +143,19 @@ export const customerInitial = {
 }
 
 
+export const sourceWriteInitial = {
+    "receiptDate": moment().format('YYYY-MM-DD'),
+    "documentNumber": "",
+    "maker": "",
+    "model": "",
+    "importUnitPrice": "",
+    "currencyUnit": "",
+    "receivedQuantity": "",
+    "unit": "",
+    "location": "",
+    "remarks": "",
+}
+
 export const makerWriteInitial = {
     "makerName": "",                   // Maker
     "item": "",               // Item

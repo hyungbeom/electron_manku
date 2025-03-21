@@ -22,7 +22,7 @@ import moment from "moment/moment";
 import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 import {projectInfo} from "@/utils/column/ProjectInfo";
 
-export default function SourceWrite({getPropertyId, copyPageInfo}:any) {
+export default function SourceUpdate({updateKey, getCopyPage}:any) {
     const notificationAlert = useNotificationAlert();
     const [info, setInfo] = useState(sourceWriteInitial);
     const groupRef = useRef<any>(null)
@@ -37,40 +37,42 @@ export default function SourceWrite({getPropertyId, copyPageInfo}:any) {
 
 
     useEffect(() => {
+        getData.post('inventory/getInventoryDetail',updateKey['source_update']).then(v=>{
+            const {code, entity} = v?.data;
+            if(code === 1){
+                setInfo(entity.inventoryItemList[0])
+            }
+        })
+        setInfo(updateKey['source_update'].key)
+    }, [updateKey['source_update']])
 
-        if (copyPageInfo['source_write'] && !isEmptyObj(copyPageInfo['source_write'])) {
-            setInfo(sourceWriteInitial)
-        } else {
-            setInfo(copyPageInfo['source_write']);
-        }
-    }, [copyPageInfo['source_write']]);
+
 
 
     function onChange(e) {
         commonManage.onChange(e, setInfo)
     }
 
+    console.log(info,'::')
+
     async function saveFunc() {
 
-        await getData.post('inventory/addInventory', info).then(v => {
+        await getData.post('inventory/updateInventory', info).then(v => {
             if (v.data.code === 1) {
-                notificationAlert('success', '💾재고 등록완료',
+
+                notificationAlert('success', '💾메이커 수정완료',
                     <>
-                        <div>Inventory : {info['model']}</div>
+                        <div>Maker : {info['makerName']}</div>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
-                    , function () {
-
-                        getPropertyId('maker_update', v.data.entity.makerId)
-                    },
-                    {cursor: 'pointer'}
+                    , null,
                 )
             } else {
-                message.error(v.data.message)
+                message.error('저장에 실패하였습니다.')
             }
         });
-
     }
+
 
     return <div ref={infoRef}>
         <PanelSizeUtil groupRef={groupRef} storage={'source_write'}/>

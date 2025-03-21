@@ -55,6 +55,7 @@ import {getData} from "@/manage/function/api";
 import moment from "moment/moment";
 import SourceRead from "@/component/page/data/source/SourceRead";
 import SourceWrite from "@/component/page/data/source/SourceWrite";
+import SourceUpdate from "@/component/page/data/source/SourceUpdate";
 
 
 function findTitleByKey(data, key) {
@@ -334,7 +335,7 @@ export default function Main({alarm}) {
         },
         source_update: {
             name: "재고관리 수정",
-            component: <CompanyAccountUpdate updateKey={updateKey}/>
+            component: <SourceUpdate updateKey={updateKey}/>
         },
         source_write: {
             name: "재고관리 등록",

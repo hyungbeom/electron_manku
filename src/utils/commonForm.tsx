@@ -295,11 +295,17 @@ export const rangePickerForm = ({
 
 export const datePickerForm = ({title, id, disabled = false, onChange = null, data = null}) => {
 
+    function change(e){
+     if(onChange){
+         onChange(e)
+     }
+    }
+
     return <div style={{fontSize: 12, paddingBottom: 10}}>
         <div style={{paddingBottom: 5.5, fontWeight: 700}}>{title}</div>
         {/*@ts-ignore*/}
 
-        <input type="date" id={id} disabled={disabled}      value={data ? data[id] : null} />
+        <input type="date" id={id} disabled={disabled} onChange={change}      value={data ? data[id] : null} />
     </div>
 }
 

@@ -147,6 +147,9 @@ const TableGrid = ({
             if (e.data.companyAccountId) {
                 getPropertyId('company_account_update', e.data)
             }
+            if (e.data.remainingQuantity) {
+                getPropertyId('source_update', e.data)
+            }
         }
 
         if (type === 'hsCode') {
