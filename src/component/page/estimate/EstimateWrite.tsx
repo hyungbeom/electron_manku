@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {memo, useEffect, useRef, useState} from "react";
 import {DownloadOutlined, RadiusSettingOutlined, RetweetOutlined, SaveOutlined} from "@ant-design/icons";
 import {estimateDetailUnit, ModalInitList} from "@/utils/initialList";
 import message from "antd/lib/message";
@@ -35,7 +35,7 @@ import html2canvas from "html2canvas";
 
 
 const listType = 'estimateDetailList'
-export default function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
+function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
 
@@ -586,3 +586,5 @@ export default function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutR
         {/*{ready && <EstimatePaper data={info} pdfRef={pdfRef} gridRef={gridRef}/>}*/}
     </Spin></div>
 }
+
+export default memo(EstimateWrite)

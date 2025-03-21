@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {memo, useEffect, useRef, useState} from "react";
 import {ClearOutlined, FileSearchOutlined, RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
 import {ModalInitList} from "@/utils/initialList";
 import message from "antd/lib/message";
@@ -22,7 +22,7 @@ import useEventListener from "@/utils/common/function/UseEventListener";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 
 const listType = 'estimateRequestDetailList'
-export default function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
+function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
 
@@ -480,3 +480,5 @@ export default function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: 
         </>
     </Spin>
 }
+
+export default memo(RqfWrite)

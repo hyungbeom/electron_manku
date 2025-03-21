@@ -338,20 +338,18 @@ export const orderInfo = {
         column: [
             'Model',
             '주문',
-            '입고',
-            '미 입고',
             '단위',
             '화폐단위',
             '매입 단가',
             '매입 총액',
+            '입고',
+            '미 입고',
             '매출 단가',
             '매출 총액',
             'HS-CODE'],
         columnList: [
             {data: "model", type: "text"},
             {data: "quantity", type: "numeric"},
-            {data: "receivedQuantity", type: "numeric"},
-            {data: "unreceivedQuantity", type: "numeric", readOnly: true},
             {
                 data: "unit",
                 type: "autocomplete",
@@ -359,23 +357,29 @@ export const orderInfo = {
             },
             {data: "currency", type: "autocomplete", source: ['KRW', 'USD', 'EUR', 'JPY', 'GBP']},
             {data: "unitPrice", type: "numeric"},
-            {data: "totalNet", type: "numeric"},
-            {data: "net", type: "numeric"},
             {data: "total", type: "numeric"},
+
+            {data: "receivedQuantity", type: "numeric"},
+            {data: "unreceivedQuantity", type: "numeric", readOnly: true},
+
+            {data: "net", type: "numeric"},
+            {data: "totalNet", type: "numeric"},
             {data: "hsCode", type: "text"},
 
         ],
         defaultData: {
             "model": "",           // Model
             "quantity": '',              // 수량
-            "receivedQuantity": '',
-            "unreceivedQuantity": '',
             "unit": '',               // 단위
             "currency": '',
             "unitPrice": '',
-            "totalNet": '',
-            "net": '',            // 매입단가
             "total": '',            // 매입단가
+
+            "receivedQuantity": '',
+            "unreceivedQuantity": '',
+
+            "net": '',            // 매입단가
+            "totalNet": '',
             "hsCode": '',
         },mapping: {
             "model": "Model",           // Model
@@ -384,29 +388,30 @@ export const orderInfo = {
             "unreceivedQuantity": '미 입고',
             "unit": '단위',               // 단위
             "currency": '화폐단위',
-            "net": '매입 단가',            // 매입단가
+
+            "unitPrice": '매입 단가',
             "total": '매입 총액',            // 매입단가
-            "unitPrice": '매출 단가',
+            "net": '매출 단가',            // 매입단가
             "totalNet": '매출 총액',
             "hscode": 'HS-CODE',
         },
         excelExpert: (v, i) => {
-            v['unreceivedQuantity'] = `=B${i + 1} -C${i + 1}`
-            v['total'] = `=B${i + 1}*I${i + 1}`
-            v['totalNet'] = `=B${i + 1}*G${i + 1}`
+            v['unreceivedQuantity'] = `=B${i + 1} -G${i + 1}`
+            v['total'] = `=B${i + 1}*E${i + 1}`
+            v['totalNet'] = `=B${i + 1}*I${i + 1}`
             return v
         },
         totalList: {
             "model": "",           // Model
             "quantity": '=SUM(B1:B1000)',              // 수량
-            "receivedQuantity": '=SUM(C1:C1000)',
-            "unreceivedQuantity": '=SUM(D1:D1000)',
+            "receivedQuantity": '=SUM(G1:G1000)',
+            "unreceivedQuantity": '=SUM(H1:H1000)',
             "unit": '',               // 단위
             "currency": '',
+            "unitPrice": '=SUM(E1:E1000)',
+            "total": '=SUM(F1:F1000)',            // 매입단가
             "net": '=SUM(I1:I1000)',            // 매입단가
-            "total": '=SUM(J1:J1000)',            // 매입단가
-            "unitPrice": '=SUM(G1:G1000)',
-            "totalNet": '=SUM(H1:H1000)',            // 매입단가
+            "totalNet": '=SUM(J1:J1000)',            // 매입단가
             "hscode": '',
         },
 

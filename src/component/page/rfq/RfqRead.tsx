@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {memo, useEffect, useRef, useState} from "react";
 import {ExclamationCircleOutlined, RadiusSettingOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
 import {rfqReadColumns} from "@/utils/columnList";
@@ -18,7 +18,7 @@ import moment from "moment/moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 
 
-export default function RfqRead({getPropertyId, getCopyPage,}: any) {
+function RfqRead({getPropertyId, getCopyPage,}: any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
 
@@ -259,3 +259,5 @@ export default function RfqRead({getPropertyId, getCopyPage,}: any) {
         </Spin>
     </>
 }
+
+export default memo(RfqRead)

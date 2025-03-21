@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {memo, useRef, useState} from "react";
 import {rfqReadColumns} from "@/utils/columnList";
 import {subRfqReadMailInitial} from "@/utils/initialList";
 import TableGrid from "@/component/tableGrid";
@@ -17,7 +17,7 @@ import Popconfirm from "antd/lib/popconfirm";
 import moment from "moment";
 
 
-export default function RfqMailSend({getPropertyId}: any) {
+export function RfqMailSend({getPropertyId}: any) {
     const notificationAlert = useNotificationAlert();
     const gridRef = useRef(null);
     const [mini, setMini] = useState(true);
@@ -249,3 +249,5 @@ export default function RfqMailSend({getPropertyId}: any) {
         </>
     </Spin>
 }
+
+export default memo(RfqMailSend);

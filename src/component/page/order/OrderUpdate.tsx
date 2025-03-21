@@ -86,6 +86,7 @@ export default function OrderUpdate({updateKey, getCopyPage, layoutRef, getPrope
             const {orderDetail, attachmentFileList} = v;
             setFileList(fileManage.getFormatFiles(attachmentFileList));
             setOriginFileList(attachmentFileList);
+            console.log(orderDetail,'asd::::')
             setInfo({
                 ...orderDetail,
                 uploadType: 4,
