@@ -300,7 +300,13 @@ export default function EstimateUpdate({
     }
 
     const generatePDF = async (printMode = false) => {
-        const pdf = new jsPDF("portrait", "px", "a4");
+        const pdf = new jsPDF({
+            orientation: "portrait",
+            unit: "px",
+            format: "a4",
+            compress: true, // 압축 활성화
+        });
+
         const pdfWidth = pdf.internal.pageSize.getWidth();
         const padding = 30; // 좌우 여백 설정
         const contentWidth = pdfWidth - padding * 2; // 실제 이미지 너비
@@ -311,24 +317,24 @@ export default function EstimateUpdate({
         );
 
         if (pdfRef.current) {
-            const firstCanvas = await html2canvas(pdfRef.current, {scale: 2, useCORS: true});
-            const firstImgData = firstCanvas.toDataURL("image/png");
+            const firstCanvas = await html2canvas(pdfRef.current, {scale: 1.5, useCORS: true});
+            const firstImgData = firstCanvas.toDataURL("image/jpeg", 0.7);
             const firstImgProps = pdf.getImageProperties(firstImgData);
             const firstImgHeight = (firstImgProps.height * pdfWidth) / firstImgProps.width;
-            pdf.addImage(firstImgData, "PNG", 0, 20, pdfWidth, firstImgHeight);
+            pdf.addImage(firstImgData, "JPEG", 0, 20, pdfWidth, firstImgHeight);
 
 
         }
 
         for (let i = 0; i < elements.length; i++) {
             const element: any = elements[i];
-            const firstCanvas = await html2canvas(element, {scale: 2, useCORS: true});
-            const firstImgData = firstCanvas.toDataURL("image/png");
+            const firstCanvas = await html2canvas(element, {scale: 1.5, useCORS: true});
+            const firstImgData = firstCanvas.toDataURL("image/png", 0.7);
             const firstImgProps = pdf.getImageProperties(firstImgData);
             const firstImgHeight = (firstImgProps.height * pdfWidth) / firstImgProps.width;
 
             pdf.addPage();
-            pdf.addImage(firstImgData, "PNG", 0, 0, pdfWidth, firstImgHeight);
+            pdf.addImage(firstImgData, "JPEG", 0, 0, pdfWidth, firstImgHeight);
 
         }
 

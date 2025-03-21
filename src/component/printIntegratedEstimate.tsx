@@ -42,11 +42,17 @@ export default function PrintIntegratedEstimate({ data, isModalOpen, userInfo, s
     }
 
     const handleDownloadPDF = async () => {
+        console.log('!!!')
         const element = pdfRef.current;
-        const canvas = await html2canvas(element, { scale: 2 });
-        const imgData = canvas.toDataURL("image/png");
+        const canvas = await html2canvas(element, { scale: 1 });
+        const imgData = canvas.toDataURL("image/jpeg", 0.7);
 
-        const pdf = new jsPDF("portrait", "px", "a4");
+        const pdf = new jsPDF({
+            orientation: "portrait",
+            unit: "px",
+            format: "a4",
+            compress: true, // 압축 활성화
+        });
         const pdfWidth = pdf.internal.pageSize.getWidth();
         const pdfHeight = pdf.internal.pageSize.getHeight();
 
