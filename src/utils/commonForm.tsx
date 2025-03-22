@@ -3,7 +3,7 @@ import React, {useRef} from "react";
 import Button from "antd/lib/button";
 import {
     CopyOutlined,
-    DownCircleFilled,
+    DownCircleFilled, ExclamationCircleOutlined,
     FileExcelOutlined,
     InfoCircleOutlined,
     SaveOutlined,
@@ -38,6 +38,7 @@ const {RangePicker} = DatePicker
 const {Option} = Select
 import {v4 as uuid} from 'uuid';
 import message from "antd/lib/message";
+import Popconfirm from "antd/lib/popconfirm";
 
 export const numbFormatter = (value) => `₩ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 
@@ -98,6 +99,10 @@ export function BoxCard({children, title = null, tooltip = '', disabled = false}
 
 export function MainCard({children, title, list, mini = null, setMini = Function()}) {
 
+    function confirm(v){
+        v()
+    }
+
     return <Card size={'small'} style={{
         border: '1px solid #bae7ff',
         marginTop: 3,
@@ -113,9 +118,27 @@ export function MainCard({children, title, list, mini = null, setMini = Function
                              gridTemplateColumns: `${'0.1fr '.repeat(list.length)}auto`.trim(),
                              columnGap: 8
                          }}>
-                             {list.map(v => <Button
-                                 type={v.type} style={{fontSize: 11}} size={'small'}
-                                 onClick={v.func}>{v?.prefix}{v.name}</Button>)}
+                             {list.map(v => <>
+                                     {
+                                         v.type === 'delete'
+                                             ?
+                                             <Popconfirm
+                                                 title="삭제하시겠습니까?"
+                                                 onConfirm={()=>confirm(v.func)}
+                                                 icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
+                                                 <Button type={v.type} style={{fontSize: 11}} size={'small'}
+                                                         // onClick={v.func}
+                                                 >{v?.prefix}{v.name}</Button>
+                                             </Popconfirm>
+
+                                             :
+                                             <Button type={v.type} style={{fontSize: 11}} size={'small'}
+                                                     onClick={v.func}>{v?.prefix}{v.name}</Button>
+                                     }
+
+
+                                 </>
+                             )}
 
                              {mini !== null ? <span style={{fontSize: 20, cursor: 'pointer', marginTop: -5}}
                                                     onClick={() => setMini(v => !v)}> {!mini ?
@@ -158,19 +181,19 @@ export const InputForm = ({
 
 
 export const inputAntdForm = ({
-                              title,
-                              id,
-                              placeholder = '',
-                              suffix = null,
-                              handleKeyPress = function () {
-                              },
-                              onChange = null,
-                              data = null,
-                              validate = true,
-                              size = 'small',
-                              disabled = false,
-                              fontSize = 12
-                          }: any) => {
+                                  title,
+                                  id,
+                                  placeholder = '',
+                                  suffix = null,
+                                  handleKeyPress = function () {
+                                  },
+                                  onChange = null,
+                                  data = null,
+                                  validate = true,
+                                  size = 'small',
+                                  disabled = false,
+                                  fontSize = 12
+                              }: any) => {
 
 
     function onchange(e) {
@@ -261,7 +284,7 @@ export const inputPasswordForm = ({
 
     let bowl = data;
     return <div style={{fontSize: fontSize, paddingBottom: 10}}>
-        <div style={{paddingBottom: fontSize / 2, fontWeight : 700}}>{title}</div>
+        <div style={{paddingBottom: fontSize / 2, fontWeight: 700}}>{title}</div>
         {/*@ts-ignored*/}
         <Password placeholder={placeHolder}
 
@@ -295,17 +318,17 @@ export const rangePickerForm = ({
 
 export const datePickerForm = ({title, id, disabled = false, onChange = null, data = null}) => {
 
-    function change(e){
-     if(onChange){
-         onChange(e)
-     }
+    function change(e) {
+        if (onChange) {
+            onChange(e)
+        }
     }
 
     return <div style={{fontSize: 12, paddingBottom: 10}}>
         <div style={{paddingBottom: 5.5, fontWeight: 700}}>{title}</div>
         {/*@ts-ignore*/}
 
-        <input type="date" id={id} disabled={disabled} onChange={change}      value={data ? data[id] : null} />
+        <input type="date" id={id} disabled={disabled} onChange={change} value={data ? data[id] : null}/>
     </div>
 }
 
@@ -326,8 +349,8 @@ export const inputNumberForm = ({
                                 }: any) => {
     let bowl = data;
 
-    function onChanges(e){
-        if(onChange) {
+    function onChanges(e) {
+        if (onChange) {
             onChange(e)
         }
     }
@@ -370,7 +393,7 @@ export const radioForm = ({title, id, disabled = false, data, onChange, list}) =
 export const selectBoxForm = ({title, id, disabled = false, data, onChange, list, size = 'small', fontSize = 12}) => {
 
     return <div style={{}}>
-        <div style={{fontSize: 12, paddingBottom: 6, fontWeight : 700}}>{title}</div>
+        <div style={{fontSize: 12, paddingBottom: 6, fontWeight: 700}}>{title}</div>
         {/*@ts-ignore*/}
         <Select className="custom-select" id={id} size={size}
                 value={!isNaN(parseInt(data[id])) ? parseInt(data[id]) : data[id]}
@@ -452,7 +475,7 @@ export const tableButtonList = (type: any, gridRef?: any) => {
 
     const agDownloadExcel = async () => {
         const list = gridRef.current.getSelectedRows()
-        if(!list.length){
+        if (!list.length) {
             return message.warning('1개이상의 데이터를 선택해주세요')
         }
         gridRef.current.exportDataAsCsv({

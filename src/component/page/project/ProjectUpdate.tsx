@@ -23,6 +23,7 @@ import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import {CopyOutlined, DeleteOutlined, FormOutlined, RadiusSettingOutlined, SearchOutlined} from "@ant-design/icons";
 import {Actions} from "flexlayout-react";
 import _ from "lodash";
+import Popconfirm from "antd/lib/popconfirm";
 
 
 const listType = 'projectDetailList'
@@ -278,6 +279,11 @@ function ProjectUpdate({
         }
     }, typeof window !== 'undefined' ? document : null)
 
+
+    function confirm(){
+        alert('!!')
+    }
+
     return <Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'project_update'}/>
         <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
@@ -292,7 +298,7 @@ function ProjectUpdate({
             }}>
                 <MainCard title={'프로젝트 수정'} list={[
                     {name: <div><FormOutlined style={{paddingRight: 8}}/>수정</div>, func: saveFunc, type: 'primary'},
-                    {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: deleteFunc, type: ''},
+                    {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: deleteFunc, type: 'delete'},
                     {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'},
                     {name: <div><CopyOutlined style={{paddingRight: 8}}/>복제</div>, func: copyPage, type: ''}
                 ]} mini={mini} setMini={setMini}>

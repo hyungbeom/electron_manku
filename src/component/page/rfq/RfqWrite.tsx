@@ -164,16 +164,19 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         formData.delete('createdDate')
         formData.delete('modifiedDate')
 
+
         await getFormData.post('estimate/addEstimateRequest', formData).then(async (v: any) => {
             const dom = infoRef.current.querySelector('#documentNumberFull');
 
-            if (v.code === 1) {
-                const {documentNumberFull, estimateRequestId} = v.entity;
+            const {code, entity} = v?.data;
 
-                setFileList([])
+            if (code === 1) {
+                const {documentNumberFull, estimateRequestId} = entity;
+
                 if (dom) {
                     dom.value = documentNumberFull;
                 }
+
                 notificationAlert('success', '💾견적의뢰 등록완료',
                     <>
                         <div>의뢰자료 No. : {documentNumberFull}</div>

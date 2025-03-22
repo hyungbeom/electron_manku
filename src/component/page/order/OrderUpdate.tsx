@@ -89,7 +89,6 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
         getDataInfo().then(v => {
             const {orderDetail, attachmentFileList} = v;
             setFileList(fileManage.getFormatFiles(attachmentFileList));
-            console.log(orderDetail,'::::')
             setOriginFileList(attachmentFileList);
             setInfo({
                 ...orderDetail,
@@ -389,7 +388,7 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
                     {name: <div>거래명세표 출력</div>, func: printTransactionStatement, type: ''},
                     {name: <div>발주서 출력</div>, func: printPo, type: ''},
                     {name: <div><FormOutlined style={{paddingRight: 8}}/>수정</div>, func: saveFunc, type: 'primary'},
-                    {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: deleteFunc, type: ''},
+                    {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: deleteFunc, type: 'delete'},
                     {
                         name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>,
                         func: clearAll,
