@@ -158,7 +158,6 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                 const findManager = memberList.find(v => v.adminId === manager)
                                 delete estimateDetail.createdBy
                                 delete estimateDetail.managerAdminId
-                                console.log(estimateDetail, 'estimateDetail:')
                                 commonManage.setInfo(infoRef, {
                                     ...estimateDetail,
                                     estimateManager: findManager?.name,
@@ -172,9 +171,12 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                     shippingTerms: '귀사도착도',
                                     writtenDate: moment().format('YYYY-MM-DD'),
                                 })
+                               const copyList =  estimateDetail?.estimateDetailList.map(v=>{
+                                    return {...v, currency : v.currencyUnit}
+                                })
 
                                 if (estimateDetail) {
-                                    setTableData([...estimateDetail?.estimateDetailList, ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000 - estimateDetail?.estimateDetailList.length)])
+                                    setTableData([...copyList, ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000 - estimateDetail?.estimateDetailList.length)])
                                 }
                                 setLoading(false)
                             }, err => setLoading(false));

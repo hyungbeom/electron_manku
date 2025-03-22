@@ -89,6 +89,7 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
         getDataInfo().then(v => {
             const {orderDetail, attachmentFileList} = v;
             setFileList(fileManage.getFormatFiles(attachmentFileList));
+            console.log(orderDetail,'::::')
             setOriginFileList(attachmentFileList);
             setInfo({
                 ...orderDetail,
