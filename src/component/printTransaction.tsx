@@ -154,7 +154,7 @@ export default function PrintTransactionModal({data, customerData, isModalOpen, 
                         <tr>
                             <th style={headerStyle}>주소</th>
                             <th style={cellStyle} colSpan={3}>
-                                <div>서울 송파구 충미로 52 가든파이브웍스</div>
+                                <div>서울 송파구 충민로 52 가든파이브웍스</div>
                                 <div>B동 2층 211호, 212호</div>
                             </th>
                         </tr>

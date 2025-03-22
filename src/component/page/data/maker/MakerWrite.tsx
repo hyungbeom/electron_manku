@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {memo, useEffect, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
@@ -21,8 +21,11 @@ import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import moment from "moment/moment";
 import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 import {projectInfo} from "@/utils/column/ProjectInfo";
+import _ from "lodash";
+import OverseasCustomerUpdate from "@/component/page/data/customer/overseas/OverseasCustomerUpdate";
 
-export default function MakerWrite({getPropertyId, copyPageInfo}:any) {
+
+function MakerWrite({getPropertyId, copyPageInfo}:any) {
     const notificationAlert = useNotificationAlert();
     const [info, setInfo] = useState(makerWriteInitial);
     const groupRef = useRef<any>(null)
@@ -38,12 +41,12 @@ export default function MakerWrite({getPropertyId, copyPageInfo}:any) {
 
     useEffect(() => {
 
-        if (!isEmptyObj(copyPageInfo['maker_write'])) {
+        if (!isEmptyObj(copyPageInfo)) {
             setInfo(makerWriteInitial)
         } else {
-            setInfo(copyPageInfo['maker_write']);
+            setInfo(copyPageInfo);
         }
-    }, [copyPageInfo['maker_write']]);
+    }, [copyPageInfo]);
 
 
     function onChange(e) {
@@ -154,3 +157,7 @@ export default function MakerWrite({getPropertyId, copyPageInfo}:any) {
         </MainCard>
     </div>
 }
+
+export default memo(MakerWrite, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

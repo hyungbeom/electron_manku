@@ -128,7 +128,7 @@ const TableGrid = ({
                 getPropertyId('order_update', e.data.orderId)
             }
             if (e.data.remainingQuantity){
-                getPropertyId('inventory_update', e.data.model)
+                getPropertyId('source_update', e.data.model)
             }
             if (e.data.makerId){
                 getPropertyId('maker_update', e.data)

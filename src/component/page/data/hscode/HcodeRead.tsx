@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {memo, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
@@ -19,9 +19,13 @@ import {deleteHsCodeList, searchHSCode, searchMaker} from "@/utils/api/mainApi";
 import Popconfirm from "antd/lib/popconfirm";
 import moment from "moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
+import _ from "lodash";
+import MakerUpdate from "@/component/page/data/maker/MakerUpdate";
 
 
-export default function HcodeRead({getPropertyId, getCopyPage}:any) {
+
+
+function HcodeRead({getPropertyId, getCopyPage}:any) {
     const notificationAlert = useNotificationAlert();
     const gridRef = useRef(null);
     const [mini, setMini] = useState(true);
@@ -205,3 +209,7 @@ export default function HcodeRead({getPropertyId, getCopyPage}:any) {
         </>
     </Spin>
 }
+
+export default memo(HcodeRead, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {memo, useEffect, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
@@ -29,9 +29,12 @@ import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import Spin from "antd/lib/spin";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
+import DomesticCustomerRead from "@/component/page/data/customer/domestic/DomesticCustomerRead";
 
 const listType = 'customerManagerList'
-export default function DomesticCustomerUpdate({updateKey, getCopyPage}:any) {
+
+
+function DomesticCustomerUpdate({updateKey, getCopyPage}:any) {
     const notificationAlert = useNotificationAlert();
     const gridRef = useRef(null);
     const groupRef = useRef<any>(null)
@@ -266,3 +269,7 @@ export default function DomesticCustomerUpdate({updateKey, getCopyPage}:any) {
         </div>
     </Spin>
 }
+
+export default memo(DomesticCustomerUpdate, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {memo, useEffect, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
@@ -21,8 +21,11 @@ import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import moment from "moment/moment";
 import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 import {projectInfo} from "@/utils/column/ProjectInfo";
+import _ from "lodash";
 
-export default function CompanyAccountWrite({getPropertyId, copyPageInfo}:any) {
+
+
+function CompanyAccountWrite({getPropertyId, copyPageInfo}:any) {
     const notificationAlert = useNotificationAlert();
     const [info, setInfo] = useState(makerWriteInitial);
     const groupRef = useRef<any>(null)
@@ -38,12 +41,12 @@ export default function CompanyAccountWrite({getPropertyId, copyPageInfo}:any) {
 
     useEffect(() => {
 
-        if (!isEmptyObj(copyPageInfo['company_account_write'])) {
+        if (!isEmptyObj(copyPageInfo)) {
             setInfo(makerWriteInitial)
         } else {
-            setInfo(copyPageInfo['company_account_write']);
+            setInfo(copyPageInfo);
         }
-    }, [copyPageInfo['company_account_write']]);
+    }, [copyPageInfo]);
 
 
     function onChange(e) {
@@ -105,3 +108,6 @@ export default function CompanyAccountWrite({getPropertyId, copyPageInfo}:any) {
         </MainCard>
     </div>
 }
+export default memo(CompanyAccountWrite, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

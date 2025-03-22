@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {memo, useEffect, useRef, useState} from "react";
 import message from "antd/lib/message";
 import {codeDomesticAgencyWriteInitial,} from "@/utils/initialList";
 import {BoxCard, datePickerForm, inputForm, inputNumberForm, MainCard} from "@/utils/commonForm";
@@ -18,7 +18,7 @@ import {getData} from "@/manage/function/api";
 import {RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
 
 const listType = 'agencyManagerList'
-export default function DomesticAgencyWrite({copyPageInfo, getPropertyId}:any) {
+function DomesticAgencyWrite({copyPageInfo, getPropertyId}:any) {
     const notificationAlert = useNotificationAlert();
     const infoRef = useRef<any>(null)
     const tableRef = useRef(null);
@@ -53,17 +53,17 @@ export default function DomesticAgencyWrite({copyPageInfo, getPropertyId}:any) {
 
     useEffect(() => {
 
-        if (!isEmptyObj(copyPageInfo['domestic_agency_write'])) {
+        if (!isEmptyObj(copyPageInfo)) {
             // copyPageInfo 가 없을시
             setInfo(infoInit)
             setTableData(commonFunc.repeatObject(DAInfo['write']['defaultData'], 1000))
         } else {
             // copyPageInfo 가 있을시(==>보통 수정페이지에서 복제시)
             // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting
-            setInfo(copyPageInfo['project_write']);
-            setTableData(copyPageInfo['project_write'][listType])
+            setInfo(copyPageInfo);
+            setTableData(copyPageInfo[listType])
         }
-    }, [copyPageInfo['domestic_agency_write']]);
+    }, [copyPageInfo]);
 
 
     async function saveFunc() {
@@ -230,3 +230,7 @@ export default function DomesticAgencyWrite({copyPageInfo, getPropertyId}:any) {
         </div>
     </>
 }
+
+export default memo(DomesticAgencyWrite, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

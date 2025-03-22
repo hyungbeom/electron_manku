@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {memo, useEffect, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
@@ -21,8 +21,12 @@ import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import moment from "moment/moment";
 import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 import {projectInfo} from "@/utils/column/ProjectInfo";
+import _ from "lodash";
+import SourceRead from "@/component/page/data/source/SourceRead";
 
-export default function SourceUpdate({updateKey, getCopyPage}:any) {
+
+
+function SourceUpdate({updateKey, getCopyPage}:any) {
     const notificationAlert = useNotificationAlert();
     const [info, setInfo] = useState(sourceWriteInitial);
     const groupRef = useRef<any>(null)
@@ -165,3 +169,6 @@ export default function SourceUpdate({updateKey, getCopyPage}:any) {
         </MainCard>
     </div>
 }
+export default memo(SourceUpdate, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {memo, useEffect, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import message from "antd/lib/message";
 import {codeDomesticSalesWriteInitial, projectWriteInitial,} from "@/utils/initialList";
@@ -13,9 +13,12 @@ import {OCInfo} from "@/utils/column/ProjectInfo";
 import Spin from "antd/lib/spin";
 import moment from "moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
+import OverseasCustomerRead from "@/component/page/data/customer/overseas/OverseasCustomerRead";
 
 const listType = 'overseasCustomerManagerList'
-export default function OverseasCustomerUpdate({ updateKey, getCopyPage}:any) {
+
+
+function OverseasCustomerUpdate({ updateKey, getCopyPage}:any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
     const infoRef = useRef<any>(null)
@@ -198,3 +201,7 @@ export default function OverseasCustomerUpdate({ updateKey, getCopyPage}:any) {
         </div>
     </Spin>
 }
+
+export default memo(OverseasCustomerUpdate, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

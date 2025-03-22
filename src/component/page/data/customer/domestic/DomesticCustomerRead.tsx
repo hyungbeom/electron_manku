@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {memo, useEffect, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
@@ -27,8 +27,12 @@ import {searchDomesticAgency, searchDomesticCustomer} from "@/utils/api/mainApi"
 import {gridManage} from "@/utils/commonManage";
 import Spin from "antd/lib/spin";
 import Popconfirm from "antd/lib/popconfirm";
+import _ from "lodash";
+import DomesticCustomerWrite from "@/component/page/data/customer/domestic/DomesticCustomerWrite";
 
-export default function DomesticCustomerRead({ getPropertyId, getCopyPage}:any) {
+
+
+function DomesticCustomerRead({ getPropertyId, getCopyPage}:any) {
     const gridRef = useRef(null);
     const router = useRouter();
 
@@ -186,3 +190,7 @@ export default function DomesticCustomerRead({ getPropertyId, getCopyPage}:any) 
         </div>
     </Spin>
 }
+
+export default memo(DomesticCustomerRead, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

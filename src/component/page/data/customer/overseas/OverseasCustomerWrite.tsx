@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {memo, useEffect, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import LayoutComponent from "@/component/LayoutComponent";
 import message from "antd/lib/message";
@@ -20,9 +20,12 @@ import {RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
+import DomesticCustomerUpdate from "@/component/page/data/customer/domestic/DomesticCustomerUpdate";
 
 const listType = 'overseasCustomerManagerList'
-export default function OverseasCustomerWrite({ copyPageInfo, getPropertyId}:any) {
+
+
+function OverseasCustomerWrite({ copyPageInfo, getPropertyId}:any) {
     const notificationAlert = useNotificationAlert();
 
     const groupRef = useRef<any>(null)
@@ -47,7 +50,7 @@ export default function OverseasCustomerWrite({ copyPageInfo, getPropertyId}:any
 
 
     useEffect(() => {
-        if (!isEmptyObj(copyPageInfo['overseas_customer_write'])) {
+        if (!isEmptyObj(copyPageInfo)) {
             // copyPageInfo 가 없을시
             setInfo(infoInit)
             setTableData(commonFunc.repeatObject(OCInfo['write']['defaultData'], 1000))
@@ -55,12 +58,12 @@ export default function OverseasCustomerWrite({ copyPageInfo, getPropertyId}:any
             // copyPageInfo 가 있을시(==>보통 수정페이지에서 복제시)
             // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting
             setInfo({
-                ...copyPageInfo['overseas_customer_write'], ...adminParams,
+                ...copyPageInfo, ...adminParams,
                 writtenDate: moment().format('YYYY-MM-DD')
             });
-            setTableData(copyPageInfo['overseas_customer_write'][listType])
+            setTableData(copyPageInfo[listType])
         }
-    }, [copyPageInfo['overseas_customer_write']]);
+    }, [copyPageInfo]);
 
 
     const getSavedSizes = () => {
@@ -217,3 +220,7 @@ export default function OverseasCustomerWrite({ copyPageInfo, getPropertyId}:any
         </div>
     </>
 }
+
+export default memo(OverseasCustomerWrite, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

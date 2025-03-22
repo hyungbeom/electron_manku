@@ -1,14 +1,13 @@
 import React, {memo, useEffect, useRef, useState} from "react";
-import {ClearOutlined, FileSearchOutlined, RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
+import {RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
 import {ModalInitList} from "@/utils/initialList";
 import message from "antd/lib/message";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import SearchInfoModal from "@/component/SearchAgencyModal";
 import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, tooltipInfo, TopBoxCard} from "@/utils/commonForm";
-import {commonFunc, commonManage, fileManage} from "@/utils/commonManage";
+import {commonFunc, commonManage} from "@/utils/commonManage";
 import _ from "lodash";
 import {findCodeInfo} from "@/utils/api/commonApi";
-import {getAttachmentFileList, saveRfq} from "@/utils/api/mainApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {getData, getFormData} from "@/manage/function/api";
 import moment from "moment";
@@ -22,14 +21,12 @@ import useEventListener from "@/utils/common/function/UseEventListener";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 
 const listType = 'estimateRequestDetailList'
+
 function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
-
     const [memberList, setMemberList] = useState([]);
     const [tableData, setTableData] = useState([]);
-
-    console.log('!!!!!!!!!!!!!!!!!!!!!! RFQ_WRITE!!')
 
     useEffect(() => {
         getMemberList();
@@ -70,7 +67,6 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         managerAdminId: userInfo['adminId'],
         managerAdminName: userInfo['name'],
         createdBy: userInfo['name'],
-
     }
 
     const infoInit = {
@@ -157,8 +153,8 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         if (!filterTableList.length) {
             return message.warn('하위 데이터 1개 이상이여야 합니다');
         }
-        const emptyQuantity = filterTableList.filter(v=> !v.quantity)
-        if(emptyQuantity.length){
+        const emptyQuantity = filterTableList.filter(v => !v.quantity)
+        if (emptyQuantity.length) {
             return message.error('수량을 입력해야 합니다.')
         }
         setLoading(true)
@@ -175,7 +171,7 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                 const {documentNumberFull, estimateRequestId} = v.entity;
 
                 setFileList([])
-                if(dom){
+                if (dom) {
                     dom.value = documentNumberFull;
                 }
                 notificationAlert('success', '💾견적의뢰 등록완료',
@@ -189,10 +185,10 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                     {cursor: 'pointer'}
                 )
                 setLoading(false)
-            }else{
+            } else {
                 setLoading(false)
             }
-        },err=>setLoading(false))
+        }, err => setLoading(false))
     }
 
 
@@ -200,26 +196,6 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         // info 데이터 초기화
         commonManage.setInfo(infoRef, rfqInfo['defaultInfo'], userInfo['adminId']);
         setTableData(commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000))
-    }
-
-
-    const onCChange = (value: string, e: any) => {
-        setInfo(v => {
-            return {...v, managerAdminId: e.adminId, managerAdminName: e.name}
-        })
-    };
-
-    function moveRouter(param) {
-
-        switch (param) {
-            case '국내' :
-                // router.push('/agencyWrite')
-                break;
-            case '해외' :
-                // router.push('/code_overseas_agency_write')
-                break;
-        }
-        // router.push()
     }
 
 
@@ -236,14 +212,14 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
             e.preventDefault();
             const model = layoutRef.current.props.model;
             const activeTab = model.getActiveTabset()?.getSelectedNode();
-            if(activeTab?.renderedName === '견적의뢰 등록'){
+            if (activeTab?.renderedName === '견적의뢰 등록') {
                 saveFunc()
             }
         }
     }, typeof window !== 'undefined' ? document : null)
 
     return <Spin spinning={loading}>
-        <PanelSizeUtil groupRef={groupRef}  storage={'rfq_write'}/>
+        <PanelSizeUtil groupRef={groupRef} storage={'rfq_write'}/>
         <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
                          open={isModalOpen}
 
@@ -257,8 +233,12 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
             }}>
 
                 <MainCard title={'견적의뢰 작성'} list={[
-                    {name: <div><SaveOutlined style={{paddingRight : 8}} />저장</div>, func: saveFunc, type: 'primary'},
-                    {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'}
+                    {name: <div><SaveOutlined style={{paddingRight: 8}}/>저장</div>, func: saveFunc, type: 'primary'},
+                    {
+                        name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>,
+                        func: clearAll,
+                        type: 'danger'
+                    }
                 ]} mini={mini} setMini={setMini}>
 
                     <div id={'agencyId'}/>
@@ -474,7 +454,8 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                         : <></>}
                 </MainCard>
 
-                <Table data={tableData} column={rfqInfo['write']} funcButtons={['print']} ref={tableRef} infoRef={infoRef} type={'rfq_write_column'}/>
+                <Table data={tableData} column={rfqInfo['write']} funcButtons={['print']} ref={tableRef}
+                       infoRef={infoRef} type={'rfq_write_column'}/>
             </div>
         </>
     </Spin>

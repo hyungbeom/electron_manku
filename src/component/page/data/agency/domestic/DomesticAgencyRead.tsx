@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {memo, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
@@ -23,7 +23,9 @@ import moment from "moment/moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 
 
-export default function DomesticAgencyUpdate({getPropertyId, getCopyPage}:any) {
+
+
+function DomesticAgencyRead({getPropertyId, getCopyPage}:any) {
     const notificationAlert = useNotificationAlert();
     const gridRef = useRef(null);
     const copyInit = _.cloneDeep(codeDomesticAgencyWriteInitial)
@@ -207,3 +209,6 @@ export default function DomesticAgencyUpdate({getPropertyId, getCopyPage}:any) {
         </>
     </Spin>
 }
+export default memo(DomesticAgencyRead, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

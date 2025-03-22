@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {memo, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 
 import Button from "antd/lib/button";
@@ -15,9 +15,12 @@ import {deleteHsCodeList, searchHSCode} from "@/utils/api/mainApi";
 import Popconfirm from "antd/lib/popconfirm";
 import moment from "moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
+import _ from "lodash";
+import HcodeRead from "@/component/page/data/hscode/HcodeRead";
 
 
-export default function CompanyAccount({getPropertyId, getCopyPage}: any) {
+
+function CompanyAccount({getPropertyId, getCopyPage}: any) {
     const notificationAlert = useNotificationAlert();
     const gridRef = useRef(null);
     const [mini, setMini] = useState(true);
@@ -215,3 +218,7 @@ export default function CompanyAccount({getPropertyId, getCopyPage}: any) {
         </>
     </Spin>
 }
+
+export default memo(CompanyAccount, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

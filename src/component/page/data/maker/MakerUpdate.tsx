@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {memo, useEffect, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import message from "antd/lib/message";
 import {commonManage} from "@/utils/commonManage";
@@ -10,8 +10,11 @@ import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import moment from "moment";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
+import MakerRead from "@/component/page/data/maker/MakerRead";
 
-export default function MakerUpdate({updateKey, getCopyPage}:any) {
+
+
+function MakerUpdate({updateKey, getCopyPage}:any) {
     const notificationAlert = useNotificationAlert();
     const router = useRouter();
     const [info, setInfo] = useState<any>({});
@@ -103,3 +106,7 @@ export default function MakerUpdate({updateKey, getCopyPage}:any) {
         </MainCard>
     </>
 }
+
+export default memo(MakerUpdate, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

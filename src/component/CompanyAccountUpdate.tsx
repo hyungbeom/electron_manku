@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {memo, useEffect, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import message from "antd/lib/message";
 import {commonManage} from "@/utils/commonManage";
@@ -11,7 +11,9 @@ import moment from "moment";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 
-export default function CompanyAccountUpdate({updateKey, getCopyPage}:any) {
+
+
+function CompanyAccountUpdate({updateKey, getCopyPage}:any) {
     const notificationAlert = useNotificationAlert();
     const router = useRouter();
     const [info, setInfo] = useState<any>({
@@ -105,3 +107,7 @@ export default function CompanyAccountUpdate({updateKey, getCopyPage}:any) {
         </MainCard>
     </>
 }
+
+export default memo(CompanyAccountUpdate, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

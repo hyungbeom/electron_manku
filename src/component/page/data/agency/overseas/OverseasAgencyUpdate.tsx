@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {memo, useEffect, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import LayoutComponent from "@/component/LayoutComponent";
 import Card from "antd/lib/card/Card";
@@ -33,9 +33,13 @@ import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import Table from "@/component/util/Table";
 import {DCInfo, OAInfo, OCInfo} from "@/utils/column/ProjectInfo";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
+import OverseasAgencyRead from "@/component/page/data/agency/overseas/OverseasAgencyRead";
 
 const listType = 'overseasAgencyManagerList'
-export default function OverseasAgencyUpdate({ updateKey, getCopyPage}:any) {
+
+
+
+function OverseasAgencyUpdate({ updateKey, getCopyPage}:any) {
     const notificationAlert = useNotificationAlert();
     const gridRef = useRef(null);
     const groupRef = useRef<any>(null)
@@ -224,3 +228,7 @@ export default function OverseasAgencyUpdate({ updateKey, getCopyPage}:any) {
         </div>
     </Spin>
 }
+
+export default memo(OverseasAgencyUpdate, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

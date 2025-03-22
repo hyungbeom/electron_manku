@@ -1,5 +1,4 @@
 import React, {memo, useState} from "react";
-import LayoutComponent from "@/component/LayoutComponent";
 import {deliveryDaehanInitial,} from "@/utils/initialList";
 import {getData} from "@/manage/function/api";
 import {MainCard} from "@/utils/commonForm";
@@ -10,11 +9,8 @@ import Tabs from "antd/lib/tabs";
 import ETC from "@/component/delivery/ETC";
 import {useRouter} from "next/router";
 import message from "antd/lib/message";
-import initialServerRouter from "@/manage/function/initialServerRouter";
-import {wrapper} from "@/store/store";
 import {RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
 import _ from "lodash";
-import StoreRead from "@/component/page/store/StoreRead";
 
 function DeliveryWrite({copyPageInfo}) {
 
@@ -86,7 +82,7 @@ function DeliveryWrite({copyPageInfo}) {
         <>
 
             <MainCard title={'배송 등록'} list={[
-                {name: <div><SaveOutlined style={{paddingRight : 8}}/>저장</div>, func: saveFunc, type: 'primary'},
+                {name: <div><SaveOutlined style={{paddingRight: 8}}/>저장</div>, func: saveFunc, type: 'primary'},
                 {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'}
             ]}>
                 <Tabs size={'small'} activeKey={tabNumb} items={items} onChange={onChange}/>
@@ -95,6 +91,7 @@ function DeliveryWrite({copyPageInfo}) {
         </>
     </>
 }
+
 export default memo(DeliveryWrite, (prevProps, nextProps) => {
     return _.isEqual(prevProps, nextProps);
 });

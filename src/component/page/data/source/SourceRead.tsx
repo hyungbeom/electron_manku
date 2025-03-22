@@ -1,20 +1,22 @@
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
-import React, {useRef, useState} from "react";
+import React, {memo, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import moment from "moment/moment";
 import message from "antd/lib/message";
 import {deleteHsCodeList} from "@/utils/api/mainApi";
-import {codeSaveInitial, SourceReadInitial} from "@/utils/initialList";
+import {SourceReadInitial} from "@/utils/initialList";
 import Spin from "antd/lib/spin";
 import {inputForm, MainCard, TopBoxCard} from "@/utils/commonForm";
 import {ExclamationCircleOutlined, RadiusSettingOutlined, SearchOutlined} from "@ant-design/icons";
 import TableGrid from "@/component/tableGrid";
 import Popconfirm from "antd/lib/popconfirm";
 import Button from "antd/lib/button";
-import {tableCompanyAccountColumns, tableSourceColumns} from "@/utils/columnList";
+import {tableSourceColumns} from "@/utils/columnList";
+import _ from "lodash";
 
-export default function SourceRead({getPropertyId, getCopyPage}: any) {
+
+function SourceRead({getPropertyId, getCopyPage}: any) {
     const notificationAlert = useNotificationAlert();
     const gridRef = useRef(null);
     const [mini, setMini] = useState(true);
@@ -58,7 +60,6 @@ export default function SourceRead({getPropertyId, getCopyPage}: any) {
     function onChange(e) {
         commonManage.onChange(e, setInfo)
     }
-
 
 
     async function searchInfo(e?) {
@@ -188,3 +189,7 @@ export default function SourceRead({getPropertyId, getCopyPage}: any) {
         </>
     </Spin>
 }
+
+export default memo(SourceRead, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {memo, useEffect, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
@@ -28,8 +28,11 @@ import {deleteProjectList, searchDomesticCustomer, searchOverseasCustomer} from 
 import Popconfirm from "antd/lib/popconfirm";
 import moment from "moment/moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
+import _ from "lodash";
+import OverseasCustomerWrite from "@/component/page/data/customer/overseas/OverseasCustomerWrite";
 
-export default function OverseasCustomerRead({getPropertyId, getCopyPage}:any) {
+
+function OverseasCustomerRead({getPropertyId, getCopyPage}:any) {
     const notificationAlert = useNotificationAlert();
     const gridRef = useRef(null);
     const router = useRouter();
@@ -199,3 +202,7 @@ export default function OverseasCustomerRead({getPropertyId, getCopyPage}:any) {
         </div>
     </>
 }
+
+export default memo(OverseasCustomerRead, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

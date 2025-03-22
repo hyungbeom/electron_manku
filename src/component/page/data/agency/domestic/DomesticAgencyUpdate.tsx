@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {memo, useEffect, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import message from "antd/lib/message";
 import {tableCodeDomesticAgencyWriteColumns,} from "@/utils/columnList";
@@ -18,7 +18,7 @@ import moment from "moment";
 
 
 const listType = 'agencyManagerList'
-export default function DomesticAgencyUpdate({updateKey, getCopyPage}:any) {
+function DomesticAgencyUpdate({updateKey, getCopyPage}:any) {
     const notificationAlert = useNotificationAlert();
     const infoRef = useRef<any>(null)
     const tableRef = useRef(null);
@@ -213,3 +213,7 @@ export default function DomesticAgencyUpdate({updateKey, getCopyPage}:any) {
         </div>
     </Spin>
 }
+
+export default memo(DomesticAgencyUpdate, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

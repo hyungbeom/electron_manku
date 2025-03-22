@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {memo, useRef, useState} from "react";
 import {getFormData} from "@/manage/function/api";
 
 import {makerColumn,} from "@/utils/columnList";
@@ -14,8 +14,12 @@ import Button from "antd/lib/button";
 import moment from "moment/moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import message from "antd/lib/message";
+import _ from "lodash";
+import MakerWrite from "@/component/page/data/maker/MakerWrite";
 
-export default function MakerRead({getPropertyId, getCopyPage}:any) {
+
+
+function MakerRead({getPropertyId, getCopyPage}:any) {
     const gridRef = useRef(null);
     const notificationAlert = useNotificationAlert();
     const [info, setInfo] = useState(codeDomesticPurchaseInitial);
@@ -168,3 +172,7 @@ export default function MakerRead({getPropertyId, getCopyPage}:any) {
         </div>
     </Spin>
 }
+
+export default memo(MakerRead, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

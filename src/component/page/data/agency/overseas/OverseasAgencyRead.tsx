@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {memo, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 
 import Button from "antd/lib/button";
@@ -15,9 +15,11 @@ import {commonManage, gridManage} from "@/utils/commonManage";
 import Spin from "antd/lib/spin";
 import ReceiveComponent from "@/component/ReceiveComponent";
 import {searchDomesticAgency, searchOverseasAgency} from "@/utils/api/mainApi";
+import OverseasAgencyWrite from "@/component/page/data/agency/overseas/OverseasAgencyWrite";
 
 
-export default function OverseasAgencyRead({ getPropertyId, getCopyPage}:any) {
+
+function OverseasAgencyRead({ getPropertyId, getCopyPage}:any) {
 
     const gridRef = useRef(null);
     const router = useRouter();
@@ -166,3 +168,6 @@ export default function OverseasAgencyRead({ getPropertyId, getCopyPage}:any) {
         </>
     </Spin>
 }
+export default memo(OverseasAgencyRead, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

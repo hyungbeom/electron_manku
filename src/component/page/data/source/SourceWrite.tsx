@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {memo, useEffect, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
@@ -21,8 +21,12 @@ import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import moment from "moment/moment";
 import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 import {projectInfo} from "@/utils/column/ProjectInfo";
+import _ from "lodash";
+import SourceUpdate from "@/component/page/data/source/SourceUpdate";
 
-export default function SourceWrite({copyPageInfo, getPropertyId, layoutRef}:any) {
+
+
+function SourceWrite({copyPageInfo, getPropertyId, layoutRef}:any) {
     const notificationAlert = useNotificationAlert();
     const [info, setInfo] = useState(sourceWriteInitial);
     const groupRef = useRef<any>(null)
@@ -38,12 +42,12 @@ export default function SourceWrite({copyPageInfo, getPropertyId, layoutRef}:any
 
     useEffect(() => {
 
-        if (copyPageInfo['source_write'] && !isEmptyObj(copyPageInfo['source_write'])) {
+        if (copyPageInfo && !isEmptyObj(copyPageInfo)) {
             setInfo(sourceWriteInitial)
         } else {
-            setInfo(copyPageInfo['source_write']);
+            setInfo(copyPageInfo);
         }
-    }, [copyPageInfo['source_write']]);
+    }, [copyPageInfo]);
 
 
     function onChange(e) {
@@ -155,3 +159,7 @@ export default function SourceWrite({copyPageInfo, getPropertyId, layoutRef}:any
         </MainCard>
     </div>
 }
+
+export default memo(SourceWrite, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});
