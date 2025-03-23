@@ -165,23 +165,46 @@ function RfqMailSend({getPropertyId}: any) {
                             style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1.5fr', width: '100%', columnGap: 20}}>
 
                             <BoxCard title={''}>
-                                <div style={{display: 'grid', gridTemplateColumns: '1fr 80px', gap: 10}}>
+                                <div style={{display: 'grid', gridTemplateColumns: '1fr 25px 25px 25px', gap: 3}}>
                                     {rangePickerForm({
                                         title: '작성일자',
                                         id: 'searchDate',
                                         onChange: onChange,
                                         data: info
                                     })}
-                                    <Button size={'small'} style={{fontSize: 12, marginTop: 25}} onClick={() => {
-                                        setInfo(v => {
-                                            return {
-                                                ...v,
-                                                searchDate: [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
-                                                "searchStartDate": moment().format('YYYY-MM-DD'),              // 작성일자 시작일
-                                                "searchEndDate": moment().format('YYYY-MM-DD'),                // 작성일자 종료일
-                                            }
-                                        })
-                                    }}>오늘</Button>
+                                    <Button size={'small'} style={{fontSize: 12, marginTop: 25}}
+                                            onClick={() => {
+                                                setInfo(v => {
+                                                    return {
+                                                        ...v,
+                                                        searchDate: [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
+                                                        "searchStartDate": moment().format('YYYY-MM-DD'),              // 작성일자 시작일
+                                                        "searchEndDate": moment().format('YYYY-MM-DD'),                // 작성일자 종료일
+                                                    }
+                                                })
+                                            }}>T</Button>
+                                    <Button size={'small'} style={{fontSize: 12, marginTop: 25}}
+                                            onClick={() => {
+                                                setInfo(v => {
+                                                    return {
+                                                        ...v,
+                                                        searchDate: [moment().subtract(1, 'week').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
+                                                        "searchStartDate": moment().subtract(1, 'week').format('YYYY-MM-DD'),              // 작성일자 시작일
+                                                        "searchEndDate": moment().format('YYYY-MM-DD'),                // 작성일자 종료일
+                                                    }
+                                                })
+                                            }}>W</Button>
+                                    <Button size={'small'} style={{fontSize: 12, marginTop: 25}}
+                                            onClick={() => {
+                                                setInfo(v => {
+                                                    return {
+                                                        ...v,
+                                                        searchDate: [moment().subtract(1, 'month').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
+                                                        "searchStartDate": moment().subtract(1, 'month').format('YYYY-MM-DD'),              // 작성일자 시작일
+                                                        "searchEndDate": moment().format('YYYY-MM-DD'),                // 작성일자 종료일
+                                                    }
+                                                })
+                                            }}>M</Button>
                                 </div>
                                 {inputForm({
                                     title: '문서번호', id: 'searchDocumentNumber',
