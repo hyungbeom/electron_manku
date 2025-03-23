@@ -158,9 +158,32 @@ function OrderRead({getPropertyId, getCopyPage}: any) {
                             <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
                                 <Panel defaultSize={sizes[0]} minSize={5}>
                                     <BoxCard title={''}>
-                                        {rangePickerForm({title: '발주일자', id: 'searchDate', onChange: onChange, data: info})}
+                                        <div style={{display: 'grid', gridTemplateColumns: '1fr 80px', gap: 10}}>
+                                            {rangePickerForm({
+                                                title: '발주일자',
+                                                id: 'searchDate',
+                                                onChange: onChange,
+                                                data: info
+                                            })}
+                                            <Button size={'small'} style={{fontSize: 12, marginTop: 25}}
+                                                    onClick={() => {
+                                                        setInfo(v => {
+                                                            return {
+                                                                ...v,
+                                                                searchDate: [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
+                                                                "searchStartDate": moment().format('YYYY-MM-DD'),              // 작성일자 시작일
+                                                                "searchEndDate": moment().format('YYYY-MM-DD'),                // 작성일자 종료일
+                                                            }
+                                                        })
+                                                    }}>오늘</Button>
+                                        </div>
+
                                         {selectBoxForm({
-                                            title: '입고 여부', id: 'searchStockStatus', onChange: onChange, data: info, list: [
+                                            title: '입고 여부',
+                                            id: 'searchStockStatus',
+                                            onChange: onChange,
+                                            data: info,
+                                            list: [
                                                 {value: '', label: '전체'},
                                                 {value: '입고', label: '입고'},
                                                 {value: '미입고', label: '미입고'}

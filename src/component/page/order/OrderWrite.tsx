@@ -233,7 +233,6 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
         const formData: any = new FormData();
         commonManage.setInfoFormData(infoData, formData, listType, filterTableList)
         commonManage.getUploadList(fileRef, formData);
-        commonManage.deleteUploadList(fileRef, formData, originFileList)
 
         formData.delete('createdDate')
         formData.delete('modifiedDate')
@@ -245,7 +244,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
     async function returnFunc(code, msg, data) {
         const dom = infoRef.current.querySelector('#documentNumberFull');
         if (code === 1) {
-
+            setFileList([])
             await getAttachmentFileList({
                 data: {
                     "relatedType": "ORDER",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE

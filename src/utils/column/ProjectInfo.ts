@@ -580,15 +580,11 @@ export const DCWInfo = {
         ],
         columnList: [
             {data: "managerName", type: "text"},
-            {data: "directTel", type: "numeric"},
-            {data: "faxNumber", type: "numeric"},
-            {data: "mobileNumber", type: "numeric", readOnly: true},
-            {
-                data: "email",
-                type: "autocomplete",
-                source: ['ea', 'Set', 'Pack', 'Can', 'Box', 'MOQ', 'Meter', 'Feet', 'Inch', 'Roll', 'g', 'kg', 'oz']
-            },
-            {data: "remarks", type: "autocomplete", source: ['KRW', 'USD', 'EUR', 'JPY', 'GBP']},
+            {data: "directTel", type: "text"},
+            {data: "faxNumber", type: "text"},
+            {data: "mobileNumber", type: "text"},
+            {data: "email", type: "text"},
+            {data: "remarks", type: "text"},
 
 
         ],

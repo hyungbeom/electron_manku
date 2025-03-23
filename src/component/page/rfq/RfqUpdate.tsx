@@ -87,7 +87,6 @@ function RqfUpdate({
                 setFileList(fileManage.getFormatFiles(attachmentFileList));
                 setOriginFileList(attachmentFileList);
                 // replyStatus
-                console.log(estimateRequestDetail,'estimateRequestDetail:')
                 setInfo({
                     ...estimateRequestDetail,
                     uploadType: 0,
@@ -95,7 +94,6 @@ function RqfUpdate({
                     managerAdminName: estimateRequestDetail['managerAdminName'] ? estimateRequestDetail['managerAdminName'] : ''
                 })
                 estimateRequestDetail[listType] = [...estimateRequestDetail[listType], ...commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000 - estimateRequestDetail[listType].length)]
-
                 setTableData(estimateRequestDetail[listType]);
             }
             setLoading(false)
@@ -523,7 +521,7 @@ function RqfUpdate({
                                              disabled={!userInfo['microsoftId']}>
 
                                         <DriveUploadComp fileList={fileList} setFileList={setFileList}
-                                                         fileRef={fileRef} infoRef={infoRef} UploadHeight={290}/>
+                                                         fileRef={fileRef} infoRef={infoRef}/>
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>

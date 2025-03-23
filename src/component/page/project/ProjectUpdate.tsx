@@ -175,8 +175,6 @@ function ProjectUpdate({
         commonManage.deleteUploadList(fileRef, formData, originFileList)
         formData.delete('createdDate')
         formData.delete('modifiedDate')
-
-
         await updateProject({data: formData, router: router, returnFunc: returnFunc})
     }
 
@@ -405,7 +403,7 @@ function ProjectUpdate({
                                     <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}
                                              disabled={!userInfo['microsoftId']}>
 
-                                            <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}/>
+                                            <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef} infoRef={infoRef}/>
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>

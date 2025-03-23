@@ -345,7 +345,7 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                 <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}
                                          disabled={!userInfo['microsoftId']}>
 
-                                    <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}/>
+                                    <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef} infoRef={infoRef}/>
 
                                 </BoxCard>
                             </Panel>

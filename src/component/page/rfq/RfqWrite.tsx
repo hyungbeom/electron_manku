@@ -171,6 +171,7 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
             const {code, entity} = v?.data;
 
             if (code === 1) {
+                setFileList([])
                 const {documentNumberFull, estimateRequestId} = entity;
 
                 if (dom) {
@@ -445,8 +446,8 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                     <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}
                                              disabled={!userInfo['microsoftId']}>
 
-                                        <DriveUploadComp fileList={fileList} setFileList={setFileList}
-                                                         fileRef={fileRef} infoRef={infoRef} UploadHeight={290}/>
+                                        <DriveUploadComp fileList={fileList} setFileList={setFileList} infoRef={infoRef}
+                                                         fileRef={fileRef}/>
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>
