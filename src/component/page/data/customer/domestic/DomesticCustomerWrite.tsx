@@ -5,7 +5,7 @@ import {codeDomesticSalesWriteInitial,} from "@/utils/initialList";
 import moment from "moment/moment";
 import _ from "lodash";
 import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
-import {BoxCard, inputForm, MainCard, textAreaForm} from "@/utils/commonForm";
+import {BoxCard, inputForm, MainCard, textAreaForm, tooltipInfo} from "@/utils/commonForm";
 import Table from "@/component/util/Table";
 import {DCInfo, DCWInfo} from "@/utils/column/ProjectInfo";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
@@ -14,6 +14,8 @@ import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import OverseasAgencyUpdate from "@/component/page/data/agency/overseas/OverseasAgencyUpdate";
+import {DriveUploadComp} from "@/component/common/SharePointComp";
+import {useAppSelector} from "@/utils/common/function/reduxHooks";
 
 const listType = 'customerManagerList'
 
@@ -24,11 +26,12 @@ function DomesticCustomerWrite({copyPageInfo, getPropertyId}:any) {
     const groupRef = useRef<any>(null)
     const infoRef = useRef<any>(null)
     const tableRef = useRef(null);
-
+    const fileRef = useRef(null);
+    const userInfo = useAppSelector((state) => state.user);
 
     const [mini, setMini] = useState(true);
     const [tableData, setTableData] = useState([]);
-
+    const [fileList, setFileList] = useState([]);
     const copyInit = _.cloneDeep(codeDomesticSalesWriteInitial)
     const adminParams = {}
 
@@ -77,11 +80,14 @@ function DomesticCustomerWrite({copyPageInfo, getPropertyId}:any) {
             return message.warn('하위 데이터 1개 이상이여야 합니다');
         }
 
+        const formData: any = new FormData();
+        commonManage.setInfoFormData(infoData, formData, listType, filterTableList)
+        // commonManage.getUploadList(fileRef, formData);
 
 
-
-        await getData.post('customer/addCustomer', infoData).then(v => {
+        await getData.post('customer/addCustomer', formData).then(v => {
             if (v.data.code === 1) {
+                setFileList([])
                 notificationAlert('success', '💾국내 고객사 등록완료',
                     <>
                         <div>상호 : {dom.value}</div>
@@ -231,7 +237,18 @@ function DomesticCustomerWrite({copyPageInfo, getPropertyId}:any) {
                             </BoxCard>
                         </Panel>
                         <PanelResizeHandle/>
-                        <Panel defaultSize={sizes[4]} minSize={5}>
+                        {/*<Panel defaultSize={sizes[4]} minSize={5}>*/}
+                        {/*    <Panel defaultSize={sizes[3]} minSize={15} maxSize={100}>*/}
+                        {/*        <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}*/}
+                        {/*                 disabled={!userInfo['microsoftId']}>*/}
+
+                        {/*            <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef} infoRef={infoRef}/>*/}
+
+                        {/*        </BoxCard>*/}
+                        {/*    </Panel>*/}
+                        {/*</Panel>*/}
+                        <PanelResizeHandle/>
+                        <Panel defaultSize={sizes[5]} minSize={5}>
                         </Panel>
                     </PanelGroup>
                 </div> : null}
