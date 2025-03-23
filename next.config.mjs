@@ -10,10 +10,6 @@ const nextConfig = {
         NEXT_PUBLIC_MICRO_REDIRECT_URI: process.env.NEXT_PUBLIC_MICRO_REDIRECT_URI,
     },
     reactStrictMode: false,
-    experimental: {
-
-        // updateReadReplyStatus 2(e) 가 아닌것만
-    },
     images: {
         unoptimized: true,
     },
