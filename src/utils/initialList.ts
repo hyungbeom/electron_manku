@@ -6,20 +6,6 @@ import {
     tableOrderReadColumns
 } from "@/utils/columnList";
 
-export const makerRegistInitial = {
-    "makerName": "",                   // Maker
-    "item": "",               // Item
-    "homepage": "",  // 홈페이지
-    "area": "",                            // AREA
-    "origin": "",                               // 원산지
-    "managerConfirm": "",                       // 담당자확인
-    "koreanAgency": "",                         // 한국대리점
-    "directConfirm": "",                        // 직접확인
-    "ftaNumber": "",                            // FTA-No
-    "instructions": ""                          // 지시사항
-}
-
-
 export const estimateDetailUnit = {
     "model": "",   // Model
     "quantity": '',                  // 수량
@@ -31,44 +17,6 @@ export const estimateDetailUnit = {
     "serialNumber": ''           // 견적의뢰 내역 순서 (1부터 시작)
 }
 
-export const estimateWriteInitial = {
-    "writtenDate": moment().format('YYYY-MM-DD'),    // 작성일
-    "documentNumberFull": "", // Inquiry No.
-    "agencyCode": "",            // 대리점코드
-    "agencyManagerName": "",
-    "agencyManagerEmail": "",
-    "agencyManagerPhoneNumber": "",
-    "customerCode": "",             // CUSTOMER 코드
-    "customerName": "",    // 상호명
-    "managerName": "",      // 담당자
-    "phoneNumber": "",  // 연락처
-    "faxNumber": "",                // 팩스번호
-    "validityPeriod":'견적 발행 후 10일간',    // 유효기간
-    "paymentTerms": '발주시 50% / 납품시 50%',                // 결제조건
-    "shippingTerms": '귀사도착도',             // 운송조건
-    "exchangeRate": "",                  // 환율
-    "estimateManager": "",            // 담당자
-    "email": "",             // E-MAIL
-    "managerPhoneNumber": "",   // 연락처
-    "managerFaxNumber": "",       // 팩스번호
-    "maker": "",      // Maker
-    "item": "",      // Item
-    "delivery": null,    // 납기
-    "remarks": "",          // 비고란
-    "currencyUnit": "",          // 비고란
-    "estimateDetailList": [],
-    'count' : 0
-}
-
-export const tableEstimateWriteInitial = {
-    "model": "",   // Model
-    "quantity": 0,                  // 수량
-    "unit": "EA",                   // 단위
-    "currency": "USD",              // CURR
-    "net": 0,                 // 매입단가
-    "unitPrice": 0,           // 단가
-    "amount": 0               // 금액
-}
 
 
 // ======================================    견적의뢰 작성    ========================================
@@ -133,16 +81,6 @@ export const rfqWriteInitial = {
 // ==============================================================================
 
 
-export const customerInitial = {
-    "customerCode": "",                // 고객사코드
-    "customerName": "",  // 고객사명(상호명)
-    "phoneNumber": "",              // 연락처
-    "faxNumber": "",       // 팩스
-    "customerManagerEmail": "",       // 이메일
-    "managerName": ""        // 담당자명
-}
-
-
 export const sourceWriteInitial = {
     "receiptDate": moment().format('YYYY-MM-DD'),
     "documentNumber": "",
@@ -167,45 +105,6 @@ export const makerWriteInitial = {
     "directConfirm": "",                        // 직접확인
     "ftaNumber": "",                            // FTA-No
     "instructions": ""
-}
-
-export const subRfqWriteInitial = {
-    "model": "",           // Model
-    "quantity": 1,              // 수량
-    "unit": "ea",               // 단위
-    "currency": "KRW",          // CURR
-    "net": 0,            // 매입단가
-    "deliveryDate": "",   // 납기
-    "content": "",         // 내용
-    "replyDate": "",  // 회신일
-    "remarks": "",           // 비고
-    "serialNumber": 0           // 견적의뢰 내역 순서 (1부터 시작)
-}
-
-export const subRfqTableInitial = {
-    "model": "",             // Model
-    "quantity": 0,           // 수량
-    "unit": "ea",            // 단위
-    "currency": "KRW",       // CURR
-    "net": 0,                // 매입단가
-    "serialNumber": 0,       // 항목 순서 (1부터 시작)
-    "deliveryDate": "",      // 납기
-    "content": "미회신",       // 내용
-    "replyDate": null,      // 회신일
-    "remarks": ""            // 비고
-}
-
-
-export const tableOrderWriteInitial = {
-    "model": "",           // Model
-    "unit": "ea",               // 단위
-    "currency": "krw",          // CURR
-    "net": 0,            // 매입단가
-    "quantity": 1,              // 수량
-    "receivedQuantity": 0,
-    "unreceivedQuantity": 0,
-    "unitPrice": 0,
-    "amount": 0,
 }
 
 
@@ -385,14 +284,6 @@ export const orderWriteInitial = {
     "orderDetailList": [],
 }
 
-export const orderStockInitial = {
-    "receiptDate": "",          // Maker 검색
-    "documentNumber": "",          // Model 검색
-    "maker": "",       // 위치 검색
-    "page": 1,
-    "limit": 20
-}
-
 export const tableOrderInventoryInitial = {
     "receiptDate": "",        // 입고일자
     "documentNumber": "",     // 문서번호
@@ -432,50 +323,6 @@ export const deliveryDaehanInitial = {
     "isConfirm": "X"
 }
 
-
-export const tableOrderReadInitial = {
-    "orderId": 4114,
-    "documentNumberFull": "ARC-24-0326-1",
-    "writtenDate": "2024-09-04",
-    "agencyCode": "R&D Trading Co.",
-    "customerName": "정원엔지니어링",
-    "managerId": "MinkukKim",
-    "managerPhoneNumber": "02-465-7838",
-    "managerFaxNumber": "02-465-7839",
-    "managerEmail": "sales@manku.co.kr",
-    "paymentTerms": "By in advance T/T",
-    "packing": null,
-    "deliveryTerms": "7~8weeks",
-    "inspection": null,
-    "maker": "Dynapar",
-    "item": "Encoder",
-    "delivery": "2024-10-25",
-    "remarks": "",
-    "createdBy": "MinkukKim",
-    "createdDate": "2024-09-04T17:46:31.63",
-    "modifiedBy": "MinkukKim",
-    "modifiedDate": "2024-09-04T17:46:31.63",
-    "estimateManager": "권혁구",
-    "yourPoNo": "",
-    "key": 5,
-    "orderDetailList": [
-        {
-            "orderDetailId": 7504,
-            "orderId": 4114,
-            "model": "X253600033",
-            "quantity": 1,
-            "unit": "ea",
-            "currency": "USD",
-            "net": 2140.00,
-            "currencyUnit": "",
-            "unitPrice": 3724000,
-            "amount": 3724000,
-            "estimateDetailId": 28729,
-            "receivedQuantity": 0,
-            "serialNumber": 1
-        }
-    ]
-}
 
 export const orderReadInitial = {
     "searchDate": [moment().subtract(1, 'months').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],              // 작성일자 시작일
@@ -523,54 +370,6 @@ export const remittanceDomesticSearchInitial = {
     "limit": -1
 }
 
-export const inventoryReadInitial = {
-    "searchText": "",              // 재고 등록 검색 (문서번호, Maker, Model)
-    "searchMaker": "",                  // Maker
-    "searchModel": "",                  // Model
-    "searchLocation": "",                   // Item
-    "page": 1,
-    "limit": 10
-}
-
-
-export const orderCustomerReadInitial = {
-    "searchDate": "",
-    "searchStartDate": "",      // 조회일자 시작일
-    "searchEndDate": "",        // 조회일자 종료일
-    "searchAgencyCode": "",
-    "page": 1,
-    "limit": -1
-}
-
-export const orderAgencyReadInitial = {
-    "searchText": "",              // 재고 등록 검색 (문서번호, Maker, Model)
-    "searchDate": "",                  // Maker
-    "page": 1,
-    "limit": 10
-}
-
-
-export const tableOrderCustomerInitial = {
-    "customerName": "",
-    "unpaidAmount": 0,
-    "paidAmount": 0,
-    "totalAmount": 0,
-    "key": 1
-}
-
-export const subCodeExchangeInitial = {
-    "searchDate": "",              // 작성일자 시작일
-    "searchDocumentNumber": "",         // 문서번호
-    "searchCustomerName": "",           // 고객사명
-    "searchMaker": "",                  // Maker
-    "searchModel": "",                  // Model
-    "searchItem": "",                   // Item
-    "searchEstimateManager": "",              // 등록직원명
-    "page": 1,
-    "limit": 10
-}
-
-// ---------
 
 export const codeSaveInitial = {
     searchText: '',
@@ -591,59 +390,6 @@ export const codeReadInitial = {
     "limit": 10
 }
 
-
-export const codeUserSaveInitial = {
-    "customerName": "",                  // Maker
-    "homepage": "",         // 문서번호
-    "id": "",
-    "pw": "",
-    "remarks": "",
-}
-export const codeUserReadInitial = {
-    "searchCustomerName": "",
-    "page": 1,
-    "limit": 10
-}
-
-export const codeErpSaveInitial = {
-    "id": "",
-    "pw": "",
-    "name": "",
-    "position": "",
-    "right": "",
-    "email": "",
-    "phoneNumber": "",
-    "faxNumber": "",
-    "rightInfo": "",
-}
-export const codeDiplomaReadInitial = {
-    searchDate: [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
-    searchStartDate: moment().subtract(1, 'years').format('YYYY-MM-DD'),
-    searchEndDate: moment().format('YYYY-MM-DD'),
-    "searchDocumentNumber": "",           // 문서번호 검색
-}
-
-export const tableCodeDiplomaInitial = {
-    "documentNumber": "",
-    "title": "",
-    "to": "",
-    "reference": "",
-    "subTitle": "",
-    "content": "",
-    "registerer": "",
-    "registerDate": null,
-    "modifier": "",
-    "modifyDate": null,
-}
-
-export const modalCodeDiplomaInitial = {
-    "documentNumber": "",
-    "title": "",
-    "to": "",
-    "reference": "",
-    "subTitle": "",
-    "content": "",
-}
 
 export const codeDomesticPurchaseInitial = {
     "searchType": 1,
@@ -748,29 +494,6 @@ export const tableCodeDomesticSalesInitial = {
     "representative": "",
     "businessType": "",
     "businessItem": "",
-}
-
-export const tableCodeOverseasSalesInitial = {
-    "overseasCustomerId": 0,
-    "customerCode": "",
-    "customerName": "",
-    "customerRegion": "",
-    "tradeStartDate": "",
-    "phoneNumber": "",
-    "faxNumber": "",
-    "address": "",
-    "customerType": "",
-    "currencyUnit": "",
-    "mankuTradeManager": "",
-    "homepage": "",
-    "manager": "",
-    "ftaNumber": "",
-    "remarks": "",
-    "companyVerification": "",
-    "createdBy": "",
-    "createdDate": "",
-    "modifiedBy": "",
-    "modifiedDate": "",
 }
 
 

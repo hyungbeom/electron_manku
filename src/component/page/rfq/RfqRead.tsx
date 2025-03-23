@@ -196,6 +196,7 @@ function RfqRead({getPropertyId, getCopyPage}: any) {
                                                         })
                                                     }}>M</Button>
                                         </div>
+
                                         {selectBoxForm({
                                             title: '회신 여부', id: 'searchContent', onChange: onChange, data: info, list: [
                                                 {value: '', label: '전체'},
@@ -203,6 +204,7 @@ function RfqRead({getPropertyId, getCopyPage}: any) {
                                                 {value: '미회신', label: '미회신'}
                                             ]
                                         })}
+
                                         {inputForm({
                                             title: '등록직원명', id: 'searchCreatedBy',
                                             onChange: onChange,

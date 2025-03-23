@@ -127,16 +127,6 @@ export function DriveUploadComp({
 
     function fileChange({file, fileList}) {
         // 중복 파일 확인
-        const isDuplicate = fileList.some(v => v?.uid === file?.uid);
-
-        if (!isDuplicate) {
-            // 중복이 없으면 리스트 업데이트
-            setFileList(fileList);
-            if (fileRef.current) {
-                fileRef.current.fileList = fileList; // ref 상태 동기화
-            }
-            return;
-        }
 
         // 중복 파일 처리
         const updatedFileList = fileList.map(f => {
@@ -177,7 +167,7 @@ export function DriveUploadComp({
                 // 이름 수정된 파일 반환 (originFileObj 유지)
                 return {
                     ...f,
-                    name: `0${numberType}.${newNumber} ${dom.value}_${dom2.options[numberType].text}.${extension}`,
+                    name: `0${numberType}.${newNumber} ${dom.value ? dom.value : originalName}_${dom2.options[numberType].text}.${extension}`,
                     originFileObj: f.originFileObj, // 기존 originFileObj 유지
                 };
             }
@@ -194,11 +184,6 @@ export function DriveUploadComp({
     }
 
 
-    // 파일 선택 버튼 클릭
-    const handleFileSelect = (event) => {
-        const selectedFiles = Array.from(event.target.files);
-        console.log(event, ':::')
-    };
 
 
     const handleDrop = (event) => {
@@ -207,12 +192,16 @@ export function DriveUploadComp({
         setDragCounter(0);
 
 
+        console.log(event,'event:')
         // 파일 읽기
         const droppedFiles = Array.from(event.dataTransfer.files);
-
-
+        if (droppedFiles.length > 1) {
+            alert("파일은 1개씩만 업로드할 수 있어요!");
+            return;
+        }
         if (droppedFiles.length > 0) {
             const file = droppedFiles.map((file: any) => ({
+                ...file,
                 uid: file.name + "_" + Date.now(),
                 name: file.name,
                 originFileObj: file,
@@ -223,47 +212,8 @@ export function DriveUploadComp({
                 ...file,
             ];
 
-            const updatedFileList = newFileList.map(f => {
-                if (f.uid === file[0].uid) {
+            fileChange({file :file[0], fileList :  newFileList})
 
-
-                    // 현재 numb 그룹 내의 파일 이름에서 번호 추출
-                    const existingNumbers = newFileList
-                        .filter(file => file.name.startsWith(`0${uploadTypeRef.current.value}.`)) // 현재 numb 그룹만 필터링
-                        .map(file => {
-                            const match = file.name.match(/^0\d+\.(\d+)/); // 번호 추출
-                            return match ? parseInt(match[1], 10) : null;
-                        })
-                        .filter(num => num !== null) // 유효한 번호만 필터링
-                        .sort((a, b) => a - b); // 번호 정렬
-
-                    // 첫 번째 빈 번호 찾기
-                    let newNumber = 1;
-                    for (let i = 0; i < existingNumbers.length; i++) {
-                        if (existingNumbers[i] !== i + 1) {
-                            newNumber = i + 1;
-                            break;
-                        } else {
-                            newNumber = existingNumbers.length + 1;
-                        }
-                    }
-
-                    // 기존 이름의 나머지 부분 추출
-                    const match = f.name.match(/^0\d+\.\d+\s(.+)$/); // 규칙 이후의 이름 추출
-                    const originalName = match ? match[1] : f.name; // 기존 이름 유지
-
-
-                    // 이름 수정된 파일 반환 (originFileObj 유지)
-                    return {
-                        ...f,
-                        name: `0${parseInt(uploadTypeRef.current.value)}.${newNumber} ${originalName}`,
-                        originFileObj: f.originFileObj, // 기존 originFileObj 유지
-                    };
-                }
-                return f; // 다른 파일은 그대로 유지
-            });
-
-            setFileList(updatedFileList)
             if (fileRef.current) {
                 fileRef.current.fileList = newFileList;
             }
@@ -283,13 +233,14 @@ export function DriveUploadComp({
                 style={{display: 'none'}}
 
                 ref={fileInputRef}
-                onChange={handleFileSelect}
+
             />
 
             {isDragging ? <div
                     style={{
                         position: 'absolute',
                         height: '100%',
+                        zIndex : 999999,
                         border: isDragging ? `2px solid #1677FF` : '',
                         backgroundColor: isDragging ? `#1890ffb5` : '',
                         top: 0,
@@ -304,6 +255,7 @@ export function DriveUploadComp({
                     <div style={{
                         display: 'flex',
                         justifyContent: 'center',
+                        zIndex : 999999,
                         alignItems: "center",
                         height: '100%',
                         color: 'white',
