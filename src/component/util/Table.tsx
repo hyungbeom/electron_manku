@@ -47,6 +47,7 @@ const Table = forwardRef(({
 
 
     useEffect(() => {
+        console.log(data,'data:')
         setTableData(calcData(data))
     }, [data, column]);
 

@@ -60,11 +60,9 @@ getData.interceptors.request.use((config) => {
     if (token) {
         config.headers.authorization = `Bearer ${token}`;
     }
-
     const lang = getCookie(null, 'lang');
     if (lang) {
         config.headers['Accept-Language'] = lang;
     }
-
     return config;
 });
