@@ -24,6 +24,7 @@ export function DriveUploadComp({
     useEffect(() => {
         const handleDragEnter = (event) => {
             event.preventDefault();
+            console.log(event,'::::')
             setDragCounter((prev) => prev + 1);
             setIsDragging(true);
         };
