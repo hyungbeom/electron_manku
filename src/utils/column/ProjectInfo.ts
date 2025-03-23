@@ -122,7 +122,7 @@ export const projectInfo = {
 
 export const rfqInfo = {
     write: {
-        columnWidth: [220, 45, 45, 55, 120, 120, 45, 75, 75, 150],
+        columnWidth: [220, 45, 45, 55, 120, 120, 45, 75, 120, 150],
         column: ['Model', '수량', '단위', '화폐단위', '매입 단가', '매입 총액', '납기(weeks)', '회신여부', '회신일', '비고'],
         columnList: [
             {data: "model", type: "text"},

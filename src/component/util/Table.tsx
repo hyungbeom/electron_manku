@@ -543,7 +543,7 @@ const Table = forwardRef(({
 
                 afterColumnResize={afterColumnResize}
                 afterChange={afterChange}
-
+                preventOverflow={'horizontal'}
                 columns={column["columnList"].map(col => {
                     const isDate = col.type === "date";
 
@@ -560,14 +560,11 @@ const Table = forwardRef(({
                         renderer: col.data === "marginRate" ? percentRenderer : ((col.data === 'orderDocumentNumberFull' || col.data === 'connectInquiryNo'|| col.data === 'hsCode') ? iconRenderer : ((col.data === 'unitPrice') ? currencyRenderer : col.type)), // 🔥 커스텀 렌더러 적용
                         readOnly: col.readOnly,
                         filter: false,
-                        ...(isDate && {
-                            datepickerConfig: {
-                                position: "top left",
-                                bound: true,
-                                reposition: false,
-                                container: document.body, // 💡 추가해보세요
-                            },
-                        }),
+                        datePickerConfig: {
+                            position: 'auto', // or 'above', 'below'
+                            static: false,
+                            appendTo: document.body // 이걸 설정하면 팝업이 body 기준으로 나와서 안 짤림
+                        }
                     })
                 })}
 
