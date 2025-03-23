@@ -109,11 +109,12 @@ export const makerWriteInitial = {
 
 
 export const subRfqReadInitial = {
-    "searchDate": [moment().subtract(1, 'months').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],   // front 사용
+    searchDate: [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
+    searchStartDate: moment().subtract(1, 'years').format('YYYY-MM-DD'),              // 작성일자 시작일
+    searchEndDate: moment().format('YYYY-MM-DD'),                // 작성일자 종료일
+
     "searchEstimateRequestId": "",      // 견적의뢰 Id
     "searchType": "0",                   // 검색조건 1: 회신, 2: 미회신
-    searchStartDate: moment().subtract(1, 'months').format('YYYY-MM-DD'),
-    "searchEndDate":moment().format('YYYY-MM-DD'),                // 작성일자 종료일
     "searchDocumentNumber": "",         // 문서번호
     "searchCustomerName": "",           // 고객사명
     "searchMaker": "",                  // Maker
@@ -162,10 +163,11 @@ export const subRfqReadMailInitial = {
 }
 
 export const estimateReadInitial = {
-    searchDate: [moment().subtract(1, 'months').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
-    "searchType": 0,                   // 검색조건 1: 회신, 2: 미회신
-    searchStartDate: moment().subtract(1, 'months').format('YYYY-MM-DD'),
+    searchDate: [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
+    searchStartDate: moment().subtract(1, 'years').format('YYYY-MM-DD'),              // 작성일자 시작일
     searchEndDate: moment().format('YYYY-MM-DD'),                // 작성일자 종료일
+    "searchType": 0,                   // 검색조건 1: 회신, 2: 미회신
+
     "searchManagerName": "",         // 문서번호
     "searchDocumentNumber": "",         // 문서번호
     "searchCustomerName": "",           // 고객사명
@@ -325,9 +327,9 @@ export const deliveryDaehanInitial = {
 
 
 export const orderReadInitial = {
-    "searchDate": [moment().subtract(1, 'months').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],              // 작성일자 시작일
-    searchStartDate: moment().subtract(1, 'months').format('YYYY-MM-DD'),
-    searchEndDate: moment().format('YYYY-MM-DD'),
+    searchDate: [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
+    searchStartDate: moment().subtract(1, 'years').format('YYYY-MM-DD'),              // 작성일자 시작일
+    searchEndDate: moment().format('YYYY-MM-DD'),                // 작성일자 종료일
     searchStockStatus : '전체',
     "searchDocumentNumber": "",         // 문서번호
     "searchManagerAdminName ": "",           // 고객사명
