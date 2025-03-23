@@ -135,23 +135,35 @@ function ProjectRead({getPropertyId, getCopyPage}: any) {
                         <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
                             <Panel defaultSize={sizes[0]} minSize={5}>
                                 <BoxCard grid={"150px 250px 150px 1fr"}>
-                                    <div style={{display: 'grid', gridTemplateColumns: '1fr 80px', gap: 10}}>
+                                    <div style={{display: 'grid', gridTemplateColumns: '1fr 50px 50px', gap: 3}}>
                                         {rangePickerForm({
-                                            title: '작성일자',
+                                            title: '발주일자',
                                             id: 'searchDate',
                                             onChange: onChange,
                                             data: info
                                         })}
-                                        <Button size={'small'} style={{fontSize: 12, marginTop: 25}} onClick={() => {
-                                            setInfo(v => {
-                                                return {
-                                                    ...v,
-                                                    searchDate: [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
-                                                    "searchStartDate": moment().format('YYYY-MM-DD'),              // 작성일자 시작일
-                                                    "searchEndDate": moment().format('YYYY-MM-DD'),                // 작성일자 종료일
-                                                }
-                                            })
-                                        }}>오늘</Button>
+                                        <Button size={'small'} style={{fontSize: 12, marginTop: 25}}
+                                                onClick={() => {
+                                                    setInfo(v => {
+                                                        return {
+                                                            ...v,
+                                                            searchDate: [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
+                                                            "searchStartDate": moment().format('YYYY-MM-DD'),              // 작성일자 시작일
+                                                            "searchEndDate": moment().format('YYYY-MM-DD'),                // 작성일자 종료일
+                                                        }
+                                                    })
+                                                }}>오늘</Button>
+                                        <Button size={'small'} style={{fontSize: 12, marginTop: 25}}
+                                                onClick={() => {
+                                                    setInfo(v => {
+                                                        return {
+                                                            ...v,
+                                                            searchDate: [moment().subtract(1, 'week').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
+                                                            "searchStartDate": moment().subtract(1, 'week').format('YYYY-MM-DD'),              // 작성일자 시작일
+                                                            "searchEndDate": moment().format('YYYY-MM-DD'),                // 작성일자 종료일
+                                                        }
+                                                    })
+                                                }}>1주일</Button>
                                     </div>
                                     {inputForm({
                                         title: '작성자',
