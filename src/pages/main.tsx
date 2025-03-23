@@ -147,7 +147,9 @@ export default function Main({alarm}) {
           if(!selectedKey){
               return false;
           }
-          console.log(selectedKey,'!!!!!')
+          if(!tabComponents[selectedKey]?.name){
+              return false;
+          }
             const newTab = {
                 type: "tab",
                 name: tabComponents[selectedKey].name,

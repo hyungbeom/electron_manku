@@ -76,7 +76,10 @@ function DomesticCustomerWrite({copyPageInfo, getPropertyId}:any) {
         if (!filterTableList.length) {
             return message.warn('하위 데이터 1개 이상이여야 합니다');
         }
-        infoData[listType] = filterTableList
+
+
+
+
         await getData.post('customer/addCustomer', infoData).then(v => {
             if (v.data.code === 1) {
                 notificationAlert('success', '💾국내 고객사 등록완료',
