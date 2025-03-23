@@ -398,14 +398,7 @@ input[type="number"]::-webkit-inner-spin-button {
     overflow: visible !important;
 }
 
-/* 팝업이 부모 div에 의해 짤리지 않게 함 */
-.handsontable .ht_master {
-    overflow: visible !important;
-}
-/* 팝업 절대 짤리지 않게 함 */
-.handsontable .ht_master {
-    overflow: visible !important;
-}
+
 
 .pika-single {
     margin-top : -373px;

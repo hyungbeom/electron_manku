@@ -13,7 +13,6 @@ import OrderListModal from "@/component/OrderListModal";
 import Button from "antd/lib/button";
 import * as XLSX from 'xlsx';
 import {UploadOutlined} from "@ant-design/icons";
-import 'pikaday/css/pikaday.css';
 import HsCodeListModal from "@/component/HsCodeListModal";
 // register Handsontable's modules
 registerAllModules();
@@ -408,9 +407,6 @@ const Table = forwardRef(({
             // ✅ 변환된 데이터를 계산 및 저장
             const resultlist = calcData([...filterList, ...filterList2, ...commonFunc.repeatObject(column['defaultData'], 1000 - count)]);
 
-            console.log(resultlist, 'resultlist:')
-            // setTableData(commonFunc.repeatObject(column['defaultData'], 100 - count))
-
             setTableData(resultlist);
         };
 
@@ -544,9 +540,9 @@ const Table = forwardRef(({
 
                 afterColumnResize={afterColumnResize}
                 afterChange={afterChange}
-                preventOverflow={'horizontal'}
                 columns={column["columnList"].map(col => {
                     const isDate = col.type === "date";
+
 
                     return ({
                         data: col.data,
