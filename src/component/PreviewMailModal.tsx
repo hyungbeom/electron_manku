@@ -11,7 +11,6 @@ import {MinusCircleOutlined, PlusSquareOutlined, SendOutlined} from "@ant-design
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import moment from "moment/moment";
 
-
 function formatDocumentNumbers(documentNumbersArray) {
     let output = '';
     let groupedNumbers = {};  // 공통 접두사로 그룹화
@@ -128,6 +127,17 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
 
 
     async function sendMail() {
+
+        const confirmed = window.confirm('메일을 전송하시겠습니까?');
+        if (confirmed) {
+            sendEmail()
+            setIsModalOpen(false);
+        }
+
+
+    }
+
+    async function sendEmail(){
         const result = info.map((v, idx) => {
 
             let detailList = []
