@@ -7,7 +7,7 @@ import {getData} from "@/manage/function/api";
 import _ from "lodash";
 import {inputForm, textAreaForm} from "@/utils/commonForm";
 import message from "antd/lib/message";
-import {MinusCircleOutlined, PlusSquareOutlined} from "@ant-design/icons";
+import {MinusCircleOutlined, PlusSquareOutlined, SendOutlined} from "@ant-design/icons";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import moment from "moment/moment";
 
@@ -114,7 +114,7 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
                 detailList: Object.values(src),
                 ccList: [],
                 title: 'RFQ ' + formatDocumentNumbers(documentNumbers),
-                contents: `${agencyManagerName ?agencyManagerName : '직접입력'}  \n\n아래 진행 부탁 드립니다.\n\n` + output
+                contents: `${agencyManagerName ? agencyManagerName : '직접입력'}  \n\n아래 진행 부탁 드립니다.\n\n` + output
             }
         })
 
@@ -199,7 +199,7 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
     <a href="https://www.manku.co.kr" style="text-decoration: none; color: inherit;">www.manku.co.kr</a>
 </div>
 </div>`
-                }
+            }
 
         })
 
@@ -209,10 +209,10 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
 
                 notificationAlert('success', '💾메일전송 완료',
                     <>
-                        <div>{info[0]['title']} {info.length > 1 ? ('외' + (info.length -1) + '건이 발송 완료되었습니다.') : ''} </div>
+                        <div>{info[0]['title']} {info.length > 1 ? ('외' + (info.length - 1) + '건이 발송 완료되었습니다.') : ''} </div>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
-                    ,null,
+                    , null,
                     {}
                 )
                 // message.success(v.data.message);
@@ -262,102 +262,162 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
         const [count, setCount] = useState([])
 
         return <div id={`cc_${idx}`}>
-            <div style={{paddingBottom : 10}}>참조</div>
-            {count.map((src,numb) => {
-                return <div style={{width: '100%', display : 'flex'}}>
-                    <input type="text" style={{width: '50%', marginTop : 3}} onChange={e => {
+            <div style={{display: 'grid', gridTemplateColumns: '100px 1fr', gap: 5}}>
+                  <span style={{
+                      border: '1px solid lightGray',
+                      height: 23,
+                      fontSize: 12,
+                      padding: 2,
+                      marginTop: 6,
+                      textAlign: 'center'
+                  }}>참조(C)</span>
+                <div>
+                    {count.map((src, numb) => {
+                        return <div style={{width: '100%', display: 'flex'}}>
+                            <input type="text" style={{marginTop: 6, height: 23}} onChange={e => {
 
-                        e.target.style.border = ''
-                    }}/>
-                    <MinusCircleOutlined style={{color : 'red', fontSize : 15, fontWeight : 700, paddingLeft : 5, cursor : 'pointer', opacity : 0.7}} onClick={()=>{
-                        setCount(v=>{
-                            let copyArr = [...v]
-                            copyArr.splice(numb, 1)
-                            return copyArr
-                        })
-                    }}/>
+                                e.target.style.border = ''
+                            }}/>
+                            <MinusCircleOutlined style={{
+                                color: 'red',
+                                fontSize: 15,
+                                fontWeight: 700,
+                                paddingLeft: 5,
+                                cursor: 'pointer',
+                                opacity: 0.7
+                            }} onClick={() => {
+                                setCount(v => {
+                                    let copyArr = [...v]
+                                    copyArr.splice(numb, 1)
+                                    return copyArr
+                                })
+                            }}/>
+                        </div>
+                    })}
                 </div>
-            })}
+            </div>
 
-            <span style={{color: 'blue', cursor : 'pointer'}} onClick={() => {
+            <div style={{paddingTop: 5}}>
+            <span style={{color: 'blue', cursor: 'pointer'}} onClick={() => {
                 setCount(v => {
                     return [...v, '']
                 })
-            }}>추가<PlusSquareOutlined /></span>
+            }}>추가<PlusSquareOutlined/></span>
+            </div>
         </div>
     }
 
 
     return <>
-        <Modal okText={'메일 전송'} width={700} cancelText={'취소'} onOk={sendMail}
-               title={<div style={{lineHeight: 2.5, fontWeight: 550}}>견적의뢰 메일 발송</div>} open={isModalOpen}
+        <Modal okText={<><SendOutlined />  메일 전송</>} width={1000} cancelText={'취소'} onOk={sendMail}
+               title={<div style={{height: 25, textAlign: 'center'}}>견적의뢰 메일 발송</div>} open={isModalOpen}
                onCancel={() => {
                    setIsModalOpen(false)
-               }}>
-            <div style={{margin: '0px auto', fontSize: 13}}>
+               }}
 
-                {info?.map((src, idx) => {
+        >
+            <div>
+                <div style={{margin: '0px auto', fontSize: 13}}>
+
+                    {info?.map((src, idx) => {
+
+                        return <div>
+                            <div style={{display: 'grid', gridTemplateColumns: '100px 1fr', gap: 5}}>
+                            <span style={{
+                                border: '1px solid lightGray',
+                                height: 23,
+                                fontSize: 12,
+                                padding: 2,
+                                marginTop: 6,
+                                textAlign: 'center'
+                            }}>보낸 사람(M)</span>
+                                {inputForm({
+                                    title: '',
+                                    id: 'email',
+                                    onChange: e => onChange(e, idx),
+                                    data: userInfo,
+                                    disable: true,
+                                    size: 'middle',
+                                })}
+                            </div>
+                            <div style={{display: 'grid', gridTemplateColumns: '100px 1fr', gap: 5}}>
+                            <span style={{
+                                border: '1px solid lightGray',
+                                height: 23,
+                                fontSize: 12,
+                                padding: 2,
+                                marginTop: 6,
+                                textAlign: 'center'
+                            }}>받는 사람(T)</span>
+                                {inputForm({
+                                    title: '',
+                                    id: 'agencyManagerEmail',
+                                    onChange: e => onChange(e, idx),
+                                    data: src,
+                                    value: src.agencyManagerEmail,
+                                    size: 'middle',
+                                })}
+                            </div>
+                            <SubSend idx={idx}/>
+
+                            <div style={{paddingTop: 15}}>
+                                <div style={{display: 'grid', gridTemplateColumns: '100px 1fr', gap: 5}}>
+                            <span style={{
+                                border: '1px solid lightGray',
+                                height: 23,
+                                fontSize: 12,
+                                padding: 2,
+                                marginTop: 6,
+                                textAlign: 'center'
+                            }}>제목(U)</span>
+                                    {inputForm({
+                                        title: '',
+                                        id: 'title',
+                                        onChange: e => onChange(e, idx),
+                                        data: src,
+                                        value: src.title,
+                                        size: 'middle'
+                                    })}
+                                </div>
+                            </div>
 
 
-                    return <div>
-                        <div>
-                            {inputForm({
-                                title: '수신자 이메일',
-                                id: 'agencyManagerEmail',
-                                onChange: e => onChange(e, idx),
+                            {textAreaForm({
+                                title: '',
+                                id: 'contents',
                                 data: src,
-                                value: src.agencyManagerEmail,
-                                size: 'middle',
-                            })}</div>
-                        <SubSend idx={idx}/>
-
-                        <div style={{paddingTop: 15}}>
-                            {inputForm({
-                                title: '메일 제목',
-                                id: 'title',
                                 onChange: e => onChange(e, idx),
-                                data: src,
-                                value: src.title,
-                                size: 'middle'
+                                maxLength: 10000,
+                                rows: 15
                             })}
-                        </div>
-
-
-                        {textAreaForm({
-                            title: '발신 내용',
-                            id: 'contents',
-                            data: src,
-                            onChange: e => onChange(e, idx),
-                            maxLength: 10000,
-                            rows: 15
-                        })}
-                        <Card size={'small'} title={'첨부파일'} style={{marginTop: 15}}>
-                            {src.detailList.map(v => {
-                                return <>
-                                    {
-                                        fileList[v[0].estimateRequestId]?.map(v =>
-                                            <>
-                                                <div style={{display: 'flex'}}>
-                                                    <Checkbox style={{paddingRight: 10}}
-                                                              onChange={e => onCheck(e, v, idx)}/>
-                                                    <div style={{
-                                                        fontSize: 12,
-                                                        cursor: 'pointer',
-                                                        color: 'blue'
-                                                    }} onClick={e => preview(e, v)}> {v.fileName}
+                            <Card size={'small'} title={'첨부파일'} style={{marginTop: 15}}>
+                                {src.detailList.map(v => {
+                                    return <>
+                                        {
+                                            fileList[v[0].estimateRequestId]?.map(v =>
+                                                <>
+                                                    <div style={{display: 'flex'}}>
+                                                        <Checkbox style={{paddingRight: 10}}
+                                                                  onChange={e => onCheck(e, v, idx)}/>
+                                                        <div style={{
+                                                            fontSize: 12,
+                                                            cursor: 'pointer',
+                                                            color: 'blue'
+                                                        }} onClick={e => preview(e, v)}> {v.fileName}
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </>
-                                        )
-                                    }
-                                    {!src.detailList.length ? <div></div> : <></>}
-                                </>
-                            })
-                            }
-                        </Card>
-                        <div style={{borderBottom: '1px solid lightGray', marginBottom: 50, paddingTop: 20}}/>
-                    </div>
-                })}
+                                                </>
+                                            )
+                                        }
+                                        {!src.detailList.length ? <div></div> : <></>}
+                                    </>
+                                })
+                                }
+                            </Card>
+                            <div style={{borderBottom: '1px solid lightGray', marginBottom: 50, paddingTop: 20}}/>
+                        </div>
+                    })}
+                </div>
             </div>
         </Modal>
     </>
