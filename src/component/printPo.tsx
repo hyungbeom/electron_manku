@@ -2,16 +2,13 @@ import React, {memo, useEffect, useMemo, useRef, useState} from "react";
 import Modal from "antd/lib/modal/Modal";
 import {jsPDF} from "jspdf";
 import html2canvas from "html2canvas";
-import {commonManage, gridManage} from "@/utils/commonManage";
+import {commonManage} from "@/utils/commonManage";
 import Input from "antd/lib/input";
-import {getData} from "@/manage/function/api";
 import {amountFormat} from "@/utils/columnList";
 import Select from "antd/lib/select";
 import InputNumber from "antd/lib/input-number";
-import {estimateInfo, orderInfo} from "@/utils/column/ProjectInfo";
-import moment from "moment/moment";
-import EstimateHeader, {PoHeader} from "@/component/견적서/EstimateHeader";
-import {BottomInfo, BottomPoInfo, TopPoInfo} from "@/component/견적서/TopInfo";
+import {PoHeader} from "@/component/견적서/EstimateHeader";
+import {BottomPoInfo, TopPoInfo} from "@/component/견적서/TopInfo";
 import TextArea from "antd/lib/input/TextArea";
 import _ from "lodash";
 
@@ -41,35 +38,22 @@ function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, infoRef, memberLi
     const pdfRef = useRef<any>();
     const pdfSubRef = useRef<any>();
 
-    let totalAmount = 0;
-    let totalQuantity = 0;
-    let unit = '';
-    let currency = '';
 
-    const [splitData, setSplitData] = useState([[]]);
-    const [info, setInfo] = useState([]);
 
-    const today = new Date();
-    const formattedDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
 
-    function formattedNumber(number) {
-        return number?.toLocaleString();
-    }
 
-    useEffect(() => {
-        const tableList = tableRef.current?.getSourceData();
 
-        const filterTotalList = tableList.filter(v => !!v.model)
-        const result = commonManage.splitDataWithSequenceNumber(filterTotalList, 18, 30);
-        setSplitData(result)
-    }, [data])
-
-    const [tableData] = useMemo(() => {
+    const [tableData, money] = useMemo(() => {
 
         const tableList = tableRef.current?.getSourceData();
         const filterTotalList = tableList.filter(v => !!v.model)
         const result = commonManage.splitDataWithSequenceNumber(filterTotalList, 18, 28);
-        return [result]
+
+
+
+
+
+        return [result, filterTotalList[0]?.currency]
     }, [count]);
 
 
@@ -237,7 +221,7 @@ function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, infoRef, memberLi
                          onClick={() => {
                              setToggle(true);
                          }}>
-                        <span>₩</span>
+                        <span>{money}</span>
                         <span className={'netPrice'}>{amountFormat(info.unitPrice)}</span>
                     </div>
 
@@ -254,7 +238,7 @@ function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, infoRef, memberLi
                      onClick={() => {
                          setToggle(true);
                      }}>
-                    <span>₩</span>
+                    <span>{money}</span>
                     <span className={'total'}>{amountFormat(info.unitPrice * info.quantity)}</span>
                 </div>
 
@@ -305,18 +289,18 @@ function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, infoRef, memberLi
             onOk={() => setIsModalOpen({event1: false, event2: false, event3: false})}
         >
             <div ref={pdfRef} style={{
-                border: '1px solid lightGray',
+
                 width: '1000px',  // A4 가로
                 height: '1354px',  // A4 세로
                 // aspectRatio: '1 / 1.414',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
-                padding: '0px 20px'
+                padding: 20
             }}>
 
                 <PoHeader infoRef={infoRef}/>
-                <TopPoInfo infoRef={infoRef} memberList={memberList} hscode={splitData[0][0]?.hsCode}/>
+                <TopPoInfo infoRef={infoRef} memberList={memberList} hscode={tableData[0][0]?.hsCode}/>
                 <table style={{
                     width: '100%',
                     borderCollapse: 'collapse',
@@ -390,14 +374,14 @@ function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, infoRef, memberLi
                     }
 
                     return <div style={{
-                        border: '1px solid lightGray',
+
                         width: '1000px',  // A4 가로
                         height: '1354px',  // A4 세로
                         // aspectRatio: '1 / 1.414',
                         display: 'flex',
                         flexDirection: 'column',
                         justifyContent: 'space-between',
-                        padding: '0px 20px'
+                        padding: 20
                     }}>
                         <PoHeader infoRef={infoRef}/>
                         <table style={{
@@ -444,6 +428,7 @@ function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, infoRef, memberLi
                                 border: '1px solid lightGray',
                             }}>
                                 <thead>
+
                                 <tr style={{height: 35, fontWeight: 100}} ref={ref2}>
                                     <th colSpan={2} style={{width: '6%', fontWeight: 600}}></th>
                                     <th style={{width: '38%'}}>TOTAL</th>

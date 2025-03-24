@@ -202,9 +202,7 @@ const EstimatePaper = ({
                 </div>
 
             </td>
-            <td>
-                <TextArea autoSize={true} style={{border: 'none'}}/>
-            </td>
+
         </>
     }
 
@@ -242,7 +240,7 @@ const EstimatePaper = ({
 
                     <thead>
                     <tr style={{fontWeight: 'bold', height: 30}}>
-                        <th colSpan={7}/>
+                        <th colSpan={6}/>
                     </tr>
                     </thead>
                     <thead>
