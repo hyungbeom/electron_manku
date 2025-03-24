@@ -39,8 +39,8 @@ const EstimatePaper = ({
                        }: any) => {
 
 
-    const ref1 = useRef()
-    const ref2 = useRef()
+    const ref1 = useRef<any>()
+    const ref2 = useRef<any>()
 
     const [tableData] = useMemo(() => {
 
@@ -115,20 +115,6 @@ const EstimatePaper = ({
             })
         }
 
-
-       // const docTotal:any = document.getElementsByClassName('total_amount')
-       //  docTotal[0].innerText = total.toLocaleString()
-       //
-       // const docPrice:any = document.getElementsByClassName('total_netPrice');
-       //  docPrice[0].innerText = sum.toLocaleString()
-       //
-       // const docQt:any = document.getElementsByClassName('total_qt')
-       //  docQt[0].innerText = sum2
-       //
-       // const docUnit:any = document.getElementsByClassName('total_unit')
-       //  if(tableData.length) {
-       //      docUnit[0].innerText = tableData[0][0]?.unit
-       //  }
     }
 
     function NumberInputForm({value}) {
@@ -215,6 +201,9 @@ const EstimatePaper = ({
                     <span className={'total'}>{amountFormat(info.net * info.quantity)}</span>
                 </div>
 
+            </td>
+            <td>
+                <TextArea autoSize={true} style={{border: 'none'}}/>
             </td>
         </>
     }
