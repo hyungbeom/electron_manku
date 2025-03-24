@@ -279,13 +279,13 @@ export const estimateInfo = {
         },
         totalList: {
             "model": "",   // Model
-            "quantity": '=SUM(B1:B100)',                  // 수량
+            "quantity": '=SUM(B1:B1000)',                  // 수량
             "unit": "",                   // 단위
             "currencyUnit": '',          // CURR
-            "net": '=SUM(E1:E100)',                 // 매입단가
-            "totalNet": '=SUM(F1:F100)',                 // 매입단가
-            "unitPrice": '=SUM(G1:G100)',           // 단가
-            "total": '=SUM(H1:H100)',           // 단가
+            "net": '=SUM(E1:E1000)',                 // 매입단가
+            "totalNet": '=SUM(F1:F1000)',                 // 매입단가
+            "unitPrice": '=SUM(G1:G1000)',           // 단가
+            "total": '=SUM(H1:H1000)',           // 단가
             "marginRate": ''                 // 매입단가
 
         },
