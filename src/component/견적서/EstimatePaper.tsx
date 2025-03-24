@@ -75,7 +75,30 @@ const EstimatePaper = ({
         const result = commonManage.splitDataWithSequenceNumber(filterTotalList, 10, 30);
         setSplitData(result)
     }, [count])
+    const totalSummary = useMemo(() => {
 
+
+
+        const totals = splitData.flat().reduce(
+            (acc, item) => {
+                const quantity = item.quantity || 0;
+                const unitPrice = item.net || 0;
+                const amount = quantity * unitPrice;
+
+                acc.totalQuantity += quantity;
+                acc.totalUnitPrice += unitPrice;
+                acc.totalAmount += amount;
+
+                return acc;
+            },
+            {
+                totalQuantity: 0,
+                totalUnitPrice: 0,
+                totalAmount: 0,
+            }
+        );
+        return totals
+    }, [splitData, count]);
 
     const RowTotal = ({defaultValue, id}) => {
 
@@ -123,31 +146,6 @@ const EstimatePaper = ({
             </div>}</>
     }
 
-    const [total, setTotal] = useState({totalAmount : 12000})
-    const totalSummary = useMemo(() => {
-
-
-
-        const totals = splitData.flat().reduce(
-            (acc, item) => {
-                const quantity = item.quantity || 0;
-                const unitPrice = item.net || 0;
-                const amount = quantity * unitPrice;
-
-                acc.totalQuantity += quantity;
-                acc.totalUnitPrice += unitPrice;
-                acc.totalAmount += amount;
-
-                return acc;
-            },
-            {
-                totalQuantity: 0,
-                totalUnitPrice: 0,
-                totalAmount: 0,
-            }
-        );
-        return totals
-    }, [splitData, count]);
     const TotalCalc = () => {
 
 
@@ -540,7 +538,7 @@ const EstimatePaper = ({
                             padding: 30,
                             border: '1px solid lightGray'
                         }}><DataTable src={src} indexNumber={i} refList={[pdfRef, pdfSubRef]} splitData={splitData}
-                                      setSplitData={setSplitData}/>
+                                      setSplitData={setSplitData} total={totalSummary}/>
 
                             <div style={{flexGrow: 1}}/>
                             <div
@@ -626,7 +624,7 @@ const Model = ({v, refList, setSplitData}) => {
         </th>
     );
 };
-const DataTable = ({src, indexNumber, refList, splitData, setSplitData}) => {
+const DataTable = ({src, indexNumber, refList, splitData, setSplitData, total={totalAmount : ''}}) => {
 
 
     return <div>
@@ -767,71 +765,51 @@ const DataTable = ({src, indexNumber, refList, splitData, setSplitData}) => {
         })
         }
 
-        {splitData.length === indexNumber + 1 && <thead style={{width: '100%'}}>
-        <tr style={{fontWeight: 'bold', height: 50, width: '100%'}}>
-            <th colSpan={2} style={{
-                width: '7%',
+        {splitData.length === indexNumber + 1 && <thead>
+        <tr style={{fontWeight: 'bold', height: 30}}>
+            <th colSpan={3} style={{
+                width: '6%',
                 border: '1px solid lightGray',
-                borderLeft: 'none',
+                // borderLeft: 'none',
                 fontSize: 12,
-                backgroundColor: '#ebf6f7'
-            }}>총합
+            }}>
             </th>
+
             <th style={{
-                borderTop: '1px solid lightGray',
-                backgroundColor: '#ebf6f7',
-                border: '1px solid lightGray',
-                borderLeft: 'none',
-                borderRight: 'none'
-            }}></th>
-            <th style={{
-                backgroundColor: '#ebf6f7',
                 borderTop: '1px solid lightGray', border: '1px solid lightGray',
                 borderRight: 'none'
             }}>
                 <div id={'total_quantity'}
-                     style={{textAlign: 'right', paddingRight: 10, fontSize: 13.5}}></div>
+                     style={{textAlign: 'right', paddingRight: 5, fontSize: 13.5}}>{total?.totalQuantity}</div>
             </th>
             <th style={{
-                backgroundColor: '#ebf6f7',
-
                 borderTop: '1px solid lightGray',
                 border: '1px solid lightGray',
-                borderRight: 'none'
+                // borderRight: 'none'
             }}>
-                <div id={'total_unit'}
-                     style={{textAlign: 'left', fontSize: 13.5, paddingLeft: 12}}></div>
+                <div id={'total_unit'} style={{
+                    textAlign: 'left',
+                    fontSize: 13.5,
+                    paddingLeft: 12
+                }}>{total?.totalUnit ? (total?.totalUnit).toLocaleString() : ''}</div>
             </th>
             <th style={{
                 borderTop: '1px solid lightGray', border: '1px solid lightGray',
-                backgroundColor: '#ebf6f7',
                 borderRight: 'none'
             }}>
-                <div style={{
-                    display: 'flex',
-                    textAlign: 'right',
-                    direction: 'rtl',
-                    paddingRight: 13,
-                    fontSize: 13.5
-                }}>
-                    <div style={{textAlign: 'right'}}>₩</div>
-                    <div style={{paddingRight: 10}} id={'total_unit_price'}></div>
+                <div style={{textAlign: 'center', fontSize: 13.5}}>
+                    <div
+                        id={'total_unit_price'}>{total?.totalUnitPrice ? (total?.totalUnitPrice).toLocaleString() : ''}</div>
                 </div>
             </th>
             <th style={{
                 borderTop: '1px solid lightGray', border: '1px solid lightGray',
-                backgroundColor: '#ebf6f7',
-                borderRight: 'none'
+                // borderRight: 'none'
             }}>
-                <div style={{
-                    display: 'flex',
-                    textAlign: 'right',
-                    direction: 'rtl',
-                    paddingRight: 13,
-                    fontSize: 13.5
-                }}>
-                    <div style={{textAlign: 'right'}}>₩12</div>
-                    <div style={{paddingRight: 10}} id={'total_amount'}>123</div>
+                <div style={{display: 'flex', justifyContent: 'space-between', fontSize: 13.5, padding: '0px 10px'}}>
+                    <div style={{textAlign: 'left'}}>₩</div>
+                    <div style={{paddingRight: 5}}
+                         id={'total_amount'}>{(total?.totalAmount).toLocaleString()}</div>
                 </div>
             </th>
         </tr>
