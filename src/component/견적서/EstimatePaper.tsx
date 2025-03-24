@@ -631,6 +631,44 @@ const Model = ({v, refList, setSplitData}) => {
 };
 const DataTable = ({src, indexNumber, refList, splitData, setSplitData, total }:any) => {
 
+    const NumberInputForm = ({defaultValue, id, setInfo}:any) => {
+
+        const inputRef = useRef<any>();
+        const [toggle, setToggle] = useState(false);
+
+        const handleChange = (e) => {
+            if(setInfo) {
+                setInfo(v => {
+                    return {...v, net: e}
+                })
+            }
+        };
+
+        function blur() {
+            console.log('!!')
+            setToggle(false)
+        }
+
+        useEffect(() => {
+            if (toggle) {
+                inputRef.current.focus();
+            }
+        }, [toggle]);
+
+        return <>{toggle ? <InputNumber ref={inputRef} onBlur={blur} value={defaultValue} onChange={handleChange}
+                                        formatter={(value) => value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                        parser={(value) => value.replace(/[^0-9]/g, '')}
+                                        style={{border: 'none', textAlign: 'right', direction: 'rtl', width: '90%'}}
+                                        name={id}
+                                        prefix={<span style={{paddingLeft: 10}}>₩</span>}/> :
+            <div style={{fontSize: 14, display: 'flex', justifyContent: 'space-between', padding: '0px 10px'}}
+                 onClick={() => {
+                     setToggle(true);
+                 }}>
+                <span>₩</span>
+                {amountFormat(defaultValue)}
+            </div>}</>
+    }
 
     return <div>
         <div style={{
@@ -663,18 +701,22 @@ const DataTable = ({src, indexNumber, refList, splitData, setSplitData, total }:
         <thead>
 
         <tr style={{backgroundColor: '#ebf6f7', fontWeight: 'bold', height: 35}}>
-            <th colSpan={3} style={{width: '48%'}}>Specification</th>
+            <th colSpan={3} style={{width: '48%', border : '1px solid lightGray'}}>Specification</th>
             <th colSpan={2}
                 style={{
                     width: '9%',
                     textAlign: 'center',
                     // borderLeft: '1px solid lightGray',
-                    paddingRight: 10
+                    paddingRight: 10,
+                    border : '1px solid lightGray',
+                    borderLeft : 'none'
                 }}>Q`ty
             </th>
             {/*<th style={{textAlign: 'left', paddingLeft: 10, borderLeft: '1px solid lightGray'}}>Unit</th>*/}
-            <th style={{width: '20%'}}>Unit Price</th>
-            <th style={{width: '20%'}}>Amount</th>
+            <th style={{width: '20%', border : '1px solid lightGray',
+                borderLeft : 'none'}}>Unit Price</th>
+            <th style={{width: '20%', border : '1px solid lightGray',
+                borderLeft : 'none'}}>Amount</th>
         </tr>
         </thead>
 
@@ -686,9 +728,11 @@ const DataTable = ({src, indexNumber, refList, splitData, setSplitData, total }:
 
                 <th colSpan={2} style={{
                     border: 'none',
+                    borderLeft : '1px solid lightGray',
                     textAlign: 'center',
                     borderRight: '1px solid lightGray',
                     borderBottom: '1px solid lightGray',
+                    width : '6%',
                     fontSize: 12
                 }}>
                     <div>{v.sequenceNumber}</div>
@@ -746,18 +790,27 @@ const DataTable = ({src, indexNumber, refList, splitData, setSplitData, total }:
                     fontSize: 12,
                     borderLeft: '1px solid lightGray'
                 }}>
-                    <Input value={amountFormat(v.net)} style={{border: 'none'}}
-                           suffix={'₩'}/>
+                    <NumberInputForm defaultValue={v?.net} id={'net'}/>
                 </th>
-
                 <th style={{
+                    width: 150,
                     borderBottom: '1px solid lightGray',
-                    textAlign: 'right', fontWeight: 'lighter', fontSize: 12,
-                    borderLeft: '1px solid lightGray'
+                    borderRight : '1px solid lightGray',
+                    textAlign: 'right',
+                    fontWeight: 'lighter',
+                    fontSize: 12,
+                    borderLeft: '1px solid lightGray',
                 }}>
-                    <Input value={amountFormat(v.quantity * v.net)}
-                           style={{border: 'none'}} suffix={'₩'}/>
+                    <NumberInputForm defaultValue={amountFormat(v.quantity * v.net)} id={'net'}/>
                 </th>
+                {/*<th style={{*/}
+                {/*    borderBottom: '1px solid lightGray',*/}
+                {/*    textAlign: 'right', fontWeight: 'lighter', fontSize: 12,*/}
+                {/*    borderLeft: '1px solid lightGray'*/}
+                {/*}}>*/}
+                {/*    <Input value={amountFormat(v.quantity * v.net)}*/}
+                {/*           style={{border: 'none'}} suffix={'₩'}/>*/}
+                {/*</th>*/}
             </tr>
             </thead>
 
