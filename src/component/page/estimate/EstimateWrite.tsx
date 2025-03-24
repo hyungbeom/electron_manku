@@ -261,6 +261,7 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         const pdf = await commonManage.getPdfCreate(pdfRef, pdfSubRef)
         const result = await commonManage.getPdfFile(pdf, infoData['documentNumberFull'])
 
+        console.log(filterTableList,'::::::')
         commonManage.setInfoFormData(infoData, formData, listType, filterTableList)
         const resultCount = commonManage.getUploadList(fileRef, formData);
 

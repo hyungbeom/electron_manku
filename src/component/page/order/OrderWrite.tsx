@@ -388,6 +388,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                     }
                                 </select>
                             </div>
+
                             {inputForm({
                                 title: '만쿠견적서 No.',
                                 id: 'ourPoNo',

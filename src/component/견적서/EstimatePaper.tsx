@@ -1,14 +1,10 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {commonManage, gridManage} from "@/utils/commonManage";
+import {commonManage} from "@/utils/commonManage";
 import {amountFormat} from "@/utils/columnList";
 import Input from "antd/lib/input";
 import Select from "antd/lib/select";
-import TextArea from "antd/lib/input/TextArea";
-import {useAppSelector} from "@/utils/common/function/reduxHooks";
-import {getData} from "@/manage/function/api";
 import InputNumber from "antd/lib/input-number";
-import {estimateInfo} from "@/utils/column/ProjectInfo";
-import message from "antd/lib/message";
+import {estimateInfo, projectInfo} from "@/utils/column/ProjectInfo";
 
 const getTextAreaValues = (ref) => {
     if (ref?.current) {
@@ -22,7 +18,16 @@ const getTextAreaValues = (ref) => {
     return [];
 };
 
-const EstimatePaper = ({infoRef, pdfRef, pdfSubRef, tableRef, memberList = [], count=0, position = true}: any) => {
+const EstimatePaper = ({
+                           infoRef,
+                           pdfRef,
+                           pdfSubRef,
+                           tableRef,
+                           memberList = [],
+                           count = 0,
+                           position = true,
+                           type = 'estimate'
+                       }: any) => {
 
     const [info, setInfo] = useState<any>([]);
     const [originInfo, setOriginInfo] = useState<any>({maker: ''});
@@ -30,12 +35,25 @@ const EstimatePaper = ({infoRef, pdfRef, pdfSubRef, tableRef, memberList = [], c
     const [splitData, setSplitData] = useState([])
 
     useEffect(() => {
-        let infoData = commonManage.getInfo(infoRef, estimateInfo['defaultInfo']);
+        let infoData:any = {}
+        if (type === 'estimate') {
+            infoData = commonManage.getInfo(infoRef, estimateInfo['defaultInfo']);
+
+        } else {
+
+            let  copyInfo = commonManage.getInfo(infoRef, projectInfo['defaultInfo']);
+            copyInfo['managerName'] = copyInfo['customerManagerName']
+            copyInfo['phoneNumber'] = copyInfo['customerManagerPhone']
+            infoData = copyInfo
+        }
+
+
         const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
         infoData['managerAdminName'] = findMember['name'];
         setOriginInfo(v => {
             return {...v, maker: infoData['maker']}
-        })
+        });
+        console.log(infoData, 'infoData:')
         setInfo([
             {title: '견적일자', value: infoData.writtenDate, id: 'writtenDate'},
             {title: '담당자', value: findMember?.name, id: 'name'},
@@ -55,7 +73,6 @@ const EstimatePaper = ({infoRef, pdfRef, pdfSubRef, tableRef, memberList = [], c
         const tableList = tableRef.current?.getSourceData();
 
         const filterTotalList = tableList.filter(v => !!v.model)
-        console.log(filterTotalList, 'infoData:')
         const result = commonManage.splitDataWithSequenceNumber(filterTotalList, 10, 30);
         setSplitData(result)
     }, [count])
@@ -64,9 +81,10 @@ const EstimatePaper = ({infoRef, pdfRef, pdfSubRef, tableRef, memberList = [], c
     const RowTotal = ({defaultValue, id}) => {
 
 
-        return <div style={{display: 'flex', justifyContent: 'space-between', padding : '0px 5px'}}><span style={{fontSize : 14, padding : 5}}>₩</span>
+        return <div style={{display: 'flex', justifyContent: 'space-between', padding: '0px 5px'}}><span
+            style={{fontSize: 14, padding: 5}}>₩</span>
             <Input value={amountFormat(defaultValue)}
-            style={{border: 'none', width : '100%', textAlign: 'right'}} id={id} name={id}/></div>
+                   style={{border: 'none', width: '100%', textAlign: 'right'}} id={id} name={id}/></div>
     }
 
     const NumberInputForm = ({defaultValue, id, setInfo}) => {
@@ -252,7 +270,7 @@ const EstimatePaper = ({infoRef, pdfRef, pdfSubRef, tableRef, memberList = [], c
 
             <th style={{
                 borderTop: '1px solid lightGray',
-                 fontWeight: 'lighter', fontSize: 12,
+                fontWeight: 'lighter', fontSize: 12,
                 borderLeft: '1px solid lightGray',
                 borderBottom: '1px solid lightGray'
             }}>
@@ -266,7 +284,7 @@ const EstimatePaper = ({infoRef, pdfRef, pdfSubRef, tableRef, memberList = [], c
 
     return (
         <div
-            style={!position ? {position : 'absolute', top : 0, zIndex : -100} : {}}
+            style={!position ? {position: 'absolute', top: 0, zIndex: -100} : {}}
         >
 
             <div ref={pdfRef} style={{
@@ -443,7 +461,7 @@ const EstimatePaper = ({infoRef, pdfRef, pdfSubRef, tableRef, memberList = [], c
                         // borderLeft: 'none',
                         // borderRight: 'none'
                     }}>
-                    <thead style={{   visibility : 'hidden'}}>
+                    <thead style={{visibility: 'hidden'}}>
                     <tr style={{backgroundColor: '#ebf6f7', fontWeight: 'bold', height: 35}}>
                         <th colSpan={3} style={{width: '48%'}}>Specification</th>
                         <th colSpan={2}

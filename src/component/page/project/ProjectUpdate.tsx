@@ -12,7 +12,7 @@ import {useAppSelector} from "@/utils/common/function/reduxHooks";
 
 import 'react-splitter-layout/lib/index.css';
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
-import {projectInfo} from "@/utils/column/ProjectInfo";
+import {estimateInfo, projectInfo} from "@/utils/column/ProjectInfo";
 import Table from "@/component/util/Table";
 import {findCodeInfo} from "@/utils/api/commonApi";
 import SearchInfoModal from "@/component/SearchAgencyModal";
@@ -24,6 +24,11 @@ import {CopyOutlined, DeleteOutlined, FormOutlined, RadiusSettingOutlined, Searc
 import {Actions} from "flexlayout-react";
 import _ from "lodash";
 import Popconfirm from "antd/lib/popconfirm";
+import Modal from "antd/lib/modal/Modal";
+import Button from "antd/lib/button";
+import EstimatePaper from "@/component/견적서/EstimatePaper";
+import {jsPDF} from "jspdf";
+import html2canvas from "html2canvas";
 
 
 const listType = 'projectDetailList'
@@ -66,7 +71,8 @@ function ProjectUpdate({
     const fileRef = useRef(null);
     const router = useRouter();
     const userInfo = useAppSelector((state) => state.user);
-
+    const pdfRef = useRef(null);
+    const pdfSubRef = useRef(null);
 
     const [info, setInfo] = useState<any>(projectWriteInitial)
     const [fileList, setFileList] = useState([]);
@@ -75,6 +81,7 @@ function ProjectUpdate({
     const [originFileList, setOriginFileList] = useState([]);
     const [loading, setLoading] = useState(false);
     const [tableData, setTableData] = useState([]);
+    const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('project_update');
@@ -278,11 +285,91 @@ function ProjectUpdate({
     }, typeof window !== 'undefined' ? document : null)
 
 
-    function confirm(){
-        alert('!!')
+    async function printEstimate() {
+        let infoData = commonManage.getInfo(infoRef, estimateInfo['defaultInfo']);
+        const tableList = tableRef.current?.getSourceData();
+
+        const filterTableList = commonManage.filterEmptyObjects(tableList, ['model', 'item', 'maker'])
+
+
+        if (!filterTableList.length) {
+            return message.warn('하위 데이터 1개 이상이여야 합니다')
+        }
+        if (!infoData['managerAdminId']) {
+            return message.warn('담당자를 선택해주세요')
+        }
+        setIsPrintModalOpen(true)
     }
 
+    const generatePDF = async (printMode = false) => {
+        const pdf = new jsPDF({
+            orientation: "portrait",
+            unit: "px",
+            format: "a4",
+            compress: true, // 압축 활성화
+        });
+
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const padding = 30; // 좌우 여백 설정
+        const contentWidth = pdfWidth - padding * 2; // 실제 이미지 너비
+
+        // ✅ 높이가 0이 아닌 요소만 필터링
+        const elements = Array.from(pdfSubRef.current.children).filter(
+            (el: any) => el.offsetHeight > 0 && el.innerHTML.trim() !== ""
+        );
+
+        if (pdfRef.current) {
+            const firstCanvas = await html2canvas(pdfRef.current, {scale: 1.5, useCORS: true});
+            const firstImgData = firstCanvas.toDataURL("image/jpeg", 0.7);
+            const firstImgProps = pdf.getImageProperties(firstImgData);
+            const firstImgHeight = (firstImgProps.height * pdfWidth) / firstImgProps.width;
+            pdf.addImage(firstImgData, "JPEG", 0, 20, pdfWidth, firstImgHeight);
+
+
+        }
+
+        for (let i = 0; i < elements.length; i++) {
+            const element: any = elements[i];
+            const firstCanvas = await html2canvas(element, {scale: 1.5, useCORS: true});
+            const firstImgData = firstCanvas.toDataURL("image/jpeg", 0.7);
+            const firstImgProps = pdf.getImageProperties(firstImgData);
+            const firstImgHeight = (firstImgProps.height * pdfWidth) / firstImgProps.width;
+
+            pdf.addPage();
+            pdf.addImage(firstImgData, "JPEG", 0, 0, pdfWidth, firstImgHeight);
+
+        }
+
+        if (printMode) {
+            const pdfBlob = pdf.output("bloburl");
+            window.open(pdfBlob, "_blank");
+        } else {
+            pdf.save(`${info.documentNumberFull}_견적서.pdf`);
+        }
+    };
+    function EstimateModal() {
+        return <Modal
+            title={<div style={{display: 'flex', justifyContent: 'space-between', padding: '0px 30px'}}>
+                <span>견적서 출력</span>
+                <span>
+                       <Button style={{fontSize: 11, marginRight: 10}} size={'small'}
+                               onClick={() => generatePDF(false)}>다운로드</Button>
+                       <Button style={{fontSize: 11}} size={'small'} onClick={() => generatePDF(true)}>인쇄</Button>
+                </span>
+            </div>}
+            onCancel={() => setIsPrintModalOpen(false)}
+            open={isPrintModalOpen}
+            width={1050}
+            footer={null}
+            onOk={() => setIsPrintModalOpen(false)}>
+            <EstimatePaper infoRef={infoRef} pdfRef={pdfRef} pdfSubRef={pdfSubRef} tableRef={tableRef} position={true}
+                           memberList={memberList} type={'project'}/>
+        </Modal>
+    }
+
+
     return <Spin spinning={loading}>
+        <EstimateModal/>
         <PanelSizeUtil groupRef={groupRef} storage={'project_update'}/>
         <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
                          open={isModalOpen}
@@ -295,6 +382,7 @@ function ProjectUpdate({
                 rowGap: 10,
             }}>
                 <MainCard title={'프로젝트 수정'} list={[
+                    {name: <div>견적서 출력</div>, func: printEstimate, type: ''},
                     {name: <div><FormOutlined style={{paddingRight: 8}}/>수정</div>, func: saveFunc, type: 'primary'},
                     {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: deleteFunc, type: 'delete'},
                     {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'},

@@ -259,6 +259,7 @@ export const estimateInfo = {
             "net": '',                 // 매입단가
             "unitPrice": '',           // 단가
             "marginRate": '',           // 단가
+            "estimateDetailId": ""            // 비고
         }, mapping: {
             "model": "Model",   // Model
             "quantity": '수량',                  // 수량

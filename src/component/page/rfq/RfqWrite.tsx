@@ -437,7 +437,6 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                             id: 'remarks',
                                             // onChange: onChange,
                                             // data: info,
-
                                         })}
                                     </BoxCard>
                                 </Panel>
