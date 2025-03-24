@@ -78,7 +78,6 @@ const EstimatePaper = ({
     const totalSummary = useMemo(() => {
 
 
-
         const totals = splitData.flat().reduce(
             (acc, item) => {
                 const quantity = item.quantity || 0;
@@ -163,21 +162,27 @@ const EstimatePaper = ({
                 borderTop: '1px solid lightGray', border: '1px solid lightGray',
                 borderRight: 'none'
             }}>
-                <div id={'total_quantity'} style={{textAlign: 'right', paddingRight: 5, fontSize: 13.5}}>{totalSummary?.totalQuantity}</div>
+                <div id={'total_quantity'}
+                     style={{textAlign: 'right', paddingRight: 5, fontSize: 13.5}}>{totalSummary?.totalQuantity}</div>
             </th>
             <th style={{
                 borderTop: '1px solid lightGray',
                 border: '1px solid lightGray',
                 // borderRight: 'none'
             }}>
-                <div id={'total_unit'} style={{textAlign: 'left', fontSize: 13.5, paddingLeft: 12}}>{totalSummary?.totalUnit ? (totalSummary?.totalUnit).toLocaleString() : ''}</div>
+                <div id={'total_unit'} style={{
+                    textAlign: 'left',
+                    fontSize: 13.5,
+                    paddingLeft: 12
+                }}>{totalSummary?.totalUnit ? (totalSummary?.totalUnit).toLocaleString() : ''}</div>
             </th>
             <th style={{
                 borderTop: '1px solid lightGray', border: '1px solid lightGray',
                 borderRight: 'none'
             }}>
                 <div style={{textAlign: 'center', fontSize: 13.5}}>
-                    <div id={'total_unit_price'}>{totalSummary?.totalUnitPrice ? (totalSummary?.totalUnitPrice).toLocaleString() : ''}</div>
+                    <div
+                        id={'total_unit_price'}>{totalSummary?.totalUnitPrice ? (totalSummary?.totalUnitPrice).toLocaleString() : ''}</div>
                 </div>
             </th>
             <th style={{
@@ -186,7 +191,8 @@ const EstimatePaper = ({
             }}>
                 <div style={{display: 'flex', justifyContent: 'space-between', fontSize: 13.5, padding: '0px 10px'}}>
                     <div style={{textAlign: 'left'}}>₩</div>
-                    <div style={{paddingRight: 5}} id={'total_amount'}>{(totalSummary?.totalAmount).toLocaleString()}</div>
+                    <div style={{paddingRight: 5}}
+                         id={'total_amount'}>{(totalSummary?.totalAmount).toLocaleString()}</div>
                 </div>
             </th>
         </tr>
@@ -220,7 +226,6 @@ const EstimatePaper = ({
         //     }
         //
         // }, [info, splitData, count]);
-
 
 
         return <thead>
@@ -624,7 +629,7 @@ const Model = ({v, refList, setSplitData}) => {
         </th>
     );
 };
-const DataTable = ({src, indexNumber, refList, splitData, setSplitData, total={totalAmount : ''}}) => {
+const DataTable = ({src, indexNumber, refList, splitData, setSplitData, total = {totalAmount: ''}}) => {
 
 
     return <div>
@@ -656,90 +661,84 @@ const DataTable = ({src, indexNumber, refList, splitData, setSplitData, total={t
 
         <div style={{paddingBottom: 25}}/>
         <thead>
-        <tr style={{backgroundColor: '#ebf6f7', fontWeight: 'bold'}}>
-            <th colSpan={3} style={{width: '55%', borderBottom: '1px solid lightGray'}}>Specification
+
+        <tr style={{backgroundColor: '#ebf6f7', fontWeight: 'bold', height: 35}}>
+            <th colSpan={3} style={{width: '48%'}}>Specification</th>
+            <th colSpan={2}
+                style={{
+                    width: '9%',
+                    textAlign: 'center',
+                    // borderLeft: '1px solid lightGray',
+                    paddingRight: 10
+                }}>Q`ty
             </th>
-            <th style={{
-                textAlign: 'right',
-                borderLeft: '1px solid lightGray',
-                borderBottom: '1px solid lightGray',
-                paddingRight: 10
-            }}>Qty
-            </th>
-            <th style={{
-                textAlign: 'left',
-                paddingLeft: 10,
-                borderLeft: '1px solid lightGray',
-                borderBottom: '1px solid lightGray'
-            }}>Unit
-            </th>
-            <th style={{borderLeft: '1px solid lightGray', borderBottom: '1px solid lightGray'}}>Unit
-                Price
-            </th>
-            <th style={{
-                borderLeft: '1px solid lightGray',
-                borderBottom: '1px solid lightGray'
-            }}>Amount
-            </th>
+            {/*<th style={{textAlign: 'left', paddingLeft: 10, borderLeft: '1px solid lightGray'}}>Unit</th>*/}
+            <th style={{width: '20%'}}>Unit Price</th>
+            <th style={{width: '20%'}}>Amount</th>
         </tr>
         </thead>
+
 
         {src.map((v, idx) => {
             return <thead>
             <tr>
+
+
                 <th colSpan={2} style={{
-                    width: '7%',
                     border: 'none',
-                    textAlign: 'left',
-                    paddingLeft: 10,
-                    borderBottom: '1px solid lightGray', fontSize: 12
+                    textAlign: 'center',
+                    borderRight: '1px solid lightGray',
+                    borderBottom: '1px solid lightGray', fontSize: 12,
 
                 }}>
+                    <div>{v.sequenceNumber}</div>
+                </th>
 
-                    <div
-                        style={{width: 30, borderRight: '1px solid lightGray'}}>{v.sequenceNumber}</div>
+                <th style={{borderBottom: '1px solid lightGray', textAlign: 'left', fontSize: 12}}>
+                    <Model v={v} refList={refList} setSplitData={setSplitData}/>
+
                 </th>
-                <th style={{
-                    borderBottom: '1px solid lightGray',
-                    textAlign: 'left',
-                    fontSize: 12,
-                    whiteSpace: 'normal',
-                    wordBreak: 'break-word',
-                    overflowWrap: 'break-word'
-                }}>
-                    <>
-                        <Model v={v} refList={refList} setSplitData={setSplitData}/>
-                    </>
-                </th>
+
+
                 <th style={{
                     ...headerStyle,
+                    width: 60,
                     textAlign: 'right',
                     fontWeight: 'lighter',
                     fontSize: 12,
-                    borderLeft: '1px solid lightGray'
+                    borderLeft: '1px solid lightGray',
+                    paddingRight: 6
+
                 }}>
                     <Input value={amountFormat(v.quantity)}
+                           name={'quantity'}
                            style={{
                                border: 'none',
-                               backgroundColor: '#ebf6f7',
                                textAlign: 'right',
                                padding: 0
                            }}/>
                 </th>
+
+
                 <th style={{
                     borderBottom: '1px solid lightGray',
                     fontSize: 12,
-                    borderLeft: '1px solid lightGray'
+                    borderLeft: '1px solid lightGray',
+                    textAlign: 'left',
+                    paddingRight: 0
                 }}>
                     <Select value={amountFormat(v.unit)}
-                            style={{border: 'none'}}
-                            bordered={false} suffixIcon={null}>
+                            style={{border: 'none', height: 30, paddingRight: 0}}
+                            bordered={false} suffixIcon={null}
+                    >
                         {['ea', 'Set', 'Pack', 'Can', 'Box', 'MOQ', 'Meter', 'Feet', 'Inch', 'Roll', 'g', 'kg', 'oz'].map(v => {
                             // @ts-ignored
                             return <Option style={{fontSize: 11}} value={v}>{v}</Option>
                         })}
                     </Select>
                 </th>
+
+
                 <th style={{
                     borderBottom: '1px solid lightGray',
                     textAlign: 'right',
