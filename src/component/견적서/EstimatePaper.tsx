@@ -155,7 +155,7 @@ const EstimatePaper = ({
                 width: '6%',
                 border: '1px solid lightGray',
                 // borderLeft: 'none',
-                fontSize: 12,
+                fontSize: 12
             }}>
             </th>
 
@@ -166,6 +166,7 @@ const EstimatePaper = ({
                 <div id={'total_quantity'}
                      style={{textAlign: 'right', paddingRight: 5, fontSize: 13.5}}>{totalSummary?.totalQuantity}</div>
             </th>
+
             <th style={{
                 borderTop: '1px solid lightGray',
                 border: '1px solid lightGray',
@@ -177,11 +178,12 @@ const EstimatePaper = ({
                     paddingLeft: 12
                 }}>{totalSummary?.totalUnit ? (totalSummary?.totalUnit).toLocaleString() : ''}</div>
             </th>
+
             <th style={{
                 borderTop: '1px solid lightGray', border: '1px solid lightGray',
                 borderRight: 'none'
             }}>
-                <div style={{textAlign: 'center', fontSize: 13.5}}>
+                <div style={{textAlign: 'right', fontSize: 13.5, paddingRight: 10}}>
                     <div
                         id={'total_unit_price'}>{totalSummary?.totalUnitPrice ? (totalSummary?.totalUnitPrice).toLocaleString() : ''}</div>
                 </div>
@@ -630,15 +632,15 @@ const Model = ({v, refList, setSplitData}) => {
         </th>
     );
 };
-const DataTable = ({src, indexNumber, refList, splitData, setSplitData, total }:any) => {
+const DataTable = ({src, indexNumber, refList, splitData, setSplitData, total}: any) => {
 
-    const NumberInputForm = ({defaultValue, id, setInfo}:any) => {
+    const NumberInputForm = ({defaultValue, id, setInfo}: any) => {
 
         const inputRef = useRef<any>();
         const [toggle, setToggle] = useState(false);
 
         const handleChange = (e) => {
-            if(setInfo) {
+            if (setInfo) {
                 setInfo(v => {
                     return {...v, net: e}
                 })
@@ -702,22 +704,28 @@ const DataTable = ({src, indexNumber, refList, splitData, setSplitData, total }:
         <thead>
 
         <tr style={{backgroundColor: '#ebf6f7', fontWeight: 'bold', height: 35}}>
-            <th colSpan={3} style={{width: '48%', border : '1px solid lightGray'}}>Specification</th>
+            <th colSpan={3} style={{width: '48%', border: '1px solid lightGray'}}>Specification</th>
             <th colSpan={2}
                 style={{
                     width: '9%',
                     textAlign: 'center',
                     // borderLeft: '1px solid lightGray',
                     paddingRight: 10,
-                    border : '1px solid lightGray',
-                    borderLeft : 'none'
+                    border: '1px solid lightGray',
+                    borderLeft: 'none'
                 }}>Q`ty
             </th>
             {/*<th style={{textAlign: 'left', paddingLeft: 10, borderLeft: '1px solid lightGray'}}>Unit</th>*/}
-            <th style={{width: '20%', border : '1px solid lightGray',
-                borderLeft : 'none'}}>Unit Price</th>
-            <th style={{width: '20%', border : '1px solid lightGray',
-                borderLeft : 'none'}}>Amount</th>
+            <th style={{
+                width: '20%', border: '1px solid lightGray',
+                borderLeft: 'none'
+            }}>Unit Price
+            </th>
+            <th style={{
+                width: '20%', border: '1px solid lightGray',
+                borderLeft: 'none'
+            }}>Amount
+            </th>
         </tr>
         </thead>
 
@@ -729,11 +737,11 @@ const DataTable = ({src, indexNumber, refList, splitData, setSplitData, total }:
 
                 <th colSpan={2} style={{
                     border: 'none',
-                    borderLeft : '1px solid lightGray',
+                    borderLeft: '1px solid lightGray',
                     textAlign: 'center',
                     borderRight: '1px solid lightGray',
                     borderBottom: '1px solid lightGray',
-                    width : '6%',
+                    width: '6%',
                     fontSize: 12
                 }}>
                     <div>{v.sequenceNumber}</div>
@@ -796,7 +804,7 @@ const DataTable = ({src, indexNumber, refList, splitData, setSplitData, total }:
                 <th style={{
                     width: 150,
                     borderBottom: '1px solid lightGray',
-                    borderRight : '1px solid lightGray',
+                    borderRight: '1px solid lightGray',
                     textAlign: 'right',
                     fontWeight: 'lighter',
                     fontSize: 12,

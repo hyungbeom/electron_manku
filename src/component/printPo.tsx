@@ -49,7 +49,7 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
         const tableList = tableRef.current?.getSourceData();
 
         const filterTotalList = tableList.filter(v => !!v.model)
-        const result = commonManage.splitDataWithSequenceNumber(filterTotalList, 28, 30);
+        const result = commonManage.splitDataWithSequenceNumber(filterTotalList, 18, 30);
         setSplitData(result)
     }, [data])
 
@@ -86,20 +86,7 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
     };
 
 
-    async function getInfo() {
-        return await getData.post('admin/getAdminList', {
-            "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
-            "searchAuthority": null,    // 1: 일반, 0: 관리자
-            "page": 1,
-            "limit": -1
-        }).then(v => {
-            return v
-        })
-    }
-
     useEffect(() => {
-
-
         let infoData = commonManage.getInfo(infoRef, orderInfo['defaultInfo']);
         const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
         infoData['managerAdminName'] = findMember['name'];
