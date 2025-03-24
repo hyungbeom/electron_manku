@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 import Modal from "antd/lib/modal/Modal";
 import {jsPDF} from "jspdf";
 import html2canvas from "html2canvas";
@@ -268,6 +268,30 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
         );
     };
 
+    const totalSummary = useMemo(() => {
+
+
+        const totals = splitData.flat().reduce(
+            (acc, item) => {
+                const quantity = item.quantity || 0;
+                const unitPrice = item.unitPrice || 0;
+                const amount = quantity * unitPrice;
+
+                acc.totalQuantity += quantity;
+                acc.totalUnitPrice += unitPrice;
+                acc.totalAmount += amount;
+
+                return acc;
+            },
+            {
+                totalQuantity: 0,
+                totalUnitPrice: 0,
+                totalAmount: 0,
+            }
+        );
+        return totals
+    }, [splitData, count]);
+
     const RowContent = ({v, i}) => {
         const [info, setInfo] = useState({quantity: v.quantity, unit: v.unit, unitPrice: v.unitPrice})
 
@@ -285,10 +309,10 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
             const resultNum = Number(info?.unitPrice ? info?.unitPrice : '');
 
             if (document.getElementById("total_amount")) {
-                document.getElementById("total_amount").textContent = amountFormat(totalAmount);
-                document.getElementById("total_unit_price").textContent = '(V.A.T)별도';
-                document.getElementById("total_unit").textContent = info.unit;
-                document.getElementById("total_quantity").textContent = totalQuantity.toString()
+                // document.getElementById("total_amount").textContent = amountFormat(totalAmount);
+                // document.getElementById("total_unit_price").textContent = '(V.A.T)별도';
+                // document.getElementById("total_unit").textContent = info.unit;
+                // document.getElementById("total_quantity").textContent = totalQuantity.toString()
             }
 
         }, [info]);
@@ -603,7 +627,7 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
                             <RowContent v={v} i={i}/>
                         </>
                     })}
-                    <TotalCalc splitData={splitData}/>
+                    <TotalCalc splitData={splitData} totalSummary={totalSummary}/>
                     {/*{splitData.length === 1 ? <TotalCalc/> : <></>}*/}
                 </table>
                 <div style={{flexGrow: 1}}/>
@@ -793,7 +817,7 @@ export default function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, in
         ;
 }
 
-const TotalCalc = ({splitData = [[]]}) => {
+const TotalCalc = ({splitData = [[]], totalSummary}) => {
 
 
     return <thead>
@@ -817,7 +841,7 @@ const TotalCalc = ({splitData = [[]]}) => {
             border: '1px solid lightGray',
             borderRight: 'none'
         }}>
-            <div id={'total_quantity'} style={{textAlign: 'right', paddingRight: 5, fontSize: 13.5}}></div>
+            <div id={'total_quantity'} style={{textAlign: 'right', paddingRight: 5, fontSize: 13.5}}>{totalSummary?.totalQuantity}</div>
 
         </th>
         <th style={{
@@ -834,8 +858,9 @@ const TotalCalc = ({splitData = [[]]}) => {
             borderRight: 'none'
         }}>
             <div style={{display: 'flex', justifyContent: 'space-between', fontSize: 13.5, padding: '0px 10px'}}>
-                <div style={{textAlign: 'left'}}></div>
-                <div id={'total_unit_price'}></div>
+                <div style={{textAlign: 'left'}}>{splitData[0][0]?.currency ? splitData[0][0]?.currency : 'KRW'}</div>
+                <div
+                    id={'total_unit_price'}>{totalSummary?.totalUnitPrice ? (totalSummary?.totalUnitPrice).toLocaleString() : ''}</div>
 
 
             </div>
@@ -846,7 +871,7 @@ const TotalCalc = ({splitData = [[]]}) => {
         }}>
             <div style={{display: 'flex', justifyContent: 'space-between', fontSize: 13.5, padding: '0px 10px'}}>
                 <div style={{textAlign: 'left'}}>{splitData[0][0]?.currency ? splitData[0][0]?.currency : 'KRW'}</div>
-                <div style={{paddingRight: 5}} id={'total_amount'}></div>
+                <div style={{paddingRight: 5}} id={'total_amount'}>{totalSummary?.totalAmount ? (totalSummary?.totalAmount).toLocaleString() : ''}</div>
 
 
             </div>

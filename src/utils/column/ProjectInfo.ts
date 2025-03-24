@@ -534,15 +534,15 @@ export const storeInfo = {
         },
         totalList: {
             "model": "",           // Model
-            "quantity": '=SUM(B1:B100)',              // 수량
-            "receivedQuantity": '=SUM(C1:C100)',
-            "unreceivedQuantity": '=SUM(D1:D100)',
+            "quantity": '=SUM(B1:B1000)',              // 수량
+            "receivedQuantity": '=SUM(C1:C1000)',
+            "unreceivedQuantity": '=SUM(D1:D1000)',
             "unit": '',               // 단위
             "currency": '',
-            "net": '=SUM(G1:G100)',            // 매입단가
-            "total": '=SUM(H1:H100)',            // 매입단가
-            "unitPrice": '=SUM(I1:I100)',
-            "totalNet": '=SUM(J1:J100)',            // 매입단가
+            "net": '=SUM(G1:G1000)',            // 매입단가
+            "total": '=SUM(H1:H1000)',            // 매입단가
+            "unitPrice": '=SUM(I1:I1000)',
+            "totalNet": '=SUM(J1:J1000)',            // 매입단가
             "hscode": '',
         },
 
@@ -605,15 +605,15 @@ export const DCWInfo = {
         },
         totalList: {
             "model": "",           // Model
-            "quantity": '=SUM(B1:B100)',              // 수량
-            "receivedQuantity": '=SUM(C1:C100)',
-            "unreceivedQuantity": '=SUM(D1:D100)',
+            "quantity": '=SUM(B1:B1000)',              // 수량
+            "receivedQuantity": '=SUM(C1:C1000)',
+            "unreceivedQuantity": '=SUM(D1:D1000)',
             "unit": '',               // 단위
             "currency": '',
-            "net": '=SUM(G1:G100)',            // 매입단가
-            "total": '=SUM(H1:H100)',            // 매입단가
-            "unitPrice": '=SUM(I1:I100)',
-            "totalNet": '=SUM(J1:J100)',            // 매입단가
+            "net": '=SUM(G1:G1000)',            // 매입단가
+            "total": '=SUM(H1:H1000)',            // 매입단가
+            "unitPrice": '=SUM(I1:I1000)',
+            "totalNet": '=SUM(J1:J1000)',            // 매입단가
             "hscode": '',
         },
 
