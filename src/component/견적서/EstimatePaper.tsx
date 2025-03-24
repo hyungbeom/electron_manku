@@ -1,10 +1,11 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {memo, useEffect, useMemo, useRef, useState} from 'react';
 import {commonManage} from "@/utils/commonManage";
 import {amountFormat} from "@/utils/columnList";
 import Input from "antd/lib/input";
 import Select from "antd/lib/select";
 import InputNumber from "antd/lib/input-number";
 import {estimateInfo, projectInfo} from "@/utils/column/ProjectInfo";
+import _ from "lodash";
 
 const getTextAreaValues = (ref) => {
     if (ref?.current) {
@@ -35,12 +36,12 @@ const EstimatePaper = ({
     const [splitData, setSplitData] = useState([])
 
     useEffect(() => {
-        let infoData:any = {}
+        let infoData: any = {}
         if (type === 'estimate') {
             infoData = commonManage.getInfo(infoRef, estimateInfo['defaultInfo']);
 
         } else {
-            let  copyInfo = commonManage.getInfo(infoRef, projectInfo['defaultInfo']);
+            let copyInfo = commonManage.getInfo(infoRef, projectInfo['defaultInfo']);
             copyInfo['managerName'] = copyInfo['customerManagerName']
             copyInfo['phoneNumber'] = copyInfo['customerManagerPhone']
             infoData = copyInfo
@@ -72,7 +73,6 @@ const EstimatePaper = ({
 
         const filterTotalList = tableList.filter(v => !!v.model)
         const result = commonManage.splitDataWithSequenceNumber(filterTotalList, 10, 30);
-        console.log(result,'result:')
         setSplitData(result)
     }, [count])
 
@@ -123,6 +123,31 @@ const EstimatePaper = ({
             </div>}</>
     }
 
+    const [total, setTotal] = useState({totalAmount : 12000})
+    const totalSummary = useMemo(() => {
+
+
+
+        const totals = splitData.flat().reduce(
+            (acc, item) => {
+                const quantity = item.quantity || 0;
+                const unitPrice = item.net || 0;
+                const amount = quantity * unitPrice;
+
+                acc.totalQuantity += quantity;
+                acc.totalUnitPrice += unitPrice;
+                acc.totalAmount += amount;
+
+                return acc;
+            },
+            {
+                totalQuantity: 0,
+                totalUnitPrice: 0,
+                totalAmount: 0,
+            }
+        );
+        return totals
+    }, [splitData, count]);
     const TotalCalc = () => {
 
 
@@ -140,21 +165,21 @@ const EstimatePaper = ({
                 borderTop: '1px solid lightGray', border: '1px solid lightGray',
                 borderRight: 'none'
             }}>
-                <div id={'total_quantity'} style={{textAlign: 'right', paddingRight: 5, fontSize: 13.5}}></div>
+                <div id={'total_quantity'} style={{textAlign: 'right', paddingRight: 5, fontSize: 13.5}}>{totalSummary?.totalQuantity}</div>
             </th>
             <th style={{
                 borderTop: '1px solid lightGray',
                 border: '1px solid lightGray',
                 // borderRight: 'none'
             }}>
-                <div id={'total_unit'} style={{textAlign: 'left', fontSize: 13.5, paddingLeft: 12}}></div>
+                <div id={'total_unit'} style={{textAlign: 'left', fontSize: 13.5, paddingLeft: 12}}>{totalSummary?.totalUnit ? (totalSummary?.totalUnit).toLocaleString() : ''}</div>
             </th>
             <th style={{
                 borderTop: '1px solid lightGray', border: '1px solid lightGray',
                 borderRight: 'none'
             }}>
                 <div style={{textAlign: 'center', fontSize: 13.5}}>
-                    <div id={'total_unit_price'}></div>
+                    <div id={'total_unit_price'}>{totalSummary?.totalUnitPrice ? (totalSummary?.totalUnitPrice).toLocaleString() : ''}</div>
                 </div>
             </th>
             <th style={{
@@ -163,39 +188,41 @@ const EstimatePaper = ({
             }}>
                 <div style={{display: 'flex', justifyContent: 'space-between', fontSize: 13.5, padding: '0px 10px'}}>
                     <div style={{textAlign: 'left'}}>₩</div>
-                    <div style={{paddingRight: 5}} id={'total_amount'}></div>
-
-
+                    <div style={{paddingRight: 5}} id={'total_amount'}>{(totalSummary?.totalAmount).toLocaleString()}</div>
                 </div>
             </th>
         </tr>
         </thead>
     }
 
+
     const RowContent = ({v, i}) => {
         const [info, setInfo] = useState({quantity: v.quantity, unit: v.unit, net: v.net})
 
-        useEffect(() => {
-            const totalQuantity = Array.from(document.getElementsByName("quantity"))
-                .reduce((sum, input: any) => sum + (parseFloat(input.value) || 0), 0);
+        // useEffect(() => {
+        //     const totalQuantity = Array.from(document.getElementsByName("quantity"))
+        //         .reduce((sum, input: any) => sum + (parseFloat(input.value) || 0), 0);
+        //
+        //     const totalPrice = Array.from(document.getElementsByName("net"))
+        //         .reduce((sum, input: any) => sum + (Number(input.value.replace(/,/g, "")) || 0), 0);
+        //
+        //     const totalAmount = Array.from(document.getElementsByName("amount"))
+        //         .reduce((sum, input: any) => sum + (Number(input.value.replace(/,/g, "")) || 0), 0);
+        //
+        //     const resultNum = Number(info?.net ? info?.net : '');
+        //
+        //     if (document.getElementById("total_amount")) {
+        //         // setTotal(v=>{
+        //         //     return {...v, totalAmount: amountFormat(totalAmount), totalUnitPrice : '(V.A.T)별도', totalUnit : info?.unit, totalQuantity : totalQuantity.toString()  }
+        //         // })
+        //         document.getElementById("total_amount").textContent = amountFormat(totalAmount);
+        //         document.getElementById("total_unit_price").textContent = '(V.A.T)별도';
+        //         document.getElementById("total_unit").textContent = info.unit;
+        //         document.getElementById("total_quantity").textContent = totalQuantity.toString()
+        //     }
+        //
+        // }, [info, splitData, count]);
 
-            const totalPrice = Array.from(document.getElementsByName("net"))
-                .reduce((sum, input: any) => sum + (Number(input.value.replace(/,/g, "")) || 0), 0);
-
-            const totalAmount = Array.from(document.getElementsByName("amount"))
-                .reduce((sum, input: any) => sum + (Number(input.value.replace(/,/g, "")) || 0), 0);
-
-
-            const resultNum = Number(info?.net ? info?.net : '');
-
-            if (document.getElementById("total_amount")) {
-                document.getElementById("total_amount").textContent = amountFormat(totalAmount);
-                document.getElementById("total_unit_price").textContent = '(V.A.T)별도';
-                document.getElementById("total_unit").textContent = info.unit;
-                document.getElementById("total_quantity").textContent = totalQuantity.toString()
-            }
-
-        }, [info]);
 
 
         return <thead>
@@ -803,8 +830,8 @@ const DataTable = ({src, indexNumber, refList, splitData, setSplitData}) => {
                     paddingRight: 13,
                     fontSize: 13.5
                 }}>
-                    <div style={{textAlign: 'right'}}>₩</div>
-                    <div style={{paddingRight: 10}} id={'total_amount'}></div>
+                    <div style={{textAlign: 'right'}}>₩12</div>
+                    <div style={{paddingRight: 10}} id={'total_amount'}>123</div>
                 </div>
             </th>
         </tr>
@@ -823,4 +850,6 @@ const headerStyle: any = {
     width: 100
 };
 
-export default EstimatePaper;
+export default memo(EstimatePaper, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

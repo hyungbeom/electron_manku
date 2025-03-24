@@ -81,7 +81,7 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
 
     const router = useRouter();
 
-    const [ready, setReady] = useState(false);
+    const [ready, setReady] = useState(memberList.length > 0);
 
     const copyInit = _.cloneDeep(estimateInfo['defaultInfo']);
     const copyUnitInit = _.cloneDeep(estimateDetailUnit);
@@ -128,11 +128,11 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
 
     useEffect(() => {
         commonManage.setInfo(infoRef, info, userInfo['adminId']);
-        if (memberList.length) {
-            setReady(true)
+
+        if (!ready && memberList.length) {
+            setReady(true);
         }
     }, [info, memberList]);
-
 
     async function handleKeyPress(e) {
 
@@ -254,14 +254,12 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         if(emptyQuantity.length){
             return message.error('수량을 입력해야 합니다.')
         }
-        setLoading(true)
-        await delay(300); // 0.3초 대기 후 실행
+
         const formData: any = new FormData();
 
         const pdf = await commonManage.getPdfCreate(pdfRef, pdfSubRef)
         const result = await commonManage.getPdfFile(pdf, infoData['documentNumberFull'])
 
-        console.log(filterTableList,'::::::')
         commonManage.setInfoFormData(infoData, formData, listType, filterTableList)
         const resultCount = commonManage.getUploadList(fileRef, formData);
 
@@ -270,7 +268,7 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
 
         formData.delete('createdDate')
         formData.delete('modifiedDate')
-
+        setLoading(true)
         await saveEstimate({data: formData}).then(async v => {
             const {code, message: msg, entity} = v;
             const dom = infoRef.current.querySelector('#documentNumberFull');
@@ -581,8 +579,7 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                        type={'estimate_write_column'}/>
             </div>
         </>
-        {ready &&
-            <EstimatePaper infoRef={infoRef} pdfRef={pdfRef} pdfSubRef={pdfSubRef} tableRef={tableRef} position={false}
+        {ready && <EstimatePaper infoRef={infoRef} pdfRef={pdfRef} pdfSubRef={pdfSubRef} tableRef={tableRef} position={false}
                            memberList={memberList} count={count}/>}
         {/*{ready && <EstimatePaper data={info} pdfRef={pdfRef} gridRef={gridRef}/>}*/}
     </Spin></div>
