@@ -172,7 +172,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                     writtenDate: moment().format('YYYY-MM-DD'),
                                 })
                                const copyList =  estimateDetail?.estimateDetailList.map(v=>{
-                                    return {...v, currency : v.currencyUnit}
+                                    return {...v, currency : v.currencyUnit, orderDetailId : v.estimateDetailId}
                                 })
 
                                 if (estimateDetail) {
