@@ -861,8 +861,6 @@ const TotalCalc = ({splitData = [[]], totalSummary}) => {
                 <div style={{textAlign: 'left'}}>{splitData[0][0]?.currency ? splitData[0][0]?.currency : 'KRW'}</div>
                 <div
                     id={'total_unit_price'}>{totalSummary?.totalUnitPrice ? (totalSummary?.totalUnitPrice).toLocaleString() : ''}</div>
-
-
             </div>
         </th>
         <th style={{

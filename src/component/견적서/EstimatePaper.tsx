@@ -73,7 +73,7 @@ const EstimatePaper = ({
 
         const filterTotalList = tableList.filter(v => !!v.model)
         const result = commonManage.splitDataWithSequenceNumber(filterTotalList, 10, 30);
-        console.log(result,'result:')
+
         setSplitData(result)
     }, [count])
     const totalSummary = useMemo(() => {

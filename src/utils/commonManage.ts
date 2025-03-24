@@ -70,6 +70,7 @@ commonManage.checkValue = function (value) {
  * @param adminId 로그인 user의 managerAdminId 에 해당하는 adminId
  */
 commonManage.setInfo = function (infoRef, obj, adminId?) {
+    console.log(obj,'obj:')
     const result = Object.keys(obj).map(v => `#${v}`)
     const test = `${result.join(',')}`;
 

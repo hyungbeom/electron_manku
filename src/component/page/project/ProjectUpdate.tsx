@@ -166,7 +166,7 @@ function ProjectUpdate({
             delete v.total;
             delete v.totalPurchase;
             return {
-                ...v, unitPrice : isNaN(v.unitPrice) ? '' : v.unitPrice,  purchasePrice : isNaN(v.purchasePrice) ? '' : v.purchasePrice
+                ...v, unitPrice : isNaN(v.unitPrice) ? '' : v.unitPrice,  net : isNaN(v.net) ? '' : v.net
             }
 
         })

@@ -3,7 +3,7 @@ import moment from "moment";
 export const projectInfo = {
     write: {
         columnWidth: [160, 220, 220, 200, 55, 55, 65, 45, 120, 120, 120, 120, 80, 45, 160, 130, 130, 180, 160, 120, 180],
-        column: ['연결 Inquiry No.', 'Model', 'Maker', 'Item','수식', '마진율', '단위', '수량', '매출 단가', '매출 총액', '매입 단가', '매입 총액','배송비', '화폐단위', '납기(weeks)', '매입처명', '매입처 담당자명', '매입처 연락처', '매입처 이메일', '관련링크', '납품기한', '비고'],
+        column: ['연결 Inquiry No.', 'Model', 'Maker', 'Item', '수식', '마진율', '단위', '수량', '매출 단가', '매출 총액', '매입 단가', '매입 총액', '배송비', '화폐단위', '납기(weeks)', '매입처명', '매입처 담당자명', '매입처 연락처', '매입처 이메일', '관련링크', '납품기한', '비고'],
         columnList: [
             {data: "connectInquiryNo", type: "text"},
             {data: "model", type: "text"},
@@ -17,10 +17,10 @@ export const projectInfo = {
                 source: ['ea', 'Set', 'Pack', 'Can', 'Box', 'MOQ', 'Meter', 'Feet', 'Inch', 'Roll', 'g', 'kg', 'oz']
             },
             {data: "quantity", type: "numeric",},
+            {data: "net", type: "numeric"},
+            {data: "totalPurchase", type: "numeric", readOnly: true},
             {data: "unitPrice", type: "numeric"},
             {data: "total", type: "numeric", readOnly: true},
-            {data: "purchasePrice", type: "numeric"},
-            {data: "totalPurchase", type: "numeric", readOnly: true},
             {data: "deliveryPrice", type: "numeric"},
             {data: "currencyUnit", type: "autocomplete", source: ['KRW', 'USD', 'EUR', 'JPY', 'GBP']},
             {data: "deliveryDate", type: "numeric"},
@@ -41,10 +41,10 @@ export const projectInfo = {
             "marginRate": "",
             "unit": "",
             "quantity": '',
+            "net": '',
+            "totalPurchase": "",
             "unitPrice": '',
             "total": "",
-            "purchasePrice": '',
-            "totalPurchase": "",
             "deliveryPrice": "",
             "currencyUnit": "",
             "deliveryDate": "",
@@ -65,10 +65,10 @@ export const projectInfo = {
             "marginRate": "마진율",
             "unit": "단위",
             "quantity": "수량",
-            "unitPrice": "매출 단가",
-            "total": "매출 총액",
-            "purchasePrice": "매입 단가",
-            "totalPurchase": "매입 총액",
+            "net": "매출 단가",
+            "totalPurchase": "매출 총액",
+            "unitPrice": "매입 단가",
+            "total": "매입 총액",
             "deliveryPrice": "배송비",
             "currencyUnit": "화폐단위",
             "deliveryDate": "납기(weeks)",
@@ -81,8 +81,9 @@ export const projectInfo = {
             "remarks": "비고"
         },
         excelExpert: (v, i) => {
-            v['total'] =`=H${i + 1}*I${i + 1}`
-            v['totalPurchase'] = `= (H${i + 1} * K${i + 1}) + M${i + 1}`
+            v['total'] = `= (H${i + 1} * J${i + 1}) + M${i + 1}`
+
+            v['totalPurchase'] = `=H${i + 1}*I${i + 1}`
             v['unitPrice'] = `= (L${i + 1} / H${i + 1})`
             return v
         },
@@ -95,10 +96,11 @@ export const projectInfo = {
             marginRate: '',
             unit: '',
             quantity: '=SUM(H1:H1000)',
-            unitPrice: '=SUM(I1:I1000)',
-            total: '=SUM(J1:J1000)',
-            purchasePrice: '=SUM(K1:K1000)',
-            totalPurchase: '=SUM(L1:L1000)',
+
+            net: '=SUM(I1:I1000)',
+            totalPurchase: '=SUM(J1:J1000)',
+            unitPrice: '=SUM(K1:K1000)',
+            total: '=SUM(L1:L1000)',
             deliveryPrice: '=SUM(M1:M1000)',
         },
         type: 'write'
@@ -133,7 +135,7 @@ export const rfqInfo = {
                 source: ['ea', 'Set', 'Pack', 'Can', 'Box', 'MOQ', 'Meter', 'Feet', 'Inch', 'Roll', 'g', 'kg', 'oz']
             },
             {data: "currencyUnit", type: "autocomplete", source: ['KRW', 'USD', 'EUR', 'JPY', 'GBP']},
-            {data: "unitPrice", type: "numeric", pattern : {pattern : 0.00}},
+            {data: "unitPrice", type: "numeric", pattern: {pattern: 0.00}},
             {data: "total", type: "text", readOnly: true},
             {data: "deliveryDate", type: "numeric"},
             {
@@ -156,7 +158,7 @@ export const rfqInfo = {
             "deliveryDate": '',      // 납기
             "content": "",       // 내용
             "replyDate": '',         // 회신일
-            "remarks": ""       ,     // 비고
+            "remarks": "",     // 비고
             "estimateRequestDetailId": ""            // 비고
         }, mapping: {
             "model": 'Model',             // Model
@@ -380,9 +382,9 @@ export const orderInfo = {
             "net": '',            // 매입단가
             "totalNet": '',
             "hsCode": '',
-            orderDetailId : '',
-            estimateDetailId : ''
-        },mapping: {
+            orderDetailId: '',
+            estimateDetailId: ''
+        }, mapping: {
             "model": "Model",           // Model
             "quantity": '주문',              // 수량
             "receivedQuantity": '입고',
@@ -423,10 +425,10 @@ export const orderInfo = {
         createdBy: '',
         managerAdminName: '',
         managerAdminId: null,
-        customerManagerName : '',
-        customerManagerPhoneNumber : '',
-        customerManagerEmail : '',
-        customerManagerFaxNumber : '',
+        customerManagerName: '',
+        customerManagerPhoneNumber: '',
+        customerManagerEmail: '',
+        customerManagerFaxNumber: '',
         "ourPoNo": "",    //  PO No
         "documentNumberFull": "",    // Our PO No
         "writtenDate": moment().format('YYYY-MM-DD'),
@@ -639,7 +641,6 @@ export const DCWInfo = {
 };
 
 
-
 export const OCInfo = {
     write: {
         columnWidth: [220, 50, 50, 50, 45],
@@ -699,8 +700,6 @@ export const OCInfo = {
         "companyVerification": "",
     },
 };
-
-
 
 
 export const DCInfo = {
@@ -774,8 +773,6 @@ export const DCInfo = {
 };
 
 
-
-
 export const OAInfo = {
     write: {
         columnWidth: [220, 50, 50, 50, 45, 50, 50, 50],
@@ -836,8 +833,6 @@ export const OAInfo = {
         "swiftCode": "",                      // Swift Code
     },
 };
-
-
 
 
 export const DAInfo = {
