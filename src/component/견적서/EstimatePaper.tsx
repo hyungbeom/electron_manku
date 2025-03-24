@@ -40,7 +40,6 @@ const EstimatePaper = ({
             infoData = commonManage.getInfo(infoRef, estimateInfo['defaultInfo']);
 
         } else {
-
             let  copyInfo = commonManage.getInfo(infoRef, projectInfo['defaultInfo']);
             copyInfo['managerName'] = copyInfo['customerManagerName']
             copyInfo['phoneNumber'] = copyInfo['customerManagerPhone']
@@ -53,7 +52,6 @@ const EstimatePaper = ({
         setOriginInfo(v => {
             return {...v, maker: infoData['maker']}
         });
-        console.log(infoData, 'infoData:')
         setInfo([
             {title: '견적일자', value: infoData.writtenDate, id: 'writtenDate'},
             {title: '담당자', value: findMember?.name, id: 'name'},
@@ -74,6 +72,7 @@ const EstimatePaper = ({
 
         const filterTotalList = tableList.filter(v => !!v.model)
         const result = commonManage.splitDataWithSequenceNumber(filterTotalList, 10, 30);
+        console.log(result,'result:')
         setSplitData(result)
     }, [count])
 

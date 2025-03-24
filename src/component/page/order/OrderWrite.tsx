@@ -154,7 +154,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                 documentNumberFull: dom.value.toUpperCase()
                             }).then(src => {
 
-                                const manager = estimateDetail.managerAdminId;
+                                const manager = estimateDetail?.managerAdminId;
                                 const findManager = memberList.find(v => v.adminId === manager)
                                 delete estimateDetail.createdBy
                                 delete estimateDetail.managerAdminId
@@ -172,7 +172,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                     writtenDate: moment().format('YYYY-MM-DD'),
                                 })
                                const copyList =  estimateDetail?.estimateDetailList.map(v=>{
-                                    return {...v, currency : v.currencyUnit, orderDetailId : v.estimateDetailId}
+                                    return {...v, currency : v.currencyUnit}
                                 })
 
                                 if (estimateDetail) {

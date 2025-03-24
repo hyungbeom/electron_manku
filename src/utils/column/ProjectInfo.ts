@@ -375,14 +375,13 @@ export const orderInfo = {
             "currency": '',
             "unitPrice": '',
             "total": '',            // 매입단가
-
             "receivedQuantity": '',
             "unreceivedQuantity": '',
-
             "net": '',            // 매입단가
             "totalNet": '',
             "hsCode": '',
-            orderDetailId : ''
+            orderDetailId : '',
+            estimateDetailId : ''
         },mapping: {
             "model": "Model",           // Model
             "quantity": '주문',              // 수량
