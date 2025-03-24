@@ -375,6 +375,7 @@ function EstimateUpdate({
 
 
     function EstimateModal() {
+        const dom = infoRef?.current?.querySelector('#maker');
         return <Modal
             title={<div style={{display: 'flex', justifyContent: 'space-between', padding: '0px 30px'}}>
                 <span>견적서 출력</span>
@@ -390,7 +391,7 @@ function EstimateUpdate({
             footer={null}
             onOk={() => setIsPrintModalOpen(false)}>
             <EstimatePaper infoRef={infoRef} pdfRef={pdfRef} pdfSubRef={pdfSubRef} tableRef={tableRef} position={true}
-                           memberList={memberList}/>
+                           memberList={memberList} maker={dom?.value}/>
         </Modal>
     }
 

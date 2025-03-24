@@ -382,6 +382,7 @@ export const orderInfo = {
             "net": '',            // 매입단가
             "totalNet": '',
             "hsCode": '',
+            "managerId": '',
             orderDetailId: '',
             estimateDetailId: ''
         }, mapping: {

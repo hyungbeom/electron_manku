@@ -13,6 +13,10 @@ const columns = [
         dataIndex: 'adminName',
         key: 'adminName',
     },{
+        title: '문서번호',
+        dataIndex: 'documentNumberFull',
+        key: 'documentNumberFull',
+    },{
         title: '카테고리',
         dataIndex: 'category',
         key: 'category',
@@ -32,6 +36,7 @@ export default function HistoryPage() {
     useEffect(() => {
         getHistory().then(v => {
             if (v.code === 1) {
+                
                 setList(v.entity.workHistoryList)
             }
         })

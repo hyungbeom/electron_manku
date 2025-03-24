@@ -404,3 +404,15 @@ input[type="number"]::-webkit-inner-spin-button {
     margin-top : -373px;
     margin-left : -170px;
 }
+
+table {
+    border-collapse: collapse; /* 테이블의 셀들 간의 경계선 겹침 방지 */
+    width: 100%;
+}
+
+th {
+    border: 1px solid lightgrey;
+}
+td {
+    border: 1px solid lightgrey;
+}
