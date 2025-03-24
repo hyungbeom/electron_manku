@@ -688,8 +688,8 @@ const DataTable = ({src, indexNumber, refList, splitData, setSplitData, total }:
                     border: 'none',
                     textAlign: 'center',
                     borderRight: '1px solid lightGray',
-                    borderBottom: '1px solid lightGray', fontSize: 12,
-
+                    borderBottom: '1px solid lightGray',
+                    fontSize: 12
                 }}>
                     <div>{v.sequenceNumber}</div>
                 </th>
