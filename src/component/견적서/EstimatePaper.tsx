@@ -629,7 +629,7 @@ const Model = ({v, refList, setSplitData}) => {
         </th>
     );
 };
-const DataTable = ({src, indexNumber, refList, splitData, setSplitData, total = {totalAmount: ''}}) => {
+const DataTable = ({src, indexNumber, refList, splitData, setSplitData, total }:any) => {
 
 
     return <div>
