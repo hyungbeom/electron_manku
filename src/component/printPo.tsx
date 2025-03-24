@@ -357,7 +357,28 @@ function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, infoRef, memberLi
                     </thead>
                 </table>
                 <div style={{flexGrow: 1}}/>
+                {tableData.length > 1 ? <></> :  <table style={{
+                        width: '100%',
+                        borderCollapse: 'collapse',
+                        margin: '20px 0',
+                        textAlign: 'center',
+                        border: '1px solid lightGray',
+                    }}>
+                        <thead>
 
+                        <tr style={{height: 35, fontWeight: 100}} ref={ref2}>
+                            <th colSpan={2} style={{width: '6%', fontWeight: 600}}></th>
+                            <th style={{width: '40%'}}>TOTAL</th>
+                            <th style={{width: 80, textAlign: 'right', paddingRight: 8}}
+                                className={'total_qt'}></th>
+                            <th style={{width: 50, textAlign: 'left', paddingLeft: 5}}
+                                className={'total_unit'}></th>
+                            <th style={{width: '15%'}} className={'total_netPrice'}></th>
+                            <th style={{width: '15%'}} className={'total_amount'}></th>
+                            <th style={{width: '14%'}}></th>
+                        </tr>
+                        </thead>
+                    </table>}
                 {tableData.length > 1 ? <></> : <BottomPoInfo infoRef={infoRef}/>}
 
                 <div style={{textAlign: 'center'}}>- 1 -</div>
