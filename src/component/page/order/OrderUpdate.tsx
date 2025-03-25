@@ -125,7 +125,7 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
     }
 
     async function saveFunc() {
-        let infoData = commonManage.getInfo(infoRef, estimateInfo['defaultInfo']);
+        let infoData = commonManage.getInfo(infoRef, orderInfo['defaultInfo']);
         const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
         infoData['managerAdminName'] = findMember['name'];
         infoData['orderId'] = updateKey['order_update']
@@ -516,7 +516,7 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
                             <PanelResizeHandle/>
                             <Panel defaultSize={sizes[1]} minSize={5}>
                                 <BoxCard title={'담당자 정보'}>
-                                    {inputForm({title: '작성자', id: 'managerId'})}
+                                    {inputForm({title: '작성자', id: 'managerAdminName'})}
                                     {inputForm({title: 'TEL', id: 'managerPhoneNumber'})}
                                     {inputForm({title: 'Fax', id: 'managerFaxNumber'})}
                                     {inputForm({title: 'E-Mail', id: 'managerEmail'})}

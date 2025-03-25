@@ -383,8 +383,13 @@ export const orderInfo = {
             "totalNet": '',
             "hsCode": '',
             "managerId": '',
+            managerAdminName: '',
             orderDetailId: '',
-            estimateDetailId: ''
+            estimateDetailId: '',
+            customerManagerName : '',
+            customerManagerEmail : '',
+            customerManagerFaxNumber : ''
+
         }, mapping: {
             "model": "Model",           // Model
             "quantity": '주문',              // 수량
