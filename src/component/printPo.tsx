@@ -85,7 +85,7 @@ function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, infoRef, memberLi
             const pdfBlob = pdf.output("bloburl");
             window.open(pdfBlob, "_blank");
         } else {
-            pdf.save(`${data.documentNumberFull}_견적서.pdf`);
+            pdf.save(`${data.documentNumberFull}_발주서.pdf`);
         }
     };
 
