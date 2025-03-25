@@ -228,6 +228,7 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
 
     async function saveFunc() {
         setCount(v => v + 1)
+        await delay(800); // 0.3초 대기 후 실행
         let infoData = commonManage.getInfo(infoRef, infoInit);
         const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
         infoData['managerAdminName'] = findMember['name'];
@@ -273,7 +274,6 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         formData.delete('createdDate')
         formData.delete('modifiedDate')
         setLoading(true)
-        await delay(300); // 0.3초 대기 후 실행
         await saveEstimate({data: formData}).then(async v => {
             const {code, message: msg, entity} = v;
             const dom = infoRef.current.querySelector('#documentNumberFull');
