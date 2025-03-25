@@ -104,6 +104,7 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     const [mini, setMini] = useState(true);
 
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
+    const [maker, setMaker] = useState('');
 
     const [fileList, setFileList] = useState([]);
 
@@ -227,12 +228,13 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
 
     async function saveFunc() {
         setCount(v => v + 1)
-        await delay(800); // 0.3초 대기 후 실행
         let infoData = commonManage.getInfo(infoRef, infoInit);
         const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
         infoData['managerAdminName'] = findMember['name'];
 
+        const maker = infoRef.current.querySelector('#maker');
 
+        setMaker(maker.value)
         if (!infoData['managerAdminId']) {
             return message.warn('담당자가 누락되었습니다.')
         }
@@ -271,7 +273,7 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         formData.delete('createdDate')
         formData.delete('modifiedDate')
         setLoading(true)
-
+        await delay(300); // 0.3초 대기 후 실행
         await saveEstimate({data: formData}).then(async v => {
             const {code, message: msg, entity} = v;
             const dom = infoRef.current.querySelector('#documentNumberFull');
@@ -324,8 +326,6 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
             }
         }
     }, typeof window !== 'undefined' ? document : null)
-
-    console.log(count,'::out')
 
     return <div style={{overflow: 'hidden'}}><Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'estimate_write'}/>
@@ -585,8 +585,8 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
             </div>
         </>
 
-        {ready &&  <EstimatePaper infoRef={infoRef} pdfRef={pdfRef} pdfSubRef={pdfSubRef} tableRef={tableRef}
-                                  memberList={memberList} count={count}/>}
+        {ready &&  <EstimatePaper infoRef={infoRef} pdfRef={pdfRef} pdfSubRef={pdfSubRef} tableRef={tableRef} position={false}
+                                  memberList={memberList} count={count} maker={maker}/>}
     </Spin></div>
 }
 
