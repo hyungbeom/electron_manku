@@ -194,6 +194,8 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
 
                                     if (estimateRequestDetail) {
                                         setTableData([...estimateRequestDetail['estimateRequestDetailList'], ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000 - estimateRequestDetail['estimateRequestDetailList'].length)])
+                                    }else{
+                                        message.error('조회정보가 없습니다.')
                                     }
                                 setLoading(false)
                                 }, err => setLoading(false)

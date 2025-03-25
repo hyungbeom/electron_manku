@@ -145,6 +145,12 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                     }).then(async v => {
                         if (v.data.code === 1) {
                             const {estimateDetail} = v.data?.entity
+                            if(!estimateDetail){
+                                message.error('조회정보가 없습니다.');
+                                setLoading(false)
+                                return false;
+
+                            }
                             setFileList([])
                             setOriginFileList([])
                             const dom = infoRef.current.querySelector('#ourPoNo');
@@ -156,8 +162,8 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
 
                                 const manager = estimateDetail?.managerAdminId;
                                 const findManager = memberList.find(v => v.adminId === manager)
-                                delete estimateDetail.createdBy
-                                delete estimateDetail.managerAdminId
+                                delete estimateDetail?.createdBy
+                                delete estimateDetail?.managerAdminId
                                 commonManage.setInfo(infoRef, {
                                     ...estimateDetail,
                                     estimateManager: findManager?.name,
