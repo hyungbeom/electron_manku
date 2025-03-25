@@ -76,9 +76,9 @@ const EstimatePaper = ({
         const inputs = document.getElementsByName('qt');
         let sum2 = 0;
         inputs.forEach((input:any) => {
+            console.log(parseFloat(input.value),'???')
             sum2 += parseFloat(input.value) || 0;  // 숫자가 아닌 값이 있을 경우 0으로 처리
         });
-
         if(ref2.current){
             ref2.current.childNodes.forEach(v=>{
                 if(v.className === 'total_qt'){
@@ -147,8 +147,10 @@ const EstimatePaper = ({
                 return {...v, quantity : e.target.value}
             })
         }
+        console.log(info.quantity,'info.quantity:')
         return <>
             <td style={{width: 100, textAlign: 'right'}}>
+
 
                 <Input style={{border: 'none', textAlign: 'right'}} type={'number'} value={info.quantity} onChange={onQuantity} onBlur={blur} name={'qt'}/>
 
@@ -258,6 +260,7 @@ const EstimatePaper = ({
                     </tr>
 
                     {tableData[0]?.map((v, i) =>
+
                         <tr style={{height: 35}}>
                             <td colSpan={2} style={{fontWeight: 600}}>{i + 1}</td>
                             <td style={{
