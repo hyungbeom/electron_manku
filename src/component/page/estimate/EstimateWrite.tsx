@@ -191,7 +191,6 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                         shippingTerms: '귀사도착도',
                                         writtenDate: moment().format('YYYY-MM-DD'),
                                     })
-
                                     if (estimateRequestDetail) {
                                         setTableData([...estimateRequestDetail['estimateRequestDetailList'], ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000 - estimateRequestDetail['estimateRequestDetailList'].length)])
                                     }else{
@@ -228,6 +227,7 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
 
     async function saveFunc() {
         setCount(v => v + 1)
+        await delay(800); // 0.3초 대기 후 실행
         let infoData = commonManage.getInfo(infoRef, infoInit);
         const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
         infoData['managerAdminName'] = findMember['name'];
@@ -271,6 +271,7 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         formData.delete('createdDate')
         formData.delete('modifiedDate')
         setLoading(true)
+
         await saveEstimate({data: formData}).then(async v => {
             const {code, message: msg, entity} = v;
             const dom = infoRef.current.querySelector('#documentNumberFull');
@@ -324,6 +325,8 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         }
     }, typeof window !== 'undefined' ? document : null)
 
+    console.log(count,'::out')
+
     return <div style={{overflow: 'hidden'}}><Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'estimate_write'}/>
         <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
@@ -334,7 +337,7 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
             <div ref={infoRef} style={{
                 display: 'grid',
                 gridTemplateRows: `${mini ? '500px' : '65px'} calc(100vh - ${mini ? 595 : 195}px)`,
-                overflowY: 'hidden',
+                // overflowY: 'hidden',
                 rowGap: 10,
             }}>
                 <MainCard title={'견적서 작성'} list={[
@@ -581,9 +584,9 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                        type={'estimate_write_column'}/>
             </div>
         </>
-        {ready && <EstimatePaper infoRef={infoRef} pdfRef={pdfRef} pdfSubRef={pdfSubRef} tableRef={tableRef} position={false}
-                           memberList={memberList} count={count}/>}
-        {/*{ready && <EstimatePaper data={info} pdfRef={pdfRef} gridRef={gridRef}/>}*/}
+
+        {ready &&  <EstimatePaper infoRef={infoRef} pdfRef={pdfRef} pdfSubRef={pdfSubRef} tableRef={tableRef}
+                                  memberList={memberList} count={count}/>}
     </Spin></div>
 }
 

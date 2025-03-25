@@ -8,6 +8,7 @@ export default function TopInfo({count, infoRef, type, memberList}) {
 
 
     const [info, maker] = useMemo(() => {
+        console.log(count,'::in')
         let infoData: any = {}
         if (type === 'estimate') {
             infoData = commonManage.getInfo(infoRef, estimateInfo['defaultInfo']);
@@ -18,6 +19,7 @@ export default function TopInfo({count, infoRef, type, memberList}) {
             copyInfo['phoneNumber'] = copyInfo['customerManagerPhone']
             infoData = copyInfo
         }
+        console.log(infoData,'infoData:')
 
 
         const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
@@ -68,7 +70,7 @@ export default function TopInfo({count, infoRef, type, memberList}) {
                             <div style={{paddingLeft: 15}}>{v.value}</div>
 
                             :
-                            <Input defaultValue={v.value} id={v.id}
+                            <Input value={v.value} id={v.id}
                                    suffix={<>{v.id === 'delivery' ? '주' : ''}</>}
                                    style={{
                                        border: 'none',
