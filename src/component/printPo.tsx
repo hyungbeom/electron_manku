@@ -373,8 +373,8 @@ function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, infoRef, memberLi
                                 className={'total_qt'}></th>
                             <th style={{width: 50, textAlign: 'left', paddingLeft: 5}}
                                 className={'total_unit'}></th>
-                            <th style={{width: '15%'}} className={'total_netPrice'}></th>
-                            <th style={{width: '15%'}} className={'total_amount'}></th>
+                            <th style={{width: '15%', textAlign : 'right', paddingRight : 10}} className={'total_netPrice'}></th>
+                            <th style={{width: '15%', textAlign : 'right', paddingRight : 10}} className={'total_amount'}></th>
                             <th style={{width: '14%'}}></th>
                         </tr>
                         </thead>
@@ -457,8 +457,8 @@ function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, infoRef, memberLi
                                         className={'total_qt'}></th>
                                     <th style={{width: 40, textAlign: 'left', paddingLeft: 5}}
                                         className={'total_unit'}></th>
-                                    <th style={{width: '15%'}} className={'total_netPrice'}></th>
-                                    <th style={{width: '15%'}} className={'total_amount'}></th>
+                                    <th style={{width: '15%', textAlign : 'right', paddingRight : 10}} className={'total_netPrice'}></th>
+                                    <th style={{width: '15%', textAlign : 'right', paddingRight : 10}} className={'total_amount'}></th>
                                     <th style={{width: '14%'}}></th>
                                 </tr>
                                 </thead>

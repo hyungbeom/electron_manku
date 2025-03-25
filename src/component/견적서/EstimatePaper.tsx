@@ -291,8 +291,8 @@ const EstimatePaper = ({
                             <th style={{width: '43%'}}>TOTAL</th>
                             <th style={{width: 50, textAlign: 'right', paddingRight: 8}} className={'total_qt'}></th>
                             <th style={{width: 40, textAlign: 'left', paddingLeft: 5}} className={'total_unit'}></th>
-                            <th style={{width: '20%'}} className={'total_netPrice'}></th>
-                            <th style={{width: '20%'}} className={'total_amount'}></th>
+                            <th style={{width: '20%', textAlign : 'right', paddingRight : 10}} className={'total_netPrice'}></th>
+                            <th style={{width: '20%', textAlign : 'right', paddingRight : 10}} className={'total_amount'}></th>
                         </tr>
                         </thead>
                     </table>
@@ -371,8 +371,8 @@ const EstimatePaper = ({
                                     <th style={{width: '43%'}}>TOTAL</th>
                                     <th style={{width: 50, textAlign: 'right', paddingRight: 8}} className={'total_qt'}></th>
                                     <th style={{width: 40, textAlign: 'left', paddingLeft: 5}} className={'total_unit'}></th>
-                                    <th style={{width: '20%'}} className={'total_netPrice'}></th>
-                                    <th style={{width: '20%'}} className={'total_amount'}></th>
+                                    <th style={{width: '20%', textAlign : 'right', paddingRight : 10}} className={'total_netPrice'}></th>
+                                    <th style={{width: '20%', textAlign : 'right', paddingRight : 10}} className={'total_amount'}></th>
                                 </tr>
                                 </thead>
                             </table>
