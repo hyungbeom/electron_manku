@@ -174,8 +174,13 @@ export const rfqInfo = {
             "remarks": "비고"            // 비고
         },
         excelExpert: (v, i) => {
-            v['total'] = `=B${i + 1}*E${i + 1}`
-            return v
+            let bowl = {}
+            Object.keys(v).forEach(src=>{
+                bowl[src] = (!v[src] || v[src] === 'null') ? '' : v[src]
+            });
+
+            bowl['total'] = `=B${i + 1}*E${i + 1}`
+            return bowl
         },
         totalList: {
             "model": '',             // Model

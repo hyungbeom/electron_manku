@@ -23,6 +23,7 @@ import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import PrintTransactionModal from "@/component/printTransaction";
 import _ from "lodash";
 import {Actions} from "flexlayout-react";
+import TransactionStatementHeader from "@/component/TransactionStatement/TransactionStatementHeader";
 
 const listType = 'orderDetailList'
 
@@ -325,6 +326,7 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
     }, typeof window !== 'undefined' ? document : null)
 
     async function printTransactionStatement() {
+        setCount(v => v + 1)
         setIsModalOpen(v => {
             return {...v, event1: true}
         })
@@ -357,9 +359,8 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
                 message.error(v?.data?.message)
                 setLoading(false)
             }
-        },err=>                setLoading(false))
+        }, err => setLoading(false))
     }
-
 
     return <Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'order_update'}/>
@@ -374,10 +375,11 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
                 <PrintPo data={info} infoRef={infoRef} tableRef={tableRef} isModalOpen={isModalOpen}
                          setIsModalOpen={setIsModalOpen} memberList={memberList} count={count}/>}
             {isModalOpen['event1'] &&
-                <PrintTransactionModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}
-                                       customerData={customerData}
-                                       data={commonManage.filterEmptyObjects(tableData, ['model', 'item', 'maker'])}
-                                       infoRef={infoRef}/>}
+                <TransactionStatementHeader isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}
+                                            customerData={customerData}
+                                            data={commonManage.filterEmptyObjects(tableData, ['model', 'item', 'maker'])}
+                                            infoRef={infoRef}/>
+            }
 
             <div ref={infoRef} style={{
                 display: 'grid',
@@ -444,12 +446,7 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
                                     }
                                 </select>
                             </div>
-                            {inputForm({
-                                title: '만쿠발주서 No',
-                                id: 'documentNumberFull',
-                                disabled: true
-                            })}
-
+                            {inputForm({title: '만쿠발주서 No', id: 'documentNumberFull', disabled: true})}
                             {inputForm({title: '고객사발주서 No', id: 'yourPoNo'})}
                         </TopBoxCard>
 
@@ -583,6 +580,7 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
         </>
     </Spin>
 }
+
 
 export default memo(OrderUpdate, (prevProps, nextProps) => {
     return _.isEqual(prevProps, nextProps);

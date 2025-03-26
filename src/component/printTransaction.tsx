@@ -24,7 +24,7 @@ const headerStyle = {
     whiteSpace: 'nowrap'
 };
 
-export default function PrintTransactionModal({data, customerData, isModalOpen, setIsModalOpen, infoRef}) {
+export default function PrintTransactionModal({data, isModalOpen, setIsModalOpen, infoRef}) {
 
 
 
@@ -41,11 +41,6 @@ export default function PrintTransactionModal({data, customerData, isModalOpen, 
         customerTel: '',
     });
 
-
-
-    useEffect(() => {
-
-    }, [data]);
 
 
     const InputUnit = ({id, size = 'middle'}) => {
@@ -74,7 +69,6 @@ export default function PrintTransactionModal({data, customerData, isModalOpen, 
     async function loadData(){
         let infoData = commonManage.getInfo(infoRef, orderInfo['defaultInfo']);
 
-        console.log(infoData, 'infoData[\'customerName\']:')
         await searchDomesticCustomer({
             data: {
                 "searchType": 2,      // 1: 코드, 2: 상호명, 3: Maker
@@ -104,11 +98,13 @@ export default function PrintTransactionModal({data, customerData, isModalOpen, 
 
     return (
         <Modal
-            onCancel={() => setIsModalOpen({event1: false, event2: false})}
+
             open={isModalOpen?.event1}
             width={1000}
+            onCancel={() => setIsModalOpen({event1: false, event2: false})}
             footer={null}
-            onOk={() => setIsModalOpen({event1: false, event2: false})}>
+            onOk={() => setIsModalOpen({event1: false, event2: false})}
+        >
 
             <div style={{textAlign: 'center', fontSize: 30, fontWeight: 'bold'}}>거래명세표</div>
             <div style={{

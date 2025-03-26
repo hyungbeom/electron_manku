@@ -118,7 +118,10 @@ export default function Main({alarm}) {
     }
 
 
-
+    /**
+     * @description 탭을 추가 및 활성화 시키는 로직입니다
+     * @param selectedKeys 활성화에 필요한 tab key 입니다 (ex : 'rfq_write')
+     */
     const onSelect = useCallback((selectedKeys) => {
         const selectedKey = selectedKeys[0];
 
@@ -157,11 +160,8 @@ export default function Main({alarm}) {
                 enableRename: false,
             };
             const rootNode = modelRef.current.getRoot();
-            const tabset = rootNode.getChildren()[0]; // 첫 번째 tabset 가져오기
-            // 🔥 올바른 DockLocation 객체 사용
+            const tabset = rootNode.getChildren()[0];
             modelRef.current.doAction(Actions.addNode(newTab, tabset.getId(), DockLocation.CENTER, -1, true));
-
-            // addTab(selectedKey);
         }
     }, []);
 
@@ -171,8 +171,6 @@ export default function Main({alarm}) {
             [key]: id
         }));
         onSelect([key]);
-
-
     }, [onSelect]); // ✅ updateKey를 직접 참조하지 않음
 
     const getCopyPage = useCallback((page, v) => {
