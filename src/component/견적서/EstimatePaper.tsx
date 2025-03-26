@@ -76,7 +76,6 @@ const EstimatePaper = ({
         const inputs = document.getElementsByName('qt');
         let sum2 = 0;
         inputs.forEach((input:any) => {
-            console.log(parseFloat(input.value),'???')
             sum2 += parseFloat(input.value) || 0;  // 숫자가 아닌 값이 있을 경우 0으로 처리
         });
         if(ref2.current){
@@ -147,7 +146,6 @@ const EstimatePaper = ({
                 return {...v, quantity : e.target.value}
             })
         }
-        console.log(info.quantity,'info.quantity:')
         return <>
             <td style={{width: 100, textAlign: 'right'}}>
 

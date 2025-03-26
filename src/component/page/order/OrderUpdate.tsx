@@ -67,6 +67,8 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
     }));
     const fileRef = useRef(null);
     const gridRef = useRef(null);
+    const pdfRef = useRef(null);
+    const pdfSubRef = useRef(null);
     const router = useRouter();
 
 
@@ -374,12 +376,14 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
             {isModalOpen['event3'] &&
                 <PrintPo data={info} infoRef={infoRef} tableRef={tableRef} isModalOpen={isModalOpen}
                          setIsModalOpen={setIsModalOpen} memberList={memberList} count={count}/>}
-            {isModalOpen['event1'] &&
-                <TransactionStatementHeader isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}
+
+            {isModalOpen['event1'] &&   <TransactionStatementHeader isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}
                                             customerData={customerData}
-                                            data={commonManage.filterEmptyObjects(tableData, ['model', 'item', 'maker'])}
-                                            infoRef={infoRef}/>
-            }
+                                            pdfRef={pdfRef}
+                                            tableRef={tableRef}
+                                            pdfSubRef={pdfSubRef}
+                                            infoRef={infoRef}/>}
+
 
             <div ref={infoRef} style={{
                 display: 'grid',

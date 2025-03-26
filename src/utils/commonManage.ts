@@ -27,7 +27,57 @@ export const fileManage: any = {}
 // =========================================================================================
 
 
+commonManage.pdfDown = async function (pdfRef=null,pdfSubRef =null,  printMode = false, title) {
+    const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "px",
+        format: "a4",
+        compress: true, // 압축 활성화
+    });
 
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const padding = 30; // 좌우 여백 설정
+    const contentWidth = pdfWidth - padding * 2; // 실제 이미지 너비
+
+    let elements = null
+    if(!pdfRef){
+        return false;
+    }
+
+    if(pdfSubRef) {
+        elements = Array.from(pdfSubRef.current.children).filter(
+            (el: any) => el.offsetHeight > 0 && el.innerHTML.trim() !== ""
+        );
+    }
+
+    if (pdfRef) {
+        const firstCanvas = await html2canvas(pdfRef.current, {scale: 1.5, useCORS: true});
+        const firstImgData = firstCanvas.toDataURL("image/jpeg", 0.7);
+        const firstImgProps = pdf.getImageProperties(firstImgData);
+        const firstImgHeight = (firstImgProps.height * pdfWidth) / firstImgProps.width;
+        pdf.addImage(firstImgData, "JPEG", 0, 20, pdfWidth, firstImgHeight);
+    }
+
+    if(pdfSubRef) {
+        for (let i = 0; i < elements.length; i++) {
+            const element: any = elements[i];
+            const firstCanvas = await html2canvas(element, {scale: 1.5, useCORS: true});
+            const firstImgData = firstCanvas.toDataURL("image/jpeg", 0.7);
+            const firstImgProps = pdf.getImageProperties(firstImgData);
+            const firstImgHeight = (firstImgProps.height * pdfWidth) / firstImgProps.width;
+
+            pdf.addPage();
+            pdf.addImage(firstImgData, "JPEG", 0, 0, pdfWidth, firstImgHeight);
+        }
+    }
+    if (printMode) {
+        const pdfBlob = pdf.output("bloburl");
+        window.open(pdfBlob, "_blank");
+    } else {
+        pdf.save(`${title}.pdf`);
+    }
+
+}
 
 commonManage.getMemberList = async function () {
     // @ts-ignore

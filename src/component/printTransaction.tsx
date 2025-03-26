@@ -98,10 +98,9 @@ export default function PrintTransactionModal({data, isModalOpen, setIsModalOpen
 
     return (
         <Modal
-
+            onCancel={() => setIsModalOpen({event1: false, event2: false})}
             open={isModalOpen?.event1}
             width={1000}
-            onCancel={() => setIsModalOpen({event1: false, event2: false})}
             footer={null}
             onOk={() => setIsModalOpen({event1: false, event2: false})}
         >

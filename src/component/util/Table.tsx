@@ -31,6 +31,8 @@ const Table = forwardRef(({
 
     const hotRef = useRef(null)
     const [isModalOpen, setIsModalOpen] = useState({estimate: false, agency: false});
+
+
     useImperativeHandle(ref, () => ({
         hotInstance: hotRef.current?.hotInstance, // Handsontable 인스턴스 접근
         getData: () => hotRef.current?.hotInstance?.getData(), // 현재 테이블 데이터 가져오기
