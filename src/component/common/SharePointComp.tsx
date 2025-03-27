@@ -24,7 +24,6 @@ export function DriveUploadComp({
     useEffect(() => {
         const handleDragEnter = (event) => {
             event.preventDefault();
-            console.log(event,'::::')
             setDragCounter((prev) => prev + 1);
             setIsDragging(true);
         };
@@ -127,12 +126,13 @@ export function DriveUploadComp({
     };
 
     function fileChange({file, fileList}) {
+
         // 중복 파일 확인
 
-        // 중복 파일 처리
         const updatedFileList = fileList.map(f => {
-            if (f.uid === file.uid) {
 
+            //내가 올린 파일
+            if (f.uid === file.uid) {
                 // 현재 numb 그룹 내의 파일 이름에서 번호 추출
                 const existingNumbers = fileList
                     .filter(file => file.name.startsWith(`0${uploadTypeRef.current.value}.`)) // 현재 numb 그룹만 필터링
@@ -168,7 +168,7 @@ export function DriveUploadComp({
                 // 이름 수정된 파일 반환 (originFileObj 유지)
                 return {
                     ...f,
-                    name: `0${numberType}.${newNumber} ${dom.value ? dom.value : originalName}_${dom2.options[numberType].text}.${extension}`,
+                    name: `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}_${dom2.options[numberType].text}.${extension}`,
                     originFileObj: f.originFileObj, // 기존 originFileObj 유지
                 };
             }

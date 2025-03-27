@@ -542,8 +542,9 @@ commonManage.onChange = function (e, setInfo) {
         }
         if (e.target.id === 'supplyAmount') {
             addDate['surtax'] = Math.round(e.target.value * 0.1)
-            addDate['total'] = e.target.value + Math.round(e.target.value * 0.1)
+            addDate['total'] = parseFloat(e.target.value) + Math.round(e.target.value * 0.1)
         }
+        console.log(bowl,'bowl:')
         return {...v, ...bowl, ...addDate}
     })
 }

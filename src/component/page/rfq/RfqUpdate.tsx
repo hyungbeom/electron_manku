@@ -21,6 +21,7 @@ import useEventListener from "@/utils/common/function/UseEventListener";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import _ from "lodash";
 import {Actions} from "flexlayout-react";
+import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 
 const listType = 'estimateRequestDetailList'
 
@@ -103,6 +104,8 @@ function RqfUpdate({
     useEffect(() => {
         commonManage.setInfo(infoRef, info);
     }, [info]);
+
+
 
 
     async function getDataInfo() {

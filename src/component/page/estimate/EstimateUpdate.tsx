@@ -116,6 +116,7 @@ function EstimateUpdate({
         setLoading(true)
         getDataInfo().then(v => {
             const {estimateDetail, attachmentFileList} = v;
+
             setFileList(fileManage.getFormatFiles(attachmentFileList));
             setOriginFileList(attachmentFileList)
             console.log(estimateDetail, 'estimateDetail:')
@@ -207,6 +208,10 @@ function EstimateUpdate({
         formData.delete('createdDate')
         formData.delete('modifiedDate')
 
+
+        // formData.forEach((value, key) => {
+        //     console.log(`${key}:`, value);
+        // });
         await updateEstimate({data: formData, returnFunc: returnFunc});
 
     }
@@ -221,6 +226,7 @@ function EstimateUpdate({
                 }
             }).then(v => {
                 const list = fileManage.getFormatFiles(v);
+                console.log(v,':::::')
                 setFileList(list)
                 setOriginFileList(list);
 
