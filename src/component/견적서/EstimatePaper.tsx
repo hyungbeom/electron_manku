@@ -212,7 +212,6 @@ const EstimatePaper = ({
         <div style={!position ? {position: 'absolute', top: 0, zIndex: -100} : {}}>
 
             <div ref={pdfRef} style={{
-                border: '1px solid lightGray',
                 width: '1000px',  // A4 가로
                 height: '1354px',  // A4 세로
                 // aspectRatio: '1 / 1.414',
@@ -315,7 +314,6 @@ const EstimatePaper = ({
                     }
 
                     return <div style={{
-                        border: '1px solid lightGray',
                         width: '1000px',  // A4 가로
                         height: '1354px',  // A4 세로
                         // aspectRatio: '1 / 1.414',

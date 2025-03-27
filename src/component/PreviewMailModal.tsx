@@ -1,5 +1,5 @@
 import Modal from "antd/lib/modal/Modal";
-import React, {useEffect, useState} from "react";
+import React, {memo, useEffect, useState} from "react";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import Checkbox from "antd/lib/checkbox/Checkbox";
 import Card from "antd/lib/card/Card";
@@ -7,9 +7,10 @@ import {getData} from "@/manage/function/api";
 import _ from "lodash";
 import {inputForm, textAreaForm} from "@/utils/commonForm";
 import message from "antd/lib/message";
-import {MinusCircleOutlined, PlusSquareOutlined, SendOutlined} from "@ant-design/icons";
+import {SendOutlined} from "@ant-design/icons";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import moment from "moment/moment";
+import {SubSend} from "@/component/SubSend";
 
 function formatDocumentNumbers(documentNumbersArray) {
     let output = '';
@@ -92,7 +93,7 @@ function generateFormattedOutputWithDocumentNumbers(data) {
 }
 
 
-export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fileList}) {
+function PreviewMailModal({data, isModalOpen, setIsModalOpen, fileList}) {
     const userInfo = useAppSelector((state) => state.user);
     const notificationAlert = useNotificationAlert();
     const [info, setInfo] = useState<any>();
@@ -137,7 +138,7 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
 
     }
 
-    async function sendEmail(){
+    async function sendEmail() {
         const result = info.map((v, idx) => {
 
             let detailList = []
@@ -267,59 +268,8 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
     }
 
 
-    const SubSend = ({idx}) => {
-
-        const [count, setCount] = useState([])
-
-        return <div id={`cc_${idx}`}>
-            <div style={{display: 'grid', gridTemplateColumns: '100px 1fr', gap: 5}}>
-                  <span style={{
-                      border: '1px solid lightGray',
-                      height: 23,
-                      fontSize: 12,
-                      padding: 2,
-                      marginTop: 6,
-                      textAlign: 'center'
-                  }}>참조(C)</span>
-                <div>
-                    {count.map((src, numb) => {
-                        return <div style={{width: '100%', display: 'flex'}}>
-                            <input type="text" style={{marginTop: 6, height: 23}} onChange={e => {
-
-                                e.target.style.border = ''
-                            }}/>
-                            <MinusCircleOutlined style={{
-                                color: 'red',
-                                fontSize: 15,
-                                fontWeight: 700,
-                                paddingLeft: 5,
-                                cursor: 'pointer',
-                                opacity: 0.7
-                            }} onClick={() => {
-                                setCount(v => {
-                                    let copyArr = [...v]
-                                    copyArr.splice(numb, 1)
-                                    return copyArr
-                                })
-                            }}/>
-                        </div>
-                    })}
-                </div>
-            </div>
-
-            <div style={{paddingTop: 5}}>
-            <span style={{color: 'blue', cursor: 'pointer'}} onClick={() => {
-                setCount(v => {
-                    return [...v, '']
-                })
-            }}>추가<PlusSquareOutlined/></span>
-            </div>
-        </div>
-    }
-
-
     return <>
-        <Modal okText={<><SendOutlined />  메일 전송</>} width={1000} cancelText={'취소'} onOk={sendMail}
+        <Modal okText={<><SendOutlined/> 메일 전송</>} width={1000} cancelText={'취소'} onOk={sendMail}
                title={<div style={{height: 25, textAlign: 'center'}}>견적의뢰 메일 발송</div>} open={isModalOpen}
                onCancel={() => {
                    setIsModalOpen(false)
@@ -369,7 +319,6 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
                                 })}
                             </div>
                             <SubSend idx={idx}/>
-
                             <div style={{paddingTop: 15}}>
                                 <div style={{display: 'grid', gridTemplateColumns: '100px 1fr', gap: 5}}>
                             <span style={{
@@ -432,3 +381,9 @@ export default function PreviewMailModal({data, isModalOpen, setIsModalOpen, fil
         </Modal>
     </>
 }
+
+export default memo(PreviewMailModal, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});
+
+
