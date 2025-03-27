@@ -224,7 +224,6 @@ export function DriveUploadComp({
 
     return (
         <div style={{
-
             overflowY: "auto",   // 세로 스크롤 추가
         }}>
 
