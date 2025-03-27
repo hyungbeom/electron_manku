@@ -152,7 +152,9 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
         setLoading(true)
         const formData: any = new FormData();
         commonManage.setInfoFormData(infoData, formData, listType, filterTableList)
+
         commonManage.getUploadList(fileRef, formData);
+
         commonManage.deleteUploadList(fileRef, formData, originFileList)
         formData.delete('createdDate')
         formData.delete('modifiedDate')

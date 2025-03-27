@@ -193,7 +193,6 @@ export function DriveUploadComp({
         setDragCounter(0);
 
 
-        console.log(event,'event:')
         // 파일 읽기
         const droppedFiles = Array.from(event.dataTransfer.files);
         if (droppedFiles.length > 1) {
