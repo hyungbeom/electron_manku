@@ -10,6 +10,22 @@ import {amountFormat} from "@/utils/columnList";
 import InputNumber from "antd/lib/input-number";
 import "@/resources/NotoSansKR-normal"; // 생성된 JS 파일 경로
 
+
+export function TextAreas({value}){
+
+    const [model, setModel] = useState('');
+
+    useEffect(() => {
+        setModel(value)
+    }, [value]);
+
+    function onChange(e){
+        setModel(e.target.value)
+    }
+    return  <TextArea autoSize={true} style={{border: 'none'}} onChange={onChange} value={model} />
+
+}
+
 function sumLengthsUpToIndex(array, index) {
     let totalLength = 0;
 
@@ -257,23 +273,23 @@ const EstimatePaper = ({
                         <th></th>
                     </tr>
 
-                    {tableData[0]?.map((v, i) =>
+                    {tableData[0]?.map((v, i) => {
+                            return <tr style={{height: 35}}>
+                                <td colSpan={2} style={{fontWeight: 600}}>{i + 1}</td>
+                                <td style={{
+                                    whiteSpace: 'pre-line',
+                                    lineHeight: 2.1,
+                                    textAlign: 'left',
+                                    paddingLeft: 5
+                                }}>
 
-                        <tr style={{height: 35}}>
-                            <td colSpan={2} style={{fontWeight: 600}}>{i + 1}</td>
-                            <td style={{
-                                whiteSpace: 'pre-line',
-                                lineHeight: 2.1,
-                                textAlign: 'left',
-                                paddingLeft: 5
-                            }}>
+                                    <TextAreas value={v.model}/>
 
-                                <TextArea autoSize={true} style={{border: 'none'}} defaultValue={v.model}/>
+                                </td>
+                                <NumberInputForm value={v}/>
 
-                            </td>
-                            <NumberInputForm value={v}/>
-
-                        </tr>
+                            </tr>
+                        }
                     )}
                     </thead>
                 </table>
@@ -350,7 +366,7 @@ const EstimatePaper = ({
                                         paddingLeft: 5
                                     }}>
 
-                                        <TextArea autoSize={true} style={{border: 'none'}} defaultValue={src.model}/>
+                                        <TextAreas value={src.model}/>
 
                                     </td>
                                     <NumberInputForm value={src}/>
