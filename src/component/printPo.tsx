@@ -49,10 +49,6 @@ function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, infoRef, memberLi
         const filterTotalList = tableList.filter(v => !!v.model)
         const result = commonManage.splitDataWithSequenceNumber(filterTotalList, 18, 28);
 
-
-
-
-
         return [result, filterTotalList[0]?.currency]
     }, [count]);
 
@@ -334,12 +330,9 @@ function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, infoRef, memberLi
                                 textAlign: 'left',
                                 paddingLeft: 5
                             }}>
-
                                 <TextArea autoSize={true} style={{border: 'none'}} defaultValue={v.model}/>
-
                             </td>
                             <NumberInputForm value={v}/>
-
                         </tr>
                     )}
                     </thead>
