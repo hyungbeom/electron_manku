@@ -8,7 +8,7 @@ import Input from "antd/lib/input";
 import Select from "antd/lib/select";
 import {amountFormat} from "@/utils/columnList";
 import InputNumber from "antd/lib/input-number";
-
+import "@/resources/NotoSansKR-normal"; // 생성된 JS 파일 경로
 
 function sumLengthsUpToIndex(array, index) {
     let totalLength = 0;
@@ -212,6 +212,7 @@ const EstimatePaper = ({
         <div style={!position ? {position: 'absolute', top: 0, zIndex: -100} : {}}>
 
             <div ref={pdfRef} style={{
+                fontFamily: "Noto Sans KR, sans-serif",
                 width: '1000px',  // A4 가로
                 height: '1354px',  // A4 세로
                 // aspectRatio: '1 / 1.414',

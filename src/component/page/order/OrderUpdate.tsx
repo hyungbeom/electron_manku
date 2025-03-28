@@ -418,7 +418,7 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
                             })}
                             {inputForm({title: '작성자', id: 'createdBy', disabled: true})}
                             <div>
-                                <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>담당자</div>
+                                <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>담당드자</div>
                                 <select name="languages" id="managerAdminId"
                                         style={{
                                             outline: 'none',

@@ -324,18 +324,6 @@ function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, infoRef, memberLi
                     </tr>
                     </thead>
                     <thead>
-                    <tr style={{fontWeight: 'bold', height: 35}}>
-                        <th colSpan={2} style={{width: '6%',}}>Maker</th>
-                        <th style={{
-                            textAlign: 'left',
-                            paddingLeft: 10
-                        }}>{true ? 'maker' : '-'}</th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                    </tr>
 
                     {tableData[0]?.map((v, i) =>
                         <tr style={{height: 35}}>
