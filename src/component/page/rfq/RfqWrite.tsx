@@ -79,14 +79,10 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
 
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
-
     const [fileList, setFileList] = useState([]);
-
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-
-
         if (!isEmptyObj(copyPageInfo)) {
             // copyPageInfo 가 없을시
             setInfo(infoInit)
@@ -167,9 +163,7 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
 
         await getFormData.post('estimate/addEstimateRequest', formData).then(async (v: any) => {
             const dom = infoRef.current.querySelector('#documentNumberFull');
-
             const {code, entity} = v?.data;
-
             if (code === 1) {
                 setFileList([])
                 const {documentNumberFull, estimateRequestId} = entity;
@@ -208,8 +202,7 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         return savedSizes ? JSON.parse(savedSizes) : [25, 25, 25, 25, 0]; // 기본값 [50, 50, 50]
     };
 
-
-    const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
+    const [sizes] = useState(getSavedSizes); // 패널 크기 상태
 
     useEventListener('keydown', (e: any) => {
         if (e.ctrlKey && e.key === "s") {
@@ -244,10 +237,8 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                         type: 'danger'
                     }
                 ]} mini={mini} setMini={setMini}>
-
                     <div id={'agencyId'}/>
                     <div id={'agencyManagerPhoneNumber'}/>
-
                     {mini ? <div>
                             <TopBoxCard title={''} grid={'100px 80px 80px 110px 110px 110px 300px'}>
                                 {datePickerForm({
@@ -343,8 +334,6 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                             // onChange: onChange,
                                             // data: info
                                         })}
-
-
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>
