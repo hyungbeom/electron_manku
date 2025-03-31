@@ -29,5 +29,6 @@ export default withTM([
     'xlsx',
     'flexlayout-react',
     'react-splitter-layout',
-    '@handsontable/react-wrapper'
+    '@handsontable/react-wrapper',
+    '@react-pdf/renderer'
 ])(nextConfig);

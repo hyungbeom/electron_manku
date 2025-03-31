@@ -25,6 +25,10 @@ const listType = 'estimateRequestDetailList'
 function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
+    const checkInfoRef = useRef<any>({
+        info: {},
+        table: []
+    })
     const [memberList, setMemberList] = useState([]);
     const [tableData, setTableData] = useState([]);
 
@@ -130,8 +134,22 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
 
     async function saveFunc() {
         let infoData = commonManage.getInfo(infoRef, infoInit);
+
         const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
         infoData['managerAdminName'] = findMember['name'];
+
+
+        if (infoData['documentNumberFull']) {
+            delete checkInfoRef.current['info']['documentNumberFull']
+            const copyData = {...infoData};
+            delete copyData['documentNumberFull']
+
+            if (JSON.stringify(copyData) === JSON.stringify(checkInfoRef.current['info'])) {
+                return false
+            } else {
+                checkInfoRef.current['info'] = infoData
+            }
+        }
 
         if (!infoData['managerAdminId']) {
             const dom = infoRef.current.querySelector('#managerAdminId');
@@ -153,7 +171,7 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         if (emptyQuantity.length) {
             return message.error('수량을 입력해야 합니다.')
         }
-        setLoading(true)
+        // setLoading(true)
         const formData: any = new FormData();
         commonManage.setInfoFormData(infoData, formData, listType, filterTableList)
         commonManage.getUploadList(fileRef, formData);
@@ -182,7 +200,9 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                     },
                     {cursor: 'pointer'}
                 )
-                setLoading(false)
+                checkInfoRef.current['info'] = infoData
+                setLoading(false);
+
             } else {
                 setLoading(false)
             }
