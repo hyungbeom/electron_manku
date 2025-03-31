@@ -133,8 +133,9 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     }
 
     async function saveFunc() {
+        setLoading(true);
         let infoData = commonManage.getInfo(infoRef, infoInit);
-
+        setLoading(false);
         const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
         infoData['managerAdminName'] = findMember['name'];
 
@@ -145,6 +146,7 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
             delete copyData['documentNumberFull']
 
             if (JSON.stringify(copyData) === JSON.stringify(checkInfoRef.current['info'])) {
+                setLoading(false);
                 return false
             } else {
                 checkInfoRef.current['info'] = infoData;
@@ -154,21 +156,25 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         if (!infoData['managerAdminId']) {
             const dom = infoRef.current.querySelector('#managerAdminId');
             dom.style.borderColor = 'red'
+            setLoading(false);
             return message.warn('담당자가 누락되었습니다.')
         }
         if (!infoData['agencyCode']) {
             const dom = infoRef.current.querySelector('#agencyCode');
             dom.style.borderColor = 'red'
+            setLoading(false);
             return message.warn('매입처 코드가 누락되었습니다.')
         }
         const tableList = tableRef.current?.getSourceData();
 
         const filterTableList = commonManage.filterEmptyObjects(tableList, ['model', 'item', 'maker'])
         if (!filterTableList.length) {
+            setLoading(false);
             return message.warn('하위 데이터 1개 이상이여야 합니다');
         }
         const emptyQuantity = filterTableList.filter(v => !v.quantity)
         if (emptyQuantity.length) {
+            setLoading(false);
             return message.error('수량을 입력해야 합니다.')
         }
         // setLoading(true)
