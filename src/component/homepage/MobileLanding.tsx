@@ -364,11 +364,11 @@ export default function MobileLanding({isMobile, width}) {
                             data: info,
                             size: 'middle'
                         })}
-                        {/*{textAreaForm({*/}
-                        {/*    title: '문의 내용*', id: 'searchCreatedBy',*/}
-                        {/*    onChange: onChange,*/}
-                        {/*    data: info,*/}
-                        {/*})}*/}
+                        {textAreaForm({
+                            title: '문의 내용*', id: 'searchCreatedBy',
+                            onChange: onChange,
+                            data: info,
+                        })}
                         {inputForm({
                             title: '파일 또는 사진 첨부 ', id: 'searchCreatedBy',
                             onChange: onChange,
