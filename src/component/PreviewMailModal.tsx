@@ -78,7 +78,7 @@ function generateFormattedOutputWithDocumentNumbers(data) {
         output += `Model :\n`;
 
         models.forEach((model, index) => {
-            output += `${index + 1}) ${model.model} ---${model.quantity}${model.unit}\n`;
+            output += `${index + 1}) ${model.model}  ${model.model.length > 30 ? '\n' : ''} ---${model.quantity}${model.unit}\n`;
         });
 
         // 줄 간격 추가 (각 항목 사이에 빈 줄 추가)
