@@ -165,6 +165,8 @@ const Test2 = () => (
                     (주) 만쿠무역은 세계 각지의 공급자를 통해 의뢰하시는 부품 및 산업자재를 저렴하게 공급합니다.
                 </Text>
 
+
+
                 {/* 상단 정보 */}
                 <View style={styles.infoRow}>
                     <Text style={styles.label}>견적일자 :</Text>
