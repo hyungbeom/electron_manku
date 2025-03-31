@@ -147,7 +147,7 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
             if (JSON.stringify(copyData) === JSON.stringify(checkInfoRef.current['info'])) {
                 return false
             } else {
-                checkInfoRef.current['info'] = infoData
+                checkInfoRef.current['info'] = infoData;
             }
         }
 

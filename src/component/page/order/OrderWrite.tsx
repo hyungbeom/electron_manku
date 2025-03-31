@@ -354,7 +354,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
 
                     {mini ? <div>
 
-                        <TopBoxCard grid={'100px 70px 70px 120px 120px 120px'}>
+                        <TopBoxCard grid={'100px 70px 70px 120px 120px 120px 200px'}>
                             {datePickerForm({
                                 title: '작성일',
                                 id: 'writtenDate',
@@ -407,6 +407,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                             })}
 
                             {inputForm({title: '고객사발주서 No', id: 'yourPoNo'})}
+                            {inputForm({title: '프로젝트 제목', id: 'projectTitle'})}
                         </TopBoxCard>
 
                         <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>

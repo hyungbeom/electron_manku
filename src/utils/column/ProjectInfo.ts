@@ -461,6 +461,7 @@ export const orderInfo = {
         "delivery": '',               // 납기
         "remarks": "",                      // 비고란
         "currencyUnit": "",                      // 비고란
+        "projectTitle": "",                      // 비고란
         uploadType: 4
     },
 };
