@@ -1,4 +1,5 @@
-import Test from "@/component/Test";
+// import Test from "@/component/Test";
+import Test2 from "@/component/Test2";
 import React, {useEffect, useState} from "react";
 import dynamic from "next/dynamic";
 const PDFDownloadLink = dynamic(
@@ -20,7 +21,7 @@ export default function tester() {
             {ready ? <div style={{padding: 40}}>
                     <h2>견적서 PDF 다운로12드</h2>
                     <PDFDownloadLink
-                        document={<Test/>}
+                        document={<Test2/>}
                         fileName="estimate.pdf"
                         style={{
                             textDecoration: 'none',
