@@ -248,6 +248,19 @@ const EstimatePaper = ({
         // setPrintComp(<PdfForm data={data} topInfoData={topInfoData}/>)
     }
 
+    const print = async () => {
+        const blob = await pdf(<PdfForm data={data} topInfoData={topInfoData} totalData={totalData}
+                                        key={Date.now()}/>).toBlob();
+        const blobUrl = URL.createObjectURL(blob);
+
+        const printWindow = window.open(blobUrl);
+        if (printWindow) {
+            printWindow.onload = () => {
+                // printWindow.focus();
+                // printWindow.print();
+            };
+        }
+        }
     return (
         <div style={!position ? {position: 'absolute', top: 0, zIndex: -100} : {}}>
             {/*<div style={{width: '100%', height: '100vh'}}>*/}
@@ -258,7 +271,8 @@ const EstimatePaper = ({
             <div style={{marginTop: -10, padding: 15, display: 'flex', justifyContent: 'space-between'}}>
                 <div>{title}</div>
                 <div>
-                    <Button onClick={download} size={'small'} type={'primary'} style={{fontSize : 12, marginRight : 20}}>다운로드</Button>
+                    <Button onClick={download} size={'small'} type={'primary'} style={{fontSize : 12, marginRight : 5}}>다운로드</Button>
+                    <Button onClick={print} size={'small'} type={'primary'} style={{fontSize : 12, marginRight : 20}}>인쇄</Button>
                 </div>
             </div>
             <div ref={pdfRef} style={{
