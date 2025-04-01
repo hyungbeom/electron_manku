@@ -32,7 +32,8 @@ import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import EstimatePaper from "@/component/견적서/EstimatePaper";
 import {jsPDF} from "jspdf";
 import html2canvas from "html2canvas";
-
+import {PdfForm} from "@/component/견적서/PdfForm";
+import { pdf as pdfs } from '@react-pdf/renderer';
 
 const listType = 'estimateDetailList'
 function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
@@ -232,16 +233,21 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         let infoData = commonManage.getInfo(infoRef, infoInit);
         const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
         infoData['managerAdminName'] = findMember['name'];
+        infoData['name'] = findMember['name'];
+        infoData['contactNumber'] = findMember['contactNumber'];
+        infoData['email'] = findMember['email'];
+        infoData['customerManagerName'] = infoData['managerName'];
+        infoData['customerManagerPhone'] = infoData['phoneNumber'];
 
         const maker = infoRef.current.querySelector('#maker');
-
+        const dom:any = infoRef.current.querySelector('#documentNumberFull');
         setMaker(maker.value)
         if (!infoData['managerAdminId']) {
             return message.warn('담당자가 누락되었습니다.')
         }
 
         if (!infoData['documentNumberFull']) {
-            const dom = infoRef.current.querySelector('#documentNumberFull');
+
             dom.style.borderColor = 'red'
             return message.warn('Inquiry No. 정보가 누락되었습니다.')
         }
@@ -259,17 +265,42 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         if(emptyQuantity.length){
             return message.error('수량을 입력해야 합니다.')
         }
-
         const formData: any = new FormData();
 
-        const pdf = await commonManage.getPdfCreate(pdfRef, pdfSubRef)
-        const result = await commonManage.getPdfFile(pdf, infoData['documentNumberFull'])
 
         commonManage.setInfoFormData(infoData, formData, listType, filterTableList)
         const resultCount = commonManage.getUploadList(fileRef, formData);
 
-        formData.append(`attachmentFileList[${resultCount}].attachmentFile`, result);
-        formData.append(`attachmentFileList[${resultCount}].fileName`, `03.${resultCount + 1} ${result.name}`);
+
+
+
+        const filterTotalList = tableList.filter(v => !!v.model)
+        const data = commonManage.splitDataWithSequenceNumber(filterTotalList, 18, 28);
+        // =========================================PDF FILE====================================================
+
+        const list = Object.values(data);
+        let bowl = {quantity: 0, net: 0, total: 0, unit: list.length ? list[0][0]['unit'] : ''}
+
+
+            let results = filterTotalList.reduce((acc, cur, idx) => {
+                const {quantity, net} = cur
+                acc['quantity'] += quantity;
+                acc['net'] += net;
+                acc['total'] += (quantity * net)
+                return acc
+            }, {quantity : 0, net : 0, total : 0})
+
+        results['unit'] = filterTotalList[0]['unit'];
+        const blob = await pdfs(<PdfForm data={data} topInfoData={infoData} totalData={results}
+                                        key={Date.now()}/>).toBlob();
+
+        // File 객체로 만들기 (선택 사항)
+        const file = new File([blob], '견적서.pdf', { type: 'application/pdf' });
+        // =====================================================================================================
+
+
+        formData.append(`attachmentFileList[${resultCount}].attachmentFile`, file);
+        formData.append(`attachmentFileList[${resultCount}].fileName`, `03.${resultCount + 1} ${dom.value}.pdf`);
 
         formData.delete('createdDate')
         formData.delete('modifiedDate')
@@ -585,8 +616,6 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
             </div>
         </>
 
-        {ready &&  <EstimatePaper infoRef={infoRef} pdfRef={pdfRef} pdfSubRef={pdfSubRef} tableRef={tableRef} position={false}
-                                  memberList={memberList} count={count} maker={maker}/>}
     </Spin></div>
 }
 

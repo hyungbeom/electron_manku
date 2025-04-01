@@ -1,7 +1,7 @@
 // 폰트 설정 (기본 한글 폰트 필요 시 추가해야 함)
 import styles from "@/component/util/Common";
 import {Document, Font, Image, Page, StyleSheet, Text, View} from '@react-pdf/renderer';
-import {useEffect} from "react";
+import React, {useEffect} from "react";
 
 Font.register({
     family: 'NotoSansKR',
@@ -42,11 +42,11 @@ export function PdfForm({data, topInfoData, totalData}){
                         <Image src="/manku_ci_black_text.png" style={styles.logo}/>
                     </View>
                     <View style={styles.leftInfo}>
-                        <Text>(주)만쿠무역</Text>
+                        <Text>(주) 만쿠무역</Text>
                         <Text>Manku Trading Co., Ltd</Text>
-                        <Text>서울시 송파구 송파대로 52 카타르타워</Text>
-                        <Text>B동 213호, 2112</Text>
-                        <Text>Tel: 02-445-7838, Fax: 02-445-7839</Text>
+                        <Text>서울시 송파구 충민로 52 가든파이브웍스</Text>
+                        <Text>B동 2층 211호, 212호</Text>
+                        <Text>Tel : 02-465-7838, Fax : 02-465-7839</Text>
                     </View>
                     <View style={styles.centerTitle}>
                         <Text style={styles.title}>견 적 서</Text>
