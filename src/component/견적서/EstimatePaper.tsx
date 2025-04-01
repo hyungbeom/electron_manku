@@ -38,8 +38,6 @@ function sumLengthsUpToIndex(array, index) {
 
 const EstimatePaper = ({
                            infoRef,
-                           pdfRef,
-                           pdfSubRef,
                            tableRef,
                            memberList = [],
                            count = 0,
@@ -49,10 +47,6 @@ const EstimatePaper = ({
                            title = ''
                        }: any) => {
 
-    console.log(maker, 'maker:')
-
-    const ref1 = useRef<any>()
-    const ref2 = useRef<any>()
 
     const [data, setData] = useState({});
 
@@ -212,18 +206,6 @@ const EstimatePaper = ({
 
         </>
     }
-
-    // title={<div style={{display: 'flex', justifyContent: 'space-between', padding: '0px 30px'}}>
-    //     <span>견적서 출력</span>
-    //     <span>
-    //                    <Button style={{fontSize: 11, marginRight: 10}} size={'small'}
-    //                        // onClick={() => generatePDF(false)}>다운로드</Button>
-    //                            onClick={() => {
-    //
-    //                            }}>다운로드</Button>
-    //                    <Button style={{fontSize: 11}} size={'small'} onClick={() => generatePDF(true)}>인쇄</Button>
-    //             </span>
-    // </div>}
     const [topInfoData, setTopInfoData] = useState<any>({})
 
 
@@ -275,7 +257,7 @@ const EstimatePaper = ({
                     <Button onClick={print} size={'small'} type={'primary'} style={{fontSize : 12, marginRight : 20}}>인쇄</Button>
                 </div>
             </div>
-            <div ref={pdfRef} style={{
+            <div style={{
                 fontFamily: "Noto Sans KR, sans-serif",
                 width: '1000px',  // A4 가로
                 height: '1354px',  // A4 세로
@@ -353,7 +335,7 @@ const EstimatePaper = ({
                         border: '1px solid lightGray',
                     }}>
                         <thead>
-                        <tr style={{height: 35, fontWeight: 100}} ref={ref2}>
+                        <tr style={{height: 35, fontWeight: 100}}>
                             <th colSpan={2} style={{width: '6%', fontWeight: 600}}></th>
                             <th style={{width: '43%'}}>TOTAL</th>
                             <th style={{width: 50, textAlign: 'right', paddingRight: 8}}>
@@ -378,7 +360,7 @@ const EstimatePaper = ({
             </div>
 
 
-            <div ref={pdfSubRef}>
+            <div>
 
                 {Object.values(data).map((v: any, i) => {
 
@@ -440,7 +422,7 @@ const EstimatePaper = ({
                                 border: '1px solid lightGray',
                             }}>
                                 <thead>
-                                <tr style={{height: 35, fontWeight: 100}} ref={ref2}>
+                                <tr style={{height: 35, fontWeight: 100}}>
                                     <th colSpan={2} style={{width: '6%', fontWeight: 600}}></th>
                                     <th style={{width: '43%'}}>TOTAL</th>
                                     <th style={{width: 50, textAlign: 'right', paddingRight: 8}}>
