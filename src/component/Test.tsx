@@ -49,6 +49,8 @@ const styles = StyleSheet.create({
         flexGrow: 1,
     },
     table: {
+
+        // @ts-ignored
         display: 'table',
         width: '100%',
         marginTop: 10,

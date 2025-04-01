@@ -241,12 +241,12 @@ const Test2 = () => (
     </Document>
 );
 
-export default function App() {
-    return (
-        <div style={{width: '100%', height: '100vh'}}>
-            <PDFViewer width="100%" height="100%">
-                <Test2/>
-            </PDFViewer>
-        </div>
-    );
-}
+// export default function App() {
+//     return (
+//         <div style={{width: '100%', height: '100vh'}}>
+//             <PDFViewer width="100%" height="100%">
+//                 <Test2/>
+//             </PDFViewer>
+//         </div>
+//     );
+// }

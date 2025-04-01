@@ -101,6 +101,7 @@ function EstimateUpdate({
     const infoInitFile = dataInfo?.attachmentFileList
 
     const [info, setInfo] = useState<any>(infoInit)
+    const [count    , setCount] = useState(0);
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
     const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
@@ -305,7 +306,8 @@ function EstimateUpdate({
         if (!infoData['managerAdminId']) {
             return message.warn('담당자를 선택해주세요')
         }
-        setIsPrintModalOpen(true)
+        setIsPrintModalOpen(true);
+        setCount(v=> v + 1)
     }
 
     const generatePDF = async (printMode = false) => {
@@ -379,25 +381,21 @@ function EstimateUpdate({
         }
     }, typeof window !== 'undefined' ? document : null)
 
+    function getPaperData(){
+
+    }
+
 
     function EstimateModal() {
         const dom = infoRef?.current?.querySelector('#maker');
         return <Modal
-            title={<div style={{display: 'flex', justifyContent: 'space-between', padding: '0px 30px'}}>
-                <span>견적서 출력</span>
-                <span>
-                       <Button style={{fontSize: 11, marginRight: 10}} size={'small'}
-                               onClick={() => generatePDF(false)}>다운로드</Button>
-                       <Button style={{fontSize: 11}} size={'small'} onClick={() => generatePDF(true)}>인쇄</Button>
-                </span>
-            </div>}
             onCancel={() => setIsPrintModalOpen(false)}
             open={isPrintModalOpen}
             width={1050}
             footer={null}
             onOk={() => setIsPrintModalOpen(false)}>
             <EstimatePaper infoRef={infoRef} pdfRef={pdfRef} pdfSubRef={pdfSubRef} tableRef={tableRef} position={true}
-                           memberList={memberList} maker={dom?.value}/>
+                           memberList={memberList} maker={dom?.value} title={'견적서 출력'} count={count}/>
         </Modal>
     }
 

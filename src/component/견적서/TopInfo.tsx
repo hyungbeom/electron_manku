@@ -1,14 +1,14 @@
-import React, {useEffect, useMemo} from "react";
+import React, {useEffect, useMemo, useRef} from "react";
 import {commonManage} from "@/utils/commonManage";
 import {estimateInfo, orderInfo, projectInfo} from "@/utils/column/ProjectInfo";
 import Input from "antd/lib/input";
 import moment from "moment";
 
-export default function TopInfo({count, infoRef, type, memberList}) {
+export default function TopInfo({count, infoRef, type, memberList, getTopInfoData}) {
 
+    const topInfoRef = useRef<any>(null);
 
     const [info, maker] = useMemo(() => {
-        console.log(count,'::in')
         let infoData: any = {}
         if (type === 'estimate') {
             infoData = commonManage.getInfo(infoRef, estimateInfo['defaultInfo']);
@@ -19,11 +19,27 @@ export default function TopInfo({count, infoRef, type, memberList}) {
             copyInfo['phoneNumber'] = copyInfo['customerManagerPhone']
             infoData = copyInfo
         }
-        console.log(infoData,'infoData:')
-
 
         const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
         infoData['managerAdminName'] = findMember['name'];
+
+        getTopInfoData({
+            writtenDate: infoData.writtenDate,
+            name: findMember?.name,
+            documentNumberFull: infoData.documentNumberFull,
+            contactNumber: findMember?.contactNumber,
+            customerName: infoData.customerName,
+            email: findMember?.email,
+            customerManagerName: infoData.managerName,
+            validityPeriod: infoData.validityPeriod,
+            customerManagerPhone: infoData.phoneNumber,
+            paymentTerms: infoData.paymentTerms,
+            customerManagerEmail: infoData.customerManagerEmail,
+            delivery: infoData.delivery,
+            faxNumber: infoData.faxNumber,
+            shippingTerms: infoData.shippingTerms,
+            maker : infoData['maker']
+        })
 
         return [[
             {title: '견적일자', value: infoData.writtenDate, id: 'writtenDate'},
@@ -46,7 +62,7 @@ export default function TopInfo({count, infoRef, type, memberList}) {
 
     return <>
 
-        <div style={{
+        <div ref={topInfoRef} style={{
             fontFamily: 'Arial, sans-serif',
             display: 'grid',
             gridTemplateColumns: '1fr 1fr',
@@ -66,11 +82,8 @@ export default function TopInfo({count, infoRef, type, memberList}) {
                         <div style={{alignItems: 'center', fontWeight: 600}}>{v.title} <span
                             style={{float: 'right', fontWeight: 600}}>:</span></div>
 
-                        {(v.id === 'documentNumberFull' || v.id === 'writtenDate') ?
-                            <div style={{paddingLeft: 15}}>{v.value}</div>
 
-                            :
-                            <Input value={v.value} id={v.id}
+                            <Input defaultValue={v.value} id={v.id}
                                    suffix={<>{v.id === 'delivery' ? '주' : ''}</>}
                                    style={{
                                        border: 'none',
@@ -78,8 +91,18 @@ export default function TopInfo({count, infoRef, type, memberList}) {
                                        alignItems: 'center',
                                        fontSize: 15,
                                        width: v.id === 'delivery' ? 70 : '100%'
-                                   }}/>
-                        }
+                                   }}
+                                   onBlur={() => {
+                                       const list = topInfoRef.current.querySelectorAll('input');
+                                       let bowl = {}
+                                       list.forEach(v => {
+                                           bowl[v.id] = v.value;
+                                       });
+                                       bowl['maker'] = maker;
+                                       getTopInfoData(bowl)
+                                   }}
+                            />
+
                     </div>
                 }
             )}
@@ -88,7 +111,7 @@ export default function TopInfo({count, infoRef, type, memberList}) {
 }
 
 
-export const TopPoInfo = ({infoRef, memberList, hscode=''}) => {
+export const TopPoInfo = ({infoRef, memberList, hscode = ''}) => {
 
 
     const [info] = useMemo(() => {
