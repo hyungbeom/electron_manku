@@ -229,9 +229,9 @@ export function PdfForm({data, topInfoData, totalData}){
                     </View>
 
                     <View style={styles.footer}>
-                        <Text>· 의뢰하신 Model로 기준한 견적입니다.</Text>
-                        <Text>· 계좌번호 : 기업은행 069-118048-04-010 / 만쿠무역</Text>
-                        <Text>· 긴급 납기시 담당자와 협의 가능합니다.</Text>
+                        <Text>· 의뢰하실 Model로 기준한 견적입니다.</Text>
+                        <Text>· 계좌번호 : (기업은행)069-118428-04-010/만쿠무역</Text>
+                        <Text>· 긴급 납기시 담당자와 협의가능합니다.</Text>
                     </View>
                 </> : <></>}
                 <Text style={styles.pageNum}>- 1 -</Text>
