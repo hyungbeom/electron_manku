@@ -16,6 +16,5 @@ export default function MailFile({list}){
     const  fileRef = useRef();
     const [fileList, setFileList] = useState(files)
 
-    return    <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                               numb={4} uploadType={false}/>
+    return   <></>
 }
