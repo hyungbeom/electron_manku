@@ -63,8 +63,16 @@ function generateFormattedOutputWithDocumentNumbers(data) {
         });
     });
 
+
+    const sortedKeys = Object.keys(groupedData).sort((a, b) => {
+        const numA = parseInt(a.split('-')[2], 10); // "1103"
+        const numB = parseInt(b.split('-')[2], 10); // "1102"
+        return numA - numB; // 내림차순
+    });
+
+
     // 출력 형식 생성
-    Object.keys(groupedData).forEach(docNumber => {
+    sortedKeys.forEach(docNumber => {
         const {maker, item, models} = groupedData[docNumber];
 
         if (output) {
@@ -78,7 +86,17 @@ function generateFormattedOutputWithDocumentNumbers(data) {
         output += `Model :\n`;
 
         models.forEach((model, index) => {
-            output += `${index + 1}) ${model.model}  ${model.model.length > 30 ? '\n' : ''} ---${model.quantity}${model.unit}\n`;
+
+            let text = `${index + 1}) ${model.model}`; // ← 테스트할 문자열
+
+            let lines = text.split('\n');
+
+            if (lines.length > 0) {
+                lines[0] = lines[0].trimEnd() + `     ---${model.quantity}${model.unit}`;
+            }
+            let result = lines.join('\n');
+
+            output +=result;
         });
 
         // 줄 간격 추가 (각 항목 사이에 빈 줄 추가)
