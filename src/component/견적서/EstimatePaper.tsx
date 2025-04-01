@@ -224,7 +224,7 @@ const EstimatePaper = ({
     //                    <Button style={{fontSize: 11}} size={'small'} onClick={() => generatePDF(true)}>인쇄</Button>
     //             </span>
     // </div>}
-    const [topInfoData, setTopInfoData] = useState({})
+    const [topInfoData, setTopInfoData] = useState<any>({})
 
 
     async function download() {
@@ -234,7 +234,7 @@ const EstimatePaper = ({
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = '견적서.pdf';
+        link.download = `${topInfoData?.documentNumberFull}.pdf`;
         link.click();
 
         // 메모리 해제
@@ -242,7 +242,6 @@ const EstimatePaper = ({
     }
 
 
-    const [printComp, setPrintComp] = useState<any>(<></>)
 
     function getTopInfoData(e) {
         setTopInfoData(e);
@@ -251,17 +250,15 @@ const EstimatePaper = ({
 
     return (
         <div style={!position ? {position: 'absolute', top: 0, zIndex: -100} : {}}>
-            <div style={{width: '100%', height: '100vh'}}>
-                <PDFViewer width="100%" height="100%">
-                    <PdfForm data={data} topInfoData={topInfoData} totalData={totalData} key={Date.now()}/>
-                </PDFViewer>
-            </div>
+            {/*<div style={{width: '100%', height: '100vh'}}>*/}
+            {/*    <PDFViewer width="100%" height="100%">*/}
+            {/*        <PdfForm data={data} topInfoData={topInfoData} totalData={totalData} key={Date.now()}/>*/}
+            {/*    </PDFViewer>*/}
+            {/*</div>*/}
             <div style={{marginTop: -10, padding: 15, display: 'flex', justifyContent: 'space-between'}}>
                 <div>{title}</div>
                 <div>
-                    <Button onClick={download}>다운로드</Button>
-                    {/*<Button size={'small'}  style={{fontSize : 12}} type={'primary'}>다운로드</Button>*/}
-
+                    <Button onClick={download} size={'small'} type={'primary'} style={{fontSize : 12, marginRight : 20}}>다운로드</Button>
                 </div>
             </div>
             <div ref={pdfRef} style={{
