@@ -15,6 +15,22 @@ Font.register({
 
 const colWidths = [40, 210, 50, 50, 110, 110];
 
+function sumLengthsUpToIndex(array, index) {
+    let totalLength = 0;
+
+    // 인덱스가 유효한지 확인
+    if (index >= array.length) {
+        return "유효한 인덱스를 입력해주세요.";
+    }
+
+    // 0부터 index까지 각 배열의 길이를 합산
+    for (let i = 0; i <= index; i++) {
+        totalLength += array[i].length;
+    }
+
+    return totalLength;
+}
+
 export function PdfForm({data, topInfoData, totalData}){
 
     return <Document>
@@ -251,13 +267,15 @@ export function PdfForm({data, topInfoData, totalData}){
 
                        {/* 내용 행 반복 */}
                        {v.map((row: any, i) => {
+                           const count: any = sumLengthsUpToIndex(Object.values(data), idx - 1);
+
                            const {model, quantity, unit, net} = row;
                            return <> <View key={i} style={styles.tableRow}>
                                <View key={i} style={{
                                    ...styles.cell,
                                    width: colWidths[0],
                                }}>
-                                   <Text style={{textAlign: 'center'}}>{i + 1}</Text>
+                                   <Text style={{textAlign: 'center'}}>{count + i + 1}</Text>
                                </View>
                                <View key={i} style={{
                                    ...styles.cell,
