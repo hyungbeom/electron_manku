@@ -14,7 +14,7 @@ Font.register({
 });
 
 
-const colWidths = [40, 210, 50, 50, 110, 110];
+const colWidths = [50, 210, 45, 45, 100, 100, 100];
 
 
 export function PdfForm({data, topInfoData, totalData}) {
@@ -35,7 +35,7 @@ export function PdfForm({data, topInfoData, totalData}) {
                         <Text>Tel : 02-465-7838, Fax : 02-465-7839</Text>
                     </View>
                     <View style={styles.centerTitle}>
-                        <Text style={styles.title}>견 적 서</Text>
+                        <Text style={styles.title}>발 주 서</Text>
                     </View>
                     <View style={styles.rightInfo}>
                         <Image src="/manku_stamp_ko.png" style={styles.info}/>
@@ -43,71 +43,63 @@ export function PdfForm({data, topInfoData, totalData}) {
                 </View>
 
                 <View style={styles.titleLine}/>
-                <Text style={styles.subtitle}>
-                    (주) 만쿠무역은 세계 각지의 공급자를 통해 의뢰하시는 부품 및 산업자재를 저렴하게 공급합니다.
-                </Text>
-
 
                 {/* 상단 정보 */}
                 <View style={styles.infoRow}>
-                    <Text style={styles.label}>견적일자 :</Text>
+                    <Text style={styles.label}>수신처 :</Text>
                     <Text style={styles.value}>{topInfoData?.writtenDate}</Text>
-                    <Text style={styles.labelRight}>담당자 :</Text>
-                    <Text style={styles.valueRight}>{topInfoData?.name}</Text>
-                </View>
-                <View style={styles.infoRow}>
-                    <Text style={styles.label}>견적서 No :</Text>
-                    <Text style={styles.value}>{topInfoData?.documentNumberFull}</Text>
-                    <Text style={styles.labelRight}>연락처 :</Text>
-                    <Text style={styles.valueRight}>{topInfoData?.contactNumber}</Text>
-                </View>
-                <View style={styles.infoRow}>
-                    <Text style={styles.label}>고객사 :</Text>
-                    <Text style={styles.value}>{topInfoData?.customerName}</Text>
-                    <Text style={styles.labelRight}>E-mail :</Text>
-                    <Text style={styles.valueRight}>{topInfoData?.email}</Text>
+                    <Text style={styles.labelRight}>발주일자 :</Text>
+                    <Text style={styles.valueRight}>{topInfoData?.writtenDate}</Text>
                 </View>
                 <View style={styles.infoRow}>
                     <Text style={styles.label}>담당자 :</Text>
-                    <Text style={styles.value}>{topInfoData?.customerManagerName}</Text>
-                    <Text style={styles.labelRight}>유효기간 :</Text>
+                    <Text style={styles.value}>{topInfoData?.managerAdminName}</Text>
+                    <Text style={styles.labelRight}>발주번호 :</Text>
+                    <Text style={styles.valueRight}>{topInfoData?.documentNumberFull}</Text>
+                </View>
+                <View style={styles.infoRow}>
+                    <Text style={styles.label}>납품조건 :</Text>
+                    <Text style={styles.value}>{topInfoData?.shippingTerms}</Text>
+                    <Text style={styles.labelRight}>귀사견적 :</Text>
+                    <Text style={styles.valueRight}>{topInfoData?.email}</Text>
+                </View>
+                <View style={styles.infoRow}>
+                    <Text style={styles.label}>결제조건 :</Text>
+                    <Text style={styles.value}>{topInfoData?.paymentTerms}</Text>
+                    <Text style={styles.labelRight}>담당자 :</Text>
                     <Text style={styles.valueRight}>{topInfoData?.validityPeriod}</Text>
                 </View>
                 <View style={styles.infoRow}>
-                    <Text style={styles.label}>연락처 :</Text>
-                    <Text style={styles.value}>{topInfoData?.customerManagerPhone}</Text>
-                    <Text style={styles.labelRight}>결제조건 :</Text>
-                    <Text style={styles.valueRight}>{topInfoData?.paymentTerms}</Text>
+                    <Text style={styles.label}>납기조건 :</Text>
+                    <Text style={styles.value}>{topInfoData?.deliveryTerms}</Text>
+                    <Text style={styles.labelRight}>연락처 :</Text>
+                    <Text style={styles.valueRight}>{topInfoData?.managerPhoneNumber}</Text>
                 </View>
                 <View style={styles.infoRow}>
-                    <Text style={styles.label}>E-mail :</Text>
-                    <Text style={styles.value}>{topInfoData?.customerManagerEmail}</Text>
-                    <Text style={styles.labelRight}>납기 :</Text>
-                    <Text style={styles.valueRight}>{topInfoData?.delivery} 주</Text>
+                    <Text style={styles.label}></Text>
+                    <Text style={styles.value}></Text>
+                    <Text style={styles.labelRight}>E-Mail :</Text>
+                    <Text style={styles.valueRight}>{topInfoData?.managerEmail}</Text>
                 </View>
-                <View style={styles.infoRow}>
-                    <Text style={styles.label}>Fax :</Text>
-                    <Text style={styles.value}>{topInfoData?.faxNumber}</Text>
-                    <Text style={styles.labelRight}>납품조건 :</Text>
-                    <Text style={styles.valueRight}>{topInfoData?.shippingTerms}</Text>
-                </View>
-
 
                 {/* 표 */}
                 <View style={styles.table}>
                     {/* 테이블 헤더 */}
                     <View style={styles.tableHeader}>
-                        <View style={{...styles.point, width: 250}}>
+                        <View style={{...styles.point, width: 260}}>
                             <Text style={{textAlign: 'center'}}>Specification</Text>
                         </View>
-                        <View style={{...styles.point, width: 100}}>
+                        <View style={{...styles.point, width: 90}}>
                             <Text style={{textAlign: 'center'}}>Q`ty</Text>
                         </View>
-                        <View style={{...styles.point, width: 110}}>
+                        <View style={{...styles.point, width: 100}}>
                             <Text style={{textAlign: 'center'}}>Unit Price</Text>
                         </View>
-                        <View style={{...styles.point, width: 110, borderRightWidth: 0}}>
+                        <View style={{...styles.point, width: 100}}>
                             <Text style={{textAlign: 'center'}}>Amount</Text>
+                        </View>
+                        <View style={{...styles.point, width: 100, borderRightWidth: 0}}>
+                            <Text style={{textAlign: 'center'}}>Other</Text>
                         </View>
                     </View>
 
@@ -131,7 +123,8 @@ export function PdfForm({data, topInfoData, totalData}) {
                         <View style={{...styles.cell, width: colWidths[2]}}/>
                         <View style={{...styles.cell, width: colWidths[3]}}/>
                         <View style={{...styles.cell, width: colWidths[4]}}/>
-                        <View style={{...styles.cell, width: colWidths[5], borderRightWidth: 0}}/>
+                        <View style={{...styles.cell, width: colWidths[5]}}/>
+                        <View style={{...styles.cell, width: colWidths[6], borderRightWidth: 0}}/>
                     </View>
 
                     {/* 내용 행 반복 */}
@@ -171,12 +164,21 @@ export function PdfForm({data, topInfoData, totalData}) {
                             <View key={i} style={{
                                 ...styles.cell,
                                 width: colWidths[5],
-                                borderRightWidth: 0,
                             }}>
                                 <Text style={{
                                     textAlign: 'right',
                                     paddingRight: 5
                                 }}>{(quantity * net)?.toLocaleString()}</Text>
+                            </View>
+                            <View key={i} style={{
+                                ...styles.cell,
+                                width: colWidths[6],
+                                borderRightWidth: 0,
+                            }}>
+                                <Text style={{
+                                    textAlign: 'left',
+                                    paddingLeft: 5
+                                }}></Text>
                             </View>
                         </View>
                         </>
@@ -211,7 +213,7 @@ export function PdfForm({data, topInfoData, totalData}) {
                         </View>
                         <View style={{
                             ...styles.point,
-                            width: colWidths[4],
+                            width: colWidths[5],
                             flexDirection: 'row',
                             justifyContent: 'space-between'
                         }}><Text
@@ -221,6 +223,12 @@ export function PdfForm({data, topInfoData, totalData}) {
                                     textAlign: 'right',
                                     paddingRight: 8
                                 }}>{(totalData?.total)?.toLocaleString()}</Text>
+                        </View>
+                        <View style={{
+                            ...styles.point,
+                            width: colWidths[6],
+                        }}><Text
+                            style={{textAlign: 'left', paddingLeft: 8}}></Text>
                         </View>
                     </View>
 
@@ -247,17 +255,20 @@ export function PdfForm({data, topInfoData, totalData}) {
                     <View style={styles.table}>
                         {/* 테이블 헤더 */}
                         <View style={styles.tableHeader}>
-                            <View style={{...styles.point, width: 250}}>
+                            <View style={{...styles.point, width: 260}}>
                                 <Text style={{textAlign: 'center'}}>Specification</Text>
                             </View>
-                            <View style={{...styles.point, width: 100}}>
+                            <View style={{...styles.point, width: 90}}>
                                 <Text style={{textAlign: 'center'}}>Q`ty</Text>
                             </View>
-                            <View style={{...styles.point, width: 110}}>
+                            <View style={{...styles.point, width: 100}}>
                                 <Text style={{textAlign: 'center'}}>Unit Price</Text>
                             </View>
-                            <View style={{...styles.point, width: 110, borderRightWidth: 0}}>
+                            <View style={{...styles.point, width: 100}}>
                                 <Text style={{textAlign: 'center'}}>Amount</Text>
+                            </View>
+                            <View style={{...styles.point, width: 100, borderRightWidth: 0}}>
+                                <Text style={{textAlign: 'center'}}>Other</Text>
                             </View>
                         </View>
 
@@ -307,6 +318,16 @@ export function PdfForm({data, topInfoData, totalData}) {
                                         paddingRight: 5
                                     }}>{(quantity * net)?.toLocaleString()}</Text>
                                 </View>
+                                <View key={i} style={{
+                                    ...styles.cell,
+                                    width: colWidths[6],
+                                    borderRightWidth: 0,
+                                }}>
+                                    <Text style={{
+                                        textAlign: 'left',
+                                        paddingLeft: 5
+                                    }}></Text>
+                                </View>
                             </View>
                             </>
                         })}
@@ -342,7 +363,7 @@ export function PdfForm({data, topInfoData, totalData}) {
                             </View>
                             <View style={{
                                 ...styles.point,
-                                width: colWidths[4],
+                                width: colWidths[5],
                                 flexDirection: 'row',
                                 justifyContent: 'space-between'
                             }}><Text
@@ -352,6 +373,12 @@ export function PdfForm({data, topInfoData, totalData}) {
                                         textAlign: 'right',
                                         paddingRight: 8
                                     }}>{(totalData?.total).toLocaleString()}</Text>
+                            </View>
+                            <View style={{
+                                ...styles.point,
+                                width: colWidths[6],
+                            }}><Text
+                                style={{textAlign: 'left', paddingLeft: 8}}></Text>
                             </View>
                         </View>
 

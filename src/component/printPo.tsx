@@ -6,11 +6,12 @@ import {amountFormat} from "@/utils/columnList";
 import Select from "antd/lib/select";
 import InputNumber from "antd/lib/input-number";
 import {PoHeader} from "@/component/견적서/EstimateHeader";
-import {BottomInfo, BottomPoInfo, TopPoInfo} from "@/component/견적서/TopInfo";
+import {BottomPoInfo, TopPoInfo} from "@/component/견적서/TopInfo";
 import TextArea from "antd/lib/input/TextArea";
 import _ from "lodash";
 import {pdf} from "@react-pdf/renderer";
-import {PdfForm} from "@/component/견적서/PdfForm";
+import {PdfForm} from "@/component/printPoForm";
+import dynamic from "next/dynamic";
 
 
 function PrintPo({
@@ -29,7 +30,7 @@ function PrintPo({
     const [data, setData] = useState([[]]);
     const [topInfoData, setTopInfoData] = useState<any>({})
 
-    function getTopInfoData(e){
+    function getTopInfoData(e) {
         setTopInfoData(e)
     }
 
@@ -192,24 +193,50 @@ function PrintPo({
     }
 
     async function download() {
-        console.log(topInfoData,':::::')
-        // const blob = await pdf(<PdfForm data={data} topInfoData={topInfoData} totalData={totalData}
-        //                                 key={Date.now()}/>).toBlob();
-        //
-        // const url = URL.createObjectURL(blob);
-        // const link = document.createElement('a');
-        // link.href = url;
-        // link.download = `${topInfoData?.documentNumberFull}.pdf`;
-        // link.click();
-        //
-        // // 메모리 해제
-        // URL.revokeObjectURL(url);
+        console.log(topInfoData, '::topInfoData:::')
+        console.log(data, ':::data::')
+        console.log(totalData, '::totalData:::')
+        const blob = await pdf(<PdfForm data={data} topInfoData={topInfoData} totalData={totalData}
+                                        key={Date.now()}/>).toBlob();
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${topInfoData?.documentNumberFull}.pdf`;
+        link.click();
+
+        // 메모리 해제
+        URL.revokeObjectURL(url);
     }
+
+    const print = async () => {
+        const blob = await pdf(<PdfForm data={data} topInfoData={topInfoData} totalData={totalData}
+                                        key={Date.now()}/>).toBlob();
+        const blobUrl = URL.createObjectURL(blob);
+
+        const printWindow = window.open(blobUrl);
+        if (printWindow) {
+            printWindow.onload = () => {
+                // printWindow.focus();
+                // printWindow.print();
+            };
+        }
+    }
+    const PDFViewer = dynamic(
+        () => import('@react-pdf/renderer').then((mod) => mod.PDFViewer),
+        {ssr: false}
+    );
 
 
     return (
         <Modal
             title={<div style={{width: '100%', display: "flex", justifyContent: 'space-between', alignItems: 'center'}}>
+                <div style={{width: '100%', height: '100vh'}}>
+                    <PDFViewer width="100%" height="100%">
+                        <PdfForm data={data} topInfoData={topInfoData} totalData={totalData}
+                                 key={Date.now()}/>
+                    </PDFViewer>
+                </div>
                 <div>발주서 출력</div>
                 <div>
                     <button onClick={download} style={{
@@ -225,7 +252,7 @@ function PrintPo({
                         다운로드
                     </button>
                     {/*@ts-ignore*/}
-                    <button onClick={() => generatePDF(true)} style={{
+                    <button onClick={print} style={{
                         padding: "5px 10px",
                         backgroundColor: "gray",
                         color: "#fff",
