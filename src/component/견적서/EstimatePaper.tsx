@@ -20,28 +20,14 @@ const PDFViewer = dynamic(
 );
 
 
-function sumLengthsUpToIndex(array, index) {
-    let totalLength = 0;
 
-    // 인덱스가 유효한지 확인
-    if (index >= array.length) {
-        return "유효한 인덱스를 입력해주세요.";
-    }
-
-    // 0부터 index까지 각 배열의 길이를 합산
-    for (let i = 0; i <= index; i++) {
-        totalLength += array[i].length;
-    }
-
-    return totalLength;
-}
 
 const EstimatePaper = ({
                            infoRef,
                            tableRef,
                            memberList = [],
                            count = 0,
-                           position = true,
+
                            type = 'estimate',
                            maker,
                            title = ''
@@ -181,7 +167,7 @@ const EstimatePaper = ({
                          onClick={() => {
                              setToggle(true);
                          }}>
-                        <span>₩</span>
+                        <span>{!isNaN(info.net ) ? '₩' : ''}</span>
                         <span className={'netPrice'}>{amountFormat(info.net)}</span>
                     </div>
 
@@ -189,7 +175,7 @@ const EstimatePaper = ({
 
             </td>
             <td>
-                <div style={{
+            <div style={{
                     fontSize: 14,
                     display: 'flex',
                     justifyContent: 'space-between',
@@ -198,8 +184,8 @@ const EstimatePaper = ({
                      onClick={() => {
                          setToggle(true);
                      }}>
-                    <span>₩</span>
-                    <span className={'total'}>{amountFormat(info.net * info.quantity)}</span>
+                    <span>{!isNaN(info.net * info.quantity) ?'₩' : ''}</span>
+                    <span className={'total'}>{!isNaN(info.net * info.quantity) ?  amountFormat(info.net * info.quantity) : ''}</span>
                 </div>
 
             </td>
@@ -244,12 +230,8 @@ const EstimatePaper = ({
         }
         }
     return (
-        <div style={!position ? {position: 'absolute', top: 0, zIndex: -100} : {}}>
-            {/*<div style={{width: '100%', height: '100vh'}}>*/}
-            {/*    <PDFViewer width="100%" height="100%">*/}
-            {/*        <PdfForm data={data} topInfoData={topInfoData} totalData={totalData} key={Date.now()}/>*/}
-            {/*    </PDFViewer>*/}
-            {/*</div>*/}
+        <div>
+
             <div style={{marginTop: -10, padding: 15, display: 'flex', justifyContent: 'space-between'}}>
                 <div>{title}</div>
                 <div>
@@ -270,6 +252,7 @@ const EstimatePaper = ({
                 <EstimateHeader/>
                 <TopInfo count={count} infoRef={infoRef} type={type} memberList={memberList}
                          getTopInfoData={getTopInfoData}/>
+
                 <table style={{
                     width: '100%',
                     borderCollapse: 'collapse',
@@ -364,7 +347,7 @@ const EstimatePaper = ({
 
                 {Object.values(data).map((v: any, i) => {
 
-                    const count: any = sumLengthsUpToIndex(Object.values(data), i - 1);
+                    const count: any = commonManage.getPageIndex(Object.values(data), i - 1);
                     if (!i) {
                         return false;
                     }

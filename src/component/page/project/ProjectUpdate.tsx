@@ -362,8 +362,7 @@ function ProjectUpdate({
             width={1050}
             footer={null}
             onOk={() => setIsPrintModalOpen(false)}>
-            <EstimatePaper infoRef={infoRef} pdfRef={pdfRef} pdfSubRef={pdfSubRef} tableRef={tableRef} position={true}
-                           memberList={memberList} type={'project'}/>
+            <EstimatePaper infoRef={infoRef} pdfRef={pdfRef} pdfSubRef={pdfSubRef} tableRef={tableRef} memberList={memberList} type={'project'}/>
         </Modal>
     }
 

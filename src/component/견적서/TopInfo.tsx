@@ -111,10 +111,11 @@ export default function TopInfo({count, infoRef, type, memberList, getTopInfoDat
 }
 
 
-export const TopPoInfo = ({infoRef, memberList, hscode = ''}) => {
+export const TopPoInfo = ({infoRef, memberList, getTopInfoData}) => {
 
+    const topInfoRef = useRef<any>(null);
 
-    const [info] = useMemo(() => {
+    const [info, maker] = useMemo(() => {
 
         let infoData = commonManage.getInfo(infoRef, orderInfo['defaultInfo']);
         const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
@@ -132,6 +133,33 @@ export const TopPoInfo = ({infoRef, memberList, hscode = ''}) => {
             totalDate = newDate.format('YYYY-MM-DD')
         }
 
+
+        getTopInfoData({
+            agencyName: infoData.agencyName,
+            writtenDate: infoData.writtenDate,
+            agencyManagerName: infoData.agencyManagerName,
+            managerAdminName: infoData.managerAdminName,
+            attnTo: infoData.attnTo,
+            managerPhoneNumber: infoData.managerPhoneNumber,
+            documentNumberFull: infoData.documentNumberFull,
+            managerEmail: infoData.managerEmail,
+            deliveryTerms: infoData.deliveryTerms,
+            hscode: '',
+            incoterms: '',
+            paymentTerms: infoData.paymentTerms,
+
+            // from obj2 (non-conflicting keys)
+            ourPoNo: infoData.agencyName,
+            name: totalDate,
+            contactNumber: infoData?.documentNumberFull,
+            yourPoNo: infoData?.yourPoNo,
+            faxNumber: findMember?.contactNumber,
+            findMember: findMember?.name,
+            shippingTerms: findMember?.email,
+            maker : infoData['maker']
+        })
+
+
         return [lang ? [
                 {title: '수신처', value: infoData.agencyName, id: 'ourPoNo'},
                 {title: '발주일자', value: totalDate, id: 'name'},
@@ -140,7 +168,7 @@ export const TopPoInfo = ({infoRef, memberList, hscode = ''}) => {
                 {title: '납품조건', value: '', id: ''},
                 {title: '귀사견적', value: infoData?.yourPoNo, id: 'yourPoNo'},
                 {title: '결제조건.', value: infoData?.paymentTerms, id: 'attnTo'},
-                {title: '담당자', value: findMember?.name, id: ''},
+                {title: '담당자', value: findMember?.name, id: 'findMember'},
                 {title: '납기조건', value: '', id: ''},
                 {title: '연락처', value: findMember?.contactNumber, id: 'faxNumber'},
                 {title: '', value: '', id: 'deliveryTerms'},
@@ -149,27 +177,27 @@ export const TopPoInfo = ({infoRef, memberList, hscode = ''}) => {
             ]
 
             : [
-                {title: 'MESSER', value: infoData.agencyName, id: 'ourPoNo'},
+                {title: 'MESSER', value: infoData.agencyName, id: 'agencyName'},
                 {title: 'DATE', value: infoData.writtenDate, id: 'writtenDate'},
-                {title: 'ATTN', value: infoData.agencyManagerName, id: 'attnTo'},
-                {title: 'Contact Person', value: infoData.managerAdminName, id: 'ourPoNo'},
-                {title: 'YOUR OFFER NO.', value: infoData.attnTo, id: 'ourPoNo'},
-                {title: 'TEL', value: infoData.managerPhoneNumber, id: 'ourPoNo'},
-                {title: 'MANKU No.', value: infoData.documentNumberFull, id: 'ourPoNo'},
-                {title: 'E-mail', value: infoData.managerEmail, id: 'ourPoNo'},
-                {title: 'Delivery', value: infoData.deliveryTerms, id: 'ourPoNo'},
+                {title: 'ATTN', value: infoData.agencyManagerName, id: 'agencyManagerName'},
+                {title: 'Contact Person', value: infoData.managerAdminName, id: 'managerAdminName'},
+                {title: 'YOUR OFFER NO.', value: infoData.attnTo, id: 'attnTo'},
+                {title: 'TEL', value: infoData.managerPhoneNumber, id: 'managerPhoneNumber'},
+                {title: 'MANKU No.', value: infoData.documentNumberFull, id: 'documentNumberFull'},
+                {title: 'E-mail', value: infoData.managerEmail, id: 'managerEmail'},
+                {title: 'Delivery', value: infoData.deliveryTerms, id: 'deliveryTerms'},
                 {title: 'HS-code', value: '', id: 'hscode'},
                 {title: 'Incoterms', value: '', id: 'incoterms'},
                 {title: '', value: '', id: ''},
-                {title: 'Payment', value: infoData.paymentTerms, id: 'ourPoNo'},
-            ]]
+                {title: 'Payment', value: infoData.paymentTerms, id: 'paymentTerms'},
+            ], infoData['maker']]
 
 
     }, []);
 
 
     return <>
-        <div style={{
+        <div ref={topInfoRef}  style={{
             fontFamily: 'Arial, sans-serif',
             display: 'grid',
             gridTemplateColumns: '1fr 1fr',
@@ -188,18 +216,25 @@ export const TopPoInfo = ({infoRef, memberList, hscode = ''}) => {
                         <div style={{alignItems: 'center', fontWeight: 600}}>{v.title} <span
                             style={{float: 'right', fontWeight: 600}}>{v.title ? ':' : null}</span></div>
 
-                        {(v.id === 'documentNumberFull' || v.id === 'writtenDate') ?
-                            <div style={{paddingLeft: 15}}>{v.value}</div>
-                            :
-                            <Input defaultValue={v.value} id={v.id}
+                            <Input value={v.value} id={v.id}
                                    style={{
                                        border: 'none',
                                        paddingLeft: 15,
                                        alignItems: 'center',
                                        fontSize: 15,
                                        width: '100%'
-                                   }}/>
-                        }
+                                   }}
+                                   onBlur={() => {
+                                       const list = topInfoRef.current.querySelectorAll('input');
+                                       let bowl = {}
+                                       list.forEach(v => {
+                                           bowl[v.id] = v.value;
+                                       });
+                                       bowl['maker'] = maker;
+                                       getTopInfoData(bowl)
+                                   }}
+                            />
+
                     </div>
                 }
             )}
