@@ -345,7 +345,6 @@ function PrintPo({
                                 {totalData?.quantity}
                             </th>
                             <th style={{width: '6%', textAlign: 'left', paddingLeft: 5}}>
-
                                 {data[0][0]?.unit}
                             </th>
                             <th style={{width: '15%'}}>
