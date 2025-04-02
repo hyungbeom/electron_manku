@@ -23,6 +23,28 @@ export const fileManage: any = {}
 // =========================================================================================
 // =========================================================================================
 // =========================================================================================
+
+/**
+ * @description 2번째 출력물 페이지 모델의 index 를 알기위한 함수
+ * @param array 전체 table data
+ * @param index 해당 페이지를 가리키는 numb index
+ */
+commonManage.getPageIndex = function sumLengthsUpToIndex(array, index) {
+    let totalLength = 0;
+    if (index >= array.length) {
+        return "유효한 인덱스를 입력해주세요.";
+    }
+    // 0부터 index까지 각 배열의 길이를 합산
+    for (let i = 0; i <= index; i++) {
+        totalLength += array[i].length;
+    }
+    return totalLength;
+}
+
+
+
+
+
 // =========================================================================================
 // =========================================================================================
 
@@ -899,7 +921,6 @@ commonManage.splitDataWithSequenceNumber = function (data, firstLimit = 20, next
             currentCount = lineCount;
             sequenceNumber++; // ✅ 순서 증가
 
-            // ✅ 첫 번째 그룹 이후부터는 기준을 30으로 변경
             currentLimit = nextLimit;
         }
     });
@@ -911,4 +932,3 @@ commonManage.splitDataWithSequenceNumber = function (data, firstLimit = 20, next
 
     return result;
 }
-

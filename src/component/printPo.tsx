@@ -1,178 +1,124 @@
 import React, {memo, useEffect, useMemo, useRef, useState} from "react";
 import Modal from "antd/lib/modal/Modal";
-import {jsPDF} from "jspdf";
-import html2canvas from "html2canvas";
 import {commonManage} from "@/utils/commonManage";
 import Input from "antd/lib/input";
 import {amountFormat} from "@/utils/columnList";
 import Select from "antd/lib/select";
 import InputNumber from "antd/lib/input-number";
 import {PoHeader} from "@/component/견적서/EstimateHeader";
-import {BottomPoInfo, TopPoInfo} from "@/component/견적서/TopInfo";
+import {BottomInfo, BottomPoInfo, TopPoInfo} from "@/component/견적서/TopInfo";
 import TextArea from "antd/lib/input/TextArea";
 import _ from "lodash";
+import {pdf} from "@react-pdf/renderer";
+import {PdfForm} from "@/component/견적서/PdfForm";
 
 
-function sumLengthsUpToIndex(array, index) {
-    let totalLength = 0;
+function PrintPo({
 
-    // 인덱스가 유효한지 확인
-    if (index >= array.length) {
-        return "유효한 인덱스를 입력해주세요.";
+                     isModalOpen,
+                     setIsModalOpen,
+                     tableRef,
+                     infoRef,
+                     maker = '',
+                     memberList = [],
+                     count = 0,
+                     title = ''
+                 }) {
+
+
+    const [data, setData] = useState([[]]);
+    const [topInfoData, setTopInfoData] = useState<any>({})
+
+    function getTopInfoData(e){
+        setTopInfoData(e)
     }
 
-    // 0부터 index까지 각 배열의 길이를 합산
-    for (let i = 0; i <= index; i++) {
-        totalLength += array[i].length;
-    }
-
-    return totalLength;
-}
-
-
-function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, infoRef, memberList = [], count = 0}) {
-
-    const ref1 = useRef<any>()
-    const ref2 = useRef<any>()
-
-    const pdfRef = useRef<any>();
-    const pdfSubRef = useRef<any>();
-
-
-
-
-
-
-    const [tableData, money] = useMemo(() => {
-
+    useEffect(() => {
         const tableList = tableRef.current?.getSourceData();
         const filterTotalList = tableList.filter(v => !!v.model)
         const result = commonManage.splitDataWithSequenceNumber(filterTotalList, 18, 28);
+        let copyData = _.cloneDeep(data);
+        result.forEach((v, idx) => {
+            copyData[idx] = v;
+        })
 
-        return [result, filterTotalList[0]?.currency]
+        setData(copyData);
     }, [count]);
 
+    const totalData = useMemo(() => {
 
-    const generatePDF = async (printMode = false) => {
-        const pdf = new jsPDF("portrait", "px", "a4");
-        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const list = Object.values(data);
 
-        if (pdfRef.current) {
-            const firstCanvas = await html2canvas(pdfRef.current, {scale: 1.5, useCORS: true});
+        let bowl = {quantity: 0, net: 0, total: 0, unit: list[0].length ? list[0][0]['unit'] : ''}
+        list.forEach((v: any, i: number) => {
+            const result = v.reduce((acc, cur, idx) => {
+                const {quantity, net} = cur
+                acc[0] += quantity;
+                acc[1] += net;
+                acc[2] += (quantity * net)
 
-            const firstImgData = firstCanvas.toDataURL("image/jpeg", 0.7);
-            const firstImgProps = pdf.getImageProperties(firstImgData);
-            const firstImgHeight = (firstImgProps.height * pdfWidth) / firstImgProps.width;
-            pdf.addImage(firstImgData, "PNG", 0, 0, pdfWidth, firstImgHeight);
+                return acc
+            }, [0, 0, 0])
+            bowl["quantity"] += parseFloat(result[0]);
+            bowl["net"] += parseFloat(result[1]);
+            bowl["total"] += parseFloat(result[2]);
+        })
+        return bowl
+    }, [data]);
+
+
+    function TextAreas({value, numb, objKey = 0, name}) {
+
+        const [model, setModel] = useState('');
+
+        useEffect(() => {
+            setModel(value)
+        }, [value]);
+
+        function onChange(e) {
+            setModel(e.target.value)
         }
 
-        const elements = pdfSubRef.current.children;
-        for (let i = 0; i < elements.length; i++) {
-            const element = elements[i];
-            const canvas = await html2canvas(element, {scale: 1.5, useCORS: true});
-            const imgData = canvas.toDataURL("image/jpeg", 0.7);
-            const imgProps = pdf.getImageProperties(imgData);
-            const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
-            pdf.addPage();
-            pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, imgHeight);
-        }
 
-        if (printMode) {
-            const pdfBlob = pdf.output("bloburl");
-            window.open(pdfBlob, "_blank");
-        } else {
-            pdf.save(`${data.documentNumberFull}_발주서.pdf`);
-        }
-    };
-
-
-    useEffect(() => {
-        getTotal()
-    }, [tableData]);
-
-    function getTotal() {
-        const totalPrice = document.querySelectorAll('.total');
-        let total = 0;
-        totalPrice.forEach((input: any) => {
-            const numberString = input.innerText.replace(/[₩,]/g, ''); // ₩와 ,를 제거
-            total += parseFloat(numberString) || 0;  // 숫자가 아닌 값이 있을 경우 0으로 처리
-        });
-
-
-        const netPrice = document.querySelectorAll('.netPrice');
-        let sum = 0;
-        netPrice.forEach((input: any) => {
-            const numberString = input.innerText.replace(/[₩,]/g, ''); // ₩와 ,를 제거
-            sum += parseFloat(numberString) || 0;  // 숫자가 아닌 값이 있을 경우 0으로 처리
-        });
-
-        const inputs = document.getElementsByName('qt');
-        let sum2 = 0;
-        inputs.forEach((input: any) => {
-            sum2 += parseFloat(input.value) || 0;  // 숫자가 아닌 값이 있을 경우 0으로 처리
-        });
-
-        if (ref2.current) {
-            ref2.current.childNodes.forEach(v => {
-                if (v.className === 'total_qt') {
-                    v.innerText = sum2;
-                }
-                if (v.className === 'total_unit') {
-                    if (tableData.length) {
-                        v.innerText = tableData[0][0]?.unit;
-                    }
-                }
-                if (v.className === 'total_netPrice') {
-                    v.innerText = sum.toLocaleString();
-                }
-                if (v.className === 'total_amount') {
-                    v.innerText = total?.toLocaleString();
-                }
-            })
-        }
-        if (ref1.current) {
-            ref1.current.childNodes.forEach(v => {
-                if (v.className === 'total_qt') {
-                    v.innerText = sum2;
-                }
-                if (v.className === 'total_unit') {
-                    if (tableData.length) {
-                        v.innerText = tableData[0][0]?.unit;
-                    }
-                }
-                if (v.className === 'total_netPrice') {
-                    v.innerText = sum.toLocaleString();
-                }
-                if (v.className === 'total_amount') {
-                    v.innerText = total?.toLocaleString();
-                }
+        function blur(e) {
+            setData(v => {
+                v[objKey][numb][name] = model;
+                return {...v}
             })
         }
 
+        return <TextArea autoSize={true} style={{border: 'none'}} onChange={onChange} onBlur={blur} value={model}
+                         key={`ttt${numb}`}/>
     }
 
-    function NumberInputForm({value}) {
 
-        const [info, setInfo] = useState({unitPrice: value.unitPrice, quantity: value.quantity});
+    function NumberInputForm({value, numb, objKey = 0}) {
+
+        const [info, setInfo] = useState({net: value.net, quantity: value.quantity});
 
         const inputRef = useRef<any>();
         const [toggle, setToggle] = useState(false);
 
-        function blur() {
+
+        function blur(e) {
             setToggle(false);
-            getTotal();
+            setData(v => {
+                v[objKey][numb][e.target.id] = parseFloat(e.target.value.replaceAll(",", ""));
+                return {...v}
+            })
         }
+
 
         useEffect(() => {
             if (toggle) {
                 inputRef.current.focus();
             }
-            getTotal()
+            // getTotal()
         }, [toggle]);
 
         function onchange(e) {
             setInfo(v => {
-                return {...v, unitPrice: e}
+                return {...v, net: e}
             })
         }
 
@@ -185,8 +131,9 @@ function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, infoRef, memberLi
         return <>
             <td style={{width: 100, textAlign: 'right'}}>
 
+
                 <Input style={{border: 'none', textAlign: 'right'}} type={'number'} value={info.quantity}
-                       onChange={onQuantity} onBlur={blur} name={'qt'}/>
+                       onChange={onQuantity} onBlur={blur} id={'quantity'} name={'qt'}/>
 
             </td>
             <td style={{width: 30, textAlign: 'left', paddingLeft: 5}}>
@@ -202,7 +149,7 @@ function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, infoRef, memberLi
                 </Select>
             </td>
             <td>
-                {toggle ? <InputNumber ref={inputRef} onBlur={blur} value={info.unitPrice} onChange={onchange}
+                {toggle ? <InputNumber ref={inputRef} onBlur={blur} id={'net'} value={info.net} onChange={onchange}
                                        formatter={(value) => value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                                        parser={(value) => value.replace(/[^0-9]/g, '')}
                                        style={{border: 'none', textAlign: 'right', direction: 'rtl', width: '90%'}}
@@ -217,8 +164,8 @@ function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, infoRef, memberLi
                          onClick={() => {
                              setToggle(true);
                          }}>
-                        <span>{money}</span>
-                        <span className={'netPrice'}>{amountFormat(info.unitPrice)}</span>
+                        <span>{!isNaN(info.net) ? data[0][0]?.currency : ''}</span>
+                        <span className={'netPrice'}>{amountFormat(info.net)}</span>
                     </div>
 
                 }
@@ -234,15 +181,29 @@ function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, infoRef, memberLi
                      onClick={() => {
                          setToggle(true);
                      }}>
-                    <span>{money}</span>
-                    <span className={'total'}>{amountFormat(info.unitPrice * info.quantity)}</span>
+                    <span>{!isNaN(info.net * info.quantity) ? data[0][0]?.currency : ''}</span>
+                    <span
+                        className={'total'}>{!isNaN(info.net * info.quantity) ? amountFormat(info.net * info.quantity) : ''}</span>
                 </div>
 
             </td>
-            <td>
-                <TextArea autoSize={true} style={{border: 'none'}}/>
-            </td>
+
         </>
+    }
+
+    async function download() {
+        console.log(topInfoData,':::::')
+        // const blob = await pdf(<PdfForm data={data} topInfoData={topInfoData} totalData={totalData}
+        //                                 key={Date.now()}/>).toBlob();
+        //
+        // const url = URL.createObjectURL(blob);
+        // const link = document.createElement('a');
+        // link.href = url;
+        // link.download = `${topInfoData?.documentNumberFull}.pdf`;
+        // link.click();
+        //
+        // // 메모리 해제
+        // URL.revokeObjectURL(url);
     }
 
 
@@ -251,7 +212,7 @@ function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, infoRef, memberLi
             title={<div style={{width: '100%', display: "flex", justifyContent: 'space-between', alignItems: 'center'}}>
                 <div>발주서 출력</div>
                 <div>
-                    <button onClick={() => generatePDF(false)} style={{
+                    <button onClick={download} style={{
                         padding: "5px 10px",
                         backgroundColor: "#1890ff",
                         color: "#fff",
@@ -261,7 +222,7 @@ function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, infoRef, memberLi
                         fontSize: 11,
                         marginRight: 10
                     }}>
-                        PDF
+                        다운로드
                     </button>
                     {/*@ts-ignore*/}
                     <button onClick={() => generatePDF(true)} style={{
@@ -284,7 +245,7 @@ function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, infoRef, memberLi
             footer={null}
             onOk={() => setIsModalOpen({event1: false, event2: false, event3: false})}
         >
-            <div ref={pdfRef} style={{
+            <div style={{
 
                 width: '1000px',  // A4 가로
                 height: '1354px',  // A4 세로
@@ -296,7 +257,7 @@ function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, infoRef, memberLi
             }}>
 
                 <PoHeader infoRef={infoRef}/>
-                <TopPoInfo infoRef={infoRef} memberList={memberList} hscode={tableData[0][0]?.hsCode}/>
+                <TopPoInfo infoRef={infoRef} memberList={memberList} getTopInfoData={getTopInfoData}/>
                 <table style={{
                     width: '100%',
                     borderCollapse: 'collapse',
@@ -321,7 +282,7 @@ function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, infoRef, memberLi
                     </thead>
                     <thead>
 
-                    {tableData[0]?.map((v, i) =>
+                    {data[0]?.map((v, i) =>
                         <tr style={{height: 35}}>
                             <td colSpan={2} style={{fontWeight: 600}}>{i + 1}</td>
                             <td style={{
@@ -330,15 +291,20 @@ function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, infoRef, memberLi
                                 textAlign: 'left',
                                 paddingLeft: 5
                             }}>
-                                <TextArea autoSize={true} style={{border: 'none'}} defaultValue={v.model}/>
+                                <TextAreas value={v.model} numb={i} name={'model'}/>
                             </td>
-                            <NumberInputForm value={v}/>
+                            <NumberInputForm value={v} numb={i}/>
+                            <td>
+                                <TextAreas value={v?.other} numb={i} name={'other'}/>
+                            </td>
                         </tr>
                     )}
                     </thead>
                 </table>
                 <div style={{flexGrow: 1}}/>
-                {tableData.length > 1 ? <></> :  <table style={{
+                {Object.keys(data).length > 1 ? <></> :
+
+                    <table style={{
                         width: '100%',
                         borderCollapse: 'collapse',
                         margin: '20px 0',
@@ -346,31 +312,44 @@ function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, infoRef, memberLi
                         border: '1px solid lightGray',
                     }}>
                         <thead>
+                        <tr style={{height: 35, fontWeight: 100}}>
+                            <th style={{width: '44%'}}>TOTAL</th>
+                            <th style={{width: '6%', textAlign: 'right', paddingRight: 8}}>
+                                {totalData?.quantity}
+                            </th>
+                            <th style={{width: '6%', textAlign: 'left', paddingLeft: 5}}>
 
-                        <tr style={{height: 35, fontWeight: 100}} ref={ref2}>
-                            <th colSpan={2} style={{width: '6%', fontWeight: 600}}></th>
-                            <th style={{width: '40%'}}>TOTAL</th>
-                            <th style={{width: 80, textAlign: 'right', paddingRight: 8}}
-                                className={'total_qt'}></th>
-                            <th style={{width: 50, textAlign: 'left', paddingLeft: 5}}
-                                className={'total_unit'}></th>
-                            <th style={{width: '15%', textAlign : 'right', paddingRight : 10}} className={'total_netPrice'}></th>
-                            <th style={{width: '15%', textAlign : 'right', paddingRight : 10}} className={'total_amount'}></th>
-                            <th style={{width: '14%'}}></th>
+                                {data[0][0]?.unit}
+                            </th>
+                            <th style={{width: '15%'}}>
+                                <div style={{display: 'flex', justifyContent: 'space-between', padding: '0px 8px'}}>
+                                    <span>{data[0][0]?.currency}</span>
+                                    <span>        {(totalData?.net).toLocaleString()}</span>
+                                </div>
+                            </th>
+                            <th style={{width: '15%', textAlign: 'right', paddingRight: 10}}>
+                                <div style={{display: 'flex', justifyContent: 'space-between', padding: '0px 8px'}}>
+                                    <span>{data[0][0]?.currency}</span>
+                                    <span>{(totalData?.total).toLocaleString()}</span>
+                                </div>
+
+                            </th>
+                            <th style={{width: '15%', textAlign: 'right', paddingRight: 10}}>
+                            </th>
                         </tr>
                         </thead>
-                    </table>}
-                {tableData.length > 1 ? <></> : <BottomPoInfo infoRef={infoRef}/>}
+                    </table>
+
+                }
+                {Object.keys(data).length > 1 ? <></> : <BottomPoInfo infoRef={infoRef}/>}
 
                 <div style={{textAlign: 'center'}}>- 1 -</div>
             </div>
 
 
-            <div ref={pdfSubRef}>
-
-                {tableData.map((v, i) => {
-
-                    const count: any = sumLengthsUpToIndex(tableData, i - 1);
+            <div>
+                {Object.values(data).map((v: any, i) => {
+                    const count: any = commonManage.getPageIndex(Object.values(data), i - 1);
                     if (!i) {
                         return false;
                     }
@@ -412,11 +391,13 @@ function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, infoRef, memberLi
                                         textAlign: 'left',
                                         paddingLeft: 5
                                     }}>
-
-                                        <TextArea autoSize={true} style={{border: 'none'}} defaultValue={src.model}/>
+                                        <TextAreas value={src.model} numb={idx} objKey={i} name={'model'}/>
 
                                     </td>
-                                    <NumberInputForm value={src}/>
+                                    <NumberInputForm value={src} numb={idx} objKey={i}/>
+                                    <td>
+                                        <TextAreas value={v?.other} numb={i} name={'other'}/>
+                                    </td>
                                 </tr>
                             })}
                             </thead>
@@ -426,7 +407,7 @@ function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, infoRef, memberLi
                         <div style={{flexGrow: 1}}/>
 
 
-                        {tableData.length - 1 === i ? <table style={{
+                        {Object.keys(data).length - 1 === i ? <table style={{
                                 width: '100%',
                                 borderCollapse: 'collapse',
                                 margin: '20px 0',
@@ -434,25 +415,37 @@ function PrintPo({data, isModalOpen, setIsModalOpen, tableRef, infoRef, memberLi
                                 border: '1px solid lightGray',
                             }}>
                                 <thead>
+                                <tr style={{height: 35, fontWeight: 100}}>
+                                    <th style={{width: '44%'}}>TOTAL</th>
+                                    <th style={{width: '6%', textAlign: 'right', paddingRight: 8}}>
+                                        {totalData?.quantity}
+                                    </th>
+                                    <th style={{width: '6%', textAlign: 'left', paddingLeft: 5}}>
 
-                                <tr style={{height: 35, fontWeight: 100}} ref={ref2}>
-                                    <th colSpan={2} style={{width: '6%', fontWeight: 600}}></th>
-                                    <th style={{width: '38%'}}>TOTAL</th>
-                                    <th style={{width: 50, textAlign: 'right', paddingRight: 8}}
-                                        className={'total_qt'}></th>
-                                    <th style={{width: 40, textAlign: 'left', paddingLeft: 5}}
-                                        className={'total_unit'}></th>
-                                    <th style={{width: '15%', textAlign : 'right', paddingRight : 10}} className={'total_netPrice'}></th>
-                                    <th style={{width: '15%', textAlign : 'right', paddingRight : 10}} className={'total_amount'}></th>
-                                    <th style={{width: '14%'}}></th>
+                                        {data[0][0]?.unit}
+                                    </th>
+                                    <th style={{width: '15%'}}>
+                                        <div style={{display: 'flex', justifyContent: 'space-between', padding: '0px 8px'}}>
+                                            <span>{data[0][0]?.currency}</span>
+                                            <span>        {(totalData?.net).toLocaleString()}</span>
+                                        </div>
+                                    </th>
+                                    <th style={{width: '15%', textAlign: 'right', paddingRight: 10}}>
+                                        <div style={{display: 'flex', justifyContent: 'space-between', padding: '0px 8px'}}>
+                                            <span>{data[0][0]?.currency}</span>
+                                            <span>{(totalData?.total).toLocaleString()}</span>
+                                        </div>
+
+                                    </th>
+                                    <th style={{width: '15%', textAlign: 'right', paddingRight: 10}}>
+                                    </th>
                                 </tr>
                                 </thead>
                             </table>
                             : <></>}
-                        {tableData.length - 1 === i ? <BottomPoInfo infoRef={infoRef}/> : <></>}
+                        {Object.keys(data).length - 1 === i ? <BottomPoInfo infoRef={infoRef}/> : <></>}
                         <div style={{textAlign: 'center'}}>- {i + 1} -</div>
                     </div>
-
                 })}
             </div>
         </Modal>
