@@ -46,7 +46,6 @@ function OrderRead({getPropertyId, getCopyPage}: any) {
         })
     };
 
-
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('order_read');
         return savedSizes ? JSON.parse(savedSizes) : [25, 25, 25, 0]; // 기본값 [50, 50, 50]

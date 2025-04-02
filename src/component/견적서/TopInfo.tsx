@@ -1,8 +1,9 @@
-import React, {useEffect, useMemo, useRef} from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 import {commonManage} from "@/utils/commonManage";
 import {estimateInfo, orderInfo, projectInfo} from "@/utils/column/ProjectInfo";
 import Input from "antd/lib/input";
 import moment from "moment";
+import {paperTopInfo} from "@/utils/common";
 
 export default function TopInfo({count, infoRef, type, memberList, getTopInfoData}) {
 
@@ -38,7 +39,7 @@ export default function TopInfo({count, infoRef, type, memberList, getTopInfoDat
             delivery: infoData.delivery,
             faxNumber: infoData.faxNumber,
             shippingTerms: infoData.shippingTerms,
-            maker : infoData['maker']
+            maker: infoData['maker']
         })
 
         return [[
@@ -83,25 +84,25 @@ export default function TopInfo({count, infoRef, type, memberList, getTopInfoDat
                             style={{float: 'right', fontWeight: 600}}>:</span></div>
 
 
-                            <Input defaultValue={v.value} id={v.id}
-                                   suffix={<>{v.id === 'delivery' ? '주' : ''}</>}
-                                   style={{
-                                       border: 'none',
-                                       paddingLeft: 15,
-                                       alignItems: 'center',
-                                       fontSize: 15,
-                                       width: v.id === 'delivery' ? 70 : '100%'
-                                   }}
-                                   onBlur={() => {
-                                       const list = topInfoRef.current.querySelectorAll('input');
-                                       let bowl = {}
-                                       list.forEach(v => {
-                                           bowl[v.id] = v.value;
-                                       });
-                                       bowl['maker'] = maker;
-                                       getTopInfoData(bowl)
-                                   }}
-                            />
+                        <Input defaultValue={v.value} id={v.id}
+                               suffix={<>{v.id === 'delivery' ? '주' : ''}</>}
+                               style={{
+                                   border: 'none',
+                                   paddingLeft: 15,
+                                   alignItems: 'center',
+                                   fontSize: 15,
+                                   width: v.id === 'delivery' ? 70 : '100%'
+                               }}
+                               onBlur={() => {
+                                   const list = topInfoRef.current.querySelectorAll('input');
+                                   let bowl = {}
+                                   list.forEach(v => {
+                                       bowl[v.id] = v.value;
+                                   });
+                                   bowl['maker'] = maker;
+                                   getTopInfoData(bowl)
+                               }}
+                        />
 
                     </div>
                 }
@@ -112,99 +113,118 @@ export default function TopInfo({count, infoRef, type, memberList, getTopInfoDat
 
 
 export const TopPoInfo = ({infoRef, memberList, getTopInfoData}) => {
-
     const topInfoRef = useRef<any>(null);
+    const [info, setInfo] = useState({})
+    const [title, setTitle] = useState<any>(paperTopInfo['ko'])
 
-    const [info, maker] = useMemo(() => {
+    useEffect(() => {
 
-        let infoData = commonManage.getInfo(infoRef, orderInfo['defaultInfo']);
-        const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
-        infoData['managerAdminName'] = findMember['name'];
-
-        const dom = infoRef.current.querySelector('#agencyCode');
-        const lang = dom.value.startsWith("K");
-
-        let totalDate = ''
-        let date = moment(infoData['delivery']); // 기준 날짜
-        totalDate = infoData['delivery']
-        if (!isNaN(infoData['deliveryTerms'])) {
-            console.log('숫자')
-            let newDate = date.add(infoData['deliveryTerms'], 'weeks'); // 주 단위 추가
-            totalDate = newDate.format('YYYY-MM-DD')
+        // 초기 언어 설정 =========
+        const dom = infoRef.current.querySelector('#agencyCode')
+        if (!dom.value.startsWith("K")) {
+            setTitle(paperTopInfo['en'])
         }
 
-
-        getTopInfoData({
-            agencyName: infoData.agencyName,
-            writtenDate: infoData.writtenDate,
-            agencyManagerName: infoData.agencyManagerName,
-            managerAdminName: infoData.managerAdminName,
-            attnTo: infoData.attnTo,
-            managerPhoneNumber: infoData.managerPhoneNumber,
-            documentNumberFull: infoData.documentNumberFull,
-            managerEmail: infoData.managerEmail,
-            deliveryTerms: infoData.deliveryTerms,
-            hscode: '',
-            incoterms: '',
-            paymentTerms: infoData.paymentTerms,
-
-            // from obj2 (non-conflicting keys)
-            ourPoNo: infoData.agencyName,
-            name: totalDate,
-            contactNumber: infoData?.documentNumberFull,
-            yourPoNo: infoData?.yourPoNo,
-            faxNumber: findMember?.contactNumber,
-            findMember: findMember?.name,
-            shippingTerms: findMember?.email,
-            maker : infoData['maker']
-        })
-
-
-        return [lang ? [
-                {title: '수신처', value: infoData.agencyName, id: 'ourPoNo'},
-                {title: '발주일자', value: totalDate, id: 'name'},
-                {title: '담당자', value: infoData.agencyManagerName, id: 'agencyManagerName'},
-                {title: '발주번호', value: infoData?.documentNumberFull, id: 'contactNumber'},
-                {title: '납품조건', value: '', id: ''},
-                {title: '귀사견적', value: infoData?.yourPoNo, id: 'yourPoNo'},
-                {title: '결제조건.', value: infoData?.paymentTerms, id: 'attnTo'},
-                {title: '담당자', value: findMember?.name, id: 'findMember'},
-                {title: '납기조건', value: '', id: ''},
-                {title: '연락처', value: findMember?.contactNumber, id: 'faxNumber'},
-                {title: '', value: '', id: 'deliveryTerms'},
-                {title: 'E-Mail', value: findMember?.email, id: 'shippingTerms'},
-
-            ]
-
-            : [
-                {title: 'MESSER', value: infoData.agencyName, id: 'agencyName'},
-                {title: 'DATE', value: infoData.writtenDate, id: 'writtenDate'},
-                {title: 'ATTN', value: infoData.agencyManagerName, id: 'agencyManagerName'},
-                {title: 'Contact Person', value: infoData.managerAdminName, id: 'managerAdminName'},
-                {title: 'YOUR OFFER NO.', value: infoData.attnTo, id: 'attnTo'},
-                {title: 'TEL', value: infoData.managerPhoneNumber, id: 'managerPhoneNumber'},
-                {title: 'MANKU No.', value: infoData.documentNumberFull, id: 'documentNumberFull'},
-                {title: 'E-mail', value: infoData.managerEmail, id: 'managerEmail'},
-                {title: 'Delivery', value: infoData.deliveryTerms, id: 'deliveryTerms'},
-                {title: 'HS-code', value: '', id: 'hscode'},
-                {title: 'Incoterms', value: '', id: 'incoterms'},
-                {title: '', value: '', id: ''},
-                {title: 'Payment', value: infoData.paymentTerms, id: 'paymentTerms'},
-            ], infoData['maker']]
-
-
+        // 초기 데이터 설정 =========
+        let infoData = commonManage.getInfo(infoRef, orderInfo['defaultInfo']);
+        setInfo(infoData)
+        getTopInfoData(infoData)
     }, []);
 
 
+    // useEffect(() => {
+    //     let infoData = commonManage.getInfo(infoRef, orderInfo['defaultInfo']);
+    //     const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
+    //     infoData['managerAdminName'] = findMember['name'];
+    //
+    //     const dom = infoRef.current.querySelector('#agencyCode');
+    //     const lang = dom.value.startsWith("K");
+    //
+    //     let totalDate = ''
+    //     let date = moment(infoData['delivery']); // 기준 날짜
+    //     totalDate = infoData['delivery']
+    //     if (!isNaN(infoData['deliveryTerms'])) {
+    //         console.log('숫자')
+    //         let newDate = date.add(infoData['deliveryTerms'], 'weeks'); // 주 단위 추가
+    //         totalDate = newDate.format('YYYY-MM-DD')
+    //     }
+    //
+    //
+    //     getTopInfoData({
+    //         agencyName: infoData.agencyName,
+    //         writtenDate: infoData.writtenDate,
+    //         agencyManagerName: infoData.agencyManagerName,
+    //         managerAdminName: infoData.managerAdminName,
+    //         attnTo: infoData.attnTo,
+    //         managerPhoneNumber: infoData.managerPhoneNumber,
+    //         documentNumberFull: infoData.documentNumberFull,
+    //         managerEmail: infoData.managerEmail,
+    //         deliveryTerms: infoData.deliveryTerms,
+    //         hscode: '',
+    //         incoterms: '',
+    //         paymentTerms: infoData.paymentTerms,
+    //
+    //         // from obj2 (non-conflicting keys)
+    //         ourPoNo: infoData.agencyName,
+    //         name: totalDate,
+    //         contactNumber: infoData?.documentNumberFull,
+    //         yourPoNo: infoData?.yourPoNo,
+    //         faxNumber: findMember?.contactNumber,
+    //         findMember: findMember?.name,
+    //         shippingTerms: findMember?.email,
+    //         maker : infoData['maker']
+    //     })
+    //
+    //
+    //     return [lang ? [
+    //             {title: '수신처', value: infoData.agencyName, id: 'agencyName'},
+    //             {title: '발주일자', value: totalDate, id: 'totalDate'},
+    //             {title: '담당자', value: infoData.agencyManagerName, id: 'agencyManagerName'},
+    //             {title: '발주번호', value: infoData?.documentNumberFull, id: 'documentNumberFull'},
+    //             {title: '납품조건', value: '', id: ''},
+    //             {title: '귀사견적', value: infoData?.yourPoNo, id: 'yourPoNo'},
+    //             {title: '결제조건.', value: infoData?.paymentTerms, id: 'paymentTerms'},
+    //             {title: '담당자', value: findMember?.name, id: 'name'},
+    //             {title: '납기조건', value: '', id: ''},
+    //             {title: '연락처', value: findMember?.contactNumber, id: 'contactNumber'},
+    //             {title: '', value: '', id: 'deliveryTerms'},
+    //             {title: 'E-Mail', value: findMember?.email, id: 'email'},
+    //
+    //         ]
+    //
+    //         : [
+    //             {title: 'MESSER', value: infoData.agencyName, id: 'agencyName'},
+    //             {title: 'DATE', value: infoData.writtenDate, id: 'writtenDate'},
+    //             {title: 'ATTN', value: infoData.agencyManagerName, id: 'agencyManagerName'},
+    //             {title: 'Contact Person', value: infoData.managerAdminName, id: 'managerAdminName'},
+    //             {title: 'YOUR OFFER NO.', value: infoData.attnTo, id: 'attnTo'},
+    //             {title: 'TEL', value: infoData.managerPhoneNumber, id: 'managerPhoneNumber'},
+    //             {title: 'MANKU No.', value: infoData.documentNumberFull, id: 'documentNumberFull'},
+    //             {title: 'E-mail', value: infoData.managerEmail, id: 'managerEmail'},
+    //             {title: 'Delivery', value: infoData.deliveryTerms, id: 'deliveryTerms'},
+    //             {title: 'HS-code', value: '', id: 'hscode'},
+    //             {title: 'Incoterms', value: '', id: 'incoterms'},
+    //             {title: '', value: '', id: ''},
+    //             {title: 'Payment', value: infoData.paymentTerms, id: 'paymentTerms'},
+    //         ], infoData['maker']]
+    //
+    // }, []);
+
+    function onChange(e) {
+
+        commonManage.onChange(e, setInfo)
+    }
+
+
     return <>
-        <div ref={topInfoRef}  style={{
+        <div ref={topInfoRef} style={{
             fontFamily: 'Arial, sans-serif',
             display: 'grid',
             gridTemplateColumns: '1fr 1fr',
             gridTemplateRows: '35px 35px 35px 35px 35px 35px 35px 35px',
             alignItems: 'center',
         }}>
-            {info?.map((v: any, index) => {
+            {Object.keys(title)?.map((v: any, index) => {
 
                     return <div style={{
                         display: 'grid',
@@ -212,28 +232,23 @@ export const TopPoInfo = ({infoRef, memberList, getTopInfoData}) => {
                         alignItems: 'center',
                         fontSize: 14
                     }}>
+                        <div style={{alignItems: 'center', fontWeight: 600}}>{title[v]} <span
+                            style={{float: 'right', fontWeight: 600}}>{title[v] ? ':' : null}</span></div>
 
-                        <div style={{alignItems: 'center', fontWeight: 600}}>{v.title} <span
-                            style={{float: 'right', fontWeight: 600}}>{v.title ? ':' : null}</span></div>
 
-                            <Input value={v.value} id={v.id}
-                                   style={{
-                                       border: 'none',
-                                       paddingLeft: 15,
-                                       alignItems: 'center',
-                                       fontSize: 15,
-                                       width: '100%'
-                                   }}
-                                   onBlur={() => {
-                                       const list = topInfoRef.current.querySelectorAll('input');
-                                       let bowl = {}
-                                       list.forEach(v => {
-                                           bowl[v.id] = v.value;
-                                       });
-                                       bowl['maker'] = maker;
-                                       getTopInfoData(bowl)
-                                   }}
-                            />
+                        <Input value={info[v]} id={v}
+                               style={{
+                                   border: 'none',
+                                   paddingLeft: 15,
+                                   alignItems: 'center',
+                                   fontSize: 15,
+                                   width: '100%'
+                               }}
+                               onChange={onChange}
+                               onBlur={() => {
+                                   getTopInfoData(info)
+                               }}
+                        />
 
                     </div>
                 }
