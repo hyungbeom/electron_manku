@@ -9,13 +9,9 @@ import {PoHeader} from "@/component/견적서/EstimateHeader";
 import {BottomPoInfo, TopPoInfo} from "@/component/견적서/TopInfo";
 import TextArea from "antd/lib/input/TextArea";
 import _ from "lodash";
-import dynamic from "next/dynamic";
+import {pdf} from "@react-pdf/renderer";
 import {PrintPoForm} from "@/component/PrintPoForm";
 
-const PDFViewer = dynamic(
-    () => import('@react-pdf/renderer').then((mod) => mod.PDFViewer),
-    {ssr: false}
-);
 
 function PrintPo({
 
@@ -193,19 +189,32 @@ function PrintPo({
     }
 
     async function download() {
-        // const blob = await pdf(<PdfForm data={data} topInfoData={topInfoData} totalData={totalData}
-        //                                 key={Date.now()}/>).toBlob();
-        //
-        // const url = URL.createObjectURL(blob);
-        // const link = document.createElement('a');
-        // link.href = url;
-        // link.download = `${topInfoData?.documentNumberFull}.pdf`;
-        // link.click();
-        //
-        // // 메모리 해제
-        // URL.revokeObjectURL(url);
+        const blob = await pdf(<PrintPoForm data={data} topInfoData={topInfoData} totalData={totalData}
+                                        key={Date.now()}/>).toBlob();
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${topInfoData?.documentNumberFull}_발주서.pdf`;
+        link.click();
+
+        // 메모리 해제
+        URL.revokeObjectURL(url);
     }
 
+    const print = async () => {
+        const blob = await pdf(<PrintPoForm data={data} topInfoData={topInfoData} totalData={totalData}
+                                        key={Date.now()}/>).toBlob();
+        const blobUrl = URL.createObjectURL(blob);
+
+        const printWindow = window.open(blobUrl);
+        if (printWindow) {
+            printWindow.onload = () => {
+                // printWindow.focus();
+                // printWindow.print();
+            };
+        }
+    }
 
     return (
         <Modal
@@ -225,7 +234,7 @@ function PrintPo({
                         다운로드
                     </button>
                     {/*@ts-ignore*/}
-                    <button onClick={() => generatePDF(true)} style={{
+                    <button onClick={print} style={{
                         padding: "5px 10px",
                         backgroundColor: "gray",
                         color: "#fff",
@@ -245,11 +254,6 @@ function PrintPo({
             footer={null}
             onOk={() => setIsModalOpen({event1: false, event2: false, event3: false})}
         >
-            <div style={{width: '100%', height: '100vh'}}>
-                <PDFViewer width="100%" height="100%">
-                    <PrintPoForm data={data} topInfoData={topInfoData} totalData={totalData} key={Date.now()}/>
-                </PDFViewer>
-            </div>
             <div style={{
 
                 width: '1000px',  // A4 가로
@@ -298,7 +302,7 @@ function PrintPo({
                             }}>
                                 <TextAreas value={v.model} numb={i} name={'model'}/>
                             </td>
-                            <NumberInputForm value={v} numb={i}/>
+                            <NumberInputForm value={v} numb={i} objKey={i}/>
                             <td>
                                 <TextAreas value={v?.other} numb={i} name={'other'}/>
                             </td>
