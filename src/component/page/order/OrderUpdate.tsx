@@ -376,7 +376,7 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
         <>
 
             {isModalOpen['event3'] &&
-                <PrintPo data={info} infoRef={infoRef} tableRef={tableRef} isModalOpen={isModalOpen}
+                <PrintPo infoRef={infoRef} tableRef={tableRef} isModalOpen={isModalOpen}
                          setIsModalOpen={setIsModalOpen} memberList={memberList} count={count}/>}
 
             {isModalOpen['event1'] &&   <TransactionStatementHeader isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}
