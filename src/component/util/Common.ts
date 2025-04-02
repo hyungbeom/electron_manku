@@ -51,6 +51,12 @@ const styles = StyleSheet.create({
         marginTop: 6,
         marginBottom: 3,
     },
+    titleLine2: {
+        borderTopWidth: 2,
+        borderColor: '#71d1df',
+        marginTop: 6,
+        marginBottom: 8,
+    },
     subtitle: {
         textAlign: 'center',
         marginBottom: 16,
@@ -63,19 +69,23 @@ const styles = StyleSheet.create({
     },
     label: {
         fontFamily : 'NotoSansKR_large',
-        width: '12%',
+        width: '16%',
         fontWeight: 'bold',
+        textAlign: 'right'
     },
     value: {
-        width: '38%',
+        width: '34%',
+        paddingLeft: 10
     },
     labelRight: {
         fontFamily : 'NotoSansKR_large',
-        width: '12%',
+        width: '16%',
         fontWeight: 'bold',
+        textAlign: 'right'
     },
     valueRight: {
-        width: '38%',
+        width: '34%',
+        paddingLeft: 10
     },
 
     // 테이블 관련
