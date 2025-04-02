@@ -121,17 +121,13 @@ export function PdfForm({data, topInfoData, totalData}) {
                         <View style={{...styles.point, width: colWidths[0]}}>
                             <Text style={{textAlign: 'center'}}>Maker</Text>
                         </View>
-                        <View style={{...styles.cell, width: colWidths[1]}}>
+                        <View style={{...styles.cell, width: 530, borderRightWidth: 0}}>
                             <Text style={{
                                 textAlign: 'left',
                                 paddingLeft: 5,
                                 fontFamily: styles.point.fontFamily
                             }}>{topInfoData?.maker}</Text>
                         </View>
-                        <View style={{...styles.cell, width: colWidths[2]}}/>
-                        <View style={{...styles.cell, width: colWidths[3]}}/>
-                        <View style={{...styles.cell, width: colWidths[4]}}/>
-                        <View style={{...styles.cell, width: colWidths[5], borderRightWidth: 0}}/>
                     </View>
 
                     {/* 내용 행 반복 */}

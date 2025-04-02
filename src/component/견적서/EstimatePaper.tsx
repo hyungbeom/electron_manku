@@ -14,14 +14,6 @@ import {pdf} from "@react-pdf/renderer";
 import {PdfForm} from "@/component/견적서/PdfForm";
 import dynamic from "next/dynamic";
 
-const PDFViewer = dynamic(
-    () => import('@react-pdf/renderer').then((mod) => mod.PDFViewer),
-    {ssr: false}
-);
-
-
-
-
 const EstimatePaper = ({
                            infoRef,
                            tableRef,
@@ -202,7 +194,7 @@ const EstimatePaper = ({
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `${topInfoData?.documentNumberFull}.pdf`;
+        link.download = `${topInfoData?.documentNumberFull}_견적서.pdf`;
         link.click();
 
         // 메모리 해제
@@ -235,8 +227,31 @@ const EstimatePaper = ({
             <div style={{marginTop: -10, padding: 15, display: 'flex', justifyContent: 'space-between'}}>
                 <div>{title}</div>
                 <div>
-                    <Button onClick={download} size={'small'} type={'primary'} style={{fontSize : 12, marginRight : 5}}>다운로드</Button>
-                    <Button onClick={print} size={'small'} type={'primary'} style={{fontSize : 12, marginRight : 20}}>인쇄</Button>
+                    <button onClick={download} style={{
+                        padding: "5px 10px",
+                        backgroundColor: "#1890ff",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                        fontSize: 11,
+                        marginRight: 10
+                    }}>
+                        다운로드
+                    </button>
+                    {/*@ts-ignore*/}
+                    <button onClick={print} style={{
+                        padding: "5px 10px",
+                        backgroundColor: "gray",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                        fontSize: 11,
+                        marginRight: 20
+                    }}>
+                        인쇄
+                    </button>
                 </div>
             </div>
             <div style={{
