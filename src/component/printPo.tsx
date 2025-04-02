@@ -6,11 +6,9 @@ import {amountFormat} from "@/utils/columnList";
 import Select from "antd/lib/select";
 import InputNumber from "antd/lib/input-number";
 import {PoHeader} from "@/component/견적서/EstimateHeader";
-import {BottomInfo, BottomPoInfo, TopPoInfo} from "@/component/견적서/TopInfo";
+import {BottomPoInfo, TopPoInfo} from "@/component/견적서/TopInfo";
 import TextArea from "antd/lib/input/TextArea";
 import _ from "lodash";
-import {pdf} from "@react-pdf/renderer";
-import {PdfForm} from "@/component/견적서/PdfForm";
 
 
 function PrintPo({
@@ -29,7 +27,7 @@ function PrintPo({
     const [data, setData] = useState([[]]);
     const [topInfoData, setTopInfoData] = useState<any>({})
 
-    function getTopInfoData(e){
+    function getTopInfoData(e) {
         setTopInfoData(e)
     }
 
@@ -192,7 +190,6 @@ function PrintPo({
     }
 
     async function download() {
-        console.log(topInfoData,':::::')
         // const blob = await pdf(<PdfForm data={data} topInfoData={topInfoData} totalData={totalData}
         //                                 key={Date.now()}/>).toBlob();
         //
