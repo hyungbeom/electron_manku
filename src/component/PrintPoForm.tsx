@@ -1,8 +1,10 @@
 // 폰트 설정 (기본 한글 폰트 필요 시 추가해야 함)
 import styles from "@/component/util/Common";
 import {Document, Font, Image, Page, Text, View} from '@react-pdf/renderer';
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {commonManage} from "@/utils/commonManage";
+import {paperTopInfo} from "@/utils/common";
+import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 
 Font.register({
     family: 'NotoSansKR',
@@ -17,7 +19,18 @@ Font.register({
 const colWidths = [50, 210, 45, 45, 100, 100, 100];
 
 
-export function PdfForm({data, topInfoData, totalData}) {
+export function PrintPoForm({data, topInfoData, totalData}) {
+
+    const [title, setTitle] = useState<any>(paperTopInfo['ko'])
+    useEffect(() => {
+        if (isEmptyObj(topInfoData)) {
+            if (!topInfoData['agencyCode'].startsWith("K")) {
+                setTitle(paperTopInfo['en'])
+            }
+        }
+    }, [topInfoData]);
+
+    console.log(data,'data:')
 
     return <Document>
         <Page size="A4" style={styles.page}>
@@ -44,43 +57,18 @@ export function PdfForm({data, topInfoData, totalData}) {
 
                 <View style={styles.titleLine}/>
 
-                {/* 상단 정보 */}
-                <View style={styles.infoRow}>
-                    <Text style={styles.label}>수신처 :</Text>
-                    <Text style={styles.value}>{topInfoData?.writtenDate}</Text>
-                    <Text style={styles.labelRight}>발주일자 :</Text>
-                    <Text style={styles.valueRight}>{topInfoData?.writtenDate}</Text>
-                </View>
-                <View style={styles.infoRow}>
-                    <Text style={styles.label}>담당자 :</Text>
-                    <Text style={styles.value}>{topInfoData?.managerAdminName}</Text>
-                    <Text style={styles.labelRight}>발주번호 :</Text>
-                    <Text style={styles.valueRight}>{topInfoData?.documentNumberFull}</Text>
-                </View>
-                <View style={styles.infoRow}>
-                    <Text style={styles.label}>납품조건 :</Text>
-                    <Text style={styles.value}>{topInfoData?.shippingTerms}</Text>
-                    <Text style={styles.labelRight}>귀사견적 :</Text>
-                    <Text style={styles.valueRight}>{topInfoData?.email}</Text>
-                </View>
-                <View style={styles.infoRow}>
-                    <Text style={styles.label}>결제조건 :</Text>
-                    <Text style={styles.value}>{topInfoData?.paymentTerms}</Text>
-                    <Text style={styles.labelRight}>담당자 :</Text>
-                    <Text style={styles.valueRight}>{topInfoData?.validityPeriod}</Text>
-                </View>
-                <View style={styles.infoRow}>
-                    <Text style={styles.label}>납기조건 :</Text>
-                    <Text style={styles.value}>{topInfoData?.deliveryTerms}</Text>
-                    <Text style={styles.labelRight}>연락처 :</Text>
-                    <Text style={styles.valueRight}>{topInfoData?.managerPhoneNumber}</Text>
-                </View>
-                <View style={styles.infoRow}>
-                    <Text style={styles.label}></Text>
-                    <Text style={styles.value}></Text>
-                    <Text style={styles.labelRight}>E-Mail :</Text>
-                    <Text style={styles.valueRight}>{topInfoData?.managerEmail}</Text>
-                </View>
+                {Object.keys(title).map((v, i) => {
+                    if (i % 2 === 1) {
+                        return false;
+                    }
+
+                    return <View style={styles.infoRow}>
+                        <Text style={styles.label}>{title[v]} {v ==='blank' ? '':':' }</Text>
+                        <Text style={styles.value}>{topInfoData[v]}</Text>
+                        <Text style={styles.labelRight}>{title[Object.keys(title)[i + 1]]}  {!Object.keys(title)[i + 1] || Object.keys(title)[i + 1]  ==='blank' ? '':':' }</Text>
+                        <Text style={styles.valueRight}>{topInfoData[Object.keys(title)[i + 1]]}</Text>
+                    </View>
+                })}
 
                 {/* 표 */}
                 <View style={styles.table}>
@@ -113,15 +101,15 @@ export function PdfForm({data, topInfoData, totalData}) {
                         <View style={{...styles.point, width: colWidths[0]}}>
                             <Text style={{textAlign: 'center'}}>Maker</Text>
                         </View>
-                        <View style={{...styles.cell, width: colWidths[1]}}>
+                        <View style={{...styles.cell, width: 300}}>
                             <Text style={{
                                 textAlign: 'left',
                                 paddingLeft: 5,
                                 fontFamily: styles.point.fontFamily
                             }}>{topInfoData?.maker}</Text>
                         </View>
-                        <View style={{...styles.cell, width: colWidths[2]}}/>
-                        <View style={{...styles.cell, width: colWidths[3]}}/>
+                        {/*<View style={{...styles.cell, width: colWidths[2]}}/>*/}
+                        {/*<View style={{...styles.cell, width: colWidths[3]}}/>*/}
                         <View style={{...styles.cell, width: colWidths[4]}}/>
                         <View style={{...styles.cell, width: colWidths[5]}}/>
                         <View style={{...styles.cell, width: colWidths[6], borderRightWidth: 0}}/>
@@ -129,7 +117,7 @@ export function PdfForm({data, topInfoData, totalData}) {
 
                     {/* 내용 행 반복 */}
                     {data[0]?.map((row: any, i) => {
-                        const {model, quantity, unit, net} = row;
+                        const {model, quantity, unit, unitPrice} = row;
                         return <> <View key={i} style={styles.tableRow}>
                             <View key={i} style={{
                                 ...styles.cell,
@@ -159,7 +147,7 @@ export function PdfForm({data, topInfoData, totalData}) {
                                 ...styles.cell,
                                 width: colWidths[4],
                             }}>
-                                <Text style={{textAlign: 'right', paddingRight: 5}}>{net?.toLocaleString()}</Text>
+                                <Text style={{textAlign: 'right', paddingRight: 5}}>{unitPrice?.toLocaleString()}</Text>
                             </View>
                             <View key={i} style={{
                                 ...styles.cell,
@@ -168,7 +156,7 @@ export function PdfForm({data, topInfoData, totalData}) {
                                 <Text style={{
                                     textAlign: 'right',
                                     paddingRight: 5
-                                }}>{(quantity * net)?.toLocaleString()}</Text>
+                                }}>{(quantity * unitPrice)?.toLocaleString()}</Text>
                             </View>
                             <View key={i} style={{
                                 ...styles.cell,
@@ -209,7 +197,7 @@ export function PdfForm({data, topInfoData, totalData}) {
                                 style={{
                                     textAlign: 'right',
                                     paddingRight: 8
-                                }}>{(totalData?.net)?.toLocaleString()}</Text>
+                                }}>{(totalData?.unitPrice)?.toLocaleString()}</Text>
                         </View>
                         <View style={{
                             ...styles.point,
@@ -276,7 +264,7 @@ export function PdfForm({data, topInfoData, totalData}) {
                         {v.map((row: any, i) => {
                             const count: any = commonManage.getPageIndex(Object.values(data), idx - 1);
 
-                            const {model, quantity, unit, net} = row;
+                            const {model, quantity, unit, unitPrice} = row;
                             return <> <View key={i} style={styles.tableRow}>
                                 <View key={i} style={{
                                     ...styles.cell,
@@ -306,7 +294,7 @@ export function PdfForm({data, topInfoData, totalData}) {
                                     ...styles.cell,
                                     width: colWidths[4],
                                 }}>
-                                    <Text style={{textAlign: 'right', paddingRight: 5}}>{net?.toLocaleString()}</Text>
+                                    <Text style={{textAlign: 'right', paddingRight: 5}}>{unitPrice?.toLocaleString()}</Text>
                                 </View>
                                 <View key={i} style={{
                                     ...styles.cell,
@@ -316,7 +304,7 @@ export function PdfForm({data, topInfoData, totalData}) {
                                     <Text style={{
                                         textAlign: 'right',
                                         paddingRight: 5
-                                    }}>{(quantity * net)?.toLocaleString()}</Text>
+                                    }}>{(quantity * unitPrice)?.toLocaleString()}</Text>
                                 </View>
                                 <View key={i} style={{
                                     ...styles.cell,
@@ -359,7 +347,7 @@ export function PdfForm({data, topInfoData, totalData}) {
                                     style={{
                                         textAlign: 'right',
                                         paddingRight: 8
-                                    }}>{(totalData?.net).toLocaleString()}</Text>
+                                    }}>{(totalData?.unitPrice).toLocaleString()}</Text>
                             </View>
                             <View style={{
                                 ...styles.point,

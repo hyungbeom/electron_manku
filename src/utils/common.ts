@@ -369,7 +369,7 @@ export const paperTopInfo = {
         deliveryTerms: 'Delivery',
         hscode: 'HS-code',
         incoterms: 'Incoterms',
-        black: '',
+        blank: '',
         paymentTerms: 'Payment'
     }
 }

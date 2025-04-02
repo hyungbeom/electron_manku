@@ -9,7 +9,13 @@ import {PoHeader} from "@/component/견적서/EstimateHeader";
 import {BottomPoInfo, TopPoInfo} from "@/component/견적서/TopInfo";
 import TextArea from "antd/lib/input/TextArea";
 import _ from "lodash";
+import dynamic from "next/dynamic";
+import {PrintPoForm} from "@/component/PrintPoForm";
 
+const PDFViewer = dynamic(
+    () => import('@react-pdf/renderer').then((mod) => mod.PDFViewer),
+    {ssr: false}
+);
 
 function PrintPo({
 
@@ -47,18 +53,18 @@ function PrintPo({
 
         const list = Object.values(data);
 
-        let bowl = {quantity: 0, net: 0, total: 0, unit: list[0].length ? list[0][0]['unit'] : ''}
+        let bowl = {quantity: 0, unitPrice: 0, total: 0, unit: list[0].length ? list[0][0]['unit'] : ''}
         list.forEach((v: any, i: number) => {
             const result = v.reduce((acc, cur, idx) => {
-                const {quantity, net} = cur
+                const {quantity, unitPrice} = cur
                 acc[0] += quantity;
-                acc[1] += net;
-                acc[2] += (quantity * net)
+                acc[1] += unitPrice;
+                acc[2] += (quantity * unitPrice)
 
                 return acc
             }, [0, 0, 0])
             bowl["quantity"] += parseFloat(result[0]);
-            bowl["net"] += parseFloat(result[1]);
+            bowl["unitPrice"] += parseFloat(result[1]);
             bowl["total"] += parseFloat(result[2]);
         })
         return bowl
@@ -92,7 +98,7 @@ function PrintPo({
 
     function NumberInputForm({value, numb, objKey = 0}) {
 
-        const [info, setInfo] = useState({net: value.net, quantity: value.quantity});
+        const [info, setInfo] = useState({unitPrice: value.unitPrice, quantity: value.quantity});
 
         const inputRef = useRef<any>();
         const [toggle, setToggle] = useState(false);
@@ -120,7 +126,7 @@ function PrintPo({
 
         function onchange(e) {
             setInfo(v => {
-                return {...v, net: e}
+                return {...v, unitPrice: e}
             })
         }
 
@@ -151,7 +157,7 @@ function PrintPo({
                 </Select>
             </td>
             <td>
-                {toggle ? <InputNumber ref={inputRef} onBlur={blur} id={'net'} value={info.net} onChange={onchange}
+                {toggle ? <InputNumber ref={inputRef} onBlur={blur} id={'unitPrice'} value={info.unitPrice} onChange={onchange}
                                        formatter={(value) => value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                                        parser={(value) => value.replace(/[^0-9]/g, '')}
                                        style={{border: 'none', textAlign: 'right', direction: 'rtl', width: '90%'}}
@@ -166,8 +172,8 @@ function PrintPo({
                          onClick={() => {
                              setToggle(true);
                          }}>
-                        <span>{!isNaN(info.net) ? data[0][0]?.currency : ''}</span>
-                        <span className={'netPrice'}>{amountFormat(info.net)}</span>
+                        <span>{!isNaN(info.unitPrice) ? data[0][0]?.currency : ''}</span>
+                        <span >{amountFormat(info.unitPrice)}</span>
                     </div>
 
                 }
@@ -183,9 +189,9 @@ function PrintPo({
                      onClick={() => {
                          setToggle(true);
                      }}>
-                    <span>{!isNaN(info.net * info.quantity) ? data[0][0]?.currency : ''}</span>
+                    <span>{!isNaN(info.unitPrice * info.quantity) ? data[0][0]?.currency : ''}</span>
                     <span
-                        className={'total'}>{!isNaN(info.net * info.quantity) ? amountFormat(info.net * info.quantity) : ''}</span>
+                        className={'total'}>{!isNaN(info.unitPrice * info.quantity) ? amountFormat(info.unitPrice * info.quantity) : ''}</span>
                 </div>
 
             </td>
@@ -246,6 +252,11 @@ function PrintPo({
             footer={null}
             onOk={() => setIsModalOpen({event1: false, event2: false, event3: false})}
         >
+            <div style={{width: '100%', height: '100vh'}}>
+                <PDFViewer width="100%" height="100%">
+                    <PrintPoForm data={data} topInfoData={topInfoData} totalData={totalData} key={Date.now()}/>
+                </PDFViewer>
+            </div>
             <div style={{
 
                 width: '1000px',  // A4 가로
@@ -324,7 +335,7 @@ function PrintPo({
                             <th style={{width: '15%'}}>
                                 <div style={{display: 'flex', justifyContent: 'space-between', padding: '0px 8px'}}>
                                     <span>{data[0][0]?.currency}</span>
-                                    <span>        {(totalData?.net).toLocaleString()}</span>
+                                    <span>        {(totalData?.unitPrice).toLocaleString()}</span>
                                 </div>
                             </th>
                             <th style={{width: '15%', textAlign: 'right', paddingRight: 10}}>
@@ -427,7 +438,7 @@ function PrintPo({
                                     <th style={{width: '15%'}}>
                                         <div style={{display: 'flex', justifyContent: 'space-between', padding: '0px 8px'}}>
                                             <span>{data[0][0]?.currency}</span>
-                                            <span>        {(totalData?.net).toLocaleString()}</span>
+                                            <span>        {(totalData?.unitPrice).toLocaleString()}</span>
                                         </div>
                                     </th>
                                     <th style={{width: '15%', textAlign: 'right', paddingRight: 10}}>
