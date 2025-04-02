@@ -30,8 +30,6 @@ export function PrintPoForm({data, topInfoData, totalData}) {
         }
     }, [topInfoData]);
 
-    console.log(data,'data:')
-
     return <Document>
         <Page size="A4" style={styles.page}>
             <View>
@@ -55,7 +53,7 @@ export function PrintPoForm({data, topInfoData, totalData}) {
                     </View>
                 </View>
 
-                <View style={styles.titleLine}/>
+                <View style={styles.titleLine2}/>
 
                 {Object.keys(title).map((v, i) => {
                     if (i % 2 === 1) {
@@ -101,18 +99,13 @@ export function PrintPoForm({data, topInfoData, totalData}) {
                         <View style={{...styles.point, width: colWidths[0]}}>
                             <Text style={{textAlign: 'center'}}>Maker</Text>
                         </View>
-                        <View style={{...styles.cell, width: 300}}>
+                        <View style={{...styles.cell, width: 600}}>
                             <Text style={{
                                 textAlign: 'left',
                                 paddingLeft: 5,
                                 fontFamily: styles.point.fontFamily
                             }}>{topInfoData?.maker}</Text>
                         </View>
-                        {/*<View style={{...styles.cell, width: colWidths[2]}}/>*/}
-                        {/*<View style={{...styles.cell, width: colWidths[3]}}/>*/}
-                        <View style={{...styles.cell, width: colWidths[4]}}/>
-                        <View style={{...styles.cell, width: colWidths[5]}}/>
-                        <View style={{...styles.cell, width: colWidths[6], borderRightWidth: 0}}/>
                     </View>
 
                     {/* 내용 행 반복 */}
@@ -238,6 +231,26 @@ export function PrintPoForm({data, topInfoData, totalData}) {
 
             return <Page size="A4" style={styles.page}>
                 <View>
+                    <View style={styles.header}>
+                        <View style={styles.logoInfo}>
+                            <Image src="/manku_ci_black_text.png" style={styles.logo}/>
+                        </View>
+                        <View style={styles.leftInfo}>
+                            <Text>(주) 만쿠무역</Text>
+                            <Text>Manku Trading Co., Ltd</Text>
+                            <Text>서울시 송파구 충민로 52 가든파이브웍스</Text>
+                            <Text>B동 2층 211호, 212호</Text>
+                            <Text>Tel : 02-465-7838, Fax : 02-465-7839</Text>
+                        </View>
+                        <View style={styles.centerTitle}>
+                            <Text style={styles.title}>발 주 서</Text>
+                        </View>
+                        <View style={styles.rightInfo}>
+                            <Image src="/manku_stamp_ko.png" style={styles.info}/>
+                        </View>
+                    </View>
+
+                    <View style={styles.titleLine}/>
 
                     {/* 표 */}
                     <View style={styles.table}>
@@ -298,8 +311,7 @@ export function PrintPoForm({data, topInfoData, totalData}) {
                                 </View>
                                 <View key={i} style={{
                                     ...styles.cell,
-                                    width: colWidths[5],
-                                    borderRightWidth: 0,
+                                    width: colWidths[5]
                                 }}>
                                     <Text style={{
                                         textAlign: 'right',
