@@ -31,10 +31,12 @@ function ProjectRead({getPropertyId, getCopyPage}: any) {
 
 
     const onGridReady = async (params) => {
+        setLoading(true)
         gridRef.current = params.api;
         await searchProject({data: projectReadInitial}).then(v => {
             params.api.applyTransaction({add: v.data})
             setTotalRow(v.pageInfo.totalRow)
+            setLoading(false)
         })
     };
 

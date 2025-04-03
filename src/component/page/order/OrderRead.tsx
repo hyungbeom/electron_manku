@@ -39,10 +39,12 @@ function OrderRead({getPropertyId, getCopyPage}: any) {
 
 
     const onGridReady = async (params) => {
+        setLoading(true)
         gridRef.current = params.api;
         await searchOrder({data: orderReadInitial}).then(v => {
             params.api.applyTransaction({add: v.data});
             setTotalRow(v.pageInfo.totalRow)
+            setLoading(false)
         })
     };
 
@@ -124,7 +126,7 @@ function OrderRead({getPropertyId, getCopyPage}: any) {
     }
 
 
-    return <Spin spinning={loading} tip={'견적서 조회중...'}>
+    return <Spin spinning={loading} tip={'발주서 조회중...'}>
         <PanelSizeUtil groupRef={groupRef} storage={'order_read'}/>
         <ReceiveComponent searchInfo={searchInfo}/>
         <>

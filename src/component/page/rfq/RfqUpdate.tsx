@@ -89,7 +89,7 @@ function RqfUpdate({
                 // replyStatus
                 setInfo({
                     ...estimateRequestDetail,
-                    uploadType: 0,
+                    uploadType: 1,
                     managerAdminId: estimateRequestDetail['managerAdminId'] ? estimateRequestDetail['managerAdminId'] : '',
                     managerAdminName: estimateRequestDetail['managerAdminName'] ? estimateRequestDetail['managerAdminName'] : ''
                 })

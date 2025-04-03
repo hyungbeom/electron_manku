@@ -45,11 +45,13 @@ function EstimateRead({getPropertyId, getCopyPage, }:any) {
     const userInfo = useAppSelector((state) => state.user);
 
     const onGridReady = async (params) => {
+        setLoading(true)
         gridRef.current = params.api;
         await searchEstimate({data: estimateReadInitial}).then(v => {
 
             params.api.applyTransaction({add: v.data});
             setTotalRow(v.pageInfo.totalRow)
+            setLoading(false)
         })
     };
 

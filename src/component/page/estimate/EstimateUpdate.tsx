@@ -267,10 +267,21 @@ function EstimateUpdate({
         const test = `${result.join(',')}`;
         const elements = infoRef.current.querySelectorAll(test);
 
+        console.log(elements, 'elements')
+        console.log(elements, 'elements')
+        console.log(elements, 'elements')
+        console.log(elements, 'elements')
+
         let copyInfo = {}
         for (let element of elements) {
             copyInfo[element.id] = element.value
         }
+
+        // customerManageEmail
+        // customerName
+        // faxNumber
+        // phoneNumber
+        // managerName
 
         const dom = infoRef.current.querySelector('#managerAdminId');
 
@@ -282,6 +293,11 @@ function EstimateUpdate({
         }
 
         copyInfo[listType] = [...totalList, ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000 - totalList.length)];
+
+        console.log(copyInfo, 'copyInfo')
+        console.log(copyInfo, 'copyInfo')
+        console.log(copyInfo, 'copyInfo')
+        console.log(copyInfo, 'copyInfo')
 
         getCopyPage('estimate_write', copyInfo)
     }
