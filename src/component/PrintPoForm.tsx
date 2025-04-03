@@ -19,16 +19,8 @@ Font.register({
 const colWidths = [50, 210, 45, 45, 100, 100, 100];
 
 
-export function PrintPoForm({data, topInfoData, totalData}) {
+export function PrintPoForm({data, topInfoData, totalData, title}) {
 
-    const [title, setTitle] = useState<any>(paperTopInfo['ko'])
-    useEffect(() => {
-        if (isEmptyObj(topInfoData)) {
-            if (!topInfoData['agencyCode'].startsWith("K")) {
-                setTitle(paperTopInfo['en'])
-            }
-        }
-    }, [topInfoData]);
 
     return <Document>
         <Page size="A4" style={styles.page}>
@@ -136,21 +128,41 @@ export function PrintPoForm({data, topInfoData, totalData}) {
                             }}>
                                 <Text style={{textAlign: 'left', paddingLeft: 5}}>{unit}</Text>
                             </View>
-                            <View key={i} style={{
+
+
+                            <View style={{
                                 ...styles.cell,
                                 width: colWidths[4],
-                            }}>
-                                <Text style={{textAlign: 'right', paddingRight: 5}}>{unitPrice?.toLocaleString()}</Text>
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                                alignItems : 'center'
+                            }}><Text
+                                style={{textAlign: 'right', paddingRight: 8}}>{totalData?.currency}</Text>
+                                <Text
+                                    style={{
+                                        textAlign: 'right',
+                                        paddingRight: 8
+                                    }}>{unitPrice?.toLocaleString()}</Text>
                             </View>
-                            <View key={i} style={{
+
+                            <View style={{
                                 ...styles.cell,
                                 width: colWidths[5],
-                            }}>
-                                <Text style={{
-                                    textAlign: 'right',
-                                    paddingRight: 5
-                                }}>{(quantity * unitPrice)?.toLocaleString()}</Text>
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                                alignItems : 'center'
+                            }}><Text
+                                style={{textAlign: 'right', paddingRight: 8}}>{totalData?.currency}</Text>
+                                <Text
+                                    style={{
+                                        textAlign: 'right',
+                                        paddingRight: 8
+                                    }}>{(quantity * unitPrice)?.toLocaleString()}</Text>
                             </View>
+
+
+
+
                             <View key={i} style={{
                                 ...styles.cell,
                                 width: colWidths[6],
@@ -185,7 +197,7 @@ export function PrintPoForm({data, topInfoData, totalData}) {
                             flexDirection: 'row',
                             justifyContent: 'space-between'
                         }}><Text
-                            style={{textAlign: 'right', paddingRight: 8}}>₩</Text>
+                            style={{textAlign: 'right', paddingRight: 8}}>{totalData?.currency}</Text>
                             <Text
                                 style={{
                                     textAlign: 'right',
@@ -198,7 +210,7 @@ export function PrintPoForm({data, topInfoData, totalData}) {
                             flexDirection: 'row',
                             justifyContent: 'space-between'
                         }}><Text
-                            style={{textAlign: 'right', paddingRight: 8}}>₩</Text>
+                            style={{textAlign: 'right', paddingRight: 8}}>{totalData?.currency}</Text>
                             <Text
                                 style={{
                                     textAlign: 'right',
@@ -303,21 +315,35 @@ export function PrintPoForm({data, topInfoData, totalData}) {
                                 }}>
                                     <Text style={{textAlign: 'left', paddingLeft: 5}}>{unit}</Text>
                                 </View>
-                                <View key={i} style={{
+                                <View style={{
                                     ...styles.cell,
                                     width: colWidths[4],
-                                }}>
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-between',
+                                    alignItems : 'center'
+                                }}><Text
+                                    style={{textAlign: 'right', paddingRight: 8}}>{totalData?.currency}</Text>
                                     <Text style={{textAlign: 'right', paddingRight: 5}}>{unitPrice?.toLocaleString()}</Text>
                                 </View>
-                                <View key={i} style={{
+
+
+
+
+                                <View style={{
                                     ...styles.cell,
-                                    width: colWidths[5]
-                                }}>
-                                    <Text style={{
-                                        textAlign: 'right',
-                                        paddingRight: 5
-                                    }}>{(quantity * unitPrice)?.toLocaleString()}</Text>
+                                    width: colWidths[5],
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-between',
+                                    alignItems : 'center'
+                                }}><Text
+                                    style={{textAlign: 'right', paddingRight: 8}}>{totalData?.currency}</Text>
+                                    <Text
+                                        style={{
+                                            textAlign: 'right',
+                                            paddingRight: 8
+                                        }}>{(quantity * unitPrice)?.toLocaleString()}</Text>
                                 </View>
+
                                 <View key={i} style={{
                                     ...styles.cell,
                                     width: colWidths[6],
@@ -354,7 +380,7 @@ export function PrintPoForm({data, topInfoData, totalData}) {
                                 flexDirection: 'row',
                                 justifyContent: 'space-between'
                             }}><Text
-                                style={{textAlign: 'right', paddingRight: 8}}>₩</Text>
+                                style={{textAlign: 'right', paddingRight: 8}}>{totalData?.currency}</Text>
                                 <Text
                                     style={{
                                         textAlign: 'right',
@@ -367,7 +393,7 @@ export function PrintPoForm({data, topInfoData, totalData}) {
                                 flexDirection: 'row',
                                 justifyContent: 'space-between'
                             }}><Text
-                                style={{textAlign: 'right', paddingRight: 8}}>₩</Text>
+                                style={{textAlign: 'right', paddingRight: 8}}>{totalData?.currency}</Text>
                                 <Text
                                     style={{
                                         textAlign: 'right',

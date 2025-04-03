@@ -1,5 +1,5 @@
 import React, {memo, useEffect, useRef, useState} from "react";
-import {CopyOutlined, DeleteOutlined, FormOutlined, RadiusSettingOutlined} from "@ant-design/icons";
+import {CopyOutlined, DeleteOutlined, FormOutlined, RadiusSettingOutlined, SendOutlined} from "@ant-design/icons";
 import message from "antd/lib/message";
 import {getData} from "@/manage/function/api";
 import SearchInfoModal from "@/component/SearchAgencyModal";
@@ -21,7 +21,6 @@ import useEventListener from "@/utils/common/function/UseEventListener";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import _ from "lodash";
 import {Actions} from "flexlayout-react";
-import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 
 const listType = 'estimateRequestDetailList'
 
@@ -104,8 +103,6 @@ function RqfUpdate({
     useEffect(() => {
         commonManage.setInfo(infoRef, info);
     }, [info]);
-
-
 
 
     async function getDataInfo() {
@@ -298,6 +295,25 @@ function RqfUpdate({
         })
     }
 
+    function checkSend() {
+        const tableList = tableRef.current?.getSourceData();
+
+        const filterTableList = commonManage.filterEmptyObjects(tableList, ['model', 'item', 'maker'])
+        console.log(filterTableList, 'filterTableList:')
+        const result = filterTableList.map(src => {
+            return {
+                estimateRequestDetailId: src.estimateRequestDetailId,
+                "sentStatus": "전송"
+            }
+        })
+        getData.post('estimate/updateSentStatuses', {sentStatusList : result}).then(v => {
+            if(v.data.code === 1){
+                message.success('발송처리가 완료되었습니다.')
+            }else{
+                message.error(v?.data?.message);
+            }
+        })
+    }
 
     return <Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'rfq_update'}/>
@@ -314,6 +330,11 @@ function RqfUpdate({
             }}>
 
                 <MainCard title={'견적의뢰 수정'} list={[
+                    {
+                        name: <div><SendOutlined style={{paddingRight: 8}}/>발송처리완료</div>,
+                        func: checkSend,
+                        type: 'primary'
+                    },
                     {name: <div><FormOutlined style={{paddingRight: 8}}/>수정</div>, func: saveFunc, type: 'primary'},
                     {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: deleteFunc, type: 'delete'},
                     {

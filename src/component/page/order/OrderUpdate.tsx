@@ -330,10 +330,11 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
     }, typeof window !== 'undefined' ? document : null)
 
     async function printTransactionStatement() {
-        setCount(v => v + 1)
-        setIsModalOpen(v => {
-            return {...v, event1: true}
-        })
+        alert('쉐어포인트 자동저장')
+        // setCount(v => v + 1)
+        // setIsModalOpen(v => {
+        //     return {...v, event1: true}
+        // })
     }
 
 

@@ -11,6 +11,8 @@ import TextArea from "antd/lib/input/TextArea";
 import _ from "lodash";
 import {pdf} from "@react-pdf/renderer";
 import {PrintPoForm} from "@/component/PrintPoForm";
+import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
+import {paperTopInfo} from "@/utils/common";
 
 
 function PrintPo({
@@ -46,7 +48,13 @@ function PrintPo({
 
         const list = Object.values(data);
 
-        let bowl = {quantity: 0, unitPrice: 0, total: 0, unit: list[0].length ? list[0][0]['unit'] : ''}
+        let bowl = {
+            quantity: 0,
+            unitPrice: 0,
+            total: 0,
+            unit: list[0].length ? list[0][0]['unit'] : '',
+            currency: list[0].length ? list[0][0]['currency'] : ''
+        }
         list.forEach((v: any, i: number) => {
             const result = v.reduce((acc, cur, idx) => {
                 const {quantity, unitPrice} = cur
@@ -189,8 +197,10 @@ function PrintPo({
     }
 
     async function download() {
+        console.log(totalData, 'totalData:')
         const blob = await pdf(<PrintPoForm data={data} topInfoData={topInfoData} totalData={totalData}
-                                        key={Date.now()}/>).toBlob();
+                                            title={!topInfoData['agencyCode'].startsWith("K") ? paperTopInfo['en'] : paperTopInfo['ko']}
+                                            key={Date.now()}/>).toBlob();
 
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
@@ -203,8 +213,10 @@ function PrintPo({
     }
 
     const print = async () => {
+
         const blob = await pdf(<PrintPoForm data={data} topInfoData={topInfoData} totalData={totalData}
-                                        key={Date.now()}/>).toBlob();
+                                            title={!topInfoData['agencyCode'].startsWith("K") ? paperTopInfo['en'] : paperTopInfo['ko']}
+                                            key={Date.now()}/>).toBlob();
         const blobUrl = URL.createObjectURL(blob);
 
         const printWindow = window.open(blobUrl);
@@ -285,8 +297,16 @@ function PrintPo({
                     </thead>
 
                     <thead>
-                    <tr style={{fontWeight: 'bold', height: 30}}>
+                    <tr style={{fontWeight: 'bold', height: 35}}>
                         <th colSpan={8}/>
+                    </tr>
+                    <tr style={{fontWeight: 'bold', height: 35}}>
+                        <th>
+                            Maker
+                        </th>
+                        <th colSpan={7} style={{textAlign : 'left', paddingLeft : 5}}>
+                            {topInfoData?.maker}
+                        </th>
                     </tr>
                     </thead>
                     <thead>
@@ -408,7 +428,6 @@ function PrintPo({
                                     </td>
                                 </tr>
                             })}
-
 
 
                             </thead>

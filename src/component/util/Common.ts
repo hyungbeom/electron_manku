@@ -110,6 +110,7 @@ const styles = StyleSheet.create({
         borderRightWidth: 1,
         borderColor: '#ccc',
         justifyContent: 'center',
+        fontSize : 8
     },
 
     // 하단 푸터 관련
