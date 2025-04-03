@@ -98,7 +98,8 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
             // copyPageInfo 가 있을시(==>보통 수정페이지에서 복제시)
             // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting
             setInfo({...copyPageInfo, ...adminParams, writtenDate: moment().format('YYYY-MM-DD')});
-            setTableData(copyPageInfo[listType])
+            setTableData(copyPageInfo[listType]);
+            setRouterId(null)
         }
     }, [copyPageInfo]);
 

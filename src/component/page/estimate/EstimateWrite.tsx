@@ -123,7 +123,8 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                 documentNumberFull: '',
                 writtenDate: moment().format('YYYY-MM-DD')
             });
-            setTableData(copyPageInfo[listType])
+            setTableData(copyPageInfo[listType]);
+            setRouterId(null)
         }
     }, [copyPageInfo]);
 

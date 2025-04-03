@@ -295,7 +295,15 @@ const EstimatePaper = ({
                         <th style={{
                             textAlign: 'left',
                             paddingLeft: 10
-                        }}>{maker ? maker : '-'}</th>
+                        }}>
+                            <Input defaultValue={topInfoData.maker} style={{border : 'none'}}
+                            onBlur={e=>{
+                                setTopInfoData(v =>{
+                                    return {...v, maker : e.target.value}
+                                })
+                            }}
+                            />
+                        </th>
                         <th></th>
                         <th></th>
                         <th></th>

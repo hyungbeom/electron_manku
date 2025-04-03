@@ -12,6 +12,17 @@ import {useRouter} from "next/router";
 import {tabComponents} from "@/utils/commonForm";
 
 
+const tabShortcutMap = {
+    '1': 'rfq_write',
+    '2': 'rfq_read',
+    '3': 'estimate_write',
+    '4': 'estimate_read',
+    '5': 'order_write',
+    '6': 'order_read',
+
+    // 원하는 키와 컴포넌트 키 연결
+};
+
 export default function Main() {
     const modelRef = useRef(Model.fromJson({
         global: {},
@@ -42,6 +53,7 @@ export default function Main() {
         });
         setTabCounts(count);
     }, [activeTabId]);
+
 
 
     const [updateKey, setUpdateKey] = useState({})
@@ -91,6 +103,19 @@ export default function Main() {
             modelRef.current.doAction(Actions.addNode(newTab, tabset.getId(), DockLocation.CENTER, -1, true));
         }
     }, []);
+
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.ctrlKey && tabShortcutMap[e.key]) {
+                e.preventDefault();
+                const targetKey = tabShortcutMap[e.key];
+                onSelect([targetKey]); // 기존에 있는 onSelect 그대로 사용
+            }
+        };
+
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [onSelect]);
 
     const getPropertyId = useCallback((key, id) => {
         setUpdateKey(prev => ({
