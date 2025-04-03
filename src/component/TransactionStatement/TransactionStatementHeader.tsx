@@ -42,12 +42,12 @@ function sumLengthsUpToIndex(array, index) {
 }
 
 export const Header = () => <>
-    <div style={{textAlign: 'center', fontSize: 30, fontWeight: 'bold'}}>거래명세표</div>
+    <div style={{textAlign: 'center', fontSize: 30, fontWeight: 'bold'}}>거 래 명 세 표 <span
+        style={{fontSize: 14}}>(공급자용)</span></div>
     <div style={{
         textAlign: 'center',
         fontSize: 14,
         fontWeight: 'bold',
-        paddingTop: 20,
         display: 'flex',
         justifyContent: 'center'
     }}>
@@ -311,15 +311,21 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRe
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
-                padding: '0px 20px'
+                padding: '20px 20px'
             }}>
-                <Header/>
-                <div style={{display: 'flex', justifyContent: 'center', paddingTop: 50}}>
+
+                <div style={{border: '1px solid lightGray', borderBottom: 'none'}}>
+                    <Header/>
+                </div>
+                <div style={{display: 'flex', justifyContent: 'center'}}>
                     <div style={{
                         position: 'relative',
                         display: 'grid',
                         gridTemplateColumns: '40px auto',
-                        fontSize: 12,borderLeft : '1px solid lightGray'
+                        fontSize: 12,
+                        borderLeft: '1px solid lightGray',
+                        borderTop: '1px solid lightGray',
+                        borderBottom: '1px solid lightGray'
                     }}>
                         <div style={{width: 25, margin: "auto", paddingLeft: 7, fontWeight: 700}}>
                             공급자
@@ -327,8 +333,8 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRe
                         <table style={{borderLeft: '1px solid lightGray', width: 440}}>
                             <thead>
                             <tr>
-                                <th style={headerStyle}>등록번호</th>
-                                <th style={cellStyle} colSpan={3}>714-87-01453</th>
+                                <th style={{...headerStyle, borderTop: 'none'}}>등록번호</th>
+                                <th style={{...cellStyle, borderTop: 'none'}} colSpan={3}>714-87-01453</th>
                             </tr>
                             </thead>
                             <thead>
@@ -341,6 +347,7 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRe
                             </tr>
                             </thead>
                             <thead>
+
                             <tr>
                                 <th style={headerStyle}>주소</th>
                                 <th style={cellStyle} colSpan={3}>
@@ -349,6 +356,7 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRe
                                 </th>
                             </tr>
                             </thead>
+
                             <thead>
                             <tr>
                                 <th style={headerStyle}>업태</th>
@@ -359,10 +367,10 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRe
                             </thead>
                             <thead>
                             <tr>
-                                <th style={headerStyle}>담당자</th>
-                                <th style={cellStyle}>신단비</th>
-                                <th style={headerStyle}>연락처</th>
-                                <th style={cellStyle}>02-465-7838</th>
+                                <th style={{...headerStyle, borderBottom: 'none'}}>담당자</th>
+                                <th style={{...cellStyle, borderBottom: 'none'}}>신단비</th>
+                                <th style={{...headerStyle, borderBottom: 'none'}}>연락처</th>
+                                <th style={{...cellStyle, borderBottom: 'none'}}>02-465-7838</th>
                             </tr>
                             </thead>
                         </table>
@@ -371,21 +379,23 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRe
                         position: 'relative',
                         display: 'grid',
                         gridTemplateColumns: '40px auto',
-                        fontSize: 12
+                        fontSize: 12,
+                        borderTop: '1px solid lightGray',
+                        borderBottom: '1px solid lightGray',
                     }}>
-                        <div style={{width: 25, margin: "auto", paddingLeft: 7, fontWeight: 700}}>
-                            공급받는자
-                        </div>
+                        <div style={{width: 25, margin: "auto", paddingLeft: 7, fontWeight: 700}}>공급받는자</div>
+
                         <table style={{borderLeft: '1px solid lightGray', width: 438}}>
                             <thead>
                             <tr>
-                                <th style={headerStyle}>등록번호</th>
-                                <th style={cellStyle} colSpan={3}>
+                                <th style={{...headerStyle, borderTop: 'none'}}>등록번호</th>
+                                <th style={{...cellStyle, borderTop: 'none'}} colSpan={3}>
                                     <input style={{border: 'none', textAlign: 'center', fontSize: 12, fontWeight: 700}}
                                            defaultValue={domesticInfo?.businessRegistrationNumber}/>
                                 </th>
                             </tr>
                             </thead>
+
                             <thead>
                             <tr>
                                 <th style={headerStyle}>상호</th>
@@ -398,6 +408,7 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRe
                                            defaultValue={domesticInfo?.representative}/></th>
                             </tr>
                             </thead>
+
                             <thead>
                             <tr>
                                 <th style={headerStyle}>주소</th>
@@ -414,6 +425,7 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRe
                                 </th>
                             </tr>
                             </thead>
+
                             <thead>
                             <tr>
                                 <th style={headerStyle}>업태</th>
@@ -422,43 +434,51 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRe
                                            defaultValue={domesticInfo?.businessType}/></th>
                                 <th style={headerStyle}>종목</th>
                                 <th style={cellStyle}>
-                                    <input style={{border: 'none', textAlign: 'center', fontSize: 12, fontWeight: 700}}
-                                           defaultValue={domesticInfo?.businessItem}/></th>
+                                    <TextArea autoSize={{minRows: 1, maxRows: 6}} style={{
+                                        resize: 'none',
+                                        border: 'none',
+                                        textAlign: 'center',
+                                        fontSize: 12,
+                                        fontWeight: 700
+                                    }}
+                                              value={domesticInfo?.businessItem}/></th>
+
                             </tr>
                             </thead>
+
                             <thead>
                             <tr>
-                                <th style={headerStyle}>담당자</th>
-                                <th style={cellStyle}><input
+                                <th style={{...headerStyle, borderBottom: 'none'}}>담당자</th>
+                                <th style={{...cellStyle, borderBottom: 'none'}}><input
                                     style={{border: 'none', textAlign: 'center', fontSize: 12, fontWeight: 700}}
                                     defaultValue={domesticInfo?.representative}/></th>
-                                <th style={headerStyle}>연락처</th>
-                                <th style={cellStyle}><input
+                                <th style={{...headerStyle, borderBottom: 'none'}}>연락처</th>
+                                <th style={{...cellStyle, borderBottom: 'none'}}><input
                                     style={{border: 'none', textAlign: 'center', fontSize: 12, fontWeight: 700}}
                                     defaultValue={domesticInfo?.customerTel}/></th>
                             </tr>
                             </thead>
                         </table>
+
                     </div>
                 </div>
 
                 <table style={{
                     width: '100%',
                     borderCollapse: 'collapse',
-                    margin: '20px 0',
                     textAlign: 'center', fontSize: 12
 
                 }}>
                     <thead>
                     <tr style={{backgroundColor: '#ebf6f7', fontWeight: 'bold', height: 35}}>
-                        <th style={{width: 80}}>NO</th>
-                        <th style={{width: '9%'}}>날짜</th>
-                        <th style={{width: 300, borderLeft: '1px solid lightGray'}}>품목</th>
-                        <th style={{width: '5%', borderLeft: '1px solid lightGray'}}>수량</th>
-                        <th style={{width: '12%', borderLeft: '1px solid lightGray'}}>단가</th>
-                        <th style={{width: '15%', borderLeft: '1px solid lightGray'}}>공급가액</th>
-                        <th style={{width: '12%', borderLeft: '1px solid lightGray'}}>세액</th>
-                        <th style={{width: '12%', borderLeft: '1px solid lightGray'}}>비고</th>
+                        <th style={{width: 40, borderTop: 'none'}}>NO</th>
+                        <th style={{width: '9%', borderTop: 'none'}}>날짜</th>
+                        <th style={{width: 300, borderLeft: '1px solid lightGray', borderTop: 'none'}}>품목</th>
+                        <th style={{width: '5%', borderLeft: '1px solid lightGray', borderTop: 'none'}}>수량</th>
+                        <th style={{width: '12%', borderLeft: '1px solid lightGray', borderTop: 'none'}}>단가</th>
+                        <th style={{width: '15%', borderLeft: '1px solid lightGray', borderTop: 'none'}}>공급가액</th>
+                        <th style={{width: '12%', borderLeft: '1px solid lightGray', borderTop: 'none'}}>세액</th>
+                        <th style={{width: '12%', borderLeft: '1px solid lightGray', borderTop: 'none'}}>비고</th>
                     </tr>
                     </thead>
 
@@ -491,33 +511,33 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRe
                     )}
                     </thead>
                 </table>
-                <div style={{flexGrow: 1}}/>
                 {tableData.length > 1 ? <></> :
 
                     <table style={{
                         width: '100%',
                         borderCollapse: 'collapse',
-                        margin: '20px 0',
-                        textAlign: 'center',
-                        border: '1px solid lightGray',
+                        textAlign: 'center'
                     }}>
                         <thead>
-                        <tr style={{height: 35, fontWeight: 100}} ref={ref1}>
+                        <tr style={{height: 35, fontWeight: 100}}>
 
-                            <th colSpan={2} style={{fontWeight: 600}}>TOTAL</th>
-                            <th style={{width: '5%', textAlign: 'right', paddingRight: 8}} className={'total_qt'}></th>
-                            <th style={{width: '12%', textAlign: 'right', paddingRight: 10}}
+                            <th colSpan={2} style={{fontWeight: 600, borderTop: 'none'}}>TOTAL</th>
+                            <th style={{width: '5%', textAlign: 'right', paddingRight: 8, borderTop: 'none'}}
+                                className={'total_qt'}></th>
+                            <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop: 'none'}}
                                 className={'total_netPrice'}></th>
-                            <th style={{width: '15%', textAlign: 'right', paddingRight: 10}}
+                            <th style={{width: '15%', textAlign: 'right', paddingRight: 10, borderTop: 'none'}}
                                 className={'total_amount'}></th>
-                            <th style={{width: '12%', textAlign: 'right', paddingRight: 10}}
+                            <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop: 'none'}}
                                 className={'total_tax'}></th>
-                            <th style={{width: '12%', textAlign: 'right', paddingRight: 10}} className={'remark'}></th>
+                            <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop: 'none'}}
+                                className={'remark'}></th>
                         </tr>
                         </thead>
                     </table>
-
                 }
+                <div style={{flexGrow: 1}}/>
+
                 <div style={{textAlign: 'center'}}>- 1 -</div>
             </div>
 
