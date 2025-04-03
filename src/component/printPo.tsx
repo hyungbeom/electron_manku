@@ -11,9 +11,7 @@ import TextArea from "antd/lib/input/TextArea";
 import _ from "lodash";
 import {pdf} from "@react-pdf/renderer";
 import {PrintPoForm} from "@/component/PrintPoForm";
-import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 import {paperTopInfo} from "@/utils/common";
-
 
 function PrintPo({
 
@@ -197,9 +195,9 @@ function PrintPo({
     }
 
     async function download() {
-        console.log(totalData, 'totalData:')
         const blob = await pdf(<PrintPoForm data={data} topInfoData={topInfoData} totalData={totalData}
                                             title={!topInfoData['agencyCode'].startsWith("K") ? paperTopInfo['en'] : paperTopInfo['ko']}
+                                            lang={!topInfoData['agencyCode'].startsWith("K") ? 'en' : 'ko'}
                                             key={Date.now()}/>).toBlob();
 
         const url = URL.createObjectURL(blob);
@@ -216,6 +214,7 @@ function PrintPo({
 
         const blob = await pdf(<PrintPoForm data={data} topInfoData={topInfoData} totalData={totalData}
                                             title={!topInfoData['agencyCode'].startsWith("K") ? paperTopInfo['en'] : paperTopInfo['ko']}
+                                            lang={!topInfoData['agencyCode'].startsWith("K") ? 'en' : 'ko'}
                                             key={Date.now()}/>).toBlob();
         const blobUrl = URL.createObjectURL(blob);
 

@@ -14,31 +14,46 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
+    leftInfo: {
+        width: '33%',
+        flexDirection: 'row',
+    },
     logoInfo: {
-        width: '6%',
         paddingTop: 3
     },
     logo: {
         width: 30,
         height: 20
     },
-    leftInfo: {
-        width: '25%',
-        fontSize: 7
+    companyInfo: {
+        fontSize: 7,
+        paddingLeft: 8
     },
     centerTitle: {
-        width: '37%',
+        width: '33%',
         alignItems: 'center',
         justifyContent: 'flex-start',
         paddingTop: 10,
+    },
+    centerTitle2: {
+        width: '33%',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
     },
     title: {
         fontSize: 25,
         fontWeight: 'bold',
         fontFamily : 'NotoSansKR_large'
     },
+    title2: {
+        fontSize: 25,
+        fontWeight: 'bold',
+        fontFamily : 'NotoSansKR_large',
+        lineHeight: 1.2,
+        paddingTop: -10,
+    },
     rightInfo: {
-        width: '30%',
+        width: '33%',
         alignItems: 'flex-end',
     },
     info: {
@@ -71,7 +86,7 @@ const styles = StyleSheet.create({
         fontFamily : 'NotoSansKR_large',
         width: '16%',
         fontWeight: 'bold',
-        textAlign: 'right'
+        textAlign: 'left'
     },
     value: {
         width: '34%',
@@ -81,7 +96,7 @@ const styles = StyleSheet.create({
         fontFamily : 'NotoSansKR_large',
         width: '16%',
         fontWeight: 'bold',
-        textAlign: 'right'
+        textAlign: 'left'
     },
     valueRight: {
         width: '34%',

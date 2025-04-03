@@ -5,6 +5,7 @@ import React, {useEffect, useState} from "react";
 import {commonManage} from "@/utils/commonManage";
 import {paperTopInfo} from "@/utils/common";
 import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
+import {linearGradient} from "html2canvas/dist/types/css/types/functions/linear-gradient";
 
 Font.register({
     family: 'NotoSansKR',
@@ -19,31 +20,59 @@ Font.register({
 const colWidths = [50, 210, 45, 45, 100, 100, 100];
 
 
-export function PrintPoForm({data, topInfoData, totalData, title}) {
+export function PrintPoForm({data, topInfoData, totalData, title, lang}) {
 
 
     return <Document>
         <Page size="A4" style={styles.page}>
             <View>
                 {/* 상단 헤더 */}
-                <View style={styles.header}>
-                    <View style={styles.logoInfo}>
-                        <Image src="/manku_ci_black_text.png" style={styles.logo}/>
-                    </View>
-                    <View style={styles.leftInfo}>
-                        <Text>(주) 만쿠무역</Text>
-                        <Text>Manku Trading Co., Ltd</Text>
-                        <Text>서울시 송파구 충민로 52 가든파이브웍스</Text>
-                        <Text>B동 2층 211호, 212호</Text>
-                        <Text>Tel : 02-465-7838, Fax : 02-465-7839</Text>
-                    </View>
-                    <View style={styles.centerTitle}>
-                        <Text style={styles.title}>발 주 서</Text>
-                    </View>
-                    <View style={styles.rightInfo}>
-                        <Image src="/manku_stamp_ko.png" style={styles.info}/>
-                    </View>
-                </View>
+
+                {
+                    lang === 'ko' ?
+                        <View style={styles.header}>
+                            <View style={styles.leftInfo}>
+                                <View style={styles.logoInfo}>
+                                    <Image src="/manku_ci_black_text.png" style={styles.logo}/>
+                                </View>
+                                <View style={styles.companyInfo}>
+                                    <Text>(주) 만쿠무역</Text>
+                                    <Text>Manku Trading Co., Ltd</Text>
+                                    <Text>서울시 송파구 충민로 52 가든파이브웍스</Text>
+                                    <Text>B동 2층 211호, 212호</Text>
+                                    <Text>Tel : 02-465-7838, Fax : 02-465-7839</Text>
+                                </View>
+                            </View>
+                            <View style={styles.centerTitle}>
+                                <Text style={styles.title}>발    주    서</Text>
+                            </View>
+                            <View style={styles.rightInfo}>
+                                <Image src="/manku_stamp_ko.png" style={styles.info}/>
+                            </View>
+                        </View>
+                        :
+                        <View style={styles.header}>
+                            <View style={styles.leftInfo}>
+                                <View style={styles.logoInfo}>
+                                    <Image src="/manku_ci_black_text.png" style={styles.logo}/>
+                                </View>
+                                <View style={styles.companyInfo}>
+                                    <Text>Manku Trading Co.,Ltd</Text>
+                                    <Text>B- 211#, Garden Five Works, 52,</Text>
+                                    <Text>Chungmin-ro,</Text>
+                                    <Text>Songpa-gu, Seoul, South Korea</Text>
+                                    <Text>Postal Code 05839</Text>
+                                </View>
+                            </View>
+                            <View style={styles.centerTitle2}>
+                                <Text style={styles.title2}>PURCHASE</Text>
+                                <Text style={styles.title2}>ORDER</Text>
+                            </View>
+                            <View style={styles.rightInfo}>
+                                <Image src="/manku_stamp_en.jpg" style={styles.info}/>
+                            </View>
+                        </View>
+                }
 
                 <View style={styles.titleLine2}/>
 
@@ -53,9 +82,10 @@ export function PrintPoForm({data, topInfoData, totalData, title}) {
                     }
 
                     return <View style={styles.infoRow}>
-                        <Text style={styles.label}>{title[v]} {v ==='blank' ? '':':' }</Text>
+                        <Text style={styles.label}>{title[v]} {v === 'blank' ? '' : ':'}</Text>
                         <Text style={styles.value}>{topInfoData[v]}</Text>
-                        <Text style={styles.labelRight}>{title[Object.keys(title)[i + 1]]}  {!Object.keys(title)[i + 1] || Object.keys(title)[i + 1]  ==='blank' ? '':':' }</Text>
+                        <Text
+                            style={styles.labelRight}>{title[Object.keys(title)[i + 1]]} {!Object.keys(title)[i + 1] || Object.keys(title)[i + 1] === 'blank' ? '' : ':'}</Text>
                         <Text style={styles.valueRight}>{topInfoData[Object.keys(title)[i + 1]]}</Text>
                     </View>
                 })}
@@ -135,7 +165,7 @@ export function PrintPoForm({data, topInfoData, totalData, title}) {
                                 width: colWidths[4],
                                 flexDirection: 'row',
                                 justifyContent: 'space-between',
-                                alignItems : 'center'
+                                alignItems: 'center'
                             }}><Text
                                 style={{textAlign: 'right', paddingRight: 8}}>{totalData?.currency}</Text>
                                 <Text
@@ -150,7 +180,7 @@ export function PrintPoForm({data, topInfoData, totalData, title}) {
                                 width: colWidths[5],
                                 flexDirection: 'row',
                                 justifyContent: 'space-between',
-                                alignItems : 'center'
+                                alignItems: 'center'
                             }}><Text
                                 style={{textAlign: 'right', paddingRight: 8}}>{totalData?.currency}</Text>
                                 <Text
@@ -159,8 +189,6 @@ export function PrintPoForm({data, topInfoData, totalData, title}) {
                                         paddingRight: 8
                                     }}>{(quantity * unitPrice)?.toLocaleString()}</Text>
                             </View>
-
-
 
 
                             <View key={i} style={{
@@ -225,11 +253,27 @@ export function PrintPoForm({data, topInfoData, totalData, title}) {
                         </View>
                     </View>
 
-                    <View style={styles.footer}>
-                        <Text>· 의뢰하실 Model로 기준한 견적입니다.</Text>
-                        <Text>· 계좌번호 : (기업은행)069-118428-04-010/만쿠무역</Text>
-                        <Text>· 긴급 납기시 담당자와 협의가능합니다.</Text>
-                    </View>
+                    {
+                        lang === 'ko' ?
+                            <View style={styles.footer}>
+                                <Text>· 금일 환율 기준으로 2%이상 인상될 시 , 단가가 인상될 수 있습니다.</Text>
+                                <Text>· 러-우전쟁 및 COVID-19 장기화로 납기 변동성이 큰 시기입니다. 납기 지연이 발생할 수 있는 점 양해 부탁드립니다.</Text>
+                                <Text>· 의뢰하신 Model로 기준한 견적이며, 견적 수량 전량 구입시 가격입니다. (긴급 납기시 담당자와 협의 가능합니다.)</Text>
+                                <Text>· 계좌번호: (기업은행)069-118428-04-010/(주)만쿠무역.</Text>
+                                <Text>· 성적서 및 품질보증서는 별도입니다.</Text>
+                            </View>
+                            :
+                            <View style={styles.footer}>
+                                <Text>* For the invoice* Please indicate few things as below:</Text>
+                                <Text>1. HS Code 6 Digit</Text>
+                                <Text>2. Indication of Country of Origin</Text>
+                                <Text>It has to be written into the remark of every Invoice every time.</Text>
+                                <Text>And your name, your signature and date of signature have to be put in under the
+                                    sentence as well.</Text>
+                                <Text>* Please give us Order confirmation. (Advise us if we should pay your bank charge as
+                                    well.)</Text>
+                            </View>
+                    }
                 </> : <></>}
                 <Text style={styles.pageNum}>- 1 -</Text>
             </View>
@@ -243,24 +287,51 @@ export function PrintPoForm({data, topInfoData, totalData, title}) {
 
             return <Page size="A4" style={styles.page}>
                 <View>
-                    <View style={styles.header}>
-                        <View style={styles.logoInfo}>
-                            <Image src="/manku_ci_black_text.png" style={styles.logo}/>
-                        </View>
-                        <View style={styles.leftInfo}>
-                            <Text>(주) 만쿠무역</Text>
-                            <Text>Manku Trading Co., Ltd</Text>
-                            <Text>서울시 송파구 충민로 52 가든파이브웍스</Text>
-                            <Text>B동 2층 211호, 212호</Text>
-                            <Text>Tel : 02-465-7838, Fax : 02-465-7839</Text>
-                        </View>
-                        <View style={styles.centerTitle}>
-                            <Text style={styles.title}>발 주 서</Text>
-                        </View>
-                        <View style={styles.rightInfo}>
-                            <Image src="/manku_stamp_ko.png" style={styles.info}/>
-                        </View>
-                    </View>
+                    {
+                        lang === 'ko' ?
+                            <View style={styles.header}>
+                                <View style={styles.leftInfo}>
+                                    <View style={styles.logoInfo}>
+                                        <Image src="/manku_ci_black_text.png" style={styles.logo}/>
+                                    </View>
+                                    <View style={styles.companyInfo}>
+                                        <Text>(주) 만쿠무역</Text>
+                                        <Text>Manku Trading Co., Ltd</Text>
+                                        <Text>서울시 송파구 충민로 52 가든파이브웍스</Text>
+                                        <Text>B동 2층 211호, 212호</Text>
+                                        <Text>Tel : 02-465-7838, Fax : 02-465-7839</Text>
+                                    </View>
+                                </View>
+                                <View style={styles.centerTitle}>
+                                    <Text style={styles.title}>발    주    서</Text>
+                                </View>
+                                <View style={styles.rightInfo}>
+                                    <Image src="/manku_stamp_ko.png" style={styles.info}/>
+                                </View>
+                            </View>
+                            :
+                            <View style={styles.header}>
+                                <View style={styles.leftInfo}>
+                                    <View style={styles.logoInfo}>
+                                        <Image src="/manku_ci_black_text.png" style={styles.logo}/>
+                                    </View>
+                                    <View style={styles.companyInfo}>
+                                        <Text>Manku Trading Co.,Ltd</Text>
+                                        <Text>B- 211#, Garden Five Works, 52,</Text>
+                                        <Text>Chungmin-ro,</Text>
+                                        <Text>Songpa-gu, Seoul, South Korea</Text>
+                                        <Text>Postal Code 05839</Text>
+                                    </View>
+                                </View>
+                                <View style={styles.centerTitle2}>
+                                    <Text style={styles.title2}>PURCHASE</Text>
+                                    <Text style={styles.title2}>ORDER</Text>
+                                </View>
+                                <View style={styles.rightInfo}>
+                                    <Image src="/manku_stamp_en.jpg" style={styles.info}/>
+                                </View>
+                            </View>
+                    }
 
                     <View style={styles.titleLine}/>
 
@@ -320,13 +391,14 @@ export function PrintPoForm({data, topInfoData, totalData, title}) {
                                     width: colWidths[4],
                                     flexDirection: 'row',
                                     justifyContent: 'space-between',
-                                    alignItems : 'center'
+                                    alignItems: 'center'
                                 }}><Text
                                     style={{textAlign: 'right', paddingRight: 8}}>{totalData?.currency}</Text>
-                                    <Text style={{textAlign: 'right', paddingRight: 5}}>{unitPrice?.toLocaleString()}</Text>
+                                    <Text style={{
+                                        textAlign: 'right',
+                                        paddingRight: 5
+                                    }}>{unitPrice?.toLocaleString()}</Text>
                                 </View>
-
-
 
 
                                 <View style={{
@@ -334,7 +406,7 @@ export function PrintPoForm({data, topInfoData, totalData, title}) {
                                     width: colWidths[5],
                                     flexDirection: 'row',
                                     justifyContent: 'space-between',
-                                    alignItems : 'center'
+                                    alignItems: 'center'
                                 }}><Text
                                     style={{textAlign: 'right', paddingRight: 8}}>{totalData?.currency}</Text>
                                     <Text
@@ -408,12 +480,27 @@ export function PrintPoForm({data, topInfoData, totalData, title}) {
                             </View>
                         </View>
 
-                        {/* footer */}
-                        <View style={styles.footer}>
-                            <Text>· 의뢰하실 Model로 기준한 견적입니다.</Text>
-                            <Text>· 계좌번호 : (기업은행)069-118428-04-010/만쿠무역</Text>
-                            <Text>· 긴급 납기시 담당자와 협의가능합니다.</Text>
-                        </View>
+                        {
+                            lang === 'ko' ?
+                                <View style={styles.footer}>
+                                    <Text>· 금일 환율 기준으로 2%이상 인상될 시 , 단가가 인상될 수 있습니다.</Text>
+                                    <Text>· 러-우전쟁 및 COVID-19 장기화로 납기 변동성이 큰 시기입니다. 납기 지연이 발생할 수 있는 점 양해 부탁드립니다.</Text>
+                                    <Text>· 의뢰하신 Model로 기준한 견적이며, 견적 수량 전량 구입시 가격입니다. (긴급 납기시 담당자와 협의 가능합니다.)</Text>
+                                    <Text>· 계좌번호: (기업은행)069-118428-04-010/(주)만쿠무역.</Text>
+                                    <Text>· 성적서 및 품질보증서는 별도입니다.</Text>
+                                </View>
+                                :
+                                <View style={styles.footer}>
+                                    <Text>* For the invoice* Please indicate few things as below:</Text>
+                                    <Text>1. HS Code 6 Digit</Text>
+                                    <Text>2. Indication of Country of Origin</Text>
+                                    <Text>It has to be written into the remark of every Invoice every time.</Text>
+                                    <Text>And your name, your signature and date of signature have to be put in under the
+                                        sentence as well.</Text>
+                                    <Text>* Please give us Order confirmation. (Advise us if we should pay your bank charge as
+                                        well.)</Text>
+                                </View>
+                        }
 
                     </> : <></>}
 

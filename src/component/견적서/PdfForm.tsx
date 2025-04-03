@@ -24,18 +24,20 @@ export function PdfForm({data, topInfoData, totalData}) {
             <View>
                 {/* 상단 헤더 */}
                 <View style={styles.header}>
-                    <View style={styles.logoInfo}>
-                        <Image src="/manku_ci_black_text.png" style={styles.logo}/>
-                    </View>
                     <View style={styles.leftInfo}>
-                        <Text>(주) 만쿠무역</Text>
-                        <Text>Manku Trading Co., Ltd</Text>
-                        <Text>서울시 송파구 충민로 52 가든파이브웍스</Text>
-                        <Text>B동 2층 211호, 212호</Text>
-                        <Text>Tel : 02-465-7838, Fax : 02-465-7839</Text>
+                        <View style={styles.logoInfo}>
+                            <Image src="/manku_ci_black_text.png" style={styles.logo}/>
+                        </View>
+                        <View style={styles.companyInfo}>
+                            <Text>(주) 만쿠무역</Text>
+                            <Text>Manku Trading Co., Ltd</Text>
+                            <Text>서울시 송파구 충민로 52 가든파이브웍스</Text>
+                            <Text>B동 2층 211호, 212호</Text>
+                            <Text>Tel : 02-465-7838, Fax : 02-465-7839</Text>
+                        </View>
                     </View>
                     <View style={styles.centerTitle}>
-                        <Text style={styles.title}>견 적 서</Text>
+                        <Text style={styles.title}>견    적    서</Text>
                     </View>
                     <View style={styles.rightInfo}>
                         <Image src="/manku_stamp_ko.png" style={styles.info}/>
