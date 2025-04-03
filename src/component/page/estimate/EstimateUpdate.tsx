@@ -1,5 +1,12 @@
 import React, {memo, useEffect, useRef, useState} from "react";
-import {CopyOutlined, DeleteOutlined, FormOutlined, RadiusSettingOutlined} from "@ant-design/icons";
+import {
+    CopyOutlined,
+    DeleteOutlined,
+    FileAddFilled,
+    FileTextOutlined,
+    FormOutlined,
+    RadiusSettingOutlined
+} from "@ant-design/icons";
 import {ModalInitList} from "@/utils/initialList";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
@@ -34,8 +41,39 @@ import useEventListener from "@/utils/common/function/UseEventListener";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import _ from "lodash";
 import {Actions} from "flexlayout-react";
+import {pdf as pdfs} from "@react-pdf/renderer";
+import {PdfForm} from "@/component/견적서/PdfForm";
 
 const listType = 'estimateDetailList'
+
+
+
+function findNextAvailableNumber(data: { name: string }[], prefix: string): string {
+    // 1. prefix로 시작하는 항목만 추출
+    const filtered = data
+        .map(item => item.name)
+        .filter(name => name.startsWith(prefix + '.'))
+        .map(name => {
+            const numPart = name.split(' ')[0]; // "03.1"
+            const decimal = parseFloat(numPart.split('.')[1]); // 1, 3, ...
+            return decimal;
+        });
+
+    if (filtered.length === 0) return `${prefix}.1`;
+
+    // 2. 정렬
+    filtered.sort((a, b) => a - b);
+
+    // 3. 빈 숫자 찾기
+    for (let i = 1; i <= filtered[filtered.length - 1]; i++) {
+        if (!filtered.includes(i)) {
+            return `${prefix}.${i}`;
+        }
+    }
+
+    // 4. 다 있으면 마지막 숫자 다음
+    return `${prefix}.${filtered[filtered.length - 1] + 1}`;
+}
 
 function EstimateUpdate({
                             dataInfo = {estimateDetail: [], attachmentFileList: []},
@@ -97,17 +135,16 @@ function EstimateUpdate({
     const gridRef = useRef(null);
     const router = useRouter();
 
-    const infoInit = dataInfo?.estimateDetail
-    const infoInitFile = dataInfo?.attachmentFileList
 
-    const [info, setInfo] = useState<any>(infoInit)
+
+    const [info, setInfo] = useState<any>({})
     const [count    , setCount] = useState(0);
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
     const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
 
-    const [fileList, setFileList] = useState(fileManage.getFormatFiles(infoInitFile));
-    const [originFileList, setOriginFileList] = useState(infoInitFile);
+    const [fileList, setFileList] = useState([]);
+    const [originFileList, setOriginFileList] = useState([]);
     const [tableData, setTableData] = useState([]);
 
     const [loading, setLoading] = useState(false);
@@ -450,6 +487,57 @@ function EstimateUpdate({
         }, err => setLoading(false))
     }
 
+    async function addEstimate(){
+        let infoData = commonManage.getInfo(infoRef, estimateInfo['defaultInfo']);
+        const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
+        infoData['managerAdminName'] = findMember['name'];
+        infoData['name'] = findMember['name'];
+        infoData['contactNumber'] = findMember['contactNumber'];
+        infoData['email'] = findMember['email'];
+        infoData['customerManagerName'] = infoData['managerName'];
+        infoData['customerManagerPhone'] = infoData['phoneNumber'];
+
+        const tableList = tableRef.current?.getSourceData();
+        const filterTableList = commonManage.filterEmptyObjects(tableList, ['model', 'item', 'maker'])
+        const data = commonManage.splitDataWithSequenceNumber(filterTableList, 18, 28);
+
+        let results = filterTableList.reduce((acc, cur, idx) => {
+            const {quantity, net} = cur
+            acc['quantity'] += quantity;
+            acc['net'] += net;
+            acc['total'] += (quantity * net)
+            return acc
+        }, {quantity: 0, net: 0, total: 0})
+
+        results['unit'] = filterTableList[0]['unit'];
+
+        const blob = await pdfs(<PdfForm data={data} topInfoData={infoData} totalData={results}
+                                         key={Date.now()}/>).toBlob();
+
+        const dom = infoRef.current.querySelector('#documentNumberFull');
+
+        // File 객체로 만들기 (선택 사항)
+
+
+        const file = new File([blob], `${dom.value}.pdf`, {type: 'application/pdf'});
+
+        const findNumb =  findNextAvailableNumber(fileList, '03')
+        const newFile =  {
+            ...file,
+            uid: file.name + "_" + Date.now(),
+            name: `${findNumb} ${file.name}`,
+            originFileObj: file,
+            type: file.type,
+        }
+
+
+
+       setFileList([
+           ...fileList,
+           newFile,
+       ])
+    }
+
     return <div style={{overflow: 'hidden'}}><Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'estimate_update'}/>
         <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
@@ -654,7 +742,7 @@ function EstimateUpdate({
                                 </Panel>
                                 <PanelResizeHandle/>
                                 <Panel defaultSize={sizes[5]} minSize={5}>
-                                    <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
+                                    <BoxCard title={<div>드라이브 목록 <FileAddFilled style={{fontSize : 18 , cursor : 'pointer'}} onClick={addEstimate} /></div>} disabled={!userInfo['microsoftId']}>
                                         {/*@ts-ignored*/}
                                         <div style={{overFlowY: "auto", maxHeight: 300}}>
                                             <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
