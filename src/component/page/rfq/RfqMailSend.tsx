@@ -158,8 +158,8 @@ function RfqMailSend({getPropertyId}: any) {
         })
         getData.post('estimate/updateSentStatuses', {sentStatusList : result}).then(v => {
             if(v.data.code === 1){
-                message.success('발송처리가 완료되었습니다.');
                 searchInfo();
+                message.success('발송처리가 완료되었습니다.');
             }else{
                 message.error(v?.data?.message);
             }
