@@ -1,5 +1,5 @@
 import React, {memo, useEffect, useRef, useState} from "react";
-import {RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
+import {ArrowRightOutlined, RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
 import {ModalInitList} from "@/utils/initialList";
 import message from "antd/lib/message";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
@@ -31,6 +31,7 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     })
     const [memberList, setMemberList] = useState([]);
     const [tableData, setTableData] = useState([]);
+    const [routerId, setRouterId] = useState(null);
 
     useEffect(() => {
         getMemberList();
@@ -191,7 +192,7 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
             if (code === 1) {
                 setFileList([])
                 const {documentNumberFull, estimateRequestId} = entity;
-
+                setRouterId(estimateRequestId)
                 if (dom) {
                     dom.value = documentNumberFull;
                 }
@@ -241,6 +242,12 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         }
     }, typeof window !== 'undefined' ? document : null)
 
+    function moveUpdate() {
+        if (routerId) {
+            getPropertyId('rfq_update', routerId)
+        }
+    }
+
     return <Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'rfq_write'}/>
         <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
@@ -256,6 +263,10 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
             }}>
 
                 <MainCard title={'견적의뢰 작성'} list={[
+                    {
+                        name: <div style={{opacity: routerId ? 1 : 0.5}}><ArrowRightOutlined style={{paddingRight: 8}}/>수정페이지
+                            이동</div>, func: moveUpdate, type: ''
+                    },
                     {name: <div><SaveOutlined style={{paddingRight: 8}}/>저장</div>, func: saveFunc, type: 'primary'},
                     {
                         name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>,
