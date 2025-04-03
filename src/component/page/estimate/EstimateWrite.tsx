@@ -11,7 +11,7 @@ import {
     datePickerForm,
     inputForm,
     inputNumberForm,
-    MainCard,
+    MainCard, SelectForm,
     textAreaForm,
     TopBoxCard
 } from "@/utils/commonForm";
@@ -33,10 +33,15 @@ import EstimatePaper from "@/component/견적서/EstimatePaper";
 import {jsPDF} from "jspdf";
 import html2canvas from "html2canvas";
 import {PdfForm} from "@/component/견적서/PdfForm";
-import { pdf as pdfs } from '@react-pdf/renderer';
+import {pdf as pdfs} from '@react-pdf/renderer';
 
 const listType = 'estimateDetailList'
+
 function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
+    const fileRef = useRef(null);
+    const tableRef = useRef(null);
+    const infoRef = useRef<any>(null)
+
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
 
@@ -54,6 +59,7 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     useEffect(() => {
         getMemberList();
     }, []);
+
 
     async function getMemberList() {
         // @ts-ignore
@@ -73,12 +79,6 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         label: item.name,
     }));
 
-
-    const pdfRef = useRef(null);
-    const pdfSubRef = useRef(null);
-    const fileRef = useRef(null);
-    const tableRef = useRef(null);
-    const infoRef = useRef<any>(null)
 
     const router = useRouter();
 
@@ -155,16 +155,16 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                     }
                     setLoading(true)
                     await getData.post('estimate/getNewDocumentNumberFull', {
-                            agencyCode: dom.value,
-                            type: 'ESTIMATE'
-                        }).then(v=>{
-                       if(v.data.code === 1){
-                           dom2.value = v.data.entity.newDocumentNumberFull;
-                       }else{
+                        agencyCode: dom.value,
+                        type: 'ESTIMATE'
+                    }).then(v => {
+                        if (v.data.code === 1) {
+                            dom2.value = v.data.entity.newDocumentNumberFull;
+                        } else {
                             message.error(v.data.message)
-                       }
+                        }
                         setLoading(false)
-                    }, err=>setLoading(false))
+                    }, err => setLoading(false))
 
 
                     break;
@@ -195,15 +195,15 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                     })
                                     if (estimateRequestDetail) {
                                         setTableData([...estimateRequestDetail['estimateRequestDetailList'], ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000 - estimateRequestDetail['estimateRequestDetailList'].length)])
-                                    }else{
+                                    } else {
                                         message.error('조회정보가 없습니다.')
                                     }
-                                setLoading(false)
+                                    setLoading(false)
                                 }, err => setLoading(false)
                             );
 
 
-                        }else{
+                        } else {
                             setLoading(false)
                         }
                     })
@@ -240,7 +240,7 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         infoData['customerManagerPhone'] = infoData['phoneNumber'];
 
         const maker = infoRef.current.querySelector('#maker');
-        const dom:any = infoRef.current.querySelector('#documentNumberFull');
+        const dom: any = infoRef.current.querySelector('#documentNumberFull');
         setMaker(maker.value)
         if (!infoData['managerAdminId']) {
             return message.warn('담당자가 누락되었습니다.')
@@ -261,8 +261,8 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         if (!filterTableList.length) {
             return message.warn('하위 데이터 1개 이상이여야 합니다');
         }
-        const emptyQuantity = filterTableList.filter(v=> !v.quantity)
-        if(emptyQuantity.length){
+        const emptyQuantity = filterTableList.filter(v => !v.quantity)
+        if (emptyQuantity.length) {
             return message.error('수량을 입력해야 합니다.')
         }
         const formData: any = new FormData();
@@ -270,8 +270,6 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
 
         commonManage.setInfoFormData(infoData, formData, listType, filterTableList)
         const resultCount = commonManage.getUploadList(fileRef, formData);
-
-
 
 
         const filterTotalList = tableList.filter(v => !!v.model)
@@ -282,20 +280,20 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         let bowl = {quantity: 0, net: 0, total: 0, unit: list.length ? list[0][0]['unit'] : ''}
 
 
-            let results = filterTotalList.reduce((acc, cur, idx) => {
-                const {quantity, net} = cur
-                acc['quantity'] += quantity;
-                acc['net'] += net;
-                acc['total'] += (quantity * net)
-                return acc
-            }, {quantity : 0, net : 0, total : 0})
+        let results = filterTotalList.reduce((acc, cur, idx) => {
+            const {quantity, net} = cur
+            acc['quantity'] += quantity;
+            acc['net'] += net;
+            acc['total'] += (quantity * net)
+            return acc
+        }, {quantity: 0, net: 0, total: 0})
 
         results['unit'] = filterTotalList[0]['unit'];
         const blob = await pdfs(<PdfForm data={data} topInfoData={infoData} totalData={results}
-                                        key={Date.now()}/>).toBlob();
+                                         key={Date.now()}/>).toBlob();
 
         // File 객체로 만들기 (선택 사항)
-        const file = new File([blob], '견적서.pdf', { type: 'application/pdf' });
+        const file = new File([blob], '견적서.pdf', {type: 'application/pdf'});
         // =====================================================================================================
 
 
@@ -358,6 +356,7 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         }
     }, typeof window !== 'undefined' ? document : null)
 
+
     return <div style={{overflow: 'hidden'}}><Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'estimate_write'}/>
         <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
@@ -372,8 +371,12 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                 rowGap: 10,
             }}>
                 <MainCard title={'견적서 작성'} list={[
-                    {name: <div><SaveOutlined style={{paddingRight : 8}} />저장</div>, func: saveFunc, type: 'primary'},
-                    {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'}
+                    {name: <div><SaveOutlined style={{paddingRight: 8}}/>저장</div>, func: saveFunc, type: 'primary'},
+                    {
+                        name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>,
+                        func: clearAll,
+                        type: 'danger'
+                    }
                 ]} mini={mini} setMini={setMini}>
                     {mini ? <div>
                             <TopBoxCard grid={'100px 70px 70px 120px 120px 120px 300px'}>
@@ -498,53 +501,18 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                 <PanelResizeHandle/>
                                 <Panel defaultSize={sizes[2]} minSize={5}>
                                     <BoxCard title={'운송 정보'}>
-                                        <div>
-                                            <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 6}}>유효기간</div>
-                                            <select name="languages" id="validityPeriod"
-                                                    style={{
-                                                        outline: 'none',
-                                                        border: '1px solid lightGray',
-                                                        height: 23,
-                                                        width: '100%',
-                                                        fontSize: 12,
-                                                        paddingBottom: 0.5
-                                                    }}>
-                                                <option value={'견적 발행 후 10일간'}>견적 발행 후 10일간</option>
-                                                <option value={'견적 발행 후 30일간'}>견적 발행 후 30일간</option>
-                                            </select>
-                                        </div>
+
+                                        <SelectForm id={'validityPeriod'} list={['견적 발행 후 10일간', '견적 발행 후 30일간']}
+                                                    title={'유효기간'}/>
                                         <div style={{paddingTop: 10}}>
-                                            <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 6}}>결제조건</div>
-                                            <select name="languages" id="paymentTerms"
-                                                    style={{
-                                                        outline: 'none',
-                                                        border: '1px solid lightGray',
-                                                        height: 23,
-                                                        width: '100%',
-                                                        fontSize: 12,
-                                                        paddingBottom: 0.5
-                                                    }}>
-                                                <option value={'발주시 50% / 납품시 50%'}>발주시 50% / 납품시 50%</option>
-                                                <option value={'현금결제'}>현금결제</option>
-                                                <option value={'선수금'}>선수금</option>
-                                                <option value={'정기결제'}>정기결제</option>
-                                            </select>
+                                            <SelectForm id={'paymentTerms'}
+                                                        list={['발주시 50% / 납품시 50%', '현금결제', '선수금', '정기결제']} title={'결제조건'}/>
                                         </div>
 
                                         <div style={{paddingTop: 10, paddingBottom: 10}}>
-                                            <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 6}}>운송조건</div>
-                                            <select name="languages" id="shippingTerms"
-                                                    style={{
-                                                        outline: 'none',
-                                                        border: '1px solid lightGray',
-                                                        height: 23,
-                                                        width: '100%',
-                                                        fontSize: 12,
-                                                        paddingBottom: 0.5
-                                                    }}>
-                                                <option value={'귀사도착도'}>귀사도착도</option>
-                                                <option value={'화물 및 택배비 별도'}>화물 및 택배비 별도</option>
-                                            </select>
+                                            <SelectForm id={'shippingTerms'}
+                                                        list={['귀사도착도', '화물 및 택배비 별도']}
+                                                        title={'운송조건'}/>
                                         </div>
 
                                         {inputNumberForm({

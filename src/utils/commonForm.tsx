@@ -1,5 +1,5 @@
 import Card from "antd/lib/card/Card";
-import React, {useRef} from "react";
+import React, {useEffect, useRef} from "react";
 import Button from "antd/lib/button";
 import {
     CopyOutlined,
@@ -99,7 +99,7 @@ export function BoxCard({children, title = null, tooltip = '', disabled = false}
 
 export function MainCard({children, title, list, mini = null, setMini = Function()}) {
 
-    function confirm(v){
+    function confirm(v) {
         v()
     }
 
@@ -124,10 +124,10 @@ export function MainCard({children, title, list, mini = null, setMini = Function
                                              ?
                                              <Popconfirm
                                                  title="삭제하시겠습니까?"
-                                                 onConfirm={()=>confirm(v.func)}
+                                                 onConfirm={() => confirm(v.func)}
                                                  icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
                                                  <Button type={v.type} style={{fontSize: 11}} size={'small'}
-                                                         // onClick={v.func}
+                                                     // onClick={v.func}
                                                  >{v?.prefix}{v.name}</Button>
                                              </Popconfirm>
 
@@ -369,6 +369,63 @@ export const inputNumberForm = ({
 
             />
             <span style={{marginLeft: -20, paddingTop: 5, fontWeight: 700}}>{addonAfter}</span>
+        </div>
+    </div>
+}
+
+export const SelectForm = ({id, list, title}: any) => {
+
+    const ref = useRef<any>(null)
+    const listRef = useRef<any>(null)
+
+    useEffect(() => {
+        const input = ref.current.getElementsByClassName('customInput')[0];
+
+        const handleInputFocus = () => {
+            listRef.current.style.display = 'block';
+        };
+
+        const handleOptionClick = (e: any) => {
+            if (e.target.tagName === 'DIV') {
+                input.value = e.target.textContent;
+                listRef.current.style.display = 'none';
+            }
+        };
+
+        const handleFocusIn = (e: any) => {
+            if (!ref.current.contains(e.target)) {
+                listRef.current.style.display = 'none';
+            }
+        };
+
+        const handleClickOutside = (e: any) => {
+            if (!ref?.current?.contains(e.target)) {
+                if (listRef.current) {
+                    listRef.current.style.display = 'none';
+                }
+            }
+        };
+
+        input.addEventListener('focus', handleInputFocus);
+        listRef.current.addEventListener('click', handleOptionClick);
+        document.addEventListener('focusin', handleFocusIn);
+        document.addEventListener('click', handleClickOutside);
+
+        return () => {
+            input.removeEventListener('focus', handleInputFocus);
+            listRef.current?.removeEventListener('click', handleOptionClick);
+            document.removeEventListener('focusin', handleFocusIn);
+            document.removeEventListener('click', handleClickOutside);
+        };
+
+    }, []);
+
+    return <div ref={ref} className="dropdown-wrapper" id="dropdownWrapper" style={{fontSize: 12, width: '100%'}}>
+        <div style={{fontWeight: 700, paddingBottom: 5}}>{title}</div>
+        <input type="text" id={id} className="customInput" name={'customInput'}
+               placeholder="선택 또는 입력" autoComplete="off" style={{height: 23}}/>
+        <div className="dropdown-list" ref={listRef} id={`${id}s`}>
+            {list.map(v => <div>{v}</div>)}
         </div>
     </div>
 }

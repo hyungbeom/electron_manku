@@ -12,7 +12,7 @@ import {
     datePickerForm,
     inputForm,
     inputNumberForm,
-    MainCard,
+    MainCard, SelectForm,
     textAreaForm,
     TopBoxCard
 } from "@/utils/commonForm";
@@ -577,53 +577,17 @@ function EstimateUpdate({
                                 <PanelResizeHandle/>
                                 <Panel defaultSize={sizes[2]} minSize={5}>
                                     <BoxCard title={'운송 정보'}>
-                                        <div>
-                                            <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 6}}>유효기간</div>
-                                            <select name="languages" id="validityPeriod"
-                                                    style={{
-                                                        outline: 'none',
-                                                        border: '1px solid lightGray',
-                                                        height: 23,
-                                                        width: '100%',
-                                                        fontSize: 12,
-                                                        paddingBottom: 0.5
-                                                    }}>
-                                                <option value={'견적 발행 후 10일간'}>견적 발행 후 10일간</option>
-                                                <option value={'견적 발행 후 30일간'}>견적 발행 후 30일간</option>
-                                            </select>
-                                        </div>
+                                        <SelectForm id={'validityPeriod'} list={['견적 발행 후 10일간', '견적 발행 후 30일간']}
+                                                    title={'유효기간'}/>
                                         <div style={{paddingTop: 10}}>
-                                            <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 6}}>결제조건</div>
-                                            <select name="languages" id="paymentTerms"
-                                                    style={{
-                                                        outline: 'none',
-                                                        border: '1px solid lightGray',
-                                                        height: 23,
-                                                        width: '100%',
-                                                        fontSize: 12,
-                                                        paddingBottom: 0.5
-                                                    }}>
-                                                <option value={'발주시 50% / 납품시 50%'}>발주시 50% / 납품시 50%</option>
-                                                <option value={'현금결제'}>현금결제</option>
-                                                <option value={'선수금'}>선수금</option>
-                                                <option value={'정기결제'}>정기결제</option>
-                                            </select>
+                                            <SelectForm id={'paymentTerms'}
+                                                        list={['발주시 50% / 납품시 50%', '현금결제', '선수금', '정기결제']} title={'결제조건'}/>
                                         </div>
 
                                         <div style={{paddingTop: 10, paddingBottom: 10}}>
-                                            <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 6}}>운송조건</div>
-                                            <select name="languages" id="shippingTerms"
-                                                    style={{
-                                                        outline: 'none',
-                                                        border: '1px solid lightGray',
-                                                        height: 23,
-                                                        width: '100%',
-                                                        fontSize: 12,
-                                                        paddingBottom: 0.5
-                                                    }}>
-                                                <option value={'귀사도착도'}>귀사도착도</option>
-                                                <option value={'화물 및 택배비 별도'}>화물 및 택배비 별도</option>
-                                            </select>
+                                            <SelectForm id={'shippingTerms'}
+                                                        list={['귀사도착도', '화물 및 택배비 별도']}
+                                                        title={'운송조건'}/>
                                         </div>
 
                                         {inputNumberForm({

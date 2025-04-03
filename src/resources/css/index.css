@@ -416,3 +416,39 @@ th {
 td {
     border: 1px solid lightgrey;
 }
+
+
+
+
+.dropdown-wrapper {
+    position: relative;
+    width: 200px;
+}
+
+.customInput {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+.dropdown-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    border: 1px solid #ccc;
+    background: white;
+    z-index: 10;
+    display: none;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.dropdown-list div {
+    padding: 8px;
+    cursor: pointer;
+}
+
+.dropdown-list div:hover {
+    background: #eee;
+}

@@ -3,7 +3,7 @@ import {DownloadOutlined, RadiusSettingOutlined, SaveOutlined} from "@ant-design
 import message from "antd/lib/message";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {useRouter} from "next/router";
-import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, TopBoxCard} from "@/utils/commonForm";
+import {BoxCard, datePickerForm, inputForm, MainCard, SelectForm, textAreaForm, TopBoxCard} from "@/utils/commonForm";
 import {commonFunc, commonManage, fileManage} from "@/utils/commonManage";
 import _ from "lodash";
 import {findCodeInfo} from "@/utils/api/commonApi";
@@ -485,22 +485,9 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                             <PanelResizeHandle/>
                             <Panel defaultSize={sizes[3]} minSize={5}>
                                 <BoxCard title={'세부사항'}>
-                                    <div style={{paddingBottom: 10}}>
-                                        <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>결제조건</div>
-                                        <select name="languages" id="paymentTerms"
-                                                style={{
-                                                    outline: 'none',
-                                                    border: '1px solid lightGray',
-                                                    height: 23,
-                                                    width: '100%',
-                                                    fontSize: 12,
-                                                    paddingBottom: 0.5
-                                                }}>
-                                            <option value={'발주시 50% / 납품시 50%'}>발주시 50% / 납품시 50%</option>
-                                            <option value={'현금결제'}>현금결제</option>
-                                            <option value={'선수금'}>선수금</option>
-                                            <option value={'정기결제'}>정기결제</option>
-                                        </select>
+                                    <div style={{paddingTop: 10}}>
+                                        <SelectForm id={'paymentTerms'}
+                                                    list={['발주시 50% / 납품시 50%', '현금결제', '선수금', '정기결제']} title={'결제조건'}/>
                                     </div>
                                     {inputForm({
                                         title: '납기',
