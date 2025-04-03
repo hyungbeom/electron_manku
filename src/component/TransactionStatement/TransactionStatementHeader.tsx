@@ -635,8 +635,6 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRe
                             : <></>}
 
 
-
-
                         <div style={{textAlign: 'center'}}>- {i + 1} -</div>
                     </div>
 
