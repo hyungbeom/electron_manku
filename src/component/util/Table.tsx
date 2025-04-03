@@ -112,6 +112,11 @@ const Table = forwardRef(({
                     const newValueIndex = propIndex + 2; // newValue 위치 (prop + 2)
 
                     changes[index][newValueIndex] = parseFloat(change[newValueIndex]).toFixed(2); // ✅ 소수점 2자리 변환
+
+                    if(type === 'rfq_write_column') {
+                        hotRef.current.hotInstance.setDataAtCell(row, 7, '회신'); // replyDate 컬럼 업데이트
+                        hotRef.current.hotInstance.setDataAtCell(row, 8, moment().format('YYYY-MM-DD')); // replyDate 컬럼 업데이트
+                    }
                 }
                 if (prop === 'calcCheck') {
                     let data = [...hotRef.current.hotInstance.getSourceData()]

@@ -8,7 +8,6 @@ import https from 'https';
 export const API_URL = 'http://175.125.92.183:8080/api';
 
 
-// 1. 공통 Axios 인스턴스 생성
 const agent = new https.Agent({
     rejectUnauthorized: false, // SSL 검증 비활성화 (개발 환경 전용)
 });
