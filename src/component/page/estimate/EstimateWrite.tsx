@@ -1,23 +1,24 @@
 import React, {memo, useEffect, useRef, useState} from "react";
-import {DownloadOutlined, RadiusSettingOutlined, RetweetOutlined, SaveOutlined} from "@ant-design/icons";
+import {ArrowRightOutlined, DownloadOutlined, RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
 import {estimateDetailUnit, ModalInitList} from "@/utils/initialList";
 import message from "antd/lib/message";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {useRouter} from "next/router";
 import SearchInfoModal from "@/component/SearchAgencyModal";
-import {commonFunc, commonManage, fileManage} from "@/utils/commonManage";
+import {commonFunc, commonManage} from "@/utils/commonManage";
 import {
     BoxCard,
     datePickerForm,
     inputForm,
     inputNumberForm,
-    MainCard, SelectForm,
+    MainCard,
+    SelectForm,
     textAreaForm,
     TopBoxCard
 } from "@/utils/commonForm";
 import _ from "lodash";
 import {findCodeInfo} from "@/utils/api/commonApi";
-import {checkInquiryNo, getAttachmentFileList, saveEstimate} from "@/utils/api/mainApi";
+import {saveEstimate} from "@/utils/api/mainApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import Spin from "antd/lib/spin";
 import {getData} from "@/manage/function/api";
@@ -29,9 +30,6 @@ import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import useEventListener from "@/utils/common/function/UseEventListener";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
-import EstimatePaper from "@/component/견적서/EstimatePaper";
-import {jsPDF} from "jspdf";
-import html2canvas from "html2canvas";
 import {PdfForm} from "@/component/견적서/PdfForm";
 import {pdf as pdfs} from '@react-pdf/renderer';
 
@@ -48,6 +46,7 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     const [count, setCount] = useState(0);
     const [memberList, setMemberList] = useState([]);
     const [tableData, setTableData] = useState([]);
+    const [routerId, setRouterId] = useState(null);
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('estimate_write');
         return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 20]; // 기본값 [50, 50, 50]
@@ -307,7 +306,9 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
             const {code, message: msg, entity} = v;
             const dom = infoRef.current.querySelector('#documentNumberFull');
             if (code === 1) {
+                getPropertyId('estimate_update', entity?.estimateId)
                 setFileList([])
+                setRouterId(entity?.estimateId)
                 notificationAlert('success', '💾견적서 등록완료',
                     <>
                         <div>Inquiry No. : {dom.value}</div>
@@ -356,6 +357,15 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         }
     }, typeof window !== 'undefined' ? document : null)
 
+    function moveUpdate() {
+        if (routerId) {
+            getPropertyId('estimate_update', routerId)
+        }
+    }
+
+    function checkId(e){
+        setRouterId(null)
+    }
 
     return <div style={{overflow: 'hidden'}}><Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'estimate_write'}/>
@@ -371,6 +381,10 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                 rowGap: 10,
             }}>
                 <MainCard title={'견적서 작성'} list={[
+                    {
+                        name: <div style={{opacity: routerId ? 1 : 0.5}}><ArrowRightOutlined style={{paddingRight: 8}}/>수정페이지
+                            이동</div>, func: moveUpdate, type: ''
+                    },
                     {name: <div><SaveOutlined style={{paddingRight: 8}}/>저장</div>, func: saveFunc, type: 'primary'},
                     {
                         name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>,
@@ -414,7 +428,8 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                 })}
                                 {inputForm({
                                     title: '만쿠견적서 No.',
-                                    id: 'documentNumberFull'
+                                    id: 'documentNumberFull',
+                                    onChange : checkId
                                 })}
                                 {inputForm({title: 'RFQ No.', id: 'rfqNo'})}
                                 {inputForm({title: '프로젝트 제목', id: 'projectTitle'})}

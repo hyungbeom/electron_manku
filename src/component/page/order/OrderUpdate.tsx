@@ -11,7 +11,7 @@ import {findCodeInfo} from "@/utils/api/commonApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import Spin from "antd/lib/spin";
-import {estimateInfo, orderInfo} from "@/utils/column/ProjectInfo";
+import {orderInfo} from "@/utils/column/ProjectInfo";
 import Table from "@/component/util/Table";
 import SearchInfoModal from "@/component/SearchAgencyModal";
 import {CopyOutlined, DeleteOutlined, FormOutlined, RadiusSettingOutlined} from "@ant-design/icons";
@@ -20,7 +20,6 @@ import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import useEventListener from "@/utils/common/function/UseEventListener";
 import moment from "moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
-import PrintTransactionModal from "@/component/printTransaction";
 import _ from "lodash";
 import {Actions} from "flexlayout-react";
 import TransactionStatementHeader from "@/component/TransactionStatement/TransactionStatementHeader";
@@ -380,7 +379,8 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
                 <PrintPo infoRef={infoRef} tableRef={tableRef} isModalOpen={isModalOpen}
                          setIsModalOpen={setIsModalOpen} memberList={memberList} count={count}/>}
 
-            {isModalOpen['event1'] &&   <TransactionStatementHeader isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}
+            {isModalOpen['event1'] &&
+                <TransactionStatementHeader isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}
                                             customerData={customerData}
                                             pdfRef={pdfRef}
                                             tableRef={tableRef}
@@ -552,7 +552,8 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
                             <PanelResizeHandle/>
                             <Panel defaultSize={sizes[4]} minSize={5}>
                                 <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
-                                    <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef} infoRef={infoRef}/>
+                                    <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
+                                                     infoRef={infoRef}/>
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>

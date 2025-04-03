@@ -228,7 +228,14 @@ function RqfUpdate({
 
         const totalList = tableRef.current.getSourceData();
         totalList.pop();
-
+        const list = totalList.map(v=>{
+            return {
+                model : v.model,
+                quantity : v.quantity,
+                unit : v.unit,
+                currencyUnit : v.currencyUnit,
+            }
+        })
 
         const result = Object.keys(rfqInfo['defaultInfo']).map(v => `#${v}`)
         const test = `${result.join(',')}`;
@@ -246,7 +253,8 @@ function RqfUpdate({
 
         copyInfo['managerAdminName'] = findMember['name'];
 
-        copyInfo[listType] = [...totalList, ...commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000 - totalList.length)];
+
+        copyInfo[listType] = [...list, ...commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000 - list.length)];
 
         getCopyPage('rfq_write', copyInfo)
     }

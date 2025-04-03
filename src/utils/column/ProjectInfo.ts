@@ -345,11 +345,12 @@ export const orderInfo = {
         columnWidth: [220, 50, 50, 50, 45, 50, 120, 120, 120, 120, 80],
         column: [
             'Model',
-            '주문',
+            '수량',
             '단위',
             '화폐단위',
             '매입 단가',
             '매입 총액',
+            '주문',
             '입고',
             '미 입고',
             '매출 단가',
@@ -366,7 +367,7 @@ export const orderInfo = {
             {data: "currency", type: "autocomplete", source: ['KRW', 'USD', 'EUR', 'JPY', 'GBP']},
             {data: "unitPrice", type: "numeric"},
             {data: "total", type: "numeric"},
-
+            {data: "quantity", type: "numeric"},
             {data: "receivedQuantity", type: "numeric"},
             {data: "unreceivedQuantity", type: "numeric", readOnly: true},
 
