@@ -12,7 +12,7 @@ import message from "antd/lib/message";
 import {RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
 import _ from "lodash";
 
-function DeliveryWrite({copyPageInfo}) {
+function DeliveryWrite({copyPageInfo}:any) {
 
     const router = useRouter();
 

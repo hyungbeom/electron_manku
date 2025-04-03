@@ -96,6 +96,7 @@ function ProjectUpdate({
     useEffect(() => {
         setLoading(true)
         getDataInfo().then(v => {
+
             const {projectDetail, attachmentFileList} = v;
             setFileList(fileManage.getFormatFiles(attachmentFileList))
             setOriginFileList(attachmentFileList)
@@ -117,6 +118,7 @@ function ProjectUpdate({
             "projectId": updateKey['project_update'],
             "documentNumberFull": ""
         });
+
         return result?.data?.entity;
     }
 

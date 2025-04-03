@@ -44,7 +44,6 @@ function CompanyAccount({getPropertyId, getCopyPage}: any) {
         }).then(v => {
 
             const {code, entity} = v.data
-            console.log(code,'::')
             if (code === 1) {
                 const {pageInfo, companyAccountList} = entity;
                 setTotalRow(pageInfo.totalRow)

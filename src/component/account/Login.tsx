@@ -50,7 +50,7 @@ export default function Login() {
     }
 
     const [adminLogin, setAdminLogin] = useState(false);
-    console.log(adminLogin,'adminLogin:')
+
     return <>
         <Button style={{borderRadius : 5}} onClick={()=>{
             setAdminLogin(v=> !v)

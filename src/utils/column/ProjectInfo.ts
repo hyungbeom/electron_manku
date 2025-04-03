@@ -345,11 +345,12 @@ export const orderInfo = {
         columnWidth: [220, 50, 50, 50, 45, 50, 120, 120, 120, 120, 80],
         column: [
             'Model',
-            '주문',
+            '수량',
             '단위',
             '화폐단위',
             '매입 단가',
             '매입 총액',
+            '주문',
             '입고',
             '미 입고',
             '매출 단가',
@@ -366,7 +367,7 @@ export const orderInfo = {
             {data: "currency", type: "autocomplete", source: ['KRW', 'USD', 'EUR', 'JPY', 'GBP']},
             {data: "unitPrice", type: "numeric"},
             {data: "total", type: "numeric"},
-
+            {data: "order", type: "numeric"},
             {data: "receivedQuantity", type: "numeric"},
             {data: "unreceivedQuantity", type: "numeric", readOnly: true},
 
@@ -410,22 +411,24 @@ export const orderInfo = {
             "hscode": 'HS-CODE',
         },
         excelExpert: (v, i) => {
-            v['unreceivedQuantity'] = `=B${i + 1} -G${i + 1}`
+            v['unreceivedQuantity'] = `=B${i + 1} -H${i + 1}`
             v['total'] = `=B${i + 1}*E${i + 1}`
-            v['totalNet'] = `=B${i + 1}*I${i + 1}`
+            v['totalNet'] = `=B${i + 1}*J${i + 1}`
             return v
         },
         totalList: {
             "model": "",           // Model
             "quantity": '=SUM(B1:B1000)',              // 수량
-            "receivedQuantity": '=SUM(G1:G1000)',
-            "unreceivedQuantity": '=SUM(H1:H1000)',
+
             "unit": '',               // 단위
             "currency": '',
             "unitPrice": '=SUM(E1:E1000)',
             "total": '=SUM(F1:F1000)',            // 매입단가
-            "net": '=SUM(I1:I1000)',            // 매입단가
-            "totalNet": '=SUM(J1:J1000)',            // 매입단가
+            "order": '=SUM(G1:G1000)',            // 매입단가
+            "receivedQuantity": '=SUM(H1:H1000)',
+            "unreceivedQuantity": '=SUM(I1:I1000)',
+            "net": '=SUM(J1:J1000)',            // 매입단가
+            "totalNet": '=SUM(K1:K1000)',            // 매입단가
             "hscode": '',
         },
 

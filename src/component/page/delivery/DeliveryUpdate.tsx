@@ -19,7 +19,7 @@ import DeliveryRead from "@/component/page/delivery/DeliveryRead";
 
 
 
-function DeliveryUpdate({updateKey})
+function DeliveryUpdate({updateKey}:any)
 {
 
     const [tabNumb, setTabNumb] = useState('')

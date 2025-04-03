@@ -53,7 +53,7 @@ function DomesticAgencyUpdate({updateKey, getCopyPage}:any) {
     useEffect(() => {
         setLoading(true)
         getDataInfo().then(v => {
-            console.log(v,'::asd')
+
             const {agencyDetail, attachmentFileList} = v;
 
             setInfo(agencyDetail);

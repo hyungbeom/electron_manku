@@ -157,7 +157,7 @@ function EstimateUpdate({
 
             setFileList(fileManage.getFormatFiles(attachmentFileList));
             setOriginFileList(attachmentFileList)
-            console.log(estimateDetail, 'estimateDetail:')
+
             setInfo({
                 ...estimateDetail,
                 uploadType: 3,
@@ -264,7 +264,7 @@ function EstimateUpdate({
                 }
             }).then(v => {
                 const list = fileManage.getFormatFiles(v);
-                console.log(v,':::::')
+
                 setFileList(list)
                 setOriginFileList(list);
 
@@ -362,64 +362,6 @@ function EstimateUpdate({
         setCount(v=> v + 1)
     }
 
-    const generatePDF = async (printMode = false) => {
-        const pdf = new jsPDF({
-            orientation: "portrait",
-            unit: "px",
-            format: "a4",
-            compress: true, // 압축 활성화
-        });
-
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const padding = 30; // 좌우 여백 설정
-        const contentWidth = pdfWidth - padding * 2; // 실제 이미지 너비
-
-        // ✅ 높이가 0이 아닌 요소만 필터링
-        const elements = Array.from(pdfSubRef.current.children).filter(
-            (el: any) => el.offsetHeight > 0 && el.innerHTML.trim() !== ""
-        );
-
-        if (pdfRef.current) {
-            const firstCanvas = await html2canvas(pdfRef.current, {scale: 1.5, useCORS: true});
-            const firstImgData = firstCanvas.toDataURL("image/jpeg", 0.7);
-            const firstImgProps = pdf.getImageProperties(firstImgData);
-            const firstImgHeight = (firstImgProps.height * pdfWidth) / firstImgProps.width;
-            pdf.addImage(firstImgData, "JPEG", 0, 20, pdfWidth, firstImgHeight);
-
-
-        }
-
-        for (let i = 0; i < elements.length; i++) {
-            const element: any = elements[i];
-            const firstCanvas = await html2canvas(element, {scale: 1.5, useCORS: true});
-            const firstImgData = firstCanvas.toDataURL("image/jpeg", 0.7);
-            const firstImgProps = pdf.getImageProperties(firstImgData);
-            const firstImgHeight = (firstImgProps.height * pdfWidth) / firstImgProps.width;
-
-            pdf.addPage();
-            pdf.addImage(firstImgData, "JPEG", 0, 0, pdfWidth, firstImgHeight);
-
-        }
-
-        if (printMode) {
-            const pdfBlob = pdf.output("bloburl");
-            window.open(pdfBlob, "_blank");
-        } else {
-            pdf.save(`${info.documentNumberFull}_견적서.pdf`);
-        }
-    };
-
-    function print() {
-        const printContents = pdfRef.current.innerHTML;
-        const originalContents = document.body.innerHTML;
-
-        document.body.innerHTML = printContents;
-
-        window.print();
-
-        document.body.innerHTML = originalContents;
-        location.reload();
-    }
 
 
     useEventListener('keydown', (e: any) => {
@@ -432,10 +374,6 @@ function EstimateUpdate({
             }
         }
     }, typeof window !== 'undefined' ? document : null)
-
-    function getPaperData(){
-
-    }
 
 
     function EstimateModal() {
@@ -488,6 +426,7 @@ function EstimateUpdate({
     }
 
     async function addEstimate(){
+        setLoading(true)
         let infoData = commonManage.getInfo(infoRef, estimateInfo['defaultInfo']);
         const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
         infoData['managerAdminName'] = findMember['name'];
@@ -535,7 +474,8 @@ function EstimateUpdate({
        setFileList([
            ...fileList,
            newFile,
-       ])
+       ]);
+        setLoading(false)
     }
 
     return <div style={{overflow: 'hidden'}}><Spin spinning={loading}>
@@ -742,7 +682,7 @@ function EstimateUpdate({
                                 </Panel>
                                 <PanelResizeHandle/>
                                 <Panel defaultSize={sizes[5]} minSize={5}>
-                                    <BoxCard title={<div>드라이브 목록 <FileAddFilled style={{fontSize : 18 , cursor : 'pointer'}} onClick={addEstimate} /></div>} disabled={!userInfo['microsoftId']}>
+                                    <BoxCard title={<div style={{display : 'flex', justifyContent :  'space-between'}}><div>드라이브 목록 </div><FileAddFilled style={{fontSize : 18 , cursor : 'pointer'}} onClick={addEstimate} /></div>} disabled={!userInfo['microsoftId']}>
                                         {/*@ts-ignored*/}
                                         <div style={{overFlowY: "auto", maxHeight: 300}}>
                                             <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}

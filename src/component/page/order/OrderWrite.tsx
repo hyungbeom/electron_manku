@@ -21,9 +21,11 @@ import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import useEventListener from "@/utils/common/function/UseEventListener";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
+import {Switch} from "antd";
 
 
 const listType = 'orderDetailList'
+
 function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
@@ -146,7 +148,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                     }).then(async v => {
                         if (v.data.code === 1) {
                             const {estimateDetail} = v.data?.entity
-                            if(!estimateDetail){
+                            if (!estimateDetail) {
                                 message.error('조회정보가 없습니다.');
                                 setLoading(false)
                                 return false;
@@ -178,8 +180,8 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                     shippingTerms: '귀사도착도',
                                     writtenDate: moment().format('YYYY-MM-DD'),
                                 })
-                               const copyList =  estimateDetail?.estimateDetailList.map(v=>{
-                                    return {...v, currency : v.currencyUnit}
+                                const copyList = estimateDetail?.estimateDetailList.map(v => {
+                                    return {...v, currency: v.currencyUnit}
                                 })
 
                                 if (estimateDetail) {
@@ -325,7 +327,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
         alert('쉐어포인트 자동저장')
     }
 
-    function checkId(e){
+    function checkId(e) {
         setRouterId(null)
     }
 
@@ -335,6 +337,15 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
         }
     }
 
+
+    const [check, setCheck] = useState(false)
+    const switchChange = (checked: boolean) => {
+        const dom = infoRef.current.querySelector('#paymentTerms');
+
+        dom.value = !checked ? '발주시 50% / 납품시 50%' : 'By in advance T/T'
+
+        setCheck(checked)
+    };
 
     return <Spin spinning={loading} tip={'LOADING'}>
         <PanelSizeUtil groupRef={groupRef} storage={'order_write'}/>
@@ -419,7 +430,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                             {inputForm({
                                 title: '만쿠발주서 No',
                                 id: 'documentNumberFull',
-                                onChange : checkId
+                                onChange: checkId
                             })}
 
                             {inputForm({title: '고객사발주서 No', id: 'yourPoNo'})}
@@ -500,9 +511,14 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                             </Panel>
                             <PanelResizeHandle/>
                             <Panel defaultSize={sizes[3]} minSize={5}>
-                                <BoxCard title={'세부사항'}>
-                                    <div style={{paddingTop: 10}}>
-                                        <SelectForm id={'paymentTerms'} list={['발주시 50% / 납품시 50%', '현금결제', '선수금', '정기결제']} title={'결제조건'}/>
+                                <BoxCard title={<div style={{display: 'flex', justifyContent: 'space-between'}}>
+                                    <div>세부사항</div>
+                                    <div><Switch size={'small'} defaultChecked onChange={switchChange}/></div>
+                                </div>}>
+                                    <div style={{paddingBottom: 10}}>
+                                        <SelectForm id={'paymentTerms'}
+                                                    list={!check ? ['발주시 50% / 납품시 50%', '현금결제', '선수금', '정기결제'] : ['By in advance T/T', 'Credit Card', 'L/C', 'Order 30% Before Shipping 50%', 'Order 30% Before Shipping 50%']}
+                                                    title={'결제조건'}/>
                                     </div>
                                     {inputForm({
                                         title: '납기',
@@ -535,7 +551,8 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                         </PanelGroup>
                     </div> : null}
                 </MainCard>
-                <Table data={tableData} column={orderInfo['write']} funcButtons={['print']} ref={tableRef} type={'order_write_column'}/>
+                <Table data={tableData} column={orderInfo['write']} funcButtons={['print']} ref={tableRef}
+                       type={'order_write_column'}/>
             </div>
         </>
     </Spin>

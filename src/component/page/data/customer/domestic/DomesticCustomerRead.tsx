@@ -101,7 +101,7 @@ function DomesticCustomerRead({ getPropertyId, getCopyPage}:any) {
 
             await searchDomesticCustomer({
                 data: {
-                    "searchType": info['searchType'],      // 1: 코드, 2: 상호명, 3: Maker
+                    "searchType": 0,      // 1: 코드, 2: 상호명, 3: Maker
                     "searchText": info['searchText'],
                     "page": 1,
                     "limit": -1
@@ -143,16 +143,16 @@ function DomesticCustomerRead({ getPropertyId, getCopyPage}:any) {
 
 
                 {mini ? <div style={{display: 'flex', alignItems: 'center', padding: 10}}>
-                    {radioForm({
-                        title: '',
-                        id: 'searchType',
-                        onChange: onChange,
-                        data: info,
-                        list: [{value: 1, title: '코드'},
-                            {value: 2, title: '상호명'},
-                            {value: 3, title: 'item'},
-                            {value: 4, title: '국가'}]
-                    })}
+                    {/*{radioForm({*/}
+                    {/*    title: '',*/}
+                    {/*    id: 'searchType',*/}
+                    {/*    onChange: onChange,*/}
+                    {/*    data: info,*/}
+                    {/*    list: [{value: 1, title: '코드'},*/}
+                    {/*        {value: 2, title: '상호명'},*/}
+                    {/*        {value: 3, title: 'item'},*/}
+                    {/*        {value: 4, title: '국가'}]*/}
+                    {/*})}*/}
 
                     <div style={{width: 500, marginLeft: 20}}>
                         {inputForm({

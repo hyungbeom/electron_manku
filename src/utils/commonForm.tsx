@@ -39,6 +39,50 @@ const {Option} = Select
 import {v4 as uuid} from 'uuid';
 import message from "antd/lib/message";
 import Popconfirm from "antd/lib/popconfirm";
+import ProjectWrite from "@/component/page/project/ProjectWrite";
+import ProjectRead from "@/component/page/project/ProjectRead";
+import ProjectUpdate from "@/component/page/project/ProjectUpdate";
+import RfqWrite from "@/component/page/rfq/RfqWrite";
+import RfqRead from "@/component/page/rfq/RfqRead";
+import RqfUpdate from "@/component/page/rfq/RfqUpdate";
+import RfqMailSend from "@/component/page/rfq/RfqMailSend";
+import EstimateWrite from "@/component/page/estimate/EstimateWrite";
+import EstimateRead from "@/component/page/estimate/EstimateRead";
+import EstimateUpdate from "@/component/page/estimate/EstimateUpdate";
+import OrderWrite from "@/component/page/order/OrderWrite";
+import OrderRead from "@/component/page/order/OrderRead";
+import OrderUpdate from "@/component/page/order/OrderUpdate";
+import StoreWrite from "@/component/page/store/StoreWrite";
+import StoreRead from "@/component/page/store/StoreRead";
+import StoreUpdate from "@/component/page/store/StoreUpdate";
+import DeliveryWrite from "@/component/page/delivery/DeliveryWrite";
+import DeliveryRead from "@/component/page/delivery/DeliveryRead";
+import DeliveryUpdate from "@/component/page/delivery/DeliveryUpdate";
+import RemittanceDomesticWrite from "@/component/page/remittance/RemittanceDomesticWrite";
+import RemittanceDomesticRead from "@/component/page/remittance/RemittanceDomesticRead";
+import RemittanceDomesticUpdate from "@/component/page/remittance/RemittanceDomesticUpdate";
+import DomesticAgencyWrite from "@/component/page/data/agency/domestic/DomesticAgencyWrite";
+import DomesticAgencyRead from "@/component/page/data/agency/domestic/DomesticAgencyRead";
+import DomesticAgencyUpdate from "@/component/page/data/agency/domestic/DomesticAgencyUpdate";
+import OverseasAgencyWrite from "@/component/page/data/agency/overseas/OverseasAgencyWrite";
+import OverseasAgencyRead from "@/component/page/data/agency/overseas/OverseasAgencyRead";
+import OverseasAgencyUpdate from "@/component/page/data/agency/overseas/OverseasAgencyUpdate";
+import DomesticCustomerWrite from "@/component/page/data/customer/domestic/DomesticCustomerWrite";
+import DomesticCustomerRead from "@/component/page/data/customer/domestic/DomesticCustomerRead";
+import DomesticCustomerUpdate from "@/component/page/data/customer/domestic/DomesticCustomerUpdate";
+import OverseasCustomerWrite from "@/component/page/data/customer/overseas/OverseasCustomerWrite";
+import OverseasCustomerRead from "@/component/page/data/customer/overseas/OverseasCustomerRead";
+import OverseasCustomerUpdate from "@/component/page/data/customer/overseas/OverseasCustomerUpdate";
+import MakerWrite from "@/component/page/data/maker/MakerWrite";
+import MakerRead from "@/component/page/data/maker/MakerRead";
+import MakerUpdate from "@/component/page/data/maker/MakerUpdate";
+import HcodeRead from "@/component/page/data/hscode/HcodeRead";
+import CompanyAccount from "@/component/CompanyAccount";
+import CompanyAccountUpdate from "@/component/CompanyAccountUpdate";
+import CompanyAccountWrite from "@/component/CompanyAccountWrite";
+import SourceRead from "@/component/page/data/source/SourceRead";
+import SourceUpdate from "@/component/page/data/source/SourceUpdate";
+import SourceWrite from "@/component/page/data/source/SourceWrite";
 
 export const numbFormatter = (value) => `₩ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 
@@ -64,7 +108,7 @@ export function TopBoxCard({children, title = '', grid = '1fr 1fr 1fr 1fr'}) {
     </Card>
 }
 
-export function BoxCard({children, title = null, tooltip = '', disabled = false}: any) {
+export function BoxCard({children, title = '', tooltip = '', disabled = false}: any) {
     const disabledStyle = {
         opacity: disabled ? 0.5 : 1, // 흐리게 표시
         pointerEvents: disabled ? "none" : "auto", // 클릭 막기
@@ -86,9 +130,7 @@ export function BoxCard({children, title = null, tooltip = '', disabled = false}
         height: '100%'
     }} size={'small'}
                  headStyle={{backgroundColor: '#bae7ff'}}
-                 title={title ? <div style={{display: 'flex', justifyContent: 'space-between', fontSize: 13}}>
-                     <span>{title}</span>
-                 </div> : null}>
+                 title={title}>
         {/*@ts-ignore*/}
         <div style={disabled ? disabledStyle : defaultStyle}>
             {children}
@@ -628,4 +670,130 @@ export const tableButtonList = (type: any, gridRef?: any) => {
 
     }
 }
+
+
+
+export const tabComponents = {
+
+    project_write: {name: "프로젝트 등록", component: <ProjectWrite/>},
+    project_read: {
+        name: "프로젝트 조회",
+        component: <ProjectRead/>
+    },
+    project_update: {name: "프로젝트 수정", component: <ProjectUpdate/>},
+
+
+    rfq_write: {name: "견적의뢰 등록", component: <RfqWrite/>},
+    rfq_read: {name: "견적의뢰 조회", component: <RfqRead/>},
+    rfq_update: {name: "견적의뢰 수정", component: <RqfUpdate/>},
+
+    rfq_mail_send: {name: "메일전송", component: <RfqMailSend/>},
+
+    estimate_write: {name: "견적서 등록", component: <EstimateWrite/>},
+    estimate_read: {
+        name: "견적서 조회",
+        component: <EstimateRead/>
+    },
+    estimate_update: {name: "견적서 수정", component: <EstimateUpdate/>},
+
+    order_write: {name: "발주서 등록", component: <OrderWrite/>},
+    order_read: {name: "발주서 조회", component: <OrderRead/>},
+    order_update: {name: "발주서 수정", component: <OrderUpdate/>},
+
+    store_write: {name: "입고 등록", component: <StoreWrite/>},
+    store_read: {name: "입고 조회", component: <StoreRead/>},
+    store_update: {name: "입고 수정", component: <StoreUpdate/>},
+
+    delivery_write: {name: "배송 등록", component: <DeliveryWrite/>},
+    delivery_read: {
+        name: "배송 조회",
+        component: <DeliveryRead/>
+    },
+    delivery_update: {name: "배송 수정", component: <DeliveryUpdate/>},
+
+
+    remittance_domestic_write: {name: "국내송금 등록", component: <RemittanceDomesticWrite/>},
+    remittance_domestic_read: {
+        name: "국내송금 조회",
+        component: <RemittanceDomesticRead/>
+    },
+    remittance_domestic_update: {name: "국내송금 수정", component: <RemittanceDomesticUpdate/>},
+
+
+    domestic_agency_write: {name: "국내매입처 등록", component: <DomesticAgencyWrite/>},
+    domestic_agency_read: {
+        name: "국내매입처 조회",
+        component: <DomesticAgencyRead/>
+    },
+    domestic_agency_update: {
+        name: "국내매입처 수정",
+        component: <DomesticAgencyUpdate/>
+    },
+
+    overseas_agency_write: {name: "해외매입처 등록", component: <OverseasAgencyWrite/>},
+    overseas_agency_read: {
+        name: "해외매입처 조회",
+        component: <OverseasAgencyRead/>
+    },
+    overseas_agency_update: {
+        name: "해외매입처 수정",
+        component: <OverseasAgencyUpdate/>
+    },
+
+
+    domestic_customer_write: {name: "국내고객사 등록", component: <DomesticCustomerWrite/>},
+    domestic_customer_read: {
+        name: "국내고객사 조회",
+        component: <DomesticCustomerRead/>
+    },
+    domestic_customer_update: {name: "국내고객사 수정", component: <DomesticCustomerUpdate/>},
+
+
+    overseas_customer_write: {name: "해외고객사 등록", component: <OverseasCustomerWrite/>},
+    overseas_customer_read: {
+        name: "해외고객사 조회", component: <OverseasCustomerRead/>
+    },
+    overseas_customer_update: {
+        name: "해외고객사 수정",
+        component: <OverseasCustomerUpdate/>
+    },
+
+
+    maker_write: {name: "메이커 등록", component: <MakerWrite/>},
+    maker_read: {name: "메이커 조회", component: <MakerRead/>},
+    maker_update: {name: "메이커 수정", component: <MakerUpdate/>},
+
+
+    hscode_read: {
+        name: "HS CODE 조회",
+        component: <HcodeRead/>
+    },
+
+    company_account_read: {
+        name: "회사계정관리 조회",
+        component: <CompanyAccount/>
+    },
+    company_account_update: {
+        name: "회사계정관리 수정",
+        component: <CompanyAccountUpdate/>
+    },
+    company_account_write: {
+        name: "회사계정관리 등록",
+        component: <CompanyAccountWrite/>
+    },
+
+    source_read: {
+        name: "재고관리 조회",
+        component: <SourceRead/>
+    },
+    source_update: {
+        name: "재고관리 수정",
+        component: <SourceUpdate/>
+    },
+    source_write: {
+        name: "재고관리 등록",
+        component: <SourceWrite/>
+    },
+
+};
 

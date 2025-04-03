@@ -25,7 +25,7 @@ function SignUpButton() {
     const sendCodeToBackend = async (code) => {
         try {
             const response = await axios.post("/api/auth/callback", { code });
-            console.log("Response from backend:", response.data);
+
 
             // 성공 시 사용자 페이지로 리디렉션
             router.push("/dashboard");

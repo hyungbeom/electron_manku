@@ -6,7 +6,7 @@ const CustomCellEditor = forwardRef((props: any, ref) => {
     // getValue 메서드 정의
     React.useImperativeHandle(ref, () => ({
         getValue: () => {
-            console.log("getValue 호출됨:", value); // 반환값 로그 출력
+
             return value;
         },
     }));

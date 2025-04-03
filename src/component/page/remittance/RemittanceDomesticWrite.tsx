@@ -68,7 +68,7 @@ export default function RemittanceDomesticWrite({dataInfo = [], copyPageInfo}: a
 
         if (!isEmptyObj(copyPageInfo['remittance_domestic_write'])) {
             // copyPageInfo 가 없을시
-            console.log(infoInit, 'infoInit:')
+
             setInfo(infoInit)
 
         } else {

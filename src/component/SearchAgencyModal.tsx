@@ -308,7 +308,7 @@ export default function SearchInfoModal({
                                                  type: type
                                              }
                                          }).then(data => {
-                                             console.log(e.data,'????')
+
                                              // agencyTel
                                              commonManage.setInfo(infoRef, {
                                                  agencyManagerId: commonManage.checkValue(e.data.agencyId),

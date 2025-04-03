@@ -142,7 +142,7 @@ commonManage.checkValue = function (value) {
  * @param adminId 로그인 user의 managerAdminId 에 해당하는 adminId
  */
 commonManage.setInfo = function (infoRef, obj, adminId?) {
-    console.log(obj,'obj:')
+
     const result = Object.keys(obj).map(v => `#${v}`)
     const test = `${result.join(',')}`;
 
@@ -891,7 +891,7 @@ commonManage.getPdfCreate = async function (pdfRef, pdfSubRef) {
 
 commonManage.getPdfFile = async function (pdf, documentNumberFull) {
     const pdfBlob = pdf.output("blob");
-    console.log(`PDF Blob Size: ${pdfBlob.size} bytes`);
+
     const fileName = `${documentNumberFull}_견적서.pdf`;
     const pdfFile = new File([pdfBlob], fileName, {type: "application/pdf"});
     return pdfFile;

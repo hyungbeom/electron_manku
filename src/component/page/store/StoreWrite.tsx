@@ -214,7 +214,7 @@ function StoreWrite({copyPageInfo,notificationAlert = null, getPropertyId}:any) 
             const selectedRows = ref.current.getSelectedRows();
 
             const result = selectedRows.map(v => {
-                console.log(v, 'v[\'net\']')
+
                 let copyData = _.cloneDeep(storeDetailUnit);
                 copyData['orderDocumentNumberFull'] = v['documentNumberFull'];
                 copyData['orderDate'] = v['writtenDate'];

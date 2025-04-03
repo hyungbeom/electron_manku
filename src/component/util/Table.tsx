@@ -14,6 +14,7 @@ import Button from "antd/lib/button";
 import * as XLSX from 'xlsx';
 import {UploadOutlined} from "@ant-design/icons";
 import HsCodeListModal from "@/component/HsCodeListModal";
+import _ from "lodash";
 // register Handsontable's modules
 registerAllModules();
 
@@ -48,7 +49,7 @@ const Table = forwardRef(({
 
 
     useEffect(() => {
-        console.log(data,'data:')
+
         setTableData(calcData(data))
     }, [data, column]);
 
@@ -106,6 +107,12 @@ const Table = forwardRef(({
                     hotRef.current.hotInstance.suspendExecution(); // ⚠️ 자동 계산 방지
                     hotRef.current.hotInstance.setDataAtCell(row, 8, moment().format('YYYY-MM-DD')); // replyDate 컬럼 업데이트
                     hotRef.current.hotInstance.resumeExecution(); // ✅ 다시 계산 시작
+                }
+                if (prop === "quantity" ) {
+                    if(type === 'order_write_column') {
+
+                        hotRef.current.hotInstance.setDataAtCell(row, 6,newValue); // replyDate 컬럼 업데이트
+                    }
                 }
                 if (prop === 'unitPrice') {
                     const propIndex = change.indexOf('unitPrice'); // 'unitPrice'의 인덱스 찾기
@@ -311,7 +318,7 @@ const Table = forwardRef(({
 
 
     function getSelectedRows3(data) {
-        console.log(data,':?:')
+
         const instance = hotRef.current.hotInstance;
         const currentList = instance.getSourceData();
         // console.log(currentList)
@@ -496,11 +503,11 @@ const Table = forwardRef(({
                 }}
                 colWidths={storedColumnWidths}
                 height={'calc(100% - 25px)'}
-
+                viewportRowRenderingOffset={20}
+                // height={500}
                 colHeaders={column["column"]}
                 fixedRowsBottom={1}
                 stretchH="all"
-
                 autoWrapRow={true}
                 autoWrapCol={true}
                 manualColumnMove={true}
@@ -580,4 +587,6 @@ const Table = forwardRef(({
     );
 });
 
-export default memo(Table);
+export default memo(Table, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

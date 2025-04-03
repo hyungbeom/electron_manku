@@ -1338,8 +1338,7 @@ export const tableOrderReadColumns = [
         minWidth: 60,
         valueFormatter: (params) => {
             const {quantity, net} = params.data;
-            console.log(quantity,'quantity::')
-            console.log(net,'net::')
+
             return (quantity * net).toLocaleString()
         },
         cellStyle: {textAlign: 'right'}
