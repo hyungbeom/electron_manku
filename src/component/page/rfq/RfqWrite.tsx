@@ -190,9 +190,11 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
             const dom = infoRef.current.querySelector('#documentNumberFull');
             const {code, entity} = v?.data;
             if (code === 1) {
-                setFileList([])
                 const {documentNumberFull, estimateRequestId} = entity;
+                getPropertyId('rfq_update', estimateRequestId)
+                setFileList([])
                 setRouterId(estimateRequestId)
+
                 if (dom) {
                     dom.value = documentNumberFull;
                 }
@@ -264,8 +266,7 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
 
                 <MainCard title={'견적의뢰 작성'} list={[
                     {
-                        name: <div style={{opacity: routerId ? 1 : 0.5}}><ArrowRightOutlined style={{paddingRight: 8}}/>수정페이지
-                            이동</div>, func: moveUpdate, type: ''
+                        name: <div style={{opacity: routerId ? 1 : 0.5}}><ArrowRightOutlined style={{paddingRight: 8}}/>수정페이지 이동</div>, func: moveUpdate, type: ''
                     },
                     {name: <div><SaveOutlined style={{paddingRight: 8}}/>저장</div>, func: saveFunc, type: 'primary'},
                     {

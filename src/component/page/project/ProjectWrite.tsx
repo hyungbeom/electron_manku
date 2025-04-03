@@ -3,7 +3,7 @@ import {ModalInitList, projectWriteInitial} from "@/utils/initialList";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, tooltipInfo, TopBoxCard} from "@/utils/commonForm";
 import {useRouter} from "next/router";
-import {commonFunc, commonManage, fileManage} from "@/utils/commonManage";
+import {commonFunc, commonManage} from "@/utils/commonManage";
 import _ from "lodash";
 import {findCodeInfo} from "@/utils/api/commonApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
@@ -17,11 +17,11 @@ import {getData} from "@/manage/function/api";
 import Table from "@/component/util/Table";
 import {projectInfo} from "@/utils/column/ProjectInfo";
 import message from "antd/lib/message";
-import {getAttachmentFileList, saveProject} from "@/utils/api/mainApi";
+import {saveProject} from "@/utils/api/mainApi";
 import SearchInfoModal from "@/component/SearchAgencyModal";
 import useEventListener from "@/utils/common/function/UseEventListener";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
-import {RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
+import {ArrowRightOutlined, RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
 
 
 const listType = 'projectDetailList'
@@ -29,7 +29,7 @@ const listType = 'projectDetailList'
 function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     const notificationAlert = useNotificationAlert();
     const [memberList, setMemberList] = useState([]);
-
+    const [routerId, setRouterId] = useState(null);
     useEffect(() => {
         getMemberList();
     }, []);
@@ -45,8 +45,6 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
             setMemberList(v.data.entity.adminList)
         })
     }
-
-    console.log('!!!ProjectWrite')
 
     const options = memberList?.map((item) => ({
         ...item,
@@ -128,7 +126,6 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     async function saveFunc() {
         let infoData = commonManage.getInfo(infoRef, infoInit);
 
-
         const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
         infoData['managerAdminName'] = findMember['name'];
         if (!infoData['documentNumberFull']) {
@@ -140,16 +137,18 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         const tableList = tableRef.current?.getSourceData();
 
         const filterTableList = commonManage.filterEmptyObjects(tableList, ['model', 'item', 'maker'])
-        const emptyQuantity = filterTableList.filter(v=> !v.quantity)
-        if(emptyQuantity.length){
+        const emptyQuantity = filterTableList.filter(v => !v.quantity)
+        if (emptyQuantity.length) {
             return message.error('수량을 입력해야 합니다.')
         }
-        const resultFilterTableList =  filterTableList.map(v=>{
+        const resultFilterTableList = filterTableList.map(v => {
             delete v.total;
             delete v.totalPurchase;
-                return {
-                    ...v, unitPrice : isNaN(v.unitPrice) ? '' : v.unitPrice,  purchasePrice : isNaN(v.purchasePrice) ? '' : v.purchasePrice
-                }
+            return {
+                ...v,
+                unitPrice: isNaN(v.unitPrice) ? '' : v.unitPrice,
+                purchasePrice: isNaN(v.purchasePrice) ? '' : v.purchasePrice
+            }
 
         })
 
@@ -169,7 +168,8 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     async function returnFunc(e, data, msg) {
         const dom = infoRef.current.querySelector('#documentNumberFull');
         if (e === 1) {
-            setFileList([])
+            getPropertyId('project_update', data?.projectId)
+
             notificationAlert('success', '💾프로젝트 등록완료',
                 <>
                     <div>Project No. : {dom.value}</div>
@@ -180,11 +180,13 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                 },
                 {cursor: 'pointer'}
             )
+            setRouterId(data?.projectId)
+            setFileList([])
             setLoading(false)
         } else if (e === -20001) {
             dom.style.borderColor = 'red'
             message.error(msg)
-        }else{
+        } else {
             message.error(msg)
         }
         setLoading(false)
@@ -216,11 +218,21 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         }
     }, typeof window !== 'undefined' ? document : null)
 
+    function checkId(e){
+        setRouterId(null)
+    }
+
+    function moveUpdate() {
+        if (routerId) {
+            getPropertyId('project_update', routerId)
+        }
+    }
 
     return <Spin spinning={loading}>
 
         <PanelSizeUtil groupRef={groupRef} storage={'project_write'}/>
-        <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo} open={isModalOpen} setIsModalOpen={setIsModalOpen}/>
+        <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo} open={isModalOpen}
+                         setIsModalOpen={setIsModalOpen}/>
 
         <div ref={infoRef} style={{
             display: 'grid',
@@ -228,78 +240,82 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
             rowGap: 10
         }}>
             <MainCard title={'프로젝트 등록'} list={[
-                {name: <div><SaveOutlined style={{paddingRight : 8}} />저장</div>, func: saveFunc, type: 'primary'},
+                {
+                    name: <div style={{opacity: routerId ? 1 : 0.5}}><ArrowRightOutlined style={{paddingRight: 8}}/>수정페이지
+                        이동</div>, func: moveUpdate, type: ''
+                },
+                {name: <div><SaveOutlined style={{paddingRight: 8}}/>저장</div>, func: saveFunc, type: 'primary'},
                 {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'}
             ]} mini={mini} setMini={setMini}>
 
-            {mini ? <div>
-                <TopBoxCard title={''} grid={'100px 80px 80px'}>
-                    {datePickerForm({
-                        title: '작성일자',
-                        id: 'writtenDate',
-                        disabled: true,
-                    })}
-                    {inputForm({
-                        title: '작성자',
-                        id: 'createdBy',
-                        disabled: true,
-                    })}
-                    <div>
-                        <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>담당자</div>
-                        <select name="languages" id="managerAdminId"
-                                style={{
-                                    outline: 'none',
-                                    border: '1px solid lightGray',
-                                    height: 23,
-                                    width: '100%',
-                                    fontSize: 12,
-                                    paddingBottom: 0.5
-                                }}>
-                            {
-                                options?.map(v => {
-                                    return <option value={v.value}>{v.label}</option>
-                                })
-                            }
-                        </select>
-
-                    </div>
-
-
-
-                </TopBoxCard>
-
-
-                <PanelGroup ref={groupRef} className={'ground'} direction="horizontal"
-                            style={{gap: 0.5, paddingTop: 3}}>
-                    <Panel defaultSize={sizes[0]} minSize={5}>
-                        <BoxCard title={'프로젝트 정보'} tooltip={tooltipInfo('readProject')}>
-                            {inputForm({
-                                title: 'Project No.',
-                                id: 'documentNumberFull'
+                {mini ? <div>
+                        <TopBoxCard title={''} grid={'100px 80px 80px'}>
+                            {datePickerForm({
+                                title: '작성일자',
+                                id: 'writtenDate',
+                                disabled: true,
                             })}
                             {inputForm({
-                                title: '프로젝트 제목',
-                                id: 'projectTitle',
+                                title: '작성자',
+                                id: 'createdBy',
+                                disabled: true,
                             })}
-                            {datePickerForm({title: '마감일자', id: 'dueDate'})}
-                            {/*<label htmlFor="fruits">Choose a fruit or type your own:</label>*/}
-                            {/*<input list="fruit-options" id="fruits" name="fruits"/>*/}
-                            {/*<datalist id="fruit-options">*/}
-                            {/*    <option value="Apple"/>*/}
-                            {/*    <option value="Banana"/>*/}
-                            {/*    <option value="Cherry"/>*/}
-                            {/*    <option value="Grapes"/>*/}
-                            {/*</datalist>*/}
-                        </BoxCard>
-                    </Panel>
-                    <PanelResizeHandle/>
-                    <Panel defaultSize={sizes[1]} minSize={5}>
-                        <BoxCard title={'고객사 정보'} tooltip={tooltipInfo('customer')}>
-                            {inputForm({
-                                title: '고객사명',
-                                id: 'customerName',
+                            <div>
+                                <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>담당자</div>
+                                <select name="languages" id="managerAdminId"
+                                        style={{
+                                            outline: 'none',
+                                            border: '1px solid lightGray',
+                                            height: 23,
+                                            width: '100%',
+                                            fontSize: 12,
+                                            paddingBottom: 0.5
+                                        }}>
+                                    {
+                                        options?.map(v => {
+                                            return <option value={v.value}>{v.label}</option>
+                                        })
+                                    }
+                                </select>
 
-                                suffix: <span style={{cursor: 'pointer'}} onClick={
+                            </div>
+
+
+                        </TopBoxCard>
+
+
+                        <PanelGroup ref={groupRef} className={'ground'} direction="horizontal"
+                                    style={{gap: 0.5, paddingTop: 3}}>
+                            <Panel defaultSize={sizes[0]} minSize={5}>
+                                <BoxCard title={'프로젝트 정보'} tooltip={tooltipInfo('readProject')}>
+                                    {inputForm({
+                                        title: 'Project No.',
+                                        id: 'documentNumberFull',
+                                        onChange : checkId
+                                    })}
+                                    {inputForm({
+                                        title: '프로젝트 제목',
+                                        id: 'projectTitle',
+                                    })}
+                                    {datePickerForm({title: '마감일자', id: 'dueDate'})}
+                                    {/*<label htmlFor="fruits">Choose a fruit or type your own:</label>*/}
+                                    {/*<input list="fruit-options" id="fruits" name="fruits"/>*/}
+                                    {/*<datalist id="fruit-options">*/}
+                                    {/*    <option value="Apple"/>*/}
+                                    {/*    <option value="Banana"/>*/}
+                                    {/*    <option value="Cherry"/>*/}
+                                    {/*    <option value="Grapes"/>*/}
+                                    {/*</datalist>*/}
+                                </BoxCard>
+                            </Panel>
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[1]} minSize={5}>
+                                <BoxCard title={'고객사 정보'} tooltip={tooltipInfo('customer')}>
+                                    {inputForm({
+                                        title: '고객사명',
+                                        id: 'customerName',
+
+                                        suffix: <span style={{cursor: 'pointer'}} onClick={
                                             (e) => {
                                                 e.stopPropagation();
                                                 openModal('customerName');
@@ -345,7 +361,8 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                 <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}
                                          disabled={!userInfo['microsoftId']}>
 
-                                    <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef} infoRef={infoRef}/>
+                                    <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
+                                                     infoRef={infoRef}/>
 
                                 </BoxCard>
                             </Panel>
@@ -356,7 +373,8 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                     : <></>}
             </MainCard>
 
-            <Table data={tableData} column={projectInfo['write']} funcButtons={['print']} ref={tableRef} infoRef={infoRef} type={'project_write_column'}/>
+            <Table data={tableData} column={projectInfo['write']} funcButtons={['print']} ref={tableRef}
+                   infoRef={infoRef} type={'project_write_column'}/>
         </div>
     </Spin>
 }

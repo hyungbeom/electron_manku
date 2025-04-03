@@ -1,5 +1,5 @@
 import React, {memo, useEffect, useRef, useState} from "react";
-import {DownloadOutlined, RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
+import {ArrowRightOutlined, DownloadOutlined, RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
 import message from "antd/lib/message";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {useRouter} from "next/router";
@@ -77,6 +77,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
     const [fileList, setFileList] = useState([]);
     const [tableData, setTableData] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [routerId, setRouterId] = useState(null);
 
     const adminParams = {
         managerAdminId: userInfo['adminId'],
@@ -250,7 +251,9 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
     async function returnFunc(code, msg, data) {
         const dom = infoRef.current.querySelector('#documentNumberFull');
         if (code === 1) {
+            getPropertyId('order_update', data?.orderId)
             setFileList([])
+
             await getAttachmentFileList({
                 data: {
                     "relatedType": "ORDER",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
@@ -258,7 +261,8 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                 }
             }).then(v => {
                 const list = fileManage.getFormatFiles(v);
-                setFileList(list)
+                setFileList(list);
+                setRouterId(data?.orderId)
                 notificationAlert('success', '💾발주서 등록완료',
                     <>
                         <div>Inquiry No. : {dom.value}</div>
@@ -321,7 +325,15 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
         alert('쉐어포인트 자동저장')
     }
 
-    console.log(isModalOpen, 'isModalOpen::')
+    function checkId(e){
+        setRouterId(null)
+    }
+
+    function moveUpdate() {
+        if (routerId) {
+            getPropertyId('order_update', routerId)
+        }
+    }
 
 
     return <Spin spinning={loading} tip={'LOADING'}>
@@ -341,6 +353,10 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                 rowGap: 10,
             }}>
                 <MainCard title={'발주서 작성'} list={[
+                    {
+                        name: <div style={{opacity: routerId ? 1 : 0.5}}><ArrowRightOutlined style={{paddingRight: 8}}/>수정페이지
+                            이동</div>, func: moveUpdate, type: ''
+                    },
                     {name: '거래명세표 출력', func: printTransactionStatement, type: 'default'},
                     {name: '발주서 출력', func: printPo, type: 'default'},
                     {name: <div><SaveOutlined style={{paddingRight: 8}}/>저장</div>, func: saveFunc, type: 'primary'},
@@ -359,7 +375,6 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                 title: '작성일',
                                 id: 'writtenDate',
                                 disabled: true,
-
                             })}
                             {inputForm({title: '작성자', id: 'createdBy', disabled: true})}
                             <div>
@@ -404,6 +419,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                             {inputForm({
                                 title: '만쿠발주서 No',
                                 id: 'documentNumberFull',
+                                onChange : checkId
                             })}
 
                             {inputForm({title: '고객사발주서 No', id: 'yourPoNo'})}
@@ -486,8 +502,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                             <Panel defaultSize={sizes[3]} minSize={5}>
                                 <BoxCard title={'세부사항'}>
                                     <div style={{paddingTop: 10}}>
-                                        <SelectForm id={'paymentTerms'}
-                                                    list={['발주시 50% / 납품시 50%', '현금결제', '선수금', '정기결제']} title={'결제조건'}/>
+                                        <SelectForm id={'paymentTerms'} list={['발주시 50% / 납품시 50%', '현금결제', '선수금', '정기결제']} title={'결제조건'}/>
                                     </div>
                                     {inputForm({
                                         title: '납기',
@@ -518,11 +533,9 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                             <Panel defaultSize={0} minSize={0}>
                             </Panel>
                         </PanelGroup>
-
                     </div> : null}
                 </MainCard>
-                <Table data={tableData} column={orderInfo['write']} funcButtons={['print']} ref={tableRef}
-                       type={'order_write_column'}/>
+                <Table data={tableData} column={orderInfo['write']} funcButtons={['print']} ref={tableRef} type={'order_write_column'}/>
             </div>
         </>
     </Spin>
