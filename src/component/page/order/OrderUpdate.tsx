@@ -330,11 +330,11 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
     }, typeof window !== 'undefined' ? document : null)
 
     async function printTransactionStatement() {
-        alert('쉐어포인트 자동저장')
-        // setCount(v => v + 1)
-        // setIsModalOpen(v => {
-        //     return {...v, event1: true}
-        // })
+        // alert('쉐어포인트 자동저장')
+        setCount(v => v + 1)
+        setIsModalOpen(v => {
+            return {...v, event1: true}
+        })
     }
 
 
@@ -568,15 +568,11 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
                             <PanelResizeHandle/>
                             <Panel defaultSize={sizes[4]} minSize={5}>
                                 <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
-
-                                    <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                     infoRef={infoRef}/>
-
+                                    <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef} infoRef={infoRef}/>
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
-                            <Panel defaultSize={0} minSize={0}>
-                            </Panel>
+                            <Panel defaultSize={0} minSize={0}></Panel>
                         </PanelGroup>
 
                     </div> : null}

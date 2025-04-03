@@ -141,8 +141,29 @@ function RfqMailSend({getPropertyId}: any) {
                 message.error(v.message)
             }
         })
+    }
 
+    function checkMail(){
 
+        const checkedData = gridManage.getSelectRows(gridRef);
+        if(!checkedData.length){
+            return message.warn('처리할 데이터가 없습니다.')
+        }
+        // const filterTableList = commonManage.filterEmptyObjects(tableList, ['model', 'item', 'maker'])
+        const result = checkedData.map(src => {
+            return {
+                estimateRequestDetailId: src.estimateRequestDetailId,
+                "sentStatus": "전송"
+            }
+        })
+        getData.post('estimate/updateSentStatuses', {sentStatusList : result}).then(v => {
+            if(v.data.code === 1){
+                message.success('발송처리가 완료되었습니다.');
+                searchInfo();
+            }else{
+                message.error(v?.data?.message);
+            }
+        })
     }
 
     return <Spin spinning={loading} tip={'견적의뢰 조회중...'}>
@@ -155,6 +176,7 @@ function RfqMailSend({getPropertyId}: any) {
                 columnGap: 5
             }}>
                 <MainCard title={'견적의뢰 메일전송'} list={[
+                    {name: '메일전송처리', func: checkMail, type: 'primary'},
                     {name: '조회', func: searchInfo, type: 'primary'},
                     {name: '초기화', func: clearAll, type: 'danger'},
                     {name: '선택 견적의뢰 발송', func: handleSendMail, type: 'default'},

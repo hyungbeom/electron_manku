@@ -297,19 +297,19 @@ function RqfUpdate({
 
     function checkSend() {
         const tableList = tableRef.current?.getSourceData();
-
         const filterTableList = commonManage.filterEmptyObjects(tableList, ['model', 'item', 'maker'])
-        console.log(filterTableList, 'filterTableList:')
+
         const result = filterTableList.map(src => {
             return {
                 estimateRequestDetailId: src.estimateRequestDetailId,
                 "sentStatus": "전송"
             }
-        })
-        getData.post('estimate/updateSentStatuses', {sentStatusList : result}).then(v => {
-            if(v.data.code === 1){
+        });
+
+        getData.post('estimate/updateSentStatuses', {sentStatusList: result}).then(v => {
+            if (v.data.code === 1) {
                 message.success('발송처리가 완료되었습니다.')
-            }else{
+            } else {
                 message.error(v?.data?.message);
             }
         })

@@ -91,12 +91,19 @@ function generateFormattedOutputWithDocumentNumbers(data) {
 
             let lines = text.split('\n');
 
-            if (lines.length > 0) {
-                lines[0] = lines[0].trimEnd() + `     ---${model.quantity}${model.unit}`;
-            }
+            // if (lines.length > 0) {
+            //     lines[0] = lines[0].trimEnd() + `     ---${model.quantity}${model.unit}`;
+            // }
+            lines.forEach((v, i)=>{
+               if(!i){
+                   lines[i] = lines[i].trimEnd() + `     ---${model.quantity}${model.unit}`;
+               }else{
+                   lines[i] = `    ${lines[i]}`;
+               }
+            })
             let result = lines.join('\n');
 
-            output +=result;
+            output += `${result}\n`;
         });
 
         // 줄 간격 추가 (각 항목 사이에 빈 줄 추가)
