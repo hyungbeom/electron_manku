@@ -26,9 +26,6 @@ const headerStyle = {
 
 export default function PrintTransactionModal({data, isModalOpen, setIsModalOpen, infoRef}) {
 
-
-
-
     const [info, setInfo] = useState({writtenDate: moment().format('YYYY-MM-DD')});
     const [total, setTotal] = useState({net : 0, total : 0, subTotal : 0});
     const [titleInfo, setTitleInfo] = useState({
@@ -46,7 +43,6 @@ export default function PrintTransactionModal({data, isModalOpen, setIsModalOpen
     const InputUnit = ({id, size = 'middle'}) => {
         const inputRef = useRef<any>()
         const [toggle, setToggle] = useState(false);
-
 
         function blur() {
             setToggle(false)

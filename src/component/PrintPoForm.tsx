@@ -30,8 +30,6 @@ export function PrintPoForm({data, topInfoData, totalData}) {
         }
     }, [topInfoData]);
 
-    console.log(data,'data:')
-
     return <Document>
         <Page size="A4" style={styles.page}>
             <View>

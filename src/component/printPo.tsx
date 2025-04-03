@@ -23,12 +23,9 @@ function PrintPo({
                      setIsModalOpen,
                      tableRef,
                      infoRef,
-                     maker = '',
                      memberList = [],
                      count = 0,
-                     title = ''
                  }) {
-
 
     const [data, setData] = useState([[]]);
     const [topInfoData, setTopInfoData] = useState<any>({})
@@ -113,15 +110,10 @@ function PrintPo({
         }
 
 
-        // ===test
-        // ===test
-        // ===test
-
         useEffect(() => {
             if (toggle) {
                 inputRef.current.focus();
             }
-            // getTotal()
         }, [toggle]);
 
         function onchange(e) {
@@ -157,7 +149,8 @@ function PrintPo({
                 </Select>
             </td>
             <td>
-                {toggle ? <InputNumber ref={inputRef} onBlur={blur} id={'unitPrice'} value={info.unitPrice} onChange={onchange}
+                {toggle ? <InputNumber ref={inputRef} onBlur={blur} id={'unitPrice'} value={info.unitPrice}
+                                       onChange={onchange}
                                        formatter={(value) => value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                                        parser={(value) => value.replace(/[^0-9]/g, '')}
                                        style={{border: 'none', textAlign: 'right', direction: 'rtl', width: '90%'}}
@@ -173,7 +166,7 @@ function PrintPo({
                              setToggle(true);
                          }}>
                         <span>{!isNaN(info.unitPrice) ? data[0][0]?.currency : ''}</span>
-                        <span >{amountFormat(info.unitPrice)}</span>
+                        <span>{amountFormat(info.unitPrice)}</span>
                     </div>
 
                 }
