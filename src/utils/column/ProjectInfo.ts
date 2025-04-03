@@ -894,12 +894,16 @@ export const DAInfo = {
         "dealerType": "",               // 딜러/제조
         "grade": "",                             // 등급
         "margin": null,                           // 마진
+        "instructions": "",        // 지시사항
+        "maker": "",            // Maker
         "homepage": "",   // 홈페이지
-        "item": "",                        // Item
         "tradeStartDate": "",               // 거래 시작일
         "currencyUnit": "",                        // 화폐단위
         "manager": "",                     // 담당자
+        "businessRegistrationNumber": "",       // 사업자 번호
         "bankAccountNumber": "",            // Account No
+        "item": "",                        // Item
+        "agencyManagerList": [],
         "country": "",                             // 국가
         "ftaNumber": "",                      // FTA No
         "intermediaryBank": "",        // 송금중개은행

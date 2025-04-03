@@ -5,7 +5,7 @@ import {tableCodeDomesticAgencyWriteColumns,} from "@/utils/columnList";
 import {codeDomesticAgencyWriteInitial,} from "@/utils/initialList";
 import TableGrid from "@/component/tableGrid";
 import {useRouter} from "next/router";
-import {BoxCard, datePickerForm, inputForm, inputNumberForm, MainCard} from "@/utils/commonForm";
+import {BoxCard, datePickerForm, inputForm, inputNumberForm, MainCard, textAreaForm} from "@/utils/commonForm";
 import {commonFunc, commonManage, fileManage, gridManage} from "@/utils/commonManage";
 import _ from "lodash";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
@@ -37,7 +37,7 @@ function DomesticAgencyUpdate({updateKey, getCopyPage}:any) {
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('domestic_agency_update');
-        return savedSizes ? JSON.parse(savedSizes) : [20, 20,20, 0]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20,20, 20]; // 기본값 [50, 50, 50]
     };
 
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
@@ -164,7 +164,7 @@ function DomesticAgencyUpdate({updateKey, getCopyPage}:any) {
                             {datePickerForm({title: '거래시작일', id: 'tradeStartDate'})}
                             <div>
                                 <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>달러/제조</div>
-                                <select name="languages" id="currencyUnit"
+                                <select name="languages" id="dealerType"
                                         style={{
                                             outline: 'none',
                                             border: '1px solid lightGray',
@@ -180,7 +180,7 @@ function DomesticAgencyUpdate({updateKey, getCopyPage}:any) {
 
                             <div style={{padding: '10px 0px'}}>
                                 <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>등급</div>
-                                <select name="languages" id="currencyUnit"
+                                <select name="languages" id="grade"
                                         style={{
                                             outline: 'none',
                                             border: '1px solid lightGray',
@@ -202,7 +202,17 @@ function DomesticAgencyUpdate({updateKey, getCopyPage}:any) {
                         </Panel>
                         <PanelResizeHandle/>
                         <Panel defaultSize={sizes[3]} minSize={5}>
+                            <BoxCard title={'ETC'}>
+                                {textAreaForm({
+                                    title: '지시사항',
+                                    rows: 5,
+                                    id: 'instructions',
+
+                                })}
+                            </BoxCard>
                         </Panel>
+                        <PanelResizeHandle/>
+                        <Panel></Panel>
                     </PanelGroup>
                     </div>
                     : <></>}

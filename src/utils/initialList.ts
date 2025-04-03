@@ -403,10 +403,11 @@ export const codeDomesticPurchaseInitial = {
 
 export const codeDomesticAgencyWriteInitial = {
     "agencyCode": "",        // 코드(약칭)
+    "agencyName": "",   // 상호
     "dealerType": "딜러",        // "딜러", "제조"
     "grade": "A",               // 등급
     "margin": 0,                // 마진
-    "agencyName": "",   // 상호
+    "instructions": "",        // 지시사항
     "maker": "",            // Maker
     "homepage": "",   // 홈페이지
     "tradeStartDate": "",         // 거래시작일

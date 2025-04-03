@@ -1,7 +1,7 @@
 import React, {memo, useEffect, useRef, useState} from "react";
 import message from "antd/lib/message";
 import {codeDomesticAgencyWriteInitial,} from "@/utils/initialList";
-import {BoxCard, datePickerForm, inputForm, inputNumberForm, MainCard} from "@/utils/commonForm";
+import {BoxCard, datePickerForm, inputForm, inputNumberForm, MainCard, textAreaForm} from "@/utils/commonForm";
 import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
 import _ from "lodash";
 import {saveDomesticAgency} from "@/utils/api/mainApi";
@@ -29,7 +29,7 @@ function DomesticAgencyWrite({copyPageInfo, getPropertyId}:any) {
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('domestic_agency_update');
-        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 0]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20]; // 기본값 [50, 50, 50]
     };
 
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
@@ -176,7 +176,7 @@ function DomesticAgencyWrite({copyPageInfo, getPropertyId}:any) {
                             </Panel>
                             <PanelResizeHandle/>
                             <Panel defaultSize={sizes[2]} minSize={5}>
-                                <BoxCard title={'ETC'}>
+                                <BoxCard title={'거래정보'}>
                                     {datePickerForm({title: '거래시작일', id: 'tradeStartDate'})}
                                     <div>
                                         <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>달러/제조</div>
@@ -218,7 +218,17 @@ function DomesticAgencyWrite({copyPageInfo, getPropertyId}:any) {
                             </Panel>
                             <PanelResizeHandle/>
                             <Panel defaultSize={sizes[3]} minSize={5}>
+                                <BoxCard title={'ETC'}>
+                                    {textAreaForm({
+                                        title: '지시사항',
+                                        rows: 5,
+                                        id: 'instructions',
+
+                                    })}
+                                </BoxCard>
                             </Panel>
+                            <PanelResizeHandle/>
+                            <Panel></Panel>
                         </PanelGroup>
                     </div>
                     : <></>}

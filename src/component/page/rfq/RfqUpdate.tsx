@@ -87,12 +87,20 @@ function RqfUpdate({
                 setFileList(fileManage.getFormatFiles(attachmentFileList));
                 setOriginFileList(attachmentFileList);
                 // replyStatus
+
+                /**
+                 * 개선사항
+                 * 견적의뢰 수정시 드라이브 목록 '업체회신자료'로 자동 선택
+                 * uploadType 0에서 1로 수정
+                 */
                 setInfo({
                     ...estimateRequestDetail,
                     uploadType: 1,
                     managerAdminId: estimateRequestDetail['managerAdminId'] ? estimateRequestDetail['managerAdminId'] : '',
                     managerAdminName: estimateRequestDetail['managerAdminName'] ? estimateRequestDetail['managerAdminName'] : ''
                 })
+                //
+
                 estimateRequestDetail[listType] = [...estimateRequestDetail[listType], ...commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000 - estimateRequestDetail[listType].length)]
                 setTableData(estimateRequestDetail[listType]);
             }

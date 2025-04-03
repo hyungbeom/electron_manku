@@ -267,21 +267,25 @@ function EstimateUpdate({
         const test = `${result.join(',')}`;
         const elements = infoRef.current.querySelectorAll(test);
 
-        console.log(elements, 'elements')
-        console.log(elements, 'elements')
-        console.log(elements, 'elements')
-        console.log(elements, 'elements')
-
         let copyInfo = {}
         for (let element of elements) {
             copyInfo[element.id] = element.value
         }
 
-        // customerManageEmail
-        // customerName
-        // faxNumber
-        // phoneNumber
-        // managerName
+        /**
+         * 개선사항
+         * 견적서 복제버튼 > 등록페이지 이동시 고객사 정보 초기화
+         * copyInfo 데이터에서 해당 키의 값 제거함
+         */
+        copyInfo = {
+            ...copyInfo,
+            customerName: '',
+            managerName: '',
+            phoneNumber: '',
+            customerManagerEmail: '',
+            faxNumber: ''
+        };
+        //
 
         const dom = infoRef.current.querySelector('#managerAdminId');
 
@@ -293,11 +297,6 @@ function EstimateUpdate({
         }
 
         copyInfo[listType] = [...totalList, ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000 - totalList.length)];
-
-        console.log(copyInfo, 'copyInfo')
-        console.log(copyInfo, 'copyInfo')
-        console.log(copyInfo, 'copyInfo')
-        console.log(copyInfo, 'copyInfo')
 
         getCopyPage('estimate_write', copyInfo)
     }
