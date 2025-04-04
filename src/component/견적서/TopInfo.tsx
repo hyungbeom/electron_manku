@@ -4,8 +4,6 @@ import {estimateInfo, orderInfo, projectInfo} from "@/utils/column/ProjectInfo";
 import Input from "antd/lib/input";
 import moment from "moment";
 import {paperTopInfo} from "@/utils/common";
-import Select from "antd/lib/select";
-import {SelectForm} from "@/utils/commonForm";
 
 export default function TopInfo({count, infoRef, type, memberList, getTopInfoData}) {
 
@@ -125,17 +123,11 @@ export const TopPoInfo = ({infoRef, memberList, getTopInfoData}) => {
         const dom = infoRef.current.querySelector('#agencyCode')
         if (!dom.value.startsWith("K")) {
             setTitle(paperTopInfo['en'])
-        } else {
-            setTitle(paperTopInfo['ko'])
         }
 
-        console.log(title, 'title')
-        console.log(title, 'title')
-        console.log(title, 'title')
-        console.log(title, 'title')
-        console.log(title, 'title')
-        // 초기 데이터 설정 =========
         let infoData = commonManage.getInfo(infoRef, orderInfo['defaultInfo']);
+
+        infoData['totalDate'] = moment().format('YYYY-MM-DD');
         setInfo(infoData)
         infoData['incoterms'] = 'EXW'
         // EXW, FOB, CIF, DDU
@@ -212,9 +204,9 @@ export const TopPoInfo = ({infoRef, memberList, getTopInfoData}) => {
 
         }, []);
 
-        function onChanges(e){
+        function onChanges(e) {
 
-            setInfo(v=>{
+            setInfo(v => {
                 let bowl = {};
                 bowl[id] = e.target.value;
                 return {...v, ...bowl}
@@ -222,10 +214,11 @@ export const TopPoInfo = ({infoRef, memberList, getTopInfoData}) => {
         }
 
         return <div ref={ref} className="dropdown-wrapper" id="dropdownWrapper" style={{fontSize: 12, width: '100%'}}>
-            <input  onBlur={onChanges} defaultValue={info['incoterms']} ref={inputRef} type="text" id={id} className="customInput" name={'customInput'}
-                   autoComplete="off" style={{height: 23, border : 'none', fontSize : 15, paddingLeft : 14}}/>
+            <input onBlur={onChanges} defaultValue={info['incoterms']} ref={inputRef} type="text" id={id}
+                   className="customInput" name={'customInput'}
+                   autoComplete="off" style={{height: 23, border: 'none', fontSize: 15, paddingLeft: 14}}/>
             <div className="dropdown-list" ref={listRef} id={`${id}s`}>
-                {list.map(v => <div onPointerDown={(e:any)=>{
+                {list.map(v => <div onPointerDown={(e: any) => {
                     if (e.target.tagName === 'DIV') {
                         inputRef.current.value = e.target.textContent;
                         listRef.current.style.display = 'none';
@@ -236,7 +229,7 @@ export const TopPoInfo = ({infoRef, memberList, getTopInfoData}) => {
     }
 
 
-    console.log(info['incoterms'],'??')
+    console.log(info['incoterms'], '??')
     return <>
         <div ref={topInfoRef} style={{
             fontFamily: 'Arial, sans-serif',

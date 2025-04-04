@@ -520,7 +520,7 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
                             <PanelResizeHandle/>
                             <Panel defaultSize={sizes[1]} minSize={5}>
                                 <BoxCard title={'담당자 정보'}>
-                                    {inputForm({title: '작성자', id: 'managerName'})}
+                                    {inputForm({title: '작성자', id: 'managerId', onChange: onChange, data: info})}
                                     {inputForm({title: 'TEL', id: 'managerPhoneNumber'})}
                                     {inputForm({title: 'Fax', id: 'managerFaxNumber'})}
                                     {inputForm({title: 'E-Mail', id: 'managerEmail'})}

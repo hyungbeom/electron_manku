@@ -113,6 +113,7 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
 
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
+    console.log(userInfo,':::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::')
     const {query} = ctx; // URL 쿼리 파라미터
     const {code, redirect_to} = query;
 
