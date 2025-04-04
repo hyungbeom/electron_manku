@@ -532,7 +532,7 @@ export const codeOverseasAgencyWriteInitial = {
     "agencyName": "",       // 상호
     "dealerType": "",               // 딜러/제조
     "grade": "",                             // 등급
-    "margin": null,                           // 마진
+    "margin": 0,                           // 마진
     "homepage": "",   // 홈페이지
     "item": "",                        // Item
     "tradeStartDate": "",               // 거래 시작일

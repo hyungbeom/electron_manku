@@ -95,7 +95,7 @@ function DomesticCustomerUpdate({updateKey, getCopyPage}:any) {
         infoData[listType] = filterTableList
         await getData.post('customer/updateCustomer', infoData).then(v => {
             if (v.data.code === 1) {
-                notificationAlert('success', '💾국내고객사 수정완료',
+                notificationAlert('success', '💾 국내 고객사 수정완료',
                     <>
                         <div>상호 : {dom.value}</div>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>

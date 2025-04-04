@@ -119,7 +119,7 @@ function OverseasAgencyUpdate({ updateKey, getCopyPage}:any) {
 
         await getData.post('agency/updateOverseasAgency',  infoData).then(v => {
             if (v.data.code === 1) {
-                notificationAlert('success', '💾해외매입처 수정완료',
+                notificationAlert('success', '💾 해외매입처 수정완료',
                     <>
                         <div>코드 : {dom.value}</div>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
@@ -186,6 +186,23 @@ function OverseasAgencyUpdate({ updateKey, getCopyPage}:any) {
                                     {/*    ]*/}
                                     {/*})}*/}
                                     {inputNumberForm({title: '마진', id: 'margin', suffix: '%'})}
+
+                                    <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>등급</div>
+                                    <select name="languages" id="grade"
+                                            style={{
+                                                outline: 'none',
+                                                border: '1px solid lightGray',
+                                                height: 23,
+                                                width: '100%',
+                                                fontSize: 12,
+                                                paddingBottom: 0.5
+                                            }}>
+                                        <option value={'A'}>A</option>
+                                        <option value={'B'}>B</option>
+                                        <option value={'C'}>C</option>
+                                        <option value={'D'}>D</option>
+
+                                    </select>
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>

@@ -92,7 +92,7 @@ function DomesticAgencyUpdate({updateKey, getCopyPage}:any) {
         infoData['agencyId'] = updateKey['domestic_agency_update']
         await getData.post('agency/updateAgency', infoData).then(v => {
             if (v.data.code === 1) {
-                notificationAlert('success', '💾국내매입처 수정완료',
+                notificationAlert('success', '💾 국내매입처 수정완료',
                     <>
                         <div>코드 : {dom.value}</div>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>

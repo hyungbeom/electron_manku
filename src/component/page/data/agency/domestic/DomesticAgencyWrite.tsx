@@ -4,13 +4,12 @@ import {codeDomesticAgencyWriteInitial,} from "@/utils/initialList";
 import {BoxCard, datePickerForm, inputForm, inputNumberForm, MainCard, textAreaForm} from "@/utils/commonForm";
 import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
 import _ from "lodash";
-import {saveDomesticAgency} from "@/utils/api/mainApi";
 import {useRouter} from "next/router";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import Table from "@/component/util/Table";
-import {DAInfo, projectInfo} from "@/utils/column/ProjectInfo";
+import {DAInfo} from "@/utils/column/ProjectInfo";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 import moment from "moment/moment";
@@ -79,7 +78,7 @@ function DomesticAgencyWrite({copyPageInfo, getPropertyId}:any) {
         await getData.post('agency/addAgency', infoData).then(v => {
             if (v.data.code === 1) {
 
-                notificationAlert('success', '💾국내매입처 등록완료',
+                notificationAlert('success', '💾 국내매입처 등록완료',
                     <>
                         <div>상호 : {dom.value}</div>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>

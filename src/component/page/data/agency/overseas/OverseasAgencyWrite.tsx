@@ -63,7 +63,7 @@ function OverseasAgencyWrite({copyPageInfo, getPropertyId}: any) {
 
 
     async function saveFunc() {
-        const dom = infoRef.current.querySelector('#agency');
+        const dom = infoRef.current.querySelector('#agencyName');
         let infoData = commonManage.getInfo(infoRef, infoInit);
         const tableList = tableRef.current?.getSourceData();
 
@@ -76,7 +76,7 @@ function OverseasAgencyWrite({copyPageInfo, getPropertyId}: any) {
 
         await getData.post('agency/addOverseasAgency', infoData).then(v => {
             if (v.data.code === 1) {
-                notificationAlert('success', '💾해외 매입처 등록완료',
+                notificationAlert('success', '💾 해외 매입처 등록완료',
                     <>
                         <div>상호 : {dom.value}</div>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
@@ -93,17 +93,17 @@ function OverseasAgencyWrite({copyPageInfo, getPropertyId}: any) {
         });
 
 
-        await getData.post('agency/addOverseasAgency', infoData).then(v => {
-            if (v.data.code === 1) {
-                window.opener?.postMessage('write', window.location.origin);
-                message.success('저장되었습니다.')
-                setInfo(codeOverseasAgencyInitial);
-                deleteList()
-                window.location.href = '/code_overseas_agency'
-            } else {
-                message.error('저장에 실패하였습니다.')
-            }
-        });
+        // await getData.post('agency/addOverseasAgency', infoData).then(v => {
+        //     if (v.data.code === 1) {
+        //         window.opener?.postMessage('write', window.location.origin);
+        //         message.success('저장되었습니다.')
+        //         setInfo(codeOverseasAgencyInitial);
+        //         deleteList()
+        //         window.location.href = '/code_overseas_agency'
+        //     } else {
+        //         message.error('저장에 실패하였습니다.')
+        //     }
+        // });
 
     }
 
@@ -141,7 +141,7 @@ function OverseasAgencyWrite({copyPageInfo, getPropertyId}: any) {
         }}>
             <PanelSizeUtil groupRef={groupRef} storage={'overseas_agency_write'}/>
             <MainCard title={'해외 매입처 등록'} list={[
-                {name: <div><SaveOutlined style={{paddingRight : 8}}/>저장</div>, func: saveFunc, type: 'primary'},
+                {name: <div><SaveOutlined style={{paddingRight: 8}}/>저장</div>, func: saveFunc, type: 'primary'},
                 {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'}
             ]} mini={mini} setMini={setMini}>
 
@@ -169,6 +169,23 @@ function OverseasAgencyWrite({copyPageInfo, getPropertyId}: any) {
                                     {/*    ]*/}
                                     {/*})}*/}
                                     {inputNumberForm({title: '마진', id: 'margin', suffix: '%'})}
+
+                                    <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>등급</div>
+                                    <select name="languages" id="grade"
+                                            style={{
+                                                outline: 'none',
+                                                border: '1px solid lightGray',
+                                                height: 23,
+                                                width: '100%',
+                                                fontSize: 12,
+                                                paddingBottom: 0.5
+                                            }}>
+                                        <option value={'A'}>A</option>
+                                        <option value={'B'}>B</option>
+                                        <option value={'C'}>C</option>
+                                        <option value={'D'}>D</option>
+
+                                    </select>
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>

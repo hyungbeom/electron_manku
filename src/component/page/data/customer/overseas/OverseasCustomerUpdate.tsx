@@ -77,7 +77,7 @@ function OverseasCustomerUpdate({ updateKey, getCopyPage}:any) {
         infoData[listType] = filterTableList
         await getData.post('customer/updateOverseasCustomer', infoData).then(v => {
             if (v.data.code === 1) {
-                notificationAlert('success', '💾해외고객사 수정완료',
+                notificationAlert('success', '💾 해외 고객사 수정완료',
                     <>
                         <div>Project No. : {dom.value}</div>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>

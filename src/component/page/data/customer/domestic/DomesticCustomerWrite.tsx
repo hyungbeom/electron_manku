@@ -88,7 +88,7 @@ function DomesticCustomerWrite({copyPageInfo, getPropertyId}:any) {
         await getData.post('customer/addCustomer', formData).then(v => {
             if (v.data.code === 1) {
                 setFileList([])
-                notificationAlert('success', '💾국내 고객사 등록완료',
+                notificationAlert('success', '💾 국내 고객사 등록완료',
                     <>
                         <div>상호 : {dom.value}</div>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>

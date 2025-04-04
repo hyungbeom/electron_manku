@@ -812,14 +812,14 @@ export const OAInfo = {
             {data: "remarks", type: "text"}
         ],
         defaultData: {
-            "managerName": "string",
-            "phoneNumber": "string",
-            "faxNumber": "string",
-            "email": "string",
-            "address": "string",
-            "remarks": "string",
-            "countryAgency": "string",
-            "mobilePhone": "string",
+            "managerName": "",
+            "phoneNumber": "",
+            "faxNumber": "",
+            "email": "",
+            "address": "",
+            "remarks": "",
+            "countryAgency": "",
+            "mobilePhone": "",
         },
         excelExpert: (v, i) => {
             return v
