@@ -33,7 +33,9 @@ export default async function (ctx, store) {
             userInfo = entity;
             codeInfo = code
 
+            console.log(entity,':::entity')
         }, async err => {
+            console.log(err,'err')
             await getData.get("account/refresh").then((res) => {
 
             }, err => {
