@@ -1,5 +1,11 @@
 import React, {memo, useEffect, useRef, useState} from "react";
-import {ArrowRightOutlined, DownloadOutlined, RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
+import {
+    ArrowRightOutlined,
+    DownloadOutlined,
+    RadiusSettingOutlined,
+    RollbackOutlined,
+    SaveOutlined
+} from "@ant-design/icons";
 import message from "antd/lib/message";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {useRouter} from "next/router";
@@ -395,11 +401,14 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                 <select name="languages" id="managerAdminId" onChange={e => {
                                     const member = memberList.find(v => v.adminId === parseInt(e.target.value))
 
+
+                                    const code = infoRef.current.querySelector('#agencyCode');
+
                                     if (member) {
-                                        const {name, faxNumber, contactNumber, email} = member;
+                                        const {name, faxNumber, contactNumber, email, englishName} = member;
 
                                         const sendObj = {
-                                            managerId: name,
+                                            managerId: code?.value?.startsWith('K') ? name : englishName,
                                             managerPhoneNumber: contactNumber,
                                             managerFaxNumber: faxNumber,
                                             managerEmail: email
@@ -503,7 +512,25 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
 
                             <PanelResizeHandle/>
                             <Panel defaultSize={sizes[2]} minSize={5}>
-                                <BoxCard title={'담당자 정보'}>
+                                <BoxCard title={<div style={{display : 'flex', justifyContent : 'space-between'}}><span>담당자 정보</span><span><RollbackOutlined style={{cursor : 'pointer'}}
+                                onClick={()=>{
+                                    const idNumber = infoRef.current.querySelector('#managerAdminId');
+                                    const member = memberList.find(v => v.adminId === parseInt(idNumber?.value))
+
+                                    const code = infoRef.current.querySelector('#agencyCode');
+                                    if (member) {
+                                        const {name, faxNumber, contactNumber, email, englishName} = member;
+
+                                        const sendObj = {
+                                            managerId: code?.value?.startsWith('K') ? name : englishName,
+                                            managerPhoneNumber: contactNumber,
+                                            managerFaxNumber: faxNumber,
+                                            managerEmail: email
+                                        }
+                                        commonManage.setInfo(infoRef, sendObj);
+                                    }
+                                }}
+                                /></span></div>}>
                                     {inputForm({title: '작성자', id: 'managerId', onChange: onChange, data: info})}
                                     {inputForm({title: 'TEL', id: 'managerPhoneNumber'})}
                                     {inputForm({title: 'Fax', id: 'managerFaxNumber'})}
