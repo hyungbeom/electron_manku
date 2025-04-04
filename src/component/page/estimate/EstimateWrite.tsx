@@ -424,7 +424,12 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                 {inputForm({
                                     title: '의뢰자료 No.',
                                     id: 'connectDocumentNumberFull',
-                                    suffix: <DownloadOutlined style={{cursor: 'pointer'}}/>
+                                    suffix: <DownloadOutlined style={{cursor: 'pointer'}} onClick={(e)=>{
+                                       const document = infoRef.current.querySelector('#connectDocumentNumberFull');
+
+                                       let bowl = {target : {id : 'connectDocumentNumberFull', value : document.value}, key : 'Enter'}
+                                        handleKeyPress(bowl)
+                                    }}/>
                                     , handleKeyPress: handleKeyPress
                                 })}
                                 {inputForm({

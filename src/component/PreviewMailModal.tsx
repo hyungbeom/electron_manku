@@ -129,8 +129,7 @@ function PreviewMailModal({data, isModalOpen, setIsModalOpen, fileList}) {
     const notificationAlert = useNotificationAlert();
     const [info, setInfo] = useState<any>();
     const [checkList, setCheckList] = useState<any>([]);
-    useEffect( () => {
-
+    useEffect(() => {
 
 
         const list = Object.values(data).map(src => {
@@ -170,7 +169,6 @@ function PreviewMailModal({data, isModalOpen, setIsModalOpen, fileList}) {
     }, [data])
 
 
-
     function isValidEmail(email) {
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         return emailRegex.test(email);
@@ -178,14 +176,7 @@ function PreviewMailModal({data, isModalOpen, setIsModalOpen, fileList}) {
 
 
     async function sendMail() {
-
-        const confirmed = window.confirm('메일을 전송하시겠습니까?');
-        if (confirmed) {
-            sendEmail()
-            setIsModalOpen(false);
-        }
-
-
+        showModal();
     }
 
     async function sendEmail() {
@@ -317,6 +308,22 @@ function PreviewMailModal({data, isModalOpen, setIsModalOpen, fileList}) {
         }
     }
 
+    const [open, setOpen] = useState(false);
+    const showModal = () => {
+        setOpen(true);
+    };
+
+    const handleOk = () => {
+        sendEmail()
+        setIsModalOpen(false);
+        setOpen(false);
+    };
+
+    const handleCancel = () => {
+        setOpen(false);
+    };
+
+
     function getAddress() {
         getData.post('account/getMyContactList').then(v => {
             console.log(v, ':::')
@@ -324,13 +331,14 @@ function PreviewMailModal({data, isModalOpen, setIsModalOpen, fileList}) {
     }
 
     return <>
+        <Modal title="" open={open} cancelText={'취소'} okText={'확인'} onOk={handleOk} onCancel={handleCancel}>
+            <p>메일을 전송하시겠습니까?</p>
+        </Modal>
         <Modal okText={<><SendOutlined/> 메일 전송</>} width={1000} cancelText={'취소'} onOk={sendMail}
                title={<div style={{height: 25, textAlign: 'center'}}>견적의뢰 메일 발송</div>} open={isModalOpen}
                onCancel={() => {
                    setIsModalOpen(false)
-               }}
-
-        >
+               }}>
             <div>
                 <div style={{margin: '0px auto', fontSize: 13}}>
 
