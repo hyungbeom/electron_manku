@@ -4,8 +4,8 @@ import https from 'https';
 
 
 //DEV
-// export const API_URL = 'https://manku.progist.co.kr/api';
-export const API_URL = 'http://175.125.92.183:8080/api';
+export const API_URL = 'https://manku.progist.co.kr/api';
+// export const API_URL = 'http://175.125.92.183:8080/api';
 
 
 const agent = new https.Agent({
@@ -71,11 +71,9 @@ getFormData.interceptors.request.use((config) => {
     return config;
 });
 
-
 getData.interceptors.request.use((config) => {
 
     const token = getCookie(null, 'token');
-    console.log(config,'????????')
     if (token) {
         config.headers.authorization = `Bearer ${token}`;
     }
@@ -88,9 +86,7 @@ getData.interceptors.request.use((config) => {
 
 getLoginData.interceptors.request.use((config) => {
 
-
     const token = getCookie(null, 'token');
-    console.log(token,'loginApi')
     if (token) {
         config.headers.authorization = `Bearer ${token}`;
     }
