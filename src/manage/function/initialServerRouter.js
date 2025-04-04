@@ -27,14 +27,14 @@ export default async function (ctx, store) {
         //     // ====> header 값을 기준으로 백엔드에서는 토큰의 유효성 검사 후 리턴해준다.
 
 
-        await getData.post("admin/getMyAccount").then((res) => {
+        await getData.post("account/getMyAccount").then((res) => {
 
             const {entity, code} = res?.data;
             userInfo = entity;
             codeInfo = code
 
         }, async err => {
-            await getData.get("api/account/refresh").then((res) => {
+            await getData.get("account/refresh").then((res) => {
 
             }, err => {
 
