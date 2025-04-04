@@ -92,12 +92,17 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
             const {orderDetail, attachmentFileList} = v;
             setFileList(fileManage.getFormatFiles(attachmentFileList));
             setOriginFileList(attachmentFileList);
+           const addOrderList = orderDetail[listType].map(v=>{
+                return {...v, order : v.quantity}
+            });
+           console.log(addOrderList,'addOrderList:')
+
             setInfo({
                 ...orderDetail,
                 uploadType: 4,
                 managerAdminId: orderDetail['managerAdminId'] ? orderDetail['managerAdminId'] : ''
             })
-            orderDetail[listType] = [...orderDetail[listType], ...commonFunc.repeatObject(orderInfo['write']['defaultData'], 1000 - orderDetail[listType].length)]
+            orderDetail[listType] = [...addOrderList, ...commonFunc.repeatObject(orderInfo['write']['defaultData'], 1000 - orderDetail[listType].length)]
             setTableData(orderDetail[listType]);
             setLoading(false)
         })

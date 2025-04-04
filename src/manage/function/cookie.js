@@ -10,15 +10,12 @@ export const setCookies = (ctx, key, value) => {
 };
 
 export const removeCookie = (ctx, key) => {
-  destroyCookie(ctx, key, {
-    path: '/',
-  });
-  // cookie.destroy(ctx, key);
+  destroyCookie(ctx, key, { path: '/' }); // 반드시 path 지정!
 };
 
 export const getCookie = (ctx, key) => {
-  const cookies = parseCookies(ctx);
-
-  return cookies[key]
+  const cookies = typeof window === "undefined"
+      ? parseCookies(ctx)   // SSR
+      : parseCookies();     // CSR
+  return cookies[key];
 };
-

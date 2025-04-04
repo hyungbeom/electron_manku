@@ -383,6 +383,7 @@ export const orderInfo = {
             "currency": '',
             "unitPrice": '',
             "total": '',            // 매입단가
+            "order": '',
             "receivedQuantity": '',
             "unreceivedQuantity": '',
             "net": '',            // 매입단가
