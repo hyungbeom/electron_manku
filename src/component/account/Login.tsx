@@ -4,7 +4,7 @@ import Checkbox from "antd/lib/checkbox/Checkbox";
 import Button from "antd/lib/button";
 import React, {useState} from "react";
 import {useRouter} from "next/router";
-import {getData, getLoginData} from "@/manage/function/api";
+import {getData} from "@/manage/function/api";
 import {setCookies} from "@/manage/function/cookie";
 import message from "antd/lib/message";
 import LoginButton from "@/component/Sample";
@@ -33,7 +33,7 @@ export default function Login() {
             return message.warn('비밀번호를 입력해주세요')
         }
 
-        getLoginData.post('account/login', info).then(v => {
+        getData.post('account/login', info).then(v => {
             if (v.data.code === 1) {
                 const {accessToken} = v?.data?.entity;
                 setCookies(null, 'token', accessToken)

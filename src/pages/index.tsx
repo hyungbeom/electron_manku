@@ -6,7 +6,7 @@ import SignUp from "@/component/account/SignUp";
 import {wrapper} from "@/store/store";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
-import {getData, getLoginData} from "@/manage/function/api";
+import {getData} from "@/manage/function/api";
 import {getCookie, setCookies} from "@/manage/function/cookie";
 import {setCookie} from "nookies";
 import message from "antd/lib/message";
@@ -120,7 +120,7 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
         const codeVerifier = getCookie(ctx, "code_verifier");
 
         try {
-            const v = await getLoginData.post('account/microsoftLogin', {
+            const v = await getData.post('account/microsoftLogin', {
                 authorizationCode: code,
                 codeVerifier: codeVerifier,
                 redirectUri: process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://manku.progist.co.kr'
