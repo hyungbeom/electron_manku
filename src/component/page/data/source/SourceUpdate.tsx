@@ -44,6 +44,7 @@ function SourceUpdate({updateKey, getCopyPage}:any) {
         getData.post('inventory/getInventoryDetail',updateKey['source_update']).then(v=>{
             const {code, entity} = v?.data;
             if(code === 1){
+                console.log(entity,':::')
                 setInfo(entity.inventoryItemList[0])
             }
         })

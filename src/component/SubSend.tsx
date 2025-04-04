@@ -1,6 +1,7 @@
 import React, {memo, useState} from "react";
 import {MinusCircleOutlined, PlusSquareOutlined} from "@ant-design/icons";
 import _ from "lodash";
+import Button from "antd/lib/button";
 
 export const SubSend = ({idx}) => {
 
@@ -8,14 +9,8 @@ export const SubSend = ({idx}) => {
 
     return <div id={`cc_${idx}`}>
         <div style={{display: 'grid', gridTemplateColumns: '100px 1fr', gap: 5}}>
-                  <span style={{
-                      border: '1px solid lightGray',
-                      height: 23,
-                      fontSize: 12,
-                      padding: 2,
-                      marginTop: 6,
-                      textAlign: 'center'
-                  }}>참조(C)</span>
+
+            <Button type={'primary'} size={'small'} style={{fontSize : 12, marginTop : 5}}>참조(C)</Button>
             <div>
                 {count.map((src, numb) => {
                     return <div style={{width: '100%', display: 'flex'}}>
