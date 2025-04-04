@@ -338,7 +338,7 @@ function PrintPo({
                             }}>
                                 <TextAreas value={v.model} numb={i} name={'model'}/>
                             </td>
-                            <NumberInputForm value={v} numb={i} objKey={0}/>
+                            <NumberInputForm value={v} numb={i}/>
                             <td>
                                 <TextAreas value={v?.other} numb={i} name={'other'}/>
                             </td>

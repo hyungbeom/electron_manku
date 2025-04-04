@@ -90,16 +90,12 @@ function generateFormattedOutputWithDocumentNumbers(data) {
             let text = `${index + 1}) ${model.model}`; // ← 테스트할 문자열
 
             let lines = text.split('\n');
-
-            // if (lines.length > 0) {
-            //     lines[0] = lines[0].trimEnd() + `     ---${model.quantity}${model.unit}`;
-            // }
-            lines.forEach((v, i)=>{
-               if(!i){
-                   lines[i] = lines[i].trimEnd() + `     ---${model.quantity}${model.unit}`;
-               }else{
-                   lines[i] = `    ${lines[i]}`;
-               }
+            lines.forEach((v, i) => {
+                if (!i) {
+                    lines[i] = lines[i].trimEnd() + `     ---${model.quantity}${model.unit}`;
+                } else {
+                    lines[i] = `    ${lines[i]}`;
+                }
             })
             let result = lines.join('\n');
 
