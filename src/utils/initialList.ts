@@ -276,7 +276,7 @@ export const orderWriteInitial = {
     "managerPhoneNumber": "",  // Tel
     "managerFaxNumber": "",      // E-Mail
     "managerEmail": "",   // Fax
-    "paymentTerms": 'By in advance T/T',    // Payment Terms
+    "paymentTerms": 'T/T',    // Payment Terms
     "deliveryTerms": "",              // 납기 Terms
     "maker": "",                    // Maker
     "item": "",                       // Item

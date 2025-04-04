@@ -519,7 +519,9 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                 </div>}>
                                     <div style={{paddingBottom: 10}}>
                                         <SelectForm id={'paymentTerms'}
-                                                    list={!check ? ['발주시 50% / 납품시 50%', '현금결제', '선수금', '정기결제'] : ['By in advance T/T', 'Credit Card', 'L/C', 'Order 30% Before Shipping 50%', 'Order 30% Before Shipping 50%']}
+                                                    list={!check ? ['발주시 50% / 납품시 50%', '현금결제', '선수금', '정기결제']
+                                                        :
+                                                        ['T/T', 'Credit Card', 'Order 30% Before Shipping 70%', 'Order 50% Before Shipping 50%']}
                                                     title={'결제조건'}/>
                                     </div>
                                     {inputForm({

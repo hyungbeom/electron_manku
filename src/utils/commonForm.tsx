@@ -417,6 +417,7 @@ export const inputNumberForm = ({
 
 export const SelectForm = ({id, list, title}: any) => {
 
+    const inputRef = useRef<any>(null)
     const ref = useRef<any>(null)
     const listRef = useRef<any>(null)
 
@@ -464,10 +465,15 @@ export const SelectForm = ({id, list, title}: any) => {
 
     return <div ref={ref} className="dropdown-wrapper" id="dropdownWrapper" style={{fontSize: 12, width: '100%'}}>
         <div style={{fontWeight: 700, paddingBottom: 5}}>{title}</div>
-        <input type="text" id={id} className="customInput" name={'customInput'}
+        <input ref={inputRef} type="text" id={id} className="customInput" name={'customInput'}
                placeholder="선택 또는 입력" autoComplete="off" style={{height: 23}}/>
         <div className="dropdown-list" ref={listRef} id={`${id}s`}>
-            {list.map(v => <div>{v}</div>)}
+            {list.map(v => <div onPointerDown={(e:any)=>{
+                if (e.target.tagName === 'DIV') {
+                    inputRef.current.value = e.target.textContent;
+                    listRef.current.style.display = 'none';
+                }
+            }}>{v}</div>)}
         </div>
     </div>
 }

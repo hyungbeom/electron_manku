@@ -13,6 +13,7 @@ import Button from "antd/lib/button";
 import {pdf} from "@react-pdf/renderer";
 import {PdfForm} from "@/component/견적서/PdfForm";
 import dynamic from "next/dynamic";
+import {SelectForm} from "@/utils/commonForm";
 
 const EstimatePaper = ({
                            infoRef,
@@ -285,7 +286,6 @@ const EstimatePaper = ({
                 <EstimateHeader/>
                 <TopInfo count={count} infoRef={infoRef} type={type} memberList={memberList}
                          getTopInfoData={getTopInfoData}/>
-
                 <table style={{
                     width: '100%',
                     borderCollapse: 'collapse',

@@ -4,6 +4,8 @@ import {estimateInfo, orderInfo, projectInfo} from "@/utils/column/ProjectInfo";
 import Input from "antd/lib/input";
 import moment from "moment";
 import {paperTopInfo} from "@/utils/common";
+import Select from "antd/lib/select";
+import {SelectForm} from "@/utils/commonForm";
 
 export default function TopInfo({count, infoRef, type, memberList, getTopInfoData}) {
 
@@ -128,94 +130,106 @@ export const TopPoInfo = ({infoRef, memberList, getTopInfoData}) => {
         // 초기 데이터 설정 =========
         let infoData = commonManage.getInfo(infoRef, orderInfo['defaultInfo']);
         setInfo(infoData)
+        infoData['incoterms'] = 'EXW'
+        // EXW, FOB, CIF, DDU
         getTopInfoData(infoData)
     }, []);
 
-
-    // useEffect(() => {
-    //     let infoData = commonManage.getInfo(infoRef, orderInfo['defaultInfo']);
-    //     const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
-    //     infoData['managerAdminName'] = findMember['name'];
-    //
-    //     const dom = infoRef.current.querySelector('#agencyCode');
-    //     const lang = dom.value.startsWith("K");
-    //
-    //     let totalDate = ''
-    //     let date = moment(infoData['delivery']); // 기준 날짜
-    //     totalDate = infoData['delivery']
-    //     if (!isNaN(infoData['deliveryTerms'])) {
-    //         console.log('숫자')
-    //         let newDate = date.add(infoData['deliveryTerms'], 'weeks'); // 주 단위 추가
-    //         totalDate = newDate.format('YYYY-MM-DD')
-    //     }
-    //
-    //
-    //     getTopInfoData({
-    //         agencyName: infoData.agencyName,
-    //         writtenDate: infoData.writtenDate,
-    //         agencyManagerName: infoData.agencyManagerName,
-    //         managerAdminName: infoData.managerAdminName,
-    //         attnTo: infoData.attnTo,
-    //         managerPhoneNumber: infoData.managerPhoneNumber,
-    //         documentNumberFull: infoData.documentNumberFull,
-    //         managerEmail: infoData.managerEmail,
-    //         deliveryTerms: infoData.deliveryTerms,
-    //         hscode: '',
-    //         incoterms: '',
-    //         paymentTerms: infoData.paymentTerms,
-    //
-    //         // from obj2 (non-conflicting keys)
-    //         ourPoNo: infoData.agencyName,
-    //         name: totalDate,
-    //         contactNumber: infoData?.documentNumberFull,
-    //         yourPoNo: infoData?.yourPoNo,
-    //         faxNumber: findMember?.contactNumber,
-    //         findMember: findMember?.name,
-    //         shippingTerms: findMember?.email,
-    //         maker : infoData['maker']
-    //     })
-    //
-    //
-    //     return [lang ? [
-    //             {title: '수신처', value: infoData.agencyName, id: 'agencyName'},
-    //             {title: '발주일자', value: totalDate, id: 'totalDate'},
-    //             {title: '담당자', value: infoData.agencyManagerName, id: 'agencyManagerName'},
-    //             {title: '발주번호', value: infoData?.documentNumberFull, id: 'documentNumberFull'},
-    //             {title: '납품조건', value: '', id: ''},
-    //             {title: '귀사견적', value: infoData?.yourPoNo, id: 'yourPoNo'},
-    //             {title: '결제조건.', value: infoData?.paymentTerms, id: 'paymentTerms'},
-    //             {title: '담당자', value: findMember?.name, id: 'name'},
-    //             {title: '납기조건', value: '', id: ''},
-    //             {title: '연락처', value: findMember?.contactNumber, id: 'contactNumber'},
-    //             {title: '', value: '', id: 'deliveryTerms'},
-    //             {title: 'E-Mail', value: findMember?.email, id: 'email'},
-    //
-    //         ]
-    //
-    //         : [
-    //             {title: 'MESSER', value: infoData.agencyName, id: 'agencyName'},
-    //             {title: 'DATE', value: infoData.writtenDate, id: 'writtenDate'},
-    //             {title: 'ATTN', value: infoData.agencyManagerName, id: 'agencyManagerName'},
-    //             {title: 'Contact Person', value: infoData.managerAdminName, id: 'managerAdminName'},
-    //             {title: 'YOUR OFFER NO.', value: infoData.attnTo, id: 'attnTo'},
-    //             {title: 'TEL', value: infoData.managerPhoneNumber, id: 'managerPhoneNumber'},
-    //             {title: 'MANKU No.', value: infoData.documentNumberFull, id: 'documentNumberFull'},
-    //             {title: 'E-mail', value: infoData.managerEmail, id: 'managerEmail'},
-    //             {title: 'Delivery', value: infoData.deliveryTerms, id: 'deliveryTerms'},
-    //             {title: 'HS-code', value: '', id: 'hscode'},
-    //             {title: 'Incoterms', value: '', id: 'incoterms'},
-    //             {title: '', value: '', id: ''},
-    //             {title: 'Payment', value: infoData.paymentTerms, id: 'paymentTerms'},
-    //         ], infoData['maker']]
-    //
-    // }, []);
 
     function onChange(e) {
 
         commonManage.onChange(e, setInfo)
     }
 
+    function selectOnChange(e) {
+        let bowl = {
+            target: {
+                value: e,
+                id: 'incoterms'
+            }
+        }
 
+        commonManage.onChange(bowl, setInfo)
+    }
+
+    useEffect(() => {
+        getTopInfoData(info)
+    }, [info]);
+
+
+    const SelectForms = ({id, list, title}: any) => {
+
+        const inputRef = useRef<any>(null)
+        const ref = useRef<any>(null)
+        const listRef = useRef<any>(null)
+
+        useEffect(() => {
+            const input = ref.current.getElementsByClassName('customInput')[0];
+
+            const handleInputFocus = () => {
+                listRef.current.style.display = 'block';
+            };
+
+            const handleOptionClick = (e: any) => {
+                if (e.target.tagName === 'DIV') {
+                    input.value = e.target.textContent;
+                    listRef.current.style.display = 'none';
+                }
+            };
+
+            const handleFocusIn = (e: any) => {
+                if (!ref.current.contains(e.target)) {
+                    listRef.current.style.display = 'none';
+                }
+            };
+
+            const handleClickOutside = (e: any) => {
+                if (!ref?.current?.contains(e.target)) {
+                    if (listRef.current) {
+                        listRef.current.style.display = 'none';
+                    }
+                }
+            };
+
+            input.addEventListener('focus', handleInputFocus);
+            listRef.current.addEventListener('click', handleOptionClick);
+            document.addEventListener('focusin', handleFocusIn);
+            document.addEventListener('click', handleClickOutside);
+
+            return () => {
+                input.removeEventListener('focus', handleInputFocus);
+                listRef.current?.removeEventListener('click', handleOptionClick);
+                document.removeEventListener('focusin', handleFocusIn);
+                document.removeEventListener('click', handleClickOutside);
+            };
+
+        }, []);
+
+        function onChanges(e){
+
+            setInfo(v=>{
+                let bowl = {};
+                bowl[id] = e.target.value;
+                return {...v, ...bowl}
+            })
+        }
+
+        return <div ref={ref} className="dropdown-wrapper" id="dropdownWrapper" style={{fontSize: 12, width: '100%'}}>
+            <input  onBlur={onChanges} defaultValue={info['incoterms']} ref={inputRef} type="text" id={id} className="customInput" name={'customInput'}
+                   autoComplete="off" style={{height: 23, border : 'none', fontSize : 15, paddingLeft : 14}}/>
+            <div className="dropdown-list" ref={listRef} id={`${id}s`}>
+                {list.map(v => <div onPointerDown={(e:any)=>{
+                    if (e.target.tagName === 'DIV') {
+                        inputRef.current.value = e.target.textContent;
+                        listRef.current.style.display = 'none';
+                    }
+                }}>{v}</div>)}
+            </div>
+        </div>
+    }
+
+
+    console.log(info['incoterms'],'??')
     return <>
         <div ref={topInfoRef} style={{
             fontFamily: 'Arial, sans-serif',
@@ -235,20 +249,28 @@ export const TopPoInfo = ({infoRef, memberList, getTopInfoData}) => {
                         <div style={{alignItems: 'center', fontWeight: 600}}>{title[v]} <span
                             style={{float: 'right', fontWeight: 600}}>{title[v] ? ':' : null}</span></div>
 
+                        {v === 'incoterms' ?
+                            <>
+                                <SelectForms id={'incoterms'} list={['EXW', 'FOB', 'CIF', 'DDU']}/>
+                            </>
 
-                        <Input value={info[v]} id={v}
-                               style={{
-                                   border: 'none',
-                                   paddingLeft: 15,
-                                   alignItems: 'center',
-                                   fontSize: 15,
-                                   width: '100%'
-                               }}
-                               onChange={onChange}
-                               onBlur={() => {
-                                   getTopInfoData(info)
-                               }}
-                        />
+
+                            :
+                            <Input value={info[v]} id={v}
+                                   style={{
+                                       border: 'none',
+                                       paddingLeft: 15,
+                                       alignItems: 'center',
+                                       fontSize: 15,
+                                       width: '100%'
+                                   }}
+                                   onChange={onChange}
+                                // onBlur={() => {
+                                //     getTopInfoData(info)
+                                // }}
+                            />
+
+                        }
 
                     </div>
                 }

@@ -567,7 +567,7 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRe
                         <table style={{
                             width: '100%',
                             borderCollapse: 'collapse',
-                            margin: '20px 0',
+                            margin: '20px 0px 0px 0px',
                             textAlign: 'center',
                             border: '1px solid lightGray',
                         }}>
@@ -614,11 +614,9 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRe
                             })}
                             </thead>
                         </table>
-                        <div style={{flexGrow: 1}}/>
                         {tableData.length - 1 === i ? <table style={{
                                 width: '100%',
                                 borderCollapse: 'collapse',
-                                margin: '20px 0',
                                 textAlign: 'center',
                                 border: '1px solid lightGray',
                             }}>
@@ -627,20 +625,22 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRe
                                 <tr style={{height: 35, fontWeight: 100}} ref={ref2}>
 
                                     <th colSpan={2} style={{fontWeight: 600}}>TOTAL</th>
-                                    <th style={{width: '5%', textAlign: 'right', paddingRight: 8}}
+                                    <th style={{width: '5%', textAlign: 'right', paddingRight: 8, borderTop : 'none'}}
                                         className={'total_qt'}></th>
-                                    <th style={{width: '12%', textAlign: 'right', paddingRight: 10}}
+                                    <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop : 'none'}}
                                         className={'total_netPrice'}></th>
-                                    <th style={{width: '15%', textAlign: 'right', paddingRight: 10}}
+                                    <th style={{width: '15%', textAlign: 'right', paddingRight: 10, borderTop : 'none'}}
                                         className={'total_amount'}></th>
-                                    <th style={{width: '12%', textAlign: 'right', paddingRight: 10}}
+                                    <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop : 'none'}}
                                         className={'total_tax'}></th>
-                                    <th style={{width: '12%', textAlign: 'right', paddingRight: 10}}
+                                    <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop : 'none'}}
                                         className={'remark'}></th>
                                 </tr>
                                 </thead>
                             </table>
                             : <></>}
+                        <div style={{flexGrow: 1}}/>
+
 
                         <div style={{textAlign: 'center'}}>- {i + 1} -</div>
                     </div>
@@ -865,10 +865,11 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRe
                         <table style={{
                             width: '100%',
                             borderCollapse: 'collapse',
-                            textAlign: 'center'
+                            textAlign: 'center',
+                            borderTop : 'none'
                         }}>
                             <thead>
-                            <tr style={{height: 35, fontWeight: 100}}>
+                            <tr style={{height: 35, fontWeight: 100, borderTop : 'none'}}>
 
                                 <th colSpan={2} style={{fontWeight: 600, borderTop: 'none'}}>TOTAL</th>
                                 <th style={{width: '5%', textAlign: 'right', paddingRight: 8, borderTop: 'none'}}
@@ -911,7 +912,7 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRe
                         <table style={{
                             width: '100%',
                             borderCollapse: 'collapse',
-                            margin: '20px 0',
+                            margin: '20px 0px 0px 0px',
                             textAlign: 'center',
                             border: '1px solid lightGray',
                         }}>
@@ -958,33 +959,33 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRe
                             })}
                             </thead>
                         </table>
-                        <div style={{flexGrow: 1}}/>
                         {tableData.length - 1 === i ? <table style={{
                                 width: '100%',
                                 borderCollapse: 'collapse',
-                                margin: '20px 0',
                                 textAlign: 'center',
                                 border: '1px solid lightGray',
+                            borderTop : 'none'
                             }}>
                                 <thead>
 
-                                <tr style={{height: 35, fontWeight: 100}} ref={ref2}>
+                                <tr style={{height: 35, fontWeight: 100, borderTop : 'none'}} ref={ref2}>
 
-                                    <th colSpan={2} style={{fontWeight: 600}}>TOTAL</th>
-                                    <th style={{width: '5%', textAlign: 'right', paddingRight: 8}}
+                                    <th colSpan={2} style={{fontWeight: 600, borderTop : 'none'}}>TOTAL</th>
+                                    <th style={{width: '5%', textAlign: 'right', paddingRight: 8, borderTop : 'none'}}
                                         className={'total_qt'}></th>
-                                    <th style={{width: '12%', textAlign: 'right', paddingRight: 10}}
+                                    <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop : 'none'}}
                                         className={'total_netPrice'}></th>
-                                    <th style={{width: '15%', textAlign: 'right', paddingRight: 10}}
+                                    <th style={{width: '15%', textAlign: 'right', paddingRight: 10, borderTop : 'none'}}
                                         className={'total_amount'}></th>
-                                    <th style={{width: '12%', textAlign: 'right', paddingRight: 10}}
+                                    <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop : 'none'}}
                                         className={'total_tax'}></th>
-                                    <th style={{width: '12%', textAlign: 'right', paddingRight: 10}}
+                                    <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop : 'none'}}
                                         className={'remark'}></th>
                                 </tr>
                                 </thead>
                             </table>
                             : <></>}
+                        <div style={{flexGrow: 1}}/>
 
                         <div style={{textAlign: 'center'}}>- {i + 1} -</div>
                     </div>
