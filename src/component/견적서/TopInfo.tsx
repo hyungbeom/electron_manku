@@ -125,8 +125,15 @@ export const TopPoInfo = ({infoRef, memberList, getTopInfoData}) => {
         const dom = infoRef.current.querySelector('#agencyCode')
         if (!dom.value.startsWith("K")) {
             setTitle(paperTopInfo['en'])
+        } else {
+            setTitle(paperTopInfo['ko'])
         }
 
+        console.log(title, 'title')
+        console.log(title, 'title')
+        console.log(title, 'title')
+        console.log(title, 'title')
+        console.log(title, 'title')
         // 초기 데이터 설정 =========
         let infoData = commonManage.getInfo(infoRef, orderInfo['defaultInfo']);
         setInfo(infoData)

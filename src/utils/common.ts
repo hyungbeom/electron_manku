@@ -350,11 +350,11 @@ export const paperTopInfo = {
         deliveryCondition: '납품조건',
         yourPoNo: '귀사견적',
         paymentTerms: '결제조건.',
-        name: '담당자',
+        managerName: '담당자',
         deliveryDateCondition: '납기조건',
-        contactNumber: '연락처',
+        managerPhoneNumber: '연락처',
         blank: '',
-        email: 'E-Mail'
+        managerEmail: 'E-Mail'
     },
 
     en: {
