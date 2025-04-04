@@ -1,49 +1,36 @@
-import React, {memo, useEffect, useRef, useState} from "react";
+import React, {memo, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
-import {wrapper} from "@/store/store";
-import initialServerRouter from "@/manage/function/initialServerRouter";
-import {setUserInfo} from "@/store/user/userSlice";
-import LayoutComponent from "@/component/LayoutComponent";
-import Card from "antd/lib/card/Card";
-
-import {tableCodeDomesticSalesColumns, tableCodeOverseasSalesColumns,} from "@/utils/columnList";
-import {codeDomesticPurchaseInitial, estimateDetailUnit, tableCodeDomesticSalesInitial,} from "@/utils/initialList";
-import Radio from "antd/lib/radio";
+import {tableCodeOverseasSalesColumns,} from "@/utils/columnList";
+import {codeDomesticPurchaseInitial,} from "@/utils/initialList";
 import TableGrid from "@/component/tableGrid";
-import Search from "antd/lib/input/Search";
 import message from "antd/lib/message";
-import * as XLSX from "xlsx";
 import Button from "antd/lib/button";
-import {
-    CopyOutlined,
-    EditOutlined,
-    ExclamationCircleOutlined,
-    FileExcelOutlined,
-    SearchOutlined
-} from "@ant-design/icons";
+import {ExclamationCircleOutlined} from "@ant-design/icons";
 import {useRouter} from "next/router";
-import {inputForm, MainCard, radioForm} from "@/utils/commonForm";
-import {commonFunc, gridManage} from "@/utils/commonManage";
-import {deleteProjectList, searchDomesticCustomer, searchOverseasCustomer} from "@/utils/api/mainApi";
+import {inputForm, MainCard} from "@/utils/commonForm";
+import {gridManage} from "@/utils/commonManage";
+import {searchOverseasCustomer} from "@/utils/api/mainApi";
 import Popconfirm from "antd/lib/popconfirm";
 import moment from "moment/moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import _ from "lodash";
-import OverseasCustomerWrite from "@/component/page/data/customer/overseas/OverseasCustomerWrite";
+import Spin from "antd/lib/spin";
 
 
 function OverseasCustomerRead({getPropertyId, getCopyPage}:any) {
     const notificationAlert = useNotificationAlert();
     const gridRef = useRef(null);
     const router = useRouter();
+    const copyInit = _.cloneDeep(codeDomesticPurchaseInitial)
 
     const [loading, setLoading] = useState(false);
-    const [info, setInfo] = useState(codeDomesticPurchaseInitial);
+    const [info, setInfo] = useState(copyInit);
     const [totalRow, setTotalRow] = useState(0);
     const [mini, setMini] = useState(true);
 
 
     const onGridReady = async (params) => {
+        setLoading(true)
         gridRef.current = params.api;
         await searchOverseasCustomer({
             data: {
@@ -53,9 +40,9 @@ function OverseasCustomerRead({getPropertyId, getCopyPage}:any) {
                 "limit": -1
             }
         }).then(v => {
-
             params.api.applyTransaction({add: v.data});
             setTotalRow(v.pageInfo.totalRow)
+            setLoading(false)
         })
     };
 
@@ -70,6 +57,35 @@ function OverseasCustomerRead({getPropertyId, getCopyPage}:any) {
         })
     }
 
+    async function confirm() {
+        if (gridRef.current.getSelectedRows().length < 1) {
+            return message.error('삭제할 데이터를 선택해주세요.')
+        }
+        setLoading(true)
+
+        const list = gridRef.current.getSelectedRows()
+        const filterList = list.map(v => v.overseasCustomerId);
+
+        await getData.post('customer/deleteOverseasCustomers', {overseasCustomerIdList: filterList}).then(v => {
+            if (v.data.code === 1) {
+                searchInfo(true)
+                notificationAlert('success', '🗑️ 해외 고객사 삭제완료',
+                    <>
+                        <div>고객사 상호
+                            - {list[0].agencyName} {list.length > 1 ? ('외' + " " + (list.length - 1) + '개') : ''} 이(가)
+                            삭제되었습니다
+                        </div>
+                        <div>삭제일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                    },
+                )
+            } else {
+                message.error(v.data.message)
+            }
+            searchInfo(false)
+        })
+    }
 
     async function searchInfo(e) {
 
@@ -94,7 +110,8 @@ function OverseasCustomerRead({getPropertyId, getCopyPage}:any) {
     }
 
     function clearAll() {
-
+        setInfo(copyInit);
+        gridRef.current.deselectAll();
     }
 
     function moveRouter() {
@@ -108,73 +125,47 @@ function OverseasCustomerRead({getPropertyId, getCopyPage}:any) {
         }
     }
 
-    async function confirm() {
-        if (gridRef.current.getSelectedRows().length < 1) {
-            return message.error('삭제할 데이터를 선택해주세요.')
-        }
-
-        const selectedRows = gridRef.current.getSelectedRows();
-        const list = gridRef.current.getSelectedRows()
-        const filterList = list.map(v => v.overseasCustomerId);
-
-        setLoading(true)
-        await getData.post('customer/deleteOverseasCustomers', {
-            overseasCustomerIdList: filterList
-        }).then(v => {
-            if (v.data.code === 1) {
-                searchInfo(true)
-                notificationAlert('success', '🗑️해외고객사 삭제완료',
-                    <>
-                        <div>상호
-                            - {selectedRows[0]?.customerName} {selectedRows.length > 1 ? ('외' + " " + (selectedRows.length - 1) + '개') : ''} 이(가)
-                            삭제되었습니다
-                        </div>
-                        {/*<div>프로젝트 제목 - {selectedRows[0].projectTitle} `${selectedRows.length > 1 ? ('외' + (selectedRows.length - 1)) + '개' : ''}`가 삭제되었습니다 </div>*/}
-                        <div>삭제일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
-                    </>
-                    , null,
-                )
-            } else {
-                message.error(v.data.message)
-            }
-        })
-    }
-
-
-    return <>
+    return <Spin spinning={loading} tip={'해외 고객사 조회중...'}>
         <div style={{
             display: 'grid',
             gridTemplateRows: `${mini ? '120px' : '65px'} calc(100vh - ${mini ? 250 : 195}px)`,
             columnGap: 5
         }}>
             <MainCard title={'해외 고객사 조회'}
-                      list={[{name: '조회', func: searchInfo, type: 'primary'},
-                          {name: '초기화', func: clearAll, type: 'danger'},
-                          {name: '신규생성', func: moveRouter}]}
+                      // list={[{name: '조회', func: searchInfo, type: 'primary'},
+                      //     {name: '초기화', func: clearAll, type: 'danger'},
+                      //     {name: '신규생성', func: moveRouter}]}
+                      list={[{name: '신규생성', func: moveRouter}]}
                       mini={mini} setMini={setMini}>
 
 
-                {mini ? <div style={{display: 'flex', alignItems: 'center', padding: 10}}>
-                    {radioForm({
-                        title: '',
-                        id: 'searchType',
-                        onChange: onChange,
-                        data: info,
-                        list: [{value: 1, title: '코드'},
-                            {value: 2, title: '상호명'},
-                            {value: 3, title: 'item'},
-                            {value: 4, title: '국가'}]
-                    })}
+                {/*{mini ? <div style={{display: 'flex', alignItems: 'center', padding: 10}}>*/}
+                {mini ? <div style={{display: 'flex', alignItems: 'center'}}>
+                    {/*{radioForm({*/}
+                    {/*    title: '',*/}
+                    {/*    id: 'searchType',*/}
+                    {/*    onChange: onChange,*/}
+                    {/*    data: info,*/}
+                    {/*    list: [{value: 1, title: '코드'},*/}
+                    {/*        {value: 2, title: '상호명'},*/}
+                    {/*        {value: 3, title: 'item'},*/}
+                    {/*        {value: 4, title: '국가'}]*/}
+                    {/*})}*/}
 
-                    <div style={{width: 500, marginLeft: 20}}>
+                    {/*<div style={{width: 500, marginLeft: 20}}>*/}
+                    <div style={{width: 500, marginLeft: 10}}>
                         {inputForm({
-                            title: '',
+                            title: '검색어',
                             id: 'searchText',
                             onChange: onChange,
                             handleKeyPress: handleKeyPress,
                             data: info,
                             size: 'middle'
                         })}
+                    </div>
+                    <div style={{marginTop: 14, marginLeft: 20, width: 88, display: 'flex', justifyContent: 'space-between'}}>
+                        <Button type={'primary'} style={{fontSize: 11}} size={'small'} onClick={searchInfo}>조회</Button>
+                        <Button type={'primary'} danger style={{fontSize: 11}} size={'small'} onClick={clearAll}>초기화</Button>
                     </div>
 
                 </div> : <></>}
@@ -200,7 +191,7 @@ function OverseasCustomerRead({getPropertyId, getCopyPage}:any) {
                 funcButtons={['agPrint']}
             />
         </div>
-    </>
+    </Spin>
 }
 
 export default memo(OverseasCustomerRead, (prevProps, nextProps) => {

@@ -1,34 +1,26 @@
 import React, {memo, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
-import {wrapper} from "@/store/store";
-import initialServerRouter from "@/manage/function/initialServerRouter";
-import {setUserInfo} from "@/store/user/userSlice";
-import LayoutComponent from "@/component/LayoutComponent";
-
 import Button from "antd/lib/button";
-import {CopyOutlined, ExclamationCircleOutlined,} from "@ant-design/icons";
+import {ExclamationCircleOutlined,} from "@ant-design/icons";
 import message from "antd/lib/message";
-
 import {tableCodeDomesticPurchaseColumns,} from "@/utils/columnList";
 import TableGrid from "@/component/tableGrid";
 import _ from "lodash";
-import {codeDomesticAgencyWriteInitial} from "@/utils/initialList";
-import {inputForm, MainCard, selectBoxForm} from "@/utils/commonForm";
+import {codeDomesticPurchaseInitial} from "@/utils/initialList";
+import {inputForm, MainCard} from "@/utils/commonForm";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import Spin from "antd/lib/spin";
 import ReceiveComponent from "@/component/ReceiveComponent";
-import {deleteProjectList, searchDomesticAgency} from "@/utils/api/mainApi";
+import {searchDomesticAgency} from "@/utils/api/mainApi";
 import Popconfirm from "antd/lib/popconfirm";
 import moment from "moment/moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 
 
-
-
-function DomesticAgencyRead({getPropertyId, getCopyPage}:any) {
+function DomesticAgencyRead({getPropertyId, getCopyPage}: any) {
     const notificationAlert = useNotificationAlert();
     const gridRef = useRef(null);
-    const copyInit = _.cloneDeep(codeDomesticAgencyWriteInitial)
+    const copyInit = _.cloneDeep(codeDomesticPurchaseInitial)
 
     const [info, setInfo] = useState(copyInit);
     const [mini, setMini] = useState(true);
@@ -36,6 +28,7 @@ function DomesticAgencyRead({getPropertyId, getCopyPage}:any) {
     const [loading, setLoading] = useState(false);
 
     const onGridReady = async (params) => {
+        setLoading(true)
         gridRef.current = params.api;
         await searchDomesticAgency({
             data: {
@@ -47,6 +40,7 @@ function DomesticAgencyRead({getPropertyId, getCopyPage}:any) {
         }).then(v => {
             params.api.applyTransaction({add: v.data});
             setTotalRow(v.pageInfo.totalRow)
+            setLoading(false)
         })
     };
 
@@ -110,7 +104,6 @@ function DomesticAgencyRead({getPropertyId, getCopyPage}:any) {
     }
 
 
-
     async function confirm() {
         if (gridRef.current.getSelectedRows().length < 1) {
             return message.error('삭제할 데이터를 선택해주세요.')
@@ -122,30 +115,28 @@ function DomesticAgencyRead({getPropertyId, getCopyPage}:any) {
         const filterList = list.map(v => parseInt(v.agencyId));
 
 
-
-        await deleteProjectList({data: {agencyIdList: filterList}}).then(v => {
-            if (v.code === 1) {
+        await getData.post('agency/deleteAgencies', {agencyIdList: filterList}).then(v => {
+            if (v.data.code === 1) {
                 searchInfo(true)
-                notificationAlert('success', '🗑️국내매입처 삭제완료',
+                notificationAlert('success', '🗑️ 국내매입처 삭제완료',
                     <>
                         <div>매입처 상호
                             - {list[0].agencyName} {list.length > 1 ? ('외' + " " + (list.length - 1) + '개') : ''} 이(가)
                             삭제되었습니다
                         </div>
-                        {/*<div>프로젝트 제목 - {selectedRows[0].projectTitle} `${selectedRows.length > 1 ? ('외' + (selectedRows.length - 1)) + '개' : ''}`가 삭제되었습니다 </div>*/}
                         <div>삭제일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
                     , function () {
                     },
                 )
             } else {
-                message.error(v.message)
+                message.error(v.data.message)
             }
+            searchInfo(false)
         })
-
     }
 
-    return <Spin spinning={loading}>
+    return <Spin spinning={loading} tip={'국내 매입처 조회중...'}>
         <ReceiveComponent searchInfo={searchInfo}/>
         <>
 
@@ -155,22 +146,23 @@ function DomesticAgencyRead({getPropertyId, getCopyPage}:any) {
                 columnGap: 5
             }}>
                 <MainCard title={'국내 매입처 조회'}
-                          list={[{name: '조회', func: searchInfo, type: 'primary'},
-                              {name: '초기화', func: clearAll, type: 'danger'},
-                              {name: '신규생성', func: moveRouter}]}
+                    // list={[{name: '조회', func: searchInfo, type: 'primary'},
+                    //     {name: '초기화', func: clearAll, type: 'danger'},
+                    //     {name: '신규생성', func: moveRouter}]}
+                          list={[{name: '신규생성', func: moveRouter}]}
                           mini={mini} setMini={setMini}>
                     {mini ?
                         <div style={{display: 'flex', alignItems: 'center'}}>
 
-                            <div style={{marginTop: -10, width: 150}}>
-                                {selectBoxForm({
-                                    title: '유효기간', id: 'searchType', list: [
-                                        {value: 1, label: '코드'},
-                                        {value: 2, label: '상호명'},
-                                        {value: 3, label: 'Maker'}
-                                    ], onChange: onChange, data: info
-                                })}
-                            </div>
+                            {/*<div style={{marginTop: -10, width: 150}}>*/}
+                            {/*    {selectBoxForm({*/}
+                            {/*        title: '유효기간', id: 'searchType', list: [*/}
+                            {/*            {value: 1, label: '코드'},*/}
+                            {/*            {value: 2, label: '상호명'},*/}
+                            {/*            {value: 3, label: 'Maker'}*/}
+                            {/*        ], onChange: onChange, data: info*/}
+                            {/*    })}*/}
+                            {/*</div>*/}
                             <div style={{width: 500, marginLeft: 10}}>
                                 {inputForm({
                                     title: '검색어',
@@ -180,6 +172,18 @@ function DomesticAgencyRead({getPropertyId, getCopyPage}:any) {
                                     size: 'small',
                                     handleKeyPress: handleKeyPress
                                 })}
+                            </div>
+                            <div style={{
+                                marginTop: 14,
+                                marginLeft: 20,
+                                width: 88,
+                                display: 'flex',
+                                justifyContent: 'space-between'
+                            }}>
+                                <Button type={'primary'} style={{fontSize: 11}} size={'small'}
+                                        onClick={searchInfo}>조회</Button>
+                                <Button type={'primary'} danger style={{fontSize: 11}} size={'small'}
+                                        onClick={clearAll}>초기화</Button>
                             </div>
                         </div>
                         : <></>}
@@ -209,6 +213,7 @@ function DomesticAgencyRead({getPropertyId, getCopyPage}:any) {
         </>
     </Spin>
 }
+
 export default memo(DomesticAgencyRead, (prevProps, nextProps) => {
     return _.isEqual(prevProps, nextProps);
 });
