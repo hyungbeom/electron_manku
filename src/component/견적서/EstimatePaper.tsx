@@ -159,7 +159,7 @@ const EstimatePaper = ({
                          onClick={() => {
                              setToggle(true);
                          }}>
-                        <span>{!isNaN(info.net ) ? '₩' : ''}</span>
+                        <span>{!isNaN(info.net) ? '₩' : ''}</span>
                         <span className={'netPrice'}>{amountFormat(info.net)}</span>
                     </div>
 
@@ -167,7 +167,7 @@ const EstimatePaper = ({
 
             </td>
             <td>
-            <div style={{
+                <div style={{
                     fontSize: 14,
                     display: 'flex',
                     justifyContent: 'space-between',
@@ -176,14 +176,16 @@ const EstimatePaper = ({
                      onClick={() => {
                          setToggle(true);
                      }}>
-                    <span>{!isNaN(info.net * info.quantity) ?'₩' : ''}</span>
-                    <span className={'total'}>{!isNaN(info.net * info.quantity) ?  amountFormat(info.net * info.quantity) : ''}</span>
+                    <span>{!isNaN(info.net * info.quantity) ? '₩' : ''}</span>
+                    <span
+                        className={'total'}>{!isNaN(info.net * info.quantity) ? amountFormat(info.net * info.quantity) : ''}</span>
                 </div>
 
             </td>
 
         </>
     }
+
     const [topInfoData, setTopInfoData] = useState<any>({})
 
 
@@ -200,7 +202,6 @@ const EstimatePaper = ({
         // 메모리 해제
         URL.revokeObjectURL(url);
     }
-
 
 
     function getTopInfoData(e) {
@@ -220,7 +221,24 @@ const EstimatePaper = ({
                 // printWindow.print();
             };
         }
-        }
+    }
+
+
+    function MakerInput({value}){
+        const [info, setInfo] = useState(value);
+
+       return  <Input value={info} style={{border : 'none'}}
+                      onChange={e=>{
+                          setInfo(e.target.value)
+                      }}
+               onBlur={e=>{
+                   setTopInfoData(v =>{
+                       return {...v, maker : e.target.value}
+                   })
+               }}
+        />
+    }
+
     return (
         <div>
 
@@ -296,13 +314,7 @@ const EstimatePaper = ({
                             textAlign: 'left',
                             paddingLeft: 10
                         }}>
-                            <Input defaultValue={topInfoData.maker} style={{border : 'none'}}
-                            onBlur={e=>{
-                                setTopInfoData(v =>{
-                                    return {...v, maker : e.target.value}
-                                })
-                            }}
-                            />
+                            <MakerInput value={topInfoData?.maker}/>
                         </th>
                         <th></th>
                         <th></th>

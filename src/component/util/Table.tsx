@@ -42,7 +42,6 @@ const Table = forwardRef(({
         forceRender: () => hotRef.current?.hotInstance?.render(), // 강제 렌더링
     }));
 
-    const hyperformulaInstance = HyperFormula.buildEmpty(); // HyperFormula 엔진 생성
     const tableContainerRef = useRef(null);
 
     const [tableData, setTableData] = useState([])
@@ -99,6 +98,11 @@ const Table = forwardRef(({
     };
 
 
+    /**
+     * @description cell의 입력 데이터가 포커스아웃이 되는순간 이벤트를 캐치하는 ㄴ함수
+     * @param changes
+     * @param source
+     */
     function afterChange(changes, source) {
         if (source === "edit" || source === "Checkbox") {
             changes.forEach((change, index) => {

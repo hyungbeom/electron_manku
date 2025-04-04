@@ -7,21 +7,12 @@ import Tree from "antd/lib/tree/Tree";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import {introMenulist, treeData} from "@/component/util/MenuData";
-import {useAppSelector} from "@/utils/common/function/reduxHooks";
+import {useAppSelector} from "@/utils/common/function/reduxHooks";``
 import {useRouter} from "next/router";
-import {tabComponents} from "@/utils/commonForm";
+import {tabComponents, tabShortcutMap} from "@/utils/commonForm";
 
 
-const tabShortcutMap = {
-    '1': 'rfq_write',
-    '2': 'rfq_read',
-    '3': 'estimate_write',
-    '4': 'estimate_read',
-    '5': 'order_write',
-    '6': 'order_read',
 
-    // 원하는 키와 컴포넌트 키 연결
-};
 
 export default function Main() {
     const modelRef = useRef(Model.fromJson({
@@ -55,7 +46,6 @@ export default function Main() {
     }, [activeTabId]);
 
 
-
     const [updateKey, setUpdateKey] = useState({})
     const [copyPageInfo, setCopyPageInfo] = useState({})
 
@@ -67,15 +57,17 @@ export default function Main() {
     const onSelect = useCallback((selectedKeys) => {
         const selectedKey = selectedKeys[0];
 
-
+        //활성화 된 탭 찾기
         const existingTabs = modelRef.current.getRoot().getChildren().flatMap(tabset =>
             tabset.getChildren().map((tab: any) => tab.getComponent())
         );
+        console.log(existingTabs,'existingTabs:')
 
         if (!copyPageInfo[selectedKey]) {
             setCopyPageInfo(prev => ({...prev, [selectedKey]: {}}));
         }
 
+        //중복처리
         if (existingTabs.includes(selectedKey)) {
             const model = modelRef.current;
 
@@ -86,6 +78,7 @@ export default function Main() {
             }
             return;
         } else {
+            //추가처리
             if (!selectedKey) {
                 return false;
             }
@@ -104,6 +97,10 @@ export default function Main() {
         }
     }, []);
 
+
+
+
+    //활성화탭 단축키
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.ctrlKey && tabShortcutMap[e.key]) {
@@ -116,6 +113,7 @@ export default function Main() {
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
     }, [onSelect]);
+
 
     const getPropertyId = useCallback((key, id) => {
         setUpdateKey(prev => ({
@@ -135,23 +133,21 @@ export default function Main() {
 
 
     const factory = (node: TabNode) => {
-
         const componentKey = node.getComponent();
         return <div style={{padding: '0px 5px 0px 5px'}}
                     className={`tab-content ${node.getId() === activeTabId ? "active-tab" : ""}`}>
-
             {React.cloneElement(tabComponents[componentKey].component, {
                 getPropertyId: getPropertyId,
                 layoutRef: layoutRef,
                 getCopyPage: getCopyPage,
                 copyPageInfo: copyPageInfo[componentKey],
                 updateKey: updateKey
-
             })}
         </div>;
     };
 
 
+    // 탭이(CURD)변화하는 순간을 캐치 하기위함
     const onLayoutChange = (action: any) => {
         modelRef.current = action;
         const activeTab = modelRef.current.getActiveTabset()?.getSelectedNode();
@@ -188,6 +184,7 @@ export default function Main() {
             ),
             children: node.children ? transformTreeData(node.children) : undefined,
         }));
+
     return (
         <LayoutComponent>
             <div style={{display: "grid", gridTemplateColumns: "205px auto"}}>

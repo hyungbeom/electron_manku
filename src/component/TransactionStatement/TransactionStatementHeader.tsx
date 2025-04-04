@@ -10,6 +10,7 @@ import TextArea from "antd/lib/input/TextArea";
 import InputNumber from "antd/lib/input-number";
 import {amountFormat} from "@/utils/columnList";
 import Button from "antd/lib/button";
+import Checkbox from "antd/lib/checkbox/Checkbox";
 
 const cellStyle = {
 
@@ -41,9 +42,9 @@ function sumLengthsUpToIndex(array, index) {
     return totalLength;
 }
 
-export const Header = () => <>
+export const Header = ({title}) => <>
     <div style={{textAlign: 'center', fontSize: 30, fontWeight: 'bold'}}>거 래 명 세 표 <span
-        style={{fontSize: 14}}>(공급자용)</span></div>
+        style={{fontSize: 14}}>({title})</span></div>
     <div style={{
         textAlign: 'center',
         fontSize: 14,
@@ -58,7 +59,7 @@ export const Header = () => <>
     </div>
 </>
 
-function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRef, pdfSubRef, tableRef}: any) {
+function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRef, tableRef}: any) {
 
     const ref1 = useRef<any>()
     const ref2 = useRef<any>()
@@ -290,130 +291,133 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRe
         <Modal
             title={<div style={{display: 'flex', justifyContent: 'space-between', padding: '0px 30px'}}>
                 <span>거래명세표 출력</span>
-                <span>
+                <div>
                        <Button style={{fontSize: 11, marginRight: 10}} size={'small'}
-                               onClick={() => commonManage.pdfDown(pdfRef, pdfSubRef, false, 'test')}>다운로드</Button>
+                               onClick={() => commonManage.pdfDown(pdfRef,  false, 'test')}>다운로드</Button>
                        <Button style={{fontSize: 11}} size={'small'}
-                               onClick={() => commonManage.pdfDown(pdfRef, pdfSubRef, true, 'test')}>인쇄</Button>
-                </span>
+                               onClick={() => commonManage.pdfDown(pdfRef,  true, 'test')}>인쇄</Button>
+                </div>
             </div>}
             width={1100} open={isModalOpen?.event1}
             onCancel={() => setIsModalOpen({event1: false, event2: false})}
-            onOk={() => setIsModalOpen({event1: false, event2: false})}
-        >
+            onOk={() => setIsModalOpen({event1: false, event2: false})}>
 
+            <div ref={pdfRef}>
 
-            <div ref={pdfRef} style={{
+                <div style={{
 
-                width: '1000px',  // A4 가로
-                height: '1354px',  // A4 세로
-                // aspectRatio: '1 / 1.414',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                padding: '20px 20px'
-            }}>
+                    width: '1000px',  // A4 가로
+                    height: '1354px',  // A4 세로
+                    // aspectRatio: '1 / 1.414',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    padding: '20px 20px'
+                }}>
 
-                <div style={{border: '1px solid lightGray', borderBottom: 'none'}}>
-                    <Header/>
-                </div>
-                <div style={{display: 'flex', justifyContent: 'center'}}>
-                    <div style={{
-                        position: 'relative',
-                        display: 'grid',
-                        gridTemplateColumns: '40px auto',
-                        fontSize: 12,
-                        borderLeft: '1px solid lightGray',
-                        borderTop: '1px solid lightGray',
-                        borderBottom: '1px solid lightGray'
-                    }}>
-                        <div style={{width: 25, margin: "auto", paddingLeft: 7, fontWeight: 700}}>
-                            공급자
-                        </div>
-                        <table style={{borderLeft: '1px solid lightGray', width: 440}}>
-                            <thead>
-                            <tr>
-                                <th style={{...headerStyle, borderTop: 'none'}}>등록번호</th>
-                                <th style={{...cellStyle, borderTop: 'none'}} colSpan={3}>714-87-01453</th>
-                            </tr>
-                            </thead>
-                            <thead>
-                            <tr>
-                                <th style={headerStyle}>상호</th>
-                                <th style={cellStyle}>주식회사 만쿠무역</th>
-                                <th style={headerStyle}>대표자</th>
-                                <th style={cellStyle}>김민국 <img src={'/manku_stamp_only.png'} width={30} alt=""
-                                                               style={{marginLeft: -10}}/></th>
-                            </tr>
-                            </thead>
-                            <thead>
-
-                            <tr>
-                                <th style={headerStyle}>주소</th>
-                                <th style={cellStyle} colSpan={3}>
-                                    <div>서울 송파구 충민로 52 가든파이브웍스</div>
-                                    <div>B동 2층 211호, 212호</div>
-                                </th>
-                            </tr>
-                            </thead>
-
-                            <thead>
-                            <tr>
-                                <th style={headerStyle}>업태</th>
-                                <th style={cellStyle}>도매, 도소매</th>
-                                <th style={headerStyle}>종목</th>
-                                <th style={cellStyle}>무역, 기계자재</th>
-                            </tr>
-                            </thead>
-                            <thead>
-                            <tr>
-                                <th style={{...headerStyle, borderBottom: 'none'}}>담당자</th>
-                                <th style={{...cellStyle, borderBottom: 'none'}}>신단비</th>
-                                <th style={{...headerStyle, borderBottom: 'none'}}>연락처</th>
-                                <th style={{...cellStyle, borderBottom: 'none'}}>02-465-7838</th>
-                            </tr>
-                            </thead>
-                        </table>
+                    <div style={{border: '1px solid lightGray', borderBottom: 'none'}}>
+                        <Header title={'공급자용'}/>
                     </div>
-                    <div style={{
-                        position: 'relative',
-                        display: 'grid',
-                        gridTemplateColumns: '40px auto',
-                        fontSize: 12,
-                        borderTop: '1px solid lightGray',
-                        borderBottom: '1px solid lightGray',
-                    }}>
-                        <div style={{width: 25, margin: "auto", paddingLeft: 7, fontWeight: 700}}>공급받는자</div>
+                    <div style={{display: 'flex', justifyContent: 'center'}}>
+                        <div style={{
+                            position: 'relative',
+                            display: 'grid',
+                            gridTemplateColumns: '40px auto',
+                            fontSize: 12,
+                            borderLeft: '1px solid lightGray',
+                            borderTop: '1px solid lightGray',
+                            borderBottom: '1px solid lightGray'
+                        }}>
+                            <div style={{width: 25, margin: "auto", paddingLeft: 7, fontWeight: 700}}>
+                                공급자
+                            </div>
+                            <table style={{borderLeft: '1px solid lightGray', width: 440}}>
+                                <thead>
+                                <tr>
+                                    <th style={{...headerStyle, borderTop: 'none'}}>등록번호</th>
+                                    <th style={{...cellStyle, borderTop: 'none'}} colSpan={3}>714-87-01453</th>
+                                </tr>
+                                </thead>
+                                <thead>
+                                <tr>
+                                    <th style={headerStyle}>상호</th>
+                                    <th style={cellStyle}>주식회사 만쿠무역</th>
+                                    <th style={headerStyle}>대표자</th>
+                                    <th style={cellStyle}>김민국 <img src={'/manku_stamp_only.png'} width={30} alt=""
+                                                                   style={{marginLeft: -10}}/></th>
+                                </tr>
+                                </thead>
+                                <thead>
 
-                        <table style={{borderLeft: '1px solid lightGray', width: 438}}>
-                            <thead>
-                            <tr>
-                                <th style={{...headerStyle, borderTop: 'none'}}>등록번호</th>
-                                <th style={{...cellStyle, borderTop: 'none'}} colSpan={3}>
-                                    <input style={{border: 'none', textAlign: 'center', fontSize: 12, fontWeight: 700}}
-                                           defaultValue={domesticInfo?.businessRegistrationNumber}/>
-                                </th>
-                            </tr>
-                            </thead>
+                                <tr>
+                                    <th style={headerStyle}>주소</th>
+                                    <th style={cellStyle} colSpan={3}>
+                                        <div>서울 송파구 충민로 52 가든파이브웍스</div>
+                                        <div>B동 2층 211호, 212호</div>
+                                    </th>
+                                </tr>
+                                </thead>
 
-                            <thead>
-                            <tr>
-                                <th style={headerStyle}>상호</th>
-                                <th style={cellStyle}>
-                                    <input style={{border: 'none', textAlign: 'center', fontSize: 12, fontWeight: 700}}
-                                           defaultValue={domesticInfo?.customerName}/></th>
-                                <th style={headerStyle}>대표자</th>
-                                <th style={cellStyle}>
-                                    <input style={{border: 'none', textAlign: 'center', fontSize: 12, fontWeight: 700}}
-                                           defaultValue={domesticInfo?.representative}/></th>
-                            </tr>
-                            </thead>
+                                <thead>
+                                <tr>
+                                    <th style={headerStyle}>업태</th>
+                                    <th style={cellStyle}>도매, 도소매</th>
+                                    <th style={headerStyle}>종목</th>
+                                    <th style={cellStyle}>무역, 기계자재</th>
+                                </tr>
+                                </thead>
+                                <thead>
+                                <tr>
+                                    <th style={{...headerStyle, borderBottom: 'none'}}>담당자</th>
+                                    <th style={{...cellStyle, borderBottom: 'none'}}>신단비</th>
+                                    <th style={{...headerStyle, borderBottom: 'none'}}>연락처</th>
+                                    <th style={{...cellStyle, borderBottom: 'none'}}>02-465-7838</th>
+                                </tr>
+                                </thead>
+                            </table>
+                        </div>
+                        <div style={{
+                            position: 'relative',
+                            display: 'grid',
+                            gridTemplateColumns: '40px auto',
+                            fontSize: 12,
+                            borderTop: '1px solid lightGray',
+                            borderBottom: '1px solid lightGray',
+                        }}>
+                            <div style={{width: 25, margin: "auto", paddingLeft: 7, fontWeight: 700}}>공급받는자</div>
 
-                            <thead>
-                            <tr>
-                                <th style={headerStyle}>주소</th>
-                                <th style={cellStyle} colSpan={3}>
-                                    <div>
+                            <table style={{borderLeft: '1px solid lightGray', width: 438}}>
+                                <thead>
+                                <tr>
+                                    <th style={{...headerStyle, borderTop: 'none'}}>등록번호</th>
+                                    <th style={{...cellStyle, borderTop: 'none'}} colSpan={3}>
+                                        <input
+                                            style={{border: 'none', textAlign: 'center', fontSize: 12, fontWeight: 700}}
+                                            defaultValue={domesticInfo?.businessRegistrationNumber}/>
+                                    </th>
+                                </tr>
+                                </thead>
+
+                                <thead>
+                                <tr>
+                                    <th style={headerStyle}>상호</th>
+                                    <th style={cellStyle}>
+                                        <input
+                                            style={{border: 'none', textAlign: 'center', fontSize: 12, fontWeight: 700}}
+                                            defaultValue={domesticInfo?.customerName}/></th>
+                                    <th style={headerStyle}>대표자</th>
+                                    <th style={cellStyle}>
+                                        <input
+                                            style={{border: 'none', textAlign: 'center', fontSize: 12, fontWeight: 700}}
+                                            defaultValue={domesticInfo?.representative}/></th>
+                                </tr>
+                                </thead>
+
+                                <thead>
+                                <tr>
+                                    <th style={headerStyle}>주소</th>
+                                    <th style={cellStyle} colSpan={3}>
+                                        <div>
                                     <textarea style={{
                                         resize: 'none',
                                         border: 'none',
@@ -422,127 +426,126 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRe
                                         fontWeight: 700
                                     }} defaultValue={domesticInfo?.address}/></div>
 
-                                </th>
-                            </tr>
-                            </thead>
+                                    </th>
+                                </tr>
+                                </thead>
 
-                            <thead>
-                            <tr>
-                                <th style={headerStyle}>업태</th>
-                                <th style={cellStyle}>
-                                    <input style={{border: 'none', textAlign: 'center', fontSize: 12, fontWeight: 700}}
-                                           defaultValue={domesticInfo?.businessType}/></th>
-                                <th style={headerStyle}>종목</th>
-                                <th style={cellStyle}>
-                                    <TextArea autoSize={{minRows: 1, maxRows: 6}} style={{
-                                        resize: 'none',
-                                        border: 'none',
-                                        textAlign: 'center',
-                                        fontSize: 12,
-                                        fontWeight: 700
-                                    }}
-                                              value={domesticInfo?.businessItem}/></th>
+                                <thead>
+                                <tr>
+                                    <th style={headerStyle}>업태</th>
+                                    <th style={cellStyle}>
+                                        <input
+                                            style={{border: 'none', textAlign: 'center', fontSize: 12, fontWeight: 700}}
+                                            defaultValue={domesticInfo?.businessType}/></th>
+                                    <th style={headerStyle}>종목</th>
+                                    <th style={cellStyle}>
+                                        <TextArea autoSize={{minRows: 1, maxRows: 6}} style={{
+                                            resize: 'none',
+                                            border: 'none',
+                                            textAlign: 'center',
+                                            fontSize: 12,
+                                            fontWeight: 700
+                                        }}
+                                                  value={domesticInfo?.businessItem}/></th>
 
-                            </tr>
-                            </thead>
+                                </tr>
+                                </thead>
 
-                            <thead>
-                            <tr>
-                                <th style={{...headerStyle, borderBottom: 'none'}}>담당자</th>
-                                <th style={{...cellStyle, borderBottom: 'none'}}><input
-                                    style={{border: 'none', textAlign: 'center', fontSize: 12, fontWeight: 700}}
-                                    defaultValue={domesticInfo?.representative}/></th>
-                                <th style={{...headerStyle, borderBottom: 'none'}}>연락처</th>
-                                <th style={{...cellStyle, borderBottom: 'none'}}><input
-                                    style={{border: 'none', textAlign: 'center', fontSize: 12, fontWeight: 700}}
-                                    defaultValue={domesticInfo?.customerTel}/></th>
-                            </tr>
-                            </thead>
-                        </table>
+                                <thead>
+                                <tr>
+                                    <th style={{...headerStyle, borderBottom: 'none'}}>담당자</th>
+                                    <th style={{...cellStyle, borderBottom: 'none'}}><input
+                                        style={{border: 'none', textAlign: 'center', fontSize: 12, fontWeight: 700}}
+                                        defaultValue={domesticInfo?.representative}/></th>
+                                    <th style={{...headerStyle, borderBottom: 'none'}}>연락처</th>
+                                    <th style={{...cellStyle, borderBottom: 'none'}}><input
+                                        style={{border: 'none', textAlign: 'center', fontSize: 12, fontWeight: 700}}
+                                        defaultValue={domesticInfo?.customerTel}/></th>
+                                </tr>
+                                </thead>
+                            </table>
 
+                        </div>
                     </div>
-                </div>
-
-                <table style={{
-                    width: '100%',
-                    borderCollapse: 'collapse',
-                    textAlign: 'center', fontSize: 12
-
-                }}>
-                    <thead>
-                    <tr style={{backgroundColor: '#ebf6f7', fontWeight: 'bold', height: 35}}>
-                        <th style={{width: 40, borderTop: 'none'}}>NO</th>
-                        <th style={{width: '9%', borderTop: 'none'}}>날짜</th>
-                        <th style={{width: 300, borderLeft: '1px solid lightGray', borderTop: 'none'}}>품목</th>
-                        <th style={{width: '5%', borderLeft: '1px solid lightGray', borderTop: 'none'}}>수량</th>
-                        <th style={{width: '12%', borderLeft: '1px solid lightGray', borderTop: 'none'}}>단가</th>
-                        <th style={{width: '15%', borderLeft: '1px solid lightGray', borderTop: 'none'}}>공급가액</th>
-                        <th style={{width: '12%', borderLeft: '1px solid lightGray', borderTop: 'none'}}>세액</th>
-                        <th style={{width: '12%', borderLeft: '1px solid lightGray', borderTop: 'none'}}>비고</th>
-                    </tr>
-                    </thead>
-
-                    <thead>
-
-                    {tableData[0]?.map((v, i) =>
-
-                        <tr style={{height: 35}}>
-                            <td style={{fontWeight: 600}}>{i + 1}</td>
-                            <td style={{fontWeight: 600}}>
-                                <input style={{border: 'none'}} defaultValue={moment().format('YYYY-MM-DD')}/>
-                            </td>
-                            <td style={{
-                                whiteSpace: 'pre-line',
-                                lineHeight: 2.1,
-                                textAlign: 'left',
-                                paddingLeft: 5
-                            }}>
-
-                                <TextArea autoSize={true} style={{border: 'none', fontSize: 12}}
-                                          defaultValue={v.model}/>
-
-                            </td>
-                            <NumberInputForm value={v}/>
-
-                            <td style={{fontWeight: 600}}>
-                                <TextArea autoSize={true} style={{border: 'none', fontSize: 12}}/>
-                            </td>
-                        </tr>
-                    )}
-                    </thead>
-                </table>
-                {tableData.length > 1 ? <></> :
 
                     <table style={{
                         width: '100%',
                         borderCollapse: 'collapse',
-                        textAlign: 'center'
+                        textAlign: 'center', fontSize: 12
+
                     }}>
                         <thead>
-                        <tr style={{height: 35, fontWeight: 100}}>
-
-                            <th colSpan={2} style={{fontWeight: 600, borderTop: 'none'}}>TOTAL</th>
-                            <th style={{width: '5%', textAlign: 'right', paddingRight: 8, borderTop: 'none'}}
-                                className={'total_qt'}></th>
-                            <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop: 'none'}}
-                                className={'total_netPrice'}></th>
-                            <th style={{width: '15%', textAlign: 'right', paddingRight: 10, borderTop: 'none'}}
-                                className={'total_amount'}></th>
-                            <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop: 'none'}}
-                                className={'total_tax'}></th>
-                            <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop: 'none'}}
-                                className={'remark'}></th>
+                        <tr style={{backgroundColor: '#ebf6f7', fontWeight: 'bold', height: 35}}>
+                            <th style={{width: 40, borderTop: 'none'}}>NO</th>
+                            <th style={{width: '9%', borderTop: 'none'}}>날짜</th>
+                            <th style={{width: 300, borderLeft: '1px solid lightGray', borderTop: 'none'}}>품목</th>
+                            <th style={{width: '5%', borderLeft: '1px solid lightGray', borderTop: 'none'}}>수량</th>
+                            <th style={{width: '12%', borderLeft: '1px solid lightGray', borderTop: 'none'}}>단가</th>
+                            <th style={{width: '15%', borderLeft: '1px solid lightGray', borderTop: 'none'}}>공급가액</th>
+                            <th style={{width: '12%', borderLeft: '1px solid lightGray', borderTop: 'none'}}>세액</th>
+                            <th style={{width: '12%', borderLeft: '1px solid lightGray', borderTop: 'none'}}>비고</th>
                         </tr>
                         </thead>
+
+                        <thead>
+
+                        {tableData[0]?.map((v, i) =>
+
+                            <tr style={{height: 35}}>
+                                <td style={{fontWeight: 600}}>{i + 1}</td>
+                                <td style={{fontWeight: 600}}>
+                                    <input style={{border: 'none'}} defaultValue={moment().format('YYYY-MM-DD')}/>
+                                </td>
+                                <td style={{
+                                    whiteSpace: 'pre-line',
+                                    lineHeight: 2.1,
+                                    textAlign: 'left',
+                                    paddingLeft: 5
+                                }}>
+
+                                    <TextArea autoSize={true} style={{border: 'none', fontSize: 12}}
+                                              defaultValue={v.model}/>
+
+                                </td>
+                                <NumberInputForm value={v}/>
+
+                                <td style={{fontWeight: 600}}>
+                                    <TextArea autoSize={true} style={{border: 'none', fontSize: 12}}/>
+                                </td>
+                            </tr>
+                        )}
+                        </thead>
                     </table>
-                }
-                <div style={{flexGrow: 1}}/>
+                    {tableData.length > 1 ? <></> :
 
-                <div style={{textAlign: 'center'}}>- 1 -</div>
-            </div>
+                        <table style={{
+                            width: '100%',
+                            borderCollapse: 'collapse',
+                            textAlign: 'center'
+                        }}>
+                            <thead>
+                            <tr style={{height: 35, fontWeight: 100}}>
 
+                                <th colSpan={2} style={{fontWeight: 600, borderTop: 'none'}}>TOTAL</th>
+                                <th style={{width: '5%', textAlign: 'right', paddingRight: 8, borderTop: 'none'}}
+                                    className={'total_qt'}></th>
+                                <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop: 'none'}}
+                                    className={'total_netPrice'}></th>
+                                <th style={{width: '15%', textAlign: 'right', paddingRight: 10, borderTop: 'none'}}
+                                    className={'total_amount'}></th>
+                                <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop: 'none'}}
+                                    className={'total_tax'}></th>
+                                <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop: 'none'}}
+                                    className={'remark'}></th>
+                            </tr>
+                            </thead>
+                        </table>
+                    }
+                    <div style={{flexGrow: 1}}/>
 
-            <div ref={pdfSubRef}>
+                    <div style={{textAlign: 'center'}}>- 1 -</div>
+                </div>
+
 
                 {tableData.map((v, i) => {
 
@@ -570,14 +573,363 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRe
                         }}>
                             <thead>
                             <tr style={{backgroundColor: '#ebf6f7', fontWeight: 'bold', height: 35}}>
-                                <th style={{width: 80}}>NO</th>
-                                <th style={{width: '11%'}}>날짜</th>
-                                <th style={{width: 300, borderLeft: '1px solid lightGray'}}>품목</th>
-                                <th style={{width: '5%', borderLeft: '1px solid lightGray'}}>수량</th>
-                                <th style={{width: '12%', borderLeft: '1px solid lightGray'}}>단가</th>
-                                <th style={{width: '15%', borderLeft: '1px solid lightGray'}}>공급가액</th>
-                                <th style={{width: '12%', borderLeft: '1px solid lightGray'}}>세액</th>
-                                <th style={{width: '12%', borderLeft: '1px solid lightGray'}}>비고</th>
+                                <th style={{width: 40, borderTop: 'none'}}>NO</th>
+                                <th style={{width: '9%', borderTop: 'none'}}>날짜</th>
+                                <th style={{width: 300, borderLeft: '1px solid lightGray', borderTop: 'none'}}>품목</th>
+                                <th style={{width: '5%', borderLeft: '1px solid lightGray', borderTop: 'none'}}>수량</th>
+                                <th style={{width: '12%', borderLeft: '1px solid lightGray', borderTop: 'none'}}>단가</th>
+                                <th style={{
+                                    width: '15%',
+                                    borderLeft: '1px solid lightGray',
+                                    borderTop: 'none'
+                                }}>공급가액
+                                </th>
+                                <th style={{width: '12%', borderLeft: '1px solid lightGray', borderTop: 'none'}}>세액</th>
+                                <th style={{width: '12%', borderLeft: '1px solid lightGray', borderTop: 'none'}}>비고</th>
+                            </tr>
+
+                            {v.map((src, idx) => {
+                                return <tr style={{height: 35}}>
+                                    <td style={{fontWeight: 600}}>{count + idx + 1}</td>
+                                    <td style={{fontWeight: 600}}>
+                                        <input style={{border: 'none'}} defaultValue={moment().format('YYYY-MM-DD')}/>
+                                    </td>
+                                    <td style={{
+                                        whiteSpace: 'pre-line',
+                                        lineHeight: 2.1,
+                                        textAlign: 'left',
+                                        paddingLeft: 5
+                                    }}>
+
+                                        <TextArea autoSize={true} style={{border: 'none', fontSize: 12}}
+                                                  defaultValue={src.model}/>
+
+                                    </td>
+                                    <NumberInputForm value={src}/>
+
+                                    <td style={{fontWeight: 600}}>
+                                        <TextArea autoSize={true} style={{border: 'none'}}/>
+                                    </td>
+                                </tr>
+                            })}
+                            </thead>
+                        </table>
+                        <div style={{flexGrow: 1}}/>
+                        {tableData.length - 1 === i ? <table style={{
+                                width: '100%',
+                                borderCollapse: 'collapse',
+                                margin: '20px 0',
+                                textAlign: 'center',
+                                border: '1px solid lightGray',
+                            }}>
+                                <thead>
+
+                                <tr style={{height: 35, fontWeight: 100}} ref={ref2}>
+
+                                    <th colSpan={2} style={{fontWeight: 600}}>TOTAL</th>
+                                    <th style={{width: '5%', textAlign: 'right', paddingRight: 8}}
+                                        className={'total_qt'}></th>
+                                    <th style={{width: '12%', textAlign: 'right', paddingRight: 10}}
+                                        className={'total_netPrice'}></th>
+                                    <th style={{width: '15%', textAlign: 'right', paddingRight: 10}}
+                                        className={'total_amount'}></th>
+                                    <th style={{width: '12%', textAlign: 'right', paddingRight: 10}}
+                                        className={'total_tax'}></th>
+                                    <th style={{width: '12%', textAlign: 'right', paddingRight: 10}}
+                                        className={'remark'}></th>
+                                </tr>
+                                </thead>
+                            </table>
+                            : <></>}
+
+                        <div style={{textAlign: 'center'}}>- {i + 1} -</div>
+                    </div>
+
+                })}
+
+
+                <div style={{
+
+                    width: '1000px',  // A4 가로
+                    height: '1354px',  // A4 세로
+                    // aspectRatio: '1 / 1.414',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    padding: '20px 20px'
+                }}>
+
+                    <div style={{border: '1px solid lightGray', borderBottom: 'none'}}>
+                        <Header title={'공급받는자용'}/>
+                    </div>
+                    <div style={{display: 'flex', justifyContent: 'center'}}>
+                        <div style={{
+                            position: 'relative',
+                            display: 'grid',
+                            gridTemplateColumns: '40px auto',
+                            fontSize: 12,
+                            borderLeft: '1px solid lightGray',
+                            borderTop: '1px solid lightGray',
+                            borderBottom: '1px solid lightGray'
+                        }}>
+                            <div style={{width: 25, margin: "auto", paddingLeft: 7, fontWeight: 700}}>
+                                공급자
+                            </div>
+                            <table style={{borderLeft: '1px solid lightGray', width: 440}}>
+                                <thead>
+                                <tr>
+                                    <th style={{...headerStyle, borderTop: 'none'}}>등록번호</th>
+                                    <th style={{...cellStyle, borderTop: 'none'}} colSpan={3}>714-87-01453</th>
+                                </tr>
+                                </thead>
+                                <thead>
+                                <tr>
+                                    <th style={headerStyle}>상호</th>
+                                    <th style={cellStyle}>주식회사 만쿠무역</th>
+                                    <th style={headerStyle}>대표자</th>
+                                    <th style={cellStyle}>김민국 <img src={'/manku_stamp_only.png'} width={30} alt=""
+                                                                   style={{marginLeft: -10}}/></th>
+                                </tr>
+                                </thead>
+                                <thead>
+
+                                <tr>
+                                    <th style={headerStyle}>주소</th>
+                                    <th style={cellStyle} colSpan={3}>
+                                        <div>서울 송파구 충민로 52 가든파이브웍스</div>
+                                        <div>B동 2층 211호, 212호</div>
+                                    </th>
+                                </tr>
+                                </thead>
+
+                                <thead>
+                                <tr>
+                                    <th style={headerStyle}>업태</th>
+                                    <th style={cellStyle}>도매, 도소매</th>
+                                    <th style={headerStyle}>종목</th>
+                                    <th style={cellStyle}>무역, 기계자재</th>
+                                </tr>
+                                </thead>
+                                <thead>
+                                <tr>
+                                    <th style={{...headerStyle, borderBottom: 'none'}}>담당자</th>
+                                    <th style={{...cellStyle, borderBottom: 'none'}}>신단비</th>
+                                    <th style={{...headerStyle, borderBottom: 'none'}}>연락처</th>
+                                    <th style={{...cellStyle, borderBottom: 'none'}}>02-465-7838</th>
+                                </tr>
+                                </thead>
+                            </table>
+                        </div>
+                        <div style={{
+                            position: 'relative',
+                            display: 'grid',
+                            gridTemplateColumns: '40px auto',
+                            fontSize: 12,
+                            borderTop: '1px solid lightGray',
+                            borderBottom: '1px solid lightGray',
+                        }}>
+                            <div style={{width: 25, margin: "auto", paddingLeft: 7, fontWeight: 700}}>공급받는자</div>
+
+                            <table style={{borderLeft: '1px solid lightGray', width: 438}}>
+                                <thead>
+                                <tr>
+                                    <th style={{...headerStyle, borderTop: 'none'}}>등록번호</th>
+                                    <th style={{...cellStyle, borderTop: 'none'}} colSpan={3}>
+                                        <input
+                                            style={{border: 'none', textAlign: 'center', fontSize: 12, fontWeight: 700}}
+                                            defaultValue={domesticInfo?.businessRegistrationNumber}/>
+                                    </th>
+                                </tr>
+                                </thead>
+
+                                <thead>
+                                <tr>
+                                    <th style={headerStyle}>상호</th>
+                                    <th style={cellStyle}>
+                                        <input
+                                            style={{border: 'none', textAlign: 'center', fontSize: 12, fontWeight: 700}}
+                                            defaultValue={domesticInfo?.customerName}/></th>
+                                    <th style={headerStyle}>대표자</th>
+                                    <th style={cellStyle}>
+                                        <input
+                                            style={{border: 'none', textAlign: 'center', fontSize: 12, fontWeight: 700}}
+                                            defaultValue={domesticInfo?.representative}/></th>
+                                </tr>
+                                </thead>
+
+                                <thead>
+                                <tr>
+                                    <th style={headerStyle}>주소</th>
+                                    <th style={cellStyle} colSpan={3}>
+                                        <div>
+                                    <textarea style={{
+                                        resize: 'none',
+                                        border: 'none',
+                                        textAlign: 'center',
+                                        fontSize: 12,
+                                        fontWeight: 700
+                                    }} defaultValue={domesticInfo?.address}/></div>
+
+                                    </th>
+                                </tr>
+                                </thead>
+
+                                <thead>
+                                <tr>
+                                    <th style={headerStyle}>업태</th>
+                                    <th style={cellStyle}>
+                                        <input
+                                            style={{border: 'none', textAlign: 'center', fontSize: 12, fontWeight: 700}}
+                                            defaultValue={domesticInfo?.businessType}/></th>
+                                    <th style={headerStyle}>종목</th>
+                                    <th style={cellStyle}>
+                                        <TextArea autoSize={{minRows: 1, maxRows: 6}} style={{
+                                            resize: 'none',
+                                            border: 'none',
+                                            textAlign: 'center',
+                                            fontSize: 12,
+                                            fontWeight: 700
+                                        }}
+                                                  value={domesticInfo?.businessItem}/></th>
+
+                                </tr>
+                                </thead>
+
+                                <thead>
+                                <tr>
+                                    <th style={{...headerStyle, borderBottom: 'none'}}>담당자</th>
+                                    <th style={{...cellStyle, borderBottom: 'none'}}><input
+                                        style={{border: 'none', textAlign: 'center', fontSize: 12, fontWeight: 700}}
+                                        defaultValue={domesticInfo?.representative}/></th>
+                                    <th style={{...headerStyle, borderBottom: 'none'}}>연락처</th>
+                                    <th style={{...cellStyle, borderBottom: 'none'}}><input
+                                        style={{border: 'none', textAlign: 'center', fontSize: 12, fontWeight: 700}}
+                                        defaultValue={domesticInfo?.customerTel}/></th>
+                                </tr>
+                                </thead>
+                            </table>
+
+                        </div>
+                    </div>
+
+                    <table style={{
+                        width: '100%',
+                        borderCollapse: 'collapse',
+                        textAlign: 'center', fontSize: 12
+
+                    }}>
+                        <thead>
+                        <tr style={{backgroundColor: '#ebf6f7', fontWeight: 'bold', height: 35}}>
+                            <th style={{width: 40, borderTop: 'none'}}>NO</th>
+                            <th style={{width: '9%', borderTop: 'none'}}>날짜</th>
+                            <th style={{width: 300, borderLeft: '1px solid lightGray', borderTop: 'none'}}>품목</th>
+                            <th style={{width: '5%', borderLeft: '1px solid lightGray', borderTop: 'none'}}>수량</th>
+                            <th style={{width: '12%', borderLeft: '1px solid lightGray', borderTop: 'none'}}>단가</th>
+                            <th style={{width: '15%', borderLeft: '1px solid lightGray', borderTop: 'none'}}>공급가액</th>
+                            <th style={{width: '12%', borderLeft: '1px solid lightGray', borderTop: 'none'}}>세액</th>
+                            <th style={{width: '12%', borderLeft: '1px solid lightGray', borderTop: 'none'}}>비고</th>
+                        </tr>
+                        </thead>
+
+                        <thead>
+
+                        {tableData[0]?.map((v, i) =>
+
+                            <tr style={{height: 35}}>
+                                <td style={{fontWeight: 600}}>{i + 1}</td>
+                                <td style={{fontWeight: 600}}>
+                                    <input style={{border: 'none'}} defaultValue={moment().format('YYYY-MM-DD')}/>
+                                </td>
+                                <td style={{
+                                    whiteSpace: 'pre-line',
+                                    lineHeight: 2.1,
+                                    textAlign: 'left',
+                                    paddingLeft: 5
+                                }}>
+
+                                    <TextArea autoSize={true} style={{border: 'none', fontSize: 12}}
+                                              defaultValue={v.model}/>
+
+                                </td>
+                                <NumberInputForm value={v}/>
+
+                                <td style={{fontWeight: 600}}>
+                                    <TextArea autoSize={true} style={{border: 'none', fontSize: 12}}/>
+                                </td>
+                            </tr>
+                        )}
+                        </thead>
+                    </table>
+                    {tableData.length > 1 ? <></> :
+
+                        <table style={{
+                            width: '100%',
+                            borderCollapse: 'collapse',
+                            textAlign: 'center'
+                        }}>
+                            <thead>
+                            <tr style={{height: 35, fontWeight: 100}}>
+
+                                <th colSpan={2} style={{fontWeight: 600, borderTop: 'none'}}>TOTAL</th>
+                                <th style={{width: '5%', textAlign: 'right', paddingRight: 8, borderTop: 'none'}}
+                                    className={'total_qt'}></th>
+                                <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop: 'none'}}
+                                    className={'total_netPrice'}></th>
+                                <th style={{width: '15%', textAlign: 'right', paddingRight: 10, borderTop: 'none'}}
+                                    className={'total_amount'}></th>
+                                <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop: 'none'}}
+                                    className={'total_tax'}></th>
+                                <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop: 'none'}}
+                                    className={'remark'}></th>
+                            </tr>
+                            </thead>
+                        </table>
+                    }
+                    <div style={{flexGrow: 1}}/>
+
+                    <div style={{textAlign: 'center'}}>- 1 -</div>
+                </div>
+
+
+                {tableData.map((v, i) => {
+
+                    const count: any = sumLengthsUpToIndex(tableData, i - 1);
+                    if (!i) {
+                        return false;
+                    }
+
+                    return <div style={{
+
+                        width: '1000px',  // A4 가로
+                        height: '1354px',  // A4 세로
+                        // aspectRatio: '1 / 1.414',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-between',
+                        padding: '0px 20px'
+                    }}>
+                        <table style={{
+                            width: '100%',
+                            borderCollapse: 'collapse',
+                            margin: '20px 0',
+                            textAlign: 'center',
+                            border: '1px solid lightGray',
+                        }}>
+                            <thead>
+                            <tr style={{backgroundColor: '#ebf6f7', fontWeight: 'bold', height: 35}}>
+                                <th style={{width: 40, borderTop: 'none'}}>NO</th>
+                                <th style={{width: '9%', borderTop: 'none'}}>날짜</th>
+                                <th style={{width: 300, borderLeft: '1px solid lightGray', borderTop: 'none'}}>품목</th>
+                                <th style={{width: '5%', borderLeft: '1px solid lightGray', borderTop: 'none'}}>수량</th>
+                                <th style={{width: '12%', borderLeft: '1px solid lightGray', borderTop: 'none'}}>단가</th>
+                                <th style={{
+                                    width: '15%',
+                                    borderLeft: '1px solid lightGray',
+                                    borderTop: 'none'
+                                }}>공급가액
+                                </th>
+                                <th style={{width: '12%', borderLeft: '1px solid lightGray', borderTop: 'none'}}>세액</th>
+                                <th style={{width: '12%', borderLeft: '1px solid lightGray', borderTop: 'none'}}>비고</th>
                             </tr>
 
                             {v.map((src, idx) => {

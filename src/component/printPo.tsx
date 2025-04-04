@@ -70,6 +70,22 @@ function PrintPo({
     }, [data]);
 
 
+
+    function MakerInput({value}){
+        const [info, setInfo] = useState(value);
+
+        return  <Input value={info} style={{border : 'none'}}
+                       onChange={e=>{
+                           setInfo(e.target.value)
+                       }}
+                       onBlur={e=>{
+                           setTopInfoData(v =>{
+                               return {...v, maker : e.target.value}
+                           })
+                       }}
+        />
+    }
+
     function TextAreas({value, numb, objKey = 0, name}) {
 
         const [model, setModel] = useState('');
@@ -304,7 +320,7 @@ function PrintPo({
                             Maker
                         </th>
                         <th colSpan={7} style={{textAlign : 'left', paddingLeft : 5}}>
-                            {topInfoData?.maker}
+                            <MakerInput value={topInfoData?.maker}/>
                         </th>
                     </tr>
                     </thead>

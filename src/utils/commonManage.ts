@@ -49,7 +49,7 @@ commonManage.getPageIndex = function sumLengthsUpToIndex(array, index) {
 // =========================================================================================
 
 
-commonManage.pdfDown = async function (pdfRef=null,pdfSubRef =null,  printMode = false, title) {
+commonManage.pdfDown = async function (pdfRef=null, printMode = false, title) {
     const pdf = new jsPDF({
         orientation: "portrait",
         unit: "px",
@@ -66,22 +66,18 @@ commonManage.pdfDown = async function (pdfRef=null,pdfSubRef =null,  printMode =
         return false;
     }
 
-    if(pdfSubRef) {
-        elements = Array.from(pdfSubRef.current.children).filter(
+    if(pdfRef) {
+        elements = Array.from(pdfRef.current.children).filter(
             (el: any) => el.offsetHeight > 0 && el.innerHTML.trim() !== ""
         );
     }
 
-    if (pdfRef) {
-        const firstCanvas = await html2canvas(pdfRef.current, {scale: 1.5, useCORS: true});
-        const firstImgData = firstCanvas.toDataURL("image/jpeg", 0.7);
-        const firstImgProps = pdf.getImageProperties(firstImgData);
-        const firstImgHeight = (firstImgProps.height * pdfWidth) / firstImgProps.width;
-        pdf.addImage(firstImgData, "JPEG", 0, 20, pdfWidth, firstImgHeight);
-    }
 
-    if(pdfSubRef) {
+
+    if(pdfRef) {
         for (let i = 0; i < elements.length; i++) {
+
+
             const element: any = elements[i];
             const firstCanvas = await html2canvas(element, {scale: 1.5, useCORS: true});
             const firstImgData = firstCanvas.toDataURL("image/jpeg", 0.7);
@@ -92,6 +88,7 @@ commonManage.pdfDown = async function (pdfRef=null,pdfSubRef =null,  printMode =
             pdf.addImage(firstImgData, "JPEG", 0, 0, pdfWidth, firstImgHeight);
         }
     }
+    pdf.deletePage?.(1)
     if (printMode) {
         const pdfBlob = pdf.output("bloburl");
         window.open(pdfBlob, "_blank");
