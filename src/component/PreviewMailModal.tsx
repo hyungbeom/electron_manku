@@ -37,7 +37,7 @@ function formatDocumentNumbers(documentNumbersArray) {
 }
 
 
-function generateFormattedOutputWithDocumentNumbers(data) {
+function generateFormattedOutputWithDocumentNumbers(data, code) {
     let output = '';
     let documentNumbers = {};  // documentNumberFull을 저장할 객체
 
@@ -75,7 +75,6 @@ function generateFormattedOutputWithDocumentNumbers(data) {
     // 출력 형식 생성
     sortedKeys.forEach(docNumber => {
         const {maker, item, models} = groupedData[docNumber];
-
         if (output) {
             // documentNumberFull 앞에 한 줄 띄우기
             output += '\n';
@@ -107,25 +106,52 @@ function generateFormattedOutputWithDocumentNumbers(data) {
         output += '\n';
     });
 
+    let ment = ''
+    if (code.startsWith('K')) {
+        ment = '문의사항은 언제든지 연락 부탁 드립니다.\n' +
+            '\n' +
+            '감사합니다.'
+    } else {
+        ment = 'Best Regards'
+    }
+
     // documentNumberFull만 객체로 리턴
     return {
-        output: output + '\n\n\n' + '감사합니다',
+        output: output + '\n\n' + ment,
         documentNumbers: Object.keys(documentNumbers)
     };
 }
 
 
 function PreviewMailModal({data, isModalOpen, setIsModalOpen, fileList}) {
+
     const userInfo = useAppSelector((state) => state.user);
     const notificationAlert = useNotificationAlert();
     const [info, setInfo] = useState<any>();
     const [checkList, setCheckList] = useState<any>([]);
-    useEffect(() => {
+    useEffect( () => {
+
+
+
         const list = Object.values(data).map(src => {
-            const {agencyManagerName, agencyManagerEmail, agencyManagerId, agencyCode} = Object.values(src)[0][0];
+            const {
+                agencyManagerName,
+                agencyManagerEmail,
+                agencyManagerId,
+                agencyCode,
+                managerAdminName,
+                managerAdminId
+            } = Object.values(src)[0][0];
 
-            const {output, documentNumbers} = generateFormattedOutputWithDocumentNumbers(Object.values(src))
+            const {output, documentNumbers} = generateFormattedOutputWithDocumentNumbers(Object.values(src), agencyCode)
 
+
+            let content = ''
+            if (agencyCode.startsWith('K')) {
+                content = `${agencyManagerName ? agencyManagerName : '직접입력'} 님  \n\n안녕하십니까 만쿠무역 ${managerAdminName} 입니다.\n아래 확인하시어 견적 부탁 드립니다.\n\n\n`
+            } else {
+                content = `Dear ${agencyManagerName ? agencyManagerName : '직접입력'}  \n\nPlease see below and let me know your quote\n\n\n`
+            }
 
             return {
                 agencyCode: agencyCode,
@@ -136,12 +162,14 @@ function PreviewMailModal({data, isModalOpen, setIsModalOpen, fileList}) {
                 detailList: Object.values(src),
                 ccList: [],
                 title: 'RFQ ' + formatDocumentNumbers(documentNumbers),
-                contents: `${agencyManagerName ? agencyManagerName : '직접입력'}  \n\n아래 진행 부탁 드립니다.\n\n` + output
+                contents: content + output
             }
         })
 
         setInfo(list)
     }, [data])
+
+
 
     function isValidEmail(email) {
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -289,9 +317,9 @@ function PreviewMailModal({data, isModalOpen, setIsModalOpen, fileList}) {
         }
     }
 
-    function getAddress(){
-        getData.post('account/getMyContactList').then(v=>{
-            console.log(v,':::')
+    function getAddress() {
+        getData.post('account/getMyContactList').then(v => {
+            console.log(v, ':::')
         })
     }
 
@@ -311,7 +339,8 @@ function PreviewMailModal({data, isModalOpen, setIsModalOpen, fileList}) {
                         return <div>
                             <div style={{display: 'grid', gridTemplateColumns: '100px 1fr', gap: 5}}>
 
-                                <Button type={'primary'} size={'small'} style={{fontSize : 12, marginTop : 5}}>보낸 사람(M)</Button>
+                                <Button type={'primary'} size={'small'} style={{fontSize: 12, marginTop: 5}}>보낸
+                                    사람(M)</Button>
                                 {inputForm({
                                     title: '',
                                     id: 'email',
@@ -322,7 +351,8 @@ function PreviewMailModal({data, isModalOpen, setIsModalOpen, fileList}) {
                                 })}
                             </div>
                             <div style={{display: 'grid', gridTemplateColumns: '100px 1fr', gap: 5}}>
-                            <Button type={'primary'} size={'small'} style={{fontSize : 12, marginTop : 5}} onClick={getAddress}>받는 사람(T)</Button>
+                                <Button type={'primary'} size={'small'} style={{fontSize: 12, marginTop: 5}}
+                                        onClick={getAddress}>받는 사람(T)</Button>
                                 {inputForm({
                                     title: '',
                                     id: 'agencyManagerEmail',
@@ -336,7 +366,8 @@ function PreviewMailModal({data, isModalOpen, setIsModalOpen, fileList}) {
                             <div style={{paddingTop: 15}}>
                                 <div style={{display: 'grid', gridTemplateColumns: '100px 1fr', gap: 5}}>
 
-                                    <Button type={'primary'} size={'small'} style={{fontSize : 12, marginTop : 5}}>제목(U)</Button>
+                                    <Button type={'primary'} size={'small'}
+                                            style={{fontSize: 12, marginTop: 5}}>제목(U)</Button>
                                     {inputForm({
                                         title: '',
                                         id: 'title',
