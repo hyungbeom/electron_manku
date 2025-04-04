@@ -282,7 +282,6 @@ function PrintPo({
             footer={null}
             onOk={() => setIsModalOpen({event1: false, event2: false, event3: false})}
         >
-            <SelectForm id={'incoterms'} list={['111','2222']} title={'123'}/>
             <div style={{
 
                 width: '1000px',  // A4 가로

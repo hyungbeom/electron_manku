@@ -93,114 +93,91 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRe
         })
     }
 
+    const [data, setData] = useState({});
 
-    const [tableData] = useMemo(() => {
-
+    useEffect(() => {
         let returnTable = []
         if (tableRef.current) {
             const tableList = tableRef.current?.getSourceData();
             const filterTableList = commonManage.filterEmptyObjects(tableList, ['model'])
-            const result = commonManage.splitDataWithSequenceNumber(filterTableList, 18, 35);
+            const result = commonManage.splitDataWithSequenceNumber(filterTableList, 18, 30);
             returnTable = result
         }
-        return [returnTable]
+        setData(returnTable)
     }, [isModalOpen]);
 
 
-    function getTotal() {
-        const totalPrice = document.querySelectorAll('.total');
-        let total = 0;
-        totalPrice.forEach((input: any) => {
-            const numberString = input.innerText.replace(/[₩,]/g, ''); // ₩와 ,를 제거
-            total += parseFloat(numberString) || 0;  // 숫자가 아닌 값이 있을 경우 0으로 처리
-        });
+    const totalData = useMemo(() => {
 
-        const taxDom = document.querySelectorAll('.tax');
-        let sumTax = 0;
-        taxDom.forEach((input: any) => {
-            const numberString = input.innerText.replace(/[₩,]/g, ''); // ₩와 ,를 제거
-            sumTax += parseFloat(numberString) || 0;  // 숫자가 아닌 값이 있을 경우 0으로 처리
-        });
+        const list = Object.values(data);
+        let bowl = {quantity: 0, net: 0, total: 0, tax : 0, unit: list.length ? list[0][0]['unit'] : ''}
 
-        const netPrice = document.querySelectorAll('.netPrice');
-        let sum = 0;
-        netPrice.forEach((input: any) => {
-            const numberString = input.innerText.replace(/[₩,]/g, ''); // ₩와 ,를 제거
-            sum += parseFloat(numberString) || 0;  // 숫자가 아닌 값이 있을 경우 0으로 처리
-        });
+        list.forEach((v: any, i: number) => {
+            const result = v.reduce((acc, cur, idx) => {
+                const {quantity, net} = cur
+                acc[0] += quantity;
+                acc[1] += net;
+                acc[2] += (quantity * net)
+                acc[3] += Math.round((quantity * net) / 10);
 
-        const inputs = document.getElementsByName('qt');
-        let sum2 = 0;
-        inputs.forEach((input: any) => {
-            sum2 += parseFloat(input.value) || 0;  // 숫자가 아닌 값이 있을 경우 0으로 처리
-        });
-        if (ref2.current) {
-            ref2.current.childNodes.forEach(v => {
-                if (v.className === 'total_qt') {
-                    v.innerText = sum2;
-                }
-                if (v.className === 'total_unit') {
-                    if (tableData.length) {
-                        v.innerText = tableData[0][0]?.unit;
-                    }
-                }
-                if (v.className === 'total_netPrice') {
-                    v.innerText = sum.toLocaleString();
-                }
-                if (v.className === 'total_amount') {
-                    v.innerText = total?.toLocaleString();
-                }
-                if (v.className === 'total_tax') {
-                    v.innerText = sumTax?.toLocaleString();
-                }
-            })
+                return acc
+            }, [0, 0, 0, 0])
+            bowl["quantity"] += parseFloat(result[0]);
+            bowl["net"] += parseFloat(result[1]);
+            bowl["total"] += parseFloat(result[2]);
+            bowl["tax"] += parseFloat(result[3]);
+        })
+
+        return bowl
+    }, [data]);
+
+
+
+    function TextAreas({value, numb, objKey = 0}) {
+
+        const [model, setModel] = useState('');
+
+        useEffect(() => {
+            setModel(value)
+        }, [value]);
+
+        function onChange(e) {
+            setModel(e.target.value)
         }
-        if (ref1.current) {
-            ref1.current.childNodes.forEach(v => {
-                if (v.className === 'total_qt') {
-                    v.innerText = sum2;
-                }
-                if (v.className === 'total_unit') {
-                    if (tableData.length) {
-                        v.innerText = tableData[0][0]?.unit;
-                    }
-                }
-                if (v.className === 'total_netPrice') {
-                    v.innerText = sum.toLocaleString();
-                }
-                if (v.className === 'total_amount') {
-                    v.innerText = total?.toLocaleString();
-                }
-                if (v.className === 'total_tax') {
-                    v.innerText = sumTax?.toLocaleString();
-                }
+
+
+        function blur(e) {
+            setData(v => {
+                v[objKey][numb]['model'] = model;
+                return {...v}
             })
         }
 
+        return <TextArea autoSize={true} style={{border: 'none'}} onChange={onChange} onBlur={blur} value={model}
+                         key={`ttt${numb}`}/>
     }
 
 
-    useEffect(() => {
-        getTotal()
-    }, [tableData]);
-
-    function NumberInputForm({value}) {
+    function NumberInputForm({value, numb, objKey = 0}){
 
         const [info, setInfo] = useState({net: value.net, quantity: value.quantity});
 
         const inputRef = useRef<any>();
         const [toggle, setToggle] = useState(false);
 
-        function blur() {
+        function blur(e) {
             setToggle(false);
-            getTotal();
+            setData(v => {
+                v[objKey][numb][e.target.id] = parseFloat(e.target.value.replaceAll(",", ""));
+                return {...v}
+            })
         }
 
         useEffect(() => {
             if (toggle) {
                 inputRef.current.focus();
             }
-            getTotal()
+
         }, [toggle]);
 
         function onchange(e) {
@@ -208,6 +185,7 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRe
                 return {...v, net: e}
             })
         }
+
 
         function onQuantity(e) {
             setInfo(v => {
@@ -219,13 +197,13 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRe
             <td style={{width: 100, textAlign: 'right'}}>
 
 
-                <Input style={{border: 'none', textAlign: 'right', fontSize: 13}} type={'number'} value={info.quantity}
+                <Input style={{border: 'none', textAlign: 'right', fontSize: 13}} id={'quantity'} type={'number'} value={info.quantity}
                        onChange={onQuantity} onBlur={blur} name={'qt'}/>
 
             </td>
 
             <td>
-                {toggle ? <InputNumber ref={inputRef} onBlur={blur} value={info.net} onChange={onchange}
+                {toggle ? <InputNumber id={'net'} ref={inputRef} onBlur={blur} value={info.net} onChange={onchange}
                                        formatter={(value) => value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                                        parser={(value) => value.replace(/[^0-9]/g, '')}
                                        style={{
@@ -292,10 +270,10 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRe
             title={<div style={{display: 'flex', justifyContent: 'space-between', padding: '0px 30px'}}>
                 <span>거래명세표 출력</span>
                 <div>
-                       <Button style={{fontSize: 11, marginRight: 10}} size={'small'}
-                               onClick={() => commonManage.pdfDown(pdfRef,  false, 'test')}>다운로드</Button>
-                       <Button style={{fontSize: 11}} size={'small'}
-                               onClick={() => commonManage.pdfDown(pdfRef,  true, 'test')}>인쇄</Button>
+                    <Button style={{fontSize: 11, marginRight: 10}} size={'small'}
+                            onClick={() => commonManage.pdfDown(pdfRef, false, 'test')}>다운로드</Button>
+                    <Button style={{fontSize: 11}} size={'small'}
+                            onClick={() => commonManage.pdfDown(pdfRef, true, 'test')}>인쇄</Button>
                 </div>
             </div>}
             width={1100} open={isModalOpen?.event1}
@@ -489,7 +467,7 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRe
 
                         <thead>
 
-                        {tableData[0]?.map((v, i) =>
+                        {data[0]?.map((v, i) =>
 
                             <tr style={{height: 35}}>
                                 <td style={{fontWeight: 600}}>{i + 1}</td>
@@ -503,20 +481,27 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRe
                                     paddingLeft: 5
                                 }}>
 
-                                    <TextArea autoSize={true} style={{border: 'none', fontSize: 12}}
-                                              defaultValue={v.model}/>
+                                    <TextAreas value={v.model} numb={i}/>
 
                                 </td>
-                                <NumberInputForm value={v}/>
+                                <NumberInputForm value={v} numb={i}/>
+
 
                                 <td style={{fontWeight: 600}}>
-                                    <TextArea autoSize={true} style={{border: 'none', fontSize: 12}}/>
-                                </td>
+                                     <TextArea   autoSize={{ minRows: 1, maxRows: 5 }} style={{
+                                         resize: 'none',
+                                         border: 'none',
+                                         textAlign: 'center',
+                                         fontSize: 12,
+                                         fontWeight: 700,
+
+                                     }} defaultValue={''}/>
+                            </td>
                             </tr>
-                        )}
+                            )}
                         </thead>
                     </table>
-                    {tableData.length > 1 ? <></> :
+                    {Object.keys(data).length > 1 ? <></> :
 
                         <table style={{
                             width: '100%',
@@ -527,14 +512,14 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRe
                             <tr style={{height: 35, fontWeight: 100}}>
 
                                 <th colSpan={2} style={{fontWeight: 600, borderTop: 'none'}}>TOTAL</th>
-                                <th style={{width: '5%', textAlign: 'right', paddingRight: 8, borderTop: 'none'}}
-                                    className={'total_qt'}></th>
+                                <th style={{width: '5%', textAlign: 'right', paddingRight: 8, borderTop: 'none'}}>{totalData?.quantity}</th>
                                 <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop: 'none'}}
-                                    className={'total_netPrice'}></th>
+                                    >{(totalData?.net).toLocaleString()}</th>
                                 <th style={{width: '15%', textAlign: 'right', paddingRight: 10, borderTop: 'none'}}
-                                    className={'total_amount'}></th>
-                                <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop: 'none'}}
-                                    className={'total_tax'}></th>
+                                >{(totalData?.total).toLocaleString()}</th>
+                                <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop: 'none'}}>
+                                    {(totalData?.tax).toLocaleString()}
+                                </th>
                                 <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop: 'none'}}
                                     className={'remark'}></th>
                             </tr>
@@ -547,12 +532,12 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRe
                 </div>
 
 
-                {tableData.map((v, i) => {
-
-                    const count: any = sumLengthsUpToIndex(tableData, i - 1);
+                {Object.values(data).map((v:any, i) => {
+                    const count: any = commonManage.getPageIndex(Object.values(data), i - 1);
                     if (!i) {
                         return false;
                     }
+
 
                     return <div style={{
 
@@ -570,6 +555,7 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRe
                             margin: '20px 0px 0px 0px',
                             textAlign: 'center',
                             border: '1px solid lightGray',
+                            fontSize: 12
                         }}>
                             <thead>
                             <tr style={{backgroundColor: '#ebf6f7', fontWeight: 'bold', height: 35}}>
@@ -588,7 +574,7 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRe
                                 <th style={{width: '12%', borderLeft: '1px solid lightGray', borderTop: 'none'}}>비고</th>
                             </tr>
 
-                            {v.map((src, idx) => {
+                            {v?.map((src, idx) => {
                                 return <tr style={{height: 35}}>
                                     <td style={{fontWeight: 600}}>{count + idx + 1}</td>
                                     <td style={{fontWeight: 600}}>
@@ -601,39 +587,52 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRe
                                         paddingLeft: 5
                                     }}>
 
-                                        <TextArea autoSize={true} style={{border: 'none', fontSize: 12}}
-                                                  defaultValue={src.model}/>
+
+                                        <TextAreas value={src.model} numb={idx} objKey={i}/>
 
                                     </td>
-                                    <NumberInputForm value={src}/>
+                                    <NumberInputForm value={src} numb={idx} objKey={i}/>
 
                                     <td style={{fontWeight: 600}}>
-                                        <TextArea autoSize={true} style={{border: 'none'}}/>
+                                        <TextArea   autoSize={{ minRows: 1, maxRows: 5 }} style={{
+                                            resize: 'none',
+                                            border: 'none',
+                                            textAlign: 'center',
+                                            fontSize: 12,
+                                            fontWeight: 700,
+
+                                        }} defaultValue={''}/>
                                     </td>
                                 </tr>
                             })}
                             </thead>
                         </table>
-                        {tableData.length - 1 === i ? <table style={{
+                        {Object.keys(data).length - 1 === i ? <table style={{
                                 width: '100%',
                                 borderCollapse: 'collapse',
                                 textAlign: 'center',
                                 border: '1px solid lightGray',
+                                borderTop: 'none'
                             }}>
                                 <thead>
 
-                                <tr style={{height: 35, fontWeight: 100}} ref={ref2}>
+                                <tr style={{height: 35, fontWeight: 100}}>
 
-                                    <th colSpan={2} style={{fontWeight: 600}}>TOTAL</th>
-                                    <th style={{width: '5%', textAlign: 'right', paddingRight: 8, borderTop : 'none'}}
-                                        className={'total_qt'}></th>
-                                    <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop : 'none'}}
-                                        className={'total_netPrice'}></th>
-                                    <th style={{width: '15%', textAlign: 'right', paddingRight: 10, borderTop : 'none'}}
-                                        className={'total_amount'}></th>
-                                    <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop : 'none'}}
-                                        className={'total_tax'}></th>
-                                    <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop : 'none'}}
+                                    <th colSpan={2} style={{fontWeight: 600, borderTop: 'none'}}>TOTAL</th>
+                                    <th style={{
+                                        width: '5%',
+                                        textAlign: 'right',
+                                        paddingRight: 8,
+                                        borderTop: 'none'
+                                    }}>{totalData?.quantity}</th>
+                                    <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop: 'none'}}
+                                    >{(totalData?.net).toLocaleString()}</th>
+                                    <th style={{width: '15%', textAlign: 'right', paddingRight: 10, borderTop: 'none'}}
+                                    >{(totalData?.total).toLocaleString()}</th>
+                                    <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop: 'none'}}>
+                                        {(totalData?.tax).toLocaleString()}
+                                    </th>
+                                    <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop: 'none'}}
                                         className={'remark'}></th>
                                 </tr>
                                 </thead>
@@ -646,6 +645,15 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRe
                     </div>
 
                 })}
+
+
+
+
+
+
+
+
+
 
 
                 <div style={{
@@ -833,7 +841,7 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRe
 
                         <thead>
 
-                        {tableData[0]?.map((v, i) =>
+                        {data[0]?.map((v, i) =>
 
                             <tr style={{height: 35}}>
                                 <td style={{fontWeight: 600}}>{i + 1}</td>
@@ -847,39 +855,45 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRe
                                     paddingLeft: 5
                                 }}>
 
-                                    <TextArea autoSize={true} style={{border: 'none', fontSize: 12}}
-                                              defaultValue={v.model}/>
+                                    <TextAreas value={v.model} numb={i}/>
 
                                 </td>
-                                <NumberInputForm value={v}/>
+                                <NumberInputForm value={v} numb={i}/>
+
 
                                 <td style={{fontWeight: 600}}>
-                                    <TextArea autoSize={true} style={{border: 'none', fontSize: 12}}/>
+                                    <TextArea   autoSize={{ minRows: 1, maxRows: 5 }} style={{
+                                        resize: 'none',
+                                        border: 'none',
+                                        textAlign: 'center',
+                                        fontSize: 12,
+                                        fontWeight: 700,
+
+                                    }} defaultValue={''}/>
                                 </td>
                             </tr>
                         )}
                         </thead>
                     </table>
-                    {tableData.length > 1 ? <></> :
+                    {Object.keys(data).length > 1 ? <></> :
 
                         <table style={{
                             width: '100%',
                             borderCollapse: 'collapse',
-                            textAlign: 'center',
-                            borderTop : 'none'
+                            textAlign: 'center'
                         }}>
                             <thead>
-                            <tr style={{height: 35, fontWeight: 100, borderTop : 'none'}}>
+                            <tr style={{height: 35, fontWeight: 100}}>
 
                                 <th colSpan={2} style={{fontWeight: 600, borderTop: 'none'}}>TOTAL</th>
-                                <th style={{width: '5%', textAlign: 'right', paddingRight: 8, borderTop: 'none'}}
-                                    className={'total_qt'}></th>
+                                <th style={{width: '5%', textAlign: 'right', paddingRight: 8, borderTop: 'none'}}>{totalData?.quantity}</th>
                                 <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop: 'none'}}
-                                    className={'total_netPrice'}></th>
+                                >{(totalData?.net).toLocaleString()}</th>
                                 <th style={{width: '15%', textAlign: 'right', paddingRight: 10, borderTop: 'none'}}
-                                    className={'total_amount'}></th>
-                                <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop: 'none'}}
-                                    className={'total_tax'}></th>
+                                >{(totalData?.total).toLocaleString()}</th>
+                                <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop: 'none'}}>
+                                    {(totalData?.tax).toLocaleString()}
+                                </th>
                                 <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop: 'none'}}
                                     className={'remark'}></th>
                             </tr>
@@ -888,16 +902,16 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRe
                     }
                     <div style={{flexGrow: 1}}/>
 
-                    <div style={{textAlign: 'center'}}>- 1 -</div>
+                    <div style={{textAlign: 'center'}}>- {Object.keys(data).length + 1} -</div>
                 </div>
 
 
-                {tableData.map((v, i) => {
-
-                    const count: any = sumLengthsUpToIndex(tableData, i - 1);
+                {Object.values(data).map((v:any, i) => {
+                    const count: any = commonManage.getPageIndex(Object.values(data), i - 1);
                     if (!i) {
                         return false;
                     }
+
 
                     return <div style={{
 
@@ -933,7 +947,7 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRe
                                 <th style={{width: '12%', borderLeft: '1px solid lightGray', borderTop: 'none'}}>비고</th>
                             </tr>
 
-                            {v.map((src, idx) => {
+                            {v?.map((src, idx) => {
                                 return <tr style={{height: 35}}>
                                     <td style={{fontWeight: 600}}>{count + idx + 1}</td>
                                     <td style={{fontWeight: 600}}>
@@ -946,11 +960,11 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRe
                                         paddingLeft: 5
                                     }}>
 
-                                        <TextArea autoSize={true} style={{border: 'none', fontSize: 12}}
-                                                  defaultValue={src.model}/>
+
+                                        <TextAreas value={src.model} numb={idx} objKey={i}/>
 
                                     </td>
-                                    <NumberInputForm value={src}/>
+                                    <NumberInputForm value={src} numb={idx} objKey={i}/>
 
                                     <td style={{fontWeight: 600}}>
                                         <TextArea autoSize={true} style={{border: 'none'}}/>
@@ -959,27 +973,32 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRe
                             })}
                             </thead>
                         </table>
-                        {tableData.length - 1 === i ? <table style={{
+                        {Object.keys(data).length - 1 === i ? <table style={{
                                 width: '100%',
                                 borderCollapse: 'collapse',
                                 textAlign: 'center',
                                 border: '1px solid lightGray',
-                            borderTop : 'none'
+                                borderTop: 'none'
                             }}>
                                 <thead>
 
-                                <tr style={{height: 35, fontWeight: 100, borderTop : 'none'}} ref={ref2}>
+                                <tr style={{height: 35, fontWeight: 100}}>
 
-                                    <th colSpan={2} style={{fontWeight: 600, borderTop : 'none'}}>TOTAL</th>
-                                    <th style={{width: '5%', textAlign: 'right', paddingRight: 8, borderTop : 'none'}}
-                                        className={'total_qt'}></th>
-                                    <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop : 'none'}}
-                                        className={'total_netPrice'}></th>
-                                    <th style={{width: '15%', textAlign: 'right', paddingRight: 10, borderTop : 'none'}}
-                                        className={'total_amount'}></th>
-                                    <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop : 'none'}}
-                                        className={'total_tax'}></th>
-                                    <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop : 'none'}}
+                                    <th colSpan={2} style={{fontWeight: 600, borderTop: 'none'}}>TOTAL</th>
+                                    <th style={{
+                                        width: '5%',
+                                        textAlign: 'right',
+                                        paddingRight: 8,
+                                        borderTop: 'none'
+                                    }}>{totalData?.quantity}</th>
+                                    <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop: 'none'}}
+                                    >{(totalData?.net).toLocaleString()}</th>
+                                    <th style={{width: '15%', textAlign: 'right', paddingRight: 10, borderTop: 'none'}}
+                                    >{(totalData?.total).toLocaleString()}</th>
+                                    <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop: 'none'}}>
+                                        {(totalData?.tax).toLocaleString()}
+                                    </th>
+                                    <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop: 'none'}}
                                         className={'remark'}></th>
                                 </tr>
                                 </thead>
@@ -987,7 +1006,8 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRe
                             : <></>}
                         <div style={{flexGrow: 1}}/>
 
-                        <div style={{textAlign: 'center'}}>- {i + 1} -</div>
+
+                        <div style={{textAlign: 'center'}}>- {Object.keys(data).length + 1 + i} -</div>
                     </div>
 
                 })}
