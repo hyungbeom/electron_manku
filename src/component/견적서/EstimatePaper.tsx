@@ -14,6 +14,7 @@ import {pdf} from "@react-pdf/renderer";
 import {PdfForm} from "@/component/견적서/PdfForm";
 import dynamic from "next/dynamic";
 import {SelectForm} from "@/utils/commonForm";
+import Checkbox from "antd/lib/checkbox/Checkbox";
 
 const EstimatePaper = ({
                            infoRef,
@@ -28,6 +29,10 @@ const EstimatePaper = ({
 
 
     const [data, setData] = useState({});
+    {/*<div>· 의뢰하실 Model로 기준한 견적입니다.</div>*/}
+    {/*<div>· 계좌번호 : (기업은행)069-118428-04-010/만쿠무역</div>*/}
+    {/*<div>· 긴급 납기시 담당자와 협의가능합니다.</div>*/}
+    const [bottomInfo, setBottomInfo] = useState('▶의뢰하신 Model로 기준한 견적입니다.\n▶계좌번호 :  (기업은행)069-118428-04-010/만쿠무역\n▶긴급 납기시 담당자와 협의가능합니다.\n▶견적서에 기재되지 않은 서류 및 성적서는 미 포함 입니다.');
 
 
     useEffect(() => {
@@ -191,7 +196,7 @@ const EstimatePaper = ({
 
 
     async function download() {
-        const blob = await pdf(<PdfForm data={data} topInfoData={topInfoData} totalData={totalData}
+        const blob = await pdf(<PdfForm data={data} topInfoData={topInfoData} totalData={totalData} bottomInfo={bottomInfo}
                                         key={Date.now()}/>).toBlob();
 
         const url = URL.createObjectURL(blob);
@@ -211,7 +216,7 @@ const EstimatePaper = ({
     }
 
     const print = async () => {
-        const blob = await pdf(<PdfForm data={data} topInfoData={topInfoData} totalData={totalData}
+        const blob = await pdf(<PdfForm data={data} topInfoData={topInfoData} totalData={totalData} bottomInfo={bottomInfo}
                                         key={Date.now()}/>).toBlob();
         const blobUrl = URL.createObjectURL(blob);
 
@@ -363,17 +368,34 @@ const EstimatePaper = ({
                                 {totalData?.unit}
                             </th>
                             <th style={{width: '20%', textAlign: 'right', paddingRight: 10}}>
-                                {(totalData?.net).toLocaleString()}
+                                (V.A.T) 포함
                             </th>
                             <th style={{width: '20%', textAlign: 'right', paddingRight: 10}}>
-                                {(totalData?.total).toLocaleString()}
+                                {((totalData?.total) + ((totalData?.total) / 10)).toLocaleString()}
                             </th>
+                            {/*tax*/}
                         </tr>
                         </thead>
                     </table>
 
                 }
-                {Object.keys(data).length > 1 ? <></> : <BottomInfo/>}
+                {Object.keys(data).length > 1 ? <></> :
+                    <div
+                        style={{
+                            paddingTop: 10,
+                            // padding: '30px 20px',
+                            fontSize: 12,
+                            lineHeight: 1.7,
+                            borderTop: '1px solid black',
+                        }}>
+                        <TextArea value={bottomInfo} onChange={e=>{
+                            setBottomInfo(e.target.value)
+                        }}
+                            autoSize={true} style={{border: 'none'}}
+                        />
+
+                    </div>
+                }
                 <div style={{textAlign: 'center'}}>- 1 -</div>
             </div>
 
@@ -450,16 +472,31 @@ const EstimatePaper = ({
                                         {totalData?.unit}
                                     </th>
                                     <th style={{width: '20%', textAlign: 'right', paddingRight: 10}}>
-                                        {(totalData?.net).toLocaleString()}
+                                        (V.A.T) 포함
                                     </th>
                                     <th style={{width: '20%', textAlign: 'right', paddingRight: 10}}>
-                                        {(totalData?.total).toLocaleString()}
+                                        {((totalData?.total) + ((totalData?.total) / 10)).toLocaleString()}
                                     </th>
                                 </tr>
                                 </thead>
                             </table>
                             : <></>}
-                        {Object.keys(data).length - 1 === i ? <BottomInfo/> : <></>}
+                        {Object.keys(data).length - 1 === i ?
+                            <div
+                                style={{
+                                    paddingTop: 10,
+                                    // padding: '30px 20px',
+                                    fontSize: 12,
+                                    lineHeight: 1.7,
+                                    borderTop: '1px solid black',
+                                }}>
+                                <TextArea value={bottomInfo} onChange={e=>{
+                                    setBottomInfo(e.target.value)
+                                }}
+                                          autoSize={true} style={{border: 'none'}}
+                                />
+                            </div>
+                            : <></>}
                         <div style={{textAlign: 'center'}}>- {i + 1} -</div>
                     </div>
 

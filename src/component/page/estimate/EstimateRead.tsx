@@ -2,13 +2,7 @@ import React, {memo, useEffect, useRef, useState} from "react";
 import {tableEstimateReadColumns} from "@/utils/columnList";
 import {estimateDetailUnit, estimateReadInitial} from "@/utils/initialList";
 import Button from "antd/lib/button";
-import {
-    CopyOutlined,
-    ExclamationCircleOutlined,
-    FileExcelOutlined,
-    RadiusSettingOutlined, SaveOutlined,
-    SearchOutlined
-} from "@ant-design/icons";
+import {ExclamationCircleOutlined, RadiusSettingOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
 import {deleteEstimate, searchEstimate} from "@/utils/api/mainApi";
@@ -17,7 +11,6 @@ import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
 import {BoxCard, inputForm, MainCard, rangePickerForm, selectBoxForm} from "@/utils/commonForm";
 import Spin from "antd/lib/spin";
 import {useRouter} from "next/router";
-import PrintIntegratedEstimate from "@/component/printIntegratedEstimate";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
@@ -26,7 +19,7 @@ import moment from "moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 
 
-function EstimateRead({getPropertyId, getCopyPage, }:any) {
+function EstimateRead({getPropertyId, getCopyPage,}: any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
     const router = useRouter();
@@ -112,8 +105,8 @@ function EstimateRead({getPropertyId, getCopyPage, }:any) {
         });
         setLoading(true);
         const selectedRows = gridRef.current.getSelectedRows();
-        await deleteEstimate({data: {deleteList: deleteList}}).then(v=>{
-            if(v.code === 1){
+        await deleteEstimate({data: {deleteList: deleteList}}).then(v => {
+            if (v.code === 1) {
                 searchInfo(true);
                 notificationAlert('success', '🗑️프로젝트 삭제완료',
                     <>
@@ -127,7 +120,7 @@ function EstimateRead({getPropertyId, getCopyPage, }:any) {
                     , function () {
                     },
                 )
-            }else{
+            } else {
                 message.error(v.message)
             }
         })
@@ -150,10 +143,6 @@ function EstimateRead({getPropertyId, getCopyPage, }:any) {
 
     return <Spin spinning={loading} tip={'견적서 조회중...'}>
         <PanelSizeUtil groupRef={groupRef} storage={'estimate_read'}/>
-        {selectedRow.length > 0 &&
-            <PrintIntegratedEstimate data={selectedRow} isModalOpen={isModalOpen} userInfo={userInfo}
-                                     setIsModalOpen={setIsModalOpen}/>
-        }
         <>
             <div style={{
                 display: 'grid',
@@ -162,9 +151,21 @@ function EstimateRead({getPropertyId, getCopyPage, }:any) {
             }}>
                 <MainCard title={'견적서 조회'}
                           list={[
-                              {name: <div><SearchOutlined style={{paddingRight: 8}}/>조회</div>, func: searchInfo, type: 'primary'},
-                              {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'},
-                              {name: <div><SaveOutlined style={{paddingRight : 8}} />신규작성</div>, func: moveRouter, type: ''},
+                              {
+                                  name: <div><SearchOutlined style={{paddingRight: 8}}/>조회</div>,
+                                  func: searchInfo,
+                                  type: 'primary'
+                              },
+                              {
+                                  name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>,
+                                  func: clearAll,
+                                  type: 'danger'
+                              },
+                              {
+                                  name: <div><SaveOutlined style={{paddingRight: 8}}/>신규작성</div>,
+                                  func: moveRouter,
+                                  type: ''
+                              },
                           ]}
                           mini={mini} setMini={setMini}>
                     {mini ? <div>

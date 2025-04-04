@@ -11,6 +11,7 @@ import {SendOutlined} from "@ant-design/icons";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import moment from "moment/moment";
 import {SubSend} from "@/component/SubSend";
+import Button from "antd/lib/button";
 
 function formatDocumentNumbers(documentNumbersArray) {
     let output = '';
@@ -288,6 +289,11 @@ function PreviewMailModal({data, isModalOpen, setIsModalOpen, fileList}) {
         }
     }
 
+    function getAddress(){
+        getData.post('account/getMyContactList').then(v=>{
+            console.log(v,':::')
+        })
+    }
 
     return <>
         <Modal okText={<><SendOutlined/> 메일 전송</>} width={1000} cancelText={'취소'} onOk={sendMail}
@@ -304,14 +310,8 @@ function PreviewMailModal({data, isModalOpen, setIsModalOpen, fileList}) {
 
                         return <div>
                             <div style={{display: 'grid', gridTemplateColumns: '100px 1fr', gap: 5}}>
-                            <span style={{
-                                border: '1px solid lightGray',
-                                height: 23,
-                                fontSize: 12,
-                                padding: 2,
-                                marginTop: 6,
-                                textAlign: 'center'
-                            }}>보낸 사람(M)</span>
+
+                                <Button type={'primary'} size={'small'} style={{fontSize : 12, marginTop : 5}}>보낸 사람(M)</Button>
                                 {inputForm({
                                     title: '',
                                     id: 'email',
@@ -322,14 +322,7 @@ function PreviewMailModal({data, isModalOpen, setIsModalOpen, fileList}) {
                                 })}
                             </div>
                             <div style={{display: 'grid', gridTemplateColumns: '100px 1fr', gap: 5}}>
-                            <span style={{
-                                border: '1px solid lightGray',
-                                height: 23,
-                                fontSize: 12,
-                                padding: 2,
-                                marginTop: 6,
-                                textAlign: 'center'
-                            }}>받는 사람(T)</span>
+                            <Button type={'primary'} size={'small'} style={{fontSize : 12, marginTop : 5}} onClick={getAddress}>받는 사람(T)</Button>
                                 {inputForm({
                                     title: '',
                                     id: 'agencyManagerEmail',
@@ -342,14 +335,8 @@ function PreviewMailModal({data, isModalOpen, setIsModalOpen, fileList}) {
                             <SubSend idx={idx}/>
                             <div style={{paddingTop: 15}}>
                                 <div style={{display: 'grid', gridTemplateColumns: '100px 1fr', gap: 5}}>
-                            <span style={{
-                                border: '1px solid lightGray',
-                                height: 23,
-                                fontSize: 12,
-                                padding: 2,
-                                marginTop: 6,
-                                textAlign: 'center'
-                            }}>제목(U)</span>
+
+                                    <Button type={'primary'} size={'small'} style={{fontSize : 12, marginTop : 5}}>제목(U)</Button>
                                     {inputForm({
                                         title: '',
                                         id: 'title',

@@ -16,8 +16,7 @@ Font.register({
 
 const colWidths = [40, 210, 50, 50, 110, 110];
 
-
-export function PdfForm({data, topInfoData, totalData}) {
+export function PdfForm({data, topInfoData, totalData, bottomInfo='▶의뢰하신 Model로 기준한 견적입니다.\n▶계좌번호 :  (기업은행)069-118428-04-010/만쿠무역\n▶긴급 납기시 담당자와 협의가능합니다.\n▶견적서에 기재되지 않은 서류 및 성적서는 미 포함 입니다.'}) {
 
     return <Document>
         <Page size="A4" style={styles.page}>
@@ -205,7 +204,7 @@ export function PdfForm({data, topInfoData, totalData}) {
                                 style={{
                                     textAlign: 'right',
                                     paddingRight: 8
-                                }}>{(totalData?.net)?.toLocaleString()}</Text>
+                                }}>(V.A.T) 포함</Text>
                         </View>
                         <View style={{
                             ...styles.point,
@@ -218,14 +217,14 @@ export function PdfForm({data, topInfoData, totalData}) {
                                 style={{
                                     textAlign: 'right',
                                     paddingRight: 8
-                                }}>{(totalData?.total)?.toLocaleString()}</Text>
+                                }}>
+                                {((totalData?.total) + ((totalData?.total) / 10)).toLocaleString()}
+                            </Text>
                         </View>
                     </View>
 
                     <View style={styles.footer}>
-                        <Text>· 의뢰하실 Model로 기준한 견적입니다.</Text>
-                        <Text>· 계좌번호 : (기업은행)069-118428-04-010/만쿠무역</Text>
-                        <Text>· 긴급 납기시 담당자와 협의가능합니다.</Text>
+                        <Text>{bottomInfo}</Text>
                     </View>
                 </> : <></>}
                 <Text style={styles.pageNum}>- 1 -</Text>
@@ -336,7 +335,7 @@ export function PdfForm({data, topInfoData, totalData}) {
                                     style={{
                                         textAlign: 'right',
                                         paddingRight: 8
-                                    }}>{(totalData?.net).toLocaleString()}</Text>
+                                    }}>(V.A.T) 포함</Text>
                             </View>
                             <View style={{
                                 ...styles.point,
@@ -349,15 +348,14 @@ export function PdfForm({data, topInfoData, totalData}) {
                                     style={{
                                         textAlign: 'right',
                                         paddingRight: 8
-                                    }}>{(totalData?.total).toLocaleString()}</Text>
+                                    }}>  {((totalData?.total) + ((totalData?.total) / 10)).toLocaleString()}</Text>
                             </View>
                         </View>
 
                         {/* footer */}
                         <View style={styles.footer}>
-                            <Text>· 의뢰하실 Model로 기준한 견적입니다.</Text>
-                            <Text>· 계좌번호 : (기업은행)069-118428-04-010/만쿠무역</Text>
-                            <Text>· 긴급 납기시 담당자와 협의가능합니다.</Text>
+                            <Text>{bottomInfo}</Text>
+
                         </View>
 
                     </> : <></>}
