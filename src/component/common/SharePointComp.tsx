@@ -173,10 +173,10 @@ export function DriveUploadComp({
                         result =  `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}_RFQ.${extension}`
                         break;
                     case 1 :
-                        result =  `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}_Datasheet.${extension}`
+                        result =  `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}_Received.${extension}`
                         break;
                     case 2 :
-                        result =  `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}_Received.${extension}`
+                        result =  `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}_Datasheet.${extension}`
                         break;
                     case 3 :
                         result =  `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}_${dom3.value}_Quote.${extension}`

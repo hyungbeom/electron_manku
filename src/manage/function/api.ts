@@ -6,6 +6,7 @@ import https from 'https';
 //DEV
 export const API_URL = 'https://manku.progist.co.kr/api';
 // export const API_URL = 'http://175.125.92.183:8080/api';
+// export const API_URL = 'http://localhost:8080/api';
 
 
 const agent = new https.Agent({
