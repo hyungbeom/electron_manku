@@ -423,7 +423,7 @@ export default function NewEstimatePaper({gridRef, openEstimateModal}) {
                 <thead>
 
                 {data[0]?.map((src, idx) => {
-                    return <tr style={{height: 35, fontWeight: 100}}  id={( data.length === 1 && data[0].length - 1 === idx) ? 'lastRow' : ''}>
+                    return <tr>
                         {src.documentNumberFull ?
                             <td colSpan={3} style={{
                                 width: '6%',
@@ -457,7 +457,7 @@ export default function NewEstimatePaper({gridRef, openEstimateModal}) {
             <div style={{flexGrow: 1}}/>
             {Object.keys(data).length > 1 ? <></> :
 
-                <table id={'total'} style={{
+                <table style={{
                     width: '100%',
                     borderCollapse: 'collapse',
                     margin: '20px 0',
@@ -540,8 +540,7 @@ export default function NewEstimatePaper({gridRef, openEstimateModal}) {
                     <thead>
 
                     {v?.map((src, idx) => {
-                        return <tr style={{height: 35, fontWeight: 100}}
-                                   id={(Object.keys(data).length - 1 === i && v.length - 1 === idx) ? 'lastRow' : ''}>
+                        return <tr style={{height: 35, fontWeight: 100}}>
                             {src.documentNumberFull ?
                                 <td colSpan={3} style={{
                                     width: '6%',
@@ -568,23 +567,13 @@ export default function NewEstimatePaper({gridRef, openEstimateModal}) {
                             <NumberInputForm value={src} numb={idx} objKey={i}/>
                         </tr>
                     })}
-                    {Object.keys(data).length - 1 === i ?
-                        <>
-                        {new Array((Math.round(gapRow / 35))).fill({}).map(v => <tr style={{height: 35, fontWeight: 100}}>
 
-                                <td colSpan={2} style={{width: '6%', fontWeight: 600}}></td>
-                            <TextAreas value={''} numb={''} objKey={i}/>
-                            <NumberInputForm value={''} numb={''} objKey={i}/>
-                        </tr>)}
-                        </>
-                        : <></>
-                    }
                     </thead>
                 </table>
 
 
                 <div style={{flexGrow: 1}}/>
-                {Object.keys(data).length - 1 === i ? <table id={'total'} style={{
+                {Object.keys(data).length - 1 === i ? <table style={{
                     width: '100%',
                     borderCollapse: 'collapse',
                     margin: '20px 0',
@@ -607,7 +596,6 @@ export default function NewEstimatePaper({gridRef, openEstimateModal}) {
                         <th style={{width: '20%', textAlign: 'right', paddingRight: 10}}>
                             {((totalData?.total) + ((totalData?.total) / 10)).toLocaleString()}
                         </th>
-                        {/*tax*/}
                     </tr>
                     </thead>
                 </table> : <></>
