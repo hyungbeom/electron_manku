@@ -96,8 +96,8 @@ export const sourceWriteInitial = {
 
 export const makerWriteInitial = {
     "makerName": "",                   // Maker
-    "item": "",               // Item
-    "homepage": "",  // 홈페이지
+    "item": "",                        // Item
+    "homepage": "",                     // 홈페이지
     "area": "",                            // AREA
     "origin": "",                               // 원산지
     "managerConfirm": "",                       // 담당자확인
@@ -400,27 +400,26 @@ export const codeDomesticPurchaseInitial = {
     "limit": -1
 }
 
-
+// 국내매입처 등록 코드
 export const codeDomesticAgencyWriteInitial = {
-    "agencyCode": "",        // 코드(약칭)
-    "agencyName": "",   // 상호
-    "dealerType": "딜러",        // "딜러", "제조"
-    "grade": "A",               // 등급
-    "margin": 0,                // 마진
-    "instructions": "",        // 지시사항
-    "maker": "",            // Maker
-    "homepage": "",   // 홈페이지
-    "tradeStartDate": "",         // 거래시작일
-    "businessRegistrationNumber": "",       // 사업자 번호
-    "bankAccountNumber": "",                // 계좌번호
-    "item": "",                             // 아이템
-    "agencyManagerList": [],
+    "agencyCode": "",                  // 코드(약칭)
+    "agencyName": "",                  // 상호
+    "businessRegistrationNumber": "",  // 사업자 번호
+    "bankAccountNumber": "",           // 계좌번호
+    "maker": "",                       // Maker
+    "item": "",                        // 아이템
+    "homepage": "",                    // 홈페이지
+    "tradeStartDate": "",              // 거래시작일
+    "dealerType": "딜러",               // "딜러", "제조"
+    "grade": "A",                      // 등급
+    "margin": 0,                       // 마진
+    "instructions": "",                // 지시사항
+    "agencyManagerList": [],           // 담당자 리스트
     searchType : 1
 }
 
-
+// 국내고객사 등록 코드
 export const codeDomesticSalesWriteInitial = {
-    "customerId": 1,
     "customerCode": "",
     "customerName": "",
     "customerRegion": "",
@@ -450,6 +449,7 @@ export const codeDomesticSalesWriteInitial = {
     "customerManagerList": []
 }
 
+// 해외고객사 등록 코드
 export const codeOverseasSalesWriteInitial = {
     "customerCode": "",
     "customerName": "",
@@ -513,7 +513,7 @@ export const codeOverseasAgencyInitial = {
     "currencyUnit": "",
     "manager": "",
     "bankAccountNumber": "",
-    "country": "USA",
+    "country": "",
     "ftaNumber": "",
     "intermediaryBank": "",
     "address": "",
@@ -527,11 +527,12 @@ export const codeOverseasAgencyInitial = {
     "overseasAgencyManagerList": []
 }
 
+// 해외 매입처 등록 코드
 export const codeOverseasAgencyWriteInitial = {
     "agencyCode": "",                      // 코드(약칭)
     "agencyName": "",       // 상호
-    "dealerType": "",               // 딜러/제조
-    "grade": "",                             // 등급
+    "dealerType": "딜러",               // 딜러/제조
+    "grade": "A",                             // 등급
     "margin": 0,                           // 마진
     "homepage": "",   // 홈페이지
     "item": "",                        // Item

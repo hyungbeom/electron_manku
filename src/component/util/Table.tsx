@@ -46,9 +46,7 @@ const Table = forwardRef(({
 
     const [tableData, setTableData] = useState([])
 
-
     useEffect(() => {
-
         setTableData(calcData(data))
     }, [data, column]);
 
@@ -367,6 +365,10 @@ const Table = forwardRef(({
         }
     }
 
+    const formatManagerTypes = [
+        'domestic_agency_write_column', 'domestic_agency_update_column', 'overseas_agency_write_column', 'overseas_agency_update_column',
+        'domestic_customer_write_column', 'domestic_customer_update_column', 'overseas_customer_write_column', 'overseas_customer_update_column'
+    ]
     function handleFileUpload(event) {
         const file = event.target.files[0];
         if (!file) return;
@@ -391,10 +393,10 @@ const Table = forwardRef(({
 
             // ✅ 컬럼 매핑 (엑셀 헤더 → 내부 객체 키값)
             const excelHeaders: any = rawData[0]; // 첫 번째 행 (엑셀의 원래 컬럼명)
+            console.log(column['mapping'])
             const mappedHeaders = excelHeaders.map(header =>
                 Object.keys(column['mapping']).find(key => column['mapping'][key] === header) || header
             );
-
             // ✅ 데이터를 새로운 키값으로 매핑 & 날짜 변환 적용
             let formattedData = rawData.slice(1).map((row) =>
                 mappedHeaders.reduce((obj, key, index) => {
@@ -410,21 +412,30 @@ const Table = forwardRef(({
                     return obj;
                 }, {})
             );
-
             // ✅ 최대 100개 데이터만 유지
             formattedData = formattedData.slice(0, 1000);
 
-            console.log(formattedData)
             const instance = hotRef.current.hotInstance;
             const currentList = instance.getSourceData();
-            const filterList = currentList.filter(v => !!v?.model || v?.connectInquiryNo)
-            const filterList2 = formattedData.filter(v => !!v?.model || v?.connectInquiryNo)
+
+            /**
+             * 데이터 관리의 엑셀 업로드를 위해서 분기처리함
+             * 데이터 관리 엑셀들은 model, inquiryNo가 없음
+             * (사용처: 국내/해외 매입처,고객사 등록, 수정시 managerName으로 filtering)
+             */
+            let filterList, filterList2;
+            if (formatManagerTypes.includes(type)) {
+                filterList = currentList.filter(v => !!v?.managerName);
+                filterList2 = formattedData.filter(v => !!v?.managerName);
+            } else {
+                filterList = currentList.filter(v => !!v?.model || v?.connectInquiryNo);
+                filterList2 = formattedData.filter(v => !!v?.model || v?.connectInquiryNo);
+            }
 
             const count = filterList.length + filterList2.length
 
             // ✅ 변환된 데이터를 계산 및 저장
             const resultlist = calcData([...filterList, ...filterList2, ...commonFunc.repeatObject(column['defaultData'], 1000 - count)]);
-
             setTableData(resultlist);
         };
 

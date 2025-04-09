@@ -1,89 +1,55 @@
 import React, {memo, useEffect, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
-import LayoutComponent from "@/component/LayoutComponent";
-import Card from "antd/lib/card/Card";
-import Button from "antd/lib/button";
-import {
-    CopyOutlined, DownCircleFilled, EditOutlined, RetweetOutlined, SaveOutlined, UpCircleFilled,
-} from "@ant-design/icons";
+import {CopyOutlined, DeleteOutlined, FormOutlined,} from "@ant-design/icons";
 import message from "antd/lib/message";
-import {
-    tableCodeDomesticAgencyWriteColumns, tableCodeOverseasAgencyWriteColumns,
-} from "@/utils/columnList";
-import {
-    codeDomesticAgencyWriteInitial, codeOverseasAgencyWriteInitial,
-} from "@/utils/initialList";
-import TableGrid from "@/component/tableGrid";
 import {useRouter} from "next/router";
 import moment from "moment/moment";
-import DatePicker from "antd/lib/date-picker";
-import Input from "antd/lib/input/Input";
-import Select from "antd/lib/select";
-import initialServerRouter from "@/manage/function/initialServerRouter";
-import nookies from "nookies";
-import {setUserInfo} from "@/store/user/userSlice";
-import {wrapper} from "@/store/store";
-import {BoxCard, datePickerForm, inputForm, inputNumberForm, MainCard, selectBoxForm} from "@/utils/commonForm";
-import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
-import {updateDomesticAgency} from "@/utils/api/mainApi";
+import {BoxCard, datePickerForm, inputForm, inputNumberForm, MainCard} from "@/utils/commonForm";
+import {commonFunc, commonManage} from "@/utils/commonManage";
 import Spin from "antd/lib/spin";
 import _ from "lodash";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import Table from "@/component/util/Table";
-import {DCInfo, OAInfo, OCInfo} from "@/utils/column/ProjectInfo";
+import {OAInfo, OCInfo} from "@/utils/column/ProjectInfo";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
-import OverseasAgencyRead from "@/component/page/data/agency/overseas/OverseasAgencyRead";
+import {Actions} from "flexlayout-react";
 
 const listType = 'overseasAgencyManagerList'
 
-
-
-function OverseasAgencyUpdate({ updateKey, getCopyPage}:any) {
+function OverseasAgencyUpdate({ updateKey, getCopyPage, layoutRef}:any) {
     const notificationAlert = useNotificationAlert();
-    const gridRef = useRef(null);
     const groupRef = useRef<any>(null)
     const infoRef = useRef<any>(null)
     const tableRef = useRef(null);
 
-    const router=useRouter();
-
     const [mini, setMini] = useState(true);
-    const [info, setInfo] = useState<any>([])
-
+    const [info, setInfo] = useState<any>([]);
+    const [tableData, setTableData] = useState([]);
+    const [loading, setLoading] = useState<any>(false);
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('overseas_agency_update');
         return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 0]; // 기본값 [50, 50, 50]
     };
-
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
-
-    const [loading, setLoading] = useState<any>(false)
-
-    const [tableData, setTableData] = useState([]);
-
-
-
     async function getDataInfo() {
-
         const result = await getData.post('agency/getOverseasAgencyDetail', {
             "overseasAgencyId": updateKey['overseas_agency_update'],
             "overseasAgencyCode": ""
         });
-
         return result?.data?.entity;
     }
 
     useEffect(() => {
-        setLoading(true)
+        setLoading(true);
         getDataInfo().then(v => {
             const {overseasAgencyDetail} = v;
+            setInfo(overseasAgencyDetail);
             overseasAgencyDetail[listType] = [...overseasAgencyDetail[listType], ...commonFunc.repeatObject(OCInfo['write']['defaultData'], 1000 - overseasAgencyDetail[listType].length)];
-            setInfo(overseasAgencyDetail)
             setTableData(overseasAgencyDetail[listType]);
-            setLoading(false)
+            setLoading(false);
         })
     }, [updateKey['overseas_agency_update']])
 
@@ -91,79 +57,117 @@ function OverseasAgencyUpdate({ updateKey, getCopyPage}:any) {
         commonManage.setInfo(infoRef, info);
     }, [info]);
 
-
-    function onChange(e) {
-        commonManage.onChange(e, setInfo)
-    }
-
+    /**
+     * @description 해외매입처 저장
+     * 해외 매입처 수정 페이지 -> 저장 버튼
+     */
     async function saveFunc() {
-        const dom = infoRef.current.querySelector('#agencyCode');
         let infoData = commonManage.getInfo(infoRef, OAInfo['defaultInfo']);
+        infoData['overseasAgencyId'] = updateKey['overseas_agency_update'];
         infoData['overseas_agency_update'] = updateKey['overseas_agency_update']
-
         if(!infoData['agencyCode']){
             return message.error('코드(약칭)이 누락되었습니다.')
         }
-
-
         const tableList = tableRef.current?.getSourceData();
-
-        const filterTableList = commonManage.filterEmptyObjects(tableList, ['managerName','phoneNumber'])
+        const filterTableList = commonManage.filterEmptyObjects(tableList, ['managerName'])
         if (!filterTableList.length) {
-            return message.warn('하위 데이터 1개 이상이여야 합니다');
+            return message.warn('하위 담당자 데이터가 1개 이상 이여야 합니다.');
         }
-        // console.log(filterTableList,'infoData::')
-        // setLoading(true)
         infoData[listType] = filterTableList;
-        infoData['overseasAgencyId'] = updateKey['overseas_agency_update'];
 
+        setLoading(true);
+
+        const agencyCode = infoRef.current.querySelector('#agencyCode')?.value || '';
+        const agencyName = infoRef.current.querySelector('#agencyName')?.value || '';
         await getData.post('agency/updateOverseasAgency',  infoData).then(v => {
             if (v.data.code === 1) {
                 notificationAlert('success', '💾 해외매입처 수정완료',
                     <>
-                        <div>코드 : {dom.value}</div>
+                        <div>코드(약칭) : {agencyCode}</div>
+                        <div>상호 : {agencyName}</div>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
                     ,null,
                 )
             } else {
-                message.error('저장에 실패하였습니다.')
+                message.error(v?.data?.message)
             }
+            setLoading(false);
         })
     }
 
-    function returnFunc(){
-        setLoading(false)
+    /**
+     * @description 해외매입처 삭제
+     * 해외 매입처 수정 페이지 -> 삭제 버튼
+     */
+    function deleteFunc(){
+        setLoading(true);
+        const agencyCode = infoRef.current.querySelector('#agencyCode')?.value || '';
+        const agencyName = infoRef.current.querySelector('#agencyName')?.value || '';
+        getData.post('agency/deleteOverseasAgency',{overseasAgencyId : updateKey['overseas_agency_update']}).then(v=>{
+            const {code, message} = v.data;
+            if(code === 1){
+                notificationAlert('success', '🗑️ 해외매입처 삭제완료',
+                    <>
+                        <div>코드(약칭) : {agencyCode}</div>
+                        <div>상호 : {agencyName}</div>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    ,null, null, 3
+                )
+                const {model} = layoutRef.current.props;
+                window.postMessage('delete', window.location.origin);
+                getCopyPage('overseas_agency_read', {})
+                const targetNode = model.getRoot().getChildren()[0]?.getChildren()
+                    .find((node: any) => node.getType() === "tab" && node.getComponent() === 'overseas_agency_update');
+
+                if (targetNode) {
+                    model.doAction(Actions.deleteTab(targetNode.getId())); // ✅ 기존 로직 유지
+                }
+            } else {
+                message.error(v?.data?.message);
+            }
+            setLoading(false);
+        })
     }
 
-
-    function clearAll() {
-        setInfo(codeOverseasAgencyWriteInitial);
-        gridManage.deleteAll(gridRef)
-    }
-
+    /**
+     * @description 해외매입처 복제
+     * 해외 매입처 수정 페이지 -> 복제 버튼
+     */
     function copyPage() {
-        const totalList = gridManage.getAllData(gridRef)
-        let copyInfo = _.cloneDeep(info)
-        copyInfo[listType] = totalList
+        const totalList = tableRef.current.getSourceData();
+        totalList.pop();
+        const list = totalList.map(v => { return v })
 
-        const query = `data=${encodeURIComponent(JSON.stringify(copyInfo))}`;
-        router.push(`/data/agency/overseas/agency_write?${query}`)
+        const result = Object.keys(OAInfo['defaultInfo']).map(v => `#${v}`)
+        const test = `${result.join(',')}`;
+        const elements = infoRef.current.querySelectorAll(test);
+
+        let copyInfo = {}
+        for (let element of elements) {
+            copyInfo[element.id] = element.value
+        }
+
+        copyInfo[listType] = [...list, ...commonFunc.repeatObject(OAInfo['write']['defaultData'], 1000 - list.length)];
+        getCopyPage('overseas_agency_write', {...copyInfo, _meta: {updateKey: Date.now()}})
     }
+
     return <Spin spinning={loading}>
-        <div style={{
+        <div ref={infoRef} style={{
             display: 'grid',
             gridTemplateRows: `${mini ? '365px' : '65px'} calc(100vh - ${mini ? 460 : 160}px)`,
             rowGap: 10
         }}>
             <PanelSizeUtil groupRef={groupRef} storage={'overseas_agency_update'}/>
             <MainCard title={'해외 매입처'} list={[
-                {name: '수정', func: saveFunc, type: 'primary'},
-                {name: '초기화', func: clearAll, type: 'danger'}
+                {name: <div><FormOutlined style={{paddingRight: 8}}/>수정</div>, func: saveFunc, type: 'primary'},
+                {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: deleteFunc, type: 'delete'},
+                {name: <div><CopyOutlined style={{paddingRight: 8}}/>복제</div>, func: copyPage, type: 'default'},
             ]} mini={mini} setMini={setMini}>
 
 
-                {mini ? <div ref={infoRef}>
+                {mini ? <div>
                         <PanelGroup ref={groupRef} className={'ground'} direction="horizontal"
                                     style={{gap: 0.5, paddingTop: 3}}>
                             <Panel defaultSize={sizes[0]} minSize={5}>
@@ -176,33 +180,42 @@ function OverseasAgencyUpdate({ updateKey, getCopyPage}:any) {
                             <PanelResizeHandle/>
                             <Panel defaultSize={sizes[1]} minSize={5}>
                                 <BoxCard title={'매입처 정보'}>
-                                    {inputForm({title: '딜러/제조', id: 'dealerType'})}
-                                    {/*{selectBoxForm({*/}
-                                    {/*    title: '등급', id: 'grade',     list: [*/}
-                                    {/*        {value: 'A', label: 'A'},*/}
-                                    {/*        {value: 'B', label: 'B'},*/}
-                                    {/*        {value: 'C', label: 'C'},*/}
-                                    {/*        {value: 'D', label: 'D'},*/}
-                                    {/*    ]*/}
-                                    {/*})}*/}
-                                    {inputNumberForm({title: '마진', id: 'margin', suffix: '%'})}
+                                    {datePickerForm({title: '거래시작일', id: 'tradeStartDate'})}
+                                    <div>
+                                        <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>딜러/제조</div>
+                                        <select name="languages" id="dealerType"
+                                                style={{
+                                                    outline: 'none',
+                                                    border: '1px solid lightGray',
+                                                    height: 23,
+                                                    width: '100%',
+                                                    fontSize: 12,
+                                                    paddingBottom: 0.5
+                                                }}>
+                                            <option value={'딜러'}>딜러</option>
+                                            <option value={'제조'}>제조</option>
+                                        </select>
+                                    </div>
 
-                                    <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>등급</div>
-                                    <select name="languages" id="grade"
-                                            style={{
-                                                outline: 'none',
-                                                border: '1px solid lightGray',
-                                                height: 23,
-                                                width: '100%',
-                                                fontSize: 12,
-                                                paddingBottom: 0.5
-                                            }}>
-                                        <option value={'A'}>A</option>
-                                        <option value={'B'}>B</option>
-                                        <option value={'C'}>C</option>
-                                        <option value={'D'}>D</option>
+                                    <div style={{padding: '10px 0px'}}>
+                                        <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>등급</div>
+                                        <select name="languages" id="grade"
+                                                style={{
+                                                    outline: 'none',
+                                                    border: '1px solid lightGray',
+                                                    height: 23,
+                                                    width: '100%',
+                                                    fontSize: 12,
+                                                    paddingBottom: 0.5
+                                                }}>
+                                            <option value={'A'}>A</option>
+                                            <option value={'B'}>B</option>
+                                            <option value={'C'}>C</option>
+                                            <option value={'D'}>D</option>
 
-                                    </select>
+                                        </select>
+                                    </div>
+                                    {inputNumberForm({title: '마진 (%)', id: 'margin', suffix: '%'})}
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
@@ -224,24 +237,21 @@ function OverseasAgencyUpdate({ updateKey, getCopyPage}:any) {
                                     {inputForm({title: 'FTA NO', id: 'ftaNumber'})}
                                 </BoxCard>
                             </Panel>
-                            <PanelResizeHandle  />
+                            <PanelResizeHandle/>
                             <Panel defaultSize={sizes[4]} minSize={5}>
                                 <BoxCard title={'ETC'}>
-                                    {datePickerForm({title: '거래시작일', id: 'tradeStartDate'})}
                                     {inputForm({title: '담당자', id: 'manager'})}
                                     {inputForm({title: '홈페이지', id: 'homepage'})}
                                 </BoxCard>
                             </Panel>
-                            <PanelResizeHandle />
-                            <Panel defaultSize={sizes[5]} minSize={5}>
-                            </Panel>
+                            <PanelResizeHandle/>
+                            <Panel></Panel>
                         </PanelGroup>
                     </div>
                     : <></>}
             </MainCard>
-            {}
             <Table data={tableData} column={OAInfo['write']} funcButtons={['print']} ref={tableRef}
-                   type={'overseas_agency_write_column'}/>
+                   type={'overseas_agency_update_column'}/>
         </div>
     </Spin>
 }

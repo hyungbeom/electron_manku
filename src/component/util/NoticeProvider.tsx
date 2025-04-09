@@ -6,13 +6,13 @@ const NotificationContext = createContext(null);
 export const NoticeProvider = ({ children }) => {
     const [api, contextHolder] = notification.useNotification();
 
-    const notificationAlert = (type, title, description, onClick, style = {cursor : 'pointer'}) => {
+    const notificationAlert = (type, title, description, onClick, style , duration = 5) => {
         api[type]({
             message: title,
             description: description,
             onClick: onClick,
-            duration: 10,
-            style: style,
+            duration: duration,
+            style: style ?? {cursor : 'pointer'},
             placement: "bottomLeft"
         });
     };

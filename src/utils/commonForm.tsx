@@ -581,7 +581,7 @@ export const tableButtonList = (type: any, gridRef?: any) => {
     const agDownloadExcel = async () => {
         const list = gridRef.current.getSelectedRows()
         if (!list.length) {
-            return message.warning('1개이상의 데이터를 선택해주세요')
+            return message.warning('1개 이상의 데이터를 선택해주세요.')
         }
         gridRef.current.exportDataAsCsv({
             fileName: "조회리스트.csv",

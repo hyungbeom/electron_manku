@@ -225,9 +225,24 @@ const TableGrid = ({
     }
 
 
-    const handleSelectionChanged = () => {
+    /**
+     * total 행이 필요 없는 컴포넌트에 적용하려고 추가
+     * 선택된 row의 해당 key가 있으면 total 행 제외
+     * (사용처: 데이터 관리 카테고리 테이블 들)
+     */
+    const excludeKeys = ['agencyId', 'overseasAgencyId', 'customerId', 'overseasCustomerId', 'makerId'];
+    const containsKey = (list) => {
+        const firstRow = list?.[0];
+        if (!firstRow) return;
+        return excludeKeys.some(key => key in firstRow);
+    }
 
+    const handleSelectionChanged = () => {
         const selectedRows = gridRef.current.getSelectedRows(); // 체크된 행 가져오기
+        if(!selectedRows.length || containsKey(selectedRows)) {
+            setPinnedBottomRowData([]);
+            return;
+        }
         const totals = commonFunc.sumCalc(selectedRows);
         setPinnedBottomRowData([totals]);
     };

@@ -1,7 +1,7 @@
-import React, {memo, useRef, useState} from "react";
+import React, {memo, useEffect, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import Button from "antd/lib/button";
-import {ExclamationCircleOutlined,} from "@ant-design/icons";
+import {ExclamationCircleOutlined, ReloadOutlined, SaveOutlined, SearchOutlined,} from "@ant-design/icons";
 import message from "antd/lib/message";
 import {tableCodeDomesticPurchaseColumns,} from "@/utils/columnList";
 import TableGrid from "@/component/tableGrid";
@@ -15,7 +15,7 @@ import {searchDomesticAgency} from "@/utils/api/mainApi";
 import Popconfirm from "antd/lib/popconfirm";
 import moment from "moment/moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
-
+import Space from "antd/lib/space";
 
 function DomesticAgencyRead({getPropertyId, getCopyPage}: any) {
     const notificationAlert = useNotificationAlert();
@@ -26,6 +26,15 @@ function DomesticAgencyRead({getPropertyId, getCopyPage}: any) {
     const [mini, setMini] = useState(true);
     const [totalRow, setTotalRow] = useState(0);
     const [loading, setLoading] = useState(false);
+
+    const [isSearch, setIsSearch] = useState(false);
+
+    useEffect(() => {
+        if (isSearch) {
+            searchInfo(true);
+            setIsSearch(false);
+        }
+    }, [isSearch]);
 
     const onGridReady = async (params) => {
         setLoading(true)
@@ -50,34 +59,17 @@ function DomesticAgencyRead({getPropertyId, getCopyPage}: any) {
 
     function handleKeyPress(e) {
         if (e.key === 'Enter') {
-            searchInfo(true)
+            setIsSearch(true);
         }
     }
 
-
-    async function deleteList() {
-        if (gridRef.current.getSelectedRows().length < 1) {
-            return message.error('삭제할 데이터를 선택해주세요.')
-        }
-
-        const deleteList = gridManage.getFieldDeleteList(gridRef, {
-            agencyId: 'agencyId',
-        });
-
-        setLoading(true)
-
-        await getData.post('agency/deleteAgency', {deleteList: deleteList}).then(v => {
-            searchInfo(v.data.code === 1)
-        })
+    async function moveRouter() {
+        getCopyPage('domestic_agency_write', {})
     }
-
 
     async function searchInfo(e) {
-
         if (e) {
             setLoading(true)
-
-
             await searchDomesticAgency({
                 data: {
                     "searchType": info['searchType'],      // 1: 코드, 2: 상호명, 3: Maker
@@ -91,69 +83,58 @@ function DomesticAgencyRead({getPropertyId, getCopyPage}: any) {
                 setLoading(false)
             })
         }
-        setLoading(false)
     }
 
     function clearAll() {
-        setInfo(copyInit);
         gridRef.current.deselectAll();
+        setInfo(copyInit);
+        setIsSearch(true);
     }
-
-    async function moveRouter() {
-        getCopyPage('domestic_agency_write', {orderDetailList: []})
-    }
-
 
     async function confirm() {
         if (gridRef.current.getSelectedRows().length < 1) {
-            return message.error('삭제할 데이터를 선택해주세요.')
+            return message.error('삭제할 매입처를 선택해주세요.')
         }
         setLoading(true)
 
-
         const list = gridRef.current.getSelectedRows()
         const filterList = list.map(v => parseInt(v.agencyId));
-
 
         await getData.post('agency/deleteAgencies', {agencyIdList: filterList}).then(v => {
             if (v.data.code === 1) {
                 searchInfo(true)
                 notificationAlert('success', '🗑️ 국내매입처 삭제완료',
                     <>
-                        <div>매입처 상호
-                            - {list[0].agencyName} {list.length > 1 ? ('외' + " " + (list.length - 1) + '개') : ''} 이(가)
-                            삭제되었습니다
+                        <div>상호 : {list[0].agencyName} {list.length > 1 ? ('외' + " " + (list.length - 1) + '개') : ''} 이(가) 삭제되었습니다.
                         </div>
                         <div>삭제일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
-                    , function () {
-                    },
+                    , null, null, 3
                 )
             } else {
                 message.error(v.data.message)
             }
-            searchInfo(false)
+            setLoading(false)
         })
     }
 
     return <Spin spinning={loading} tip={'국내 매입처 조회중...'}>
         <ReceiveComponent searchInfo={searchInfo}/>
         <>
-
             <div style={{
                 display: 'grid',
                 gridTemplateRows: `${mini ? '120px' : '65px'} calc(100vh - ${mini ? 250 : 195}px)`,
                 columnGap: 5
             }}>
                 <MainCard title={'국내 매입처 조회'}
-                    // list={[{name: '조회', func: searchInfo, type: 'primary'},
-                    //     {name: '초기화', func: clearAll, type: 'danger'},
-                    //     {name: '신규생성', func: moveRouter}]}
-                          list={[{name: '신규생성', func: moveRouter}]}
+                          list={[{
+                              name: <div><SaveOutlined style={{paddingRight: 8}}/>신규작성</div>,
+                              func: moveRouter,
+                              type: ''
+                          }]}
                           mini={mini} setMini={setMini}>
                     {mini ?
                         <div style={{display: 'flex', alignItems: 'center'}}>
-
                             {/*<div style={{marginTop: -10, width: 150}}>*/}
                             {/*    {selectBoxForm({*/}
                             {/*        title: '유효기간', id: 'searchType', list: [*/}
@@ -173,32 +154,25 @@ function DomesticAgencyRead({getPropertyId, getCopyPage}: any) {
                                     handleKeyPress: handleKeyPress
                                 })}
                             </div>
-                            <div style={{
-                                marginTop: 14,
-                                marginLeft: 20,
-                                width: 88,
-                                display: 'flex',
-                                justifyContent: 'space-between'
-                            }}>
-                                <Button type={'primary'} style={{fontSize: 11}} size={'small'}
-                                        onClick={searchInfo}>조회</Button>
-                                <Button type={'primary'} danger style={{fontSize: 11}} size={'small'}
-                                        onClick={clearAll}>초기화</Button>
-                            </div>
+                            <Space style={{marginTop: 14, marginLeft: 20}} size={8}>
+                                <Button type="primary" size="small" style={{fontSize: 11}} onClick={searchInfo}>
+                                    <SearchOutlined/>조회
+                                </Button>
+                                <Button type="primary" danger size="small" style={{fontSize: 11}} onClick={clearAll}>
+                                    <ReloadOutlined/>초기화
+                                </Button>
+                            </Space>
                         </div>
                         : <></>}
                 </MainCard>
 
                 {/*@ts-ignored*/}
                 <TableGrid deleteComp={
-
                     <Popconfirm
                         title="삭제하시겠습니까?"
                         onConfirm={confirm}
                         icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
-
-                        {/*@ts-ignored*/}
-                        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}>삭제</Button>
+                        <Button type={'primary'} danger size={'small'} style={{fontSize: 11, marginLeft: 5}}>삭제</Button>
                     </Popconfirm>
                 }
                            totalRow={totalRow}

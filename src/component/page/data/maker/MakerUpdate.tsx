@@ -97,7 +97,19 @@ function MakerUpdate({updateKey, getCopyPage}:any) {
                 <PanelResizeHandle/>
                 <Panel defaultSize={sizes[2]} minSize={5}>
                     <BoxCard title={'기타 정보'}>
-                        {textAreaForm({title: '지시사항', id: 'instructions', onChange: onChange, data: info})}
+                        {inputForm({
+                            title: 'FTA-No',
+                            id: 'ftaNumber',
+                            onChange: onChange,
+                            data: info
+                        })}
+                        {textAreaForm({
+                            title: '지시사항',
+                            rows: 7,
+                            id: 'instructions',
+                            onChange: onChange,
+                            data: info
+                        })}
                     </BoxCard>
                 </Panel>
                 <PanelResizeHandle/>

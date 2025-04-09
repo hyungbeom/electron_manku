@@ -12,7 +12,7 @@ export default function ReceiveComponent({searchInfo}){
 
 
            if(event.data){
-               if(event.data === 'write' || event.data === 'update'){
+               if(event.data === 'write' || event.data === 'update' || event.data === 'delete'){
                    searchInfo(true)
                }
            }

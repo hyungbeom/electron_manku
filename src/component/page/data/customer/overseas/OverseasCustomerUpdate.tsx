@@ -1,7 +1,6 @@
 import React, {memo, useEffect, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import message from "antd/lib/message";
-import {codeDomesticSalesWriteInitial, projectWriteInitial,} from "@/utils/initialList";
 import {useRouter} from "next/router";
 import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm} from "@/utils/commonForm";
 import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
@@ -9,37 +8,33 @@ import _ from "lodash";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import Table from "@/component/util/Table";
-import {OCInfo} from "@/utils/column/ProjectInfo";
+import {DCInfo, OCInfo} from "@/utils/column/ProjectInfo";
 import Spin from "antd/lib/spin";
 import moment from "moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
-import OverseasCustomerRead from "@/component/page/data/customer/overseas/OverseasCustomerRead";
+import {CopyOutlined, DeleteOutlined, FormOutlined} from "@ant-design/icons";
+import {Actions} from "flexlayout-react";
 
 const listType = 'overseasCustomerManagerList'
 
-
-function OverseasCustomerUpdate({ updateKey, getCopyPage}:any) {
+function OverseasCustomerUpdate({ updateKey, getCopyPage, layoutRef}:any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
     const infoRef = useRef<any>(null)
-
     const tableRef = useRef(null);
-    const gridRef = useRef(null);
-    const router = useRouter();
 
     const [mini, setMini] = useState(true);
     const [info, setInfo] = useState<any>({});
     const [tableData, setTableData] = useState([]);
     const [loading, setLoading] = useState(false);
-    const getSavedSizes = () => {
-        const savedSizes = localStorage.getItem('overseas_customer_write');
-        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 0]; // 기본값 [50, 50, 50]
-    };
 
+    const getSavedSizes = () => {
+        const savedSizes = localStorage.getItem('overseas_customer_update');
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20]; // 기본값 [50, 50, 50]
+    };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
     async function getDataInfo() {
-
         const result = await getData.post('customer/getOverseasCustomerDetail', {
             "overseasCustomerId": updateKey['overseas_customer_update'],
             "overseasCustomerCode": ""
@@ -57,69 +52,89 @@ function OverseasCustomerUpdate({ updateKey, getCopyPage}:any) {
             setLoading(false)
         })
     }, [updateKey['overseas_customer_update']])
-    useEffect(() => {
 
+    useEffect(() => {
         commonManage.setInfo(infoRef, info);
     }, [info]);
 
-
     async function saveFunc() {
-        const dom = infoRef.current.querySelector('#customerName');
         let infoData = commonManage.getInfo(infoRef, OCInfo['defaultInfo']);
         infoData['overseasCustomerId'] = updateKey['overseas_customer_update']
-
         const tableList = tableRef.current?.getSourceData();
-
         const filterTableList = commonManage.filterEmptyObjects(tableList, ['managerName'])
         if (!filterTableList.length) {
-            return message.warn('하위 데이터 1개 이상이여야 합니다');
+            return message.warn('하위 담당자 데이터가 1개 이상 이여야 합니다.');
         }
+
         infoData[listType] = filterTableList
+
+        setLoading(true);
+
+        const customerCode = infoRef.current.querySelector('#customerCode')?.value || '';
+        const customerName = infoRef.current.querySelector('#customerName')?.value || '';
         await getData.post('customer/updateOverseasCustomer', infoData).then(v => {
-            if (v.data.code === 1) {
-                notificationAlert('success', '💾 해외 고객사 수정완료',
+            if (v?.data?.code === 1) {
+                notificationAlert('success', '💾 해외고객사 수정완료',
                     <>
-                        <div>Project No. : {dom.value}</div>
+                        <div>코드(약칭) : {customerCode}</div>
+                        <div>상호 : {customerName}</div>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
                     ,null,
                 )
             } else {
-                message.error('저장에 실패하였습니다.')
+                message.error(v?.data?.message)
             }
+            setLoading(false);
         });
-
     }
 
+    function deleteFunc(){
+        setLoading(true);
+        const customerCode = infoRef.current.querySelector('#customerCode')?.value || '';
+        const customerName = infoRef.current.querySelector('#customerName')?.value || '';
+        getData.post('customer/deleteOverseasCustomer',{overseasCustomerId : updateKey['overseas_customer_update']}).then(v=>{
+            if(v?.data?.code === 1){
+                notificationAlert('success', '🗑️ 해외고객사 삭제완료',
+                    <>
+                        <div>코드(약칭) : {customerCode}</div>
+                        <div>상호 : {customerName}</div>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    ,null, null, 3
+                )
+                const {model} = layoutRef.current.props;
+                window.postMessage('delete', window.location.origin);
+                getCopyPage('overseas_customer_read', {})
+                const targetNode = model.getRoot().getChildren()[0]?.getChildren()
+                    .find((node: any) => node.getType() === "tab" && node.getComponent() === 'overseas_customer_update');
 
-    function deleteList() {
-
-        const api = gridRef.current.api;
-
-        // 전체 행 반복하면서 선택되지 않은 행만 추출
-        const uncheckedData = [];
-        for (let i = 0; i < api.getDisplayedRowCount(); i++) {
-            const rowNode = api.getDisplayedRowAtIndex(i);
-            if (!rowNode.isSelected()) {
-                uncheckedData.push(rowNode.data);
+                if (targetNode) {
+                    model.doAction(Actions.deleteTab(targetNode.getId())); // ✅ 기존 로직 유지
+                }
+            } else {
+                message.error(v?.data?.message)
             }
-        }
-
-        let copyData = {...info}
-        copyData['customerManagerList'] = uncheckedData;
-
-        setInfo(copyData);
-
+            setLoading(false);
+        })
     }
-
 
     function copyPage() {
-        const totalList = gridManage.getAllData(gridRef)
-        let copyInfo = _.cloneDeep(info)
-        copyInfo[listType] = totalList
+        const totalList = tableRef.current.getSourceData();
+        totalList.pop();
 
-        const query = `data=${encodeURIComponent(JSON.stringify(copyInfo))}`;
-        router.push(`/data/customer/overseas/customer_write?${query}`)
+        const result = Object.keys(OCInfo['defaultInfo']).map(v => `#${v}`)
+        const test = `${result.join(',')}`;
+        const elements = infoRef.current.querySelectorAll(test);
+
+        let copyInfo = {}
+        for (let element of elements) {
+            copyInfo[element.id] = element.value
+        }
+
+        copyInfo['overseasCustomerId'] = updateKey['overseas_customer_update']
+        copyInfo[listType] = [...totalList, ...commonFunc.repeatObject(OCInfo['write']['defaultData'], 1000 - totalList.length)];
+        getCopyPage('overseas_customer_write', {...copyInfo, _meta: {updateKey: Date.now()}})
     }
 
     return <Spin spinning={loading}>
@@ -128,11 +143,11 @@ function OverseasCustomerUpdate({ updateKey, getCopyPage}:any) {
             gridTemplateRows: `${mini ? '365px' : '65px'} calc(100vh - ${mini ? 460 : 150}px)`,
             rowGap: 10,
         }}>
-            <PanelSizeUtil groupRef={groupRef} storage={'overseas_customer_write'}/>
+            <PanelSizeUtil groupRef={groupRef} storage={'overseas_customer_update'}/>
             <MainCard title={'해외 고객사 수정'} list={[
-                {name: '수정', func: saveFunc, type: 'primary'},
-                {name: '삭제', func: saveFunc, type: 'danger'},
-                {name: '복제', func: copyPage, type: 'default'},
+                {name: <div><FormOutlined style={{paddingRight: 8}}/>수정</div>, func: saveFunc, type: 'primary'},
+                {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: deleteFunc, type: 'delete'},
+                {name: <div><CopyOutlined style={{paddingRight: 8}}/>복제</div>, func: copyPage, type: 'default'},
             ]} mini={mini} setMini={setMini}>
 
 
@@ -177,6 +192,7 @@ function OverseasCustomerUpdate({ updateKey, getCopyPage}:any) {
                         <PanelResizeHandle/>
                         <Panel defaultSize={sizes[2]} minSize={5}>
                             <BoxCard title={'INQUIRY & PO no'}>
+                                {inputForm({title: '거래처', id: 'customerType'})}
                                 {inputForm({title: '연락처', id: 'phoneNumber'})}
                                 {inputForm({title: '팩스번호', id: 'faxNumber'})}
                                 {inputForm({title: '만쿠 담당자', id: 'mankuTradeManager'})}
@@ -190,14 +206,12 @@ function OverseasCustomerUpdate({ updateKey, getCopyPage}:any) {
                             </BoxCard>
                         </Panel>
                         <PanelResizeHandle/>
-                        <Panel defaultSize={sizes[4]} minSize={5}>
-                        </Panel>
+                        <Panel></Panel>
                     </PanelGroup>
                 </div> : <></>}
             </MainCard>
             <Table data={tableData} column={OCInfo['write']} funcButtons={['print']} ref={tableRef}
-                   type={'overseas_customer_write_column'}/>
-
+                   type={'overseas_customer_update_column'}/>
         </div>
     </Spin>
 }

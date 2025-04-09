@@ -343,7 +343,7 @@ export const makerColumn = [
         headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
         checkboxSelection: true, // 각 행에 체크박스 추가
         cellStyle: {textAlign: "center"}, // 스타일 설정
-        maxWidth: 45, // 컬럼 너비
+        maxWidth: 60, // 컬럼 너비
         pinned: "left", // 왼쪽에 고정
         filter: false
     }, {
@@ -360,7 +360,7 @@ export const makerColumn = [
         field: 'item',
         key: 'item',
         render: (text) => <div style={{width: 80}} className="ellipsis-cell">{text}</div>,
-
+        pinned: 'left'
     },
     {
         headerName: '홈페이지',
@@ -1926,7 +1926,7 @@ export const tableCodeDomesticAgencyWriteColumns = [
     },
 ]
 
-
+// 국내매입처 조회 테이블 컬럼
 export const tableCodeDomesticPurchaseColumns = [
     {
         headerName: "", // 컬럼 제목
@@ -1934,21 +1934,23 @@ export const tableCodeDomesticPurchaseColumns = [
         checkboxSelection: true, // 각 행에 체크박스 추가
         valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
         cellStyle: {textAlign: "center"}, // 스타일 설정
-        maxWidth: 45, // 컬럼 너비
+        maxWidth: 60, // 컬럼 너비
         pinned: "left", // 왼쪽에 고정
         filter: false
     }, {
         headerName: '코드',
         field: 'agencyCode',
         key: 'agencyCode',
-        maxWidth: 70,
-        pinned: "left",
+        maxWidth: 80,
+        pinned: "left"
     },
     {
         headerName: '상호',
         field: 'agencyName',
         key: 'agencyName',
-    }, {
+        pinned: "left"
+    },
+    {
         headerName: 'Item',
         field: 'item',
         key: 'item',
@@ -1970,7 +1972,7 @@ export const tableCodeDomesticPurchaseColumns = [
         key: 'grade',
     },
     {
-        headerName: '마진',
+        headerName: '마진 (%)',
         field: 'margin',
         key: 'margin',
     },
@@ -2023,18 +2025,19 @@ export const tableCodeDomesticPurchaseColumns = [
     },
 ];
 
+// 해외매입처 조회 테이블 컬럼
 export const tableCodeOverseasPurchaseColumns = [
     {
         headerName: "", // 컬럼 제목
+        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
+        checkboxSelection: true, // 각 행에 체크박스 추가
         valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
         cellStyle: {textAlign: "center"}, // 스타일 설정
-        maxWidth: 45, // 컬럼 너비
+        maxWidth: 60, // 컬럼 너비
         pinned: "left", // 왼쪽에 고정
         filter: false
     },
     {
-        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
-        checkboxSelection: true, // 각 행에 체크박스 추가
         headerName: '코드',
         field: 'agencyCode',
         key: 'agencyCode',
@@ -2058,7 +2061,7 @@ export const tableCodeOverseasPurchaseColumns = [
         key: 'grade',
     },
     {
-        headerName: '마진',
+        headerName: '마진 (%)',
         field: 'margin',
         key: 'margin',
     },
@@ -2214,28 +2217,28 @@ export const tableCodeOverseasAgencyWriteColumns = [
     },
 ]
 
+// 국내고객사 조회 테이블 컬럼
 export const tableCodeDomesticSalesColumns = [
     {
         headerName: "", // 컬럼 제목
+        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
+        checkboxSelection: true, // 각 행에 체크박스 추가
         valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
         cellStyle: {textAlign: "center"}, // 스타일 설정
-        maxWidth: 45, // 컬럼 너비
+        maxWidth: 60, // 컬럼 너비
         pinned: "left", // 왼쪽에 고정
         filter: false
     },
     {
         headerName: '코드',
         field: 'customerCode',
-        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
-        checkboxSelection: true, // 각 행에 체크박스 추가
         pinned: "left", // 왼쪽에 고정
-        maxWidth: 55
+        maxWidth: 80
     },
     {
         headerName: '상호',
         field: 'customerName',
         pinned: "left", // 왼쪽에 고정
-        maxWidth: 120
     },
     {
         headerName: '지역',
@@ -2277,7 +2280,7 @@ export const tableCodeDomesticSalesColumns = [
 
     },
     {
-        headerName: '고객사',
+        headerName: '거래처',
         field: 'customerType',
 
     },
@@ -2376,7 +2379,7 @@ export const tableCodeDomesticWriteColumn = [
     },
 ]
 
-
+// 해외고객사 테이블 조회 컬럼
 export const tableCodeOverseasSalesColumns = [
     {
         headerName: "", // 컬럼 제목
@@ -2384,17 +2387,20 @@ export const tableCodeOverseasSalesColumns = [
         checkboxSelection: true, // 각 행에 체크박스 추가
         valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
         cellStyle: {textAlign: "center"}, // 스타일 설정
-        maxWidth: 45, // 컬럼 너비
+        maxWidth: 60, // 컬럼 너비
         pinned: "left", // 왼쪽에 고정
         filter: false
     },
     {
         headerName: '코드',
         field: 'customerCode',
+        maxWidth: 80,
+        pinned: 'left'
     },
     {
         headerName: '상호',
         field: 'customerName',
+        pinned: 'left'
     },
     {
         headerName: '지역',
@@ -2417,8 +2423,8 @@ export const tableCodeOverseasSalesColumns = [
         field: 'address',
     },
     {
-        headerName: '고객사',
-        field: 'customerName',
+        headerName: '거래처',
+        field: 'customerType',
     },
     {
 
@@ -2531,14 +2537,14 @@ export const tableCodeReadColumns = [
         headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
         checkboxSelection: true, // 각 행에 체크박스 추가
         cellStyle: {textAlign: "center"}, // 스타일 설정
-        maxWidth: 45, // 컬럼 너비
+        maxWidth: 80, // 컬럼 너비
         pinned: "left", // 왼쪽에 고정
         filter: false
     }, {
         pinned: 'left',
         headerName: 'Item',
         field: 'item',
-        maxWidth: 250
+        maxWidth: 300
     },
     {
         headerName: 'HS-CODE',

@@ -603,8 +603,6 @@ export const DCWInfo = {
             {data: "mobileNumber", type: "text"},
             {data: "email", type: "text"},
             {data: "remarks", type: "text"},
-
-
         ],
         defaultData: {
             "managerName": "",
@@ -655,7 +653,7 @@ export const DCWInfo = {
     },
 };
 
-
+// 해외고객사 코드
 export const OCInfo = {
     write: {
         columnWidth: [220, 50, 50, 50, 45],
@@ -682,6 +680,14 @@ export const OCInfo = {
             "mobileNumber": "",
             "email": "",
             "remarks": ""
+        },
+        mapping: {
+            "managerName": "담당자",
+            "directTel": '연락처',
+            "faxNumber": '팩스번호',
+            "mobileNumber": '휴대폰번호',
+            "email": '이메일',
+            "remarks": '비고'
         },
         excelExpert: (v, i) => {
             return v
@@ -744,6 +750,14 @@ export const DCInfo = {
             "email": "",
             "remarks": ""
         },
+        mapping: {
+            "managerName": "담당자",
+            "directTel": '연락처',
+            "faxNumber": '팩스번호',
+            "mobileNumber": '휴대폰번호',
+            "email": '이메일',
+            "remarks": '비고'
+        },
         excelExpert: (v, i) => {
             return v
         },
@@ -771,6 +785,7 @@ export const DCInfo = {
         "businessRegistrationNumber": "",
         "customerType": "",
         "remarks": "",
+        "customerCategory": "",
         "mankuTradeManager": "",
         "companyVerify": "",
         "freightCharge": "화물 후불",
@@ -788,6 +803,9 @@ export const DCInfo = {
 };
 
 
+/**
+ * 해외 매입처 등록/수정 -> 담당자 정보 입력
+ */
 export const OAInfo = {
     write: {
         columnWidth: [220, 50, 50, 50, 45, 50, 50, 50],
@@ -821,6 +839,16 @@ export const OAInfo = {
             "countryAgency": "",
             "mobilePhone": "",
         },
+        mapping: {
+            "managerName": "담당자",
+            "phoneNumber": '연락처',
+            "faxNumber": '팩스번호',
+            "email": '이메일',
+            "address": "주소",
+            "countryAgency": '국가대리점',
+            "mobilePhone": '휴대폰',
+            "remarks": '비고'
+        },
         excelExpert: (v, i) => {
             return v
         },
@@ -833,7 +861,7 @@ export const OAInfo = {
         "agencyName": "",       // 상호
         "dealerType": "",               // 딜러/제조
         "grade": "",                             // 등급
-        "margin": null,                           // 마진
+        "margin": 0,                           // 마진
         "homepage": "",   // 홈페이지
         "item": "",                        // Item
         "tradeStartDate": "",               // 거래 시작일
@@ -849,7 +877,9 @@ export const OAInfo = {
     },
 };
 
-
+/**
+ * 국내 매입처 등록/수정 -> 담당자 정보 입력
+ */
 export const DAInfo = {
     write: {
         columnWidth: [220, 50, 50, 50, 45, 50, 50, 50],
@@ -879,9 +909,19 @@ export const DAInfo = {
             "faxNumber": "",
             "email": "",
             "address": "",
-            "remarks": "",
             "countryAgency": "",
             "mobilePhone": "",
+            "remarks": ""
+        },
+        mapping: {
+            "managerName": "담당자",
+            "phoneNumber": '연락처',
+            "faxNumber": '팩스번호',
+            "email": '이메일',
+            "address": "주소",
+            "countryAgency": '국가대리점',
+            "mobilePhone": '휴대폰',
+            "remarks": '비고'
         },
         excelExpert: (v, i) => {
             return v
@@ -891,27 +931,18 @@ export const DAInfo = {
         type: 'write'
     },
     defaultInfo: {
-        "agencyCode": "",                      // 코드(약칭)
-        "agencyName": "",       // 상호
-        "dealerType": "",               // 딜러/제조
-        "grade": "",                             // 등급
-        "margin": null,                           // 마진
-        "instructions": "",        // 지시사항
-        "maker": "",            // Maker
-        "homepage": "",   // 홈페이지
-        "tradeStartDate": "",               // 거래 시작일
-        "currencyUnit": "",                        // 화폐단위
-        "manager": "",                     // 담당자
-        "businessRegistrationNumber": "",       // 사업자 번호
-        "bankAccountNumber": "",            // Account No
-        "item": "",                        // Item
-        "agencyManagerList": [],
-        "country": "",                             // 국가
-        "ftaNumber": "",                      // FTA No
-        "intermediaryBank": "",        // 송금중개은행
-        "address": "",  // 주소
-        "ibanCode": "",           // IBan Code
-        "swiftCode": "",                      // Swift Code
+        "agencyCode": "",
+        "agencyName": "",
+        "businessRegistrationNumber": "",
+        "bankAccountNumber": "",
+        "maker": "",
+        "item": "",
+        "homepage": "",
+        "tradeStartDate": "",
+        "dealerType": "딜러",
+        "grade": "A",
+        "margin": 0,
+        "instructions": "",
     },
 };
 

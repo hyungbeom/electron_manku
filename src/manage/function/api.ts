@@ -50,7 +50,26 @@ export const getFormData = axios.create({
         "Accept-Language": getCookie(null,'lang') ? getCookie(null,'lang') : 'ko-KR',
         // @ts-ignore
         "refresh_token": getCookie(null,'refreshToken'),
-    }
+    },
+    transformRequest: [(data) => {
+        if (!(data instanceof FormData) && typeof data === 'object') {
+            const formData = new FormData();
+            for (const key in data) {
+                const value = data[key];
+                if (Array.isArray(value)) {
+                    value.forEach((item, i) => {
+                        for (const subKey in item) {
+                            formData.append(`${key}[${i}].${subKey}`, item[subKey] ?? '');
+                        }
+                    });
+                } else {
+                    formData.append(key, value ?? '');
+                }
+            }
+            return formData;
+        }
+        return data;
+    }]
 });
 
 
