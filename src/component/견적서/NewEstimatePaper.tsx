@@ -9,6 +9,7 @@ import {amountFormat} from "@/utils/columnList";
 import {pdf} from "@react-pdf/renderer";
 import {PdfForm} from "@/component/견적서/PdfForm";
 import EstimateHeader from "@/component/견적서/EstimateHeader";
+import {getData} from "@/manage/function/api";
 
 
 function transformEstimateData(data: any) {
@@ -74,17 +75,56 @@ export default function NewEstimatePaper({gridRef}) {
     const [title, setTitle] = useState<any>(estimateTopInfo)
     const [data, setData] = useState<any>([])
     const [info, setInfo] = useState<any>({})
-    useEffect(() => {
+    // @ts-ignore
+    useEffect( () => {
+
         const list = gridRef.current.getSelectedRows();
+
+        if(list.length === 0){
+            return false;
+        }
 
         const calcList = transformEstimateData(list);
         const firstRow = list[0];
+
+        console.log(firstRow,'firstRow:')
         const result = commonManage.splitDataWithSequenceNumber(calcList, 18, 28);
 
         setInfo(firstRow);
         setData(result)
     }, []);
 
+
+    const [memberList, setMemberList] = useState([])
+    async function getInfo(){
+        return await getData.post('admin/getAdminList',{
+            "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
+            "searchAuthority": null,    // 1: 일반, 0: 관리자
+            "page": 1,
+            "limit": -1
+        }).then(v=>{
+            setMemberList(v.data.entity.adminList)
+        })
+    }
+
+    useEffect(()=>{
+        getInfo()
+    },[])
+
+    useEffect(() => {
+
+        if(memberList.length){
+
+                const findMember = memberList.find(v=> v.adminId === info?.managerAdminId);
+
+            setInfo(v=>{
+                return {...v, name : findMember['name'], contactNumber : findMember['contactNumber'], email : findMember['email'], customerManagerName : v.managerName, customerManagerPhone : v.phoneNumber}
+            });
+
+        }
+    }, [memberList]);
+
+    console.log(info,':::22')
 
     const totalData = useMemo(() => {
 

@@ -147,6 +147,8 @@ function PrintPo({
             })
         }
 
+
+
         return <>
             <td style={{width: 100, textAlign: 'right'}}>
 
@@ -203,7 +205,7 @@ function PrintPo({
                      }}>
                     <span>{!isNaN(info.unitPrice * info.quantity) ? data[0][0]?.currency : ''}</span>
                     <span
-                        className={'total'}>{!isNaN(info.unitPrice * info.quantity) ? amountFormat(info.unitPrice * info.quantity) : ''}</span>
+                        className={'total'}>{!isNaN(info.unitPrice * info.quantity) ? (info.unitPrice * info.quantity).toLocaleString() : ''}</span>
                 </div>
 
             </td>
