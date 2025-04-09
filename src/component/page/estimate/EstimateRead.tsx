@@ -148,7 +148,7 @@ function EstimateRead({getPropertyId, getCopyPage,}: any) {
             width={1050}
             footer={null}
             onOk={() => setOpenEstimateModal(false)}>
-            <div><NewEstimatePaper gridRef={gridRef}/></div>
+            <div><NewEstimatePaper gridRef={gridRef} openEstimateModal={openEstimateModal}/></div>
         </Modal> : <></>}
         <>
             <div style={{

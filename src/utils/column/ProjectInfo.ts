@@ -305,7 +305,10 @@ export const estimateInfo = {
         managerAdminName: '',
         managerAdminId: null,
         "writtenDate": moment().format('YYYY-MM-DD'),    // 작성일
+        "connectDocumentNumberFull": "", // Inquiry No.
         "documentNumberFull": "", // Inquiry No.
+        "rfqNo": "", // Inquiry No.
+        "projectTitle": "", // Inquiry No.
         "agencyCode": "",            // 대리점코드
         "agencyName": "",
         "agencyManagerName": "",
@@ -435,6 +438,7 @@ export const orderInfo = {
 
         type: 'write'
     },
+
     defaultInfo: {
         attnTo: '',
         createdBy: '',

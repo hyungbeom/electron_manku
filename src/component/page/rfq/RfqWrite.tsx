@@ -31,7 +31,7 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     })
     const [memberList, setMemberList] = useState([]);
     const [tableData, setTableData] = useState([]);
-    const [routerId, setRouterId] = useState(null);
+
 
     useEffect(() => {
         getMemberList();
@@ -101,7 +101,6 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                 writtenDate: moment().format('YYYY-MM-DD')
             });
             setTableData(copyPageInfo[listType]);
-            setRouterId(null)
         }
     }, [copyPageInfo]);
 
@@ -188,17 +187,11 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
 
 
         await getFormData.post('estimate/addEstimateRequest', formData).then(async (v: any) => {
-            const dom = infoRef.current.querySelector('#documentNumberFull');
             const {code, entity} = v?.data;
             if (code === 1) {
                 const {documentNumberFull, estimateRequestId} = entity;
-                getPropertyId('rfq_update', estimateRequestId)
-                setFileList([])
-                setRouterId(estimateRequestId)
-
-                if (dom) {
-                    dom.value = documentNumberFull;
-                }
+                getPropertyId('rfq_update', estimateRequestId);
+                clearAll()
 
                 notificationAlert('success', '💾견적의뢰 등록완료',
                     <>
@@ -221,9 +214,17 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
 
 
     function clearAll() {
-        // info 데이터 초기화
-        commonManage.setInfo(infoRef, rfqInfo['defaultInfo'], userInfo['adminId']);
-        setTableData(commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000))
+        commonManage.setInfo(infoRef, {...rfqInfo['defaultInfo'], ...adminParams}, userInfo['adminId']);
+
+        function calcData(sourceData) {
+            const keyOrder = Object.keys(rfqInfo['write']['defaultData']);
+            return sourceData
+                .map((item) => keyOrder.reduce((acc, key) => ({...acc, [key]: item[key] ?? ""}), {}))
+                .map(rfqInfo['write']['excelExpert'])
+                .concat(rfqInfo['write']['totalList']); // `push` 대신 `concat` 사용
+        }
+        tableRef.current?.hotInstance?.loadData(calcData(commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000)));
+        setFileList([])
     }
 
 
@@ -245,11 +246,6 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         }
     }, typeof window !== 'undefined' ? document : null)
 
-    function moveUpdate() {
-        if (routerId) {
-            getPropertyId('rfq_update', routerId)
-        }
-    }
 
     return <Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'rfq_write'}/>
@@ -266,9 +262,7 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
             }}>
 
                 <MainCard title={'견적의뢰 작성'} list={[
-                    {
-                        name: <div style={{opacity: routerId ? 1 : 0.5}}><ArrowRightOutlined style={{paddingRight: 8}}/>수정페이지 이동</div>, func: moveUpdate, type: ''
-                    },
+
                     {name: <div><SaveOutlined style={{paddingRight: 8}}/>저장</div>, func: saveFunc, type: 'primary'},
                     {
                         name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>,

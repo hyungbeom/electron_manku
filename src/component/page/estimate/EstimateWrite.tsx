@@ -1,5 +1,5 @@
 import React, {memo, useEffect, useRef, useState} from "react";
-import {ArrowRightOutlined, DownloadOutlined, RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
+import {DownloadOutlined, RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
 import {estimateDetailUnit, ModalInitList} from "@/utils/initialList";
 import message from "antd/lib/message";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
@@ -24,7 +24,7 @@ import Spin from "antd/lib/spin";
 import {getData} from "@/manage/function/api";
 import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 import moment from "moment";
-import {estimateInfo} from "@/utils/column/ProjectInfo";
+import {estimateInfo, rfqInfo} from "@/utils/column/ProjectInfo";
 import Table from "@/component/util/Table";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
@@ -46,7 +46,6 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     const [count, setCount] = useState(0);
     const [memberList, setMemberList] = useState([]);
     const [tableData, setTableData] = useState([]);
-    const [routerId, setRouterId] = useState(null);
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('estimate_write');
         return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 20]; // 기본값 [50, 50, 50]
@@ -124,7 +123,6 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                 writtenDate: moment().format('YYYY-MM-DD')
             });
             setTableData(copyPageInfo[listType]);
-            setRouterId(null)
         }
     }, [copyPageInfo]);
 
@@ -308,8 +306,7 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
             const dom = infoRef.current.querySelector('#documentNumberFull');
             if (code === 1) {
                 getPropertyId('estimate_update', entity?.estimateId)
-                setFileList([])
-                setRouterId(entity?.estimateId)
+                clearAll()
                 notificationAlert('success', '💾견적서 등록완료',
                     <>
                         <div>Inquiry No. : {dom.value}</div>
@@ -343,8 +340,16 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
 
 
     function clearAll() {
-        setInfo({...infoInit});
-        // gridManage.deleteAll(gridRef);
+        commonManage.setInfo(infoRef, {...estimateInfo['defaultInfo'], ...adminParams}, userInfo['adminId']);
+        function calcData(sourceData) {
+            const keyOrder = Object.keys(estimateInfo['write']['defaultData']);
+            return sourceData
+                .map((item) => keyOrder.reduce((acc, key) => ({...acc, [key]: item[key] ?? ""}), {}))
+                .map(estimateInfo['write']['excelExpert'])
+                .concat(estimateInfo['write']['totalList']); // `push` 대신 `concat` 사용
+        }
+        tableRef.current?.hotInstance?.loadData(calcData(commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000)));
+        setFileList([]);
     }
 
     useEventListener('keydown', (e: any) => {
@@ -358,21 +363,11 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         }
     }, typeof window !== 'undefined' ? document : null)
 
-    function moveUpdate() {
-        if (routerId) {
-            getPropertyId('estimate_update', routerId)
-        }
-    }
-
-    function checkId(e){
-        setRouterId(null)
-    }
 
     return <div style={{overflow: 'hidden'}}><Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'estimate_write'}/>
         <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
                          open={isModalOpen}
-
                          setIsModalOpen={setIsModalOpen}/>
         <>
             <div ref={infoRef} style={{
@@ -382,10 +377,6 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                 rowGap: 10,
             }}>
                 <MainCard title={'견적서 작성'} list={[
-                    {
-                        name: <div style={{opacity: routerId ? 1 : 0.5}}><ArrowRightOutlined style={{paddingRight: 8}}/>수정페이지
-                            이동</div>, func: moveUpdate, type: ''
-                    },
                     {name: <div><SaveOutlined style={{paddingRight: 8}}/>저장</div>, func: saveFunc, type: 'primary'},
                     {
                         name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>,
@@ -424,18 +415,20 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                 {inputForm({
                                     title: '의뢰자료 No.',
                                     id: 'connectDocumentNumberFull',
-                                    suffix: <DownloadOutlined style={{cursor: 'pointer'}} onClick={(e)=>{
-                                       const document = infoRef.current.querySelector('#connectDocumentNumberFull');
+                                    suffix: <DownloadOutlined style={{cursor: 'pointer'}} onClick={(e) => {
+                                        const document = infoRef.current.querySelector('#connectDocumentNumberFull');
 
-                                       let bowl = {target : {id : 'connectDocumentNumberFull', value : document.value}, key : 'Enter'}
+                                        let bowl = {
+                                            target: {id: 'connectDocumentNumberFull', value: document.value},
+                                            key: 'Enter'
+                                        }
                                         handleKeyPress(bowl)
                                     }}/>
                                     , handleKeyPress: handleKeyPress
                                 })}
                                 {inputForm({
                                     title: '만쿠견적서 No.',
-                                    id: 'documentNumberFull',
-                                    onChange : checkId
+                                    id: 'documentNumberFull'
                                 })}
                                 {inputForm({title: 'RFQ No.', id: 'rfqNo'})}
                                 {inputForm({title: '프로젝트 제목', id: 'projectTitle'})}

@@ -67,7 +67,7 @@ function transformEstimateData(data: any) {
 }
 
 
-export default function NewEstimatePaper({gridRef}) {
+export default function NewEstimatePaper({gridRef, openEstimateModal}) {
 
     const [bottomInfo, setBottomInfo] = useState('▶의뢰하신 Model로 기준한 견적입니다.\n▶계좌번호 :  (기업은행)069-118428-04-010/만쿠무역\n▶긴급 납기시 담당자와 협의가능합니다.\n▶견적서에 기재되지 않은 서류 및 성적서는 미 포함 입니다.');
 
@@ -76,18 +76,18 @@ export default function NewEstimatePaper({gridRef}) {
     const [data, setData] = useState<any>([])
     const [info, setInfo] = useState<any>({})
     // @ts-ignore
-    useEffect( () => {
+    useEffect(() => {
 
         const list = gridRef.current.getSelectedRows();
 
-        if(list.length === 0){
+        if (list.length === 0) {
             return false;
         }
 
         const calcList = transformEstimateData(list);
         const firstRow = list[0];
 
-        console.log(firstRow,'firstRow:')
+        console.log(firstRow, 'firstRow:')
         const result = commonManage.splitDataWithSequenceNumber(calcList, 18, 28);
 
         setInfo(firstRow);
@@ -96,35 +96,56 @@ export default function NewEstimatePaper({gridRef}) {
 
 
     const [memberList, setMemberList] = useState([])
-    async function getInfo(){
-        return await getData.post('admin/getAdminList',{
+
+    async function getInfo() {
+        return await getData.post('admin/getAdminList', {
             "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
             "searchAuthority": null,    // 1: 일반, 0: 관리자
             "page": 1,
             "limit": -1
-        }).then(v=>{
+        }).then(v => {
             setMemberList(v.data.entity.adminList)
         })
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         getInfo()
-    },[])
+    }, [])
 
+    const [gapRow, setGapRow] = useState(0)
+
+    function getRowGapSize(){
+        const qtyElement = document.querySelector('#lastRow'); // 예: 마지막 Q'ty 셀에 id 부여
+        const totalElement = document.querySelector('#total'); // 예: TOTAL 행의 Q'ty 셀
+
+        if (qtyElement && totalElement) {
+            const qtyRect = qtyElement.getBoundingClientRect();
+            const totalRect = totalElement.getBoundingClientRect();
+
+            const verticalDistance = Math.abs(totalRect.top - qtyRect.bottom);
+
+            setGapRow(verticalDistance)
+        }
+    }
     useEffect(() => {
 
-        if(memberList.length){
+        if (memberList.length) {
 
-                const findMember = memberList.find(v=> v.adminId === info?.managerAdminId);
+            const findMember = memberList.find(v => v.adminId === info?.managerAdminId);
 
-            setInfo(v=>{
-                return {...v, name : findMember['name'], contactNumber : findMember['contactNumber'], email : findMember['email'], customerManagerName : v.managerName, customerManagerPhone : v.phoneNumber}
+            setInfo(v => {
+                return {
+                    ...v,
+                    name: findMember['name'],
+                    contactNumber: findMember['contactNumber'],
+                    email: findMember['email'],
+                    customerManagerName: v.managerName,
+                    customerManagerPhone: v.phoneNumber
+                }
             });
-
+            getRowGapSize();
         }
-    }, [memberList]);
-
-    console.log(info,':::22')
+    }, [memberList, openEstimateModal]);
 
     const totalData = useMemo(() => {
 
@@ -194,11 +215,10 @@ export default function NewEstimatePaper({gridRef}) {
             setToggle(false);
             setData(v => {
                 v[objKey][numb][e.target.id] = parseFloat(e.target.value.replaceAll(",", ""));
-                console.log({...v},':::')
+                console.log({...v}, ':::')
                 return {...v}
             })
         }
-
 
 
         function onchange(e) {
@@ -299,6 +319,8 @@ export default function NewEstimatePaper({gridRef}) {
         return <TextArea autoSize={true} style={{border: 'none'}} onChange={onChange} onBlur={blur} value={model}
                          key={`ttt${numb}`}/>
     }
+
+    console.log(gapRow,'gapRow:')
 
     return <>
         <div style={{marginTop: -10, padding: 15, display: 'flex', justifyContent: 'space-between'}}>
@@ -401,7 +423,7 @@ export default function NewEstimatePaper({gridRef}) {
                 <thead>
 
                 {data[0]?.map((src, idx) => {
-                    return <tr style={{height: 35, fontWeight: 100}}>
+                    return <tr style={{height: 35, fontWeight: 100}}  id={( data.length === 1 && data[0].length - 1 === idx) ? 'lastRow' : ''}>
                         {src.documentNumberFull ?
                             <td colSpan={3} style={{
                                 width: '6%',
@@ -435,7 +457,7 @@ export default function NewEstimatePaper({gridRef}) {
             <div style={{flexGrow: 1}}/>
             {Object.keys(data).length > 1 ? <></> :
 
-                <table style={{
+                <table id={'total'} style={{
                     width: '100%',
                     borderCollapse: 'collapse',
                     margin: '20px 0',
@@ -473,7 +495,7 @@ export default function NewEstimatePaper({gridRef}) {
                         lineHeight: 1.7,
                         borderTop: '1px solid black',
                     }}>
-                    <TextArea value={bottomInfo} onChange={e=>{
+                    <TextArea value={bottomInfo} onChange={e => {
                         setBottomInfo(e.target.value)
                     }}
                               autoSize={true} style={{border: 'none'}}
@@ -483,8 +505,8 @@ export default function NewEstimatePaper({gridRef}) {
             <div style={{textAlign: 'center'}}>- 1 -</div>
         </div>
 
-        {Object.values(data)?.map((v:any, i)=> {
-            if(!i){
+        {Object.values(data)?.map((v: any, i) => {
+            if (!i) {
                 return false;
             }
             return <div style={{
@@ -518,7 +540,8 @@ export default function NewEstimatePaper({gridRef}) {
                     <thead>
 
                     {v?.map((src, idx) => {
-                        return <tr style={{height: 35, fontWeight: 100}}>
+                        return <tr style={{height: 35, fontWeight: 100}}
+                                   id={(Object.keys(data).length - 1 === i && v.length - 1 === idx) ? 'lastRow' : ''}>
                             {src.documentNumberFull ?
                                 <td colSpan={3} style={{
                                     width: '6%',
@@ -545,12 +568,23 @@ export default function NewEstimatePaper({gridRef}) {
                             <NumberInputForm value={src} numb={idx} objKey={i}/>
                         </tr>
                     })}
+                    {Object.keys(data).length - 1 === i ?
+                        <>
+                        {new Array((Math.round(gapRow / 35))).fill({}).map(v => <tr style={{height: 35, fontWeight: 100}}>
+
+                                <td colSpan={2} style={{width: '6%', fontWeight: 600}}></td>
+                            <TextAreas value={''} numb={''} objKey={i}/>
+                            <NumberInputForm value={''} numb={''} objKey={i}/>
+                        </tr>)}
+                        </>
+                        : <></>
+                    }
                     </thead>
                 </table>
 
 
                 <div style={{flexGrow: 1}}/>
-                {Object.keys(data).length - 1 === i ? <table style={{
+                {Object.keys(data).length - 1 === i ? <table id={'total'} style={{
                     width: '100%',
                     borderCollapse: 'collapse',
                     margin: '20px 0',
@@ -576,7 +610,7 @@ export default function NewEstimatePaper({gridRef}) {
                         {/*tax*/}
                     </tr>
                     </thead>
-                </table> :<></>
+                </table> : <></>
 
 
                 }
