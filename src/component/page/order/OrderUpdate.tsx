@@ -14,7 +14,7 @@ import Spin from "antd/lib/spin";
 import {orderInfo} from "@/utils/column/ProjectInfo";
 import Table from "@/component/util/Table";
 import SearchInfoModal from "@/component/SearchAgencyModal";
-import {CopyOutlined, DeleteOutlined, FormOutlined, RadiusSettingOutlined} from "@ant-design/icons";
+import {CopyOutlined, DeleteOutlined, FormOutlined, RadiusSettingOutlined, RollbackOutlined} from "@ant-design/icons";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import useEventListener from "@/utils/common/function/UseEventListener";
@@ -92,12 +92,16 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
             const {orderDetail, attachmentFileList} = v;
             setFileList(fileManage.getFormatFiles(attachmentFileList));
             setOriginFileList(attachmentFileList);
+            const addOrderList = orderDetail[listType].map(v => {
+                return {...v, order: v.quantity}
+            });
+
             setInfo({
                 ...orderDetail,
                 uploadType: 4,
                 managerAdminId: orderDetail['managerAdminId'] ? orderDetail['managerAdminId'] : ''
             })
-            orderDetail[listType] = [...orderDetail[listType], ...commonFunc.repeatObject(orderInfo['write']['defaultData'], 1000 - orderDetail[listType].length)]
+            orderDetail[listType] = [...addOrderList, ...commonFunc.repeatObject(orderInfo['write']['defaultData'], 1000 - orderDetail[listType].length)]
             setTableData(orderDetail[listType]);
             setLoading(false)
         })
@@ -519,8 +523,27 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
                             </Panel>
                             <PanelResizeHandle/>
                             <Panel defaultSize={sizes[1]} minSize={5}>
-                                <BoxCard title={'담당자 정보'}>
-                                    {inputForm({title: '작성자', id: 'managerName'})}
+                                <BoxCard title={<div style={{display: 'flex', justifyContent: 'space-between'}}><span>담당자 정보</span><span>
+                                    <RollbackOutlined style={{cursor: 'pointer'}}
+                                    onClick={() => {
+                                        const idNumber = infoRef.current.querySelector('#managerAdminId');
+                                        const member = memberList.find(v => v.adminId === parseInt(idNumber?.value))
+
+                                        const code = infoRef.current.querySelector('#agencyCode');
+                                        if (member) {
+                                            const {name, faxNumber, contactNumber, email, englishName} = member;
+
+                                            const sendObj = {
+                                                managerId: code?.value?.startsWith('K') ? name : englishName,
+                                                managerPhoneNumber: contactNumber,
+                                                managerFaxNumber: faxNumber,
+                                                managerEmail: email
+                                            }
+                                            commonManage.setInfo(infoRef, sendObj);
+                                        }
+                                    }}
+                                /></span></div>}>
+                                    {inputForm({title: '작성자', id: 'managerId', onChange: onChange, data: info})}
                                     {inputForm({title: 'TEL', id: 'managerPhoneNumber'})}
                                     {inputForm({title: 'Fax', id: 'managerFaxNumber'})}
                                     {inputForm({title: 'E-Mail', id: 'managerEmail'})}

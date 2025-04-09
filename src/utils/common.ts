@@ -350,7 +350,7 @@ export const paperTopInfo = {
         deliveryCondition: '납품조건',
         yourPoNo: '귀사견적',
         paymentTerms: '결제조건.',
-        managerName: '담당자',
+        managerId: '담당자',
         deliveryDateCondition: '납기조건',
         managerPhoneNumber: '연락처',
         blank: '',
@@ -361,7 +361,7 @@ export const paperTopInfo = {
         agencyName: 'MESSER',
         writtenDate: 'DATE',
         agencyManagerName: 'ATTN',
-        managerAdminName: 'Contact Person',
+        managerId: 'Contact Person',
         attnTo: 'YOUR OFFER NO.',
         managerPhoneNumber: 'TEL',
         documentNumberFull: 'MANKU No.',
@@ -372,4 +372,22 @@ export const paperTopInfo = {
         blank: '',
         paymentTerms: 'Payment'
     }
+}
+
+export const estimateTopInfo = {
+
+    writtenDate: '견적일자',
+    name: '담당자',
+    documentNumberFull: '견적서 No',
+    contactNumber: '연락처',
+    customerName: '고객사',
+    email: 'E-mail',
+    customerManagerName: '담당자',
+    validityPeriod: '유효기간',
+    customerManagerPhone: '연락처',
+    paymentTerms: '결제조건',
+    customerManagerEmail: 'E-mail',
+    delivery: '납기',
+    faxNumber: 'Fax',
+    shippingTerms: '납품조건'
 }

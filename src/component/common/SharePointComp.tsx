@@ -159,16 +159,36 @@ export function DriveUploadComp({
                 const originalName = match ? match[1] : f.name; // 기존 이름 유지
 
                 const dom = infoRef.current.querySelector('#documentNumberFull');
-                const dom2 = uploadTypeRef.current;
+                const dom3 = infoRef.current.querySelector('#agencyName');
                 const extension = originalName.split('.').pop().toLowerCase();
 
-
                 const numberType = parseInt(uploadTypeRef.current.value);
+
+                let result = ''
+                switch (numberType) {
+                    case 0 :
+                        result =  `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}_RFQ.${extension}`
+                        break;
+                    case 1 :
+                        result =  `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}_Received.${extension}`
+                        break;
+                    case 2 :
+                        result =  `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}_Datasheet.${extension}`
+                        break;
+                    case 3 :
+                        result =  `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}_${dom3.value}_Quote.${extension}`
+                        break;
+                    case 4 :
+                        result =  `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}_PO.${extension}`
+                        break;
+                    default :
+                        result =  `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}.${extension}`
+                }
 
                 // 이름 수정된 파일 반환 (originFileObj 유지)
                 return {
                     ...f,
-                    name: `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}_${dom2.options[numberType].text}.${extension}`,
+                    name: result,
                     originFileObj: f.originFileObj, // 기존 originFileObj 유지
                 };
             }

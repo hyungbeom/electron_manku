@@ -181,10 +181,23 @@ export const amountFormat = (params) => {
     if (params === null || params === undefined) {
         return "";
     }
-    // 숫자를 3자리마다 쉼표로 포맷
-    return params?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-};
 
+    const num = Number(params);
+    if (isNaN(num)) {
+        return "";
+    }
+
+    // 소수점은 최대 2자리까지만 유지 (원하는 자릿수로 조절 가능)
+    const fixedNum = num.toFixed(2); // "1371.60"
+
+    const [integerPart, decimalPart] = fixedNum.split(".");
+
+    const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+    return decimalPart !== "00"
+        ? `${formattedInteger}.${decimalPart}`
+        : formattedInteger; // 소수점이 0.00이면 아예 표시 안 함
+};
 export const amountFormatParser = (params) => {
     // 쉼표 제거 후 숫자로 변환하여 저장
     const parsedValue = parseFloat(params.newValue.replace(/,/g, ""));

@@ -16,7 +16,7 @@ Font.register({
 
 const colWidths = [40, 210, 50, 50, 110, 110];
 
-export function PdfForm({data, topInfoData, totalData, bottomInfo='▶의뢰하신 Model로 기준한 견적입니다.\n▶계좌번호 :  (기업은행)069-118428-04-010/만쿠무역\n▶긴급 납기시 담당자와 협의가능합니다.\n▶견적서에 기재되지 않은 서류 및 성적서는 미 포함 입니다.'}) {
+export function PdfForm({data, topInfoData, totalData,type='', bottomInfo='▶의뢰하신 Model로 기준한 견적입니다.\n▶계좌번호 :  (기업은행)069-118428-04-010/만쿠무역\n▶긴급 납기시 담당자와 협의가능합니다.\n▶견적서에 기재되지 않은 서류 및 성적서는 미 포함 입니다.'}) {
 
     return <Document>
         <Page size="A4" style={styles.page}>
@@ -118,7 +118,7 @@ export function PdfForm({data, topInfoData, totalData, bottomInfo='▶의뢰하�
                     </View>
 
                     {/* 2번째 maker 행 */}
-                    <View style={styles.tableRow}>
+                    {type !== 'total' ? <View style={styles.tableRow}>
                         <View style={{...styles.point, width: colWidths[0]}}>
                             <Text style={{textAlign: 'center'}}>Maker</Text>
                         </View>
@@ -129,24 +129,42 @@ export function PdfForm({data, topInfoData, totalData, bottomInfo='▶의뢰하�
                                 fontFamily: styles.point.fontFamily
                             }}>{topInfoData?.maker}</Text>
                         </View>
-                    </View>
+                    </View> : <></>}
 
                     {/* 내용 행 반복 */}
                     {data[0]?.map((row: any, i) => {
-                        const {model, quantity, unit, net} = row;
+                        const {model, quantity, unit, net, modelIndex, documentNumberFull} = row;
                         return <> <View key={i} style={styles.tableRow}>
-                            <View key={i} style={{
-                                ...styles.cell,
-                                width: colWidths[0],
-                            }}>
-                                <Text style={{textAlign: 'center'}}>{i + 1}</Text>
-                            </View>
-                            <View key={i} style={{
-                                ...styles.cell,
-                                width: colWidths[1],
-                            }}>
-                                <Text style={{textAlign: 'left', paddingLeft: 5}}>{model}</Text>
-                            </View>
+
+                            {documentNumberFull ?
+
+                                <View key={i} style={{
+                                    ...styles.cell,
+                                    width: colWidths[0] + colWidths[1],
+                                }}>
+                                    <Text style={{textAlign: 'left', paddingLeft : 5}}>{documentNumberFull}</Text>
+                                </View>
+                                :
+
+                                <>
+                                    <View key={i} style={{
+                                        ...styles.cell,
+                                        width: colWidths[0],
+                                    }}>
+                                        <Text style={{textAlign: 'center'}}>{type==='total'? modelIndex :  i + 1}</Text>
+                                    </View>
+
+                                    <View key={i} style={{
+                                        ...styles.cell,
+                                        width: colWidths[1],
+                                    }}>
+                                        <Text style={{textAlign: 'left', paddingLeft: 5}}>{model}</Text>
+                                    </View>
+                                </>
+                            }
+
+
+
                             <View key={i} style={{
                                 ...styles.cell,
                                 width: colWidths[2],
@@ -262,20 +280,38 @@ export function PdfForm({data, topInfoData, totalData, bottomInfo='▶의뢰하�
                         {v.map((row: any, i) => {
                             const count: any = commonManage.getPageIndex(Object.values(data), idx - 1);
 
-                            const {model, quantity, unit, net} = row;
+                            const {model, quantity, unit, net, documentNumberFull, modelIndex} = row;
                             return <> <View key={i} style={styles.tableRow}>
-                                <View key={i} style={{
-                                    ...styles.cell,
-                                    width: colWidths[0],
-                                }}>
-                                    <Text style={{textAlign: 'center'}}>{count + i + 1}</Text>
-                                </View>
-                                <View key={i} style={{
-                                    ...styles.cell,
-                                    width: colWidths[1],
-                                }}>
-                                    <Text style={{textAlign: 'left', paddingLeft: 5}}>{model}</Text>
-                                </View>
+
+                                {documentNumberFull ?
+
+                                    <View key={i} style={{
+                                        ...styles.cell,
+                                        width: colWidths[0] + colWidths[1],
+                                    }}>
+                                        <Text style={{textAlign: 'left', paddingLeft : 5}}>{documentNumberFull}</Text>
+                                    </View>
+                                    :
+
+                                    <>
+                                        <View key={i} style={{
+                                            ...styles.cell,
+                                            width: colWidths[0],
+                                        }}>
+                                            <Text style={{textAlign: 'center'}}>{type==='total'? modelIndex :  count + i + 1}</Text>
+                                        </View>
+                                        <View key={i} style={{
+                                            ...styles.cell,
+                                            width: colWidths[1],
+                                        }}>
+                                            <Text style={{textAlign: 'left', paddingLeft: 5}}>{model}</Text>
+                                        </View>
+                                    </>
+                                }
+
+
+
+
                                 <View key={i} style={{
                                     ...styles.cell,
                                     width: colWidths[2],

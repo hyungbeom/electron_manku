@@ -383,6 +383,7 @@ export const orderInfo = {
             "currency": '',
             "unitPrice": '',
             "total": '',            // 매입단가
+            "order": '',
             "receivedQuantity": '',
             "unreceivedQuantity": '',
             "net": '',            // 매입단가
@@ -450,10 +451,11 @@ export const orderInfo = {
         "agencyCode": "",  // Messrs
         "agencyName": "",  // Messrs
         "customerName": "",          // 고객사명
+        "managerName": "",          // 고객사명
         agencyManagerName: '',
         "customerId": 0,          // 고객사명
         "estimateManager": "",            // 견적서담당자
-        "managerID": "",                 // Responsibility
+        "managerId": "",                 // Responsibility
         "managerPhoneNumber": "",  // Tel
         "managerFaxNumber": "",      // E-Mail
         "managerEmail": "",   // Fax

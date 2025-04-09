@@ -34,6 +34,7 @@ export default async function (ctx, store) {
             codeInfo = code
 
         }, async err => {
+            console.log(err,'err')
             await getData.get("account/refresh").then((res) => {
 
             }, err => {

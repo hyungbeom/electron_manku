@@ -291,7 +291,8 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
     const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
 
     const {first} = ctx.query;
-    if (!userInfo) {
+
+    if (codeInfo !== 1) {
         return {
             redirect: {
                 destination: '/',
