@@ -129,7 +129,7 @@ const TableGrid = ({
                 getPropertyId('source_update', e.data.model)
             }
             if (e.data.makerId){
-                getPropertyId('maker_update', e.data)
+                getPropertyId('maker_update', e.data.makerId)
             }
             if (e.data.agencyId){
                 getPropertyId('domestic_agency_update', e.data.agencyId)

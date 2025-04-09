@@ -59,7 +59,7 @@ function DomesticAgencyRead({getPropertyId, getCopyPage}: any) {
 
     function handleKeyPress(e) {
         if (e.key === 'Enter') {
-            setIsSearch(true);
+            searchInfo(true)
         }
     }
 
@@ -109,7 +109,7 @@ function DomesticAgencyRead({getPropertyId, getCopyPage}: any) {
                         </div>
                         <div>삭제일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
-                    , null, null, 3
+                    , null, null, 2
                 )
             } else {
                 message.error(v.data.message)

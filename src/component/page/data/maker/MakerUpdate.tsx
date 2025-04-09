@@ -3,21 +3,21 @@ import {getData} from "@/manage/function/api";
 import message from "antd/lib/message";
 import {commonManage} from "@/utils/commonManage";
 import {BoxCard, inputForm, MainCard, textAreaForm} from "@/utils/commonForm";
-import {makerWriteInitial} from "@/utils/initialList";
 import _ from "lodash";
 import {useRouter} from "next/router";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import moment from "moment";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
-import MakerRead from "@/component/page/data/maker/MakerRead";
+import {CopyOutlined, DeleteOutlined, FormOutlined} from "@ant-design/icons";
+import {Actions} from "flexlayout-react";
 
 
-
-function MakerUpdate({updateKey, getCopyPage}:any) {
+function MakerUpdate({updateKey, getCopyPage, layoutRef}:any) {
     const notificationAlert = useNotificationAlert();
     const router = useRouter();
     const [info, setInfo] = useState<any>({});
+    const [loading, setLoading] = useState(false);
 
     const groupRef = useRef<any>(null)
 
@@ -28,11 +28,20 @@ function MakerUpdate({updateKey, getCopyPage}:any) {
 
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
-
-
+    async function getDataInfo() {
+        const result = await getData.post('maker/getMakerDetail', {
+            "makerId": updateKey['maker_update'],
+        });
+        return result?.data?.entity;
+    }
 
     useEffect(() => {
-        setInfo(updateKey['maker_update'])
+        setLoading(true)
+        getDataInfo().then(v => {
+            const {makerDetail} = v;
+            setInfo(makerDetail);
+            setLoading(false)
+        })
     }, [updateKey['maker_update']])
 
     function onChange(e) {
@@ -40,39 +49,58 @@ function MakerUpdate({updateKey, getCopyPage}:any) {
     }
 
     async function saveFunc() {
-
         await getData.post('maker/updateMaker', info).then(v => {
-            if (v.data.code === 1) {
-
-                notificationAlert('success', '💾메이커 수정완료',
+            if (v?.data?.code === 1) {
+                notificationAlert('success', '💾 메이커 수정완료',
                     <>
                         <div>Maker : {info['makerName']}</div>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
-                    , null,
+                    , null, null, 2
                 )
             } else {
-                message.error('저장에 실패하였습니다.')
+                message.error(v?.data?.message)
             }
         });
     }
 
+    function deleteFunc(){
+        setLoading(true);
+        getData.post('maker/deleteMaker',{makerId : updateKey['maker_update']}).then(v=>{
+            if(v?.data?.code === 1){
+                notificationAlert('success', '🗑️ Maker 삭제완료',
+                    <>
+                        <div>Maker : {info['makerName']}</div>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , null, null, 2
+                )
+                const {model} = layoutRef.current.props;
+                window.postMessage('delete', window.location.origin);
+                getCopyPage('maker_read', {})
+                const targetNode = model.getRoot().getChildren()[0]?.getChildren()
+                    .find((node: any) => node.getType() === "tab" && node.getComponent() === 'maker_update');
+                if (targetNode) {
+                    model.doAction(Actions.deleteTab(targetNode.getId())); // ✅ 기존 로직 유지
+                }
+            } else {
+                message.error(v?.data?.message)
+            }
+            setLoading(false);
+        })
+    }
 
     function copyPage() {
         let copyInfo = _.cloneDeep(info)
-        getCopyPage('maker_write', copyInfo)
-    }
-
-    function clearAll() {
-        setInfo(makerWriteInitial);
+        getCopyPage('maker_write', {...copyInfo, _meta: {updateKey: Date.now()}})
     }
 
     return <>
         <PanelSizeUtil groupRef={groupRef} storage={'maker_update'}/>
         <MainCard title={'메이커 수정'} list={[
-            {name: '수정', func: saveFunc, type: 'primary'},
-            {name: '초기화', func: clearAll, type: 'danger'},
-            {name: '복제', func: copyPage, type: 'default'},
+            {name: <div><FormOutlined style={{paddingRight: 8}}/>수정</div>, func: saveFunc, type: 'primary'},
+            {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: deleteFunc, type: 'delete'},
+            {name: <div><CopyOutlined style={{paddingRight: 8}}/>복제</div>, func: copyPage, type: 'default'},
         ]}>
 
             <PanelGroup ref={groupRef} className={'ground'} direction="horizontal"

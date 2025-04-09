@@ -1,29 +1,16 @@
 import React, {memo, useEffect, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
-import {wrapper} from "@/store/store";
-import initialServerRouter from "@/manage/function/initialServerRouter";
-import {setUserInfo} from "@/store/user/userSlice";
-import LayoutComponent from "@/component/LayoutComponent";
-import Card from "antd/lib/card/Card";
-
-import Button from "antd/lib/button";
-import {RadiusSettingOutlined, RetweetOutlined, SaveOutlined} from "@ant-design/icons";
+import {RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
 import message from "antd/lib/message";
 import {makerWriteInitial,} from "@/utils/initialList";
-import Input from "antd/lib/input/Input";
-import TextArea from "antd/lib/input/TextArea";
-import {commonFunc, commonManage} from "@/utils/commonManage";
-import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, tooltipInfo} from "@/utils/commonForm";
+import {commonManage} from "@/utils/commonManage";
+import {BoxCard, inputForm, MainCard, textAreaForm} from "@/utils/commonForm";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
-import {DriveUploadComp} from "@/component/common/SharePointComp";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import moment from "moment/moment";
 import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
-import {projectInfo} from "@/utils/column/ProjectInfo";
 import _ from "lodash";
-
-
 
 function CompanyAccountWrite({getPropertyId, copyPageInfo}:any) {
     const notificationAlert = useNotificationAlert();
@@ -35,9 +22,7 @@ function CompanyAccountWrite({getPropertyId, copyPageInfo}:any) {
         const savedSizes = localStorage.getItem('company_account_write');
         return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 0]; // 기본값 [50, 50, 50]
     };
-
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
-
 
     useEffect(() => {
 
@@ -46,7 +31,7 @@ function CompanyAccountWrite({getPropertyId, copyPageInfo}:any) {
         } else {
             setInfo(copyPageInfo);
         }
-    }, [copyPageInfo]);
+    }, [copyPageInfo?.meta?.updateKey]);
 
 
     function onChange(e) {

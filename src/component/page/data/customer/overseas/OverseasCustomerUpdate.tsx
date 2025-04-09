@@ -101,7 +101,7 @@ function OverseasCustomerUpdate({ updateKey, getCopyPage, layoutRef}:any) {
                         <div>상호 : {customerName}</div>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
-                    ,null, null, 3
+                    , null, null, 2
                 )
                 const {model} = layoutRef.current.props;
                 window.postMessage('delete', window.location.origin);

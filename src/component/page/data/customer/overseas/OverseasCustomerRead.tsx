@@ -60,8 +60,7 @@ function OverseasCustomerRead({getPropertyId, getCopyPage}: any) {
 
     function handleKeyPress(e) {
         if (e.key === 'Enter') {
-            // searchInfo(true)
-            setIsSearch(true);
+            searchInfo(true)
         }
     }
 
@@ -114,7 +113,7 @@ function OverseasCustomerRead({getPropertyId, getCopyPage}: any) {
                         </div>
                         <div>삭제일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
-                    , null, null, 3
+                    , null, null, 2
                 )
             } else {
                 message.error(v?.data?.message)

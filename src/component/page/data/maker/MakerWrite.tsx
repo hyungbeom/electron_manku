@@ -3,7 +3,7 @@ import {getData} from "@/manage/function/api";
 import {RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
 import message from "antd/lib/message";
 import {makerWriteInitial,} from "@/utils/initialList";
-import {commonFunc, commonManage} from "@/utils/commonManage";
+import {commonManage} from "@/utils/commonManage";
 import {BoxCard, inputForm, MainCard, textAreaForm, tooltipInfo} from "@/utils/commonForm";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
@@ -12,7 +12,6 @@ import moment from "moment/moment";
 import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 import _ from "lodash";
 import Spin from "antd/lib/spin";
-import {DCInfo} from "@/utils/column/ProjectInfo";
 
 
 function MakerWrite({getPropertyId, copyPageInfo}: any) {
@@ -38,7 +37,7 @@ function MakerWrite({getPropertyId, copyPageInfo}: any) {
         } else {
             setInfo(copyPageInfo);
         }
-    }, [copyPageInfo?._mata?.updateKey]);
+    }, [copyPageInfo?._meta?.updateKey]);
 
     function onChange(e) {
         commonManage.onChange(e, setInfo)
