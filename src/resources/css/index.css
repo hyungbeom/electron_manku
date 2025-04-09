@@ -452,3 +452,10 @@ td {
 .dropdown-list div:hover {
     background: #eee;
 }
+
+#lastRow{
+    background-color: red;
+}
+#total{
+    background-color: red;
+}

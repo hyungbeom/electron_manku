@@ -264,7 +264,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
         const dom = infoRef.current.querySelector('#documentNumberFull');
         if (code === 1) {
             getPropertyId('order_update', data?.orderId)
-            setFileList([])
+            clearAll()
 
             await getAttachmentFileList({
                 data: {
@@ -304,22 +304,18 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
     }
 
     function clearAll() {
-
-        const {createdBy, documentNumberFull, managerAdminId, managerAdminName, uploadType, writtenDate} = info
         setLoading(true)
-        setTableData(commonFunc.repeatObject(orderInfo['write']['defaultData'], 1000))
-        setInfo({
-            ...orderInfo['defaultInfo'],
-            createdBy: createdBy,
-            documentNumberFull: documentNumberFull,
-            managerAdminId: managerAdminId,
-            managerAdminName: managerAdminName,
-            uploadType: uploadType,
-            writtenDate: writtenDate,
-            managerId: ''
-        });
+        commonManage.setInfo(infoRef, {...orderInfo['defaultInfo'], ...adminParams}, userInfo['adminId']);
+        function calcData(sourceData) {
+            const keyOrder = Object.keys(orderInfo['write']['defaultData']);
+            return sourceData
+                .map((item) => keyOrder.reduce((acc, key) => ({...acc, [key]: item[key] ?? ""}), {}))
+                .map(orderInfo['write']['excelExpert'])
+                .concat(orderInfo['write']['totalList']); // `push` 대신 `concat` 사용
+        }
+        tableRef.current?.hotInstance?.loadData(calcData(commonFunc.repeatObject(orderInfo['write']['defaultData'], 1000)));
+        setFileList([]);
         setLoading(false)
-
     }
 
 
@@ -374,10 +370,6 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                 rowGap: 10,
             }}>
                 <MainCard title={'발주서 작성'} list={[
-                    {
-                        name: <div style={{opacity: routerId ? 1 : 0.5}}><ArrowRightOutlined style={{paddingRight: 8}}/>수정페이지
-                            이동</div>, func: moveUpdate, type: ''
-                    },
                     {name: '거래명세표 출력', func: printTransactionStatement, type: 'default'},
                     {name: '발주서 출력', func: printPo, type: 'default'},
                     {name: <div><SaveOutlined style={{paddingRight: 8}}/>저장</div>, func: saveFunc, type: 'primary'},

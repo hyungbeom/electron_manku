@@ -110,10 +110,10 @@ const Table = forwardRef(({
                     hotRef.current.hotInstance.setDataAtCell(row, 8, moment().format('YYYY-MM-DD')); // replyDate 컬럼 업데이트
                     hotRef.current.hotInstance.resumeExecution(); // ✅ 다시 계산 시작
                 }
-                if (prop === "quantity" ) {
-                    if(type === 'order_write_column') {
+                if (prop === "quantity") {
+                    if (type === 'order_write_column') {
 
-                        hotRef.current.hotInstance.setDataAtCell(row, 6,newValue); // replyDate 컬럼 업데이트
+                        hotRef.current.hotInstance.setDataAtCell(row, 6, newValue); // replyDate 컬럼 업데이트
                     }
                 }
                 if (prop === 'unitPrice') {
@@ -122,7 +122,7 @@ const Table = forwardRef(({
 
                     changes[index][newValueIndex] = parseFloat(change[newValueIndex]).toFixed(2); // ✅ 소수점 2자리 변환
 
-                    if(type === 'rfq_write_column') {
+                    if (type === 'rfq_write_column') {
                         hotRef.current.hotInstance.setDataAtCell(row, 7, '회신'); // replyDate 컬럼 업데이트
                         hotRef.current.hotInstance.setDataAtCell(row, 8, moment().format('YYYY-MM-DD')); // replyDate 컬럼 업데이트
                     }
@@ -268,7 +268,7 @@ const Table = forwardRef(({
             setIsModalOpen(v => {
                 if (prop === 'orderDocumentNumberFull') {
                     return {...v, order: true}
-                }else if(prop === 'hsCode'){
+                } else if (prop === 'hsCode') {
                     return {...v, hsCode: true}
                 } else {
                     return {...v, estimate: true}
@@ -324,13 +324,14 @@ const Table = forwardRef(({
         const instance = hotRef.current.hotInstance;
         const currentList = instance.getSourceData();
         // console.log(currentList)
-        currentList[rowRef.current['row']] = {...currentList[rowRef.current['row']], hsCode : data.hsCode}
-                setTableData(currentList)
+        currentList[rowRef.current['row']] = {...currentList[rowRef.current['row']], hsCode: data.hsCode}
+        setTableData(currentList)
         // } else {
         //     console.warn('Grid API is not available.');
         //     return [];
         // }
     }
+
     function getSelectedRows2(ref) {
         if (ref.current) {
             const selectedRows = ref.current.getSelectedRows();
@@ -471,11 +472,10 @@ const Table = forwardRef(({
     };
 
 
-
     const handleBeforePaste = (data, coords) => {
         const hotInstance = hotRef.current.hotInstance;
 
-        coords.forEach(({ startCol }) => {
+        coords.forEach(({startCol}) => {
             const columnConfig = hotInstance.getSettings().columns[startCol];
 
             if (columnConfig?.type === "numeric") {
@@ -504,7 +504,7 @@ const Table = forwardRef(({
             <OrderListModal isModalOpen={isModalOpen['order']} setIsModalOpen={setIsModalOpen}
                             getRows={getSelectedRows2}/>
             <HsCodeListModal isModalOpen={isModalOpen['hsCode']} setIsModalOpen={setIsModalOpen}
-                            getRows={getSelectedRows3}/>
+                             getRows={getSelectedRows3}/>
             <HotTable
                 style={{
                     border: '1px solid #ebebed',
@@ -562,8 +562,8 @@ const Table = forwardRef(({
                         return {readOnly: true}; // 🔥 마지막 행은 읽기 전용
                     }
 
-                    if(prop === 'unitPrice'|| prop === 'total' || prop === 'net' || prop === 'totalNet'){
-                        return { numericFormat: { pattern: '0,0.00' } };
+                    if (prop === 'unitPrice' || prop === 'total' || prop === 'net' || prop === 'totalNet') {
+                        return {numericFormat: {pattern: '0,0.00'}};
                     }
                 }}
 
@@ -582,8 +582,11 @@ const Table = forwardRef(({
                         allowHtml: true,
                         dateFormat: col.type === "date" ? "YYYY-MM-DD" : undefined,
                         // correctFormat: col.data === "marginRate" ? true : undefined, // 🔥 숫자가 올바른 형식이 아니면 자동 수정
-                        numericFormat: col.data === "marginRate" ? {pattern: "0%", suffix: "%"} : ( col.data.includes('rice') ? {pattern:'0,00'}:           undefined), // 🔥 소수점 둘째 자리 고정 + % 유지
-                        renderer: col.data === "marginRate" ? percentRenderer : ((col.data === 'orderDocumentNumberFull' || col.data === 'connectInquiryNo'|| col.data === 'hsCode') ? iconRenderer : ((col.data === 'unitPrice') ? currencyRenderer : col.type)), // 🔥 커스텀 렌더러 적용
+                        numericFormat: col.data === "marginRate" ? {
+                            pattern: "0%",
+                            suffix: "%"
+                        } : (col.data.includes('rice') ? {pattern: '0,00'} : undefined), // 🔥 소수점 둘째 자리 고정 + % 유지
+                        renderer: col.data === "marginRate" ? percentRenderer : ((col.data === 'orderDocumentNumberFull' || col.data === 'connectInquiryNo' || col.data === 'hsCode') ? iconRenderer : ((col.data === 'unitPrice') ? currencyRenderer : col.type)), // 🔥 커스텀 렌더러 적용
                         readOnly: col.readOnly,
                         filter: false,
                         datePickerConfig: {
