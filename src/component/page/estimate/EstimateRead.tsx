@@ -299,7 +299,7 @@ function EstimateRead({getPropertyId, getCopyPage,}: any) {
                 {/*@ts-ignored*/}
                 <TableGrid deleteComp={
                     <>
-                        <Button type={'primary'} size={'small'} style={{fontSize : 11}} onClick={openEstimate}>통합견적서</Button>
+                        {/*<Button type={'primary'} size={'small'} style={{fontSize : 11}} onClick={openEstimate}>통합견적서</Button>*/}
                         <Popconfirm
                             title="삭제하시겠습니까?"
                             onConfirm={deleteList}
