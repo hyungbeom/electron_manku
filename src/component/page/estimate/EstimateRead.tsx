@@ -17,19 +17,21 @@ import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import Popconfirm from "antd/lib/popconfirm";
 import moment from "moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
+import EstimatePaper from "@/component/견적서/EstimatePaper";
+import Modal from "antd/lib/modal/Modal";
+import NewEstimatePaper from "@/component/견적서/NewEstimatePaper";
 
 
 function EstimateRead({getPropertyId, getCopyPage,}: any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
-    const router = useRouter();
-    const countRef = useRef(1);
-    const infoRef = useRef(null);
+
     const gridRef = useRef(null);
 
     const copyInit = _.cloneDeep(estimateReadInitial)
     const [info, setInfo] = useState(copyInit)
     const [mini, setMini] = useState(true);
+    const [openEstimateModal, setOpenEstimateModal] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedRow, setSelectedRow] = useState([])
     const [loading, setLoading] = useState(false);
@@ -132,17 +134,22 @@ function EstimateRead({getPropertyId, getCopyPage,}: any) {
         gridRef.current.deselectAll();
     }
 
-    async function printEstimate() {
 
-        const checkedData = gridRef.current.getSelectedRows();
-
-        setSelectedRow(checkedData)
-        // console.log(selectedRow, 'setSelectedRow')
-        setIsModalOpen(true)
+    function openEstimate(){
+        setOpenEstimateModal(true)
     }
 
     return <Spin spinning={loading} tip={'견적서 조회중...'}>
         <PanelSizeUtil groupRef={groupRef} storage={'estimate_read'}/>
+
+        {openEstimateModal ? <Modal
+            onCancel={() => setOpenEstimateModal(false)}
+            open={openEstimateModal}
+            width={1050}
+            footer={null}
+            onOk={() => setOpenEstimateModal(false)}>
+            <div><NewEstimatePaper gridRef={gridRef}/></div>
+        </Modal> : <></>}
         <>
             <div style={{
                 display: 'grid',
@@ -290,14 +297,18 @@ function EstimateRead({getPropertyId, getCopyPage,}: any) {
                         : <></>}
                 </MainCard>
                 {/*@ts-ignored*/}
-                <TableGrid deleteComp={<Popconfirm
-                    title="삭제하시겠습니까?"
-                    onConfirm={deleteList}
-                    icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
+                <TableGrid deleteComp={
+                    <>
+                        <Button type={'primary'} size={'small'} style={{fontSize : 11}} onClick={openEstimate}>통합견적서</Button>
+                        <Popconfirm
+                            title="삭제하시겠습니까?"
+                            onConfirm={deleteList}
+                            icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
 
-                    {/*@ts-ignored*/}
-                    <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}>삭제</Button>
-                </Popconfirm>
+                            {/*@ts-ignored*/}
+                            <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}>삭제</Button>
+                        </Popconfirm>
+                    </>
                 }
                            totalRow={totalRow}
                            getPropertyId={getPropertyId}

@@ -469,8 +469,6 @@ function EstimateUpdate({
             type: file.type,
         }
 
-
-
        setFileList([
            ...fileList,
            newFile,
@@ -701,7 +699,7 @@ function EstimateUpdate({
                        type={'estimate_write_column'}/>
             </div>
         </>
-        {/*{ready && <EstimatePaper data={info} pdfRef={pdfRef} gridRef={gridRef}/>}*/}
+
     </Spin></div>
 }
 

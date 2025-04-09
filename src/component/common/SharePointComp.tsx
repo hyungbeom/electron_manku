@@ -160,12 +160,9 @@ export function DriveUploadComp({
 
                 const dom = infoRef.current.querySelector('#documentNumberFull');
                 const dom3 = infoRef.current.querySelector('#agencyName');
-                const dom2 = uploadTypeRef.current;
                 const extension = originalName.split('.').pop().toLowerCase();
 
-
                 const numberType = parseInt(uploadTypeRef.current.value);
-
 
                 let result = ''
                 switch (numberType) {

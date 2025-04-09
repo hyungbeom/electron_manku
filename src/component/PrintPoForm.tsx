@@ -362,12 +362,14 @@ export function PrintPoForm({data, topInfoData, totalData, title, lang}) {
 
                             const {model, quantity, unit, unitPrice} = row;
                             return <> <View key={i} style={styles.tableRow}>
+
                                 <View key={i} style={{
                                     ...styles.cell,
                                     width: colWidths[0],
                                 }}>
                                     <Text style={{textAlign: 'center'}}>{count + i + 1}</Text>
                                 </View>
+
                                 <View key={i} style={{
                                     ...styles.cell,
                                     width: colWidths[1],

@@ -306,8 +306,8 @@ function PrintPo({
                     <tr style={{backgroundColor: '#ebf6f7', fontWeight: 'bold', height: 35}}>
                         <th colSpan={3} style={{width: '45%'}}>Specification</th>
                         <th colSpan={2} style={{width: '10%', borderLeft: '1px solid lightGray',}}>Q`ty</th>
-                        <th style={{width: '15%', borderLeft: '1px solid lightGray'}}>단가</th>
-                        <th style={{width: '15%', borderLeft: '1px solid lightGray'}}>총액</th>
+                        <th style={{width: '15%', borderLeft: '1px solid lightGray'}}>Unit Price</th>
+                        <th style={{width: '15%', borderLeft: '1px solid lightGray'}}>Amount</th>
                         <th style={{width: '15%', borderLeft: '1px solid lightGray'}}>Other</th>
                     </tr>
                     </thead>
@@ -420,8 +420,8 @@ function PrintPo({
                             <tr style={{backgroundColor: '#ebf6f7', fontWeight: 'bold', height: 35}}>
                                 <th colSpan={3} style={{width: '45%'}}>Specification</th>
                                 <th colSpan={2} style={{width: '10%', borderLeft: '1px solid lightGray',}}>Q`ty</th>
-                                <th style={{width: '15%', borderLeft: '1px solid lightGray'}}>단가</th>
-                                <th style={{width: '15%', borderLeft: '1px solid lightGray'}}>총액</th>
+                                <th style={{width: '15%', borderLeft: '1px solid lightGray'}}>Unit Price</th>
+                                <th style={{width: '15%', borderLeft: '1px solid lightGray'}}>Amount</th>
                                 <th style={{width: '15%', borderLeft: '1px solid lightGray'}}>Other</th>
                             </tr>
 

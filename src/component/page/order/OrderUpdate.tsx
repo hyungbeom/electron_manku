@@ -95,7 +95,6 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
             const addOrderList = orderDetail[listType].map(v => {
                 return {...v, order: v.quantity}
             });
-            console.log(addOrderList, 'addOrderList:')
 
             setInfo({
                 ...orderDetail,

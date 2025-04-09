@@ -175,6 +175,8 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                 const findManager = memberList.find(v => v.adminId === manager)
                                 delete estimateDetail?.createdBy
                                 delete estimateDetail?.managerAdminId
+
+                                console.log(estimateDetail,'findManager:')
                                 commonManage.setInfo(infoRef, {
                                     ...estimateDetail,
                                     estimateManager: findManager?.name,
