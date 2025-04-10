@@ -120,10 +120,6 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
         })
     }
 
-    const onGridReady = (params) => {
-        gridRef.current = params.api;
-        // params.api.applyTransaction({add: dataInfo?.orderDetail[listType]});
-    };
 
 
     function onChange(e) {
@@ -327,7 +323,7 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
             const model = layoutRef.current.props.model;
             const activeTab = model.getActiveTabset()?.getSelectedNode();
             if (activeTab?.renderedName === '발주서 수정') {
-                saveFunc()
+                saveFunc();
             }
         }
     }, typeof window !== 'undefined' ? document : null)
@@ -447,9 +443,7 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
                                                 }
                                                 commonManage.setInfo(infoRef, sendObj);
                                             }
-                                        }}
-
-                                >
+                                        }}>
                                     {
                                         options?.map(v => {
                                             return <option value={v.value}>{v.label}</option>

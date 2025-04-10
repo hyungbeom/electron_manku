@@ -112,7 +112,7 @@ export default function TopInfo({count, infoRef, type, memberList, getTopInfoDat
 }
 
 
-export const TopPoInfo = ({infoRef, memberList, getTopInfoData}) => {
+export const TopPoInfo = ({infoRef, hsCode, getTopInfoData}) => {
     const topInfoRef = useRef<any>(null);
     const [info, setInfo] = useState({})
     const [title, setTitle] = useState<any>(paperTopInfo['ko'])
@@ -128,11 +128,11 @@ export const TopPoInfo = ({infoRef, memberList, getTopInfoData}) => {
         let infoData = commonManage.getInfo(infoRef, orderInfo['defaultInfo']);
 
         infoData['totalDate'] = moment().format('YYYY-MM-DD');
-        setInfo(infoData)
+        setInfo({...infoData, hscode: hsCode});
         infoData['incoterms'] = 'EXW'
         // EXW, FOB, CIF, DDU
         getTopInfoData(infoData)
-    }, []);
+    }, [hsCode]);
 
 
     function onChange(e) {
