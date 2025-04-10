@@ -817,6 +817,8 @@ commonManage.deleteUploadList = function (fileRef, formData, originFileList) {
     //기존 기준 사라진 파일
     const result = originFileList?.filter(itemA => !fileRef.current.fileList.some(itemB => itemA.id === itemB.id));
 
+    console.log(result,'result:')
+
     result.map((v, idx) => {
         formData.append(`deleteAttachmentIdList[${idx}]`, v.id);
     })

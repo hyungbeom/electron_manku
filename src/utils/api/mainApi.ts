@@ -26,12 +26,12 @@ export const updateRfq = async ({data, returnFunc}) => {
 };
 
 export const getAttachmentFileList = async ({data}) => {
-    return await getFormData.post('common/getAttachmentFileList', data).then(v => {
+    return await getData.post('common/getAttachmentFileList', data).then(v => {
         const code = v.data.code;
         if (code === 1) {
             return v.data.entity;
         } else {
-            msg.error('저장에 실패하였습니다.')
+            msg.error('파일 저장에 실패하였습니다.')
         }
     }, err => msg.error(err))
 };
