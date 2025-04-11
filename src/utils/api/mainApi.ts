@@ -372,7 +372,6 @@ export const searchDomesticAgency = async ({data}: any) => {
 };
 
 export const searchOverseasAgency = async ({data}: any) => {
-
     return getData.post('agency/getOverseasAgencyList', data).then(v => {
         const code = v.data.code;
         if (code === 1) {
@@ -383,7 +382,6 @@ export const searchOverseasAgency = async ({data}: any) => {
             msg.error('실패하였습니다.')
         }
     })
-
 };
 
 

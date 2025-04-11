@@ -26,7 +26,7 @@ import SourceUpdate from "@/component/page/data/source/SourceUpdate";
 
 
 
-function SourceWrite({copyPageInfo, getPropertyId, layoutRef}:any) {
+function SourceWrite({copyPageInfo}:any) {
     const notificationAlert = useNotificationAlert();
     const [info, setInfo] = useState(sourceWriteInitial);
     const groupRef = useRef<any>(null)
@@ -37,7 +37,7 @@ function SourceWrite({copyPageInfo, getPropertyId, layoutRef}:any) {
         return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 0]; // 기본값 [50, 50, 50]
     };
 
-    const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
+    const [sizes] = useState(getSavedSizes); // 패널 크기 상태
 
 
     useEffect(() => {

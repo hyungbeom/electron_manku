@@ -86,7 +86,6 @@ function RfqRead({getPropertyId, getCopyPage}: any) {
             setLoading(false)
             gridRef.current.ensureIndexVisible(0)
         })
-
     }
 
 
@@ -147,15 +146,27 @@ function RfqRead({getPropertyId, getCopyPage}: any) {
                     // rowGap : 10
                 }}>
                     <MainCard title={'견적의뢰 조회'} list={[
-                        {name: <div><SearchOutlined style={{paddingRight: 8}}/>조회</div>, func: searchInfo, type: 'primary'},
-                        {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'},
-                        {name: <div><SaveOutlined style={{paddingRight : 8}} />신규작성</div>, func: moveRegist, type: ''},
+                        {
+                            name: <div><SearchOutlined style={{paddingRight: 8}}/>조회</div>,
+                            func: searchInfo,
+                            type: 'primary'
+                        },
+                        {
+                            name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>,
+                            func: clearAll,
+                            type: 'danger'
+                        },
+                        {name: <div><SaveOutlined style={{paddingRight: 8}}/>신규작성</div>, func: moveRegist, type: ''},
                     ]} mini={mini} setMini={setMini}>
                         {mini ? <div>
                             <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
                                 <Panel defaultSize={sizes[0]} minSize={5}>
                                     <BoxCard>
-                                        <div style={{display: 'grid', gridTemplateColumns: '1fr 25px 25px 25px', gap: 3}}>
+                                        <div style={{
+                                            display: 'grid',
+                                            gridTemplateColumns: '1fr 25px 25px 25px',
+                                            gap: 3
+                                        }}>
                                             {rangePickerForm({
                                                 title: '작성일자',
                                                 id: 'searchDate',
@@ -291,6 +302,7 @@ function RfqRead({getPropertyId, getCopyPage}: any) {
         </Spin>
     </>
 }
+
 export default memo(RfqRead, (prevProps, nextProps) => {
     return _.isEqual(prevProps, nextProps);
 });
