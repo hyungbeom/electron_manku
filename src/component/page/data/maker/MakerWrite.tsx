@@ -27,7 +27,7 @@ function MakerWrite({getPropertyId, copyPageInfo}: any) {
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('maker_write');
-        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 0]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 5]; // 기본값 [50, 50, 50]
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
@@ -158,6 +158,8 @@ function MakerWrite({getPropertyId, copyPageInfo}: any) {
                             })}
                         </BoxCard>
                     </Panel>
+                    <PanelResizeHandle/>
+                    <Panel defaultSize={sizes[3]} minSize={0}></Panel>
                 </PanelGroup>
             </MainCard>
         </div>

@@ -439,7 +439,7 @@ export const subRfqWriteColumn = [
         checkboxSelection: true, // 각 행에 체크박스 추가
         valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
         cellStyle: {textAlign: "center"}, // 스타일 설정
-        maxWidth: 45, // 컬럼 너비
+        maxWidth: 60, // 컬럼 너비
         pinned: "left", // 왼쪽에 고정
         filter: false
     }, {
@@ -548,7 +548,7 @@ export const tableOrderWriteColumn = [
         checkboxSelection: true, // 각 행에 체크박스 추가
         valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
         cellStyle: {textAlign: "center"}, // 스타일 설정
-        maxWidth: 45, // 컬럼 너비
+        maxWidth: 60, // 컬럼 너비
         pinned: "left", // 왼쪽에 고정
         filter: false
     }, {
@@ -744,7 +744,7 @@ export const tableEstimateReadColumns = [
         checkboxSelection: true, // 각 행에 체크박스 추가
         valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
         cellStyle: {textAlign: "left"}, // 스타일 설정
-        maxWidth: 50, // 컬럼 너비
+        maxWidth: 60, // 컬럼 너비
         pinned: "left", // 왼쪽에 고정
         filter: false
     },
@@ -889,7 +889,7 @@ export const tableEstimateWriteColumns = [
         checkboxSelection: true, // 각 행에 체크박스 추가
         valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
         cellStyle: {textAlign: "center"}, // 스타일 설정
-        maxWidth: 45, // 컬럼 너비
+        maxWidth: 60, // 컬럼 너비
         pinned: "left", // 왼쪽에 고정
         filter: false
     }, {
@@ -986,8 +986,7 @@ export const rfqReadColumns = [
         headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
         checkboxSelection: true, // 각 행에 체크박스 추가
         valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
-
-        maxWidth: 55, // 컬럼 너비
+        maxWidth: 60, // 컬럼 너비
         pinned: "left", // 왼쪽에 고정
         filter: false,
         cellStyle: (params) => {
@@ -1191,7 +1190,7 @@ export const tableOrderReadColumns = [
         checkboxSelection: true, // 각 행에 체크박스 추가
         valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
         cellStyle: {textAlign: "center"}, // 스타일 설정
-        maxWidth: 45, // 컬럼 너비
+        maxWidth: 60, // 컬럼 너비
         pinned: "left", // 왼쪽에 고정
         filter: false
     },
@@ -2173,7 +2172,7 @@ export const tableCodeOverseasAgencyWriteColumns = [
         headerName: "", // 컬럼 제목
         valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
         cellStyle: {textAlign: "center"}, // 스타일 설정
-        maxWidth: 45, // 컬럼 너비
+        maxWidth: 60, // 컬럼 너비
         pinned: "left", // 왼쪽에 고정
         filter: false
     },
@@ -2545,12 +2544,11 @@ export const tableCodeReadColumns = [
 
     {
         headerName: "", // 컬럼 제목
-
         valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
         headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
         checkboxSelection: true, // 각 행에 체크박스 추가
         cellStyle: {textAlign: "center"}, // 스타일 설정
-        maxWidth: 80, // 컬럼 너비
+        maxWidth: 60, // 컬럼 너비
         pinned: "left", // 왼쪽에 고정
         filter: false
     }, {
@@ -2567,7 +2565,7 @@ export const tableCodeReadColumns = [
 
 
 
-
+// 재고관리 조회 테이블 컬럼
 export const tableSourceColumns = [
 
     {
@@ -2576,7 +2574,7 @@ export const tableSourceColumns = [
         headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
         checkboxSelection: true, // 각 행에 체크박스 추가
         cellStyle: {textAlign: "center"}, // 스타일 설정
-        maxWidth: 45, // 컬럼 너비
+        maxWidth: 60, // 컬럼 너비
         pinned: "left", // 왼쪽에 고정
         filter: false
     }, {
@@ -2611,7 +2609,7 @@ export const tableSourceColumns = [
 
 
 
-
+// 데이터 관리 > 회사계정관리 > 조회 테이블 컬럼
 export const tableCompanyAccountColumns = [
 
     {
@@ -2620,7 +2618,7 @@ export const tableCompanyAccountColumns = [
         headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
         checkboxSelection: true, // 각 행에 체크박스 추가
         cellStyle: {textAlign: "center"}, // 스타일 설정
-        maxWidth: 45, // 컬럼 너비
+        maxWidth: 60, // 컬럼 너비
         pinned: "left", // 왼쪽에 고정
         filter: false
     }, {
@@ -2653,10 +2651,9 @@ export const subTableCodeReadColumns = [
 
     {
         headerName: "", // 컬럼 제목
-
         valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
         cellStyle: {textAlign: "center"}, // 스타일 설정
-        maxWidth: 45, // 컬럼 너비
+        maxWidth: 60, // 컬럼 너비
         pinned: "left", // 왼쪽에 고정
         filter: false
     }, {
@@ -2785,7 +2782,7 @@ export const projectWriteColumn = [
         checkboxSelection: true, // 각 행에 체크박스 추가
         valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
         cellStyle: {textAlign: "center"}, // 스타일 설정
-        maxWidth: 45, // 컬럼 너비
+        maxWidth: 60, // 컬럼 너비
         pinned: "left", // 왼쪽에 고정
         filter: false
     },
@@ -3098,7 +3095,7 @@ export const delilveryReadColumn = [
         checkboxSelection: true, // 각 행에 체크박스 추가
         valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
         cellStyle: {textAlign: "center"}, // 스타일 설정
-        maxWidth: 45, // 컬럼 너비
+        maxWidth: 60, // 컬럼 너비
         pinned: "left", // 왼쪽에 고정
         filter: false
     },
@@ -3186,7 +3183,7 @@ export const remittanceReadColumn = [
         checkboxSelection: true, // 각 행에 체크박스 추가
         valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
         cellStyle: {textAlign: "center"}, // 스타일 설정
-        maxWidth: 45, // 컬럼 너비
+        maxWidth: 60, // 컬럼 너비
         pinned: "left", // 왼쪽에 고정
         filter: false
     }, {
@@ -3261,7 +3258,7 @@ export const storeWriteColumn = [
         checkboxSelection: true, // 각 행에 체크박스 추가
         valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
         cellStyle: {textAlign: "center"}, // 스타일 설정
-        maxWidth: 45, // 컬럼 너비
+        maxWidth: 60, // 컬럼 너비
         pinned: "left", // 왼쪽에 고정
         filter: false
     }, {
@@ -3412,7 +3409,7 @@ export const storeReadColumn = [
         checkboxSelection: true, // 각 행에 체크박스 추가
         valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
         cellStyle: {textAlign: "center"}, // 스타일 설정
-        maxWidth: 45, // 컬럼 너비
+        maxWidth: 60, // 컬럼 너비
         pinned: "left", // 왼쪽에 고정
         filter: false
     }, {

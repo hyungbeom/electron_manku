@@ -224,7 +224,7 @@ gridManage.exportSelectedRowsToExcel = function (hotRef, title) {
         exportHiddenColumns: true,
         exportHiddenRows: true,
         fileExtension: 'csv',
-        filename: 'Handsontable-CSV-file_[YYYY]-[MM]-[DD]',
+        filename: `${title}_[YYYY]-[MM]-[DD]`,
         mimeType: 'text/csv',
         rowDelimiter: '\r\n',
         rowHeaders: true,

@@ -28,8 +28,9 @@ export const updateList = [
     {title : '국내고객사 수정', key : 'domestic_customer_update'},
     {title : '해외고객사 수정', key : 'overseas_customer_update'},
     {title : '메이커 수정', key : 'maker_update'},
-    {title : 'HS CODE 수정', key : 'hscode_update'},
     {title : '회사계정관리 수정', key : 'company_account_update'},
+    {title : '재고관리 수정', key : 'source_update'},
+    {title : 'HS CODE 수정', key : 'hscode_update'},
 ]
 
 export const treeData = [

@@ -3,7 +3,7 @@ import {getData} from "@/manage/function/api";
 import {makerColumn,} from "@/utils/columnList";
 import {codeDomesticPurchaseInitial, orderReadInitial,} from "@/utils/initialList";
 import TableGrid from "@/component/tableGrid";
-import {inputForm, MainCard, radioForm} from "@/utils/commonForm";
+import {inputForm, MainCard, radioForm, TopBoxCard} from "@/utils/commonForm";
 import {searchMaker} from "@/utils/api/mainApi";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import Spin from "antd/lib/spin";
@@ -18,7 +18,7 @@ import Space from "antd/lib/space";
 import ReceiveComponent from "@/component/ReceiveComponent";
 
 
-function MakerRead({getPropertyId, getCopyPage}:any) {
+function MakerRead({getPropertyId, getCopyPage}: any) {
     const gridRef = useRef(null);
     const notificationAlert = useNotificationAlert();
     const copyInit = _.cloneDeep(codeDomesticPurchaseInitial)
@@ -28,7 +28,6 @@ function MakerRead({getPropertyId, getCopyPage}:any) {
     const [loading, setLoading] = useState(false);
 
     const [isSearch, setIsSearch] = useState(false);
-
     useEffect(() => {
         if (isSearch) {
             searchInfo(true);
@@ -96,7 +95,10 @@ function MakerRead({getPropertyId, getCopyPage}:any) {
                 searchInfo(true)
                 notificationAlert('success', '🗑️Maker 삭제완료',
                     <>
-                        <div>Maker : {list[0].makerName} {list.length > 1 ? ('외' + " " + (list.length - 1) + '개') : ''} 이(가) 삭제되었습니다.</div>
+                        <div>Maker
+                            : {list[0].makerName} {list.length > 1 ? ('외' + " " + (list.length - 1) + '개') : ''} 이(가)
+                            삭제되었습니다.
+                        </div>
                         <div>삭제일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
                     , null, null, 2
@@ -112,7 +114,7 @@ function MakerRead({getPropertyId, getCopyPage}:any) {
         <ReceiveComponent searchInfo={searchInfo}/>
         <div style={{
             display: 'grid',
-            gridTemplateRows: `${mini ? '120px' : '65px'} calc(100vh - ${mini ? 250 : 195}px)`,
+            gridTemplateRows: `${mini ? '150px' : '65px'} calc(100vh - ${mini ? 280 : 195}px)`,
             columnGap: 5
         }}>
             <MainCard title={'메이커 조회'}
@@ -123,35 +125,39 @@ function MakerRead({getPropertyId, getCopyPage}:any) {
                       }]}
                       mini={mini} setMini={setMini}>
 
-                {mini ? <div style={{display: 'flex', alignItems: 'center', padding: 10}}>
-                    {radioForm({
-                        title: '',
-                        id: 'searchType',
-                        onChange: onChange,
-                        data: info,
-                        list: [{value: 1, title: 'Maker'},
-                            {value: 2, title: 'Item'},
-                            {value: 3, title: 'AREA'}]
-                    })}
-                    <div style={{width: 500, marginLeft: 20}}>
-                        {inputForm({
-                            title: '',
-                            id: 'searchText',
-                            onChange: onChange,
-                            handleKeyPress: handleKeyPress,
-                            data: info,
-                            size: 'middle'
-                        })}
-                    </div>
-                    <Space style={{marginTop: -4, marginLeft: 20}} size={8}>
-                        <Button type="primary" size="small" style={{fontSize: 11}} onClick={searchInfo}>
-                            <SearchOutlined/>조회
-                        </Button>
-                        <Button type="primary" danger size="small" style={{fontSize: 11}} onClick={clearAll}>
-                            <ReloadOutlined/>초기화
-                        </Button>
-                    </Space>
-                </div> : <></>}
+                {mini ?
+                    <TopBoxCard title={''} grid={'240px 270px 190px'}>
+                        <Space style={{marginTop: 10}}>
+                            {radioForm({
+                                title: '',
+                                id: 'searchType',
+                                onChange: onChange,
+                                data: info,
+                                list: [{value: 1, title: 'Maker'},
+                                    {value: 2, title: 'Item'},
+                                    {value: 3, title: 'AREA'}],
+                            })}
+                        </Space>
+                        <div style={{marginTop: 5}}>
+                            {inputForm({
+                                title: '',
+                                id: 'searchText',
+                                onChange: onChange,
+                                handleKeyPress: handleKeyPress,
+                                data: info,
+                                size: 'middle'
+                            })}
+                        </div>
+                        <Space size={10}>
+                            <Button type="primary" size="small" style={{fontSize: 11}} onClick={searchInfo}>
+                                <SearchOutlined/>조회
+                            </Button>
+                            <Button type="primary" danger size="small" style={{fontSize: 11}} onClick={clearAll}>
+                                <ReloadOutlined/>초기화
+                            </Button>
+                        </Space>
+                    </TopBoxCard>
+                    : <></>}
             </MainCard>
 
             {/*@ts-ignored*/}

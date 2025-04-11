@@ -103,7 +103,7 @@ const TableGrid = ({
 
     const handleDoubleClicked = (e) => {
         if (type === 'read') {
-
+            console.log(e.data)
             if (e.data.orderStatusId){
                 getPropertyId('store_update', e.data.orderStatusId)
             }
@@ -144,7 +144,7 @@ const TableGrid = ({
             if (e.data.officialDocumentId)
                 getPropertyId('code_diploma_update', e.data.officialDocumentId)
             if (e.data.companyAccountId) {
-                getPropertyId('company_account_update', e.data)
+                getPropertyId('company_account_update', e.data.companyAccountId)
             }
             if (e.data.remainingQuantity) {
                 getPropertyId('source_update', e.data)
@@ -153,6 +153,8 @@ const TableGrid = ({
 
         if (type === 'hsCode') {
             // setInfo(e.data)
+            setInfo(e.data)
+            tempFunc(true)
         }
     };
 
@@ -227,22 +229,23 @@ const TableGrid = ({
 
     /**
      * total 행이 필요 없는 컴포넌트에 적용하려고 추가
-     * 선택된 row의 해당 key가 있으면 total 행 제외
-     * (사용처: 데이터 관리 카테고리 테이블 들)
+     * 선택된 row의 해당 key가 있으면 total 행 추가
+     * (사용처: 견적의뢰, 견적서, 발주서 등)
      */
-    const excludeKeys = ['agencyId', 'overseasAgencyId', 'customerId', 'overseasCustomerId', 'makerId'];
-    const containsKey = (list) => {
+    const includeKeys = ['estimateRequestId', 'estimateId', 'orderId', 'orderStatusId'];
+    const containsIncludeKey = (list) => {
         const firstRow = list?.[0];
-        if (!firstRow) return;
-        return excludeKeys.some(key => key in firstRow);
-    }
-
+        if (!firstRow) return false;
+        return includeKeys.some(key => key in firstRow);
+    };
     const handleSelectionChanged = () => {
         const selectedRows = gridRef.current.getSelectedRows(); // 체크된 행 가져오기
-        if(!selectedRows.length || containsKey(selectedRows)) {
+
+        if (!selectedRows.length || !containsIncludeKey(selectedRows)) {
             setPinnedBottomRowData([]);
             return;
         }
+
         const totals = commonFunc.sumCalc(selectedRows);
         setPinnedBottomRowData([totals]);
     };

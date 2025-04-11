@@ -431,7 +431,20 @@ export const searchMaker = async ({data}: any) => {
             msg.error('실패하였습니다.')
         }
     })
+};
 
+export const searchCompanyAccount = async ({data}: any) => {
+
+    return getData.post('company/getCompanyAccountList', data).then(v => {
+        const code = v.data.code;
+        if (code === 1) {
+            const {companyAccountList, pageInfo} = v.data.entity
+            return {data: companyAccountList, pageInfo: pageInfo}
+            msg.success('수정되었습니다.')
+        } else {
+            msg.error('실패하였습니다.')
+        }
+    })
 };
 
 export const searchHSCode = async ({data}: any) => {

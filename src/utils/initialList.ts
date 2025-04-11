@@ -107,6 +107,20 @@ export const makerWriteInitial = {
     "instructions": ""
 }
 
+// 회사계정관리 초기값 정보
+export const companyAccountWriteInitial = {
+    "companyName": "",
+    "homepage": "",
+    "userName": "",
+    "password": "",
+    "remarks": ""
+}
+
+// HSCode 초기값 정보
+export const hsCodeInitial = {
+    item: "",
+    hsCode: ""
+}
 
 export const subRfqReadInitial = {
     searchDate: [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],

@@ -584,7 +584,7 @@ export const tableButtonList = (type: any, gridRef?: any) => {
             return message.warning('1개 이상의 데이터를 선택해주세요.')
         }
         gridRef.current.exportDataAsCsv({
-            fileName: "조회리스트.csv",
+            fileName: `조회리스트_${moment().format('YYYY-MM-DD')}.csv`,
             onlySelected: true, // ✅ 선택된 행만 내보내기
         });
     };
