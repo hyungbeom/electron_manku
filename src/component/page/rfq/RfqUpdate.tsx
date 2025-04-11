@@ -207,10 +207,13 @@ function RqfUpdate({
                     "relatedId": updateKey['rfq_update']
                 }
             }).then(v => {
+
                 const list = fileManage.getFormatFiles(v);
                 setFileList(list)
                 setOriginFileList(list)
                 setLoading(false)
+            },err=>{
+                console.log(err,'::::::')
             })
         } else {
             message.warning(v.message)

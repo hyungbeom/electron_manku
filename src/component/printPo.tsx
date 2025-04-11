@@ -43,6 +43,8 @@ function PrintPo({
         setData(copyData);
     }, [count]);
 
+
+
     const totalData = useMemo(() => {
 
         const list = Object.values(data);
@@ -296,7 +298,7 @@ function PrintPo({
             }}>
 
                 <PoHeader infoRef={infoRef}/>
-                <TopPoInfo infoRef={infoRef} memberList={memberList} getTopInfoData={getTopInfoData}/>
+                <TopPoInfo infoRef={infoRef} hsCode={data[0][0]?.hsCode} getTopInfoData={getTopInfoData}/>
                 <table style={{
                     width: '100%',
                     borderCollapse: 'collapse',
