@@ -206,6 +206,7 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
 
         const list = gridRef.current.getSelectedRows()
         const filterList = list.map(v => v.inventoryId);
+        console.log(filterList,'filterList:::')
 
         await getData.post('inventory/deleteInventories', {inventoryIdList: filterList}).then(v => {
             if (v?.data?.code === 1) {
