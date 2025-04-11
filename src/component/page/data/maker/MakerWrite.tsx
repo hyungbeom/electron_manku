@@ -13,7 +13,6 @@ import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 import _ from "lodash";
 import Spin from "antd/lib/spin";
 
-
 function MakerWrite({getPropertyId, copyPageInfo}: any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
@@ -21,9 +20,8 @@ function MakerWrite({getPropertyId, copyPageInfo}: any) {
 
     const [loading, setLoading] = useState(false);
 
-    const copyInit = _.cloneDeep(makerWriteInitial);
-    const [info, setInfo] = useState({...copyInit});
-
+    const getMakerInit = () => _.cloneDeep(makerWriteInitial);
+    const [info, setInfo] = useState(getMakerInit());
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('maker_write');
@@ -33,9 +31,9 @@ function MakerWrite({getPropertyId, copyPageInfo}: any) {
 
     useEffect(() => {
         if (!isEmptyObj(copyPageInfo)) {
-            setInfo(makerWriteInitial)
+            setInfo(getMakerInit())
         } else {
-            setInfo(copyPageInfo);
+            setInfo(_.cloneDeep(copyPageInfo));
         }
     }, [copyPageInfo?._meta?.updateKey]);
 
@@ -43,6 +41,10 @@ function MakerWrite({getPropertyId, copyPageInfo}: any) {
         commonManage.onChange(e, setInfo)
     }
 
+    /**
+     * @description 등록 페이지 > 저장 버튼
+     * 데이터 관리 > 메이커
+     */
     async function saveFunc() {
         setLoading(true);
         await getData.post('maker/addMaker', info).then(v => {
@@ -60,14 +62,16 @@ function MakerWrite({getPropertyId, copyPageInfo}: any) {
             } else {
                 message.error(v?.data?.message)
             }
-            setLoading(false);
-        });
+        })
+        setLoading(false);
     }
 
+    /**
+     * @description 등록 페이지 > 초기화 버튼
+     * 데이터 관리 > 메이커
+     */
     function clearAll() {
-        const init = _.cloneDeep(makerWriteInitial);
-        setInfo(init)
-        commonManage.setInfo(infoRef, init);
+        setInfo(getMakerInit());
     }
 
     return <Spin spinning={loading}>

@@ -26,7 +26,7 @@ function DomesticAgencyWrite({copyPageInfo, getPropertyId}: any) {
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('domestic_agency_update');
-        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 5]; // 기본값 [50, 50, 50]
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
@@ -72,8 +72,8 @@ function DomesticAgencyWrite({copyPageInfo, getPropertyId}: any) {
 
 
     /**
-     * @description 국내매입처 저장
-     * 국내 매입처 등록 페이지 -> 저장 버튼
+     * @description 둥록 페이지 > 저장 버튼
+     * 데이터 관리 > 매입처 > 국내매입처
      */
     async function saveFunc() {
         let infoData = commonManage.getInfo(infoRef, infoInit);
@@ -105,14 +105,14 @@ function DomesticAgencyWrite({copyPageInfo, getPropertyId}: any) {
             } else {
                 message.error(v?.data?.message)
             }
-            setLoading(false)
         });
+        setLoading(false);
 
     }
 
     /**
-     * @description 국내매입처 초기화
-     * 국내 매입처 등록 페이지 -> 초기화 버튼
+     * @description 등록 페이지 > 초기화
+     * 데이터 관리 > 매입처 > 국내매입처
      */
     function clearAll() {
         commonManage.setInfo(infoRef, DAInfo['defaultInfo'], userInfo['adminId']);
@@ -210,7 +210,7 @@ function DomesticAgencyWrite({copyPageInfo, getPropertyId}: any) {
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>
-                                <Panel></Panel>
+                                <Panel defaultSize={sizes[4]} minSize={0}></Panel>
                             </PanelGroup>
                         </div>
                         : <></>}

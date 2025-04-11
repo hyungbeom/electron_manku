@@ -1,10 +1,9 @@
 import React, {memo, useEffect, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import message from "antd/lib/message";
-import {codeDomesticSalesWriteInitial, codeOverseasSalesWriteInitial,} from "@/utils/initialList";
-import {useRouter} from "next/router";
+import {codeOverseasSalesWriteInitial,} from "@/utils/initialList";
 import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm} from "@/utils/commonForm";
-import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
+import {commonFunc, commonManage} from "@/utils/commonManage";
 import _ from "lodash";
 import Table from "@/component/util/Table";
 import {OCInfo} from "@/utils/column/ProjectInfo";
@@ -45,7 +44,7 @@ function OverseasCustomerWrite({copyPageInfo, getPropertyId}: any) {
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('overseas_customer_write');
-        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 0]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 5]; // 기본값 [50, 50, 50]
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
@@ -70,6 +69,10 @@ function OverseasCustomerWrite({copyPageInfo, getPropertyId}: any) {
         tableRef.current?.setData(tableData);
     }, [tableData]);
 
+    /**
+     * @description 등록페이지 > 등록 버튼
+     * 데이터 관리 > 고객사 > 해외고객사
+     */
     async function saveFunc() {
         let infoData = commonManage.getInfo(infoRef, infoInit);
         const tableList = tableRef.current?.getSourceData();
@@ -100,10 +103,14 @@ function OverseasCustomerWrite({copyPageInfo, getPropertyId}: any) {
             } else {
                 message.error(v?.data?.message)
             }
-            setLoading(false);
         });
+        setLoading(false);
     }
 
+    /**
+     * @description 등록 페이지 > 초기화 버튼
+     * 데이터 관리 > 고객사 > 해외고객사
+     */
     function clearAll() {
         commonManage.setInfo(infoRef, OCInfo['defaultInfo'], userInfo['adminId']);
         setTableData(commonFunc.repeatObject(OCInfo['write']['defaultData'], 1000))
@@ -180,7 +187,7 @@ function OverseasCustomerWrite({copyPageInfo, getPropertyId}: any) {
                             </BoxCard>
                         </Panel>
                         <PanelResizeHandle/>
-                        <Panel></Panel>
+                        <Panel defaultSize={sizes[4]} minSize={0}></Panel>
                     </PanelGroup>
                 </div> : <></>}
             </MainCard>

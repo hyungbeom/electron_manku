@@ -16,7 +16,7 @@ import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import _ from "lodash";
 import Space from "antd/lib/space";
 
-function HcodeRead({getPropertyId, getCopyPage}: any) {
+function HcodeRead({getPropertyId}: any) {
     const notificationAlert = useNotificationAlert();
     const gridRef = useRef(null);
     const [mini, setMini] = useState(true);
@@ -63,19 +63,30 @@ function HcodeRead({getPropertyId, getCopyPage}: any) {
         setSearchInit({...searchInit, searchText: e.target.value});
     }
 
+    /**
+     * @description 조회 페이지 > 조회 버튼
+     * 데이터 관리 > HS CODE 조회
+     * @param e
+     */
     async function searchInfo(e?) {
         if (e) {
             setLoading(true)
             await searchHSCode({data: searchInit}).then(v => {
-                gridManage.resetData(gridRef, v.data);
-                setTotalRow(v.pageInfo.totalRow)
-                setLoading(false)
+                if(v?.data?.code === 1) {
+                    gridManage.resetData(gridRef, v.data);
+                    setTotalRow(v.pageInfo.totalRow)
+                    setLoading(false)
+                } else {
+                    message.error(v?.data?.message);
+                }
             })
+            setLoading(false);
         }
     }
 
     /**
-     * @description HS-Code > 초기화
+     * @description 조회 페이지 > 초기화
+     * 데이터 관리 > HS CODE 관리
      */
     function clearAll() {
         gridRef.current.deselectAll();
@@ -85,6 +96,7 @@ function HcodeRead({getPropertyId, getCopyPage}: any) {
 
     /**
      * @description HS-Code 유효성 체크
+     * 데이터 관리 > HS CODE 관리
      * @param info
      */
     function checkValidate(info) {
@@ -101,7 +113,7 @@ function HcodeRead({getPropertyId, getCopyPage}: any) {
 
     /**
      * @description HS-Code > 등록
-     * 데이터 관리 > HS-Code 조회
+     * 데이터 관리 > HS Code 조회
      * isModify = false 수정 모드 아닐때 노출
      */
     async function saveFunc() {
@@ -123,13 +135,13 @@ function HcodeRead({getPropertyId, getCopyPage}: any) {
             } else {
                 message.error(v?.data?.message)
             }
-            setLoading(false)
         })
+        setLoading(false);
     }
 
     /**
      * @description HS-Code > 수정
-     * 데이터 관리 > HS-CODE 조회
+     * 데이터 관리 > HS CODE 조회
      * 테이블 내용 더블 클릭시 isModify = true 가 되면서 수정모드에서 노출
      */
     async function updateFunc() {
@@ -150,13 +162,13 @@ function HcodeRead({getPropertyId, getCopyPage}: any) {
             } else {
                 message.error(v?.data?.message)
             }
-            setLoading(false)
         })
+        setLoading(false);
     }
 
     /**
      * @description HS-Code > 취소
-     * 데이터 관리 > HS-CODE 조회
+     * 데이터 관리 > HS CODE 조회
      * 테이블 내용 더블 클릭시 isModify = true 가 되면서 수정모드에서 노출
      */
     function cancel() {
@@ -166,7 +178,7 @@ function HcodeRead({getPropertyId, getCopyPage}: any) {
 
     /**
      * @description HS-Code > 테이블 > 삭제
-     * 데이터 관리 > HS-CODE 조회
+     * 데이터 관리 > HS CODE 조회
      */
     async function deleteList() {
         if (gridRef.current.getSelectedRows().length < 1) {
@@ -177,7 +189,7 @@ function HcodeRead({getPropertyId, getCopyPage}: any) {
         const selectedRows = gridRef.current.getSelectedRows();
         const filterList = selectedRows.map(v => v.hsCodeId)
         await deleteHsCodeList({data: {hsCodeIdList: filterList}}).then(v => {
-            if (v.code === 1) {
+            if (v?.code === 1) {
                 searchInfo(true);
                 notificationAlert('success', '🗑 HS-CODE 삭제완료',
                     <>
@@ -191,10 +203,10 @@ function HcodeRead({getPropertyId, getCopyPage}: any) {
                     , null, null, 2
                 )
             } else {
-                message.error(v.message)
+                message.error(v?.message)
             }
-            setLoading(false)
         })
+        setLoading(false);
     }
 
     return <Spin spinning={loading}>

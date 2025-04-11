@@ -49,8 +49,8 @@ function OverseasAgencyRead({getPropertyId, getCopyPage}: any) {
         }).then(v => {
             params.api.applyTransaction({add: v.data});
             setTotalRow(v.pageInfo.totalRow)
-            setLoading(false)
         })
+        setLoading(false);
     };
 
     function onChange(e) {
@@ -63,10 +63,19 @@ function OverseasAgencyRead({getPropertyId, getCopyPage}: any) {
         }
     }
 
+    /**
+     * @description 조회 페이지 > 신규생성 버튼
+     * 데이터 관리 > 매입처 > 해외매입처
+     */
     function moveRouter() {
         getCopyPage('overseas_agency_write', {})
     }
 
+    /**
+     * @description 조회 페이지 > 조회 버튼
+     * 데이터 관리 > 매입처 > 해외매입처
+     * @param e
+     */
     async function searchInfo(e) {
         if (e) {
             setLoading(true)
@@ -80,17 +89,25 @@ function OverseasAgencyRead({getPropertyId, getCopyPage}: any) {
             }).then(v => {
                 gridManage.resetData(gridRef, v.data);
                 setTotalRow(v.pageInfo.totalRow)
-                setLoading(false)
             })
+            setLoading(false)
         }
     }
 
+    /**
+     * @description 조회 페이지 > 초기화 버튼
+     * 데이터 관리 > 매입처 > 해외매입처
+     */
     function clearAll() {
         gridRef.current.deselectAll();
         setInfo(copyInit);
         setIsSearch(true);
     }
 
+    /**
+     * @description 조회 페이지 테이블 > 삭제 버튼
+     * 데이터 관리 > 매입처 > 해외매입처
+     */
     async function confirm() {
         if (gridRef.current.getSelectedRows().length < 1) {
             return message.error('삭제할 매입처를 선택해주세요.')
@@ -114,8 +131,8 @@ function OverseasAgencyRead({getPropertyId, getCopyPage}: any) {
             } else {
                 message.error(v.data.message)
             }
-            setLoading(false)
         })
+        setLoading(false)
     }
 
     return <Spin spinning={loading} tip={'해외 매입처 조회중...'}>

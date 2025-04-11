@@ -4,7 +4,6 @@ import message from "antd/lib/message";
 import {commonManage} from "@/utils/commonManage";
 import {BoxCard, inputForm, MainCard, textAreaForm} from "@/utils/commonForm";
 import _ from "lodash";
-import {useRouter} from "next/router";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import moment from "moment";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
@@ -15,7 +14,6 @@ import {Actions} from "flexlayout-react";
 
 function MakerUpdate({updateKey, getCopyPage, layoutRef}:any) {
     const notificationAlert = useNotificationAlert();
-    const router = useRouter();
     const [info, setInfo] = useState<any>({});
     const [loading, setLoading] = useState(false);
 
@@ -25,7 +23,6 @@ function MakerUpdate({updateKey, getCopyPage, layoutRef}:any) {
         const savedSizes = localStorage.getItem('maker_update');
         return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 5]; // 기본값 [50, 50, 50]
     };
-
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
     async function getDataInfo() {
@@ -36,19 +33,24 @@ function MakerUpdate({updateKey, getCopyPage, layoutRef}:any) {
     }
 
     useEffect(() => {
-        setLoading(true)
+        setLoading(true);
         getDataInfo().then(v => {
             const {makerDetail} = v;
             setInfo(makerDetail);
-            setLoading(false)
         })
+        setLoading(false);
     }, [updateKey['maker_update']])
 
     function onChange(e) {
         commonManage.onChange(e, setInfo)
     }
 
+    /**
+     * @description 수정 페이지 > 수정 버튼
+     * 데이터 관리 > 메이커
+     */
     async function saveFunc() {
+        setLoading(true);
         await getData.post('maker/updateMaker', info).then(v => {
             if (v?.data?.code === 1) {
                 notificationAlert('success', '💾 메이커 수정완료',
@@ -62,8 +64,13 @@ function MakerUpdate({updateKey, getCopyPage, layoutRef}:any) {
                 message.error(v?.data?.message)
             }
         });
+        setLoading(false);
     }
 
+    /**
+     * @description 수정 페이지 > 삭제 버튼
+     * 데이터 관리 > 메이커
+     */
     function deleteFunc(){
         setLoading(true);
         getData.post('maker/deleteMaker',{makerId : updateKey['maker_update']}).then(v=>{
@@ -86,13 +93,16 @@ function MakerUpdate({updateKey, getCopyPage, layoutRef}:any) {
             } else {
                 message.error(v?.data?.message)
             }
-            setLoading(false);
         })
+        setLoading(false);
     }
 
+    /**
+     * @description 수정 페이지 > 복제 버튼
+     * 데이터 관리 > 메이커
+     */
     function copyPage() {
-        let copyInfo = _.cloneDeep(info)
-        getCopyPage('maker_write', {...copyInfo, _meta: {updateKey: Date.now()}})
+        getCopyPage('maker_write', {...info, _meta: {updateKey: Date.now()}})
     }
 
     return <>

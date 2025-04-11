@@ -50,7 +50,7 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
      * @description 재고 리스트 정리
      * 데이터 관리 > 재고관리
      * 재고관리 조회 리스트와 상세 리스트의 키값이 달라서 정리
-     * 출고, 합계 없음, 잔량 키값 다름 (API 수정시 바뀔 수 있음)
+     * 출고/합계 없음, 잔량 키값 다름 (API 수정시 바뀔 수 있음)
      * @param list
      */
     const processData = (list) => {
@@ -62,6 +62,22 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
         return newList.sort((a, b) => b.inventoryId - a.inventoryId);
     }
 
+    const fetchData = async () => {
+        setLoading(true);
+        const v = await getData.post('inventory/getInventoryDetail', updateKey['source_update']);
+        if (v?.data?.code === 1) {
+            const {inventoryItemList = []} = v?.data?.entity;
+            const processList = processData(inventoryItemList);
+            setInfo(processList?.[0] || {});
+            setInventoryList(processList);
+            gridManage.resetData(gridRef, processList);
+            setTotalRow(inventoryItemList.length);
+        } else {
+            message.error(v?.data?.message);
+        }
+        setLoading(false);
+    }
+
     const onGridReady = async (params) => {
         gridRef.current = params.api;
         setIsGrid(true);
@@ -69,19 +85,6 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
 
     useEffect(() => {
         if (!isGrid) return;
-        const fetchData = async () => {
-            setLoading(true);
-            const v = await getData.post('inventory/getInventoryDetail', updateKey['source_update']);
-            if (v?.data?.code === 1) {
-                const {inventoryItemList = []} = v?.data?.entity;
-                const processList = processData(inventoryItemList);
-                setInfo(processList?.[0] || {});
-                setInventoryList(processList);
-                gridManage.resetData(gridRef, processList);
-                setTotalRow(inventoryItemList.length);
-            }
-            setLoading(false);
-        }
         fetchData();
     }, [updateKey['source_update'], isGrid])
 
@@ -91,7 +94,7 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
 
     async function searchInfo(e) {
         if (e) {
-            setLoading(true)
+            setLoading(true);
             await getData.post('inventory/getInventoryDetail', updateKey['source_update']).then(v => {
                 if (v?.data?.code === 1) {
                     const {inventoryItemList = []} = v?.data?.entity;
@@ -99,9 +102,11 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
                     setInventoryList(processList);
                     gridManage.resetData(gridRef, processList);
                     setTotalRow(inventoryItemList.length);
+                } else {
+                    message.error(v?.data?.message);
                 }
-                setLoading(false)
             })
+            setLoading(false);
         }
     }
 
@@ -147,8 +152,8 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
             } else {
                 message.error(v?.data?.message)
             }
-            setLoading(false)
-        });
+        })
+        setLoading(false);
     }
 
     /**
@@ -166,7 +171,12 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
                     </>
                     , null, null, 2
                 )
-                if (inventoryList?.length === 1) {
+                // 삭제한 데이터가 마지막 데이터인지 여부
+                const isLastData = inventoryList.length === 1 && inventoryList[0].inventoryId === info.inventoryId;
+                if(!isLastData) {
+                    setInfo(getSourceInit());
+                    searchInfo(true);
+                } else {
                     const {model} = layoutRef.current.props;
                     window.postMessage('delete', window.location.origin);
                     getCopyPage('source_read', {})
@@ -175,15 +185,12 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
                     if (targetNode) {
                         model.doAction(Actions.deleteTab(targetNode.getId())); // ✅ 기존 로직 유지
                     }
-                } else {
-                    searchInfo(true);
-                    setInfo(getSourceInit());
                 }
             } else {
                 message.error(v?.data?.message)
             }
-            setLoading(false);
         })
+        setLoading(false);
     }
 
     /**
@@ -209,22 +216,38 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
 
         await getData.post('inventory/deleteInventories', {inventoryIdList: filterList}).then(v => {
             if (v?.data?.code === 1) {
-                searchInfo(true)
-                notificationAlert('success', '🗑 재고 삭제완료',
-                    <>
-                        <div>Model
-                            : {list[0].model} {list.length > 1 ? ('외' + " " + (list.length - 1) + '개') : ''} 재고이(가)
-                            삭제되었습니다.
-                        </div>
-                        <div>삭제일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
-                    </>
-                    , null, null, 2
-                )
+
+                // 전체 삭제 여부 (삭제 id 리스트에 조회한 초기 리스트의 id가 전부 포함됬는지)
+                const isAllDeleted = inventoryList.every(item => filterList.includes(item.inventoryId));
+                if (!isAllDeleted) {
+                    // 삭제된 리스트에 현재 수정중인 id가 있는지 확인 (삭제됬으면 폼 초기화)
+                    if (filterList.includes(info.inventoryId)) setInfo(getSourceInit());
+                    searchInfo(true);
+                    notificationAlert('success', '🗑 재고 삭제완료',
+                        <>
+                            <div>Model
+                                : {list[0].model} {list.length > 1 ? ('외' + " " + (list.length - 1) + '개') : ''} 재고이(가)
+                                삭제되었습니다.
+                            </div>
+                            <div>삭제일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                        </>
+                        , null, null, 2
+                    )
+                } else {
+                    const {model} = layoutRef.current.props;
+                    window.postMessage('delete', window.location.origin);
+                    getCopyPage('source_read', {})
+                    const targetNode = model.getRoot().getChildren()[0]?.getChildren()
+                        .find((node: any) => node.getType() === "tab" && node.getComponent() === 'source_update');
+                    if (targetNode) {
+                        model.doAction(Actions.deleteTab(targetNode.getId())); // ✅ 기존 로직 유지
+                    }
+                }
             } else {
                 message.error(v?.data?.message)
             }
-            setLoading(false)
         })
+        setLoading(false);
     }
 
     return <Spin spinning={loading}>

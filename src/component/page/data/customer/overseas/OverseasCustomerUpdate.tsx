@@ -1,14 +1,13 @@
 import React, {memo, useEffect, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import message from "antd/lib/message";
-import {useRouter} from "next/router";
 import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm} from "@/utils/commonForm";
-import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
+import {commonFunc, commonManage} from "@/utils/commonManage";
 import _ from "lodash";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import Table from "@/component/util/Table";
-import {DCInfo, OCInfo} from "@/utils/column/ProjectInfo";
+import {OCInfo} from "@/utils/column/ProjectInfo";
 import Spin from "antd/lib/spin";
 import moment from "moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
@@ -30,7 +29,7 @@ function OverseasCustomerUpdate({ updateKey, getCopyPage, layoutRef}:any) {
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('overseas_customer_update');
-        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 5]; // 기본값 [50, 50, 50]
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
@@ -57,6 +56,10 @@ function OverseasCustomerUpdate({ updateKey, getCopyPage, layoutRef}:any) {
         commonManage.setInfo(infoRef, info);
     }, [info]);
 
+    /**
+     * @description 수정 페이지 > 수정 버튼
+     * 데이터 관리 > 고객사 > 해외고객사
+     */
     async function saveFunc() {
         let infoData = commonManage.getInfo(infoRef, OCInfo['defaultInfo']);
         infoData['overseasCustomerId'] = updateKey['overseas_customer_update']
@@ -85,10 +88,14 @@ function OverseasCustomerUpdate({ updateKey, getCopyPage, layoutRef}:any) {
             } else {
                 message.error(v?.data?.message)
             }
-            setLoading(false);
         });
+        setLoading(false);
     }
 
+    /**
+     * @description 수정 페이지 > 삭제 버튼
+     * 데이터 관리 > 고객사 > 해외고객사
+     */
     function deleteFunc(){
         setLoading(true);
         const customerCode = infoRef.current.querySelector('#customerCode')?.value || '';
@@ -119,6 +126,10 @@ function OverseasCustomerUpdate({ updateKey, getCopyPage, layoutRef}:any) {
         })
     }
 
+    /**
+     * @description 수정 페이지 > 복제 버튼
+     * 데이터 관리 > 고객사 > 해외고객사
+     */
     function copyPage() {
         const totalList = tableRef.current.getSourceData();
         totalList.pop();
@@ -206,7 +217,7 @@ function OverseasCustomerUpdate({ updateKey, getCopyPage, layoutRef}:any) {
                             </BoxCard>
                         </Panel>
                         <PanelResizeHandle/>
-                        <Panel></Panel>
+                        <Panel defaultSize={sizes[4]} minSize={0}></Panel>
                     </PanelGroup>
                 </div> : <></>}
             </MainCard>

@@ -25,8 +25,7 @@ function CompanyAccountUpdate({updateKey, getCopyPage, layoutRef}: any) {
 
     const [loading, setLoading] = useState(false);
 
-    const getCompanyAccountInit = () => _.cloneDeep(companyAccountWriteInitial);
-    const [info, setInfo] = useState(getCompanyAccountInit());
+    const [info, setInfo] = useState({});
 
     async function getDataInfo() {
         const result = await getData.post('company/getCompanyAccountDetail', {
@@ -88,8 +87,8 @@ function CompanyAccountUpdate({updateKey, getCopyPage, layoutRef}: any) {
             } else {
                 message.error(v?.data?.message);
             }
-            setLoading(false);
-        });
+        })
+        setLoading(false);
     }
 
     /**
@@ -118,8 +117,8 @@ function CompanyAccountUpdate({updateKey, getCopyPage, layoutRef}: any) {
             } else {
                 message.error(v?.data?.message)
             }
-            setLoading(false);
         })
+        setLoading(false);
     }
 
     /**

@@ -50,6 +50,10 @@ function SourceWrite({copyPageInfo, getPropertyId}: any) {
         }
     }, [copyPageInfo?._meta?.updateKey]);
 
+    /**
+     * @description 등록 페이지 > 하단의 재고 조회
+     * 데이터 관리 > 재고관리
+     */
     const fetchData = async () => {
         setLoading(true);
         const v = await getData.post('inventory/getInventoryList', {page: 1, limit: -1});
