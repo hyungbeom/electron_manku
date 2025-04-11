@@ -19,7 +19,7 @@ import moment from "moment";
 const TableGrid = ({
                        gridRef,
                        columns,
-    getRowInfo = null,
+                       getRowInfo = null,
                        onGridReady = function () {
                        },
                        tempFunc = function () {
@@ -33,7 +33,7 @@ const TableGrid = ({
                        setInfo = null,
                        getPropertyId = null,
                        totalRow = 0,
-                        reply = false
+                       reply = false
                    }: any) => {
 
 
@@ -103,7 +103,6 @@ const TableGrid = ({
 
     const handleDoubleClicked = (e) => {
         if (type === 'read') {
-            console.log(e.data)
             if (e.data.orderStatusId){
                 getPropertyId('store_update', e.data.orderStatusId)
             }
@@ -124,9 +123,6 @@ const TableGrid = ({
             }
             if (e.data.orderId){
                 getPropertyId('order_update', e.data.orderId)
-            }
-            if (e.data.remainingQuantity){
-                getPropertyId('source_update', e.data.model)
             }
             if (e.data.makerId){
                 getPropertyId('maker_update', e.data.makerId)
@@ -446,8 +442,10 @@ const TableGrid = ({
 
             <div>
                 <div style={{width: '100%', display: 'flex', justifyContent: 'space-between', padding : '15px 0px 5px 0px'}}>
-                    <div style={{fontWeight: 500, paddingLeft : 3}}>{type === 'read' ?<span style={{fontSize: 12}}>검색결과 (<span
-                        style={{color: 'orangered'}}>{totalRow}</span> 건)</span> : <></>}</div>
+                    {/*<div style={{fontWeight: 500, paddingLeft : 3}}>{type === 'read' ?<span style={{fontSize: 12}}>검색결과 (<span*/}
+                    {/*    style={{color: 'orangered'}}>{totalRow}</span> 건)</span> : <></>}</div>*/}
+                    <div style={{fontWeight: 500, paddingLeft : 3}}><span style={{fontSize: 12}}>검색결과 (<span
+                        style={{color: 'orangered'}}>{totalRow}</span> 건)</span></div>
 
                     <div style={{display: 'flex', alignItems: 'end', gap: 7}}>
                         <Button type={'dashed'} size={'small'} style={{fontSize: 11, marginLeft: 5}}

@@ -179,7 +179,7 @@ function HcodeRead({getPropertyId, getCopyPage}: any) {
         await deleteHsCodeList({data: {hsCodeIdList: filterList}}).then(v => {
             if (v.code === 1) {
                 searchInfo(true);
-                notificationAlert('success', '🗑HS-CODE 삭제완료',
+                notificationAlert('success', '🗑 HS-CODE 삭제완료',
                     <>
                         <div>Item
                             : {selectedRows[0]?.item} {selectedRows.length > 1 ? ('외' + " " + (selectedRows.length - 1) + '개') : ''} HS-CODE

@@ -95,11 +95,9 @@ function SourceRead({getPropertyId, getCopyPage}: any) {
         }
         setLoading(true);
 
-        const list = gridRef.current.getSelectedRows()
-        // const filterList = list.map(v => v.key);
+        const list = gridRef.current.getSelectedRows();
 
-        // await getData.post('inventory/deleteInventories', {deleteInventoryList: filterList}).then(v => {
-        await getData.post('inventory/deleteInventories', {deleteInventoryList: list}).then(v => {
+        await getData.post('inventory/deleteListInventories', {deleteInventoryList: list}).then(v => {
             if (v?.data?.code === 1) {
                 searchInfo(true)
                 notificationAlert('success', '🗑 재고 삭제완료',

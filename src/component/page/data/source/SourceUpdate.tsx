@@ -4,7 +4,15 @@ import {CopyOutlined, DeleteOutlined, ExclamationCircleOutlined, FormOutlined} f
 import message from "antd/lib/message";
 import {sourceWriteInitial,} from "@/utils/initialList";
 import {commonManage, gridManage} from "@/utils/commonManage";
-import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, tooltipInfo} from "@/utils/commonForm";
+import {
+    BoxCard,
+    datePickerForm,
+    inputForm,
+    inputNumberForm,
+    MainCard,
+    textAreaForm,
+    tooltipInfo
+} from "@/utils/commonForm";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
@@ -15,6 +23,7 @@ import Popconfirm from "antd/lib/popconfirm";
 import Button from "antd/lib/button";
 import {tableSourceColumns} from "@/utils/columnList";
 import {Actions} from "flexlayout-react";
+import Spin from "antd/lib/spin";
 
 function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
     const notificationAlert = useNotificationAlert();
@@ -33,6 +42,8 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
 
     const getSourceInit = () => _.cloneDeep(sourceWriteInitial);
     const [info, setInfo] = useState(getSourceInit);
+    const [inventoryList, setInventoryList] = useState([]);
+    const [isGrid, setIsGrid] = useState(false);
 
 
     /**
@@ -53,16 +64,26 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
 
     const onGridReady = async (params) => {
         gridRef.current = params.api;
-        await getData.post('inventory/getInventoryDetail', updateKey['source_update']).then(v => {
+        setIsGrid(true);
+    };
+
+    useEffect(() => {
+        if (!isGrid) return;
+        const fetchData = async () => {
+            setLoading(true);
+            const v = await getData.post('inventory/getInventoryDetail', updateKey['source_update']);
             if (v?.data?.code === 1) {
                 const {inventoryItemList = []} = v?.data?.entity;
                 const processList = processData(inventoryItemList);
                 setInfo(processList?.[0] || {});
-                params.api.applyTransaction({add: processList});
+                setInventoryList(processList);
+                gridManage.resetData(gridRef, processList);
                 setTotalRow(inventoryItemList.length);
             }
-        })
-    };
+            setLoading(false);
+        }
+        fetchData();
+    }, [updateKey['source_update'], isGrid])
 
     function onChange(e) {
         commonManage.onChange(e, setInfo)
@@ -75,6 +96,7 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
                 if (v?.data?.code === 1) {
                     const {inventoryItemList = []} = v?.data?.entity;
                     const processList = processData(inventoryItemList);
+                    setInventoryList(processList);
                     gridManage.resetData(gridRef, processList);
                     setTotalRow(inventoryItemList.length);
                 }
@@ -84,10 +106,32 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
     }
 
     /**
+     * @description 재고관리 유효성 체크
+     * @param info
+     */
+    function checkValidate(info) {
+        if (!info.maker) {
+            message.warning('Maker를 입력해주세요.');
+            return false;
+        }
+        if (!info.model) {
+            message.warning('Model을 입력해주세요.');
+            return false;
+        }
+        if (!info.receivedQuantity) {
+            message.warning('입고수량을 입력해주세요.');
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * @description 수정 페이지 > 수정
      * 데이터 관리 > 재고관리
      */
     async function saveFunc() {
+        if (!checkValidate(info)) return;
+
         setLoading(true);
         await getData.post('inventory/updateInventory', info).then(v => {
             if (v?.data?.code === 1) {
@@ -122,14 +166,19 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
                     </>
                     , null, null, 2
                 )
-                // const {model} = layoutRef.current.props;
-                // window.postMessage('delete', window.location.origin);
-                // getCopyPage('source_read', {})
-                // const targetNode = model.getRoot().getChildren()[0]?.getChildren()
-                //     .find((node: any) => node.getType() === "tab" && node.getComponent() === 'source_update');
-                // if (targetNode) {
-                //     model.doAction(Actions.deleteTab(targetNode.getId())); // ✅ 기존 로직 유지
-                // }
+                if (inventoryList?.length === 1) {
+                    const {model} = layoutRef.current.props;
+                    window.postMessage('delete', window.location.origin);
+                    getCopyPage('source_read', {})
+                    const targetNode = model.getRoot().getChildren()[0]?.getChildren()
+                        .find((node: any) => node.getType() === "tab" && node.getComponent() === 'source_update');
+                    if (targetNode) {
+                        model.doAction(Actions.deleteTab(targetNode.getId())); // ✅ 기존 로직 유지
+                    }
+                } else {
+                    searchInfo(true);
+                    setInfo(getSourceInit());
+                }
             } else {
                 message.error(v?.data?.message)
             }
@@ -156,15 +205,17 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
         setLoading(true);
 
         const list = gridRef.current.getSelectedRows()
-        // const filterList = list.map(v => v.inventoryId);
+        const filterList = list.map(v => v.inventoryId);
 
-        // await getData.post('inventory/deleteInventories', {deleteInventoryList: filterList}).then(v => {
-        await getData.post('inventory/deleteInventories', {deleteInventoryList: list}).then(v => {
+        await getData.post('inventory/deleteInventories', {inventoryIdList: filterList}).then(v => {
             if (v?.data?.code === 1) {
                 searchInfo(true)
                 notificationAlert('success', '🗑 재고 삭제완료',
                     <>
-                        <div>Model : {list[0].model} {list.length > 1 ? ('외' + " " + (list.length - 1) + '개') : ''} 재고이(가) 삭제되었습니다.</div>
+                        <div>Model
+                            : {list[0].model} {list.length > 1 ? ('외' + " " + (list.length - 1) + '개') : ''} 재고이(가)
+                            삭제되었습니다.
+                        </div>
                         <div>삭제일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
                     , null, null, 2
@@ -176,119 +227,125 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
         })
     }
 
-    return <div ref={infoRef}>
-        <PanelSizeUtil groupRef={groupRef} storage={'source_update'}/>
-        <div style={{
-            display: 'grid',
-            gridTemplateRows: `${mini ? '375px' : '65px'} calc(100vh - ${mini ? 505 : 195}px)`,
-            columnGap: 5
-        }}>
-            <MainCard title={'재고관리 수정'} list={[
-                {name: <div><FormOutlined style={{paddingRight: 8}}/>수정</div>, func: saveFunc, type: 'primary'},
-                {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: deleteFunc, type: 'delete'},
-                {name: <div><CopyOutlined style={{paddingRight: 8}}/>복제</div>, func: copyPage, type: 'default'},
-            ]} mini={mini} setMini={setMini}>
-                {mini ?
-                    <PanelGroup ref={groupRef} className={'ground'} direction="horizontal"
-                                style={{gap: 0.5, paddingTop: 3}}>
-                        <Panel defaultSize={sizes[0]} minSize={5}>
-                            <BoxCard title={'기본 정보'}>
-                                {datePickerForm({
-                                    title: '입고일자', id: 'receiptDate', onChange: onChange,
-                                    data: info
-                                })}
-                                {inputForm({
-                                    title: '문서번호',
-                                    id: 'documentNumber',
-                                    onChange: onChange,
-                                    data: info
-                                })}
-                                {inputForm({
-                                    title: 'Maker',
-                                    id: 'maker',
-                                    onChange: onChange,
-                                    data: info
-                                })}
-                                {inputForm({
-                                    title: 'Model',
-                                    id: 'model',
-                                    onChange: onChange,
-                                    data: info
-                                })}
-                            </BoxCard>
-                        </Panel>
-                        <PanelResizeHandle/>
-                        <Panel defaultSize={sizes[1]} minSize={5}>
-                            <BoxCard title={'재고 정보'} tooltip={tooltipInfo('customer')}>
-                                {inputForm({
-                                    title: '수입단가',
-                                    id: 'importUnitPrice',
-                                    onChange: onChange,
-                                    data: info
-                                })}
-                                {inputForm({
-                                    title: '화폐단위',
-                                    id: 'currencyUnit',
-                                    onChange: onChange,
-                                    data: info
-                                })}
-                                {inputForm({
-                                    title: '입고수량',
-                                    id: 'receivedQuantity',
-                                    onChange: onChange,
-                                    data: info
-                                })}
-                                {inputForm({
-                                    title: '단위',
-                                    id: 'unit',
-                                    onChange: onChange,
-                                    data: info
-                                })}
-                            </BoxCard>
-                        </Panel>
-                        <PanelResizeHandle/>
-                        <Panel defaultSize={sizes[2]} minSize={5}>
-                            <BoxCard title={'기타 정보'} tooltip={tooltipInfo('etc')}>
-                                {inputForm({
-                                    title: '위치',
-                                    id: 'location',
-                                    onChange: onChange,
-                                    data: info
-                                })}
-                                {textAreaForm({
-                                    title: '비고',
-                                    rows: 7,
-                                    id: 'remarks',
-                                    onChange: onChange,
-                                    data: info
-                                })}
-                            </BoxCard>
-                        </Panel>
-                        <PanelResizeHandle/>
-                        <Panel defaultSize={sizes[3]} minSize={0}></Panel>
-                    </PanelGroup>
-                    : <></>}
-            </MainCard>
-            {/*@ts-ignored*/}
-            <TableGrid
-                deleteComp={<Popconfirm
-                    title="삭제하시겠습니까?"
-                    onConfirm={deleteList}
-                    icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
-                    <Button type={'primary'} danger size={'small'} style={{fontSize: 11, marginLeft: 5}}>삭제</Button>
-                </Popconfirm>
-                }
-                totalRow={totalRow}
-                gridRef={gridRef}
-                columns={tableSourceColumns}
-                onGridReady={onGridReady}
-                getPropertyId={getPropertyId}
-                type={'sourceUpdate'}
-                setInfo={setInfo}
-                funcButtons={['agPrint']}
-            />
+    return <Spin spinning={loading}>
+        <div ref={infoRef}>
+            <PanelSizeUtil groupRef={groupRef} storage={'source_update'}/>
+            <div style={{
+                display: 'grid',
+                gridTemplateRows: `${mini ? '375px' : '65px'} calc(100vh - ${mini ? 505 : 195}px)`,
+                columnGap: 5
+            }}>
+                <MainCard title={'재고관리 수정'} list={[
+                    {name: <div><FormOutlined style={{paddingRight: 8}}/>수정</div>, func: saveFunc, type: 'primary'},
+                    {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: deleteFunc, type: 'delete'},
+                    {name: <div><CopyOutlined style={{paddingRight: 8}}/>복제</div>, func: copyPage, type: 'default'},
+                ]} mini={mini} setMini={setMini}>
+                    {mini ?
+                        <PanelGroup ref={groupRef} className={'ground'} direction="horizontal"
+                                    style={{gap: 0.5, paddingTop: 3}}>
+                            <Panel defaultSize={sizes[0]} minSize={5}>
+                                <BoxCard title={'기본 정보'}>
+                                    {datePickerForm({
+                                        title: '입고일자', id: 'receiptDate', onChange: onChange,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: '문서번호',
+                                        id: 'documentNumber',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: 'Maker',
+                                        id: 'maker',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: 'Model',
+                                        id: 'model',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                </BoxCard>
+                            </Panel>
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[1]} minSize={5}>
+                                <BoxCard title={'재고 정보'} tooltip={tooltipInfo('customer')}>
+                                    {inputNumberForm({
+                                        title: '수입단가',
+                                        id: 'importUnitPrice',
+                                        min: 0,
+                                        step: 0.01,
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: '화폐단위',
+                                        id: 'currencyUnit',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                    {inputNumberForm({
+                                        title: '입고수량',
+                                        id: 'receivedQuantity',
+                                        min: 0,
+                                        step: 0.01,
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: '단위',
+                                        id: 'unit',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                </BoxCard>
+                            </Panel>
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[2]} minSize={5}>
+                                <BoxCard title={'기타 정보'} tooltip={tooltipInfo('etc')}>
+                                    {inputForm({
+                                        title: '위치',
+                                        id: 'location',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                    {textAreaForm({
+                                        title: '비고',
+                                        rows: 7,
+                                        id: 'remarks',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                </BoxCard>
+                            </Panel>
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[3]} minSize={0}></Panel>
+                        </PanelGroup>
+                        : <></>}
+                </MainCard>
+                {/*@ts-ignored*/}
+                <TableGrid
+                    deleteComp={<Popconfirm
+                        title="삭제하시겠습니까?"
+                        onConfirm={deleteList}
+                        icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
+                        <Button type={'primary'} danger size={'small'} style={{fontSize: 11, marginLeft: 5}}>삭제</Button>
+                    </Popconfirm>
+                    }
+                    totalRow={totalRow}
+                    gridRef={gridRef}
+                    columns={tableSourceColumns}
+                    onGridReady={onGridReady}
+                    getPropertyId={getPropertyId}
+                    type={'sourceUpdate'}
+                    setInfo={setInfo}
+                    funcButtons={['agPrint']}
+                />
+            </div>
         </div>
-    </div>
+    </Spin>
 }
 
 export default memo(SourceUpdate, (prevProps, nextProps) => {
