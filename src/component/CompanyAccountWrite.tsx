@@ -73,7 +73,7 @@ function CompanyAccountWrite({getPropertyId, copyPageInfo}: any) {
             if (v?.data?.code === 1) {
                 notificationAlert('success', '💾 회사계정 등록완료',
                     <>
-                        <div>회사명 : {info['companyName']}</div>
+                        <div>회사 이름: {info['companyName']}</div>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
                     , function () {
@@ -84,8 +84,8 @@ function CompanyAccountWrite({getPropertyId, copyPageInfo}: any) {
             } else {
                 message.error(v?.data?.message)
             }
-            setLoading(false);
-        });
+        })
+        setLoading(false);
     }
 
     /**

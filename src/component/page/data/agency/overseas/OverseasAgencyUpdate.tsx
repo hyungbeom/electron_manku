@@ -2,7 +2,6 @@ import React, {memo, useEffect, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import {CopyOutlined, DeleteOutlined, FormOutlined,} from "@ant-design/icons";
 import message from "antd/lib/message";
-import {useRouter} from "next/router";
 import moment from "moment/moment";
 import {BoxCard, datePickerForm, inputForm, inputNumberForm, MainCard} from "@/utils/commonForm";
 import {commonFunc, commonManage} from "@/utils/commonManage";
@@ -30,7 +29,7 @@ function OverseasAgencyUpdate({ updateKey, getCopyPage, layoutRef}:any) {
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('overseas_agency_update');
-        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 0]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20]; // 기본값 [50, 50, 50]
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
@@ -58,8 +57,8 @@ function OverseasAgencyUpdate({ updateKey, getCopyPage, layoutRef}:any) {
     }, [info]);
 
     /**
-     * @description 해외매입처 저장
-     * 해외 매입처 수정 페이지 -> 저장 버튼
+     * @description 수정 페이지 > 저장 버튼
+     * 데이터 관리 > 매입처 > 해외매입처
      */
     async function saveFunc() {
         let infoData = commonManage.getInfo(infoRef, OAInfo['defaultInfo']);
@@ -92,13 +91,13 @@ function OverseasAgencyUpdate({ updateKey, getCopyPage, layoutRef}:any) {
             } else {
                 message.error(v?.data?.message)
             }
-            setLoading(false);
         })
+        setLoading(false);
     }
 
     /**
-     * @description 해외매입처 삭제
-     * 해외 매입처 수정 페이지 -> 삭제 버튼
+     * @description 수정 페이지 > 삭제 버튼
+     * 데이터 관리 > 매입처 > 해외매입처
      */
     function deleteFunc(){
         setLoading(true);
@@ -127,13 +126,13 @@ function OverseasAgencyUpdate({ updateKey, getCopyPage, layoutRef}:any) {
             } else {
                 message.error(v?.data?.message);
             }
-            setLoading(false);
         })
+        setLoading(false);
     }
 
     /**
-     * @description 해외매입처 복제
-     * 해외 매입처 수정 페이지 -> 복제 버튼
+     * @description 수정 페이지 > 복제 버튼
+     * 데이터 관리 > 매입처 > 해외매입처
      */
     function copyPage() {
         const totalList = tableRef.current.getSourceData();

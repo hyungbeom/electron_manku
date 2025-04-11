@@ -3,13 +3,12 @@ import {getData} from "@/manage/function/api";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
 import {tableCompanyAccountColumns,} from "@/utils/columnList";
-import {codeSaveInitial,} from "@/utils/initialList";
 import TableGrid from "@/component/tableGrid";
 import {inputForm, MainCard, TopBoxCard} from "@/utils/commonForm";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import Spin from "antd/lib/spin";
 import {ExclamationCircleOutlined, ReloadOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
-import {searchCompanyAccount, searchMaker} from "@/utils/api/mainApi";
+import {searchCompanyAccount} from "@/utils/api/mainApi";
 import Popconfirm from "antd/lib/popconfirm";
 import moment from "moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
@@ -58,23 +57,33 @@ function CompanyAccount({getPropertyId, getCopyPage}: any) {
         commonManage.onChange(e, setInfo)
     }
 
+    /**
+     * @description 조회 페이지 > 신규생성 버튼
+     * 데이터 관리 > 회사계정관리
+     */
     async function moveRouter() {
         getCopyPage('company_account_write', {})
     }
 
+    /**
+     * @description 조회 페이지 > 조회 버튼
+     * 데이터 관리 > 회사계정관리
+     * @param e
+     */
     async function searchInfo(e) {
         if (e) {
             setLoading(true)
             await searchCompanyAccount({data: info}).then(v => {
                 gridManage.resetData(gridRef, v.data);
-                setTotalRow(v.pageInfo.totalRow)
+                setTotalRow(v?.pageInfo?.totalRow || 0)
                 setLoading(false)
             })
         }
     }
 
     /**
-     * @description 조회 > 초기화 버튼
+     * @description 조회 페이지 > 초기화 버튼
+     * 데이터 관리 > 회사계정관리
      */
     function clearAll() {
         gridRef.current.deselectAll();
@@ -83,7 +92,8 @@ function CompanyAccount({getPropertyId, getCopyPage}: any) {
     }
 
     /**
-     * @description 조회 테이블 > 삭제
+     * @description 조회 페이지 테이블 > 삭제
+     * 데이터 관리 > 회사계정관리
      */
     async function deleteList() {
         if (gridRef.current.getSelectedRows().length < 1) {
@@ -110,8 +120,8 @@ function CompanyAccount({getPropertyId, getCopyPage}: any) {
             } else {
                 message.error(v?.data?.message)
             }
-            setLoading(false)
         })
+        setLoading(false);
     }
 
     return <Spin spinning={loading}>

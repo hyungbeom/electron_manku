@@ -19,13 +19,20 @@ import ReceiveComponent from "@/component/ReceiveComponent";
 
 
 function MakerRead({getPropertyId, getCopyPage}: any) {
-    const gridRef = useRef(null);
     const notificationAlert = useNotificationAlert();
-    const copyInit = _.cloneDeep(codeDomesticPurchaseInitial)
-    const [info, setInfo] = useState({...copyInit});
+    const gridRef = useRef(null);
     const [mini, setMini] = useState(true);
     const [totalRow, setTotalRow] = useState(0);
     const [loading, setLoading] = useState(false);
+
+    const searchInit = {
+        searchType: 1,
+        searchText: '',
+        page: 1,
+        limit: -1
+    }
+    const getSearchInit = () => _.cloneDeep(searchInit)
+    const [info, setInfo] = useState(getSearchInit());
 
     const [isSearch, setIsSearch] = useState(false);
     useEffect(() => {
@@ -53,39 +60,49 @@ function MakerRead({getPropertyId, getCopyPage}: any) {
         commonManage.onChange(e, setInfo)
     }
 
+    /**
+     * @description 조회 페이지 > 신규생성 버튼
+     * 데이터 관리 > 메이커
+     */
     async function moveRouter() {
         getCopyPage('maker_write', {})
     }
 
+    /**
+     * @description 조회 페이지 > 저장 버튼
+     * 데이터 관리 > 메이커
+     * @param e
+     */
     async function searchInfo(e) {
         if (e) {
-            setLoading(true)
-            await searchMaker({
-                data: {
-                    "searchType": info['searchType'],      // 1: 코드, 2: 상호명, 3: Maker
-                    "searchText": info['searchText'],
-                    "page": 1,
-                    "limit": -1
-                }
-            }).then(v => {
+            setLoading(true);
+            await searchMaker({data: info}).then(v => {
                 gridManage.resetData(gridRef, v.data);
                 setTotalRow(v.pageInfo.totalRow)
-                setLoading(false)
             })
+            setLoading(false);
         }
     }
 
+    /**
+     * @description 조회 페이지 > 초기화 버튼
+     * 데이터 관리 > 메이커
+     */
     function clearAll() {
         gridRef.current.deselectAll();
-        setInfo({...copyInit});
+        setInfo(getSearchInit());
         setIsSearch(true);
     }
 
+    /**
+     * @description 조회 페이지 테이블 > 삭제 버튼
+     * 데이터 관리 > 메이커
+     */
     async function deleteList() {
         if (gridRef.current.getSelectedRows().length < 1) {
             return message.error('삭제할 Maker를 선택해주세요.')
         }
-        setLoading(true)
+        setLoading(true);
 
         const list = gridRef.current.getSelectedRows()
         const filterList = list.map(v => v.makerId);
@@ -93,7 +110,7 @@ function MakerRead({getPropertyId, getCopyPage}: any) {
         await getData.post('maker/deleteMakers', {makerIdList: filterList}).then(v => {
             if (v?.data?.code === 1) {
                 searchInfo(true)
-                notificationAlert('success', '🗑️Maker 삭제완료',
+                notificationAlert('success', '🗑️ Maker 삭제완료',
                     <>
                         <div>Maker
                             : {list[0].makerName} {list.length > 1 ? ('외' + " " + (list.length - 1) + '개') : ''} 이(가)
@@ -106,8 +123,8 @@ function MakerRead({getPropertyId, getCopyPage}: any) {
             } else {
                 message.error(v?.data?.message)
             }
-            setLoading(false)
         })
+        setLoading(false);
     }
 
     return <Spin spinning={loading} tip={'Maker 조회중...'}>

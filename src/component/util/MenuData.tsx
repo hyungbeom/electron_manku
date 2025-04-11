@@ -194,19 +194,10 @@ export const introMenulist = [
     {
         icon: <DatabaseFilled/>, color: 'dimgray',
         title: '데이터관리',
-        children: [{name: '국내매입처 조회', key: 'domestic_agency_read'}, {
-            name: '해외매입처 조회',
-            key: 'overseas_agency_read'
-        }, {
-            name: '국내거래처 조회',
-            key: 'domestic_customer_read'
-        }, {
-            name: '해외거래처 조회',
-            key: 'overseas_customer_read'
-        }, {name: '메이커 조회', key: 'maker_read'}, {
-            name: 'HS CODE',
-            key: 'hscode_read'
-        }]
+        children: [{name: '국내매입처 조회', key: 'domestic_agency_read'}, {name: '해외매입처 조회', key: 'overseas_agency_read'},
+            {name: '국내거래처 조회', key: 'domestic_customer_read'}, {name: '해외거래처 조회', key: 'overseas_customer_read'},
+            {name: '메이커 조회', key: 'maker_read'}, {name: '회사계정관리 조회', key: 'company_account_read'},
+            {name: '재고관리 조회', key: 'source_read'}, {name: 'HS CODE', key: 'hscode_read'}]
     },   {
         icon: <SettingOutlined />, color: 'black',
         title: '시스템관리',

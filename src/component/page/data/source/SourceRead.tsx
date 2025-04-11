@@ -47,6 +47,8 @@ function SourceRead({getPropertyId, getCopyPage}: any) {
                 const {pageInfo = {}, inventoryList = []} = v?.data?.entity;
                 params.api.applyTransaction({add: inventoryList});
                 setTotalRow(pageInfo.totalRow)
+            } else {
+                message.error(v?.data?.message);
             }
         })
     };
@@ -61,24 +63,38 @@ function SourceRead({getPropertyId, getCopyPage}: any) {
         commonManage.onChange(e, setInfo)
     }
 
+    /**
+     * @description 조회 페이지 > 신규생성 버튼
+     * 데이터 관리 > 재고고나리
+     */
     async function moveRouter() {
         getCopyPage('source_write', {})
     }
 
+    /**
+     * @description 조회 페이지 > 조회 버튼
+     * 데이터 관리 > 재고관리
+     * @param e
+     */
     async function searchInfo(e?) {
         if (e) {
             setLoading(true)
             getData.post('inventory/getInventoryList', info).then(v => {
+                if (v?.data?.code === 1) {
                     const {pageInfo = {}, inventoryList = []} = v?.data?.entity;
                     gridManage.resetData(gridRef, inventoryList);
                     setTotalRow(pageInfo.totalRow)
+                } else {
+                    message.error(v?.data?.message);
+                }
             })
             setLoading(false)
         }
     }
 
     /**
-     * @description 조회 > 초기화 버튼
+     * @description 조회 페이지 > 초기화 버튼
+     * 데이터 관리 > 재고관리
      */
     function clearAll() {
         gridRef.current.deselectAll();
@@ -87,7 +103,8 @@ function SourceRead({getPropertyId, getCopyPage}: any) {
     }
 
     /**
-     * @description 조회 테이블 > 삭제
+     * @description 조회 페이지 테이블 > 삭제 버튼
+     * 데이터 관리 > 재고관리
      */
     async function deleteList() {
         if (gridRef.current.getSelectedRows().length < 1) {
@@ -99,10 +116,13 @@ function SourceRead({getPropertyId, getCopyPage}: any) {
 
         await getData.post('inventory/deleteListInventories', {deleteInventoryList: list}).then(v => {
             if (v?.data?.code === 1) {
-                searchInfo(true)
+                searchInfo(true);
                 notificationAlert('success', '🗑 재고 삭제완료',
                     <>
-                        <div>Model : {list[0].model} {list.length > 1 ? ('외' + " " + (list.length - 1) + '개') : ''} 재고이(가) 삭제되었습니다.</div>
+                        <div>Model
+                            : {list[0].model} {list.length > 1 ? ('외' + " " + (list.length - 1) + '개') : ''} 재고이(가)
+                            삭제되었습니다.
+                        </div>
                         <div>삭제일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
                     , null, null, 2
@@ -110,8 +130,8 @@ function SourceRead({getPropertyId, getCopyPage}: any) {
             } else {
                 message.error(v?.data?.message)
             }
-            setLoading(false)
         })
+        setLoading(false);
     }
 
     return <Spin spinning={loading} tip={'재고관리 조회중...'}>

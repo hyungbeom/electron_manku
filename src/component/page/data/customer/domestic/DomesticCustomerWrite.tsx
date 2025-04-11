@@ -18,7 +18,6 @@ import Spin from "antd/lib/spin";
 
 const listType = 'customerManagerList'
 
-
 function DomesticCustomerWrite({copyPageInfo, getPropertyId}: any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
@@ -46,7 +45,7 @@ function DomesticCustomerWrite({copyPageInfo, getPropertyId}: any) {
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('domestic_customer_write');
-        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 5]; // 기본값 [50, 50, 50]
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
@@ -73,6 +72,10 @@ function DomesticCustomerWrite({copyPageInfo, getPropertyId}: any) {
         tableRef.current?.setData(tableData);
     }, [tableData]);
 
+    /**
+     * @description 등록 페이지 > 저장 버튼
+     * 데이터 관리 > 고객사 > 국내고객사
+     */
     async function saveFunc() {
         let infoData = commonManage.getInfo(infoRef, infoInit);
         const tableList = tableRef.current?.getSourceData();
@@ -103,11 +106,14 @@ function DomesticCustomerWrite({copyPageInfo, getPropertyId}: any) {
             } else {
                 message.error(v?.data?.message);
             }
-            setLoading(false);
         });
+        setLoading(false);
     }
 
-
+    /**
+     * @description 등록 페이지 > 초기화 버튼
+     * 데이터 관리 > 고객사 > 국내고객사
+     */
     function clearAll() {
         commonManage.setInfo(infoRef, DCInfo['defaultInfo'], userInfo['adminId']);
         tableRef.current?.setData(commonFunc.repeatObject(DCInfo['write']['defaultData'], 1000));
@@ -223,7 +229,7 @@ function DomesticCustomerWrite({copyPageInfo, getPropertyId}: any) {
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>
-                                <Panel></Panel>
+                                <Panel defaultSize={sizes[4]} minSize={0}></Panel>
                             </PanelGroup>
                         </div>
                         : <></>}

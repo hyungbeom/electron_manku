@@ -49,8 +49,8 @@ function DomesticAgencyRead({getPropertyId, getCopyPage}: any) {
         }).then(v => {
             params.api.applyTransaction({add: v.data});
             setTotalRow(v.pageInfo.totalRow)
-            setLoading(false)
         })
+        setLoading(false)
     };
 
     function onChange(e) {
@@ -63,10 +63,19 @@ function DomesticAgencyRead({getPropertyId, getCopyPage}: any) {
         }
     }
 
+    /**
+     * @description 조회 페이지 > 신규생성 버튼
+     * 데이터 관리 > 매입처 > 국내매입처
+     */
     async function moveRouter() {
         getCopyPage('domestic_agency_write', {})
     }
 
+    /**
+     * @description 조회 페이지 > 조회 버튼
+     * 데이터 관리 > 매입처 > 국내매입처
+     * @param e
+     */
     async function searchInfo(e) {
         if (e) {
             setLoading(true)
@@ -80,22 +89,30 @@ function DomesticAgencyRead({getPropertyId, getCopyPage}: any) {
             }).then(v => {
                 gridManage.resetData(gridRef, v.data);
                 setTotalRow(v.pageInfo.totalRow)
-                setLoading(false)
             })
+            setLoading(false)
         }
     }
 
+    /**
+     * @description 조회 페이지 > 초기화 버튼
+     * 데이터 관리 > 매입처 > 국내매입처
+     */
     function clearAll() {
         gridRef.current.deselectAll();
         setInfo(copyInit);
         setIsSearch(true);
     }
 
+    /**
+     * @description 조회 페이지 테이블 > 삭제 버튼
+     * 데이터 관리 > 매입처 > 국내매입처
+     */
     async function confirm() {
         if (gridRef.current.getSelectedRows().length < 1) {
             return message.error('삭제할 매입처를 선택해주세요.')
         }
-        setLoading(true)
+        setLoading(true);
 
         const list = gridRef.current.getSelectedRows()
         const filterList = list.map(v => parseInt(v.agencyId));
@@ -105,7 +122,9 @@ function DomesticAgencyRead({getPropertyId, getCopyPage}: any) {
                 searchInfo(true)
                 notificationAlert('success', '🗑️ 국내매입처 삭제완료',
                     <>
-                        <div>상호 : {list[0].agencyName} {list.length > 1 ? ('외' + " " + (list.length - 1) + '개') : ''} 이(가) 삭제되었습니다.
+                        <div>상호
+                            : {list[0].agencyName} {list.length > 1 ? ('외' + " " + (list.length - 1) + '개') : ''} 이(가)
+                            삭제되었습니다.
                         </div>
                         <div>삭제일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
@@ -114,8 +133,8 @@ function DomesticAgencyRead({getPropertyId, getCopyPage}: any) {
             } else {
                 message.error(v.data.message)
             }
-            setLoading(false)
         })
+        setLoading(false);
     }
 
     return <Spin spinning={loading} tip={'국내 매입처 조회중...'}>

@@ -4,9 +4,9 @@ import message from "antd/lib/message";
 import {codeOverseasAgencyWriteInitial,} from "@/utils/initialList";
 import {BoxCard, datePickerForm, inputForm, inputNumberForm, MainCard} from "@/utils/commonForm";
 import _ from "lodash";
-import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
+import {commonFunc, commonManage} from "@/utils/commonManage";
 import Table from "@/component/util/Table";
-import {DAInfo, OAInfo} from "@/utils/column/ProjectInfo";
+import {OAInfo} from "@/utils/column/ProjectInfo";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
@@ -73,8 +73,8 @@ function OverseasAgencyWrite({copyPageInfo, getPropertyId}: any) {
     }, [tableData]);
 
     /**
-     * @description 해외매입처 저장
-     * 해외 매입처 등록 페이지 -> 저장 버튼
+     * @description 등록 페이지 > 저장 버튼
+     * 데이터 관리 > 매입처 > 해외매입처
      */
     async function saveFunc() {
         let infoData = commonManage.getInfo(infoRef, infoInit);
@@ -106,13 +106,13 @@ function OverseasAgencyWrite({copyPageInfo, getPropertyId}: any) {
             } else {
                 message.error(v?.data?.message);
             }
-            setLoading(false);
         });
+        setLoading(false);
     }
 
     /**
-     * @description 해외매입처 초기화
-     * 해외 매입처 등록 페이지 -> 초기화 버튼
+     * @description 등록 페이지 > 초기화 버튼
+     * 데이터 관리 > 매입처 > 해외매입처
      */
     function clearAll() {
         commonManage.setInfo(infoRef, OAInfo['defaultInfo'], userInfo['adminId']);

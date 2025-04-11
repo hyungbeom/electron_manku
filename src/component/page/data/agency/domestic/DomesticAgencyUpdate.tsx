@@ -30,7 +30,7 @@ function DomesticAgencyUpdate({updateKey, getCopyPage, layoutRef}: any) {
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('domestic_agency_update');
-        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 5]; // 기본값 [50, 50, 50]
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
@@ -58,8 +58,8 @@ function DomesticAgencyUpdate({updateKey, getCopyPage, layoutRef}: any) {
     }, [info]);
 
     /**
-     * @description 국내매입처 수정
-     * 국내 매입처 수정 페이지 -> 수정 버튼
+     * @description 수정 페이지 > 수정버튼
+     * 데이터 관리 > 매입처 > 국내매입처
      */
     async function saveFunc() {
         let infoData = commonManage.getInfo(infoRef, DAInfo['defaultInfo']);
@@ -92,13 +92,13 @@ function DomesticAgencyUpdate({updateKey, getCopyPage, layoutRef}: any) {
             } else {
                 message.error(v?.data?.message)
             }
-            setLoading(false);
         })
+        setLoading(false);
     }
 
     /**
-     * @description 국내매입처 삭제
-     * 국내 매입처 수정 페이지 -> 삭제 버튼
+     * @description 수정 페이지 > 삭제 버튼
+     * 데이터 관리 > 매입처 > 국내매입처
      */
     function deleteFunc(){
         setLoading(true);
@@ -126,13 +126,13 @@ function DomesticAgencyUpdate({updateKey, getCopyPage, layoutRef}: any) {
             } else {
                 message.error(v?.data?.message)
             }
-            setLoading(false);
         })
+        setLoading(false);
     }
 
     /**
-     * @description 국내매입처 복제
-     * 국내 매입처 수정 페이지 -> 복제 버튼
+     * @description 수정 페이지 > 복제 버튼
+     * 데이터 관리 > 매입처 > 국내매입처
      */
     function copyPage() {
         const totalList = tableRef.current.getSourceData();
@@ -240,7 +240,7 @@ function DomesticAgencyUpdate({updateKey, getCopyPage, layoutRef}: any) {
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
-                            <Panel></Panel>
+                            <Panel defaultSize={sizes[4]} minSize={0}></Panel>
                         </PanelGroup>
                     </div>
                     : <></>}

@@ -6,7 +6,6 @@ import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
 import Button from "antd/lib/button";
 import {ExclamationCircleOutlined, ReloadOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
-import {useRouter} from "next/router";
 import {inputForm, MainCard} from "@/utils/commonForm";
 import {searchDomesticCustomer} from "@/utils/api/mainApi";
 import {commonManage, gridManage} from "@/utils/commonManage";
@@ -64,10 +63,19 @@ function DomesticCustomerRead({getPropertyId, getCopyPage}: any) {
         }
     }
 
+    /**
+     * @description 조회 페이지 > 신규생성 버튼
+     * 데이터 관리 > 고객사 > 국내고객사
+     */
     function moveRouter() {
         getCopyPage('domestic_customer_write', {})
     }
 
+    /**
+     * @description 조회 페이지 > 조회 버튼
+     * 데이터 관리 > 고객사 > 국내고객사 관리
+     * @param e
+     */
     async function searchInfo(e) {
         if (e) {
             setLoading(true)
@@ -81,29 +89,37 @@ function DomesticCustomerRead({getPropertyId, getCopyPage}: any) {
             }).then(v => {
                 gridManage.resetData(gridRef, v.data);
                 setTotalRow(v.pageInfo.totalRow)
-                setLoading(false)
             })
+            setLoading(false);
         }
     }
 
+    /**
+     * @description 조회 페이지 > 초기화 버튼
+     * 데이터 관리 > 고객사 > 국내고객사
+     */
     function clearAll() {
         gridRef.current.deselectAll();
         setInfo(copyInit);
         setIsSearch(true);
     }
 
+    /**
+     * @description 조회 페이지 테이블 > 삭제 버튼
+     * 데이터 관리 > 고객사 > 국내고객사
+     */
     async function confirm() {
         if (gridRef.current.getSelectedRows().length < 1) {
             return message.error('삭제할 고객사를 선택해주세요.')
         }
-        setLoading(true)
+        setLoading(true);
 
         const list = gridRef.current.getSelectedRows()
         const filterList = list.map(v => parseInt(v.customerId));
 
         await getData.post('customer/deleteCustomers', {customerIdList: filterList}).then(v => {
             if (v?.data?.code === 1) {
-                searchInfo(true)
+                searchInfo(true);
                 notificationAlert('success', '🗑️ 국내고객사 삭제완료',
                     <>
                         <div>상호
@@ -117,8 +133,8 @@ function DomesticCustomerRead({getPropertyId, getCopyPage}: any) {
             } else {
                 message.error(v?.data?.message)
             }
-            setLoading(false);
         })
+        setLoading(false);
     }
 
     return <Spin spinning={loading} tip={'국내 고객사 조회중...'}>

@@ -6,7 +6,6 @@ import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
 import Button from "antd/lib/button";
 import {ExclamationCircleOutlined, ReloadOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
-import {useRouter} from "next/router";
 import {inputForm, MainCard} from "@/utils/commonForm";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import {searchOverseasCustomer} from "@/utils/api/mainApi";
@@ -64,14 +63,23 @@ function OverseasCustomerRead({getPropertyId, getCopyPage}: any) {
         }
     }
 
+    /**
+     * @description 조회 페이지 > 신규생성 버튼
+     * 데이터 관리 > 고객사 > 해외고객사
+     */
     function moveRouter() {
         getCopyPage('overseas_customer_write', {})
 
     }
 
+    /**
+     * @description 조회 페이지 > 조회 버튼
+     * 데이터 관리 > 고객사 > 해외고객사
+     * @param e
+     */
     async function searchInfo(e) {
         if (e) {
-            setLoading(true)
+            setLoading(true);
             await searchOverseasCustomer({
                 data: {
                     "searchType": info['searchType'],      // 1: 코드, 2: 상호명, 3: Maker
@@ -82,22 +90,30 @@ function OverseasCustomerRead({getPropertyId, getCopyPage}: any) {
             }).then(v => {
                 gridManage.resetData(gridRef, v.data);
                 setTotalRow(v.pageInfo.totalRow)
-                setLoading(false)
             })
+            setLoading(false);
         }
     }
 
+    /**
+     * @description 조회 페이지 > 초기화 버튼
+     * 데이터 관리 > 고객사 > 해외고객사
+     */
     function clearAll() {
         setInfo(copyInit);
         gridRef.current.deselectAll();
         setIsSearch(true);
     }
 
+    /**
+     * @description 조회 페이지 테이블 > 삭제 버튼
+     * 데이터 관리 > 고객사 > 해외고객사
+     */
     async function confirm() {
         if (gridRef.current.getSelectedRows().length < 1) {
             return message.error('삭제할 데이터를 선택해주세요.')
         }
-        setLoading(true)
+        setLoading(true);
 
         const list = gridRef.current.getSelectedRows()
         const filterList = list.map(v => v.overseasCustomerId);
@@ -118,8 +134,8 @@ function OverseasCustomerRead({getPropertyId, getCopyPage}: any) {
             } else {
                 message.error(v?.data?.message)
             }
-            setLoading(false);
         })
+        setLoading(false);
     }
 
     return <Spin spinning={loading} tip={'해외 고객사 조회중...'}>
