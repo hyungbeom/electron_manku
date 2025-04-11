@@ -90,7 +90,7 @@ function DomesticCustomerWrite({copyPageInfo, getPropertyId}: any) {
             if (v?.data?.code === 1) {
                 notificationAlert('success', '💾 국내고객사 등록완료',
                     <>
-                        <div>코드(약칭) : {customerCode}</div>
+                        <div>코드(약칭) : {customerCode ? customerCode : v?.data?.entity?.customerId}</div>
                         <div>상호 : {customerName}</div>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>

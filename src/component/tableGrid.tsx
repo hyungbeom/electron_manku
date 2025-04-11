@@ -150,9 +150,10 @@ const TableGrid = ({
                 getPropertyId('source_update', e.data)
             }
         }
-
+        if (type === 'sourceUpdate') {
+            setInfo(e.data)
+        }
         if (type === 'hsCode') {
-            // setInfo(e.data)
             setInfo(e.data)
             tempFunc(true)
         }
