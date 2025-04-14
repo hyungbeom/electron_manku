@@ -542,7 +542,7 @@ commonManage.onChange = function (e, setInfo) {
         commonFunc.unValidateInput('documentNumberFull')
     }
 
-    if (e.target.id === 'searchDate' || e.target.id === 'searchArrivalDate') {
+    if (e.target.id === 'searchDate' || e.target.id === 'searchArrivalDate' || e.target.id === 'searchRequestDate') {
         if (!e.target.value[0] || !e.target.value[1]) {
             e.target.value = [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
         }
@@ -558,6 +558,10 @@ commonManage.onChange = function (e, setInfo) {
         if (e.target.id === 'searchArrivalDate') {
             addDate['searchStartArrivalDate'] = e.target.value[0];
             addDate['searchEndArrivalDate'] = e.target.value[1];
+        }
+        if (e.target.id === 'searchRequestDate') {
+            addDate['searchRequestStartDate'] = e.target.value[0];
+            addDate['searchRequestEndDate'] = e.target.value[1];
         }
         if (e.target.id === 'supplyAmount') {
             addDate['surtax'] = Math.round(e.target.value * 0.1)

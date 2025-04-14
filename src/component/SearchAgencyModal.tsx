@@ -9,8 +9,7 @@ import {ModalInitList, modalList} from "@/utils/initialList";
 import useEventListener from "@/utils/common/function/UseEventListener";
 import message from "antd/lib/message";
 import {checkInquiryNo} from "@/utils/api/mainApi";
-import Drawer from "antd/lib/drawer";
-import {commonManage, gridManage} from "@/utils/commonManage";
+import {commonManage} from "@/utils/commonManage";
 
 
 export default function SearchInfoModal({

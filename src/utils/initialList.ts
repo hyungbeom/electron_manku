@@ -358,6 +358,7 @@ export const orderReadInitial = {
     "limit": -1
 }
 
+// 국내 송금 파라미터
 export const remittanceDomesticInitial = {
     connectInquiryNo: '',
     customerName: '',
@@ -366,14 +367,17 @@ export const remittanceDomesticInitial = {
     assignedDate: moment().format('YYYY-MM-DD'),
     isSend: 'X',
     isInvoice: 'X',
-    supplyAmount: 0,
+    isPartialSend: 'X',
+    isRejected: 'X',
+    supplyAmount: '',
+    surtax: '',
+    total: '',
+    remarks: '',
     managerAdminId: null,
-    managerAdminName: '',
-    surtax: 0,
-    total: 0,
+    managerAdminName: null,
 }
 export const remittanceDomesticSearchInitial = {
-    "searchDate": [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
+    "searchRequestDate": [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
     "searchConnectInquiryNo": "",   // InquiryNo
     "searchCustomerName": "",       // 고객사명
     "searchAgencyName": "",         // 매입처명

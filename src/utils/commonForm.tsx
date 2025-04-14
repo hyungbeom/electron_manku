@@ -61,6 +61,9 @@ import DeliveryUpdate from "@/component/page/delivery/DeliveryUpdate";
 import RemittanceDomesticWrite from "@/component/page/remittance/RemittanceDomesticWrite";
 import RemittanceDomesticRead from "@/component/page/remittance/RemittanceDomesticRead";
 import RemittanceDomesticUpdate from "@/component/page/remittance/RemittanceDomesticUpdate";
+import DomesticRemittanceWrite from "@/component/page/remittance/domestic/DomesticRemittanceWrite";
+import DomesticRemittanceRead from "@/component/page/remittance/domestic/DomesticRemittanceRead";
+import DomesticRemittanceUpdate from "@/component/page/remittance/domestic/DomesticRemittanceUpdate";
 import DomesticAgencyWrite from "@/component/page/data/agency/domestic/DomesticAgencyWrite";
 import DomesticAgencyRead from "@/component/page/data/agency/domestic/DomesticAgencyRead";
 import DomesticAgencyUpdate from "@/component/page/data/agency/domestic/DomesticAgencyUpdate";
@@ -296,7 +299,7 @@ export const inputForm = ({
                    id={id}
                    size={size}
                    disabled={disabled}
-                   value={data ? data[id] || '' : ''}
+                   value={data ? data[id] : null}
                    onKeyDown={handleKeyPress}
                    onChange={onchange}
                 // suffix={suffix}
@@ -482,8 +485,9 @@ export const radioForm = ({title, id, disabled = false, data, onChange, list}) =
     let bowl = data;
 
     return <div style={{fontSize: 12, paddingBottom: 10}}>
-        <div>{title}</div>
+        <div style={{paddingBottom: 6}}>{title}</div>
         <Radio.Group id={id} value={bowl[id]} disabled={disabled}
+                     style={{display: 'flex', justifyContent: 'space-between', width: '100%'}}
                      onChange={e => {
                          e.target['id'] = id
                          onChange(e);
@@ -720,12 +724,19 @@ export const tabComponents = {
     delivery_update: {name: "배송 수정", component: <DeliveryUpdate/>},
 
 
-    remittance_domestic_write: {name: "국내송금 등록", component: <RemittanceDomesticWrite/>},
-    remittance_domestic_read: {
+    // remittance_domestic_write: {name: "국내송금 등록", component: <RemittanceDomesticWrite/>},
+    // remittance_domestic_read: {
+    //     name: "국내송금 조회",
+    //     component: <RemittanceDomesticRead/>
+    // },
+    // remittance_domestic_update: {name: "국내송금 수정", component: <RemittanceDomesticUpdate/>},
+
+    domestic_remittance_write: {name: "국내송금 등록", component: <DomesticRemittanceWrite/>},
+    domestic_remittance_read: {
         name: "국내송금 조회",
-        component: <RemittanceDomesticRead/>
+        component: <DomesticRemittanceRead/>
     },
-    remittance_domestic_update: {name: "국내송금 수정", component: <RemittanceDomesticUpdate/>},
+    domestic_remittance_update: {name: "국내송금 수정", component: <DomesticRemittanceUpdate/>},
 
 
     domestic_agency_write: {name: "국내매입처 등록", component: <DomesticAgencyWrite/>},

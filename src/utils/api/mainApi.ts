@@ -66,12 +66,12 @@ export const saveEstimate = async ({data}) => {
     });
 };
 
-export const saveRemittance = async ({data, router}) => {
-    await getFormData.post('remittance/addRemittance', data).then(v => {
+export const saveRemittance = async ({data}) => {
+    return await getFormData.post('remittance/addRemittance', data).then(v => {
         if (v.data.code === 1) {
             window.opener?.postMessage('write', window.location.origin);
-            msg.success('저장되었습니다.')
-            // router.push(`/remittance_domestic_update?remittanceId=${v.data.entity.remittanceId}`)
+            // msg.success('저장되었습니다.')
+            return v
         } else {
             msg.error('저장에 실패하였습니다.')
         }
@@ -315,11 +315,13 @@ export const getOrderStatusList = async ({data}) => {
 
 export const getRemittanceList = async ({data}) => {
     const v = await getData.post('remittance/getRemittanceList', {
-        ...data, page: 1,
+        ...data,
+        page: 1,
         limit: -1
     })
     if (v.data.code === 1) {
-        return v.data.entity.remittanceList
+        const {remittanceList, pageInfo} = v.data.entity
+        return {data: remittanceList, pageInfo: pageInfo}
     } else {
         msg.error('오류가 발생하였습니다. 다시 시도해주세요.')
     }

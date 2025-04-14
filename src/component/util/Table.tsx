@@ -113,7 +113,7 @@ const Table = forwardRef(({
                 if (prop === "quantity") {
                     if (type === 'order_write_column') {
 
-                        hotRef.current.hotInstance.setDataAtCell(row, 6, newValue); // replyDate 컬럼 업데이트
+                        hotRef.current.hotInstance.setDataAtCell(row, 8, newValue); // replyDate 컬럼 업데이트
                     }
                 }
                 if (prop === 'unitPrice') {
