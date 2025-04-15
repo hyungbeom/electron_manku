@@ -3189,22 +3189,17 @@ export const remittanceReadColumn = [
     }, {
         headerName: 'Inquiry No.',
         field: 'connectInquiryNo',
-        maxWidth: 80,
+        maxWidth: 100,
         pinned: 'left'
-    }, {
-        headerName: '담당자',
-        field: 'managerAdminName',
-        minWidth: 150,
-        pinned: 'right'
     }, {
         headerName: '송금요청일자',
         field: 'requestDate',
-        minWidth: 150,
+        maxWidth: 120,
 
     }, {
         headerName: '송금지정일자',
         field: 'assignedDate',
-        minWidth: 150,
+        maxWidth: 120,
 
     }, {
         headerName: '고객사명',
@@ -3221,32 +3216,31 @@ export const remittanceReadColumn = [
         field: 'supplyAmount',
         minWidth: 150,
         valueFormatter: params => params.data.supplyAmount?.toLocaleString(),
-
     },
     {
         headerName: '부가세',
         field: 'net',
-        valueFormatter: params => Math.round(params.data.supplyAmount / 10)?.toLocaleString(),
+        valueFormatter: params => Math.round(params.data.supplyAmount * 0.1 * 10 / 10)?.toLocaleString(),
         cellEditor: 'agNumberCellEditor',
-
     }, {
         headerName: '합계',
         field: 'total',
-        valueFormatter: params => (params.data.supplyAmount + Math.round(params.data.supplyAmount / 10))?.toLocaleString(),
+        valueFormatter: params => (params.data.supplyAmount + Math.round(params.data.supplyAmount * 0.1 * 10 / 10))?.toLocaleString(),
         minWidth: 150,
     }
     , {
-        headerName: '송금여부',
+        headerName: '송금 여부',
         field: 'isSend',
-        minWidth: 150,
+        maxWidth: 80,
     }, {
         headerName: '계산서 발행 여부',
         field: 'isInvoice',
-        minWidth: 150,
+        maxWidth: 80,
     }, {
-        headerName: '고객사명',
-        field: 'customerName',
-        minWidth: 150,
+        headerName: '담당자',
+        field: 'managerAdminName',
+        maxWidth: 80,
+        pinned: 'right'
     }
 ];
 

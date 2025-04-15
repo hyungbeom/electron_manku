@@ -345,7 +345,7 @@ export const estimateInfo = {
 
 export const orderInfo = {
     write: {
-        columnWidth: [220, 50, 50, 50, 45, 50, 120, 120, 120, 120, 80],
+        columnWidth: [220, 50, 50, 50, 120, 120, 120, 120, 50, 50, 50, 80],
         column: [
             'Model',
             '수량',
@@ -353,11 +353,11 @@ export const orderInfo = {
             '화폐단위',
             '매입 단가',
             '매입 총액',
+            '매출 단가',
+            '매출 총액',
             '주문',
             '입고',
             '미 입고',
-            '매출 단가',
-            '매출 총액',
             'HS-CODE'],
         columnList: [
             {data: "model", type: "text"},
@@ -370,14 +370,12 @@ export const orderInfo = {
             {data: "currency", type: "autocomplete", source: ['KRW', 'USD', 'EUR', 'JPY', 'GBP']},
             {data: "unitPrice", type: "numeric"},
             {data: "total", type: "numeric"},
+            {data: "net", type: "numeric"},
+            {data: "totalNet", type: "numeric"},
             {data: "order", type: "numeric"},
             {data: "receivedQuantity", type: "numeric"},
             {data: "unreceivedQuantity", type: "numeric", readOnly: true},
-
-            {data: "net", type: "numeric"},
-            {data: "totalNet", type: "numeric"},
             {data: "hsCode", type: "text"},
-
         ],
         defaultData: {
             "model": "",           // Model
@@ -386,11 +384,11 @@ export const orderInfo = {
             "currency": '',
             "unitPrice": '',
             "total": '',            // 매입단가
+            "net": '',            // 매입단가
+            "totalNet": '',
             "order": '',
             "receivedQuantity": '',
             "unreceivedQuantity": '',
-            "net": '',            // 매입단가
-            "totalNet": '',
             "hsCode": '',
             "managerId": '',
             managerAdminName: '',
@@ -399,7 +397,6 @@ export const orderInfo = {
             customerManagerName : '',
             customerManagerEmail : '',
             customerManagerFaxNumber : ''
-
         }, mapping: {
             "model": "Model",           // Model
             "quantity": '주문',              // 수량
@@ -407,7 +404,6 @@ export const orderInfo = {
             "unreceivedQuantity": '미 입고',
             "unit": '단위',               // 단위
             "currency": '화폐단위',
-
             "unitPrice": '매입 단가',
             "total": '매입 총액',            // 매입단가
             "net": '매출 단가',            // 매입단가
@@ -415,30 +411,27 @@ export const orderInfo = {
             "hscode": 'HS-CODE',
         },
         excelExpert: (v, i) => {
-            v['unreceivedQuantity'] = `=B${i + 1} -H${i + 1}`
+            v['unreceivedQuantity'] = `=B${i + 1} -J${i + 1}`
             v['total'] = `=B${i + 1}*E${i + 1}`
-            v['totalNet'] = `=B${i + 1}*J${i + 1}`
+            v['totalNet'] = `=B${i + 1}*G${i + 1}`
             return v
         },
         totalList: {
             "model": "",           // Model
             "quantity": '=SUM(B1:B1000)',              // 수량
-
             "unit": '',               // 단위
             "currency": '',
             "unitPrice": '=SUM(E1:E1000)',
             "total": '=SUM(F1:F1000)',            // 매입단가
-            "order": '=SUM(G1:G1000)',            // 매입단가
-            "receivedQuantity": '=SUM(H1:H1000)',
-            "unreceivedQuantity": '=SUM(I1:I1000)',
-            "net": '=SUM(J1:J1000)',            // 매입단가
-            "totalNet": '=SUM(K1:K1000)',            // 매입단가
+            "net": '=SUM(G1:G1000)',            // 매입단가
+            "totalNet": '=SUM(H1:H1000)',            // 매입단가
+            "order": '=SUM(I1:I1000)',            // 매입단가
+            "receivedQuantity": '=SUM(J1:J1000)',
+            "unreceivedQuantity": '=SUM(K1:K1000)',
             "hscode": '',
         },
-
         type: 'write'
     },
-
     defaultInfo: {
         attnTo: '',
         createdBy: '',
@@ -590,6 +583,112 @@ export const storeInfo = {
     },
 };
 
+// 송금 관련
+export const remittanceInfo = {
+    write: {
+        columnWidth: [20, 100, 100, 100, 100, 100, 100, 70, 70],
+        column: ['', 'Inquiry No.', '송금요청일자', '송금지정일자', '공급가액', '부가세', '합계', '송금 여부', '계산서 발행 여부'],
+        columnList: [
+            {data: "check", type: "checkbox"},
+            {data: "connectInquiryNo", type: "text"},
+            {data: "requestDate", type: "text"},
+            {data: "assignedDate", type: "text"},
+            {data: "supplyAmount", type: "text"},
+            {data: "surtax", type: "text"},
+            {data: "total", type: "text"},
+            {
+                data: "isSend",
+                type: "autocomplete",
+                source: ['O', 'X', '부분송금', '반려']
+            },
+            {
+                data: "isSend",
+                type: "autocomplete",
+                source: ['발행', '미발행']
+            },
+        ],
+        defaultData: {
+            "check": "",   // Model
+            "connectInquiryNo": "",   // Model
+            "requestDate": '',                  // 수량
+            "assignedDate": "",                   // 단위
+            "supplyAmount": '',          // CURR
+            "surtax": '',           // 단가
+            "total": "",            // 비고
+            "isSend": '',                 // 매입단가
+            "isInvoice": '',           // 단가
+        }, mapping: {
+            "model": "Model",   // Model
+            "quantity": '수량',                  // 수량
+            "net": '매출 단가',
+            // 단가
+            "totalNet": '매출 총액',           // 단가
+            "unit": "단위",                   // 단위
+            "currency": '화폐단위',          // CURR
+            "unitPrice": '매입 단가',
+            "total": '매입 총액',                 // 매입단가
+            "marginRate": '마진율',           // 단가
+        },
+        excelExpert: (v, i) => {
+            v['surtax'] = `=E${i + 1}*0.1*10/10`
+            v['total'] = `=E${i + 1}+F${i + 1}`
+            return v
+        },
+        totalList: {
+            "check": '',   // Model
+            "connectInquiryNo": '',                  // 수량
+            "requestDate": '',                   // 단위
+            "assignedDate": '',          // CURR
+            "supplyAmount": '=SUM(E1:E100)',                 // 매입단가
+            "surtax": '=SUM(F1:F100)',                 // 매입단가
+            "total": '=SUM(G1:G100)',           // 단가
+            "isSend": '',           // 단가
+            "isInvoice": ''                 // 매입단가
+        },
+        type: 'write'
+    },
+    defaultInfo: {
+        createdBy: '',
+        agencyTel: '',
+        managerAdminName: '',
+        managerAdminId: null,
+        "writtenDate": moment().format('YYYY-MM-DD'),    // 작성일
+        "connectDocumentNumberFull": "", // Inquiry No.
+        "documentNumberFull": "", // Inquiry No.
+        "rfqNo": "", // Inquiry No.
+        "projectTitle": "", // Inquiry No.
+        "agencyCode": "",            // 대리점코드
+        "agencyName": "",
+        "agencyManagerName": "",
+        "agencyManagerEmail": "",
+        "deliveryTerms": "",
+        "agencyManagerPhoneNumber": "",
+        "customerCode": "",             // CUSTOMER 코드
+        "customerName": "",    // 상호명
+        "customerManagerEmail": "",    // 상호명
+        "managerEmail": "",    // 상호명
+        "managerName": "",      // 담당자
+        "phoneNumber": "",  // 연락처
+        "faxNumber": "",                // 팩스번호
+        "validityPeriod": '견적 발행 후 10일간',    // 유효기간
+        "paymentTerms": '발주시 50% / 납품시 50%',                // 결제조건
+        "shippingTerms": '귀사도착도',             // 운송조건
+        "exchangeRate": "",                  // 환율
+        "estimateManager": "",            // 담당자
+        "email": "",             // E-MAIL
+        "managerPhoneNumber": "",   // 연락처
+        "managerFaxNumber": "",       // 팩스번호
+        "maker": "",      // Maker
+        "item": "",      // Item
+        "delivery": null,    // 납기
+        "instructions": "",          // 지시사항
+        "remarks": "",          // 비고란
+        "currencyUnit": "",          // 비고란
+        'count': 0,
+        attnTo: '',
+        uploadType: 3
+    },
+};
 
 export const DCWInfo = {
     write: {
