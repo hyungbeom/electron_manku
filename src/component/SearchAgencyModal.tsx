@@ -202,8 +202,6 @@ export default function SearchInfoModal({
         setOpen(false);
     };
 
-
-
     return <>
         {page.x ? <div style={{
             position: 'fixed',
@@ -318,6 +316,7 @@ export default function SearchInfoModal({
                                                  agencyManagerEmail: commonManage.checkValue(e.data.email),
                                                  agencyManagerPhoneNumber: commonManage.checkValue(e.data.phoneNumber)
                                              })
+                                             console.log('@@@@@@@@@@@@@@@')
                                              const dom = infoRef.current.querySelector('#agencyCode');
                                              dom.style.borderColor = ''
                                              // commonManage.changeCurr(e.data.agencyCode)
