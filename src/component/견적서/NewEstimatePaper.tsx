@@ -475,10 +475,10 @@ export default function NewEstimatePaper({gridRef, openEstimateModal}) {
                             {totalData?.unit}
                         </th>
                         <th style={{width: '20%', textAlign: 'right', paddingRight: 10}}>
-                            (V.A.T) 포함
+                            (V.A.T) 미포함
                         </th>
                         <th style={{width: '20%', textAlign: 'right', paddingRight: 10}}>
-                            {((totalData?.total) + ((totalData?.total) / 10)).toLocaleString()}
+                            {(totalData?.total).toLocaleString()}
                         </th>
                         {/*tax*/}
                     </tr>
@@ -591,10 +591,10 @@ export default function NewEstimatePaper({gridRef, openEstimateModal}) {
                             {totalData?.unit}
                         </th>
                         <th style={{width: '20%', textAlign: 'right', paddingRight: 10}}>
-                            (V.A.T) 포함
+                            (V.A.T) 미포함
                         </th>
                         <th style={{width: '20%', textAlign: 'right', paddingRight: 10}}>
-                            {((totalData?.total) + ((totalData?.total) / 10)).toLocaleString()}
+                            {(totalData?.total).toLocaleString()}
                         </th>
                     </tr>
                     </thead>

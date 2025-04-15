@@ -4,14 +4,15 @@ import https from 'https';
 
 
 //DEV
-// export const API_URL = 'https://manku.progist.co.kr/api';
-export const API_URL = 'http://175.125.92.183:8080/api';
+export const API_URL = 'https://manku.progist.co.kr/api';
+// export const API_URL = 'http://175.125.92.183:8080/api';
 // export const API_URL = 'http://localhost:8080/api';
 
 
 const agent = new https.Agent({
     rejectUnauthorized: false, // SSL 검증 비활성화 (개발 환경 전용)
 });
+
 
 export const getData = axios.create({
     baseURL: API_URL,
@@ -47,7 +48,6 @@ export const getFormData = axios.create({
     httpsAgent: agent,
     headers: {
         authorization: `Bearer ${getCookie(null,'token')}`,
-
         "Accept-Language": getCookie(null,'lang') ? getCookie(null,'lang') : 'ko-KR',
         // @ts-ignore
         "refresh_token": getCookie(null,'refreshToken'),
