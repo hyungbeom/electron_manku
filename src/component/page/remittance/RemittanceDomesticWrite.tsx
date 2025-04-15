@@ -97,7 +97,7 @@ export default function RemittanceDomesticWrite({dataInfo = [], copyPageInfo}: a
         commonManage.getUploadList(fileRef, formData)
         formData.delete('createdDate')
         formData.delete('modifiedDate')
-        await saveRemittance({data: formData, router: router})
+        await saveRemittance({data: formData})
     }
 
     function clearAll() {
