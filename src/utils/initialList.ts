@@ -367,7 +367,7 @@ export const remittanceDomesticInitial = {
     assignedDate: moment().format('YYYY-MM-DD'),
     isSend: 'X',
     isInvoice: 'X',
-    isPartialSend: 'X',
+    isPartialSend: '',
     isRejected: 'X',
     supplyAmount: '',
     surtax: '',

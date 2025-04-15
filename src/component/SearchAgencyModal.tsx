@@ -18,8 +18,6 @@ export default function SearchInfoModal({
                                             setInfo,
                                             open,
                                             setIsModalOpen,
-
-
                                             type = '',
                                             gridRef = null,
                                             compProps

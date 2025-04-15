@@ -2605,8 +2605,52 @@ export const tableSourceColumns = [
     },
 ]
 
+// 데이터 관리 > 재고관리 > 재고관리 수정 history 테이블
+export const tableSourceUpdateColumns = [
 
-
+    {
+        headerName: "", // 컬럼 제목
+        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
+        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
+        checkboxSelection: true, // 각 행에 체크박스 추가
+        cellStyle: {textAlign: "center"}, // 스타일 설정
+        maxWidth: 60, // 컬럼 너비
+        pinned: "left", // 왼쪽에 고정
+        filter: false
+    },
+    {
+        headerName: '입고일자',
+        field: 'receiptDate',
+    },
+    {
+        headerName: '문서번호',
+        field: 'documentNumber',
+    },
+    {
+        headerName: 'Maker',
+        field: 'maker',
+    },
+    {
+        headerName: 'Model',
+        field: 'model',
+    },
+    {
+        headerName: '잔량',
+        field: 'remainingQuantity',
+    },
+    {
+        headerName: '출고',
+        field: 'shippedQuantity',
+    },
+    {
+        headerName: '합계',
+        field: 'totalQuantity',
+    },
+    {
+        headerName: '위치',
+        field: 'location',
+    },
+]
 
 
 // 데이터 관리 > 회사계정관리 > 조회 테이블 컬럼

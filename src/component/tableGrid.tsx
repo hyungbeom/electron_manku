@@ -124,8 +124,8 @@ const TableGrid = ({
             if (e.data.orderId){
                 getPropertyId('order_update', e.data.orderId)
             }
-            if (e.data.makerId){
-                getPropertyId('maker_update', e.data.makerId)
+            if (e.data.remittanceId){
+                getPropertyId('domestic_remittance_update', e.data.remittanceId)
             }
             if (e.data.agencyId){
                 getPropertyId('domestic_agency_update', e.data.agencyId)
@@ -136,6 +136,9 @@ const TableGrid = ({
                 getPropertyId('domestic_customer_update', e.data.customerId)
             if (e.data.overseasCustomerId) {
                 getPropertyId('overseas_customer_update', e.data.overseasCustomerId)
+            }
+            if (e.data.makerId){
+                getPropertyId('maker_update', e.data.makerId)
             }
             if (e.data.officialDocumentId)
                 getPropertyId('code_diploma_update', e.data.officialDocumentId)

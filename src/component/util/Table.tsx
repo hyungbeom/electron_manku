@@ -87,11 +87,8 @@ const Table = forwardRef(({
                 if (row === 1000) {
 
                 }
-
                 td.style.fontWeight = "bold"; // 텍스트 굵게
             }
-
-
         }
     };
 
@@ -394,7 +391,6 @@ const Table = forwardRef(({
 
             // ✅ 컬럼 매핑 (엑셀 헤더 → 내부 객체 키값)
             const excelHeaders: any = rawData[0]; // 첫 번째 행 (엑셀의 원래 컬럼명)
-            console.log(column['mapping'])
             const mappedHeaders = excelHeaders.map(header =>
                 Object.keys(column['mapping']).find(key => column['mapping'][key] === header) || header
             );

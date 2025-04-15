@@ -21,7 +21,7 @@ import _ from "lodash";
 import TableGrid from "@/component/tableGrid";
 import Popconfirm from "antd/lib/popconfirm";
 import Button from "antd/lib/button";
-import {tableSourceColumns} from "@/utils/columnList";
+import {tableSourceColumns, tableSourceUpdateColumns} from "@/utils/columnList";
 import {Actions} from "flexlayout-react";
 import Spin from "antd/lib/spin";
 
@@ -359,7 +359,7 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
                     }
                     totalRow={totalRow}
                     gridRef={gridRef}
-                    columns={tableSourceColumns}
+                    columns={tableSourceUpdateColumns}
                     onGridReady={onGridReady}
                     getPropertyId={getPropertyId}
                     type={'sourceUpdate'}

@@ -587,7 +587,7 @@ export const storeInfo = {
 export const remittanceInfo = {
     write: {
         columnWidth: [20, 100, 100, 100, 100, 100, 100, 70, 70],
-        column: ['', 'Inquiry No.', '송금요청일자', '송금지정일자', '공급가액', '부가세', '합계', '송금 여부', '계산서 발행 여부'],
+        column: ['-', 'Inquiry No.', '송금요청일자', '송금지정일자', '공급가액', '부가세', '합계', '송금 여부', '계산서 발행 여부'],
         columnList: [
             {data: "check", type: "checkbox"},
             {data: "connectInquiryNo", type: "text"},
@@ -630,20 +630,22 @@ export const remittanceInfo = {
             "marginRate": '마진율',           // 단가
         },
         excelExpert: (v, i) => {
-            v['surtax'] = `=E${i + 1}*0.1*10/10`
-            v['total'] = `=E${i + 1}+F${i + 1}`
+            // v['surtax'] = `=E${i + 1}*0.1*10/10`
+            // v['total'] = `=E${i + 1}+F${i + 1}`
+            v['surtax'] = `=IF(E${i + 1}="", "", E${i + 1}*0.1*10/10)`
+            v['total'] = `=IF(E${i + 1}="", "", E${i + 1}+F${i + 1})`
             return v
         },
         totalList: {
-            "check": '',   // Model
-            "connectInquiryNo": '',                  // 수량
-            "requestDate": '',                   // 단위
-            "assignedDate": '',          // CURR
-            "supplyAmount": '=SUM(E1:E100)',                 // 매입단가
-            "surtax": '=SUM(F1:F100)',                 // 매입단가
-            "total": '=SUM(G1:G100)',           // 단가
-            "isSend": '',           // 단가
-            "isInvoice": ''                 // 매입단가
+            "check": '',
+            "connectInquiryNo": '',
+            "requestDate": '',
+            "assignedDate": '',
+            "supplyAmount": '=SUM(E1:E100)',
+            "surtax": '=SUM(F1:F100)',
+            "total": '=IF(SUM(G1:G100)=0, "", SUM(G1:G100))',
+            "isSend": '',
+            "isInvoice": ''
         },
         type: 'write'
     },
