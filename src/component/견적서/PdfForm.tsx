@@ -222,7 +222,7 @@ export function PdfForm({data, topInfoData, totalData,type='', bottomInfo='▶�
                                 style={{
                                     textAlign: 'right',
                                     paddingRight: 8
-                                }}>(V.A.T) 포함</Text>
+                                }}>(V.A.T) 미포함</Text>
                         </View>
                         <View style={{
                             ...styles.point,
@@ -236,7 +236,7 @@ export function PdfForm({data, topInfoData, totalData,type='', bottomInfo='▶�
                                     textAlign: 'right',
                                     paddingRight: 8
                                 }}>
-                                {((totalData?.total) + ((totalData?.total) / 10)).toLocaleString()}
+                                {(totalData?.total).toLocaleString()}
                             </Text>
                         </View>
                     </View>
@@ -371,7 +371,7 @@ export function PdfForm({data, topInfoData, totalData,type='', bottomInfo='▶�
                                     style={{
                                         textAlign: 'right',
                                         paddingRight: 8
-                                    }}>(V.A.T) 포함</Text>
+                                    }}>(V.A.T) 미포함</Text>
                             </View>
                             <View style={{
                                 ...styles.point,
@@ -384,7 +384,7 @@ export function PdfForm({data, topInfoData, totalData,type='', bottomInfo='▶�
                                     style={{
                                         textAlign: 'right',
                                         paddingRight: 8
-                                    }}>  {((totalData?.total) + ((totalData?.total) / 10)).toLocaleString()}</Text>
+                                    }}>  {(totalData?.total).toLocaleString()}</Text>
                             </View>
                         </View>
 
