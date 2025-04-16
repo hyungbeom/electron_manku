@@ -12,18 +12,18 @@ import {checkInquiryNo} from "@/utils/api/mainApi";
 import {commonManage} from "@/utils/commonManage";
 
 
-export default function SearchInfoModal({
-                                            info,
-                                            infoRef,
-                                            setInfo,
-                                            open,
-                                            setIsModalOpen,
+export default function SearchAgencyModal_test({
+                                                   info,
+
+                                                   setInfo,
+                                                   open,
+                                                   setIsModalOpen,
 
 
-                                            type = '',
-                                            gridRef = null,
-                                            compProps
-                                        }: any) {
+                                                   type = '',
+                                                   gridRef = null,
+                                                   compProps
+                                               }: any) {
 
     const [code, setCode] = useState();
     const [list, setList] = useState([])
@@ -38,16 +38,14 @@ export default function SearchInfoModal({
     useEffect(() => {
         if (open) {
             const firstTrueKey = Object.keys(open).find(key => open[key]);
-            const dom = infoRef.current.querySelector(`#${firstTrueKey}`);
 
             switch (firstTrueKey) {
                 case 'customerName' :
                 case 'agencyCode' :
                 case 'maker' :
                 case 'connectInquiryNo' :
-                    searchFunc(firstTrueKey, dom.value)
-                    setCode(dom.value)
-
+                    searchFunc(firstTrueKey, info[firstTrueKey])
+                    setCode(info[firstTrueKey])
                     break;
             }
             setOpenCheck(firstTrueKey);
@@ -96,7 +94,6 @@ export default function SearchInfoModal({
 
         const {clientX, clientY} = e.event;
         e.event.preventDefault();
-
 
 
         setPage({x: clientX, y: clientY})
@@ -181,6 +178,8 @@ export default function SearchInfoModal({
         setOpen(false);
     };
 
+
+    console.log(code, 'code::')
     return <>
         {page.x ? <div style={{
             position: 'fixed',
@@ -229,79 +228,106 @@ export default function SearchInfoModal({
                            placeholder={modalList[openCheck]?.placeholder}
                            id={'agencyCode'} value={code}
                            onChange={(e: any) => setCode(e.target.value)}/>
+
+
                     <Button onClick={() => searchFunc(openCheck, code)}>조회</Button>
                 </div>
 
                 <AgGridReact containerStyle={{height: '93%', width: '100%'}} theme={tableTheme}
                              onCellClicked={async (e) => {
 
+                                 console.log(openCheck, 'openCheck:')
                                  switch (openCheck) {
+                                     case 'agencyCode' : {
+                                         const result = {
+                                             agencyManagerId: commonManage.checkValue(e.data.agencyId),
+                                             agencyCode: commonManage.checkValue(e.data.agencyCode),
+                                             agencyName: commonManage.checkValue(e.data.agencyName),
+                                             agencyTel: commonManage.checkValue(e.data.phoneNumber),
+                                             agencyManagerName: commonManage.checkValue(e?.data?.managerName),
+                                             agencyManagerEmail: commonManage.checkValue(e.data.email),
+                                             agencyManagerPhoneNumber: commonManage.checkValue(e.data.phoneNumber)
+                                         }
+                                         setInfo(v => {
+                                             return {...v, ...result}
+                                         })
+                                     }
+                                         break;
                                      case 'customerName' :
-                                         commonManage.setInfo(infoRef, {
+                                         const result = {
                                              phoneNumber: e.data.directTel,
                                              customerName: e.data.customerName,
                                              customerManagerEmail: e.data.email,
                                              customerManagerName: e.data.managerName,
                                              customerManagerFaxNumber: e.data.faxNumber,
+
                                              faxNumber: e.data.faxNumber,
                                              managerName: e.data.managerName,
                                              customerManagerPhone: e.data.directTel,
                                              customerManagerPhoneNumber: e.data.directTel,
                                              customerCode: e.data.customerCode,
                                              paymentTerms: e.data.paymentMethod ? e.data.paymentMethod : '발주시 50% / 납품시 50%',
+                                         }
+                                         setInfo(v => {
+                                             return {...v, ...result}
                                          })
+
                                          break;
-                                     case 'maker' :
-                                         commonManage.setInfo(infoRef, {
+                                     case 'maker' : {
+                                         const result = {
                                              maker: e.data.makerName,
                                              item: e.data.item,
                                              instructions: e.data.instructions,
+                                         }
+                                         setInfo(v => {
+                                             return {...v, ...result}
                                          })
+                                     }
                                          break;
                                      case 'orderList' :
 
-                                         setInfo(v => {
-                                             return {
-                                                 ...v, ...e.data,
-                                                 maker: e.data.makerName,
-                                                 connectInquiryNo: e.data.documentNumberFull,
-                                             }
-                                         })
+                                         // setInfo(v => {
+                                         //     return {
+                                         //         ...v, ...e.data,
+                                         //         maker: e.data.makerName,
+                                         //         connectInquiryNo: e.data.documentNumberFull,
+                                         //     }
+                                         // })
                                          break;
                                      case 'connectInquiryNo' :
-                                         setInfo(v => {
-                                             return {
-                                                 ...v, ...e.data,
-                                                 maker: e.data.makerName,
-                                                 connectInquiryNo: e.data.documentNumberFull,
-                                             }
-                                         })
+                                         // setInfo(v => {
+                                         //     return {
+                                         //         ...v, ...e.data,
+                                         //         maker: e.data.makerName,
+                                         //         connectInquiryNo: e.data.documentNumberFull,
+                                         //     }
+                                         // })
                                          break;
                                      default :
-                                         await checkInquiryNo({
-                                             data: {
-                                                 agencyCode: e.data.agencyCode,
-                                                 type: type
-                                             }
-                                         }).then(data => {
-
-                                             // agencyTel
-                                             commonManage.setInfo(infoRef, {
-                                                 agencyManagerId: commonManage.checkValue(e.data.agencyId),
-                                                 agencyCode: commonManage.checkValue(e.data.agencyCode),
-                                                 agencyName: commonManage.checkValue(e.data.agencyName),
-                                                 agencyTel: commonManage.checkValue(e.data.phoneNumber),
-                                                 agencyManagerName: commonManage.checkValue(e?.data?.managerName),
-                                                 agencyManagerEmail: commonManage.checkValue(e.data.email),
-                                                 agencyManagerPhoneNumber: commonManage.checkValue(e.data.phoneNumber)
-                                             })
-                                             console.log('@@@@@@@@@@@@@@@')
-                                             const dom = infoRef.current.querySelector('#agencyCode');
-                                             dom.style.borderColor = ''
-                                             // commonManage.changeCurr(e.data.agencyCode)
-                                             // gridManage.updateAllFields(gridRef, 'currency', commonManage.changeCurr(e.data.agencyCode))
-
-                                         })
+                                         // await checkInquiryNo({
+                                         //     data: {
+                                         //         agencyCode: e.data.agencyCode,
+                                         //         type: type
+                                         //     }
+                                         // }).then(data => {
+                                         //
+                                         //     // agencyTel
+                                         //     commonManage.setInfo(infoRef, {
+                                         //         agencyManagerId: commonManage.checkValue(e.data.agencyId),
+                                         //         agencyCode: commonManage.checkValue(e.data.agencyCode),
+                                         //         agencyName: commonManage.checkValue(e.data.agencyName),
+                                         //         agencyTel: commonManage.checkValue(e.data.phoneNumber),
+                                         //         agencyManagerName: commonManage.checkValue(e?.data?.managerName),
+                                         //         agencyManagerEmail: commonManage.checkValue(e.data.email),
+                                         //         agencyManagerPhoneNumber: commonManage.checkValue(e.data.phoneNumber)
+                                         //     })
+                                         //     console.log('@@@@@@@@@@@@@@@')
+                                         //     const dom = infoRef.current.querySelector('#agencyCode');
+                                         //     dom.style.borderColor = ''
+                                         //     // commonManage.changeCurr(e.data.agencyCode)
+                                         //     // gridManage.updateAllFields(gridRef, 'currency', commonManage.changeCurr(e.data.agencyCode))
+                                         //
+                                         // })
 
                                          break;
                                  }

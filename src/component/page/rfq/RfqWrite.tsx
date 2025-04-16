@@ -3,8 +3,16 @@ import {RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
 import {ModalInitList} from "@/utils/initialList";
 import message from "antd/lib/message";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
-import SearchInfoModal from "@/component/SearchAgencyModal";
-import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, tooltipInfo, TopBoxCard} from "@/utils/commonForm";
+import {
+    BoxCard,
+    datePickerForm,
+    inputForm,
+    MainCard,
+    selectBoxForm,
+    textAreaForm,
+    tooltipInfo,
+    TopBoxCard
+} from "@/utils/commonForm";
 import {commonFunc, commonManage} from "@/utils/commonManage";
 import _ from "lodash";
 import {findCodeInfo} from "@/utils/api/commonApi";
@@ -19,6 +27,7 @@ import {rfqInfo} from "@/utils/column/ProjectInfo";
 import Table from "@/component/util/Table";
 import useEventListener from "@/utils/common/function/UseEventListener";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
+import SearchAgencyModal_test from "@/component/SearchAgencyModal_test";
 
 const listType = 'estimateRequestDetailList'
 
@@ -31,6 +40,7 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     })
     const [memberList, setMemberList] = useState([]);
     const [tableData, setTableData] = useState([]);
+    const [validate, setValidate] = useState({agencyCode: true, managerAdminId: true});
 
 
     useEffect(() => {
@@ -49,13 +59,6 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
             setMemberList(v.data.entity.adminList)
         })
     }
-
-
-    const options = memberList?.map((item) => ({
-        ...item,
-        value: item.adminId,
-        label: item.name,
-    }));
 
 
     const fileRef = useRef(null);
@@ -102,11 +105,6 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     }, [copyPageInfo]);
 
 
-    useEffect(() => {
-        commonManage.setInfo(infoRef, info, userInfo['adminId']);
-    }, [info, memberList]);
-
-
     async function handleKeyPress(e) {
         if (e.key === 'Enter') {
 
@@ -114,7 +112,7 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                 case 'agencyCode' :
                 case 'customerName' :
                 case 'maker' :
-                    await findCodeInfo(e, setInfo, openModal, infoRef)
+                    await findCodeInfo(e, setInfo, openModal)
                     break;
             }
         }
@@ -125,19 +123,34 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     }
 
     function onChange(e) {
-        if (e.target.id === 'agencyCode') {
-            e.target.style.borderColor = ''
+        commonManage.onChange(e, setInfo)
+
+        if (e.target.id === 'agencyCode' && !validate['agencyCode']) {
+            setValidate(v => {
+                return {...v, agencyCode: true}
+            })
         }
+        if (e.target.id === 'managerAdminId' && !validate['managerAdminId']) {
+            setValidate(v => {
+                return {...v, managerAdminId: true}
+            })
+        }
+
     }
 
     async function saveFunc() {
-        setLoading(true);
-        let infoData = commonManage.getInfo(infoRef, infoInit);
-        setLoading(false);
-        const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
+
+        let infoData = _.cloneDeep(info);
+
+
+        const findMember = memberList.find(v => v.adminId === parseInt(info['managerAdminId']));
         infoData['managerAdminName'] = findMember['name'];
 
+        setLoading(true);
+        setLoading(false);
 
+
+        // 중복 저장을 막기 위한 로직
         if (infoData['documentNumberFull']) {
             delete checkInfoRef.current['info']['documentNumberFull']
             const copyData = {...infoData};
@@ -151,18 +164,22 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
             }
         }
 
+
         if (!infoData['managerAdminId']) {
-            const dom = infoRef.current.querySelector('#managerAdminId');
-            dom.style.borderColor = 'red'
+            setValidate(v => {
+                return {...v, managerAdminId: false}
+            })
             setLoading(false);
             return message.warn('담당자가 누락되었습니다.')
         }
         if (!infoData['agencyCode']) {
-            const dom = infoRef.current.querySelector('#agencyCode');
-            dom.style.borderColor = 'red'
+            setValidate(v => {
+                return {...v, agencyCode: false}
+            })
             setLoading(false);
             return message.warn('매입처 코드가 누락되었습니다.')
         }
+
         const tableList = tableRef.current?.getSourceData();
 
         const filterTableList = commonManage.filterEmptyObjects(tableList, ['model', 'item', 'maker'])
@@ -211,7 +228,7 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
 
 
     function clearAll() {
-        commonManage.setInfo(infoRef, {...rfqInfo['defaultInfo'], ...adminParams}, userInfo['adminId']);
+        setInfo(infoInit)
 
         function calcData(sourceData) {
             const keyOrder = Object.keys(rfqInfo['write']['defaultData']);
@@ -244,13 +261,13 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         }
     }, typeof window !== 'undefined' ? document : null)
 
+    console.log(info)
 
     return <Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'rfq_write'}/>
-        <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
-                         open={isModalOpen}
-
-                         setIsModalOpen={setIsModalOpen}/>
+        <SearchAgencyModal_test info={info} setInfo={setInfo}
+                                open={isModalOpen}
+                                setIsModalOpen={setIsModalOpen}/>
 
         <>
             <div ref={infoRef} style={{
@@ -276,53 +293,50 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                     title: '작성일',
                                     id: 'writtenDate',
                                     disabled: true,
-                                    // onChange: onChange,
-                                    // data: info
+                                    onChange: onChange,
+                                    data: info
                                 })}
 
                                 {inputForm({title: '작성자', id: 'createdBy', disabled: true, onChange: onChange, data: info})}
+
                                 <div>
-                                    <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>담당자</div>
-                                    <select name="languages" id="managerAdminId"
-                                            style={{
-                                                outline: 'none',
-                                                border: '1px solid lightGray',
-                                                height: 23,
-                                                width: '100%',
-                                                fontSize: 12,
-                                                paddingBottom: 0.5
-                                            }}>
-                                        {
-                                            options?.map(v => {
-                                                return <option value={v.value}>{v.label}</option>
-                                            })
-                                        }
-                                    </select>
+                                    {selectBoxForm({
+                                        title: '담당자',
+                                        id: 'managerAdminId',
+                                        onChange: onChange,
+                                        data: info,
+                                        validate: validate['managerAdminId'],
+                                        list: memberList?.map((item) => ({
+                                            ...item,
+                                            value: item.adminId,
+                                            label: item.name,
+                                        }))
+                                    })}
                                 </div>
                                 {inputForm({
                                     title: '의뢰자료 No.',
                                     id: 'documentNumberFull',
-                                    // onChange: onChange,
-                                    // data: info,
+                                    onChange: onChange,
+                                    data: info,
                                     disabled: true,
                                     placeHolder: '자동생성'
                                 })}
                                 {datePickerForm({
                                     title: '마감일자(예상)', id: 'dueDate'
-                                    // , onChange: onChange, data: info
+                                    , onChange: onChange, data: info
                                 })}
                                 {inputForm({
                                     title: 'RFQ No.',
                                     id: 'rfqNo',
-                                    // onChange: onChange,
-                                    // data: info
+                                    onChange: onChange,
+                                    data: info
 
                                 })}
                                 {inputForm({
                                     title: 'PROJECT NAME',
                                     id: 'projectTitle',
-                                    // onChange: onChange,
-                                    // data: info
+                                    onChange: onChange,
+                                    data: info
 
                                 })}
                             </TopBoxCard>
@@ -338,32 +352,34 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                                     openModal('agencyCode');
                                                 }
                                             }>🔍</span>,
+                                            onChange: onChange,
                                             handleKeyPress: handleKeyPress,
-                                            // data: info
+                                            data: info,
+                                            validate: validate['agencyCode']
                                         })}
                                         {inputForm({
                                             title: '회사명',
                                             id: 'agencyName',
-                                            // onChange: onChange,
-                                            // data: info
+                                            onChange: onChange,
+                                            data: info
                                         })}
                                         {inputForm({
                                             title: '담당자',
                                             id: 'agencyManagerName',
-                                            // onChange: onChange,
-                                            // data: info
+                                            onChange: onChange,
+                                            data: info
                                         })}
                                         {inputForm({
                                             title: '연락처',
                                             id: 'agencyTel',
-                                            // onChange: onChange,
-                                            // data: info
+                                            onChange: onChange,
+                                            data: info
                                         })}
                                         {inputForm({
                                             title: '이메일',
                                             id: 'agencyManagerEmail',
-                                            // onChange: onChange,
-                                            // data: info
+                                            onChange: onChange,
+                                            data: info
                                         })}
                                     </BoxCard>
                                 </Panel>
@@ -380,33 +396,33 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                                 }
                                             }>🔍</span>,
 
-                                            // onChange: onChange,
+                                            onChange: onChange,
                                             handleKeyPress: handleKeyPress,
-                                            // data: info
+                                            data: info
                                         })}
                                         {inputForm({
                                             title: '담당자명',
                                             id: 'managerName',
-                                            // onChange: onChange,
-                                            // data: info,
+                                            onChange: onChange,
+                                            data: info,
                                         })}
                                         {inputForm({
                                             title: '연락처',
                                             id: 'phoneNumber',
-                                            // onChange: onChange,
-                                            // data: info,
+                                            onChange: onChange,
+                                            data: info,
                                         })}
                                         {inputForm({
                                             title: '팩스',
                                             id: 'faxNumber',
-                                            // onChange: onChange,
-                                            // data: info
+                                            onChange: onChange,
+                                            data: info
                                         })}
                                         {inputForm({
                                             title: '이메일',
                                             id: 'customerManagerEmail',
-                                            // onChange: onChange,
-                                            // data: info
+                                            onChange: onChange,
+                                            data: info
                                         })}
                                     </BoxCard>
                                 </Panel>
@@ -423,21 +439,21 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                                 }
                                             }>🔍</span>,
 
-                                            // onChange: onChange,
+                                            onChange: onChange,
                                             handleKeyPress: handleKeyPress,
-                                            // data: info
+                                            data: info
                                         })}
                                         {inputForm({
                                             title: 'Item',
                                             id: 'item',
-                                            // onChange: onChange,
-                                            // data: info
+                                            onChange: onChange,
+                                            data: info
                                         })}
                                         {textAreaForm({
                                             title: '지시사항',
                                             id: 'instructions',
-                                            // onChange: onChange,
-                                            // data: info,
+                                            onChange: onChange,
+                                            data: info,
                                             rows: 7
                                         })}
                                     </BoxCard>
@@ -448,15 +464,15 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                         {inputForm({
                                             title: 'End User',
                                             id: 'endUser',
-                                            // onChange: onChange,
-                                            // data: info
+                                            onChange: onChange,
+                                            data: info
                                         })}
                                         {textAreaForm({
                                             title: '비고란',
                                             rows: 10,
                                             id: 'remarks',
-                                            // onChange: onChange,
-                                            // data: info,
+                                            onChange: onChange,
+                                            data: info,
                                         })}
                                     </BoxCard>
                                 </Panel>
