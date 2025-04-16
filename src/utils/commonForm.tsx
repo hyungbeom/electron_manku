@@ -499,15 +499,15 @@ export const radioForm = ({title, id, disabled = false, data, onChange, list}) =
     </div>
 }
 
-export const selectBoxForm = ({title, id, disabled = false, data, onChange, list, size = 'small', fontSize = 12}) => {
+export const selectBoxForm = ({title, id, disabled = false, data, validate = true, onChange, list, size = 'small', fontSize = 12}) => {
 
     return <div style={{}}>
-        <div style={{fontSize: 12, paddingBottom: 6, fontWeight: 700}}>{title}</div>
+        <div style={{fontSize: 12, paddingBottom: 5, fontWeight: 700}}>{title}</div>
         {/*@ts-ignore*/}
         <Select className="custom-select" id={id} size={size}
                 value={!isNaN(parseInt(data[id])) ? parseInt(data[id]) : data[id]}
                 onChange={(src, e) => onChange({target: {id: id, value: src, e: e}})}
-                style={{width: '100%', fontSize: 11, paddingBottom: 7}}>
+                style={{width: '100%', fontSize: 11, border : validate ? '': '1px solid red'}}>
             {list.map(v => {
                 return <Option style={{fontSize: 11}} value={v.value}>{v.label}</Option>
             })}

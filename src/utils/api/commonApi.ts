@@ -8,7 +8,7 @@ import {inputForm} from "@/utils/commonForm";
 import {orderInfo} from "@/utils/column/ProjectInfo";
 
 
-export const findCodeInfo = async (event, setInfo, openModal, infoRef?) => {
+export const findCodeInfo = async (event, setInfo, openModal) => {
 
 
     getData.post(modalList[event.target.id]?.url, {
@@ -18,6 +18,7 @@ export const findCodeInfo = async (event, setInfo, openModal, infoRef?) => {
         "limit": -1
     }).then(async v => {
 
+        console.log(event.target.id, 'event.target.id:')
 
         const data = v?.data?.entity[modalList[event.target.id]?.list];
 
@@ -31,7 +32,7 @@ export const findCodeInfo = async (event, setInfo, openModal, infoRef?) => {
                 case 'agencyCode' : {
                     // K79
                     const {agencyId, agencyCode, agencyName, currencyUnit, email, managerName, phoneNumber} = data[0];
-                    commonManage.setInfo(infoRef, {
+                    const result = {
                         agencyId: agencyId,
                         agencyCode: agencyCode,
                         agencyName: commonManage.checkValue(agencyName),
@@ -40,18 +41,17 @@ export const findCodeInfo = async (event, setInfo, openModal, infoRef?) => {
                         currencyUnit: commonManage.checkValue(currencyUnit),
                         agencyManagerPhoneNumber: commonManage.checkValue(phoneNumber),
                         agencyTel: commonManage.checkValue(phoneNumber),
-                        // managerId: commonManage.checkValue(phoneNumber)
+
+                    }
+                    setInfo(v => {
+                        return {...v, ...result}
                     })
-
-
-
-
                 }
 
                     break;
-                case 'customerName' :
+                case 'customerName' : {
                     const {customerName, managerName, directTel, faxNumber, email, paymentMethod} = data[0];
-                    commonManage.setInfo(infoRef, {
+                    const result = {
                         phoneNumber: directTel,
                         customerName: customerName,
                         customerManagerEmail: email,
@@ -60,19 +60,26 @@ export const findCodeInfo = async (event, setInfo, openModal, infoRef?) => {
                         managerName: managerName,
                         customerManagerPhone: directTel,
                         paymentTerms: paymentMethod ? paymentMethod : '발주시 50% / 납품시 50%',
-                    })
+                    }
 
+                    setInfo(v => {
+                        return {...v, ...result}
+                    })
+                }
                     break;
 
-                case 'maker' :
+                case 'maker' : {
                     const {makerName, item, instructions} = data[0];
-                    commonManage.setInfo(infoRef, {
+
+                    const result = {
                         maker: makerName,
                         item: item,
                         instructions: instructions,
+                    }
+                    setInfo(v => {
+                        return {...v, ...result}
                     })
-
-
+                }
                     break;
 
             }
@@ -86,7 +93,6 @@ export const findCodeInfo = async (event, setInfo, openModal, infoRef?) => {
 
 
 export const findDocumentInfo = async (event, setInfo) => {
-
 
 
     const result = await getData.post('order/getOrderList', {
@@ -169,7 +175,7 @@ export const findOrderDocumentInfo = async (event, setInfo, setTableData?, manag
                 }
             );
 
-            setTableData([...result?.data?.entity?.estimateDetail?.estimateDetailList,...commonFunc.repeatObject(orderInfo['write']['defaultData'], 1000 - result?.data?.entity?.estimateDetail?.estimateDetailList.length)])
+            setTableData([...result?.data?.entity?.estimateDetail?.estimateDetailList, ...commonFunc.repeatObject(orderInfo['write']['defaultData'], 1000 - result?.data?.entity?.estimateDetail?.estimateDetailList.length)])
 
             // gridManage.resetData(gridRef, detailList)
 
