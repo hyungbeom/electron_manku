@@ -210,6 +210,10 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     }
 
 
+    /**
+     * @description 등록 페이지 > 초기화 버튼
+     * 견적의뢰 > 견적의뢰 등록
+     */
     function clearAll() {
         commonManage.setInfo(infoRef, {...rfqInfo['defaultInfo'], ...adminParams}, userInfo['adminId']);
 
