@@ -57,7 +57,8 @@ function transformEstimateData(data: any) {
                 model: item.model,
                 quantity: item.quantity,
                 unit: item.unit,
-                net: item.unitPrice ?? null,
+                // net: item.unitPrice ?? null,
+                net: item.net ?? null,
                 modelIndex: index + 1
             });
         });
@@ -84,8 +85,9 @@ export default function NewEstimatePaper({gridRef, openEstimateModal}) {
             return false;
         }
 
-        const calcList = transformEstimateData(list);
-        const firstRow = list[0];
+        const selectList = list.sort((a, b) => b.estimateId - a.estimateId);
+        const calcList = transformEstimateData(selectList);
+        const firstRow = selectList[0];
 
         console.log(firstRow, 'firstRow:')
         const result = commonManage.splitDataWithSequenceNumber(calcList, 18, 28);
@@ -128,11 +130,8 @@ export default function NewEstimatePaper({gridRef, openEstimateModal}) {
         }
     }
     useEffect(() => {
-
         if (memberList.length) {
-
             const findMember = memberList.find(v => v.adminId === info?.managerAdminId);
-
             setInfo(v => {
                 return {
                     ...v,
@@ -140,7 +139,8 @@ export default function NewEstimatePaper({gridRef, openEstimateModal}) {
                     contactNumber: findMember['contactNumber'],
                     email: findMember['email'],
                     customerManagerName: v.managerName,
-                    customerManagerPhone: v.phoneNumber
+                    customerManagerPhone: v.phoneNumber,
+                    delivery: v.delivery?.includes('주') ? v.delivery : `${v.delivery} 주`
                 }
             });
             getRowGapSize();
@@ -206,7 +206,7 @@ export default function NewEstimatePaper({gridRef, openEstimateModal}) {
     function NumberInputForm({value, numb, objKey = 0}) {
 
         const [info, setInfo] = useState({net: value.net, quantity: value.quantity});
-
+        console.log(info, 'info')
         const inputRef = useRef<any>();
         const [toggle, setToggle] = useState(false);
 
@@ -272,7 +272,8 @@ export default function NewEstimatePaper({gridRef, openEstimateModal}) {
                          onClick={() => {
                              setToggle(true);
                          }}>
-                        <span>{!isNaN(info.net) ? '₩' : ''}</span>
+                        {/*<span>{!isNaN(info.net) ? '₩' : ''}</span>*/}
+                        <span>{Number(info.net) ? '₩' : ''}</span>
                         <span className={'netPrice'}>{amountFormat(info.net)}</span>
                     </div>
 
@@ -290,9 +291,10 @@ export default function NewEstimatePaper({gridRef, openEstimateModal}) {
                      onClick={() => {
                          setToggle(true);
                      }}>
-                    <span>{!isNaN(info.net * info.quantity) ? '₩' : ''}</span>
+                    {/*<span>{!isNaN(info.net * info.quantity) ? '₩' : ''}</span>*/}
+                    <span>{Number(info.net * info.quantity) ? '₩' : ''}</span>
                     <span
-                        className={'total'}>{!isNaN(info.net * info.quantity) ? amountFormat(info.net * info.quantity) : ''}</span>
+                        className={'total'}>{Number(info.net * info.quantity) ? amountFormat(info.net * info.quantity) : ''}</span>
                 </div>
 
             </td>
