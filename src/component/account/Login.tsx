@@ -64,8 +64,8 @@ export default function Login() {
             <div style={{textAlign: 'left'}}>
                 <Checkbox style={{color: 'white', fontSize : 12}}>아이디저장</Checkbox>
             </div>
-            <Button type={'primary'} style={{height: '100%', borderRadius: 5}} onClick={getLogin}>LOGIN</Button>
-            <div style={{textAlign: 'center',color: 'white'}}>or</div>
+            <Button type={'primary'} style={{height: '100%', borderRadius: 5, border : '1px solid white', fontSize : 14}} size={'large'} onClick={getLogin}>로그인</Button>
+            <div style={{textAlign: 'center',color: 'white', fontSize : 12}}>or</div>
         </> : <></>}
         <LoginButton/>
     </>

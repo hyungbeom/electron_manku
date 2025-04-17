@@ -45,7 +45,7 @@ function LoginButton() {
     };
 
     return <div style={{textAlign: 'center', cursor: 'pointer', width : '100%', backgroundColor : '#2f2f2f', borderRadius : 5, border : '1px solid white'}} onClick={handleLogin}>
-        <img width={'100%'} style={{ height : 40}}
+        <img width={'100%'} style={{ height : 38}}
             src={'https://learn.microsoft.com/ko-kr/entra/identity-platform/media/howto-add-branding-in-apps/ms-symbollockup_signin_dark.svg'}
             alt=""/>
     </div>

@@ -22,20 +22,6 @@ function SignUpButton() {
         }
     }, [query]);
 
-    const sendCodeToBackend = async (code) => {
-        try {
-            const response = await axios.post("/api/auth/callback", { code });
-
-
-            // 성공 시 사용자 페이지로 리디렉션
-            router.push("/dashboard");
-        } catch (error) {
-            console.error("Error sending code to backend:", error);
-            // 에러 페이지로 리디렉션
-            router.push("/error");
-        }
-    };
-
     // code_verifier 생성 함수
     function generateCodeVerifier() {
         const array = new Uint32Array(56 / 2);
@@ -73,9 +59,9 @@ function SignUpButton() {
     };
 
     return <div
-        style={{textAlign: 'center', cursor: 'pointer', width: '100%', backgroundColor: '#2f2f2f', borderRadius: 5}}
+        style={{textAlign: 'center', cursor: 'pointer', width: '100%', backgroundColor: '#2f2f2f', borderRadius: 5, border : '1px solid white'}}
         onClick={handleLogin}>
-        <img  width={'100%'} style={{ height : 40}}
+        <img  width={'100%'} style={{ height : 38}}
             src={'https://learn.microsoft.com/ko-kr/entra/identity-platform/media/howto-add-branding-in-apps/ms-symbollockup_signin_dark.svg'}
             alt=""/>
     </div>

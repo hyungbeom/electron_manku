@@ -8,7 +8,6 @@ import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import {getData} from "@/manage/function/api";
 import {getCookie, setCookies} from "@/manage/function/cookie";
-import {setCookie} from "nookies";
 import message from "antd/lib/message";
 
 export default function Home(props) {
@@ -17,8 +16,6 @@ export default function Home(props) {
     const router = useRouter();
 
     const [page, setPage] = useState('login');
-
-    const {query} = router;
 
     const pageChange = (e) => {
         setPage(e)
@@ -53,17 +50,24 @@ export default function Home(props) {
                 <source src="/login_back.mp4" type="video/mp4"/>
                 브라우저가 비디오 태그를 지원하지 않습니다.
             </video>
-            <div className={'container'} style={{paddingTop : 150}}>
-                <div style={{marginTop: 100, width: 330, margin: '0 auto', backgroundColor: 'rgba(0, 0, 0, 0.5)',  padding : 20, borderRadius : 10}}>
+            <div className={'container'} style={{paddingTop: 150}}>
+                <div style={{
+                    marginTop: 100,
+                    width: 330,
+                    margin: '0 auto',
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                    padding: 20,
+                    borderRadius: 10
+                }}>
 
                     <div style={{textAlign: 'center'}}>
                         <div><span
-                            style={{fontSize: 33, fontWeight: 500, color : 'white'}}>
+                            style={{fontSize: 33, fontWeight: 500, color: 'white'}}>
 
                     MANKU ERP</span></div>
 
 
-                        <div style={{fontSize: 14,  opacity: 0.8,color : 'white'}}>manku erp will take care of your
+                        <div style={{fontSize: 14, opacity: 0.8, color: 'white'}}>manku erp will take care of your
                             convenience
                         </div>
                     </div>
@@ -71,13 +75,13 @@ export default function Home(props) {
 
                     <div style={{
                         display: 'grid',
-                        gridTemplateRows: `repeat(${page === 'login' ? 5 : 10}, 40px)`,
+                        gridTemplateRows: `repeat(${page === 'login' ? 5 : 7}, 40px)`,
                         rowGap: 20,
                         textAlign: 'center',
                         paddingTop: 60
                     }}>
 
-                        <Tabs defaultActiveKey="login" centered={true} style={{color : 'white'}} items={[
+                        <Tabs defaultActiveKey="login" centered={true} style={{color: 'white'}} items={[
                             {
                                 key: 'login',
                                 label: 'LOGIN',
@@ -100,11 +104,12 @@ export default function Home(props) {
                         flexDirection: 'column',
                         justifyContent: 'flex-end',
                         textAlign: 'center',
-                        alignItems: 'center'
+                        alignItems: 'center',
+                        color: 'white'
                     }}>
                         <div style={{position: 'absolute', bottom: 30}}>
-                            <div style={{color: 'gray'}}>Manku ERP program <img src="/manku_logo.png" alt=""
-                                                                                width={30}/> Manku Trading
+                            <div style={{color: 'white'}}>Manku ERP program <img src="/manku_logo.png" alt=""
+                                                                                 width={30}/> Manku Trading
                             </div>
                             <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
                                 <svg viewBox="64 64 896 896" focusable="false" data-icon="copyright" width="1em"
@@ -169,9 +174,9 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
             console.error("Microsoft Login failed:", error);
             // 필요시 로그인 실패 처리를 할 수 있습니다.
         }
-    } else if (userInfo) {  // 조건을 좀 더 직관적으로 변경
+    } else if (userInfo) {
 
-        if (codeInfo >= 0) {  // 조건을 좀 더 직관적으로 변경
+        if (codeInfo >= 0) {
             return {
                 redirect: {
                     destination: '/main?first=true',
@@ -179,11 +184,9 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
                 },
             };
         }
-
         store.dispatch(setUserInfo(userInfo));
 
-    }else{
-
+    } else {
         return {
             props: {message: message},
         };
