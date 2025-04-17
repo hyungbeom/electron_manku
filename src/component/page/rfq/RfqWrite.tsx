@@ -164,7 +164,6 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
             }
         }
 
-
         if (!infoData['managerAdminId']) {
             setValidate(v => {
                 return {...v, managerAdminId: false}
@@ -227,6 +226,10 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     }
 
 
+    /**
+     * @description 등록 페이지 > 초기화 버튼
+     * 견적의뢰 > 견적의뢰 등록
+     */
     function clearAll() {
         setInfo(infoInit)
 

@@ -127,8 +127,8 @@ function OrderRead({getPropertyId, getCopyPage}: any) {
 
 
     return <Spin spinning={loading} tip={'발주서 조회중...'}>
-        <PanelSizeUtil groupRef={groupRef} storage={'order_read'}/>
         <ReceiveComponent searchInfo={searchInfo}/>
+        <PanelSizeUtil groupRef={groupRef} storage={'order_read'}/>
         <>
             <div style={{
                 display: 'grid',

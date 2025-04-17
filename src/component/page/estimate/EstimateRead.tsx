@@ -20,6 +20,7 @@ import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import EstimatePaper from "@/component/견적서/EstimatePaper";
 import Modal from "antd/lib/modal/Modal";
 import NewEstimatePaper from "@/component/견적서/NewEstimatePaper";
+import ReceiveComponent from "@/component/ReceiveComponent";
 
 
 function EstimateRead({getPropertyId, getCopyPage,}: any) {
@@ -49,10 +50,6 @@ function EstimateRead({getPropertyId, getCopyPage,}: any) {
             setLoading(false)
         })
     };
-
-    useEffect(() => {
-        // infoRef.current = info
-    }, [info]);
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('estimate_read');
@@ -140,8 +137,8 @@ function EstimateRead({getPropertyId, getCopyPage,}: any) {
     }
 
     return <Spin spinning={loading} tip={'견적서 조회중...'}>
+        <ReceiveComponent searchInfo={searchInfo}/>
         <PanelSizeUtil groupRef={groupRef} storage={'estimate_read'}/>
-
         {openEstimateModal ? <Modal
             onCancel={() => setOpenEstimateModal(false)}
             open={openEstimateModal}

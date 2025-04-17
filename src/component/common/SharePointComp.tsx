@@ -9,6 +9,7 @@ export function DriveUploadComp({
                                     setFileList,
                                     fileRef,
                                     infoRef = null,
+                                    uploadType = 0
                                 }) {
     const fileInputRef = useRef(null);
 
@@ -47,6 +48,8 @@ export function DriveUploadComp({
             setIsDragging(false);
             setDragCounter(0);
         };
+
+        if (uploadType !== 0)
 
         window.addEventListener("dragenter", handleDragEnter);
         window.addEventListener("dragleave", handleDragLeave);
@@ -346,7 +349,7 @@ export function DriveUploadComp({
                     <select ref={uploadTypeRef} onClick={e => {
                         e.preventDefault();
                         e.stopPropagation()
-                    }} name="languages" id="uploadType"
+                    }} name="languages" id="uploadType" value={uploadType}
                             style={{
                                 outline: 'none',
                                 border: '1px solid lightGray',

@@ -18,8 +18,6 @@ export default function SearchInfoModal({
                                             setInfo,
                                             open,
                                             setIsModalOpen,
-
-
                                             type = '',
                                             gridRef = null,
                                             compProps
@@ -97,11 +95,7 @@ export default function SearchInfoModal({
         const {clientX, clientY} = e.event;
         e.event.preventDefault();
 
-
-
         setPage({x: clientX, y: clientY})
-
-
         if (e.data.makerId)
             setWindowOpenKey({
                 key: 'makerId',
@@ -237,29 +231,51 @@ export default function SearchInfoModal({
 
                                  switch (openCheck) {
                                      case 'customerName' :
-                                         commonManage.setInfo(infoRef, {
-                                             phoneNumber: e.data.directTel,
-                                             customerName: e.data.customerName,
-                                             customerManagerEmail: e.data.email,
-                                             customerManagerName: e.data.managerName,
-                                             customerManagerFaxNumber: e.data.faxNumber,
-                                             faxNumber: e.data.faxNumber,
-                                             managerName: e.data.managerName,
-                                             customerManagerPhone: e.data.directTel,
-                                             customerManagerPhoneNumber: e.data.directTel,
-                                             customerCode: e.data.customerCode,
-                                             paymentTerms: e.data.paymentMethod ? e.data.paymentMethod : '발주시 50% / 납품시 50%',
+                                         // commonManage.setInfo(infoRef, {
+                                         //     phoneNumber: e.data.directTel,
+                                         //     customerName: e.data.customerName,
+                                         //     customerManagerEmail: e.data.email,
+                                         //     customerManagerName: e.data.managerName,
+                                         //     customerManagerFaxNumber: e.data.faxNumber,
+                                         //     faxNumber: e.data.faxNumber,
+                                         //     managerName: e.data.managerName,
+                                         //     customerManagerPhone: e.data.directTel,
+                                         //     customerManagerPhoneNumber: e.data.directTel,
+                                         //     customerCode: e.data.customerCode,
+                                         //     paymentTerms: e.data.paymentMethod ? e.data.paymentMethod : '발주시 50% / 납품시 50%',
+                                         // })
+                                         setInfo(v => {
+                                             return {
+                                                 ...v,
+                                                 customerName: e.data.customerName,
+                                                 managerName: e.data.managerName,
+                                                 phoneNumber: e.data.directTel,
+                                                 faxNumber: e.data.faxNumber,
+                                                 customerManagerEmail: e.data.email,
+                                                 customerManagerName: e.data.managerName,
+                                                 customerManagerFaxNumber: e.data.faxNumber,
+                                                 customerManagerPhone: e.data.directTel,
+                                                 customerManagerPhoneNumber: e.data.directTel,
+                                                 customerCode: e.data.customerCode,
+                                                 paymentTerms: e.data.paymentMethod ? e.data.paymentMethod : '발주시 50% / 납품시 50%',
+                                             }
                                          })
                                          break;
                                      case 'maker' :
-                                         commonManage.setInfo(infoRef, {
-                                             maker: e.data.makerName,
-                                             item: e.data.item,
-                                             instructions: e.data.instructions,
+                                         // commonManage.setInfo(infoRef, {
+                                         //     maker: e.data.makerName,
+                                         //     item: e.data.item,
+                                         //     instructions: e.data.instructions,
+                                         // })
+                                         setInfo(v => {
+                                             return {
+                                                 maker: e.data.makerName,
+                                                 item: e.data.item,
+                                                 instructions: e.data.instructions,
+                                             }
                                          })
                                          break;
                                      case 'orderList' :
-
                                          setInfo(v => {
                                              return {
                                                  ...v, ...e.data,
@@ -284,25 +300,34 @@ export default function SearchInfoModal({
                                                  type: type
                                              }
                                          }).then(data => {
-
                                              // agencyTel
-                                             commonManage.setInfo(infoRef, {
-                                                 agencyManagerId: commonManage.checkValue(e.data.agencyId),
-                                                 agencyCode: commonManage.checkValue(e.data.agencyCode),
-                                                 agencyName: commonManage.checkValue(e.data.agencyName),
-                                                 agencyTel: commonManage.checkValue(e.data.phoneNumber),
-                                                 agencyManagerName: commonManage.checkValue(e?.data?.managerName),
-                                                 agencyManagerEmail: commonManage.checkValue(e.data.email),
-                                                 agencyManagerPhoneNumber: commonManage.checkValue(e.data.phoneNumber)
+                                             // commonManage.setInfo(infoRef, {
+                                             //     agencyManagerId: commonManage.checkValue(e.data.agencyId),
+                                             //     agencyCode: commonManage.checkValue(e.data.agencyCode),
+                                             //     agencyName: commonManage.checkValue(e.data.agencyName),
+                                             //     agencyTel: commonManage.checkValue(e.data.phoneNumber),
+                                             //     agencyManagerName: commonManage.checkValue(e?.data?.managerName),
+                                             //     agencyManagerEmail: commonManage.checkValue(e.data.email),
+                                             //     agencyManagerPhoneNumber: commonManage.checkValue(e.data.phoneNumber)
+                                             // })
+                                             setInfo(v => {
+                                                 return {
+                                                     ...v,
+                                                     agencyManagerId: commonManage.checkValue(e.data.agencyId),
+                                                     agencyCode: commonManage.checkValue(e.data.agencyCode),
+                                                     agencyName: commonManage.checkValue(e.data.agencyName),
+                                                     agencyTel: commonManage.checkValue(e.data.phoneNumber),
+                                                     agencyManagerName: commonManage.checkValue(e?.data?.managerName),
+                                                     agencyManagerEmail: commonManage.checkValue(e.data.email),
+                                                     agencyManagerPhoneNumber: commonManage.checkValue(e.data.phoneNumber)
+                                                 }
                                              })
-                                             console.log('@@@@@@@@@@@@@@@')
-                                             const dom = infoRef.current.querySelector('#agencyCode');
-                                             dom.style.borderColor = ''
+                                             // const dom = infoRef.current.querySelector('#agencyCode');
+                                             // dom.style.borderColor = ''
                                              // commonManage.changeCurr(e.data.agencyCode)
                                              // gridManage.updateAllFields(gridRef, 'currency', commonManage.changeCurr(e.data.agencyCode))
 
                                          })
-
                                          break;
                                  }
                                  setIsModalOpen(ModalInitList);
