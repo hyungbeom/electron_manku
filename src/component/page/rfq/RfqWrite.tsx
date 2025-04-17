@@ -164,7 +164,6 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
             }
         }
 
-
         if (!infoData['managerAdminId']) {
             setValidate(v => {
                 return {...v, managerAdminId: false}

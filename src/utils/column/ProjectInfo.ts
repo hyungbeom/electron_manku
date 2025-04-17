@@ -175,7 +175,7 @@ export const rfqInfo = {
         },
         excelExpert: (v, i) => {
             let bowl = {}
-            Object.keys(v).forEach(src=>{
+            Object.keys(v).forEach(src => {
                 bowl[src] = (!v[src] || v[src] === 'null') ? '' : v[src]
             });
 
@@ -294,10 +294,18 @@ export const estimateInfo = {
             "unitPrice": '=SUM(G1:G1000)',           // 단가
             "total": '=SUM(H1:H1000)',           // 단가
             "marginRate": ''                 // 매입단가
-
         },
-
-        type: 'write'
+        type: 'write',
+        validate: {
+            managerAdminId: true,
+            documentNumberFull: true,
+            agencyCode: true
+        },
+        validationList: [
+            {key: 'managerAdminId', message: '담당자가 누락되었습니다.'},
+            {key: 'documentNumberFull', message: 'Inquiry No. 가 누락되었습니다.'},
+            {key: 'agencyCode', message: '매입처 코드가 누락되었습니다.'},
+        ]
     },
     defaultInfo: {
         createdBy: '',
@@ -332,7 +340,7 @@ export const estimateInfo = {
         "managerFaxNumber": "",       // 팩스번호
         "maker": "",      // Maker
         "item": "",      // Item
-        "delivery": null,    // 납기
+        "delivery": "",    // 납기
         "instructions": "",          // 지시사항
         "remarks": "",          // 비고란
         "currencyUnit": "",          // 비고란
@@ -394,9 +402,9 @@ export const orderInfo = {
             managerAdminName: '',
             orderDetailId: '',
             estimateDetailId: '',
-            customerManagerName : '',
-            customerManagerEmail : '',
-            customerManagerFaxNumber : ''
+            customerManagerName: '',
+            customerManagerEmail: '',
+            customerManagerFaxNumber: ''
         }, mapping: {
             "model": "Model",           // Model
             "quantity": '주문',              // 수량
@@ -430,7 +438,13 @@ export const orderInfo = {
             "unreceivedQuantity": '=SUM(K1:K1000)',
             "hscode": '',
         },
-        type: 'write'
+        type: 'write',
+        validate: {
+            documentNumberFull: true,
+        },
+        validationList: [
+            {key: 'documentNumberFull', message: 'Inquiry No. 가 누락되었습니다.'},
+        ]
     },
     defaultInfo: {
         attnTo: '',
@@ -450,7 +464,7 @@ export const orderInfo = {
         "customerName": "",          // 고객사명
         "managerName": "",          // 고객사명
         agencyManagerName: '',
-        "customerId": 0,          // 고객사명
+        "customerId": '',          // 고객사명
         "estimateManager": "",            // 견적서담당자
         "managerId": "",                 // Responsibility
         "managerPhoneNumber": "",  // Tel

@@ -2,15 +2,10 @@ import {getData} from "@/manage/function/api";
 import message from "antd/lib/message";
 import {modalList} from "@/utils/initialList";
 import moment from "moment/moment";
-import {checkInquiryNo} from "@/utils/api/mainApi";
-import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
-import {inputForm} from "@/utils/commonForm";
+import {commonFunc, commonManage} from "@/utils/commonManage";
 import {orderInfo} from "@/utils/column/ProjectInfo";
 
-
 export const findCodeInfo = async (event, setInfo, openModal) => {
-
-
     getData.post(modalList[event.target.id]?.url, {
         "searchType": "1",
         "searchText": event.target.value,       // 대리점코드 or 대리점 상호명
@@ -25,7 +20,6 @@ export const findCodeInfo = async (event, setInfo, openModal) => {
         const size = data?.length;
 
         if (size > 1) {
-
             return openModal(event.target.id);
         } else if (size === 1) {
             switch (event.target.id) {
@@ -47,7 +41,6 @@ export const findCodeInfo = async (event, setInfo, openModal) => {
                         return {...v, ...result}
                     })
                 }
-
                     break;
                 case 'customerName' : {
                     const {customerName, managerName, directTel, faxNumber, email, paymentMethod} = data[0];
@@ -61,13 +54,11 @@ export const findCodeInfo = async (event, setInfo, openModal) => {
                         customerManagerPhone: directTel,
                         paymentTerms: paymentMethod ? paymentMethod : '발주시 50% / 납품시 50%',
                     }
-
                     setInfo(v => {
                         return {...v, ...result}
                     })
                 }
                     break;
-
                 case 'maker' : {
                     const {makerName, item, instructions} = data[0];
 
@@ -86,15 +77,11 @@ export const findCodeInfo = async (event, setInfo, openModal) => {
         } else {
             message.warn('조회된 데이터가 없습니다.')
         }
-
-
     }, err => message.error(err))
 };
 
 
 export const findDocumentInfo = async (event, setInfo) => {
-
-
     const result = await getData.post('order/getOrderList', {
         "searchStartDate": "",          // 발주일자 검색 시작일
         "searchEndDate": "",            // 발주일자 검색 종료일

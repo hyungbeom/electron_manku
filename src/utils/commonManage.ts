@@ -549,6 +549,7 @@ commonManage.onChange = function (e, setInfo) {
     }
     let bowl = {}
     bowl[e.target.id] = e.target.value;
+
     setInfo(v => {
         let addDate = {}
         if (e.target.id === 'searchDate') {
@@ -569,6 +570,25 @@ commonManage.onChange = function (e, setInfo) {
         }
         return {...v, ...bowl, ...addDate}
     })
+}
+
+commonManage.checkValidate = function (info, validationList, setValidate) {
+    for (const { key, message : msg, customFunc} of validationList) {
+        const isValid = customFunc ? customFunc(info[key]) : !!info[key];
+        if (!isValid) {
+            setValidate(v => ({ ...v, [key]: false }));
+            message?.warn?.(msg);
+            return false;
+        }
+    }
+    return true;
+}
+
+commonManage.resetValidate = function (key, value, setValidate ) {
+    const isValid = value !== undefined && value !== null && value !== '';
+    if (isValid) {
+        setValidate(v => ({ ...v, [key] : true}))
+    }
 }
 
 commonManage.openModal = function (e, setIsModalOpen) {

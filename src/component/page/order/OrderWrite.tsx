@@ -36,23 +36,20 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
     const tableRef = useRef(null);
-    const infoRef = useRef<any>(null)
+    const infoRef = useRef<any>(null);
+    const fileRef = useRef(null);
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('order_write');
-        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 0]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 5]; // 기본값 [50, 50, 50]
     };
-
-
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
-    const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false, event3: false});
     const [memberList, setMemberList] = useState([]);
-    const [originFileList, setOriginFileList] = useState([]);
+
     useEffect(() => {
         getMemberList();
     }, []);
-
 
     async function getMemberList() {
         // @ts-ignore
@@ -66,28 +63,22 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
         })
     }
 
-
     const options = memberList?.map((item) => ({
         ...item,
         value: item.adminId,
         label: item.name,
     }));
-    const fileRef = useRef(null);
-    const gridRef = useRef(null);
-    const router = useRouter();
-
-
-    const copyInit = _.cloneDeep(orderInfo['defaultInfo'])
-
-    const userInfo = useAppSelector((state) => state.user);
 
     const [mini, setMini] = useState(true);
-    const [validate, setValidate] = useState({documentNumberFull: true});
+    const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false, event3: false});
     const [fileList, setFileList] = useState([]);
+    const [originFileList, setOriginFileList] = useState([]);
     const [tableData, setTableData] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [routerId, setRouterId] = useState(null);
 
+    const router = useRouter();
+    const [loading, setLoading] = useState(false);
+
+    const userInfo = useAppSelector((state) => state.user);
     const adminParams = {
         managerAdminId: userInfo['adminId'],
         managerAdminName: userInfo['name'],
@@ -100,47 +91,29 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
         createdId: 0,
         customerId: 0
     }
-    const infoInit = {
-        ...copyInit,
-        ...adminParams,
-        writtenDate: moment().format('YYYY-MM-DD')
+    const getOrderInit = () => {
+        const copyInit = _.cloneDeep(orderInfo['defaultInfo']);
+        return {
+            ...copyInit,
+            ...adminParams
+        }
     }
-
-    const [info, setInfo] = useState<any>(infoInit)
-
+    const [info, setInfo] = useState<any>(getOrderInit())
+    const [validate, setValidate] = useState(orderInfo['write']['validate']);
 
     useEffect(() => {
         if (!isEmptyObj(copyPageInfo)) {
             // copyPageInfo 가 없을시
-            setInfo(infoInit);
+            setInfo(getOrderInit());
             setTableData(commonFunc.repeatObject(orderInfo['write']['defaultData'], 1000))
         } else {
             // copyPageInfo 가 있을시(==>보통 수정페이지에서 복제시)
             // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting
+            console.log(copyPageInfo)
             setInfo({...copyPageInfo, ...adminParams, writtenDate: moment().format('YYYY-MM-DD')});
             setTableData(copyPageInfo[listType]);
-            setRouterId(null)
         }
-    }, [copyPageInfo]);
-
-
-    useEffect(() => {
-        commonManage.setInfo(infoRef, info, userInfo['adminId']);
-    }, [info, memberList]);
-
-
-    useEventListener('keydown', (e: any) => {
-        if (e.ctrlKey && e.key === "s") {
-            e.preventDefault();
-
-            const model = layoutRef.current.props.model;
-            const activeTab = model.getActiveTabset()?.getSelectedNode();
-            if (activeTab?.renderedName === '발주서 등록') {
-                saveFunc()
-            }
-        }
-    }, typeof window !== 'undefined' ? document : null)
-
+    }, [copyPageInfo?._meta?.updateKey]);
 
     async function handleKeyPress(e) {
         if (e.key === 'Enter') {
@@ -211,7 +184,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                     break;
                 case 'agencyCode' :
                 case 'customerName' :
-                    await findCodeInfo(e, setInfo, openModal, infoRef)
+                    // await findCodeInfo(e, setInfo, openModal, infoRef)
                     break;
             }
         }
@@ -226,18 +199,33 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
         commonManage.onChange(e, setInfo)
     }
 
+    useEventListener('keydown', (e: any) => {
+        if (e.ctrlKey && e.key === "s") {
+            e.preventDefault();
 
+            const model = layoutRef.current.props.model;
+            const activeTab = model.getActiveTabset()?.getSelectedNode();
+            if (activeTab?.renderedName === '발주서 등록') {
+                saveFunc()
+            }
+        }
+    }, typeof window !== 'undefined' ? document : null)
+
+    /**
+     * @description 등록 페이지 > 저장 버튼
+     * 발주서 > 발주서 등록
+     */
     async function saveFunc() {
 
-        let infoData = commonManage.getInfo(infoRef, infoInit);
-        const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
-        infoData['managerAdminName'] = findMember['name'];
+        // let infoData = commonManage.getInfo(infoRef, infoInit);
+        // const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
+        // infoData['managerAdminName'] = findMember['name'];
 
-        if (!infoData['documentNumberFull']) {
+        // if (!infoData['documentNumberFull']) {
             const dom = infoRef.current.querySelector('#documentNumberFull');
             dom.style.borderColor = 'red'
             return message.warn('Inquiry No. 정보가 누락되었습니다.')
-        }
+        // }
         const tableList = tableRef.current?.getSourceData();
 
         const filterTableList = commonManage.filterEmptyObjects(tableList, ['model', 'item', 'maker'])
@@ -250,7 +238,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
         }
         setLoading(true)
         const formData: any = new FormData();
-        commonManage.setInfoFormData(infoData, formData, listType, filterTableList)
+        // commonManage.setInfoFormData(infoData, formData, listType, filterTableList)
         commonManage.getUploadList(fileRef, formData);
 
         formData.delete('createdDate')
@@ -274,7 +262,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
             }).then(v => {
                 const list = fileManage.getFormatFiles(v);
                 setFileList(list);
-                setRouterId(data?.orderId)
+                // setRouterId(data?.orderId)
                 notificationAlert('success', '💾발주서 등록완료',
                     <>
                         <div>Inquiry No. : {dom.value}</div>
@@ -303,6 +291,10 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
         }
     }
 
+    /**
+     * @description 등록 페이지 > 초기화 버튼
+     * 발주서 > 발주서 등록
+     */
     function clearAll() {
         setLoading(true)
         commonManage.setInfo(infoRef, {...orderInfo['defaultInfo'], ...adminParams}, userInfo['adminId']);
@@ -334,23 +326,27 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
     }
 
     function checkId(e) {
-        setRouterId(null)
+        // setRouterId(null)
     }
 
     function moveUpdate() {
-        if (routerId) {
-            getPropertyId('order_update', routerId)
-        }
+        // if (routerId) {
+        //     getPropertyId('order_update', routerId)
+        // }
     }
 
 
+    /**
+     * @description 등록 페이지 > 결제 조건 토글 버튼
+     * 발주서 > 발주서 등록
+     */
     const [check, setCheck] = useState(false)
+
     const switchChange = (checked: boolean) => {
-        const dom = infoRef.current.querySelector('#paymentTerms');
-
-        dom.value = !checked ? '발주시 50% / 납품시 50%' : 'By in advance T/T'
-
+        // const dom = infoRef.current.querySelector('#paymentTerms');
+        // dom.value = !checked ? '발주시 50% / 납품시 50%' : 'By in advance T/T'
         setCheck(checked)
+        info.paymentTerms = !checked ? '발주시 50% / 납품시 50%' : 'By in advance T/T'
     };
 
     return <Spin spinning={loading} tip={'LOADING'}>
@@ -541,41 +537,40 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                 </div>}>
                                     <div style={{paddingBottom: 10}}>
                                         <SelectForm id={'paymentTerms'}
-                                                    list={!check ? ['발주시 50% / 납품시 50%', '현금결제', '선수금', '정기결제']
-                                                        :
-                                                        ['T/T', 'Credit Card', 'Order 30% Before Shipping 70%', 'Order 50% Before Shipping 50%']}
-                                                    title={'결제조건'}/>
+                                                    list={!check ?
+                                                        ['발주시 50% / 납품시 50%', '현금결제', '선수금', '정기결제'] :
+                                                        ['T/T', 'Credit Card', 'Order 30% Before Shipping 70%', 'Order 50% Before Shipping 50%']
+                                                    }
+                                                    title={'결제조건'}
+                                                    onChange={onChange}
+                                                    data={info}
+                                                    key={info.paymentTerms}
+                                        />
                                     </div>
-                                    {inputForm({
-                                        title: '납기',
-                                        id: 'deliveryTerms'
-                                    })}
-                                    {inputForm({title: 'Maker', id: 'maker'})}
-                                    {inputForm({title: 'Item', id: 'item'})}
-                                    {datePickerForm({title: '예상 입고일', id: 'delivery'})}
+                                    {inputForm({title: '납기', id: 'deliveryTerms', onChange: onChange, data: info})}
+                                    {inputForm({title: 'Maker', id: 'maker', onChange: onChange, data: info})}
+                                    {inputForm({title: 'Item', id: 'item', onChange: onChange, data: info})}
+                                    {datePickerForm({title: '예상 입고일', id: 'delivery', onChange: onChange, data: info})}
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
                             <Panel defaultSize={sizes[4]} minSize={5}>
                                 <BoxCard title={'ETC'}>
-                                    {inputForm({title: '견적서담당자', id: 'estimateManager'})}
-                                    {textAreaForm({title: '비고란', rows: 9, id: 'remarks'})}
+                                    {inputForm({title: '견적서담당자', id: 'estimateManager', onChange: onChange, data: info})}
+                                    {textAreaForm({title: '비고란', rows: 9, id: 'remarks', onChange: onChange, data: info})}
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
                             <Panel defaultSize={sizes[5]} minSize={5}>
                                 <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
-
                                     <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                     infoRef={infoRef}/>
-
+                                                     infoRef={infoRef} uploadType={info.uploadType}/>
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
-                            <Panel defaultSize={0} minSize={0}>
-                            </Panel>
+                            <Panel defaultSize={6} minSize={0}> </Panel>
                         </PanelGroup>
-                    </div> : null}
+                    </div> : <></>}
                 </MainCard>
                 <Table data={tableData} column={orderInfo['write']} funcButtons={['print']} ref={tableRef}
                        type={'order_write_column'}/>
@@ -583,7 +578,6 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
         </>
     </Spin>
 }
-
 
 export default memo(OrderWrite, (prevProps, nextProps) => {
     return _.isEqual(prevProps, nextProps);

@@ -291,6 +291,10 @@ export const inputForm = ({
         }
     }
 
+    if (id === 'documentNumberFull') {
+        console.log(validate)
+    }
+
     return <div style={{fontSize: fontSize, paddingBottom: 10}}>
         <div style={{paddingBottom: fontSize / 2, fontWeight: 700}}>{title}</div>
         {/*@ts-ignored*/}
@@ -418,37 +422,41 @@ export const inputNumberForm = ({
     </div>
 }
 
-export const SelectForm = ({id, list, title}: any) => {
-
-    const inputRef = useRef<any>(null)
-    const ref = useRef<any>(null)
-    const listRef = useRef<any>(null)
+export const SelectForm = ({ id, list, title, onChange, data }) => {
+    const inputRef = useRef<HTMLInputElement>(null);
+    const ref = useRef<HTMLDivElement>(null);
+    const listRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        const input = ref.current.getElementsByClassName('customInput')[0];
+        const input = ref.current?.getElementsByClassName('customInput')[0] as HTMLInputElement;
+        if (!input || !listRef.current || !ref.current) return;
 
         const handleInputFocus = () => {
-            listRef.current.style.display = 'block';
+            listRef.current!.style.display = 'block';
         };
 
         const handleOptionClick = (e: any) => {
             if (e.target.tagName === 'DIV') {
-                input.value = e.target.textContent;
-                listRef.current.style.display = 'none';
+                const syntheticEvent = {
+                    target: {
+                        id,
+                        value: e.target.textContent,
+                    },
+                };
+                onChange(syntheticEvent);
+                listRef.current!.style.display = 'none';
             }
         };
 
         const handleFocusIn = (e: any) => {
-            if (!ref.current.contains(e.target)) {
-                listRef.current.style.display = 'none';
+            if (!ref.current!.contains(e.target)) {
+                listRef.current!.style.display = 'none';
             }
         };
 
         const handleClickOutside = (e: any) => {
-            if (!ref?.current?.contains(e.target)) {
-                if (listRef.current) {
-                    listRef.current.style.display = 'none';
-                }
+            if (!ref.current!.contains(e.target)) {
+                listRef.current!.style.display = 'none';
             }
         };
 
@@ -463,23 +471,41 @@ export const SelectForm = ({id, list, title}: any) => {
             document.removeEventListener('focusin', handleFocusIn);
             document.removeEventListener('click', handleClickOutside);
         };
+    }, [id, onChange]);
 
-    }, []);
-
-    return <div ref={ref} className="dropdown-wrapper" id="dropdownWrapper" style={{fontSize: 12, width: '100%'}}>
-        <div style={{fontWeight: 700, paddingBottom: 5}}>{title}</div>
-        <input ref={inputRef} type="text" id={id} className="customInput" name={'customInput'}
-               placeholder="선택 또는 입력" autoComplete="off" style={{height: 23}}/>
-        <div className="dropdown-list" ref={listRef} id={`${id}s`}>
-            {list.map(v => <div onPointerDown={(e:any)=>{
-                if (e.target.tagName === 'DIV') {
-                    inputRef.current.value = e.target.textContent;
-                    listRef.current.style.display = 'none';
-                }
-            }}>{v}</div>)}
+    return (
+        <div ref={ref} className="dropdown-wrapper" style={{ fontSize: 12, width: '100%' }}>
+            <div style={{ fontWeight: 700, paddingBottom: 5 }}>{title}</div>
+            <input
+                ref={inputRef}
+                type="text"
+                id={id}
+                className="customInput"
+                name="customInput"
+                value={data?.[id] ?? ''}
+                onChange={(e) => onChange({ target: { id: id, value: e.target.value } })}
+                placeholder="선택 또는 입력"
+                autoComplete="off"
+                style={{ height: 23 }}
+            />
+            <div className="dropdown-list" ref={listRef}>
+                {list.map((v) => (
+                    <div
+                        key={v}
+                        onPointerDown={(e) => {
+                            if ((e.target as HTMLElement).tagName === 'DIV') {
+                                onChange({ target: { id, value: v } });
+                                listRef.current!.style.display = 'none';
+                            }
+                        }}
+                    >
+                        {v}
+                    </div>
+                ))}
+            </div>
         </div>
-    </div>
-}
+    );
+};
 
 export const radioForm = ({title, id, disabled = false, data, onChange, list}) => {
     let bowl = data;
