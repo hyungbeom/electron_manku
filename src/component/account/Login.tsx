@@ -49,7 +49,7 @@ export default function Login() {
         }
     }
 
-    const [adminLogin, setAdminLogin] = useState(false);
+    const [adminLogin, setAdminLogin] = useState(true);
 
     return <>
         <Button style={{borderRadius : 5}} onClick={()=>{
@@ -62,10 +62,10 @@ export default function Login() {
                       style={{borderRadius: 5}}
                       placeholder={'input your password'}/>
             <div style={{textAlign: 'left'}}>
-                <Checkbox style={{color: 'gray'}}>아이디저장</Checkbox>
+                <Checkbox style={{color: 'white', fontSize : 12}}>아이디저장</Checkbox>
             </div>
             <Button type={'primary'} style={{height: '100%', borderRadius: 5}} onClick={getLogin}>LOGIN</Button>
-            <div style={{textAlign: 'center'}}>or</div>
+            <div style={{textAlign: 'center',color: 'white'}}>or</div>
         </> : <></>}
         <LoginButton/>
     </>
