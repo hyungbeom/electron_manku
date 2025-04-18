@@ -50,7 +50,7 @@ function RqfUpdate({
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('rfq_write');
-        return savedSizes ? JSON.parse(savedSizes) : [20, 25, 25, 25, 25, 5]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 5]; // 기본값 [50, 50, 50]
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
@@ -115,7 +115,8 @@ function RqfUpdate({
                     ...estimateRequestDetail,
                     uploadType: 1,
                     managerAdminId: estimateRequestDetail['managerAdminId'] ? estimateRequestDetail['managerAdminId'] : '',
-                    managerAdminName: estimateRequestDetail['managerAdminName'] ? estimateRequestDetail['managerAdminName'] : ''
+                    managerAdminName: estimateRequestDetail['managerAdminName'] ? estimateRequestDetail['managerAdminName'] : '',
+                    createdBy: userInfo['name']
                 })
                 //
                 setFileList(fileManage.getFormatFiles(attachmentFileList));
@@ -269,9 +270,11 @@ function RqfUpdate({
      * 견적의뢰 > 견적의뢰 수정
      */
     function deleteFunc() {
+        setLoading(true)
         getData.post('estimate/deleteEstimateRequest', {estimateRequestId: updateKey['rfq_update']}).then(v => {
             const {code, message} = v.data;
             if (code === 1) {
+                window.postMessage('delete', window.location.origin);
                 notificationAlert('success', '🗑️견적의뢰 삭제완료',
                     <>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
@@ -284,12 +287,14 @@ function RqfUpdate({
                 getCopyPage('rfq_read', {})
                 const targetNode = model.getRoot().getChildren()[0]?.getChildren()
                     .find((node: any) => node.getType() === "tab" && node.getComponent() === 'rfq_update');
-
                 if (targetNode) {
                     model.doAction(Actions.deleteTab(targetNode.getId())); // ✅ 기존 로직 유지
                 }
+            } else {
+                message.error(v?.data?.message)
             }
-        })
+            setLoading(true)
+        }, err => setLoading(false))
     }
 
     /**
@@ -315,6 +320,7 @@ function RqfUpdate({
      * 견적의뢰 > 견적의뢰 수정
      */
     function copyPage() {
+        const copyInfo = _.cloneDeep(info);
 
         const totalList = tableRef.current.getSourceData();
         totalList.pop();
@@ -326,27 +332,9 @@ function RqfUpdate({
                 currencyUnit : v.currencyUnit,
             }
         })
-
-        const result = Object.keys(rfqInfo['defaultInfo']).map(v => `#${v}`)
-        const test = `${result.join(',')}`;
-        const elements = infoRef.current.querySelectorAll(test);
-
-        let copyInfo = {}
-        for (let element of elements) {
-            copyInfo[element.id] = element.value
-        }
-
-        const dom = infoRef.current.querySelector('#managerAdminId');
-
-        copyInfo['managerAdminId'] = parseInt(dom.value);
-        const findMember = memberList.find(v => v.adminId === parseInt(dom.value));
-
-        copyInfo['managerAdminName'] = findMember['name'];
-
-
         copyInfo[listType] = [...list, ...commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000 - list.length)];
 
-        getCopyPage('rfq_write', copyInfo)
+        getCopyPage('rfq_write', { ...copyInfo, _meta: {updateKey: Date.now()}})
     }
 
     /**

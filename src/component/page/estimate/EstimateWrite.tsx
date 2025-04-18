@@ -116,6 +116,7 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                 documentNumberFull: ''
             });
             setTableData(copyPageInfo[listType]);
+            setValidate(estimateInfo['write']['validate']);
         }
     }, [copyPageInfo?._meta?.updateKey]);
 
@@ -177,6 +178,7 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                         shippingTerms: '귀사도착도',
                                         createdBy: adminParams.createdBy,
                                         writtenDate: moment().format('YYYY-MM-DD'),
+                                        uploadType: 3
                                     })
                                     // 만쿠 견적서 No. 가져오면 유효성 초기화
                                     if(src.data.entity.newDocumentNumberFull) setValidate(v => {return {...v, documentNumberFull: true}});

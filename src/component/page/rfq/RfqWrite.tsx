@@ -90,15 +90,20 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
 
     useEffect(() => {
         if (!isEmptyObj(copyPageInfo)) {
+            // copyPageInfo 가 없을시
             setInfo(getRfqInit())
             setTableData(commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000))
         } else {
+            // copyPageInfo 가 있을시(==>보통 수정페이지에서 복제시)
+            // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting
             setInfo({
-                ...copyPageInfo, ...adminParams,
+                ...copyPageInfo,
+                ...adminParams,
                 documentNumberFull: '',
                 writtenDate: moment().format('YYYY-MM-DD')
             });
             setTableData(copyPageInfo[listType]);
+            setValidate(rfqInfo['write']['validate']);
         }
     }, [copyPageInfo?._meta?.updateKey]);
 
@@ -176,7 +181,7 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
             if (code === 1) {
                 const {documentNumberFull, estimateRequestId} = entity;
                 window.postMessage('write', window.location.origin);
-                notificationAlert('success', '💾견적의뢰 등록완료',
+                notificationAlert('success', '💾 견적의뢰 등록완료',
                     <>
                         <div>의뢰자료 No. : {documentNumberFull}</div>
                         <div>등록일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
@@ -443,8 +448,7 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>
-                                <Panel defaultSize={sizes[5]} minSize={0}>
-                                </Panel>
+                                <Panel defaultSize={sizes[5]} minSize={0}></Panel>
                             </PanelGroup>
                         </div> : <></>}
                 </MainCard>

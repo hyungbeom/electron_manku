@@ -107,6 +107,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
             setInfo({...copyPageInfo, ...adminParams, writtenDate: moment().format('YYYY-MM-DD')});
             setTableData(copyPageInfo[listType]);
             if(!copyPageInfo?.agencyCode?.toUpperCase().startsWith('K')) setCheck(true);
+            setValidate(orderInfo['write']['validate']);
         }
     }, [copyPageInfo?._meta?.updateKey]);
 
