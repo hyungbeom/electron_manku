@@ -288,6 +288,7 @@ function EstimateUpdate({
                 setFileList(list)
                 setOriginFileList(list);
 
+                window.postMessage('update', window.location.origin);
                 notificationAlert('success', '💾 견적서 수정완료',
                     <>
                         <div>Inquiry No. : {info.documentNumberFull}</div>
@@ -517,7 +518,7 @@ function EstimateUpdate({
                                 <Panel defaultSize={sizes[0]} minSize={5}>
                                     <BoxCard title={'매입처 정보'}>
                                         {inputForm({
-                                            title: '매입처코드',
+                                            title: '매입처 코드',
                                             id: 'agencyCode',
                                             suffix: <span style={{cursor: 'pointer'}} onClick={
                                                 (e) => {

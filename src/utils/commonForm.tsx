@@ -291,10 +291,6 @@ export const inputForm = ({
         }
     }
 
-    if (id === 'documentNumberFull') {
-        console.log(validate)
-    }
-
     return <div style={{fontSize: fontSize, paddingBottom: 10}}>
         <div style={{paddingBottom: fontSize / 2, fontWeight: 700}}>{title}</div>
         {/*@ts-ignored*/}

@@ -162,6 +162,7 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
             const dom = infoRef.current.querySelector('#documentNumberFull');
 
             if (v.code === 1) {
+                window.postMessage('update', window.location.origin);
                 notificationAlert('success', '💾발주서 수정완료',
                     <>
                         <div>Inquiry No. : {dom.value}</div>
@@ -258,7 +259,7 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
             switch (e.target.id) {
                 case 'agencyCode' :
                 case 'customerName' :
-                    await findCodeInfo(e, setInfo, openModal, infoRef)
+                    await findCodeInfo(e, setInfo, openModal)
                     break;
             }
         }
@@ -547,8 +548,8 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
                             <Panel defaultSize={sizes[2]} minSize={5}>
                                 <BoxCard title={'세부사항'}>
                                     <div style={{paddingBottom: 10}}>
-                                        <SelectForm id={'paymentTerms'}
-                                                    list={['발주시 50% / 납품시 50%', '현금결제', '선수금', '정기결제']} title={'결제조건'}/>
+                                        {/*<SelectForm id={'paymentTerms'}*/}
+                                        {/*            list={['발주시 50% / 납품시 50%', '현금결제', '선수금', '정기결제']} title={'결제조건'}/>*/}
                                     </div>
                                     {inputForm({
                                         title: '납기',

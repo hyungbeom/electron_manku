@@ -59,6 +59,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
             "page": 1,
             "limit": -1
         }).then(v => {
+            console.log(v?.data?.entity?.adminList)
             setMemberList(v?.data?.entity?.adminList)
         })
     }
@@ -116,13 +117,20 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
     }, [copyPageInfo?._meta?.updateKey]);
 
     async function handleKeyPress(e) {
+        console.log(e.key)
         if (e.key === 'Enter') {
             switch (e.target.id) {
+                case 'agencyCode' :
+                case 'customerName' :
+                    // await findCodeInfo(e, setInfo, openModal, infoRef)
+                    break;
                 case 'ourPoNo' :
+                    console.log(e.target.value)
+                    console.log(info)
                     if (!e.target.value) {
-                        return message.warn('연결 Inqruiy No.를 입력해주세요 ')
+                        return message.warn('연결 Inqruiy No.를 입력해주세요.')
                     }
-                    setLoading(true)
+                    setLoading(true);
                     await getData.post('estimate/getEstimateDetail', {
                         "estimateId": '',
                         documentNumberFull: e.target.value.toUpperCase()
@@ -130,43 +138,38 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                         if (v.data.code === 1) {
                             const {estimateDetail} = v.data?.entity
                             if (!estimateDetail) {
-                                message.error('조회정보가 없습니다.');
-                                setLoading(false)
+                                message.error('조회 정보가 없습니다.');
                                 return false;
-
                             }
-                            setFileList([])
-                            setOriginFileList([])
-                            const dom = infoRef.current.querySelector('#ourPoNo');
+                            setFileList([]);
+                            setOriginFileList([]);
                             // const result = await findDocumentInfo(e, setInfo);
                             await getData.post('estimate/generateDocumentNumberFull', {
                                 type: 'ORDER',
-                                documentNumberFull: dom.value.toUpperCase()
+                                documentNumberFull: info?.ourPoNo?.toUpperCase()
                             }).then(src => {
-
                                 const manager = estimateDetail?.managerAdminId;
                                 const findManager = memberList.find(v => v.adminId === manager)
                                 delete estimateDetail?.createdBy
                                 delete estimateDetail?.managerAdminId
-
-                                console.log(estimateDetail,'findManager:')
-                                commonManage.setInfo(infoRef, {
+                                setInfo({
                                     ...estimateDetail,
-                                    estimateManager: findManager?.name,
-                                    customerManagerName: estimateDetail.managerName,
-                                    customerManagerPhoneNumber: estimateDetail.phoneNumber,
-                                    customerManagerEmail: estimateDetail.faxNumber,
-                                    customerManagerFaxNumber: estimateDetail?.email ? estimateDetail?.email : '',
-                                    documentNumberFull: src.data.code === 1 ? src.data.entity.newDocumentNumberFull : '',
-                                    validityPeriod: '견적 발행 후 10일간',
-                                    paymentTerms: '발주시 50% / 납품시 50%',
-                                    shippingTerms: '귀사도착도',
+                                    ourPoNo: e?.target?.value?.toUpperCase(),
                                     writtenDate: moment().format('YYYY-MM-DD'),
+                                    estimateManager: findManager?.name,
+                                    customerManagerName: estimateDetail?.managerName,
+                                    customerManagerPhoneNumber: estimateDetail?.phoneNumber,
+                                    customerManagerEmail: estimateDetail?.faxNumber,
+                                    customerManagerFaxNumber: estimateDetail?.email ? estimateDetail?.email : '',
+                                    documentNumberFull: src?.data?.code === 1 ? src?.data?.entity?.newDocumentNumberFull : '',
+                                    // validityPeriod: '견적 발행 후 10일간',
+                                    // paymentTerms: '발주시 50% / 납품시 50%',
+                                    // shippingTerms: '귀사도착도',
+                                    uploadType: 4
                                 })
                                 const copyList = estimateDetail?.estimateDetailList.map(v => {
                                     return {...v, currency: v.currencyUnit}
                                 })
-
                                 if (estimateDetail) {
                                     setTableData([...copyList, ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000 - estimateDetail?.estimateDetailList.length)])
                                 }
@@ -179,30 +182,43 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                         console.log(err, ':::err:::')
                         setLoading(false)
                     })
-
                     // await findOrderDocumentInfo(e, setInfo, setTableData, memberList)
-                    break;
-                case 'agencyCode' :
-                case 'customerName' :
-                    // await findCodeInfo(e, setInfo, openModal, infoRef)
                     break;
             }
         }
     }
 
+    function openModal(e) {
+        commonManage.openModal(e, setIsModalOpen)
+    }
+
     function onChange(e) {
-        if (e.target.id === 'documentNumberFull') {
-            setValidate(v => {
-                return {...v, documentNumberFull: true}
-            })
-        }
         commonManage.onChange(e, setInfo)
+
+        // 값 입력되면 유효성 초기화
+        const {key, value} = e?.target;
+        commonManage.resetValidate(key, value, setValidate);
+    }
+
+    /**
+     * @description 등록 페이지 > 거래명세표 출력 버튼
+     * 발주서 > 발주서 등록
+     */
+    async function printTransactionStatement() {
+        alert('쉐어포인트 자동저장');
+    }
+
+    /**
+     * @description 등록 페이지 > 발주서 출력 버튼
+     * 발주서 > 발주서 등록
+     */
+    function printPo() {
+        setIsModalOpen({event1: false, event2: false, event3: true});
     }
 
     useEventListener('keydown', (e: any) => {
         if (e.ctrlKey && e.key === "s") {
             e.preventDefault();
-
             const model = layoutRef.current.props.model;
             const activeTab = model.getActiveTabset()?.getSelectedNode();
             if (activeTab?.renderedName === '발주서 등록') {
@@ -216,29 +232,25 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
      * 발주서 > 발주서 등록
      */
     async function saveFunc() {
+        console.log(info, 'info:::')
 
-        // let infoData = commonManage.getInfo(infoRef, infoInit);
-        // const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
-        // infoData['managerAdminName'] = findMember['name'];
+        if (!commonManage.checkValidate(info, orderInfo['write']['validationList'], setValidate)) return;
 
-        // if (!infoData['documentNumberFull']) {
-            const dom = infoRef.current.querySelector('#documentNumberFull');
-            dom.style.borderColor = 'red'
-            return message.warn('Inquiry No. 정보가 누락되었습니다.')
-        // }
+        const admin = memberList.find(v => v.adminId === parseInt(info.managerAdminId));
+        info.managerAdminName = admin?.name;
+
         const tableList = tableRef.current?.getSourceData();
-
         const filterTableList = commonManage.filterEmptyObjects(tableList, ['model', 'item', 'maker'])
         if (!filterTableList.length) {
-            return message.warn('하위 데이터 1개 이상이여야 합니다');
+            return message.warn('하위 데이터가 1개 이상이여야 합니다.');
         }
         const emptyQuantity = filterTableList.filter(v => !v.quantity)
         if (emptyQuantity.length) {
-            return message.error('수량을 입력해야 합니다.')
+            return message.error('하위 데이터의 수량을 입력해야 합니다.')
         }
-        setLoading(true)
+
         const formData: any = new FormData();
-        // commonManage.setInfoFormData(infoData, formData, listType, filterTableList)
+        commonManage.setInfoFormData(info, formData, listType, filterTableList)
         commonManage.getUploadList(fileRef, formData);
 
         formData.delete('createdDate')
@@ -251,9 +263,9 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
     async function returnFunc(code, msg, data) {
         const dom = infoRef.current.querySelector('#documentNumberFull');
         if (code === 1) {
+            clearAll();
             getPropertyId('order_update', data?.orderId)
-            clearAll()
-
+            window.postMessage('write', window.location.origin);
             await getAttachmentFileList({
                 data: {
                     "relatedType": "ORDER",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
@@ -262,10 +274,10 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
             }).then(v => {
                 const list = fileManage.getFormatFiles(v);
                 setFileList(list);
-                // setRouterId(data?.orderId)
-                notificationAlert('success', '💾발주서 등록완료',
+
+                notificationAlert('success', '💾 발주서 등록완료',
                     <>
-                        <div>Inquiry No. : {dom.value}</div>
+                        <div>Inquiry No. : {info.documentNumberFull}</div>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
                     , function () {
@@ -273,13 +285,11 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                     },
                     {cursor: 'pointer'}
                 )
-                setLoading(false)
             })
-            setLoading(false)
         } else {
             notificationAlert('error', '⚠️작업실패',
                 <>
-                    <div>Inquiry No. : {dom.value}</div>
+                    <div>Inquiry No. : {info.documentNumberFull}</div>
                     <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                 </>
                 , function () {
@@ -287,8 +297,8 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                 },
                 {cursor: 'pointer'}
             )
-            setLoading(false)
         }
+        setLoading(false)
     }
 
     /**
@@ -296,8 +306,9 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
      * 발주서 > 발주서 등록
      */
     function clearAll() {
-        setLoading(true)
-        commonManage.setInfo(infoRef, {...orderInfo['defaultInfo'], ...adminParams}, userInfo['adminId']);
+        setLoading(true);
+        setInfo(getOrderInit());
+
         function calcData(sourceData) {
             const keyOrder = Object.keys(orderInfo['write']['defaultData']);
             return sourceData
@@ -305,36 +316,12 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                 .map(orderInfo['write']['excelExpert'])
                 .concat(orderInfo['write']['totalList']); // `push` 대신 `concat` 사용
         }
-        tableRef.current?.hotInstance?.loadData(calcData(commonFunc.repeatObject(orderInfo['write']['defaultData'], 1000)));
+
+        // tableRef.current?.hotInstance?.loadData(calcData(commonFunc.repeatObject(orderInfo['write']['defaultData'], 1000)));
+        setTableData(calcData(commonFunc.repeatObject(orderInfo['write']['defaultData'], 1000)))
         setFileList([]);
-        setLoading(false)
+        setLoading(false);
     }
-
-
-    function printPo() {
-        setIsModalOpen({event1: false, event2: false, event3: true});
-    }
-
-
-    function openModal(e) {
-        commonManage.openModal(e, setIsModalOpen)
-    }
-
-
-    async function printTransactionStatement() {
-        alert('쉐어포인트 자동저장')
-    }
-
-    function checkId(e) {
-        // setRouterId(null)
-    }
-
-    function moveUpdate() {
-        // if (routerId) {
-        //     getPropertyId('order_update', routerId)
-        // }
-    }
-
 
     /**
      * @description 등록 페이지 > 결제 조건 토글 버튼
@@ -343,13 +330,11 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
     const [check, setCheck] = useState(false)
 
     const switchChange = (checked: boolean) => {
-        // const dom = infoRef.current.querySelector('#paymentTerms');
-        // dom.value = !checked ? '발주시 50% / 납품시 50%' : 'By in advance T/T'
         setCheck(checked)
-        info.paymentTerms = !checked ? '발주시 50% / 납품시 50%' : 'By in advance T/T'
+        info.paymentTerms = !checked ? '발주시 50% / 납품시 50%' : 'By in advance T/T';
     };
 
-    return <Spin spinning={loading} tip={'LOADING'}>
+    return <Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'order_write'}/>
         {(isModalOpen['event1'] || isModalOpen['agencyCode'] || isModalOpen['event2'] || isModalOpen['customerName']) &&
             <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
@@ -366,7 +351,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                 rowGap: 10,
             }}>
                 <MainCard title={'발주서 작성'} list={[
-                    {name: '거래명세표 출력', func: printTransactionStatement, type: 'default'},
+                    // {name: '거래명세표 출력', func: printTransactionStatement, type: 'default'},
                     {name: '발주서 출력', func: printPo, type: 'default'},
                     {name: <div><SaveOutlined style={{paddingRight: 8}}/>저장</div>, func: saveFunc, type: 'primary'},
                     {
@@ -375,45 +360,35 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                         type: 'danger'
                     }
                 ]} mini={mini} setMini={setMini}>
-
-
                     {mini ? <div>
-
-                        <TopBoxCard grid={'100px 70px 70px 120px 120px 120px 200px'}>
+                        <TopBoxCard grid={'100px 70px 70px 130px 130px 130px 200px'}>
                             {datePickerForm({
                                 title: '작성일',
                                 id: 'writtenDate',
                                 disabled: true,
+                                data: info
                             })}
-                            {inputForm({title: '작성자', id: 'createdBy', disabled: true})}
+                            {inputForm({title: '작성자', id: 'createdBy', disabled: true, data: info})}
                             <div>
                                 <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>담당자</div>
                                 <select name="languages" id="managerAdminId" onChange={e => {
                                     const member = memberList.find(v => v.adminId === parseInt(e.target.value))
-
-
-                                    const code = infoRef.current.querySelector('#agencyCode');
-
-                                    if (member) {
-                                        const {name, faxNumber, contactNumber, email, englishName} = member;
-
-                                        const sendObj = {
-                                            managerId: code?.value?.startsWith('K') ? name : englishName,
-                                            managerPhoneNumber: contactNumber,
-                                            managerFaxNumber: faxNumber,
-                                            managerEmail: email
-                                        }
-                                        commonManage.setInfo(infoRef, sendObj);
+                                    const managerInfo = {
+                                        managerId: info?.agencyCode?.toUpperCase().startsWith('K') ? member?.name : member?.adminName,
+                                        managerAdminId: member?.adminId,
+                                        managerPhoneNumber: member?.contactNumber,
+                                        managerFaxNumber: member?.faxNumber,
+                                        managerEmail: member?.email
                                     }
-                                }}
-                                        style={{
-                                            outline: 'none',
-                                            border: '1px solid lightGray',
-                                            height: 23,
-                                            width: '100%',
-                                            fontSize: 12,
-                                            paddingBottom: 0.5
-                                        }}>
+                                    setInfo(v => ({...v, ...managerInfo}))
+                                }} style={{
+                                    outline: 'none',
+                                    border: '1px solid lightGray',
+                                    height: 23,
+                                    width: '100%',
+                                    fontSize: 12,
+                                    paddingBottom: 0.5
+                                }} value={info?.managerAdminId ?? ''}>
                                     {
                                         options?.map(v => {
                                             return <option value={v.value}>{v.label}</option>
@@ -421,28 +396,32 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                     }
                                 </select>
                             </div>
-
                             {inputForm({
                                 title: '만쿠견적서 No.',
                                 id: 'ourPoNo',
-                                suffix: <DownloadOutlined style={{cursor: 'pointer'}}/>,
-                                handleKeyPress: handleKeyPress
+                                suffix: <DownloadOutlined style={{cursor: 'pointer'}} onClick={(e) => {
+                                    handleKeyPress({key: 'Enter', target: {id: 'ourPoNo', value: info.ourPoNo}})
+                                }}/>,
+                                handleKeyPress: handleKeyPress,
+                                onChange: onChange,
+                                data: info
                             })}
                             {inputForm({
                                 title: '만쿠발주서 No',
                                 id: 'documentNumberFull',
-                                onChange: checkId
+                                onChange: onChange,
+                                data: info,
+                                validate: validate['documentNumberFull'],
+                                key: validate['documentNumberFull']
                             })}
-
-                            {inputForm({title: '고객사발주서 No', id: 'yourPoNo'})}
-                            {inputForm({title: '프로젝트 제목', id: 'projectTitle'})}
+                            {inputForm({title: '고객사발주서 No', id: 'yourPoNo', onChange: onChange, data: info})}
+                            {inputForm({title: '프로젝트 제목', id: 'projectTitle', onChange: onChange, data: info})}
                         </TopBoxCard>
-
                         <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
                             <Panel defaultSize={sizes[0]} minSize={5}>
                                 <BoxCard title={'매입처 정보'}>
                                     {inputForm({
-                                        title: '매입처코드',
+                                        title: '매입처 코드',
                                         id: 'agencyCode',
                                         suffix: <span style={{cursor: 'pointer'}} onClick={
                                             (e) => {
@@ -450,18 +429,16 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                                 openModal('agencyCode');
                                             }
                                         }>🔍</span>,
-
+                                        onChange: onChange,
                                         handleKeyPress: handleKeyPress,
-
-
+                                        data: info
                                     })}
-                                    {inputForm({title: '회사명', id: 'agencyName'})}
-                                    {inputForm({title: '관리번호', id: 'attnTo'})}
-                                    {inputForm({title: '담당자', id: 'agencyManagerName'})}
+                                    {inputForm({title: '회사명', id: 'agencyName', onChange: onChange, data: info})}
+                                    {inputForm({title: '관리번호', id: 'attnTo', onChange: onChange, data: info})}
+                                    {inputForm({title: '담당자', id: 'agencyManagerName', onChange: onChange, data: info})}
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
-
                             <Panel defaultSize={sizes[1]} minSize={5}>
                                 <BoxCard title={'고객사 정보'}>
                                     {inputForm({
@@ -473,67 +450,67 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                                 openModal('customerName');
                                             }
                                         }>🔍</span>,
-
-
+                                        onChange: onChange,
                                         handleKeyPress: handleKeyPress,
+                                        data: info
                                     })}
                                     {inputForm({
                                         title: '담당자명',
                                         id: 'customerManagerName',
-
+                                        onChange: onChange,
+                                        data: info
                                     })}
                                     {inputForm({
                                         title: '연락처',
                                         id: 'customerManagerPhoneNumber',
-
+                                        onChange: onChange,
+                                        data: info
                                     })}
                                     {inputForm({
                                         title: '이메일',
                                         id: 'customerManagerEmail',
-
+                                        onChange: onChange,
+                                        data: info
                                     })}
                                     {inputForm({
                                         title: '팩스',
                                         id: 'customerManagerFaxNumber',
-
+                                        onChange: onChange,
+                                        data: info
                                     })}
                                 </BoxCard>
                             </Panel>
-
                             <PanelResizeHandle/>
                             <Panel defaultSize={sizes[2]} minSize={5}>
                                 <BoxCard title={<div style={{display: 'flex', justifyContent: 'space-between'}}><span>담당자 정보</span><span><RollbackOutlined
                                     style={{cursor: 'pointer'}}
                                     onClick={() => {
-                                        const idNumber = infoRef.current.querySelector('#managerAdminId');
-                                        const member = memberList.find(v => v.adminId === parseInt(idNumber?.value))
-
-                                        const code = infoRef.current.querySelector('#agencyCode');
-                                        if (member) {
-                                            const {name, faxNumber, contactNumber, email, englishName} = member;
-
-                                            const sendObj = {
-                                                managerId: code?.value?.startsWith('K') ? name : englishName,
-                                                managerPhoneNumber: contactNumber,
-                                                managerFaxNumber: faxNumber,
-                                                managerEmail: email
-                                            }
-                                            commonManage.setInfo(infoRef, sendObj);
+                                        const member = memberList.find(v => v.adminId === parseInt(info.managerAdminId));
+                                        const managerInfo = {
+                                            managerId: info?.agencyCode?.toUpperCase().startsWith('K') ? member?.name : member?.adminName,
+                                            managerPhoneNumber: member?.contactNumber,
+                                            managerFaxNumber: member?.faxNumber,
+                                            managerEmail: member?.email
                                         }
+                                        setInfo(v => ({...v, ...managerInfo}))
                                     }}
                                 /></span></div>}>
-                                    {inputForm({title: '작성자', id: 'managerId'})}
-                                    {inputForm({title: 'TEL', id: 'managerPhoneNumber'})}
-                                    {inputForm({title: 'Fax', id: 'managerFaxNumber'})}
-
-                                    {inputForm({title: 'E-Mail', id: 'managerEmail'})}
+                                    {inputForm({title: '작성자', id: 'managerId', onChange: onChange, data: info})}
+                                    {inputForm({
+                                        title: 'TEL',
+                                        id: 'managerPhoneNumber',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                    {inputForm({title: 'Fax', id: 'managerFaxNumber', onChange: onChange, data: info})}
+                                    {inputForm({title: 'E-Mail', id: 'managerEmail', onChange: onChange, data: info})}
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
                             <Panel defaultSize={sizes[3]} minSize={5}>
                                 <BoxCard title={<div style={{display: 'flex', justifyContent: 'space-between'}}>
                                     <div>세부사항</div>
-                                    <div><Switch size={'small'} defaultChecked onChange={switchChange}/></div>
+                                    <div><Switch size={'small'} onChange={switchChange}/></div>
                                 </div>}>
                                     <div style={{paddingBottom: 10}}>
                                         <SelectForm id={'paymentTerms'}
@@ -547,17 +524,33 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                                     key={info.paymentTerms}
                                         />
                                     </div>
-                                    {inputForm({title: '납기', id: 'deliveryTerms', onChange: onChange, data: info})}
+                                    {inputForm({title: '납기', id: 'delivery', onChange: onChange, data: info})}
                                     {inputForm({title: 'Maker', id: 'maker', onChange: onChange, data: info})}
                                     {inputForm({title: 'Item', id: 'item', onChange: onChange, data: info})}
-                                    {datePickerForm({title: '예상 입고일', id: 'delivery', onChange: onChange, data: info})}
+                                    {datePickerForm({
+                                        title: '예상 입고일',
+                                        id: 'deliveryTerms',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
                             <Panel defaultSize={sizes[4]} minSize={5}>
                                 <BoxCard title={'ETC'}>
-                                    {inputForm({title: '견적서담당자', id: 'estimateManager', onChange: onChange, data: info})}
-                                    {textAreaForm({title: '비고란', rows: 9, id: 'remarks', onChange: onChange, data: info})}
+                                    {inputForm({
+                                        title: '견적서담당자',
+                                        id: 'estimateManager',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                    {textAreaForm({
+                                        title: '비고란',
+                                        rows: 9,
+                                        id: 'remarks',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>

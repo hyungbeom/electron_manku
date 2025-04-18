@@ -25,7 +25,7 @@ import Spin from "antd/lib/spin";
 import {getData} from "@/manage/function/api";
 import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 import moment from "moment";
-import {estimateInfo} from "@/utils/column/ProjectInfo";
+import {estimateInfo, orderInfo} from "@/utils/column/ProjectInfo";
 import Table from "@/component/util/Table";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
@@ -333,7 +333,8 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
      * 견적서 > 견적서 등록
      */
     function clearAll() {
-        setInfo(getEstimateInit())
+        setLoading(true);
+        setInfo(getEstimateInit());
 
         function calcData(sourceData) {
             const keyOrder = Object.keys(estimateInfo['write']['defaultData']);
@@ -343,8 +344,10 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                 .concat(estimateInfo['write']['totalList']); // `push` 대신 `concat` 사용
         }
 
+        // tableRef.current?.hotInstance?.loadData(calcData(commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000)));
         setTableData(calcData(commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000)))
         setFileList([]);
+        setLoading(false);
     }
 
     return <div style={{overflow: 'hidden'}}><Spin spinning={loading}>
@@ -394,12 +397,7 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                     title: '의뢰자료 No.',
                                     id: 'connectDocumentNumberFull',
                                     suffix: <DownloadOutlined style={{cursor: 'pointer'}} onClick={(e) => {
-                                        const document = infoRef.current.querySelector('#connectDocumentNumberFull');
-                                        let bowl = {
-                                            target: {id: 'connectDocumentNumberFull', value: document.value},
-                                            key: 'Enter'
-                                        }
-                                        handleKeyPress(bowl)
+                                        handleKeyPress({key: 'Enter', target: {id: 'connectDocumentNumberFull', value: info.connectDocumentNumberFull}})
                                     }}/>,
                                     handleKeyPress: handleKeyPress,
                                     onChange: onChange,
@@ -421,7 +419,7 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                 <Panel defaultSize={sizes[0]} minSize={5}>
                                     <BoxCard title={'매입처 정보'}>
                                         {inputForm({
-                                            title: '매입처코드',
+                                            title: '매입처 코드',
                                             id: 'agencyCode',
                                             suffix: <span style={{cursor: 'pointer'}} onClick={
                                                 (e) => {
