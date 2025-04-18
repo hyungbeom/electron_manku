@@ -34,19 +34,25 @@ const listType = 'estimateRequestDetailList'
 function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
+    const fileRef = useRef(null);
+    const tableRef = useRef(null);
+    const infoRef = useRef<any>(null)
     const checkInfoRef = useRef<any>({
         info: {},
         table: []
     })
-    const [memberList, setMemberList] = useState([]);
-    const [tableData, setTableData] = useState([]);
-    const [validate, setValidate] = useState({agencyCode: true, managerAdminId: true});
 
+    const getSavedSizes = () => {
+        const savedSizes = localStorage.getItem('rfq_write');
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 5]; // 기본값 [50, 50, 50]
+    };
+    const [sizes] = useState(getSavedSizes); // 패널 크기 상태
+
+    const [memberList, setMemberList] = useState([]);
 
     useEffect(() => {
         getMemberList();
     }, []);
-
 
     async function getMemberList() {
         // @ts-ignore
@@ -60,39 +66,31 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         })
     }
 
-
-    const fileRef = useRef(null);
-    const tableRef = useRef(null);
-    const infoRef = useRef<any>(null)
-
-
-    const copyInit = _.cloneDeep(rfqInfo['defaultInfo'])
-
+    const [mini, setMini] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
+    const [fileList, setFileList] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [tableData, setTableData] = useState([]);
 
     const userInfo = useAppSelector((state) => state.user);
-
     const adminParams = {
         managerAdminId: userInfo['adminId'],
         managerAdminName: userInfo['name'],
         createdBy: userInfo['name'],
     }
-
-    const infoInit = {
-        ...copyInit,
-        ...adminParams,
-        writtenDate: moment().format('YYYY-MM-DD')
+    const getRfqInit = () => {
+        const copyInit = _.cloneDeep(rfqInfo['defaultInfo']);
+        return {
+            ...copyInit,
+            ...adminParams
+        }
     }
-
-    const [info, setInfo] = useState<any>(infoInit)
-
-    const [mini, setMini] = useState(true);
-    const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
-    const [fileList, setFileList] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [info, setInfo] = useState(getRfqInit());
+    const [validate, setValidate] = useState(rfqInfo['write']['validate']);
 
     useEffect(() => {
         if (!isEmptyObj(copyPageInfo)) {
-            setInfo(infoInit)
+            setInfo(getRfqInit())
             setTableData(commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000))
         } else {
             setInfo({
@@ -102,7 +100,7 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
             });
             setTableData(copyPageInfo[listType]);
         }
-    }, [copyPageInfo]);
+    }, [copyPageInfo?._meta?.updateKey]);
 
 
     async function handleKeyPress(e) {
@@ -125,133 +123,11 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     function onChange(e) {
         commonManage.onChange(e, setInfo)
 
-        if (e.target.id === 'agencyCode' && !validate['agencyCode']) {
-            setValidate(v => {
-                return {...v, agencyCode: true}
-            })
-        }
-        if (e.target.id === 'managerAdminId' && !validate['managerAdminId']) {
-            setValidate(v => {
-                return {...v, managerAdminId: true}
-            })
-        }
+        // 값 입력되면 유효성 초기화
+        const { key, value } = e?.target;
+        commonManage.resetValidate(key, value, setValidate);
 
     }
-
-    async function saveFunc() {
-
-        let infoData = _.cloneDeep(info);
-
-
-        const findMember = memberList.find(v => v.adminId === parseInt(info['managerAdminId']));
-        infoData['managerAdminName'] = findMember['name'];
-
-        setLoading(true);
-        setLoading(false);
-
-
-        // 중복 저장을 막기 위한 로직
-        if (infoData['documentNumberFull']) {
-            delete checkInfoRef.current['info']['documentNumberFull']
-            const copyData = {...infoData};
-            delete copyData['documentNumberFull']
-
-            if (JSON.stringify(copyData) === JSON.stringify(checkInfoRef.current['info'])) {
-                setLoading(false);
-                return false
-            } else {
-                checkInfoRef.current['info'] = infoData;
-            }
-        }
-
-        if (!infoData['managerAdminId']) {
-            setValidate(v => {
-                return {...v, managerAdminId: false}
-            })
-            setLoading(false);
-            return message.warn('담당자가 누락되었습니다.')
-        }
-        if (!infoData['agencyCode']) {
-            setValidate(v => {
-                return {...v, agencyCode: false}
-            })
-            setLoading(false);
-            return message.warn('매입처 코드가 누락되었습니다.')
-        }
-
-        const tableList = tableRef.current?.getSourceData();
-
-        const filterTableList = commonManage.filterEmptyObjects(tableList, ['model', 'item', 'maker'])
-        if (!filterTableList.length) {
-            setLoading(false);
-            return message.warn('하위 데이터 1개 이상이여야 합니다');
-        }
-        const emptyQuantity = filterTableList.filter(v => !v.quantity)
-        if (emptyQuantity.length) {
-            setLoading(false);
-            return message.error('수량을 입력해야 합니다.')
-        }
-        // setLoading(true)
-        const formData: any = new FormData();
-        commonManage.setInfoFormData(infoData, formData, listType, filterTableList)
-        commonManage.getUploadList(fileRef, formData);
-        formData.delete('createdDate')
-        formData.delete('modifiedDate')
-
-
-        await getFormData.post('estimate/addEstimateRequest', formData).then(async (v: any) => {
-            const {code, entity} = v?.data;
-            if (code === 1) {
-                const {documentNumberFull, estimateRequestId} = entity;
-                getPropertyId('rfq_update', estimateRequestId);
-                clearAll()
-
-                notificationAlert('success', '💾견적의뢰 등록완료',
-                    <>
-                        <div>의뢰자료 No. : {documentNumberFull}</div>
-                        <div>등록일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
-                    </>
-                    , function () {
-                        getPropertyId('rfq_update', estimateRequestId)
-                    },
-                    {cursor: 'pointer'}
-                )
-                checkInfoRef.current['info'] = infoData
-                setLoading(false);
-
-            } else {
-                setLoading(false)
-            }
-        }, err => setLoading(false))
-    }
-
-
-    /**
-     * @description 등록 페이지 > 초기화 버튼
-     * 견적의뢰 > 견적의뢰 등록
-     */
-    function clearAll() {
-        setInfo(infoInit)
-
-        function calcData(sourceData) {
-            const keyOrder = Object.keys(rfqInfo['write']['defaultData']);
-            return sourceData
-                .map((item) => keyOrder.reduce((acc, key) => ({...acc, [key]: item[key] ?? ""}), {}))
-                .map(rfqInfo['write']['excelExpert'])
-                .concat(rfqInfo['write']['totalList']); // `push` 대신 `concat` 사용
-        }
-
-        tableRef.current?.hotInstance?.loadData(calcData(commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000)));
-        setFileList([])
-    }
-
-
-    const getSavedSizes = () => {
-        const savedSizes = localStorage.getItem('rfq_write');
-        return savedSizes ? JSON.parse(savedSizes) : [25, 25, 25, 25, 0]; // 기본값 [50, 50, 50]
-    };
-
-    const [sizes] = useState(getSavedSizes); // 패널 크기 상태
 
     useEventListener('keydown', (e: any) => {
         if (e.ctrlKey && e.key === "s") {
@@ -264,7 +140,92 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         }
     }, typeof window !== 'undefined' ? document : null)
 
-    console.log(info)
+    /**
+     * @description 등록 페이지 > 저장 버튼
+     * 견적의뢰 > 견적의뢰 등록
+     */
+    async function saveFunc() {
+        console.log(info, 'info:::')
+
+        // 유효성 체크 추가
+        if(!commonManage.checkValidate(info, rfqInfo['write']['validationList'], setValidate)) return;
+
+        const tableList = tableRef.current?.getSourceData();
+        const filterTableList = commonManage.filterEmptyObjects(tableList, ['model', 'item', 'maker'])
+        if (!filterTableList.length) {
+            return message.warn('하위 데이터가 1개 이상이여야 합니다.');
+        }
+        const emptyQuantity = filterTableList.filter(v => !v.quantity)
+        if (emptyQuantity.length) {
+            return message.error('하위 데이터의 수량을 입력해야 합니다.')
+        }
+
+        const findMember = memberList.find(v => v.adminId === parseInt(info['managerAdminId']));
+        info['managerAdminName'] = findMember['name'];
+
+        setLoading(true)
+
+        const formData: any = new FormData();
+        commonManage.setInfoFormData(info, formData, listType, filterTableList)
+        commonManage.getUploadList(fileRef, formData);
+        formData.delete('createdDate')
+        formData.delete('modifiedDate')
+
+        await getFormData.post('estimate/addEstimateRequest', formData).then(async (v: any) => {
+            const {code, entity} = v?.data;
+            if (code === 1) {
+                const {documentNumberFull, estimateRequestId} = entity;
+                window.postMessage('write', window.location.origin);
+                notificationAlert('success', '💾견적의뢰 등록완료',
+                    <>
+                        <div>의뢰자료 No. : {documentNumberFull}</div>
+                        <div>등록일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                        getPropertyId('rfq_update', estimateRequestId)
+                    },
+                    {cursor: 'pointer'}
+                )
+                checkInfoRef.current['info'] = info
+
+                clearAll();
+                getPropertyId('rfq_update', estimateRequestId);
+            } else {
+                notificationAlert('error', '⚠️작업실패',
+                    <>
+                        {/*<div>의뢰자료 No. : {}</div>*/}
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                        alert('관리자 로그 페이지 참고')
+                    },
+                    {cursor: 'pointer'}
+                )
+            }
+            setLoading(false)
+        }, err => setLoading(false))
+    }
+
+    /**
+     * @description 등록 페이지 > 초기화 버튼
+     * 견적의뢰 > 견적의뢰 등록
+     */
+    function clearAll() {
+        setLoading(true)
+        setInfo(getRfqInit())
+        setValidate(rfqInfo['write']['validate']);
+
+        function calcData(sourceData) {
+            const keyOrder = Object.keys(rfqInfo['write']['defaultData']);
+            return sourceData
+                .map((item) => keyOrder.reduce((acc, key) => ({...acc, [key]: item[key] ?? ""}), {}))
+                .map(rfqInfo['write']['excelExpert'])
+                .concat(rfqInfo['write']['totalList']); // `push` 대신 `concat` 사용
+        }
+        tableRef.current?.hotInstance?.loadData(calcData(commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000)));
+        setFileList([])
+        setLoading(false)
+    }
 
     return <Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'rfq_write'}/>
@@ -278,7 +239,6 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                 gridTemplateRows: `${mini ? 495 : 65}px calc(100vh - ${mini ? 590 : 195}px)`,
                 rowGap: 10,
             }}>
-
                 <MainCard title={'견적의뢰 작성'} list={[
 
                     {name: <div><SaveOutlined style={{paddingRight: 8}}/>저장</div>, func: saveFunc, type: 'primary'},
@@ -291,17 +251,14 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                     <div id={'agencyId'}/>
                     <div id={'agencyManagerPhoneNumber'}/>
                     {mini ? <div>
-                            <TopBoxCard title={''} grid={'100px 80px 80px 110px 110px 110px 300px'}>
+                            <TopBoxCard title={''} grid={'110px 80px 80px 110px 110px 110px 300px'}>
                                 {datePickerForm({
                                     title: '작성일',
                                     id: 'writtenDate',
                                     disabled: true,
-                                    onChange: onChange,
                                     data: info
                                 })}
-
-                                {inputForm({title: '작성자', id: 'createdBy', disabled: true, onChange: onChange, data: info})}
-
+                                {inputForm({title: '작성자', id: 'createdBy', disabled: true, data: info})}
                                 <div>
                                     {selectBoxForm({
                                         title: '담당자',
@@ -333,14 +290,12 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                     id: 'rfqNo',
                                     onChange: onChange,
                                     data: info
-
                                 })}
                                 {inputForm({
                                     title: 'PROJECT NAME',
                                     id: 'projectTitle',
                                     onChange: onChange,
                                     data: info
-
                                 })}
                             </TopBoxCard>
                             <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
@@ -358,7 +313,8 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                             onChange: onChange,
                                             handleKeyPress: handleKeyPress,
                                             data: info,
-                                            validate: validate['agencyCode']
+                                            validate: validate['agencyCode'],
+                                            key: validate['agencyCode']
                                         })}
                                         {inputForm({
                                             title: '회사명',
@@ -398,7 +354,6 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                                     openModal('customerName');
                                                 }
                                             }>🔍</span>,
-
                                             onChange: onChange,
                                             handleKeyPress: handleKeyPress,
                                             data: info
@@ -441,7 +396,6 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                                     openModal('maker');
                                                 }
                                             }>🔍</span>,
-
                                             onChange: onChange,
                                             handleKeyPress: handleKeyPress,
                                             data: info
@@ -492,8 +446,7 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                 <Panel defaultSize={sizes[5]} minSize={0}>
                                 </Panel>
                             </PanelGroup>
-                        </div>
-                        : <></>}
+                        </div> : <></>}
                 </MainCard>
 
                 <Table data={tableData} column={rfqInfo['write']} funcButtons={['print']} ref={tableRef}

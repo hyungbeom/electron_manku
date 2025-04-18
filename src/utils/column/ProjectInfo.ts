@@ -195,16 +195,22 @@ export const rfqInfo = {
             "replyDate": '',         // 회신일
             "remarks": ""            // 비고
         },
-        type: 'write'
+        type: 'write',
+        validate: {
+            managerAdminId: true,
+            agencyCode: true
+        },
+        validationList: [
+            {key: 'managerAdminId', message: '담당자가 누락되었습니다.'},
+            {key: 'agencyCode', message: '매입처 코드가 누락되었습니다.'},
+        ]
     },
     defaultInfo: {
         createdBy: '',
         managerAdminName: '',
         agencyTel: '',
         managerAdminId: null,
-
         writtenDate: moment().format('YYYY-MM-DD'),
-
         documentNumberFull: '',   // ====== api 통해서 가져와야 함?
         rfqNo: '',
         projectTitle: '',
@@ -440,10 +446,14 @@ export const orderInfo = {
         },
         type: 'write',
         validate: {
+            managerAdminId: true,
             documentNumberFull: true,
+            agencyCode: true
         },
         validationList: [
+            {key: 'managerAdminId', message: '담당자가 누락되었습니다.'},
             {key: 'documentNumberFull', message: 'Inquiry No. 가 누락되었습니다.'},
+            {key: 'agencyCode', message: '매입처 코드가 누락되었습니다.'},
         ]
     },
     defaultInfo: {

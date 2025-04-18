@@ -61,7 +61,6 @@ export const deleteRfq = async ({
 // =================================================================================================
 export const saveEstimate = async ({data}) => {
     return await getFormData.post('estimate/addEstimate', data).then(v => {
-
         return v.data
     });
 };
@@ -136,7 +135,6 @@ export const updateProject = async ({data, router, returnFunc}) => {
 
 export const updateEstimate = async ({data, returnFunc}) => {
     await getFormData.post('estimate/updateEstimate', data).then(v => {
-
         returnFunc(v.data);
     }, err => console.log(err, '::::'));
 };
@@ -251,7 +249,8 @@ export const saveOrder = async ({data, router, returnFunc}) => {
 
 export const updateOrder = async ({data, returnFunc}) => {
     return await getFormData.post('order/updateOrder', data).then(v => {
-        return v.data
+        const {code, message, entity} = v.data
+        returnFunc(code, message, entity);
     });
 };
 

@@ -108,7 +108,6 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         } else {
             // copyPageInfo 가 있을시(==>보통 수정페이지에서 복제시)
             // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting
-            console.log(copyPageInfo)
             setInfo({
                 ...copyPageInfo,
                 ...adminParams,
@@ -235,8 +234,6 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         // 유효성 체크 추가
         if(!commonManage.checkValidate(info, estimateInfo['write']['validationList'], setValidate)) return;
 
-        setLoading(true)
-
         const findMember = memberList.find(v => v.adminId === parseInt(info['managerAdminId']));
         info['managerAdminName'] = findMember['name'];
         info['name'] = findMember['name'];
@@ -257,6 +254,8 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         if (emptyQuantity.length) {
             return message.error('하위 데이터의 수량을 입력해야 합니다.')
         }
+
+        setLoading(true)
 
         const formData: any = new FormData();
         commonManage.setInfoFormData(info, formData, listType, filterTableList)
@@ -294,8 +293,6 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         await saveEstimate({data: formData}).then(async v => {
             const {code, message: msg, entity} = v;
             if (code === 1) {
-                clearAll();
-                getPropertyId('estimate_update', entity?.estimateId)
                 window.postMessage('write', window.location.origin);
                 notificationAlert('success', '💾 견적서 등록완료',
                     <>
@@ -307,6 +304,8 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                     },
                     {cursor: 'pointer'}
                 )
+                clearAll();
+                getPropertyId('estimate_update', entity?.estimateId)
             } else if (code === -20001) {
                 setValidate(v => {
                     return {...v, documentNumberFull: false}
@@ -335,6 +334,7 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     function clearAll() {
         setLoading(true);
         setInfo(getEstimateInit());
+        setValidate(estimateInfo['write']['validate']);
 
         function calcData(sourceData) {
             const keyOrder = Object.keys(estimateInfo['write']['defaultData']);

@@ -171,7 +171,7 @@ export function MainCard({children, title, list, mini = null, setMini = Function
                                                  title="삭제하시겠습니까?"
                                                  onConfirm={() => confirm(v.func)}
                                                  icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
-                                                 <Button type={v.type} style={{fontSize: 11}} size={'small'}
+                                                 <Button type={'primary'} danger style={{fontSize: 11}} size={'small'}
                                                      // onClick={v.func}
                                                  >{v?.prefix}{v.name}</Button>
                                              </Popconfirm>

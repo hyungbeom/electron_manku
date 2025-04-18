@@ -1,18 +1,11 @@
 import React, {memo, useEffect, useRef, useState} from "react";
-import {
-    ArrowRightOutlined,
-    DownloadOutlined,
-    RadiusSettingOutlined,
-    RollbackOutlined,
-    SaveOutlined
-} from "@ant-design/icons";
+import {DownloadOutlined, RadiusSettingOutlined, RollbackOutlined, SaveOutlined} from "@ant-design/icons";
 import message from "antd/lib/message";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {useRouter} from "next/router";
 import {BoxCard, datePickerForm, inputForm, MainCard, SelectForm, textAreaForm, TopBoxCard} from "@/utils/commonForm";
 import {commonFunc, commonManage, fileManage} from "@/utils/commonManage";
 import _ from "lodash";
-import {findCodeInfo} from "@/utils/api/commonApi";
 import {getAttachmentFileList, saveOrder} from "@/utils/api/mainApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {getData} from "@/manage/function/api";
@@ -41,7 +34,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('order_write');
-        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 5]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 20, 5]; // 기본값 [50, 50, 50]
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
@@ -113,6 +106,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
             console.log(copyPageInfo)
             setInfo({...copyPageInfo, ...adminParams, writtenDate: moment().format('YYYY-MM-DD')});
             setTableData(copyPageInfo[listType]);
+            if(!copyPageInfo?.agencyCode?.toUpperCase().startsWith('K')) setCheck(true);
         }
     }, [copyPageInfo?._meta?.updateKey]);
 
@@ -153,6 +147,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                 delete estimateDetail?.createdBy
                                 delete estimateDetail?.managerAdminId
                                 setInfo({
+                                    ...info,
                                     ...estimateDetail,
                                     ourPoNo: e?.target?.value?.toUpperCase(),
                                     writtenDate: moment().format('YYYY-MM-DD'),
@@ -186,10 +181,6 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                     break;
             }
         }
-    }
-
-    function openModal(e) {
-        commonManage.openModal(e, setIsModalOpen)
     }
 
     function onChange(e) {
@@ -249,6 +240,8 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
             return message.error('하위 데이터의 수량을 입력해야 합니다.')
         }
 
+        setLoading(true)
+
         const formData: any = new FormData();
         commonManage.setInfoFormData(info, formData, listType, filterTableList)
         commonManage.getUploadList(fileRef, formData);
@@ -263,9 +256,6 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
     async function returnFunc(code, msg, data) {
         const dom = infoRef.current.querySelector('#documentNumberFull');
         if (code === 1) {
-            clearAll();
-            getPropertyId('order_update', data?.orderId)
-            window.postMessage('write', window.location.origin);
             await getAttachmentFileList({
                 data: {
                     "relatedType": "ORDER",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
@@ -275,6 +265,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                 const list = fileManage.getFormatFiles(v);
                 setFileList(list);
 
+                window.postMessage('write', window.location.origin);
                 notificationAlert('success', '💾 발주서 등록완료',
                     <>
                         <div>Inquiry No. : {info.documentNumberFull}</div>
@@ -285,7 +276,14 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                     },
                     {cursor: 'pointer'}
                 )
+                clearAll();
+                getPropertyId('order_update', data?.orderId)
             })
+        } else if (code === -20001) {
+            setValidate(v => {
+                return {...v, documentNumberFull: false}
+            })
+            message.error(msg);
         } else {
             notificationAlert('error', '⚠️작업실패',
                 <>
@@ -298,7 +296,6 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                 {cursor: 'pointer'}
             )
         }
-        setLoading(false)
     }
 
     /**
@@ -308,6 +305,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
     function clearAll() {
         setLoading(true);
         setInfo(getOrderInit());
+        setValidate(orderInfo['write']['validate']);
 
         function calcData(sourceData) {
             const keyOrder = Object.keys(orderInfo['write']['defaultData']);
@@ -321,6 +319,16 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
         setTableData(calcData(commonFunc.repeatObject(orderInfo['write']['defaultData'], 1000)))
         setFileList([]);
         setLoading(false);
+    }
+
+    /**
+     * @description 등록 페이지 > 돋보기 버튼
+     * 발주서 > 발주서 등록
+     * 매입처, 고객사 조회 Modal
+     * @param e
+     */
+    function openModal(e) {
+        commonManage.openModal(e, setIsModalOpen)
     }
 
     /**
@@ -414,7 +422,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                 validate: validate['documentNumberFull'],
                                 key: validate['documentNumberFull']
                             })}
-                            {inputForm({title: '고객사발주서 No', id: 'yourPoNo', onChange: onChange, data: info})}
+                            {inputForm({title: '고객사발주서 No.', id: 'yourPoNo', onChange: onChange, data: info})}
                             {inputForm({title: '프로젝트 제목', id: 'projectTitle', onChange: onChange, data: info})}
                         </TopBoxCard>
                         <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
@@ -431,7 +439,9 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                         }>🔍</span>,
                                         onChange: onChange,
                                         handleKeyPress: handleKeyPress,
-                                        data: info
+                                        data: info,
+                                        validate: validate['agencyCode'],
+                                        key: validate['agencyCode']
                                     })}
                                     {inputForm({title: '회사명', id: 'agencyName', onChange: onChange, data: info})}
                                     {inputForm({title: '관리번호', id: 'attnTo', onChange: onChange, data: info})}
@@ -510,7 +520,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                             <Panel defaultSize={sizes[3]} minSize={5}>
                                 <BoxCard title={<div style={{display: 'flex', justifyContent: 'space-between'}}>
                                     <div>세부사항</div>
-                                    <div><Switch size={'small'} onChange={switchChange}/></div>
+                                    <div><Switch size={'small'} checked={check} onChange={switchChange}/></div>
                                 </div>}>
                                     <div style={{paddingBottom: 10}}>
                                         <SelectForm id={'paymentTerms'}

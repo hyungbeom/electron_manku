@@ -270,12 +270,12 @@ ipcMain.on('launch-outlook', (event, params) => {
         // execFile에서 Outlook 경로와 인자를 별도로 전달
         execFile(outlookPath, ['/c', 'ipm.note', '/m', mailtoLink], (error) => {
             if (error) {
-                alert('Outlook 실행 실패====> 문의바람');
+                console.log('Outlook 실행 실패====> 문의바람');
             } else {
                 console.log('Outlook 실행됨!');
             }
         });
     } else {
-        alert('Outlook 실행 실패====> Outlook 경로를 찾지 못함');
+        console.log('Outlook 실행 실패====> Outlook 경로를 찾지 못함');
     }
 });
