@@ -31,7 +31,7 @@ export default function todoList() {
         setCurrent(e.key);
     };
 
-    return <LayoutComponent>
+    return <>
 
         <div style={{padding : 10}}>
 
@@ -115,7 +115,7 @@ export default function todoList() {
             }
 
         </div>
-    </LayoutComponent>
+    </>
 }
 
 

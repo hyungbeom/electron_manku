@@ -58,7 +58,7 @@ export default function Manage(any) {
 
     };
 
-    return <LayoutComponent>
+    return <>
     <div style={{padding : 20}}>
         <Card title={'관리자 페이지'}>
 
@@ -67,7 +67,7 @@ export default function Manage(any) {
             {/*<Table />*/}
         </Card>
     </div>
-    </LayoutComponent>
+    </>
 }
 
 // @ts-ignore

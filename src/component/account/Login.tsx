@@ -36,7 +36,7 @@ export default function Login() {
         getData.post('account/login', info).then(v => {
             if (v.data.code === 1) {
                 const {accessToken} = v?.data?.entity;
-                setCookies(null, 'token', accessToken)
+                setCookies(null, 'token', accessToken);
                 return router.push('/main?first=true')
             }
             message.warn(v.data.message)
@@ -52,7 +52,7 @@ export default function Login() {
     const [adminLogin, setAdminLogin] = useState(true);
 
     return <>
-        <Button style={{borderRadius : 5}} onClick={()=>{
+        <Button style={{borderRadius : 5, fontSize : 13}} onClick={()=>{
             setAdminLogin(v=> !v)
         }}>일반유저 로그인 {!adminLogin? <DownCircleFilled/> : <UpCircleFilled />}</Button>
         {adminLogin ? <>

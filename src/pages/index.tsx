@@ -21,9 +21,9 @@ export default function Home(props) {
         setPage(e)
     };
 
-    function moveClick() {
-        router.push('/join')
-    }
+    useEffect(() => {
+        // window.electron?.resizeWindow(600, 868)
+    }, []);
 
     useEffect(() => {
         if (props?.message) {
@@ -32,7 +32,7 @@ export default function Home(props) {
 
     }, [])
     return (
-        <>
+        <div>
             <video style={{
                 position: 'fixed',
                 top: 0,
@@ -48,9 +48,8 @@ export default function Home(props) {
                    playsInline
             >
                 <source src="/login_back.mp4" type="video/mp4"/>
-                브라우저가 비디오 태그를 지원하지 않습니다.
             </video>
-            <div className={'container'} style={{paddingTop: 150}}>
+            <div className={'container'} style={{paddingTop: 100}}>
                 <div style={{
                     marginTop: 100,
                     width: 330,
@@ -124,7 +123,7 @@ export default function Home(props) {
                 </div>
 
             </div>
-        </>
+        </div>
     );
 }
 

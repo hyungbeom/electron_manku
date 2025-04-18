@@ -49,13 +49,33 @@ export function UserMenu() {
         {
             key: '1',
             label: <span onClick={() => {
-                router.push('/myaccount');
+                // @ts-ignore
+                if (window.electron?.openMyAccountWindow) {
+                    // @ts-ignore
+                    window.electron.openMyAccountWindow();
+                } else {
+                    window.open(
+                        "/myaccount", // 열 URL
+                        "_blank",              // 새창
+                        "width=600,height=800,top=100,left=100,scrollbars=yes,resizable=yes"
+                    );
+                }
             }}>My Account
             </span>
         }, {
             key: '2',
             label: <span onClick={() => {
-                router.push('/todoList');
+                // @ts-ignore
+                if (window.electron?.openTodoListWindow) {
+                    // @ts-ignore
+                    window.electron.openTodoListWindow();
+                } else {
+                    window.open(
+                        "/todoList", // 열 URL
+                        "_blank",              // 새창
+                        "width=600,height=800,top=100,left=100,scrollbars=yes,resizable=yes"
+                    );
+                }
             }}>Todo List
             </span>
         },
@@ -74,7 +94,19 @@ export function UserMenu() {
         userInfo.authority === 1 && {
             key: '4',
             label: <span onClick={() => {
-                router.push('/manage');
+
+                // @ts-ignore
+                if (window.electron?.openManageWindow) {
+                    // @ts-ignore
+                    window.electron.openManageWindow();
+                } else {
+                    window.open(
+                        "/manage", // 열 URL
+                        "_blank",              // 새창
+                        "width=1366,height=868,top=100,left=100,scrollbars=yes,resizable=yes"
+                    );
+                }
+                // router.push('/manage');
             }}><SettingOutlined style={{paddingRight: 5}}/>관리자</span>
         },
     ];

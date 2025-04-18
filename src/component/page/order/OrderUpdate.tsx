@@ -548,7 +548,8 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
                                 <BoxCard title={'세부사항'}>
                                     <div style={{paddingBottom: 10}}>
                                         <SelectForm id={'paymentTerms'}
-                                                    list={['발주시 50% / 납품시 50%', '현금결제', '선수금', '정기결제']} title={'결제조건'}/>
+                                                    list={['발주시 50% / 납품시 50%', '현금결제', '선수금', '정기결제']} title={'결제조건'}
+                                                    onChange={undefined} data={undefined}/>
                                     </div>
                                     {inputForm({
                                         title: '납기',
