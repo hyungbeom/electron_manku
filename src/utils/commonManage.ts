@@ -144,11 +144,11 @@ commonManage.setInfo = function (infoRef, obj, adminId?) {
     const test = `${result.join(',')}`;
 
 
+    console.log(test,'test:')
     if (test) {
         const elements = infoRef.current.querySelectorAll(test);
 
         elements.forEach(element => {
-
             if (element.id === 'managerAdminId' && !isNaN(adminId)) {
                 element.value = parseInt(adminId)
             } else {

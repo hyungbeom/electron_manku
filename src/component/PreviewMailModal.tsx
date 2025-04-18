@@ -335,7 +335,7 @@ function PreviewMailModal({data, isModalOpen, setIsModalOpen, fileList}) {
             <p>메일을 전송하시겠습니까?</p>
         </Modal>
         <Modal okText={<><SendOutlined/> 메일 전송</>} width={1000} cancelText={'취소'} onOk={sendMail}
-               title={<div style={{height: 25, textAlign: 'center'}}>견적의뢰 메일 발송</div>} open={isModalOpen}
+               title={<><div style={{height: 25, textAlign: 'center'}}>견적의뢰 메일 발송</div></>} open={isModalOpen}
                onCancel={() => {
                    setIsModalOpen(false)
                }}>
@@ -346,7 +346,11 @@ function PreviewMailModal({data, isModalOpen, setIsModalOpen, fileList}) {
 
                         return <div>
                             <div style={{display: 'grid', gridTemplateColumns: '100px 1fr', gap: 5}}>
-
+                                <Button onClick={()=>{
+                                    // @ts-ignore
+                                    window.electron?.launchOutlook({to : src.agencyManagerEmail, subject : src.title, body : src['contents'], cc : ''});
+                                }}>OUT LOOK</Button>
+                                <div></div>
                                 <Button type={'primary'} size={'small'} style={{fontSize: 12, marginTop: 5}}>보낸
                                     사람(M)</Button>
                                 {inputForm({

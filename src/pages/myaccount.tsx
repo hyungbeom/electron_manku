@@ -44,7 +44,7 @@ export default function myaccount() {
 
     }
 
-    return <LayoutComponent>
+    return <>
         <Spin spinning={loading}>
         <div style={{maxWidth: 500, margin: '0px auto'}}>
             <div style={{fontSize: 30, fontWeight: 500, textAlign: 'center', padding: '50px 0px 30px 0px'}}>개인정보 수정
@@ -136,7 +136,7 @@ export default function myaccount() {
             </Button>
         </div>
         </Spin>
-    </LayoutComponent>
+    </>
 }
 
 

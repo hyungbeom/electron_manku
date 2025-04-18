@@ -7,14 +7,13 @@ import Tree from "antd/lib/tree/Tree";
 import initialServerRouter from "@/manage/function/initialServerRouter";
 import {setUserInfo} from "@/store/user/userSlice";
 import {introMenulist, treeData} from "@/component/util/MenuData";
-import {useAppSelector} from "@/utils/common/function/reduxHooks";``
+import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {useRouter} from "next/router";
 import {tabComponents, tabShortcutMap} from "@/utils/commonForm";
 
 
-
-
 export default function Main() {
+
     const modelRef = useRef(Model.fromJson({
         global: {},
         borders: [],
@@ -25,9 +24,7 @@ export default function Main() {
         },
     }));
 
-
     const [activeTabId, setActiveTabId] = useState<string | null>(null);
-
 
     const layoutRef = useRef<any>(null);
 
@@ -45,10 +42,8 @@ export default function Main() {
         setTabCounts(count);
     }, [activeTabId]);
 
-
     const [updateKey, setUpdateKey] = useState({})
     const [copyPageInfo, setCopyPageInfo] = useState({})
-
 
     /**
      * @description 탭을 추가 및 활성화 시키는 로직입니다
@@ -61,7 +56,7 @@ export default function Main() {
         const existingTabs = modelRef.current.getRoot().getChildren().flatMap(tabset =>
             tabset.getChildren().map((tab: any) => tab.getComponent())
         );
-        console.log(existingTabs,'existingTabs:')
+        console.log(existingTabs, 'existingTabs:')
 
         if (!copyPageInfo[selectedKey]) {
             setCopyPageInfo(prev => ({...prev, [selectedKey]: {}}));
@@ -96,8 +91,6 @@ export default function Main() {
             modelRef.current.doAction(Actions.addNode(newTab, tabset.getId(), DockLocation.CENTER, -1, true));
         }
     }, []);
-
-
 
 
     //활성화탭 단축키

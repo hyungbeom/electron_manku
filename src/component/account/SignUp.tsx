@@ -16,8 +16,8 @@ export default function SignUp(){
 
 
 
-        <Button type={'primary'} style={{height: '100%', borderRadius: 5}} onClick={moveJoin}>SIGN UP</Button>
-        <div style={{textAlign: 'center', display : 'flex', justifyContent : 'center', alignItems : 'center'}}>or</div>
+        <Button type={'primary'} style={{height: '100%', borderRadius: 5, fontSize : 14, border : '1px solid white'}} onClick={moveJoin}>SIGN UP</Button>
+        <div style={{textAlign: 'center', display : 'flex', justifyContent : 'center', alignItems : 'center', color : 'white'}}>or</div>
         <SignUpButton/>
 
     </>

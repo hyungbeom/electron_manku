@@ -1,17 +1,9 @@
-const { contextBridge, ipcRenderer } = require("electron");
-
-// contextBridge.exposeInMainWorld("electron", {
-//     send: (channel, data) => {
-//         // 허용된 채널 목록
-//         const validChannels = ['login-success', 'minimize-app', 'maximize-app', 'close-app'];
-//         if (validChannels.includes(channel)) {
-//             ipcRenderer.send(channel, data);
-//         }
-//     },
-// });
+const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('electron', {
-    onNavigate: (callback) => ipcRenderer.on('navigate-to', callback)
+    openMyAccountWindow: () => ipcRenderer.invoke('open-myaccount-window'),
+    openTodoListWindow: () => ipcRenderer.invoke('open-todoList-window'),
+    openManageWindow: () => ipcRenderer.invoke('open-manage-window'),
+    resizeWindow: (width, height) => ipcRenderer.invoke('resize-window', width, height),
+    launchOutlook: (params) => ipcRenderer.send('launch-outlook', params)
 });
-
-
