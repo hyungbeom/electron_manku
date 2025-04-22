@@ -91,6 +91,7 @@ function OverseasAgencyWrite({copyPageInfo, getPropertyId}: any) {
         const agencyName = infoRef.current.querySelector('#agencyName')?.value || '';
         await getData.post('agency/addOverseasAgency', infoData).then(v => {
             if (v?.data?.code === 1) {
+                window.postMessage({message: 'reload', target: 'overseas_agency_read'}, window.location.origin);
                 notificationAlert('success', '💾 해외 매입처 등록완료',
                     <>
                         <div>코드(약칭) : {agencyCode}</div>

@@ -3,60 +3,71 @@ import {getData} from "@/manage/function/api";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
 import {tableCodeReadColumns,} from "@/utils/columnList";
-import {hsCodeInitial,} from "@/utils/initialList";
+import {hsCodeSearchInitial,} from "@/utils/initialList";
 import TableGrid from "@/component/tableGrid";
 import {inputForm, MainCard, TopBoxCard} from "@/utils/commonForm";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import Spin from "antd/lib/spin";
-import {ExclamationCircleOutlined, ReloadOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
+import {ExclamationCircleOutlined, FormOutlined, ReloadOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
 import {deleteHsCodeList, searchHSCode} from "@/utils/api/mainApi";
 import Popconfirm from "antd/lib/popconfirm";
 import moment from "moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import _ from "lodash";
 import Space from "antd/lib/space";
+import {hsCodeInfo} from "@/utils/column/ProjectInfo";
 
 function HcodeRead({getPropertyId}: any) {
     const notificationAlert = useNotificationAlert();
     const gridRef = useRef(null);
-    const [mini, setMini] = useState(true);
-    const [totalRow, setTotalRow] = useState(0);
-    const [loading, setLoading] = useState(false);
 
-    const getHsCodeInit = () => _.cloneDeep(hsCodeInitial);
+    const [loading, setLoading] = useState(false);
+    const [mini, setMini] = useState(true);
+
+    const getHsCodeInit = () => _.cloneDeep(hsCodeInfo['defaultInfo']);
     const [info, setInfo] = useState(getHsCodeInit());
-    const init = {
-        searchText: "",
-        page: 1,
-        limit: -1
-    }
-    const [searchInit, setSearchInit] = useState(_.cloneDeep(init));
+    const getHsCodeValidateInit = () => _.cloneDeep(hsCodeInfo['write']['validate']);
+    const [validate, setValidate] = useState(getHsCodeValidateInit());
+
+    const [totalRow, setTotalRow] = useState(0);
+
     const [isModify, setIsModifty] = useState(false);
 
+    const getSearchInit = () => _.cloneDeep(hsCodeSearchInitial);
+    const [searchInit, setSearchInit] = useState(getSearchInit());
     const [isSearch, setIsSearch] = useState(false);
     useEffect(() => {
         if (isSearch) {
+            cancel();
             searchInfo(true);
             setIsSearch(false);
         }
     }, [isSearch]);
 
     const onGridReady = async (params) => {
+        setLoading(true);
         gridRef.current = params.api;
         await searchHSCode({data: searchInit}).then(v => {
-            params.api.applyTransaction({add: v.data});
-            setTotalRow(v.pageInfo.totalRow)
+            params.api.applyTransaction({add: v.data ?? []});
+            setTotalRow(v?.pageInfo?.totalRow ?? 0)
         })
+        .finally(() => {
+            setLoading(false);
+        });
     };
 
     function handleKeyPress(e) {
         if (e.key === 'Enter') {
-            searchInfo(true)
+            searchInfo(true);
         }
     }
 
     function onChange(e) {
         commonManage.onChange(e, setInfo)
+
+        // 값 입력되면 유효성 초기화
+        const {id, value} = e?.target;
+        commonManage.resetValidate(id, value, setValidate);
     }
 
     function searchChange(e) {
@@ -70,17 +81,14 @@ function HcodeRead({getPropertyId}: any) {
      */
     async function searchInfo(e?) {
         if (e) {
-            setLoading(true)
+            setLoading(true);
             await searchHSCode({data: searchInit}).then(v => {
-                if(v?.data?.code === 1) {
-                    gridManage.resetData(gridRef, v.data);
-                    setTotalRow(v.pageInfo.totalRow)
-                    setLoading(false)
-                } else {
-                    message.error(v?.data?.message);
-                }
+                gridManage.resetData(gridRef, v.data ?? []);
+                setTotalRow(v.pageInfo.totalRow ?? 0)
             })
-            setLoading(false);
+            .finally(() => {
+                setLoading(false);
+            });
         }
     }
 
@@ -89,26 +97,10 @@ function HcodeRead({getPropertyId}: any) {
      * 데이터 관리 > HS CODE 관리
      */
     function clearAll() {
+        cancel();
+        setSearchInit(getSearchInit());
         gridRef.current.deselectAll();
-        setSearchInit(_.cloneDeep(init));
         setIsSearch(true);
-    }
-
-    /**
-     * @description HS-Code 유효성 체크
-     * 데이터 관리 > HS CODE 관리
-     * @param info
-     */
-    function checkValidate(info) {
-        if (!info.item) {
-            message.warning('Item을 입력해주세요.');
-            return false;
-        }
-        if (!info.hsCode) {
-            message.warning('HS-CODE를 입력해주세요.');
-            return false;
-        }
-        return true;
     }
 
     /**
@@ -117,11 +109,13 @@ function HcodeRead({getPropertyId}: any) {
      * isModify = false 수정 모드 아닐때 노출
      */
     async function saveFunc() {
-        if (!checkValidate(info)) return;
+        console.log(info, 'info:::')
+        if (!commonManage.checkValidate(info, hsCodeInfo['write']['validationList'], setValidate)) return;
 
         setLoading(true);
         await getData.post('hsCode/addHsCode', info).then(v => {
             if (v?.data?.code === 1) {
+                setInfo(getHsCodeInit());
                 searchInfo(true);
                 notificationAlert('success', '💾 HS-CODE 등록완료',
                     <>
@@ -131,13 +125,27 @@ function HcodeRead({getPropertyId}: any) {
                     </>
                     , null, null, 2
                 )
-                setInfo(getHsCodeInit());
             } else {
-                message.error(v?.data?.message)
+                console.warn(v?.data?.message);
+                notificationAlert('error', '⚠️작업실패',
+                    <>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                        alert('작업 로그 페이지 참고');
+                    },
+                    {cursor: 'pointer'}
+                )
             }
         })
-        setLoading(false);
-    }
+        .catch((err) => {
+            notificationAlert('error', '❌ 네트워크 오류 발생', <div>{err.message}</div>);
+            console.error('에러:', err);
+        })
+        .finally(() => {
+            setLoading(false);
+        });
+}
 
     /**
      * @description HS-Code > 수정
@@ -145,7 +153,8 @@ function HcodeRead({getPropertyId}: any) {
      * 테이블 내용 더블 클릭시 isModify = true 가 되면서 수정모드에서 노출
      */
     async function updateFunc() {
-        if (!checkValidate(info)) return;
+        console.log(info, 'info:::')
+        if (!commonManage.checkValidate(info, hsCodeInfo['write']['validationList'], setValidate)) return;
 
         setLoading(true);
         await getData.post('hsCode/updateHsCode', info).then(v => {
@@ -160,10 +169,25 @@ function HcodeRead({getPropertyId}: any) {
                     , null, null, 2
                 )
             } else {
-                message.error(v?.data?.message)
+                console.log(v?.data?.message);
+                notificationAlert('error', '⚠️작업실패',
+                    <>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                        alert('작업 로그 페이지 참고');
+                    },
+                    {cursor: 'pointer'}
+                )
             }
         })
-        setLoading(false);
+        .catch((err) => {
+            notificationAlert('error', '❌ 네트워크 오류 발생', <div>{err.message}</div>);
+            console.error('에러:', err);
+        })
+        .finally(() => {
+            setLoading(false);
+        });
     }
 
     /**
@@ -172,8 +196,9 @@ function HcodeRead({getPropertyId}: any) {
      * 테이블 내용 더블 클릭시 isModify = true 가 되면서 수정모드에서 노출
      */
     function cancel() {
-        setIsModifty(false);
         setInfo(getHsCodeInit());
+        setValidate(getHsCodeValidateInit());
+        setIsModifty(false);
     }
 
     /**
@@ -181,21 +206,22 @@ function HcodeRead({getPropertyId}: any) {
      * 데이터 관리 > HS CODE 조회
      */
     async function deleteList() {
-        if (gridRef.current.getSelectedRows().length < 1) {
-            return message.error('삭제할 HS-CODE를 선택해주세요.')
-        }
-        setLoading(true);
+        const list = gridRef.current.getSelectedRows()
+        if (!list?.length) return message.warn('삭제할 HS-CODE를 선택해주세요.');
 
-        const selectedRows = gridRef.current.getSelectedRows();
-        const filterList = selectedRows.map(v => v.hsCodeId)
+        setLoading(true);
+        const filterList = list.map(v => v.hsCodeId);
         await deleteHsCodeList({data: {hsCodeIdList: filterList}}).then(v => {
             if (v?.code === 1) {
+                // 삭제된 리스트에 현재 수정중인 id가 있는지 확인 (삭제됬으면 폼 초기화)
+                if (filterList.includes(info.hsCodeId)) cancel();
+
                 searchInfo(true);
                 notificationAlert('success', '🗑 HS-CODE 삭제완료',
                     <>
                         <div>Item
-                            : {selectedRows[0]?.item} {selectedRows.length > 1 ? ('외' + " " + (selectedRows.length - 1) + '개') : ''} HS-CODE
-                            이(가)
+                            : {list[0]?.item} {list.length > 1 ? ('외' + " " + (list.length - 1) + '개') : ''} 의
+                            HS-CODE이(가)
                             삭제되었습니다.
                         </div>
                         <div>삭제일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
@@ -203,91 +229,108 @@ function HcodeRead({getPropertyId}: any) {
                     , null, null, 2
                 )
             } else {
-                message.error(v?.message)
+                console.log(v?.data?.message);
+                notificationAlert('error', '⚠️작업실패',
+                    <>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                        alert('작업 로그 페이지 참고');
+                    },
+                    {cursor: 'pointer'}
+                )
             }
         })
-        setLoading(false);
+        .catch((err) => {
+            notificationAlert('error', '❌ 네트워크 오류 발생', <div>{err.message}</div>);
+            console.error('에러:', err);
+        })
+        .finally(() => {
+            setLoading(false);
+        });
     }
 
     return <Spin spinning={loading}>
-        <>
-            <div style={{
-                display: 'grid',
-                gridTemplateRows: `${mini ? '150px' : '65px'} calc(100vh - ${mini ? 280 : 195}px)`,
-                columnGap: 5
-            }}>
-                <MainCard title={'HS-CODE 조회'}
-                          list={[]}
-                          mini={mini} setMini={setMini}>
-
-                    {mini ?
-                        <TopBoxCard title={''} grid={'200px 190px 200px 200px 190px'}>
-                            {inputForm({
-                                title: '검색어',
-                                id: 'searchText',
-                                onChange: searchChange,
-                                handleKeyPress: handleKeyPress,
-                                data: searchInit
-                            })}
-                            <Space style={{marginTop: 14}} size={10}>
-                                <Button type="primary" size="small" style={{fontSize: 11}} onClick={searchInfo}>
-                                    <SearchOutlined/>조회
+        <div style={{
+            display: 'grid',
+            gridTemplateRows: `${mini ? '150px' : '65px'} calc(100vh - ${mini ? 280 : 195}px)`,
+            columnGap: 5
+        }}>
+            <MainCard title={'HS-CODE 조회'}
+                      list={[]}
+                      mini={mini} setMini={setMini}>
+                {mini ?
+                    <TopBoxCard title={''} grid={'200px 190px 200px 200px 190px'}>
+                        {inputForm({
+                            title: '검색어',
+                            id: 'searchText',
+                            handleKeyPress: handleKeyPress,
+                            onChange: searchChange,
+                            data: searchInit
+                        })}
+                        <Space style={{marginTop: 14}} size={10}>
+                            <Button type="primary" size="small" style={{fontSize: 11}} onClick={searchInfo}>
+                                <SearchOutlined/>조회
+                            </Button>
+                            <Button type="primary" danger size="small" style={{fontSize: 11}} onClick={clearAll}>
+                                <ReloadOutlined/>초기화
+                            </Button>
+                        </Space>
+                        {inputForm({
+                            title: 'Item',
+                            id: 'item',
+                            onChange: onChange,
+                            data: info,
+                            validate: validate['item'],
+                            key: validate['item']
+                        })}
+                        {inputForm({
+                            title: 'HS-CODE',
+                            id: 'hsCode',
+                            onChange: onChange,
+                            data: info,
+                            validate: validate['hsCode'],
+                            key: validate['hsCode']
+                        })}
+                        <Space style={{marginTop: 14}} size={10}>
+                            {!isModify ?
+                                <Button type="primary" size="small" style={{fontSize: 11}} onClick={saveFunc}>
+                                    <SaveOutlined/>저장
                                 </Button>
-                                <Button type="primary" danger size="small" style={{fontSize: 11}} onClick={clearAll}>
-                                    <ReloadOutlined/>초기화
-                                </Button>
-                            </Space>
-                            {inputForm({
-                                title: 'Item',
-                                id: 'item',
-                                onChange: onChange,
-                                data: info
-                            })}
-                            {inputForm({
-                                title: 'HSCODE',
-                                id: 'hsCode',
-                                onChange: onChange,
-                                data: info
-                            })}
-                            <Space style={{marginTop: 14}} size={10}>
-                                {!isModify ?
-                                    <Button type="primary" size="small" style={{fontSize: 11}} onClick={saveFunc}>
-                                        <SaveOutlined/>저장
+                                : <>
+                                    <Button type="primary" size="small" style={{fontSize: 11}} onClick={updateFunc}>
+                                        <FormOutlined/>수정
                                     </Button>
-                                    : <>
-                                        <Button type="primary" size="small" style={{fontSize: 11}} onClick={updateFunc}>
-                                            <SaveOutlined/>수정
-                                        </Button>
-                                        <Button type="default" size="small" style={{fontSize: 11}}
-                                                onClick={cancel}>
-                                            <ReloadOutlined/>취소
-                                        </Button>
-                                    </>
-                                }
-                            </Space>
-                        </TopBoxCard>
-                        : <></>}
-                </MainCard>
-                {/*@ts-ignored*/}
-                <TableGrid deleteComp={<Popconfirm
-                    title="삭제하시겠습니까?"
-                    onConfirm={deleteList}
-                    icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
-                    <Button type={'primary'} danger size={'small'} style={{fontSize: 11, marginLeft: 5}}>삭제</Button>
-                </Popconfirm>
+                                    <Button type="default" size="small" style={{fontSize: 11}} onClick={cancel}>
+                                        <ReloadOutlined/>취소
+                                    </Button>
+                                </>
+                            }
+                        </Space>
+                    </TopBoxCard>
+                    : <></>}
+            </MainCard>
+            {/*@ts-ignored*/}
+            <TableGrid
+                deleteComp={
+                    <Popconfirm
+                        title="삭제하시겠습니까?"
+                        onConfirm={deleteList}
+                        icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
+                        <Button type={'primary'} danger size={'small'} style={{fontSize: 11, marginLeft: 5}}>삭제</Button>
+                    </Popconfirm>
                 }
-                           totalRow={totalRow}
-                           gridRef={gridRef}
-                           columns={tableCodeReadColumns}
-                           onGridReady={onGridReady}
-                           getPropertyId={getPropertyId}
-                           funcButtons={['agPrint']}
-                           setInfo={setInfo}
-                           type={'hsCode'}
-                           tempFunc={setIsModifty}
-                />
-            </div>
-        </>
+                totalRow={totalRow}
+                gridRef={gridRef}
+                columns={tableCodeReadColumns}
+                onGridReady={onGridReady}
+                getPropertyId={getPropertyId}
+                funcButtons={['agPrint']}
+                setInfo={setInfo}
+                type={'hsCode'}
+                tempFunc={setIsModifty}
+            />
+        </div>
     </Spin>
 }
 

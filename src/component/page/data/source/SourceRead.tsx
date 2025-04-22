@@ -14,23 +14,20 @@ import {tableSourceColumns} from "@/utils/columnList";
 import _ from "lodash";
 import Space from "antd/lib/space";
 import ReceiveComponent from "@/component/ReceiveComponent";
+import {sourceSearchInitial} from "@/utils/initialList";
 
 
 function SourceRead({getPropertyId, getCopyPage}: any) {
     const notificationAlert = useNotificationAlert();
     const gridRef = useRef(null);
-    const [mini, setMini] = useState(true);
-    const [totalRow, setTotalRow] = useState(0);
-    const [loading, setLoading] = useState(false);
 
-    const init = {
-        searchMaker: '',
-        searchModel: '',
-        searchLocation: '',
-        page: 1,
-        limit: -1
-    }
-    const [info, setInfo] = useState(_.cloneDeep(init))
+    const [loading, setLoading] = useState(false);
+    const [mini, setMini] = useState(true);
+
+    const getSearchInit = () => _.cloneDeep(sourceSearchInitial);
+    const [info, setInfo] = useState(getSearchInit());
+
+    const [totalRow, setTotalRow] = useState(0);
 
     const [isSearch, setIsSearch] = useState(false);
     useEffect(() => {
@@ -41,34 +38,30 @@ function SourceRead({getPropertyId, getCopyPage}: any) {
     }, [isSearch]);
 
     const onGridReady = async (params) => {
+        setLoading(true);
         gridRef.current = params.api;
-        getData.post('inventory/getInventoryList', init).then(v => {
+        getData.post('inventory/getInventoryList', info).then(v => {
             if (v?.data?.code === 1) {
                 const {pageInfo = {}, inventoryList = []} = v?.data?.entity;
                 params.api.applyTransaction({add: inventoryList});
-                setTotalRow(pageInfo.totalRow)
+                setTotalRow(pageInfo?.totalRow ?? 0)
             } else {
-                message.error(v?.data?.message);
+                message.warn(v?.data?.message);
             }
         })
+        .finally(() => {
+            setLoading(false);
+        });
     };
 
     function handleKeyPress(e) {
         if (e.key === 'Enter') {
-            searchInfo(true)
+            searchInfo(true);
         }
     }
 
     function onChange(e) {
         commonManage.onChange(e, setInfo)
-    }
-
-    /**
-     * @description 조회 페이지 > 신규생성 버튼
-     * 데이터 관리 > 재고고나리
-     */
-    async function moveRouter() {
-        getCopyPage('source_write', {})
     }
 
     /**
@@ -78,17 +71,19 @@ function SourceRead({getPropertyId, getCopyPage}: any) {
      */
     async function searchInfo(e?) {
         if (e) {
-            setLoading(true)
+            setLoading(true);
             getData.post('inventory/getInventoryList', info).then(v => {
                 if (v?.data?.code === 1) {
                     const {pageInfo = {}, inventoryList = []} = v?.data?.entity;
                     gridManage.resetData(gridRef, inventoryList);
-                    setTotalRow(pageInfo.totalRow)
+                    setTotalRow(pageInfo?.totalRow ?? 0)
                 } else {
-                    message.error(v?.data?.message);
+                    message.warn(v?.data?.message);
                 }
             })
-            setLoading(false)
+            .finally(() => {
+                setLoading(false);
+            });
         }
     }
 
@@ -97,9 +92,17 @@ function SourceRead({getPropertyId, getCopyPage}: any) {
      * 데이터 관리 > 재고관리
      */
     function clearAll() {
+        setInfo(getSearchInit());
         gridRef.current.deselectAll();
-        setInfo(_.cloneDeep(init));
         setIsSearch(true);
+    }
+
+    /**
+     * @description 조회 페이지 > 신규생성 버튼
+     * 데이터 관리 > 재고관리
+     */
+    async function moveRouter() {
+        getCopyPage('source_write', {})
     }
 
     /**
@@ -107,20 +110,17 @@ function SourceRead({getPropertyId, getCopyPage}: any) {
      * 데이터 관리 > 재고관리
      */
     async function deleteList() {
-        if (gridRef.current.getSelectedRows().length < 1) {
-            return message.error('삭제할 재고를 선택해주세요.')
-        }
-        setLoading(true);
-
         const list = gridRef.current.getSelectedRows();
+        if (!list?.length) return message.warn('삭제할 재고를 선택해주세요.');
 
+        setLoading(true);
         await getData.post('inventory/deleteListInventories', {deleteInventoryList: list}).then(v => {
             if (v?.data?.code === 1) {
                 searchInfo(true);
                 notificationAlert('success', '🗑 재고 삭제완료',
                     <>
                         <div>Model
-                            : {list[0].model} {list.length > 1 ? ('외' + " " + (list.length - 1) + '개') : ''} 재고이(가)
+                            : {list[0].model} {list.length > 1 ? ('외' + " " + (list.length - 1) + '개') : ''} 의 재고이(가)
                             삭제되었습니다.
                         </div>
                         <div>삭제일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
@@ -128,45 +128,60 @@ function SourceRead({getPropertyId, getCopyPage}: any) {
                     , null, null, 2
                 )
             } else {
-                message.error(v?.data?.message)
+                notificationAlert('error', '⚠️ 작업실패',
+                    <>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                        alert('작업 로그 페이지 참고')
+                    },
+                    {cursor: 'pointer'}
+                )
+                console.warn(v?.data?.message);
             }
         })
-        setLoading(false);
+        .catch((err) => {
+            notificationAlert('error', '❌ 네트워크 오류 발생', <div>{err.message}</div>);
+            console.error('에러:', err);
+        })
+        .finally(() => {
+            setLoading(false);
+        });
     }
 
     return <Spin spinning={loading} tip={'재고관리 조회중...'}>
-        <ReceiveComponent searchInfo={searchInfo}/>
+        <ReceiveComponent componentName={'source_read'} searchInfo={searchInfo}/>
         <div style={{
             display: 'grid',
             gridTemplateRows: `${mini ? '150px' : '65px'} calc(100vh - ${mini ? 280 : 195}px)`,
             columnGap: 5
         }}>
-            <MainCard title={'재고관리 조회'} list={[{
-                name: <div><SaveOutlined style={{paddingRight: 8}}/>신규작성</div>,
-                func: moveRouter,
-                type: ''
-            }]} mini={mini} setMini={setMini}>
+            <MainCard title={'재고관리 조회'}
+                      list={[
+                          {name: <div><SaveOutlined style={{paddingRight: 8}}/>신규작성</div>, func: moveRouter, type: ''}
+                      ]}
+                      mini={mini} setMini={setMini}>
                 {mini ?
                     <TopBoxCard title={''} grid={"200px 200px 200px 1fr"}>
                         {inputForm({
                             title: 'Maker',
                             id: 'searchMaker',
-                            onChange: onChange,
                             handleKeyPress: handleKeyPress,
+                            onChange: onChange,
                             data: info
                         })}
                         {inputForm({
                             title: 'Model',
                             id: 'searchModel',
-                            onChange: onChange,
                             handleKeyPress: handleKeyPress,
+                            onChange: onChange,
                             data: info
                         })}
                         {inputForm({
                             title: '위치',
                             id: 'searchLocation',
-                            onChange: onChange,
                             handleKeyPress: handleKeyPress,
+                            onChange: onChange,
                             data: info
                         })}
                         <Space style={{marginTop: 14}} size={8}>
@@ -181,19 +196,21 @@ function SourceRead({getPropertyId, getCopyPage}: any) {
                     : <></>}
             </MainCard>
             {/*@ts-ignored*/}
-            <TableGrid deleteComp={<Popconfirm
-                title="삭제하시겠습니까?"
-                onConfirm={deleteList}
-                icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
-                <Button type={'primary'} danger size={'small'} style={{fontSize: 11, marginLeft: 5}}>삭제</Button>
-            </Popconfirm>
-            }
-                       totalRow={totalRow}
-                       gridRef={gridRef}
-                       columns={tableSourceColumns}
-                       onGridReady={onGridReady}
-                       getPropertyId={getPropertyId}
-                       funcButtons={['agPrint']}
+            <TableGrid
+                deleteComp={
+                    <Popconfirm
+                        title="삭제하시겠습니까?"
+                        onConfirm={deleteList}
+                        icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
+                        <Button type={'primary'} danger size={'small'} style={{fontSize: 11, marginLeft: 5}}>삭제</Button>
+                    </Popconfirm>
+                }
+                totalRow={totalRow}
+                gridRef={gridRef}
+                columns={tableSourceColumns}
+                onGridReady={onGridReady}
+                getPropertyId={getPropertyId}
+                funcButtons={['agPrint']}
             />
         </div>
     </Spin>

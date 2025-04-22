@@ -108,17 +108,12 @@ function EstimateUpdate({
         label: item.name,
     }));
 
+    const router = useRouter();
+    const [loading, setLoading] = useState(false);
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
     const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
     const [count, setCount] = useState(0);
-
-    const [fileList, setFileList] = useState([]);
-    const [originFileList, setOriginFileList] = useState([]);
-    const [tableData, setTableData] = useState([]);
-
-    const router = useRouter();
-    const [loading, setLoading] = useState(false);
 
     const userInfo = useAppSelector((state) => state.user);
     const adminParams = {
@@ -136,11 +131,20 @@ function EstimateUpdate({
     const [info, setInfo] = useState<any>({})
     const [validate, setValidate] = useState(estimateInfo['write']['validate']);
 
+    const [fileList, setFileList] = useState([]);
+    const [originFileList, setOriginFileList] = useState([]);
+    const [tableData, setTableData] = useState([]);
+
     useEffect(() => {
-        setLoading(true)
+        setLoading(true);
+        setInfo(getEstimateInit());
+        setFileList([]);
+        setOriginFileList([]);
+        setTableData([]);
         getDataInfo().then(v => {
             const {estimateDetail, attachmentFileList} = v;
             setInfo({
+                ...getEstimateInit(),
                 ...estimateDetail,
                 uploadType: 3,
                 managerAdminId: estimateDetail['managerAdminId'] ? estimateDetail['managerAdminId'] : '',
@@ -151,8 +155,10 @@ function EstimateUpdate({
             setOriginFileList(attachmentFileList)
             estimateDetail[listType] = [...estimateDetail[listType], ...commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000 - estimateDetail[listType].length)]
             setTableData(estimateDetail[listType]);
-            setLoading(false)
         })
+        .finally(() => {
+            setLoading(false);
+        });
     }, [updateKey['estimate_update']])
 
     async function getDataInfo() {
@@ -188,8 +194,8 @@ function EstimateUpdate({
         commonManage.onChange(e, setInfo)
 
         // 값 입력되면 유효성 초기화
-        const { key, value } = e?.target;
-        commonManage.resetValidate(key, value, setValidate);
+        const { id, value } = e?.target;
+        commonManage.resetValidate(id, value, setValidate);
     }
 
     /**
@@ -286,7 +292,7 @@ function EstimateUpdate({
                 setFileList(list)
                 setOriginFileList(list);
 
-                window.postMessage('update', window.location.origin);
+                window.postMessage({message: 'reload', target: 'estimate_read'}, window.location.origin);
                 notificationAlert('success', '💾 견적서 수정완료',
                     <>
                         <div>Inquiry No. : {info.documentNumberFull}</div>
@@ -322,8 +328,8 @@ function EstimateUpdate({
         getData.post('estimate/deleteEstimate', {estimateId: updateKey['estimate_update']}).then(v => {
             const {code, message} = v.data;
             if (code === 1) {
-                window.postMessage('delete', window.location.origin);
-                notificationAlert('success', '🗑️견적서 삭제완료',
+                window.postMessage({message: 'reload', target: 'estimate_read'}, window.location.origin);
+                notificationAlert('success', '🗑 견적서 삭제완료',
                     <>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
@@ -338,10 +344,20 @@ function EstimateUpdate({
                     model.doAction(Actions.deleteTab(targetNode.getId())); // ✅ 기존 로직 유지
                 }
             } else {
-                message.error(v?.data?.message)
+                notificationAlert('error', '⚠️작업실패',
+                    <>
+                        <div>Project No. : {info.documentNumberFull}</div>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                        console.log(v?.data?.message);
+                        alert('작업 로그 페이지 참고')
+                    },
+                    {cursor: 'pointer'}
+                )
             }
-            setLoading(false)
         }, err => setLoading(false))
+        setLoading(false)
     }
 
     /**

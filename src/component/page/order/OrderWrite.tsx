@@ -52,7 +52,6 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
             "page": 1,
             "limit": -1
         }).then(v => {
-            console.log(v?.data?.entity?.adminList)
             setMemberList(v?.data?.entity?.adminList)
         })
     }
@@ -120,24 +119,19 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                     // await findCodeInfo(e, setInfo, openModal, infoRef)
                     break;
                 case 'ourPoNo' :
-                    console.log(e.target.value)
-                    console.log(info)
                     if (!e.target.value) {
-                        return message.warn('연결 Inqruiy No.를 입력해주세요.')
+                        return message.warn('만쿠견적서 No.를 입력해주세요.');
                     }
                     setLoading(true);
                     await getData.post('estimate/getEstimateDetail', {
-                        "estimateId": '',
+                        estimateId: '',
                         documentNumberFull: e.target.value.toUpperCase()
                     }).then(async v => {
-                        if (v.data.code === 1) {
-                            const {estimateDetail} = v.data?.entity
-                            if (!estimateDetail) {
-                                message.error('조회 정보가 없습니다.');
-                                return false;
-                            }
+                        if (v?.data?.code === 1) {
+                            setInfo(getOrderInit());
                             setFileList([]);
                             setOriginFileList([]);
+                            const {estimateDetail = {}, attachmentFileList = []} = v?.data?.entity;
                             // const result = await findDocumentInfo(e, setInfo);
                             await getData.post('estimate/generateDocumentNumberFull', {
                                 type: 'ORDER',
@@ -145,41 +139,40 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                             }).then(src => {
                                 const manager = estimateDetail?.managerAdminId;
                                 const findManager = memberList.find(v => v.adminId === manager)
-                                delete estimateDetail?.createdBy
-                                delete estimateDetail?.managerAdminId
                                 setInfo({
-                                    ...info,
+                                    ...getOrderInit(),
                                     ...estimateDetail,
+                                    documentNumberFull: src?.data?.code === 1 ? src?.data?.entity?.newDocumentNumberFull : '',
                                     ourPoNo: e?.target?.value?.toUpperCase(),
-                                    writtenDate: moment().format('YYYY-MM-DD'),
                                     estimateManager: findManager?.name,
                                     customerManagerName: estimateDetail?.managerName,
                                     customerManagerPhoneNumber: estimateDetail?.phoneNumber,
                                     customerManagerEmail: estimateDetail?.faxNumber,
                                     customerManagerFaxNumber: estimateDetail?.email ? estimateDetail?.email : '',
-                                    documentNumberFull: src?.data?.code === 1 ? src?.data?.entity?.newDocumentNumberFull : '',
                                     // validityPeriod: '견적 발행 후 10일간',
                                     // paymentTerms: '발주시 50% / 납품시 50%',
                                     // shippingTerms: '귀사도착도',
-                                    uploadType: 4
+                                    uploadType: 4,
+                                    createdBy: adminParams.createdBy,
+                                    writtenDate: moment().format('YYYY-MM-DD')
                                 })
-                                const copyList = estimateDetail?.estimateDetailList.map(v => {
-                                    return {...v, currency: v.currencyUnit}
-                                })
-                                if (estimateDetail) {
+                                if (estimateDetail?.estimateDetailList?.length) {
+                                    const copyList = estimateDetail.estimateDetailList.map(v => {
+                                        return {...v, currency: v.currencyUnit}
+                                    })
                                     setTableData([...copyList, ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000 - estimateDetail?.estimateDetailList.length)])
                                 }
-                                setLoading(false)
-                            }, err => setLoading(false));
-                        } else {
-                            setLoading(false)
+                            })
+                            .finally(() => {
+                                setLoading(false);
+                            });
                         }
-                    }, err => {
-                        console.log(err, ':::err:::')
-                        setLoading(false)
                     })
-                    // await findOrderDocumentInfo(e, setInfo, setTableData, memberList)
+                    .finally(() => {
+                        setLoading(false);
+                    });
                     break;
+                    // await findOrderDocumentInfo(e, setInfo, setTableData, memberList)
             }
         }
     }
@@ -188,8 +181,8 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
         commonManage.onChange(e, setInfo)
 
         // 값 입력되면 유효성 초기화
-        const {key, value} = e?.target;
-        commonManage.resetValidate(key, value, setValidate);
+        const { id, value } = e?.target;
+        commonManage.resetValidate(id, value, setValidate);
     }
 
     /**
@@ -255,7 +248,6 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
     }
 
     async function returnFunc(code, msg, data) {
-        const dom = infoRef.current.querySelector('#documentNumberFull');
         if (code === 1) {
             await getAttachmentFileList({
                 data: {
@@ -266,7 +258,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                 const list = fileManage.getFormatFiles(v);
                 setFileList(list);
 
-                window.postMessage('write', window.location.origin);
+                window.postMessage({message: 'reload', target: 'order_read'}, window.location.origin);
                 notificationAlert('success', '💾 발주서 등록완료',
                     <>
                         <div>Inquiry No. : {info.documentNumberFull}</div>
@@ -284,8 +276,9 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
             setValidate(v => {
                 return {...v, documentNumberFull: false}
             })
-            message.error(msg);
+            message.warn(msg);
         } else {
+            console.warn(msg);
             notificationAlert('error', '⚠️작업실패',
                 <>
                     <div>Inquiry No. : {info.documentNumberFull}</div>

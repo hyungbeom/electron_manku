@@ -80,20 +80,15 @@ export const rfqWriteInitial = {
 
 // ==============================================================================
 
-
-export const sourceWriteInitial = {
-    "receiptDate": moment().format('YYYY-MM-DD'),
-    "documentNumber": "",
-    "maker": "",
-    "model": "",
-    "importUnitPrice": "",
-    "currencyUnit": "",
-    "receivedQuantity": "",
-    "unit": "",
-    "location": "",
-    "remarks": "",
+// Maker 조회 > 검색 초기값 정보
+export const makerSearchInitial = {
+    searchType: 1,
+    searchText: '',
+    page: 1,
+    limit: -1
 }
 
+// Maker 등록/수정 > 입력 초기값 정보
 export const makerWriteInitial = {
     "makerName": "",                   // Maker
     "item": "",                        // Item
@@ -107,7 +102,15 @@ export const makerWriteInitial = {
     "instructions": ""
 }
 
-// 회사계정관리 초기값 정보
+// 회사계정관리 조회 > 검색 초기값 정보
+export const companyAccountSearchInitial = {
+    searchCompanyName: '',
+    searchHomepage: '',
+    page: 1,
+    limit: -1
+}
+
+// 회사계정관리 등록/수정 > 입력 초기값 정보
 export const companyAccountWriteInitial = {
     "companyName": "",
     "homepage": "",
@@ -116,7 +119,37 @@ export const companyAccountWriteInitial = {
     "remarks": ""
 }
 
-// HSCode 초기값 정보
+// 재고관리 조회 > 검색 초기값 정보
+export const sourceSearchInitial = {
+    searchMaker: '',
+    searchModel: '',
+    searchLocation: '',
+    page: 1,
+    limit: -1
+}
+
+// 재고관리 등록/수정 > 입력 초기값 정보
+export const sourceWriteInitial = {
+    "receiptDate": moment().format('YYYY-MM-DD'),
+    "documentNumber": "",
+    "maker": "",
+    "model": "",
+    "importUnitPrice": "",
+    "currencyUnit": "",
+    "receivedQuantity": "",
+    "unit": "",
+    "location": "",
+    "remarks": "",
+}
+
+// HS-CODE 조회 > 검색 초기값 정보
+export const hsCodeSearchInitial = {
+    searchText: "",
+    page: 1,
+    limit: -1
+}
+
+// HSCode 등록/수정 > 입력 초기값 정보
 export const hsCodeInitial = {
     item: "",
     hsCode: ""
@@ -193,6 +226,7 @@ export const estimateReadInitial = {
     limit: -1
 }
 
+// 프로젝트 조회 > 검색 초기값 정보
 export const projectReadInitial = {
     searchManagerAdminName: "",
     searchDate: [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],

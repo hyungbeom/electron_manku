@@ -129,8 +129,8 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         commonManage.onChange(e, setInfo)
 
         // 값 입력되면 유효성 초기화
-        const { key, value } = e?.target;
-        commonManage.resetValidate(key, value, setValidate);
+        const { id, value } = e?.target;
+        commonManage.resetValidate(id, value, setValidate);
 
     }
 
@@ -180,7 +180,7 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
             const {code, entity} = v?.data;
             if (code === 1) {
                 const {documentNumberFull, estimateRequestId} = entity;
-                window.postMessage('write', window.location.origin);
+                window.postMessage({message: 'reload', target: 'rfq_read'}, window.location.origin);
                 notificationAlert('success', '💾 견적의뢰 등록완료',
                     <>
                         <div>의뢰자료 No. : {documentNumberFull}</div>

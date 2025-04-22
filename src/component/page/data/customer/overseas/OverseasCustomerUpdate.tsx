@@ -77,6 +77,7 @@ function OverseasCustomerUpdate({ updateKey, getCopyPage, layoutRef}:any) {
         const customerName = infoRef.current.querySelector('#customerName')?.value || '';
         await getData.post('customer/updateOverseasCustomer', infoData).then(v => {
             if (v?.data?.code === 1) {
+                window.postMessage({message: 'reload', target: 'overseas_customer_read'}, window.location.origin);
                 notificationAlert('success', '💾 해외고객사 수정완료',
                     <>
                         <div>코드(약칭) : {customerCode}</div>
@@ -101,7 +102,8 @@ function OverseasCustomerUpdate({ updateKey, getCopyPage, layoutRef}:any) {
         const customerCode = infoRef.current.querySelector('#customerCode')?.value || '';
         const customerName = infoRef.current.querySelector('#customerName')?.value || '';
         getData.post('customer/deleteOverseasCustomer',{overseasCustomerId : updateKey['overseas_customer_update']}).then(v=>{
-            if(v?.data?.code === 1){
+            if(v?.data?.code === 1) {
+                window.postMessage({message: 'reload', target: 'overseas_customer_read'}, window.location.origin);
                 notificationAlert('success', '🗑️ 해외고객사 삭제완료',
                     <>
                         <div>코드(약칭) : {customerCode}</div>
@@ -110,9 +112,8 @@ function OverseasCustomerUpdate({ updateKey, getCopyPage, layoutRef}:any) {
                     </>
                     , null, null, 2
                 )
-                const {model} = layoutRef.current.props;
-                window.postMessage('delete', window.location.origin);
                 getCopyPage('overseas_customer_read', {})
+                const {model} = layoutRef.current.props;
                 const targetNode = model.getRoot().getChildren()[0]?.getChildren()
                     .find((node: any) => node.getType() === "tab" && node.getComponent() === 'overseas_customer_update');
 

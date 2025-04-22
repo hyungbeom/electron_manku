@@ -136,7 +136,7 @@ function OverseasAgencyRead({getPropertyId, getCopyPage}: any) {
     }
 
     return <Spin spinning={loading} tip={'해외 매입처 조회중...'}>
-        <ReceiveComponent searchInfo={searchInfo}/>
+        <ReceiveComponent componentName={'overseas_agency_read'} searchInfo={searchInfo}/>
         <>
             <div style={{
                 display: 'grid',

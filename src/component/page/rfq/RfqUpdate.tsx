@@ -39,14 +39,12 @@ function RqfUpdate({
                        getPropertyId = null,
                        layoutRef
                    }: any) {
-
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
     const infoRef = useRef<any>(null)
     const tableRef = useRef(null);
     const fileRef = useRef(null);
     const gridRef = useRef(null);
-    const router = useRouter();
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('rfq_write');
@@ -78,12 +76,10 @@ function RqfUpdate({
         label: item.name,
     }));
 
+    const router = useRouter();
+    const [loading, setLoading] = useState(false);
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false, event3: false});
-    const [fileList, setFileList] = useState([]);
-    const [originFileList, setOriginFileList] = useState([]);
-    const [tableData, setTableData] = useState([]);
-    const [loading, setLoading] = useState(false);
 
     const userInfo = useAppSelector((state) => state.user);
     const adminParams = {
@@ -101,8 +97,16 @@ function RqfUpdate({
     const [info, setInfo] = useState(getRfqInit());
     const [validate, setValidate] = useState(rfqInfo['write']['validate']);
 
+    const [fileList, setFileList] = useState([]);
+    const [originFileList, setOriginFileList] = useState([]);
+    const [tableData, setTableData] = useState([]);
+
     useEffect(() => {
-        setLoading(true)
+        setLoading(true);
+        setInfo(getRfqInit());
+        setFileList([]);
+        setOriginFileList([]);
+        setTableData([]);
         getDataInfo().then(v => {
             if (v) {
                 const {estimateRequestDetail, attachmentFileList} = v;
@@ -112,20 +116,23 @@ function RqfUpdate({
                  * uploadType 0에서 1로 수정
                  */
                 setInfo({
+                    ...getRfqInit(),
                     ...estimateRequestDetail,
                     uploadType: 1,
                     managerAdminId: estimateRequestDetail['managerAdminId'] ? estimateRequestDetail['managerAdminId'] : '',
                     managerAdminName: estimateRequestDetail['managerAdminName'] ? estimateRequestDetail['managerAdminName'] : '',
                     createdBy: userInfo['name']
-                })
+                });
                 //
                 setFileList(fileManage.getFormatFiles(attachmentFileList));
                 setOriginFileList(attachmentFileList);
                 estimateRequestDetail[listType] = [...estimateRequestDetail[listType], ...commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000 - estimateRequestDetail[listType].length)]
                 setTableData(estimateRequestDetail[listType]);
             }
-            setLoading(false)
         })
+        .finally(() => {
+            setLoading(false);
+        });
     }, [updateKey['rfq_update']])
 
     async function getDataInfo() {
@@ -152,8 +159,8 @@ function RqfUpdate({
         commonManage.onChange(e, setInfo)
 
         // 값 입력되면 유효성 초기화
-        const { key, value } = e?.target;
-        commonManage.resetValidate(key, value, setValidate);
+        const { id, value } = e?.target;
+        commonManage.resetValidate(id, value, setValidate);
     }
 
     /**
@@ -238,7 +245,7 @@ function RqfUpdate({
                 setFileList(list)
                 setOriginFileList(list)
 
-                window.postMessage('update', window.location.origin);
+                window.postMessage({message: 'reload', target: 'rfq_read'}, window.location.origin);
                 notificationAlert('success', '💾 견적의뢰 수정완료',
                     <>
                         <div>의뢰자료 No. : {info.documentNumberFull}</div>
@@ -274,7 +281,8 @@ function RqfUpdate({
         getData.post('estimate/deleteEstimateRequest', {estimateRequestId: updateKey['rfq_update']}).then(v => {
             const {code, message} = v.data;
             if (code === 1) {
-                window.postMessage('delete', window.location.origin);
+                window.postMessage({message: 'reload', target: 'rfq_read'}, window.location.origin);
+
                 notificationAlert('success', '🗑️견적의뢰 삭제완료',
                     <>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
@@ -291,10 +299,20 @@ function RqfUpdate({
                     model.doAction(Actions.deleteTab(targetNode.getId())); // ✅ 기존 로직 유지
                 }
             } else {
-                message.error(v?.data?.message)
+                notificationAlert('error', '⚠️작업실패',
+                    <>
+                        <div>Project No. : {info.documentNumberFull}</div>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                        console.log(v?.data?.message);
+                        alert('작업 로그 페이지 참고')
+                    },
+                    {cursor: 'pointer'}
+                )
             }
-            setLoading(true)
         }, err => setLoading(false))
+        setLoading(true)
     }
 
     /**

@@ -88,6 +88,7 @@ function OverseasCustomerWrite({copyPageInfo, getPropertyId}: any) {
         const customerName = infoRef.current.querySelector('#customerName')?.value || '';
         await getData.post('customer/addOverseasCustomer', infoData).then(v => {
             if (v?.data?.code === 1) {
+                window.postMessage({message: 'reload', target: 'overseas_customer_read'}, window.location.origin);
                 notificationAlert('success', '💾 해외 고객사 등록완료',
                     <>
                         <div>코드(약칭) : {customerCode}</div>

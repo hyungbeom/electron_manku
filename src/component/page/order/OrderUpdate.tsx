@@ -70,14 +70,10 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
 
     const router = useRouter();
     const [loading, setLoading] = useState(false);
-
     const [mini, setMini] = useState(true);
     const [count, setCount] = useState(0);
     const [customerData, setCustomerData] = useState<any>(printEstimateInitial)
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false, event3: false});
-    const [fileList, setFileList] = useState([]);
-    const [originFileList, setOriginFileList] = useState([]);
-    const [tableData, setTableData] = useState([]);
 
     const userInfo = useAppSelector((state) => state.user);
     const adminParams = {
@@ -100,30 +96,39 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
     const [info, setInfo] = useState<any>(getOrderInit())
     const [validate, setValidate] = useState(orderInfo['write']['validate']);
 
+    const [fileList, setFileList] = useState([]);
+    const [originFileList, setOriginFileList] = useState([]);
+    const [tableData, setTableData] = useState([]);
+
     useEffect(() => {
-        setLoading(true)
+        setLoading(true);
+        setInfo(getOrderInit());
+        setFileList([]);
+        setOriginFileList([]);
+        setTableData([]);
         getDataInfo().then(v => {
             const {orderDetail, attachmentFileList} = v;
-            setFileList(fileManage.getFormatFiles(attachmentFileList));
-            setOriginFileList(attachmentFileList);
-            const addOrderList = orderDetail[listType].map(v => {
-                return {...v, order: v.quantity}
-            });
             setInfo({
+                ...getOrderInit(),
                 ...orderDetail,
                 uploadType: 4,
                 managerAdminId: orderDetail['managerAdminId'] ? orderDetail['managerAdminId'] : '',
                 managerAdminName: orderDetail['managerAdminName'] ? orderDetail['managerAdminName'] : '',
                 createdBy: userInfo['name']
             })
+            setFileList(fileManage.getFormatFiles(attachmentFileList));
+            setOriginFileList(attachmentFileList);
+            const addOrderList = orderDetail[listType].map(v => {
+                return {...v, order: v.quantity}
+            });
             orderDetail[listType] = [...addOrderList, ...commonFunc.repeatObject(orderInfo['write']['defaultData'], 1000 - orderDetail[listType].length)]
             setTableData(orderDetail[listType]);
             // 한국코드가 아니면 영어로 셋
-            if (!orderDetail?.agencyCode?.toUpperCase().startsWith('K')) {
-                setCheck(true);
-            }
-            setLoading(false)
+            if (!orderDetail?.agencyCode?.toUpperCase().startsWith('K')) setCheck(true);
         })
+        .finally(() => {
+            setLoading(false);
+        });
     }, [updateKey['order_update']])
 
     async function getDataInfo() {
@@ -150,8 +155,8 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
         commonManage.onChange(e, setInfo)
 
         // 값 입력되면 유효성 초기화
-        const { key, value } = e?.target;
-        commonManage.resetValidate(key, value, setValidate);
+        const { id, value } = e?.target;
+        commonManage.resetValidate(id, value, setValidate);
     }
 
     /**
@@ -235,7 +240,7 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
                 setFileList(list)
                 setOriginFileList(list)
 
-                window.postMessage('update', window.location.origin);
+                window.postMessage({message: 'reload', target: 'order_read'}, window.location.origin);
                 notificationAlert('success', '💾 발주서 수정완료',
                     <>
                         <div>Inquiry No. : {info.documentNumberFull}</div>
@@ -248,7 +253,7 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
                 )
             })
         } else {
-            notificationAlert('error', '⚠️작업실패',
+            notificationAlert('error', '⚠️ 작업실패',
                 <>
                     <div>Inquiry No. : {info.documentNumberFull}</div>
                     <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
@@ -266,11 +271,11 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
      * 발주서 > 발주서 수정
      */
     function deleteFunc() {
-        setLoading(true)
+        setLoading(true);
         getData.post('order/deleteOrder', {orderId: updateKey['order_update']}).then(v => {
             const {code, message} = v.data;
             if (code === 1) {
-                window.postMessage('delete', window.location.origin);
+                window.postMessage({message: 'reload', target: 'order_read'}, window.location.origin);
                 notificationAlert('success', '🗑️ 발주서 삭제완료',
                     <>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
@@ -278,18 +283,34 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
                     , null,
                     {cursor: 'pointer'}
                 )
-                const {model} = layoutRef.current.props;
                 getCopyPage('order_read', {})
+                const {model} = layoutRef.current.props;
                 const targetNode = model.getRoot().getChildren()[0]?.getChildren()
                     .find((node: any) => node.getType() === "tab" && node.getComponent() === 'order_update');
                 if (targetNode) {
                     model.doAction(Actions.deleteTab(targetNode.getId())); // ✅ 기존 로직 유지
                 }
             } else {
-                message.error(v?.data?.message)
+                console.log(v?.data?.message);
+                notificationAlert('error', '⚠️ 작업실패',
+                    <>
+                        <div>Project No. : {info.documentNumberFull}</div>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                        alert('작업 로그 페이지 참고')
+                    },
+                    {cursor: 'pointer'}
+                )
             }
-            setLoading(false)
-        }, err => setLoading(false))
+        })
+        .catch((err) => {
+            notificationAlert('error', '❌ 네트워크 오류 발생', <div>{err.message}</div>);
+            console.error('에러:', err);
+        })
+        .finally(() => {
+            setLoading(false);
+        });
     }
 
     /**

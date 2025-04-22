@@ -81,6 +81,7 @@ function DomesticAgencyUpdate({updateKey, getCopyPage, layoutRef}: any) {
         const agencyName = infoRef.current.querySelector('#agencyName')?.value || '';
         await getData.post('agency/updateAgency', infoData).then(v => {
             if (v?.data?.code === 1) {
+                window.postMessage({message: 'reload', target: 'domestic_agency_read'}, window.location.origin);
                 notificationAlert('success', '💾 국내매입처 수정완료',
                     <>
                         <div>코드(약칭) : {agencyCode}</div>
@@ -105,7 +106,8 @@ function DomesticAgencyUpdate({updateKey, getCopyPage, layoutRef}: any) {
         const agencyCode = infoRef.current.querySelector('#agencyCode')?.value || '';
         const agencyName = infoRef.current.querySelector('#agencyName')?.value || '';
         getData.post('agency/deleteAgency',{agencyId : updateKey['domestic_agency_update']}).then(v=>{
-            if(v?.data?.code === 1){
+            if(v?.data?.code === 1) {
+                window.postMessage({message: 'reload', target: 'domestic_agency_read'}, window.location.origin);
                 notificationAlert('success', '🗑️ 국내매입처 삭제완료',
                     <>
                         <div>코드(약칭) : {agencyCode}</div>
@@ -114,9 +116,8 @@ function DomesticAgencyUpdate({updateKey, getCopyPage, layoutRef}: any) {
                     </>
                     ,null, null, 2
                 )
-                const {model} = layoutRef.current.props;
-                window.postMessage('delete', window.location.origin);
                 getCopyPage('domestic_agency_read', {})
+                const {model} = layoutRef.current.props;
                 const targetNode = model.getRoot().getChildren()[0]?.getChildren()
                     .find((node: any) => node.getType() === "tab" && node.getComponent() === 'domestic_agency_update');
 
