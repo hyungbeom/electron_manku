@@ -31,13 +31,8 @@ export default function EstimateHeader(){
 }
 
 
-export function PoHeader({infoRef}){
+export function PoHeader({info}){
 
-
-    function chechLang() {
-        const dom = infoRef.current.querySelector('#agencyCode');
-        return dom.value.startsWith("K");
-    }
 
 
     return <>
@@ -47,7 +42,7 @@ export function PoHeader({infoRef}){
                      alt=""/>
                 <div style={{float: 'left', fontSize: 11, paddingLeft: 20}}>
 
-                    {infoRef.current.querySelector('#agencyCode').value.startsWith('K') ? <>
+                    {info?.agencyCode.startsWith("K") ? <>
                         <div>(주) 만쿠무역</div>
                         <div>Manku Trading Co., Ltd</div>
                         <div>서울시 송파구 충민로 52 가든파이브웍스</div>
@@ -68,7 +63,7 @@ export function PoHeader({infoRef}){
                 fontSize: 38,
                 fontWeight: 700,
                 textAlign: 'center'
-            }}>{chechLang() ? <>발&nbsp;&nbsp;&nbsp;&nbsp;주&nbsp;&nbsp;&nbsp;&nbsp;서</> : <>PURCHASE
+            }}>{info?.agencyCode.startsWith("K") ? <>발&nbsp;&nbsp;&nbsp;&nbsp;주&nbsp;&nbsp;&nbsp;&nbsp;서</> : <>PURCHASE
                 ORDER</>} </div>
             <div style={{width: '40%'}}>
                 <img src={'/manku_stamp_ko.png'} style={{float: 'right'}} width={180} alt=""/>

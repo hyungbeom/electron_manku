@@ -229,7 +229,7 @@ function EstimateUpdate({
             width={1050}
             footer={null}
             onOk={() => setIsPrintModalOpen(false)}>
-            <EstimatePaper infoRef={infoRef} pdfRef={pdfRef} pdfSubRef={pdfSubRef} tableRef={tableRef} position={true}
+            <EstimatePaper info={info} pdfRef={pdfRef} pdfSubRef={pdfSubRef} tableRef={tableRef} position={true}
                            memberList={memberList} maker={info.maker} title={'견적서 출력'} count={count}/>
         </Modal>
     }

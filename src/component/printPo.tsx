@@ -19,7 +19,7 @@ function PrintPo({
                      isModalOpen,
                      setIsModalOpen,
                      tableRef,
-                     infoRef,
+    info,
                      memberList = [],
                      count = 0,
                  }) {
@@ -297,8 +297,8 @@ function PrintPo({
                 padding: 20
             }}>
 
-                <PoHeader infoRef={infoRef}/>
-                <TopPoInfo infoRef={infoRef} hsCode={data[0][0]?.hsCode} getTopInfoData={getTopInfoData}/>
+                <PoHeader info={info}/>
+                <TopPoInfo info={info} hsCode={data[0][0]?.hsCode} getTopInfoData={getTopInfoData}/>
                 <table style={{
                     width: '100%',
                     borderCollapse: 'collapse',
@@ -389,7 +389,7 @@ function PrintPo({
                     </table>
 
                 }
-                {Object.keys(data).length > 1 ? <></> : <BottomPoInfo infoRef={infoRef}/>}
+                {Object.keys(data).length > 1 ? <></> : <BottomPoInfo info={info}/>}
 
                 <div style={{textAlign: 'center'}}>- 1 -</div>
             </div>
@@ -412,7 +412,7 @@ function PrintPo({
                         justifyContent: 'space-between',
                         padding: 20
                     }}>
-                        <PoHeader infoRef={infoRef}/>
+                        <PoHeader info={info}/>
                         <table style={{
                             width: '100%',
                             borderCollapse: 'collapse',
@@ -493,7 +493,7 @@ function PrintPo({
                                 </thead>
                             </table>
                             : <></>}
-                        {Object.keys(data).length - 1 === i ? <BottomPoInfo infoRef={infoRef}/> : <></>}
+                        {Object.keys(data).length - 1 === i ? <BottomPoInfo info={info}/> : <></>}
                         <div style={{textAlign: 'center'}}>- {i + 1} -</div>
                     </div>
                 })}

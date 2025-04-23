@@ -17,7 +17,7 @@ import {SelectForm} from "@/utils/commonForm";
 import Checkbox from "antd/lib/checkbox/Checkbox";
 
 const EstimatePaper = ({
-                           infoRef,
+                           info,
                            tableRef,
                            memberList = [],
                            count = 0,
@@ -289,7 +289,7 @@ const EstimatePaper = ({
                 padding: '0px 20px'
             }}>
                 <EstimateHeader/>
-                <TopInfo count={count} infoRef={infoRef} type={type} memberList={memberList}
+                <TopInfo count={count} info={info} type={type} memberList={memberList}
                          getTopInfoData={getTopInfoData}/>
                 <table style={{
                     width: '100%',

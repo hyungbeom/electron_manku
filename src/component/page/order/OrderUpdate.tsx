@@ -31,10 +31,9 @@ const listType = 'orderDetailList'
 function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
-    const infoRef = useRef<any>(null)
     const tableRef = useRef(null);
     const fileRef = useRef(null);
-    const gridRef = useRef(null);
+    const infoRef = useRef(null);
     const pdfRef = useRef(null);
     const pdfSubRef = useRef(null);
 
@@ -382,7 +381,7 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
                              setIsModalOpen={setIsModalOpen}/>}
         <>
             {isModalOpen['event3'] &&
-                <PrintPo infoRef={infoRef} tableRef={tableRef} isModalOpen={isModalOpen}
+                <PrintPo info={info} tableRef={tableRef} isModalOpen={isModalOpen}
                          setIsModalOpen={setIsModalOpen} memberList={memberList} count={count}/>}
             {isModalOpen['event1'] &&
                 <TransactionStatementHeader isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}
@@ -390,7 +389,7 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
                                             pdfRef={pdfRef}
                                             tableRef={tableRef}
                                             pdfSubRef={pdfSubRef}
-                                            infoRef={infoRef}/>}
+                                            info={info}/>}
             <div ref={infoRef} style={{
                 display: 'grid',
                 gridTemplateRows: `${mini ? '495px' : '65px'} calc(100vh - ${mini ? 590 : 195}px)`,

@@ -59,7 +59,7 @@ export const Header = ({title}) => <>
     </div>
 </>
 
-function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRef, tableRef}: any) {
+function TransactionStatementHeader({isModalOpen, setIsModalOpen, info, pdfRef, tableRef}: any) {
 
     const ref1 = useRef<any>()
     const ref2 = useRef<any>()
@@ -68,8 +68,8 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, infoRef, pdfRe
     const [domesticInfo, setDomesticInfo] = useState<any>(orderInfo['defaultInfo'])
 
     useEffect(() => {
-        let infoData = commonManage.getInfo(infoRef, orderInfo['defaultInfo']);
-        const {customerName} = infoData;
+
+        const {customerName} = info;
 
         getDomesticInfo(customerName).then((v: any) => {
             if (v.data.length) {
