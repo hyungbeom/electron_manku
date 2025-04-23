@@ -4,8 +4,8 @@ import https from 'https';
 
 
 //DEV
-// export const API_URL = 'https://manku.progist.co.kr/api';
-export const API_URL = 'http://175.125.92.183:8080/api';
+export const API_URL = 'https://manku.progist.co.kr/api';
+// export const API_URL = 'http://175.125.92.183:8080/api';
 // export const API_URL = 'http://localhost:8080/api';
 
 
@@ -20,9 +20,7 @@ export const getData = axios.create({
     headers: {
         authorization: `Bearer ${getCookie(null,'token')}`,
         "Content-Type": `application/json`,
-
         "Accept-Language": getCookie(null,'lang') ? getCookie(null,'lang') : 'ko-KR',
-        // @ts-ignore
         "refresh_token": getCookie(null,'refreshToken'),
     }
 });
