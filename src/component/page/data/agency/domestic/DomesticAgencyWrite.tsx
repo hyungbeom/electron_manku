@@ -119,6 +119,8 @@ function DomesticAgencyWrite({copyPageInfo, getPropertyId}: any) {
                 )
                 clearAll();
                 getPropertyId('domestic_agency_update', v.data?.entity?.agencyId);
+            } else if (v?.data?.code === -90009) {
+                message.error('코드(약칭)이 중복되었습니다.');
             } else {
                 console.warn(v?.data?.message);
                 notificationAlert('error', '⚠️ 작업실패',
@@ -169,8 +171,22 @@ function DomesticAgencyWrite({copyPageInfo, getPropertyId}: any) {
                                     style={{gap: 0.5, paddingTop: 3}}>
                             <Panel defaultSize={sizes[0]} minSize={5}>
                                 <BoxCard title={'매입처 정보'}>
-                                    {inputForm({title: '코드(약칭)', id: 'agencyCode', onChange: onChange, data: info})}
-                                    {inputForm({title: '상호', id: 'agencyName', onChange: onChange, data: info})}
+                                    {inputForm({
+                                        title: '코드(약칭)',
+                                        id: 'agencyCode',
+                                        onChange: onChange,
+                                        data: info,
+                                        validate: validate['agencyCode'],
+                                        key: validate['agencyCode']
+                                    })}
+                                    {inputForm({
+                                        title: '상호',
+                                        id: 'agencyName',
+                                        onChange: onChange,
+                                        data: info,
+                                        validate: validate['agencyName'],
+                                        key: validate['agencyName']
+                                    })}
                                     {inputForm({title: '사업자번호', id: 'businessRegistrationNumber', onChange: onChange, data: info})}
                                     {inputForm({title: '계좌번호', id: 'bankAccountNumber', onChange: onChange, data: info})}
                                 </BoxCard>

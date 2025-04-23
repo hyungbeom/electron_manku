@@ -343,7 +343,7 @@ export function DriveUploadComp({
                     top: 45,
                     left: 0,
                     zIndex: 10
-                }}>
+                }} key={uploadType}>
                     <Button style={{fontSize: 11, left: 10}} size={'small'}
                             icon={<UploadOutlined/>} type={'primary'}>Upload</Button>
                     <select ref={uploadTypeRef} onClick={e => {

@@ -778,9 +778,11 @@ export const DAInfo = {
         totalList: {},
         type: 'write',
         validate: {
+            agencyCode: true,
             agencyName: true
         },
         validationList: [
+            {key: 'agencyCode', message: '코드(약칭)을 입력해주세요.'},
             {key: 'agencyName', message: '상호를 입력해주세요.'},
         ]
     },

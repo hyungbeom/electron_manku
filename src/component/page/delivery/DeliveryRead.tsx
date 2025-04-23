@@ -88,7 +88,7 @@ function DeliveryRead({getPropertyId, getCopyPage}:any) {
     }
 
     return <Spin spinning={loading} tip={'배송정보 조회중...'}>
-        <ReceiveComponent searchInfo={searchInfo}/>
+        <ReceiveComponent componentName={'delivery_read'} searchInfo={searchInfo}/>
         <>
             <div style={{
                 display: 'grid',

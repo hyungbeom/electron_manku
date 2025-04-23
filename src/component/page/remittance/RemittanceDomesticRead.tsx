@@ -85,7 +85,7 @@ export default function RemittanceDomesticRead({getPropertyId, getCopyPage}:any)
 
 
     return <Spin spinning={loading} tip={'국내송금 조회중...'}>
-        <ReceiveComponent searchInfo={searchInfo}/>
+        <ReceiveComponent componentName={'remittance_domestic_read'} searchInfo={searchInfo}/>
         <>
             <div style={{
                 display: 'grid',
