@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 
-export default function ReceiveComponent({searchInfo, componentName}) {
+export default function ReceiveComponent({searchInfo, componentName}:any) {
 
     useEffect(() => {
         const handleMessage = (event: MessageEvent) => {
