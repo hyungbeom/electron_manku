@@ -185,7 +185,7 @@ export default function Main() {
                     borderRight: "1px solid lightGray",
                     paddingTop: 15,
                     height: 'calc(100vh - 56px)',
-                    overflowY: "auto"
+                    overflowY: "auto",
                 }}>
                     <Tree
                         defaultExpandedKeys={getRootKeys(treeData)}

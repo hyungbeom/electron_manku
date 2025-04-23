@@ -4,21 +4,20 @@ import {estimateInfo, orderInfo, projectInfo} from "@/utils/column/ProjectInfo";
 import Input from "antd/lib/input";
 import moment from "moment";
 import {paperTopInfo} from "@/utils/common";
+import _ from "lodash";
 
-export default function TopInfo({count, infoRef, type, memberList, getTopInfoData}) {
+export default function TopInfo({count, info, type, memberList, getTopInfoData}) {
 
     const topInfoRef = useRef<any>(null);
 
-    const [info, maker] = useMemo(() => {
-        let infoData: any = {}
+    const [infoData, maker] = useMemo(() => {
+        let infoData: any = _.cloneDeep(info)
         if (type === 'estimate') {
-            infoData = commonManage.getInfo(infoRef, estimateInfo['defaultInfo']);
+
 
         } else {
-            let copyInfo = commonManage.getInfo(infoRef, projectInfo['defaultInfo']);
-            copyInfo['managerName'] = copyInfo['customerManagerName']
-            copyInfo['phoneNumber'] = copyInfo['customerManagerPhone']
-            infoData = copyInfo
+            infoData['managerName'] = infoData['customerManagerName']
+            infoData['phoneNumber'] = infoData['customerManagerPhone']
         }
 
         const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
@@ -71,7 +70,7 @@ export default function TopInfo({count, infoRef, type, memberList, getTopInfoDat
             alignItems: 'center',
             paddingTop: 20
         }}>
-            {info?.map((v: any, index) => {
+            {infoData?.map((v: any, index) => {
 
                     return <div style={{
                         display: 'grid',
@@ -112,48 +111,36 @@ export default function TopInfo({count, infoRef, type, memberList, getTopInfoDat
 }
 
 
-export const TopPoInfo = ({infoRef, hsCode, getTopInfoData}) => {
+export const TopPoInfo = ({info, hsCode, getTopInfoData}) => {
     const topInfoRef = useRef<any>(null);
-    const [info, setInfo] = useState({})
+    const [infoData, setInfoData] = useState({})
     const [title, setTitle] = useState<any>(paperTopInfo['ko'])
 
     useEffect(() => {
 
-        // 초기 언어 설정 =========
-        const dom = infoRef.current.querySelector('#agencyCode')
-        if (!dom.value.startsWith("K")) {
+        if (!info?.agencyCode.startsWith("K")) {
             setTitle(paperTopInfo['en'])
         }
 
-        let infoData = commonManage.getInfo(infoRef, orderInfo['defaultInfo']);
+        let copyData =_.cloneDeep(info)
 
-        infoData['totalDate'] = moment().format('YYYY-MM-DD');
-        setInfo({...infoData, hscode: hsCode});
-        infoData['incoterms'] = 'EXW'
+        copyData['totalDate'] = moment().format('YYYY-MM-DD');
+        setInfoData({...copyData, hscode: hsCode});
+        copyData['incoterms'] = 'EXW'
         // EXW, FOB, CIF, DDU
-        getTopInfoData(infoData)
+        getTopInfoData(copyData)
     }, [hsCode]);
 
 
     function onChange(e) {
 
-        commonManage.onChange(e, setInfo)
+        commonManage.onChange(e, setInfoData)
     }
 
-    function selectOnChange(e) {
-        let bowl = {
-            target: {
-                value: e,
-                id: 'incoterms'
-            }
-        }
-
-        commonManage.onChange(bowl, setInfo)
-    }
 
     useEffect(() => {
-        getTopInfoData(info)
-    }, [info]);
+        getTopInfoData(infoData)
+    }, [infoData]);
 
 
     const SelectForms = ({id, list, title}: any) => {
@@ -206,7 +193,7 @@ export const TopPoInfo = ({infoRef, hsCode, getTopInfoData}) => {
 
         function onChanges(e) {
 
-            setInfo(v => {
+            setInfoData(v => {
                 let bowl = {};
                 bowl[id] = e.target.value;
                 return {...v, ...bowl}
@@ -214,7 +201,7 @@ export const TopPoInfo = ({infoRef, hsCode, getTopInfoData}) => {
         }
 
         return <div ref={ref} className="dropdown-wrapper" id="dropdownWrapper" style={{fontSize: 12, width: '100%'}}>
-            <input onBlur={onChanges} defaultValue={info['incoterms']} ref={inputRef} type="text" id={id}
+            <input onBlur={onChanges} defaultValue={infoData['incoterms']} ref={inputRef} type="text" id={id}
                    className="customInput" name={'customInput'}
                    autoComplete="off" style={{height: 23, border: 'none', fontSize: 15, paddingLeft: 14}}/>
             <div className="dropdown-list" ref={listRef} id={`${id}s`}>
@@ -229,7 +216,6 @@ export const TopPoInfo = ({infoRef, hsCode, getTopInfoData}) => {
     }
 
 
-    console.log(info['incoterms'], '??')
     return <>
         <div ref={topInfoRef} style={{
             fontFamily: 'Arial, sans-serif',
@@ -256,7 +242,7 @@ export const TopPoInfo = ({infoRef, hsCode, getTopInfoData}) => {
 
 
                             :
-                            <Input value={info[v]} id={v}
+                            <Input value={infoData[v]} id={v}
                                    style={{
                                        border: 'none',
                                        paddingLeft: 15,
@@ -298,7 +284,7 @@ export const BottomInfo = () => {
 }
 
 
-export const BottomPoInfo = ({infoRef}) => {
+export const BottomPoInfo = ({info}) => {
 
 
     return <div
@@ -309,7 +295,7 @@ export const BottomPoInfo = ({infoRef}) => {
             borderTop: '1px solid black',
         }}>
         {
-            infoRef.current.querySelector('#agencyCode').value.startsWith('K') ? <>
+            info?.agencyCode?.startsWith('K') ? <>
                 <div>· 금일 환율 기준으로 2%이상 인상될 시 , 단가가 인상될 수 있습니다.</div>
                 <div>· 러-우전쟁 및 COVID-19 장기화로 납기 변동성이 큰 시기입니다. 납기 지연이 발생할 수 있는 점 양해 부탁드립니다.</div>
                 <div>· 의뢰하신 Model로 기준한 견적이며, 견적 수량 전량 구입시 가격입니다. (긴급 납기시 담당자와 협의 가능합니다.)</div>
