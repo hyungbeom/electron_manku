@@ -10,8 +10,6 @@ import {introMenulist, treeData} from "@/component/util/MenuData";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {useRouter} from "next/router";
 import {tabComponents, tabShortcutMap} from "@/utils/commonForm";
-import Chart from "@/component/util/chart/Chart";
-import Card from "antd/lib/card/Card";
 
 
 export default function Main() {
@@ -198,97 +196,81 @@ export default function Main() {
                         onExpand={onExpand}
                     />
                 </div>
+                {!tabCounts && <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr',
+                        gap: 70,
+                        gridTemplateRows: '200px auto'
+                    }}>
 
-                {/*{!tabCounts && <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>*/}
-                {/*    <div style={{*/}
-                {/*        display: 'grid',*/}
-                {/*        gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr',*/}
-                {/*        gap: 70,*/}
-                {/*        gridTemplateRows: '200px auto'*/}
-                {/*    }}>*/}
+                        {introMenulist.map(v => {
+                            if (v.title === '시스템관리' && userInfo.authority === 0) {
+                                return false;
+                            }
+                            return <div>
+                                <div style={{
+                                    border: '1px solid lightGray',
+                                    width: 70,
+                                    height: 70,
+                                    borderRadius: 10,
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    margin: '0px auto'
+                                }}>
+                                    <div style={{fontSize: 40, color: v.color}}>
+                                        {v.icon}
+                                    </div>
+                                </div>
+                                <div style={{textAlign: 'center', fontSize: 16, fontWeight: 500, paddingTop: 10}}>
+                                    {v.title}
+                                </div>
+                                <div style={{paddingTop: 10, cursor: 'pointer', textAlign: 'center'}}>
+                                    {v.children.map(src => {
+                                        return <div style={{color: v.color, paddingTop: 3}} onClick={() => {
 
-                {/*        {introMenulist.map(v => {*/}
-                {/*            if (v.title === '시스템관리' && userInfo.authority === 0) {*/}
-                {/*                return false;*/}
-                {/*            }*/}
-                {/*            return <div>*/}
-                {/*                <div style={{*/}
-                {/*                    border: '1px solid lightGray',*/}
-                {/*                    width: 70,*/}
-                {/*                    height: 70,*/}
-                {/*                    borderRadius: 10,*/}
-                {/*                    display: 'flex',*/}
-                {/*                    justifyContent: 'center',*/}
-                {/*                    alignItems: 'center',*/}
-                {/*                    margin: '0px auto'*/}
-                {/*                }}>*/}
-                {/*                    <div style={{fontSize: 40, color: v.color}}>*/}
-                {/*                        {v.icon}*/}
-                {/*                    </div>*/}
-                {/*                </div>*/}
-                {/*                <div style={{textAlign: 'center', fontSize: 16, fontWeight: 500, paddingTop: 10}}>*/}
-                {/*                    {v.title}*/}
-                {/*                </div>*/}
-                {/*                <div style={{paddingTop: 10, cursor: 'pointer', textAlign: 'center'}}>*/}
-                {/*                    {v.children.map(src => {*/}
-                {/*                        return <div style={{color: v.color, paddingTop: 3}} onClick={() => {*/}
-
-                {/*                            if (src.key === 'accept_member') {*/}
-                {/*                                router.push('/manage')*/}
-                {/*                            } else if (src.key === 'data_log') {*/}
-                {/*                                router.push('/logData')*/}
-                {/*                            } else {*/}
-                {/*                                onSelect([src.key])*/}
-                {/*                            }*/}
-                {/*                        }}>{src.name}</div>*/}
-                {/*                    })}*/}
-                {/*                </div>*/}
-                {/*            </div>*/}
-                {/*        })}*/}
-                {/*    </div>*/}
-                {/*</div>}*/}
+                                            if (src.key === 'accept_member') {
+                                                router.push('/manage')
+                                            } else if (src.key === 'data_log') {
+                                                router.push('/logData')
+                                            } else {
+                                                onSelect([src.key])
+                                            }
+                                        }}>{src.name}</div>
+                                    })}
+                                </div>
+                            </div>
+                        })}
+                    </div>
+                </div>}
 
                 {/*<Layout model={model} factory={factory} onModelChange={onLayoutChange} ref={layoutRef}*/}
-                {!tabCounts ? <div>
-                    <div style={{display : 'grid', gridTemplateColumns : '1fr 1fr 1fr 1fr', width : '100%'}}>
-                        <Card title={'ㅅㅁㄴㅇㄹ'} size={'small'}>
-                            <Chart/>
-                        </Card>
-                        <Card title={'ㅅㅁㄴㅇㄹ'} size={'small'}>
-                            <Chart/>
-                        </Card>
-                        <Card title={'ㅅㅁㄴㅇㄹ'} size={'small'}>
-                            <Chart/>
-                        </Card>
-                        <Card title={'ㅅㅁㄴㅇㄹ'} size={'small'}>
-                            <Chart/>
-                        </Card>
-                    </div>
-                </div> : <Layout popoutURL={'/flex-popout'} model={modelRef.current} factory={factory}
-                                 onModelChange={onLayoutChange} ref={layoutRef}
-                                 onRenderTab={(node, renderValues: any) => {
-                                     // ✅ 활성화된 탭이면 CSS 클래스 추가
-                                     if (node.getId() === activeTabId) {
-                                         renderValues.className = "active-tab"; // ✅ 동적으로 클래스 추가
-                                     }
-                                     renderValues.content = (
-                                         <span
-                                             onMouseDown={(event) => {
-                                                 if (event.button === 1) { // 🔥 가운데 버튼 클릭 감지
-                                                     event.preventDefault(); // 기본 동작 방지 (브라우저 탭 닫힘 방지)
-                                                     event.stopPropagation(); // 🔥 이벤트 버블링 방지 (다른 핸들러로 전달되지 않도록)
+                <Layout popoutURL={'/flex-popout'} model={modelRef.current} factory={factory}
+                        onModelChange={onLayoutChange} ref={layoutRef}
+                        onRenderTab={(node, renderValues: any) => {
+                            // ✅ 활성화된 탭이면 CSS 클래스 추가
+                            if (node.getId() === activeTabId) {
+                                renderValues.className = "active-tab"; // ✅ 동적으로 클래스 추가
+                            }
+                            renderValues.content = (
+                                <span
+                                    onMouseDown={(event) => {
+                                        if (event.button === 1) { // 🔥 가운데 버튼 클릭 감지
+                                            event.preventDefault(); // 기본 동작 방지 (브라우저 탭 닫힘 방지)
+                                            event.stopPropagation(); // 🔥 이벤트 버블링 방지 (다른 핸들러로 전달되지 않도록)
 
-                                                     if (modelRef.current) {
-                                                         modelRef.current.doAction(Actions.deleteTab(node.getId())); // ✅ 탭 삭제
-                                                     }
-                                                 }
-                                             }}
-                                         >
+                                            if (modelRef.current) {
+                                                modelRef.current.doAction(Actions.deleteTab(node.getId())); // ✅ 탭 삭제
+                                            }
+                                        }
+                                    }}
+                                >
         {node.getName()}
       </span>
-                                     );
-                                 }}
-                />}
+                            );
+                        }}
+                />
 
             </div>
 
