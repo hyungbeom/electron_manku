@@ -346,7 +346,7 @@ function PreviewMailModal({data, isModalOpen, setIsModalOpen, fileList}) {
 
                         return <div>
                             <div style={{display: 'grid', gridTemplateColumns: '100px 1fr', gap: 5}}>
-                                <Button onClick={()=>{
+                                <Button style={{fontSize : 12}} size={'small'} type={'dashed'} onClick={()=>{
                                     // @ts-ignore
                                     window.electron?.launchOutlook({to : src.agencyManagerEmail, subject : src.title, body : src['contents'], cc : ''});
                                 }}>OUT LOOK</Button>
