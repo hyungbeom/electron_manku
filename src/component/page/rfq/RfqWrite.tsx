@@ -66,11 +66,9 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         })
     }
 
+    const [loading, setLoading] = useState(false);
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
-    const [fileList, setFileList] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [tableData, setTableData] = useState([]);
 
     const userInfo = useAppSelector((state) => state.user);
     const adminParams = {
@@ -86,25 +84,33 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         }
     }
     const [info, setInfo] = useState(getRfqInit());
-    const [validate, setValidate] = useState(rfqInfo['write']['validate']);
+    const getRfqValidateInit = () => _.cloneDeep(rfqInfo['write']['validate']);
+    const [validate, setValidate] = useState(getRfqValidateInit());
+
+    const [fileList, setFileList] = useState([]);
+    const [tableData, setTableData] = useState([]);
 
     useEffect(() => {
+        setLoading(true);
+        setValidate(getRfqValidateInit());
+        setInfo(getRfqInit());
+        setFileList([]);
+        setTableData([]);
         if (!isEmptyObj(copyPageInfo)) {
             // copyPageInfo 가 없을시
-            setInfo(getRfqInit())
             setTableData(commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000))
         } else {
             // copyPageInfo 가 있을시(==>보통 수정페이지에서 복제시)
             // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting
             setInfo({
+                ...getRfqInit(),
                 ...copyPageInfo,
-                ...adminParams,
-                documentNumberFull: '',
-                writtenDate: moment().format('YYYY-MM-DD')
+                writtenDate: moment().format('YYYY-MM-DD'),
+                documentNumberFull: ''
             });
             setTableData(copyPageInfo[listType]);
-            setValidate(rfqInfo['write']['validate']);
         }
+        setLoading(false);
     }, [copyPageInfo?._meta?.updateKey]);
 
 
@@ -217,8 +223,9 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
      */
     function clearAll() {
         setLoading(true)
+        setValidate(getRfqValidateInit());
         setInfo(getRfqInit())
-        setValidate(rfqInfo['write']['validate']);
+        setFileList([]);
 
         function calcData(sourceData) {
             const keyOrder = Object.keys(rfqInfo['write']['defaultData']);
@@ -228,8 +235,7 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                 .concat(rfqInfo['write']['totalList']); // `push` 대신 `concat` 사용
         }
         tableRef.current?.hotInstance?.loadData(calcData(commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000)));
-        setFileList([])
-        setLoading(false)
+        setLoading(false);
     }
 
     return <Spin spinning={loading}>

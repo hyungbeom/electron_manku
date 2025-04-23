@@ -24,7 +24,7 @@ import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import Table from "@/component/util/Table";
-import {rfqInfo} from "@/utils/column/ProjectInfo";
+import {estimateInfo, rfqInfo} from "@/utils/column/ProjectInfo";
 import moment from "moment/moment";
 import useEventListener from "@/utils/common/function/UseEventListener";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
@@ -70,12 +70,6 @@ function RqfUpdate({
         })
     }
 
-    const options = memberList?.map((item) => ({
-        ...item,
-        value: item.adminId,
-        label: item.name,
-    }));
-
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [mini, setMini] = useState(true);
@@ -95,7 +89,8 @@ function RqfUpdate({
         }
     }
     const [info, setInfo] = useState(getRfqInit());
-    const [validate, setValidate] = useState(rfqInfo['write']['validate']);
+    const getRfqValidateInit = () => _.cloneDeep(rfqInfo['write']['validate']);
+    const [validate, setValidate] = useState(getRfqValidateInit());
 
     const [fileList, setFileList] = useState([]);
     const [originFileList, setOriginFileList] = useState([]);
@@ -103,6 +98,7 @@ function RqfUpdate({
 
     useEffect(() => {
         setLoading(true);
+        setValidate(getRfqValidateInit());
         setInfo(getRfqInit());
         setFileList([]);
         setOriginFileList([]);
@@ -193,7 +189,7 @@ function RqfUpdate({
             const model = layoutRef.current.props.model;
             const activeTab = model.getActiveTabset()?.getSelectedNode();
             if (activeTab?.renderedName === '견적의뢰 수정') {
-                saveFunc()
+                saveFunc();
             }
         }
     }, typeof window !== 'undefined' ? document : null)
@@ -290,9 +286,8 @@ function RqfUpdate({
                     , null,
                     {cursor: 'pointer'}
                 )
-
-                const {model} = layoutRef.current.props;
                 getCopyPage('rfq_read', {})
+                const {model} = layoutRef.current.props;
                 const targetNode = model.getRoot().getChildren()[0]?.getChildren()
                     .find((node: any) => node.getType() === "tab" && node.getComponent() === 'rfq_update');
                 if (targetNode) {

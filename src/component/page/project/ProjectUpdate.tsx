@@ -20,7 +20,7 @@ import Spin from "antd/lib/spin";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import 'react-splitter-layout/lib/index.css';
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
-import {estimateInfo, projectInfo} from "@/utils/column/ProjectInfo";
+import {estimateInfo, projectInfo, rfqInfo} from "@/utils/column/ProjectInfo";
 import Table from "@/component/util/Table";
 import {findCodeInfo} from "@/utils/api/commonApi";
 import SearchInfoModal from "@/component/SearchAgencyModal";
@@ -105,7 +105,8 @@ function ProjectUpdate({
         }
     }
     const [info, setInfo] = useState(getProjectInit());
-    const [validate, setValidate] = useState(_.cloneDeep(projectInfo['write']['validate']));
+    const getProjectValidateInit = () => _.cloneDeep(projectInfo['write']['validate']);
+    const [validate, setValidate] = useState(getProjectValidateInit());
 
     const [fileList, setFileList] = useState([]);
     const [originFileList, setOriginFileList] = useState([]);
@@ -113,6 +114,7 @@ function ProjectUpdate({
 
     useEffect(() => {
         setLoading(true);
+        setValidate(getProjectValidateInit());
         setInfo(getProjectInit());
         setFileList([]);
         setOriginFileList([]);

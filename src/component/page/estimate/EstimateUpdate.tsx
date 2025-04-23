@@ -129,7 +129,8 @@ function EstimateUpdate({
         }
     }
     const [info, setInfo] = useState<any>({})
-    const [validate, setValidate] = useState(estimateInfo['write']['validate']);
+    const getEstimateValidateInit = () => _.cloneDeep(estimateInfo['write']['validate']);
+    const [validate, setValidate] = useState(getEstimateValidateInit());
 
     const [fileList, setFileList] = useState([]);
     const [originFileList, setOriginFileList] = useState([]);
@@ -137,6 +138,7 @@ function EstimateUpdate({
 
     useEffect(() => {
         setLoading(true);
+        setValidate(getEstimateValidateInit());
         setInfo(getEstimateInit());
         setFileList([]);
         setOriginFileList([]);

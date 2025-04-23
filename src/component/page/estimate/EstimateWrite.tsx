@@ -25,7 +25,7 @@ import Spin from "antd/lib/spin";
 import {getData} from "@/manage/function/api";
 import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 import moment from "moment";
-import {estimateInfo} from "@/utils/column/ProjectInfo";
+import {estimateInfo, orderInfo} from "@/utils/column/ProjectInfo";
 import Table from "@/component/util/Table";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
@@ -37,11 +37,11 @@ import {pdf as pdfs} from '@react-pdf/renderer';
 const listType = 'estimateDetailList'
 
 function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
+    const notificationAlert = useNotificationAlert();
+    const groupRef = useRef<any>(null);
+    const infoRef = useRef<any>(null);
     const fileRef = useRef(null);
     const tableRef = useRef(null);
-    const infoRef = useRef<any>(null)
-    const notificationAlert = useNotificationAlert();
-    const groupRef = useRef<any>(null)
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('estimate_write');
@@ -89,29 +89,34 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         }
     }
     const [info, setInfo] = useState(getEstimateInit());
-    const [validate, setValidate] = useState(estimateInfo['write']['validate']);
+    const getEstimateValidateInit = () => _.cloneDeep(estimateInfo['write']['validate']);
+    const [validate, setValidate] = useState(getEstimateValidateInit());
 
     const [fileList, setFileList] = useState([]);
     const [tableData, setTableData] = useState([]);
 
     useEffect(() => {
+        setLoading(true);
+        setValidate(getEstimateValidateInit());
+        setInfo(getEstimateInit());
+        setFileList([]);
+        setTableData([]);
         if (!isEmptyObj(copyPageInfo)) {
             // copyPageInfo 가 없을시
-            setInfo(getEstimateInit())
             setTableData(commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000))
         } else {
             // copyPageInfo 가 있을시(==>보통 수정페이지에서 복제시)
             // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting
             setInfo({
+                ...getEstimateInit(),
                 ...copyPageInfo,
-                ...adminParams,
                 writtenDate: moment().format('YYYY-MM-DD'),
                 connectDocumentNumberFull: '',
                 documentNumberFull: ''
             });
             setTableData(copyPageInfo[listType]);
-            setValidate(estimateInfo['write']['validate']);
         }
+        setLoading(false);
     }, [copyPageInfo?._meta?.updateKey]);
 
     /**
@@ -331,8 +336,9 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
      */
     function clearAll() {
         setLoading(true);
+        setValidate(getEstimateValidateInit())
         setInfo(getEstimateInit());
-        setValidate(estimateInfo['write']['validate']);
+        setFileList([]);
 
         function calcData(sourceData) {
             const keyOrder = Object.keys(estimateInfo['write']['defaultData']);
@@ -341,10 +347,7 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                 .map(estimateInfo['write']['excelExpert'])
                 .concat(estimateInfo['write']['totalList']); // `push` 대신 `concat` 사용
         }
-
-        // tableRef.current?.hotInstance?.loadData(calcData(commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000)));
         setTableData(calcData(commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000)))
-        setFileList([]);
         setLoading(false);
     }
 

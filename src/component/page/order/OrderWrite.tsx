@@ -13,7 +13,7 @@ import Spin from "antd/lib/spin";
 import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 import PrintPo from "@/component/printPo";
 import moment from "moment/moment";
-import {estimateInfo, orderInfo} from "@/utils/column/ProjectInfo";
+import {estimateInfo, makerInfo, orderInfo} from "@/utils/column/ProjectInfo";
 import Table from "@/component/util/Table";
 import SearchInfoModal from "@/component/SearchAgencyModal";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
@@ -92,22 +92,31 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
         }
     }
     const [info, setInfo] = useState<any>(getOrderInit())
-    const [validate, setValidate] = useState(orderInfo['write']['validate']);
+    const getOrderValidateInit = () => _.cloneDeep(orderInfo['write']['validate']);
+    const [validate, setValidate] = useState(getOrderValidateInit());
 
     useEffect(() => {
+        setLoading(true);
+        setValidate(getOrderValidateInit());
+        setInfo(getOrderInit());
+        setFileList([]);
+        setOriginFileList([]);
+        setTableData([]);
         if (!isEmptyObj(copyPageInfo)) {
             // copyPageInfo 가 없을시
-            setInfo(getOrderInit());
-            setTableData(commonFunc.repeatObject(orderInfo['write']['defaultData'], 1000))
+            setTableData(commonFunc.repeatObject(orderInfo['write']['defaultData'], 1000));
         } else {
             // copyPageInfo 가 있을시(==>보통 수정페이지에서 복제시)
             // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting
-            console.log(copyPageInfo)
-            setInfo({...copyPageInfo, ...adminParams, writtenDate: moment().format('YYYY-MM-DD')});
+            setInfo({
+                ...getOrderInit(),
+                ...copyPageInfo,
+                writtenDate: moment().format('YYYY-MM-DD')
+            });
             setTableData(copyPageInfo[listType]);
             if(!copyPageInfo?.agencyCode?.toUpperCase().startsWith('K')) setCheck(true);
-            setValidate(orderInfo['write']['validate']);
         }
+        setLoading(false);
     }, [copyPageInfo?._meta?.updateKey]);
 
     async function handleKeyPress(e) {
@@ -207,7 +216,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
             const model = layoutRef.current.props.model;
             const activeTab = model.getActiveTabset()?.getSelectedNode();
             if (activeTab?.renderedName === '발주서 등록') {
-                saveFunc()
+                saveFunc();
             }
         }
     }, typeof window !== 'undefined' ? document : null)
@@ -234,7 +243,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
             return message.error('하위 데이터의 수량을 입력해야 합니다.')
         }
 
-        setLoading(true)
+        setLoading(true);
 
         const formData: any = new FormData();
         commonManage.setInfoFormData(info, formData, listType, filterTableList)
@@ -244,7 +253,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
         formData.delete('modifiedDate')
 
         await saveOrder({data: formData, router: router, returnFunc: returnFunc})
-        setLoading(false)
+        setLoading(false);
     }
 
     async function returnFunc(code, msg, data) {
@@ -298,8 +307,10 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
      */
     function clearAll() {
         setLoading(true);
+        setValidate(getOrderValidateInit());
         setInfo(getOrderInit());
-        setValidate(orderInfo['write']['validate']);
+        setFileList([]);
+        setOriginFileList([]);
 
         function calcData(sourceData) {
             const keyOrder = Object.keys(orderInfo['write']['defaultData']);
@@ -308,10 +319,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                 .map(orderInfo['write']['excelExpert'])
                 .concat(orderInfo['write']['totalList']); // `push` 대신 `concat` 사용
         }
-
-        // tableRef.current?.hotInstance?.loadData(calcData(commonFunc.repeatObject(orderInfo['write']['defaultData'], 1000)));
         setTableData(calcData(commonFunc.repeatObject(orderInfo['write']['defaultData'], 1000)))
-        setFileList([]);
         setLoading(false);
     }
 

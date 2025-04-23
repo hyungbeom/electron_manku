@@ -66,13 +66,10 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         })
     }
 
-    const [mini, setMini] = useState(true);
-    const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
-    const [fileList, setFileList] = useState([]);
-    const [tableData, setTableData] = useState([]);
-
     const router = useRouter();
     const [loading, setLoading] = useState(false);
+    const [mini, setMini] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
 
     const userInfo = useAppSelector((state) => state.user);
     const adminParams = {
@@ -89,22 +86,33 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         }
     }
     const [info, setInfo] = useState(getProjectInit());
-    const [validate, setValidate] = useState(_.cloneDeep(projectInfo['write']['validate']));
+    const getProjectValidateInit = () => _.cloneDeep(projectInfo['write']['validate']);
+    const [validate, setValidate] = useState(getProjectValidateInit());
+
+    const [fileList, setFileList] = useState([]);
+    const [tableData, setTableData] = useState([]);
 
     useEffect(() => {
+        setLoading(true);
+        setValidate(getProjectValidateInit());
+        setInfo(getProjectInit());
+        setFileList([]);
+        setTableData([]);
         if (!isEmptyObj(copyPageInfo)) {
             // copyPageInfo 가 없을시
-            setInfo(getProjectInit())
             setTableData(commonFunc.repeatObject(projectInfo['write']['defaultData'], 1000))
         } else {
             // copyPageInfo 가 있을시(==>보통 수정페이지에서 복제시)
             // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting
-            console.log(copyPageInfo)
-            setInfo({...copyPageInfo, ...adminParams, writtenDate: moment().format('YYYY-MM-DD')});
+            setInfo({
+                ...getProjectInit(),
+                ...copyPageInfo,
+                writtenDate: moment().format('YYYY-MM-DD')
+            });
             setTableData(copyPageInfo[listType]);
-            setValidate(_.cloneDeep(projectInfo['write']['validate']));
             setRouterId(null)
         }
+        setLoading(false);
     }, [copyPageInfo?._meta?.updateKey]);
 
     async function handleKeyPress(e) {
@@ -231,8 +239,9 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
      */
     function clearAll() {
         setLoading(true);
+        setValidate(getProjectValidateInit());
         setInfo(getProjectInit());
-        setValidate(projectInfo['write']['validate']);
+        setFileList([]);
 
         function calcData(sourceData) {
             const keyOrder = Object.keys(projectInfo['write']['defaultData']);
@@ -241,10 +250,8 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                 .map(projectInfo['write']['excelExpert'])
                 .concat(projectInfo['write']['totalList']); // `push` 대신 `concat` 사용
         }
-
         // tableRef.current?.hotInstance?.loadData(calcData(commonFunc.repeatObject(projectInfo['write']['defaultData'], 1000)));
         setTableData(calcData(commonFunc.repeatObject(projectInfo['write']['defaultData'], 1000)))
-        setFileList([]);
         setLoading(false);
     }
 

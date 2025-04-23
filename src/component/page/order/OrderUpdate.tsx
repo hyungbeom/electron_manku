@@ -93,8 +93,9 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
             ...adminParams
         }
     }
-    const [info, setInfo] = useState<any>(getOrderInit())
-    const [validate, setValidate] = useState(orderInfo['write']['validate']);
+    const [info, setInfo] = useState<any>(getOrderInit());
+    const getOrderValidateInit = () => _.cloneDeep(orderInfo['write']['validate']);
+    const [validate, setValidate] = useState(getOrderValidateInit());
 
     const [fileList, setFileList] = useState([]);
     const [originFileList, setOriginFileList] = useState([]);
@@ -102,6 +103,7 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
 
     useEffect(() => {
         setLoading(true);
+        setValidate(getOrderValidateInit());
         setInfo(getOrderInit());
         setFileList([]);
         setOriginFileList([]);
@@ -215,7 +217,7 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
             return message.error('수량을 입력해야 합니다.')
         }
 
-        setLoading(true)
+        setLoading(true);
 
         const formData: any = new FormData();
         commonManage.setInfoFormData(info, formData, listType, filterTableList)
@@ -225,7 +227,7 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
         formData.delete('modifiedDate')
 
         await updateOrder({data: formData, returnFunc: returnFunc});
-        setLoading(false)
+        setLoading(false);
     }
 
     async function returnFunc(code, msg, data) {
@@ -333,6 +335,7 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
         // tableRef.current?.hotInstance?.loadData(calcData(commonFunc.repeatObject(orderInfo['write']['defaultData'], 1000)));
         setTableData(calcData(commonFunc.repeatObject(orderInfo['write']['defaultData'], 1000)))
         setFileList([]);
+        setOriginFileList([]);
         setLoading(false);
     }
 
