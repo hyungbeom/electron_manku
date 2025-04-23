@@ -156,7 +156,6 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
      * 견적의뢰 > 견적의뢰 등록
      */
     async function saveFunc() {
-        console.log(info, 'info:::')
 
         // 유효성 체크 추가
         if(!commonManage.checkValidate(info, rfqInfo['write']['validationList'], setValidate)) return;
