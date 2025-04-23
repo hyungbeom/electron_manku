@@ -117,7 +117,7 @@ function RqfUpdate({
                     uploadType: 1,
                     managerAdminId: estimateRequestDetail['managerAdminId'] ? estimateRequestDetail['managerAdminId'] : '',
                     managerAdminName: estimateRequestDetail['managerAdminName'] ? estimateRequestDetail['managerAdminName'] : '',
-                    createdBy: userInfo['name']
+                    createdBy: estimateRequestDetail['createdBy'] ? estimateRequestDetail['createdBy'] : ''
                 });
                 //
                 setFileList(fileManage.getFormatFiles(attachmentFileList));
