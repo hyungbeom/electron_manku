@@ -2,7 +2,7 @@ import React, {memo, useEffect, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import message from "antd/lib/message";
 import moment from "moment/moment";
-import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm} from "@/utils/commonForm";
+import {BoxCard, datePickerForm, inputForm, MainCard, selectBoxForm, textAreaForm} from "@/utils/commonForm";
 import {commonFunc, commonManage} from "@/utils/commonManage";
 import _ from "lodash";
 import Table from "@/component/util/Table";
@@ -13,6 +13,7 @@ import Spin from "antd/lib/spin";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import {CopyOutlined, DeleteOutlined, FormOutlined} from "@ant-design/icons";
 import {Actions} from "flexlayout-react";
+import {useAppSelector} from "@/utils/common/function/reduxHooks";
 
 const listType = 'customerManagerList'
 
@@ -22,16 +23,33 @@ function DomesticCustomerUpdate({updateKey, getCopyPage, layoutRef}:any) {
     const infoRef = useRef<any>(null)
     const tableRef = useRef(null);
 
-    const [mini, setMini] = useState(true);
-    const [tableData, setTableData] = useState([]);
-    const [info, setInfo] = useState<any>({});
-    const [loading, setLoading] = useState(false);
-
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('domestic_customer_update');
         return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 5]; // 기본값 [50, 50, 50]
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
+
+    const [loading, setLoading] = useState(false);
+    const [mini, setMini] = useState(true);
+
+    const userInfo = useAppSelector((state) => state.user);
+    const adminParams = {
+        managerAdminId: userInfo['adminId'],
+        managerAdminName: userInfo['name'],
+        createdBy: userInfo['name'],
+    }
+    const getDCInit = () => {
+        const copyInit = _.cloneDeep(DCInfo['defaultInfo']);
+        return {
+            ...copyInit,
+            ...adminParams
+        }
+    }
+    const [info, setInfo] = useState<any>(getDCInit());
+    const getDCValidateInit = () => _.cloneDeep(DCInfo['write']['validate']);
+    const [validate, setValidate] = useState(getDCValidateInit());
+
+    const [tableData, setTableData] = useState([]);
 
     async function getDataInfo() {
         const result = await getData.post('customer/getCustomerDetail', {
@@ -42,54 +60,78 @@ function DomesticCustomerUpdate({updateKey, getCopyPage, layoutRef}:any) {
     }
 
     useEffect(() => {
-        setLoading(true)
+        setLoading(true);
+        setValidate(getDCValidateInit());
+        setInfo(getDCInit());
+        setTableData([]);
         getDataInfo().then(v => {
             const {customerDetail} = v;
-            setInfo(customerDetail);
+            setInfo({
+                ...getDCInit(),
+                ...customerDetail
+            });
             customerDetail[listType] = [...customerDetail[listType], ...commonFunc.repeatObject(DCInfo['write']['defaultData'], 1000 - customerDetail[listType].length)];
             setTableData(customerDetail[listType]);
-            setLoading(false)
         })
+        .finally(() => {
+            setLoading(false);
+        });
     }, [updateKey['domestic_customer_update']])
 
-    useEffect(() => {
-        commonManage.setInfo(infoRef, info);
-    }, [info]);
+    function onChange(e) {
+        commonManage.onChange(e, setInfo)
+
+        const {id, value} = e?.target;
+        commonManage.resetValidate(id, value, setValidate);
+    }
 
     /**
      * @description 수정 페이지 > 수정 버튼
      * 데이터 관리 > 고객사 > 국내고객사
      */
     async function saveFunc() {
-        let infoData = commonManage.getInfo(infoRef, DCInfo['defaultInfo']);
-        infoData['customerId'] = updateKey['domestic_customer_update']
+        console.log(info, 'info:::')
+        if (!commonManage.checkValidate(info, DCInfo['write']['validationList'], setValidate)) return;
+
         const tableList = tableRef.current?.getSourceData();
         const filterTableList = commonManage.filterEmptyObjects(tableList, ['managerName'])
         if (!filterTableList.length) {
             return message.warn('하위 담당자 데이터가 1개 이상 이여야 합니다.');
         }
-        infoData[listType] = filterTableList
+        info[listType] = filterTableList;
 
         setLoading(true);
-
-        const customerCode = infoRef.current.querySelector('#customerCode')?.value || '';
-        const customerName = infoRef.current.querySelector('#customerName')?.value || '';
-        await getData.post('customer/updateCustomer', infoData).then(v => {
+        await getData.post('customer/updateCustomer', info).then(v => {
             if (v?.data?.code === 1) {
                 window.postMessage({message: 'reload', target: 'domestic_customer_read'}, window.location.origin);
                 notificationAlert('success', '💾 국내고객사 수정완료',
                     <>
-                        <div>코드(약칭) : {customerCode}</div>
-                        <div>상호 : {customerName}</div>
+                        <div>코드(약칭) : {info['customerCode']}</div>
+                        <div>상호 : {info['customerName']}</div>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
                     , null, null, 2
                 )
             } else {
-                message.error(v?.data?.message);
+                console.warn(v?.data?.message);
+                notificationAlert('error', '⚠️ 작업실패',
+                    <>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                        alert('작업 로그 페이지 참고')
+                    },
+                    {cursor: 'pointer'}
+                )
             }
+        })
+        .catch((err) => {
+            notificationAlert('error', '❌ 네트워크 오류 발생', <div>{err.message}</div>);
+            console.error('에러:', err);
+        })
+        .finally(() => {
+            setLoading(false);
         });
-        setLoading(false);
     }
 
     /**
@@ -98,15 +140,13 @@ function DomesticCustomerUpdate({updateKey, getCopyPage, layoutRef}:any) {
      */
     function deleteFunc(){
         setLoading(true);
-        const customerCode = infoRef.current.querySelector('#customerCode')?.value || '';
-        const customerName = infoRef.current.querySelector('#customerName')?.value || '';
         getData.post('customer/deleteCustomer',{customerId : updateKey['domestic_customer_update']}).then(v=>{
             if(v?.data?.code === 1) {
                 window.postMessage({message: 'reload', target: 'domestic_customer_read'}, window.location.origin);
                 notificationAlert('success', '🗑️ 국내고객사 삭제완료',
                     <>
-                        <div>코드(약칭) : {customerCode}</div>
-                        <div>상호 : {customerName}</div>
+                        <div>코드(약칭) : {info['customerCode']}</div>
+                        <div>상호 : {info['customerName']}</div>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
                     ,null, null, 2
@@ -115,15 +155,29 @@ function DomesticCustomerUpdate({updateKey, getCopyPage, layoutRef}:any) {
                 const {model} = layoutRef.current.props;
                 const targetNode = model.getRoot().getChildren()[0]?.getChildren()
                     .find((node: any) => node.getType() === "tab" && node.getComponent() === 'domestic_customer_update');
-
                 if (targetNode) {
                     model.doAction(Actions.deleteTab(targetNode.getId())); // ✅ 기존 로직 유지
                 }
             } else {
-                message.error(v?.data?.message)
+                console.warn(v?.data?.message);
+                notificationAlert('error', '⚠️ 작업실패',
+                    <>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                        alert('작업 로그 페이지 참고')
+                    },
+                    {cursor: 'pointer'}
+                )
             }
         })
-        setLoading(false);
+        .catch((err) => {
+            notificationAlert('error', '❌ 네트워크 오류 발생', <div>{err.message}</div>);
+            console.error('에러:', err);
+        })
+        .finally(() => {
+            setLoading(false);
+        });
     }
 
     /**
@@ -131,19 +185,9 @@ function DomesticCustomerUpdate({updateKey, getCopyPage, layoutRef}:any) {
      * 데이터 관리 > 고객사 > 국내고객사
      */
     function copyPage() {
+        const copyInfo = _.cloneDeep(info);
         const totalList = tableRef.current.getSourceData();
         totalList.pop();
-
-        const result = Object.keys(DCInfo['defaultInfo']).map(v => `#${v}`)
-        const test = `${result.join(',')}`;
-        const elements = infoRef.current.querySelectorAll(test);
-
-        let copyInfo = {}
-        for (let element of elements) {
-            copyInfo[element.id] = element.value
-        }
-
-        copyInfo['customerId'] = updateKey['domestic_customer_update']
         copyInfo[listType] = [...totalList, ...commonFunc.repeatObject(DCInfo['write']['defaultData'], 1000 - totalList.length)];
         getCopyPage('domestic_customer_write', {...copyInfo, _meta: {updateKey: Date.now()}})
     }
@@ -155,101 +199,103 @@ function DomesticCustomerUpdate({updateKey, getCopyPage, layoutRef}:any) {
             rowGap: 10,
         }}>
             <PanelSizeUtil groupRef={groupRef} storage={'domestic_customer_update'}/>
-            <MainCard title={'국내 고객사 수정'} list={[
-                {name: <div><FormOutlined style={{paddingRight: 8}}/>수정</div>, func: saveFunc, type: 'primary'},
-                {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: deleteFunc, type: 'delete'},
-                {name: <div><CopyOutlined style={{paddingRight: 8}}/>복제</div>, func: copyPage, type: 'default'},
-            ]} mini={mini} setMini={setMini}>
+            <MainCard title={'국내 고객사 수정'}
+                      list={[
+                          {name: <div><FormOutlined style={{paddingRight: 8}}/>수정</div>, func: saveFunc, type: 'primary'},
+                          {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: deleteFunc, type: 'delete'},
+                          {name: <div><CopyOutlined style={{paddingRight: 8}}/>복제</div>, func: copyPage, type: 'default'},
+                      ]}
+                      mini={mini} setMini={setMini}>
                 {mini ? <div ref={infoRef}>
                     <PanelGroup ref={groupRef} className={'ground'} direction="horizontal"
                                 style={{gap: 0.5, paddingTop: 3}}>
                         <Panel defaultSize={sizes[0]} minSize={5}>
-                            <BoxCard title={'INQUIRY & PO no'}>
-                                {inputForm({title: '코드(약칭)', id: 'customerCode'})}
-                                {inputForm({title: '지역', id: 'customerRegion'})}
-                                {inputForm({title: '업태', id: 'businessType'})}
-                                {inputForm({title: '종목', id: 'businessItem'})}
-                                {inputForm({title: '대표자', id: 'representative'})}
-                                {inputForm({title: '거래처', id: 'customerType'})}
+                            <BoxCard title={'고객사 정보'}>
+                                {inputForm({title: '코드(약칭)', id: 'customerCode', onChange: onChange, data: info})}
+                                {inputForm({title: '지역', id: 'customerRegion', onChange: onChange, data: info})}
+                                {inputForm({title: '업태', id: 'businessType', onChange: onChange, data: info})}
+                                {inputForm({title: '종목', id: 'businessItem', onChange: onChange, data: info})}
+                                {inputForm({title: '대표자', id: 'representative', onChange: onChange, data: info})}
+                                {inputForm({title: '거래처', id: 'customerType', onChange: onChange, data: info})}
                             </BoxCard>
                         </Panel>
                         <PanelResizeHandle/>
                         <Panel defaultSize={sizes[1]} minSize={5}>
-                            <BoxCard title={'INQUIRY & PO no'}>
-                                {datePickerForm({title: '거래시작일', id: 'tradeStartDate'})}
-                                {inputForm({title: '상호', id: 'customerName'})}
-                                {inputForm({title: '주소', id: 'address'})}
-                                {inputForm({title: '홈페이지', id: 'homepage'})}
-                                {inputForm({title: '연락처', id: 'customerTel'})}
-                                {inputForm({title: '팩스번호', id: 'customerFax'})}
+                            <BoxCard title={'고객사 정보'}>
+                                {datePickerForm({title: '거래시작일', id: 'tradeStartDate', onChange: onChange, data: info})}
+                                {inputForm({
+                                    title: '상호',
+                                    id: 'customerName',
+                                    onChange: onChange,
+                                    data: info,
+                                    validate: validate['customerName'],
+                                    key: validate['customerName']
+                                })}
+                                {inputForm({title: '주소', id: 'address', onChange: onChange, data: info})}
+                                {inputForm({title: '홈페이지', id: 'homepage', onChange: onChange, data: info})}
+                                {inputForm({title: '연락처', id: 'customerTel', onChange: onChange, data: info})}
+                                {inputForm({title: '팩스번호', id: 'customerFax', onChange: onChange, data: info})}
                             </BoxCard>
                         </Panel>
                         <PanelResizeHandle/>
                         <Panel defaultSize={sizes[2]} minSize={5}>
-                            <BoxCard title={'INQUIRY & PO no'}>
-                                {inputForm({title: '사업자번호', id: 'businessRegistrationNumber'})}
-                                {textAreaForm({title: '업체확인사항', id: 'companyVerify'})}
-                                {textAreaForm({title: '비고란', id: 'remarks'})}
+                            <BoxCard title={'고객사 정보'}>
+                                {inputForm({
+                                    title: '사업자번호',
+                                    id: 'businessRegistrationNumber',
+                                    onChange: onChange,
+                                    data: info
+                                })}
+                                {textAreaForm({title: '업체확인사항', id: 'companyVerify', onChange: onChange, data: info})}
+                                {textAreaForm({title: '비고란', id: 'remarks', onChange: onChange, data: info})}
                             </BoxCard>
                         </Panel>
                         <PanelResizeHandle/>
                         <Panel defaultSize={sizes[3]} minSize={5}>
-                            <BoxCard title={'INQUIRY & PO no'}>
-                                <div style={{paddingTop: 10, paddingBottom: 15}}>
-                                    <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 6}}>화물운송료</div>
-                                    <select name="languages" id="freightCharge"
-                                            style={{
-                                                outline: 'none',
-                                                border: '1px solid lightGray',
-                                                height: 23,
-                                                width: '100%',
-                                                fontSize: 12,
-                                                paddingBottom: 0.5
-                                            }}>
-                                        <option value={'화물 선불'}>화물 선불</option>
-                                        <option value={'화물 후불'}>화물 후불</option>
-                                        <option value={'택배 선불'}>택배 선불</option>
-                                        <option value={'택배 후불'}>택배 후불</option>
-                                    </select>
+                            <BoxCard title={'고객사 정보'}>
+                                <div style={{paddingBottom: 9}}>
+                                    {selectBoxForm({
+                                        title: '화물운송료',
+                                        id: 'freightCharge',
+                                        onChange: onChange,
+                                        data: info,
+                                        list: [
+                                            {value: '화물 선불', label: '화물 선불'},
+                                            {value: '화물 후불', label: '화물 후불'},
+                                            {value: '택배 선불', label: '택배 선불'},
+                                            {value: '택배 후불', label: '택배 후불'}
+                                        ]
+                                    })}
                                 </div>
-                                {inputForm({title: '화물지점', id: 'freightBranch'})}
-                                <div>
-                                    <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 6}}>결제방법</div>
-                                    <select name="languages" id="paymentMethod"
-                                            style={{
-                                                outline: 'none',
-                                                border: '1px solid lightGray',
-                                                height: 23,
-                                                width: '100%',
-                                                fontSize: 12,
-                                                paddingBottom: 0.5
-                                            }}>
-                                        <option value={'현금 결제'}>현금 결제</option>
-                                        <option value={'선수금'}>선수금</option>
-                                        <option value={'정기 결제'}>정기 결제</option>
-                                        <option value={'택배 후불'}>택배 후불</option>
-                                    </select>
+                                {inputForm({title: '화물지점', id: 'freightBranch', onChange: onChange, data: info})}
+                                <div style={{paddingBottom: 10}}>
+                                    {selectBoxForm({
+                                        title: '결제방법',
+                                        id: 'paymentMethod',
+                                        onChange: onChange,
+                                        data: info,
+                                        list: [
+                                            {value: '현금 결제', label: '현금 결제'},
+                                            {value: '선수금', label: '선수금'},
+                                            {value: '정기 결제', label: '정기 결제'},
+                                            {value: '택배 후불', label: '택배 후불'}
+                                        ]
+                                    })}
                                 </div>
-                                <div style={{paddingTop: 15, paddingBottom: 10}}>
-                                    <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 6}}>업체형태</div>
-                                    <select name="languages" id="companyType"
-                                            style={{
-                                                outline: 'none',
-                                                border: '1px solid lightGray',
-                                                height: 23,
-                                                width: '100%',
-                                                fontSize: 12,
-                                                paddingBottom: 0.5
-                                            }}>
-
-                                        <option value={'딜러'}>딜러</option>
-                                        <option value={'제조'}>제조</option>
-                                        <option value={'공공기관'}>공공기관</option>
-                                    </select>
+                                <div style={{paddingBottom: 9}}>
+                                    {selectBoxForm({
+                                        title: '업체형태',
+                                        id: 'companyType',
+                                        onChange: onChange,
+                                        data: info,
+                                        list: [
+                                            {value: '딜러', label: '딜러'},
+                                            {value: '제조', label: '제조'},
+                                            {value: '공공기관', label: '공공기관'}
+                                        ]
+                                    })}
                                 </div>
-                                <div style={{paddingTop: 5}}>
-                                    {inputForm({title: '만쿠담당자', id: 'mankuTradeManager'})}
-                                </div>
+                                {inputForm({title: '만쿠담당자', id: 'mankuTradeManager', onChange: onChange, data: info})}
                             </BoxCard>
                         </Panel>
                         <PanelResizeHandle/>

@@ -31,12 +31,16 @@ function MakerWrite({getPropertyId, copyPageInfo}: any) {
     const [validate, setValidate] = useState(getMakerValidateInit());
 
     useEffect(() => {
-        if (!isEmptyObj(copyPageInfo)) {
-            setInfo(getMakerInit())
-        } else {
-            setInfo(_.cloneDeep(copyPageInfo));
-        }
+        setLoading(true);
         setValidate(getMakerValidateInit());
+        setInfo(getMakerInit());
+        if (isEmptyObj(copyPageInfo)) {
+            setInfo({
+                ...getMakerInit(),
+                ..._.cloneDeep(copyPageInfo)
+            });
+        }
+        setLoading(false);
     }, [copyPageInfo?._meta?.updateKey]);
 
     function onChange(e) {
@@ -74,7 +78,6 @@ function MakerWrite({getPropertyId, copyPageInfo}: any) {
                 console.warn(v?.data?.message);
                 notificationAlert('error', '⚠️ 작업실패',
                     <>
-                        <div>Maker. : {info['makerName']}</div>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
                     , function () {
@@ -84,13 +87,13 @@ function MakerWrite({getPropertyId, copyPageInfo}: any) {
                 )
             }
         })
-            .catch((err) => {
-                notificationAlert('error', '❌ 네트워크 오류 발생', <div>{err.message}</div>);
-                console.error('에러:', err);
-            })
-            .finally(() => {
-                setLoading(false);
-            });
+        .catch((err) => {
+            notificationAlert('error', '❌ 네트워크 오류 발생', <div>{err.message}</div>);
+            console.error('에러:', err);
+        })
+        .finally(() => {
+            setLoading(false);
+        });
     }
 
     /**
@@ -98,8 +101,8 @@ function MakerWrite({getPropertyId, copyPageInfo}: any) {
      * 데이터 관리 > 메이커
      */
     function clearAll() {
-        setInfo(getMakerInit());
         setValidate(getMakerValidateInit());
+        setInfo(getMakerInit());
     }
 
     return <Spin spinning={loading}>

@@ -776,23 +776,29 @@ export const DAInfo = {
             return v
         },
         totalList: {},
-
-        type: 'write'
+        type: 'write',
+        validate: {
+            agencyName: true
+        },
+        validationList: [
+            {key: 'agencyName', message: '상호를 입력해주세요.'},
+        ]
     },
     defaultInfo: {
-        "agencyCode": "",
-        "agencyName": "",
-        "businessRegistrationNumber": "",
-        "bankAccountNumber": "",
-        "maker": "",
-        "item": "",
-        "homepage": "",
-        "tradeStartDate": "",
-        "dealerType": "딜러",
-        "grade": "A",
-        "margin": 0,
-        "instructions": "",
-    },
+        "agencyCode": "",                  // 코드(약칭)
+        "agencyName": "",                  // 상호
+        "businessRegistrationNumber": "",  // 사업자 번호
+        "bankAccountNumber": "",           // 계좌번호
+        "maker": "",                       // Maker
+        "item": "",                        // 아이템
+        "homepage": "",                    // 홈페이지
+        "tradeStartDate": "",              // 거래시작일
+        "dealerType": "딜러",               // "딜러", "제조"
+        "grade": "A",                      // 등급
+        "margin": 0,                       // 마진
+        "instructions": "",                // 지시사항
+        "agencyManagerList": [],           // 담당자 리스트
+    }
 };
 
 /**
@@ -941,7 +947,7 @@ export const DCWInfo = {
 };
 
 /**
- * 국내 고객사 코드
+ * 국내 고객사 등록/수정
  */
 export const DCInfo = {
     write: {
@@ -989,8 +995,13 @@ export const DCInfo = {
             "email": "",
             "remarks": ""
         },
-
-        type: 'write'
+        type: 'write',
+        validate: {
+            customerName: true
+        },
+        validationList: [
+            {key: 'customerName', message: '상호를 입력해주세요.'},
+        ]
     },
     defaultInfo: {
         "customerCode": "",
@@ -1005,10 +1016,9 @@ export const DCInfo = {
         "businessRegistrationNumber": "",
         "customerType": "",
         "remarks": "",
-        "customerCategory": "",
         "mankuTradeManager": "",
         "companyVerify": "",
-        "freightCharge": "화물 후불",
+        "freightCharge": "화물 선불",
         "freightBranch": "",
         "paymentMethod": "현금 결제",
         "companyType": "딜러",
@@ -1019,11 +1029,13 @@ export const DCInfo = {
         "representative": "",
         "businessType": "",
         "businessItem": "",
+        "key": 1,
+        "customerManagerList": []
     },
 };
 
 /**
- * 해외 고객사 코드
+ * 해외 고객사 등록/수정
  */
 export const OCInfo = {
     write: {
@@ -1071,7 +1083,13 @@ export const OCInfo = {
             "email": "",
             "remarks": ""
         },
-        type: 'write'
+        type: 'write',
+        validate: {
+            customerName: true
+        },
+        validationList: [
+            {key: 'customerName', message: '상호를 입력해주세요.'},
+        ]
     },
     defaultInfo: {
         "customerCode": "",
@@ -1089,6 +1107,7 @@ export const OCInfo = {
         "mankuTradeManager": "",
         "remarks": "",
         "companyVerification": "",
+        "overseasCustomerManagerList": []
     },
 };
 

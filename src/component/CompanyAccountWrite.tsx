@@ -31,12 +31,16 @@ function CompanyAccountWrite({getPropertyId, copyPageInfo}: any) {
     const [validate, setValidate] = useState(getCompanyAccountValidateInit());
 
     useEffect(() => {
-        if (!isEmptyObj(copyPageInfo)) {
-            setInfo(getCompanyAccountInit());
-        } else {
-            setInfo(_.cloneDeep(copyPageInfo));
-        }
+        setLoading(true);
         setValidate(getCompanyAccountValidateInit());
+        setInfo(getCompanyAccountInit());
+        if (isEmptyObj(copyPageInfo)) {
+            setInfo({
+                ...getCompanyAccountInit(),
+                ..._.cloneDeep(copyPageInfo)
+            });
+        }
+        setLoading(false);
     }, [copyPageInfo?._meta?.updateKey]);
 
     function onChange(e) {
@@ -98,8 +102,8 @@ function CompanyAccountWrite({getPropertyId, copyPageInfo}: any) {
      * 데이터관리 > 회사계정관리
      */
     function clearAll() {
-        setInfo(getCompanyAccountInit());
         setValidate(getCompanyAccountValidateInit());
+        setInfo(getCompanyAccountInit());
     }
 
     return <Spin spinning={loading}>

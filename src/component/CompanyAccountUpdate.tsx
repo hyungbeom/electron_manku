@@ -39,11 +39,12 @@ function CompanyAccountUpdate({updateKey, getCopyPage, layoutRef}: any) {
 
     useEffect(() => {
         setLoading(true);
+        setValidate(getCompanyAccountValidateInit());
+        setInfo(getCompanyAccountInit());
         getDataInfo().then(v => {
             const {companyAccountDetail} = v;
             setInfo(companyAccountDetail);
         })
-        setValidate(getCompanyAccountValidateInit());
         setLoading(false);
     }, [updateKey['company_account_update']])
 

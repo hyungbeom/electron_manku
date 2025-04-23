@@ -574,7 +574,7 @@ function RqfUpdate({
                                              disabled={!userInfo['microsoftId']}>
 
                                         <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                         infoRef={infoRef}/>
+                                                         infoRef={infoRef} uploadType={info.uploadType}/>
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>

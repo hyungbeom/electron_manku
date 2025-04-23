@@ -46,12 +46,16 @@ function SourceWrite({copyPageInfo, getPropertyId}: any) {
     const [totalRow, setTotalRow] = useState(0);
 
     useEffect(() => {
-        if (!isEmptyObj(copyPageInfo)) {
-            setInfo(getSourceInit())
-        } else {
-            setInfo(_.cloneDeep(copyPageInfo));
-        }
+        setLoading(true);
         setValidate(getSourceValidateInit());
+        setInfo(getSourceInit());
+        if (isEmptyObj(copyPageInfo)) {
+            setInfo({
+                ...getSourceInit(),
+                ..._.cloneDeep(copyPageInfo)
+            });
+        }
+        setLoading(false);
     }, [copyPageInfo?._meta?.updateKey]);
 
     const onGridReady = async (params) => {
@@ -154,8 +158,9 @@ function SourceWrite({copyPageInfo, getPropertyId}: any) {
      * 데이터관리 > 재고 관리
      */
     function clearAll() {
-        setInfo(getSourceInit());
         setValidate(getSourceValidateInit());
+        setInfo(getSourceInit());
+        setTotalRow(0);
     }
 
     return <Spin spinning={loading}>

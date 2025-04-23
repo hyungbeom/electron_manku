@@ -1,12 +1,12 @@
 import React, {memo, useEffect, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import {tableCodeOverseasSalesColumns,} from "@/utils/columnList";
-import {codeDomesticPurchaseInitial,} from "@/utils/initialList";
+import {OCSearchInitial,} from "@/utils/initialList";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
 import Button from "antd/lib/button";
 import {ExclamationCircleOutlined, ReloadOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
-import {inputForm, MainCard} from "@/utils/commonForm";
+import {inputForm, MainCard, TopBoxCard} from "@/utils/commonForm";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import {searchOverseasCustomer} from "@/utils/api/mainApi";
 import Popconfirm from "antd/lib/popconfirm";
@@ -20,15 +20,15 @@ import Space from "antd/lib/space";
 function OverseasCustomerRead({getPropertyId, getCopyPage}: any) {
     const notificationAlert = useNotificationAlert();
     const gridRef = useRef(null);
-    const copyInit = _.cloneDeep(codeDomesticPurchaseInitial)
 
     const [loading, setLoading] = useState(false);
-    const [info, setInfo] = useState(copyInit);
-    const [totalRow, setTotalRow] = useState(0);
     const [mini, setMini] = useState(true);
 
-    const [isSearch, setIsSearch] = useState(false);
+    const getSearchInit = () => _.cloneDeep(OCSearchInitial);
+    const [info, setInfo] = useState(getSearchInit());
+    const [totalRow, setTotalRow] = useState(0);
 
+    const [isSearch, setIsSearch] = useState(false);
     useEffect(() => {
         if (isSearch) {
             searchInfo(true);
@@ -37,25 +37,16 @@ function OverseasCustomerRead({getPropertyId, getCopyPage}: any) {
     }, [isSearch]);
 
     const onGridReady = async (params) => {
-        setLoading(true)
+        setLoading(true);
         gridRef.current = params.api;
-        await searchOverseasCustomer({
-            data: {
-                "searchType": "1",      // 1: 코드, 2: 상호명, 3: Maker
-                "searchText": "",
-                "page": 1,
-                "limit": -1
-            }
-        }).then(v => {
-            params.api.applyTransaction({add: v.data});
-            setTotalRow(v.pageInfo.totalRow)
-            setLoading(false)
+        await searchOverseasCustomer({data: info}).then(v => {
+            params.api.applyTransaction({add: v?.data ?? []});
+            setTotalRow(v?.pageInfo?.totalRow ?? 0)
         })
+        .finally(() => {
+            setLoading(false);
+        });
     };
-
-    function onChange(e) {
-        commonManage.onChange(e, setInfo)
-    }
 
     function handleKeyPress(e) {
         if (e.key === 'Enter') {
@@ -63,13 +54,8 @@ function OverseasCustomerRead({getPropertyId, getCopyPage}: any) {
         }
     }
 
-    /**
-     * @description 조회 페이지 > 신규생성 버튼
-     * 데이터 관리 > 고객사 > 해외고객사
-     */
-    function moveRouter() {
-        getCopyPage('overseas_customer_write', {})
-
+    function onChange(e) {
+        commonManage.onChange(e, setInfo)
     }
 
     /**
@@ -80,18 +66,13 @@ function OverseasCustomerRead({getPropertyId, getCopyPage}: any) {
     async function searchInfo(e) {
         if (e) {
             setLoading(true);
-            await searchOverseasCustomer({
-                data: {
-                    "searchType": info['searchType'],      // 1: 코드, 2: 상호명, 3: Maker
-                    "searchText": info['searchText'],
-                    "page": 1,
-                    "limit": -1
-                }
-            }).then(v => {
-                gridManage.resetData(gridRef, v.data);
-                setTotalRow(v.pageInfo.totalRow)
+            await searchOverseasCustomer({data: info}).then(v => {
+                gridManage.resetData(gridRef, v.data ?? []);
+                setTotalRow(v?.pageInfo?.totalRow ?? 0)
             })
-            setLoading(false);
+            .finally(() => {
+                setLoading(false);
+            });
         }
     }
 
@@ -100,9 +81,17 @@ function OverseasCustomerRead({getPropertyId, getCopyPage}: any) {
      * 데이터 관리 > 고객사 > 해외고객사
      */
     function clearAll() {
-        setInfo(copyInit);
+        setInfo(getSearchInit());
         gridRef.current.deselectAll();
         setIsSearch(true);
+    }
+
+    /**
+     * @description 조회 페이지 > 신규생성 버튼
+     * 데이터 관리 > 고객사 > 해외고객사
+     */
+    function moveRouter() {
+        getCopyPage('overseas_customer_write', {})
     }
 
     /**
@@ -110,17 +99,14 @@ function OverseasCustomerRead({getPropertyId, getCopyPage}: any) {
      * 데이터 관리 > 고객사 > 해외고객사
      */
     async function confirm() {
-        if (gridRef.current.getSelectedRows().length < 1) {
-            return message.error('삭제할 데이터를 선택해주세요.')
-        }
+        const list = gridRef.current.getSelectedRows();
+        if (!list?.length) return message.warn('삭제할 고객사를 선택해주세요.');
+
         setLoading(true);
-
-        const list = gridRef.current.getSelectedRows()
         const filterList = list.map(v => v.overseasCustomerId);
-
         await getData.post('customer/deleteOverseasCustomers', {overseasCustomerIdList: filterList}).then(v => {
             if (v?.data?.code === 1) {
-                searchInfo(true)
+                searchInfo(true);
                 notificationAlert('success', '🗑️ 해외고객사 삭제완료',
                     <>
                         <div>상호
@@ -132,52 +118,51 @@ function OverseasCustomerRead({getPropertyId, getCopyPage}: any) {
                     , null, null, 2
                 )
             } else {
-                message.error(v?.data?.message)
+                console.warn(v?.data?.message);
+                notificationAlert('error', '⚠️ 작업실패',
+                    <>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                        alert('작업 로그 페이지 참고')
+                    },
+                    {cursor: 'pointer'}
+                )
             }
         })
-        setLoading(false);
+        .catch((err) => {
+            notificationAlert('error', '❌ 네트워크 오류 발생', <div>{err.message}</div>);
+            console.error('에러:', err);
+        })
+        .finally(() => {
+            setLoading(false);
+        });
     }
 
     return <Spin spinning={loading} tip={'해외 고객사 조회중...'}>
         <ReceiveComponent componentName={'overseas_customer_read'} searchInfo={searchInfo}/>
         <div style={{
             display: 'grid',
-            gridTemplateRows: `${mini ? '120px' : '65px'} calc(100vh - ${mini ? 250 : 195}px)`,
+            gridTemplateRows: `${mini ? '140px' : '65px'} calc(100vh - ${mini ? 250 : 195}px)`,
             columnGap: 5
         }}>
             <MainCard title={'해외 고객사 조회'}
-                      list={[{
-                          name: <div><SaveOutlined style={{paddingRight: 8}}/>신규작성</div>,
-                          func: moveRouter,
-                          type: ''
-                      }]}
+                      list={[
+                          {name: <div><SaveOutlined style={{paddingRight: 8}}/>신규작성</div>, func: moveRouter, type: ''}
+                      ]}
                       mini={mini} setMini={setMini}>
                 {mini ?
-                    // <div style={{display: 'flex', alignItems: 'center', padding: 10}}>
-                    <div style={{display: 'flex', alignItems: 'center'}}>
-                        {/*{radioForm({*/}
-                        {/*    title: '',*/}
-                        {/*    id: 'searchType',*/}
-                        {/*    onChange: onChange,*/}
-                        {/*    data: info,*/}
-                        {/*    list: [{value: 1, title: '코드'},*/}
-                        {/*        {value: 2, title: '상호명'},*/}
-                        {/*        {value: 3, title: 'item'},*/}
-                        {/*        {value: 4, title: '국가'}]*/}
-                        {/*})}*/}
-
-                        {/*<div style={{width: 500, marginLeft: 20}}>*/}
-                        <div style={{width: 500, marginLeft: 10}}>
+                    <TopBoxCard title={''} grid={'300px 1fr'}>
+                        <div style={{marginLeft: 10}}>
                             {inputForm({
                                 title: '검색어',
                                 id: 'searchText',
-                                onChange: onChange,
                                 handleKeyPress: handleKeyPress,
-                                data: info,
-                                size: 'middle'
+                                onChange: onChange,
+                                data: info
                             })}
                         </div>
-                        <Space style={{marginTop: 14, marginLeft: 20}} size={8}>
+                        <Space style={{marginTop: 14}} size={8}>
                             <Button type="primary" size="small" style={{fontSize: 11}} onClick={searchInfo}>
                                 <SearchOutlined/>조회
                             </Button>
@@ -185,7 +170,8 @@ function OverseasCustomerRead({getPropertyId, getCopyPage}: any) {
                                 <ReloadOutlined/>초기화
                             </Button>
                         </Space>
-                    </div> : <></>}
+                    </TopBoxCard>
+                    : <></>}
             </MainCard>
             <TableGrid
                 deleteComp={

@@ -88,6 +88,10 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
 
     useEffect(() => {
         if (!isGrid) return;
+        setValidate(getSourceValidateInit());
+        setInfo(getSourceInit());
+        setInventoryList([]);
+        setTotalRow(0);
         fetchData();
     }, [updateKey['source_update'], isGrid])
 

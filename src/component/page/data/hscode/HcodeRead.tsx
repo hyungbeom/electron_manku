@@ -48,7 +48,7 @@ function HcodeRead({getPropertyId}: any) {
         setLoading(true);
         gridRef.current = params.api;
         await searchHSCode({data: searchInit}).then(v => {
-            params.api.applyTransaction({add: v.data ?? []});
+            params.api.applyTransaction({add: v?.data ?? []});
             setTotalRow(v?.pageInfo?.totalRow ?? 0)
         })
         .finally(() => {

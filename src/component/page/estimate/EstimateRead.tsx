@@ -45,7 +45,7 @@ function EstimateRead({getPropertyId, getCopyPage,}: any) {
         gridRef.current = params.api;
         await searchEstimate({data: estimateReadInitial}).then(v => {
 
-            params.api.applyTransaction({add: v.data});
+            params.api.applyTransaction({add: v?.data});
             setTotalRow(v.pageInfo.totalRow)
             setLoading(false)
         })

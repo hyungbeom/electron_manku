@@ -47,7 +47,7 @@ function OverseasAgencyRead({getPropertyId, getCopyPage}: any) {
                 "limit": -1
             }
         }).then(v => {
-            params.api.applyTransaction({add: v.data});
+            params.api.applyTransaction({add: v?.data});
             setTotalRow(v.pageInfo.totalRow)
         })
         setLoading(false);

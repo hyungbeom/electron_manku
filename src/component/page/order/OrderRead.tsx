@@ -48,7 +48,7 @@ function OrderRead({getPropertyId, getCopyPage}: any) {
         setLoading(true)
         gridRef.current = params.api;
         await searchOrder({data: orderReadInitial}).then(v => {
-            params.api.applyTransaction({add: v.data});
+            params.api.applyTransaction({add: v?.data});
             setTotalRow(v.pageInfo.totalRow)
             setLoading(false)
         })

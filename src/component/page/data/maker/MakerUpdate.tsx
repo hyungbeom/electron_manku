@@ -39,12 +39,15 @@ function MakerUpdate({updateKey, getCopyPage, layoutRef}: any) {
 
     useEffect(() => {
         setLoading(true);
+        setValidate(getMakerValidateInit());
+        setInfo(getMakerInit());
         getDataInfo().then(v => {
             const {makerDetail} = v;
             setInfo(makerDetail);
         })
-        setValidate(getMakerValidateInit());
-        setLoading(false);
+        .finally(() => {
+            setLoading(false);
+        });
     }, [updateKey['maker_update']])
 
     function onChange(e) {

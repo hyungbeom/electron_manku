@@ -80,6 +80,99 @@ export const rfqWriteInitial = {
 
 // ==============================================================================
 
+// 매입처 > 국내매입처 조회 > 검색 초기값 정보
+export const DASearchInitial = {
+    "searchType": 1,
+    "searchText": "",
+    "page": 1,
+    "limit": -1
+}
+
+// 매입처 > 국내매입처 등록/수정 > 입력 초기값 정보
+export const codeDomesticAgencyWriteInitial = {
+    "agencyCode": "",                  // 코드(약칭)
+    "agencyName": "",                  // 상호
+    "businessRegistrationNumber": "",  // 사업자 번호
+    "bankAccountNumber": "",           // 계좌번호
+    "maker": "",                       // Maker
+    "item": "",                        // 아이템
+    "homepage": "",                    // 홈페이지
+    "tradeStartDate": "",              // 거래시작일
+    "dealerType": "딜러",               // "딜러", "제조"
+    "grade": "A",                      // 등급
+    "margin": 0,                       // 마진
+    "instructions": "",                // 지시사항
+    "agencyManagerList": [],           // 담당자 리스트
+    searchType : 1
+}
+
+// 고객사 > 국내고객사 조회 > 검색 초기값 정보
+export const DCSearchInitial = {
+    "searchType": 1,
+    "searchText": "",
+    "page": 1,
+    "limit": -1
+}
+
+// 고객사 > 국내고객사 등록/수정 > 입력 초기값 정보
+export const codeDomesticSalesWriteInitial = {
+    "customerCode": "",
+    "customerName": "",
+    "customerRegion": "",
+    "tradeStartDate": "",
+    "customerTel": "",
+    "customerFax": "",
+    "homepage": "",
+    "zipCode": "",
+    "address": "",
+    "businessRegistrationNumber": "",
+    "customerType": "",
+    "remarks": "",
+    "mankuTradeManager": "",
+    "companyVerify": "",
+    "freightCharge": "화물 후불",
+    "freightBranch": "",
+    "paymentMethod": "현금 결제",
+    "companyType": "딜러",
+    "createdBy": "",
+    "createdDate": "",
+    "modifiedBy": "",
+    "modifiedDate": "",
+    "representative": "",
+    "businessType": "",
+    "businessItem": "",
+    "key": 1,
+    "customerManagerList": []
+}
+
+// 고객사 > 해외고객사 조회 > 검색 초기값 정보
+export const OCSearchInitial = {
+    "searchType": 1,
+    "searchText": "",
+    "page": 1,
+    "limit": -1
+}
+
+// 고객사 > 해외고객사 등록/수정 > 입력 초기값 정보
+export const codeOverseasSalesWriteInitial = {
+    "customerCode": "",
+    "customerName": "",
+    "tradeStartDate": "",
+    "phoneNumber": "",
+    "customerRegion": "",
+    "homepage": "",
+    "faxNumber": "",
+    "currencyUnit": "",
+    "manager": "",
+    "ftaNumber": "",
+    "customerType": "",
+    "address": "",
+    "mankuTradeManager": "",
+    "remarks": "",
+    "companyVerification": "",
+    "overseasCustomerManagerList": []
+}
+
 // Maker 조회 > 검색 초기값 정보
 export const makerSearchInitial = {
     searchType: 1,
@@ -451,76 +544,6 @@ export const codeDomesticPurchaseInitial = {
     "page": 1,
     "limit": -1
 }
-
-// 국내매입처 등록 코드
-export const codeDomesticAgencyWriteInitial = {
-    "agencyCode": "",                  // 코드(약칭)
-    "agencyName": "",                  // 상호
-    "businessRegistrationNumber": "",  // 사업자 번호
-    "bankAccountNumber": "",           // 계좌번호
-    "maker": "",                       // Maker
-    "item": "",                        // 아이템
-    "homepage": "",                    // 홈페이지
-    "tradeStartDate": "",              // 거래시작일
-    "dealerType": "딜러",               // "딜러", "제조"
-    "grade": "A",                      // 등급
-    "margin": 0,                       // 마진
-    "instructions": "",                // 지시사항
-    "agencyManagerList": [],           // 담당자 리스트
-    searchType : 1
-}
-
-// 국내고객사 등록 코드
-export const codeDomesticSalesWriteInitial = {
-    "customerCode": "",
-    "customerName": "",
-    "customerRegion": "",
-    "tradeStartDate": "",
-    "customerTel": "",
-    "customerFax": "",
-    "homepage": "",
-    "zipCode": "",
-    "address": "",
-    "businessRegistrationNumber": "",
-    "customerType": "",
-    "remarks": "",
-    "mankuTradeManager": "",
-    "companyVerify": "",
-    "freightCharge": "화물 후불",
-    "freightBranch": "",
-    "paymentMethod": "현금 결제",
-    "companyType": "딜러",
-    "createdBy": "",
-    "createdDate": "",
-    "modifiedBy": "",
-    "modifiedDate": "",
-    "representative": "",
-    "businessType": "",
-    "businessItem": "",
-    "key": 1,
-    "customerManagerList": []
-}
-
-// 해외고객사 등록 코드
-export const codeOverseasSalesWriteInitial = {
-    "customerCode": "",
-    "customerName": "",
-    "tradeStartDate": "",
-    "phoneNumber": "",
-    "customerRegion": "",
-    "homepage": "",
-    "faxNumber": "",
-    "currencyUnit": "",
-    "manager": "",
-    "ftaNumber": "",
-    "customerType": "",
-    "address": "",
-    "mankuTradeManager": "",
-    "remarks": "",
-    "companyVerification": "",
-    "overseasCustomerManagerList": []
-}
-
 
 export const tableCodeDomesticSalesInitial = {
     "customerId": 0,

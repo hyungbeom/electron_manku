@@ -21,7 +21,7 @@ export default function OrderListModal({isModalOpen, setIsModalOpen, getRows}) {
     const onGridReady = async (params) => {
         gridRef.current = params.api;
         await searchOrder({data: {"searchStartDate": '', "searchEndDate": ''}}).then(v=>{
-            gridRef.current.applyTransaction({add: v.data});
+            gridRef.current.applyTransaction({add: v?.data});
         })
 
     };

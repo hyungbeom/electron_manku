@@ -52,7 +52,7 @@ export default function DomesticRemittanceRead({getPropertyId, getCopyPage}: any
         setLoading(true)
         gridRef.current = params.api;
         await getRemittanceList({data: getRemittanceSearchInit()}).then(v => {
-            params.api.applyTransaction({add: v.data});
+            params.api.applyTransaction({add: v?.data});
             setTotalRow(v.pageInfo.totalRow)
         });
         setLoading(false);

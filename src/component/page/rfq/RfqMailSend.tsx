@@ -39,7 +39,7 @@ function RfqMailSend({getPropertyId}: any) {
 
         await searchRfq({data: subRfqReadMailInitial}).then(v => {
             setTotalRow(v.pageInfo.totalRow);
-            params.api.applyTransaction({add: v.data});
+            params.api.applyTransaction({add: v?.data});
         })
     };
 

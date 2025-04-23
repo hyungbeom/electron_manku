@@ -1,12 +1,12 @@
 import React, {memo, useEffect, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import {tableCodeDomesticSalesColumns,} from "@/utils/columnList";
-import {codeDomesticPurchaseInitial,} from "@/utils/initialList";
+import {DCSearchInitial,} from "@/utils/initialList";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
 import Button from "antd/lib/button";
 import {ExclamationCircleOutlined, ReloadOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
-import {inputForm, MainCard} from "@/utils/commonForm";
+import {inputForm, MainCard, TopBoxCard} from "@/utils/commonForm";
 import {searchDomesticCustomer} from "@/utils/api/mainApi";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import Spin from "antd/lib/spin";
@@ -20,15 +20,16 @@ import ReceiveComponent from "@/component/ReceiveComponent";
 function DomesticCustomerRead({getPropertyId, getCopyPage}: any) {
     const notificationAlert = useNotificationAlert();
     const gridRef = useRef(null);
-    const copyInit = _.cloneDeep(codeDomesticPurchaseInitial)
 
     const [loading, setLoading] = useState(false);
-    const [info, setInfo] = useState(copyInit);
-    const [totalRow, setTotalRow] = useState(0);
     const [mini, setMini] = useState(true);
 
-    const [isSearch, setIsSearch] = useState(false);
+    const getSearchInit = () => _.cloneDeep(DCSearchInitial);
+    const [info, setInfo] = useState(getSearchInit());
 
+    const [totalRow, setTotalRow] = useState(0);
+
+    const [isSearch, setIsSearch] = useState(false);
     useEffect(() => {
         if (isSearch) {
             searchInfo(true);
@@ -37,30 +38,53 @@ function DomesticCustomerRead({getPropertyId, getCopyPage}: any) {
     }, [isSearch]);
 
     const onGridReady = async (params) => {
-        setLoading(true)
+        setLoading(true);
         gridRef.current = params.api;
-        await searchDomesticCustomer({
-            data: {
-                "searchType": "1",      // 1: 코드, 2: 상호명, 3: Maker
-                "searchText": "",
-                "page": 1,
-                "limit": -1
-            }
-        }).then(v => {
-            params.api.applyTransaction({add: v.data});
-            setTotalRow(v.pageInfo.totalRow)
-            setLoading(false)
+        await searchDomesticCustomer({data: info}).then(v => {
+            params.api.applyTransaction({add: v?.data ?? []});
+            setTotalRow(v?.pageInfo?.totalRow ?? 0)
         })
+        .finally(() => {
+            setLoading(false);
+        });
     };
+
+    function handleKeyPress(e) {
+        if (e.key === 'Enter') {
+            searchInfo(true);
+        }
+    }
 
     function onChange(e) {
         commonManage.onChange(e, setInfo)
     }
 
-    function handleKeyPress(e) {
-        if (e.key === 'Enter') {
-            searchInfo(true)
+    /**
+     * @description 조회 페이지 > 조회 버튼
+     * 데이터 관리 > 고객사 > 국내고객사 관리
+     * @param e
+     */
+    async function searchInfo(e) {
+        if (e) {
+            setLoading(true);
+            await searchDomesticCustomer({data: info}).then(v => {
+                gridManage.resetData(gridRef, v?.data ?? []);
+                setTotalRow(v?.pageInfo?.totalRow ?? 0)
+            })
+            .finally(() => {
+                setLoading(false);
+            });
         }
+    }
+
+    /**
+     * @description 조회 페이지 > 초기화 버튼
+     * 데이터 관리 > 고객사 > 국내고객사
+     */
+    function clearAll() {
+        setInfo(getSearchInit());
+        gridRef.current.deselectAll();
+        setIsSearch(true);
     }
 
     /**
@@ -72,51 +96,15 @@ function DomesticCustomerRead({getPropertyId, getCopyPage}: any) {
     }
 
     /**
-     * @description 조회 페이지 > 조회 버튼
-     * 데이터 관리 > 고객사 > 국내고객사 관리
-     * @param e
-     */
-    async function searchInfo(e) {
-        if (e) {
-            setLoading(true)
-            await searchDomesticCustomer({
-                data: {
-                    "searchType": 0,      // 1: 코드, 2: 상호명, 3: Maker
-                    "searchText": info['searchText'],
-                    "page": 1,
-                    "limit": -1
-                }
-            }).then(v => {
-                gridManage.resetData(gridRef, v.data);
-                setTotalRow(v.pageInfo.totalRow)
-            })
-            setLoading(false);
-        }
-    }
-
-    /**
-     * @description 조회 페이지 > 초기화 버튼
-     * 데이터 관리 > 고객사 > 국내고객사
-     */
-    function clearAll() {
-        gridRef.current.deselectAll();
-        setInfo(copyInit);
-        setIsSearch(true);
-    }
-
-    /**
      * @description 조회 페이지 테이블 > 삭제 버튼
      * 데이터 관리 > 고객사 > 국내고객사
      */
     async function confirm() {
-        if (gridRef.current.getSelectedRows().length < 1) {
-            return message.error('삭제할 고객사를 선택해주세요.')
-        }
+        const list = gridRef.current.getSelectedRows();
+        if (!list?.length) return message.warn('삭제할 고객사를 선택해주세요.');
+
         setLoading(true);
-
-        const list = gridRef.current.getSelectedRows()
         const filterList = list.map(v => parseInt(v.customerId));
-
         await getData.post('customer/deleteCustomers', {customerIdList: filterList}).then(v => {
             if (v?.data?.code === 1) {
                 searchInfo(true);
@@ -131,17 +119,32 @@ function DomesticCustomerRead({getPropertyId, getCopyPage}: any) {
                     , null, null, 2
                 )
             } else {
-                message.error(v?.data?.message)
+                console.warn(v?.data?.message);
+                notificationAlert('error', '⚠️ 작업실패',
+                    <>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                        alert('작업 로그 페이지 참고')
+                    },
+                    {cursor: 'pointer'}
+                )
             }
         })
-        setLoading(false);
+        .catch((err) => {
+            notificationAlert('error', '❌ 네트워크 오류 발생', <div>{err.message}</div>);
+            console.error('에러:', err);
+        })
+        .finally(() => {
+            setLoading(false);
+        });
     }
 
     return <Spin spinning={loading} tip={'국내 고객사 조회중...'}>
         <ReceiveComponent componentName={'domestic_customer_read'} searchInfo={searchInfo}/>
         <div style={{
             display: 'grid',
-            gridTemplateRows: `${mini ? '120px' : '65px'} calc(100vh - ${mini ? 250 : 195}px)`,
+            gridTemplateRows: `${mini ? '140px' : '65px'} calc(100vh - ${mini ? 250 : 195}px)`,
             columnGap: 5
         }}>
             <MainCard title={'국내 고객사 조회'}
@@ -152,31 +155,17 @@ function DomesticCustomerRead({getPropertyId, getCopyPage}: any) {
                       }]}
                       mini={mini} setMini={setMini}>
                 {mini ?
-                    // <div style={{display: 'flex', alignItems: 'center', padding: 10}}>
-                    <div style={{display: 'flex', alignItems: 'center'}}>
-                        {/*{radioForm({*/}
-                        {/*    title: '',*/}
-                        {/*    id: 'searchType',*/}
-                        {/*    onChange: onChange,*/}
-                        {/*    data: info,*/}
-                        {/*    list: [{value: 1, title: '코드'},*/}
-                        {/*        {value: 2, title: '상호명'},*/}
-                        {/*        {value: 3, title: 'item'},*/}
-                        {/*        {value: 4, title: '국가'}]*/}
-                        {/*})}*/}
-
-                        {/*<div style={{width: 500, marginLeft: 20}}>*/}
-                        <div style={{width: 500, marginLeft: 10}}>
+                    <TopBoxCard title={''} grid={'300px 1fr'}>
+                        <div style={{marginLeft: 10}}>
                             {inputForm({
                                 title: '검색어',
                                 id: 'searchText',
-                                onChange: onChange,
                                 handleKeyPress: handleKeyPress,
-                                data: info,
-                                size: 'middle'
+                                onChange: onChange,
+                                data: info
                             })}
                         </div>
-                        <Space style={{marginTop: 14, marginLeft: 20}} size={8}>
+                        <Space style={{marginTop: 14}} size={8}>
                             <Button type="primary" size="small" style={{fontSize: 11}} onClick={searchInfo}>
                                 <SearchOutlined/>조회
                             </Button>
@@ -184,7 +173,8 @@ function DomesticCustomerRead({getPropertyId, getCopyPage}: any) {
                                 <ReloadOutlined/>초기화
                             </Button>
                         </Space>
-                    </div> : <></>}
+                    </TopBoxCard>
+                    : <></>}
             </MainCard>
             <TableGrid
                 deleteComp={
@@ -208,5 +198,5 @@ function DomesticCustomerRead({getPropertyId, getCopyPage}: any) {
 }
 
 export default memo(DomesticCustomerRead, (prevProps, nextProps) => {
-    return _.isEqual(prevProps, nextProps);
+return _.isEqual(prevProps, nextProps);
 });

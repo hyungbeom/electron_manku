@@ -349,7 +349,7 @@ export function DriveUploadComp({
                     <select ref={uploadTypeRef} onClick={e => {
                         e.preventDefault();
                         e.stopPropagation()
-                    }} name="languages" id="uploadType" value={uploadType}
+                    }} name="languages" id="uploadType" defaultValue={uploadType}
                             style={{
                                 outline: 'none',
                                 border: '1px solid lightGray',

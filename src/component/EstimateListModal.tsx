@@ -52,7 +52,7 @@ export default function EstimateListModal({isModalOpen, setIsModalOpen, getRows}
                 searchEndDate: info['searchEndDate']
             }
         }).then(v => {
-            gridRef.current.applyTransaction({add: v.data});
+            gridRef.current.applyTransaction({add: v?.data});
 
         })
 

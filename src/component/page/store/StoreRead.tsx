@@ -34,7 +34,7 @@ function StoreRead({ getPropertyId, getCopyPage}:any) {
     const onGridReady = async (params) => {
         gridRef.current = params.api;
         await getOrderStatusList({data: storeRealInitial}).then(v => {
-            params.api.applyTransaction({add: v.data});
+            params.api.applyTransaction({add: v?.data});
             setTotalRow(v.pageInfo.totalRow)
         })
     };
@@ -93,7 +93,7 @@ function StoreRead({ getPropertyId, getCopyPage}:any) {
     }
 
     return <Spin spinning={loading} tip={'입고 조회중...'}>
-        <ReceiveComponent searchInfo={searchInfo}/>
+        <ReceiveComponent componentName={'store_read'} searchInfo={searchInfo}/>
         <>
             <div style={{
                 display: 'grid',
