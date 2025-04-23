@@ -353,7 +353,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                              setIsModalOpen={setIsModalOpen}/>}
         <>
             {isModalOpen['event3'] &&
-                <PrintPo infoRef={infoRef} tableRef={tableRef} isModalOpen={isModalOpen}
+                <PrintPo info={info} tableRef={tableRef} isModalOpen={isModalOpen}
                          setIsModalOpen={setIsModalOpen} memberList={memberList}/>}
             <div ref={infoRef} style={{
                 display: 'grid',
