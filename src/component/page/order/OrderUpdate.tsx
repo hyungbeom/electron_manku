@@ -115,7 +115,7 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
                 uploadType: 4,
                 managerAdminId: orderDetail['managerAdminId'] ? orderDetail['managerAdminId'] : '',
                 managerAdminName: orderDetail['managerAdminName'] ? orderDetail['managerAdminName'] : '',
-                createdBy: userInfo['name']
+                createdBy: orderDetail['createdBy'] ? orderDetail['createdBy'] : ''
             })
             setFileList(fileManage.getFormatFiles(attachmentFileList));
             setOriginFileList(attachmentFileList);

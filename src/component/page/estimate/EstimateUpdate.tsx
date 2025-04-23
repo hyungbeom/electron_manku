@@ -151,7 +151,7 @@ function EstimateUpdate({
                 uploadType: 3,
                 managerAdminId: estimateDetail['managerAdminId'] ? estimateDetail['managerAdminId'] : '',
                 managerAdminName: estimateDetail['managerAdminName'] ? estimateDetail['managerAdminName'] : '',
-                createdBy: userInfo['name']
+                createdBy: estimateDetail['createdBy'] ? estimateDetail['createdBy'] : ''
             })
             setFileList(fileManage.getFormatFiles(attachmentFileList));
             setOriginFileList(attachmentFileList)
