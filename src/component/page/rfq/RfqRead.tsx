@@ -16,6 +16,7 @@ import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import Popconfirm from "antd/lib/popconfirm";
 import moment from "moment/moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
+import ReceiveComponent from "@/component/ReceiveComponent";
 
 
 function RfqRead({getPropertyId, getCopyPage}: any) {
@@ -108,9 +109,9 @@ function RfqRead({getPropertyId, getCopyPage}: any) {
                     <>
                         <div>Inquiry No.
                             - {selectedRows[0]?.documentNumberFull} {selectedRows.length > 1 ? ('외' + " " + (selectedRows.length - 1) + '개') : ''} 이(가)
-                            삭제되었습니다
+                            삭제되었습니다.
                         </div>
-                        {/*<div>프로젝트 제목 - {selectedRows[0].projectTitle} `${selectedRows.length > 1 ? ('외' + (selectedRows.length - 1)) + '개' : ''}`가 삭제되었습니다 </div>*/}
+                        {/*<div>프로젝트 제목 - {selectedRows[0].projectTitle} `${selectedRows.length > 1 ? ('외' + (selectedRows.length - 1)) + '개' : ''}`가 삭제되었습니다. </div>*/}
                         <div>삭제일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
                     , function () {
@@ -136,8 +137,8 @@ function RfqRead({getPropertyId, getCopyPage}: any) {
 
 
     return <>
-
         <Spin spinning={loading} tip={'견적의뢰 조회중...'}>
+            <ReceiveComponent componentName={'rfq_read'} searchInfo={searchInfo}/>
             <PanelSizeUtil groupRef={groupRef} storage={'rfq_read'}/>
             <>
                 <div style={{

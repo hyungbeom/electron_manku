@@ -1,7 +1,16 @@
 import React, {memo, useEffect, useRef, useState} from "react";
 import {ModalInitList, projectWriteInitial} from "@/utils/initialList";
 import message from "antd/lib/message";
-import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, tooltipInfo, TopBoxCard} from "@/utils/commonForm";
+import {
+    BoxCard,
+    datePickerForm,
+    inputForm,
+    MainCard,
+    selectBoxForm,
+    textAreaForm,
+    tooltipInfo,
+    TopBoxCard
+} from "@/utils/commonForm";
 import {useRouter} from "next/router";
 import {commonFunc, commonManage, fileManage} from "@/utils/commonManage";
 import {getAttachmentFileList, updateProject} from "@/utils/api/mainApi";
@@ -9,10 +18,9 @@ import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {getData} from "@/manage/function/api";
 import Spin from "antd/lib/spin";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
-
 import 'react-splitter-layout/lib/index.css';
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
-import {estimateInfo, projectInfo} from "@/utils/column/ProjectInfo";
+import {estimateInfo, projectInfo, rfqInfo} from "@/utils/column/ProjectInfo";
 import Table from "@/component/util/Table";
 import {findCodeInfo} from "@/utils/api/commonApi";
 import SearchInfoModal from "@/component/SearchAgencyModal";
@@ -20,18 +28,17 @@ import moment from "moment/moment";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import useEventListener from "@/utils/common/function/UseEventListener";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
-import {CopyOutlined, DeleteOutlined, FormOutlined, RadiusSettingOutlined, SearchOutlined} from "@ant-design/icons";
+import {CopyOutlined, DeleteOutlined, FormOutlined, RadiusSettingOutlined} from "@ant-design/icons";
 import {Actions} from "flexlayout-react";
 import _ from "lodash";
-import Popconfirm from "antd/lib/popconfirm";
 import Modal from "antd/lib/modal/Modal";
 import Button from "antd/lib/button";
 import EstimatePaper from "@/component/견적서/EstimatePaper";
 import {jsPDF} from "jspdf";
 import html2canvas from "html2canvas";
 
-
 const listType = 'projectDetailList'
+
 function ProjectUpdate({
                                           updateKey = {},
                                           getCopyPage = null,
@@ -41,8 +48,19 @@ function ProjectUpdate({
     const notificationAlert = useNotificationAlert();
     const infoRef = useRef<any>(null)
     const tableRef = useRef(null);
+    const groupRef = useRef<any>(null)
+    const fileRef = useRef(null);
+    const pdfRef = useRef(null);
+    const pdfSubRef = useRef(null);
+
+    const getSavedSizes = () => {
+        const savedSizes = localStorage.getItem('project_update');
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 5]; // 기본값 [50, 50, 50]
+    };
+    const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
     const [memberList, setMemberList] = useState([]);
+
     useEffect(() => {
         getMemberList();
     }, []);
@@ -59,74 +77,77 @@ function ProjectUpdate({
         })
     }
 
-
     const options = memberList?.map((item) => ({
         ...item,
         value: item.adminId,
         label: item.name,
     }));
 
-    const groupRef = useRef<any>(null)
-
-    const fileRef = useRef(null);
-    const router = useRouter();
-    const userInfo = useAppSelector((state) => state.user);
-    const pdfRef = useRef(null);
-    const pdfSubRef = useRef(null);
-
-    const [info, setInfo] = useState<any>(projectWriteInitial)
-    const [fileList, setFileList] = useState([]);
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
-    const [originFileList, setOriginFileList] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [tableData, setTableData] = useState([]);
     const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
 
-    const getSavedSizes = () => {
-        const savedSizes = localStorage.getItem('project_update');
-        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 0]; // 기본값 [50, 50, 50]
-    };
+    const router = useRouter();
+    const [loading, setLoading] = useState(false);
 
-    const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
+    const userInfo = useAppSelector((state) => state.user);
+    const adminParams = {
+        managerAdminId: userInfo['adminId'],
+        createdBy: userInfo['name'],
+        managerAdminName: userInfo['name'],
+        writtenDate: moment().format('YYYY-MM-DD'),
+    }
+    const getProjectInit = () => {
+        const copyInit = _.cloneDeep(projectInfo['defaultInfo']);
+        return {
+            ...copyInit,
+            ...adminParams
+        }
+    }
+    const [info, setInfo] = useState(getProjectInit());
+    const getProjectValidateInit = () => _.cloneDeep(projectInfo['write']['validate']);
+    const [validate, setValidate] = useState(getProjectValidateInit());
 
-
-
+    const [fileList, setFileList] = useState([]);
+    const [originFileList, setOriginFileList] = useState([]);
+    const [tableData, setTableData] = useState([]);
 
     useEffect(() => {
-        setLoading(true)
+        setLoading(true);
+        setValidate(getProjectValidateInit());
+        setInfo(getProjectInit());
+        setFileList([]);
+        setOriginFileList([]);
+        setTableData([]);
         getDataInfo().then(v => {
-
             const {projectDetail, attachmentFileList} = v;
+            setInfo({
+                ...getProjectInit(),
+                ...projectDetail,
+                managerAdminId: projectDetail['managerAdminId'] ? projectDetail['managerAdminId'] : '',
+                managerAdminName: projectDetail['managerAdminName'] ? projectDetail['managerAdminName'] : '',
+                createdBy: userInfo['name']
+            });
             setFileList(fileManage.getFormatFiles(attachmentFileList))
             setOriginFileList(attachmentFileList)
-            setInfo(projectDetail);
             projectDetail[listType] = [...projectDetail[listType], ...commonFunc.repeatObject(projectInfo['write']['defaultData'], 1000 - projectDetail[listType].length)];
             setTableData(projectDetail[listType]);
-            setLoading(false)
         })
+        .finally(() => {
+            setLoading(false);
+        });
     }, [updateKey['project_update']])
-
-
-    useEffect(() => {
-        commonManage.setInfo(infoRef, info);
-    }, [info]);
-
 
     async function getDataInfo() {
         const result = await getData.post('project/getProjectDetail', {
             "projectId": updateKey['project_update'],
             "documentNumberFull": ""
         });
-
         return result?.data?.entity;
     }
 
-
-    // ======================================================================================================
     async function handleKeyPress(e) {
         if (e.key === 'Enter') {
-
             switch (e.target.id) {
                 case 'agencyCode' :
                 case 'customerName' :
@@ -137,143 +158,13 @@ function ProjectUpdate({
         }
     }
 
-    function openModal(e) {
-        commonManage.openModal(e, setIsModalOpen)
+    function onChange(e) {
+        commonManage.onChange(e, setInfo)
+
+        // 값 입력되면 유효성 초기화
+        const { id, value } = e?.target;
+        commonManage.resetValidate(id, value, setValidate);
     }
-
-    const compareRef = useRef();
-
-    async function saveFunc() {
-        let infoData = commonManage.getInfo(infoRef, projectWriteInitial);
-
-        const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
-        infoData['projectId'] = updateKey['project_update']
-        infoData['managerAdminName'] = findMember['name'];
-        if (!infoData['documentNumberFull']) {
-            const dom = infoRef.current.querySelector('#documentNumberFull');
-            dom.style.borderColor = 'red'
-            return message.warn('프로젝트 번호가 누락되었습니다.')
-        }
-
-        const tableList = tableRef.current?.getSourceData();
-
-        const filterTableList = commonManage.filterEmptyObjects(tableList, ['model', 'item', 'maker'])
-
-
-        const emptyQuantity = filterTableList.filter(v=> !v.quantity)
-        if(emptyQuantity.length){
-            return message.error('수량을 입력해야 합니다.')
-        }
-        const resultFilterTableList =  filterTableList.map(v=>{
-            delete v.total;
-            delete v.totalPurchase;
-            return {
-                ...v, unitPrice : isNaN(v.unitPrice) ? '' : v.unitPrice,  net : isNaN(v.net) ? '' : v.net
-            }
-
-        })
-
-        if (!resultFilterTableList.length) {
-            return message.warn('하위 데이터 1개 이상이여야 합니다');
-        }
-
-        setLoading(true)
-        const formData: any = new FormData();
-        commonManage.setInfoFormData(infoData, formData, listType, resultFilterTableList)
-        commonManage.getUploadList(fileRef, formData);
-        commonManage.deleteUploadList(fileRef, formData, originFileList)
-        formData.delete('createdDate')
-        formData.delete('modifiedDate')
-        await updateProject({data: formData, router: router, returnFunc: returnFunc})
-    }
-
-    async function returnFunc(code, msg) {
-        if (code === 1) {
-            const dom = infoRef.current.querySelector('#documentNumberFull');
-
-            await getAttachmentFileList({
-                data: {
-                    "relatedType": "PROJECT",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
-                    "relatedId": updateKey['project_update']
-                }
-            }).then(v => {
-                const list = fileManage.getFormatFiles(v);
-                setFileList(list)
-                setOriginFileList(v)
-                notificationAlert('success', '💾프로젝트 수정완료',
-                    <>
-                        <div>Project No. : {dom.value}</div>
-                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
-                    </>
-                    , function () {
-                        getPropertyId('project_update', updateKey['project_update'])
-                    },
-                    {cursor: 'pointer'}
-                )
-                setLoading(false);
-            })
-        } else {
-            message.warning(msg)
-            setLoading(false)
-        }
-    }
-
-    function copyPage() {
-
-        const totalList = tableRef.current.getSourceData();
-        totalList.pop();
-
-
-        const result = Object.keys(projectWriteInitial).map(v => `#${v}`)
-        const test = `${result.join(',')}`;
-        const elements = infoRef.current.querySelectorAll(test);
-
-        let copyInfo = {}
-        for (let element of elements) {
-            copyInfo[element.id] = element.value
-        }
-
-
-        copyInfo['managerAdminId'] = info['managerAdminId'];
-        const findMember = memberList.find(v => v.adminId === info['managerAdminId']);
-        copyInfo['managerAdminName'] = findMember['name'];
-
-        copyInfo[listType] = [...totalList, ...commonFunc.repeatObject(projectInfo['write']['defaultData'], 1000 - totalList.length)];
-
-        getCopyPage('project_write', copyInfo)
-    }
-
-    function clearAll() {
-        // info 데이터 초기화
-        commonManage.setInfo(infoRef, projectInfo['defaultInfo'], userInfo['adminId']);
-        setTableData(commonFunc.repeatObject(projectInfo['write']['defaultData'], 1000))
-
-    }
-
-    function deleteFunc(){
-        getData.post('project/deleteProject',{projectId : updateKey['project_update']}).then(v=>{
-           const {code, message} = v.data;
-           if(code === 1){
-
-               notificationAlert('success', '🗑️프로젝트 삭제완료',
-                   <>
-                       <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
-                   </>
-                   ,null,
-                   {cursor: 'pointer'}
-               )
-               const {model} = layoutRef.current.props;
-               getCopyPage('project_read', {})
-               const targetNode = model.getRoot().getChildren()[0]?.getChildren()
-                   .find((node: any) => node.getType() === "tab" && node.getComponent() === 'project_update');
-
-               if (targetNode) {
-                   model.doAction(Actions.deleteTab(targetNode.getId())); // ✅ 기존 로직 유지
-               }
-           }
-        })
-    }
-
 
     useEventListener('keydown', (e: any) => {
         if (e.ctrlKey && e.key === "s") {
@@ -286,6 +177,170 @@ function ProjectUpdate({
         }
     }, typeof window !== 'undefined' ? document : null)
 
+    /**
+     * @description 수정 페이지 > 수정 버튼
+     * 프로젝트 > 프로젝트 수정
+     */
+    async function saveFunc() {
+        console.log(info, 'info:::')
+
+        if (!commonManage.checkValidate(info, projectInfo['write']['validationList'], setValidate)) return;
+
+        const tableList = tableRef.current?.getSourceData();
+        const filterTableList = commonManage.filterEmptyObjects(tableList, ['model', 'item', 'maker'])
+        if (!filterTableList.length) {
+            return message.warn('하위 데이터가 1개 이상이여야 합니다.');
+        }
+        const emptyQuantity = filterTableList.filter(v=> !v.quantity)
+        if (emptyQuantity.length) {
+            return message.error('하위 데이터의 수량을 입력해야 합니다.')
+        }
+        // const resultFilterTableList =  filterTableList.map(v=>{
+        //     delete v.total;
+        //     delete v.totalPurchase;
+        //     return {
+        //         ...v, unitPrice : isNaN(v.unitPrice) ? '' : v.unitPrice,  net : isNaN(v.net) ? '' : v.net
+        //     }
+        //
+        // })
+        //
+        // if (!resultFilterTableList.length) {
+        //     return message.warn('하위 데이터 1개 이상이여야 합니다');
+        // }
+
+        setLoading(true)
+
+        const findMember = memberList.find(v => v.adminId === parseInt(info['managerAdminId']));
+        info['managerAdminName'] = findMember['name'];
+        info['projectId'] = updateKey['project_update']
+
+        const formData: any = new FormData();
+        commonManage.setInfoFormData(info, formData, listType, filterTableList)
+        commonManage.getUploadList(fileRef, formData);
+        commonManage.deleteUploadList(fileRef, formData, originFileList)
+
+        formData.delete('createdDate')
+        formData.delete('modifiedDate')
+
+        await updateProject({data: formData, router: router, returnFunc: returnFunc})
+        setLoading(false)
+    }
+
+    async function returnFunc(code, msg) {
+        if (code === 1) {
+            await getAttachmentFileList({
+                data: {
+                    "relatedType": "PROJECT",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
+                    "relatedId": updateKey['project_update']
+                }
+            }).then(v => {
+                const list = fileManage.getFormatFiles(v);
+                setFileList(list)
+                setOriginFileList(v)
+
+                window.postMessage({message: 'reload', target: 'project_read'}, window.location.origin);
+                notificationAlert('success', '💾 프로젝트 수정완료',
+                    <>
+                        <div>Project No. : {info.documentNumberFull}</div>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                        getPropertyId('project_update', updateKey['project_update'])
+                    },
+                    {cursor: 'pointer'}
+                )
+            })
+        } else {
+            notificationAlert('error', '⚠️작업실패',
+                <>
+                    <div>Project No. : {info.documentNumberFull}</div>
+                    <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                </>
+                , function () {
+                    alert('작업 로그 페이지 참고')
+                },
+                {cursor: 'pointer'}
+            )
+        }
+    }
+
+    /**
+     * @description 수정 페이지 > 삭제 버튼
+     * 프로젝트 > 프로젝트 수정
+     */
+    function deleteFunc(){
+        getData.post('project/deleteProject',{projectId : updateKey['project_update']}).then(v=>{
+            const {code, message} = v.data;
+            if(code === 1){
+                window.postMessage({message: 'reload', target: 'project_read'}, window.location.origin);
+                notificationAlert('success', '🗑 프로젝트 삭제완료',
+                    <>
+                        <div>Project No. : {info.documentNumberFull}</div>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    ,null,
+                    {cursor: 'pointer'}
+                )
+                getCopyPage('project_read', {})
+                const {model} = layoutRef.current.props;
+                const targetNode = model.getRoot().getChildren()[0]?.getChildren()
+                    .find((node: any) => node.getType() === "tab" && node.getComponent() === 'project_update');
+                if (targetNode) {
+                    model.doAction(Actions.deleteTab(targetNode.getId())); // ✅ 기존 로직 유지
+                }
+            } else {
+                notificationAlert('error', '⚠️작업실패',
+                    <>
+                        <div>Project No. : {info.documentNumberFull}</div>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                        console.log(v?.data?.message);
+                        alert('작업 로그 페이지 참고')
+                    },
+                    {cursor: 'pointer'}
+                )
+            }
+        }, err => setLoading(false))
+        setLoading(false)
+    }
+
+    /**
+     * @description 수정 페이지 > 초기화 버튼
+     * 프로젝트 > 프로젝트 수정
+     */
+    function clearAll() {
+        setLoading(true);
+        setInfo(getProjectInit());
+        setValidate(projectInfo['write']['validate']);
+
+        function calcData(sourceData) {
+            const keyOrder = Object.keys(projectInfo['write']['defaultData']);
+            return sourceData
+                .map((item) => keyOrder.reduce((acc, key) => ({...acc, [key]: item[key] ?? ""}), {}))
+                .map(projectInfo['write']['excelExpert'])
+                .concat(projectInfo['write']['totalList']); // `push` 대신 `concat` 사용
+        }
+
+        // tableRef.current?.hotInstance?.loadData(calcData(commonFunc.repeatObject(projectInfo['write']['defaultData'], 1000)));
+        setTableData(calcData(commonFunc.repeatObject(projectInfo['write']['defaultData'], 1000)))
+        setFileList([]);
+        setLoading(false);
+    }
+
+    /**
+     * @description 수정 페이지 > 복제 버튼
+     * 프로젝트 > 프로젝트 수정
+     */
+    function copyPage() {
+        const copyInfo = _.cloneDeep(info);
+        copyInfo['documentNumberFull'] = ''
+        const totalList = tableRef.current.getSourceData();
+        totalList.pop();
+        copyInfo[listType] = [...totalList, ...commonFunc.repeatObject(projectInfo['write']['defaultData'], 1000 - totalList.length)];
+
+        getCopyPage('project_write', { ...copyInfo, _meta: {updateKey: Date.now()}})
+    }
 
     async function printEstimate() {
         let infoData = commonManage.getInfo(infoRef, estimateInfo['defaultInfo']);
@@ -301,6 +356,25 @@ function ProjectUpdate({
             return message.warn('담당자를 선택해주세요')
         }
         setIsPrintModalOpen(true)
+    }
+
+    function EstimateModal() {
+        return <Modal
+            title={<div style={{display: 'flex', justifyContent: 'space-between', padding: '0px 30px'}}>
+                <span>견적서 출력</span>
+                <span>
+                       <Button style={{fontSize: 11, marginRight: 10}} size={'small'}
+                               onClick={() => generatePDF(false)}>다운로드</Button>
+                       <Button style={{fontSize: 11}} size={'small'} onClick={() => generatePDF(true)}>인쇄</Button>
+                </span>
+            </div>}
+            onCancel={() => setIsPrintModalOpen(false)}
+            open={isPrintModalOpen}
+            width={1050}
+            footer={null}
+            onOk={() => setIsPrintModalOpen(false)}>
+            <EstimatePaper infoRef={infoRef} pdfRef={pdfRef} pdfSubRef={pdfSubRef} tableRef={tableRef} memberList={memberList} type={'project'}/>
+        </Modal>
     }
 
     const generatePDF = async (printMode = false) => {
@@ -349,25 +423,16 @@ function ProjectUpdate({
             pdf.save(`${info.documentNumberFull}_견적서.pdf`);
         }
     };
-    function EstimateModal() {
-        return <Modal
-            title={<div style={{display: 'flex', justifyContent: 'space-between', padding: '0px 30px'}}>
-                <span>견적서 출력</span>
-                <span>
-                       <Button style={{fontSize: 11, marginRight: 10}} size={'small'}
-                               onClick={() => generatePDF(false)}>다운로드</Button>
-                       <Button style={{fontSize: 11}} size={'small'} onClick={() => generatePDF(true)}>인쇄</Button>
-                </span>
-            </div>}
-            onCancel={() => setIsPrintModalOpen(false)}
-            open={isPrintModalOpen}
-            width={1050}
-            footer={null}
-            onOk={() => setIsPrintModalOpen(false)}>
-            <EstimatePaper infoRef={infoRef} pdfRef={pdfRef} pdfSubRef={pdfSubRef} tableRef={tableRef} memberList={memberList} type={'project'}/>
-        </Modal>
-    }
 
+    /**
+     * @description 수정 페이지 > 돋보기 버튼
+     * 프로젝트 > 프로젝트 수정
+     * 고객사 조회 Modal
+     * @param e
+     */
+    function openModal(e) {
+        commonManage.openModal(e, setIsModalOpen)
+    }
 
     return <Spin spinning={loading}>
         <EstimateModal/>
@@ -375,7 +440,6 @@ function ProjectUpdate({
         <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
                          open={isModalOpen}
                          setIsModalOpen={setIsModalOpen}/>
-
         <>
             <div ref={infoRef} style={{
                 display: 'grid',
@@ -386,42 +450,39 @@ function ProjectUpdate({
                     {name: <div>견적서 출력</div>, func: printEstimate, type: ''},
                     {name: <div><FormOutlined style={{paddingRight: 8}}/>수정</div>, func: saveFunc, type: 'primary'},
                     {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: deleteFunc, type: 'delete'},
-                    {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'},
+                    // {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'},
                     {name: <div><CopyOutlined style={{paddingRight: 8}}/>복제</div>, func: copyPage, type: ''}
                 ]} mini={mini} setMini={setMini}>
 
                     {mini ? <div>
-                            <TopBoxCard title={''} grid={'100px 80px 80px'}>
+                            <TopBoxCard title={''} grid={'110px 80px 80px'}>
                                 {datePickerForm({
                                     title: '작성일자',
                                     id: 'writtenDate',
                                     disabled: true,
+                                    data: info
                                 })}
                                 {inputForm({
                                     title: '작성자',
                                     id: 'createdBy',
                                     disabled: true,
+                                    data: info
                                 })}
                                 <div>
-                                    <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>담당자</div>
-                                    <select name="languages" id="managerAdminId"
-                                            style={{
-                                                outline: 'none',
-                                                border: '1px solid lightGray',
-                                                height: 23,
-                                                width: '100%',
-                                                fontSize: 12,
-                                                paddingBottom: 0.5
-                                            }}>
-                                        {
-                                            options?.map(v => {
-                                                return <option  key={v.value} value={v.value}>{v.label}</option>
-                                            })
-                                        }
-                                    </select>
+                                    {selectBoxForm({
+                                        title: '담당자',
+                                        id: 'managerAdminId',
+                                        onChange: onChange,
+                                        data: info,
+                                        validate: validate['managerAdminId'],
+                                        list: memberList?.map((item) => ({
+                                            ...item,
+                                            value: item.adminId,
+                                            label: item.name,
+                                        }))
+                                    })}
                                 </div>
                             </TopBoxCard>
-
 
                             <PanelGroup ref={groupRef} className={'ground'} direction="horizontal"
                                         style={{gap: 0.5, paddingTop: 3}}>
@@ -430,13 +491,16 @@ function ProjectUpdate({
                                         {inputForm({
                                             title: 'Project No.',
                                             id: 'documentNumberFull',
-                                            disabled : true
+                                            disabled : true,
+                                            data: info
                                         })}
                                         {inputForm({
                                             title: '프로젝트 제목',
                                             id: 'projectTitle',
+                                            onChange: onChange,
+                                            data: info
                                         })}
-                                        {datePickerForm({title: '마감일자', id: 'dueDate'})}
+                                        {datePickerForm({title: '마감일자', id: 'dueDate', onChange: onChange, data: info})}
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>
@@ -445,25 +509,33 @@ function ProjectUpdate({
                                         {inputForm({
                                             title: '고객사명',
                                             id: 'customerName',
-
                                             suffix: <span style={{cursor: 'pointer'}} onClick={
                                                 (e) => {
                                                     e.stopPropagation();
                                                     openModal('customerName');
                                                 }
-                                            }>🔍</span>, handleKeyPress: handleKeyPress
+                                            }>🔍</span>,
+                                            handleKeyPress: handleKeyPress,
+                                            onChange: onChange,
+                                            data: info
                                         })}
                                         {inputForm({
                                             title: '담당자명',
                                             id: 'customerManagerName',
+                                            onChange: onChange,
+                                            data: info
                                         })}
                                         {inputForm({
                                             title: '전화번호',
                                             id: 'customerManagerPhone',
+                                            onChange: onChange,
+                                            data: info
                                         })}
                                         {inputForm({
                                             title: '이메일',
                                             id: 'customerManagerEmail',
+                                            onChange: onChange,
+                                            data: info
                                         })}
                                     </BoxCard>
                                 </Panel>
@@ -474,16 +546,22 @@ function ProjectUpdate({
                                             title: '비고란',
                                             rows: 2,
                                             id: 'remarks',
+                                            onChange: onChange,
+                                            data: info
                                         })}
                                         {textAreaForm({
                                             title: '지시사항',
                                             rows: 2,
                                             id: 'instructions',
+                                            onChange: onChange,
+                                            data: info
                                         })}
                                         {textAreaForm({
                                             title: '특이사항',
                                             rows: 2,
                                             id: 'specialNotes',
+                                            onChange: onChange,
+                                            data: info
                                         })}
                                     </BoxCard>
                                 </Panel>
@@ -491,15 +569,13 @@ function ProjectUpdate({
                                 <Panel defaultSize={sizes[3]} minSize={15} maxSize={100}>
                                     <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}
                                              disabled={!userInfo['microsoftId']}>
-
                                             <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef} infoRef={infoRef}/>
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>
                                 <Panel defaultSize={sizes[4]} minSize={0}></Panel>
                             </PanelGroup>
-                        </div>
-                        : <></>}
+                        </div> : <></>}
                 </MainCard>
 
                 <Table data={tableData} column={projectInfo['write']} funcButtons={['print']} ref={tableRef} type={'project_write_column'}/>
@@ -507,7 +583,6 @@ function ProjectUpdate({
         </>
     </Spin>
 }
-
 
 export default memo(ProjectUpdate, (prevProps, nextProps) => {
     return _.isEqual(prevProps, nextProps);

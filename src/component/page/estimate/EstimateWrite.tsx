@@ -25,7 +25,7 @@ import Spin from "antd/lib/spin";
 import {getData} from "@/manage/function/api";
 import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 import moment from "moment";
-import {estimateInfo} from "@/utils/column/ProjectInfo";
+import {estimateInfo, orderInfo} from "@/utils/column/ProjectInfo";
 import Table from "@/component/util/Table";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
@@ -37,11 +37,11 @@ import {pdf as pdfs} from '@react-pdf/renderer';
 const listType = 'estimateDetailList'
 
 function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
+    const notificationAlert = useNotificationAlert();
+    const groupRef = useRef<any>(null);
+    const infoRef = useRef<any>(null);
     const fileRef = useRef(null);
     const tableRef = useRef(null);
-    const infoRef = useRef<any>(null)
-    const notificationAlert = useNotificationAlert();
-    const groupRef = useRef<any>(null)
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('estimate_write');
@@ -67,22 +67,13 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         })
     }
 
-    const options = memberList?.map((item) => ({
-        ...item,
-        value: item.adminId,
-        label: item.name,
-    }));
-
+    const router = useRouter();
+    const [loading, setLoading] = useState(false);
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
     const [count, setCount] = useState(0);
     const [maker, setMaker] = useState('');
-    const [fileList, setFileList] = useState([]);
-    const [tableData, setTableData] = useState([]);
-
-    const router = useRouter();
     const [ready, setReady] = useState(memberList.length > 0);
-    const [loading, setLoading] = useState(false);
 
     const userInfo = useAppSelector((state) => state.user);
     const adminParams = {
@@ -98,26 +89,34 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         }
     }
     const [info, setInfo] = useState(getEstimateInit());
-    const [validate, setValidate] = useState(estimateInfo['write']['validate']);
+    const getEstimateValidateInit = () => _.cloneDeep(estimateInfo['write']['validate']);
+    const [validate, setValidate] = useState(getEstimateValidateInit());
+
+    const [fileList, setFileList] = useState([]);
+    const [tableData, setTableData] = useState([]);
 
     useEffect(() => {
+        setLoading(true);
+        setValidate(getEstimateValidateInit());
+        setInfo(getEstimateInit());
+        setFileList([]);
+        setTableData([]);
         if (!isEmptyObj(copyPageInfo)) {
             // copyPageInfo 가 없을시
-            setInfo(getEstimateInit())
             setTableData(commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000))
         } else {
             // copyPageInfo 가 있을시(==>보통 수정페이지에서 복제시)
             // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting
-            console.log(copyPageInfo)
             setInfo({
+                ...getEstimateInit(),
                 ...copyPageInfo,
-                ...adminParams,
                 writtenDate: moment().format('YYYY-MM-DD'),
                 connectDocumentNumberFull: '',
                 documentNumberFull: ''
             });
             setTableData(copyPageInfo[listType]);
         }
+        setLoading(false);
     }, [copyPageInfo?._meta?.updateKey]);
 
     /**
@@ -153,60 +152,63 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                 //     }, err => setLoading(false))
                 //     break;
                 case 'connectDocumentNumberFull' :
-                    if (!info.connectDocumentNumberFull) {
-                        return message.warn('의뢰자료 No.를 입력해주세요.')
+                    if (!e.target.value) {
+                        return message.warn('의뢰자료 No.를 입력해주세요.');
                     }
-                    setLoading(true)
+                    setLoading(true);
                     await getData.post('estimate/getEstimateRequestDetail', {
-                        "estimateRequestId": '',
+                        estimateRequestId: '',
                         documentNumberFull: e.target.value.toUpperCase()
                     }).then(async v => {
-                        if (v.data.code === 1) {
-                            const {attachmentFileList, estimateRequestDetail} = v.data?.entity
+                        if (v?.data?.code === 1) {
+                            setInfo(getEstimateInit());
+                            setFileList([]);
+                            setTableData([]);
+                            const {estimateRequestDetail = {}, attachmentFileList = []} = v?.data?.entity;
                             // setFileList(fileManage.getFormatFiles(attachmentFileList))
                             // const dom = infoRef.current.querySelector('#connectDocumentNumberFull');
                             // const result = await findDocumentInfo(e, setInfo);
                             await getData.post('estimate/generateDocumentNumberFull', {
                                 type: 'ESTIMATE',
                                 documentNumberFull: info?.connectDocumentNumberFull.toUpperCase()
-                            }).then(src => {
-                                    setInfo({
-                                        ...estimateRequestDetail,
-                                        documentNumberFull: src.data.code === 1 ? src.data.entity.newDocumentNumberFull : '',
-                                        validityPeriod: '견적 발행 후 10일간',
-                                        paymentTerms: '발주시 50% / 납품시 50%',
-                                        shippingTerms: '귀사도착도',
-                                        createdBy: adminParams.createdBy,
-                                        writtenDate: moment().format('YYYY-MM-DD'),
-                                    })
-                                    // 만쿠 견적서 No. 가져오면 유효성 초기화
-                                    if(src.data.entity.newDocumentNumberFull) setValidate(v => {return {...v, documentNumberFull: true}});
-                                    if (estimateRequestDetail) {
-                                        setTableData([...estimateRequestDetail['estimateRequestDetailList'], ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000 - estimateRequestDetail['estimateRequestDetailList'].length)])
-                                    } else {
-                                        message.error('조회 정보가 없습니다.')
-                                    }
-                                }, err => setLoading(false)
-                            );
-                            setLoading(false)
+                            })
+                            .then(src => {
+                                setInfo({
+                                    ...getEstimateInit(),
+                                    ...estimateRequestDetail,
+                                    documentNumberFull: src?.data?.code === 1 ? src?.data?.entity?.newDocumentNumberFull : '',
+                                    validityPeriod: '견적 발행 후 10일간',
+                                    paymentTerms: '발주시 50% / 납품시 50%',
+                                    shippingTerms: '귀사도착도',
+                                    uploadType: 3,
+                                    createdBy: adminParams.createdBy,
+                                    writtenDate: moment().format('YYYY-MM-DD')
+                                })
+                                if (estimateRequestDetail?.estimateRequestDetailList?.length) {
+                                    setTableData([...estimateRequestDetail['estimateRequestDetailList'], ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000 - estimateRequestDetail['estimateRequestDetailList'].length)])
+                                }
+                                // 만쿠 견적서 No. 가져오면 유효성 초기화
+                                if(src.data.entity.newDocumentNumberFull) setValidate(v => {return {...v, documentNumberFull: true}});
+                            })
+                            .finally(() => {
+                                setLoading(false);
+                            });
                         }
                     })
-                    setLoading(false)
+                    .finally(() => {
+                        setLoading(false);
+                    });
                     break;
             }
         }
-    }
-
-    function openModal(e) {
-        commonManage.openModal(e, setIsModalOpen)
     }
 
     function onChange(e) {
         commonManage.onChange(e, setInfo)
 
         // 값 입력되면 유효성 초기화
-        const { key, value } = e?.target;
-        commonManage.resetValidate(key, value, setValidate);
+        const { id, value } = e?.target;
+        commonManage.resetValidate(id, value, setValidate);
     }
 
     const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
@@ -235,8 +237,6 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         // 유효성 체크 추가
         if(!commonManage.checkValidate(info, estimateInfo['write']['validationList'], setValidate)) return;
 
-        setLoading(true)
-
         const findMember = memberList.find(v => v.adminId === parseInt(info['managerAdminId']));
         info['managerAdminName'] = findMember['name'];
         info['name'] = findMember['name'];
@@ -257,6 +257,8 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         if (emptyQuantity.length) {
             return message.error('하위 데이터의 수량을 입력해야 합니다.')
         }
+
+        setLoading(true)
 
         const formData: any = new FormData();
         commonManage.setInfoFormData(info, formData, listType, filterTableList)
@@ -294,9 +296,7 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         await saveEstimate({data: formData}).then(async v => {
             const {code, message: msg, entity} = v;
             if (code === 1) {
-                clearAll();
-                getPropertyId('estimate_update', entity?.estimateId)
-                window.postMessage('write', window.location.origin);
+                window.postMessage({message: 'reload', target: 'estimate_read'}, window.location.origin);
                 notificationAlert('success', '💾 견적서 등록완료',
                     <>
                         <div>Inquiry No. : {info.documentNumberFull}</div>
@@ -307,6 +307,8 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                     },
                     {cursor: 'pointer'}
                 )
+                clearAll();
+                getPropertyId('estimate_update', entity?.estimateId)
             } else if (code === -20001) {
                 setValidate(v => {
                     return {...v, documentNumberFull: false}
@@ -333,7 +335,10 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
      * 견적서 > 견적서 등록
      */
     function clearAll() {
-        setInfo(getEstimateInit())
+        setLoading(true);
+        setValidate(getEstimateValidateInit())
+        setInfo(getEstimateInit());
+        setFileList([]);
 
         function calcData(sourceData) {
             const keyOrder = Object.keys(estimateInfo['write']['defaultData']);
@@ -342,9 +347,18 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                 .map(estimateInfo['write']['excelExpert'])
                 .concat(estimateInfo['write']['totalList']); // `push` 대신 `concat` 사용
         }
-
         setTableData(calcData(commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000)))
-        setFileList([]);
+        setLoading(false);
+    }
+
+    /**
+     * @description 등록 페이지 > 돋보기 버튼
+     * 견적서 > 견적서 등록
+     * 매앱처, 고객사, Maker 조회 Modal
+     * @param e
+     */
+    function openModal(e) {
+        commonManage.openModal(e, setIsModalOpen)
     }
 
     return <div style={{overflow: 'hidden'}}><Spin spinning={loading}>
@@ -394,12 +408,7 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                     title: '의뢰자료 No.',
                                     id: 'connectDocumentNumberFull',
                                     suffix: <DownloadOutlined style={{cursor: 'pointer'}} onClick={(e) => {
-                                        const document = infoRef.current.querySelector('#connectDocumentNumberFull');
-                                        let bowl = {
-                                            target: {id: 'connectDocumentNumberFull', value: document.value},
-                                            key: 'Enter'
-                                        }
-                                        handleKeyPress(bowl)
+                                        handleKeyPress({key: 'Enter', target: {id: 'connectDocumentNumberFull', value: info.connectDocumentNumberFull}})
                                     }}/>,
                                     handleKeyPress: handleKeyPress,
                                     onChange: onChange,
@@ -421,7 +430,7 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                 <Panel defaultSize={sizes[0]} minSize={5}>
                                     <BoxCard title={'매입처 정보'}>
                                         {inputForm({
-                                            title: '매입처코드',
+                                            title: '매입처 코드',
                                             id: 'agencyCode',
                                             suffix: <span style={{cursor: 'pointer'}} onClick={
                                                 (e) => {

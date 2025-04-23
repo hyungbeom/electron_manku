@@ -24,7 +24,7 @@ import {DriveUploadComp} from "@/component/common/SharePointComp";
 import Spin from "antd/lib/spin";
 import Modal from "antd/lib/modal/Modal";
 import EstimatePaper from "@/component/견적서/EstimatePaper";
-import {estimateInfo, rfqInfo} from "@/utils/column/ProjectInfo";
+import {estimateInfo, orderInfo, rfqInfo} from "@/utils/column/ProjectInfo";
 import Table from "@/component/util/Table";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
@@ -108,17 +108,12 @@ function EstimateUpdate({
         label: item.name,
     }));
 
+    const router = useRouter();
+    const [loading, setLoading] = useState(false);
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
     const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
     const [count, setCount] = useState(0);
-
-    const [fileList, setFileList] = useState([]);
-    const [originFileList, setOriginFileList] = useState([]);
-    const [tableData, setTableData] = useState([]);
-
-    const router = useRouter();
-    const [loading, setLoading] = useState(false);
 
     const userInfo = useAppSelector((state) => state.user);
     const adminParams = {
@@ -134,13 +129,24 @@ function EstimateUpdate({
         }
     }
     const [info, setInfo] = useState<any>({})
-    const [validate, setValidate] = useState(estimateInfo['write']['validate']);
+    const getEstimateValidateInit = () => _.cloneDeep(estimateInfo['write']['validate']);
+    const [validate, setValidate] = useState(getEstimateValidateInit());
+
+    const [fileList, setFileList] = useState([]);
+    const [originFileList, setOriginFileList] = useState([]);
+    const [tableData, setTableData] = useState([]);
 
     useEffect(() => {
-        setLoading(true)
+        setLoading(true);
+        setValidate(getEstimateValidateInit());
+        setInfo(getEstimateInit());
+        setFileList([]);
+        setOriginFileList([]);
+        setTableData([]);
         getDataInfo().then(v => {
             const {estimateDetail, attachmentFileList} = v;
             setInfo({
+                ...getEstimateInit(),
                 ...estimateDetail,
                 uploadType: 3,
                 managerAdminId: estimateDetail['managerAdminId'] ? estimateDetail['managerAdminId'] : '',
@@ -151,8 +157,10 @@ function EstimateUpdate({
             setOriginFileList(attachmentFileList)
             estimateDetail[listType] = [...estimateDetail[listType], ...commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000 - estimateDetail[listType].length)]
             setTableData(estimateDetail[listType]);
-            setLoading(false)
         })
+        .finally(() => {
+            setLoading(false);
+        });
     }, [updateKey['estimate_update']])
 
     async function getDataInfo() {
@@ -188,8 +196,8 @@ function EstimateUpdate({
         commonManage.onChange(e, setInfo)
 
         // 값 입력되면 유효성 초기화
-        const { key, value } = e?.target;
-        commonManage.resetValidate(key, value, setValidate);
+        const { id, value } = e?.target;
+        commonManage.resetValidate(id, value, setValidate);
     }
 
     /**
@@ -243,17 +251,15 @@ function EstimateUpdate({
      */
     async function saveFunc() {
         console.log(info, 'info:::')
+
         // 유효성 체크
         if(!commonManage.checkValidate(info, estimateInfo['write']['validationList'], setValidate)) return;
-
-        setLoading(true)
 
         const findMember = memberList.find(v => v.adminId === parseInt(info['managerAdminId']));
         info['managerAdminName'] = findMember['name'];
         info['estimateId'] = updateKey['estimate_update']
 
         const tableList = tableRef.current?.getSourceData();
-
         const filterTableList = commonManage.filterEmptyObjects(tableList, ['model', 'item', 'maker'])
         if (!filterTableList.length) {
             return message.warn('하위 데이터가 1개 이상이여야 합니다.');
@@ -262,6 +268,8 @@ function EstimateUpdate({
         if (emptyQuantity.length) {
             return message.error('하위 데이터의 수량을 입력해야 합니다.')
         }
+
+        setLoading(true)
 
         const formData: any = new FormData();
         commonManage.setInfoFormData(info, formData, listType, filterTableList)
@@ -275,7 +283,6 @@ function EstimateUpdate({
     }
 
     async function returnFunc(v) {
-        const dom = infoRef.current.querySelector('#documentNumberFull');
         if (v.code === 1) {
             await getAttachmentFileList({
                 data: {
@@ -284,10 +291,10 @@ function EstimateUpdate({
                 }
             }).then(v => {
                 const list = fileManage.getFormatFiles(v);
-
                 setFileList(list)
                 setOriginFileList(list);
 
+                window.postMessage({message: 'reload', target: 'estimate_read'}, window.location.origin);
                 notificationAlert('success', '💾 견적서 수정완료',
                     <>
                         <div>Inquiry No. : {info.documentNumberFull}</div>
@@ -312,6 +319,70 @@ function EstimateUpdate({
             )
         }
         setLoading(false)
+    }
+
+    /**
+     * @description 수정 페이지 > 삭제 버튼
+     * 견적서 > 견적서 수정
+     */
+    function deleteFunc() {
+        setLoading(true)
+        getData.post('estimate/deleteEstimate', {estimateId: updateKey['estimate_update']}).then(v => {
+            const {code, message} = v.data;
+            if (code === 1) {
+                window.postMessage({message: 'reload', target: 'estimate_read'}, window.location.origin);
+                notificationAlert('success', '🗑 견적서 삭제완료',
+                    <>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , null,
+                    {cursor: 'pointer'}
+                )
+                const {model} = layoutRef.current.props;
+                getCopyPage('estimate_read', {})
+                const targetNode = model.getRoot().getChildren()[0]?.getChildren()
+                    .find((node: any) => node.getType() === "tab" && node.getComponent() === 'estimate_update');
+                if (targetNode) {
+                    model.doAction(Actions.deleteTab(targetNode.getId())); // ✅ 기존 로직 유지
+                }
+            } else {
+                notificationAlert('error', '⚠️작업실패',
+                    <>
+                        <div>Project No. : {info.documentNumberFull}</div>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                        console.log(v?.data?.message);
+                        alert('작업 로그 페이지 참고')
+                    },
+                    {cursor: 'pointer'}
+                )
+            }
+        }, err => setLoading(false))
+        setLoading(false)
+    }
+
+    /**
+     * @description 수정 페이지 > 초기화 버튼
+     * 견적서 > 견적서 수정
+     */
+    function clearAll() {
+        setLoading(true);
+        setInfo(getEstimateInit());
+        setValidate(estimateInfo['write']['validate']);
+
+        function calcData(sourceData) {
+            const keyOrder = Object.keys(estimateInfo['write']['defaultData']);
+            return sourceData
+                .map((item) => keyOrder.reduce((acc, key) => ({...acc, [key]: item[key] ?? ""}), {}))
+                .map(estimateInfo['write']['excelExpert'])
+                .concat(estimateInfo['write']['totalList']); // `push` 대신 `concat` 사용
+        }
+
+        // tableRef.current?.hotInstance?.loadData(calcData(commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000)));
+        setTableData(calcData(commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000)))
+        setFileList([]);
+        setLoading(false);
     }
 
     /**
@@ -342,62 +413,18 @@ function EstimateUpdate({
     }
 
     /**
-     * @description 수정 페이지 > 삭제 버튼
-     * 견적서 > 견적서 수정
-     */
-    function deleteFunc() {
-        setLoading(true)
-        getData.post('estimate/deleteEstimate', {estimateId: updateKey['estimate_update']}).then(v => {
-            const {code, message} = v.data;
-            if (code === 1) {
-
-                notificationAlert('success', '🗑️견적서 삭제완료',
-                    <>
-                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
-                    </>
-                    , null,
-                    {cursor: 'pointer'}
-                )
-                const {model} = layoutRef.current.props;
-                getCopyPage('estimate_read', {})
-                const targetNode = model.getRoot().getChildren()[0]?.getChildren()
-                    .find((node: any) => node.getType() === "tab" && node.getComponent() === 'estimate_update');
-
-                if (targetNode) {
-                    model.doAction(Actions.deleteTab(targetNode.getId())); // ✅ 기존 로직 유지
-                }
-                setLoading(false)
-            } else {
-                message.error(v?.data?.message)
-                setLoading(false)
-            }
-        }, err => setLoading(false))
-    }
-
-    /**
-     * @description 수정 페이지 > 초기화 버튼
-     * 견적서 > 견적서 수정
-     */
-    function clearAll() {
-        // info 데이터 초기화
-        commonManage.setInfo(infoRef, estimateInfo['defaultInfo'], userInfo['adminId']);
-        setTableData(commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000))
-    }
-
-    /**
      * @description 수정 페이지 > 드라이브 목록 파일 버튼
      * 견적서 > 견적서 수정
      */
     async function addEstimate() {
         setLoading(true)
-        let infoData = commonManage.getInfo(infoRef, estimateInfo['defaultInfo']);
-        const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
-        infoData['managerAdminName'] = findMember['name'];
-        infoData['name'] = findMember['name'];
-        infoData['contactNumber'] = findMember['contactNumber'];
-        infoData['email'] = findMember['email'];
-        infoData['customerManagerName'] = infoData['managerName'];
-        infoData['customerManagerPhone'] = infoData['phoneNumber'];
+        const findMember = memberList.find(v => v.adminId === parseInt(info['managerAdminId']));
+        info['managerAdminName'] = findMember['name'];
+        info['name'] = findMember['name'];
+        info['contactNumber'] = findMember['contactNumber'];
+        info['email'] = findMember['email'];
+        info['customerManagerName'] = info['managerName'];
+        info['customerManagerPhone'] = info['phoneNumber'];
 
         const tableList = tableRef.current?.getSourceData();
         const filterTableList = commonManage.filterEmptyObjects(tableList, ['model', 'item', 'maker'])
@@ -413,15 +440,11 @@ function EstimateUpdate({
 
         results['unit'] = filterTableList[0]['unit'];
 
-        const blob = await pdfs(<PdfForm data={data} topInfoData={infoData} totalData={results}
+        const blob = await pdfs(<PdfForm data={data} topInfoData={info} totalData={results}
                                          key={Date.now()}/>).toBlob();
 
-        const dom = infoRef.current.querySelector('#documentNumberFull');
-
         // File 객체로 만들기 (선택 사항)
-
-
-        const file = new File([blob], `${dom.value}.pdf`, {type: 'application/pdf'});
+        const file = new File([blob], `${info.documentNumberFull}.pdf`, {type: 'application/pdf'});
 
         const findNumb = findNextAvailableNumber(fileList, '03')
         const newFile = {
@@ -474,22 +497,6 @@ function EstimateUpdate({
                                 })}
                                 {inputForm({title: '작성자', id: 'createdBy', disabled: true, data: info})}
                                 <div>
-                                    {/*<div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>담당자</div>*/}
-                                    {/*<select name="languages" id="managerAdminId"*/}
-                                    {/*        style={{*/}
-                                    {/*            outline: 'none',*/}
-                                    {/*            border: '1px solid lightGray',*/}
-                                    {/*            height: 23,*/}
-                                    {/*            width: '100%',*/}
-                                    {/*            fontSize: 12,*/}
-                                    {/*            paddingBottom: 0.5*/}
-                                    {/*        }}>*/}
-                                    {/*    {*/}
-                                    {/*        options?.map(v => {*/}
-                                    {/*            return <option value={v.value}>{v.label}</option>*/}
-                                    {/*        })*/}
-                                    {/*    }*/}
-                                    {/*</select>*/}
                                     {selectBoxForm({
                                         title: '담당자',
                                         id: 'managerAdminId',
@@ -517,7 +524,7 @@ function EstimateUpdate({
                                 <Panel defaultSize={sizes[0]} minSize={5}>
                                     <BoxCard title={'매입처 정보'}>
                                         {inputForm({
-                                            title: '매입처코드',
+                                            title: '매입처 코드',
                                             id: 'agencyCode',
                                             suffix: <span style={{cursor: 'pointer'}} onClick={
                                                 (e) => {

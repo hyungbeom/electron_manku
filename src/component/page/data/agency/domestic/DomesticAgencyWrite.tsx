@@ -90,6 +90,7 @@ function DomesticAgencyWrite({copyPageInfo, getPropertyId}: any) {
         const agencyName = infoRef.current.querySelector('#agencyName')?.value || '';
         await getData.post('agency/addAgency', infoData).then(v => {
             if (v?.data?.code === 1) {
+                window.postMessage({message: 'reload', target: 'domestic_agency_read'}, window.location.origin);
                 notificationAlert('success', '💾 국내매입처 등록완료',
                     <>
                         <div>코드(약칭) : {agencyCode}</div>

@@ -138,7 +138,7 @@ function DomesticAgencyRead({getPropertyId, getCopyPage}: any) {
     }
 
     return <Spin spinning={loading} tip={'국내 매입처 조회중...'}>
-        <ReceiveComponent searchInfo={searchInfo}/>
+        <ReceiveComponent componentName={'domestic_agency_read'} searchInfo={searchInfo}/>
         <>
             <div style={{
                 display: 'grid',

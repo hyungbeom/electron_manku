@@ -1,7 +1,7 @@
 import React, {memo, useEffect, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import {makerColumn,} from "@/utils/columnList";
-import {codeDomesticPurchaseInitial, orderReadInitial,} from "@/utils/initialList";
+import {makerSearchInitial,} from "@/utils/initialList";
 import TableGrid from "@/component/tableGrid";
 import {inputForm, MainCard, radioForm, TopBoxCard} from "@/utils/commonForm";
 import {searchMaker} from "@/utils/api/mainApi";
@@ -17,22 +17,17 @@ import _ from "lodash";
 import Space from "antd/lib/space";
 import ReceiveComponent from "@/component/ReceiveComponent";
 
-
 function MakerRead({getPropertyId, getCopyPage}: any) {
     const notificationAlert = useNotificationAlert();
     const gridRef = useRef(null);
-    const [mini, setMini] = useState(true);
-    const [totalRow, setTotalRow] = useState(0);
-    const [loading, setLoading] = useState(false);
 
-    const searchInit = {
-        searchType: 1,
-        searchText: '',
-        page: 1,
-        limit: -1
-    }
-    const getSearchInit = () => _.cloneDeep(searchInit)
+    const [loading, setLoading] = useState(false);
+    const [mini, setMini] = useState(true);
+
+    const getSearchInit = () => _.cloneDeep(makerSearchInitial)
     const [info, setInfo] = useState(getSearchInit());
+
+    const [totalRow, setTotalRow] = useState(0);
 
     const [isSearch, setIsSearch] = useState(false);
     useEffect(() => {
@@ -43,21 +38,53 @@ function MakerRead({getPropertyId, getCopyPage}: any) {
     }, [isSearch]);
 
     const onGridReady = async (params) => {
+        setLoading(true);
         gridRef.current = params.api;
-        await searchMaker({data: orderReadInitial}).then(v => {
-            params.api.applyTransaction({add: v.data});
-            setTotalRow(v.pageInfo.totalRow)
+        await searchMaker({data: info}).then(v => {
+            params.api.applyTransaction({add: v?.data ?? []});
+            setTotalRow(v?.pageInfo?.totalRow ?? 0)
         })
+        .finally(() => {
+            setLoading(false);
+        });
     };
 
     function handleKeyPress(e) {
         if (e.key === 'Enter') {
-            searchInfo(true)
+            searchInfo(true);
         }
     }
 
     function onChange(e) {
         commonManage.onChange(e, setInfo)
+    }
+
+    /**
+     * @description 조회 페이지 > 조회 버튼
+     * 데이터 관리 > 메이커
+     * @param e
+     */
+    async function searchInfo(e) {
+        if (e) {
+            setLoading(true);
+            await searchMaker({data: info}).then(v => {
+                gridManage.resetData(gridRef, v?.data ?? []);
+                setTotalRow(v?.pageInfo?.totalRow ?? 0)
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+        }
+    }
+
+    /**
+     * @description 조회 페이지 > 초기화 버튼
+     * 데이터 관리 > 메이커
+     */
+    function clearAll() {
+        setInfo(getSearchInit());
+        gridRef.current.deselectAll();
+        setIsSearch(true);
     }
 
     /**
@@ -69,47 +96,18 @@ function MakerRead({getPropertyId, getCopyPage}: any) {
     }
 
     /**
-     * @description 조회 페이지 > 저장 버튼
-     * 데이터 관리 > 메이커
-     * @param e
-     */
-    async function searchInfo(e) {
-        if (e) {
-            setLoading(true);
-            await searchMaker({data: info}).then(v => {
-                gridManage.resetData(gridRef, v.data);
-                setTotalRow(v.pageInfo.totalRow)
-            })
-            setLoading(false);
-        }
-    }
-
-    /**
-     * @description 조회 페이지 > 초기화 버튼
-     * 데이터 관리 > 메이커
-     */
-    function clearAll() {
-        gridRef.current.deselectAll();
-        setInfo(getSearchInit());
-        setIsSearch(true);
-    }
-
-    /**
      * @description 조회 페이지 테이블 > 삭제 버튼
-     * 데이터 관리 > 메이커
+     * 데이터 관리 > 메이커 조회
      */
     async function deleteList() {
-        if (gridRef.current.getSelectedRows().length < 1) {
-            return message.error('삭제할 Maker를 선택해주세요.')
-        }
+        const list = gridRef.current.getSelectedRows();
+        if (!list?.length) return message.warn('삭제할 Maker를 선택해주세요.');
+
         setLoading(true);
-
-        const list = gridRef.current.getSelectedRows()
         const filterList = list.map(v => v.makerId);
-
         await getData.post('maker/deleteMakers', {makerIdList: filterList}).then(v => {
             if (v?.data?.code === 1) {
-                searchInfo(true)
+                searchInfo(true);
                 notificationAlert('success', '🗑️ Maker 삭제완료',
                     <>
                         <div>Maker
@@ -121,51 +119,64 @@ function MakerRead({getPropertyId, getCopyPage}: any) {
                     , null, null, 2
                 )
             } else {
-                message.error(v?.data?.message)
+                console.warn(v?.data?.message);
+                notificationAlert('error', '⚠️ 작업실패',
+                    <>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                        alert('작업 로그 페이지 참고')
+                    },
+                    {cursor: 'pointer'}
+                )
             }
         })
-        setLoading(false);
+        .catch((err) => {
+            notificationAlert('error', '❌ 네트워크 오류 발생', <div>{err.message}</div>);
+            console.error('에러:', err);
+        })
+        .finally(() => {
+            setLoading(false);
+        });
     }
 
     return <Spin spinning={loading} tip={'Maker 조회중...'}>
-        <ReceiveComponent searchInfo={searchInfo}/>
+        <ReceiveComponent componentName={'maker_read'} searchInfo={searchInfo}/>
         <div style={{
             display: 'grid',
             gridTemplateRows: `${mini ? '150px' : '65px'} calc(100vh - ${mini ? 280 : 195}px)`,
             columnGap: 5
         }}>
             <MainCard title={'메이커 조회'}
-                      list={[{
-                          name: <div><SaveOutlined style={{paddingRight: 8}}/>신규작성</div>,
-                          func: moveRouter,
-                          type: ''
-                      }]}
+                      list={[
+                          {name: <div><SaveOutlined style={{paddingRight: 8}}/>신규작성</div>, func: moveRouter, type: ''}
+                      ]}
                       mini={mini} setMini={setMini}>
-
                 {mini ?
                     <TopBoxCard title={''} grid={'240px 270px 190px'}>
-                        <Space style={{marginTop: 10}}>
+                        <Space style={{marginTop: 7}}>
                             {radioForm({
                                 title: '',
                                 id: 'searchType',
                                 onChange: onChange,
                                 data: info,
-                                list: [{value: 1, title: 'Maker'},
+                                list: [
+                                    {value: 1, title: 'Maker'},
                                     {value: 2, title: 'Item'},
-                                    {value: 3, title: 'AREA'}],
+                                    {value: 3, title: 'AREA'}
+                                ],
                             })}
                         </Space>
-                        <div style={{marginTop: 5}}>
+                        <div style={{marginTop: 7}}>
                             {inputForm({
                                 title: '',
                                 id: 'searchText',
-                                onChange: onChange,
                                 handleKeyPress: handleKeyPress,
+                                onChange: onChange,
                                 data: info,
-                                size: 'middle'
                             })}
                         </div>
-                        <Space size={10}>
+                        <Space size={10} style={{marginTop: 1}}>
                             <Button type="primary" size="small" style={{fontSize: 11}} onClick={searchInfo}>
                                 <SearchOutlined/>조회
                             </Button>
@@ -176,15 +187,15 @@ function MakerRead({getPropertyId, getCopyPage}: any) {
                     </TopBoxCard>
                     : <></>}
             </MainCard>
-
             {/*@ts-ignored*/}
             <TableGrid
-                deleteComp={<Popconfirm
-                    title="삭제하시겠습니까?"
-                    onConfirm={deleteList}
-                    icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
-                    <Button type={'primary'} danger size={'small'} style={{fontSize: 11, marginLeft: 5}}>삭제</Button>
-                </Popconfirm>
+                deleteComp={
+                    <Popconfirm
+                        title="삭제하시겠습니까?"
+                        onConfirm={deleteList}
+                        icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
+                        <Button type={'primary'} danger size={'small'} style={{fontSize: 11, marginLeft: 5}}>삭제</Button>
+                    </Popconfirm>
                 }
                 totalRow={totalRow}
                 getPropertyId={getPropertyId}

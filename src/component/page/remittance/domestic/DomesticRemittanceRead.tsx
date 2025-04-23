@@ -136,230 +136,228 @@ export default function DomesticRemittanceRead({getPropertyId, getCopyPage}: any
     }
 
     return <Spin spinning={loading} tip={'국내 송금 조회중...'}>
-        <ReceiveComponent searchInfo={searchInfo}/>
-        <>
-            <div style={{
-                display: 'grid',
-                gridTemplateRows: `${mini ? '270px' : '65px'} calc(100vh - ${mini ? 400 : 195}px)`,
-                columnGap: 5
-            }}>
-                <MainCard title={'국내송금 조회'} list={[
-                    {name: <div><SearchOutlined style={{paddingRight: 8}}/>조회</div>, func: searchInfo, type: 'primary'},
-                    {
-                        name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>,
-                        func: clearAll,
-                        type: 'danger'
-                    },
-                    {
-                        name: <div><SaveOutlined style={{paddingRight: 8}}/>신규작성</div>,
-                        func: moveRouter,
-                        type: ''
-                    }
-                ]} mini={mini} setMini={setMini}>
-
-                    {mini ? <div>
-                        <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
-                            <Panel defaultSize={sizes[0]} minSize={5}>
-                                <BoxCard title={''}>
-                                    <div style={{
-                                        display: 'grid',
-                                        gridTemplateColumns: '1fr 25px 25px 25px',
-                                        gap: 3
-                                    }}>
-                                        {rangePickerForm({
-                                            title: '발주일자',
-                                            id: 'searchRequestDate',
-                                            onChange: onChange,
-                                            data: info
-                                        })}
-                                        <Button size={'small'} style={{fontSize: 12, marginTop: 25}}
-                                                onClick={() => {
-                                                    setInfo(v => {
-                                                        return {
-                                                            ...v,
-                                                            searchRequestDate: [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
-                                                            searchRequestStartDate: moment().format('YYYY-MM-DD'),              // 작성일자 시작일
-                                                            searchRequestEndDate: moment().format('YYYY-MM-DD'),                // 작성일자 종료일
-                                                        }
-                                                    })
-                                                }}>T</Button>
-                                        <Button size={'small'} style={{fontSize: 12, marginTop: 25}}
-                                                onClick={() => {
-                                                    setInfo(v => {
-                                                        return {
-                                                            ...v,
-                                                            searchRequestDate: [moment().subtract(1, 'week').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
-                                                            searchRequestStartDate: moment().subtract(1, 'week').format('YYYY-MM-DD'),              // 작성일자 시작일
-                                                            searchRequestEndDate: moment().format('YYYY-MM-DD'),                // 작성일자 종료일
-                                                        }
-                                                    })
-                                                }}>W</Button>
-                                        <Button size={'small'} style={{fontSize: 12, marginTop: 25}}
-                                                onClick={() => {
-                                                    console.log('!!!!')
-                                                    setInfo(v => {
-                                                        return {
-                                                            ...v,
-                                                            searchRequestDate: [moment().subtract(1, 'month').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
-                                                            searchRequestStartDate: moment().subtract(1, 'month').format('YYYY-MM-DD'),              // 작성일자 시작일
-                                                            searchRequestEndDate: moment().format('YYYY-MM-DD'),                // 작성일자 종료일
-                                                        }
-                                                    })
-                                                }}>M</Button>
-                                    </div>
-                                    {inputForm({
-                                        title: 'Inquiry No.',
-                                        id: 'searchConnectInquiryNo',
-                                        onChange: onChange,
-                                        handleKeyPress: handleKeyPress,
-                                        data: info
-                                    })}
-                                </BoxCard>
-                            </Panel>
-                            <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[1]} minSize={5}>
-                                <BoxCard title={''}>
-                                    {inputForm({
-                                        title: '고객사명',
-                                        id: 'searchCustomerName',
-                                        onChange: onChange,
-                                        handleKeyPress: handleKeyPress,
-                                        data: info
-                                    })}
-                                    {inputForm({
-                                        title: '매입처명',
-                                        id: 'searchAgencyName',
-                                        onChange: onChange,
-                                        handleKeyPress: handleKeyPress,
-                                        data: info
-                                    })}
-                                    {inputForm({
-                                        title: '담당자',
-                                        id: 'searchManagerAdminName',
-                                        onChange: onChange,
-                                        handleKeyPress: handleKeyPress,
-                                        data: info
-                                    })}
-                                </BoxCard>
-                            </Panel>
-                            <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[2]} minSize={5}>
-                                <BoxCard title={''}>
-                                    {radioForm({
-                                        title: '송금 여부',
-                                        id: 'searchIsSend',
-                                        onChange: onChange,
-                                        data: info,
-                                        list: [{value: '', title: '전체'}, {value: 'O', title: 'O'}, {
-                                            value: 'X',
-                                            title: 'X'
-                                        }]
-                                    })}
-                                    {radioForm({
-                                        title: '계산서 발행여부',
-                                        id: 'searchIsInvoice',
-                                        onChange: onChange,
-                                        data: info,
-                                        list: [{value: '', title: '전체'}, {value: 'O', title: 'O'}, {
-                                            value: 'X',
-                                            title: 'X'
-                                        }]
-                                    })}
-                                </BoxCard>
-                            </Panel>
-                            <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[3]} minSize={0}></Panel>
-                        </PanelGroup>
-
-
-                        {/*<div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1.5fr', gap: 20}}>*/}
-                        {/*    <BoxCard title={'기본 정보'}>*/}
-
-                        {/*        {inputForm({*/}
-                        {/*            title: 'Inquiry No.',*/}
-                        {/*            id: 'searchConnectInquiryNo',*/}
-                        {/*            onChange: onChange,*/}
-                        {/*            handleKeyPress: handleKeyPress,*/}
-                        {/*            data: info*/}
-                        {/*        })}*/}
-                        {/*        <div>*/}
-                        {/*            <div style={{marginBottom: 3}}>발주일자</div>*/}
-                        {/*            <RangePicker style={{width: '100%'}}*/}
-                        {/*                         value={[moment(info['searchDate'][0]), moment(info['searchDate'][1])]}*/}
-                        {/*                         id={'searchDate'} size={'small'} onChange={(date, dateString) => {*/}
-                        {/*                onChange({*/}
-                        {/*                    target: {*/}
-                        {/*                        id: 'searchDate',*/}
-                        {/*                        value: date ? [moment(date[0]).format('YYYY-MM-DD'), moment(date[1]).format('YYYY-MM-DD')] : [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]*/}
-                        {/*                    }*/}
-                        {/*                })*/}
-                        {/*            }*/}
-                        {/*            }/>*/}
-                        {/*        </div>*/}
-                        {/*    </BoxCard>*/}
-                        {/*    <BoxCard title={'거래 정보'}>*/}
-                        {/*        {inputForm({*/}
-                        {/*            title: '고객사명',*/}
-                        {/*            id: 'searchCustomerName',*/}
-                        {/*            onChange: onChange,*/}
-                        {/*            handleKeyPress: handleKeyPress,*/}
-                        {/*            data: info*/}
-                        {/*        })}*/}
-                        {/*        {inputForm({*/}
-                        {/*            title: '매입처명',*/}
-                        {/*            id: 'searchAgencyName',*/}
-                        {/*            onChange: onChange,*/}
-                        {/*            handleKeyPress: handleKeyPress,*/}
-                        {/*            data: info*/}
-                        {/*        })}*/}
-                        {/*        {inputForm({*/}
-                        {/*            title: '담당자',*/}
-                        {/*            id: 'searchManagerAdminName',*/}
-                        {/*            onChange: onChange,*/}
-                        {/*            handleKeyPress: handleKeyPress,*/}
-                        {/*            data: info*/}
-                        {/*        })}*/}
-                        {/*    </BoxCard>*/}
-
-                        {/*    <BoxCard title={'확인정보'}>*/}
-                        {/*        {radioForm({*/}
-                        {/*            title: '송금여부',*/}
-                        {/*            id: 'searchIsSend',*/}
-                        {/*            onChange: onChange,*/}
-                        {/*            data: info,*/}
-                        {/*            list: [{value: 'O', title: 'O'}, {value: 'X', title: 'X'}, {value: '', title: '전체'}]*/}
-                        {/*        })}*/}
-                        {/*        {radioForm({*/}
-                        {/*            title: '계산서 발행여부',*/}
-                        {/*            id: 'searchIsInvoice',*/}
-                        {/*            onChange: onChange,*/}
-                        {/*            data: info,*/}
-                        {/*            list: [{value: 'O', title: 'O'}, {value: 'X', title: 'X'}, {value: '', title: '전체'}]*/}
-                        {/*        })}*/}
-                        {/*    </BoxCard>*/}
-                        {/*</div>*/}
-
-
-                    </div> : <></>}
-                </MainCard>
-                {/*@ts-ignored*/}
-                <TableGrid deleteComp={
-                    <Popconfirm
-                        title="삭제하시겠습니까?"
-                        onConfirm={confirm}
-                        icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
-                        <Button type={'primary'} danger size={'small'} style={{fontSize: 11, marginLeft: 5}}>삭제</Button>
-                    </Popconfirm>
+        <ReceiveComponent componentName={'domestic_remittance_read'} searchInfo={searchInfo}/>
+        <div style={{
+            display: 'grid',
+            gridTemplateRows: `${mini ? '270px' : '65px'} calc(100vh - ${mini ? 400 : 195}px)`,
+            columnGap: 5
+        }}>
+            <MainCard title={'국내송금 조회'} list={[
+                {name: <div><SearchOutlined style={{paddingRight: 8}}/>조회</div>, func: searchInfo, type: 'primary'},
+                {
+                    name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>,
+                    func: clearAll,
+                    type: 'danger'
+                },
+                {
+                    name: <div><SaveOutlined style={{paddingRight: 8}}/>신규작성</div>,
+                    func: moveRouter,
+                    type: ''
                 }
-                           totalRow={totalRow}
-                           getPropertyId={getPropertyId}
-                           gridRef={gridRef}
-                           columns={remittanceReadColumn}
-                           onGridReady={onGridReady}
-                           funcButtons={['agPrint']}
-                />
-            </div>
-        </>
+            ]} mini={mini} setMini={setMini}>
+
+                {mini ? <div>
+                    <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
+                        <Panel defaultSize={sizes[0]} minSize={5}>
+                            <BoxCard title={''}>
+                                <div style={{
+                                    display: 'grid',
+                                    gridTemplateColumns: '1fr 25px 25px 25px',
+                                    gap: 3
+                                }}>
+                                    {rangePickerForm({
+                                        title: '발주일자',
+                                        id: 'searchRequestDate',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                    <Button size={'small'} style={{fontSize: 12, marginTop: 25}}
+                                            onClick={() => {
+                                                setInfo(v => {
+                                                    return {
+                                                        ...v,
+                                                        searchRequestDate: [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
+                                                        searchRequestStartDate: moment().format('YYYY-MM-DD'),              // 작성일자 시작일
+                                                        searchRequestEndDate: moment().format('YYYY-MM-DD'),                // 작성일자 종료일
+                                                    }
+                                                })
+                                            }}>T</Button>
+                                    <Button size={'small'} style={{fontSize: 12, marginTop: 25}}
+                                            onClick={() => {
+                                                setInfo(v => {
+                                                    return {
+                                                        ...v,
+                                                        searchRequestDate: [moment().subtract(1, 'week').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
+                                                        searchRequestStartDate: moment().subtract(1, 'week').format('YYYY-MM-DD'),              // 작성일자 시작일
+                                                        searchRequestEndDate: moment().format('YYYY-MM-DD'),                // 작성일자 종료일
+                                                    }
+                                                })
+                                            }}>W</Button>
+                                    <Button size={'small'} style={{fontSize: 12, marginTop: 25}}
+                                            onClick={() => {
+                                                console.log('!!!!')
+                                                setInfo(v => {
+                                                    return {
+                                                        ...v,
+                                                        searchRequestDate: [moment().subtract(1, 'month').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
+                                                        searchRequestStartDate: moment().subtract(1, 'month').format('YYYY-MM-DD'),              // 작성일자 시작일
+                                                        searchRequestEndDate: moment().format('YYYY-MM-DD'),                // 작성일자 종료일
+                                                    }
+                                                })
+                                            }}>M</Button>
+                                </div>
+                                {inputForm({
+                                    title: 'Inquiry No.',
+                                    id: 'searchConnectInquiryNo',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                            </BoxCard>
+                        </Panel>
+                        <PanelResizeHandle/>
+                        <Panel defaultSize={sizes[1]} minSize={5}>
+                            <BoxCard title={''}>
+                                {inputForm({
+                                    title: '고객사명',
+                                    id: 'searchCustomerName',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: '매입처명',
+                                    id: 'searchAgencyName',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: '담당자',
+                                    id: 'searchManagerAdminName',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                            </BoxCard>
+                        </Panel>
+                        <PanelResizeHandle/>
+                        <Panel defaultSize={sizes[2]} minSize={5}>
+                            <BoxCard title={''}>
+                                {radioForm({
+                                    title: '송금 여부',
+                                    id: 'searchIsSend',
+                                    onChange: onChange,
+                                    data: info,
+                                    list: [{value: '', title: '전체'}, {value: 'O', title: 'O'}, {
+                                        value: 'X',
+                                        title: 'X'
+                                    }]
+                                })}
+                                {radioForm({
+                                    title: '계산서 발행여부',
+                                    id: 'searchIsInvoice',
+                                    onChange: onChange,
+                                    data: info,
+                                    list: [{value: '', title: '전체'}, {value: 'O', title: 'O'}, {
+                                        value: 'X',
+                                        title: 'X'
+                                    }]
+                                })}
+                            </BoxCard>
+                        </Panel>
+                        <PanelResizeHandle/>
+                        <Panel defaultSize={sizes[3]} minSize={0}></Panel>
+                    </PanelGroup>
+
+
+                    {/*<div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1.5fr', gap: 20}}>*/}
+                    {/*    <BoxCard title={'기본 정보'}>*/}
+
+                    {/*        {inputForm({*/}
+                    {/*            title: 'Inquiry No.',*/}
+                    {/*            id: 'searchConnectInquiryNo',*/}
+                    {/*            onChange: onChange,*/}
+                    {/*            handleKeyPress: handleKeyPress,*/}
+                    {/*            data: info*/}
+                    {/*        })}*/}
+                    {/*        <div>*/}
+                    {/*            <div style={{marginBottom: 3}}>발주일자</div>*/}
+                    {/*            <RangePicker style={{width: '100%'}}*/}
+                    {/*                         value={[moment(info['searchDate'][0]), moment(info['searchDate'][1])]}*/}
+                    {/*                         id={'searchDate'} size={'small'} onChange={(date, dateString) => {*/}
+                    {/*                onChange({*/}
+                    {/*                    target: {*/}
+                    {/*                        id: 'searchDate',*/}
+                    {/*                        value: date ? [moment(date[0]).format('YYYY-MM-DD'), moment(date[1]).format('YYYY-MM-DD')] : [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]*/}
+                    {/*                    }*/}
+                    {/*                })*/}
+                    {/*            }*/}
+                    {/*            }/>*/}
+                    {/*        </div>*/}
+                    {/*    </BoxCard>*/}
+                    {/*    <BoxCard title={'거래 정보'}>*/}
+                    {/*        {inputForm({*/}
+                    {/*            title: '고객사명',*/}
+                    {/*            id: 'searchCustomerName',*/}
+                    {/*            onChange: onChange,*/}
+                    {/*            handleKeyPress: handleKeyPress,*/}
+                    {/*            data: info*/}
+                    {/*        })}*/}
+                    {/*        {inputForm({*/}
+                    {/*            title: '매입처명',*/}
+                    {/*            id: 'searchAgencyName',*/}
+                    {/*            onChange: onChange,*/}
+                    {/*            handleKeyPress: handleKeyPress,*/}
+                    {/*            data: info*/}
+                    {/*        })}*/}
+                    {/*        {inputForm({*/}
+                    {/*            title: '담당자',*/}
+                    {/*            id: 'searchManagerAdminName',*/}
+                    {/*            onChange: onChange,*/}
+                    {/*            handleKeyPress: handleKeyPress,*/}
+                    {/*            data: info*/}
+                    {/*        })}*/}
+                    {/*    </BoxCard>*/}
+
+                    {/*    <BoxCard title={'확인정보'}>*/}
+                    {/*        {radioForm({*/}
+                    {/*            title: '송금여부',*/}
+                    {/*            id: 'searchIsSend',*/}
+                    {/*            onChange: onChange,*/}
+                    {/*            data: info,*/}
+                    {/*            list: [{value: 'O', title: 'O'}, {value: 'X', title: 'X'}, {value: '', title: '전체'}]*/}
+                    {/*        })}*/}
+                    {/*        {radioForm({*/}
+                    {/*            title: '계산서 발행여부',*/}
+                    {/*            id: 'searchIsInvoice',*/}
+                    {/*            onChange: onChange,*/}
+                    {/*            data: info,*/}
+                    {/*            list: [{value: 'O', title: 'O'}, {value: 'X', title: 'X'}, {value: '', title: '전체'}]*/}
+                    {/*        })}*/}
+                    {/*    </BoxCard>*/}
+                    {/*</div>*/}
+
+
+                </div> : <></>}
+            </MainCard>
+            {/*@ts-ignored*/}
+            <TableGrid deleteComp={
+                <Popconfirm
+                    title="삭제하시겠습니까?"
+                    onConfirm={confirm}
+                    icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
+                    <Button type={'primary'} danger size={'small'} style={{fontSize: 11, marginLeft: 5}}>삭제</Button>
+                </Popconfirm>
+            }
+                       totalRow={totalRow}
+                       getPropertyId={getPropertyId}
+                       gridRef={gridRef}
+                       columns={remittanceReadColumn}
+                       onGridReady={onGridReady}
+                       funcButtons={['agPrint']}
+            />
+        </div>
     </Spin>
 }
 

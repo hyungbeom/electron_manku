@@ -2541,7 +2541,6 @@ export const tableCodeExchangeColumns = [
 ]
 
 export const tableCodeReadColumns = [
-
     {
         headerName: "", // 컬럼 제목
         valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
@@ -2563,11 +2562,44 @@ export const tableCodeReadColumns = [
     },
 ]
 
+// 회사계정관리 > 조회 테이블 컬럼
+export const tableCompanyAccountColumns = [
 
+    {
+        headerName: "", // 컬럼 제목
+        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
+        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
+        checkboxSelection: true, // 각 행에 체크박스 추가
+        cellStyle: {textAlign: "center"}, // 스타일 설정
+        maxWidth: 60, // 컬럼 너비
+        pinned: "left", // 왼쪽에 고정
+        filter: false
+    }, {
+        pinned: 'left',
+        headerName: '회사이름',
+        field: 'companyName',
+        maxWidth: 250
+    },
+    {
+        headerName: '홈페이지',
+        field: 'homepage',
+    },
+    {
+        headerName: '아이디',
+        field: 'userName',
+    },
+    {
+        headerName: '비밀번호',
+        field: 'password',
+    },
+    {
+        headerName: '비고',
+        field: 'remarks',
+    },
+]
 
-// 재고관리 조회 테이블 컬럼
+// 재고관리 > 조회 테이블 컬럼
 export const tableSourceColumns = [
-
     {
         headerName: "", // 컬럼 제목
         valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
@@ -2604,48 +2636,6 @@ export const tableSourceColumns = [
         field: 'location',
     },
 ]
-
-
-
-
-
-// 데이터 관리 > 회사계정관리 > 조회 테이블 컬럼
-export const tableCompanyAccountColumns = [
-
-    {
-        headerName: "", // 컬럼 제목
-        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
-        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
-        checkboxSelection: true, // 각 행에 체크박스 추가
-        cellStyle: {textAlign: "center"}, // 스타일 설정
-        maxWidth: 60, // 컬럼 너비
-        pinned: "left", // 왼쪽에 고정
-        filter: false
-    }, {
-        pinned: 'left',
-        headerName: '회사이름',
-        field: 'companyName',
-        maxWidth: 250
-    },
-    {
-        headerName: '홈페이지',
-        field: 'homepage',
-    },
-    {
-        headerName: '아이디',
-        field: 'userName',
-    },
-    {
-        headerName: '비밀번호',
-        field: 'password',
-    },
-    {
-        headerName: '비고',
-        field: 'remarks',
-    },
-]
-
-
 
 export const subTableCodeReadColumns = [
 

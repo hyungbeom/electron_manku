@@ -3,7 +3,16 @@ import {CopyOutlined, DeleteOutlined, FormOutlined, RadiusSettingOutlined, SendO
 import message from "antd/lib/message";
 import {getData} from "@/manage/function/api";
 import SearchInfoModal from "@/component/SearchAgencyModal";
-import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, tooltipInfo, TopBoxCard} from "@/utils/commonForm";
+import {
+    BoxCard,
+    datePickerForm,
+    inputForm,
+    MainCard,
+    selectBoxForm,
+    textAreaForm,
+    tooltipInfo,
+    TopBoxCard
+} from "@/utils/commonForm";
 import {commonFunc, commonManage, fileManage} from "@/utils/commonManage";
 import {findCodeInfo} from "@/utils/api/commonApi";
 import {getAttachmentFileList, updateRfq} from "@/utils/api/mainApi";
@@ -15,7 +24,7 @@ import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import Table from "@/component/util/Table";
-import {rfqInfo} from "@/utils/column/ProjectInfo";
+import {estimateInfo, rfqInfo} from "@/utils/column/ProjectInfo";
 import moment from "moment/moment";
 import useEventListener from "@/utils/common/function/UseEventListener";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
@@ -30,11 +39,18 @@ function RqfUpdate({
                        getPropertyId = null,
                        layoutRef
                    }: any) {
-
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
     const infoRef = useRef<any>(null)
     const tableRef = useRef(null);
+    const fileRef = useRef(null);
+    const gridRef = useRef(null);
+
+    const getSavedSizes = () => {
+        const savedSizes = localStorage.getItem('rfq_write');
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 5]; // 기본값 [50, 50, 50]
+    };
+    const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
     const [memberList, setMemberList] = useState([]);
 
@@ -54,81 +70,72 @@ function RqfUpdate({
         })
     }
 
-    const options = memberList?.map((item) => ({
-        ...item,
-        value: item.adminId,
-        label: item.name,
-    }));
-
-
-    const fileRef = useRef(null);
-    const gridRef = useRef(null);
     const router = useRouter();
-
+    const [loading, setLoading] = useState(false);
+    const [mini, setMini] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false, event3: false});
 
     const userInfo = useAppSelector((state) => state.user);
-    const [info, setInfo] = useState<any>({})
-    const [mini, setMini] = useState(true);
+    const adminParams = {
+        managerAdminId: userInfo['adminId'],
+        managerAdminName: userInfo['name'],
+        createdBy: userInfo['name'],
+    }
+    const getRfqInit = () => {
+        const copyInit = _.cloneDeep(rfqInfo['defaultInfo']);
+        return {
+            ...copyInit,
+            ...adminParams
+        }
+    }
+    const [info, setInfo] = useState(getRfqInit());
+    const getRfqValidateInit = () => _.cloneDeep(rfqInfo['write']['validate']);
+    const [validate, setValidate] = useState(getRfqValidateInit());
 
     const [fileList, setFileList] = useState([]);
     const [originFileList, setOriginFileList] = useState([]);
-    const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false, event3: false});
     const [tableData, setTableData] = useState([]);
 
-    const [loading, setLoading] = useState(false);
-
-
     useEffect(() => {
-        setLoading(true)
+        setLoading(true);
+        setValidate(getRfqValidateInit());
+        setInfo(getRfqInit());
+        setFileList([]);
+        setOriginFileList([]);
+        setTableData([]);
         getDataInfo().then(v => {
             if (v) {
                 const {estimateRequestDetail, attachmentFileList} = v;
-
-                setFileList(fileManage.getFormatFiles(attachmentFileList));
-                setOriginFileList(attachmentFileList);
-                // replyStatus
-
                 /**
                  * 개선사항
                  * 견적의뢰 수정시 드라이브 목록 '업체회신자료'로 자동 선택
                  * uploadType 0에서 1로 수정
                  */
                 setInfo({
+                    ...getRfqInit(),
                     ...estimateRequestDetail,
                     uploadType: 1,
                     managerAdminId: estimateRequestDetail['managerAdminId'] ? estimateRequestDetail['managerAdminId'] : '',
-                    managerAdminName: estimateRequestDetail['managerAdminName'] ? estimateRequestDetail['managerAdminName'] : ''
-                })
+                    managerAdminName: estimateRequestDetail['managerAdminName'] ? estimateRequestDetail['managerAdminName'] : '',
+                    createdBy: userInfo['name']
+                });
                 //
-
+                setFileList(fileManage.getFormatFiles(attachmentFileList));
+                setOriginFileList(attachmentFileList);
                 estimateRequestDetail[listType] = [...estimateRequestDetail[listType], ...commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000 - estimateRequestDetail[listType].length)]
                 setTableData(estimateRequestDetail[listType]);
             }
-            setLoading(false)
         })
+        .finally(() => {
+            setLoading(false);
+        });
     }, [updateKey['rfq_update']])
 
-    useEffect(() => {
-        commonManage.setInfo(infoRef, info);
-    }, [info]);
-
-
     async function getDataInfo() {
-
         const result = await getData.post('estimate/getEstimateRequestDetail', {
             "estimateRequestId": updateKey['rfq_update']
         });
         return result?.data?.entity;
-    }
-
-
-    function openModal(e) {
-        commonManage.openModal(e, setIsModalOpen)
-    }
-
-    function onChange(e) {
-
-        commonManage.onChange(e, setInfo)
     }
 
     async function handleKeyPress(e) {
@@ -138,182 +145,24 @@ function RqfUpdate({
                 case 'agencyCode' :
                 case 'customerName' :
                 case 'maker' :
-                    await findCodeInfo(e, setInfo, openModal, infoRef)
+                    await findCodeInfo(e, setInfo, openModal)
                     break;
             }
         }
     }
 
-    async function saveFunc() {
-        let infoData = commonManage.getInfo(infoRef, rfqInfo['defaultInfo']);
+    function onChange(e) {
+        commonManage.onChange(e, setInfo)
 
-        const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
-        if (findMember) {
-            infoData['managerAdminName'] = findMember['name'];
-        }
-
-        if (!infoData['agencyCode']) {
-            const dom = infoRef.current.querySelector('#agencyCode');
-            dom.style.borderColor = 'red';
-            return message.warn('매입처 코드가 누락되었습니다.');
-        }
-
-        const tableList = tableRef.current?.getSourceData();
-
-        const filterTableList = commonManage.filterEmptyObjects(tableList, ['model', 'item', 'maker'])
-        if (!filterTableList.length) {
-            return message.warn('하위 데이터 1개 이상이여야 합니다');
-        }
-        const emptyQuantity = filterTableList.filter(v => !v.quantity)
-        if (emptyQuantity.length) {
-            return message.error('수량을 입력해야 합니다.')
-        }
-
-        setLoading(true);
-        const formData: any = new FormData();
-
-        commonManage.setInfoFormData({
-            ...infoData,
-            estimateRequestId: updateKey['rfq_update']
-        }, formData, listType, filterTableList)
-        commonManage.getUploadList(fileRef, formData);
-        commonManage.deleteUploadList(fileRef, formData, originFileList)
-        formData.delete('createdDate');
-        formData.delete('modifiedDate');
-        await updateRfq({data: formData, returnFunc: returnFunc})
+        // 값 입력되면 유효성 초기화
+        const { id, value } = e?.target;
+        commonManage.resetValidate(id, value, setValidate);
     }
 
-    async function returnFunc(v) {
-
-
-        if (v.code === 1) {
-
-            const dom = infoRef.current.querySelector('#documentNumberFull');
-            notificationAlert('success', '💾견적의뢰 수정완료',
-                <>
-                    <div>의뢰자료 No. : {dom.value}</div>
-                    <div>등록일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
-                </>
-                , function () {
-                    getPropertyId('rfq_update', updateKey['rfq_update'])
-                },
-                {cursor: 'pointer'}
-            )
-
-
-            await getAttachmentFileList({
-                data: {
-                    "relatedType": "ESTIMATE_REQUEST",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
-                    "relatedId": updateKey['rfq_update']
-                }
-            }).then(v => {
-
-                const list = fileManage.getFormatFiles(v);
-                setFileList(list)
-                setOriginFileList(list)
-                setLoading(false)
-            },err=>{
-                console.log(err,'::::::')
-            })
-        } else {
-            message.warning(v.message)
-        }
-        setLoading(false)
-    }
-
-    function clearAll() {
-        setInfo(v => {
-            return {
-                ...rfqWriteInitial,
-                documentNumberFull: v.documentNumberFull,
-                writtenDate: v.writtenDate,
-                createdBy: v.createdBy,
-                managerAdminName: v.managerAdminName,
-                managerAdminId: v?.managerAdminId ? v?.managerAdminId : 0
-            }
-        });
-        setTableData(commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000))
-    }
-
-    function copyPage() {
-
-        const totalList = tableRef.current.getSourceData();
-        totalList.pop();
-        const list = totalList.map(v=>{
-            return {
-                model : v.model,
-                quantity : v.quantity,
-                unit : v.unit,
-                currencyUnit : v.currencyUnit,
-            }
-        })
-
-        const result = Object.keys(rfqInfo['defaultInfo']).map(v => `#${v}`)
-        const test = `${result.join(',')}`;
-        const elements = infoRef.current.querySelectorAll(test);
-
-        let copyInfo = {}
-        for (let element of elements) {
-            copyInfo[element.id] = element.value
-        }
-
-        const dom = infoRef.current.querySelector('#managerAdminId');
-
-        copyInfo['managerAdminId'] = parseInt(dom.value);
-        const findMember = memberList.find(v => v.adminId === parseInt(dom.value));
-
-        copyInfo['managerAdminName'] = findMember['name'];
-
-
-        copyInfo[listType] = [...list, ...commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000 - list.length)];
-
-        getCopyPage('rfq_write', copyInfo)
-    }
-
-    const getSavedSizes = () => {
-        const savedSizes = localStorage.getItem('rfq_write');
-        return savedSizes ? JSON.parse(savedSizes) : [25, 25, 25, 25, 0]; // 기본값 [50, 50, 50]
-    };
-
-    const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
-
-
-    useEventListener('keydown', (e: any) => {
-        if (e.ctrlKey && e.key === "s") {
-            e.preventDefault();
-            const model = layoutRef.current.props.model;
-            const activeTab = model.getActiveTabset()?.getSelectedNode();
-            if (activeTab?.renderedName === '견적의뢰 수정') {
-                saveFunc()
-            }
-        }
-    }, typeof window !== 'undefined' ? document : null)
-
-    function deleteFunc() {
-
-        getData.post('estimate/deleteEstimateRequest', {estimateRequestId: updateKey['rfq_update']}).then(v => {
-            const {code, message} = v.data;
-            if (code === 1) {
-                notificationAlert('success', '🗑️견적의뢰 삭제완료',
-                    <>
-                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
-                    </>
-                    , null,
-                    {cursor: 'pointer'}
-                )
-
-                const {model} = layoutRef.current.props;
-                getCopyPage('rfq_read', {})
-                const targetNode = model.getRoot().getChildren()[0]?.getChildren()
-                    .find((node: any) => node.getType() === "tab" && node.getComponent() === 'rfq_update');
-
-                if (targetNode) {
-                    model.doAction(Actions.deleteTab(targetNode.getId())); // ✅ 기존 로직 유지
-                }
-            }
-        })
-    }
-
+    /**
+     * @description 수정 페이지 > 발송처리 버튼
+     * 견적의뢰 > 견적의뢰 수정
+     */
     function checkSend() {
         const tableList = tableRef.current?.getSourceData();
         const filterTableList = commonManage.filterEmptyObjects(tableList, ['model', 'item', 'maker'])
@@ -334,20 +183,194 @@ function RqfUpdate({
         })
     }
 
+    useEventListener('keydown', (e: any) => {
+        if (e.ctrlKey && e.key === "s") {
+            e.preventDefault();
+            const model = layoutRef.current.props.model;
+            const activeTab = model.getActiveTabset()?.getSelectedNode();
+            if (activeTab?.renderedName === '견적의뢰 수정') {
+                saveFunc();
+            }
+        }
+    }, typeof window !== 'undefined' ? document : null)
+
+    /**
+     * @description 수정 페이지 > 수정 버튼
+     * 견적의뢰 > 견적의뢰 수정
+     */
+    async function saveFunc() {
+        console.log(info, 'info:::')
+
+        // 유효성 체크 추가
+        if(!commonManage.checkValidate(info, rfqInfo['write']['validationList'], setValidate)) return;
+
+        const tableList = tableRef.current?.getSourceData();
+        const filterTableList = commonManage.filterEmptyObjects(tableList, ['model', 'item', 'maker'])
+        if (!filterTableList.length) {
+            return message.warn('하위 데이터가 1개 이상이여야 합니다.');
+        }
+        const emptyQuantity = filterTableList.filter(v => !v.quantity)
+        if (emptyQuantity.length) {
+            return message.error('하위 데이터의 수량을 입력해야 합니다.')
+        }
+
+        const findMember = memberList.find(v => v.adminId === parseInt(info['managerAdminId']));
+        info['managerAdminName'] = findMember['name'];
+
+        setLoading(true);
+
+        const formData: any = new FormData();
+        commonManage.setInfoFormData(info, formData, listType, filterTableList)
+        commonManage.getUploadList(fileRef, formData);
+        commonManage.deleteUploadList(fileRef, formData, originFileList)
+        formData.delete('createdDate');
+        formData.delete('modifiedDate');
+        await updateRfq({data: formData, returnFunc: returnFunc})
+        setLoading(false);
+    }
+
+    async function returnFunc(v) {
+        if (v.code === 1) {
+            await getAttachmentFileList({
+                data: {
+                    "relatedType": "ESTIMATE_REQUEST",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
+                    "relatedId": updateKey['rfq_update']
+                }
+            }).then(v => {
+                const list = fileManage.getFormatFiles(v);
+                setFileList(list)
+                setOriginFileList(list)
+
+                window.postMessage({message: 'reload', target: 'rfq_read'}, window.location.origin);
+                notificationAlert('success', '💾 견적의뢰 수정완료',
+                    <>
+                        <div>의뢰자료 No. : {info.documentNumberFull}</div>
+                        <div>등록일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                        getPropertyId('rfq_update', updateKey['rfq_update'])
+                    },
+                    {cursor: 'pointer'}
+                )
+            })
+        } else {
+            notificationAlert('error', '⚠️작업실패',
+                <>
+                    <div>Inquiry No. : {info.documentNumberFull}</div>
+                    <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                </>
+                , function () {
+                    alert('관리자 로그 페이지 참고')
+                },
+                {cursor: 'pointer'}
+            )
+        }
+        setLoading(false)
+    }
+
+    /**
+     * @description 수정 페이지 > 삭제 버튼
+     * 견적의뢰 > 견적의뢰 수정
+     */
+    function deleteFunc() {
+        setLoading(true)
+        getData.post('estimate/deleteEstimateRequest', {estimateRequestId: updateKey['rfq_update']}).then(v => {
+            const {code, message} = v.data;
+            if (code === 1) {
+                window.postMessage({message: 'reload', target: 'rfq_read'}, window.location.origin);
+
+                notificationAlert('success', '🗑️견적의뢰 삭제완료',
+                    <>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , null,
+                    {cursor: 'pointer'}
+                )
+                getCopyPage('rfq_read', {})
+                const {model} = layoutRef.current.props;
+                const targetNode = model.getRoot().getChildren()[0]?.getChildren()
+                    .find((node: any) => node.getType() === "tab" && node.getComponent() === 'rfq_update');
+                if (targetNode) {
+                    model.doAction(Actions.deleteTab(targetNode.getId())); // ✅ 기존 로직 유지
+                }
+            } else {
+                notificationAlert('error', '⚠️작업실패',
+                    <>
+                        <div>Project No. : {info.documentNumberFull}</div>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                        console.log(v?.data?.message);
+                        alert('작업 로그 페이지 참고')
+                    },
+                    {cursor: 'pointer'}
+                )
+            }
+        }, err => setLoading(false))
+        setLoading(true)
+    }
+
+    /**
+     * @description 수정 페이지 > 초기화 버튼
+     * 견적의뢰 > 견적의뢰 수정
+     */
+    function clearAll() {
+        setInfo(v => {
+            return {
+                ...rfqWriteInitial,
+                documentNumberFull: v.documentNumberFull,
+                writtenDate: v.writtenDate,
+                createdBy: v.createdBy,
+                managerAdminName: v.managerAdminName,
+                managerAdminId: v?.managerAdminId ? v?.managerAdminId : 0
+            }
+        });
+        setTableData(commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000))
+    }
+
+    /**
+     * @description 수정 페이지 > 복제 버튼
+     * 견적의뢰 > 견적의뢰 수정
+     */
+    function copyPage() {
+        const copyInfo = _.cloneDeep(info);
+
+        const totalList = tableRef.current.getSourceData();
+        totalList.pop();
+        const list = totalList.map(v=>{
+            return {
+                model : v.model,
+                quantity : v.quantity,
+                unit : v.unit,
+                currencyUnit : v.currencyUnit,
+            }
+        })
+        copyInfo[listType] = [...list, ...commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000 - list.length)];
+
+        getCopyPage('rfq_write', { ...copyInfo, _meta: {updateKey: Date.now()}})
+    }
+
+    /**
+     * @description 수정 페이지 > 돋보기 버튼
+     * 매입처, 고객사, Maker 조회 Modal
+     * @param e
+     */
+    function openModal(e) {
+        commonManage.openModal(e, setIsModalOpen)
+    }
+
     return <Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'rfq_update'}/>
         <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
                          open={isModalOpen}
 
                          setIsModalOpen={setIsModalOpen}/>
-
         <>
             <div ref={infoRef} style={{
                 display: 'grid',
                 gridTemplateRows: `${mini ? 495 : 65}px calc(100vh - ${mini ? 590 : 195}px)`,
                 rowGap: 10,
             }}>
-
                 <MainCard title={'견적의뢰 수정'} list={[
                     {
                         name: <div><SendOutlined style={{paddingRight: 8}}/>발송처리완료</div>,
@@ -356,69 +379,58 @@ function RqfUpdate({
                     },
                     {name: <div><FormOutlined style={{paddingRight: 8}}/>수정</div>, func: saveFunc, type: 'primary'},
                     {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: deleteFunc, type: 'delete'},
-                    {
-                        name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>,
-                        func: clearAll,
-                        type: 'danger'
-                    },
+                    // {
+                    //     name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>,
+                    //     func: clearAll,
+                    //     type: 'danger'
+                    // },
                     {name: <div><CopyOutlined style={{paddingRight: 8}}/>복제</div>, func: copyPage, type: ''}
                 ]} mini={mini} setMini={setMini}>
-
-
                     {mini ? <div>
-                            <TopBoxCard title={''} grid={'100px 80px 80px 110px 110px 110px 300px'}>
+                            <TopBoxCard title={''} grid={'110px 80px 80px 110px 110px 110px 300px'}>
                                 {datePickerForm({
                                     title: '작성일',
                                     id: 'writtenDate',
                                     disabled: true,
-                                    // onChange: onChange,
-                                    // data: info
+                                    data: info
                                 })}
-
                                 {inputForm({title: '작성자', id: 'createdBy', disabled: true, onChange: onChange, data: info})}
                                 <div>
-                                    <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>담당자</div>
-                                    <select name="languages" id="managerAdminId"
-                                            style={{
-                                                outline: 'none',
-                                                border: '1px solid lightGray',
-                                                height: 23,
-                                                width: '100%',
-                                                fontSize: 12,
-                                                paddingBottom: 0.5
-                                            }}>
-                                        {
-                                            options?.map(v => {
-                                                return <option value={v.value}>{v.label}</option>
-                                            })
-                                        }
-                                    </select>
+                                    {selectBoxForm({
+                                        title: '담당자',
+                                        id: 'managerAdminId',
+                                        onChange: onChange,
+                                        data: info,
+                                        validate: validate['managerAdminId'],
+                                        list: memberList?.map((item) => ({
+                                            ...item,
+                                            value: item.adminId,
+                                            label: item.name,
+                                        }))
+                                    })}
                                 </div>
                                 {inputForm({
                                     title: '의뢰자료 No.',
                                     id: 'documentNumberFull',
-                                    // onChange: onChange,
-                                    // data: info,
+                                    data: info,
                                     disabled: true,
                                     placeHolder: '자동생성'
                                 })}
                                 {datePickerForm({
                                     title: '마감일자(예상)', id: 'dueDate'
-                                    // , onChange: onChange, data: info
+                                    , onChange: onChange, data: info
                                 })}
                                 {inputForm({
                                     title: 'RFQ No.',
                                     id: 'rfqNo',
-                                    // onChange: onChange,
-                                    // data: info
-
+                                    onChange: onChange,
+                                    data: info
                                 })}
                                 {inputForm({
                                     title: 'PROJECT NAME',
                                     id: 'projectTitle',
-                                    // onChange: onChange,
-                                    // data: info
-
+                                    onChange: onChange,
+                                    data: info
                                 })}
                             </TopBoxCard>
                             <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
@@ -433,34 +445,35 @@ function RqfUpdate({
                                                     openModal('agencyCode');
                                                 }
                                             }>🔍</span>,
-
                                             onChange: onChange,
                                             handleKeyPress: handleKeyPress,
-                                            // data: info
+                                            data: info,
+                                            validate: validate['agencyCode'],
+                                            key: validate['agencyCode']
                                         })}
                                         {inputForm({
                                             title: '회사명',
                                             id: 'agencyName',
-                                            // onChange: onChange,
-                                            // data: info
+                                            onChange: onChange,
+                                            data: info
                                         })}
                                         {inputForm({
                                             title: '담당자',
                                             id: 'agencyManagerName',
-                                            // onChange: onChange,
-                                            // data: info
+                                            onChange: onChange,
+                                            data: info
                                         })}
                                         {inputForm({
                                             title: '연락처',
                                             id: 'agencyTel',
-                                            // onChange: onChange,
-                                            // data: info
+                                            onChange: onChange,
+                                            data: info
                                         })}
                                         {inputForm({
                                             title: '이메일',
                                             id: 'agencyManagerEmail',
-                                            // onChange: onChange,
-                                            // data: info
+                                            onChange: onChange,
+                                            data: info
                                         })}
                                     </BoxCard>
                                 </Panel>
@@ -476,34 +489,33 @@ function RqfUpdate({
                                                     openModal('customerName');
                                                 }
                                             }>🔍</span>,
-
-                                            // onChange: onChange,
+                                            onChange: onChange,
                                             handleKeyPress: handleKeyPress,
-                                            // data: info
+                                            data: info
                                         })}
                                         {inputForm({
                                             title: '담당자명',
                                             id: 'managerName',
-                                            // onChange: onChange,
-                                            // data: info,
+                                            onChange: onChange,
+                                            data: info,
                                         })}
                                         {inputForm({
                                             title: '연락처',
                                             id: 'phoneNumber',
-                                            // onChange: onChange,
-                                            // data: info,
+                                            onChange: onChange,
+                                            data: info,
                                         })}
                                         {inputForm({
                                             title: '팩스',
                                             id: 'faxNumber',
-                                            // onChange: onChange,
-                                            // data: info
+                                            onChange: onChange,
+                                            data: info
                                         })}
                                         {inputForm({
                                             title: '이메일',
                                             id: 'customerManagerEmail',
-                                            // onChange: onChange,
-                                            // data: info
+                                            onChange: onChange,
+                                            data: info
                                         })}
                                     </BoxCard>
                                 </Panel>
@@ -519,22 +531,21 @@ function RqfUpdate({
                                                     openModal('maker');
                                                 }
                                             }>🔍</span>,
-
-                                            // onChange: onChange,
+                                            onChange: onChange,
                                             handleKeyPress: handleKeyPress,
-                                            // data: info
+                                            data: info
                                         })}
                                         {inputForm({
                                             title: 'Item',
                                             id: 'item',
-                                            // onChange: onChange,
-                                            // data: info
+                                            onChange: onChange,
+                                            data: info
                                         })}
                                         {textAreaForm({
                                             title: '지시사항',
                                             id: 'instructions',
-                                            // onChange: onChange,
-                                            // data: info,
+                                            onChange: onChange,
+                                            data: info,
                                             rows: 7
                                         })}
                                     </BoxCard>
@@ -545,16 +556,15 @@ function RqfUpdate({
                                         {inputForm({
                                             title: 'End User',
                                             id: 'endUser',
-                                            // onChange: onChange,
-                                            // data: info
+                                            onChange: onChange,
+                                            data: info
                                         })}
                                         {textAreaForm({
                                             title: '비고란',
                                             rows: 10,
                                             id: 'remarks',
-                                            // onChange: onChange,
-                                            // data: info,
-
+                                            onChange: onChange,
+                                            data: info,
                                         })}
                                     </BoxCard>
                                 </Panel>
@@ -563,16 +573,14 @@ function RqfUpdate({
                                     <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}
                                              disabled={!userInfo['microsoftId']}>
 
-                                        <DriveUploadComp fileList={fileList} setFileList={setFileList}
-                                                         fileRef={fileRef} infoRef={infoRef}/>
+                                        <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
+                                                         infoRef={infoRef}/>
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>
-                                <Panel defaultSize={sizes[5]} minSize={0}>
-                                </Panel>
+                                <Panel defaultSize={sizes[5]} minSize={0}></Panel>
                             </PanelGroup>
-                        </div>
-                        : <></>}
+                        </div>: <></>}
                 </MainCard>
 
                 <Table data={tableData} column={rfqInfo['write']} funcButtons={['print']} ref={tableRef}

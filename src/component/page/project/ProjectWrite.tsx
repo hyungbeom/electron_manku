@@ -1,7 +1,16 @@
 import React, {memo, useEffect, useRef, useState} from "react";
-import {ModalInitList, projectWriteInitial} from "@/utils/initialList";
+import {ModalInitList} from "@/utils/initialList";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
-import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, tooltipInfo, TopBoxCard} from "@/utils/commonForm";
+import {
+    BoxCard,
+    datePickerForm,
+    inputForm,
+    MainCard,
+    selectBoxForm,
+    textAreaForm,
+    tooltipInfo,
+    TopBoxCard
+} from "@/utils/commonForm";
 import {useRouter} from "next/router";
 import {commonFunc, commonManage} from "@/utils/commonManage";
 import _ from "lodash";
@@ -21,15 +30,26 @@ import {saveProject} from "@/utils/api/mainApi";
 import SearchInfoModal from "@/component/SearchAgencyModal";
 import useEventListener from "@/utils/common/function/UseEventListener";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
-import {ArrowRightOutlined, RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
-
+import {RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
 
 const listType = 'projectDetailList'
 
 function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     const notificationAlert = useNotificationAlert();
-    const [memberList, setMemberList] = useState([]);
+    const groupRef = useRef<any>(null)
+    const infoRef = useRef<any>(null)
+    const fileRef = useRef(null);
+    const tableRef = useRef(null);
     const [routerId, setRouterId] = useState(null);
+
+    const getSavedSizes = () => {
+        const savedSizes = localStorage.getItem('project_write');
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 5]; // 기본값 [50, 50, 50]
+    };
+    const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
+
+    const [memberList, setMemberList] = useState([]);
+
     useEffect(() => {
         getMemberList();
     }, []);
@@ -46,67 +66,54 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         })
     }
 
-    const options = memberList?.map((item) => ({
-        ...item,
-        value: item.adminId,
-        label: item.name,
-    }));
-
     const router = useRouter();
-
-    const groupRef = useRef<any>(null)
-    const infoRef = useRef<any>(null)
-
-
-    const fileRef = useRef(null);
-    const tableRef = useRef(null);
-    const copyInit = _.cloneDeep(projectWriteInitial)
+    const [loading, setLoading] = useState(false);
+    const [mini, setMini] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
 
     const userInfo = useAppSelector((state) => state.user);
-
     const adminParams = {
         managerAdminId: userInfo['adminId'],
         createdBy: userInfo['name'],
         managerAdminName: userInfo['name'],
         writtenDate: moment().format('YYYY-MM-DD'),
     }
-
-    const infoInit = {
-        ...copyInit,
-        ...adminParams,
-        writtenDate: moment().format('YYYY-MM-DD')
+    const getProjectInit = () => {
+        const copyInit = _.cloneDeep(projectInfo['defaultInfo']);
+        return {
+            ...copyInit,
+            ...adminParams
+        }
     }
-
-    const [mini, setMini] = useState(true);
-    const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
+    const [info, setInfo] = useState(getProjectInit());
+    const getProjectValidateInit = () => _.cloneDeep(projectInfo['write']['validate']);
+    const [validate, setValidate] = useState(getProjectValidateInit());
 
     const [fileList, setFileList] = useState([]);
-    const [loading, setLoading] = useState(false);
-
-
     const [tableData, setTableData] = useState([]);
-    const [info, setInfo] = useState(infoInit);
-
 
     useEffect(() => {
-
+        setLoading(true);
+        setValidate(getProjectValidateInit());
+        setInfo(getProjectInit());
+        setFileList([]);
+        setTableData([]);
         if (!isEmptyObj(copyPageInfo)) {
             // copyPageInfo 가 없을시
-            setInfo(infoInit)
             setTableData(commonFunc.repeatObject(projectInfo['write']['defaultData'], 1000))
         } else {
             // copyPageInfo 가 있을시(==>보통 수정페이지에서 복제시)
             // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting
-            setInfo({...copyPageInfo, ...adminParams, writtenDate: moment().format('YYYY-MM-DD')});
+            setInfo({
+                ...getProjectInit(),
+                ...copyPageInfo,
+                writtenDate: moment().format('YYYY-MM-DD')
+            });
             setTableData(copyPageInfo[listType]);
             setRouterId(null)
         }
-    }, [copyPageInfo]);
-
-
-    useEffect(() => {
-        commonManage.setInfo(infoRef, info, userInfo['adminId']);
-    }, [info, memberList]);
+        setLoading(false);
+    }, [copyPageInfo?._meta?.updateKey]);
 
     async function handleKeyPress(e) {
         if (e.key === 'Enter') {
@@ -114,99 +121,19 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                 case 'agencyCode' :
                 case 'customerName' :
                 case 'maker' :
-                    await findCodeInfo(e, setInfo, openModal, infoRef)
+                    await findCodeInfo(e, setInfo, openModal)
                     break;
             }
         }
     }
 
-    function openModal(e) {
-        commonManage.openModal(e, setIsModalOpen)
+    function onChange(e) {
+        commonManage.onChange(e, setInfo)
+
+        // 값 입력되면 유효성 초기화
+        const { id, value } = e?.target;
+        commonManage.resetValidate(id, value, setValidate);
     }
-
-    async function saveFunc() {
-        let infoData = commonManage.getInfo(infoRef, infoInit);
-
-        const findMember = memberList.find(v => v.adminId === parseInt(infoData['managerAdminId']));
-        infoData['managerAdminName'] = findMember['name'];
-        if (!infoData['documentNumberFull']) {
-            const dom = infoRef.current.querySelector('#documentNumberFull');
-            dom.style.borderColor = 'red'
-            return message.warn('프로젝트 번호가 누락되었습니다.')
-        }
-
-        const tableList = tableRef.current?.getSourceData();
-
-        const filterTableList = commonManage.filterEmptyObjects(tableList, ['model', 'item', 'maker'])
-        const emptyQuantity = filterTableList.filter(v => !v.quantity)
-        if (emptyQuantity.length) {
-            return message.error('수량을 입력해야 합니다.')
-        }
-        const resultFilterTableList = filterTableList.map(v => {
-            delete v.total;
-            delete v.totalPurchase;
-            return {
-                ...v,
-                unitPrice: isNaN(v.unitPrice) ? '' : v.unitPrice,
-                purchasePrice: isNaN(v.purchasePrice) ? '' : v.purchasePrice
-            }
-
-        })
-
-        if (!resultFilterTableList.length) {
-            return message.warn('하위 데이터 1개 이상이여야 합니다');
-        }
-
-        setLoading(true)
-        const formData: any = new FormData();
-        commonManage.setInfoFormData(infoData, formData, listType, resultFilterTableList)
-        commonManage.getUploadList(fileRef, formData);
-        formData.delete('createdDate')
-        formData.delete('modifiedDate')
-        await saveProject({data: formData, router: router, returnFunc: returnFunc})
-    }
-
-    async function returnFunc(e, data, msg) {
-        const dom = infoRef.current.querySelector('#documentNumberFull');
-        if (e === 1) {
-            getPropertyId('project_update', data?.projectId)
-
-            notificationAlert('success', '💾프로젝트 등록완료',
-                <>
-                    <div>Project No. : {dom.value}</div>
-                    <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
-                </>
-                , function () {
-                    getPropertyId('project_update', data?.projectId)
-                },
-                {cursor: 'pointer'}
-            )
-            setRouterId(data?.projectId)
-            setFileList([])
-            setLoading(false)
-        } else if (e === -20001) {
-            dom.style.borderColor = 'red'
-            message.error(msg)
-        } else {
-            message.error(msg)
-        }
-        setLoading(false)
-    }
-
-
-    function clearAll() {
-        // info 데이터 초기화
-        commonManage.setInfo(infoRef, projectInfo['defaultInfo'], userInfo['adminId']);
-        setTableData(commonFunc.repeatObject(projectInfo['write']['defaultData'], 1000))
-    }
-
-    const getSavedSizes = () => {
-        const savedSizes = localStorage.getItem('project_write');
-        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 0]; // 기본값 [50, 50, 50]
-    };
-
-    const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
-
 
     useEventListener('keydown', (e: any) => {
         if (e.ctrlKey && e.key === "s") {
@@ -219,71 +146,172 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         }
     }, typeof window !== 'undefined' ? document : null)
 
-    function checkId(e){
-        setRouterId(null)
+    /**
+     * @description 등록 페이지 > 저장 버튼
+     * 프로젝트 > 프로젝트 등록
+     */
+    async function saveFunc() {
+        console.log(info, 'info:::')
+
+        if (!commonManage.checkValidate(info, projectInfo['write']['validationList'], setValidate)) return;
+
+        const tableList = tableRef.current?.getSourceData();
+        const filterTableList = commonManage.filterEmptyObjects(tableList, ['model', 'item', 'maker'])
+        if (!filterTableList.length) {
+            return message.warn('하위 데이터가 1개 이상이여야 합니다.');
+        }
+        const emptyQuantity = filterTableList.filter(v => !v.quantity)
+        if (emptyQuantity.length) {
+            return message.error('하위 데이터의 수량을 입력해야 합니다.')
+        }
+
+        // const resultFilterTableList = filterTableList.map(v => {
+        //     delete v.total;
+        //     delete v.totalPurchase;
+        //     return {
+        //         ...v,
+        //         unitPrice: isNaN(v.unitPrice) ? '' : v.unitPrice,
+        //         purchasePrice: isNaN(v.purchasePrice) ? '' : v.purchasePrice
+        //     }
+        //
+        // })
+        //
+        // if (!resultFilterTableList.length) {
+        //     return message.warn('하위 데이터 1개 이상이여야 합니다');
+        // }
+
+        setLoading(true)
+
+        const findMember = memberList.find(v => v.adminId === parseInt(info['managerAdminId']));
+        info['managerAdminName'] = findMember['name'];
+
+        const formData: any = new FormData();
+        // commonManage.setInfoFormData(infoData, formData, listType, resultFilterTableList)
+        commonManage.setInfoFormData(info, formData, listType, filterTableList)
+        commonManage.getUploadList(fileRef, formData);
+
+        formData.delete('createdDate')
+        formData.delete('modifiedDate')
+
+        await saveProject({data: formData, router: router, returnFunc: returnFunc})
+        setLoading(false);
     }
 
-    function moveUpdate() {
-        if (routerId) {
-            getPropertyId('project_update', routerId)
+    async function returnFunc(e, data, msg) {
+        const dom = infoRef.current.querySelector('#documentNumberFull');
+        if (e === 1) {
+            setRouterId(data?.projectId)
+            window.postMessage({message: 'reload', target: 'project_read'}, window.location.origin);
+            notificationAlert('success', '💾프로젝트 등록완료',
+                <>
+                    <div>Project No. : {dom.value}</div>
+                    <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                </>
+                , function () {
+                    getPropertyId('project_update', data?.projectId)
+                },
+                {cursor: 'pointer'}
+            )
+            clearAll();
+            getPropertyId('project_update', data?.projectId)
+        } else if (e === -20001) {
+            setValidate(v => {
+                return {...v, documentNumberFull: false}
+            })
+            message.error(msg);
+        } else {
+            notificationAlert('error', '⚠️작업실패',
+                <>
+                    <div>Inquiry No. : {info.documentNumberFull}</div>
+                    <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                </>
+                , function () {
+                    alert('작업 로그 페이지 참고')
+                },
+                {cursor: 'pointer'}
+            )
         }
     }
 
-    return <Spin spinning={loading}>
+    /**
+     * @description 등록 페이지 > 초기화 버튼
+     * 프로젝트 > 프로젝트 등록
+     */
+    function clearAll() {
+        setLoading(true);
+        setValidate(getProjectValidateInit());
+        setInfo(getProjectInit());
+        setFileList([]);
 
-        <PanelSizeUtil groupRef={groupRef} storage={'project_write'}/>
+        function calcData(sourceData) {
+            const keyOrder = Object.keys(projectInfo['write']['defaultData']);
+            return sourceData
+                .map((item) => keyOrder.reduce((acc, key) => ({...acc, [key]: item[key] ?? ""}), {}))
+                .map(projectInfo['write']['excelExpert'])
+                .concat(projectInfo['write']['totalList']); // `push` 대신 `concat` 사용
+        }
+        // tableRef.current?.hotInstance?.loadData(calcData(commonFunc.repeatObject(projectInfo['write']['defaultData'], 1000)));
+        setTableData(calcData(commonFunc.repeatObject(projectInfo['write']['defaultData'], 1000)))
+        setLoading(false);
+    }
+
+    /**
+     * @description 등록 페이지 > 돋보기 버튼
+     * 프로젝트 > 프로젝트 등록
+     * 고객사 조회 Modal
+     * @param e
+     */
+    function openModal(e) {
+        commonManage.openModal(e, setIsModalOpen)
+    }
+
+    return <Spin spinning={loading}>
         <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo} open={isModalOpen}
                          setIsModalOpen={setIsModalOpen}/>
-
+        <PanelSizeUtil groupRef={groupRef} storage={'project_write'}/>
         <div ref={infoRef} style={{
             display: 'grid',
             gridTemplateRows: `${mini ? '440px' : '65px'} calc(100vh - ${mini ? 535 : 195}px)`,
             rowGap: 10
         }}>
             <MainCard title={'프로젝트 등록'} list={[
-                {
-                    name: <div style={{opacity: routerId ? 1 : 0.5}}><ArrowRightOutlined style={{paddingRight: 8}}/>수정페이지
-                        이동</div>, func: moveUpdate, type: ''
-                },
+                // {
+                //     name: <div style={{opacity: routerId ? 1 : 0.5}}><ArrowRightOutlined style={{paddingRight: 8}}/>수정페이지
+                //         이동</div>, func: moveUpdate, type: ''
+                // },
                 {name: <div><SaveOutlined style={{paddingRight: 8}}/>저장</div>, func: saveFunc, type: 'primary'},
                 {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'}
             ]} mini={mini} setMini={setMini}>
 
                 {mini ? <div>
-                        <TopBoxCard title={''} grid={'100px 80px 80px'}>
+                        <TopBoxCard title={''} grid={'110px 80px 80px'}>
                             {datePickerForm({
                                 title: '작성일자',
                                 id: 'writtenDate',
                                 disabled: true,
+                                data: info
                             })}
                             {inputForm({
                                 title: '작성자',
                                 id: 'createdBy',
                                 disabled: true,
+                                data: info
                             })}
                             <div>
-                                <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>담당자</div>
-                                <select name="languages" id="managerAdminId"
-                                        style={{
-                                            outline: 'none',
-                                            border: '1px solid lightGray',
-                                            height: 23,
-                                            width: '100%',
-                                            fontSize: 12,
-                                            paddingBottom: 0.5
-                                        }}>
-                                    {
-                                        options?.map(v => {
-                                            return <option value={v.value}>{v.label}</option>
-                                        })
-                                    }
-                                </select>
-
+                                {selectBoxForm({
+                                    title: '담당자',
+                                    id: 'managerAdminId',
+                                    onChange: onChange,
+                                    data: info,
+                                    validate: validate['managerAdminId'],
+                                    list: memberList?.map((item) => ({
+                                        ...item,
+                                        value: item.adminId,
+                                        label: item.name,
+                                    }))
+                                })}
                             </div>
-
-
                         </TopBoxCard>
-
 
                         <PanelGroup ref={groupRef} className={'ground'} direction="horizontal"
                                     style={{gap: 0.5, paddingTop: 3}}>
@@ -292,21 +320,20 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                     {inputForm({
                                         title: 'Project No.',
                                         id: 'documentNumberFull',
-                                        onChange : checkId
+                                        onChange : onChange,
+                                        data: info,
+                                        validate: validate['documentNumberFull'],
+                                        key: validate['documentNumberFull']
                                     })}
                                     {inputForm({
                                         title: '프로젝트 제목',
                                         id: 'projectTitle',
+                                        onChange : onChange,
+                                        data: info,
+                                        validate: validate['projectTitle'],
+                                        key: validate['projectTitle']
                                     })}
-                                    {datePickerForm({title: '마감일자', id: 'dueDate'})}
-                                    {/*<label htmlFor="fruits">Choose a fruit or type your own:</label>*/}
-                                    {/*<input list="fruit-options" id="fruits" name="fruits"/>*/}
-                                    {/*<datalist id="fruit-options">*/}
-                                    {/*    <option value="Apple"/>*/}
-                                    {/*    <option value="Banana"/>*/}
-                                    {/*    <option value="Cherry"/>*/}
-                                    {/*    <option value="Grapes"/>*/}
-                                    {/*</datalist>*/}
+                                    {datePickerForm({title: '마감일자', id: 'dueDate', onChange: onChange, data: info})}
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
@@ -315,25 +342,33 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                     {inputForm({
                                         title: '고객사명',
                                         id: 'customerName',
-
                                         suffix: <span style={{cursor: 'pointer'}} onClick={
                                             (e) => {
                                                 e.stopPropagation();
                                                 openModal('customerName');
                                             }
-                                        }>🔍</span>, handleKeyPress: handleKeyPress
+                                        }>🔍</span>,
+                                        handleKeyPress: handleKeyPress,
+                                        onChange : onChange,
+                                        data: info
                                     })}
                                     {inputForm({
                                         title: '담당자명',
                                         id: 'customerManagerName',
+                                        onChange : onChange,
+                                        data: info
                                     })}
                                     {inputForm({
                                         title: '전화번호',
                                         id: 'customerManagerPhone',
+                                        onChange : onChange,
+                                        data: info
                                     })}
                                     {inputForm({
                                         title: '이메일',
                                         id: 'customerManagerEmail',
+                                        onChange : onChange,
+                                        data: info
                                     })}
                                 </BoxCard>
                             </Panel>
@@ -344,16 +379,22 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                         title: '비고란',
                                         rows: 2,
                                         id: 'remarks',
+                                        onChange : onChange,
+                                        data: info
                                     })}
                                     {textAreaForm({
                                         title: '지시사항',
                                         rows: 2,
                                         id: 'instructions',
+                                        onChange : onChange,
+                                        data: info
                                     })}
                                     {textAreaForm({
                                         title: '특이사항',
                                         rows: 2,
                                         id: 'specialNotes',
+                                        onChange : onChange,
+                                        data: info
                                     })}
                                 </BoxCard>
                             </Panel>
@@ -370,8 +411,7 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                             <PanelResizeHandle/>
                             <Panel defaultSize={sizes[4]} minSize={0}></Panel>
                         </PanelGroup>
-                    </div>
-                    : <></>}
+                    </div> : <></>}
             </MainCard>
 
             <Table data={tableData} column={projectInfo['write']} funcButtons={['print']} ref={tableRef}
@@ -379,7 +419,6 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         </div>
     </Spin>
 }
-
 
 export default memo(ProjectWrite, (prevProps, nextProps) => {
     return _.isEqual(prevProps, nextProps);

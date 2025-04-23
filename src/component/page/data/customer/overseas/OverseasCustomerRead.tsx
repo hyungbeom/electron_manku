@@ -139,7 +139,7 @@ function OverseasCustomerRead({getPropertyId, getCopyPage}: any) {
     }
 
     return <Spin spinning={loading} tip={'해외 고객사 조회중...'}>
-        <ReceiveComponent searchInfo={searchInfo}/>
+        <ReceiveComponent componentName={'overseas_customer_read'} searchInfo={searchInfo}/>
         <div style={{
             display: 'grid',
             gridTemplateRows: `${mini ? '120px' : '65px'} calc(100vh - ${mini ? 250 : 195}px)`,

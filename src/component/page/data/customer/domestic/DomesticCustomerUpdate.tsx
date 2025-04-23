@@ -6,7 +6,7 @@ import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm} from "@/util
 import {commonFunc, commonManage} from "@/utils/commonManage";
 import _ from "lodash";
 import Table from "@/component/util/Table";
-import {DCInfo, DCWInfo} from "@/utils/column/ProjectInfo";
+import {DCInfo} from "@/utils/column/ProjectInfo";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import Spin from "antd/lib/spin";
@@ -76,6 +76,7 @@ function DomesticCustomerUpdate({updateKey, getCopyPage, layoutRef}:any) {
         const customerName = infoRef.current.querySelector('#customerName')?.value || '';
         await getData.post('customer/updateCustomer', infoData).then(v => {
             if (v?.data?.code === 1) {
+                window.postMessage({message: 'reload', target: 'domestic_customer_read'}, window.location.origin);
                 notificationAlert('success', '💾 국내고객사 수정완료',
                     <>
                         <div>코드(약칭) : {customerCode}</div>
@@ -100,7 +101,8 @@ function DomesticCustomerUpdate({updateKey, getCopyPage, layoutRef}:any) {
         const customerCode = infoRef.current.querySelector('#customerCode')?.value || '';
         const customerName = infoRef.current.querySelector('#customerName')?.value || '';
         getData.post('customer/deleteCustomer',{customerId : updateKey['domestic_customer_update']}).then(v=>{
-            if(v?.data?.code === 1){
+            if(v?.data?.code === 1) {
+                window.postMessage({message: 'reload', target: 'domestic_customer_read'}, window.location.origin);
                 notificationAlert('success', '🗑️ 국내고객사 삭제완료',
                     <>
                         <div>코드(약칭) : {customerCode}</div>
@@ -109,9 +111,8 @@ function DomesticCustomerUpdate({updateKey, getCopyPage, layoutRef}:any) {
                     </>
                     ,null, null, 2
                 )
-                const {model} = layoutRef.current.props;
-                window.postMessage('delete', window.location.origin);
                 getCopyPage('domestic_customer_read', {})
+                const {model} = layoutRef.current.props;
                 const targetNode = model.getRoot().getChildren()[0]?.getChildren()
                     .find((node: any) => node.getType() === "tab" && node.getComponent() === 'domestic_customer_update');
 

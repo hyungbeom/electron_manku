@@ -269,6 +269,7 @@ export default function SearchInfoModal({
                                          // })
                                          setInfo(v => {
                                              return {
+                                                 ...v,
                                                  maker: e.data.makerName,
                                                  item: e.data.item,
                                                  instructions: e.data.instructions,

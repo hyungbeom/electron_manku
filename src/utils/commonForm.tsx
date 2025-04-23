@@ -171,7 +171,7 @@ export function MainCard({children, title, list, mini = null, setMini = Function
                                                  title="삭제하시겠습니까?"
                                                  onConfirm={() => confirm(v.func)}
                                                  icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
-                                                 <Button type={v.type} style={{fontSize: 11}} size={'small'}
+                                                 <Button type={'primary'} danger style={{fontSize: 11}} size={'small'}
                                                      // onClick={v.func}
                                                  >{v?.prefix}{v.name}</Button>
                                              </Popconfirm>
@@ -291,10 +291,6 @@ export const inputForm = ({
         }
     }
 
-    if (id === 'documentNumberFull') {
-        console.log(validate)
-    }
-
     return <div style={{fontSize: fontSize, paddingBottom: 10}}>
         <div style={{paddingBottom: fontSize / 2, fontWeight: 700}}>{title}</div>
         {/*@ts-ignored*/}
@@ -389,6 +385,7 @@ export const inputNumberForm = ({
                                     placeholder = '',
                                     onChange,
                                     data,
+                                    validate = true,
                                     formatter = null,
                                     parser = null,
                                     step = 1,
@@ -408,7 +405,7 @@ export const inputNumberForm = ({
         <div style={{paddingBottom: 4, fontWeight: 700}}>{title}</div>
         <div style={{display: 'flex'}}>
             <input type={'number'} id={id} disabled={disabled}
-                   style={{width: '100%', marginTop: 3}}
+                   style={{width: '100%', marginTop: 3, border: `1px solid ${validate ? 'lightGray' : 'red'}`}}
                    step={step}
                    value={data ? data[id] : null}
                    placeholder={placeholder}

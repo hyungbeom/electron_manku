@@ -100,6 +100,7 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
 
         await saveRemittance({data: info}).then(v => {
             if (v?.data?.code === 1) {
+                window.postMessage({message: 'reload', target: 'domestic_remittance_read'}, window.location.origin);
                 notificationAlert('success', '💾 국내 송금 등록완료',
                     <>
                         <div>Inquiry No. : {info.connectInquiryNo}</div>

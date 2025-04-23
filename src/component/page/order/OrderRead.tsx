@@ -28,15 +28,21 @@ import {useNotificationAlert} from "@/component/util/NoticeProvider";
 function OrderRead({getPropertyId, getCopyPage}: any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
-
     const gridRef = useRef(null);
-    const copyInit = _.cloneDeep(orderReadInitial)
 
-    const [info, setInfo] = useState(copyInit);
-    const [mini, setMini] = useState(true);
-    const [totalRow, setTotalRow] = useState(0);
+    const getSavedSizes = () => {
+        const savedSizes = localStorage.getItem('order_read');
+        return savedSizes ? JSON.parse(savedSizes) : [25, 25, 25, 0]; // 기본값 [50, 50, 50]
+    };
+    const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
+
     const [loading, setLoading] = useState(false);
+    const [mini, setMini] = useState(true);
 
+    const copyInit = _.cloneDeep(orderReadInitial)
+    const [info, setInfo] = useState(copyInit);
+
+    const [totalRow, setTotalRow] = useState(0);
 
     const onGridReady = async (params) => {
         setLoading(true)
@@ -48,17 +54,9 @@ function OrderRead({getPropertyId, getCopyPage}: any) {
         })
     };
 
-    const getSavedSizes = () => {
-        const savedSizes = localStorage.getItem('order_read');
-        return savedSizes ? JSON.parse(savedSizes) : [25, 25, 25, 0]; // 기본값 [50, 50, 50]
-    };
-
-
-    const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
-
     function handleKeyPress(e) {
         if (e.key === 'Enter') {
-            searchInfo(true)
+            searchInfo(true);
         }
     }
 
@@ -66,7 +64,11 @@ function OrderRead({getPropertyId, getCopyPage}: any) {
         commonManage.onChange(e, setInfo)
     }
 
-
+    /**
+     * @description 조회 페이지 > 조회 버튼
+     * 발주서 > 발주서 조회
+     * @param e
+     */
     async function searchInfo(e) {
         const copyData: any = {...info}
         if (e) {
@@ -77,16 +79,17 @@ function OrderRead({getPropertyId, getCopyPage}: any) {
                 setTotalRow(v.pageInfo.totalRow)
                 setLoading(false)
             })
+            .finally(() => {
+                setLoading(false);
+            });
         }
-        setLoading(false)
     }
 
 
     async function deleteList() {
         if (gridRef.current.getSelectedRows().length < 1) {
-            return message.error('삭제할 데이터를 선택해주세요.')
+            return message.error('삭제할 발주서를 선택해주세요.')
         }
-
 
         const deleteList = gridManage.getFieldDeleteList(gridRef, {
             orderId: 'orderId',
@@ -97,23 +100,38 @@ function OrderRead({getPropertyId, getCopyPage}: any) {
         await deleteOrder({data: {deleteList: deleteList}}).then(v => {
             if (v.code === 1) {
                 searchInfo(true);
-                notificationAlert('success', '🗑️발주서 삭제완료',
+                notificationAlert('success', '🗑️ 발주서 삭제완료',
                     <>
                         <div>Inquiry No.
-                            - {selectedRows[0]?.documentNumberFull} {selectedRows.length > 1 ? ('외' + " " + (selectedRows.length - 1) + '개') : ''} 이(가)
-                            삭제되었습니다
+                            : {selectedRows[0]?.documentNumberFull} {selectedRows.length > 1 ? ('외' + " " + (selectedRows.length - 1) + '개') : ''} 의 발주서이(가)
+                            삭제되었습니다.
                         </div>
-                        {/*<div>프로젝트 제목 - {selectedRows[0].projectTitle} `${selectedRows.length > 1 ? ('외' + (selectedRows.length - 1)) + '개' : ''}`가 삭제되었습니다 </div>*/}
+                        {/*<div>프로젝트 제목 - {selectedRows[0].projectTitle} `${selectedRows.length > 1 ? ('외' + (selectedRows.length - 1)) + '개' : ''}`가 삭제되었습니다. </div>*/}
                         <div>삭제일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
                     , function () {
                     },
                 )
             } else {
-                message.error(v.message)
+                console.warn(v?.message);
+                notificationAlert('error', '⚠️ 작업실패',
+                    <>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                        alert('작업 로그 페이지 참고')
+                    },
+                    {cursor: 'pointer'}
+                )
             }
         })
-
+        .catch((err) => {
+            notificationAlert('error', '❌ 네트워크 오류 발생', <div>{err.message}</div>);
+            console.error('에러:', err);
+        })
+        .finally(() => {
+            setLoading(false);
+        });
     }
 
     function clearAll() {
@@ -127,7 +145,7 @@ function OrderRead({getPropertyId, getCopyPage}: any) {
 
 
     return <Spin spinning={loading} tip={'발주서 조회중...'}>
-        <ReceiveComponent searchInfo={searchInfo}/>
+        <ReceiveComponent componentName={'order_read'} searchInfo={searchInfo}/>
         <PanelSizeUtil groupRef={groupRef} storage={'order_read'}/>
         <>
             <div style={{
