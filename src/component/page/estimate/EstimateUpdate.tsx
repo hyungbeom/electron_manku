@@ -307,9 +307,8 @@ function EstimateUpdate({
                 )
             })
         } else {
-            notificationAlert('error', '⚠️작업실패',
+            notificationAlert('error', '⚠️ 작업실패',
                 <>
-                    <div>Inquiry No. : {info.documentNumberFull}</div>
                     <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                 </>
                 , function () {
@@ -335,8 +334,7 @@ function EstimateUpdate({
                     <>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
-                    , null,
-                    {cursor: 'pointer'}
+                    , null, null, 2
                 )
                 const {model} = layoutRef.current.props;
                 getCopyPage('estimate_read', {})
@@ -348,7 +346,6 @@ function EstimateUpdate({
             } else {
                 notificationAlert('error', '⚠️작업실패',
                     <>
-                        <div>Project No. : {info.documentNumberFull}</div>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
                     , function () {

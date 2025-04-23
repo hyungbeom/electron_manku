@@ -254,9 +254,8 @@ function RqfUpdate({
                 )
             })
         } else {
-            notificationAlert('error', '⚠️작업실패',
+            notificationAlert('error', '⚠️ 작업실패',
                 <>
-                    <div>Inquiry No. : {info.documentNumberFull}</div>
                     <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                 </>
                 , function () {
@@ -283,8 +282,7 @@ function RqfUpdate({
                     <>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
-                    , null,
-                    {cursor: 'pointer'}
+                    , null, null, 2
                 )
                 getCopyPage('rfq_read', {})
                 const {model} = layoutRef.current.props;
@@ -294,9 +292,8 @@ function RqfUpdate({
                     model.doAction(Actions.deleteTab(targetNode.getId())); // ✅ 기존 로직 유지
                 }
             } else {
-                notificationAlert('error', '⚠️작업실패',
+                notificationAlert('error', '⚠️ 작업실패',
                     <>
-                        <div>Project No. : {info.documentNumberFull}</div>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
                     , function () {

@@ -55,6 +55,7 @@ function OverseasCustomerWrite({copyPageInfo, getPropertyId}: any) {
         setLoading(true);
         setValidate(getOCValidateInit());
         setInfo(getOCInit());
+        setTableData([]);
         if (!isEmptyObj(copyPageInfo)) {
             // copyPageInfo 가 없을시
             setTableData(commonFunc.repeatObject(OCInfo['write']['defaultData'], 1000))
@@ -71,7 +72,7 @@ function OverseasCustomerWrite({copyPageInfo, getPropertyId}: any) {
     }, [copyPageInfo?._meta?.updateKey]);
 
     function onChange(e) {
-        commonManage.onChange(e, setInfo)
+        commonManage.onChange(e, setInfo);
 
         const {id, value} = e?.target;
         commonManage.resetValidate(id, value, setValidate);

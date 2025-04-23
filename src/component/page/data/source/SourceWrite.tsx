@@ -26,8 +26,8 @@ import {sourceInfo} from "@/utils/column/ProjectInfo";
 
 function SourceWrite({copyPageInfo, getPropertyId}: any) {
     const notificationAlert = useNotificationAlert();
+    const groupRef = useRef<any>(null);
     const gridRef = useRef(null);
-    const groupRef = useRef<any>(null)
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('source_write');
@@ -97,7 +97,7 @@ function SourceWrite({copyPageInfo, getPropertyId}: any) {
     }
 
     function onChange(e) {
-        commonManage.onChange(e, setInfo)
+        commonManage.onChange(e, setInfo);
 
         const {id, value} = e?.target;
         commonManage.resetValidate(id, value, setValidate);
@@ -133,8 +133,6 @@ function SourceWrite({copyPageInfo, getPropertyId}: any) {
                 console.warn(v?.data?.message);
                 notificationAlert('error', '⚠️ 작업실패',
                     <>
-                        <div>Maker : {info['maker']}</div>
-                        <div>Model : {info['model']}</div>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
                     , function () {
@@ -160,7 +158,7 @@ function SourceWrite({copyPageInfo, getPropertyId}: any) {
     function clearAll() {
         setValidate(getSourceValidateInit());
         setInfo(getSourceInit());
-        setTotalRow(0);
+        fetchData();
     }
 
     return <Spin spinning={loading}>

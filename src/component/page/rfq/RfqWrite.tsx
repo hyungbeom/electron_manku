@@ -202,9 +202,8 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                 clearAll();
                 getPropertyId('rfq_update', estimateRequestId);
             } else {
-                notificationAlert('error', '⚠️작업실패',
+                notificationAlert('error', '⚠️ 작업실패',
                     <>
-                        {/*<div>의뢰자료 No. : {}</div>*/}
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
                     , function () {

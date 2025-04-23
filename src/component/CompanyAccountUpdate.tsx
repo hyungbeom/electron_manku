@@ -14,7 +14,7 @@ import {companyAccountInfo} from "@/utils/column/ProjectInfo";
 
 function CompanyAccountUpdate({updateKey, getCopyPage, layoutRef}: any) {
     const notificationAlert = useNotificationAlert();
-    const groupRef = useRef<any>(null)
+    const groupRef = useRef<any>(null);
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('company_account_update');
@@ -43,9 +43,14 @@ function CompanyAccountUpdate({updateKey, getCopyPage, layoutRef}: any) {
         setInfo(getCompanyAccountInit());
         getDataInfo().then(v => {
             const {companyAccountDetail} = v;
-            setInfo(companyAccountDetail);
+            setInfo({
+                ...getCompanyAccountInit(),
+                ...companyAccountDetail
+            });
         })
-        setLoading(false);
+        .finally(() => {
+            setLoading(false);
+        });
     }, [updateKey['company_account_update']])
 
     function onChange(e) {
@@ -78,7 +83,6 @@ function CompanyAccountUpdate({updateKey, getCopyPage, layoutRef}: any) {
                 console.warn(v?.data?.message);
                 notificationAlert('error', '⚠️ 작업실패',
                     <>
-                        <div>회사 이름 : {info['companyName']}</div>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
                     , function () {
@@ -124,7 +128,6 @@ function CompanyAccountUpdate({updateKey, getCopyPage, layoutRef}: any) {
                 console.warn(v?.data?.message);
                 notificationAlert('error', '⚠️ 작업실패',
                     <>
-                        <div>회사 이름 : {info['companyName']}</div>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
                     , function () {

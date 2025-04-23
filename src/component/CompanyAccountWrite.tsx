@@ -44,7 +44,7 @@ function CompanyAccountWrite({getPropertyId, copyPageInfo}: any) {
     }, [copyPageInfo?._meta?.updateKey]);
 
     function onChange(e) {
-        commonManage.onChange(e, setInfo)
+        commonManage.onChange(e, setInfo);
 
         const {id, value} = e?.target;
         commonManage.resetValidate(id, value, setValidate);
@@ -78,7 +78,6 @@ function CompanyAccountWrite({getPropertyId, copyPageInfo}: any) {
                 console.warn(v?.data?.message);
                 notificationAlert('error', '⚠️ 작업실패',
                     <>
-                        <div>회사 이름: {info['companyName']}</div>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
                     , function () {

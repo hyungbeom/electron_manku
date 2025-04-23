@@ -63,7 +63,7 @@ function HcodeRead({getPropertyId}: any) {
     }
 
     function onChange(e) {
-        commonManage.onChange(e, setInfo)
+        commonManage.onChange(e, setInfo);
 
         // 값 입력되면 유효성 초기화
         const {id, value} = e?.target;
@@ -83,8 +83,8 @@ function HcodeRead({getPropertyId}: any) {
         if (e) {
             setLoading(true);
             await searchHSCode({data: searchInit}).then(v => {
-                gridManage.resetData(gridRef, v.data ?? []);
-                setTotalRow(v.pageInfo.totalRow ?? 0)
+                gridManage.resetData(gridRef, v?.data ?? []);
+                setTotalRow(v?.pageInfo?.totalRow ?? 0)
             })
             .finally(() => {
                 setLoading(false);
@@ -127,7 +127,7 @@ function HcodeRead({getPropertyId}: any) {
                 )
             } else {
                 console.warn(v?.data?.message);
-                notificationAlert('error', '⚠️작업실패',
+                notificationAlert('error', '⚠️ 작업실패',
                     <>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
@@ -170,7 +170,7 @@ function HcodeRead({getPropertyId}: any) {
                 )
             } else {
                 console.log(v?.data?.message);
-                notificationAlert('error', '⚠️작업실패',
+                notificationAlert('error', '⚠️ 작업실패',
                     <>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
@@ -196,8 +196,8 @@ function HcodeRead({getPropertyId}: any) {
      * 테이블 내용 더블 클릭시 isModify = true 가 되면서 수정모드에서 노출
      */
     function cancel() {
-        setInfo(getHsCodeInit());
         setValidate(getHsCodeValidateInit());
+        setInfo(getHsCodeInit());
         setIsModifty(false);
     }
 
@@ -230,7 +230,7 @@ function HcodeRead({getPropertyId}: any) {
                 )
             } else {
                 console.log(v?.data?.message);
-                notificationAlert('error', '⚠️작업실패',
+                notificationAlert('error', '⚠️ 작업실패',
                     <>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>

@@ -61,7 +61,7 @@ function SourceRead({getPropertyId, getCopyPage}: any) {
     }
 
     function onChange(e) {
-        commonManage.onChange(e, setInfo)
+        commonManage.onChange(e, setInfo);
     }
 
     /**
@@ -128,6 +128,7 @@ function SourceRead({getPropertyId, getCopyPage}: any) {
                     , null, null, 2
                 )
             } else {
+                console.warn(v?.data?.message);
                 notificationAlert('error', '⚠️ 작업실패',
                     <>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
@@ -137,7 +138,6 @@ function SourceRead({getPropertyId, getCopyPage}: any) {
                     },
                     {cursor: 'pointer'}
                 )
-                console.warn(v?.data?.message);
             }
         })
         .catch((err) => {

@@ -1,6 +1,5 @@
 import React, {memo, useEffect, useRef, useState} from "react";
 import message from "antd/lib/message";
-import {codeDomesticAgencyWriteInitial,} from "@/utils/initialList";
 import {
     BoxCard,
     datePickerForm,
@@ -16,7 +15,7 @@ import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import Table from "@/component/util/Table";
-import {DAInfo, DCInfo} from "@/utils/column/ProjectInfo";
+import {DAInfo} from "@/utils/column/ProjectInfo";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 import moment from "moment/moment";
@@ -64,6 +63,7 @@ function DomesticAgencyWrite({copyPageInfo, getPropertyId}: any) {
         setLoading(true);
         setValidate(getDAValidateInit());
         setInfo(getDAInit());
+        setTableData([]);
         if (!isEmptyObj(copyPageInfo)) {
             // copyPageInfo 가 없을시
             setTableData(commonFunc.repeatObject(DAInfo['write']['defaultData'], 1000))
@@ -74,13 +74,13 @@ function DomesticAgencyWrite({copyPageInfo, getPropertyId}: any) {
                 ...getDAInit(),
                 ..._.cloneDeep(copyPageInfo)
             });
-            setTableData(copyPageInfo[listType])
+            setTableData(copyPageInfo[listType]);
         }
         setLoading(false);
     }, [copyPageInfo?._meta?.updateKey]);
 
     function onChange(e) {
-        commonManage.onChange(e, setInfo)
+        commonManage.onChange(e, setInfo);
 
         const {id, value} = e?.target;
         commonManage.resetValidate(id, value, setValidate);
@@ -120,7 +120,7 @@ function DomesticAgencyWrite({copyPageInfo, getPropertyId}: any) {
                 clearAll();
                 getPropertyId('domestic_agency_update', v.data?.entity?.agencyId);
             } else if (v?.data?.code === -90009) {
-                message.error('코드(약칭)이 중복되었습니다.');
+                message.error('코드(약칭)이(가) 중복되었습니다.');
             } else {
                 console.warn(v?.data?.message);
                 notificationAlert('error', '⚠️ 작업실패',

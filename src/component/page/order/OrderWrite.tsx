@@ -288,9 +288,8 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
             message.warn(msg);
         } else {
             console.warn(msg);
-            notificationAlert('error', '⚠️작업실패',
+            notificationAlert('error', '⚠️ 작업실패',
                 <>
-                    <div>Inquiry No. : {info.documentNumberFull}</div>
                     <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                 </>
                 , function () {

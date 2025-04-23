@@ -56,7 +56,7 @@ function DomesticCustomerRead({getPropertyId, getCopyPage}: any) {
     }
 
     function onChange(e) {
-        commonManage.onChange(e, setInfo)
+        commonManage.onChange(e, setInfo);
     }
 
     /**

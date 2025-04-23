@@ -14,7 +14,7 @@ import {makerInfo} from "@/utils/column/ProjectInfo";
 
 function MakerWrite({getPropertyId, copyPageInfo}: any) {
     const notificationAlert = useNotificationAlert();
-    const groupRef = useRef<any>(null)
+    const groupRef = useRef<any>(null);
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('maker_write');
@@ -44,7 +44,7 @@ function MakerWrite({getPropertyId, copyPageInfo}: any) {
     }, [copyPageInfo?._meta?.updateKey]);
 
     function onChange(e) {
-        commonManage.onChange(e, setInfo)
+        commonManage.onChange(e, setInfo);
 
         const {id, value} = e?.target;
         commonManage.resetValidate(id, value, setValidate);

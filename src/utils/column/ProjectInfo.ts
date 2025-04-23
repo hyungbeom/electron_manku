@@ -853,27 +853,35 @@ export const OAInfo = {
             return v
         },
         totalList: {},
-
-        type: 'write'
+        type: 'write',
+        validate: {
+            agencyCode: true,
+            agencyName: true
+        },
+        validationList: [
+            {key: 'agencyCode', message: '코드(약칭)을 입력해주세요.'},
+            {key: 'agencyName', message: '상호를 입력해주세요.'},
+        ]
     },
     defaultInfo: {
-        "agencyCode": "",                      // 코드(약칭)
-        "agencyName": "",       // 상호
-        "dealerType": "",               // 딜러/제조
-        "grade": "",                             // 등급
-        "margin": 0,                           // 마진
-        "homepage": "",   // 홈페이지
-        "item": "",                        // Item
-        "tradeStartDate": "",               // 거래 시작일
-        "currencyUnit": "",                        // 화폐단위
-        "manager": "",                     // 담당자
-        "bankAccountNumber": "",            // Account No
-        "country": "",                             // 국가
-        "ftaNumber": "",                      // FTA No
-        "intermediaryBank": "",        // 송금중개은행
-        "address": "",  // 주소
-        "ibanCode": "",           // IBan Code
-        "swiftCode": "",                      // Swift Code
+        "agencyCode": "",                 // 코드(약칭)
+        "agencyName": "",                 // 상호
+        "dealerType": "딜러",              // 딜러/제조
+        "grade": "A",                     // 등급
+        "margin": 0,                      // 마진
+        "homepage": "",                   // 홈페이지
+        "item": "",                       // Item
+        "tradeStartDate": "",             // 거래 시작일
+        "currencyUnit": "",               // 화폐단위
+        "manager": "",                    // 담당자
+        "bankAccountNumber": "",          // Account No
+        "country": "",                    // 국가
+        "ftaNumber": "",                  // FTA No
+        "intermediaryBank": "",           // 송금중개은행
+        "address": "",                    // 주소
+        "ibanCode": "",                   // IBan Code
+        "swiftCode": "",                  // Swift Code
+        "overseasAgencyManagerList": []   // 담당자 리스트
     },
 };
 

@@ -106,6 +106,36 @@ export const codeDomesticAgencyWriteInitial = {
     searchType : 1
 }
 
+// 매입처 > 해외매입처 조회 > 검색 초기값 정보
+export const OASearchInitial = {
+    "searchType": 1,
+    "searchText": "",
+    "page": 1,
+    "limit": -1
+}
+
+// 매입처 > 해외매입처 등록/수정 > 입력 초기값 정보
+export const codeOverseasAgencyWriteInitial = {
+    "agencyCode": "",                      // 코드(약칭)
+    "agencyName": "",       // 상호
+    "dealerType": "딜러",               // 딜러/제조
+    "grade": "A",                             // 등급
+    "margin": 0,                           // 마진
+    "homepage": "",   // 홈페이지
+    "item": "",                        // Item
+    "tradeStartDate": "",               // 거래 시작일
+    "currencyUnit": "",                        // 화폐단위
+    "manager": "",                     // 담당자
+    "bankAccountNumber": "",            // Account No
+    "country": "",                             // 국가
+    "ftaNumber": "",                      // FTA No
+    "intermediaryBank": "",        // 송금중개은행
+    "address": "",  // 주소
+    "ibanCode": "",           // IBan Code
+    "swiftCode": "",                      // Swift Code
+    "overseasAgencyManagerList": []
+}
+
 // 고객사 > 국내고객사 조회 > 검색 초기값 정보
 export const DCSearchInitial = {
     "searchType": 1,
@@ -599,28 +629,6 @@ export const codeOverseasAgencyInitial = {
     "modifiedBy": "",
     "modifiedDate": "",
     "key": 1,
-    "overseasAgencyManagerList": []
-}
-
-// 해외 매입처 등록 코드
-export const codeOverseasAgencyWriteInitial = {
-    "agencyCode": "",                      // 코드(약칭)
-    "agencyName": "",       // 상호
-    "dealerType": "딜러",               // 딜러/제조
-    "grade": "A",                             // 등급
-    "margin": 0,                           // 마진
-    "homepage": "",   // 홈페이지
-    "item": "",                        // Item
-    "tradeStartDate": "",               // 거래 시작일
-    "currencyUnit": "",                        // 화폐단위
-    "manager": "",                     // 담당자
-    "bankAccountNumber": "",            // Account No
-    "country": "",                             // 국가
-    "ftaNumber": "",                      // FTA No
-    "intermediaryBank": "",        // 송금중개은행
-    "address": "",  // 주소
-    "ibanCode": "",           // IBan Code
-    "swiftCode": "",                      // Swift Code
     "overseasAgencyManagerList": []
 }
 

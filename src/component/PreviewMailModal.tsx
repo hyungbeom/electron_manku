@@ -264,8 +264,7 @@ function PreviewMailModal({data, isModalOpen, setIsModalOpen, fileList}) {
                         <div>{info[0]['title']} {info.length > 1 ? ('외' + (info.length - 1) + '건이 발송 완료되었습니다.') : ''} </div>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
-                    , null,
-                    {}
+                    , null, null, 2
                 )
                 // message.success(v.data.message);
             } else {

@@ -26,6 +26,7 @@ function OverseasCustomerRead({getPropertyId, getCopyPage}: any) {
 
     const getSearchInit = () => _.cloneDeep(OCSearchInitial);
     const [info, setInfo] = useState(getSearchInit());
+
     const [totalRow, setTotalRow] = useState(0);
 
     const [isSearch, setIsSearch] = useState(false);
@@ -50,12 +51,12 @@ function OverseasCustomerRead({getPropertyId, getCopyPage}: any) {
 
     function handleKeyPress(e) {
         if (e.key === 'Enter') {
-            searchInfo(true)
+            searchInfo(true);
         }
     }
 
     function onChange(e) {
-        commonManage.onChange(e, setInfo)
+        commonManage.onChange(e, setInfo);
     }
 
     /**

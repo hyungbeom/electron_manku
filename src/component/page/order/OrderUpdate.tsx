@@ -257,7 +257,6 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
         } else {
             notificationAlert('error', '⚠️ 작업실패',
                 <>
-                    <div>Inquiry No. : {info.documentNumberFull}</div>
                     <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                 </>
                 , function () {
@@ -282,8 +281,7 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
                     <>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
-                    , null,
-                    {cursor: 'pointer'}
+                    , null, null, 2
                 )
                 getCopyPage('order_read', {})
                 const {model} = layoutRef.current.props;
@@ -296,7 +294,6 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
                 console.log(v?.data?.message);
                 notificationAlert('error', '⚠️ 작업실패',
                     <>
-                        <div>Project No. : {info.documentNumberFull}</div>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
                     , function () {

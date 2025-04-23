@@ -315,9 +315,8 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                 })
                 message.error(msg);
             } else {
-                notificationAlert('error', '⚠️작업실패',
+                notificationAlert('error', '⚠️ 작업실패',
                     <>
-                        <div>Inquiry No. : {info.documentNumberFull}</div>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
                     , function () {

@@ -43,7 +43,10 @@ function MakerUpdate({updateKey, getCopyPage, layoutRef}: any) {
         setInfo(getMakerInit());
         getDataInfo().then(v => {
             const {makerDetail} = v;
-            setInfo(makerDetail);
+            setInfo({
+                ...getMakerInit(),
+                ...makerDetail
+            });
         })
         .finally(() => {
             setLoading(false);
@@ -51,7 +54,7 @@ function MakerUpdate({updateKey, getCopyPage, layoutRef}: any) {
     }, [updateKey['maker_update']])
 
     function onChange(e) {
-        commonManage.onChange(e, setInfo)
+        commonManage.onChange(e, setInfo);
 
         const {id, value} = e?.target;
         commonManage.resetValidate(id, value, setValidate);
@@ -80,7 +83,6 @@ function MakerUpdate({updateKey, getCopyPage, layoutRef}: any) {
                 console.warn(v?.data?.message);
                 notificationAlert('error', '⚠️ 작업실패',
                     <>
-                        <div>Maker : {info['makerName']}</div>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
                     , function () {
@@ -126,7 +128,6 @@ function MakerUpdate({updateKey, getCopyPage, layoutRef}: any) {
                 console.warn(v?.data?.message);
                 notificationAlert('error', '⚠️ 작업실패',
                     <>
-                        <div>Maker : {info['makerName']}</div>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
                     , function () {

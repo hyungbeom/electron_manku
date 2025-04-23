@@ -27,8 +27,8 @@ import {sourceInfo} from "@/utils/column/ProjectInfo";
 
 function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
     const notificationAlert = useNotificationAlert();
-    const gridRef = useRef(null);
     const groupRef = useRef<any>(null);
+    const gridRef = useRef(null);
 
     const [loading, setLoading] = useState(false);
     const [mini, setMini] = useState(true);
@@ -44,8 +44,8 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
     const getSourceValidateInit = () => _.cloneDeep(sourceInfo['write']['validate']);
     const [validate, setValidate] = useState(getSourceValidateInit());
 
-    const [inventoryList, setInventoryList] = useState([]);
     const [totalRow, setTotalRow] = useState(0);
+    const [inventoryList, setInventoryList] = useState([]);
 
     const [isGrid, setIsGrid] = useState(false);
 
@@ -90,13 +90,13 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
         if (!isGrid) return;
         setValidate(getSourceValidateInit());
         setInfo(getSourceInit());
-        setInventoryList([]);
         setTotalRow(0);
+        setInventoryList([]);
         fetchData();
     }, [updateKey['source_update'], isGrid])
 
     function onChange(e) {
-        commonManage.onChange(e, setInfo)
+        commonManage.onChange(e, setInfo);
 
         const {id, value} = e?.target;
         commonManage.resetValidate(id, value, setValidate);
@@ -111,7 +111,7 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
                     const processList = processData(inventoryItemList);
                     setInventoryList(processList);
                     gridManage.resetData(gridRef, processList ?? []);
-                    setTotalRow(inventoryItemList.length ?? 0);
+                    setTotalRow(inventoryItemList?.length ?? 0);
                 } else {
                     message.warn(v?.data?.message);
                 }
@@ -147,8 +147,6 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
                 console.warn(v?.data?.message);
                 notificationAlert('error', '⚠️ 작업실패',
                     <>
-                        <div>Maker : {info['maker']}</div>
-                        <div>Model : {info['model']}</div>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
                     , function () {
@@ -202,8 +200,6 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
                 console.warn(v?.data?.message);
                 notificationAlert('error', '⚠️ 작업실패',
                     <>
-                        <div>Maker : {info['maker']}</div>
-                        <div>Model : {info['model']}</div>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
                     , function () {

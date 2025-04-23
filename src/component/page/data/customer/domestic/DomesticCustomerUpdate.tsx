@@ -19,8 +19,8 @@ const listType = 'customerManagerList'
 
 function DomesticCustomerUpdate({updateKey, getCopyPage, layoutRef}:any) {
     const notificationAlert = useNotificationAlert();
-    const groupRef = useRef<any>(null)
-    const infoRef = useRef<any>(null)
+    const groupRef = useRef<any>(null);
+    const infoRef = useRef<any>(null);
     const tableRef = useRef(null);
 
     const getSavedSizes = () => {
@@ -79,7 +79,7 @@ function DomesticCustomerUpdate({updateKey, getCopyPage, layoutRef}:any) {
     }, [updateKey['domestic_customer_update']])
 
     function onChange(e) {
-        commonManage.onChange(e, setInfo)
+        commonManage.onChange(e, setInfo);
 
         const {id, value} = e?.target;
         commonManage.resetValidate(id, value, setValidate);
@@ -149,7 +149,7 @@ function DomesticCustomerUpdate({updateKey, getCopyPage, layoutRef}:any) {
                         <div>상호 : {info['customerName']}</div>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
-                    ,null, null, 2
+                    , null, null, 2
                 )
                 getCopyPage('domestic_customer_read', {})
                 const {model} = layoutRef.current.props;

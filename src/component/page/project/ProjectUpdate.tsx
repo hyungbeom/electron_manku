@@ -251,9 +251,8 @@ function ProjectUpdate({
                 )
             })
         } else {
-            notificationAlert('error', '⚠️작업실패',
+            notificationAlert('error', '⚠️ 작업실패',
                 <>
-                    <div>Project No. : {info.documentNumberFull}</div>
                     <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                 </>
                 , function () {
@@ -278,8 +277,7 @@ function ProjectUpdate({
                         <div>Project No. : {info.documentNumberFull}</div>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
-                    ,null,
-                    {cursor: 'pointer'}
+                    , null, null, 2
                 )
                 getCopyPage('project_read', {})
                 const {model} = layoutRef.current.props;
@@ -289,9 +287,8 @@ function ProjectUpdate({
                     model.doAction(Actions.deleteTab(targetNode.getId())); // ✅ 기존 로직 유지
                 }
             } else {
-                notificationAlert('error', '⚠️작업실패',
+                notificationAlert('error', '⚠️ 작업실패',
                     <>
-                        <div>Project No. : {info.documentNumberFull}</div>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
                     , function () {
