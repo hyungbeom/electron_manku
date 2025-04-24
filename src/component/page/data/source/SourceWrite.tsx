@@ -165,7 +165,7 @@ function SourceWrite({copyPageInfo, getPropertyId}: any) {
         <PanelSizeUtil groupRef={groupRef} storage={'source_write'}/>
         <div style={{
             display: 'grid',
-            gridTemplateRows: `${mini ? '375px' : '65px'} calc(100vh - ${mini ? 505 : 195}px)`,
+            gridTemplateRows: `${mini ? '370px' : '65px'} calc(100vh - ${mini ? 505 : 195}px)`,
             columnGap: 5
         }}>
             <MainCard title={'재고관리 등록'}

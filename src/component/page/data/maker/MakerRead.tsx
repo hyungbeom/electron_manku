@@ -144,7 +144,7 @@ function MakerRead({getPropertyId, getCopyPage}: any) {
         <ReceiveComponent componentName={'maker_read'} searchInfo={searchInfo}/>
         <div style={{
             display: 'grid',
-            gridTemplateRows: `${mini ? '150px' : '65px'} calc(100vh - ${mini ? 280 : 195}px)`,
+            gridTemplateRows: `${mini ? '140px' : '65px'} calc(100vh - ${mini ? 270 : 195}px)`,
             columnGap: 5
         }}>
             <MainCard title={'메이커 조회'}

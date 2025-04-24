@@ -49,8 +49,6 @@ export function DriveUploadComp({
             setDragCounter(0);
         };
 
-        if (uploadType !== 0)
-
         window.addEventListener("dragenter", handleDragEnter);
         window.addEventListener("dragleave", handleDragLeave);
         window.addEventListener("dragover", handleDragOver);

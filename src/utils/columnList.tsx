@@ -2637,6 +2637,60 @@ export const tableSourceColumns = [
     },
 ]
 
+// 재고관리 > 조회 테이블 컬럼
+export const tableSourceUpdateColumns = [
+    {
+        headerName: "", // 컬럼 제목
+        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
+        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
+        checkboxSelection: true, // 각 행에 체크박스 추가
+        cellStyle: {textAlign: "center"}, // 스타일 설정
+        maxWidth: 60, // 컬럼 너비
+        pinned: "left", // 왼쪽에 고정
+        filter: false
+    },
+    {
+        pinned: 'left',
+        headerName: '입고 일자',
+        field: 'receiptDate',
+        maxWidth: 100,
+    },
+    {
+        pinned: 'left',
+        headerName: '문서번호',
+        field: 'documentNumber',
+        maxWidth: 120
+    },
+    {
+        pinned: 'left',
+        headerName: 'Maker',
+        field: 'maker',
+        maxWidth: 200
+    },
+    {
+        pinned: 'left',
+        headerName: 'Model',
+        field: 'model',
+        maxWidth: 200
+    },
+    {
+        headerName: '잔량',
+        field: 'remainingQuantity',
+    },
+    {
+        headerName: '출고',
+        field: 'shippedQuantity',
+    },
+    {
+        headerName: '합계',
+        field: 'totalQuantity',
+    },
+    {
+        headerName: '위치',
+        field: 'location',
+    },
+]
+
 export const subTableCodeReadColumns = [
 
     {

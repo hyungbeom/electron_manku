@@ -20,7 +20,7 @@ import _ from "lodash";
 import TableGrid from "@/component/tableGrid";
 import Popconfirm from "antd/lib/popconfirm";
 import Button from "antd/lib/button";
-import {tableSourceColumns} from "@/utils/columnList";
+import {tableSourceColumns, tableSourceUpdateColumns} from "@/utils/columnList";
 import {Actions} from "flexlayout-react";
 import Spin from "antd/lib/spin";
 import {sourceInfo} from "@/utils/column/ProjectInfo";
@@ -291,7 +291,7 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
             <PanelSizeUtil groupRef={groupRef} storage={'source_update'}/>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '375px' : '65px'} calc(100vh - ${mini ? 505 : 195}px)`,
+                gridTemplateRows: `${mini ? '370px' : '65px'} calc(100vh - ${mini ? 505 : 195}px)`,
                 columnGap: 5
             }}>
                 <MainCard title={'재고관리 수정'}
@@ -401,7 +401,7 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
                     }
                     totalRow={totalRow}
                     gridRef={gridRef}
-                    columns={tableSourceColumns}
+                    columns={tableSourceUpdateColumns}
                     onGridReady={onGridReady}
                     getPropertyId={getPropertyId}
                     type={'sourceUpdate'}

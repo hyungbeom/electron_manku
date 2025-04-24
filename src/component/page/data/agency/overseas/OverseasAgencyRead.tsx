@@ -143,7 +143,7 @@ function OverseasAgencyRead({getPropertyId, getCopyPage}: any) {
         <ReceiveComponent componentName={'overseas_agency_read'} searchInfo={searchInfo}/>
         <div style={{
             display: 'grid',
-            gridTemplateRows: `${mini ? '140px' : '65px'} calc(100vh - ${mini ? 250 : 195}px)`,
+            gridTemplateRows: `${mini ? '140px' : '65px'} calc(100vh - ${mini ? 270 : 195}px)`,
             columnGap: 5
         }}>
             <MainCard title={'해외 매입처 조회'}

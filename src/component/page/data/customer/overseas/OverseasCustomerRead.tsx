@@ -144,7 +144,7 @@ function OverseasCustomerRead({getPropertyId, getCopyPage}: any) {
         <ReceiveComponent componentName={'overseas_customer_read'} searchInfo={searchInfo}/>
         <div style={{
             display: 'grid',
-            gridTemplateRows: `${mini ? '140px' : '65px'} calc(100vh - ${mini ? 250 : 195}px)`,
+            gridTemplateRows: `${mini ? '140px' : '65px'} calc(100vh - ${mini ? 270 : 195}px)`,
             columnGap: 5
         }}>
             <MainCard title={'해외 고객사 조회'}

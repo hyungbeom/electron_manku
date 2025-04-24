@@ -153,7 +153,7 @@ function SourceRead({getPropertyId, getCopyPage}: any) {
         <ReceiveComponent componentName={'source_read'} searchInfo={searchInfo}/>
         <div style={{
             display: 'grid',
-            gridTemplateRows: `${mini ? '150px' : '65px'} calc(100vh - ${mini ? 280 : 195}px)`,
+            gridTemplateRows: `${mini ? '140px' : '65px'} calc(100vh - ${mini ? 270 : 195}px)`,
             columnGap: 5
         }}>
             <MainCard title={'재고관리 조회'}
