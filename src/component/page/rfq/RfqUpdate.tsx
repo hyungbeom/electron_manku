@@ -1,5 +1,12 @@
 import React, {memo, useEffect, useRef, useState} from "react";
-import {CopyOutlined, DeleteOutlined, FormOutlined, RadiusSettingOutlined, SendOutlined} from "@ant-design/icons";
+import {
+    CopyOutlined,
+    DeleteOutlined,
+    FormOutlined,
+    RadiusSettingOutlined,
+    SendOutlined,
+    SettingOutlined
+} from "@ant-design/icons";
 import message from "antd/lib/message";
 import {getData} from "@/manage/function/api";
 import SearchInfoModal from "@/component/SearchAgencyModal";
@@ -160,7 +167,7 @@ function RqfUpdate({
     }
 
     /**
-     * @description 수정 페이지 > 발송처리 버튼
+     * @description 수정 페이지 > 메일 발송 처리 버튼
      * 견적의뢰 > 견적의뢰 수정
      */
     function checkSend() {
@@ -370,9 +377,9 @@ function RqfUpdate({
             }}>
                 <MainCard title={'견적의뢰 수정'} list={[
                     {
-                        name: <div><SendOutlined style={{paddingRight: 8}}/>발송처리완료</div>,
+                        name: <div><SettingOutlined style={{paddingRight: 8}}/>메일 발송 처리</div>,
                         func: checkSend,
-                        type: 'primary'
+                        type: 'mail'
                     },
                     {name: <div><FormOutlined style={{paddingRight: 8}}/>수정</div>, func: saveFunc, type: 'primary'},
                     {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: deleteFunc, type: 'delete'},

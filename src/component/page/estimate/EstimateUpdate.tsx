@@ -1,5 +1,5 @@
 import React, {memo, useEffect, useRef, useState} from "react";
-import {CopyOutlined, DeleteOutlined, FileAddFilled, FormOutlined} from "@ant-design/icons";
+import {CopyOutlined, DeleteOutlined, ExceptionOutlined, FileAddFilled, FormOutlined} from "@ant-design/icons";
 import {ModalInitList} from "@/utils/initialList";
 import message from "antd/lib/message";
 import {getData} from "@/manage/function/api";
@@ -24,7 +24,7 @@ import {DriveUploadComp} from "@/component/common/SharePointComp";
 import Spin from "antd/lib/spin";
 import Modal from "antd/lib/modal/Modal";
 import EstimatePaper from "@/component/견적서/EstimatePaper";
-import {estimateInfo, orderInfo, rfqInfo} from "@/utils/column/ProjectInfo";
+import {estimateInfo, rfqInfo} from "@/utils/column/ProjectInfo";
 import Table from "@/component/util/Table";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
@@ -226,7 +226,7 @@ function EstimateUpdate({
         return <Modal
             onCancel={() => setIsPrintModalOpen(false)}
             open={isPrintModalOpen}
-            width={1050}
+            width={1100}
             footer={null}
             onOk={() => setIsPrintModalOpen(false)}>
             <EstimatePaper info={info} pdfRef={pdfRef} pdfSubRef={pdfSubRef} tableRef={tableRef} position={true}
@@ -463,7 +463,6 @@ function EstimateUpdate({
         <PanelSizeUtil groupRef={groupRef} storage={'estimate_update'}/>
         <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
                          open={isModalOpen}
-
                          setIsModalOpen={setIsModalOpen}/>
         <EstimateModal/>
         <>
@@ -474,7 +473,7 @@ function EstimateUpdate({
                 rowGap: 10,
             }}>
                 <MainCard title={'견적서 수정'} list={[
-                    {name: <div>견적서 출력</div>, func: printEstimate, type: ''},
+                    {name: <div><ExceptionOutlined style={{paddingRight: 8}}/>견적서 출력</div>, func: printEstimate, type: 'default'},
                     {name: <div><FormOutlined style={{paddingRight: 8}}/>수정</div>, func: saveFunc, type: 'primary'},
                     {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: deleteFunc, type: 'delete'},
                     // {

@@ -2,7 +2,13 @@ import React, {memo, useRef, useState} from "react";
 import {projectReadColumn} from "@/utils/columnList";
 import {projectReadInitial} from "@/utils/initialList";
 import Button from "antd/lib/button";
-import {ExclamationCircleOutlined, RadiusSettingOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
+import {
+    DeleteOutlined,
+    ExclamationCircleOutlined,
+    RadiusSettingOutlined,
+    SaveOutlined,
+    SearchOutlined
+} from "@ant-design/icons";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
 import {deleteProjectList, searchProject} from "@/utils/api/mainApi";
@@ -328,7 +334,9 @@ function ProjectRead({getPropertyId, getCopyPage}: any) {
                         title="삭제하시겠습니까?"
                         onConfirm={confirm}
                         icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
-                        <Button type={'primary'} danger size={'small'} style={{fontSize: 11, marginLeft: 5}}>삭제</Button>
+                        <Button type={'primary'} danger size={'small'} style={{fontSize: 11}}>
+                            <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>
+                        </Button>
                     </Popconfirm>
                 }
                 totalRow={totalRow}

@@ -2,41 +2,22 @@ import Card from "antd/lib/card/Card";
 import React, {useEffect, useRef} from "react";
 import Button from "antd/lib/button";
 import {
-    CopyOutlined,
-    DownCircleFilled, ExclamationCircleOutlined,
+    DownCircleFilled,
+    ExclamationCircleOutlined,
     FileExcelOutlined,
-    InfoCircleOutlined,
     SaveOutlined,
-    UpCircleFilled
+    UpCircleFilled,
+    WarningOutlined
 } from "@ant-design/icons";
 import Input from "antd/lib/input/Input";
 import Password from "antd/lib/input/Password";
 import DatePicker from "antd/lib/date-picker";
 import moment from "moment";
-import InputNumber from "antd/lib/input-number";
-import {commonManage, gridManage} from "@/utils/commonManage";
+import {gridManage} from "@/utils/commonManage";
 import Radio from "antd/lib/radio";
-import TextArea from "antd/lib/input/TextArea";
 import Select from "antd/lib/select";
-import Tooltip from "antd/lib/tooltip";
-import {
-    estimateDetailUnit,
-    estimateRequestDetailUnit,
-    estimateWriteList,
-    orderDetailUnit,
-    orderWriteList,
-    projectDetailUnit,
-    projectWriteList,
-    reqWriteList,
-    storeDetailUnit,
-    storeWriteList
-} from "@/utils/initialList";
+import {orderDetailUnit, projectDetailUnit, storeDetailUnit} from "@/utils/initialList";
 import {ExcelUpload} from "@/component/common/ExcelUpload";
-import {tableCodeDomesticAgencyWriteColumns} from "@/utils/columnList";
-
-const {RangePicker} = DatePicker
-const {Option} = Select
-import {v4 as uuid} from 'uuid';
 import message from "antd/lib/message";
 import Popconfirm from "antd/lib/popconfirm";
 import ProjectWrite from "@/component/page/project/ProjectWrite";
@@ -58,9 +39,6 @@ import StoreUpdate from "@/component/page/store/StoreUpdate";
 import DeliveryWrite from "@/component/page/delivery/DeliveryWrite";
 import DeliveryRead from "@/component/page/delivery/DeliveryRead";
 import DeliveryUpdate from "@/component/page/delivery/DeliveryUpdate";
-import RemittanceDomesticWrite from "@/component/page/remittance/RemittanceDomesticWrite";
-import RemittanceDomesticRead from "@/component/page/remittance/RemittanceDomesticRead";
-import RemittanceDomesticUpdate from "@/component/page/remittance/RemittanceDomesticUpdate";
 import DomesticRemittanceWrite from "@/component/page/remittance/domestic/DomesticRemittanceWrite";
 import DomesticRemittanceRead from "@/component/page/remittance/domestic/DomesticRemittanceRead";
 import DomesticRemittanceUpdate from "@/component/page/remittance/domestic/DomesticRemittanceUpdate";
@@ -86,6 +64,9 @@ import CompanyAccountWrite from "@/component/CompanyAccountWrite";
 import SourceRead from "@/component/page/data/source/SourceRead";
 import SourceUpdate from "@/component/page/data/source/SourceUpdate";
 import SourceWrite from "@/component/page/data/source/SourceWrite";
+
+const {RangePicker} = DatePicker
+const {Option} = Select
 
 export const numbFormatter = (value) => `₩ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 
@@ -148,6 +129,7 @@ export function MainCard({children, title, list, mini = null, setMini = Function
         v()
     }
 
+    // @ts-ignore
     return <Card size={'small'} style={{
         border: '1px solid #bae7ff',
         marginTop: 3,
@@ -165,8 +147,7 @@ export function MainCard({children, title, list, mini = null, setMini = Function
                          }}>
                              {list.map(v => <>
                                      {
-                                         v.type === 'delete'
-                                             ?
+                                         v.type === 'delete' ?
                                              <Popconfirm
                                                  title="삭제하시겠습니까?"
                                                  onConfirm={() => confirm(v.func)}
@@ -176,12 +157,21 @@ export function MainCard({children, title, list, mini = null, setMini = Function
                                                  >{v?.prefix}{v.name}</Button>
                                              </Popconfirm>
 
-                                             :
-                                             <Button type={v.type} style={{fontSize: 11}} size={'small'}
-                                                     onClick={v.func}>{v?.prefix}{v.name}</Button>
+                                         // 견적의뢰 메일 발송 추가
+                                         : v.type === 'mail' ?
+                                                 <Popconfirm
+                                                     title="발송처리하시겠습니까?"
+                                                     onConfirm={() => confirm(v.func)}
+                                                     icon={<WarningOutlined/>}>
+                                                     <Button type={'default'} size={'small'}
+                                                             style={{
+                                                                 fontSize: 11,
+                                                             }}>{v?.prefix}{v.name}</Button>
+                                                 </Popconfirm>
+
+                                         :  <Button type={v.type} style={{fontSize: 11}} size={'small'}
+                                                    onClick={v.func}>{v?.prefix}{v.name}</Button>
                                      }
-
-
                                  </>
                              )}
 

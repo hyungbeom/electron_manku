@@ -1,6 +1,6 @@
 import React, {memo, useRef, useState} from "react";
 import {
-    CopyOutlined,
+    DeleteOutlined,
     ExclamationCircleOutlined,
     RadiusSettingOutlined,
     SaveOutlined,
@@ -15,7 +15,6 @@ import {deleteOrder, searchOrder} from "@/utils/api/mainApi";
 import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
 import _ from "lodash";
 import {BoxCard, inputForm, MainCard, rangePickerForm, selectBoxForm} from "@/utils/commonForm";
-import {useRouter} from "next/router";
 import ReceiveComponent from "@/component/ReceiveComponent";
 import Spin from "antd/lib/spin";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
@@ -79,9 +78,9 @@ function OrderRead({getPropertyId, getCopyPage}: any) {
                 setTotalRow(v.pageInfo.totalRow)
                 setLoading(false)
             })
-            .finally(() => {
-                setLoading(false);
-            });
+                .finally(() => {
+                    setLoading(false);
+                });
         }
     }
 
@@ -103,7 +102,8 @@ function OrderRead({getPropertyId, getCopyPage}: any) {
                 notificationAlert('success', '🗑️ 발주서 삭제완료',
                     <>
                         <div>Inquiry No.
-                            : {selectedRows[0]?.documentNumberFull} {selectedRows.length > 1 ? ('외' + " " + (selectedRows.length - 1) + '개') : ''} 의 발주서이(가)
+                            : {selectedRows[0]?.documentNumberFull} {selectedRows.length > 1 ? ('외' + " " + (selectedRows.length - 1) + '개') : ''} 의
+                            발주서이(가)
                             삭제되었습니다.
                         </div>
                         {/*<div>프로젝트 제목 - {selectedRows[0].projectTitle} `${selectedRows.length > 1 ? ('외' + (selectedRows.length - 1)) + '개' : ''}`가 삭제되었습니다. </div>*/}
@@ -125,13 +125,13 @@ function OrderRead({getPropertyId, getCopyPage}: any) {
                 )
             }
         })
-        .catch((err) => {
-            notificationAlert('error', '❌ 네트워크 오류 발생', <div>{err.message}</div>);
-            console.error('에러:', err);
-        })
-        .finally(() => {
-            setLoading(false);
-        });
+            .catch((err) => {
+                notificationAlert('error', '❌ 네트워크 오류 발생', <div>{err.message}</div>);
+                console.error('에러:', err);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
     }
 
     function clearAll() {
@@ -222,28 +222,28 @@ function OrderRead({getPropertyId, getCopyPage}: any) {
                                                     }}>M</Button>
                                         </div>
 
-                                        {selectBoxForm({
-                                            title: '입고 여부',
-                                            id: 'searchStockStatus',
-                                            onChange: onChange,
-                                            data: info,
-                                            list: [
-                                                {value: '', label: '전체'},
-                                                {value: '입고', label: '입고'},
-                                                {value: '미입고', label: '미입고'}
-                                            ]
-                                        })}
+                                        <div style={{paddingBottom: 9}}>
+                                            {selectBoxForm({
+                                                title: '입고 여부',
+                                                id: 'searchStockStatus',
+                                                onChange: onChange,
+                                                data: info,
+                                                list: [
+                                                    {value: '', label: '전체'},
+                                                    {value: '입고', label: '입고'},
+                                                    {value: '미입고', label: '미입고'}
+                                                ]
+                                            })}
+                                        </div>
                                         {inputForm({
                                             title: '등록직원명', id: 'searchCreatedBy',
                                             onChange: onChange,
                                             handleKeyPress: handleKeyPress,
                                             data: info
                                         })}
-
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>
-
                                 <Panel defaultSize={sizes[1]} minSize={5}>
                                     <BoxCard title={''}>
                                         {inputForm({
@@ -313,8 +313,9 @@ function OrderRead({getPropertyId, getCopyPage}: any) {
                     onConfirm={deleteList}
                     icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
 
-                    {/*@ts-ignored*/}
-                    <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}>삭제</Button>
+                    <Button type={'primary'} danger size={'small'} style={{fontSize: 11}}>
+                        <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>
+                    </Button>
                 </Popconfirm>
                 }
 

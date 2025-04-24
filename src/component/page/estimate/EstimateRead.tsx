@@ -2,7 +2,14 @@ import React, {memo, useEffect, useRef, useState} from "react";
 import {tableEstimateReadColumns} from "@/utils/columnList";
 import {estimateDetailUnit, estimateReadInitial} from "@/utils/initialList";
 import Button from "antd/lib/button";
-import {ExclamationCircleOutlined, RadiusSettingOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
+import {
+    DeleteOutlined,
+    ExclamationCircleOutlined,
+    FileDoneOutlined,
+    RadiusSettingOutlined,
+    SaveOutlined,
+    SearchOutlined
+} from "@ant-design/icons";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
 import {deleteEstimate, searchEstimate} from "@/utils/api/mainApi";
@@ -221,13 +228,15 @@ function EstimateRead({getPropertyId, getCopyPage,}: any) {
                                                         })
                                                     }}>M</Button>
                                         </div>
-                                        {selectBoxForm({
-                                            title: '주문 여부', id: 'searchType', onChange: onChange, data: info, list: [
-                                                {value: 0, label: '전체'},
-                                                {value: 1, label: '주문'},
-                                                {value: 2, label: '미주문'}
-                                            ]
-                                        })}
+                                        <div style={{paddingBottom: 9}}>
+                                            {selectBoxForm({
+                                                title: '주문 여부', id: 'searchType', onChange: onChange, data: info, list: [
+                                                    {value: 0, label: '전체'},
+                                                    {value: 1, label: '주문'},
+                                                    {value: 2, label: '미주문'}
+                                                ]
+                                            })}
+                                        </div>
                                         {inputForm({
                                             title: '등록직원명', id: 'searchCreatedBy',
                                             onChange: onChange,
@@ -296,14 +305,17 @@ function EstimateRead({getPropertyId, getCopyPage,}: any) {
                 {/*@ts-ignored*/}
                 <TableGrid deleteComp={
                     <>
-                        <Button type={'primary'} size={'small'} style={{fontSize : 11}} onClick={openEstimate}>통합견적서</Button>
+                        <Button type={'primary'} size={'small'} style={{fontSize : 11}} onClick={openEstimate}>
+                            <div><FileDoneOutlined style={{paddingRight: 8}}/>통합견적서 출력</div>
+                        </Button>
                         <Popconfirm
                             title="삭제하시겠습니까?"
                             onConfirm={deleteList}
                             icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
 
-                            {/*@ts-ignored*/}
-                            <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}>삭제</Button>
+                            <Button type={'primary'} danger size={'small'} style={{fontSize: 11}}>
+                                <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>
+                            </Button>
                         </Popconfirm>
                     </>
                 }

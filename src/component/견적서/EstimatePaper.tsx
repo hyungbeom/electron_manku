@@ -1,7 +1,7 @@
 import React, {memo, useEffect, useMemo, useRef, useState} from 'react';
 import {commonManage} from "@/utils/commonManage";
 import _ from "lodash";
-import TopInfo, {BottomInfo} from "@/component/견적서/TopInfo";
+import TopInfo from "@/component/견적서/TopInfo";
 import EstimateHeader from "@/component/견적서/EstimateHeader";
 import TextArea from "antd/lib/input/TextArea";
 import Input from "antd/lib/input";
@@ -9,12 +9,9 @@ import Select from "antd/lib/select";
 import {amountFormat} from "@/utils/columnList";
 import InputNumber from "antd/lib/input-number";
 import "@/resources/NotoSansKR-normal";
-import Button from "antd/lib/button";
 import {pdf} from "@react-pdf/renderer";
 import {PdfForm} from "@/component/견적서/PdfForm";
-import dynamic from "next/dynamic";
-import {SelectForm} from "@/utils/commonForm";
-import Checkbox from "antd/lib/checkbox/Checkbox";
+import {DownloadOutlined, PrinterOutlined} from "@ant-design/icons";
 
 const EstimatePaper = ({
                            info,
@@ -247,7 +244,6 @@ const EstimatePaper = ({
 
     return (
         <div>
-
             <div style={{marginTop: -10, padding: 15, display: 'flex', justifyContent: 'space-between'}}>
                 <div>{title}</div>
                 <div>
@@ -261,7 +257,7 @@ const EstimatePaper = ({
                         fontSize: 11,
                         marginRight: 10
                     }}>
-                        다운로드
+                        <div><DownloadOutlined style={{paddingRight: 8}}/>다운로드</div>
                     </button>
                     {/*@ts-ignore*/}
                     <button onClick={print} style={{
@@ -274,10 +270,11 @@ const EstimatePaper = ({
                         fontSize: 11,
                         marginRight: 20
                     }}>
-                        인쇄
+                        <div><PrinterOutlined style={{paddingRight: 8}}/>인쇄</div>
                     </button>
                 </div>
             </div>
+
             <div style={{
                 fontFamily: "Noto Sans KR, sans-serif",
                 width: '1000px',  // A4 가로
@@ -308,7 +305,7 @@ const EstimatePaper = ({
                     </thead>
 
                     <thead>
-                    <tr style={{fontWeight: 'bold', height: 30}}>
+                    <tr style={{fontWeight: 'bold', height: 35}}>
                         <th colSpan={6}/>
                     </tr>
                     </thead>
@@ -336,12 +333,9 @@ const EstimatePaper = ({
                                     textAlign: 'left',
                                     paddingLeft: 5
                                 }}>
-
                                     <TextAreas value={v.model} numb={i}/>
-
                                 </td>
                                 <NumberInputForm value={v} numb={i}/>
-
                             </tr>
                         }
                     )}
@@ -349,7 +343,6 @@ const EstimatePaper = ({
                 </table>
                 <div style={{flexGrow: 1}}/>
                 {Object.keys(data).length > 1 ? <></> :
-
                     <table style={{
                         width: '100%',
                         borderCollapse: 'collapse',
@@ -436,7 +429,7 @@ const EstimatePaper = ({
 
 
                             {v.map((src, idx) => {
-                                return <tr style={{height: 35, fontWeight: 100}}>
+                                return <tr style={{height: 35}}>
                                     <td colSpan={2} style={{width: '6%', fontWeight: 600}}>{count + idx + 1}</td>
                                     <td style={{
                                         whiteSpace: 'pre-line',
@@ -444,7 +437,6 @@ const EstimatePaper = ({
                                         textAlign: 'left',
                                         paddingLeft: 5
                                     }}>
-
                                         <TextAreas value={src.model} numb={idx} objKey={i}/>
 
                                     </td>
@@ -493,7 +485,7 @@ const EstimatePaper = ({
                                 <TextArea value={bottomInfo} onChange={e=>{
                                     setBottomInfo(e.target.value)
                                 }}
-                                          autoSize={true} style={{border: 'none'}}
+                                    autoSize={true} style={{border: 'none'}}
                                 />
                             </div>
                             : <></>}

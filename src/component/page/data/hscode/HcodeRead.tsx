@@ -8,7 +8,14 @@ import TableGrid from "@/component/tableGrid";
 import {inputForm, MainCard, TopBoxCard} from "@/utils/commonForm";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import Spin from "antd/lib/spin";
-import {ExclamationCircleOutlined, FormOutlined, ReloadOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
+import {
+    DeleteOutlined,
+    ExclamationCircleOutlined,
+    FormOutlined,
+    ReloadOutlined,
+    SaveOutlined,
+    SearchOutlined
+} from "@ant-design/icons";
 import {deleteHsCodeList, searchHSCode} from "@/utils/api/mainApi";
 import Popconfirm from "antd/lib/popconfirm";
 import moment from "moment";
@@ -317,7 +324,9 @@ function HcodeRead({getPropertyId}: any) {
                         title="삭제하시겠습니까?"
                         onConfirm={deleteList}
                         icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
-                        <Button type={'primary'} danger size={'small'} style={{fontSize: 11, marginLeft: 5}}>삭제</Button>
+                        <Button type={'primary'} danger size={'small'} style={{fontSize: 11}}>
+                            <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>
+                        </Button>
                     </Popconfirm>
                 }
                 totalRow={totalRow}

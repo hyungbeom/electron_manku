@@ -5,6 +5,7 @@ import Input from "antd/lib/input";
 import moment from "moment";
 import {paperTopInfo} from "@/utils/common";
 import _ from "lodash";
+import TextArea from "antd/lib/input/TextArea";
 
 export default function TopInfo({count, info, type, memberList, getTopInfoData}) {
 
@@ -240,7 +241,6 @@ export const TopPoInfo = ({info, hsCode, getTopInfoData}) => {
                                 <SelectForms id={'incoterms'} list={['EXW', 'FOB', 'CIF', 'DDU']}/>
                             </>
 
-
                             :
                             <Input value={infoData[v]} id={v}
                                    style={{
@@ -284,35 +284,49 @@ export const BottomInfo = () => {
 }
 
 
-export const BottomPoInfo = ({info}) => {
-
+export const BottomPoInfo = ({bottomInfo, setBottomInfo}) => {
 
     return <div
         style={{
-            padding: '30px 20px',
+            paddingTop: 10,
             fontSize: 12,
             lineHeight: 1.7,
             borderTop: '1px solid black',
         }}>
-        {
-            info?.agencyCode?.startsWith('K') ? <>
-                <div>· 금일 환율 기준으로 2%이상 인상될 시 , 단가가 인상될 수 있습니다.</div>
-                <div>· 러-우전쟁 및 COVID-19 장기화로 납기 변동성이 큰 시기입니다. 납기 지연이 발생할 수 있는 점 양해 부탁드립니다.</div>
-                <div>· 의뢰하신 Model로 기준한 견적이며, 견적 수량 전량 구입시 가격입니다. (긴급 납기시 담당자와 협의 가능합니다.)</div>
-                <div>· 계좌번호: (기업은행)069-118428-04-010/(주)만쿠무역.</div>
-                <div>· 성적서 및 품질보증서는 별도입니다.</div>
-            </> : <>
-                <div> * For the invoice* Please indicate few things as below:</div>
-                <div>1. HS Code 6 Digit</div>
-                <div>2. Indication of Country of Origin</div>
-                <div>It has to be written into the remark of every Invoice every time.</div>
-                <div>And your name, your signature and date of signature have to be put in under the
-                    sentence as well.
-                </div>
-                <div>* Please give us Order confirmation. (Advise us if we should pay your bank charge as
-                    well.)
-                </div>
-            </>
-        }
+        <TextArea value={bottomInfo}
+                  onChange={e=> {
+                      setBottomInfo(e.target.value);
+                  }}
+                  autoSize={true} style={{border: 'none'}}
+        />
     </div>
+
+    // return <div
+    //     style={{
+    //         padding: '30px 20px',
+    //         fontSize: 12,
+    //         lineHeight: 1.7,
+    //         borderTop: '1px solid black',
+    //     }}>
+    //     {
+    //         info?.agencyCode?.startsWith('K') ? <>
+    //             <div>· 금일 환율 기준으로 2%이상 인상될 시 , 단가가 인상될 수 있습니다.</div>
+    //             <div>· 러-우전쟁 및 COVID-19 장기화로 납기 변동성이 큰 시기입니다. 납기 지연이 발생할 수 있는 점 양해 부탁드립니다.</div>
+    //             <div>· 의뢰하신 Model로 기준한 견적이며, 견적 수량 전량 구입시 가격입니다. (긴급 납기시 담당자와 협의 가능합니다.)</div>
+    //             <div>· 계좌번호: (기업은행)069-118428-04-010/(주)만쿠무역.</div>
+    //             <div>· 성적서 및 품질보증서는 별도입니다.</div>
+    //         </> : <>
+    //             <div> * For the invoice* Please indicate few things as below:</div>
+    //             <div>1. HS Code 6 Digit</div>
+    //             <div>2. Indication of Country of Origin</div>
+    //             <div>It has to be written into the remark of every Invoice every time.</div>
+    //             <div>And your name, your signature and date of signature have to be put in under the
+    //                 sentence as well.
+    //             </div>
+    //             <div>* Please give us Order confirmation. (Advise us if we should pay your bank charge as
+    //                 well.)
+    //             </div>
+    //         </>
+    //     }
+    // </div>
 }

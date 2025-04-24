@@ -10,7 +10,13 @@ import _ from "lodash";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import Spin from "antd/lib/spin";
 import Button from "antd/lib/button";
-import {ExclamationCircleOutlined} from "@ant-design/icons";
+import {
+    ExclamationCircleOutlined,
+    RadiusSettingOutlined,
+    SearchOutlined,
+    SendOutlined,
+    SettingOutlined
+} from "@ant-design/icons";
 import {getData} from "@/manage/function/api";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import Popconfirm from "antd/lib/popconfirm";
@@ -70,7 +76,7 @@ function RfqMailSend({getPropertyId}: any) {
     const handleSendMail = async () => {
         const checkedData = gridManage.getSelectRows(gridRef);
         if (!checkedData.length) {
-            return message.warn('선택된 데이터가 없습니다.')
+            return message.warn('발송할 견적의뢰을 선택해주세요.')
         }
 
         const groupedData = {};
@@ -105,6 +111,32 @@ function RfqMailSend({getPropertyId}: any) {
         setIsModalOpen(true)
     };
 
+    /**
+     * @description 메일전송 페이지 > 메일 발송 처리 버튼
+     * 견적의뢰 > 메일전송
+     */
+    function checkMail(){
+        const checkedData = gridManage.getSelectRows(gridRef);
+        if(!checkedData.length){
+            return message.warn('발송처리할 견적의뢰를 선택해주세요.')
+        }
+        // const filterTableList = commonManage.filterEmptyObjects(tableList, ['model', 'item', 'maker'])
+        const result = checkedData.map(src => {
+            return {
+                estimateRequestDetailId: src.estimateRequestDetailId,
+                "sentStatus": "전송"
+            }
+        })
+        getData.post('estimate/updateSentStatuses', {sentStatusList : result}).then(v => {
+            if(v.data.code === 1){
+                searchInfo();
+                message.success('발송처리가 완료되었습니다.');
+            }else{
+                message.error(v?.data?.message);
+            }
+        })
+    }
+
     function clearAll() {
         setInfo(copyInit)
         gridRef.current.deselectAll()
@@ -112,7 +144,7 @@ function RfqMailSend({getPropertyId}: any) {
 
     async function deleteList() {
         if (gridRef.current.getSelectedRows().length < 1) {
-            return message.error('삭제할 데이터를 선택해주세요.')
+            return message.error('삭제할 견적의뢰를 선택해주세요.')
         }
 
         const deleteList = gridManage.getFieldDeleteList(gridRef, {
@@ -143,29 +175,6 @@ function RfqMailSend({getPropertyId}: any) {
         })
     }
 
-    function checkMail(){
-
-        const checkedData = gridManage.getSelectRows(gridRef);
-        if(!checkedData.length){
-            return message.warn('처리할 데이터가 없습니다.')
-        }
-        // const filterTableList = commonManage.filterEmptyObjects(tableList, ['model', 'item', 'maker'])
-        const result = checkedData.map(src => {
-            return {
-                estimateRequestDetailId: src.estimateRequestDetailId,
-                "sentStatus": "전송"
-            }
-        })
-        getData.post('estimate/updateSentStatuses', {sentStatusList : result}).then(v => {
-            if(v.data.code === 1){
-                searchInfo();
-                message.success('발송처리가 완료되었습니다.');
-            }else{
-                message.error(v?.data?.message);
-            }
-        })
-    }
-
     return <Spin spinning={loading} tip={'견적의뢰 조회중...'}>
         {isModalOpen && <PreviewMailModal data={previewData} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}
                                           fileList={fileList}/>}
@@ -175,14 +184,29 @@ function RfqMailSend({getPropertyId}: any) {
                 gridTemplateRows: `${mini ? '210px' : '65px'} calc(100vh - ${mini ? 340 : 195}px)`,
                 columnGap: 5
             }}>
-                <MainCard title={'견적의뢰 메일전송'} list={[
-                    {name: '메일전송처리', func: checkMail, type: 'primary'},
-                    {name: '조회', func: searchInfo, type: 'primary'},
-                    {name: '초기화', func: clearAll, type: 'danger'},
-                    {name: '선택 견적의뢰 발송', func: handleSendMail, type: 'default'},
-                ]} mini={mini} setMini={setMini}>
-
-
+                <MainCard title={'견적의뢰 메일전송'}
+                          list={[
+                              {
+                                  name: <div><SendOutlined style={{paddingRight: 8}}/>선택 견적의뢰 발송</div>,
+                                  func: handleSendMail,
+                                  type: 'default'
+                              },
+                              {name: <div><SettingOutlined style={{paddingRight: 8}}/>메일 발송 처리</div>,
+                                  func: checkMail,
+                                  type: 'mail'
+                              },
+                              {
+                                  name: <div><SearchOutlined style={{paddingRight: 8}}/>조회</div>,
+                                  func: searchInfo,
+                                  type: 'primary'
+                              },
+                              {
+                                  name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>,
+                                  func: clearAll,
+                                  type: 'danger'
+                              }
+                          ]}
+                          mini={mini} setMini={setMini}>
                     {mini ? <div
                             style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1.5fr', width: '100%', columnGap: 20}}>
 

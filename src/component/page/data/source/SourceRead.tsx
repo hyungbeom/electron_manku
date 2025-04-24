@@ -6,7 +6,13 @@ import moment from "moment/moment";
 import message from "antd/lib/message";
 import Spin from "antd/lib/spin";
 import {inputForm, MainCard, TopBoxCard} from "@/utils/commonForm";
-import {ExclamationCircleOutlined, ReloadOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
+import {
+    DeleteOutlined,
+    ExclamationCircleOutlined,
+    ReloadOutlined,
+    SaveOutlined,
+    SearchOutlined
+} from "@ant-design/icons";
 import TableGrid from "@/component/tableGrid";
 import Popconfirm from "antd/lib/popconfirm";
 import Button from "antd/lib/button";
@@ -202,7 +208,9 @@ function SourceRead({getPropertyId, getCopyPage}: any) {
                         title="삭제하시겠습니까?"
                         onConfirm={deleteList}
                         icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
-                        <Button type={'primary'} danger size={'small'} style={{fontSize: 11, marginLeft: 5}}>삭제</Button>
+                        <Button type={'primary'} danger size={'small'} style={{fontSize: 11}}>
+                            <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>
+                        </Button>
                     </Popconfirm>
                 }
                 totalRow={totalRow}

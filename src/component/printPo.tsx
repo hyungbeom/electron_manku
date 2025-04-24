@@ -12,20 +12,24 @@ import _ from "lodash";
 import {pdf} from "@react-pdf/renderer";
 import {PrintPoForm} from "@/component/PrintPoForm";
 import {paperTopInfo} from "@/utils/common";
-import {SelectForm} from "@/utils/commonForm";
+import {DownloadOutlined, PrinterOutlined} from "@ant-design/icons";
 
 function PrintPo({
 
                      isModalOpen,
                      setIsModalOpen,
                      tableRef,
-    info,
+                     info,
                      memberList = [],
                      count = 0,
                  }) {
 
     const [data, setData] = useState([[]]);
     const [topInfoData, setTopInfoData] = useState<any>({})
+
+    const bottomInfoKr = '· 금일 환율 기준으로 2%이상 인상될 시 , 단가가 인상될 수 있습니다.\n· 러-우전쟁 및 COVID-19 장기화로 납기 변동성이 큰 시기입니다. 납기 지연이 발생할 수 있는 점 양해 부탁드립니다.\n· 의뢰하신 Model로 기준한 견적이며, 견적 수량 전량 구입시 가격입니다. (긴급 납기시 담당자와 협의 가능합니다.)\n· 계좌번호: (기업은행)069-118428-04-010/(주)만쿠무역.\n· 성적서 및 품질보증서는 별도입니다.';
+    const bottomInfoEn = '* For the invoice *  Please indicate few things as below:\n1. HS Code 6 Digit\n2. Indication of Country of Origin\nIt has to be written into the remark of every Invoice every time.\nAnd your name, your signature and date of signature have to be put in under the sentence as well.\n* Please give us Order confirmation. (Advise us if we should pay your bank charge as well.)';
+    const [bottomInfo, setBottomInfo] = useState<any>(bottomInfoKr);
 
     function getTopInfoData(e) {
         setTopInfoData(e)
@@ -39,10 +43,14 @@ function PrintPo({
         result.forEach((v, idx) => {
             copyData[idx] = v;
         })
-
         setData(copyData);
-    }, [count]);
 
+        if(info?.agencyCode?.startsWith('K')) {
+            setBottomInfo(bottomInfoKr);
+        } else {
+            setBottomInfo(bottomInfoEn);
+        }
+    }, [count]);
 
 
     const totalData = useMemo(() => {
@@ -73,19 +81,18 @@ function PrintPo({
     }, [data]);
 
 
-
-    function MakerInput({value}){
+    function MakerInput({value}) {
         const [info, setInfo] = useState(value);
 
-        return  <Input value={info} style={{border : 'none'}}
-                       onChange={e=>{
-                           setInfo(e.target.value)
-                       }}
-                       onBlur={e=>{
-                           setTopInfoData(v =>{
-                               return {...v, maker : e.target.value}
-                           })
-                       }}
+        return <Input value={info} style={{border: 'none'}}
+                      onChange={e => {
+                          setInfo(e.target.value)
+                      }}
+                      onBlur={e => {
+                          setTopInfoData(v => {
+                              return {...v, maker: e.target.value}
+                          })
+                      }}
         />
     }
 
@@ -148,7 +155,6 @@ function PrintPo({
                 return {...v, quantity: e.target.value}
             })
         }
-
 
 
         return <>
@@ -216,7 +222,7 @@ function PrintPo({
     }
 
     async function download() {
-        const blob = await pdf(<PrintPoForm data={data} topInfoData={topInfoData} totalData={totalData}
+        const blob = await pdf(<PrintPoForm data={data} topInfoData={topInfoData} totalData={totalData} bottomInfo={bottomInfo}
                                             title={!topInfoData['agencyCode'].startsWith("K") ? paperTopInfo['en'] : paperTopInfo['ko']}
                                             lang={!topInfoData['agencyCode'].startsWith("K") ? 'en' : 'ko'}
                                             key={Date.now()}/>).toBlob();
@@ -233,7 +239,7 @@ function PrintPo({
 
     const print = async () => {
 
-        const blob = await pdf(<PrintPoForm data={data} topInfoData={topInfoData} totalData={totalData}
+        const blob = await pdf(<PrintPoForm data={data} topInfoData={topInfoData} totalData={totalData} bottomInfo={bottomInfo}
                                             title={!topInfoData['agencyCode'].startsWith("K") ? paperTopInfo['en'] : paperTopInfo['ko']}
                                             lang={!topInfoData['agencyCode'].startsWith("K") ? 'en' : 'ko'}
                                             key={Date.now()}/>).toBlob();
@@ -263,7 +269,7 @@ function PrintPo({
                         fontSize: 11,
                         marginRight: 10
                     }}>
-                        다운로드
+                        <div><DownloadOutlined style={{paddingRight: 8}}/>다운로드</div>
                     </button>
                     {/*@ts-ignore*/}
                     <button onClick={print} style={{
@@ -276,7 +282,7 @@ function PrintPo({
                         fontSize: 11,
                         marginRight: 20
                     }}>
-                        인쇄
+                        <div><PrinterOutlined style={{paddingRight: 8}}/>인쇄</div>
                     </button>
                 </div>
             </div>}
@@ -324,9 +330,13 @@ function PrintPo({
                         <th>
                             Maker
                         </th>
-                        <th colSpan={7} style={{textAlign : 'left', paddingLeft : 5}}>
+                        <th colSpan={2} style={{textAlign: 'left', paddingLeft: 5}}>
                             <MakerInput value={topInfoData?.maker}/>
                         </th>
+                        <th colSpan={2}></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
                     </tr>
                     </thead>
                     <thead>
@@ -351,8 +361,10 @@ function PrintPo({
                     </thead>
                 </table>
                 <div style={{flexGrow: 1}}/>
-                {Object.keys(data).length > 1 ? <></> :
 
+                {Object.keys(data).length > 1 ?
+                    <></>
+                    :
                     <table style={{
                         width: '100%',
                         borderCollapse: 'collapse',
@@ -387,10 +399,13 @@ function PrintPo({
                         </tr>
                         </thead>
                     </table>
-
                 }
-                {Object.keys(data).length > 1 ? <></> : <BottomPoInfo info={info}/>}
 
+                {Object.keys(data).length > 1 ?
+                    <></>
+                    :
+                    <BottomPoInfo bottomInfo={bottomInfo} setBottomInfo={setBottomInfo}/>
+                }
                 <div style={{textAlign: 'center'}}>- 1 -</div>
             </div>
 
@@ -457,7 +472,8 @@ function PrintPo({
                         <div style={{flexGrow: 1}}/>
 
 
-                        {Object.keys(data).length - 1 === i ? <table style={{
+                        {Object.keys(data).length - 1 === i ?
+                            <table style={{
                                 width: '100%',
                                 borderCollapse: 'collapse',
                                 margin: '20px 0',
@@ -492,8 +508,15 @@ function PrintPo({
                                 </tr>
                                 </thead>
                             </table>
-                            : <></>}
-                        {Object.keys(data).length - 1 === i ? <BottomPoInfo info={info}/> : <></>}
+                            :
+                            <></>
+                        }
+
+                        {Object.keys(data).length - 1 === i ?
+                            <BottomPoInfo bottomInfo={bottomInfo} setBottomInfo={setBottomInfo}/>
+                            :
+                            <></>
+                        }
                         <div style={{textAlign: 'center'}}>- {i + 1} -</div>
                     </div>
                 })}

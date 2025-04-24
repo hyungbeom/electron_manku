@@ -9,8 +9,7 @@ import {searchDomesticCustomer} from "@/utils/api/mainApi";
 import TextArea from "antd/lib/input/TextArea";
 import InputNumber from "antd/lib/input-number";
 import {amountFormat} from "@/utils/columnList";
-import Button from "antd/lib/button";
-import Checkbox from "antd/lib/checkbox/Checkbox";
+import {DownloadOutlined, PrinterOutlined} from "@ant-design/icons";
 
 const cellStyle = {
 
@@ -110,7 +109,7 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, info, pdfRef, 
     const totalData = useMemo(() => {
 
         const list = Object.values(data);
-        let bowl = {quantity: 0, net: 0, total: 0, tax : 0, unit: list.length ? list[0][0]['unit'] : ''}
+        let bowl = {quantity: 0, net: 0, total: 0, tax: 0, unit: list.length ? list[0][0]['unit'] : ''}
 
         list.forEach((v: any, i: number) => {
             const result = v.reduce((acc, cur, idx) => {
@@ -130,7 +129,6 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, info, pdfRef, 
 
         return bowl
     }, [data]);
-
 
 
     function TextAreas({value, numb, objKey = 0}) {
@@ -158,7 +156,7 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, info, pdfRef, 
     }
 
 
-    function NumberInputForm({value, numb, objKey = 0}){
+    function NumberInputForm({value, numb, objKey = 0}) {
 
         const [info, setInfo] = useState({net: value.net, quantity: value.quantity});
 
@@ -197,7 +195,8 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, info, pdfRef, 
             <td style={{width: 100, textAlign: 'right'}}>
 
 
-                <Input style={{border: 'none', textAlign: 'right', fontSize: 13}} id={'quantity'} type={'number'} value={info.quantity}
+                <Input style={{border: 'none', textAlign: 'right', fontSize: 13}} id={'quantity'} type={'number'}
+                       value={info.quantity}
                        onChange={onQuantity} onBlur={blur} name={'qt'}/>
 
             </td>
@@ -267,13 +266,36 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, info, pdfRef, 
 
     return <>
         <Modal
-            title={<div style={{display: 'flex', justifyContent: 'space-between', padding: '0px 30px'}}>
-                <span>거래명세표 출력</span>
+            title={<div style={{width: '100%', display: "flex", justifyContent: 'space-between', alignItems: 'center'}}>
+                <div>거래명세표 출력</div>
                 <div>
-                    <Button style={{fontSize: 11, marginRight: 10}} size={'small'}
-                            onClick={() => commonManage.pdfDown(pdfRef, false, 'test')}>다운로드</Button>
-                    <Button style={{fontSize: 11}} size={'small'}
-                            onClick={() => commonManage.pdfDown(pdfRef, true, 'test')}>인쇄</Button>
+                    <button onClick={() => commonManage.pdfDown(pdfRef, false, 'test')}
+                            style={{
+                                padding: "5px 10px",
+                                backgroundColor: "#1890ff",
+                                color: "#fff",
+                                border: "none",
+                                borderRadius: "4px",
+                                cursor: "pointer",
+                                fontSize: 11,
+                                marginRight: 10
+                            }}>
+                        <div><DownloadOutlined style={{paddingRight: 8}}/>다운로드</div>
+                    </button>
+                    {/*@ts-ignore*/}
+                    <button onClick={() => commonManage.pdfDown(pdfRef, true, 'test')}
+                            style={{
+                                padding: "5px 10px",
+                                backgroundColor: "gray",
+                                color: "#fff",
+                                border: "none",
+                                borderRadius: "4px",
+                                cursor: "pointer",
+                                fontSize: 11,
+                                marginRight: 20
+                            }}>
+                        <div><PrinterOutlined style={{paddingRight: 8}}/>인쇄</div>
+                    </button>
                 </div>
             </div>}
             width={1100} open={isModalOpen?.event1}
@@ -488,17 +510,17 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, info, pdfRef, 
 
 
                                 <td style={{fontWeight: 600}}>
-                                     <TextArea   autoSize={{ minRows: 1, maxRows: 5 }} style={{
-                                         resize: 'none',
-                                         border: 'none',
-                                         textAlign: 'center',
-                                         fontSize: 12,
-                                         fontWeight: 700,
+                                    <TextArea autoSize={{minRows: 1, maxRows: 5}} style={{
+                                        resize: 'none',
+                                        border: 'none',
+                                        textAlign: 'center',
+                                        fontSize: 12,
+                                        fontWeight: 700,
 
-                                     }} defaultValue={''}/>
-                            </td>
+                                    }} defaultValue={''}/>
+                                </td>
                             </tr>
-                            )}
+                        )}
                         </thead>
                     </table>
                     {Object.keys(data).length > 1 ? <></> :
@@ -512,9 +534,14 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, info, pdfRef, 
                             <tr style={{height: 35, fontWeight: 100}}>
 
                                 <th colSpan={2} style={{fontWeight: 600, borderTop: 'none'}}>TOTAL</th>
-                                <th style={{width: '5%', textAlign: 'right', paddingRight: 8, borderTop: 'none'}}>{totalData?.quantity}</th>
+                                <th style={{
+                                    width: '5%',
+                                    textAlign: 'right',
+                                    paddingRight: 8,
+                                    borderTop: 'none'
+                                }}>{totalData?.quantity}</th>
                                 <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop: 'none'}}
-                                    >{(totalData?.net).toLocaleString()}</th>
+                                >{(totalData?.net).toLocaleString()}</th>
                                 <th style={{width: '15%', textAlign: 'right', paddingRight: 10, borderTop: 'none'}}
                                 >{(totalData?.total).toLocaleString()}</th>
                                 <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop: 'none'}}>
@@ -532,7 +559,7 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, info, pdfRef, 
                 </div>
 
 
-                {Object.values(data).map((v:any, i) => {
+                {Object.values(data).map((v: any, i) => {
                     const count: any = commonManage.getPageIndex(Object.values(data), i - 1);
                     if (!i) {
                         return false;
@@ -594,7 +621,7 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, info, pdfRef, 
                                     <NumberInputForm value={src} numb={idx} objKey={i}/>
 
                                     <td style={{fontWeight: 600}}>
-                                        <TextArea   autoSize={{ minRows: 1, maxRows: 5 }} style={{
+                                        <TextArea autoSize={{minRows: 1, maxRows: 5}} style={{
                                             resize: 'none',
                                             border: 'none',
                                             textAlign: 'center',
@@ -645,15 +672,6 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, info, pdfRef, 
                     </div>
 
                 })}
-
-
-
-
-
-
-
-
-
 
 
                 <div style={{
@@ -862,7 +880,7 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, info, pdfRef, 
 
 
                                 <td style={{fontWeight: 600}}>
-                                    <TextArea   autoSize={{ minRows: 1, maxRows: 5 }} style={{
+                                    <TextArea autoSize={{minRows: 1, maxRows: 5}} style={{
                                         resize: 'none',
                                         border: 'none',
                                         textAlign: 'center',
@@ -886,7 +904,12 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, info, pdfRef, 
                             <tr style={{height: 35, fontWeight: 100}}>
 
                                 <th colSpan={2} style={{fontWeight: 600, borderTop: 'none'}}>TOTAL</th>
-                                <th style={{width: '5%', textAlign: 'right', paddingRight: 8, borderTop: 'none'}}>{totalData?.quantity}</th>
+                                <th style={{
+                                    width: '5%',
+                                    textAlign: 'right',
+                                    paddingRight: 8,
+                                    borderTop: 'none'
+                                }}>{totalData?.quantity}</th>
                                 <th style={{width: '12%', textAlign: 'right', paddingRight: 10, borderTop: 'none'}}
                                 >{(totalData?.net).toLocaleString()}</th>
                                 <th style={{width: '15%', textAlign: 'right', paddingRight: 10, borderTop: 'none'}}
@@ -906,7 +929,7 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, info, pdfRef, 
                 </div>
 
 
-                {Object.values(data).map((v:any, i) => {
+                {Object.values(data).map((v: any, i) => {
                     const count: any = commonManage.getPageIndex(Object.values(data), i - 1);
                     if (!i) {
                         return false;

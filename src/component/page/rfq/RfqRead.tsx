@@ -1,5 +1,11 @@
 import React, {memo, useEffect, useRef, useState} from "react";
-import {ExclamationCircleOutlined, RadiusSettingOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
+import {
+    DeleteOutlined,
+    ExclamationCircleOutlined,
+    RadiusSettingOutlined,
+    SaveOutlined,
+    SearchOutlined
+} from "@ant-design/icons";
 import Button from "antd/lib/button";
 import {rfqReadColumns} from "@/utils/columnList";
 import {estimateRequestDetailUnit, subRfqReadInitial} from "@/utils/initialList";
@@ -208,15 +214,15 @@ function RfqRead({getPropertyId, getCopyPage}: any) {
                                                         })
                                                     }}>M</Button>
                                         </div>
-
-                                        {selectBoxForm({
-                                            title: '회신 여부', id: 'searchContent', onChange: onChange, data: info, list: [
-                                                {value: '', label: '전체'},
-                                                {value: '회신', label: '회신'},
-                                                {value: '미회신', label: '미회신'}
-                                            ]
-                                        })}
-
+                                        <div style={{paddingBottom: 9}}>
+                                            {selectBoxForm({
+                                                title: '회신 여부', id: 'searchContent', onChange: onChange, data: info, list: [
+                                                    {value: '', label: '전체'},
+                                                    {value: '회신', label: '회신'},
+                                                    {value: '미회신', label: '미회신'}
+                                                ]
+                                            })}
+                                        </div>
                                         {inputForm({
                                             title: '등록직원명', id: 'searchCreatedBy',
                                             onChange: onChange,
@@ -285,9 +291,9 @@ function RfqRead({getPropertyId, getCopyPage}: any) {
                         title="삭제하시겠습니까?"
                         onConfirm={deleteList}
                         icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
-
-                        {/*@ts-ignored*/}
-                        <Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}>삭제</Button>
+                        <Button type={'primary'} danger size={'small'} style={{fontSize: 11}}>
+                            <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>
+                        </Button>
                     </Popconfirm>}
                                totalRow={totalRow}
                                getPropertyId={getPropertyId}

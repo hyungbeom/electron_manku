@@ -20,8 +20,7 @@ Font.register({
 const colWidths = [50, 210, 45, 45, 100, 100, 100];
 
 
-export function PrintPoForm({data, topInfoData, totalData, title, lang}) {
-
+export function PrintPoForm({data, topInfoData, totalData, bottomInfo, title, lang}) {
 
     return <Document>
         <Page size="A4" style={styles.page}>
@@ -253,28 +252,33 @@ export function PrintPoForm({data, topInfoData, totalData, title, lang}) {
                         </View>
                     </View>
 
-                    {
-                        lang === 'ko' ?
-                            <View style={styles.footer}>
-                                <Text>· 금일 환율 기준으로 2%이상 인상될 시 , 단가가 인상될 수 있습니다.</Text>
-                                <Text>· 러-우전쟁 및 COVID-19 장기화로 납기 변동성이 큰 시기입니다. 납기 지연이 발생할 수 있는 점 양해 부탁드립니다.</Text>
-                                <Text>· 의뢰하신 Model로 기준한 견적이며, 견적 수량 전량 구입시 가격입니다. (긴급 납기시 담당자와 협의 가능합니다.)</Text>
-                                <Text>· 계좌번호: (기업은행)069-118428-04-010/(주)만쿠무역.</Text>
-                                <Text>· 성적서 및 품질보증서는 별도입니다.</Text>
-                            </View>
-                            :
-                            <View style={styles.footer}>
-                                <Text>* For the invoice* Please indicate few things as below:</Text>
-                                <Text>1. HS Code 6 Digit</Text>
-                                <Text>2. Indication of Country of Origin</Text>
-                                <Text>It has to be written into the remark of every Invoice every time.</Text>
-                                <Text>And your name, your signature and date of signature have to be put in under the
-                                    sentence as well.</Text>
-                                <Text>* Please give us Order confirmation. (Advise us if we should pay your bank charge as
-                                    well.)</Text>
-                            </View>
-                    }
+                    <View style={styles.footer}>
+                        <Text>{bottomInfo}</Text>
+                    </View>
+                    {/*{*/}
+                    {/*    lang === 'ko' ?*/}
+                    {/*        <View style={styles.footer}>*/}
+                    {/*            <Text>· 금일 환율 기준으로 2%이상 인상될 시 , 단가가 인상될 수 있습니다.</Text>*/}
+                    {/*            <Text>· 러-우전쟁 및 COVID-19 장기화로 납기 변동성이 큰 시기입니다. 납기 지연이 발생할 수 있는 점 양해 부탁드립니다.</Text>*/}
+                    {/*            <Text>· 의뢰하신 Model로 기준한 견적이며, 견적 수량 전량 구입시 가격입니다. (긴급 납기시 담당자와 협의 가능합니다.)</Text>*/}
+                    {/*            <Text>· 계좌번호: (기업은행)069-118428-04-010/(주)만쿠무역.</Text>*/}
+                    {/*            <Text>· 성적서 및 품질보증서는 별도입니다.</Text>*/}
+                    {/*        </View>*/}
+                    {/*        :*/}
+                    {/*        <View style={styles.footer}>*/}
+                    {/*            <Text>* For the invoice* Please indicate few things as below:</Text>*/}
+                    {/*            <Text>1. HS Code 6 Digit</Text>*/}
+                    {/*            <Text>2. Indication of Country of Origin</Text>*/}
+                    {/*            <Text>It has to be written into the remark of every Invoice every time.</Text>*/}
+                    {/*            <Text>And your name, your signature and date of signature have to be put in under the*/}
+                    {/*                sentence as well.</Text>*/}
+                    {/*            <Text>* Please give us Order confirmation. (Advise us if we should pay your bank charge as*/}
+                    {/*                well.)</Text>*/}
+                    {/*        </View>*/}
+                    {/*}*/}
+
                 </> : <></>}
+
                 <Text style={styles.pageNum}>- 1 -</Text>
             </View>
         </Page>
@@ -482,30 +486,33 @@ export function PrintPoForm({data, topInfoData, totalData, title, lang}) {
                             </View>
                         </View>
 
-                        {
-                            lang === 'ko' ?
-                                <View style={styles.footer}>
-                                    <Text>· 금일 환율 기준으로 2%이상 인상될 시 , 단가가 인상될 수 있습니다.</Text>
-                                    <Text>· 러-우전쟁 및 COVID-19 장기화로 납기 변동성이 큰 시기입니다. 납기 지연이 발생할 수 있는 점 양해 부탁드립니다.</Text>
-                                    <Text>· 의뢰하신 Model로 기준한 견적이며, 견적 수량 전량 구입시 가격입니다. (긴급 납기시 담당자와 협의 가능합니다.)</Text>
-                                    <Text>· 계좌번호: (기업은행)069-118428-04-010/(주)만쿠무역.</Text>
-                                    <Text>· 성적서 및 품질보증서는 별도입니다.</Text>
-                                </View>
-                                :
-                                <View style={styles.footer}>
-                                    <Text>* For the invoice* Please indicate few things as below:</Text>
-                                    <Text>1. HS Code 6 Digit</Text>
-                                    <Text>2. Indication of Country of Origin</Text>
-                                    <Text>It has to be written into the remark of every Invoice every time.</Text>
-                                    <Text>And your name, your signature and date of signature have to be put in under the
-                                        sentence as well.</Text>
-                                    <Text>* Please give us Order confirmation. (Advise us if we should pay your bank charge as
-                                        well.)</Text>
-                                </View>
-                        }
+                        <View style={styles.footer}>
+                            <Text>{bottomInfo}</Text>
+                        </View>
+
+                        {/*{*/}
+                        {/*    lang === 'ko' ?*/}
+                        {/*        <View style={styles.footer}>*/}
+                        {/*            <Text>· 금일 환율 기준으로 2%이상 인상될 시 , 단가가 인상될 수 있습니다.</Text>*/}
+                        {/*            <Text>· 러-우전쟁 및 COVID-19 장기화로 납기 변동성이 큰 시기입니다. 납기 지연이 발생할 수 있는 점 양해 부탁드립니다.</Text>*/}
+                        {/*            <Text>· 의뢰하신 Model로 기준한 견적이며, 견적 수량 전량 구입시 가격입니다. (긴급 납기시 담당자와 협의 가능합니다.)</Text>*/}
+                        {/*            <Text>· 계좌번호: (기업은행)069-118428-04-010/(주)만쿠무역.</Text>*/}
+                        {/*            <Text>· 성적서 및 품질보증서는 별도입니다.</Text>*/}
+                        {/*        </View>*/}
+                        {/*        :*/}
+                        {/*        <View style={styles.footer}>*/}
+                        {/*            <Text>* For the invoice* Please indicate few things as below:</Text>*/}
+                        {/*            <Text>1. HS Code 6 Digit</Text>*/}
+                        {/*            <Text>2. Indication of Country of Origin</Text>*/}
+                        {/*            <Text>It has to be written into the remark of every Invoice every time.</Text>*/}
+                        {/*            <Text>And your name, your signature and date of signature have to be put in under the*/}
+                        {/*                sentence as well.</Text>*/}
+                        {/*            <Text>* Please give us Order confirmation. (Advise us if we should pay your bank charge as*/}
+                        {/*                well.)</Text>*/}
+                        {/*        </View>*/}
+                        {/*}*/}
 
                     </> : <></>}
-
 
                     <Text style={styles.pageNum}>- {idx + 1} -</Text>
                 </View>

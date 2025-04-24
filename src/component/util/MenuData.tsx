@@ -166,10 +166,7 @@ export const introMenulist = [
         icon: <CopyFilled/>,
         color: 'yellowgreen',
         title: '견적서',
-        children: [{name: '견적서 등록', key: 'estimate_write'}, {name: '견적서 조회', key: 'estimate_read'}, {
-            name: '통합견적서',
-            key: ''
-        }]
+        children: [{name: '견적서 등록', key: 'estimate_write'}, {name: '견적서 조회', key: 'estimate_read'}, {name: '통합견적서',key: ''}]
     },
     {
         icon: <WalletFilled/>,

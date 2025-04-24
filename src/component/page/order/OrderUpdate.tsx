@@ -5,16 +5,23 @@ import {getData} from "@/manage/function/api";
 import {useRouter} from "next/router";
 import {BoxCard, datePickerForm, inputForm, MainCard, SelectForm, textAreaForm, TopBoxCard} from "@/utils/commonForm";
 import PrintPo from "@/component/printPo";
-import {commonFunc, commonManage, fileManage, gridManage} from "@/utils/commonManage";
+import {commonFunc, commonManage, fileManage} from "@/utils/commonManage";
 import {getAttachmentFileList, updateOrder} from "@/utils/api/mainApi";
 import {findCodeInfo} from "@/utils/api/commonApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import Spin from "antd/lib/spin";
-import {estimateInfo, orderInfo} from "@/utils/column/ProjectInfo";
+import {orderInfo} from "@/utils/column/ProjectInfo";
 import Table from "@/component/util/Table";
 import SearchInfoModal from "@/component/SearchAgencyModal";
-import {CopyOutlined, DeleteOutlined, FormOutlined, RadiusSettingOutlined, RollbackOutlined} from "@ant-design/icons";
+import {
+    AuditOutlined,
+    CopyOutlined,
+    DeleteOutlined,
+    FileDoneOutlined,
+    FormOutlined,
+    RollbackOutlined
+} from "@ant-design/icons";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import useEventListener from "@/utils/common/function/UseEventListener";
@@ -393,8 +400,8 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
                 rowGap: 10,
             }}>
                 <MainCard title={'발주서 수정'} list={[
-                    {name: <div>거래명세표 출력</div>, func: printTransactionStatement, type: ''},
-                    {name: <div>발주서 출력</div>, func: printPo, type: ''},
+                    {name: <div><FileDoneOutlined style={{paddingRight: 8}}/>거래명세표 출력</div>, func: printTransactionStatement, type: ''},
+                    {name: <div><AuditOutlined style={{paddingRight: 8}}/>발주서 출력</div>, func: printPo, type: ''},
                     {name: <div><FormOutlined style={{paddingRight: 8}}/>수정</div>, func: saveFunc, type: 'primary'},
                     {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: deleteFunc, type: 'delete'},
                     // {

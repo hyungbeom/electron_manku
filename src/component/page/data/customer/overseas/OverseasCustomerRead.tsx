@@ -5,7 +5,13 @@ import {OCSearchInitial,} from "@/utils/initialList";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
 import Button from "antd/lib/button";
-import {ExclamationCircleOutlined, ReloadOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
+import {
+    DeleteOutlined,
+    ExclamationCircleOutlined,
+    ReloadOutlined,
+    SaveOutlined,
+    SearchOutlined
+} from "@ant-design/icons";
 import {inputForm, MainCard, TopBoxCard} from "@/utils/commonForm";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import {searchOverseasCustomer} from "@/utils/api/mainApi";
@@ -180,7 +186,9 @@ function OverseasCustomerRead({getPropertyId, getCopyPage}: any) {
                         title="삭제하시겠습니까?"
                         onConfirm={confirm}
                         icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
-                        <Button type={'primary'} danger size={'small'} style={{fontSize: 11, marginLeft: 5}}>삭제</Button>
+                        <Button type={'primary'} danger size={'small'} style={{fontSize: 11}}>
+                            <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>
+                        </Button>
                     </Popconfirm>
                 }
                 totalRow={totalRow}

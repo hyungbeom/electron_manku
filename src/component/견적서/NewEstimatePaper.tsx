@@ -10,6 +10,7 @@ import {pdf} from "@react-pdf/renderer";
 import {PdfForm} from "@/component/견적서/PdfForm";
 import EstimateHeader from "@/component/견적서/EstimateHeader";
 import {getData} from "@/manage/function/api";
+import {DownloadOutlined, PrinterOutlined} from "@ant-design/icons";
 
 
 function transformEstimateData(data: any) {
@@ -128,11 +129,8 @@ export default function NewEstimatePaper({gridRef, openEstimateModal}) {
         }
     }
     useEffect(() => {
-
         if (memberList.length) {
-
             const findMember = memberList.find(v => v.adminId === info?.managerAdminId);
-
             setInfo(v => {
                 return {
                     ...v,
@@ -291,12 +289,9 @@ export default function NewEstimatePaper({gridRef, openEstimateModal}) {
                          setToggle(true);
                      }}>
                     <span>{!isNaN(info.net * info.quantity) ? '₩' : ''}</span>
-                    <span
-                        className={'total'}>{!isNaN(info.net * info.quantity) ? amountFormat(info.net * info.quantity) : ''}</span>
+                    <span className={'total'}>{!isNaN(info.net * info.quantity) ? amountFormat(info.net * info.quantity) : ''}</span>
                 </div>
-
             </td>
-
         </>
     }
 
@@ -336,7 +331,7 @@ export default function NewEstimatePaper({gridRef, openEstimateModal}) {
                     fontSize: 11,
                     marginRight: 10
                 }}>
-                    다운로드
+                    <div><DownloadOutlined style={{paddingRight: 8}}/>다운로드</div>
                 </button>
                 {/*@ts-ignore*/}
                 <button onClick={print} style={{
@@ -349,7 +344,7 @@ export default function NewEstimatePaper({gridRef, openEstimateModal}) {
                     fontSize: 11,
                     marginRight: 20
                 }}>
-                    인쇄
+                    <div><PrinterOutlined style={{paddingRight: 8}}/>인쇄</div>
                 </button>
             </div>
         </div>
@@ -415,8 +410,8 @@ export default function NewEstimatePaper({gridRef, openEstimateModal}) {
                 </thead>
 
                 <thead>
-                <tr style={{fontWeight: 'bold', height: 30}}>
-                    <th colSpan={6}/>
+                <tr style={{fontWeight: 'bold', height: 35,}}>
+                    <th colSpan={7}/>
                 </tr>
                 </thead>
 
@@ -425,29 +420,61 @@ export default function NewEstimatePaper({gridRef, openEstimateModal}) {
                 {data[0]?.map((src, idx) => {
                     return <tr>
                         {src.documentNumberFull ?
-                            <td colSpan={3} style={{
-                                width: '6%',
-                                fontWeight: 600,
-                                textAlign: 'left',
-                                paddingLeft: 15
-                            }}>{src.documentNumberFull}</td>
-                            :
-                            <td colSpan={2} style={{width: '6%', fontWeight: 600}}>{src.modelIndex}</td>
-                        }
-
-                        {!src.documentNumberFull ? <td style={{
+                            <>
+                                <td colSpan={3} style={{
+                                    width: '6%',
+                                    fontWeight: 600,
+                                    textAlign: 'left',
+                                    paddingLeft: 15,
+                                    height: 35
+                                }}>{src.documentNumberFull}</td>
+                                <td colSpan={2}></td>
+                                <td></td>
+                                <td></td>
+                            </>
+                            : <>
+                                <td colSpan={2} style={{width: '6%', fontWeight: 600}}>{src.modelIndex}</td>
+                                <td style={{
                                 whiteSpace: 'pre-line',
                                 lineHeight: 2.1,
                                 textAlign: 'left',
                                 paddingLeft: 5
-                            }}>
-                                <TextAreas value={src.model} numb={idx} objKey={0}/>
-
-                            </td>
-                            :
-                            <></>
+                                }}><TextAreas value={src.model} numb={idx} objKey={0}/></td>
+                                {src.modelIndex === 'maker' ?
+                                <>
+                                    <td colSpan={2}></td>
+                                    <td></td>
+                                    <td></td>
+                                </>
+                                :
+                                <NumberInputForm value={src} numb={idx} objKey={0}/>}
+                            </>
                         }
-                        <NumberInputForm value={src} numb={idx} objKey={0}/>
+
+                        {/*{src.documentNumberFull ?*/}
+                        {/*    <td colSpan={3} style={{*/}
+                        {/*        width: '6%',*/}
+                        {/*        fontWeight: 600,*/}
+                        {/*        textAlign: 'left',*/}
+                        {/*        paddingLeft: 15*/}
+                        {/*    }}>{src.documentNumberFull}</td>*/}
+                        {/*    :*/}
+                        {/*    <td colSpan={2} style={{width: '6%', fontWeight: 600}}>{src.modelIndex}</td>*/}
+                        {/*}*/}
+
+                        {/*{!src.documentNumberFull ? <td style={{*/}
+                        {/*        whiteSpace: 'pre-line',*/}
+                        {/*        lineHeight: 2.1,*/}
+                        {/*        textAlign: 'left',*/}
+                        {/*        paddingLeft: 5*/}
+                        {/*    }}>*/}
+                        {/*        <TextAreas value={src.model} numb={idx} objKey={0}/>*/}
+
+                        {/*    </td>*/}
+                        {/*    :*/}
+                        {/*    <></>*/}
+                        {/*}*/}
+                        {/*<NumberInputForm value={src} numb={idx} objKey={0}/>*/}
                     </tr>
                 })}
                 </thead>
@@ -542,29 +569,61 @@ export default function NewEstimatePaper({gridRef, openEstimateModal}) {
                     {v?.map((src, idx) => {
                         return <tr style={{height: 35, fontWeight: 100}}>
                             {src.documentNumberFull ?
-                                <td colSpan={3} style={{
-                                    width: '6%',
-                                    fontWeight: 600,
-                                    textAlign: 'left',
-                                    paddingLeft: 15
-                                }}>{src.documentNumberFull}</td>
-                                :
-                                <td colSpan={2} style={{width: '6%', fontWeight: 600}}>{src.modelIndex}</td>
+                                <>
+                                    <td colSpan={3} style={{
+                                        width: '6%',
+                                        fontWeight: 600,
+                                        textAlign: 'left',
+                                        paddingLeft: 15,
+                                        height: 35
+                                    }}>{src.documentNumberFull}</td>
+                                    <td colSpan={2}></td>
+                                    <td></td>
+                                    <td></td>
+                                </>
+                                : <>
+                                    <td colSpan={2} style={{width: '6%', fontWeight: 600}}>{src.modelIndex}</td>
+                                    <td style={{
+                                        whiteSpace: 'pre-line',
+                                        lineHeight: 2.1,
+                                        textAlign: 'left',
+                                        paddingLeft: 5
+                                    }}><TextAreas value={src.model} numb={idx} objKey={0}/></td>
+                                    {src.modelIndex === 'maker' ?
+                                        <>
+                                            <td colSpan={2}></td>
+                                            <td></td>
+                                            <td></td>
+                                        </>
+                                        :
+                                        <NumberInputForm value={src} numb={idx} objKey={0}/>}
+                                </>
                             }
 
-                            {!src.documentNumberFull ? <td style={{
-                                    whiteSpace: 'pre-line',
-                                    lineHeight: 2.1,
-                                    textAlign: 'left',
-                                    paddingLeft: 5
-                                }}>
-                                    <TextAreas value={src.model} numb={idx} objKey={i}/>
+                            {/*{src.documentNumberFull ?*/}
+                            {/*    <td colSpan={3} style={{*/}
+                            {/*        width: '6%',*/}
+                            {/*        fontWeight: 600,*/}
+                            {/*        textAlign: 'left',*/}
+                            {/*        paddingLeft: 15*/}
+                            {/*    }}>{src.documentNumberFull}</td>*/}
+                            {/*    :*/}
+                            {/*    <td colSpan={2} style={{width: '6%', fontWeight: 600}}>{src.modelIndex}</td>*/}
+                            {/*}*/}
 
-                                </td>
-                                :
-                                <></>
-                            }
-                            <NumberInputForm value={src} numb={idx} objKey={i}/>
+                            {/*{!src.documentNumberFull ? <td style={{*/}
+                            {/*        whiteSpace: 'pre-line',*/}
+                            {/*        lineHeight: 2.1,*/}
+                            {/*        textAlign: 'left',*/}
+                            {/*        paddingLeft: 5*/}
+                            {/*    }}>*/}
+                            {/*        <TextAreas value={src.model} numb={idx} objKey={i}/>*/}
+
+                            {/*    </td>*/}
+                            {/*    :*/}
+                            {/*    <></>*/}
+                            {/*}*/}
+                            {/*<NumberInputForm value={src} numb={idx} objKey={i}/>*/}
                         </tr>
                     })}
 
