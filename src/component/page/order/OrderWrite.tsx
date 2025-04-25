@@ -129,6 +129,8 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                     await findCodeInfo(e, setInfo, openModal)
                     break;
                 case 'ourPoNo' :
+
+                    const connValue = e.target.value
                     if (!e.target.value) {
                         return message.warn('만쿠견적서 No.를 입력해주세요.');
                     }
@@ -138,10 +140,15 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                         documentNumberFull: e.target.value.toUpperCase()
                     }).then(async v => {
                         if (v?.data?.code === 1) {
+                            const {estimateDetail = {}, attachmentFileList = []} = v?.data?.entity;
+                            if(!isEmptyObj(estimateDetail)){
+                                setLoading(false);
+                                return message.warn('조회데이터가 없습니다.')
+                            }
                             setInfo(getOrderInit());
                             setFileList([]);
                             setOriginFileList([]);
-                            const {estimateDetail = {}, attachmentFileList = []} = v?.data?.entity;
+
                             // const result = await findDocumentInfo(e, setInfo);
                             await getData.post('estimate/generateDocumentNumberFull', {
                                 type: 'ORDER',
@@ -153,7 +160,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                     ...getOrderInit(),
                                     ...estimateDetail,
                                     documentNumberFull: src?.data?.code === 1 ? src?.data?.entity?.newDocumentNumberFull : '',
-                                    ourPoNo: e?.target?.value?.toUpperCase(),
+                                    ourPoNo: connValue,
                                     estimateManager: findManager?.name,
                                     customerManagerName: estimateDetail?.managerName,
                                     customerManagerPhoneNumber: estimateDetail?.phoneNumber,
