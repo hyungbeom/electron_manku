@@ -21,6 +21,7 @@ import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import useEventListener from "@/utils/common/function/UseEventListener";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import {Switch} from "antd";
+import {findCodeInfo} from "@/utils/api/commonApi";
 
 
 const listType = 'orderDetailList'
@@ -125,7 +126,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
             switch (e.target.id) {
                 case 'agencyCode' :
                 case 'customerName' :
-                    // await findCodeInfo(e, setInfo, openModal, infoRef)
+                    await findCodeInfo(e, setInfo, openModal)
                     break;
                 case 'ourPoNo' :
                     if (!e.target.value) {
