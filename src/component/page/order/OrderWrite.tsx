@@ -498,8 +498,9 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                     style={{cursor: 'pointer'}}
                                     onClick={() => {
                                         const member = memberList.find(v => v.adminId === parseInt(info.managerAdminId));
+                                        console.log(member,':::')
                                         const managerInfo = {
-                                            managerId: info?.agencyCode?.toUpperCase().startsWith('K') ? member?.name : member?.adminName,
+                                            managerId: info?.agencyCode?.toUpperCase().startsWith('K') ? member?.name : member?.englishName,
                                             managerPhoneNumber: member?.contactNumber,
                                             managerFaxNumber: member?.faxNumber,
                                             managerEmail: member?.email
