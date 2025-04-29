@@ -58,11 +58,13 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
      */
     const processData = (list) => {
         let sum = 0;
-        const newList = list.map(item => {
-            sum += item.receivedQuantity || 0;
-            return {...item, totalQuantity: sum, remainingQuantity: item.receivedQuantity, shippedQuantity: 0}
-        });
-        return newList.sort((a, b) => b.inventoryId - a.inventoryId);
+        const newList = [...list]
+            .sort((a, b) => new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime())
+            .map(item => {
+                sum += Number(item.receivedQuantity ?? 0);
+                return {...item, remainingQuantity: item.receivedQuantity, shippedQuantity: 0, totalQuantity: sum}
+            })
+        return newList.sort((a, b) => new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime());
     }
 
     const fetchData = async () => {

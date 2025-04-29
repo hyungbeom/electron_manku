@@ -500,7 +500,7 @@ export const radioForm = ({title, id, disabled = false, data, onChange, list}) =
     return <div style={{fontSize: 12, paddingBottom: 10}}>
         <div style={{paddingBottom: 6}}>{title}</div>
         <Radio.Group id={id} value={bowl[id]} disabled={disabled}
-                     style={{display: 'flex', justifyContent: 'space-between', width: '100%'}}
+                     style={{width: '100%', display: 'flex', flexWrap:'wrap', gap: '35px', alignItems: 'center'}}
                      onChange={e => {
                          e.target['id'] = id
                          onChange(e);

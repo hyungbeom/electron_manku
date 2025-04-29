@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState} from "react";
 import {remittanceDomesticSearchInitial} from "@/utils/initialList";
 import {getData} from "@/manage/function/api";
 import moment from "moment";
-import {BoxCard, inputForm, MainCard, radioForm, rangePickerForm} from "@/utils/commonForm";
+import {BoxCard, inputForm, MainCard, radioForm, rangePickerForm, selectBoxForm, SelectForm} from "@/utils/commonForm";
 import _ from "lodash";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import TableGrid from "@/component/tableGrid";
@@ -164,7 +164,7 @@ export default function DomesticRemittanceRead({getPropertyId, getCopyPage}: any
 
                 {mini ? <div>
                     <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
-                        <Panel defaultSize={sizes[0]} minSize={5}>
+                        <Panel defaultSize={sizes[0]} minSize={15}>
                             <BoxCard title={''}>
                                 <div style={{
                                     display: 'grid',
@@ -222,7 +222,7 @@ export default function DomesticRemittanceRead({getPropertyId, getCopyPage}: any
                             </BoxCard>
                         </Panel>
                         <PanelResizeHandle/>
-                        <Panel defaultSize={sizes[1]} minSize={5}>
+                        <Panel defaultSize={sizes[1]} minSize={15}>
                             <BoxCard title={''}>
                                 {inputForm({
                                     title: 'Inquiry No.',
@@ -248,28 +248,44 @@ export default function DomesticRemittanceRead({getPropertyId, getCopyPage}: any
                             </BoxCard>
                         </Panel>
                         <PanelResizeHandle/>
-                        <Panel defaultSize={sizes[2]} minSize={5}>
+                        <Panel defaultSize={sizes[2]} minSize={20}>
                             <BoxCard title={''}>
-                                {radioForm({
-                                    title: '송금 여부',
-                                    id: 'searchIsSend',
-                                    onChange: onChange,
-                                    data: info,
-                                    list: [{value: '', title: '전체'}, {value: 'O', title: 'O'}, {
-                                        value: 'X',
-                                        title: 'X'
-                                    }]
-                                })}
                                 {radioForm({
                                     title: '계산서 발행여부',
                                     id: 'searchIsInvoice',
                                     onChange: onChange,
                                     data: info,
-                                    list: [{value: '', title: '전체'}, {value: 'O', title: 'O'}, {
-                                        value: 'X',
-                                        title: 'X'
-                                    }]
+                                    list: [
+                                        {value: 'O', title: 'O'},
+                                        {value: 'X', title: 'X'}
+                                    ]
                                 })}
+                                {radioForm({
+                                    title: '부분송금 진행여부',
+                                    id: 'searchIsSend',
+                                    onChange: onChange,
+                                    data: info,
+                                    list: [
+                                        {value: '완료', title: '완료'},
+                                        {value: '진행중', title: '진행중'},
+                                        {value: '', title: '해당없음'}
+                                    ]
+                                })}
+                                <div style={{paddingTop: 2}}>
+                                    {selectBoxForm({
+                                        title: '송금상태',
+                                        id: 'paymentMethod',
+                                        onChange: onChange,
+                                        data: info,
+                                        list: [
+                                            {value: '요청', label: '요청'},
+                                            {value: '취소', label: '취소'},
+                                            {value: '반려', label: '반려'},
+                                            {value: '부분완료', label: '부분완료'},
+                                            {value: '완료', label: '완료'}
+                                        ]
+                                    })}
+                                </div>
                             </BoxCard>
                         </Panel>
                         <PanelResizeHandle/>
