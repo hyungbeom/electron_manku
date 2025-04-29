@@ -1938,6 +1938,86 @@ export const tableCodeDomesticAgencyWriteColumns = [
     },
 ]
 
+
+
+// ================================================ 송금 =================================================
+
+// 송금 조회 테이블 컬럼
+export const remittanceReadColumn = [
+    {
+        headerName: "", // 컬럼 제목
+        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
+        checkboxSelection: true, // 각 행에 체크박스 추가
+        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
+        cellStyle: {textAlign: "center"}, // 스타일 설정
+        maxWidth: 60, // 컬럼 너비
+        pinned: "left", // 왼쪽에 고정
+        filter: false
+    },
+    {
+        headerName: 'Inquiry No.',
+        field: 'connectInquiryNo',
+        maxWidth: 100,
+        pinned: 'left'
+    },
+    {
+        headerName: '항목번호',
+        field: 'test',
+        maxWidth: 80,
+        pinned: 'left'
+    },
+    {
+        headerName: '송금지정일자',
+        field: 'assignedDate',
+        maxWidth: 120,
+    },
+    {
+        headerName: '고객사명',
+        field: 'customerName',
+    },
+    {
+        headerName: '매입처명',
+        field: 'agencyName',
+    },
+    {
+        headerName: '송금 상태',
+        field: 'isSend',
+        maxWidth: 80,
+    },
+    {
+        headerName: '계산서 발행 여부',
+        field: 'isInvoice',
+        maxWidth: 90,
+    },
+    {
+        headerName: '공급가액',
+        field: 'supplyAmount',
+        valueFormatter: params => params.data.supplyAmount?.toLocaleString(),
+    },
+    {
+        headerName: '부가세',
+        field: 'net',
+        valueFormatter: params => Math.round(params.data.supplyAmount * 0.1 * 10 / 10)?.toLocaleString(),
+        cellEditor: 'agNumberCellEditor',
+    },
+    {
+        headerName: '합계',
+        field: 'total',
+        valueFormatter: params => (params.data.supplyAmount + Math.round(params.data.supplyAmount * 0.1 * 10 / 10))?.toLocaleString(),
+    },
+    {
+        headerName: '담당자',
+        field: 'managerAdminName',
+        maxWidth: 80,
+        pinned: 'right'
+    }
+];
+//
+
+
+
+// ============================================== 데이터 관리 ===============================================
+
 // 국내매입처 조회 테이블 컬럼
 export const tableCodeDomesticPurchaseColumns = [
     {
@@ -3214,75 +3294,6 @@ export const delilveryReadColumn = [
     }, {
         headerName: '확인 여부',
         field: 'isConfirm',
-        maxWidth: 80,
-        pinned: 'right'
-    }
-];
-
-
-export const remittanceReadColumn = [
-    {
-        headerName: "", // 컬럼 제목
-        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
-        checkboxSelection: true, // 각 행에 체크박스 추가
-        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
-        cellStyle: {textAlign: "center"}, // 스타일 설정
-        maxWidth: 60, // 컬럼 너비
-        pinned: "left", // 왼쪽에 고정
-        filter: false
-    }, {
-        headerName: 'Inquiry No.',
-        field: 'connectInquiryNo',
-        maxWidth: 100,
-        pinned: 'left'
-    }, {
-        headerName: '송금요청일자',
-        field: 'requestDate',
-        maxWidth: 120,
-
-    }, {
-        headerName: '송금지정일자',
-        field: 'assignedDate',
-        maxWidth: 120,
-
-    }, {
-        headerName: '고객사명',
-        field: 'customerName',
-        minWidth: 150,
-
-    }, {
-        headerName: '매입처명',
-        field: 'agencyName',
-        minWidth: 150,
-
-    }, {
-        headerName: '공급가액',
-        field: 'supplyAmount',
-        minWidth: 150,
-        valueFormatter: params => params.data.supplyAmount?.toLocaleString(),
-    },
-    {
-        headerName: '부가세',
-        field: 'net',
-        valueFormatter: params => Math.round(params.data.supplyAmount * 0.1 * 10 / 10)?.toLocaleString(),
-        cellEditor: 'agNumberCellEditor',
-    }, {
-        headerName: '합계',
-        field: 'total',
-        valueFormatter: params => (params.data.supplyAmount + Math.round(params.data.supplyAmount * 0.1 * 10 / 10))?.toLocaleString(),
-        minWidth: 150,
-    }
-    , {
-        headerName: '송금 여부',
-        field: 'isSend',
-        maxWidth: 80,
-    }, {
-        headerName: '계산서 발행 여부',
-        field: 'isInvoice',
-        maxWidth: 80,
-    }, {
-        headerName: '담당자',
-        field: 'managerAdminName',
         maxWidth: 80,
         pinned: 'right'
     }

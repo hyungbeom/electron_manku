@@ -24,7 +24,7 @@ import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 import {getData} from "@/manage/function/api";
 import Table from "@/component/util/Table";
-import {projectInfo} from "@/utils/column/ProjectInfo";
+import {orderInfo, projectInfo, rfqInfo} from "@/utils/column/ProjectInfo";
 import message from "antd/lib/message";
 import {saveProject} from "@/utils/api/mainApi";
 import SearchInfoModal from "@/component/SearchAgencyModal";
@@ -34,7 +34,7 @@ import {RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
 
 const listType = 'projectDetailList'
 
-function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
+function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef, getCopyPage}: any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
     const infoRef = useRef<any>(null)
@@ -92,6 +92,14 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     const [fileList, setFileList] = useState([]);
     const [tableData, setTableData] = useState([]);
 
+    const tempData = [
+        {calcCheck: false, connectInquiryNo: '', model: '111', item: '11111', maker: '1', unit: 'ea', quantity: '', currencyUnit: 'KRW', requestDeliveryDate: '', remarks: '비고 1'},
+        {calcCheck: false, connectInquiryNo: '', model: '222', item: '22222', maker: '2', unit: 'ea', quantity: '', currencyUnit: 'KRW', requestDeliveryDate: '', remarks: '비고 2'},
+        {calcCheck: false, connectInquiryNo: '', model: '333', item: '33333', maker: '3', unit: 'ea', quantity: '', currencyUnit: 'KRW', requestDeliveryDate: '', remarks: '비고 3'},
+        {calcCheck: false, connectInquiryNo: '', model: '444', item: '44444', maker: '4', unit: 'ea', quantity: '', currencyUnit: 'KRW', requestDeliveryDate: '', remarks: '비고 4'},
+        {calcCheck: false, connectInquiryNo: '', model: '555', item: '55555', maker: '5', unit: 'ea', quantity: '', currencyUnit: 'KRW', requestDeliveryDate: '', remarks: '비고 5'}
+    ]
+
     useEffect(() => {
         setLoading(true);
         setValidate(getProjectValidateInit());
@@ -100,7 +108,8 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         setTableData([]);
         if (!isEmptyObj(copyPageInfo)) {
             // copyPageInfo 가 없을시
-            setTableData(commonFunc.repeatObject(projectInfo['write']['defaultData'], 1000))
+            // setTableData(commonFunc.repeatObject(projectInfo['write']['defaultData'], 1000))
+            setTableData([...tempData, ...commonFunc.repeatObject(projectInfo['write']['defaultData'], 1000 - tempData.length)])
         } else {
             // copyPageInfo 가 있을시(==>보통 수정페이지에서 복제시)
             // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting
@@ -252,6 +261,36 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         // tableRef.current?.hotInstance?.loadData(calcData(commonFunc.repeatObject(projectInfo['write']['defaultData'], 1000)));
         setTableData(calcData(commonFunc.repeatObject(projectInfo['write']['defaultData'], 1000)))
         setLoading(false);
+    }
+
+    /**
+     * @description 둥록 페이지 > 견적의뢰 이동 버튼
+     * 프로젝트 > 프로젝트 등록
+     * 선택된 Item을 가지고 견적의뢰 작성 페이지로 이동
+     */
+    function copyPage () {
+        const totalList = tableRef.current.getSourceData().slice(0, -1);
+        // totalList.pop();
+        const checkedList = totalList.filter(v => v.check);
+        console.log(checkedList);
+
+        if (!checkedList?.length) {
+            return message.warn('선택한 데이터가 1개 이상이여야 합니다.');
+        }
+
+        const copyInfo = _.cloneDeep(info);
+
+        const list = checkedList.map(v=>{
+            return {
+                model : v.model,
+                quantity : v.quantity,
+                unit : v.unit,
+                currencyUnit : v.currencyUnit,
+                remarks: v.remarks
+            }
+        })
+        copyInfo['estimateRequestDetailList'] = [...list, ...commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000 - list.length)];
+        getCopyPage('rfq_write', { ...copyInfo, _meta: {updateKey: Date.now()}})
     }
 
     /**
@@ -414,7 +453,7 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
             </MainCard>
 
             <Table data={tableData} column={projectInfo['write']} funcButtons={['print']} ref={tableRef}
-                   infoRef={infoRef} type={'project_write_column'}/>
+                   infoRef={infoRef} type={'project_write_column'} customFunc={copyPage}/>
         </div>
     </Spin>
 }

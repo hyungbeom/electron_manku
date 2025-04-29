@@ -57,7 +57,7 @@ function RfqRead({getPropertyId, getCopyPage}: any) {
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('rfq_read');
-        return savedSizes ? JSON.parse(savedSizes) : [25, 25, 25, 0]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [25, 25, 25, 5]; // 기본값 [50, 50, 50]
     };
 
 
@@ -280,7 +280,7 @@ function RfqRead({getPropertyId, getCopyPage}: any) {
                                 </Panel>
 
                                 <PanelResizeHandle/>
-                                <Panel defaultSize={sizes[3]} minSize={5}>
+                                <Panel defaultSize={sizes[3]} minSize={0}>
                                 </Panel>
                             </PanelGroup>
                         </div> : <></>}

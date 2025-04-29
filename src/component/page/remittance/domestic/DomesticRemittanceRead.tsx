@@ -8,7 +8,13 @@ import {commonManage, gridManage} from "@/utils/commonManage";
 import TableGrid from "@/component/tableGrid";
 import {remittanceReadColumn} from "@/utils/columnList";
 import Button from "antd/lib/button";
-import {ExclamationCircleOutlined, RadiusSettingOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
+import {
+    DeleteOutlined,
+    ExclamationCircleOutlined,
+    RadiusSettingOutlined,
+    SaveOutlined,
+    SearchOutlined
+} from "@ant-design/icons";
 import {getRemittanceList} from "@/utils/api/mainApi";
 import message from "antd/lib/message";
 import Spin from "antd/lib/spin";
@@ -166,7 +172,7 @@ export default function DomesticRemittanceRead({getPropertyId, getCopyPage}: any
                                     gap: 3
                                 }}>
                                     {rangePickerForm({
-                                        title: '발주일자',
+                                        title: '송금지정일자',
                                         id: 'searchRequestDate',
                                         onChange: onChange,
                                         data: info
@@ -207,8 +213,8 @@ export default function DomesticRemittanceRead({getPropertyId, getCopyPage}: any
                                             }}>M</Button>
                                 </div>
                                 {inputForm({
-                                    title: 'Inquiry No.',
-                                    id: 'searchConnectInquiryNo',
+                                    title: '담당자',
+                                    id: 'searchManagerAdminName',
                                     onChange: onChange,
                                     handleKeyPress: handleKeyPress,
                                     data: info
@@ -219,6 +225,13 @@ export default function DomesticRemittanceRead({getPropertyId, getCopyPage}: any
                         <Panel defaultSize={sizes[1]} minSize={5}>
                             <BoxCard title={''}>
                                 {inputForm({
+                                    title: 'Inquiry No.',
+                                    id: 'searchConnectInquiryNo',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                                {inputForm({
                                     title: '고객사명',
                                     id: 'searchCustomerName',
                                     onChange: onChange,
@@ -228,13 +241,6 @@ export default function DomesticRemittanceRead({getPropertyId, getCopyPage}: any
                                 {inputForm({
                                     title: '매입처명',
                                     id: 'searchAgencyName',
-                                    onChange: onChange,
-                                    handleKeyPress: handleKeyPress,
-                                    data: info
-                                })}
-                                {inputForm({
-                                    title: '담당자',
-                                    id: 'searchManagerAdminName',
                                     onChange: onChange,
                                     handleKeyPress: handleKeyPress,
                                     data: info
@@ -342,20 +348,23 @@ export default function DomesticRemittanceRead({getPropertyId, getCopyPage}: any
                 </div> : <></>}
             </MainCard>
             {/*@ts-ignored*/}
-            <TableGrid deleteComp={
-                <Popconfirm
-                    title="삭제하시겠습니까?"
-                    onConfirm={confirm}
-                    icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
-                    <Button type={'primary'} danger size={'small'} style={{fontSize: 11, marginLeft: 5}}>삭제</Button>
-                </Popconfirm>
-            }
-                       totalRow={totalRow}
-                       getPropertyId={getPropertyId}
-                       gridRef={gridRef}
-                       columns={remittanceReadColumn}
-                       onGridReady={onGridReady}
-                       funcButtons={['agPrint']}
+            <TableGrid
+                deleteComp={
+                    <Popconfirm
+                        title="삭제하시겠습니까?"
+                        onConfirm={confirm}
+                        icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
+                        <Button type={'primary'} danger size={'small'} style={{fontSize: 11}}>
+                            <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>
+                        </Button>
+                    </Popconfirm>
+                }
+               totalRow={totalRow}
+               getPropertyId={getPropertyId}
+               gridRef={gridRef}
+               columns={remittanceReadColumn}
+               onGridReady={onGridReady}
+               funcButtons={['agPrint']}
             />
         </div>
     </Spin>
