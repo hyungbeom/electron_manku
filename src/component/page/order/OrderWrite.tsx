@@ -13,7 +13,7 @@ import Spin from "antd/lib/spin";
 import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 import PrintPo from "@/component/printPo";
 import moment from "moment/moment";
-import {estimateInfo, makerInfo, orderInfo} from "@/utils/column/ProjectInfo";
+import {estimateInfo, orderInfo} from "@/utils/column/ProjectInfo";
 import Table from "@/component/util/Table";
 import SearchInfoModal from "@/component/SearchAgencyModal";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
@@ -22,7 +22,6 @@ import useEventListener from "@/utils/common/function/UseEventListener";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import {Switch} from "antd";
 import {findCodeInfo} from "@/utils/api/commonApi";
-
 
 const listType = 'orderDetailList'
 
@@ -41,9 +40,11 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
 
     const [memberList, setMemberList] = useState([]);
 
+
     useEffect(() => {
         getMemberList();
     }, []);
+
 
     async function getMemberList() {
         // @ts-ignore
@@ -56,6 +57,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
             setMemberList(v?.data?.entity?.adminList)
         })
     }
+
 
     const options = memberList?.map((item) => ({
         ...item,
@@ -115,7 +117,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                 writtenDate: moment().format('YYYY-MM-DD')
             });
             setTableData(copyPageInfo[listType]);
-            if(!copyPageInfo?.agencyCode?.toUpperCase().startsWith('K')) setCheck(true);
+            if (!copyPageInfo?.agencyCode?.toUpperCase().startsWith('K')) setCheck(true);
         }
         setLoading(false);
     }, [copyPageInfo?._meta?.updateKey]);
@@ -141,7 +143,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                     }).then(async v => {
                         if (v?.data?.code === 1) {
                             const {estimateDetail = {}, attachmentFileList = []} = v?.data?.entity;
-                            if(!isEmptyObj(estimateDetail)){
+                            if (!isEmptyObj(estimateDetail)) {
                                 setLoading(false);
                                 return message.warn('조회데이터가 없습니다.')
                             }
@@ -180,16 +182,16 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                     setTableData([...copyList, ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000 - estimateDetail?.estimateDetailList.length)])
                                 }
                             })
-                            .finally(() => {
-                                setLoading(false);
-                            });
+                                .finally(() => {
+                                    setLoading(false);
+                                });
                         }
                     })
-                    .finally(() => {
-                        setLoading(false);
-                    });
+                        .finally(() => {
+                            setLoading(false);
+                        });
                     break;
-                    // await findOrderDocumentInfo(e, setInfo, setTableData, memberList)
+                // await findOrderDocumentInfo(e, setInfo, setTableData, memberList)
             }
         }
     }
@@ -198,7 +200,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
         commonManage.onChange(e, setInfo)
 
         // 값 입력되면 유효성 초기화
-        const { id, value } = e?.target;
+        const {id, value} = e?.target;
         commonManage.resetValidate(id, value, setValidate);
     }
 
@@ -234,7 +236,6 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
      * 발주서 > 발주서 등록
      */
     async function saveFunc() {
-        console.log(info, 'info:::')
 
         if (!commonManage.checkValidate(info, orderInfo['write']['validationList'], setValidate)) return;
 
@@ -326,6 +327,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                 .map(orderInfo['write']['excelExpert'])
                 .concat(orderInfo['write']['totalList']); // `push` 대신 `concat` 사용
         }
+
         setTableData(calcData(commonFunc.repeatObject(orderInfo['write']['defaultData'], 1000)))
         setLoading(false);
     }

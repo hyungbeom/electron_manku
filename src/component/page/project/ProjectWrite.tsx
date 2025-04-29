@@ -151,7 +151,7 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
      * 프로젝트 > 프로젝트 등록
      */
     async function saveFunc() {
-        console.log(info, 'info:::')
+
 
         if (!commonManage.checkValidate(info, projectInfo['write']['validationList'], setValidate)) return;
 
