@@ -152,22 +152,28 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                 //     }, err => setLoading(false))
                 //     break;
                 case 'connectDocumentNumberFull' :
+                     const connValue = e.target.value
                     if (!e.target.value) {
                         return message.warn('의뢰자료 No.를 입력해주세요.');
                     }
+
                     setLoading(true);
                     await getData.post('estimate/getEstimateRequestDetail', {
                         estimateRequestId: '',
                         documentNumberFull: e.target.value.toUpperCase()
                     }).then(async v => {
                         if (v?.data?.code === 1) {
+                            const {estimateRequestDetail = {}, attachmentFileList = []} = v?.data?.entity;
+                            if(!isEmptyObj(estimateRequestDetail)){
+                                setLoading(false);
+                                return message.warn('조회데이터가 없습니다.')
+                            }
                             setInfo(getEstimateInit());
                             setFileList([]);
                             setTableData([]);
-                            const {estimateRequestDetail = {}, attachmentFileList = []} = v?.data?.entity;
-                            // setFileList(fileManage.getFormatFiles(attachmentFileList))
-                            // const dom = infoRef.current.querySelector('#connectDocumentNumberFull');
-                            // const result = await findDocumentInfo(e, setInfo);
+
+
+
                             await getData.post('estimate/generateDocumentNumberFull', {
                                 type: 'ESTIMATE',
                                 documentNumberFull: info?.connectDocumentNumberFull.toUpperCase()
@@ -176,6 +182,7 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                 setInfo({
                                     ...getEstimateInit(),
                                     ...estimateRequestDetail,
+                                    connectDocumentNumberFull : connValue,
                                     documentNumberFull: src?.data?.code === 1 ? src?.data?.entity?.newDocumentNumberFull : '',
                                     validityPeriod: '견적 발행 후 10일간',
                                     paymentTerms: '발주시 50% / 납품시 50%',
