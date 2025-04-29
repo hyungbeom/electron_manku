@@ -12,7 +12,7 @@ import EstimateListModal from "@/component/EstimateListModal";
 import OrderListModal from "@/component/OrderListModal";
 import Button from "antd/lib/button";
 import * as XLSX from 'xlsx';
-import {UploadOutlined} from "@ant-design/icons";
+import {CopyOutlined, FileExcelOutlined, UploadOutlined} from "@ant-design/icons";
 import HsCodeListModal from "@/component/HsCodeListModal";
 import _ from "lodash";
 // register Handsontable's modules
@@ -25,6 +25,7 @@ const Table = forwardRef(({
                               type = '',
                               funcButtons,
                               infoRef = null,
+                              customFunc = null
                           }: any, ref) => {
 
     const rowRef = useRef(null)
@@ -491,14 +492,37 @@ const Table = forwardRef(({
 
     return (
         <div ref={tableContainerRef} className="table-container" style={{width: '100%', overflowX: 'auto'}}>
-            <div style={{display: 'flex', justifyContent: 'end'}}>
-                <input type="file" accept=".xlsx, .xls, .csv" onChange={handleFileUpload} ref={fileInputRef}
-                       style={{display: "none"}}/>
-                <div style={{display: 'flex', gap: 5, paddingBottom: 0}}>
-                    <Button style={{fontSize: 11}} size={'small'} onClick={upload}><UploadOutlined/>업로드</Button>
-                    {funcButtons?.map(v => tableButtonList(v, hotRef))}
+            <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                <div>
+                    {
+                        type === 'project_write_column' || type === 'project_update_column' ?
+                            <Button
+                                size={'small'} style={{fontSize: 11, backgroundColor: '#bae7ff'}} onClick={customFunc}>
+                                <CopyOutlined/>선택 항목 견적의뢰 등록으로 이동
+                            </Button>
+                            // <Button type={'primary'} style={{fontSize: 11}} size={'small'} onClick={customFunc}><CopyOutlined/>선택 항목 견적의뢰 등록으로 이동</Button>
+                            : <></>
+                    }
+                </div>
+                <div style={{display: 'flex', justifyContent: 'end'}}>
+                    <input type="file" accept=".xlsx, .xls, .csv" onChange={handleFileUpload} ref={fileInputRef}
+                           style={{display: "none"}}/>
+                    <div style={{display: 'flex', gap: 5, paddingBottom: 0}}>
+                        <Button style={{fontSize: 11}} size={'small'} onClick={upload}><UploadOutlined/>업로드</Button>
+                        {funcButtons?.map(v => tableButtonList(v, hotRef))}
+                    </div>
                 </div>
             </div>
+
+            {/*<div style={{display: 'flex', justifyContent: 'end'}}>*/}
+            {/*    <input type="file" accept=".xlsx, .xls, .csv" onChange={handleFileUpload} ref={fileInputRef}*/}
+            {/*           style={{display: "none"}}/>*/}
+            {/*    <div style={{display: 'flex', gap: 5, paddingBottom: 0}}>*/}
+            {/*        <Button style={{fontSize: 11}} size={'small'} onClick={upload}><UploadOutlined/>업로드</Button>*/}
+            {/*        {funcButtons?.map(v => tableButtonList(v, hotRef))}*/}
+            {/*    </div>*/}
+            {/*</div>*/}
+
             <EstimateListModal isModalOpen={isModalOpen['estimate']} setIsModalOpen={setIsModalOpen}
                                getRows={getSelectedRows}/>
             <OrderListModal isModalOpen={isModalOpen['order']} setIsModalOpen={setIsModalOpen}
@@ -571,7 +595,6 @@ const Table = forwardRef(({
                 afterChange={afterChange}
                 columns={column["columnList"].map(col => {
                     const isDate = col.type === "date";
-
 
                     return ({
                         data: col.data,

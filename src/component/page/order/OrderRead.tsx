@@ -31,7 +31,7 @@ function OrderRead({getPropertyId, getCopyPage}: any) {
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('order_read');
-        return savedSizes ? JSON.parse(savedSizes) : [25, 25, 25, 0]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [25, 25, 25, 5]; // 기본값 [50, 50, 50]
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
@@ -301,7 +301,7 @@ function OrderRead({getPropertyId, getCopyPage}: any) {
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>
-                                <Panel defaultSize={sizes[3]} minSize={5}>
+                                <Panel defaultSize={sizes[3]} minSize={0}>
                                 </Panel>
                             </PanelGroup>
                         </div>
