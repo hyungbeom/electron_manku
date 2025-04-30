@@ -290,9 +290,9 @@ function EstimateUpdate({
                     "relatedId": updateKey['estimate_update']
                 }
             }).then(v => {
-                const list = fileManage.getFormatFiles(v);
-                setFileList(list)
-                setOriginFileList(list);
+                // const list = fileManage.getFormatFiles(v);
+                // setFileList(list)
+                // setOriginFileList(list);
 
                 window.postMessage({message: 'reload', target: 'estimate_read'}, window.location.origin);
                 notificationAlert('success', '💾 견적서 수정완료',
@@ -681,15 +681,17 @@ function EstimateUpdate({
                                 </Panel>
                                 <PanelResizeHandle/>
                                 <Panel defaultSize={sizes[5]} minSize={5}>
-                                    <BoxCard title={<div style={{display: 'flex', justifyContent: 'space-between'}}>
-                                        <div>드라이브 목록</div>
-                                        <FileAddFilled style={{fontSize: 18, cursor: 'pointer'}} onClick={addEstimate}/>
-                                    </div>} disabled={!userInfo['microsoftId']}>
+                                    <BoxCard title={
+                                                <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                                                <div>드라이브 목록</div>
+                                                <FileAddFilled style={{fontSize: 18, cursor: 'pointer'}} onClick={addEstimate}/>
+                                                </div>
+                                             } disabled={!userInfo['microsoftId']}>
                                         {/*@ts-ignored*/}
                                         <div style={{overFlowY: "auto", maxHeight: 300}}>
                                             <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                             infoRef={infoRef} uploadType={info.uploadType}
-                                                             addFileName={info?.customerName}/>
+                                                             infoRef={infoRef} uploadType={info.uploadType} type={'estimate'}
+                                                             folderId={info?.folderId} info={info}/>
                                         </div>
                                     </BoxCard>
                                 </Panel>

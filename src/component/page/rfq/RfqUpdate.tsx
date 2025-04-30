@@ -217,7 +217,6 @@ function RqfUpdate({
         if (!filterTableList.length) {
             return message.warn('하위 데이터가 1개 이상이여야 합니다.');
         }
-
         const emptyQuantity = filterTableList.filter(v => !v.quantity)
         if (emptyQuantity.length) {
             return message.error('하위 데이터의 수량을 입력해야 합니다.')
@@ -246,9 +245,9 @@ function RqfUpdate({
                     "relatedId": updateKey['rfq_update']
                 }
             }).then(v => {
-                const list = fileManage.getFormatFiles(v);
-                setFileList(list)
-                setOriginFileList(list)
+                // const list = fileManage.getFormatFiles(v);
+                // setFileList(list)
+                // setOriginFileList(list)
 
                 window.postMessage({message: 'reload', target: 'rfq_read'}, window.location.origin);
                 notificationAlert('success', '💾 견적의뢰 수정완료',
@@ -273,7 +272,6 @@ function RqfUpdate({
                 {cursor: 'pointer'}
             )
         }
-        setLoading(false)
     }
 
     /**
@@ -352,6 +350,7 @@ function RqfUpdate({
             }
         })
         copyInfo[listType] = [...list, ...commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000 - list.length)];
+
         getCopyPage('rfq_write', { ...copyInfo, _meta: {updateKey: Date.now()}})
     }
 
@@ -579,7 +578,8 @@ function RqfUpdate({
                                              disabled={!userInfo['microsoftId']}>
 
                                         <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                         infoRef={infoRef} uploadType={info.uploadType} folderId={info?.folderId}/>
+                                                         infoRef={infoRef} uploadType={info.uploadType} type={'rfq'}
+                                                         folderId={info?.folderId} info={info}/>
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>
