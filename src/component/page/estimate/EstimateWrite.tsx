@@ -5,7 +5,7 @@ import message from "antd/lib/message";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {useRouter} from "next/router";
 import SearchInfoModal from "@/component/SearchAgencyModal";
-import {commonFunc, commonManage} from "@/utils/commonManage";
+import {commonFunc, commonManage, fileManage} from "@/utils/commonManage";
 import {
     BoxCard,
     datePickerForm,
@@ -132,25 +132,6 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                 case 'maker' :
                     await findCodeInfo(e, setInfo, openModal)
                     break;
-                // case 'documentNumberFull' :
-                //     const dom = infoRef.current.querySelector('#agencyCode');
-                //     const dom2 = infoRef.current.querySelector('#documentNumberFull');
-                //     if (!dom.value) {
-                //         return message.warn('매입처코드를 선택해주세요.')
-                //     }
-                //     setLoading(true)
-                //     await getData.post('estimate/getNewDocumentNumberFull', {
-                //         agencyCode: dom.value,
-                //         type: 'ESTIMATE'
-                //     }).then(v => {
-                //         if (v.data.code === 1) {
-                //             dom2.value = v.data.entity.newDocumentNumberFull;
-                //         } else {
-                //             message.error(v.data.message)
-                //         }
-                //         setLoading(false)
-                //     }, err => setLoading(false))
-                //     break;
                 case 'connectDocumentNumberFull' :
                      const connValue = e.target.value
                     if (!e.target.value) {
@@ -160,7 +141,7 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                     setLoading(true);
                     await getData.post('estimate/getEstimateRequestDetail', {
                         estimateRequestId: '',
-                        documentNumberFull: e.target.value.toUpperCase()
+                        documentNumberFull: e.target.value.toUpperCase(),
                     }).then(async v => {
                         if (v?.data?.code === 1) {
                             const {estimateRequestDetail = {}, attachmentFileList = []} = v?.data?.entity;
@@ -179,10 +160,13 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                 documentNumberFull: info?.connectDocumentNumberFull.toUpperCase()
                             })
                             .then(src => {
+                                setFileList(fileManage.getFormatFiles(src?.data?.entity.attachmentFileList));
+                                console.log(src?.data?.entity)
+                                const result = connValue.replace(/^[a-zA-Z]+/, match => match.toUpperCase());
                                 setInfo({
                                     ...getEstimateInit(),
                                     ...estimateRequestDetail,
-                                    connectDocumentNumberFull : connValue,
+                                    connectDocumentNumberFull : result,
                                     documentNumberFull: src?.data?.code === 1 ? src?.data?.entity?.newDocumentNumberFull : '',
                                     validityPeriod: '견적 발행 후 10일간',
                                     paymentTerms: '발주시 50% / 납품시 50%',
@@ -236,7 +220,6 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
      * 견적서 > 견적서 등록
      */
     async function saveFunc() {
-        console.log(info, 'info:::')
 
         setCount(v => v + 1)
         await delay(800); // 0.3초 대기 후 실행
@@ -268,7 +251,14 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         setLoading(true)
 
         const formData: any = new FormData();
-        commonManage.setInfoFormData(info, formData, listType, filterTableList)
+        commonManage.setInfoFormData(info, formData, listType, filterTableList);
+        const result =fileRef.current.fileList.filter(v=>{
+            if(!v.driveId){
+                return v
+            }
+        });
+
+
         const resultCount = commonManage.getUploadList(fileRef, formData);
 
         const filterTotalList = tableList.filter(v => !!v.model)
@@ -299,6 +289,11 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
 
         formData.delete('createdDate')
         formData.delete('modifiedDate')
+
+
+        for (let [key, value] of formData.entries()) {
+            console.log(`${key}:`, value);
+        }
 
         await saveEstimate({data: formData}).then(async v => {
             const {code, message: msg, entity} = v;

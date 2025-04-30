@@ -167,7 +167,7 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
             } else if (codeCheck === -10005) {
                 message = v.data.message;
             }
-
+            console.log(message,'::::message::::')
 
         } catch (error) {
             console.error("Microsoft Login failed:", error);
