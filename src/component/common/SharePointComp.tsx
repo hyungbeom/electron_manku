@@ -3,13 +3,16 @@ import Button from "antd/lib/button";
 import Input from "antd/lib/input";
 import {UploadOutlined} from "@ant-design/icons";
 import React, {useEffect, useRef, useState} from "react";
+import {getData, getFormData} from "@/manage/function/api";
 
 export function DriveUploadComp({
                                     fileList,
                                     setFileList,
                                     fileRef,
                                     infoRef = null,
-                                    uploadType = 0
+                                    uploadType = 0,
+                                    folderId = '',
+                                    type = ''
                                 }) {
     const fileInputRef = useRef(null);
 
@@ -91,7 +94,6 @@ export function DriveUploadComp({
             if (e.target.className === "ant-upload-list-item-name") {
                 if (file.webUrl) {
                     window.open(file.webUrl, '_blank');
-
                 } else {
                     if (file.type.includes("image")) {
                         const src =
@@ -128,7 +130,17 @@ export function DriveUploadComp({
 
     function fileChange({file, fileList}) {
 
-        // 중복 파일 확인
+        const {status} = file;
+
+
+            if (status === 'removed' && folderId) {
+                getData.post('common/fileDelete', file).then(v => {
+                    console.log(v, '::::')
+                })
+            } else {
+                console.log('upload!!')
+            }
+
 
         const updatedFileList = fileList.map(f => {
 
@@ -168,30 +180,43 @@ export function DriveUploadComp({
                 let result = ''
                 switch (numberType) {
                     case 0 :
-                        result =  `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}_RFQ.${extension}`
+                        result = `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}_RFQ.${extension}`
                         break;
                     case 1 :
-                        result =  `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}_Received.${extension}`
+                        result = `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}_Received.${extension}`
                         break;
                     case 2 :
-                        result =  `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}_Datasheet.${extension}`
+                        result = `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}_Datasheet.${extension}`
                         break;
                     case 3 :
-                        result =  `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}_${dom3.value}_Quote.${extension}`
+                        result = `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}_${dom3.value}_Quote.${extension}`
                         break;
                     case 4 :
-                        result =  `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}_PO.${extension}`
+                        result = `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}_PO.${extension}`
                         break;
                     default :
-                        result =  `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}.${extension}`
+                        result = `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}.${extension}`
                 }
 
+
+                if (folderId) {
+                    const formData: any = new FormData();
+                    formData.append('file', file?.originFileObj ? file?.originFileObj : file);
+                    formData.append('fileName', result);
+                    formData.append('folderId', folderId);
+                    formData.append('type', type);
+
+                    getFormData.post('common/fileAdd', formData).then(v => {
+                        console.log(v, '::::')
+                    })
+                }
                 // 이름 수정된 파일 반환 (originFileObj 유지)
                 return {
                     ...f,
                     name: result,
                     originFileObj: f.originFileObj, // 기존 originFileObj 유지
                 };
+
             }
             return f; // 다른 파일은 그대로 유지
         });
@@ -204,8 +229,6 @@ export function DriveUploadComp({
             fileRef.current.fileList = updatedFileList;
         }
     }
-
-
 
 
     const handleDrop = (event) => {
@@ -233,7 +256,7 @@ export function DriveUploadComp({
                 ...file,
             ];
 
-            fileChange({file :file[0], fileList :  newFileList})
+            fileChange({file: file[0], fileList: newFileList})
 
             if (fileRef.current) {
                 fileRef.current.fileList = newFileList;
@@ -241,6 +264,7 @@ export function DriveUploadComp({
         }
     };
 
+    console.log(fileList, ':::?:')
 
     return (
         <div style={{
@@ -260,7 +284,7 @@ export function DriveUploadComp({
                     style={{
                         position: 'absolute',
                         height: '100%',
-                        zIndex : 999999,
+                        zIndex: 999999,
                         border: isDragging ? `2px solid #1677FF` : '',
                         backgroundColor: isDragging ? `#1890ffb5` : '',
                         top: 0,
@@ -275,7 +299,7 @@ export function DriveUploadComp({
                     <div style={{
                         display: 'flex',
                         justifyContent: 'center',
-                        zIndex : 999999,
+                        zIndex: 999999,
                         alignItems: "center",
                         height: '100%',
                         color: 'white',
@@ -327,6 +351,14 @@ export function DriveUploadComp({
                     );
                 }}
                 ref={fileRef}
+                onRemove={(file: any) => {
+                    console.log(file?.driveId,':::')
+                    // 특정 조건에 해당하는 파일은 삭제 금지
+                    if (!!file?.driveId && folderId) {
+                        return false; // 삭제 비활성화
+                    }
+                    return true;
+                }}
                 beforeUpload={() => false}
                 maxCount={13}
             >

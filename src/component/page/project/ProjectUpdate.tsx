@@ -121,6 +121,7 @@ function ProjectUpdate({
         setTableData([]);
         getDataInfo().then(v => {
             const {projectDetail, attachmentFileList} = v;
+
             setInfo({
                 ...getProjectInit(),
                 ...projectDetail,
@@ -182,7 +183,7 @@ function ProjectUpdate({
      * 프로젝트 > 프로젝트 수정
      */
     async function saveFunc() {
-        console.log(info, 'info:::')
+
 
         if (!commonManage.checkValidate(info, projectInfo['write']['validationList'], setValidate)) return;
 
@@ -431,6 +432,8 @@ function ProjectUpdate({
         commonManage.openModal(e, setIsModalOpen)
     }
 
+    console.log(info,':::')
+
     return <Spin spinning={loading}>
         <EstimateModal/>
         <PanelSizeUtil groupRef={groupRef} storage={'project_update'}/>
@@ -566,7 +569,7 @@ function ProjectUpdate({
                                 <Panel defaultSize={sizes[3]} minSize={15} maxSize={100}>
                                     <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}
                                              disabled={!userInfo['microsoftId']}>
-                                            <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef} infoRef={infoRef}/>
+                                            <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef} infoRef={infoRef} folderId={info?.folderId} type={'project'}/>
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>

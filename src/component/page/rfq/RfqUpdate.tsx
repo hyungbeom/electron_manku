@@ -113,6 +113,7 @@ function RqfUpdate({
         getDataInfo().then(v => {
             if (v) {
                 const {estimateRequestDetail, attachmentFileList} = v;
+                console.log(attachmentFileList,'attachmentFileList:')
                 /**
                  * 개선사항
                  * 견적의뢰 수정시 드라이브 목록 '업체회신자료'로 자동 선택
@@ -578,7 +579,7 @@ function RqfUpdate({
                                              disabled={!userInfo['microsoftId']}>
 
                                         <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                         infoRef={infoRef} uploadType={info.uploadType}/>
+                                                         infoRef={infoRef} uploadType={info.uploadType} folderId={info?.folderId} type={'rfq'}/>
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>
@@ -588,7 +589,7 @@ function RqfUpdate({
                 </MainCard>
 
                 <Table data={tableData} column={rfqInfo['write']} funcButtons={['print']} ref={tableRef}
-                       type={'rfq_write_column'} infoRef={infoRef}/>
+                       type={'rfq_write_column'} infoRef={infoRef} />
             </div>
         </>
     </Spin>
