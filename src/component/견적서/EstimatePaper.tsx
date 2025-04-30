@@ -199,7 +199,7 @@ const EstimatePaper = ({
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `${topInfoData?.documentNumberFull}_견적서.pdf`;
+        link.download = `${topInfoData?.documentNumberFull}${topInfoData?.customerName ? '_' + topInfoData.customerName : ''}_견적서.pdf`;
         link.click();
 
         // 메모리 해제
