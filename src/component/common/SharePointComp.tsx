@@ -3,7 +3,7 @@ import Button from "antd/lib/button";
 import Input from "antd/lib/input";
 import {UploadOutlined} from "@ant-design/icons";
 import React, {useEffect, useRef, useState} from "react";
-import message from "antd/lib/message";
+import {getData, getFormData} from "@/manage/function/api";
 
 export function DriveUploadComp({
                                     fileList,
@@ -11,7 +11,8 @@ export function DriveUploadComp({
                                     fileRef,
                                     infoRef = null,
                                     uploadType = 0,
-                                    addFileName = ''
+                                    folderId = '',
+                                    type = ''
                                 }) {
     const fileInputRef = useRef(null);
 
@@ -85,8 +86,11 @@ export function DriveUploadComp({
 
     // 파일 클릭 이벤트 처리 (기존 로직 유지)
     const handleClick = (file, e) => {
+
         // Ctrl 키와 왼쪽 버튼 클릭 확인
         if (e.ctrlKey && e.button === 0 || e.metaKey && e.button === 0) { // e.button === 0 -> 왼쪽 버튼 클릭
+
+
             if (e.target.className === "ant-upload-list-item-name") {
                 if (file.webUrl) {
                     window.open(file.webUrl, '_blank');
@@ -112,7 +116,6 @@ export function DriveUploadComp({
                     setTempFileName(namePart); // 파일 이름 저장
                     setFileExtension(extensionPart); // 확장자 저장
                 } else if (file?.downloadUrl) {
-
                     const fileUrl = file?.downloadUrl;
                     const link = document.createElement('a');
                     link.href = fileUrl;
@@ -120,38 +123,6 @@ export function DriveUploadComp({
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
-
-
-                    // const fileUrl = file?.downloadUrl;
-                    // let fileName = file?.fileName;
-                    //
-                    // if (file?.fileName?.toLowerCase().includes('quote')) {
-                    //     if (addFileName) fileName = `${file?.inquiryNo}_${addFileName}_견적서`
-                    // } else if (file?.fileName?.toLowerCase().includes('order')) {
-                    //     fileName = `PO_${file?.inquiryNo}`
-                    // }
-                    //
-                    // fetch(fileUrl)
-                    //     .then(response => {
-                    //         if (!response.ok) {
-                    //             throw new Error(`서버 응답 실패: ${response.status}`);
-                    //         }
-                    //         return response.blob();
-                    //     })
-                    //     .then(blob => {
-                    //         const blobUrl = URL.createObjectURL(blob);
-                    //         const link = document.createElement('a');
-                    //         link.href = blobUrl;
-                    //         link.download = fileName;
-                    //         document.body.appendChild(link);
-                    //         link.click();
-                    //         document.body.removeChild(link);
-                    //         URL.revokeObjectURL(blobUrl); // 메모리 해제
-                    //     })
-                    //     .catch(err => {
-                    //         console.error('파일 다운로드 실패:', err);
-                    //         message.error('파일 다운로드에 실패했습니다.')
-                    //     });
                 }
             }
         }
@@ -159,7 +130,18 @@ export function DriveUploadComp({
 
     function fileChange({file, fileList}) {
 
-        // 중복 파일 확인
+        const {status} = file;
+
+
+        if (status === 'removed' && folderId) {
+            getData.post('common/fileDelete', file).then(v => {
+                console.log(v, '::::')
+            })
+        } else {
+            console.log('upload!!')
+        }
+
+
         const updatedFileList = fileList.map(f => {
 
             //내가 올린 파일
@@ -198,30 +180,43 @@ export function DriveUploadComp({
                 let result = ''
                 switch (numberType) {
                     case 0 :
-                        result =  `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}_RFQ.${extension}`
+                        result = `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}_RFQ.${extension}`
                         break;
                     case 1 :
-                        result =  `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}_Received.${extension}`
+                        result = `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}_Received.${extension}`
                         break;
                     case 2 :
-                        result =  `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}_Datasheet.${extension}`
+                        result = `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}_Datasheet.${extension}`
                         break;
                     case 3 :
-                        result =  `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}_${dom3.value}_Quote.${extension}`
+                        result = `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}_${dom3.value}_Quote.${extension}`
                         break;
                     case 4 :
-                        result =  `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}_PO.${extension}`
+                        result = `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}_PO.${extension}`
                         break;
                     default :
-                        result =  `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}.${extension}`
+                        result = `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}.${extension}`
                 }
 
+
+                if (folderId) {
+                    const formData: any = new FormData();
+                    formData.append('file', file?.originFileObj ? file?.originFileObj : file);
+                    formData.append('fileName', result);
+                    formData.append('folderId', folderId);
+                    formData.append('type', type);
+
+                    getFormData.post('common/fileAdd', formData).then(v => {
+                        console.log(v, '::::')
+                    })
+                }
                 // 이름 수정된 파일 반환 (originFileObj 유지)
                 return {
                     ...f,
                     name: result,
                     originFileObj: f.originFileObj, // 기존 originFileObj 유지
                 };
+
             }
             return f; // 다른 파일은 그대로 유지
         });
@@ -234,110 +229,6 @@ export function DriveUploadComp({
             fileRef.current.fileList = updatedFileList;
         }
     }
-
-    // function fileChange({file, fileList}) {
-    //
-    //     // 중복 파일 확인
-    //     const updatedFileList = fileList.map(f => {
-    //
-    //         //내가 올린 파일
-    //         if (f.uid === file.uid) {
-    //
-    //             const filterFiles = fileList.filter(file => file.name.startsWith(`0${uploadTypeRef.current.value}.`));
-    //
-    //             // .번호가 붙은 파일만 골라서 번호 뽑기
-    //             const existingNumbers = filterFiles
-    //                 .map(file => {
-    //                     const match = file.name.match(/^0\d+\.(\d+)\./); // 00.1. 처럼 번호 있는 경우
-    //                     return match ? parseInt(match[1], 10) : null;
-    //                 })
-    //                 .filter(num => num !== null)
-    //                 .sort((a, b) => a - b);
-    //
-    //             // "번호 없는" 파일 존재 여부 체크
-    //             const hasBaseFile = filterFiles.some(file => {
-    //                 return file.name.match(new RegExp(`^0${uploadTypeRef.current.value}\.`)) && !file.name.match(/^0\d+\.\d+\./);
-    //             });
-    //
-    //             // 새 번호
-    //             let newNumber = 1;
-    //             for (let i = 0; i < existingNumbers.length; i++) {
-    //                 if (existingNumbers[i] !== i + 1) {
-    //                     newNumber = i + 1;
-    //                     break;
-    //                 } else {
-    //                     newNumber = existingNumbers.length + 1;
-    //                 }
-    //             }
-    //
-    //             const match = f.name.match(/^0\d+(?:\.\d+)?\.(.+)$/);
-    //             const originalName = match ? match[1] : f.name; // 기존 이름 유지
-    //
-    //             const dom = infoRef.current.querySelector('#documentNumberFull');
-    //             const dom3 = infoRef.current.querySelector('#agencyName');
-    //             const extension = originalName.split('.').pop().toLowerCase();
-    //
-    //             const numberType = parseInt(uploadTypeRef.current.value);
-    //
-    //             let prefix = `0${uploadTypeRef.current.value}.`;
-    //             if (hasBaseFile) {
-    //                 // 이미 기본 파일(번호 없는 파일)이 있으면 새 파일은 무조건 번호 붙인다
-    //                 prefix += `${newNumber}.`;
-    //             }
-    //
-    //             let result = ''
-    //             switch (numberType) {
-    //                 case 0 :
-    //                     result =  `${prefix}${dom?.value ? dom?.value : originalName}_RFQ.${extension}`
-    //                     break;
-    //                 case 1 :
-    //                     result =  `${prefix}${dom?.value ? dom?.value : originalName}_Offer.${extension}`
-    //                     break;
-    //                 case 2 :
-    //                     result =  `${prefix}${dom?.value ? dom?.value : originalName}_Ref.${extension}`
-    //                     break;
-    //                 case 3 :
-    //                     result =  `${prefix}${dom?.value ? dom?.value : originalName}_${dom3.value}_Quote.${extension}`
-    //                     break;
-    //                 case 4 :
-    //                     result =  `${prefix}${dom?.value ? dom?.value : originalName}_Order.${extension}`
-    //                     break;
-    //                 case 5 :
-    //                     result =  `${prefix}${dom?.value ? dom?.value : originalName}_매입_.${extension}`
-    //                     break;
-    //                 case 6 :
-    //                     result =  `${prefix}${dom?.value ? dom?.value : originalName}_매출_.${extension}`
-    //                     break;
-    //                 case 7 :
-    //                     result =  `${prefix}${dom?.value ? dom?.value : originalName}_Project.${extension}`
-    //                     break;
-    //                 case 8 :
-    //                     result =  `${prefix}${dom?.value ? dom?.value : originalName}_Etc.${extension}`
-    //                     break;
-    //                 default :
-    //                     result =  `${prefix}${dom?.value ? dom?.value : originalName}.${extension}`
-    //             }
-    //
-    //             // 이름 수정된 파일 반환 (originFileObj 유지)
-    //             return {
-    //                 ...f,
-    //                 name: result,
-    //                 originFileObj: f.originFileObj, // 기존 originFileObj 유지
-    //             };
-    //         }
-    //         return f; // 다른 파일은 그대로 유지
-    //     });
-    //
-    //     // 파일 리스트 업데이트
-    //     setFileList(updatedFileList);
-    //
-    //     // ref 상태 동기화
-    //     if (fileRef.current) {
-    //         fileRef.current.fileList = updatedFileList;
-    //     }
-    // }
-
-
 
 
     const handleDrop = (event) => {
@@ -365,7 +256,7 @@ export function DriveUploadComp({
                 ...file,
             ];
 
-            fileChange({file :file[0], fileList :  newFileList})
+            fileChange({file: file[0], fileList: newFileList})
 
             if (fileRef.current) {
                 fileRef.current.fileList = newFileList;
@@ -373,6 +264,7 @@ export function DriveUploadComp({
         }
     };
 
+    console.log(fileList, ':::?:')
 
     return (
         <div style={{
@@ -392,7 +284,7 @@ export function DriveUploadComp({
                     style={{
                         position: 'absolute',
                         height: '100%',
-                        zIndex : 999999,
+                        zIndex: 999999,
                         border: isDragging ? `2px solid #1677FF` : '',
                         backgroundColor: isDragging ? `#1890ffb5` : '',
                         top: 0,
@@ -407,7 +299,7 @@ export function DriveUploadComp({
                     <div style={{
                         display: 'flex',
                         justifyContent: 'center',
-                        zIndex : 999999,
+                        zIndex: 999999,
                         alignItems: "center",
                         height: '100%',
                         color: 'white',
@@ -459,6 +351,14 @@ export function DriveUploadComp({
                     );
                 }}
                 ref={fileRef}
+                onRemove={(file: any) => {
+                    console.log(file?.driveId,':::')
+                    // 특정 조건에 해당하는 파일은 삭제 금지
+                    if (!!file?.driveId && folderId) {
+                        return false; // 삭제 비활성화
+                    }
+                    return true;
+                }}
                 beforeUpload={() => false}
                 maxCount={13}
             >
@@ -495,9 +395,9 @@ export function DriveUploadComp({
                         <option value={2}>{'첨부파일'}</option>
                         <option value={3}>{'견적서자료'}</option>
                         <option value={4}>{'발주서자료'}</option>
-                        <option value={5}>{'매입자료'}</option>
-                        <option value={6}>{'매출자료'}</option>
-                        <option value={7}>{'프로젝트자료'}</option>
+                        <option value={5}>{'프로젝트자료'}</option>
+                        <option value={6}>{'매입자료'}</option>
+                        <option value={7}>{'매출자료'}</option>
                         <option value={8}>{'기타'}</option>
                     </select>
                 </div>

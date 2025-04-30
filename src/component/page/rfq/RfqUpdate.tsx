@@ -217,6 +217,7 @@ function RqfUpdate({
         if (!filterTableList.length) {
             return message.warn('하위 데이터가 1개 이상이여야 합니다.');
         }
+
         const emptyQuantity = filterTableList.filter(v => !v.quantity)
         if (emptyQuantity.length) {
             return message.error('하위 데이터의 수량을 입력해야 합니다.')
@@ -351,7 +352,6 @@ function RqfUpdate({
             }
         })
         copyInfo[listType] = [...list, ...commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000 - list.length)];
-
         getCopyPage('rfq_write', { ...copyInfo, _meta: {updateKey: Date.now()}})
     }
 
@@ -579,7 +579,7 @@ function RqfUpdate({
                                              disabled={!userInfo['microsoftId']}>
 
                                         <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                         infoRef={infoRef} uploadType={info.uploadType} folderId={info?.folderId} type={'rfq'}/>
+                                                         infoRef={infoRef} uploadType={info.uploadType} folderId={info?.folderId}/>
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>
