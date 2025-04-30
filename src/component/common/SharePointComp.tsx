@@ -237,18 +237,26 @@ export function DriveUploadComp({
 
     function fileChange({file, fileList}) {
 
+        const forbiddenChars = /[\\/:*?"<>|#]/;
+        if (forbiddenChars.test(file.name)) {
+            message.error("파일 이름에 사용할 수 없는 문자가 포함되어 있습니다. ( \\ / : * ? \" < > | # )");
+            return;
+        }
+
         // 중복 파일 확인
         const updatedFileList = fileList.map(f => {
 
             //내가 올린 파일
             if (f.uid === file.uid) {
 
-                const filterFiles = fileList.filter(file => file.name.startsWith(`0${uploadTypeRef.current.value}.`));
+                const filterFiles = fileList.filter(file =>
+                    file.name.match(new RegExp(`^0${uploadTypeRef.current.value}(\\.\\d+)?\\s`))
+                );
 
                 // .번호가 붙은 파일만 골라서 번호 뽑기
                 const existingNumbers = filterFiles
                     .map(file => {
-                        const match = file.name.match(/^0\d+\.(\d+)\./); // 00.1. 처럼 번호 있는 경우
+                        const match = file.name.match(/^0\d+\.(\d+)\s/); // 00.1. 처럼 번호 있는 경우
                         return match ? parseInt(match[1], 10) : null;
                     })
                     .filter(num => num !== null)
@@ -256,7 +264,8 @@ export function DriveUploadComp({
 
                 // "번호 없는" 파일 존재 여부 체크
                 const hasBaseFile = filterFiles.some(file => {
-                    return file.name.match(new RegExp(`^0${uploadTypeRef.current.value}\.`)) && !file.name.match(/^0\d+\.\d+\./);
+                    return file.name.match(new RegExp(`^0${uploadTypeRef.current.value}\\s`)) &&
+                        !file.name.match(/^0\d+\.\d+\s/);
                 });
 
                 // 새 번호
@@ -270,52 +279,54 @@ export function DriveUploadComp({
                     }
                 }
 
-                const match = f.name.match(/^0\d+(?:\.\d+)?\.(.+)$/);
-                const originalName = match ? match[1] : f.name; // 기존 이름 유지
+                const match = f.name.match(/^0\d+(?:\.\d+)?\s(.+)$/);
+                const originalName = match ? match[1] : f.name;
 
                 const dom = infoRef.current.querySelector('#documentNumberFull');
                 const dom3 = infoRef.current.querySelector('#agencyName');
                 const extension = originalName.split('.').pop().toLowerCase();
+                const baseFileName = originalName.slice(0, originalName.lastIndexOf('.'));
 
                 const numberType = parseInt(uploadTypeRef.current.value);
 
-                let prefix = `0${uploadTypeRef.current.value}.`;
+                let prefix = `0${uploadTypeRef.current.value}`;
                 if (hasBaseFile) {
                     // 이미 기본 파일(번호 없는 파일)이 있으면 새 파일은 무조건 번호 붙인다
-                    prefix += `${newNumber}.`;
+                    prefix += `.${newNumber}`;
                 }
+                prefix += ' ';
 
                 let result = ''
                 switch (numberType) {
                     case 0 :
-                        result =  `${prefix}${dom?.value ? dom?.value : originalName}_RFQ.${extension}`
+                        result =  `${prefix}${dom?.value ? dom?.value : baseFileName}_RFQ.${extension}`
                         break;
                     case 1 :
-                        result =  `${prefix}${dom?.value ? dom?.value : originalName}_Offer.${extension}`
+                        result =  `${prefix}${dom?.value ? dom?.value : baseFileName}_Offer.${extension}`
                         break;
                     case 2 :
-                        result =  `${prefix}${dom?.value ? dom?.value : originalName}_Ref.${extension}`
+                        result =  `${prefix}${dom?.value ? dom?.value : baseFileName}_Ref.${extension}`
                         break;
                     case 3 :
-                        result =  `${prefix}${dom?.value ? dom?.value : originalName}_${dom3.value}_Quote.${extension}`
+                        result =  `${prefix}${dom?.value ? dom?.value : baseFileName}_${dom3.value}_Quote.${extension}`
                         break;
                     case 4 :
-                        result =  `${prefix}${dom?.value ? dom?.value : originalName}_Order.${extension}`
+                        result =  `${prefix}${dom?.value ? dom?.value : baseFileName}_Order.${extension}`
                         break;
                     case 5 :
-                        result =  `${prefix}${dom?.value ? dom?.value : originalName}_매입_.${extension}`
+                        result =  `${prefix}${dom?.value ? dom?.value : baseFileName}_매입_.${extension}`
                         break;
                     case 6 :
-                        result =  `${prefix}${dom?.value ? dom?.value : originalName}_매출_.${extension}`
+                        result =  `${prefix}${dom?.value ? dom?.value : baseFileName}_매출_.${extension}`
                         break;
                     case 7 :
-                        result =  `${prefix}${dom?.value ? dom?.value : originalName}_Project.${extension}`
+                        result =  `${prefix}${dom?.value ? dom?.value : baseFileName}_Project.${extension}`
                         break;
                     case 8 :
-                        result =  `${prefix}${dom?.value ? dom?.value : originalName}_Etc.${extension}`
+                        result =  `${prefix}${dom?.value ? dom?.value : baseFileName}_Etc.${extension}`
                         break;
                     default :
-                        result =  `${prefix}${dom?.value ? dom?.value : originalName}.${extension}`
+                        result =  `${prefix}${dom?.value ? dom?.value : baseFileName}.${extension}`
                 }
 
                 // 이름 수정된 파일 반환 (originFileObj 유지)
