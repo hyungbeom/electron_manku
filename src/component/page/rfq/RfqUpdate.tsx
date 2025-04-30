@@ -245,9 +245,9 @@ function RqfUpdate({
                     "relatedId": updateKey['rfq_update']
                 }
             }).then(v => {
-                const list = fileManage.getFormatFiles(v);
-                setFileList(list)
-                setOriginFileList(list)
+                // const list = fileManage.getFormatFiles(v);
+                // setFileList(list)
+                // setOriginFileList(list)
 
                 window.postMessage({message: 'reload', target: 'rfq_read'}, window.location.origin);
                 notificationAlert('success', '💾 견적의뢰 수정완료',
@@ -272,7 +272,6 @@ function RqfUpdate({
                 {cursor: 'pointer'}
             )
         }
-        setLoading(false)
     }
 
     /**
@@ -579,7 +578,8 @@ function RqfUpdate({
                                              disabled={!userInfo['microsoftId']}>
 
                                         <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                         infoRef={infoRef} uploadType={info.uploadType} folderId={info?.folderId} type={'rfq'}/>
+                                                         infoRef={infoRef} uploadType={info.uploadType} type={'rfq'}
+                                                         folderId={info?.folderId} info={info}/>
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>

@@ -569,7 +569,8 @@ function ProjectUpdate({
                                 <Panel defaultSize={sizes[3]} minSize={15} maxSize={100}>
                                     <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}
                                              disabled={!userInfo['microsoftId']}>
-                                            <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef} infoRef={infoRef} folderId={info?.folderId} type={'project'}/>
+                                            <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
+                                                             infoRef={infoRef} folderId={info?.folderId} type={'project'}/>
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>

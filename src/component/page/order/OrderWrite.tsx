@@ -171,10 +171,12 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                     // validityPeriod: '견적 발행 후 10일간',
                                     // paymentTerms: '발주시 50% / 납품시 50%',
                                     // shippingTerms: '귀사도착도',
+                                    delivery: estimateDetail?.deliveryDate ? estimateDetail.deliveryDate : '',
                                     uploadType: 4,
                                     createdBy: adminParams.createdBy,
                                     writtenDate: moment().format('YYYY-MM-DD')
                                 })
+                                setFileList(fileManage.getFormatFiles(src?.data?.entity.attachmentFileList));
                                 if (estimateDetail?.estimateDetailList?.length) {
                                     const copyList = estimateDetail.estimateDetailList.map(v => {
                                         return {...v, currency: v.currencyUnit}
@@ -182,9 +184,9 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                     setTableData([...copyList, ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000 - estimateDetail?.estimateDetailList.length)])
                                 }
                             })
-                                .finally(() => {
-                                    setLoading(false);
-                                });
+                            .finally(() => {
+                                setLoading(false);
+                            });
                         }
                     })
                         .finally(() => {

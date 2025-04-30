@@ -244,9 +244,9 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
                     "relatedId": info['orderId']
                 }
             }).then(v => {
-                const list = fileManage.getFormatFiles(v);
-                setFileList(list)
-                setOriginFileList(list)
+                // const list = fileManage.getFormatFiles(v);
+                // setFileList(list)
+                // setOriginFileList(list)
 
                 window.postMessage({message: 'reload', target: 'order_read'}, window.location.origin);
                 notificationAlert('success', '💾 발주서 수정완료',
@@ -593,9 +593,11 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
                             </Panel>
                             <PanelResizeHandle/>
                             <Panel defaultSize={sizes[4]} minSize={5}>
-                                <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
+                                <BoxCard title={'드라이브 목록'}
+                                         disabled={!userInfo['microsoftId']}>
                                     <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                     infoRef={infoRef} uploadType={info.uploadType}/>
+                                                     infoRef={infoRef} uploadType={info.uploadType} type={'order'}
+                                                     folderId={info?.folderId} info={info}/>
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>

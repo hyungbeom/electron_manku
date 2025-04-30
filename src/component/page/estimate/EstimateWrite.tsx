@@ -153,14 +153,11 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                             setFileList([]);
                             setTableData([]);
 
-
-
                             await getData.post('estimate/generateDocumentNumberFull', {
                                 type: 'ESTIMATE',
                                 documentNumberFull: info?.connectDocumentNumberFull.toUpperCase()
                             })
                             .then(src => {
-                                setFileList(fileManage.getFormatFiles(src?.data?.entity.attachmentFileList));
                                 console.log(src?.data?.entity)
                                 const result = connValue.replace(/^[a-zA-Z]+/, match => match.toUpperCase());
                                 setInfo({
@@ -175,6 +172,7 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                     createdBy: adminParams.createdBy,
                                     writtenDate: moment().format('YYYY-MM-DD')
                                 })
+                                setFileList(fileManage.getFormatFiles(src?.data?.entity.attachmentFileList));
                                 if (estimateRequestDetail?.estimateRequestDetailList?.length) {
                                     setTableData([...estimateRequestDetail['estimateRequestDetailList'], ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000 - estimateRequestDetail['estimateRequestDetailList'].length)])
                                 }

@@ -170,6 +170,14 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
             return message.error('하위 데이터의 수량을 입력해야 합니다.')
         }
 
+        // 하단의 model 중에서 납기가 제일 큰 값을 구해서 저장 (발주서에서 바인딩)
+        const deliveryDateList = filterTableList
+            .map(v => Number(v.deliveryDate))
+            .filter(v => !isNaN(v) && v > 0);
+        const maxDeliveryDate = deliveryDateList.length ? Math.max(...deliveryDateList) : '';
+        info['deliveryDate'] = maxDeliveryDate;
+        //
+
         const findMember = memberList.find(v => v.adminId === parseInt(info['managerAdminId']));
         info['managerAdminName'] = findMember['name'];
 
