@@ -3,6 +3,7 @@ import Button from "antd/lib/button";
 import Input from "antd/lib/input";
 import {UploadOutlined} from "@ant-design/icons";
 import React, {useEffect, useRef, useState} from "react";
+import message from "antd/lib/message";
 
 export function DriveUploadComp({
                                     fileList,
@@ -111,16 +112,46 @@ export function DriveUploadComp({
                     setTempFileName(namePart); // 파일 이름 저장
                     setFileExtension(extensionPart); // 확장자 저장
                 } else if (file?.downloadUrl) {
+
                     const fileUrl = file?.downloadUrl;
-
-                    // addFileName
-
                     const link = document.createElement('a');
                     link.href = fileUrl;
                     link.download = 'filename.pdf';
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
+
+
+                    // const fileUrl = file?.downloadUrl;
+                    // let fileName = file?.fileName;
+                    //
+                    // if (file?.fileName?.toLowerCase().includes('quote')) {
+                    //     if (addFileName) fileName = `${file?.inquiryNo}_${addFileName}_견적서`
+                    // } else if (file?.fileName?.toLowerCase().includes('order')) {
+                    //     fileName = `PO_${file?.inquiryNo}`
+                    // }
+                    //
+                    // fetch(fileUrl)
+                    //     .then(response => {
+                    //         if (!response.ok) {
+                    //             throw new Error(`서버 응답 실패: ${response.status}`);
+                    //         }
+                    //         return response.blob();
+                    //     })
+                    //     .then(blob => {
+                    //         const blobUrl = URL.createObjectURL(blob);
+                    //         const link = document.createElement('a');
+                    //         link.href = blobUrl;
+                    //         link.download = fileName;
+                    //         document.body.appendChild(link);
+                    //         link.click();
+                    //         document.body.removeChild(link);
+                    //         URL.revokeObjectURL(blobUrl); // 메모리 해제
+                    //     })
+                    //     .catch(err => {
+                    //         console.error('파일 다운로드 실패:', err);
+                    //         message.error('파일 다운로드에 실패했습니다.')
+                    //     });
                 }
             }
         }
@@ -276,6 +307,12 @@ export function DriveUploadComp({
                         break;
                     case 6 :
                         result =  `${prefix}${dom?.value ? dom?.value : originalName}_매출_.${extension}`
+                        break;
+                    case 7 :
+                        result =  `${prefix}${dom?.value ? dom?.value : originalName}_Project.${extension}`
+                        break;
+                    case 8 :
+                        result =  `${prefix}${dom?.value ? dom?.value : originalName}_Etc.${extension}`
                         break;
                     default :
                         result =  `${prefix}${dom?.value ? dom?.value : originalName}.${extension}`
@@ -458,9 +495,9 @@ export function DriveUploadComp({
                         <option value={2}>{'첨부파일'}</option>
                         <option value={3}>{'견적서자료'}</option>
                         <option value={4}>{'발주서자료'}</option>
-                        <option value={5}>{'프로젝트자료'}</option>
-                        <option value={6}>{'매입자료'}</option>
-                        <option value={7}>{'매출자료'}</option>
+                        <option value={5}>{'매입자료'}</option>
+                        <option value={6}>{'매출자료'}</option>
+                        <option value={7}>{'프로젝트자료'}</option>
                         <option value={8}>{'기타'}</option>
                     </select>
                 </div>

@@ -230,7 +230,7 @@ function PrintPo({
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `${topInfoData?.documentNumberFull}_발주서.pdf`;
+        link.download = `PO_${topInfoData?.documentNumberFull}.pdf`;
         link.click();
 
         // 메모리 해제

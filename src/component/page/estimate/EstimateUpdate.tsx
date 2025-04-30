@@ -688,7 +688,8 @@ function EstimateUpdate({
                                         {/*@ts-ignored*/}
                                         <div style={{overFlowY: "auto", maxHeight: 300}}>
                                             <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                             infoRef={infoRef} uploadType={info.uploadType}/>
+                                                             infoRef={infoRef} uploadType={info.uploadType}
+                                                             addFileName={info?.customerName}/>
                                         </div>
                                     </BoxCard>
                                 </Panel>
