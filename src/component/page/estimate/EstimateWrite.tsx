@@ -158,6 +158,7 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                             .then(src => {
                                 console.log(src?.data?.entity)
                                 const result = connValue.replace(/^[a-zA-Z]+/, match => match.toUpperCase());
+                                console.log(estimateRequestDetail.folderId,':::')
                                 setInfo({
                                     ...getEstimateInit(),
                                     ...estimateRequestDetail,
@@ -292,7 +293,6 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         for (let [key, value] of formData.entries()) {
             console.log(`${key}:`, value);
         }
-
         await saveEstimate({data: formData}).then(async v => {
             const {code, message: msg, entity} = v;
             if (code === 1) {

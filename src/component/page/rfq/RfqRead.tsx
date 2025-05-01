@@ -23,6 +23,7 @@ import Popconfirm from "antd/lib/popconfirm";
 import moment from "moment/moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import ReceiveComponent from "@/component/ReceiveComponent";
+import {getData} from "@/manage/function/api";
 
 
 function RfqRead({getPropertyId, getCopyPage}: any) {
@@ -78,6 +79,13 @@ function RfqRead({getPropertyId, getCopyPage}: any) {
 
         commonManage.onChange(e, setInfo)
     }
+
+
+    useEffect(() => {
+        getData.post('common/getFileId').then(v=>{
+            console.log(v,':::::')
+        })
+    }, []);
 
     async function searchInfo() {
         let copyData: any = {...info}
