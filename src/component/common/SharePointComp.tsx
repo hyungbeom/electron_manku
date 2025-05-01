@@ -289,7 +289,6 @@ export function DriveUploadComp({
 
         setLoading(true);
         const fileName = generateFileName(file?.name, fileList);
-        console.log(fileName, 'fileName:::')
         let uploadedInfo = {
             ...file,
             name: fileName,
@@ -345,16 +344,18 @@ export function DriveUploadComp({
                 originFileObj: file,
                 type: file.type,
             }))
-            const newFileList = [
-                ...fileList,
-                ...file,
-            ];
 
-            fileChange({file :file[0], fileList :  newFileList})
+            // const newFileList = [
+            //     ...fileList,
+            //     ...file,
+            // ];
+            // fileChange({file :file[0], fileList :  newFileList})
 
-            if (fileRef.current) {
-                fileRef.current.fileList = newFileList;
-            }
+            fileChange({file :file[0], fileList :  fileList})
+
+            // if (fileRef.current) {
+            //     fileRef.current.fileList = newFileList;
+            // }
         }
     };
 
