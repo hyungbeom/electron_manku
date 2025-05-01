@@ -1,12 +1,5 @@
 import React, {memo, useEffect, useRef, useState} from "react";
-import {
-    CopyOutlined,
-    DeleteOutlined,
-    FormOutlined,
-    RadiusSettingOutlined,
-    SendOutlined,
-    SettingOutlined
-} from "@ant-design/icons";
+import {CopyOutlined, DeleteOutlined, FormOutlined, SettingOutlined} from "@ant-design/icons";
 import message from "antd/lib/message";
 import {getData} from "@/manage/function/api";
 import SearchInfoModal from "@/component/SearchAgencyModal";
@@ -31,7 +24,7 @@ import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import Table from "@/component/util/Table";
-import {estimateInfo, rfqInfo} from "@/utils/column/ProjectInfo";
+import {rfqInfo} from "@/utils/column/ProjectInfo";
 import moment from "moment/moment";
 import useEventListener from "@/utils/common/function/UseEventListener";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
@@ -115,7 +108,6 @@ function RqfUpdate({
                 const {estimateRequestDetail, attachmentFileList} = v;
 
 
-                console.log(estimateRequestDetail?.folderId,'?????????????????????????')
                 /**
                  * 개선사항
                  * 견적의뢰 수정시 드라이브 목록 '업체회신자료'로 자동 선택
@@ -136,9 +128,9 @@ function RqfUpdate({
                 setTableData(estimateRequestDetail[listType]);
             }
         })
-        .finally(() => {
-            setLoading(false);
-        });
+            .finally(() => {
+                setLoading(false);
+            });
     }, [updateKey['rfq_update']])
 
     async function getDataInfo() {
@@ -165,7 +157,7 @@ function RqfUpdate({
         commonManage.onChange(e, setInfo)
 
         // 값 입력되면 유효성 초기화
-        const { id, value } = e?.target;
+        const {id, value} = e?.target;
         commonManage.resetValidate(id, value, setValidate);
     }
 
@@ -212,7 +204,7 @@ function RqfUpdate({
         console.log(info, 'info:::')
 
         // 유효성 체크 추가
-        if(!commonManage.checkValidate(info, rfqInfo['write']['validationList'], setValidate)) return;
+        if (!commonManage.checkValidate(info, rfqInfo['write']['validationList'], setValidate)) return;
 
         const tableList = tableRef.current?.getSourceData();
         const filterTableList = commonManage.filterEmptyObjects(tableList, ['model', 'item', 'maker'])
@@ -345,18 +337,18 @@ function RqfUpdate({
         copyInfo['folderId'] = '';
         const totalList = tableRef.current.getSourceData();
         totalList.pop();
-        const list = totalList.map(v=>{
+        const list = totalList.map(v => {
             return {
-                model : v.model,
-                quantity : v.quantity,
-                unit : v.unit,
-                currencyUnit : v.currencyUnit,
+                model: v.model,
+                quantity: v.quantity,
+                unit: v.unit,
+                currencyUnit: v.currencyUnit,
             }
         })
         copyInfo[listType] = [...list, ...commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000 - list.length)];
 
         console.log(copyInfo, 'copyInfo:::')
-        getCopyPage('rfq_write', { ...copyInfo, _meta: {updateKey: Date.now()}})
+        getCopyPage('rfq_write', {...copyInfo, _meta: {updateKey: Date.now()}})
     }
 
     /**
@@ -396,204 +388,204 @@ function RqfUpdate({
                     {name: <div><CopyOutlined style={{paddingRight: 8}}/>복제</div>, func: copyPage, type: ''}
                 ]} mini={mini} setMini={setMini}>
                     {mini ? <div>
-                            <TopBoxCard title={''} grid={'110px 80px 80px 110px 110px 110px 300px'}>
-                                {datePickerForm({
-                                    title: '작성일',
-                                    id: 'writtenDate',
-                                    disabled: true,
-                                    data: info
+                        <TopBoxCard title={''} grid={'110px 80px 80px 110px 110px 110px 300px'}>
+                            {datePickerForm({
+                                title: '작성일',
+                                id: 'writtenDate',
+                                disabled: true,
+                                data: info
+                            })}
+                            {inputForm({title: '작성자', id: 'createdBy', disabled: true, onChange: onChange, data: info})}
+                            <div>
+                                {selectBoxForm({
+                                    title: '담당자',
+                                    id: 'managerAdminId',
+                                    onChange: onChange,
+                                    data: info,
+                                    validate: validate['managerAdminId'],
+                                    list: memberList?.map((item) => ({
+                                        ...item,
+                                        value: item.adminId,
+                                        label: item.name,
+                                    }))
                                 })}
-                                {inputForm({title: '작성자', id: 'createdBy', disabled: true, onChange: onChange, data: info})}
-                                <div>
-                                    {selectBoxForm({
+                            </div>
+                            {inputForm({
+                                title: '의뢰자료 No.',
+                                id: 'documentNumberFull',
+                                data: info,
+                                disabled: true,
+                                placeHolder: '자동생성'
+                            })}
+                            {datePickerForm({
+                                title: '마감일자(예상)', id: 'dueDate'
+                                , onChange: onChange, data: info
+                            })}
+                            {inputForm({
+                                title: 'RFQ No.',
+                                id: 'rfqNo',
+                                onChange: onChange,
+                                data: info
+                            })}
+                            {inputForm({
+                                title: 'PROJECT NAME',
+                                id: 'projectTitle',
+                                onChange: onChange,
+                                data: info
+                            })}
+                        </TopBoxCard>
+                        <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
+                            <Panel defaultSize={sizes[0]} minSize={5}>
+                                <BoxCard title={'매입처 정보'} tooltip={tooltipInfo('agency')}>
+                                    {inputForm({
+                                        title: '매입처코드',
+                                        id: 'agencyCode',
+                                        suffix: <span style={{cursor: 'pointer'}} onClick={
+                                            (e) => {
+                                                e.stopPropagation();
+                                                openModal('agencyCode');
+                                            }
+                                        }>🔍</span>,
+                                        onChange: onChange,
+                                        handleKeyPress: handleKeyPress,
+                                        data: info,
+                                        validate: validate['agencyCode'],
+                                        key: validate['agencyCode']
+                                    })}
+                                    {inputForm({
+                                        title: '회사명',
+                                        id: 'agencyName',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                    {inputForm({
                                         title: '담당자',
-                                        id: 'managerAdminId',
+                                        id: 'agencyManagerName',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: '연락처',
+                                        id: 'agencyTel',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: '이메일',
+                                        id: 'agencyManagerEmail',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                </BoxCard>
+                            </Panel>
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[1]} minSize={5}>
+                                <BoxCard title={'고객사 정보'} tooltip={tooltipInfo('customer')}>
+                                    {inputForm({
+                                        title: '고객사명',
+                                        id: 'customerName',
+                                        suffix: <span style={{cursor: 'pointer'}} onClick={
+                                            (e) => {
+                                                e.stopPropagation();
+                                                openModal('customerName');
+                                            }
+                                        }>🔍</span>,
+                                        onChange: onChange,
+                                        handleKeyPress: handleKeyPress,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: '담당자명',
+                                        id: 'managerName',
                                         onChange: onChange,
                                         data: info,
-                                        validate: validate['managerAdminId'],
-                                        list: memberList?.map((item) => ({
-                                            ...item,
-                                            value: item.adminId,
-                                            label: item.name,
-                                        }))
                                     })}
-                                </div>
-                                {inputForm({
-                                    title: '의뢰자료 No.',
-                                    id: 'documentNumberFull',
-                                    data: info,
-                                    disabled: true,
-                                    placeHolder: '자동생성'
-                                })}
-                                {datePickerForm({
-                                    title: '마감일자(예상)', id: 'dueDate'
-                                    , onChange: onChange, data: info
-                                })}
-                                {inputForm({
-                                    title: 'RFQ No.',
-                                    id: 'rfqNo',
-                                    onChange: onChange,
-                                    data: info
-                                })}
-                                {inputForm({
-                                    title: 'PROJECT NAME',
-                                    id: 'projectTitle',
-                                    onChange: onChange,
-                                    data: info
-                                })}
-                            </TopBoxCard>
-                            <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
-                                <Panel defaultSize={sizes[0]} minSize={5}>
-                                    <BoxCard title={'매입처 정보'} tooltip={tooltipInfo('agency')}>
-                                        {inputForm({
-                                            title: '매입처코드',
-                                            id: 'agencyCode',
-                                            suffix: <span style={{cursor: 'pointer'}} onClick={
-                                                (e) => {
-                                                    e.stopPropagation();
-                                                    openModal('agencyCode');
-                                                }
-                                            }>🔍</span>,
-                                            onChange: onChange,
-                                            handleKeyPress: handleKeyPress,
-                                            data: info,
-                                            validate: validate['agencyCode'],
-                                            key: validate['agencyCode']
-                                        })}
-                                        {inputForm({
-                                            title: '회사명',
-                                            id: 'agencyName',
-                                            onChange: onChange,
-                                            data: info
-                                        })}
-                                        {inputForm({
-                                            title: '담당자',
-                                            id: 'agencyManagerName',
-                                            onChange: onChange,
-                                            data: info
-                                        })}
-                                        {inputForm({
-                                            title: '연락처',
-                                            id: 'agencyTel',
-                                            onChange: onChange,
-                                            data: info
-                                        })}
-                                        {inputForm({
-                                            title: '이메일',
-                                            id: 'agencyManagerEmail',
-                                            onChange: onChange,
-                                            data: info
-                                        })}
-                                    </BoxCard>
-                                </Panel>
-                                <PanelResizeHandle/>
-                                <Panel defaultSize={sizes[1]} minSize={5}>
-                                    <BoxCard title={'고객사 정보'} tooltip={tooltipInfo('customer')}>
-                                        {inputForm({
-                                            title: '고객사명',
-                                            id: 'customerName',
-                                            suffix: <span style={{cursor: 'pointer'}} onClick={
-                                                (e) => {
-                                                    e.stopPropagation();
-                                                    openModal('customerName');
-                                                }
-                                            }>🔍</span>,
-                                            onChange: onChange,
-                                            handleKeyPress: handleKeyPress,
-                                            data: info
-                                        })}
-                                        {inputForm({
-                                            title: '담당자명',
-                                            id: 'managerName',
-                                            onChange: onChange,
-                                            data: info,
-                                        })}
-                                        {inputForm({
-                                            title: '연락처',
-                                            id: 'phoneNumber',
-                                            onChange: onChange,
-                                            data: info,
-                                        })}
-                                        {inputForm({
-                                            title: '팩스',
-                                            id: 'faxNumber',
-                                            onChange: onChange,
-                                            data: info
-                                        })}
-                                        {inputForm({
-                                            title: '이메일',
-                                            id: 'customerManagerEmail',
-                                            onChange: onChange,
-                                            data: info
-                                        })}
-                                    </BoxCard>
-                                </Panel>
-                                <PanelResizeHandle/>
-                                <Panel defaultSize={sizes[2]} minSize={5}>
-                                    <BoxCard title={'Maker 정보'} tooltip={tooltipInfo('maker')}>
-                                        {inputForm({
-                                            title: 'Maker',
-                                            id: 'maker',
-                                            suffix: <span style={{cursor: 'pointer'}} onClick={
-                                                (e) => {
-                                                    e.stopPropagation();
-                                                    openModal('maker');
-                                                }
-                                            }>🔍</span>,
-                                            onChange: onChange,
-                                            handleKeyPress: handleKeyPress,
-                                            data: info
-                                        })}
-                                        {inputForm({
-                                            title: 'Item',
-                                            id: 'item',
-                                            onChange: onChange,
-                                            data: info
-                                        })}
-                                        {textAreaForm({
-                                            title: '지시사항',
-                                            id: 'instructions',
-                                            onChange: onChange,
-                                            data: info,
-                                            rows: 7
-                                        })}
-                                    </BoxCard>
-                                </Panel>
-                                <PanelResizeHandle/>
-                                <Panel defaultSize={sizes[3]} minSize={5}>
-                                    <BoxCard title={'ETC'} tooltip={tooltipInfo('etc')}>
-                                        {inputForm({
-                                            title: 'End User',
-                                            id: 'endUser',
-                                            onChange: onChange,
-                                            data: info
-                                        })}
-                                        {textAreaForm({
-                                            title: '비고란',
-                                            rows: 10,
-                                            id: 'remarks',
-                                            onChange: onChange,
-                                            data: info,
-                                        })}
-                                    </BoxCard>
-                                </Panel>
-                                <PanelResizeHandle/>
-                                <Panel defaultSize={sizes[4]} minSize={5}>
-                                    <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}
-                                             disabled={!userInfo['microsoftId']}>
+                                    {inputForm({
+                                        title: '연락처',
+                                        id: 'phoneNumber',
+                                        onChange: onChange,
+                                        data: info,
+                                    })}
+                                    {inputForm({
+                                        title: '팩스',
+                                        id: 'faxNumber',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: '이메일',
+                                        id: 'customerManagerEmail',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                </BoxCard>
+                            </Panel>
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[2]} minSize={5}>
+                                <BoxCard title={'Maker 정보'} tooltip={tooltipInfo('maker')}>
+                                    {inputForm({
+                                        title: 'Maker',
+                                        id: 'maker',
+                                        suffix: <span style={{cursor: 'pointer'}} onClick={
+                                            (e) => {
+                                                e.stopPropagation();
+                                                openModal('maker');
+                                            }
+                                        }>🔍</span>,
+                                        onChange: onChange,
+                                        handleKeyPress: handleKeyPress,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: 'Item',
+                                        id: 'item',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                    {textAreaForm({
+                                        title: '지시사항',
+                                        id: 'instructions',
+                                        onChange: onChange,
+                                        data: info,
+                                        rows: 7
+                                    })}
+                                </BoxCard>
+                            </Panel>
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[3]} minSize={5}>
+                                <BoxCard title={'ETC'} tooltip={tooltipInfo('etc')}>
+                                    {inputForm({
+                                        title: 'End User',
+                                        id: 'endUser',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                    {textAreaForm({
+                                        title: '비고란',
+                                        rows: 10,
+                                        id: 'remarks',
+                                        onChange: onChange,
+                                        data: info,
+                                    })}
+                                </BoxCard>
+                            </Panel>
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[4]} minSize={5}>
+                                <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}
+                                         disabled={!userInfo['microsoftId']}>
 
-                                        <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                         info={info} type={'rfq'}/>
-                                    </BoxCard>
-                                </Panel>
-                                <PanelResizeHandle/>
-                                <Panel defaultSize={sizes[5]} minSize={0}></Panel>
-                            </PanelGroup>
-                        </div>: <></>}
+                                    <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
+                                                     info={info} type={'rfq'}/>
+                                </BoxCard>
+                            </Panel>
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[5]} minSize={0}></Panel>
+                        </PanelGroup>
+                    </div> : <></>}
                 </MainCard>
 
                 <Table data={tableData} column={rfqInfo['write']} funcButtons={['print']} ref={tableRef}
-                       type={'rfq_write_column'} infoRef={infoRef} />
+                       type={'rfq_write_column'} infoRef={infoRef}/>
             </div>
         </>
     </Spin>
