@@ -30,7 +30,7 @@ function findOutlookPath() {
             return;
         }
         outlookPath = result['HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\OUTLOOK.EXE'].values[''].value;
-        console.log('Outlook 경로:', outlookPath);
+
     });
 }
 

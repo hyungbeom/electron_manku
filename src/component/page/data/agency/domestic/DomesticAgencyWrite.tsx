@@ -91,7 +91,7 @@ function DomesticAgencyWrite({copyPageInfo, getPropertyId}: any) {
      * 데이터 관리 > 매입처 > 국내매입처
      */
     async function saveFunc() {
-        console.log(info, 'info:::');
+
         if (!commonManage.checkValidate(info, DAInfo['write']['validationList'], setValidate)) return;
 
         const tableList = tableRef.current?.getSourceData();

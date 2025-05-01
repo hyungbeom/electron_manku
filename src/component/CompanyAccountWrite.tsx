@@ -55,7 +55,7 @@ function CompanyAccountWrite({getPropertyId, copyPageInfo}: any) {
      * 데이터관리 > 회사계정관리
      */
     async function saveFunc() {
-        console.log(info, 'info:::')
+
         if (!commonManage.checkValidate(info, companyAccountInfo['write']['validationList'], setValidate)) return;
 
         setLoading(true);

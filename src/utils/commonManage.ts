@@ -44,6 +44,24 @@ commonManage.getPageIndex = function sumLengthsUpToIndex(array, index) {
 
 
 
+commonManage.getFileNextNumb = function(fileList, baseType) {
+    const regex = new RegExp(`^${baseType}(\\.\\d+)?\\s`);
+
+    const increments = fileList
+        .map(file => file.name)
+        .filter(name => regex.test(name))
+        .map(name => {
+            const match = name.match(/^(\d+)(?:\.(\d+))?/);
+            if (!match) return 0;
+            return match[2] ? parseInt(match[2], 10) : 0;
+        });
+
+    const next = increments.length === 0 ? '' : '.' + (Math.max(...increments) + 1);
+    return baseType + next;
+}
+
+
+
 
 // =========================================================================================
 // =========================================================================================

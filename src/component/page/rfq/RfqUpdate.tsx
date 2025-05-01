@@ -113,7 +113,9 @@ function RqfUpdate({
         getDataInfo().then(v => {
             if (v) {
                 const {estimateRequestDetail, attachmentFileList} = v;
-                console.log(attachmentFileList,'attachmentFileList:')
+
+
+                console.log(estimateRequestDetail?.folderId,'?????????????????????????')
                 /**
                  * 개선사항
                  * 견적의뢰 수정시 드라이브 목록 '업체회신자료'로 자동 선택

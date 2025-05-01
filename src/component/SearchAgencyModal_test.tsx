@@ -179,7 +179,7 @@ export default function SearchAgencyModal_test({
     };
 
 
-    console.log(code, 'code::')
+
     return <>
         {page.x ? <div style={{
             position: 'fixed',
@@ -236,7 +236,6 @@ export default function SearchAgencyModal_test({
                 <AgGridReact containerStyle={{height: '93%', width: '100%'}} theme={tableTheme}
                              onCellClicked={async (e) => {
 
-                                 console.log(openCheck, 'openCheck:')
                                  switch (openCheck) {
                                      case 'agencyCode' : {
                                          const result = {

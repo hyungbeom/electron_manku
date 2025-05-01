@@ -65,7 +65,7 @@ function CompanyAccountUpdate({updateKey, getCopyPage, layoutRef}: any) {
      * 데이터 관리 > 회사계정관리
      */
     async function saveFunc() {
-        console.log(info, 'info:::')
+
         if (!commonManage.checkValidate(info, companyAccountInfo['write']['validationList'], setValidate)) return;
 
         setLoading(true);
