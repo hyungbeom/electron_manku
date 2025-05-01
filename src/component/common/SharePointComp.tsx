@@ -317,6 +317,7 @@ export function DriveUploadComp({
             }
         }
         const updateFileList = [...fileList, uploadedInfo];
+
         const sortedFileList = sortFileList(updateFileList);
         setFileList(sortedFileList);
 
