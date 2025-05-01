@@ -96,6 +96,8 @@ export const projectInfo = {
         remarks: '',
         instructions: '',
         specialNotes: '',
+        uploadType: 7,
+        folderId: '',
         projectDetailList: []
     },
 };
@@ -213,12 +215,12 @@ export const rfqInfo = {
         maker: '',
         item: '',
         instructions: '',
-        uploadType: 0,
 
         remarks: '',
         endUser: '',
 
-
+        uploadType: 0,
+        folderId: ''
     },
 };
 
@@ -331,7 +333,8 @@ export const estimateInfo = {
         "currencyUnit": "",          // 비고란
         'count': 0,
         attnTo: '',
-        uploadType: 3
+        uploadType: 3,
+        folderId: ''
     },
 };
 
@@ -467,7 +470,8 @@ export const orderInfo = {
         "remarks": "",                      // 비고란
         "currencyUnit": "",                      // 비고란
         "projectTitle": "",                      // 비고란
-        uploadType: 4
+        uploadType: 4,
+        folderId: ''
     },
 };
 

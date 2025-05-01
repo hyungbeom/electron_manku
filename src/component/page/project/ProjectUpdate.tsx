@@ -209,7 +209,7 @@ function ProjectUpdate({
         //     return message.warn('하위 데이터 1개 이상이여야 합니다');
         // }
 
-        setLoading(true)
+        setLoading(true);
 
         const findMember = memberList.find(v => v.adminId === parseInt(info['managerAdminId']));
         info['managerAdminName'] = findMember['name'];
@@ -224,7 +224,7 @@ function ProjectUpdate({
         formData.delete('modifiedDate')
 
         await updateProject({data: formData, router: router, returnFunc: returnFunc})
-        setLoading(false)
+        setLoading(false);
     }
 
     async function returnFunc(code, msg) {
@@ -299,8 +299,10 @@ function ProjectUpdate({
                     {cursor: 'pointer'}
                 )
             }
-        }, err => setLoading(false))
-        setLoading(false)
+        })
+        .finally(() => {
+            setLoading(false);
+        });
     }
 
     /**
@@ -332,7 +334,8 @@ function ProjectUpdate({
      */
     function copyPage() {
         const copyInfo = _.cloneDeep(info);
-        copyInfo['documentNumberFull'] = ''
+        copyInfo['documentNumberFull'] = '';
+        copyInfo['folderId'] = '';
         const totalList = tableRef.current.getSourceData();
         totalList.pop();
         copyInfo[listType] = [...totalList, ...commonFunc.repeatObject(projectInfo['write']['defaultData'], 1000 - totalList.length)];
@@ -443,7 +446,7 @@ function ProjectUpdate({
         <>
             <div ref={infoRef} style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '440px' : '65px'} calc(100vh - ${mini ? 535 : 195}px)`,
+                gridTemplateRows: `${mini ? '485px' : '65px'} calc(100vh - ${mini ? 580 : 160}px)`,
                 rowGap: 10,
             }}>
                 <MainCard title={'프로젝트 수정'} list={[
@@ -570,7 +573,7 @@ function ProjectUpdate({
                                     <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}
                                              disabled={!userInfo['microsoftId']}>
                                             <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                             infoRef={infoRef} folderId={info?.folderId} type={'project'}/>
+                                                             info={info} type={'project'}/>
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>

@@ -105,8 +105,7 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
             setInfo({
                 ...getRfqInit(),
                 ...copyPageInfo,
-                writtenDate: moment().format('YYYY-MM-DD'),
-                documentNumberFull: ''
+                writtenDate: moment().format('YYYY-MM-DD')
             });
             setTableData(copyPageInfo[listType]);
         }
@@ -156,7 +155,7 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
      * 견적의뢰 > 견적의뢰 등록
      */
     async function saveFunc() {
-
+        console.log(info, 'info:::');
         // 유효성 체크 추가
         if(!commonManage.checkValidate(info, rfqInfo['write']['validationList'], setValidate)) return;
 
@@ -228,7 +227,7 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
      * 견적의뢰 > 견적의뢰 등록
      */
     function clearAll() {
-        setLoading(true)
+        setLoading(true);
         setValidate(getRfqValidateInit());
         setInfo(getRfqInit())
         setFileList([]);
@@ -455,8 +454,8 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                     <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}
                                              disabled={!userInfo['microsoftId']}>
 
-                                        <DriveUploadComp fileList={fileList} setFileList={setFileList} infoRef={infoRef}
-                                                         fileRef={fileRef}/>
+                                        <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
+                                                         info={info}/>
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>

@@ -179,7 +179,6 @@ export default function SearchAgencyModal_test({
     };
 
 
-    console.log(code, 'code::')
     return <>
         {page.x ? <div style={{
             position: 'fixed',

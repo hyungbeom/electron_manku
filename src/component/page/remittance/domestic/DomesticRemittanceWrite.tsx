@@ -283,7 +283,7 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
                                     {/*@ts-ignored*/}
                                     <div style={{overFlowY: "auto", maxHeight: 300}}>
                                         <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                         infoRef={infoRef}/>
+                                                         />
                                     </div>
                                 </BoxCard>
                             </Panel>

@@ -260,7 +260,7 @@ export default function DomesticRemittanceUpdate({
                             <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
 
                                 <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                 infoRef={infoRef}/>
+                                                 />
 
                             </BoxCard>
                         </Panel>

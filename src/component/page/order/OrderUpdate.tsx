@@ -119,7 +119,6 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
             setInfo({
                 ...getOrderInit(),
                 ...orderDetail,
-                uploadType: 4,
                 managerAdminId: orderDetail['managerAdminId'] ? orderDetail['managerAdminId'] : '',
                 managerAdminName: orderDetail['managerAdminName'] ? orderDetail['managerAdminName'] : '',
                 createdBy: orderDetail['createdBy'] ? orderDetail['createdBy'] : ''
@@ -348,6 +347,10 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
      */
     function copyPage() {
         const copyInfo = _.cloneDeep(info);
+        copyInfo['ourPoNo'] = '';
+        copyInfo['documentNumberFull'] = '';
+        copyInfo['yourPoNo'] = '';
+        copyInfo['folderId'] = '';
         const totalList = tableRef.current.getSourceData();
         totalList.pop();
         copyInfo[listType] = [...totalList, ...commonFunc.repeatObject(orderInfo['write']['defaultData'], 1000 - totalList.length)];
@@ -596,8 +599,7 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
                                 <BoxCard title={'드라이브 목록'}
                                          disabled={!userInfo['microsoftId']}>
                                     <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                     infoRef={infoRef} uploadType={info.uploadType} type={'order'}
-                                                     folderId={info?.folderId} info={info}/>
+                                                     info={info} type={'order'}/>
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>

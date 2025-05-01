@@ -338,7 +338,9 @@ function RqfUpdate({
      */
     function copyPage() {
         const copyInfo = _.cloneDeep(info);
-
+        copyInfo['documentNumberFull'] = '';
+        copyInfo['uploadType'] = 0;
+        copyInfo['folderId'] = '';
         const totalList = tableRef.current.getSourceData();
         totalList.pop();
         const list = totalList.map(v=>{
@@ -351,6 +353,7 @@ function RqfUpdate({
         })
         copyInfo[listType] = [...list, ...commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000 - list.length)];
 
+        console.log(copyInfo, 'copyInfo:::')
         getCopyPage('rfq_write', { ...copyInfo, _meta: {updateKey: Date.now()}})
     }
 
@@ -578,8 +581,7 @@ function RqfUpdate({
                                              disabled={!userInfo['microsoftId']}>
 
                                         <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                         infoRef={infoRef} uploadType={info.uploadType} type={'rfq'}
-                                                         folderId={info?.folderId} info={info}/>
+                                                         info={info} type={'rfq'}/>
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>

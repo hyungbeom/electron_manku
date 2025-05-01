@@ -148,7 +148,6 @@ function EstimateUpdate({
             setInfo({
                 ...getEstimateInit(),
                 ...estimateDetail,
-                uploadType: 3,
                 managerAdminId: estimateDetail['managerAdminId'] ? estimateDetail['managerAdminId'] : '',
                 managerAdminName: estimateDetail['managerAdminName'] ? estimateDetail['managerAdminName'] : '',
                 createdBy: estimateDetail['createdBy'] ? estimateDetail['createdBy'] : ''
@@ -279,7 +278,7 @@ function EstimateUpdate({
         formData.delete('modifiedDate')
 
         await updateEstimate({data: formData, returnFunc: returnFunc});
-
+        setLoading(false);
     }
 
     async function returnFunc(v) {
@@ -317,7 +316,6 @@ function EstimateUpdate({
                 {cursor: 'pointer'}
             )
         }
-        setLoading(false)
     }
 
     /**
@@ -325,7 +323,7 @@ function EstimateUpdate({
      * 견적서 > 견적서 수정
      */
     function deleteFunc() {
-        setLoading(true)
+        setLoading(true);
         getData.post('estimate/deleteEstimate', {estimateId: updateKey['estimate_update']}).then(v => {
             const {code, message} = v.data;
             if (code === 1) {
@@ -355,8 +353,10 @@ function EstimateUpdate({
                     {cursor: 'pointer'}
                 )
             }
-        }, err => setLoading(false))
-        setLoading(false)
+        })
+        .finally(() => {
+            setLoading(false);
+        });
     }
 
     /**
@@ -398,7 +398,11 @@ function EstimateUpdate({
             managerName: '',
             phoneNumber: '',
             customerManagerEmail: '',
-            faxNumber: ''
+            faxNumber: '',
+
+            connectDocumentNumberFull: '',
+            documentNumberFull: '',
+            folderId: ''
         };
         //
 
@@ -690,8 +694,7 @@ function EstimateUpdate({
                                         {/*@ts-ignored*/}
                                         <div style={{overFlowY: "auto", maxHeight: 300}}>
                                             <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                             infoRef={infoRef} uploadType={info.uploadType} type={'estimate'}
-                                                             folderId={info?.folderId} info={info}/>
+                                                             info={info} type={'estimate'}/>
                                         </div>
                                     </BoxCard>
                                 </Panel>

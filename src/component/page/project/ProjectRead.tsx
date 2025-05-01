@@ -152,7 +152,7 @@ function ProjectRead({getPropertyId, getCopyPage}: any) {
         <PanelSizeUtil groupRef={groupRef} storage={'project_read'}/>
         <div style={{
             display: 'grid',
-            gridTemplateRows: `${mini ? '335px' : '65px'} calc(100vh - ${mini ? 495 : 195}px)`,
+            gridTemplateRows: `${mini ? '330px' : '65px'} calc(100vh - ${mini ? 495 : 195}px)`,
         }}>
             <MainCard title={'프로젝트 조회'}
                       list={[

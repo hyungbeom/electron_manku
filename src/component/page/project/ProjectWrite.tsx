@@ -119,7 +119,7 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef, getCopyPage}
                 writtenDate: moment().format('YYYY-MM-DD')
             });
             setTableData(copyPageInfo[listType]);
-            setRouterId(null)
+            setRouterId(null);
         }
         setLoading(false);
     }, [copyPageInfo?._meta?.updateKey]);
@@ -309,7 +309,7 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef, getCopyPage}
         <PanelSizeUtil groupRef={groupRef} storage={'project_write'}/>
         <div ref={infoRef} style={{
             display: 'grid',
-            gridTemplateRows: `${mini ? '440px' : '65px'} calc(100vh - ${mini ? 535 : 195}px)`,
+            gridTemplateRows: `${mini ? '485px' : '65px'} calc(100vh - ${mini ? 580 : 160}px)`,
             rowGap: 10
         }}>
             <MainCard title={'프로젝트 등록'} list={[
@@ -442,7 +442,7 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef, getCopyPage}
                                          disabled={!userInfo['microsoftId']}>
 
                                     <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                     infoRef={infoRef}/>
+                                                     info={info}/>
 
                                 </BoxCard>
                             </Panel>

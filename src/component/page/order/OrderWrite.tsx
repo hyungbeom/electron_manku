@@ -78,12 +78,12 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
     const adminParams = {
         managerAdminId: userInfo['adminId'],
         managerAdminName: userInfo['name'],
-        estimateManager: userInfo['name'],
         createdBy: userInfo['name'],
         managerId: userInfo['name'],
         managerPhoneNumber: userInfo['contactNumber'],
         managerFaxNumber: userInfo['faxNumber'],
         managerEmail: userInfo['email'],
+        estimateManager: userInfo['name'],
         createdId: 0,
         customerId: 0
     }
@@ -147,9 +147,9 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                 setLoading(false);
                                 return message.warn('조회데이터가 없습니다.')
                             }
-                            setInfo(getOrderInit());
-                            setFileList([]);
-                            setOriginFileList([]);
+                            // setInfo(getOrderInit());
+                            // setFileList([]);
+                            // setOriginFileList([]);
 
                             // const result = await findDocumentInfo(e, setInfo);
                             await getData.post('estimate/generateDocumentNumberFull', {
@@ -172,11 +172,19 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                     // paymentTerms: '발주시 50% / 납품시 50%',
                                     // shippingTerms: '귀사도착도',
                                     delivery: estimateDetail?.deliveryDate ? estimateDetail.deliveryDate : '',
-                                    uploadType: 4,
-                                    createdBy: adminParams.createdBy,
-                                    writtenDate: moment().format('YYYY-MM-DD')
+
+                                    // 담당자 정보가 현재 작성자 정보가 나와야한다고 함
+                                    managerAdminId: adminParams['managerAdminId'],
+                                    managerAdminName: adminParams['managerAdminName'],
+                                    createdBy: adminParams['createdBy'],
+                                    writtenDate: moment().format('YYYY-MM-DD'),
+                                    managerId: adminParams['name'],
+                                    managerPhoneNumber: adminParams['contactNumber'],
+                                    managerFaxNumber: adminParams['faxNumber'],
+                                    managerEmail: adminParams['email'],
                                 })
-                                setFileList(fileManage.getFormatFiles(src?.data?.entity.attachmentFileList));
+                                // setFileList(fileManage.getFormatFiles(src?.data?.entity.attachmentFileList));
+                                setFileList(fileManage.getFormatFiles(attachmentFileList));
                                 if (estimateDetail?.estimateDetailList?.length) {
                                     const copyList = estimateDetail.estimateDetailList.map(v => {
                                         return {...v, currency: v.currencyUnit}
@@ -189,9 +197,9 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                             });
                         }
                     })
-                        .finally(() => {
-                            setLoading(false);
-                        });
+                    .finally(() => {
+                        setLoading(false);
+                    });
                     break;
                 // await findOrderDocumentInfo(e, setInfo, setTableData, memberList)
             }
@@ -204,14 +212,6 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
         // 값 입력되면 유효성 초기화
         const {id, value} = e?.target;
         commonManage.resetValidate(id, value, setValidate);
-    }
-
-    /**
-     * @description 등록 페이지 > 거래명세표 출력 버튼
-     * 발주서 > 발주서 등록
-     */
-    async function printTransactionStatement() {
-        alert('쉐어포인트 자동저장');
     }
 
     /**
@@ -393,15 +393,16 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                             <div>
                                 <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>담당자</div>
                                 <select name="languages" id="managerAdminId" onChange={e => {
-                                    const member = memberList.find(v => v.adminId === parseInt(e.target.value))
-                                    const managerInfo = {
-                                        managerId: info?.agencyCode?.toUpperCase().startsWith('K') ? member?.name : member?.adminName,
-                                        managerAdminId: member?.adminId,
-                                        managerPhoneNumber: member?.contactNumber,
-                                        managerFaxNumber: member?.faxNumber,
-                                        managerEmail: member?.email
-                                    }
-                                    setInfo(v => ({...v, ...managerInfo}))
+                                    // 담당자 정보가 현재 작성자 정보가 나와야한다고 함
+                                    // const member = memberList.find(v => v.adminId === parseInt(e.target.value))
+                                    // const managerInfo = {
+                                    //     managerId: info?.agencyCode?.toUpperCase().startsWith('K') ? member?.name : member?.adminName,
+                                    //     managerAdminId: member?.adminId,
+                                    //     managerPhoneNumber: member?.contactNumber,
+                                    //     managerFaxNumber: member?.faxNumber,
+                                    //     managerEmail: member?.email
+                                    // }
+                                    // setInfo(v => ({...v, ...managerInfo}))
                                 }} style={{
                                     outline: 'none',
                                     border: '1px solid lightGray',
@@ -508,14 +509,17 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                 <BoxCard title={<div style={{display: 'flex', justifyContent: 'space-between'}}><span>담당자 정보</span><span><RollbackOutlined
                                     style={{cursor: 'pointer'}}
                                     onClick={() => {
-                                        const member = memberList.find(v => v.adminId === parseInt(info.managerAdminId));
-                                        const managerInfo = {
-                                            managerId: info?.agencyCode?.toUpperCase().startsWith('K') ? member?.name : member?.englishName,
-                                            managerPhoneNumber: member?.contactNumber,
-                                            managerFaxNumber: member?.faxNumber,
-                                            managerEmail: member?.email
-                                        }
-                                        setInfo(v => ({...v, ...managerInfo}))
+                                        // 담당자 정보가 현재 작성자 정보가 나와야한다고 함
+                                        // const member = memberList.find(v => v.adminId === parseInt(info.managerAdminId));
+                                        // const managerInfo = {
+                                        //     managerId: info?.agencyCode?.toUpperCase().startsWith('K') ? member?.name : member?.englishName,
+                                        //     managerPhoneNumber: member?.contactNumber,
+                                        //     managerFaxNumber: member?.faxNumber,
+                                        //     managerEmail: member?.email
+                                        // }
+                                        // setInfo(v => ({...v, ...managerInfo}))
+                                        const member = memberList.find(v => v.adminId === parseInt(info?.managerAdminId));
+                                        setInfo(v => ({...v, managerId: info?.agencyCode?.toUpperCase().startsWith('K') ? member?.name : member?.englishName}))
                                     }}
                                 /></span></div>}>
                                     {inputForm({title: '작성자', id: 'managerId', onChange: onChange, data: info})}
@@ -580,7 +584,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                             <Panel defaultSize={sizes[5]} minSize={5}>
                                 <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
                                     <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                     infoRef={infoRef} uploadType={info.uploadType}/>
+                                                     info={info} key={fileList.length}/>
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>

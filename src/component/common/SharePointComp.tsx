@@ -5,16 +5,14 @@ import {UploadOutlined} from "@ant-design/icons";
 import React, {useEffect, useRef, useState} from "react";
 import message from "antd/lib/message";
 import {getData, getFormData} from "@/manage/function/api";
+import Spin from "antd/lib/spin";
 
 export function DriveUploadComp({
                                     fileList,
                                     setFileList,
                                     fileRef,
-                                    infoRef = null,
-                                    uploadType = 0,
+                                    info = {} as any,
                                     type = '',
-                                    folderId = '',
-                                    info = {} as any
                                 }) {
     const fileInputRef = useRef(null);
 
@@ -28,6 +26,7 @@ export function DriveUploadComp({
     const [dragCounter, setDragCounter] = useState(0); // 드래그 이벤트 수를 추적
 
     const [isLoad, setIsLoad] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const handleDragEnter = (event) => {
@@ -128,9 +127,9 @@ export function DriveUploadComp({
                     const fileUrl = file?.downloadUrl;
                     let fileName = file?.fileName;
 
-                    if (file?.fileName?.includes('Quote')) {
+                    if (file?.fileName?.includes('QUOTE')) {
                         fileName = `${info?.documentNumberFull}_${info?.customerName}_견적서`;
-                    } else if (file?.fileName?.includes('Order')) {
+                    } else if (file?.fileName?.includes('ORDER')) {
                         fileName = `PO_${info?.documentNumberFull}`;
                     }
 
@@ -160,322 +159,171 @@ export function DriveUploadComp({
         }
     };
 
-    // function fileChange({file, fileList}) {
-    //
-    //     // 중복 파일 확인
-    //     const updatedFileList = fileList.map(f => {
-    //
-    //         //내가 올린 파일
-    //         if (f.uid === file.uid) {
-    //             // 현재 numb 그룹 내의 파일 이름에서 번호 추출
-    //             const existingNumbers = fileList
-    //                 .filter(file => file.name.startsWith(`0${uploadTypeRef.current.value}.`)) // 현재 numb 그룹만 필터링
-    //                 .map(file => {
-    //                     const match = file.name.match(/^0\d+\.(\d+)/); // 번호 추출
-    //                     return match ? parseInt(match[1], 10) : null;
-    //                 })
-    //                 .filter(num => num !== null) // 유효한 번호만 필터링
-    //                 .sort((a, b) => a - b); // 번호 정렬
-    //
-    //             // 첫 번째 빈 번호 찾기
-    //             let newNumber = 1;
-    //             for (let i = 0; i < existingNumbers.length; i++) {
-    //                 if (existingNumbers[i] !== i + 1) {
-    //                     newNumber = i + 1;
-    //                     break;
-    //                 } else {
-    //                     newNumber = existingNumbers.length + 1;
-    //                 }
-    //             }
-    //
-    //             // 기존 이름의 나머지 부분 추출
-    //             const match = f.name.match(/^0\d+\.\d+\s(.+)$/); // 규칙 이후의 이름 추출
-    //             const originalName = match ? match[1] : f.name; // 기존 이름 유지
-    //
-    //             const dom = infoRef.current.querySelector('#documentNumberFull');
-    //             const dom3 = infoRef.current.querySelector('#agencyName');
-    //             const extension = originalName.split('.').pop().toLowerCase();
-    //
-    //             const numberType = parseInt(uploadTypeRef.current.value);
-    //
-    //             let result = ''
-    //             switch (numberType) {
-    //                 case 0 :
-    //                     result =  `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}_RFQ.${extension}`
-    //                     break;
-    //                 case 1 :
-    //                     result =  `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}_Received.${extension}`
-    //                     break;
-    //                 case 2 :
-    //                     result =  `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}_Datasheet.${extension}`
-    //                     break;
-    //                 case 3 :
-    //                     result =  `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}_${dom3.value}_Quote.${extension}`
-    //                     break;
-    //                 case 4 :
-    //                     result =  `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}_PO.${extension}`
-    //                     break;
-    //                 default :
-    //                     result =  `0${numberType}.${newNumber} ${dom?.value ? dom?.value : originalName}.${extension}`
-    //             }
-    //
-    //             // 이름 수정된 파일 반환 (originFileObj 유지)
-    //             return {
-    //                 ...f,
-    //                 name: result,
-    //                 originFileObj: f.originFileObj, // 기존 originFileObj 유지
-    //             };
-    //         }
-    //         return f; // 다른 파일은 그대로 유지
-    //     });
-    //
-    //     // 파일 리스트 업데이트
-    //     setFileList(updatedFileList);
-    //
-    //     // ref 상태 동기화
-    //     if (fileRef.current) {
-    //         fileRef.current.fileList = updatedFileList;
-    //     }
-    // }
+    /**
+     * 업로드 파일 넘버링 붙은 파일명 생성
+     * @param targetFileName
+     * @param targetFileList
+     */
+    function generateFileName (targetFileName, targetFileList) {
 
-    // function fileChange({file, fileList}) {
-    //
-    //     const forbiddenChars = /[\\/:*?"<>|#]/;
-    //     if (forbiddenChars.test(file.name)) {
-    //         message.error("파일 이름에 사용할 수 없는 문자가 포함되어 있습니다. ( \\ / : * ? \" < > | # )");
-    //         return;
-    //     }
-    //
-    //     const {status} = file;
-    //     if (folderId && status === 'removed') {
-    //         getData.post('common/fileDelete', file).then(v => {
-    //             console.log(v, '수정페이지 직접삭제 결과::::')
-    //         })
-    //     }
-    //
-    //     // 중복 파일 확인
-    //     const updatedFileList = fileList.map(f => {
-    //
-    //         //내가 올린 파일
-    //         if (f.uid === file.uid) {
-    //
-    //             const filterFiles = fileList.filter(file =>
-    //                 file.name.match(new RegExp(`^0${uploadTypeRef.current.value}(\\.\\d+)?\\s`))
-    //             );
-    //
-    //             // .번호가 붙은 파일만 골라서 번호 뽑기
-    //             const existingNumbers = filterFiles
-    //                 .map(file => {
-    //                     const match = file.name.match(/^0\d+\.(\d+)\s/); // 00.1. 처럼 번호 있는 경우
-    //                     return match ? parseInt(match[1], 10) : null;
-    //                 })
-    //                 .filter(num => num !== null)
-    //                 .sort((a, b) => a - b);
-    //
-    //             // "번호 없는" 파일 존재 여부 체크
-    //             const hasBaseFile = filterFiles.some(file => {
-    //                 return file.name.match(new RegExp(`^0${uploadTypeRef.current.value}\\s`)) &&
-    //                     !file.name.match(/^0\d+\.\d+\s/);
-    //             });
-    //
-    //             // 새 번호
-    //             let newNumber = 1;
-    //             for (let i = 0; i < existingNumbers.length; i++) {
-    //                 if (existingNumbers[i] !== i + 1) {
-    //                     newNumber = i + 1;
-    //                     break;
-    //                 } else {
-    //                     newNumber = existingNumbers.length + 1;
-    //                 }
-    //             }
-    //
-    //             const match = f.name.match(/^0\d+(?:\.\d+)?\s(.+)$/);
-    //             const originalName = match ? match[1] : f.name;
-    //
-    //             const dom = infoRef.current.querySelector('#documentNumberFull');
-    //             const dom3 = infoRef.current.querySelector('#agencyName');
-    //             const extension = originalName.split('.').pop().toLowerCase();
-    //             const baseFileName = originalName.slice(0, originalName.lastIndexOf('.'));
-    //
-    //             const numberType = parseInt(uploadTypeRef.current.value);
-    //
-    //             let prefix = `0${uploadTypeRef.current.value}`;
-    //             if (hasBaseFile) {
-    //                 // 이미 기본 파일(번호 없는 파일)이 있으면 새 파일은 무조건 번호 붙인다
-    //                 prefix += `.${newNumber}`;
-    //             }
-    //             prefix += ' ';
-    //
-    //             let result = ''
-    //             switch (numberType) {
-    //                 case 0 :
-    //                     result =  `${prefix}${dom?.value ? dom?.value : baseFileName}_RFQ.${extension}`
-    //                     break;
-    //                 case 1 :
-    //                     result =  `${prefix}${dom?.value ? dom?.value : baseFileName}_Offer.${extension}`
-    //                     break;
-    //                 case 2 :
-    //                     result =  `${prefix}${dom?.value ? dom?.value : baseFileName}_Ref.${extension}`
-    //                     break;
-    //                 case 3 :
-    //                     result =  `${prefix}${dom?.value ? dom?.value : baseFileName}_${dom3.value}_Quote.${extension}`
-    //                     break;
-    //                 case 4 :
-    //                     result =  `${prefix}${dom?.value ? dom?.value : baseFileName}_Order.${extension}`
-    //                     break;
-    //                 case 5 :
-    //                     result =  `${prefix}${dom?.value ? dom?.value : baseFileName}_매입_.${extension}`
-    //                     break;
-    //                 case 6 :
-    //                     result =  `${prefix}${dom?.value ? dom?.value : baseFileName}_매출_.${extension}`
-    //                     break;
-    //                 case 7 :
-    //                     result =  `${prefix}${dom?.value ? dom?.value : baseFileName}_Project.${extension}`
-    //                     break;
-    //                 case 8 :
-    //                     result =  `${prefix}${dom?.value ? dom?.value : baseFileName}_Etc.${extension}`
-    //                     break;
-    //                 default :
-    //                     result =  `${prefix}${dom?.value ? dom?.value : baseFileName}.${extension}`
-    //             }
-    //
-    //             if (folderId) {
-    //                 const formData: any = new FormData();
-    //                 formData.append('file', file?.originFileObj ? file?.originFileObj : file);
-    //                 formData.append('fileName', result);
-    //                 formData.append('folderId', folderId);
-    //
-    //                 getFormData.post('common/fileAdd', formData).then(v => {
-    //                     if (v?.data?.code === 1) {
-    //                         const res = v?.data?.entity;
-    //                     }
-    //                     console.log(v, '수정페이지 직접업로드 결과::::')
-    //                 })
-    //             }
-    //
-    //             // 이름 수정된 파일 반환 (originFileObj 유지)
-    //             return {
-    //                 ...f,
-    //                 name: result,
-    //                 originFileObj: f.originFileObj, // 기존 originFileObj 유지
-    //             };
-    //         }
-    //         return f; // 다른 파일은 그대로 유지
-    //     });
-    //
-    //     // 파일 리스트 업데이트
-    //     // setFileList(updatedFileList);
-    //     setFileList(sortFileList(updatedFileList));
-    //
-    //     // ref 상태 동기화
-    //     if (fileRef.current) {
-    //         fileRef.current.fileList = updatedFileList;
-    //     }
-    // }
+        // fileList에서 현재 선택된 uploadType의 이름을 가지고 있는 것만 필터
+        // 예) uploadType이 3(견적서 자료) 이면 아래 목록 이름만 필터링 됨
+        // 03 sample.ext
+        // 03.1 sample.ext
+        // 03.2 sample.ext
+        const filterFiles = targetFileList.filter(file =>
+            file.name.match(new RegExp(`^0${uploadTypeRef.current.value}(\\.\\d+)?\\s`))
+        );
 
-    async function fileChange({file, fileList}) {
-
-        const {status} = file;
-        if (folderId && status === 'removed') {
-            getData.post('common/fileDelete', file).then(v => {
-                console.log(v, '수정페이지 직접삭제 결과::::')
+        // 03.1, 03.2 처럼 숫자가 붙은 파일 중에서 숫자만 추출 ( [1,2] )
+        const existingNumbers = filterFiles
+            .map(file => {
+                const match = file.name.match(/^0\d+\.(\d+)\s/); // 03.1, 03.2 처럼 .붙은 숫자만 추출
+                return match ? parseInt(match[1], 10) : null;         // 추출된 숫자 03.1 이면 1 리턴 (없으면 null 리턴)
             })
+            .filter(num => num !== null)                         // null 제외
+            .sort((a, b) => a - b);               // 숫자 오름차순 정렬
+
+        // 03 sample.ext 처럼 03공백 파일이 있는지 체크 (기본 파일 체크)
+        const hasBaseFile = filterFiles.some(file => {
+            return file.name.match(new RegExp(`^0${uploadTypeRef.current.value}\\s`)) &&   // 03공백 이름만 true
+                !file.name.match(/^0\d+\.\d+\s/);                                          // 03.1, 03.2 처럼 서브 이름은 제외
+        });
+
+        // 서브 숫자 추출한 배열을 돌면서 새로운 번호 생성
+        let newNumber = 1;                                   // 기본 넘버링 1부터
+        for (let i = 0; i < existingNumbers.length; i++) {   // [1,2] 배열을 순회하면서 번호 찾기
+            if (existingNumbers[i] !== i + 1) {                       // 배열번호와 현재 넘버링 번호가 다른지
+                newNumber = i + 1;                                    // 다르면 중간 번호 채우고 종료
+                break;
+            } else {
+                newNumber = existingNumbers.length + 1;               // 배열번호와 넘버링 배열이 같으면 그 다음 번호 생성
+            }
         }
 
+        // 파일 이름 정규식으로 체크
+        // 03 sample.ext
+        // 03.1 sample.ext
+        // 이런 파일은 뒤에 이름만 추출, 없으면 전체 이름 사용
+        const match = targetFileName.match(/^0\d+(?:\.\d+)?\s(.+)$/);
+        const originalName = match ? match[1] : targetFileName;
+
+        // 확장자 추출
+        // const extension = originalName.split('.').pop().toLowerCase();
+        const lastDotIndex = originalName.lastIndexOf('.');
+        const extension = lastDotIndex !== -1 ? originalName.slice(originalName.lastIndexOf('.') + 1).toLowerCase() : '';
+
+        // 실제 파일 이름 추출
+        // const baseFileName = originalName.slice(0, originalName.lastIndexOf('.'));
+        const baseFileName = lastDotIndex !== -1 ? originalName.slice(0, lastDotIndex) : originalName;
+
+        // 넘버링 생성
+        let prefix = `0${uploadTypeRef.current.value}`;   // 선택된 업로드 타입
+        if (hasBaseFile) prefix += `.${newNumber}`;              // 기본 파일 03 sample.ext 같은게 있으면 서브 숫자 붙임
+        prefix += ' ';                                           // 넘버링 이후 공백 붙임
+
+        // 현재 선택된 업로드 타입, 넘버링, 정보들을 가지고 파일명 생성
+        const numberType = parseInt(uploadTypeRef.current.value);
+        let result = '';
+        switch (numberType) {
+            case 0: result = `${prefix}${info?.documentNumberFull || baseFileName}_RFQ.${extension}`; break;
+            case 1: result = `${prefix}${info?.documentNumberFull || baseFileName}_OFFER.${extension}`; break;
+            case 2: result = `${prefix}${info?.documentNumberFull || baseFileName}_REF.${extension}`; break;
+            case 3: result = `${prefix}${info?.documentNumberFull || baseFileName}_${info?.agencyName ?? '고객사'}_QUOTE.${extension}`; break;
+            case 4: result = `${prefix}${info?.documentNumberFull || baseFileName}_ORDER.${extension}`; break;
+            case 5: result = `${prefix}${info?.documentNumberFull || baseFileName}_매입_.${extension}`; break;
+            case 6: result = `${prefix}${info?.documentNumberFull || baseFileName}_매출_.${extension}`; break;
+            case 7: result = `${prefix}${info?.documentNumberFull || baseFileName}_PROJECT.${extension}`; break;
+            case 8: result = `${prefix}${info?.documentNumberFull || baseFileName}_ETC.${extension}`; break;
+            default: result = `${prefix}${info?.documentNumberFull || baseFileName}.${extension}`;
+        }
+        return result;
+    }
+
+    /**
+     * 파일 업로드 영역 > 휴지통 버튼
+     * Upload 컴포넌트 onRemove 이벤트
+     * @param file
+     */
+    async function fileRemove(file): Promise<boolean> {
+        // 수정페이지이고 folderId 가 있으면 쉐어포인트 직접삭제
+        if(type && info?.folderId) {
+            setLoading(true);
+            try {
+                const res = await getData.post('common/fileDelete', file);
+                if (res?.data?.code === 1) {
+                    setFileList(prev => prev.filter( f => f.uid !== file.uid));
+                    return true;
+                } else {
+                    message.error('SharePoint 파일 삭제 중 오류가 발생했습니다.');
+                    return false;
+                }
+            } catch (err) {
+                console.error('오류 : ', err);
+                return false;
+            } finally {
+                setLoading(false);
+            }
+        } else {
+            setFileList(prev => prev.filter( f => f.uid !== file.uid));
+        }
+    }
+
+    /**
+     * 파일 업로드 영역 > 파일 변경 이벤트
+     * Upload 컴포넌트 beforeUpload 이벤트
+     * (다른 함수에서도 사용중이라 Dom에서 fileChange 호출)
+     * @param file
+     * @param fileList
+     */
+    async function fileChange({file, fileList}) {
+        // 쉐어포인트에 문제가 생기는 특수문자 제외
         const forbiddenChars = /[\\/:*?"<>|#]/;
         if (forbiddenChars.test(file.name)) {
             message.error("파일 이름에 사용할 수 없는 문자가 포함되어 있습니다. ( \\ / : * ? \" < > | # )");
             return;
         }
 
-        const updatedFileList = await Promise.all(fileList.map(async (f) => {
-            if (f.uid !== file.uid) return f;
+        const existFileIndex = fileList.findIndex(f => f.uid === file.uid);
+        if (existFileIndex !== -1) return;
 
-            const filterFiles = fileList.filter(file =>
-                file.name.match(new RegExp(`^0${uploadTypeRef.current.value}(\\.\\d+)?\\s`))
-            );
+        setLoading(true);
+        const fileName = generateFileName(file?.name, fileList);
+        console.log(fileName, 'fileName:::')
+        let uploadedInfo = {
+            ...file,
+            name: fileName,
+            originFileObj: file?.originFileObj || file
+        };
+        if (type && info?.folderId) {
+            const formData = new FormData();
+            formData.append('folderId', info?.folderId);
+            formData.append('file', file?.originFileObj || file);
+            formData.append('fileName', fileName);
 
-            const existingNumbers = filterFiles
-                .map(file => {
-                    const match = file.name.match(/^0\d+\.(\d+)\s/);
-                    return match ? parseInt(match[1], 10) : null;
-                })
-                .filter(num => num !== null)
-                .sort((a, b) => a - b);
-
-            const hasBaseFile = filterFiles.some(file => {
-                return file.name.match(new RegExp(`^0${uploadTypeRef.current.value}\\s`)) &&
-                    !file.name.match(/^0\d+\.\d+\s/);
-            });
-
-            let newNumber = 1;
-            for (let i = 0; i < existingNumbers.length; i++) {
-                if (existingNumbers[i] !== i + 1) {
-                    newNumber = i + 1;
-                    break;
+            try {
+                const uploadRes = await getFormData.post('common/fileAdd', formData);
+                if (uploadRes?.data?.code === 1) {
+                    console.log(uploadRes, '드라이브 직접 업로드 (수정페이지만) ::::')
+                    uploadedInfo = {
+                        ...uploadedInfo,
+                        ...uploadRes?.data?.entity
+                    };
                 } else {
-                    newNumber = existingNumbers.length + 1;
+                    message.error('SharePoint 파일 삭제 중 오류가 발생했습니다.');
                 }
+            } catch (err) {
+                console.error('오류 : ', err);
             }
-
-            const match = f.name.match(/^0\d+(?:\.\d+)?\s(.+)$/);
-            const originalName = match ? match[1] : f.name;
-
-            const dom = infoRef.current.querySelector('#documentNumberFull');
-            const dom3 = infoRef.current.querySelector('#agencyName');
-            const extension = originalName.split('.').pop().toLowerCase();
-            const baseFileName = originalName.slice(0, originalName.lastIndexOf('.'));
-            const numberType = parseInt(uploadTypeRef.current.value);
-
-            let prefix = `0${uploadTypeRef.current.value}`;
-            if (hasBaseFile) prefix += `.${newNumber}`;
-            prefix += ' ';
-
-            let result = '';
-            switch (numberType) {
-                case 0: result = `${prefix}${dom?.value || baseFileName}_RFQ.${extension}`; break;
-                case 1: result = `${prefix}${dom?.value || baseFileName}_Offer.${extension}`; break;
-                case 2: result = `${prefix}${dom?.value || baseFileName}_Ref.${extension}`; break;
-                case 3: result = `${prefix}${dom?.value || baseFileName}_${dom3?.value}_Quote.${extension}`; break;
-                case 4: result = `${prefix}${dom?.value || baseFileName}_Order.${extension}`; break;
-                case 5: result = `${prefix}${dom?.value || baseFileName}_매입_.${extension}`; break;
-                case 6: result = `${prefix}${dom?.value || baseFileName}_매출_.${extension}`; break;
-                case 7: result = `${prefix}${dom?.value || baseFileName}_Project.${extension}`; break;
-                case 8: result = `${prefix}${dom?.value || baseFileName}_Etc.${extension}`; break;
-                default: result = `${prefix}${dom?.value || baseFileName}.${extension}`;
-            }
-
-            let uploadedInfo = {};
-            if (folderId) {
-                const formData = new FormData();
-                formData.append('file', file?.originFileObj || file);
-                formData.append('fileName', result);
-                formData.append('folderId', folderId);
-
-                try {
-                    const res = await getFormData.post('common/fileAdd', formData);
-                    if (res?.data?.code === 1) {
-                        console.log(res, '수정페이지 직접업로드 결과::::')
-                        uploadedInfo = res.data.entity;
-                    }
-                } catch (err) {
-                    console.error('파일 업로드 에러:', err);
-                }
-            }
-
-            return {
-                ...f,
-                name: result,
-                ...uploadedInfo,
-                originFileObj: f.originFileObj,
-            };
-        }));
-
-        setFileList(sortFileList(updatedFileList));
+        }
+        const updateFileList = [...fileList, uploadedInfo];
+        const sortedFileList = sortFileList(updateFileList);
+        setFileList(sortedFileList);
 
         if (fileRef.current) {
-            fileRef.current.fileList = updatedFileList;
+            fileRef.current.fileList = sortedFileList;
         }
+        setLoading(false);
     }
 
     const handleDrop = (event) => {
@@ -534,10 +382,10 @@ export function DriveUploadComp({
             case 'estimate':
             case 'order':
             case 'remittance':
-                targetList = targetList.filter(item => !item.fileName?.includes('Project'));
+                targetList = targetList.filter(item => !item.fileName?.includes('PROJECT'));
                 break;
             case 'project':
-                targetList = targetList.filter(item => item.fileName?.includes('Project'));
+                targetList = targetList.filter(item => item.fileName?.includes('PROJECT'));
                 break;
             default:
                 break;
@@ -585,135 +433,136 @@ export function DriveUploadComp({
     }, [fileList]);
 
     return (
-        <div style={{
-            overflowY: 'auto',
-            scrollbarWidth: 'none',
-            msOverflowStyle: 'none',
-            height: '278px'
-        }}>
+        <Spin spinning={loading}>
+            <div style={{
+                overflowY: 'auto',
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none',
+                paddingTop: '5px',
+                height: '278px'
+            }}>
+                <input
+                    type="file"
+                    multiple
+                    style={{display: 'none'}}
+                    ref={fileInputRef}
+                />
 
-            <input
-                type="file"
-                multiple
-                style={{display: 'none'}}
-                ref={fileInputRef}
-            />
+                {isDragging ? <div
+                        style={{
+                            position: 'absolute',
+                            height: '100%',
+                            zIndex : 999999,
+                            border: isDragging ? `2px solid #1677FF` : '',
+                            backgroundColor: isDragging ? `#1890ffb5` : '',
+                            top: 0,
+                            left: 0,
+                            width: '100%'
+                        }}
+                        onDrop={(e) => {
+                            e.preventDefault();
+                            handleDrop(e)
+                        }}
+                    >
+                        <div style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            zIndex : 999999,
+                            alignItems: "center",
+                            height: '100%',
+                            color: 'white',
+                            fontSize: 18,
+                            fontWeight: 600
+                        }}>파일을 올려주세요
+                        </div>
+                    </div>
+                    : <></>}
+                <Upload
+                    fileList={fileList} // 상태 기반의 파일 리스트
+                    beforeUpload={ async (file) => {
+                        await fileChange({ file, fileList });
+                        // return Upload.LIST_IGNORE;
+                    }}
+                    onRemove={ async (file) => {
+                        return await fileRemove(file);
+                    }}
+                    // onChange={fileChange} // 파일 리스트 업데이트
+                    itemRender={(originNode, file: any) => {
+                        const linkType = file?.webUrl || file?.originFileObj?.type.startsWith("image");
+                        // 동적 스타일 적용
+                        const style = {
+                            color: linkType ? "blue" : "black",
+                            cursor: linkType ? "pointer" : "default",
+                        };
+                        return (
+                            <div
+                                style={style}
+                                onClick={(e) => handleClick(file, e)} // 기존 클릭 이벤트
+                            >
+                                {editingFileId === file.uid ? (
+                                    <div style={{display: "flex", alignItems: "center"}}>
+                                        <Input
+                                            style={{paddingLeft: 20,}}
+                                            size="small"
+                                            value={tempFileName}
+                                            autoFocus
+                                            onChange={handleInputChange}
+                                            onBlur={() => handleInputBlur(file)} // 수정 완료
+                                            onPressEnter={() => handleInputBlur(file)} // Enter 키로 수정 완료
+                                        />
+                                        <span style={{marginLeft: 5}}>{fileExtension}</span>
+                                    </div>
+                                ) : (
+                                    originNode
+                                )}
+                            </div>
+                        );
+                    }}
+                    ref={fileRef}
+                    // maxCount={13}
+                >
 
-            {isDragging ? <div
-                    style={{
+                    <div style={{
+                        width: '100%',
+                        display: 'flex',
+                        backgroundColor: 'white',
+                        height: 25,
                         position: 'absolute',
-                        height: '100%',
-                        zIndex : 999999,
-                        border: isDragging ? `2px solid #1677FF` : '',
-                        backgroundColor: isDragging ? `#1890ffb5` : '',
+                        justifyContent: 'space-between',
                         top: 0,
                         left: 0,
-                        width: '100%'
-                    }}
-                    onDrop={(e) => {
-                        e.preventDefault();
-                        handleDrop(e)
-                    }}
-                >
-                    <div style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        zIndex : 999999,
-                        alignItems: "center",
-                        height: '100%',
-                        color: 'white',
-                        fontSize: 18,
-                        fontWeight: 600
-                    }}>파일을 올려주세요
+                        zIndex: 10
+                    }} key={info?.uploadType}>
+                        <Button style={{fontSize: 11, left: 10}} size={'small'}
+                                icon={<UploadOutlined/>} type={'primary'}>Upload</Button>
+                        <select ref={uploadTypeRef} onClick={e => {
+                            e.preventDefault();
+                            e.stopPropagation()
+                        }} name="languages" id="uploadType" defaultValue={info?.uploadType}
+                                style={{
+                                    outline: 'none',
+                                    border: '1px solid lightGray',
+                                    height: 25,
+                                    fontSize: 12,
+                                    position: "absolute",
+                                    right: 15,
+                                    float: 'right',
+                                    width: '40%'
+                                }}>
+                            <option value={0}>{'요청자료'}</option>
+                            <option value={1}>{'업체회신자료'}</option>
+                            <option value={2}>{'첨부파일'}</option>
+                            <option value={3}>{'견적서자료'}</option>
+                            <option value={4}>{'발주서자료'}</option>
+                            <option value={5}>{'매입자료'}</option>
+                            <option value={6}>{'매출자료'}</option>
+                            <option value={7}>{'프로젝트자료'}</option>
+                            <option value={8}>{'기타'}</option>
+                        </select>
                     </div>
-                </div>
-                : <></>}
-            <Upload
 
-
-                fileList={fileList} // 상태 기반의 파일 리스트
-                onChange={fileChange} // 파일 리스트 업데이트
-                // onChange={({ fileList }) => setFileList(fileList)} // 파일 리스트 업데이트
-                itemRender={(originNode, file: any) => {
-                    const linkType = file?.webUrl || file.type.startsWith("image");
-
-
-                    // 동적 스타일 적용
-                    const style = {
-                        color: linkType ? "blue" : "black",
-                        cursor: linkType ? "pointer" : "default",
-                    };
-
-
-                    return (
-                        <div
-                            style={style}
-                            onClick={(e) => handleClick(file, e)} // 기존 클릭 이벤트
-                        >
-                            {editingFileId === file.uid ? (
-                                <div style={{display: "flex", alignItems: "center"}}>
-                                    <Input
-                                        style={{paddingLeft: 20,}}
-                                        size="small"
-                                        value={tempFileName}
-                                        autoFocus
-                                        onChange={handleInputChange}
-                                        onBlur={() => handleInputBlur(file)} // 수정 완료
-                                        onPressEnter={() => handleInputBlur(file)} // Enter 키로 수정 완료
-                                    />
-                                    <span style={{marginLeft: 5}}>{fileExtension}</span>
-                                </div>
-                            ) : (
-                                originNode
-                            )}
-                        </div>
-                    );
-                }}
-                ref={fileRef}
-                beforeUpload={() => false}
-                maxCount={13}
-            >
-
-                <div style={{
-                    width: '100%',
-                    display: 'flex',
-                    backgroundColor: 'white',
-                    height: 25,
-                    position: 'absolute',
-                    justifyContent: 'space-between',
-                    top: 45,
-                    left: 0,
-                    zIndex: 10
-                }} key={uploadType}>
-                    <Button style={{fontSize: 11, left: 10}} size={'small'}
-                            icon={<UploadOutlined/>} type={'primary'}>Upload</Button>
-                    <select ref={uploadTypeRef} onClick={e => {
-                        e.preventDefault();
-                        e.stopPropagation()
-                    }} name="languages" id="uploadType" defaultValue={uploadType}
-                            style={{
-                                outline: 'none',
-                                border: '1px solid lightGray',
-                                height: 25,
-                                fontSize: 12,
-                                position: "absolute",
-                                right: 15,
-                                float: 'right',
-                                width: '40%'
-                            }}>
-                        <option value={0}>{'요청자료'}</option>
-                        <option value={1}>{'업체회신자료'}</option>
-                        <option value={2}>{'첨부파일'}</option>
-                        <option value={3}>{'견적서자료'}</option>
-                        <option value={4}>{'발주서자료'}</option>
-                        <option value={5}>{'매입자료'}</option>
-                        <option value={6}>{'매출자료'}</option>
-                        <option value={7}>{'프로젝트자료'}</option>
-                        <option value={8}>{'기타'}</option>
-                    </select>
-                </div>
-
-            </Upload>
-        </div>
+                </Upload>
+            </div>
+        </Spin>
     );
 }

@@ -214,7 +214,7 @@ export default function RemittanceDomesticWrite({dataInfo = [], copyPageInfo}: a
                             <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
 
                                 <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                 infoRef={infoRef}/>
+                                                 />
 
                             </BoxCard>
                         </Panel>

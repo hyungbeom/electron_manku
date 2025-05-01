@@ -111,8 +111,6 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                 ...getEstimateInit(),
                 ...copyPageInfo,
                 writtenDate: moment().format('YYYY-MM-DD'),
-                connectDocumentNumberFull: '',
-                documentNumberFull: ''
             });
             setTableData(copyPageInfo[listType]);
         }
@@ -168,11 +166,11 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                     validityPeriod: '견적 발행 후 10일간',
                                     paymentTerms: '발주시 50% / 납품시 50%',
                                     shippingTerms: '귀사도착도',
-                                    uploadType: 3,
                                     createdBy: adminParams.createdBy,
                                     writtenDate: moment().format('YYYY-MM-DD')
                                 })
-                                setFileList(fileManage.getFormatFiles(src?.data?.entity.attachmentFileList));
+                                setFileList(fileManage.getFormatFiles(attachmentFileList));
+                                // setFileList(fileManage.getFormatFiles(src?.data?.entity.attachmentFileList));
                                 if (estimateRequestDetail?.estimateRequestDetailList?.length) {
                                     setTableData([...estimateRequestDetail['estimateRequestDetailList'], ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000 - estimateRequestDetail['estimateRequestDetailList'].length)])
                                 }
@@ -208,7 +206,7 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
             const model = layoutRef.current.props.model;
             const activeTab = model.getActiveTabset()?.getSelectedNode();
             if (activeTab?.renderedName === '견적서 등록') {
-                saveFunc()
+                saveFunc();
             }
         }
     }, typeof window !== 'undefined' ? document : null)
@@ -246,13 +244,13 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
             return message.error('하위 데이터의 수량을 입력해야 합니다.')
         }
 
-        setLoading(true)
+        setLoading(true);
 
         const formData: any = new FormData();
         commonManage.setInfoFormData(info, formData, listType, filterTableList);
         const result =fileRef.current.fileList.filter(v=>{
             if(!v.driveId){
-                return v
+                return v;
             }
         });
 
@@ -283,7 +281,9 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         // =====================================================================================================
 
         formData.append(`attachmentFileList[${resultCount}].attachmentFile`, file);
-        formData.append(`attachmentFileList[${resultCount}].fileName`, `03.${resultCount + 1} ${info.documentNumberFull}.pdf`);
+        console.log(typeof resultCount)
+        console.log(resultCount, 'resultCount:::');
+        formData.append(`attachmentFileList[${resultCount}].fileName`, `03${resultCount === 0 ? '' : '.' + resultCount} ${info?.documentNumberFull}_${info?.customerName}_QUOTE.pdf`);
 
         formData.delete('createdDate')
         formData.delete('modifiedDate')
@@ -326,7 +326,9 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                 )
             }
         })
-        setLoading(false)
+        .finally(() => {
+            setLoading(false);
+        });
     }
 
     /**
@@ -595,7 +597,7 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                         {/*@ts-ignored*/}
                                         <div style={{overFlowY: "auto", maxHeight: 300}}>
                                             <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                             infoRef={infoRef} uploadType={info.uploadType}/>
+                                                             info={info} key={fileList.length}/>
                                         </div>
                                     </BoxCard>
                                 </Panel>
