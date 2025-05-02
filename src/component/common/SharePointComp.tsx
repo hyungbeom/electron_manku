@@ -416,6 +416,7 @@ export const DriveUploadComp = forwardRef(function DriveUploadComp({
             }
         }
         const updateFileList = [...fileList, uploadedInfo];
+
         const sortedFileList = sortFileList(updateFileList);
         setFileList(sortedFileList);
         console.log(fileList, 'fileList:::')
