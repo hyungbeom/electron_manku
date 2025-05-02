@@ -209,6 +209,9 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
         if(!commonManage.checkValidate(info, orderInfo['write']['validationList'], setValidate)) return;
 
         const findMember = memberList.find(v => v.adminId === parseInt(info['managerAdminId']));
+        console.log(memberList,'memberList')
+        console.log(findMember,'findMember')
+        console.log(info['managerAdminId'],'info[\'managerAdminId\']')
         info['managerAdminName'] = findMember['name'];
         info['orderId'] = updateKey['order_update']
 
