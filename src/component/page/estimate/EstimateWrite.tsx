@@ -45,7 +45,7 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('estimate_write');
-        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 20, 5]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 25, 5]; // 기본값 [50, 50, 50]
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
@@ -94,6 +94,8 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
 
     const [fileList, setFileList] = useState([]);
     const [tableData, setTableData] = useState([]);
+
+    const [isFolderId, setIsFolderId] = useState(false);
 
     useEffect(() => {
         setLoading(true);
@@ -177,6 +179,7 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                 }
                                 // 만쿠 견적서 No. 가져오면 유효성 초기화
                                 if(src.data.entity.newDocumentNumberFull) setValidate(v => {return {...v, documentNumberFull: true}});
+                                setIsFolderId(true);
                             })
                             .finally(() => {
                                 setLoading(false);
@@ -255,9 +258,6 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
             }
         });
 
-
-        const resultCount = commonManage.getUploadList(fileRef, formData);
-
         const filterTotalList = tableList.filter(v => !!v.model)
         const data = commonManage.splitDataWithSequenceNumber(filterTotalList, 18, 28);
         // =========================================PDF FILE====================================================
@@ -281,18 +281,15 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         const file = new File([blob], '견적서.pdf', {type: 'application/pdf'});
         // =====================================================================================================
 
+        const resultCount = commonManage.getUploadList(fileRef, formData);
+        const findNumb = commonManage.findNextAvailableNumber(fileList, '03');
+        const fileName =  `${findNumb} ${info?.documentNumberFull}_${info?.customerName}_QUOTE.pdf`;
         formData.append(`attachmentFileList[${resultCount}].attachmentFile`, file);
-        console.log(typeof resultCount)
-        console.log(resultCount, 'resultCount:::');
-        formData.append(`attachmentFileList[${resultCount}].fileName`, `03${resultCount === 0 ? '' : '.' + resultCount} ${info?.documentNumberFull}_${info?.customerName}_QUOTE.pdf`);
+        formData.append(`attachmentFileList[${resultCount}].fileName`, fileName);
 
-        formData.delete('createdDate')
-        formData.delete('modifiedDate')
+        formData.delete('createdDate');
+        formData.delete('modifiedDate');
 
-
-        for (let [key, value] of formData.entries()) {
-            console.log(`${key}:`, value);
-        }
         await saveEstimate({data: formData}).then(async v => {
             const {code, message: msg, entity} = v;
             if (code === 1) {
@@ -340,6 +337,7 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         setValidate(getEstimateValidateInit())
         setInfo(getEstimateInit());
         setFileList([]);
+        setIsFolderId(false);
 
         function calcData(sourceData) {
             const keyOrder = Object.keys(estimateInfo['write']['defaultData']);
@@ -413,7 +411,8 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                     }}/>,
                                     handleKeyPress: handleKeyPress,
                                     onChange: onChange,
-                                    data: info
+                                    data: info,
+                                    disabled: isFolderId
                                 })}
                                 {inputForm({
                                     title: '만쿠견적서 No.',
@@ -597,7 +596,7 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                         {/*@ts-ignored*/}
                                         <div style={{overFlowY: "auto", maxHeight: 300}}>
                                             <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                             info={info} key={fileList.length}/>
+                                                             info={info}/>
                                         </div>
                                     </BoxCard>
                                 </Panel>

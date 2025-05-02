@@ -46,7 +46,7 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('order_update');
-        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 20, 5]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 25, 5]; // 기본값 [50, 50, 50]
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
@@ -82,6 +82,7 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false, event3: false});
 
     const userInfo = useAppSelector((state) => state.user);
+    console.log(userInfo)
     const adminParams = {
         managerAdminId: userInfo['adminId'],
         managerAdminName: userInfo['name'],

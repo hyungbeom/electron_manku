@@ -836,6 +836,34 @@ commonManage.setInfoDetailFormData = function (formData, listType, list?) {
     });
 }
 
+commonManage.findNextAvailableNumber =  function (data: { name: string }[], prefix: string): string {
+    // prefix로 시작하는 모든 파일 추출 ("03", "03.1", "03.2" 등 전부 포함)
+    const matching = data
+        .map(item => item.name)
+        .filter(name => name.startsWith(prefix));
+    // 아무것도 없으면 "03" 반환
+    if (matching.length === 0) return prefix;
+
+    // 넘버링된 파일만 추출 ("03.숫자 ")
+    const numbered = matching
+        .filter(name => name.startsWith(prefix + '.'))
+        .map(name => {
+            const firstPart = name.split(' ')[0]; // "03.1"
+            const parts = firstPart.split('.');
+            return parseInt(parts[1], 10); // 1, 2, ...
+        });
+
+    if (numbered.length === 0) return `${prefix}.1`;
+    numbered.sort((a, b) => a - b);
+    // 비어 있는 숫자 찾기
+    for (let i = 1; i <= numbered[numbered.length - 1]; i++) {
+        if (!numbered.includes(i)) {
+            return `${prefix}.${i}`;
+        }
+    }
+    // 다 있으면 마지막 숫자 다음
+    return `${prefix}.${numbered[numbered.length - 1] + 1}`;
+}
 
 commonManage.getUploadList = function (fileRef, formData) {
     const uploadContainer = document.querySelector(".ant-upload-list"); // 업로드 리스트 컨테이너
