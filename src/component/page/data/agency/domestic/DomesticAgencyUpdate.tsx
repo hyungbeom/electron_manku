@@ -220,24 +220,26 @@ function DomesticAgencyUpdate({updateKey, getCopyPage, layoutRef}: any) {
                         <PanelGroup ref={groupRef} className={'ground'} direction="horizontal"
                                     style={{gap: 0.5, paddingTop: 3}}>
                             <Panel defaultSize={sizes[0]} minSize={5}>
-                                {inputForm({
-                                    title: '코드(약칭)',
-                                    id: 'agencyCode',
-                                    onChange: onChange,
-                                    data: info,
-                                    validate: validate['agencyCode'],
-                                    key: validate['agencyCode']
-                                })}
-                                {inputForm({
-                                    title: '상호',
-                                    id: 'agencyName',
-                                    onChange: onChange,
-                                    data: info,
-                                    validate: validate['agencyName'],
-                                    key: validate['agencyName']
-                                })}
-                                {inputForm({title: '사업자번호', id: 'businessRegistrationNumber', onChange: onChange, data: info})}
-                                {inputForm({title: '계좌번호', id: 'bankAccountNumber', onChange: onChange, data: info})}
+                                <BoxCard title={'매입처 정보'}>
+                                    {inputForm({
+                                        title: '코드(약칭)',
+                                        id: 'agencyCode',
+                                        onChange: onChange,
+                                        data: info,
+                                        validate: validate['agencyCode'],
+                                        key: validate['agencyCode']
+                                    })}
+                                    {inputForm({
+                                        title: '상호',
+                                        id: 'agencyName',
+                                        onChange: onChange,
+                                        data: info,
+                                        validate: validate['agencyName'],
+                                        key: validate['agencyName']
+                                    })}
+                                    {inputForm({title: '사업자번호', id: 'businessRegistrationNumber', onChange: onChange, data: info})}
+                                    {inputForm({title: '계좌번호', id: 'bankAccountNumber', onChange: onChange, data: info})}
+                                </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
                             <Panel defaultSize={sizes[1]} minSize={5}>
