@@ -44,7 +44,7 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('rfq_write');
-        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 5]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 25, 5]; // 기본값 [50, 50, 50]
     };
     const [sizes] = useState(getSavedSizes); // 패널 크기 상태
 

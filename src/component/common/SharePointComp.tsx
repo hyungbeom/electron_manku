@@ -2,18 +2,37 @@ import Upload from "antd/lib/upload";
 import Button from "antd/lib/button";
 import Input from "antd/lib/input";
 import {UploadOutlined} from "@ant-design/icons";
-import React, {useEffect, useRef, useState} from "react";
+import React, {forwardRef, useEffect, useImperativeHandle, useRef, useState} from "react";
 import message from "antd/lib/message";
 import {getData, getFormData} from "@/manage/function/api";
 import Spin from "antd/lib/spin";
 
-export function DriveUploadComp({
-                                    fileList,
-                                    setFileList,
-                                    fileRef,
-                                    info = {} as any,
-                                    type = '',
-                                }) {
+// export function DriveUploadComp({
+//                                     fileList,
+//                                     setFileList,
+//                                     fileRef,
+//                                     info = {} as any,
+//                                     type = '',
+//                                 }) {
+
+export const DriveUploadComp = forwardRef(function DriveUploadComp({
+                                                                       fileList,
+                                                                       setFileList,
+                                                                       fileRef,
+                                                                       info = {} as any,
+                                                                       type = '',
+                                                                   }: any, ref) {
+
+    useImperativeHandle(ref, () => ({
+        fileChange: (file) => test(file),
+        getUploadType: () => uploadTypeRef.current?.value,
+    }));
+
+    function test(file) {
+        console.log(file, 'file:::')
+        fileChange({file: file, fileList: fileList, isEstimate: true});
+    }
+
     const fileInputRef = useRef(null);
 
     const uploadTypeRef = useRef(null);
@@ -86,75 +105,127 @@ export function DriveUploadComp({
     };
 
     // 파일 클릭 이벤트 처리 (기존 로직 유지)
-    const handleClick = (file, e) => {
-        // Ctrl 키와 왼쪽 버튼 클릭 확인
+    // const handleClick = (file, e) => {
+    //     // Ctrl 키와 왼쪽 버튼 클릭 확인
+    //     if (e.ctrlKey && e.button === 0 || e.metaKey && e.button === 0) { // e.button === 0 -> 왼쪽 버튼 클릭
+    //         if (e.target.className === "ant-upload-list-item-name") {
+    //             console.log(file)
+    //             if (file?.webUrl) {
+    //                 window.open(file.webUrl, '_blank');
+    //             } else {
+    //                 if (file?.originFileObj?.type.includes("image")) {
+    //                     const src =
+    //                         file.url ||
+    //                         (file.originFileObj && URL.createObjectURL(file.originFileObj));
+    //                     window.open(src);
+    //                 }
+    //             }
+    //         }
+    //     } else {
+    //         if (e.target.className === "ant-upload-list-item-name") {
+    //             if (file?.originFileObj) {
+    //                 setEditingFileId(file.uid); // 수정 중인 파일 ID 설정
+    //
+    //                 // 파일 이름과 확장자를 분리
+    //                 const dotIndex = file.name.lastIndexOf(".");
+    //                 const namePart = dotIndex > 0 ? file.name.slice(0, dotIndex) : file.name;
+    //                 const extensionPart = dotIndex > 0 ? file.name.slice(dotIndex) : "";
+    //
+    //                 setTempFileName(namePart); // 파일 이름 저장
+    //                 setFileExtension(extensionPart); // 확장자 저장
+    //             } else if (file?.downloadUrl) {
+    //
+    //                 const fileUrl = file?.downloadUrl;
+    //                 const link = document.createElement('a');
+    //                 link.href = fileUrl;
+    //                 link.download = 'filename.pdf';
+    //                 document.body.appendChild(link);
+    //                 link.click();
+    //                 document.body.removeChild(link);
+
+    //             }
+    //         }
+    //     }
+    // };
+
+    const handleClick = async (file, e) => {
+
+        if (e.target.className !== "ant-upload-list-item-name") return;
+
+        // Ctrl 키와 왼쪽 버튼 클릭 (새창 미리 보기)
         if (e.ctrlKey && e.button === 0 || e.metaKey && e.button === 0) { // e.button === 0 -> 왼쪽 버튼 클릭
-            if (e.target.className === "ant-upload-list-item-name") {
-                if (file.webUrl) {
-                    window.open(file.webUrl, '_blank');
-                } else {
-                    if (file.type.includes("image")) {
-                        const src =
-                            file.url ||
-                            (file.originFileObj && URL.createObjectURL(file.originFileObj));
-                        window.open(src);
-                    }
+            console.log(file)
+            if (file?.webUrl) {
+                window.open(file?.webUrl, '_blank');
+            } else {
+                // if (file?.originFileObj?.type.includes("image")) {
+                //     const src = file.url || (file.originFileObj && URL.createObjectURL(file.originFileObj));
+                //     window.open(src);
+                // }
+
+                if (!file?.originFileObj) return;
+                const mime = file?.originFileObj?.type?.toLowerCase();
+                if (!mime) return;
+                if (
+                    mime.startsWith('image/') ||
+                    mime === 'application/pdf' ||
+                    mime === 'text/plain' ||
+                    mime === 'text/csv' ||
+                    mime === 'application/json' ||
+                    mime === 'text/html' ||
+                    mime.startsWith('audio/') ||
+                    mime.startsWith('video/') && !mime.includes('spreadsheetml')
+                ) {
+                    const url = URL.createObjectURL(file.originFileObj);
+                    window.open(url);
+                    URL.revokeObjectURL(url);
                 }
             }
+        // Shift 키와 왼쪽 버튼 (이름 변경)
+        } else if (e.shiftKey && e.button === 0) {
+            // 쉐어포인트에 업로드 되지 않은 파일 이름 변경 (등록 페이지)
+            if (file?.originFileObj && !file?.driveId) {
+                setEditingFileId(file.uid); // 수정 중인 파일 ID 설정
+
+                // 파일 이름과 확장자를 분리
+                const dotIndex = file.name.lastIndexOf(".");
+                const namePart = dotIndex > 0 ? file.name.slice(0, dotIndex) : file.name;
+                const extensionPart = dotIndex > 0 ? file.name.slice(dotIndex) : "";
+
+                setTempFileName(namePart); // 파일 이름 저장
+                setFileExtension(extensionPart); // 확장자 저장
+            }
+        // 왼쪽 버튼만 (파일 다운로드)
         } else {
-            if (e.target.className === "ant-upload-list-item-name") {
-                if (file?.originFileObj) {
-                    setEditingFileId(file.uid); // 수정 중인 파일 ID 설정
-
-                    // 파일 이름과 확장자를 분리
-                    const dotIndex = file.name.lastIndexOf(".");
-                    const namePart = dotIndex > 0 ? file.name.slice(0, dotIndex) : file.name;
-                    const extensionPart = dotIndex > 0 ? file.name.slice(dotIndex) : "";
-
-                    setTempFileName(namePart); // 파일 이름 저장
-                    setFileExtension(extensionPart); // 확장자 저장
-                } else if (file?.downloadUrl) {
-
-                    // const fileUrl = file?.downloadUrl;
-                    // const link = document.createElement('a');
-                    // link.href = fileUrl;
-                    // link.download = 'filename.pdf';
-                    // document.body.appendChild(link);
-                    // link.click();
-                    // document.body.removeChild(link);
-
-
-                    const fileUrl = file?.downloadUrl;
-                    let fileName = file?.fileName;
-
-                    if (file?.fileName?.includes('QUOTE')) {
-                        fileName = `${info?.documentNumberFull}_${info?.customerName}_견적서`;
-                    } else if (file?.fileName?.includes('ORDER')) {
-                        fileName = `PO_${info?.documentNumberFull}`;
-                    }
-
-                    fetch(fileUrl)
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error(`서버 응답 실패: ${response.status}`);
-                            }
-                            return response.blob();
-                        })
-                        .then(blob => {
-                            const blobUrl = URL.createObjectURL(blob);
-                            const link = document.createElement('a');
-                            link.href = blobUrl;
-                            link.download = fileName;
-                            document.body.appendChild(link);
-                            link.click();
-                            document.body.removeChild(link);
-                            URL.revokeObjectURL(blobUrl); // 메모리 해제
-                        })
-                        .catch(err => {
-                            console.error('파일 다운로드 실패:', err);
-                            message.error('파일 다운로드에 실패했습니다.')
-                        });
+            let blob = null;
+            let fileName = '';
+            if (file?.downloadUrl) {
+                fileName = file?.fileName;
+                const lastDotIndex = fileName.lastIndexOf('.');
+                const extension = lastDotIndex !== -1 ? fileName.slice(fileName.lastIndexOf('.') + 1).toLowerCase() : '';
+                if (file?.fileName?.includes('QUOTE')) {
+                    fileName = `${info?.documentNumberFull}_${info?.customerName}_견적서.${extension}`;
+                } else if (file?.fileName?.includes('ORDER')) {
+                    fileName = `PO_${info?.documentNumberFull}.${extension}`;
                 }
+                const fileUrl = file?.downloadUrl ?? '';
+                const res = await fetch(fileUrl);
+                blob = await res.blob();
+            } else {
+                if (file?.originFileObj) {
+                    fileName = file?.name;
+                    blob = file?.originFileObj ?? null;
+                }
+            }
+            if (blob instanceof Blob) {
+                const blobUrl = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = blobUrl;
+                link.download = fileName;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(blobUrl); // 메모리 해제
             }
         }
     };
@@ -164,7 +235,8 @@ export function DriveUploadComp({
      * @param targetFileName
      * @param targetFileList
      */
-    function generateFileName (targetFileName, targetFileList) {
+    function generateFileName(targetFileName, targetFileList, isEstimate = false) {
+        const uploadType = isEstimate ? '3' : uploadTypeRef?.current?.value ?? '0';
 
         // fileList에서 현재 선택된 uploadType의 이름을 가지고 있는 것만 필터
         // 예) uploadType이 3(견적서 자료) 이면 아래 목록 이름만 필터링 됨
@@ -172,7 +244,7 @@ export function DriveUploadComp({
         // 03.1 sample.ext
         // 03.2 sample.ext
         const filterFiles = targetFileList.filter(file =>
-            file.name.match(new RegExp(`^0${uploadTypeRef.current.value}(\\.\\d+)?\\s`))
+            file.name.match(new RegExp(`^0${uploadType}(\\.\\d+)?\\s`))
         );
 
         // 03.1, 03.2 처럼 숫자가 붙은 파일 중에서 숫자만 추출 ( [1,2] )
@@ -186,19 +258,25 @@ export function DriveUploadComp({
 
         // 03 sample.ext 처럼 03공백 파일이 있는지 체크 (기본 파일 체크)
         const hasBaseFile = filterFiles.some(file => {
-            return file.name.match(new RegExp(`^0${uploadTypeRef.current.value}\\s`)) &&   // 03공백 이름만 true
+            return file.name.match(new RegExp(`^0${uploadType}\\s`)) &&   // 03공백 이름만 true
                 !file.name.match(/^0\d+\.\d+\s/);                                          // 03.1, 03.2 처럼 서브 이름은 제외
         });
 
-        // 서브 숫자 추출한 배열을 돌면서 새로운 번호 생성
         let newNumber = 1;                                   // 기본 넘버링 1부터
-        for (let i = 0; i < existingNumbers.length; i++) {   // [1,2] 배열을 순회하면서 번호 찾기
-            if (existingNumbers[i] !== i + 1) {                       // 배열번호와 현재 넘버링 번호가 다른지
-                newNumber = i + 1;                                    // 다르면 중간 번호 채우고 종료
-                break;
-            } else {
-                newNumber = existingNumbers.length + 1;               // 배열번호와 넘버링 배열이 같으면 그 다음 번호 생성
-            }
+
+        // 서브 숫자 추출한 배열을 돌면서 새로운 번호 생성 (중간에 비어있으면 중간 채워짐)
+        // for (let i = 0; i < existingNumbers.length; i++) {   // [1,2] 배열을 순회하면서 번호 찾기
+        //     if (existingNumbers[i] !== i + 1) {                       // 배열번호와 현재 넘버링 번호가 다른지
+        //         newNumber = i + 1;                                    // 다르면 중간 번호 채우고 종료
+        //         break;
+        //     } else {
+        //         newNumber = existingNumbers.length + 1;               // 배열번호와 넘버링 배열이 같으면 그 다음 번호 생성
+        //     }
+        // }
+
+        // 서브 숫자 중 제일 큰 번호 생성 (중간 안채우고 제일 큰 번호)
+        if (existingNumbers.length > 0) {                             // .1, .2 처럼 서브 번호가 있으면
+            newNumber = Math.max(...existingNumbers) + 1;             // 서브 번호중에 제일 큰수 다음 번호로
         }
 
         // 파일 이름 정규식으로 체크
@@ -218,24 +296,46 @@ export function DriveUploadComp({
         const baseFileName = lastDotIndex !== -1 ? originalName.slice(0, lastDotIndex) : originalName;
 
         // 넘버링 생성
-        let prefix = `0${uploadTypeRef.current.value}`;   // 선택된 업로드 타입
-        if (hasBaseFile) prefix += `.${newNumber}`;              // 기본 파일 03 sample.ext 같은게 있으면 서브 숫자 붙임
+        let prefix = `0${uploadType}`;   // 선택된 업로드 타입
+        // if (hasBaseFile) prefix += `.${newNumber}`;              // 기본 파일 03 sample.ext 같은게 있으면 서브 숫자 붙임
+        if (hasBaseFile || existingNumbers.length > 0) {         // 기본 파일 03 sample.ext 같은게 있거나 서브 숫자배열이 있으면 다음 서브 숫자 붙임
+            prefix += `.${newNumber}`;
+        }
         prefix += ' ';                                           // 넘버링 이후 공백 붙임
 
         // 현재 선택된 업로드 타입, 넘버링, 정보들을 가지고 파일명 생성
-        const numberType = parseInt(uploadTypeRef.current.value);
+        const numberType = parseInt(uploadType);
         let result = '';
         switch (numberType) {
-            case 0: result = `${prefix}${info?.documentNumberFull || baseFileName}_RFQ.${extension}`; break;
-            case 1: result = `${prefix}${info?.documentNumberFull || baseFileName}_OFFER.${extension}`; break;
-            case 2: result = `${prefix}${info?.documentNumberFull || baseFileName}_REF.${extension}`; break;
-            case 3: result = `${prefix}${info?.documentNumberFull || baseFileName}_${info?.agencyName ?? '고객사'}_QUOTE.${extension}`; break;
-            case 4: result = `${prefix}${info?.documentNumberFull || baseFileName}_ORDER.${extension}`; break;
-            case 5: result = `${prefix}${info?.documentNumberFull || baseFileName}_매입_.${extension}`; break;
-            case 6: result = `${prefix}${info?.documentNumberFull || baseFileName}_매출_.${extension}`; break;
-            case 7: result = `${prefix}${info?.documentNumberFull || baseFileName}_PROJECT.${extension}`; break;
-            case 8: result = `${prefix}${info?.documentNumberFull || baseFileName}_ETC.${extension}`; break;
-            default: result = `${prefix}${info?.documentNumberFull || baseFileName}.${extension}`;
+            case 0:
+                result = `${prefix}${info?.documentNumberFull || baseFileName}_RFQ.${extension}`;
+                break;
+            case 1:
+                result = `${prefix}${info?.documentNumberFull || baseFileName}_OFFER.${extension}`;
+                break;
+            case 2:
+                result = `${prefix}${info?.documentNumberFull || baseFileName}_REF.${extension}`;
+                break;
+            case 3:
+                result = `${prefix}${info?.documentNumberFull || baseFileName}${info?.customerName ? '_' + info?.customerName : ''}_QUOTE.${extension}`;
+                break;
+            case 4:
+                result = `${prefix}${info?.documentNumberFull || baseFileName}_ORDER.${extension}`;
+                break;
+            case 5:
+                result = `${prefix}${info?.documentNumberFull || baseFileName}_매입_.${extension}`;
+                break;
+            case 6:
+                result = `${prefix}${info?.documentNumberFull || baseFileName}_매출_.${extension}`;
+                break;
+            case 7:
+                result = `${prefix}${info?.documentNumberFull || baseFileName}_PROJECT.${extension}`;
+                break;
+            case 8:
+                result = `${prefix}${info?.documentNumberFull || baseFileName}_ETC.${extension}`;
+                break;
+            default:
+                result = `${prefix}${info?.documentNumberFull || baseFileName}.${extension}`;
         }
         return result;
     }
@@ -247,12 +347,12 @@ export function DriveUploadComp({
      */
     async function fileRemove(file): Promise<boolean> {
         // 수정페이지이고 folderId 가 있으면 쉐어포인트 직접삭제
-        if(type && info?.folderId) {
+        if (type && info?.folderId) {
             setLoading(true);
             try {
                 const res = await getData.post('common/fileDelete', file);
                 if (res?.data?.code === 1) {
-                    setFileList(prev => prev.filter( f => f.uid !== file.uid));
+                    setFileList(prev => prev.filter(f => f.uid !== file.uid));
                     return true;
                 } else {
                     message.error('SharePoint 파일 삭제 중 오류가 발생했습니다.');
@@ -265,7 +365,7 @@ export function DriveUploadComp({
                 setLoading(false);
             }
         } else {
-            setFileList(prev => prev.filter( f => f.uid !== file.uid));
+            setFileList(prev => prev.filter(f => f.uid !== file.uid));
         }
     }
 
@@ -276,7 +376,7 @@ export function DriveUploadComp({
      * @param file
      * @param fileList
      */
-    async function fileChange({file, fileList}) {
+    async function fileChange({file, fileList, isEstimate = false}) {
         // 쉐어포인트에 문제가 생기는 특수문자 제외
         const forbiddenChars = /[\\/:*?"<>|#]/;
         if (forbiddenChars.test(file.name)) {
@@ -288,7 +388,7 @@ export function DriveUploadComp({
         if (existFileIndex !== -1) return;
 
         setLoading(true);
-        const fileName = generateFileName(file?.name, fileList);
+        const fileName = generateFileName(file?.name, fileList, isEstimate);
         let uploadedInfo = {
             ...file,
             name: fileName,
@@ -319,6 +419,7 @@ export function DriveUploadComp({
 
         const sortedFileList = sortFileList(updateFileList);
         setFileList(sortedFileList);
+        console.log(fileList, 'fileList:::')
 
         if (fileRef.current) {
             fileRef.current.fileList = sortedFileList;
@@ -352,7 +453,7 @@ export function DriveUploadComp({
             // ];
             // fileChange({file :file[0], fileList :  newFileList})
 
-            fileChange({file :file[0], fileList :  fileList})
+            fileChange({file: file[0], fileList: fileList})
 
             // if (fileRef.current) {
             //     fileRef.current.fileList = newFileList;
@@ -369,7 +470,7 @@ export function DriveUploadComp({
         const match = name.match(/^(\d{2})(?:\.(\d+))?/); // 예: 01.2 → ['01.2', '01', '2']
         const main = match ? parseInt(match[1], 10) : -1;
         const sub = match && match[2] ? parseInt(match[2], 10) : -1;
-        return { main, sub };
+        return {main, sub};
     };
 
     /**
@@ -391,7 +492,8 @@ export function DriveUploadComp({
                 break;
             default:
                 break;
-        };
+        }
+        ;
 
         const sortedList = [...targetList]
             .sort((a, b) => {
@@ -410,10 +512,10 @@ export function DriveUploadComp({
      * @description 파일 업로드 컴포넌트 > 03 이후는 최신것만 보이기
      * @param list
      */
-    function filterLatestFileList (list) {
+    function filterLatestFileList(list) {
         const seen = new Set();
         const filteredList = list.filter(item => {
-            const { main, sub } = extractNumbers(item.name);
+            const {main, sub} = extractNumbers(item.name);
 
             if (main <= 2) return true; // 00, 01, 02는 다 포함
 
@@ -430,6 +532,7 @@ export function DriveUploadComp({
         if (!isLoad && fileList?.length) {
             const sortedList = sortFileList(fileList);
             setFileList(filterLatestFileList(sortedList));
+            console.log(fileList, 'fileList:::')
             setIsLoad(true);
         }
     }, [fileList]);
@@ -454,7 +557,7 @@ export function DriveUploadComp({
                         style={{
                             position: 'absolute',
                             height: '100%',
-                            zIndex : 999999,
+                            zIndex: 999999,
                             border: isDragging ? `2px solid #1677FF` : '',
                             backgroundColor: isDragging ? `#1890ffb5` : '',
                             top: 0,
@@ -469,7 +572,7 @@ export function DriveUploadComp({
                         <div style={{
                             display: 'flex',
                             justifyContent: 'center',
-                            zIndex : 999999,
+                            zIndex: 999999,
                             alignItems: "center",
                             height: '100%',
                             color: 'white',
@@ -481,20 +584,20 @@ export function DriveUploadComp({
                     : <></>}
                 <Upload
                     fileList={fileList} // 상태 기반의 파일 리스트
-                    beforeUpload={ async (file) => {
-                        await fileChange({ file, fileList });
+                    beforeUpload={async (file) => {
+                        await fileChange({file, fileList});
                         // return Upload.LIST_IGNORE;
                     }}
-                    onRemove={ async (file) => {
+                    onRemove={async (file) => {
                         return await fileRemove(file);
                     }}
                     // onChange={fileChange} // 파일 리스트 업데이트
                     itemRender={(originNode, file: any) => {
-                        const linkType = file?.webUrl || file?.originFileObj?.type.startsWith("image");
+                        // const linkType = file?.webUrl || file?.originFileObj?.type.startsWith("image");
                         // 동적 스타일 적용
                         const style = {
-                            color: linkType ? "blue" : "black",
-                            cursor: linkType ? "pointer" : "default",
+                            color: file?.originFileObj ? "black" : "blue",
+                            cursor: "pointer"
                         };
                         return (
                             <div
@@ -567,4 +670,4 @@ export function DriveUploadComp({
             </div>
         </Spin>
     );
-}
+});

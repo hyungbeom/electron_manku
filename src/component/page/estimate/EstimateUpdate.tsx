@@ -38,33 +38,6 @@ import {PdfForm} from "@/component/견적서/PdfForm";
 
 const listType = 'estimateDetailList'
 
-function findNextAvailableNumber(data: { name: string }[], prefix: string): string {
-    // 1. prefix로 시작하는 항목만 추출
-    const filtered = data
-        .map(item => item.name)
-        .filter(name => name.startsWith(prefix + '.'))
-        .map(name => {
-            const numPart = name.split(' ')[0]; // "03.1"
-            const decimal = parseFloat(numPart.split('.')[1]); // 1, 3, ...
-            return decimal;
-        });
-
-    if (filtered.length === 0) return `${prefix}.1`;
-
-    // 2. 정렬
-    filtered.sort((a, b) => a - b);
-
-    // 3. 빈 숫자 찾기
-    for (let i = 1; i <= filtered[filtered.length - 1]; i++) {
-        if (!filtered.includes(i)) {
-            return `${prefix}.${i}`;
-        }
-    }
-
-    // 4. 다 있으면 마지막 숫자 다음
-    return `${prefix}.${filtered[filtered.length - 1] + 1}`;
-}
-
 function EstimateUpdate({
                             dataInfo = {estimateDetail: [], attachmentFileList: []},
                             updateKey = {},
@@ -77,10 +50,11 @@ function EstimateUpdate({
     const pdfRef = useRef(null);
     const pdfSubRef = useRef(null);
     const fileRef = useRef(null);
+    const uploadRef = useRef<any>(null);
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('estimate_write');
-        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 20, 5]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 25, 5]; // 기본값 [50, 50, 50]
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
@@ -153,7 +127,8 @@ function EstimateUpdate({
                 createdBy: estimateDetail['createdBy'] ? estimateDetail['createdBy'] : ''
             })
             setFileList(fileManage.getFormatFiles(attachmentFileList));
-            setOriginFileList(attachmentFileList)
+            // setOriginFileList(attachmentFileList)
+            setOriginFileList(fileManage.getFormatFiles(attachmentFileList));
             estimateDetail[listType] = [...estimateDetail[listType], ...commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000 - estimateDetail[listType].length)]
             setTableData(estimateDetail[listType]);
         })
@@ -414,11 +389,11 @@ function EstimateUpdate({
     }
 
     /**
-     * @description 수정 페이지 > 드라이브 목록 파일 버튼
+     * @description 수정 페이지 > 드라이브 목록 파일 버튼 (견적서 파일 생성)
      * 견적서 > 견적서 수정
      */
     async function addEstimate() {
-        setLoading(true)
+        setLoading(true);
         const findMember = memberList.find(v => v.adminId === parseInt(info['managerAdminId']));
         info['managerAdminName'] = findMember['name'];
         info['name'] = findMember['name'];
@@ -445,22 +420,31 @@ function EstimateUpdate({
                                          key={Date.now()}/>).toBlob();
 
         // File 객체로 만들기 (선택 사항)
-        const file = new File([blob], `${info.documentNumberFull}.pdf`, {type: 'application/pdf'});
+        const file = new File([blob], `${info?.documentNumberFull}.pdf`, {type: 'application/pdf'});
 
-        const findNumb = findNextAvailableNumber(fileList, '03')
+        // const findNumb = commonManage.findNextAvailableNumber(fileList, '03')
+        // const newFile = {
+        //     ...file,
+        //     uid: file.name + "_" + Date.now(),
+        //     name: `${findNumb} ${file.name}`,
+        //     originFileObj: file,
+        //     type: file.type,
+        // }
+        // setOriginFileList([...originFileList, newFile]);
+        // setFileList([...fileList, newFile,]);
+
+
+        // 업로드 컴포넌트레 직접 올림
         const newFile = {
             ...file,
             uid: file.name + "_" + Date.now(),
-            name: `${findNumb} ${file.name}`,
+            name: file.name,
             originFileObj: file,
             type: file.type,
         }
+        uploadRef.current.fileChange(newFile);
 
-        setFileList([
-            ...fileList,
-            newFile,
-        ]);
-        setLoading(false)
+        setLoading(false);
     }
 
     return <div style={{overflow: 'hidden'}}><Spin spinning={loading}>
@@ -693,7 +677,7 @@ function EstimateUpdate({
                                              } disabled={!userInfo['microsoftId']}>
                                         {/*@ts-ignored*/}
                                         <div style={{overFlowY: "auto", maxHeight: 300}}>
-                                            <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
+                                            <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef} ref={uploadRef}
                                                              info={info} type={'estimate'}/>
                                         </div>
                                     </BoxCard>

@@ -34,7 +34,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('order_write');
-        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 20, 5]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 25, 5]; // 기본값 [50, 50, 50]
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
@@ -97,6 +97,8 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
     const [info, setInfo] = useState<any>(getOrderInit())
     const getOrderValidateInit = () => _.cloneDeep(orderInfo['write']['validate']);
     const [validate, setValidate] = useState(getOrderValidateInit());
+
+    const [isFolderId, setIsFolderId] = useState(false);
 
     useEffect(() => {
         setLoading(true);
@@ -178,10 +180,10 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                     managerAdminName: adminParams['managerAdminName'],
                                     createdBy: adminParams['createdBy'],
                                     writtenDate: moment().format('YYYY-MM-DD'),
-                                    managerId: adminParams['name'],
-                                    managerPhoneNumber: adminParams['contactNumber'],
-                                    managerFaxNumber: adminParams['faxNumber'],
-                                    managerEmail: adminParams['email'],
+                                    managerId: adminParams['managerId'],
+                                    managerPhoneNumber: adminParams['managerPhoneNumber'],
+                                    managerFaxNumber: adminParams['managerFaxNumber'],
+                                    managerEmail: adminParams['managerEmail']
                                 })
                                 // setFileList(fileManage.getFormatFiles(src?.data?.entity.attachmentFileList));
                                 setFileList(fileManage.getFormatFiles(attachmentFileList));
@@ -191,6 +193,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                     })
                                     setTableData([...copyList, ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000 - estimateDetail?.estimateDetailList.length)])
                                 }
+                                setIsFolderId(true);
                             })
                             .finally(() => {
                                 setLoading(false);
@@ -322,6 +325,8 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
         setFileList([]);
         setOriginFileList([]);
 
+        setIsFolderId(false);
+
         function calcData(sourceData) {
             const keyOrder = Object.keys(orderInfo['write']['defaultData']);
             return sourceData
@@ -426,7 +431,8 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                 }}/>,
                                 handleKeyPress: handleKeyPress,
                                 onChange: onChange,
-                                data: info
+                                data: info,
+                                disabled: isFolderId
                             })}
                             {inputForm({
                                 title: '만쿠발주서 No',
@@ -584,7 +590,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                             <Panel defaultSize={sizes[5]} minSize={5}>
                                 <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
                                     <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                     info={info} key={fileList.length}/>
+                                                     info={info}/>
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
