@@ -312,6 +312,9 @@ function RfqRead({getPropertyId, getCopyPage}: any) {
                                funcButtons={['agPrint']}
                                reply={true}
                     />
+
+
+
                 </div>
             </>
         </Spin>
