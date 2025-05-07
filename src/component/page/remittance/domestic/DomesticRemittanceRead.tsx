@@ -57,10 +57,16 @@ export default function DomesticRemittanceRead({getPropertyId, getCopyPage}: any
     const onGridReady = async (params) => {
         setLoading(true)
         gridRef.current = params.api;
-        await getRemittanceList({data: getRemittanceSearchInit()}).then(v => {
-            params.api.applyTransaction({add: v?.data});
-            setTotalRow(v.pageInfo.totalRow)
-        });
+
+        await getData.post('remittance/getRemittanceList', {}).then(v=>{
+
+                params.api.applyTransaction({add: v?.data.entity});
+        })
+
+        // await getRemittanceList({data: getRemittanceSearchInit()}).then(v => {
+        //     params.api.applyTransaction({add: v?.data});
+        //     // setTotalRow(v.pageInfo.totalRow)
+        // });
         setLoading(false);
     };
 
@@ -82,10 +88,15 @@ export default function DomesticRemittanceRead({getPropertyId, getCopyPage}: any
     async function searchInfo(e) {
         if (e) {
             setLoading(true);
-            await getRemittanceList({data: info}).then(v => {
-                gridManage.resetData(gridRef, v.data);
-                setTotalRow(v.pageInfo.totalRow)
-            });
+            console.log(info,'::::')
+
+            await getData.post('remittance/getRemittanceList', info).then(v=>{
+                gridManage.resetData(gridRef, v?.data?.entity);
+            })
+            // await getRemittanceList({data: info}).then(v => {
+            //     gridManage.resetData(gridRef, v.data);
+            //     setTotalRow(v.pageInfo.totalRow)
+            // });
             setLoading(false);
         }
     }
@@ -226,7 +237,7 @@ export default function DomesticRemittanceRead({getPropertyId, getCopyPage}: any
                             <BoxCard title={''}>
                                 {inputForm({
                                     title: 'Inquiry No.',
-                                    id: 'searchConnectInquiryNo',
+                                    id: 'searchDocumentNumber',
                                     onChange: onChange,
                                     handleKeyPress: handleKeyPress,
                                     data: info
@@ -262,7 +273,7 @@ export default function DomesticRemittanceRead({getPropertyId, getCopyPage}: any
                                 })}
                                 {radioForm({
                                     title: '부분송금 진행여부',
-                                    id: 'searchIsSend',
+                                    id: 'searchPartialRemittanceStatus',
                                     onChange: onChange,
                                     data: info,
                                     list: [
@@ -274,7 +285,7 @@ export default function DomesticRemittanceRead({getPropertyId, getCopyPage}: any
                                 <div style={{paddingTop: 2}}>
                                     {selectBoxForm({
                                         title: '송금상태',
-                                        id: 'paymentMethod',
+                                        id: 'searchIsSend',
                                         onChange: onChange,
                                         data: info,
                                         list: [
@@ -291,75 +302,6 @@ export default function DomesticRemittanceRead({getPropertyId, getCopyPage}: any
                         <PanelResizeHandle/>
                         <Panel defaultSize={sizes[3]} minSize={0}></Panel>
                     </PanelGroup>
-
-
-                    {/*<div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1.5fr', gap: 20}}>*/}
-                    {/*    <BoxCard title={'기본 정보'}>*/}
-
-                    {/*        {inputForm({*/}
-                    {/*            title: 'Inquiry No.',*/}
-                    {/*            id: 'searchConnectInquiryNo',*/}
-                    {/*            onChange: onChange,*/}
-                    {/*            handleKeyPress: handleKeyPress,*/}
-                    {/*            data: info*/}
-                    {/*        })}*/}
-                    {/*        <div>*/}
-                    {/*            <div style={{marginBottom: 3}}>발주일자</div>*/}
-                    {/*            <RangePicker style={{width: '100%'}}*/}
-                    {/*                         value={[moment(info['searchDate'][0]), moment(info['searchDate'][1])]}*/}
-                    {/*                         id={'searchDate'} size={'small'} onChange={(date, dateString) => {*/}
-                    {/*                onChange({*/}
-                    {/*                    target: {*/}
-                    {/*                        id: 'searchDate',*/}
-                    {/*                        value: date ? [moment(date[0]).format('YYYY-MM-DD'), moment(date[1]).format('YYYY-MM-DD')] : [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]*/}
-                    {/*                    }*/}
-                    {/*                })*/}
-                    {/*            }*/}
-                    {/*            }/>*/}
-                    {/*        </div>*/}
-                    {/*    </BoxCard>*/}
-                    {/*    <BoxCard title={'거래 정보'}>*/}
-                    {/*        {inputForm({*/}
-                    {/*            title: '고객사명',*/}
-                    {/*            id: 'searchCustomerName',*/}
-                    {/*            onChange: onChange,*/}
-                    {/*            handleKeyPress: handleKeyPress,*/}
-                    {/*            data: info*/}
-                    {/*        })}*/}
-                    {/*        {inputForm({*/}
-                    {/*            title: '매입처명',*/}
-                    {/*            id: 'searchAgencyName',*/}
-                    {/*            onChange: onChange,*/}
-                    {/*            handleKeyPress: handleKeyPress,*/}
-                    {/*            data: info*/}
-                    {/*        })}*/}
-                    {/*        {inputForm({*/}
-                    {/*            title: '담당자',*/}
-                    {/*            id: 'searchManagerAdminName',*/}
-                    {/*            onChange: onChange,*/}
-                    {/*            handleKeyPress: handleKeyPress,*/}
-                    {/*            data: info*/}
-                    {/*        })}*/}
-                    {/*    </BoxCard>*/}
-
-                    {/*    <BoxCard title={'확인정보'}>*/}
-                    {/*        {radioForm({*/}
-                    {/*            title: '송금여부',*/}
-                    {/*            id: 'searchIsSend',*/}
-                    {/*            onChange: onChange,*/}
-                    {/*            data: info,*/}
-                    {/*            list: [{value: 'O', title: 'O'}, {value: 'X', title: 'X'}, {value: '', title: '전체'}]*/}
-                    {/*        })}*/}
-                    {/*        {radioForm({*/}
-                    {/*            title: '계산서 발행여부',*/}
-                    {/*            id: 'searchIsInvoice',*/}
-                    {/*            onChange: onChange,*/}
-                    {/*            data: info,*/}
-                    {/*            list: [{value: 'O', title: 'O'}, {value: 'X', title: 'X'}, {value: '', title: '전체'}]*/}
-                    {/*        })}*/}
-                    {/*    </BoxCard>*/}
-                    {/*</div>*/}
-
 
                 </div> : <></>}
             </MainCard>

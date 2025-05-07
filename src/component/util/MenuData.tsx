@@ -14,25 +14,6 @@ export default function MenuData() {
     return <></>
 }
 
-export const updateList = [
-    {title: '프로젝트 수정', key: 'project_update'},
-    {title: '견적의뢰 수정', key: 'rfq_update'},
-    {title: '견적서 수정', key: 'estimate_update'},
-    {title: '발주서 수정', key: 'order_update'},
-    {title: '입고 수정', key: 'store_update'},
-    {title: '입고 수정', key: 'store_update'},
-    {title: '배송 수정', key: 'delivery_update'},
-    {title: '국내송금 수정', key: 'remittance_domestic_update'},
-    {title: '국내매입처 수정', key: 'domestic_agency_update'},
-    {title: '해외매입처 수정', key: 'overseas_agency_update'},
-    {title: '국내고객사 수정', key: 'domestic_customer_update'},
-    {title: '해외고객사 수정', key: 'overseas_customer_update'},
-    {title: '메이커 수정', key: 'maker_update'},
-    {title: '회사계정관리 수정', key: 'company_account_update'},
-    {title: '재고관리 수정', key: 'source_update'},
-    {title: 'HS CODE 수정', key: 'hscode_update'},
-]
-
 export const treeData = [
     {
         title: "프로젝트",

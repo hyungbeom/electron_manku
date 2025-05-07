@@ -535,14 +535,15 @@ export const remittanceDomesticInitial = {
 }
 export const remittanceDomesticSearchInitial = {
     "searchRequestDate": [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
-    "searchConnectInquiryNo": "",   // InquiryNo
+    "searchRequestStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),   // 송금요청일자 검색 시작일
+    "searchRequestEndDate": moment().format('YYYY-MM-DD'),     // 송금요청일자 검색 종료일
+    "searchDocumentNumber": "",   // InquiryNo
     "searchCustomerName": "",       // 고객사명
     "searchAgencyName": "",         // 매입처명
     "searchManagerAdminName": "",   // 담당자
-    "searchRequestStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),   // 송금요청일자 검색 시작일
-    "searchRequestEndDate": moment().format('YYYY-MM-DD'),     // 송금요청일자 검색 종료일
     "searchIsSend": "",             // 송금여부 O, X
     "searchIsInvoice": "",          // 계산서 발행여부 O, X
+    "searchPartialRemittanceStatus": "",          // 계산서 발행여부 O, X
     "page": 1,
     "limit": -1
 }

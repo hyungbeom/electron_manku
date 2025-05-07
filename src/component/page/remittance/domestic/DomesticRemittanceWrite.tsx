@@ -86,35 +86,53 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
      * 송금 > 국내송금 등록
      */
     async function saveFunc() {
-        if (!info['connectInquiryNo']) {
-            return message.warn('Inquiry No. 가 누락 되었습니다.')
-        }
+        // if (!info['connectInquiryNo']) {
+        //     return message.warn('Inquiry No. 가 누락 되었습니다.')
+        // }
 
         setLoading(true);
 
         const formData: any = new FormData();
-        commonManage.setInfoFormData(info, formData, [], [])
-        commonManage.getUploadList(fileRef, formData)
-        formData.delete('createdDate')
-        formData.delete('modifiedDate')
+        formData.append('customerName','한성웰테크');
+        formData.append('agencyName','프로지스트');
+        formData.append('managerAdminId',29);
+        formData.append('partialRemittanceStatus',2);
+        formData.append('remarks','비고란이다~!!!');
+        formData.append('selectOrderList',JSON.stringify([100,101,105]));
+        formData.append('sendRemittanceList',JSON.stringify([{
+            "remittanceRequestDate": "2025-05-02",
+            "remittanceDueDate": "2025-05-10",
+            "supplyAmount": "50000000",
+            "tax": "10%",
+            "sendStatus": "SENT",
+            "invoiceStatus": "ISSUED"
+        },{
+            "remittanceRequestDate": "2025-05-02",
+            "remittanceDueDate": "2025-05-10",
+            "supplyAmount": "50000000",
+            "tax": "10%",
+            "sendStatus": "SENT",
+            "invoiceStatus": "ISSUED"
+        }]));
 
-        await saveRemittance({data: info}).then(v => {
-            if (v?.data?.code === 1) {
-                window.postMessage({message: 'reload', target: 'domestic_remittance_read'}, window.location.origin);
-                notificationAlert('success', '💾 국내 송금 등록완료',
-                    <>
-                        <div>Inquiry No. : {info.connectInquiryNo}</div>
-                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
-                    </>
-                    ,
-                    function () {
-                        getPropertyId('domestic_remittance_update', v.data?.entity?.remittanceId)
-                    },
-                    {cursor: 'pointer'}
-                )
-            } else {
-                message.error(v?.data?.message);
-            }
+        await saveRemittance({data: formData}).then(v => {
+            console.log(v,'v:::')
+            // if (v?.data?.code === 1) {
+            //     window.postMessage({message: 'reload', target: 'domestic_remittance_read'}, window.location.origin);
+            //     notificationAlert('success', '💾 국내 송금 등록완료',
+            //         <>
+            //             <div>Inquiry No. : {info.connectInquiryNo}</div>
+            //             <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+            //         </>
+            //         ,
+            //         function () {
+            //             getPropertyId('domestic_remittance_update', v.data?.entity?.remittanceId)
+            //         },
+            //         {cursor: 'pointer'}
+            //     )
+            // } else {
+            //     message.error(v?.data?.message);
+            // }
         })
         setLoading(false);
     }
@@ -136,6 +154,7 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
         commonManage.openModal(e, setIsModalOpen)
     }
 
+    console.log(info,'::::')
     return <>
         <div style={{height: 'calc(100vh - 90px)'}}>
             <PanelSizeUtil groupRef={groupRef} storage={'domestic_remittance_write'}/>

@@ -1956,19 +1956,19 @@ export const remittanceReadColumn = [
     },
     {
         headerName: 'Inquiry No.',
-        field: 'connectInquiryNo',
+        field: 'documentNumbers',
         maxWidth: 100,
         pinned: 'left'
     },
     {
         headerName: '항목번호',
-        field: 'test',
+        field: 'orderDetailIds',
         maxWidth: 80,
         pinned: 'left'
     },
     {
         headerName: '송금지정일자',
-        field: 'assignedDate',
+        field: 'remittanceDueDate',
         maxWidth: 120,
     },
     {
@@ -1981,29 +1981,29 @@ export const remittanceReadColumn = [
     },
     {
         headerName: '송금 상태',
-        field: 'isSend',
+        field: 'sendStatus',
         maxWidth: 80,
     },
     {
         headerName: '계산서 발행 여부',
-        field: 'isInvoice',
+        field: 'invoiceStatus',
         maxWidth: 90,
     },
     {
         headerName: '공급가액',
         field: 'supplyAmount',
-        valueFormatter: params => params.data.supplyAmount?.toLocaleString(),
+        valueFormatter: params => parseFloat(params.data.supplyAmount)?.toLocaleString(),
     },
     {
         headerName: '부가세',
         field: 'net',
-        valueFormatter: params => Math.round(params.data.supplyAmount * 0.1 * 10 / 10)?.toLocaleString(),
+        valueFormatter: params => Math.round(parseFloat(params.data.supplyAmount) * 0.1 * 10 / 10)?.toLocaleString(),
         cellEditor: 'agNumberCellEditor',
     },
     {
         headerName: '합계',
         field: 'total',
-        valueFormatter: params => (params.data.supplyAmount + Math.round(params.data.supplyAmount * 0.1 * 10 / 10))?.toLocaleString(),
+        valueFormatter: params => (parseFloat(params.data.supplyAmount) + Math.round(params.data.supplyAmount * 0.1 * 10 / 10))?.toLocaleString(),
     },
     {
         headerName: '담당자',
