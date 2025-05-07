@@ -594,47 +594,43 @@ export const storeInfo = {
 export const remittanceInfo = {
     write: {
         columnWidth: [20, 100, 100, 100, 100, 100, 100, 70, 70],
-        column: ['', 'Inquiry No.', '송금요청일자', '송금지정일자', '공급가액', '부가세', '합계', '송금 여부', '계산서 발행 여부'],
+        column: ['', '송금 요청 일자', '송금 지정 일자', '공급가액', '부가세', '합계', '송금 여부', '계산서 발행 여부'],
         columnList: [
             {data: "check", type: "checkbox"},
-            {data: "connectInquiryNo", type: "text"},
-            {data: "requestDate", type: "text"},
-            {data: "assignedDate", type: "text"},
+            {data: "remittanceRequestDate", type: "text"},
+            {data: "remittanceDueDate", type: "text"},
             {data: "supplyAmount", type: "text"},
-            {data: "surtax", type: "text"},
+            {data: "tax", type: "text"},
             {data: "total", type: "text"},
             {
-                data: "isSend",
+                data: "sendStatus",
                 type: "autocomplete",
-                source: ['O', 'X', '부분송금', '반려']
+                source: ['요청', '부분완료', '완료', '취소', '반려']
             },
             {
-                data: "isSend",
+                data: "invoiceStatus",
                 type: "autocomplete",
-                source: ['발행', '미발행']
+                source: ['X', 'O']
             },
         ],
         defaultData: {
-            "check": "",   // Model
-            "connectInquiryNo": "",   // Model
-            "requestDate": '',                  // 수량
-            "assignedDate": "",                   // 단위
-            "supplyAmount": '',          // CURR
-            "surtax": '',           // 단가
-            "total": "",            // 비고
-            "isSend": '',                 // 매입단가
-            "isInvoice": '',           // 단가
+            "check": "",                   // Model
+            "remittanceRequestDate": '',   // 송금 요청 일자
+            "remittanceDueDate": "",       // 송금 지정 일자
+            "supplyAmount": '',            // 공급가액
+            "tax": "",                     // 부가세
+            "total": "",                   // 합계
+            "sendStatus": '',              // 송금 상태
+            "invoiceStatus": '',           // 계산서 발행 여부
         }, mapping: {
-            "model": "Model",   // Model
-            "quantity": '수량',                  // 수량
-            "net": '매출 단가',
-            // 단가
-            "totalNet": '매출 총액',           // 단가
-            "unit": "단위",                   // 단위
-            "currency": '화폐단위',          // CURR
-            "unitPrice": '매입 단가',
-            "total": '매입 총액',                 // 매입단가
-            "marginRate": '마진율',           // 단가
+            "check": "구분",
+            "remittanceRequestDate": '송금 요청 일자',
+            "remittanceDueDate": '송금 지정 일자',
+            "supplyAmount": '공급가액',
+            "tax": "부가세",
+            "total": '합계',
+            "sendStatus": '송금 상태',
+            "invoiceStatus": '계산서 발행 여부',
         },
         excelExpert: (v, i) => {
             v['surtax'] = `=E${i + 1}*0.1*10/10`
@@ -643,7 +639,6 @@ export const remittanceInfo = {
         },
         totalList: {
             "check": '',   // Model
-            "connectInquiryNo": '',                  // 수량
             "requestDate": '',                   // 단위
             "assignedDate": '',          // CURR
             "supplyAmount": '=SUM(E1:E100)',                 // 매입단가
