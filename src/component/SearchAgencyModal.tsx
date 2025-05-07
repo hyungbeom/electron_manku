@@ -37,15 +37,13 @@ export default function SearchInfoModal({
         if (open) {
             const firstTrueKey = Object.keys(open).find(key => open[key]);
             const dom = infoRef.current.querySelector(`#${firstTrueKey}`);
-
             switch (firstTrueKey) {
                 case 'customerName' :
                 case 'agencyCode' :
                 case 'maker' :
                 case 'connectInquiryNo' :
-                    searchFunc(firstTrueKey, dom.value)
-                    setCode(dom.value)
-
+                    searchFunc(firstTrueKey, dom.value);
+                    setCode(dom.value);
                     break;
             }
             setOpenCheck(firstTrueKey);
@@ -286,13 +284,18 @@ export default function SearchInfoModal({
                                          })
                                          break;
                                      case 'connectInquiryNo' :
-                                         setInfo(v => {
-                                             return {
-                                                 ...v, ...e.data,
-                                                 maker: e.data.makerName,
-                                                 connectInquiryNo: e.data.documentNumberFull,
-                                             }
-                                         })
+                                         console.log(e.data, 'e.data::::')
+                                         // setInfo(v => {
+                                         //     return {
+                                         //         ...v, ...e.data,
+                                         //         maker: e.data.makerName,
+                                         //         connectInquiryNo: e.data.documentNumberFull,
+                                         //     }
+                                         // })
+                                         setInfo(prev => {
+                                             const exists = prev.some(item => item.orderDetailId === e.data.orderDetailId);
+                                             return exists ? prev : [...prev, e.data];
+                                         });
                                          break;
                                      default :
                                          await checkInquiryNo({

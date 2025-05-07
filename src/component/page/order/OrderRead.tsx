@@ -308,30 +308,29 @@ function OrderRead({getPropertyId, getCopyPage}: any) {
                         : <></>}
                 </MainCard>
                 {/*@ts-ignored*/}
-                <TableGrid deleteComp={<Popconfirm
-                    title="삭제하시겠습니까?"
-                    onConfirm={deleteList}
-                    icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
+                <TableGrid
+                    deleteComp={
+                        <Popconfirm
+                            title="삭제하시겠습니까?"
+                            onConfirm={deleteList}
+                            icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
 
-                    <Button type={'primary'} danger size={'small'} style={{fontSize: 11}}>
-                        <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>
-                    </Button>
-                </Popconfirm>
-                }
-
-                           totalRow={totalRow}
-                           getPropertyId={getPropertyId}
-                           gridRef={gridRef}
-                           onGridReady={onGridReady}
-                           columns={tableOrderReadColumns}
-                           funcButtons={['agPrint']}/>
-
+                            <Button type={'primary'} danger size={'small'} style={{fontSize: 11}}>
+                                <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>
+                            </Button>
+                        </Popconfirm>
+                    }
+                    totalRow={totalRow}
+                    getPropertyId={getPropertyId}
+                    gridRef={gridRef}
+                    onGridReady={onGridReady}
+                    columns={tableOrderReadColumns}
+                    funcButtons={['agPrint']}/>
 
             </div>
         </>
     </Spin>
 }
-
 
 export default memo(OrderRead, (prevProps, nextProps) => {
     return _.isEqual(prevProps, nextProps);

@@ -516,22 +516,19 @@ export const orderReadInitial = {
 }
 
 // 국내 송금 파라미터
-export const remittanceDomesticInitial = {
-    connectInquiryNo: '',
+export const domesticRemittanceInitial = {
+    remittanceId: '',
     customerName: '',
     agencyName: '',
-    requestDate: moment().format('YYYY-MM-DD'),
-    assignedDate: moment().format('YYYY-MM-DD'),
-    isSend: 'X',
-    isInvoice: 'X',
-    isPartialSend: 'X',
-    isRejected: 'X',
-    supplyAmount: '',
-    surtax: '',
-    total: '',
+    totalAmount: '',
+    partialRemittance: '',
+    balance: '',
+    partialRemittanceStatus: '',
     remarks: '',
     managerAdminId: null,
     managerAdminName: null,
+    selectOrderList: [],
+    remittanceHistoryList: []
 }
 export const remittanceDomesticSearchInitial = {
     "searchRequestDate": [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
@@ -684,9 +681,11 @@ export const modalList = {
         placeholder: '문서번호 또는 고객사명을 입력하세요'
     },
     connectInquiryNo: {
-        url: 'order/getOrderListForRemittance',
+        // url: 'order/getOrderListForRemittance',
+        url: 'order/getOrderList',
         title: '발주서 조회',
-        column: subSecTableOrderReadColumns,
+        // column: subSecTableOrderReadColumns,
+        column: tableOrderReadColumns,
         list: 'orderList',
         placeholder: '문서번호 또는 고객사명을 입력하세요'
     },
