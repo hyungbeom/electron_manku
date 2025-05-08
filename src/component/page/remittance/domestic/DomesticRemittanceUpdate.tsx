@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import {ModalInitList, remittanceDomesticInitial} from "@/utils/initialList";
+import {ModalInitList} from "@/utils/initialList";
 import {
     BoxCard,
     inputForm,
@@ -70,16 +70,16 @@ export default function DomesticRemittanceUpdate({
 
     const userInfo = useAppSelector((state) => state.user);
     const getRemittanceInit = () => {
-        const copyInit = _.cloneDeep(remittanceDomesticInitial)
-        const adminParams = {
-            managerAdminId: userInfo['adminId'],
-            managerAdminName: userInfo['name'],
-            createdBy: userInfo['name'],
-        }
-        return {
-            ...copyInit,
-            ...adminParams,
-        }
+        // const copyInit = _.cloneDeep(remittanceDomesticInitial)
+        // const adminParams = {
+        //     managerAdminId: userInfo['adminId'],
+        //     managerAdminName: userInfo['name'],
+        //     createdBy: userInfo['name'],
+        // }
+        // return {
+        //     ...copyInit,
+        //     ...adminParams,
+        // }
     }
     const [info, setInfo] = useState(getRemittanceInit());
 
