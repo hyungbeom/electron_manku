@@ -535,6 +535,9 @@ export const orderReadInitial = {
     "limit": -1
 }
 
+export const remittanceDomesticInitial = {
+
+}
 export const remittanceDomesticSearchInitial = {
 
 }
