@@ -1957,13 +1957,27 @@ export const remittanceReadColumn = [
     {
         headerName: 'Inquiry No.',
         field: 'documentNumbers',
-        maxWidth: 100,
-        pinned: 'left'
+        pinned: 'left',
+        valueGetter: (params) => {
+            const currentRowIndex = params.node.rowIndex;
+            const currentValue = params.data.documentNumbers;
+            const previousRowNode = params.api.getDisplayedRowAtIndex(currentRowIndex - 1);
+
+            // 이전 행의 데이터가 없거나 값이 다르면 현재 값을 유지
+            if (!previousRowNode || previousRowNode.data.documentNumbers !== currentValue) {
+                return currentValue;
+            }
+            // 중복되면 null 반환
+            return null;
+        },
+        cellRenderer: (params) => {
+            // valueGetter에서 null로 설정된 값은 빈칸으로 표시
+            return params.value !== null ? params.value : '';
+        },
     },
     {
         headerName: '항목번호',
         field: 'orderDetailIds',
-        maxWidth: 80,
         pinned: 'left'
     },
     {

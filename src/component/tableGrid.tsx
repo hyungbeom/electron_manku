@@ -48,7 +48,6 @@ const TableGrid = ({
 
     const ref = useRef(null);
 
-
     const defaultColDef = useMemo(() => {
         return {
             flex: 1,
@@ -59,19 +58,16 @@ const TableGrid = ({
         };
     }, []);
 
-
     const handleSelectionChange = (e) => {
         setSelectedRows(e.api.getSelectedRows())
-
     }
-
 
     /**
      * @description row를 선택할때 documentNumberFull 을 기준으로 같은 문서번호 row들은 동시 체크되게 하는 로직
      * @param event
      */
     const handleRowSelected = (event) => {
-        if (type === 'write') {
+        if (type === 'write' || 'DRWrite') {
             return false; // 'write' 타입일 경우 아무 작업도 하지 않음
         }
 
@@ -146,20 +142,22 @@ const TableGrid = ({
                 getPropertyId('source_update', e.data)
             }
         }
+        // 송금 등록/수정시 하단에 선택한 발주서 항목 더블클릭
+        if (type === 'DRWrite') {
+            tempFunc(e.data);
+        }
         if (type === 'sourceUpdate') {
-            setInfo(e.data)
+            setInfo(e.data);
         }
         if (type === 'hsCode') {
-            setInfo(e.data)
-            tempFunc(true)
+            setInfo(e.data);
+            tempFunc(true);
         }
     };
 
 
     function clickRowCheck(api) {
-
         let checkedData = [];
-
         for (let i = 0; i < api.getDisplayedRowCount(); i++) {
             const rowNode = api.getDisplayedRowAtIndex(i);
             if (rowNode.isSelected()) {
@@ -238,7 +236,7 @@ const TableGrid = ({
     const handleSelectionChanged = () => {
         const selectedRows = gridRef.current.getSelectedRows(); // 체크된 행 가져오기
 
-        if (!selectedRows.length || !containsIncludeKey(selectedRows)) {
+        if (!selectedRows.length || !containsIncludeKey(selectedRows) || type.includes('DR')) {
             setPinnedBottomRowData([]);
             return;
         }
@@ -288,9 +286,7 @@ const TableGrid = ({
         setIsModalOpen(true);
     };
 
-
     function getAgencyInfo(data) {
-
         if (page.event.node) {
             let selectedRow = page.event.node.data;
             selectedRow['agencyName'] = data.agencyName
@@ -304,15 +300,12 @@ const TableGrid = ({
     }
 
     function selectHsCode(info) {
-
-
         let selectedRow = page.event.node.data;
         selectedRow['hsCode'] = info.hsCode
 
         page.event.api.applyTransaction({
             update: [selectedRow],
         });
-
     }
 
     const onCellClicked = (event) => {
@@ -331,8 +324,6 @@ const TableGrid = ({
     function cellDoubleClick(event){
         if(type === 'write'){
             if(event.column.getId() === 'content'){
-
-
                 const field = event.colDef.field;
                 const rowNode = event.node;
 
@@ -348,31 +339,24 @@ const TableGrid = ({
                         rowIndex: event.rowIndex,
                         colKey: field
                     });
-
-
                 }
-
             }
         }
-
     }
 
     function isRowSelectable(rowNode){
         return rowNode.displayed;
     }
 
-
     function onRowClicked(params){
-
         const isSelected = params.node.isSelected(); // 현재 선택 상태 확인
         params.node.setSelected(!isSelected); // 선택 상태 변경 (토글)
 
-
         if(getRowInfo){
-
             getRowInfo(params?.data)
         }
     }
+
     return (
         <>
             <HsCodeListModal isModalOpen={isModalOpen['hsCode']} setIsModalOpen={setIsModalOpen}
@@ -440,7 +424,7 @@ const TableGrid = ({
                 </div>
             </div> : <></>}
 
-            <div>
+            <div style={{height: '100%'}}>
                 <div style={{width: '100%', display: 'flex', justifyContent: 'space-between', padding : '15px 0px 5px 0px'}}>
                     {/*<div style={{fontWeight: 500, paddingLeft : 3}}>{type === 'read' ?<span style={{fontSize: 12}}>검색결과 (<span*/}
                     {/*    style={{color: 'orangered'}}>{totalRow}</span> 건)</span> : <></>}</div>*/}

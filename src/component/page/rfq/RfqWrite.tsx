@@ -35,6 +35,7 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
     const fileRef = useRef(null);
+    const uploadRef = useRef(null);
     const tableRef = useRef(null);
     const infoRef = useRef<any>(null)
     const checkInfoRef = useRef<any>({
@@ -87,6 +88,8 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     const getRfqValidateInit = () => _.cloneDeep(rfqInfo['write']['validate']);
     const [validate, setValidate] = useState(getRfqValidateInit());
 
+    const [driveKey, setDriveKey] = useState(0);
+
     const [fileList, setFileList] = useState([]);
     const [tableData, setTableData] = useState([]);
 
@@ -95,6 +98,7 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         setValidate(getRfqValidateInit());
         setInfo(getRfqInit());
         setFileList([]);
+        setDriveKey(prev => prev + 1);
         setTableData([]);
         if (!isEmptyObj(copyPageInfo)) {
             // copyPageInfo 가 없을시
@@ -180,7 +184,7 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         const findMember = memberList.find(v => v.adminId === parseInt(info['managerAdminId']));
         info['managerAdminName'] = findMember['name'];
 
-        setLoading(true)
+        setLoading(true);
 
         const formData: any = new FormData();
         commonManage.setInfoFormData(info, formData, listType, filterTableList)
@@ -454,8 +458,8 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                     <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}
                                              disabled={!userInfo['microsoftId']}>
 
-                                        <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                         info={info}/>
+                                        <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef} ref={uploadRef}
+                                                         info={info} key={driveKey}/>
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>

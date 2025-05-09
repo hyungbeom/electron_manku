@@ -78,6 +78,26 @@ export const rfqWriteInitial = {
     ]
 }
 
+
+// ==============================================================================
+export const domesticRemittanceSearchInitial = {
+    "searchAgencyName": "",         // 매입처명
+    "searchCustomerName": "",       // 고객사명
+    "searchManagerAdminName": "",   // 담당자
+    "searchRequestDate": [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
+    "searchRequestStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),   // 송금요청일자 검색 시작일
+    "searchRequestEndDate": moment().format('YYYY-MM-DD'),     // 송금요청일자 검색 종료일
+    "searchIsInvoice": "",          // 계산서 발행여부 O, X
+    "searchPartialRemittanceStatus": "",   // 부분송금 진행여부
+    "searchIsSend": "",             // 송금상태
+    "searchDocumentNumber": "",    // InquiryNo
+    "page": 1,
+    "limit": -1
+}
+//
+
+
+
 // ==============================================================================
 
 // 매입처 > 국내매입처 조회 > 검색 초기값 정보
@@ -520,29 +540,15 @@ export const domesticRemittanceInitial = {
     remittanceId: '',
     customerName: '',
     agencyName: '',
+    managerAdminId: null,
+    managerAdminName: null,
     totalAmount: '',
     partialRemittance: '',
     balance: '',
     partialRemittanceStatus: '',
     remarks: '',
-    managerAdminId: null,
-    managerAdminName: null,
     selectOrderList: [],
-    remittanceHistoryList: []
-}
-export const remittanceDomesticSearchInitial = {
-    "searchRequestDate": [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
-    "searchRequestStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),   // 송금요청일자 검색 시작일
-    "searchRequestEndDate": moment().format('YYYY-MM-DD'),     // 송금요청일자 검색 종료일
-    "searchDocumentNumber": "",   // InquiryNo
-    "searchCustomerName": "",       // 고객사명
-    "searchAgencyName": "",         // 매입처명
-    "searchManagerAdminName": "",   // 담당자
-    "searchIsSend": "",             // 송금여부 O, X
-    "searchIsInvoice": "",          // 계산서 발행여부 O, X
-    "searchPartialRemittanceStatus": "",          // 계산서 발행여부 O, X
-    "page": 1,
-    "limit": -1
+    sendRemittanceList: []
 }
 
 

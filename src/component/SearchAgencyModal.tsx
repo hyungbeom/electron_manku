@@ -20,7 +20,8 @@ export default function SearchInfoModal({
                                             setIsModalOpen,
                                             type = '',
                                             gridRef = null,
-                                            compProps
+                                            compProps,
+                                            returnFunc = null
                                         }: any) {
 
     const [code, setCode] = useState();
@@ -31,6 +32,7 @@ export default function SearchInfoModal({
     const [opens, setOpen] = useState(false);
 
     const ref = useRef(null);
+    const testRef = useRef(null);
 
 
     useEffect(() => {
@@ -61,8 +63,6 @@ export default function SearchInfoModal({
                 page: 1,
                 limit: -1
             });
-
-
             setList(resultList?.data?.entity[modalList[v]?.list]);
         } catch (err) {
             console.error(err, '::::');
@@ -173,6 +173,31 @@ export default function SearchInfoModal({
         setOpen(false);
     };
 
+
+    /**
+     * @description 송금 등록 페이지 > 발주서 조회 모달
+     * 항목 클릭 이벤트 (체크박스 선택)
+     * @param params
+     */
+    function onRowClicked(params){
+        const isSelected = params.node.isSelected(); // 현재 선택 상태 확인
+        params.node.setSelected(!isSelected); // 선택 상태 변경 (토글)
+    }
+
+    /**
+     * @description 송금 등록 페이지 > 발주서 조회 모달
+     * 선택 항목 처리
+     * 기본값 모달 닫기
+     */
+    function modalOk() {
+        setIsModalOpen(ModalInitList);
+        if(returnFunc) {
+            const selectedRows = testRef.current.api.getSelectedRows();
+            console.log(selectedRows)
+            returnFunc(selectedRows);
+        }
+    }
+
     return <>
         {page.x ? <div style={{
             position: 'fixed',
@@ -212,7 +237,7 @@ export default function SearchInfoModal({
             onCancel={() => setIsModalOpen(ModalInitList)}
             open={!!openCheck}
             width={'60vw'}
-            onOk={() => setIsModalOpen(ModalInitList)}
+            onOk={modalOk}
         >
             <div style={{height: '50vh'}}>
                 <div style={{display: 'flex', justifyContent: 'space-between', gap: 15, marginBottom: 20}}>
@@ -224,9 +249,9 @@ export default function SearchInfoModal({
                     <Button onClick={() => searchFunc(openCheck, code)}>조회</Button>
                 </div>
 
-                <AgGridReact containerStyle={{height: '93%', width: '100%'}} theme={tableTheme}
+                <AgGridReact containerStyle={{height: '93%', width: '100%'}} theme={tableTheme} ref={testRef}
+                             rowSelection="multiple"
                              onCellClicked={async (e) => {
-
                                  switch (openCheck) {
                                      case 'customerName' :
                                          // commonManage.setInfo(infoRef, {
@@ -283,8 +308,14 @@ export default function SearchInfoModal({
                                              }
                                          })
                                          break;
+                                     // 송금 등록/수정시 발주서 조회
                                      case 'connectInquiryNo' :
-                                         console.log(e.data, 'e.data::::')
+                                         // setInfo(prev => {
+                                         //     const exists = prev.some(item => item.orderDetailId === e.data.orderDetailId);
+                                         //     return exists ? prev : [...prev, e.data];
+                                         // });
+                                         onRowClicked(e);
+                                         return;
                                          // setInfo(v => {
                                          //     return {
                                          //         ...v, ...e.data,
@@ -292,10 +323,6 @@ export default function SearchInfoModal({
                                          //         connectInquiryNo: e.data.documentNumberFull,
                                          //     }
                                          // })
-                                         setInfo(prev => {
-                                             const exists = prev.some(item => item.orderDetailId === e.data.orderDetailId);
-                                             return exists ? prev : [...prev, e.data];
-                                         });
                                          break;
                                      default :
                                          await checkInquiryNo({
@@ -341,7 +368,7 @@ export default function SearchInfoModal({
                              pagination={true}
                              onCellContextMenu={handleCellRightClick}
                              gridOptions={{suppressContextMenu: true}}
-
+                             suppressRowClickSelection={true}
                 />
             </div>
         </Modal>

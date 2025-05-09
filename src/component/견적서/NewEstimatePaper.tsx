@@ -1,13 +1,13 @@
 import React, {useEffect, useMemo, useRef, useState} from "react";
 import Input from "antd/lib/input";
-import {estimateTopInfo, paperTopInfo} from "@/utils/common";
+import {estimateTopInfo} from "@/utils/common";
 import {commonManage} from "@/utils/commonManage";
 import TextArea from "antd/lib/input/TextArea";
 import Select from "antd/lib/select";
 import InputNumber from "antd/lib/input-number";
 import {amountFormat} from "@/utils/columnList";
 import {pdf} from "@react-pdf/renderer";
-import {PdfForm} from "@/component/견적서/PdfForm";
+import {NewPdfForm} from "@/component/견적서/NewPdfForm";
 import EstimateHeader from "@/component/견적서/EstimateHeader";
 import {getData} from "@/manage/function/api";
 import {DownloadOutlined, PrinterOutlined} from "@ant-design/icons";
@@ -58,7 +58,7 @@ function transformEstimateData(data: any) {
                 model: item.model,
                 quantity: item.quantity,
                 unit: item.unit,
-                net: item.unitPrice ?? null,
+                net: item.net ?? null,
                 modelIndex: index + 1
             });
         });
@@ -134,11 +134,12 @@ export default function NewEstimatePaper({gridRef, openEstimateModal}) {
             setInfo(v => {
                 return {
                     ...v,
-                    name: findMember['name'],
+                    name: `${findMember['name']}${findMember.position ? ' ' + findMember.position : ''}`,
                     contactNumber: findMember['contactNumber'],
                     email: findMember['email'],
                     customerManagerName: v.managerName,
-                    customerManagerPhone: v.phoneNumber
+                    customerManagerPhone: v.phoneNumber,
+                    delivery: v.delivery ? `${v.delivery} 주` : ''
                 }
             });
             getRowGapSize();
@@ -169,8 +170,8 @@ export default function NewEstimatePaper({gridRef, openEstimateModal}) {
 
     async function download() {
 
-        const blob = await pdf(<PdfForm data={data} topInfoData={info} totalData={totalData} bottomInfo={bottomInfo}
-                                        key={Date.now()}/>).toBlob();
+        const blob = await pdf(<NewPdfForm data={data} topInfoData={info} totalData={totalData} bottomInfo={bottomInfo}
+                                        key={Date.now()} type={'total'}/>).toBlob();
 
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
@@ -183,7 +184,7 @@ export default function NewEstimatePaper({gridRef, openEstimateModal}) {
     }
 
     const print = async () => {
-        const blob = await pdf(<PdfForm data={data} topInfoData={info} totalData={totalData} bottomInfo={bottomInfo}
+        const blob = await pdf(<NewPdfForm data={data} topInfoData={info} totalData={totalData} bottomInfo={bottomInfo}
                                         key={Date.now()} type={'total'}/>).toBlob();
         const blobUrl = URL.createObjectURL(blob);
 
@@ -202,7 +203,7 @@ export default function NewEstimatePaper({gridRef, openEstimateModal}) {
 
 
     function NumberInputForm({value, numb, objKey = 0}) {
-
+        console.log(value)
         const [info, setInfo] = useState({net: value.net, quantity: value.quantity});
 
         const inputRef = useRef<any>();

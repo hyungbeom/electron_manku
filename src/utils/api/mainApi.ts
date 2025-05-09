@@ -319,8 +319,7 @@ export const getRemittanceList = async ({data}) => {
         limit: -1
     })
     if (v.data.code === 1) {
-        const {remittanceList, pageInfo} = v.data.entity
-        return {data: remittanceList, pageInfo: pageInfo}
+        return {data: v?.data?.entity, pageInfo: {totalRow: v?.data?.entity.length}}
     } else {
         msg.error('오류가 발생하였습니다. 다시 시도해주세요.')
     }

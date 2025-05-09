@@ -106,6 +106,8 @@ function EstimateUpdate({
     const getEstimateValidateInit = () => _.cloneDeep(estimateInfo['write']['validate']);
     const [validate, setValidate] = useState(getEstimateValidateInit());
 
+    const [driveKey, setDriveKey] = useState(0);
+
     const [fileList, setFileList] = useState([]);
     const [originFileList, setOriginFileList] = useState([]);
     const [tableData, setTableData] = useState([]);
@@ -115,6 +117,7 @@ function EstimateUpdate({
         setValidate(getEstimateValidateInit());
         setInfo(getEstimateInit());
         setFileList([]);
+        setDriveKey(prev => prev + 1);
         setOriginFileList([]);
         setTableData([]);
         getDataInfo().then(v => {
@@ -361,29 +364,38 @@ function EstimateUpdate({
      * @description 수정 페이지 > 복제 버튼
      * 견적서 > 견적서 수정
      */
-    function copyPage() {
+    async function copyPage() {
         /**
          * 개선사항
          * 견적서 복제버튼 > 등록페이지 이동시 고객사 정보 초기화
          * copyInfo 데이터에서 해당 키의 값 제거함
          */
         const copyInfo = {
-            ...info,
-            customerName: '',
-            managerName: '',
-            phoneNumber: '',
-            customerManagerEmail: '',
-            faxNumber: '',
-
-            connectDocumentNumberFull: '',
-            documentNumberFull: '',
-            folderId: ''
+            info : {
+                ..._.cloneDeep(info),
+                customerName: '',
+                managerName: '',
+                phoneNumber: '',
+                customerManagerEmail: '',
+                faxNumber: '',
+            }
         };
         //
 
         const totalList = tableRef.current.getSourceData();
         totalList.pop();
         copyInfo[listType] = [...totalList, ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000 - totalList.length)];
+
+        // 복제시 새로운 Inquiry No. 생성 및 파일리스트 같이 넘김.
+        const res = await getData.post('estimate/generateDocumentNumberFull', {
+            type: 'ESTIMATE',
+            documentNumberFull: info['documentNumberFull'].toUpperCase()
+        })
+        if (res?.data?.code !== 1) return message.error('새로운 Inquiry No. 생성이 실패하였습니다.');
+        const { newDocumentNumberFull = '' , attachmentFileList = [] } = res?.data?.entity;
+        copyInfo['info']['connectDocumentNumberFull'] = copyInfo['info']['documentNumberFull'];
+        copyInfo['info']['documentNumberFull'] = newDocumentNumberFull;
+        copyInfo['attachmentFileList'] = attachmentFileList;
 
         getCopyPage('estimate_write', { ...copyInfo, _meta: {updateKey: Date.now()}})
     }
@@ -434,7 +446,7 @@ function EstimateUpdate({
         // setFileList([...fileList, newFile,]);
 
 
-        // 업로드 컴포넌트레 직접 올림
+        // 업로드 컴포넌트에 직접 올림
         const newFile = {
             ...file,
             uid: file.name + "_" + Date.now(),
@@ -442,7 +454,8 @@ function EstimateUpdate({
             originFileObj: file,
             type: file.type,
         }
-        uploadRef.current.fileChange(newFile);
+        console.log(newFile)
+        uploadRef.current.addEstimateFile(newFile);
 
         setLoading(false);
     }
@@ -678,7 +691,7 @@ function EstimateUpdate({
                                         {/*@ts-ignored*/}
                                         <div style={{overFlowY: "auto", maxHeight: 300}}>
                                             <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef} ref={uploadRef}
-                                                             info={info} type={'estimate'}/>
+                                                             info={info} key={driveKey} type={'estimate'}/>
                                         </div>
                                     </BoxCard>
                                 </Panel>

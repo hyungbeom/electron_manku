@@ -1,87 +1,75 @@
 import React, {useEffect, useRef, useState} from "react";
-import {commonManage, gridManage} from "@/utils/commonManage";
+import {gridManage} from "@/utils/commonManage";
 import {DeleteOutlined, ExclamationCircleOutlined} from "@ant-design/icons";
-import {findDocumentInfo} from "@/utils/api/commonApi";
 import Popconfirm from "antd/lib/popconfirm";
 import Button from "antd/lib/button";
-import {remittanceReadColumn} from "@/utils/columnList";
+import {tableOrderReadColumns} from "@/utils/columnList";
 import TableGrid from "@/component/tableGrid";
+import message from "antd/lib/message";
 
-export default function Order({tableRef, tableData = [], info, setInfo}) {
-
-
-    const gridRef = useRef(null);
-    const handleAddressComplete = (address, zipCode) => {
-        setInfo(v => {
-            return {...v, recipientAddress: address, recipientPostalCode: zipCode}
-        })
-    };
-
-    function onChange(e: any) {
-        commonManage.onChange(e, setInfo)
-    }
+export default function Order({
+                                  gridRef = null,
+                                  tableData = [],
+                                  setTableData = null,
+                                  setInfo = null,
+                                  customFunc = null}) {
 
     const isLoad = useRef(null);
-
     const [totalRow, setTotalRow] = useState(0);
+
     useEffect(() => {
-        console.log('@!@@@@@@@@@@@@@@@@@')
-        // if(!tableData) return;
         if(!isLoad.current) return;
         gridManage.resetData(gridRef, tableData);
         setTotalRow(tableData?.length ?? 0);
-        isLoad.current = true;
-
     }, [tableData]);
-
-    async function handleKeyPress(e) {
-
-        if (e.key === 'Enter') {
-
-            switch (e.target.id) {
-                case 'connectInquiryNo' :
-                    const result = await findDocumentInfo(e, setInfo);
-                    setInfo(v => {
-                        return {
-                            ...result[0],
-                            connectInquiryNo: info.connectInquiryNo
-                        }
-                    })
-
-                    break;
-            }
-        }
-    }
 
     /**
      * @description ag-grid 테이블 초기 rowData 요소 '[]' 초기화 설정
      * @param params ag-grid 제공 event 파라미터
      */
     const onGridReady = async (params) => {
-        // setLoading(true)
         gridRef.current = params.api;
-
-        // await getData.post('remittance/getRemittanceList', {}).then(v=>{
-
         params.api.applyTransaction({add: tableData});
-        // })
 
-        // await getRemittanceList({data: getRemittanceSearchInit()}).then(v => {
-        //     params.api.applyTransaction({add: v?.data});
-        //     // setTotalRow(v.pageInfo.totalRow)
-        // });
-        // setLoading(false);
+        isLoad.current = true;
     };
 
     /**
-     * @description 조회 페이지 테이블 > 삭제 버튼
+     * @description 조회 페이지 테이블 > 선택한 발주서 탭 > 삭제 버튼
      * 송금 > 국내송금 조회
      */
     async function confirm() {
-        // if (gridRef.current.getSelectedRows().length < 1) {
-        //     return message.error('삭제할 송금 정보를 선택해주세요.')
-        // }
-        // setLoading(false);
+        if (gridRef.current.getSelectedRows().length < 1) {
+            return message.error('삭제할 발주서 정보를 선택해주세요.')
+        }
+        const deleteList = gridManage.getFieldDeleteList(gridRef, {
+            orderId: 'orderId',
+            orderDetailId: 'orderDetailId'
+        });
+        const filterSelectList = tableData.filter(selectOrder =>
+            !deleteList.some(deleteItem => deleteItem.orderDetailId === selectOrder.orderDetailId)
+        );
+        setTableData(filterSelectList);
+
+        // 삭제 후 총액 계산
+        const total = filterSelectList.reduce((sum, row) => {
+            return sum + (row.quantity || 0) * (row.unitPrice || 0);
+        }, 0);
+        setInfo(prevInfo => ({
+            ...prevInfo,
+            totalAmount: total,
+            balance: total - (prevInfo.partialRemittance || 0),
+        }));
+    }
+
+    /**
+     * 선택한 발주서 항목 > 더블 클릭 이벤트
+     * CustomFunc로 부모에서 처리
+     * (상세 조회 > folderId, fileList 받아옴)
+     * @param orderDetail
+     */
+    function returnFunc(orderDetail) {
+        customFunc(orderDetail);
     }
 
     return (
@@ -98,10 +86,11 @@ export default function Order({tableRef, tableData = [], info, setInfo}) {
                     </Popconfirm>
                 }
                 totalRow={totalRow}
-                // getPropertyId={getPropertyId}
                 gridRef={gridRef}
-                columns={remittanceReadColumn}
+                columns={tableOrderReadColumns}
                 onGridReady={onGridReady}
+                type={'DRWrite'}
+                tempFunc={returnFunc}
                 funcButtons={['agPrint']}
             />
         </>

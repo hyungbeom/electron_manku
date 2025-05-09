@@ -593,15 +593,14 @@ export const storeInfo = {
 // 송금 관련
 export const remittanceInfo = {
     write: {
-        columnWidth: [20, 100, 100, 100, 100, 100, 100, 70, 70],
-        column: ['', '송금 요청 일자', '송금 지정 일자', '공급가액', '부가세', '합계', '송금 여부', '계산서 발행 여부'],
+        columnWidth: [100, 100, 100, 100, 100, 100, 100],
+        column: ['송금 요청 일자', '송금 지정 일자', '공급가액', '부가세', '합계', '송금 여부', '계산서 발행 여부'],
         columnList: [
-            {data: "check", type: "checkbox"},
-            {data: "remittanceRequestDate", type: "text"},
-            {data: "remittanceDueDate", type: "text"},
-            {data: "supplyAmount", type: "text"},
-            {data: "tax", type: "text"},
-            {data: "total", type: "text"},
+            {data: "remittanceRequestDate", type: "date"},
+            {data: "remittanceDueDate", type: "date"},
+            {data: "supplyAmount", type: "numeric"},
+            {data: "tax", type: "numeric", readOnly: true},
+            {data: "total", type: "numeric", readOnly: true},
             {
                 data: "sendStatus",
                 type: "autocomplete",
@@ -614,7 +613,6 @@ export const remittanceInfo = {
             },
         ],
         defaultData: {
-            "check": "",                   // Model
             "remittanceRequestDate": '',   // 송금 요청 일자
             "remittanceDueDate": "",       // 송금 지정 일자
             "supplyAmount": '',            // 공급가액
@@ -623,7 +621,6 @@ export const remittanceInfo = {
             "sendStatus": '',              // 송금 상태
             "invoiceStatus": '',           // 계산서 발행 여부
         }, mapping: {
-            "check": "구분",
             "remittanceRequestDate": '송금 요청 일자',
             "remittanceDueDate": '송금 지정 일자',
             "supplyAmount": '공급가액',
@@ -633,19 +630,18 @@ export const remittanceInfo = {
             "invoiceStatus": '계산서 발행 여부',
         },
         excelExpert: (v, i) => {
-            v['surtax'] = `=E${i + 1}*0.1*10/10`
-            v['total'] = `=E${i + 1}+F${i + 1}`
+            v['tax'] = `=C${i + 1}*0.1*10/10`
+            v['total'] = `=C${i + 1}+D${i + 1}`
             return v
         },
         totalList: {
-            "check": '',   // Model
-            "requestDate": '',                   // 단위
-            "assignedDate": '',          // CURR
-            "supplyAmount": '=SUM(E1:E100)',                 // 매입단가
-            "surtax": '=SUM(F1:F100)',                 // 매입단가
-            "total": '=SUM(G1:G100)',           // 단가
-            "isSend": '',           // 단가
-            "isInvoice": ''                 // 매입단가
+            "requestDate": '',
+            "assignedDate": '',
+            "supplyAmount": '=SUM(C1:C100)',
+            "tax": '=SUM(D1:D100)',
+            "total": '=SUM(E1:E100)',
+            "sendStatus": '',
+            "invoiceStatus": ''
         },
         type: 'write'
     },

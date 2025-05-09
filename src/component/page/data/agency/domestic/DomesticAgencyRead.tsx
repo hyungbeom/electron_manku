@@ -55,14 +55,14 @@ function DomesticAgencyRead({getPropertyId, getCopyPage}: any) {
         });
     };
 
+    function onChange(e) {
+        commonManage.onChange(e, setInfo);
+    }
+
     function handleKeyPress(e) {
         if (e.key === 'Enter') {
             searchInfo(true);
         }
-    }
-
-    function onChange(e) {
-        commonManage.onChange(e, setInfo);
     }
 
     /**
