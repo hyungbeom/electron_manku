@@ -116,8 +116,16 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
         //     return message.warn('Inquiry No. 가 누락 되었습니다.')
         // }
 
+        const selectOrderList = [];
+        gridRef.current.forEachNode(node => selectOrderList.push(node.data));
+        if (!selectOrderList?.length) return message.warn('발주서 데이터가 1개 이상이여야 합니다.');
+
+        const selectOrderNos = selectOrderList.map(item => item.orderDetailId)
+        console.log(selectOrderList, '선택한 발주서 리스트:::')
+
         const tableList = tableRef.current?.getSourceData();
-        console.log(tableList)
+        if (!tableList?.length) return message.warn('송금 데이터가 1개 이상이여야 합니다.');
+
         const filterTableList = commonManage.filterEmptyObjects(tableList, ['supplyAmount'])
         if (!filterTableList.length) {
             return message.warn('하위 데이터가 1개 이상이여야 합니다.');
@@ -135,8 +143,8 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
                 total: (v.supplyAmount || 0) + tax
             }
         })
-        console.log(remittanceList, 'remittanceList:::')
-
+        console.log(remittanceList, '부분송금 입력한 리스트:::')
+        console.log(info, 'info::::')
         return;
 
         setLoading(true);
@@ -227,7 +235,7 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
             children: (
                 <div style={{height: 330}}>
                     <Remittance key={tabNumb} tableRef={tableRef} tableData={sendRemittanceList}
-                                />
+                                setInfo={setInfo}/>
                 </div>
             )
         }
@@ -295,7 +303,7 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
                 return sum + q * p;
             }, 0);
 
-            const orderDetailIds = updatedList.map(row => row.orderDetailId).join(',');
+            const orderDetailIds = updatedList.map(row => row.orderDetailId).join(', ');
 
             const connectInquiryNos = [];
             for (const item of updatedList) {
@@ -389,7 +397,7 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
                                     })}
                                     {inputForm({
                                         title: '부분송금액',
-                                        id: 'partialAmount',
+                                        id: 'partialRemittance',
                                         disabled: true,
                                         onChange: onChange,
                                         data: info,

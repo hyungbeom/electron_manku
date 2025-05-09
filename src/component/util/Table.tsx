@@ -103,9 +103,7 @@ const Table = forwardRef(({
      * @param source
      */
     function afterChange(changes, source) {
-        console.log('### 1111')
         if (source === "edit" || source === "Checkbox") {
-            console.log('### 2222')
             changes.forEach((change, index) => {
                 const [row, prop, oldValue, newValue] = change; // 구조 분해 할당
                 if (prop === "content" && newValue === "회신") {
@@ -119,7 +117,6 @@ const Table = forwardRef(({
                     }
                 }
                 if (prop === 'unitPrice') {
-                    console.log('### 3333')
                     const propIndex = change.indexOf('unitPrice'); // 'unitPrice'의 인덱스 찾기
                     const newValueIndex = propIndex + 2; // newValue 위치 (prop + 2)
 
@@ -143,8 +140,13 @@ const Table = forwardRef(({
                     }
                     setTableData(data);
                 }
-                console.log('### 4444')
             });
+            // 송금 등록시 '공급가액' 총합 받아서 customFunc로 넘김
+            if (type === 'domestic_remittance_write_column') {
+                const lastRow = hotRef.current.hotInstance.countRows() - 1;
+                const sum = hotRef.current.hotInstance.getDataAtCell(lastRow, 4) // 공급가액 셀
+                customFunc(sum);
+            }
         }
     }
 
