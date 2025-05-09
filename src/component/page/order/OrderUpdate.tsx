@@ -40,6 +40,7 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
     const groupRef = useRef<any>(null)
     const tableRef = useRef(null);
     const fileRef = useRef(null);
+    const uploadRef = useRef(null);
     const infoRef = useRef(null);
     const pdfRef = useRef(null);
     const pdfSubRef = useRef(null);
@@ -104,6 +105,8 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
     const getOrderValidateInit = () => _.cloneDeep(orderInfo['write']['validate']);
     const [validate, setValidate] = useState(getOrderValidateInit());
 
+    const [driveKey, setDriveKey] = useState(0);
+
     const [fileList, setFileList] = useState([]);
     const [originFileList, setOriginFileList] = useState([]);
     const [tableData, setTableData] = useState([]);
@@ -113,6 +116,7 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
         setValidate(getOrderValidateInit());
         setInfo(getOrderInit());
         setFileList([]);
+        setDriveKey(prev => prev + 1);
         setOriginFileList([]);
         setTableData([]);
         getDataInfo().then(v => {
@@ -349,12 +353,13 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
      * @description 수정 페이지 > 복제 버튼
      * 발주서 > 발주서 수정
      */
-    function copyPage() {
-        const copyInfo = _.cloneDeep(info);
-        copyInfo['ourPoNo'] = '';
-        copyInfo['documentNumberFull'] = '';
-        copyInfo['yourPoNo'] = '';
-        copyInfo['folderId'] = '';
+    async function copyPage() {
+        const copyInfo = {info: _.cloneDeep(info)};
+        copyInfo['info']['ourPoNo'] = '';
+        copyInfo['info']['documentNumberFull'] = '';
+        copyInfo['info']['yourPoNo'] = '';
+        copyInfo['info']['folderId'] = '';
+
         const totalList = tableRef.current.getSourceData();
         totalList.pop();
         copyInfo[listType] = [...totalList, ...commonFunc.repeatObject(orderInfo['write']['defaultData'], 1000 - totalList.length)];
@@ -602,8 +607,8 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
                             <Panel defaultSize={sizes[4]} minSize={5}>
                                 <BoxCard title={'드라이브 목록'}
                                          disabled={!userInfo['microsoftId']}>
-                                    <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                     info={info} type={'order'}/>
+                                    <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef} ref={uploadRef}
+                                                     info={info} key={driveKey} type={'order'}/>
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>

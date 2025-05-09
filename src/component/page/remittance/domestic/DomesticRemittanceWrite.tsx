@@ -14,34 +14,33 @@ import {
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import _ from "lodash";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
-import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
+import {commonFunc, commonManage, fileManage} from "@/utils/commonManage";
 import {saveRemittance} from "@/utils/api/mainApi";
 import SearchInfoModal from "@/component/SearchAgencyModal";
-import {RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
+import {FileAddFilled, FileOutlined, FolderOpenOutlined, RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
-import Table from "@/component/util/Table";
-import {remittanceInfo} from "@/utils/column/ProjectInfo";
+import {orderInfo, remittanceInfo} from "@/utils/column/ProjectInfo";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import moment from "moment";
-import OrderListModal from "@/component/OrderListModal";
 import Tabs from "antd/lib/tabs";
 import {TabsProps} from "antd";
-import Deahan from "@/component/delivery/Deahan";
-import Deasin from "@/component/delivery/Deasin";
-import ETC from "@/component/delivery/ETC";
 import Order from "@/component/remittance/Order";
 import Remittance from "@/component/remittance/Remittance";
+import {getData} from "@/manage/function/api";
+import message from "antd/lib/message";
+import Spin from "antd/lib/spin";
 
 const listType = 'list';
 
 export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: any) {
     const notificationAlert = useNotificationAlert();
-    const groupRef = useRef<any>(null);
+    const groupRef = useRef(null);
+    const gridRef = useRef(null);
+    const tableRef = useRef(null);
     const infoRef = useRef<any>(null);
     const fileRef = useRef(null);
-    const tableRef = useRef(null);
 
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
 
@@ -51,10 +50,8 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
-    const [mini, setMini] = useState(true);
-    const [fileList, setFileList] = useState([]);
-    const [tableData, setTableData] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [mini, setMini] = useState(true);
 
     const userInfo = useAppSelector((state) => state.user);
     const adminParams = {
@@ -71,54 +68,40 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
     }
     const [info, setInfo] = useState(getRemittanceInit());
     const [selectOrderList, setSelectOrderList] = useState([]);
-    const [remittanceHistoryList, setRemittanceHistoryList] = useState([]);
+    const [sendRemittanceList, setSendRemittanceList] = useState([]);
 
+    const getOrderInit = () => {
+        return {
+            orderId: 0,
+            uploadType: 5,
+            folderId: ''
+        }
+    }
+    const [orderInfo, setOrderInfo] = useState(getOrderInit());
+    const [fileList, setFileList] = useState([]);
 
     useEffect(() => {
         setLoading(true);
         setInfo(getRemittanceInit());
+        setSelectOrderList([]);
+        setSendRemittanceList([]);
+        setOrderInfo(getOrderInit());
         setFileList([]);
-        setTableData([]);
         if (!isEmptyObj(copyPageInfo)) {
             // copyPageInfo 가 없을시
-            setRemittanceHistoryList(commonFunc.repeatObject(remittanceInfo['write']['defaultData'], 10))
+            setSendRemittanceList(commonFunc.repeatObject(remittanceInfo['write']['defaultData'], 100))
         } else {
             // // copyPageInfo 가 있을시(==>보통 수정페이지에서 복제시)
             // // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting
-            setInfo({
-                ...getRemittanceInit(),
-                ...copyPageInfo,
-                writtenDate: moment().format('YYYY-MM-DD')
-            })
-            setTableData(copyPageInfo[listType]);
+            // setInfo({
+            //     ...getRemittanceInit(),
+            //     ...copyPageInfo,
+            //     writtenDate: moment().format('YYYY-MM-DD')
+            // })
+            // setTableData(copyPageInfo[listType]);
         }
+        setLoading(false);
     }, [copyPageInfo]);
-
-
-
-
-    const [tabNumb, setTabNumb] = useState('Order')
-    const [orderInfo, setOrderInfo] = useState({...deliveryDaehanInitial, deliveryType: 'CJ'})
-
-    const items: TabsProps['items'] = [
-        {
-            key: 'Order',
-            label: '선택한 발주서 항목',
-            children: <Order tableData={selectOrderList} info={orderInfo} setInfo={setOrderInfo} tableRef={tableRef}/>,
-        },
-        {
-            key: 'History',
-            label: '송금 내역 리스트',
-            children: <Remittance tableData={remittanceHistoryList} info={orderInfo} setInfo={setRemittanceHistoryList} tableRef={tableRef}/>,
-        }
-    ];
-
-    const tabChange = (key: string) => {
-        setTabNumb(key);
-    };
-
-
-
 
     function onChange(e) {
         commonManage.onChange(e, setInfo)
@@ -133,32 +116,45 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
         //     return message.warn('Inquiry No. 가 누락 되었습니다.')
         // }
 
+        const tableList = tableRef.current?.getSourceData();
+        console.log(tableList)
+        const filterTableList = commonManage.filterEmptyObjects(tableList, ['supplyAmount'])
+        if (!filterTableList.length) {
+            return message.warn('하위 데이터가 1개 이상이여야 합니다.');
+        }
+        const emptyQuantity = filterTableList.filter(v => !v.sendStatus)
+        if (emptyQuantity.length) {
+            return message.error('하위 데이터의 송금 여부를 입력해야 합니다.')
+        }
+
+        const remittanceList = filterTableList.map(v => {
+            const tax = v.supplyAmount ? v.supplyAmount * 0.1 : 0;
+            return {
+                ...v,
+                tax,
+                total: (v.supplyAmount || 0) + tax
+            }
+        })
+        console.log(remittanceList, 'remittanceList:::')
+
+        return;
+
         setLoading(true);
 
         const formData: any = new FormData();
-        formData.append('customerName','한성웰테크');
-        formData.append('agencyName','프로지스트');
-        formData.append('managerAdminId',29);
-        formData.append('partialRemittanceStatus',2);
-        formData.append('remarks','비고란이다~!!!');
+        Object.entries(info).forEach(([key, value]) => {
+            formData.append(key, value ?? '');
+        });
+        // formData.append('customerName','한성웰테크');
+        // formData.append('agencyName','프로지스트');
+        // formData.append('managerAdminId',29);
+        // formData.append('partialRemittanceStatus',2);
+        // formData.append('remarks','비고란이다~!!!');
         formData.append('selectOrderList',JSON.stringify([100,101,105]));
-        formData.append('sendRemittanceList',JSON.stringify([{
-            "remittanceRequestDate": "2025-05-02",
-            "remittanceDueDate": "2025-05-10",
-            "supplyAmount": "50000000",
-            "tax": "10%",
-            "sendStatus": "SENT",
-            "invoiceStatus": "ISSUED"
-        },{
-            "remittanceRequestDate": "2025-05-02",
-            "remittanceDueDate": "2025-05-10",
-            "supplyAmount": "50000000",
-            "tax": "10%",
-            "sendStatus": "SENT",
-            "invoiceStatus": "ISSUED"
-        }]));
+        formData.append('sendRemittanceList',JSON.stringify(remittanceList));
 
-        await saveRemittance({data: formData}).then(v => {
+        await saveRemittance({data: formData})
+            .then(v => {
             console.log(v,'v:::')
             // if (v?.data?.code === 1) {
             //     window.postMessage({message: 'reload', target: 'domestic_remittance_read'}, window.location.origin);
@@ -176,8 +172,10 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
             // } else {
             //     message.error(v?.data?.message);
             // }
-        })
-        setLoading(false);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
     }
 
     /**
@@ -185,30 +183,146 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
      * 송금 > 국내송금 등록
      */
     function clearAll() {
-        setInfo(getRemittanceInit())
+        setLoading(true);
+
+        setInfo(getRemittanceInit());
+        setSelectOrderList([]);
+        setSendRemittanceList([]);
+
+        setOrderInfo(getOrderInit());
+        setFileList([]);
+
+        function calcData(sourceData) {
+            const keyOrder = Object.keys(remittanceInfo['write']['defaultData']);
+            return sourceData
+                .map((item) => keyOrder.reduce((acc, key) => ({...acc, [key]: item[key] ?? ""}), {}))
+                .map(remittanceInfo['write']['excelExpert'])
+                .concat(remittanceInfo['write']['totalList']); // `push` 대신 `concat` 사용
+        }
+        setSendRemittanceList(calcData(commonFunc.repeatObject(remittanceInfo['write']['defaultData'], 100)))
+
+        setLoading(false);
     }
 
     /**
-     * @description 등록 페이지 > Inquiry No. 검색 버튼
+     * @description 등록 페이지 > 하단 탭 관련
      * 송금 > 국내송금 등록
-     * 발주서 조회 Modal > 발주서 선택 항목 가져오기
+     */
+    const [tabNumb, setTabNumb] = useState('Order');
+    const items: TabsProps['items'] = [
+        {
+            key: 'Order',
+            label: '선택한 발주서 항목',
+            children: (
+                <div style={{height: 285}}>
+                    <Order key={tabNumb} gridRef={gridRef}
+                           tableData={selectOrderList} setTableData={setSelectOrderList}
+                           setInfo={setInfo} customFunc={getOrderDetail}/>
+                </div>
+            )
+        },
+        {
+            key: 'History',
+            label: '송금 내역 리스트',
+            children: (
+                <div style={{height: 330}}>
+                    <Remittance key={tabNumb} tableRef={tableRef} tableData={sendRemittanceList}
+                                />
+                </div>
+            )
+        }
+    ];
+    const tabChange = (key: string) => {
+        setTabNumb(key);
+    };
+
+    /**
+     * @description 등록 페이지 > 조회 테이블 발주서 항목 더블클릭
+     * 송금 > 국내송금 등록
+     * 하단의 선택 발주서 리스크 항목 더블클릭시 발주서 상세 조회 > folderId, 파일 리스트 조회
+     * @param orderDetail
+     */
+    async function getOrderDetail(orderDetail) {
+        if(!orderDetail['orderId']) {
+            message.warn('선택한 발주서 정보를 확인해주세요.');
+            return;
+        }
+        if(orderInfo['orderId'] === orderDetail['orderId']) return;
+
+        setLoading(true);
+        await getData.post('order/getOrderDetail', {orderId: orderDetail['orderId']})
+            .then(v => {
+                setOrderInfo({
+                    ...v?.data?.entity?.orderDetail,
+                    uploadType: 5
+                })
+                setFileList(fileManage.getFormatFiles(v?.data?.entity?.attachmentFileList));
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }
+
+    /**
+     * @description 등록 페이지 > Inquiry No. 검색 버튼 > 발주서 조회 Modal
+     * 송금 > 국내송금 등록
+     * 발주서 조회 Modal
      * @param e
      */
     function openModal(e) {
         commonManage.openModal(e, setIsModalOpen)
     }
 
-    useEffect(() => {
-        console.log(selectOrderList, 'selectOrderList:::')
+    /**
+     * @description 등록 페이지 > 발주서 조회 Modal
+     * Return Function
+     * 발주서 조회 Modal에서 선택한 항목 가져오기
+     * @param list
+     */
+    function modalSelected(list) {
+        setSelectOrderList(prevList => {
+            const newItems = list.filter(
+                newItem => !prevList.some(existing => existing.orderDetailId === newItem.orderDetailId)
+            );
+            const updatedList = [...prevList, ...newItems];
+            const total = updatedList.reduce((sum, row) => {
+                const quantity = parseFloat(row.quantity);
+                const unitPrice = parseFloat(row.unitPrice);
 
+                const q = isNaN(quantity) ? 0 : quantity;
+                const p = isNaN(unitPrice) ? 0 : unitPrice;
 
-    }, [selectOrderList]);
+                return sum + q * p;
+            }, 0);
 
-    return <>
+            const orderDetailIds = updatedList.map(row => row.orderDetailId).join(',');
+
+            const connectInquiryNos = [];
+            for (const item of updatedList) {
+                const inquiryNo = item.documentNumberFull;
+                if (inquiryNo && !connectInquiryNos.includes(inquiryNo)) {
+                    connectInquiryNos.push(inquiryNo);
+                }
+            }
+
+            setInfo(prevInfo => ({
+                ...prevInfo,
+                customerName: updatedList[0].customerName,
+                agencyName: updatedList[0].agencyName,
+                connectInquiryNo: connectInquiryNos.join(', '),
+                orderDetailIds,
+                totalAmount: total,
+                balance: total - (prevInfo.partialRemittance || 0),
+            }));
+            return updatedList;
+        });
+    }
+
+    return <Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'domestic_remittance_write'}/>
         <SearchInfoModal info={selectOrderList} infoRef={infoRef} setInfo={setSelectOrderList}
                              open={isModalOpen}
-                             setIsModalOpen={setIsModalOpen}/>
+                             setIsModalOpen={setIsModalOpen} returnFunc={modalSelected}/>
 
             <div ref={infoRef} style={{
                 display: 'grid',
@@ -252,7 +366,7 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
                                     }
                                 }>🔍</span>,
                             })}
-                            {inputForm({title: '항목번호', id: 'customerName', onChange: onChange, data: info})}
+                            {inputForm({title: '항목번호', id: 'orderDetailIds', onChange: onChange, data: info})}
                             {inputForm({title: '고객사명', id: 'customerName', onChange: onChange, data: info})}
                             {inputForm({title: '매입처명', id: 'agencyName', onChange: onChange, data: info})}
                             {inputForm({
@@ -266,30 +380,30 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
                         <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
                             <Panel defaultSize={sizes[0]} minSize={5}>
                                 <BoxCard title={'금액 정보'}>
-                                    {inputNumberForm({
-                                        title: '공급가액',
-                                        id: 'supplyAmount',
+                                    {inputForm({
+                                        title: '총액',
+                                        id: 'totalAmount',
                                         onChange: onChange,
                                         data: info,
-                                        parser: numbParser
+                                        // parser: numbParser
                                     })}
-                                    {inputNumberForm({
-                                        title: '부가세',
-                                        id: 'surtax',
+                                    {inputForm({
+                                        title: '부분송금액',
+                                        id: 'partialAmount',
                                         disabled: true,
                                         onChange: onChange,
                                         data: info,
-                                        formatter: numbFormatter,
-                                        parser: numbParser
+                                        // formatter: numbFormatter,
+                                        // parser: numbParser
                                     })}
-                                    {inputNumberForm({
+                                    {inputForm({
                                         title: '합계',
-                                        id: 'total',
+                                        id: 'balance',
                                         disabled: true,
                                         onChange: onChange,
                                         data: info,
-                                        formatter: numbFormatter,
-                                        parser: numbParser
+                                        // formatter: numbFormatter,
+                                        // parser: numbParser
                                     })}
                                 </BoxCard>
                             </Panel>
@@ -298,7 +412,7 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
                                 <BoxCard title={'확인 정보'}>
                                     {radioForm({
                                         title: '부분 송금 진행 여부',
-                                        id: 'isPartialSend',
+                                        id: 'partialRemittanceStatus',
                                         onChange: onChange,
                                         data: info,
                                         list: [
@@ -312,10 +426,31 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
                             </Panel>
                             <PanelResizeHandle/>
                             <Panel defaultSize={sizes[2]} minSize={5}>
-                                <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
-                                    <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                     info={info}/>
+                                {/*<BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>*/}
+                                {/*    <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}*/}
+                                {/*                     info={orderInfo} type={'remittance'} key={orderInfo?.orderId}/>*/}
+                                {/*</BoxCard>*/}
+
+                                <BoxCard title={
+                                    <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                                        <div>드라이브 목록</div>
+                                        {
+                                            orderInfo['folderId'] ?
+                                                <span>
+                                                    <FolderOpenOutlined/> {`${orderInfo['documentNumberFull']}`}
+                                                </span>
+                                            : <></>
+                                        }
+                                    </div>
+                                } disabled={!userInfo['microsoftId'] || !orderInfo?.folderId}>
+                                    {/*@ts-ignored*/}
+                                    <div style={{overFlowY: "auto", maxHeight: 300}}>
+                                        <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
+                                            info={orderInfo} type={'remittance'} key={orderInfo?.folderId}/>
+                                    </div>
                                 </BoxCard>
+
+
                             </Panel>
                             <PanelResizeHandle/>
                             <Panel defaultSize={sizes[3]} minSize={0}></Panel>
@@ -326,5 +461,5 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
                 <Tabs size={'small'} tabBarStyle={{paddingLeft: 10, paddingRight: 10, marginBottom: 0}} activeKey={tabNumb} items={items} onChange={tabChange}/>
 
             </div>
-    </>
+    </Spin>
 }

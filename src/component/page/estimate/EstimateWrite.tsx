@@ -25,7 +25,7 @@ import Spin from "antd/lib/spin";
 import {getData} from "@/manage/function/api";
 import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 import moment from "moment";
-import {estimateInfo, orderInfo} from "@/utils/column/ProjectInfo";
+import {estimateInfo} from "@/utils/column/ProjectInfo";
 import Table from "@/component/util/Table";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
@@ -41,6 +41,7 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     const groupRef = useRef<any>(null);
     const infoRef = useRef<any>(null);
     const fileRef = useRef(null);
+    const uploadRef = useRef(null);
     const tableRef = useRef(null);
 
     const getSavedSizes = () => {
@@ -96,12 +97,14 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     const [tableData, setTableData] = useState([]);
 
     const [isFolderId, setIsFolderId] = useState(false);
+    const [driveKey, setDriveKey] = useState(0);
 
     useEffect(() => {
         setLoading(true);
         setValidate(getEstimateValidateInit());
         setInfo(getEstimateInit());
         setFileList([]);
+        setDriveKey(prev => prev + 1);
         setTableData([]);
         if (!isEmptyObj(copyPageInfo)) {
             // copyPageInfo 가 없을시
@@ -111,10 +114,13 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
             // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting
             setInfo({
                 ...getEstimateInit(),
-                ...copyPageInfo,
+                ...copyPageInfo['info'],
                 writtenDate: moment().format('YYYY-MM-DD'),
             });
+            if(copyPageInfo['info']['connectDocumentNumberFull'] && copyPageInfo['info']['folderId']) setIsFolderId(true);
+            setFileList(copyPageInfo['attachmentFileList']);
             setTableData(copyPageInfo[listType]);
+
         }
         setLoading(false);
     }, [copyPageInfo?._meta?.updateKey]);
@@ -172,6 +178,8 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                     createdBy: adminParams.createdBy,
                                     writtenDate: moment().format('YYYY-MM-DD')
                                 })
+                                // folderId 가져오면 연결 inquiry 수정 못하게 막기
+                                if(estimateRequestDetail.folderId) setIsFolderId(true);
                                 setFileList(fileManage.getFormatFiles(attachmentFileList));
                                 // setFileList(fileManage.getFormatFiles(src?.data?.entity.attachmentFileList));
                                 if (estimateRequestDetail?.estimateRequestDetailList?.length) {
@@ -179,7 +187,6 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                 }
                                 // 만쿠 견적서 No. 가져오면 유효성 초기화
                                 if(src.data.entity.newDocumentNumberFull) setValidate(v => {return {...v, documentNumberFull: true}});
-                                setIsFolderId(true);
                             })
                             .finally(() => {
                                 setLoading(false);
@@ -595,8 +602,8 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                     <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
                                         {/*@ts-ignored*/}
                                         <div style={{overFlowY: "auto", maxHeight: 300}}>
-                                            <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                             info={info}/>
+                                            <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef} ref={uploadRef}
+                                                             info={info} key={driveKey}/>
                                         </div>
                                     </BoxCard>
                                 </Panel>

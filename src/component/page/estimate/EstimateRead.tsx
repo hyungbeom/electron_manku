@@ -1,4 +1,4 @@
-import React, {memo, useEffect, useRef, useState} from "react";
+import React, {memo, useRef, useState} from "react";
 import {tableEstimateReadColumns} from "@/utils/columnList";
 import {estimateDetailUnit, estimateReadInitial} from "@/utils/initialList";
 import Button from "antd/lib/button";
@@ -17,14 +17,12 @@ import _ from "lodash";
 import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
 import {BoxCard, inputForm, MainCard, rangePickerForm, selectBoxForm} from "@/utils/commonForm";
 import Spin from "antd/lib/spin";
-import {useRouter} from "next/router";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import Popconfirm from "antd/lib/popconfirm";
 import moment from "moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
-import EstimatePaper from "@/component/견적서/EstimatePaper";
 import Modal from "antd/lib/modal/Modal";
 import NewEstimatePaper from "@/component/견적서/NewEstimatePaper";
 import ReceiveComponent from "@/component/ReceiveComponent";
@@ -33,7 +31,6 @@ import ReceiveComponent from "@/component/ReceiveComponent";
 function EstimateRead({getPropertyId, getCopyPage,}: any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
-
     const gridRef = useRef(null);
 
     const copyInit = _.cloneDeep(estimateReadInitial)

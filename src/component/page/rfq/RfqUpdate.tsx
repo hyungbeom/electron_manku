@@ -44,6 +44,7 @@ function RqfUpdate({
     const infoRef = useRef<any>(null)
     const tableRef = useRef(null);
     const fileRef = useRef(null);
+    const uploadRef = useRef(null);
     const gridRef = useRef(null);
 
     const getSavedSizes = () => {
@@ -92,6 +93,8 @@ function RqfUpdate({
     const getRfqValidateInit = () => _.cloneDeep(rfqInfo['write']['validate']);
     const [validate, setValidate] = useState(getRfqValidateInit());
 
+    const [driveKey, setDriveKey] = useState(0);
+
     const [fileList, setFileList] = useState([]);
     const [originFileList, setOriginFileList] = useState([]);
     const [tableData, setTableData] = useState([]);
@@ -101,6 +104,7 @@ function RqfUpdate({
         setValidate(getRfqValidateInit());
         setInfo(getRfqInit());
         setFileList([]);
+        setDriveKey(prev => prev + 1);
         setOriginFileList([]);
         setTableData([]);
         getDataInfo().then(v => {
@@ -574,8 +578,8 @@ function RqfUpdate({
                                 <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}
                                          disabled={!userInfo['microsoftId']}>
 
-                                    <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                     info={info} type={'rfq'}/>
+                                    <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef} ref={uploadRef}
+                                                     info={info} key={driveKey} type={'rfq'}/>
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>

@@ -3,6 +3,7 @@ import styles from "@/component/util/Common";
 import {Document, Font, Image, Page, Text, View} from '@react-pdf/renderer';
 import React from "react";
 import {commonManage} from "@/utils/commonManage";
+import {amountFormat} from "@/utils/columnList";
 
 Font.register({
     family: 'NotoSansKR',
@@ -16,7 +17,7 @@ Font.register({
 
 const colWidths = [40, 210, 50, 50, 110, 110];
 
-export function PdfForm({data, topInfoData, totalData, type='',bottomInfo='▶의뢰하신 Model로 기준한 견적입니다.\n▶계좌번호 :  (기업은행)069-118428-04-010/만쿠무역\n▶긴급 납기시 담당자와 협의가능합니다.\n▶견적서에 기재되지 않은 서류 및 성적서는 미 포함 입니다.'}) {
+export function NewPdfForm({data, topInfoData, totalData, type='',bottomInfo='▶의뢰하신 Model로 기준한 견적입니다.\n▶계좌번호 :  (기업은행)069-118428-04-010/만쿠무역\n▶긴급 납기시 담당자와 협의가능합니다.\n▶견적서에 기재되지 않은 서류 및 성적서는 미 포함 입니다.'}) {
 
     return <Document>
         <Page size="A4" style={styles.page}>
@@ -84,7 +85,7 @@ export function PdfForm({data, topInfoData, totalData, type='',bottomInfo='▶�
                     <Text style={styles.label}>E-mail :</Text>
                     <Text style={styles.value}>{topInfoData?.customerManagerEmail}</Text>
                     <Text style={styles.labelRight}>납기 :</Text>
-                    <Text style={styles.valueRight}>{topInfoData?.delivery} 주</Text>
+                    <Text style={styles.valueRight}>{topInfoData?.delivery}</Text>
                 </View>
                 <View style={styles.infoRow}>
                     <Text style={styles.label}>Fax :</Text>
@@ -122,33 +123,35 @@ export function PdfForm({data, topInfoData, totalData, type='',bottomInfo='▶�
                         <View style={{...styles.point, width: colWidths[0]}}>
                             <Text style={{textAlign: 'center'}}>Maker</Text>
                         </View>
-                        {/*<View style={{...styles.cell, width: 530, borderRightWidth: 0}}>*/}
-                        <View style={{...styles.cell, width: colWidths[1]}}>
+                        <View style={{...styles.cell, width: 530, borderRightWidth: 0}}>
                             <Text style={{
                                 textAlign: 'left',
                                 paddingLeft: 5,
                                 fontFamily: styles.point.fontFamily
                             }}>{topInfoData?.maker}</Text>
                         </View>
-                        <View style={{...styles.cell, width: colWidths[2]}}></View>
-                        <View style={{...styles.cell, width: colWidths[3]}}></View>
-                        <View style={{...styles.cell, width: colWidths[4]}}></View>
-                        <View style={{...styles.cell, width: colWidths[5], borderRightWidth: 0 }}></View>
                     </View> : <></>}
 
                     {/* 내용 행 반복 */}
                     {data[0]?.map((row: any, i) => {
                         const {model, quantity, unit, net, modelIndex, documentNumberFull} = row;
-                        return <><View key={i} style={styles.tableRow}>
+                        return <> <View key={i} style={styles.tableRow}>
+
                             {documentNumberFull ?
-                                <View key={i} style={{
-                                    ...styles.cell,
-                                    width: colWidths[0] + colWidths[1],
-                                }}>
-                                    <Text style={{textAlign: 'left', paddingLeft : 5}}>{documentNumberFull}</Text>
-                                </View>
+                                <>
+                                    <View key={i} style={{
+                                        ...styles.cell,
+                                        width: colWidths[0] + colWidths[1],
+                                    }}>
+                                        <Text style={{textAlign: 'left', paddingLeft : 5}}>{documentNumberFull}</Text>
+                                    </View>
+                                    <View key={i} style={{...styles.cell, width: colWidths[2]}}></View>
+                                    <View key={i} style={{...styles.cell, width: colWidths[3]}}></View>
+                                    <View key={i} style={{...styles.cell, width: colWidths[4]}}></View>
+                                    <View key={i} style={{...styles.cell, width: colWidths[5], borderRightWidth: 0}}></View>
+                                </>
                                 :
-                                <View style={{ flexDirection: 'row' }}>
+                                <>
                                     <View key={i} style={{
                                         ...styles.cell,
                                         width: colWidths[0],
@@ -161,37 +164,47 @@ export function PdfForm({data, topInfoData, totalData, type='',bottomInfo='▶�
                                     }}>
                                         <Text style={{textAlign: 'left', paddingLeft: 5}}>{model}</Text>
                                     </View>
-                                </View>
+                                    {modelIndex === 'maker' ?
+                                        <>
+                                            <View key={i} style={{...styles.cell, width: colWidths[2]}}></View>
+                                            <View key={i} style={{...styles.cell, width: colWidths[3]}}></View>
+                                            <View key={i} style={{...styles.cell, width: colWidths[4]}}></View>
+                                            <View key={i} style={{...styles.cell, width: colWidths[5], borderRightWidth: 0}}></View>
+                                        </>
+                                        :
+                                        <>
+                                            <View key={i} style={{
+                                                ...styles.cell,
+                                                width: colWidths[2],
+                                            }}>
+                                                <Text style={{textAlign: 'right', paddingRight: 5}}>{quantity}</Text>
+                                            </View>
+                                            <View key={i} style={{
+                                                ...styles.cell,
+                                                width: colWidths[3],
+                                            }}>
+                                                <Text style={{textAlign: 'left', paddingLeft: 5}}>{unit}</Text>
+                                            </View>
+                                            <View key={i} style={{
+                                                ...styles.cell,
+                                                width: colWidths[4],
+                                            }}>
+                                                <Text style={{textAlign: 'right', paddingRight: 5}}>{amountFormat(net)}</Text>
+                                            </View>
+                                            <View key={i} style={{
+                                                ...styles.cell,
+                                                width: colWidths[5],
+                                                borderRightWidth: 0,
+                                            }}>
+                                                <Text style={{
+                                                    textAlign: 'right',
+                                                    paddingRight: 5
+                                                }}>{amountFormat(quantity * net)}</Text>
+                                            </View>
+                                        </>
+                                    }
+                                </>
                             }
-
-                            <View key={i} style={{
-                                ...styles.cell,
-                                width: colWidths[2],
-                            }}>
-                                <Text style={{textAlign: 'right', paddingRight: 5}}>{quantity}</Text>
-                            </View>
-                            <View key={i} style={{
-                                ...styles.cell,
-                                width: colWidths[3],
-                            }}>
-                                <Text style={{textAlign: 'left', paddingLeft: 5}}>{unit}</Text>
-                            </View>
-                            <View key={i} style={{
-                                ...styles.cell,
-                                width: colWidths[4],
-                            }}>
-                                <Text style={{textAlign: 'right', paddingRight: 5}}>{net?.toLocaleString()}</Text>
-                            </View>
-                            <View key={i} style={{
-                                ...styles.cell,
-                                width: colWidths[5],
-                                borderRightWidth: 0,
-                            }}>
-                                <Text style={{
-                                    textAlign: 'right',
-                                    paddingRight: 5
-                                }}>{(quantity * net)?.toLocaleString()}</Text>
-                            </View>
                         </View>
                         </>
                     })}
@@ -283,16 +296,20 @@ export function PdfForm({data, topInfoData, totalData, type='',bottomInfo='▶�
                             return <> <View key={i} style={styles.tableRow}>
 
                                 {documentNumberFull ?
-
-                                    <View key={i} style={{
-                                        ...styles.cell,
-                                        width: colWidths[0] + colWidths[1],
-                                    }}>
-                                        <Text style={{textAlign: 'left', paddingLeft : 5}}>{documentNumberFull}</Text>
-                                    </View>
+                                    <>
+                                        <View key={i} style={{
+                                            ...styles.cell,
+                                            width: colWidths[0] + colWidths[1],
+                                        }}>
+                                            <Text style={{textAlign: 'left', paddingLeft : 5}}>{documentNumberFull}</Text>
+                                        </View>
+                                        <View key={i} style={{...styles.cell, width: colWidths[2]}}></View>
+                                        <View key={i} style={{...styles.cell, width: colWidths[3]}}></View>
+                                        <View key={i} style={{...styles.cell, width: colWidths[4]}}></View>
+                                        <View key={i} style={{...styles.cell, width: colWidths[5], borderRightWidth: 0}}></View>
+                                    </>
                                     :
-
-                                    <View style={{ flexDirection: 'row' }}>
+                                    <>
                                         <View key={i} style={{
                                             ...styles.cell,
                                             width: colWidths[0],
@@ -305,37 +322,47 @@ export function PdfForm({data, topInfoData, totalData, type='',bottomInfo='▶�
                                         }}>
                                             <Text style={{textAlign: 'left', paddingLeft: 5}}>{model}</Text>
                                         </View>
-                                    </View>
+                                        {modelIndex === 'maker' ?
+                                            <>
+                                                <View key={i} style={{...styles.cell, width: colWidths[2]}}></View>
+                                                <View key={i} style={{...styles.cell, width: colWidths[3]}}></View>
+                                                <View key={i} style={{...styles.cell, width: colWidths[4]}}></View>
+                                                <View key={i} style={{...styles.cell, width: colWidths[5], borderRightWidth: 0}}></View>
+                                            </>
+                                            :
+                                            <>
+                                                <View key={i} style={{
+                                                    ...styles.cell,
+                                                    width: colWidths[2],
+                                                }}>
+                                                    <Text style={{textAlign: 'right', paddingRight: 5}}>{quantity}</Text>
+                                                </View>
+                                                <View key={i} style={{
+                                                    ...styles.cell,
+                                                    width: colWidths[3],
+                                                }}>
+                                                    <Text style={{textAlign: 'left', paddingLeft: 5}}>{unit}</Text>
+                                                </View>
+                                                <View key={i} style={{
+                                                    ...styles.cell,
+                                                    width: colWidths[4],
+                                                }}>
+                                                    <Text style={{textAlign: 'right', paddingRight: 5}}>{amountFormat(net)}</Text>
+                                                </View>
+                                                <View key={i} style={{
+                                                    ...styles.cell,
+                                                    width: colWidths[5],
+                                                    borderRightWidth: 0,
+                                                }}>
+                                                    <Text style={{
+                                                        textAlign: 'right',
+                                                        paddingRight: 5
+                                                    }}>{amountFormat(quantity * net)}</Text>
+                                                </View>
+                                            </>
+                                        }
+                                    </>
                                 }
-
-                                <View key={i} style={{
-                                    ...styles.cell,
-                                    width: colWidths[2],
-                                }}>
-                                    <Text style={{textAlign: 'right', paddingRight: 5}}>{quantity}</Text>
-                                </View>
-                                <View key={i} style={{
-                                    ...styles.cell,
-                                    width: colWidths[3],
-                                }}>
-                                    <Text style={{textAlign: 'left', paddingLeft: 5}}>{unit}</Text>
-                                </View>
-                                <View key={i} style={{
-                                    ...styles.cell,
-                                    width: colWidths[4],
-                                }}>
-                                    <Text style={{textAlign: 'right', paddingRight: 5}}>{net?.toLocaleString()}</Text>
-                                </View>
-                                <View key={i} style={{
-                                    ...styles.cell,
-                                    width: colWidths[5],
-                                    borderRightWidth: 0,
-                                }}>
-                                    <Text style={{
-                                        textAlign: 'right',
-                                        paddingRight: 5
-                                    }}>{(quantity * net)?.toLocaleString()}</Text>
-                                </View>
                             </View>
                             </>
                         })}

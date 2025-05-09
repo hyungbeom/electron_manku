@@ -306,7 +306,7 @@ const EstimatePaper = ({
 
                     <thead>
                     <tr style={{fontWeight: 'bold', height: 35}}>
-                        <th colSpan={6}/>
+                        <th colSpan={7}/>
                     </tr>
                     </thead>
                     <thead>

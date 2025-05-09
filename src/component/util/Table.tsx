@@ -103,7 +103,9 @@ const Table = forwardRef(({
      * @param source
      */
     function afterChange(changes, source) {
+        console.log('### 1111')
         if (source === "edit" || source === "Checkbox") {
+            console.log('### 2222')
             changes.forEach((change, index) => {
                 const [row, prop, oldValue, newValue] = change; // 구조 분해 할당
                 if (prop === "content" && newValue === "회신") {
@@ -113,11 +115,11 @@ const Table = forwardRef(({
                 }
                 if (prop === "quantity") {
                     if (type === 'order_write_column') {
-
                         hotRef.current.hotInstance.setDataAtCell(row, 8, newValue); // replyDate 컬럼 업데이트
                     }
                 }
                 if (prop === 'unitPrice') {
+                    console.log('### 3333')
                     const propIndex = change.indexOf('unitPrice'); // 'unitPrice'의 인덱스 찾기
                     const newValueIndex = propIndex + 2; // newValue 위치 (prop + 2)
 
@@ -141,6 +143,7 @@ const Table = forwardRef(({
                     }
                     setTableData(data);
                 }
+                console.log('### 4444')
             });
         }
     }
@@ -491,7 +494,7 @@ const Table = forwardRef(({
 
 
     return (
-        <div ref={tableContainerRef} className="table-container" style={{width: '100%', overflowX: 'auto'}}>
+        <div ref={tableContainerRef} className="table-container" style={{width: '100%', overflowX: 'auto', height:'100%'}}>
             <div style={{display: 'flex', justifyContent: 'space-between'}}>
                 <div>
                     {

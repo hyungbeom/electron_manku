@@ -1,8 +1,8 @@
 import React, {useEffect, useRef, useState} from "react";
-import {remittanceDomesticSearchInitial} from "@/utils/initialList";
+import {domesticRemittanceSearchInitial} from "@/utils/initialList";
 import {getData} from "@/manage/function/api";
 import moment from "moment";
-import {BoxCard, inputForm, MainCard, radioForm, rangePickerForm, selectBoxForm, SelectForm} from "@/utils/commonForm";
+import {BoxCard, inputForm, MainCard, radioForm, rangePickerForm, selectBoxForm} from "@/utils/commonForm";
 import _ from "lodash";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import TableGrid from "@/component/tableGrid";
@@ -22,15 +22,12 @@ import ReceiveComponent from "@/component/ReceiveComponent";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import Popconfirm from "antd/lib/popconfirm";
+import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 
 export default function DomesticRemittanceRead({getPropertyId, getCopyPage}: any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
     const gridRef = useRef(null);
-
-    const [mini, setMini] = useState(true);
-    const [totalRow, setTotalRow] = useState(0);
-    const [loading, setLoading] = useState(false);
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('domestic_remittance_read');
@@ -38,8 +35,13 @@ export default function DomesticRemittanceRead({getPropertyId, getCopyPage}: any
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
-    const getRemittanceSearchInit = () => _.cloneDeep(remittanceDomesticSearchInitial);
+    const [loading, setLoading] = useState(false);
+    const [mini, setMini] = useState(true);
+
+    const getRemittanceSearchInit = () => _.cloneDeep(domesticRemittanceSearchInitial);
     const [info, setInfo] = useState(getRemittanceSearchInit());
+
+    const [totalRow, setTotalRow] = useState(0);
 
     const [isSearch, setIsSearch] = useState(false);
 
@@ -55,28 +57,24 @@ export default function DomesticRemittanceRead({getPropertyId, getCopyPage}: any
      * @param params ag-grid 제공 event 파라미터
      */
     const onGridReady = async (params) => {
-        setLoading(true)
+        setLoading(true);
         gridRef.current = params.api;
-
-        await getData.post('remittance/getRemittanceList', {}).then(v=>{
-
-                params.api.applyTransaction({add: v?.data.entity});
+        await getRemittanceList({data: info}).then(v => {
+            params.api.applyTransaction({add: v?.data ?? []});
+            setTotalRow(v?.pageInfo?.totalRow ?? 0)
         })
-
-        // await getRemittanceList({data: getRemittanceSearchInit()}).then(v => {
-        //     params.api.applyTransaction({add: v?.data});
-        //     // setTotalRow(v.pageInfo.totalRow)
-        // });
-        setLoading(false);
+        .finally(() => {
+            setLoading(false);
+        });
     };
 
     function onChange(e) {
-        commonManage.onChange(e, setInfo)
+        commonManage.onChange(e, setInfo);
     }
 
     function handleKeyPress(e) {
         if (e.key === 'Enter') {
-            searchInfo(e)
+            searchInfo(true);
         }
     }
 
@@ -88,16 +86,13 @@ export default function DomesticRemittanceRead({getPropertyId, getCopyPage}: any
     async function searchInfo(e) {
         if (e) {
             setLoading(true);
-            console.log(info,'::::')
-
-            await getData.post('remittance/getRemittanceList', info).then(v=>{
-                gridManage.resetData(gridRef, v?.data?.entity);
+            await getRemittanceList({data: info}).then(v => {
+                gridManage.resetData(gridRef, v?.data ?? []);
+                setTotalRow(v?.pageInfo?.totalRow ?? 0)
             })
-            // await getRemittanceList({data: info}).then(v => {
-            //     gridManage.resetData(gridRef, v.data);
-            //     setTotalRow(v.pageInfo.totalRow)
-            // });
-            setLoading(false);
+            .finally(() => {
+                setLoading(false);
+            });
         }
     }
 
@@ -106,8 +101,8 @@ export default function DomesticRemittanceRead({getPropertyId, getCopyPage}: any
      * 송금 > 국내송금 조회
      */
     function clearAll() {
-        gridRef.current.deselectAll();
         setInfo(getRemittanceSearchInit());
+        gridRef.current.deselectAll();
         setIsSearch(true);
     }
 
@@ -124,21 +119,18 @@ export default function DomesticRemittanceRead({getPropertyId, getCopyPage}: any
      * 송금 > 국내송금 조회
      */
     async function confirm() {
-        if (gridRef.current.getSelectedRows().length < 1) {
-            return message.error('삭제할 송금 정보를 선택해주세요.')
-        }
+        const list = gridRef.current.getSelectedRows();
+        if (!list?.length) return message.warn('삭제할 송금내역을 선택해주세요.');
+
         setLoading(true);
-
-        const list = gridRef.current.getSelectedRows()
         const filterList = list.map(v => parseInt(v.remittanceId));
-
         await getData.post('remittance/deleteRemittances', {deleteRemittanceIdList: filterList}).then(v => {
             if (v.data.code === 1) {
-                searchInfo(true)
-                notificationAlert('success', '🗑️ 국내 송금 삭제완료',
+                searchInfo(true);
+                notificationAlert('success', '🗑️ 국내송금 삭제완료',
                     <>
                         <div>Inquiry No. :
-                            : {list[0].connectInquiryNo} {list.length > 1 ? ('외' + " " + (list.length - 1) + '개') : ''} 이(가)
+                            : {list[0].documentNumbers} {list.length > 1 ? ('외' + " " + (list.length - 1) + '개') : ''} 송금내역 이(가)
                             삭제되었습니다.
                         </div>
                         <div>삭제일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
@@ -146,14 +138,30 @@ export default function DomesticRemittanceRead({getPropertyId, getCopyPage}: any
                     , null, null, 2
                 )
             } else {
-                message.error(v.data.message)
+                console.warn(v?.data?.message);
+                notificationAlert('error', '⚠️ 작업실패',
+                    <>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                        alert('작업 로그 페이지 참고')
+                    },
+                    {cursor: 'pointer'}
+                )
             }
         })
-        setLoading(false);
+        .catch((err) => {
+            notificationAlert('error', '❌ 네트워크 오류 발생', <div>{err.message}</div>);
+            console.error('에러:', err);
+        })
+        .finally(() => {
+            setLoading(false);
+        });
     }
 
     return <Spin spinning={loading} tip={'국내 송금 조회중...'}>
         <ReceiveComponent componentName={'domestic_remittance_read'} searchInfo={searchInfo}/>
+        <PanelSizeUtil groupRef={groupRef} storage={'domestic_remittance_read'}/>
         <div style={{
             display: 'grid',
             gridTemplateRows: `${mini ? '270px' : '65px'} calc(100vh - ${mini ? 400 : 195}px)`,
@@ -172,10 +180,9 @@ export default function DomesticRemittanceRead({getPropertyId, getCopyPage}: any
                     type: ''
                 }
             ]} mini={mini} setMini={setMini}>
-
                 {mini ? <div>
                     <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
-                        <Panel defaultSize={sizes[0]} minSize={15}>
+                        <Panel defaultSize={sizes[0]} minSize={5}>
                             <BoxCard title={''}>
                                 <div style={{
                                     display: 'grid',
@@ -233,7 +240,7 @@ export default function DomesticRemittanceRead({getPropertyId, getCopyPage}: any
                             </BoxCard>
                         </Panel>
                         <PanelResizeHandle/>
-                        <Panel defaultSize={sizes[1]} minSize={15}>
+                        <Panel defaultSize={sizes[1]} minSize={5}>
                             <BoxCard title={''}>
                                 {inputForm({
                                     title: 'Inquiry No.',
@@ -259,7 +266,7 @@ export default function DomesticRemittanceRead({getPropertyId, getCopyPage}: any
                             </BoxCard>
                         </Panel>
                         <PanelResizeHandle/>
-                        <Panel defaultSize={sizes[2]} minSize={20}>
+                        <Panel defaultSize={sizes[2]} minSize={5}>
                             <BoxCard title={''}>
                                 {radioForm({
                                     title: '계산서 발행여부',
@@ -267,6 +274,7 @@ export default function DomesticRemittanceRead({getPropertyId, getCopyPage}: any
                                     onChange: onChange,
                                     data: info,
                                     list: [
+                                        {value: '', title: '전체'},
                                         {value: 'O', title: 'O'},
                                         {value: 'X', title: 'X'}
                                     ]
@@ -289,6 +297,7 @@ export default function DomesticRemittanceRead({getPropertyId, getCopyPage}: any
                                         onChange: onChange,
                                         data: info,
                                         list: [
+                                            {value: '', label: '전체'},
                                             {value: '요청', label: '요청'},
                                             {value: '취소', label: '취소'},
                                             {value: '반려', label: '반려'},
@@ -302,7 +311,6 @@ export default function DomesticRemittanceRead({getPropertyId, getCopyPage}: any
                         <PanelResizeHandle/>
                         <Panel defaultSize={sizes[3]} minSize={0}></Panel>
                     </PanelGroup>
-
                 </div> : <></>}
             </MainCard>
             {/*@ts-ignored*/}

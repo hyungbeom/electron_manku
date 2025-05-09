@@ -24,14 +24,9 @@ export const DriveUploadComp = forwardRef(function DriveUploadComp({
                                                                    }: any, ref) {
 
     useImperativeHandle(ref, () => ({
-        fileChange: (file) => test(file),
-        getUploadType: () => uploadTypeRef.current?.value,
+        addEstimateFile: (file) => addEstimateFile(file),
+        resetFileSorting: () => resetFileSorting()
     }));
-
-    function test(file) {
-        console.log(file, 'file:::')
-        fileChange({file: file, fileList: fileList, isEstimate: true});
-    }
 
     const fileInputRef = useRef(null);
 
@@ -44,7 +39,7 @@ export const DriveUploadComp = forwardRef(function DriveUploadComp({
     const [isDragging, setIsDragging] = useState(false);
     const [dragCounter, setDragCounter] = useState(0); // 드래그 이벤트 수를 추적
 
-    const [isLoad, setIsLoad] = useState(false);
+    const isLoad = useRef(false);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -365,7 +360,9 @@ export const DriveUploadComp = forwardRef(function DriveUploadComp({
                 setLoading(false);
             }
         } else {
-            setFileList(prev => prev.filter(f => f.uid !== file.uid));
+            if (file.originFileObj) {
+                setFileList(prev => prev.filter(f => f.uid !== file.uid));
+            }
         }
     }
 
@@ -416,10 +413,8 @@ export const DriveUploadComp = forwardRef(function DriveUploadComp({
             }
         }
         const updateFileList = [...fileList, uploadedInfo];
-
         const sortedFileList = sortFileList(updateFileList);
         setFileList(sortedFileList);
-        console.log(fileList, 'fileList:::')
 
         if (fileRef.current) {
             fileRef.current.fileList = sortedFileList;
@@ -461,6 +456,23 @@ export const DriveUploadComp = forwardRef(function DriveUploadComp({
         }
     };
 
+    /**
+     * @description 견적서 수정 > 드라이브 목록 우측 추가 버튼시 견적서 생성
+     * @param file
+     */
+    function addEstimateFile(file) {
+        fileChange({file: file, fileList: fileList, isEstimate: true});
+    }
+
+    /**
+     * @description 파일 재정렬
+     * 번호 내림차순, 03 이후 파일은 최신것만
+     */
+    function resetFileSorting () {
+        const sortedList = sortFileList(fileList);
+        setFileList(filterLatestFileList(sortedList));
+        console.log(filterLatestFileList(sortedList), '파일 재정렬!!!')
+    }
 
     /**
      * @description 파일 업로드 컴포넌트 > 파일 이름 추출
@@ -492,10 +504,13 @@ export const DriveUploadComp = forwardRef(function DriveUploadComp({
                 break;
             default:
                 break;
-        }
-        ;
+        };
 
         const sortedList = [...targetList]
+            .map(item => ({
+                ...item,
+                name: item.name ? item.name : item.fileName
+            }))
             .sort((a, b) => {
                 const aNum = extractNumbers(a.name);
                 const bNum = extractNumbers(b.name);
@@ -529,11 +544,9 @@ export const DriveUploadComp = forwardRef(function DriveUploadComp({
     }
 
     useEffect(() => {
-        if (!isLoad && fileList?.length) {
-            const sortedList = sortFileList(fileList);
-            setFileList(filterLatestFileList(sortedList));
-            console.log(fileList, 'fileList:::')
-            setIsLoad(true);
+        if (!isLoad.current && Array.isArray(fileList) && fileList.length > 0) {
+            resetFileSorting();
+            isLoad.current = true;
         }
     }, [fileList]);
 

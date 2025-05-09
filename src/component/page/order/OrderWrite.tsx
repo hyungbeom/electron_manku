@@ -31,6 +31,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
     const tableRef = useRef(null);
     const infoRef = useRef<any>(null);
     const fileRef = useRef(null);
+    const uploadRef = useRef(null);
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('order_write');
@@ -99,12 +100,14 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
     const [validate, setValidate] = useState(getOrderValidateInit());
 
     const [isFolderId, setIsFolderId] = useState(false);
+    const [driveKey, setDriveKey] = useState(0);
 
     useEffect(() => {
         setLoading(true);
         setValidate(getOrderValidateInit());
         setInfo(getOrderInit());
         setFileList([]);
+        setDriveKey(prev => prev + 1);
         setOriginFileList([]);
         setTableData([]);
         if (!isEmptyObj(copyPageInfo)) {
@@ -115,7 +118,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
             // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting
             setInfo({
                 ...getOrderInit(),
-                ...copyPageInfo,
+                ...copyPageInfo['info'],
                 writtenDate: moment().format('YYYY-MM-DD')
             });
             setTableData(copyPageInfo[listType]);
@@ -149,9 +152,9 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                 setLoading(false);
                                 return message.warn('조회데이터가 없습니다.')
                             }
-                            // setInfo(getOrderInit());
-                            // setFileList([]);
-                            // setOriginFileList([]);
+                            setInfo(getOrderInit());
+                            setFileList([]);
+                            setOriginFileList([]);
 
                             // const result = await findDocumentInfo(e, setInfo);
                             await getData.post('estimate/generateDocumentNumberFull', {
@@ -185,6 +188,8 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                     managerFaxNumber: adminParams['managerFaxNumber'],
                                     managerEmail: adminParams['managerEmail']
                                 })
+                                // folderId 가져오면 연결 inquiry 수정 못하게 막기
+                                if(estimateDetail.folderId) setIsFolderId(true);
                                 // setFileList(fileManage.getFormatFiles(src?.data?.entity.attachmentFileList));
                                 setFileList(fileManage.getFormatFiles(attachmentFileList));
                                 if (estimateDetail?.estimateDetailList?.length) {
@@ -193,7 +198,6 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                     })
                                     setTableData([...copyList, ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000 - estimateDetail?.estimateDetailList.length)])
                                 }
-                                setIsFolderId(true);
                             })
                             .finally(() => {
                                 setLoading(false);
@@ -589,8 +593,8 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                             <PanelResizeHandle/>
                             <Panel defaultSize={sizes[5]} minSize={5}>
                                 <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
-                                    <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                     info={info}/>
+                                    <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef} ref={uploadRef}
+                                                     info={info} key={driveKey}/>
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
