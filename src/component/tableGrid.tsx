@@ -109,7 +109,7 @@ const TableGrid = ({
                 getPropertyId('delivery_update', e.data.deliveryId)
             }
             if (e.data.remittanceId){
-                getPropertyId('domestic_remittance_update', e.data.remittanceId)
+                getPropertyId('remittance_domestic_update', e.data.remittanceId)
             }
             if (e.data.estimateRequestId){
                 getPropertyId('rfq_update', e.data.estimateRequestId)

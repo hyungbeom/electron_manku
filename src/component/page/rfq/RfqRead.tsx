@@ -295,6 +295,7 @@ function RfqRead({getPropertyId, getCopyPage}: any) {
                     </MainCard>
 
                     {/*@ts-ignored*/}
+
                     <TableGrid deleteComp={<Popconfirm
                         title="삭제하시겠습니까?"
                         onConfirm={deleteList}
@@ -302,6 +303,7 @@ function RfqRead({getPropertyId, getCopyPage}: any) {
                         <Button type={'primary'} danger size={'small'} style={{fontSize: 11}}>
                             <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>
                         </Button>
+
                     </Popconfirm>}
                                totalRow={totalRow}
                                getPropertyId={getPropertyId}
@@ -312,6 +314,7 @@ function RfqRead({getPropertyId, getCopyPage}: any) {
                                funcButtons={['agPrint']}
                                reply={true}
                     />
+
                 </div>
             </>
         </Spin>

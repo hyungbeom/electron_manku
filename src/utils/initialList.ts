@@ -535,6 +535,12 @@ export const orderReadInitial = {
     "limit": -1
 }
 
+export const remittanceDomesticInitial = {
+
+}
+export const remittanceDomesticSearchInitial = {
+
+}
 // 국내 송금 파라미터
 export const domesticRemittanceInitial = {
     remittanceId: '',

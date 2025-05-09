@@ -1,31 +1,27 @@
 import React, {useEffect, useRef, useState} from "react";
-import {ModalInitList, remittanceDomesticInitial} from "@/utils/initialList";
-import message from "antd/lib/message";
+import {ModalInitList} from "@/utils/initialList";
 import {
     BoxCard,
     inputForm,
     inputNumberForm,
     MainCard,
     numbFormatter,
-    numbParser, radioForm,
+    numbParser,
+    radioForm,
     textAreaForm,
     TopBoxCard
 } from "@/utils/commonForm";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
-import Radio from "antd/lib/radio";
 import _ from "lodash";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
-import {commonFunc, commonManage, fileManage} from "@/utils/commonManage";
+import {commonManage} from "@/utils/commonManage";
 import {saveRemittance} from "@/utils/api/mainApi";
 import SearchInfoModal from "@/component/SearchAgencyModal";
 import {RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
-import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 import Table from "@/component/util/Table";
-import {remittanceInfo, rfqInfo} from "@/utils/column/ProjectInfo";
-import moment from "moment";
-import {useNotificationAlert} from "@/component/util/NoticeProvider";
+import {remittanceInfo} from "@/utils/column/ProjectInfo";
 import {getData} from "@/manage/function/api";
 
 const listType = 'list';
@@ -35,12 +31,12 @@ export default function DomesticRemittanceUpdate({
                                                      getCopyPage
                                                  }: any) {
 
-    console.log(updateKey,':::')
+    console.log(updateKey, ':::')
 
 
     useEffect(() => {
-        getDataInfo().then(v=>{
-            console.log(v,'::::?????')
+        getDataInfo().then(v => {
+            console.log(v, '::::?????')
         })
     }, [updateKey['domestic_remittance_update']])
 
@@ -49,10 +45,9 @@ export default function DomesticRemittanceUpdate({
         const result = await getData.post('remittance/getRemittanceDetail', {
             "remittanceId": updateKey['domestic_remittance_update']
         });
-        console.log(result,'result:')
+        console.log(result, 'result:')
         return result?.data?.entity;
     }
-
 
 
     const groupRef = useRef<any>(null);
@@ -75,16 +70,16 @@ export default function DomesticRemittanceUpdate({
 
     const userInfo = useAppSelector((state) => state.user);
     const getRemittanceInit = () => {
-        const copyInit = _.cloneDeep(remittanceDomesticInitial)
-        const adminParams = {
-            managerAdminId: userInfo['adminId'],
-            managerAdminName: userInfo['name'],
-            createdBy: userInfo['name'],
-        }
-        return {
-            ...copyInit,
-            ...adminParams,
-        }
+        // const copyInit = _.cloneDeep(remittanceDomesticInitial)
+        // const adminParams = {
+        //     managerAdminId: userInfo['adminId'],
+        //     managerAdminName: userInfo['name'],
+        //     createdBy: userInfo['name'],
+        // }
+        // return {
+        //     ...copyInit,
+        //     ...adminParams,
+        // }
     }
     const [info, setInfo] = useState(getRemittanceInit());
 
@@ -117,20 +112,20 @@ export default function DomesticRemittanceUpdate({
         setLoading(true);
 
         const formData: any = new FormData();
-        formData.append('customerName','한성웰테크');
-        formData.append('agencyName','프로지스트');
-        formData.append('managerAdminId',29);
-        formData.append('partialRemittanceStatus',2);
-        formData.append('remarks','비고란이다~!!!');
-        formData.append('selectOrderList',JSON.stringify([100,101,105]));
-        formData.append('sendRemittanceList',JSON.stringify([{
+        formData.append('customerName', '한성웰테크');
+        formData.append('agencyName', '프로지스트');
+        formData.append('managerAdminId', 29);
+        formData.append('partialRemittanceStatus', 2);
+        formData.append('remarks', '비고란이다~!!!');
+        formData.append('selectOrderList', JSON.stringify([100, 101, 105]));
+        formData.append('sendRemittanceList', JSON.stringify([{
             "remittanceRequestDate": "2025-05-02",
             "remittanceDueDate": "2025-05-10",
             "supplyAmount": "50000000",
             "tax": "10%",
             "sendStatus": "SENT",
             "invoiceStatus": "ISSUED"
-        },{
+        }, {
             "remittanceRequestDate": "2025-05-02",
             "remittanceDueDate": "2025-05-10",
             "supplyAmount": "50000000",
@@ -140,7 +135,7 @@ export default function DomesticRemittanceUpdate({
         }]));
 
         await saveRemittance({data: formData}).then(v => {
-            console.log(v,'v:::')
+            console.log(v, 'v:::')
             // if (v?.data?.code === 1) {
             //     window.postMessage({message: 'reload', target: 'domestic_remittance_read'}, window.location.origin);
             //     notificationAlert('success', '💾 국내 송금 등록완료',
@@ -178,7 +173,6 @@ export default function DomesticRemittanceUpdate({
         commonManage.openModal(e, setIsModalOpen)
     }
 
-    console.log(info,'::::')
     return <>
         <div style={{height: 'calc(100vh - 90px)'}}>
             <PanelSizeUtil groupRef={groupRef} storage={'domestic_remittance_write'}/>
