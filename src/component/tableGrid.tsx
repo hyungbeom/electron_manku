@@ -67,7 +67,7 @@ const TableGrid = ({
      * @param event
      */
     const handleRowSelected = (event) => {
-        if (type === 'write' || 'DRWrite') {
+        if (type === 'write' || type === 'DRWrite') {
             return false; // 'write' 타입일 경우 아무 작업도 하지 않음
         }
 
