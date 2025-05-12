@@ -22,6 +22,25 @@ const colWidths = [50, 210, 45, 45, 100, 100, 100];
 
 export function PrintPoForm({data, topInfoData, totalData, bottomInfo, title, lang}) {
 
+    function numberFormat (number, currency = '') {
+        if (number === null || number === undefined || number === '') {
+            return '';
+        }
+        const num = Number(number);
+        if (isNaN(num)) {
+            return '';
+        }
+        const fixedNum = num.toFixed(2);
+        const [integerPart, decimalPart] = fixedNum.split('.');
+        const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        // return decimalPart !== '00'
+        //     ? `${formattedInteger}.${decimalPart}`
+        //     : formattedInteger;
+        return currency !== 'KRW'
+            ? `${formattedInteger}.${decimalPart}`
+            : decimalPart !== '00' ? `${formattedInteger}.${decimalPart}` : formattedInteger;
+    }
+
     return <Document>
         <Page size="A4" style={styles.page}>
             <View>
@@ -131,7 +150,7 @@ export function PrintPoForm({data, topInfoData, totalData, bottomInfo, title, la
 
                     {/* 내용 행 반복 */}
                     {data[0]?.map((row: any, i) => {
-                        const {model, quantity, unit, unitPrice} = row;
+                        const {model, quantity, unit, unitPrice, currency} = row;
                         return <> <View key={i} style={styles.tableRow}>
                             <View key={i} style={{
                                 ...styles.cell,
@@ -166,12 +185,12 @@ export function PrintPoForm({data, topInfoData, totalData, bottomInfo, title, la
                                 justifyContent: 'space-between',
                                 alignItems: 'center'
                             }}><Text
-                                style={{textAlign: 'right', paddingRight: 8}}>{totalData?.currency}</Text>
+                                style={{textAlign: 'right', paddingRight: 8}}>{currency}</Text>
                                 <Text
                                     style={{
                                         textAlign: 'right',
                                         paddingRight: 8
-                                    }}>{unitPrice?.toLocaleString()}</Text>
+                                    }}>{numberFormat(unitPrice, currency)}</Text>
                             </View>
 
                             <View style={{
@@ -181,12 +200,12 @@ export function PrintPoForm({data, topInfoData, totalData, bottomInfo, title, la
                                 justifyContent: 'space-between',
                                 alignItems: 'center'
                             }}><Text
-                                style={{textAlign: 'right', paddingRight: 8}}>{totalData?.currency}</Text>
+                                style={{textAlign: 'right', paddingRight: 8}}>{currency}</Text>
                                 <Text
                                     style={{
                                         textAlign: 'right',
                                         paddingRight: 8
-                                    }}>{(quantity * unitPrice)?.toLocaleString()}</Text>
+                                    }}>{numberFormat(quantity * unitPrice, currency)}</Text>
                             </View>
 
 
@@ -229,7 +248,7 @@ export function PrintPoForm({data, topInfoData, totalData, bottomInfo, title, la
                                 style={{
                                     textAlign: 'right',
                                     paddingRight: 8
-                                }}>{(totalData?.unitPrice)?.toLocaleString()}</Text>
+                                }}>{numberFormat(totalData?.unitPrice, totalData?.currency)}</Text>
                         </View>
                         <View style={{
                             ...styles.point,
@@ -242,7 +261,7 @@ export function PrintPoForm({data, topInfoData, totalData, bottomInfo, title, la
                                 style={{
                                     textAlign: 'right',
                                     paddingRight: 8
-                                }}>{(totalData?.total)?.toLocaleString()}</Text>
+                                }}>{numberFormat(totalData?.total, totalData?.currency)}</Text>
                         </View>
                         <View style={{
                             ...styles.point,
@@ -364,7 +383,8 @@ export function PrintPoForm({data, topInfoData, totalData, bottomInfo, title, la
                         {v.map((row: any, i) => {
                             const count: any = commonManage.getPageIndex(Object.values(data), idx - 1);
 
-                            const {model, quantity, unit, unitPrice} = row;
+                            const {model, quantity, unit, unitPrice, currency} = row;
+                            console.log(row)
                             return <> <View key={i} style={styles.tableRow}>
 
                                 <View key={i} style={{
@@ -399,11 +419,11 @@ export function PrintPoForm({data, topInfoData, totalData, bottomInfo, title, la
                                     justifyContent: 'space-between',
                                     alignItems: 'center'
                                 }}><Text
-                                    style={{textAlign: 'right', paddingRight: 8}}>{totalData?.currency}</Text>
+                                    style={{textAlign: 'right', paddingRight: 8}}>{currency}</Text>
                                     <Text style={{
                                         textAlign: 'right',
                                         paddingRight: 5
-                                    }}>{unitPrice?.toLocaleString()}</Text>
+                                    }}>{numberFormat(unitPrice, currency)}</Text>
                                 </View>
 
 
@@ -414,12 +434,12 @@ export function PrintPoForm({data, topInfoData, totalData, bottomInfo, title, la
                                     justifyContent: 'space-between',
                                     alignItems: 'center'
                                 }}><Text
-                                    style={{textAlign: 'right', paddingRight: 8}}>{totalData?.currency}</Text>
+                                    style={{textAlign: 'right', paddingRight: 8}}>{currency}</Text>
                                     <Text
                                         style={{
                                             textAlign: 'right',
                                             paddingRight: 8
-                                        }}>{(quantity * unitPrice)?.toLocaleString()}</Text>
+                                        }}>{numberFormat((quantity * unitPrice), currency)}</Text>
                                 </View>
 
                                 <View key={i} style={{
@@ -463,7 +483,7 @@ export function PrintPoForm({data, topInfoData, totalData, bottomInfo, title, la
                                     style={{
                                         textAlign: 'right',
                                         paddingRight: 8
-                                    }}>{(totalData?.unitPrice).toLocaleString()}</Text>
+                                    }}>{numberFormat(totalData?.unitPrice, totalData.currency)}</Text>
                             </View>
                             <View style={{
                                 ...styles.point,
@@ -476,7 +496,7 @@ export function PrintPoForm({data, topInfoData, totalData, bottomInfo, title, la
                                     style={{
                                         textAlign: 'right',
                                         paddingRight: 8
-                                    }}>{(totalData?.total).toLocaleString()}</Text>
+                                    }}>{numberFormat(totalData?.total, totalData.currency)}</Text>
                             </View>
                             <View style={{
                                 ...styles.point,

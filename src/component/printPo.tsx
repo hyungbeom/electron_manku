@@ -52,27 +52,45 @@ function PrintPo({
         }
     }, [count]);
 
+    function numberFormat (number, currency = '') {
+        if (number === null || number === undefined || number === '') {
+            return '';
+        }
+        const num = Number(number);
+        if (isNaN(num)) {
+            return '';
+        }
+        const fixedNum = num.toFixed(2);
+        const [integerPart, decimalPart] = fixedNum.split('.');
+        const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        // return decimalPart !== '00'
+        //     ? `${formattedInteger}.${decimalPart}`
+        //     : formattedInteger;
+        return currency !== 'KRW'
+            ? `${formattedInteger}.${decimalPart}`
+            : decimalPart !== '00' ? `${formattedInteger}.${decimalPart}` : formattedInteger;
+    }
 
     const totalData = useMemo(() => {
-
         const list = Object.values(data);
 
         let bowl = {
             quantity: 0,
-            unitPrice: 0,
-            total: 0,
+            unitPrice: 0.00,
+            total: 0.00,
             unit: list[0].length ? list[0][0]['unit'] : '',
             currency: list[0].length ? list[0][0]['currency'] : ''
         }
         list.forEach((v: any, i: number) => {
             const result = v.reduce((acc, cur, idx) => {
                 const {quantity, unitPrice} = cur
+                const total = quantity * unitPrice;
                 acc[0] += quantity;
                 acc[1] += unitPrice;
-                acc[2] += (quantity * unitPrice)
+                acc[2] += total;
 
                 return acc
-            }, [0, 0, 0])
+            }, [0, 0.00, 0.00])
             bowl["quantity"] += parseFloat(result[0]);
             bowl["unitPrice"] += parseFloat(result[1]);
             bowl["total"] += parseFloat(result[2]);
@@ -123,7 +141,7 @@ function PrintPo({
 
     function NumberInputForm({value, numb, objKey = 0}) {
 
-        const [info, setInfo] = useState({unitPrice: value.unitPrice, quantity: value.quantity});
+        const [info, setInfo] = useState({unitPrice: value.unitPrice, quantity: value.quantity, currency: value.currency});
 
         const inputRef = useRef<any>();
         const [toggle, setToggle] = useState(false);
@@ -155,7 +173,6 @@ function PrintPo({
                 return {...v, quantity: e.target.value}
             })
         }
-
 
         return <>
             <td style={{width: 100, textAlign: 'right'}}>
@@ -194,8 +211,8 @@ function PrintPo({
                          onClick={() => {
                              setToggle(true);
                          }}>
-                        <span>{!isNaN(info.unitPrice) ? data[0][0]?.currency : ''}</span>
-                        <span>{amountFormat(info.unitPrice)}</span>
+                        <span>{!isNaN(info.unitPrice) ? info.currency : ''}</span>
+                        <span>{numberFormat(info.unitPrice, info.currency)}</span>
                     </div>
 
                 }
@@ -211,9 +228,9 @@ function PrintPo({
                      onClick={() => {
                          setToggle(true);
                      }}>
-                    <span>{!isNaN(info.unitPrice * info.quantity) ? data[0][0]?.currency : ''}</span>
+                    <span>{!isNaN(info.unitPrice * info.quantity) ? info.currency : ''}</span>
                     <span
-                        className={'total'}>{!isNaN(info.unitPrice * info.quantity) ? (info.unitPrice * info.quantity).toLocaleString() : ''}</span>
+                        className={'total'}>{numberFormat((info.unitPrice * info.quantity), info.currency)}</span>
                 </div>
 
             </td>
@@ -384,13 +401,13 @@ function PrintPo({
                             <th style={{width: '15%'}}>
                                 <div style={{display: 'flex', justifyContent: 'space-between', padding: '0px 8px'}}>
                                     <span>{data[0][0]?.currency}</span>
-                                    <span>        {(totalData?.unitPrice).toLocaleString()}</span>
+                                    <span>{numberFormat(totalData?.unitPrice, data[0][0]?.currency)}</span>
                                 </div>
                             </th>
                             <th style={{width: '15%', textAlign: 'right', paddingRight: 10}}>
                                 <div style={{display: 'flex', justifyContent: 'space-between', padding: '0px 8px'}}>
                                     <span>{data[0][0]?.currency}</span>
-                                    <span>{(totalData?.total).toLocaleString()}</span>
+                                    <span>{numberFormat(totalData?.total, data[0][0]?.currency)}</span>
                                 </div>
 
                             </th>
@@ -493,13 +510,13 @@ function PrintPo({
                                     <th style={{width: '15%'}}>
                                         <div style={{display: 'flex', justifyContent: 'space-between', padding: '0px 8px'}}>
                                             <span>{data[0][0]?.currency}</span>
-                                            <span>        {(totalData?.unitPrice).toLocaleString()}</span>
+                                            <span>{numberFormat(totalData?.unitPrice)}</span>
                                         </div>
                                     </th>
                                     <th style={{width: '15%', textAlign: 'right', paddingRight: 10}}>
                                         <div style={{display: 'flex', justifyContent: 'space-between', padding: '0px 8px'}}>
                                             <span>{data[0][0]?.currency}</span>
-                                            <span>{(totalData?.total).toLocaleString()}</span>
+                                            <span>{numberFormat(totalData?.total)}</span>
                                         </div>
 
                                     </th>
