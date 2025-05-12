@@ -19,10 +19,10 @@ export const getData = axios.create({
     baseURL: API_URL,
     httpsAgent: agent,
     headers: {
-        authorization: `Bearer ${getCookie(null,'token')}`,
+        authorization: `Bearer ${getCookie(null, 'token')}`,
         "Content-Type": `application/json`,
-        "Accept-Language": getCookie(null,'lang') ? getCookie(null,'lang') : 'ko-KR',
-        "refresh_token": getCookie(null,'refreshToken'),
+        "Accept-Language": getCookie(null, 'lang') ? getCookie(null, 'lang') : 'ko-KR',
+        "refresh_token": getCookie(null, 'refreshToken'),
     }
 });
 
@@ -31,24 +31,23 @@ export const getLoginData = axios.create({
     baseURL: API_URL,
     httpsAgent: agent,
     headers: {
-        authorization: `Bearer ${getCookie(null,'token')}`,
+        authorization: `Bearer ${getCookie(null, 'token')}`,
         "Content-Type": `application/json`,
-        "Accept-Language": getCookie(null,'lang') ? getCookie(null,'lang') : 'ko-KR',
+        "Accept-Language": getCookie(null, 'lang') ? getCookie(null, 'lang') : 'ko-KR',
         // @ts-ignore
-        "refresh_token": getCookie(null,'refreshToken'),
+        "refresh_token": getCookie(null, 'refreshToken'),
     }
 });
-
 
 
 export const getFormData = axios.create({
     baseURL: API_URL,
     httpsAgent: agent,
     headers: {
-        authorization: `Bearer ${getCookie(null,'token')}`,
-        "Accept-Language": getCookie(null,'lang') ? getCookie(null,'lang') : 'ko-KR',
+        authorization: `Bearer ${getCookie(null, 'token')}`,
+        "Accept-Language": getCookie(null, 'lang') ? getCookie(null, 'lang') : 'ko-KR',
         // @ts-ignore
-        "refresh_token": getCookie(null,'refreshToken'),
+        "refresh_token": getCookie(null, 'refreshToken'),
     },
     transformRequest: [(data) => {
         if (!(data instanceof FormData) && typeof data === 'object') {
