@@ -1,27 +1,17 @@
 import React, {useEffect, useRef, useState} from "react";
-import {deliveryDaehanInitial, domesticRemittanceInitial, ModalInitList} from "@/utils/initialList";
-import {
-    BoxCard,
-    inputForm,
-    inputNumberForm,
-    MainCard,
-    numbFormatter,
-    numbParser,
-    radioForm,
-    textAreaForm,
-    TopBoxCard
-} from "@/utils/commonForm";
+import {domesticRemittanceInitial, ModalInitList} from "@/utils/initialList";
+import {BoxCard, inputForm, MainCard, radioForm, textAreaForm, TopBoxCard} from "@/utils/commonForm";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import _ from "lodash";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {commonFunc, commonManage, fileManage} from "@/utils/commonManage";
 import {saveRemittance} from "@/utils/api/mainApi";
 import SearchInfoModal from "@/component/SearchAgencyModal";
-import {FileAddFilled, FileOutlined, FolderOpenOutlined, RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
+import {FolderOpenOutlined, RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
-import {orderInfo, remittanceInfo} from "@/utils/column/ProjectInfo";
+import {remittanceInfo} from "@/utils/column/ProjectInfo";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import moment from "moment";
 import Tabs from "antd/lib/tabs";
@@ -46,7 +36,7 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('domestic_remittance_write');
-        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 25, 5]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [25, 25, 25, 5]; // 기본값 [50, 50, 50]
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
@@ -119,13 +109,11 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
         const selectOrderList = [];
         gridRef.current.forEachNode(node => selectOrderList.push(node.data));
         if (!selectOrderList?.length) return message.warn('발주서 데이터가 1개 이상이여야 합니다.');
-
         const selectOrderNos = selectOrderList.map(item => item.orderDetailId)
         console.log(selectOrderList, '선택한 발주서 리스트:::')
 
         const tableList = tableRef.current?.getSourceData();
         if (!tableList?.length) return message.warn('송금 데이터가 1개 이상이여야 합니다.');
-
         const filterTableList = commonManage.filterEmptyObjects(tableList, ['supplyAmount'])
         if (!filterTableList.length) {
             return message.warn('하위 데이터가 1개 이상이여야 합니다.');
@@ -137,15 +125,15 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
 
         const remittanceList = filterTableList.map(v => {
             const tax = v.supplyAmount ? v.supplyAmount * 0.1 : 0;
+            const { total, ...item } = v;
             return {
-                ...v,
+                ...item,
                 tax,
-                total: (v.supplyAmount || 0) + tax
+                // total: (v.supplyAmount || 0) + tax
             }
         })
         console.log(remittanceList, '부분송금 입력한 리스트:::')
         console.log(info, 'info::::')
-        return;
 
         setLoading(true);
 
@@ -153,33 +141,38 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
         Object.entries(info).forEach(([key, value]) => {
             formData.append(key, value ?? '');
         });
-        // formData.append('customerName','한성웰테크');
-        // formData.append('agencyName','프로지스트');
-        // formData.append('managerAdminId',29);
-        // formData.append('partialRemittanceStatus',2);
-        // formData.append('remarks','비고란이다~!!!');
-        formData.append('selectOrderList',JSON.stringify([100,101,105]));
+        formData.append('selectOrderList',JSON.stringify(selectOrderNos));
         formData.append('sendRemittanceList',JSON.stringify(remittanceList));
 
         await saveRemittance({data: formData})
             .then(v => {
-            console.log(v,'v:::')
-            // if (v?.data?.code === 1) {
-            //     window.postMessage({message: 'reload', target: 'domestic_remittance_read'}, window.location.origin);
-            //     notificationAlert('success', '💾 국내 송금 등록완료',
-            //         <>
-            //             <div>Inquiry No. : {info.connectInquiryNo}</div>
-            //             <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
-            //         </>
-            //         ,
-            //         function () {
-            //             getPropertyId('domestic_remittance_update', v.data?.entity?.remittanceId)
-            //         },
-            //         {cursor: 'pointer'}
-            //     )
-            // } else {
-            //     message.error(v?.data?.message);
-            // }
+                console.log(v,'v:::')
+                if (v?.data?.code === 1) {
+                    window.postMessage({message: 'reload', target: 'domestic_remittance_read'}, window.location.origin);
+                    notificationAlert('success', '💾 국내 송금 등록완료',
+                        <>
+                            <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                        </>
+                        ,
+                        function () {
+                            getPropertyId('domestic_remittance_update', v?.data?.entity?.remittanceId)
+                        },
+                        {cursor: 'pointer'}
+                    )
+                    clearAll();
+                    getPropertyId('domestic_remittance_update', v?.data?.entity?.remittanceId)
+                } else {
+                    console.warn(v?.data?.message);
+                    notificationAlert('error', '⚠️ 작업실패',
+                        <>
+                            <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                        </>
+                        , function () {
+                            alert('작업 로그 페이지 참고')
+                        },
+                        {cursor: 'pointer'}
+                    )
+                }
             })
             .finally(() => {
                 setLoading(false);
@@ -303,8 +296,7 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
                 return sum + q * p;
             }, 0);
 
-            const orderDetailIds = updatedList.map(row => row.orderDetailId).join(', ');
-
+            // Inquiry No. 정리
             const connectInquiryNos = [];
             for (const item of updatedList) {
                 const inquiryNo = item.documentNumberFull;
@@ -312,13 +304,15 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
                     connectInquiryNos.push(inquiryNo);
                 }
             }
+            // 항목 번호 정리
+            const orderDetailIds = updatedList.map(row => row.orderDetailId).join(', ');
 
             setInfo(prevInfo => ({
                 ...prevInfo,
                 customerName: updatedList[0].customerName,
                 agencyName: updatedList[0].agencyName,
-                connectInquiryNo: connectInquiryNos.join(', '),
-                orderDetailIds,
+                connectInquiryNo: Array.isArray(connectInquiryNos) ? connectInquiryNos.join(', ') : '',
+                orderDetailIds: orderDetailIds,
                 totalAmount: total,
                 balance: total - (prevInfo.partialRemittance || 0),
             }));

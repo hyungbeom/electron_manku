@@ -553,8 +553,8 @@ export const domesticRemittanceInitial = {
     balance: '',
     partialRemittanceStatus: '',
     remarks: '',
-    selectOrderList: [],
-    sendRemittanceList: []
+    // selectOrderList: [],
+    // sendRemittanceList: []
 }
 
 

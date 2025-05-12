@@ -83,7 +83,6 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false, event3: false});
 
     const userInfo = useAppSelector((state) => state.user);
-    console.log(userInfo)
     const adminParams = {
         managerAdminId: userInfo['adminId'],
         managerAdminName: userInfo['name'],
@@ -437,11 +436,11 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
                                 <select name="languages" id="managerAdminId" onChange={e => {
                                     const member = memberList.find(v => v.adminId === parseInt(e.target.value))
                                     const managerInfo = {
-                                        managerId: info?.agencyCode?.toUpperCase().startsWith('K') ? member?.name : member?.adminName,
+                                        // managerId: info?.agencyCode?.toUpperCase().startsWith('K') ? member?.name : member?.adminName,
                                         managerAdminId: member?.adminId,
-                                        managerPhoneNumber: member?.contactNumber,
-                                        managerFaxNumber: member?.faxNumber,
-                                        managerEmail: member?.email
+                                        // managerPhoneNumber: member?.contactNumber,
+                                        // managerFaxNumber: member?.faxNumber,
+                                        // managerEmail: member?.email
                                     }
                                     setInfo(v => ({...v, ...managerInfo}))
                                 }} style={{
@@ -534,15 +533,17 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
                                 <BoxCard title={<div style={{display: 'flex', justifyContent: 'space-between'}}><span>담당자 정보</span><span>
                                     <RollbackOutlined style={{cursor: 'pointer'}}
                                     onClick={() => {
-                                        const member = memberList.find(v => v.adminId === parseInt(info.managerAdminId));
-                                        console.log(member)
-                                        const managerInfo = {
-                                            managerId: info?.agencyCode?.toUpperCase().startsWith('K') ? member?.name : member?.adminName,
-                                            managerPhoneNumber: member?.contactNumber,
-                                            managerFaxNumber: member?.faxNumber,
-                                            managerEmail: member?.email
-                                        }
-                                        setInfo(v => ({...v, ...managerInfo}))
+                                        // const member = memberList.find(v => v.adminId === parseInt(info.managerAdminId));
+                                        // console.log(member)
+                                        // const managerInfo = {
+                                        //     managerId: info?.agencyCode?.toUpperCase().startsWith('K') ? member?.name : member?.adminName,
+                                        //     managerPhoneNumber: member?.contactNumber,
+                                        //     managerFaxNumber: member?.faxNumber,
+                                        //     managerEmail: member?.email
+                                        // }
+                                        // setInfo(v => ({...v, ...managerInfo}))
+                                        const member = memberList.find(v => v.adminId === parseInt(adminParams?.managerAdminId));
+                                        setInfo(v => ({...v, managerId: info?.agencyCode?.toUpperCase().startsWith('K') ? member?.name : member?.englishName}))
                                     }}
                                 /></span></div>}>
                                     {inputForm({title: '작성자', id: 'managerId', onChange: onChange, data: info})}
