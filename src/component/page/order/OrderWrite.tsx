@@ -171,8 +171,8 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                     estimateManager: findManager?.name,
                                     customerManagerName: estimateDetail?.managerName,
                                     customerManagerPhoneNumber: estimateDetail?.phoneNumber,
-                                    customerManagerEmail: estimateDetail?.faxNumber,
-                                    customerManagerFaxNumber: estimateDetail?.email ? estimateDetail?.email : '',
+                                    customerManagerEmail: estimateDetail?.customerManagerEmail,
+                                    customerManagerFaxNumber: estimateDetail?.faxNumber,
                                     // validityPeriod: '견적 발행 후 10일간',
                                     // paymentTerms: '발주시 50% / 납품시 50%',
                                     // shippingTerms: '귀사도착도',
@@ -403,15 +403,15 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                 <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>담당자</div>
                                 <select name="languages" id="managerAdminId" onChange={e => {
                                     // 담당자 정보가 현재 작성자 정보가 나와야한다고 함
-                                    // const member = memberList.find(v => v.adminId === parseInt(e.target.value))
-                                    // const managerInfo = {
-                                    //     managerId: info?.agencyCode?.toUpperCase().startsWith('K') ? member?.name : member?.adminName,
-                                    //     managerAdminId: member?.adminId,
-                                    //     managerPhoneNumber: member?.contactNumber,
-                                    //     managerFaxNumber: member?.faxNumber,
-                                    //     managerEmail: member?.email
-                                    // }
-                                    // setInfo(v => ({...v, ...managerInfo}))
+                                    const member = memberList.find(v => v.adminId === parseInt(e.target.value))
+                                    const managerInfo = {
+                                        // managerId: info?.agencyCode?.toUpperCase().startsWith('K') ? member?.name : member?.adminName,
+                                        managerAdminId: member?.adminId,
+                                        // managerPhoneNumber: member?.contactNumber,
+                                        // managerFaxNumber: member?.faxNumber,
+                                        // managerEmail: member?.email
+                                    }
+                                    setInfo(v => ({...v, ...managerInfo}))
                                 }} style={{
                                     outline: 'none',
                                     border: '1px solid lightGray',
@@ -528,7 +528,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                         //     managerEmail: member?.email
                                         // }
                                         // setInfo(v => ({...v, ...managerInfo}))
-                                        const member = memberList.find(v => v.adminId === parseInt(info?.managerAdminId));
+                                        const member = memberList.find(v => v.adminId === parseInt(adminParams?.managerAdminId));
                                         setInfo(v => ({...v, managerId: info?.agencyCode?.toUpperCase().startsWith('K') ? member?.name : member?.englishName}))
                                     }}
                                 /></span></div>}>

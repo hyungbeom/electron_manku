@@ -26,12 +26,12 @@ export default function TopInfo({count, info, type, memberList, getTopInfoData})
 
         getTopInfoData({
             writtenDate: infoData.writtenDate,
-            name: findMember?.name + ' ' + findMember?.position,
+            name: findMember?.name ? findMember?.name + ' ' + findMember?.position : '',
             documentNumberFull: infoData.documentNumberFull,
             contactNumber: findMember?.contactNumber,
-            customerName: infoData.customerName,
+            customerName: infoData?.customerName,
             email: findMember?.email,
-            customerManagerName: infoData.managerName,
+            customerManagerName: infoData?.managerName,
             validityPeriod: infoData.validityPeriod,
             customerManagerPhone: infoData.phoneNumber,
             paymentTerms: infoData.paymentTerms,
@@ -44,7 +44,7 @@ export default function TopInfo({count, info, type, memberList, getTopInfoData})
 
         return [[
             {title: '견적일자', value: infoData.writtenDate, id: 'writtenDate'},
-            {title: '담당자', value: findMember?.name + ' ' + findMember?.position, id: 'name'},
+            {title: '담당자', value: findMember?.name ? findMember?.name + ' ' + findMember?.position : '', id: 'name'},
             {title: '견적서 No', value: infoData.documentNumberFull, id: 'documentNumberFull'},
             {title: '연락처', value: findMember?.contactNumber, id: 'contactNumber'},
             {title: '고객사', value: infoData.customerName, id: 'customerName'},

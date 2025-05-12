@@ -5,7 +5,6 @@ import Table from "@/component/util/Table";
 export default function Remittance({tableData, tableRef, setInfo}) {
 
     function partialRemittance (sumSupplyAmount) {
-        console.log(sumSupplyAmount, 'table 합계');
         const amount = Number(sumSupplyAmount);
         if (isNaN(amount)) {
             return;

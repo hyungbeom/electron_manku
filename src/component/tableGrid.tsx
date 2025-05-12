@@ -99,47 +99,48 @@ const TableGrid = ({
 
     const handleDoubleClicked = (e) => {
         if (type === 'read') {
-            if (e.data.orderStatusId){
-                getPropertyId('store_update', e.data.orderStatusId)
-            }
-            if (e.data.projectId){
+            if (e.data.projectId) { // 프로젝트 수정
                 getPropertyId('project_update', e.data.projectId)
             }
-            if (e.data.deliveryId){
-                getPropertyId('delivery_update', e.data.deliveryId)
-            }
-            if (e.data.remittanceId){
-                getPropertyId('remittance_domestic_update', e.data.remittanceId)
-            }
-            if (e.data.estimateRequestId){
+            if (e.data.estimateRequestId) { // 견적의뢰 수정
                 getPropertyId('rfq_update', e.data.estimateRequestId)
             }
-            if (e.data.estimateId){
+            if (e.data.estimateId) { // 견적서 수정
                 getPropertyId('estimate_update', e.data.estimateId)
             }
-            if (e.data.orderId){
+            if (e.data.orderId) { // 발주서 수정
                 getPropertyId('order_update', e.data.orderId)
             }
-            if (e.data.makerId){
-                getPropertyId('maker_update', e.data.makerId)
+            if (e.data.orderStatusId) { // 입고 수정
+                getPropertyId('store_update', e.data.orderStatusId)
             }
-            if (e.data.agencyId){
+            if (e.data.deliveryId) { // 배송 수정
+                getPropertyId('delivery_update', e.data.deliveryId)
+            }
+            if (e.data.remittanceId) { // 국내 송금 수정
+                getPropertyId('domestic_remittance_update', e.data.remittanceId)
+            }
+            if (e.data.agencyId) { // 국내 매입처 수정
                 getPropertyId('domestic_agency_update', e.data.agencyId)
             }
-            if (e.data.overseasAgencyId)
+            if (e.data.overseasAgencyId) // 해외 매입처 수정
                 getPropertyId('overseas_agency_update', e.data.overseasAgencyId)
-            if (e.data.customerId)
+            if (e.data.customerId) // 국내 고객사 수정
                 getPropertyId('domestic_customer_update', e.data.customerId)
-            if (e.data.overseasCustomerId) {
+            if (e.data.overseasCustomerId) { // 해외 고객사 수정
                 getPropertyId('overseas_customer_update', e.data.overseasCustomerId)
             }
-            if (e.data.officialDocumentId)
-                getPropertyId('code_diploma_update', e.data.officialDocumentId)
-            if (e.data.companyAccountId) {
+            if (e.data.makerId){ // 메이커 수정
+                getPropertyId('maker_update', e.data.makerId)
+            }
+            if (e.data.companyAccountId) { // 회사 계정 수정
                 getPropertyId('company_account_update', e.data.companyAccountId)
             }
-            if (e.data.remainingQuantity) {
+            if (e.data.remainingQuantity) { // 재고 수정
                 getPropertyId('source_update', e.data)
+            }
+            if (e.data.officialDocumentId) {
+                getPropertyId('code_diploma_update', e.data.officialDocumentId)
             }
         }
         // 송금 등록/수정시 하단에 선택한 발주서 항목 더블클릭
