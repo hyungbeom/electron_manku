@@ -1,11 +1,8 @@
 // 폰트 설정 (기본 한글 폰트 필요 시 추가해야 함)
 import styles from "@/component/util/Common";
 import {Document, Font, Image, Page, Text, View} from '@react-pdf/renderer';
-import React, {useEffect, useState} from "react";
+import React from "react";
 import {commonManage} from "@/utils/commonManage";
-import {paperTopInfo} from "@/utils/common";
-import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
-import {linearGradient} from "html2canvas/dist/types/css/types/functions/linear-gradient";
 
 Font.register({
     family: 'NotoSansKR',
@@ -62,7 +59,7 @@ export function PrintPoForm({data, topInfoData, totalData, bottomInfo, title, la
                                 </View>
                             </View>
                             <View style={styles.centerTitle}>
-                                <Text style={styles.title}>발    주    서</Text>
+                                <Text style={styles.title}>발 주 서</Text>
                             </View>
                             <View style={styles.rightInfo}>
                                 <Image src="/manku_stamp_ko.png" style={styles.info}/>
@@ -87,7 +84,7 @@ export function PrintPoForm({data, topInfoData, totalData, bottomInfo, title, la
                                 <Text style={styles.title2}>ORDER</Text>
                             </View>
                             <View style={styles.rightInfo}>
-                                <Image src="/manku_stamp_en.jpg" style={styles.info}/>
+                                <Image src="/manku_stamp_en.png" style={styles.info}/>
                             </View>
                         </View>
                 }
@@ -326,7 +323,7 @@ export function PrintPoForm({data, topInfoData, totalData, bottomInfo, title, la
                                     </View>
                                 </View>
                                 <View style={styles.centerTitle}>
-                                    <Text style={styles.title}>발    주    서</Text>
+                                    <Text style={styles.title}>발 주 서</Text>
                                 </View>
                                 <View style={styles.rightInfo}>
                                     <Image src="/manku_stamp_ko.png" style={styles.info}/>
@@ -351,7 +348,7 @@ export function PrintPoForm({data, topInfoData, totalData, bottomInfo, title, la
                                     <Text style={styles.title2}>ORDER</Text>
                                 </View>
                                 <View style={styles.rightInfo}>
-                                    <Image src="/manku_stamp_en.jpg" style={styles.info}/>
+                                    <Image src="/manku_stamp_en.png" style={styles.info}/>
                                 </View>
                             </View>
                     }
