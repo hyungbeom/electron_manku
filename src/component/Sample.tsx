@@ -30,6 +30,7 @@ function LoginButton() {
         const clientId = "045c4017-c001-4d09-b0e2-a1bb0c222b3f";
         const redirectUri = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://manku.progist.co.kr';
         const authority = "https://login.microsoftonline.com/a4f5fe9e-ff2c-4466-b78a-af1ef5748673/oauth2/v2.0/authorize";
+
         const scopes = ["User.Read", "offline_access", "Files.Read", "Files.ReadWrite","Tasks.ReadWrite","Calendars.ReadWrite", "Contacts.Read", "People.Read","Sites.ReadWrite.All", "Mail.ReadWrite",'MailboxSettings.ReadWrite'];
 
         const codeVerifier = generateCodeVerifier();
