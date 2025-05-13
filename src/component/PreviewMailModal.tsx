@@ -125,6 +125,7 @@ function generateFormattedOutputWithDocumentNumbers(data, code) {
 
 function PreviewMailModal({data, isModalOpen, setIsModalOpen, fileList}) {
 
+    console.log(fileList,'fileList::')
     const userInfo = useAppSelector((state) => state.user);
     const notificationAlert = useNotificationAlert();
     const [info, setInfo] = useState<any>();
@@ -343,6 +344,7 @@ function PreviewMailModal({data, isModalOpen, setIsModalOpen, fileList}) {
 
                     {info?.map((src, idx) => {
 
+
                         return <div>
                             <div style={{display: 'grid', gridTemplateColumns: '100px 1fr', gap: 5}}>
                                 <Button style={{fontSize : 12}} size={'small'} type={'dashed'} onClick={()=>{
@@ -400,25 +402,22 @@ function PreviewMailModal({data, isModalOpen, setIsModalOpen, fileList}) {
                                 rows: 15
                             })}
                             <Card size={'small'} title={'첨부파일'} style={{marginTop: 15}}>
-                                {src.detailList.map(v => {
+                                {fileList[src?.agencyCode].map(value => {
                                     return <>
-                                        {
-                                            fileList[v[0].estimateRequestId]?.map(v =>
-                                                <>
-                                                    <div style={{display: 'flex'}}>
-                                                        <Checkbox style={{paddingRight: 10}}
-                                                                  onChange={e => onCheck(e, v, idx)}/>
-                                                        <div style={{
-                                                            fontSize: 12,
-                                                            cursor: 'pointer',
-                                                            color: 'blue'
-                                                        }} onClick={e => preview(e, v)}> {v.fileName}
-                                                        </div>
-                                                    </div>
-                                                </>
-                                            )
-                                        }
-                                        {!src.detailList.length ? <div></div> : <></>}
+                                        <div style={{display: 'flex'}}>
+                                            <Checkbox style={{paddingRight: 10}}
+                                                      onChange={e => onCheck(e, value, idx)}
+                                            />
+                                            <div style={{
+                                                fontSize: 12,
+                                                cursor: 'pointer',
+                                                color: 'blue'
+                                            }}
+                                                 onClick={e => preview(e, value)}
+                                            >
+                                                {value.fileName}
+                                            </div>
+                                        </div>
                                     </>
                                 })
                                 }

@@ -195,6 +195,7 @@ export default function DomesticRemittanceUpdate({ updateKey, getCopyPage }: any
         const tableList = tableRef.current?.getSourceData();
         if (!tableList?.length) return message.warn('송금 데이터가 1개 이상이여야 합니다.');
         const filterTableList = commonManage.filterEmptyObjects(tableList, ['supplyAmount'])
+
         if (!filterTableList.length) {
             return message.warn('하위 데이터가 1개 이상이여야 합니다.');
         }
