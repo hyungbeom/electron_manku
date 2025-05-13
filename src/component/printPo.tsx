@@ -60,15 +60,16 @@ function PrintPo({
         if (isNaN(num)) {
             return '';
         }
-        const fixedNum = num.toFixed(2);
+        const fixedNum = num.toFixed(3);
         const [integerPart, decimalPart] = fixedNum.split('.');
+        const trimmedDecimal = decimalPart.slice(0, 2);
         const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
         // return decimalPart !== '00'
         //     ? `${formattedInteger}.${decimalPart}`
         //     : formattedInteger;
         return currency !== 'KRW'
-            ? `${formattedInteger}.${decimalPart}`
-            : decimalPart !== '00' ? `${formattedInteger}.${decimalPart}` : formattedInteger;
+            ? `${formattedInteger}.${trimmedDecimal}`
+            : trimmedDecimal !== '00' ? `${formattedInteger}.${trimmedDecimal}` : formattedInteger;
     }
 
     const totalData = useMemo(() => {

@@ -18,6 +18,7 @@ export const treeData = [
     {
         title: "프로젝트",
         key: "project",
+        disabled: true,
         children: [
             {title: "프로젝트 등록", key: "project_write"},
             {title: "프로젝트 조회", key: "project_read"}
@@ -48,23 +49,22 @@ export const treeData = [
     }, {
         title: "입고",
         key: "store",
-
+        disabled: true,
         children: [
-            {title: "입고 등록", key: "store_write", disabled: true,},
-            {title: "입고 조회", key: "store_read"}
+            {title: "입고 등록", key: "store_write", disabled: true},
+            {title: "입고 조회", key: "store_read", disabled: true}
         ],
     }, {
         title: "배송",
         key: "delivery",
-
+        disabled: true,
         children: [
-            {title: "배송 등록", key: "delivery_write"},
-            {title: "배송 조회", key: "delivery_read"}
+            {title: "배송 등록", key: "delivery_write", disabled: true},
+            {title: "배송 조회", key: "delivery_read", disabled: true}
         ],
     }, {
         title: "송금",
         key: "remittance",
-
         children: [
             // {title: "국내", key: "remittance_domestic",     children: [
             //         {title: "국내송금 등록", key: "remittance_domestic_write"},
@@ -76,13 +76,12 @@ export const treeData = [
             //     ]},
             {title: "국내송금 등록", key: "domestic_remittance_write"},
             {title: "국내송금 조회", key: "domestic_remittance_read"},
-            {title: "해외송금 등록", key: "overseas_remittance_write"},
-            {title: "해외송금 조회", key: "overseas_remittance_read"}
+            {title: "해외송금 등록", key: "overseas_remittance_write", disabled: true},
+            {title: "해외송금 조회", key: "overseas_remittance_read", disabled: true}
         ],
     }, {
         title: "데이터관리",
         key: "data",
-
         children: [
             {
                 title: "매입처", key: "agency", children: [
@@ -120,8 +119,6 @@ export const treeData = [
             },
 
             {title: "HS CODE 조회", key: "hscode_read"},
-
-
         ],
     },
 ];

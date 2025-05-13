@@ -91,7 +91,7 @@ export default function DomesticRemittanceUpdate({ updateKey, getCopyPage }: any
 
     const getOrderInit = () => {
         return {
-            orderId: 0,
+            orderId: '',
             uploadType: 5,
             folderId: ''
         }
@@ -116,7 +116,8 @@ export default function DomesticRemittanceUpdate({ updateKey, getCopyPage }: any
                 managerAdminName: remittanceDetail['managerAdminName'] ? remittanceDetail['managerAdminName'] : '',
                 createdBy: remittanceDetail['createdBy'] ? remittanceDetail['createdBy'] : ''
             })
-            setSelectOrderList(selectOrderList);
+            // setSelectOrderList(selectOrderList);
+            modalSelected(selectOrderList);
             const sendRemittanceList = [...remittanceList, ...commonFunc.repeatObject(remittanceInfo['write']['defaultData'], 100 - remittanceList?.length)];
             setSendRemittanceList(sendRemittanceList);
         })
@@ -157,6 +158,15 @@ export default function DomesticRemittanceUpdate({ updateKey, getCopyPage }: any
                 return sum + q * p;
             }, 0);
 
+            const remittance = remittanceDetail.reduce((sum, row) => {
+                const supplyAmount = parseFloat(row.supplyAmount);
+                const tax = parseFloat(row.tax);
+
+                const s = isNaN(supplyAmount) ? 0 : supplyAmount;
+                const t = isNaN(tax) ? 0 : tax;
+
+                return sum + (s + t);
+            }, 0);
 
             return {
                 remittanceDetail: {
@@ -164,8 +174,9 @@ export default function DomesticRemittanceUpdate({ updateKey, getCopyPage }: any
                     connectInquiryNo: Array.isArray(connectInquiryNos) ? connectInquiryNos.join(', ') : '',
                     orderDetailIds: Array.isArray(selectOrderList) ? selectOrderList.join(', ') : '',
                     managerAdminName : findAdmin?.name || '',
-                    totalAmount: total,
-                    balance: total - (restDetail.partialRemittance || 0)
+                    // totalAmount: total,
+                    partialRemittance: remittance.toLocaleString(),
+                    // balance: total - (restDetail.partialRemittance || 0)
                 },
                 selectOrderList: orderList,
                 remittanceList: remittanceDetail
@@ -195,7 +206,6 @@ export default function DomesticRemittanceUpdate({ updateKey, getCopyPage }: any
         const tableList = tableRef.current?.getSourceData();
         if (!tableList?.length) return message.warn('송금 데이터가 1개 이상이여야 합니다.');
         const filterTableList = commonManage.filterEmptyObjects(tableList, ['supplyAmount'])
-
         if (!filterTableList.length) {
             return message.warn('하위 데이터가 1개 이상이여야 합니다.');
         }
@@ -213,6 +223,8 @@ export default function DomesticRemittanceUpdate({ updateKey, getCopyPage }: any
                 // total: (v.supplyAmount || 0) + tax
             }
         })
+        console.log(remittanceList, '부분송금 입력한 리스트:::')
+        console.log(info, 'info::::')
 
         setLoading(true);
 
@@ -223,40 +235,33 @@ export default function DomesticRemittanceUpdate({ updateKey, getCopyPage }: any
         formData.append('selectOrderList',JSON.stringify(selectOrderNos));
         formData.append('sendRemittanceList',JSON.stringify(remittanceList));
 
-
         await updateRemittance({data: formData})
-
-        // await saveRemittance({data: formData})
-        //     .then(v => {
-        //         console.log(v,'v:::')
-        //         if (v?.data?.code === 1) {
-        //             window.postMessage({message: 'reload', target: 'domestic_remittance_read'}, window.location.origin);
-        //             notificationAlert('success', '💾 국내 송금 등록완료',
-        //                 <>
-        //                     <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
-        //                 </>
-        //                 ,
-        //                 // function () {
-        //                 //     getPropertyId('domestic_remittance_update', v?.data?.entity?.remittanceId)
-        //                 // },
-        //                 // {cursor: 'pointer'}
-        //             )
-        //         } else {
-        //             console.warn(v?.data?.message);
-        //             notificationAlert('error', '⚠️ 작업실패',
-        //                 <>
-        //                     <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
-        //                 </>
-        //                 , function () {
-        //                     alert('작업 로그 페이지 참고')
-        //                 },
-        //                 {cursor: 'pointer'}
-        //             )
-        //         }
-        //     })
-        //     .finally(() => {
-        //         setLoading(false);
-        //     });
+            .then(v => {
+                console.log(v,'v:::')
+                if (v?.data?.code === 1) {
+                    window.postMessage({message: 'reload', target: 'domestic_remittance_read'}, window.location.origin);
+                    notificationAlert('success', '💾 국내 송금 수정완료',
+                        <>
+                            <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                        </>
+                        , null, null, 2
+                    )
+                } else {
+                    console.warn(v?.data?.message);
+                    notificationAlert('error', '⚠️ 작업실패',
+                        <>
+                            <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                        </>
+                        , function () {
+                            alert('작업 로그 페이지 참고')
+                        },
+                        {cursor: 'pointer'}
+                    )
+                }
+            })
+            .finally(() => {
+                setLoading(false);
+            });
     }
 
     /**
@@ -360,15 +365,24 @@ export default function DomesticRemittanceUpdate({ updateKey, getCopyPage }: any
                 }
             }
 
-            setInfo(prevInfo => ({
-                ...prevInfo,
-                customerName: updatedList[0].customerName,
-                agencyName: updatedList[0].agencyName,
-                connectInquiryNo: connectInquiryNos.join(', '),
-                orderDetailIds,
-                totalAmount: total,
-                balance: total - (prevInfo.partialRemittance || 0),
-            }));
+            setInfo(prevInfo => {
+                const prevPartialRemittance = prevInfo.partialRemittance || 0;
+                const partialRemittance = typeof prevPartialRemittance === "string"
+                    ? parseFloat(prevPartialRemittance.replace(/,/g, '')) || 0
+                    : prevPartialRemittance;
+
+                const balance= total - partialRemittance;
+
+                return {
+                    ...prevInfo,
+                    customerName: updatedList[0].customerName ? updatedList[0].customerName : prevInfo.customerName,
+                    agencyName: updatedList[0].agencyName ? updatedList[0].agencyName : prevInfo.agencyName,
+                    connectInquiryNo: connectInquiryNos.join(', '),
+                    orderDetailIds,
+                    totalAmount: total.toLocaleString(),
+                    balance: balance.toLocaleString()
+                }
+            });
             return updatedList;
         });
     }
@@ -436,13 +450,72 @@ export default function DomesticRemittanceUpdate({ updateKey, getCopyPage }: any
                         <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
                             <Panel defaultSize={sizes[0]} minSize={5}>
                                 <BoxCard title={'금액 정보'}>
-                                    {inputForm({
-                                        title: '총액',
-                                        id: 'totalAmount',
-                                        onChange: onChange,
-                                        data: info,
-                                        // parser: numbParser
-                                    })}
+                                    {/*{inputForm({*/}
+                                    {/*    title: '총액',*/}
+                                    {/*    id: 'totalAmount',*/}
+                                    {/*    onChange: onChange,*/}
+                                    {/*    data: info,*/}
+                                    {/*})}*/}
+                                    <div style={{fontSize: 12, paddingBottom: 10}}>
+                                        <div style={{paddingBottom: 12 / 2, fontWeight: 700}}>총액</div>
+                                        <div style={{display: 'flex'}}>
+                                            <input placeholder={''}
+                                                   id={'totalAmount'}
+                                                   value={info ? info['totalAmount'] : null}
+                                                   onKeyDown={(e) => {
+                                                       if(e.key === 'Enter') {
+                                                           setInfo(prev => {
+                                                               const prevTotalAmount = e.currentTarget.value || 0;
+                                                               const totalAmount = typeof prevTotalAmount === "string"
+                                                                   ? parseFloat(prevTotalAmount.replace(/,/g, '')) || 0
+                                                                   : prevTotalAmount;
+                                                               const prevPartialRemittance = prev.partialRemittance || 0;
+                                                               const partialRemittance = typeof prevPartialRemittance === "string"
+                                                                   ? parseFloat(prevPartialRemittance.replace(/,/g, '')) || 0
+                                                                   : prevPartialRemittance;
+                                                               const balance= totalAmount - partialRemittance;
+                                                               return {
+                                                                   ...prev,
+                                                                   balance: balance.toLocaleString()
+                                                               }
+                                                           })
+                                                           e.currentTarget.blur();
+                                                       }
+                                                   }}
+                                                   onChange={onChange}
+                                                   onFocus={(e) => {
+                                                       setInfo(prev => {
+                                                           const prevTotalAmount = e.target.value || 0;
+                                                           const totalAmount = typeof prevTotalAmount === "string"
+                                                               ? parseFloat(prevTotalAmount.replace(/,/g, '')) || 0
+                                                               : prevTotalAmount;
+                                                           return {
+                                                               ...prev,
+                                                               totalAmount
+                                                           }
+                                                       })
+                                                   }}
+                                                   onBlur={(e) => {
+                                                       setInfo(prev => {
+                                                           const prevTotalAmount = e.target.value || 0;
+                                                           const totalAmount = typeof prevTotalAmount === "string"
+                                                               ? parseFloat(prevTotalAmount.replace(/,/g, '')) || 0
+                                                               : prevTotalAmount;
+                                                           const prevPartialRemittance = prev.partialRemittance || 0;
+                                                           const partialRemittance = typeof prevPartialRemittance === "string"
+                                                               ? parseFloat(prevPartialRemittance.replace(/,/g, '')) || 0
+                                                               : prevPartialRemittance;
+                                                           const balance= totalAmount - partialRemittance;
+                                                           return {
+                                                               ...prev,
+                                                               balance: balance.toLocaleString()
+                                                           }
+                                                       })
+                                                   }}
+                                            />
+                                            <span style={{marginLeft: -22, paddingTop: 1.5}}></span>
+                                        </div>
+                                    </div>
                                     {inputForm({
                                         title: '부분송금액',
                                         id: 'partialRemittance',
@@ -477,7 +550,7 @@ export default function DomesticRemittanceUpdate({ updateKey, getCopyPage }: any
                                             {value: '', title: '해당없음'}
                                         ]
                                     })}
-                                    {textAreaForm({title: '비고란', rows: 10, id: 'remarks'})}
+                                    {textAreaForm({title: '비고란', rows: 10, id: 'remarks', onChange: onChange, data: info})}
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
