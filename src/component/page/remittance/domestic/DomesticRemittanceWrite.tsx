@@ -125,11 +125,10 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
 
         const remittanceList = filterTableList.map(v => {
             const tax = v.supplyAmount ? v.supplyAmount * 0.1 : 0;
-            const { total, ...item } = v;
+            const { remittanceDetailId, total, ...item } = v;
             return {
                 ...item,
-                tax,
-                // total: (v.supplyAmount || 0) + tax
+                tax
             }
         })
         console.log(remittanceList, '부분송금 입력한 리스트:::')
@@ -423,7 +422,7 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
                                             {value: '', title: '해당없음'}
                                         ]
                                     })}
-                                    {textAreaForm({title: '비고란', rows: 10, id: 'remarks'})}
+                                    {textAreaForm({title: '비고란', rows: 10, id: 'remarks', onChange: onChange, data: info})}
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>

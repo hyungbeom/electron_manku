@@ -68,16 +68,16 @@ const Table = forwardRef(({
 
 
     const afterRenderer = (td, row, col, prop, value) => {
-        if (["unitPrice", 'totalNet', "total", 'net', "totalPurchase", "purchasePrice", 'quantity', 'receivedQuantity', 'unreceivedQuantity'].includes(prop)) {
+        if (["unitPrice", "total", 'net', 'totalNet', "purchasePrice", "totalPurchase", 'quantity', 'receivedQuantity', 'unreceivedQuantity'].includes(prop)) {
 
             td.style.textAlign = "right"; // 우측 정렬
             td.style.color = "black"; // 텍스트 굵게
 
-            if (["total", "totalPurchase", 'totalNet'].includes(prop)) {
+            if (["total", 'totalNet', "totalPurchase"].includes(prop)) {
                 td.style.fontWeight = "bold"; // 텍스트 굵게
             }
 
-            if (['totalNet', "total", "totalPurchase", 'net', 'unitPrice', 'purchasePrice'].includes(prop)) {
+            if (['unitPrice', "total", 'net', 'totalNet', 'purchasePrice', "totalPurchase"].includes(prop)) {
 
                 const rowData = hotRef.current.hotInstance.getSourceDataAtRow(row);
                 const isForeignCurrency = ['USD', 'EUR', 'JPY', 'GBP'].includes(rowData?.currencyUnit ?? rowData?.currency);
@@ -86,12 +86,17 @@ const Table = forwardRef(({
                 if (value === 0 || isNaN(parsedValue)) {
                     td.textContent = ""; // 🔥 0 또는 NaN이면 빈 문자열 적용
                 } else {
-                    // KRW 화폐까 아니면 소수점 2자리까지
-                    if (isForeignCurrency) {
-                        const truncated = Math.floor(parseFloat(value) * 100) / 100;
-                        td.textContent = truncated.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                    } else {
+                    // 견적서, 발주서 - 매출 단가, 매출 총액은 KRW 고정으로 소수점 처리 안함
+                    if (['net', 'totalNet'].includes(prop)) {
                         td.textContent = value?.toLocaleString(); // 🔢 숫자는 쉼표 추가
+                    } else {
+                        // KRW 화폐까 아니면 소수점 2자리까지
+                        if (isForeignCurrency) {
+                            const truncated = Math.floor(parseFloat(value) * 100) / 100;
+                            td.textContent = truncated.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                        } else {
+                            td.textContent = value?.toLocaleString(); // 🔢 숫자는 쉼표 추가
+                        }
                     }
                 }
             }
@@ -154,7 +159,7 @@ const Table = forwardRef(({
     }
 
     function relatedLink(event, coords) {
-        if (event.ctrlKey) { // ✅ Ctrl 키가 눌렸는지 확인
+        if (event.ctrlKey || event.metaKey) { // ✅ Ctrl 키가 눌렸는지 확인
             const colIndex = coords.col;
             const colName = hotRef.current.hotInstance.getColHeader(colIndex);
             const cellValue = hotRef.current.hotInstance.getDataAtCell(coords.row, coords.col); // ✅ 데이터 가져오기
@@ -202,7 +207,18 @@ const Table = forwardRef(({
                     hotRef.current.hotInstance.setDataAtCell(coords.row, contentColIndex, moment().format('YYYY-MM-DD'));
                 }
             }
-
+            if (colName === '송금 요청 일자') {
+                hotRef.current.hotInstance.setDataAtCell(coords.row, coords.col, moment().format('YYYY-MM-DD'));
+            }
+            if (colName === '송금 지정 일자') {
+                hotRef.current.hotInstance.setDataAtCell(coords.row, coords.col, moment().format('YYYY-MM-DD'));
+            }
+            if (colName === '송금 여부') {
+                hotRef.current.hotInstance.setDataAtCell(coords.row, coords.col, "요청");
+            }
+            if (colName === '계산서 발행 여부') {
+                hotRef.current.hotInstance.setDataAtCell(coords.row, coords.col, "X");
+            }
         }
     }
 

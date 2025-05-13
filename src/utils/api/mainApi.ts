@@ -68,7 +68,7 @@ export const saveEstimate = async ({data}) => {
 export const saveRemittance = async ({data}) => {
     return await getFormData.post('remittance/addRemittance', data).then(v => {
         if (v.data.code === 1) {
-            window.opener?.postMessage('write', window.location.origin);
+            // window.opener?.postMessage('write', window.location.origin);
             // msg.success('저장되었습니다.')
             return v
         } else {
@@ -102,7 +102,7 @@ export const saveStore = async ({data, router}) => {
 export const updateStore = async ({data, router}) => {
     await getData.post('order/updateOrderStatus', data).then(v => {
         if (v.data.code === 1) {
-            window.opener?.postMessage('write', window.location.origin);
+            // window.opener?.postMessage('write', window.location.origin);
             msg.success('수정되었습니다.')
         } else if (v.data.code === -20001) {
             msg.error('B/L No.가 중복됩니다.')
@@ -114,13 +114,14 @@ export const updateStore = async ({data, router}) => {
 };
 
 
-export const updateRemittance = async ({data, router}) => {
-    await getFormData.post('remittance/updateRemittance', data).then(v => {
+export const updateRemittance = async ({data}) => {
+    return await getFormData.post('remittance/updateRemittance', data).then(v => {
         if (v.data.code === 1) {
-            window.opener?.postMessage('write', window.location.origin);
-            msg.success('수정되었습니다.');
+            // window.opener?.postMessage('write', window.location.origin);
+            // msg.success('수정되었습니다.');
+            return v
         } else {
-            msg.error('저장에 실패하였습니다.')
+            // msg.error('저장에 실패하였습니다.')
         }
     });
 };

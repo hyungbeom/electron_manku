@@ -148,7 +148,7 @@ export default function Main() {
     };
 
     const getRootKeys = (data) => data.map((node) => node.key);
-
+    console.log(getRootKeys(treeData))
     const [expandedKeys, setExpandedKeys] = useState(getRootKeys(treeData));
 
     // 노드 확장/축소 이벤트 핸들러
@@ -162,16 +162,16 @@ export default function Main() {
             title: node.children ? ( // 자식이 있는 경우만 아이콘 추가
                 <>
                     {expandedKeys.includes(node.key) ? (
-                        <span style={{marginRight: 2, fontSize: 11}}>📂</span>
+                        <span style={{marginRight: 2, fontSize: 11}}>📂 </span>
 
                     ) : (
-                        <span style={{marginRight: 2, fontSize: 11}}>📁</span>
+                        <span style={{marginRight: 2, fontSize: 11}}>📁 </span>
                     )}
                     <span style={{fontSize: 12}}>{node.title}</span>
                 </>
             ) : (
                 <>
-                    <span style={{marginRight: 2, fontSize: 10}}>📄</span>
+                    <span style={{marginRight: 2, fontSize: 10}}>📄 </span>
                     <span style={{fontSize: 12}}>{node.title}</span>
                 </>
             ),
@@ -189,7 +189,8 @@ export default function Main() {
 
                 }}>
                     <Tree
-                        defaultExpandedKeys={getRootKeys(treeData)}
+                        // defaultExpandedKeys={getRootKeys(treeData)}
+                        defaultExpandedKeys={['rfq', 'estimate', 'order', 'remittance', 'data']}
                         showLine
                         switcherIcon={<DownOutlined/>}
                         onSelect={onSelect}

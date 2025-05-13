@@ -257,8 +257,7 @@ export const estimateInfo = {
         }, mapping: {
             "model": "Model",   // Model
             "quantity": '수량',                  // 수량
-            "net": '매출 단가',
-            // 단가
+            "net": '매출 단가',                  // 단가
             "totalNet": '매출 총액',           // 단가
             "unit": "단위",                   // 단위
             "currency": '화폐단위',          // CURR
@@ -613,6 +612,7 @@ export const remittanceInfo = {
             },
         ],
         defaultData: {
+            "remittanceDetailId": '',
             "remittanceRequestDate": '',   // 송금 요청 일자
             "remittanceDueDate": "",       // 송금 지정 일자
             "supplyAmount": '',            // 공급가액

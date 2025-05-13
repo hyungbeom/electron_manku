@@ -260,13 +260,11 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
                         <div>Inquiry No. : {info.documentNumberFull}</div>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
-                    , function () {
-                        getPropertyId('order_update', updateKey['order_update'])
-                    },
-                    {cursor: 'pointer'}
+                    , null, null, 2
                 )
             })
         } else {
+            console.warn(msg);
             notificationAlert('error', '⚠️ 작업실패',
                 <>
                     <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
