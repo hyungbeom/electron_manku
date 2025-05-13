@@ -381,7 +381,6 @@ export function PrintPoForm({data, topInfoData, totalData, bottomInfo, title, la
                             const count: any = commonManage.getPageIndex(Object.values(data), idx - 1);
 
                             const {model, quantity, unit, unitPrice, currency} = row;
-                            console.log(row)
                             return <> <View key={i} style={styles.tableRow}>
 
                                 <View key={i} style={{

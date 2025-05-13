@@ -1349,9 +1349,11 @@ export const tableOrderReadColumns = [
         align: 'center',
         minWidth: 60,
         valueFormatter: (params) => {
+            if (params.node.rowPinned) {
+                return params.value !== undefined ? params.value.toLocaleString() : '0';
+            }
             const {quantity, net} = params.data;
-
-            return (quantity * net).toLocaleString()
+            return (!quantity || !net) ? null : Math.floor(quantity * net).toLocaleString();
         },
         cellStyle: {textAlign: 'right'}
     },

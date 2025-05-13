@@ -18,6 +18,25 @@ const colWidths = [40, 210, 50, 50, 110, 110];
 
 export function PdfForm({data, topInfoData, totalData, type='',bottomInfo='▶의뢰하신 Model로 기준한 견적입니다.\n▶계좌번호 :  (기업은행)069-118428-04-010/만쿠무역\n▶긴급 납기시 담당자와 협의가능합니다.\n▶견적서에 기재되지 않은 서류 및 성적서는 미 포함 입니다.'}) {
 
+    function numberFormat (number, currency = '') {
+        if (number === null || number === undefined || number === '') {
+            return '';
+        }
+        const num = Number(number);
+        if (isNaN(num)) {
+            return '';
+        }
+        const fixedNum = num.toFixed(2);
+        const [integerPart, decimalPart] = fixedNum.split('.');
+        const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        // return decimalPart !== '00'
+        //     ? `${formattedInteger}.${decimalPart}`
+        //     : formattedInteger;
+        return currency !== 'KRW'
+            ? `${formattedInteger}.${decimalPart}`
+            : decimalPart !== '00' ? `${formattedInteger}.${decimalPart}` : formattedInteger;
+    }
+
     return <Document>
         <Page size="A4" style={styles.page}>
             <View>
@@ -138,7 +157,7 @@ export function PdfForm({data, topInfoData, totalData, type='',bottomInfo='▶�
 
                     {/* 내용 행 반복 */}
                     {data[0]?.map((row: any, i) => {
-                        const {model, quantity, unit, net, modelIndex, documentNumberFull} = row;
+                        const {model, quantity, unit, net, modelIndex, documentNumberFull, currencyUnit} = row;
                         return <><View key={i} style={styles.tableRow}>
                             {documentNumberFull ?
                                 <View key={i} style={{
@@ -179,18 +198,36 @@ export function PdfForm({data, topInfoData, totalData, type='',bottomInfo='▶�
                             <View key={i} style={{
                                 ...styles.cell,
                                 width: colWidths[4],
+                                flexDirection: 'row',
+                                justifyContent: 'space-between'
                             }}>
-                                <Text style={{textAlign: 'right', paddingRight: 5}}>{net?.toLocaleString()}</Text>
+                                {/*<Text style={{textAlign: 'right', paddingRight: 5}}>{net?.toLocaleString()}</Text>*/}
+                                <Text
+                                    style={{textAlign: 'right', paddingRight: 8}}>{currencyUnit}</Text>
+                                <Text
+                                    style={{
+                                        textAlign: 'right',
+                                        paddingRight: 8
+                                    }}>{numberFormat(net, currencyUnit)}</Text>
                             </View>
                             <View key={i} style={{
                                 ...styles.cell,
                                 width: colWidths[5],
                                 borderRightWidth: 0,
+                                flexDirection: 'row',
+                                justifyContent: 'space-between'
                             }}>
-                                <Text style={{
-                                    textAlign: 'right',
-                                    paddingRight: 5
-                                }}>{(quantity * net)?.toLocaleString()}</Text>
+                                {/*<Text style={{*/}
+                                {/*    textAlign: 'right',*/}
+                                {/*    paddingRight: 5*/}
+                                {/*}}>{(quantity * net)?.toLocaleString()}</Text>*/}
+                                <Text
+                                    style={{textAlign: 'right', paddingRight: 8}}>{currencyUnit}</Text>
+                                <Text
+                                    style={{
+                                        textAlign: 'right',
+                                        paddingRight: 8
+                                    }}>{numberFormat(quantity * net, currencyUnit)}</Text>
                             </View>
                         </View>
                         </>
@@ -210,13 +247,24 @@ export function PdfForm({data, topInfoData, totalData, type='',bottomInfo='▶�
                             style={{textAlign: 'right', paddingRight: 5}}>{totalData?.quantity}</Text></View>
                         <View style={{...styles.point, width: colWidths[3]}}><Text
                             style={{textAlign: 'left', paddingLeft: 5}}>{totalData?.unit}</Text></View>
+                        {/*<View style={{*/}
+                        {/*    ...styles.point,*/}
+                        {/*    width: colWidths[4],*/}
+                        {/*    flexDirection: 'row',*/}
+                        {/*    justifyContent: 'space-between'*/}
+                        {/*}}>*/}
+                        {/*    <Text*/}
+                        {/*    style={{textAlign: 'right', paddingRight: 8}}>₩</Text>*/}
+                        {/*    <Text*/}
+                        {/*        style={{*/}
+                        {/*            textAlign: 'right',*/}
+                        {/*            paddingRight: 8*/}
+                        {/*        }}>(V.A.T) 미포함</Text>*/}
+                        {/*</View>*/}
                         <View style={{
                             ...styles.point,
-                            width: colWidths[4],
-                            flexDirection: 'row',
-                            justifyContent: 'space-between'
-                        }}><Text
-                            style={{textAlign: 'right', paddingRight: 8}}>₩</Text>
+                            width: colWidths[4]
+                        }}>
                             <Text
                                 style={{
                                     textAlign: 'right',
@@ -229,14 +277,19 @@ export function PdfForm({data, topInfoData, totalData, type='',bottomInfo='▶�
                             flexDirection: 'row',
                             justifyContent: 'space-between'
                         }}><Text
-                            style={{textAlign: 'right', paddingRight: 8}}>₩</Text>
+                            style={{textAlign: 'right', paddingRight: 8}}>{totalData?.currencyUnit}</Text>
+                            {/*<Text*/}
+                            {/*    style={{*/}
+                            {/*        textAlign: 'right',*/}
+                            {/*        paddingRight: 8*/}
+                            {/*    }}>*/}
+                            {/*    {(totalData?.total).toLocaleString()}*/}
+                            {/*</Text>*/}
                             <Text
                                 style={{
                                     textAlign: 'right',
                                     paddingRight: 8
-                                }}>
-                                {(totalData?.total).toLocaleString()}
-                            </Text>
+                                }}>{numberFormat(totalData?.total, totalData?.currencyUnit)}</Text>
                         </View>
                     </View>
 
@@ -279,7 +332,7 @@ export function PdfForm({data, topInfoData, totalData, type='',bottomInfo='▶�
                         {v.map((row: any, i) => {
                             const count: any = commonManage.getPageIndex(Object.values(data), idx - 1);
 
-                            const {model, quantity, unit, net, documentNumberFull, modelIndex} = row;
+                            const {model, quantity, unit, net, documentNumberFull, modelIndex, currencyUnit} = row;
                             return <> <View key={i} style={styles.tableRow}>
 
                                 {documentNumberFull ?
@@ -323,18 +376,36 @@ export function PdfForm({data, topInfoData, totalData, type='',bottomInfo='▶�
                                 <View key={i} style={{
                                     ...styles.cell,
                                     width: colWidths[4],
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-between'
                                 }}>
-                                    <Text style={{textAlign: 'right', paddingRight: 5}}>{net?.toLocaleString()}</Text>
+                                    {/*<Text style={{textAlign: 'right', paddingRight: 5}}>{net?.toLocaleString()}</Text>*/}
+                                    <Text
+                                        style={{textAlign: 'right', paddingRight: 8}}>{currencyUnit}</Text>
+                                    <Text
+                                        style={{
+                                            textAlign: 'right',
+                                            paddingRight: 8
+                                        }}>{numberFormat(net, currencyUnit)}</Text>
                                 </View>
                                 <View key={i} style={{
                                     ...styles.cell,
                                     width: colWidths[5],
                                     borderRightWidth: 0,
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-between'
                                 }}>
-                                    <Text style={{
-                                        textAlign: 'right',
-                                        paddingRight: 5
-                                    }}>{(quantity * net)?.toLocaleString()}</Text>
+                                    {/*<Text style={{*/}
+                                    {/*    textAlign: 'right',*/}
+                                    {/*    paddingRight: 5*/}
+                                    {/*}}>{(quantity * net)?.toLocaleString()}</Text>*/}
+                                    <Text
+                                        style={{textAlign: 'right', paddingRight: 8}}>{currencyUnit}</Text>
+                                    <Text
+                                        style={{
+                                            textAlign: 'right',
+                                            paddingRight: 8
+                                        }}>{numberFormat(quantity * net, currencyUnit)}</Text>
                                 </View>
                             </View>
                             </>
@@ -356,13 +427,23 @@ export function PdfForm({data, topInfoData, totalData, type='',bottomInfo='▶�
                                 style={{textAlign: 'right', paddingRight: 5}}>{totalData?.quantity}</Text></View>
                             <View style={{...styles.point, width: colWidths[3]}}><Text
                                 style={{textAlign: 'left', paddingLeft: 5}}>{totalData?.unit}</Text></View>
+                            {/*<View style={{*/}
+                            {/*    ...styles.point,*/}
+                            {/*    width: colWidths[4],*/}
+                            {/*    flexDirection: 'row',*/}
+                            {/*    justifyContent: 'space-between'*/}
+                            {/*}}><Text*/}
+                            {/*    style={{textAlign: 'right', paddingRight: 8}}>₩</Text>*/}
+                            {/*    <Text*/}
+                            {/*        style={{*/}
+                            {/*            textAlign: 'right',*/}
+                            {/*            paddingRight: 8*/}
+                            {/*        }}>(V.A.T) 미포함</Text>*/}
+                            {/*</View>*/}
                             <View style={{
                                 ...styles.point,
-                                width: colWidths[4],
-                                flexDirection: 'row',
-                                justifyContent: 'space-between'
-                            }}><Text
-                                style={{textAlign: 'right', paddingRight: 8}}>₩</Text>
+                                width: colWidths[4]
+                            }}>
                                 <Text
                                     style={{
                                         textAlign: 'right',
@@ -375,12 +456,17 @@ export function PdfForm({data, topInfoData, totalData, type='',bottomInfo='▶�
                                 flexDirection: 'row',
                                 justifyContent: 'space-between'
                             }}><Text
-                                style={{textAlign: 'right', paddingRight: 8}}>₩</Text>
+                                style={{textAlign: 'right', paddingRight: 8}}>{totalData?.currencyUnit}</Text>
+                                {/*<Text*/}
+                                {/*    style={{*/}
+                                {/*        textAlign: 'right',*/}
+                                {/*        paddingRight: 8*/}
+                                {/*    }}>  {(totalData?.total).toLocaleString()}</Text>*/}
                                 <Text
                                     style={{
                                         textAlign: 'right',
                                         paddingRight: 8
-                                    }}>  {(totalData?.total).toLocaleString()}</Text>
+                                    }}>{numberFormat(totalData?.total, totalData?.currencyUnit)}</Text>
                             </View>
                         </View>
 
