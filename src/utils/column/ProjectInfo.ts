@@ -613,6 +613,7 @@ export const remittanceInfo = {
             },
         ],
         defaultData: {
+            "remittanceDetailId": '',   // 송금 요청 일자
             "remittanceRequestDate": '',   // 송금 요청 일자
             "remittanceDueDate": "",       // 송금 지정 일자
             "supplyAmount": '',            // 공급가액

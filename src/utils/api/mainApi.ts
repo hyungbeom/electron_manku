@@ -114,7 +114,7 @@ export const updateStore = async ({data, router}) => {
 };
 
 
-export const updateRemittance = async ({data, router}) => {
+export const updateRemittance = async ({data}) => {
     await getFormData.post('remittance/updateRemittance', data).then(v => {
         if (v.data.code === 1) {
             window.opener?.postMessage('write', window.location.origin);

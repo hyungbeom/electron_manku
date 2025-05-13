@@ -15,7 +15,7 @@ import {DriveUploadComp} from "@/component/common/SharePointComp";
 import _ from "lodash";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {commonFunc, commonManage, fileManage} from "@/utils/commonManage";
-import {saveRemittance} from "@/utils/api/mainApi";
+import {saveRemittance, updateRemittance} from "@/utils/api/mainApi";
 import SearchInfoModal from "@/component/SearchAgencyModal";
 import {FolderOpenOutlined, RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
@@ -212,8 +212,6 @@ export default function DomesticRemittanceUpdate({ updateKey, getCopyPage }: any
                 // total: (v.supplyAmount || 0) + tax
             }
         })
-        console.log(remittanceList, '부분송금 입력한 리스트:::')
-        console.log(info, 'info::::')
 
         setLoading(true);
 
@@ -224,37 +222,40 @@ export default function DomesticRemittanceUpdate({ updateKey, getCopyPage }: any
         formData.append('selectOrderList',JSON.stringify(selectOrderNos));
         formData.append('sendRemittanceList',JSON.stringify(remittanceList));
 
-        await saveRemittance({data: formData})
-            .then(v => {
-                console.log(v,'v:::')
-                if (v?.data?.code === 1) {
-                    window.postMessage({message: 'reload', target: 'domestic_remittance_read'}, window.location.origin);
-                    notificationAlert('success', '💾 국내 송금 등록완료',
-                        <>
-                            <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
-                        </>
-                        ,
-                        // function () {
-                        //     getPropertyId('domestic_remittance_update', v?.data?.entity?.remittanceId)
-                        // },
-                        // {cursor: 'pointer'}
-                    )
-                } else {
-                    console.warn(v?.data?.message);
-                    notificationAlert('error', '⚠️ 작업실패',
-                        <>
-                            <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
-                        </>
-                        , function () {
-                            alert('작업 로그 페이지 참고')
-                        },
-                        {cursor: 'pointer'}
-                    )
-                }
-            })
-            .finally(() => {
-                setLoading(false);
-            });
+
+        await updateRemittance({data: formData})
+
+        // await saveRemittance({data: formData})
+        //     .then(v => {
+        //         console.log(v,'v:::')
+        //         if (v?.data?.code === 1) {
+        //             window.postMessage({message: 'reload', target: 'domestic_remittance_read'}, window.location.origin);
+        //             notificationAlert('success', '💾 국내 송금 등록완료',
+        //                 <>
+        //                     <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+        //                 </>
+        //                 ,
+        //                 // function () {
+        //                 //     getPropertyId('domestic_remittance_update', v?.data?.entity?.remittanceId)
+        //                 // },
+        //                 // {cursor: 'pointer'}
+        //             )
+        //         } else {
+        //             console.warn(v?.data?.message);
+        //             notificationAlert('error', '⚠️ 작업실패',
+        //                 <>
+        //                     <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+        //                 </>
+        //                 , function () {
+        //                     alert('작업 로그 페이지 참고')
+        //                 },
+        //                 {cursor: 'pointer'}
+        //             )
+        //         }
+        //     })
+        //     .finally(() => {
+        //         setLoading(false);
+        //     });
     }
 
     /**
