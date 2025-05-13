@@ -772,7 +772,8 @@ commonFunc.sumCalc = function calculateTotals(rowData) {
 
 
     const totalPrice = rowData.reduce((sum, row) => {
-        const calculatedPrice = (parseFloat(row.unitPrice) || 0) * (parseFloat(row.quantity) || 0);
+        // const calculatedPrice = (parseFloat(row.unitPrice) || 0) * (parseFloat(row.quantity) || 0);
+        const calculatedPrice = (parseFloat(row.net) || 0) * (parseFloat(row.quantity) || 0);
         return sum + calculatedPrice;
     }, 0);
     const totalQuantity = rowData.reduce((sum, row) => sum + (parseFloat(row.quantity) || 0), 0);

@@ -43,10 +43,35 @@ const EstimatePaper = ({
         setData(copyData);
     }, [count]);
 
+    function numberFormat (number, currency = '') {
+        if (number === null || number === undefined || number === '') {
+            return '';
+        }
+        const num = Number(number);
+        if (isNaN(num)) {
+            return '';
+        }
+        const fixedNum = num.toFixed(2);
+        const [integerPart, decimalPart] = fixedNum.split('.');
+        const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        // return decimalPart !== '00'
+        //     ? `${formattedInteger}.${decimalPart}`
+        //     : formattedInteger;
+        return currency !== 'KRW'
+            ? `${formattedInteger}.${decimalPart}`
+            : decimalPart !== '00' ? `${formattedInteger}.${decimalPart}` : formattedInteger;
+    }
+
     const totalData = useMemo(() => {
 
         const list = Object.values(data);
-        let bowl = {quantity: 0, net: 0, total: 0, unit: list.length ? list[0][0]['unit'] : ''}
+        let bowl = {
+            quantity: 0,
+            net: 0.00,
+            total: 0.00,
+            unit: list.length ? list[0][0]['unit'] : '',
+            currencyUnit: list.length ? list[0][0]['currencyUnit'] : ''
+        }
 
         list.forEach((v: any, i: number) => {
             const result = v.reduce((acc, cur, idx) => {
@@ -56,7 +81,7 @@ const EstimatePaper = ({
                 acc[2] += (quantity * net)
 
                 return acc
-            }, [0, 0, 0])
+            }, [0, 0.00, 0.00])
             bowl["quantity"] += parseFloat(result[0]);
             bowl["net"] += parseFloat(result[1]);
             bowl["total"] += parseFloat(result[2]);
@@ -92,7 +117,7 @@ const EstimatePaper = ({
 
     function NumberInputForm({value, numb, objKey = 0}) {
 
-        const [info, setInfo] = useState({net: value.net, quantity: value.quantity});
+        const [info, setInfo] = useState({net: value.net, quantity: value.quantity, currencyUnit: value.currencyUnit});
 
         const inputRef = useRef<any>();
         const [toggle, setToggle] = useState(false);
@@ -162,8 +187,8 @@ const EstimatePaper = ({
                          onClick={() => {
                              setToggle(true);
                          }}>
-                        <span>{!isNaN(info.net) ? '₩' : ''}</span>
-                        <span className={'netPrice'}>{amountFormat(info.net)}</span>
+                        <span>{!isNaN(info.net) ? info.currencyUnit : ''}</span>
+                        <span className={'netPrice'}>{numberFormat(info.net, info.currencyUnit)}</span>
                     </div>
 
                 }
@@ -179,9 +204,9 @@ const EstimatePaper = ({
                      onClick={() => {
                          setToggle(true);
                      }}>
-                    <span>{!isNaN(info.net * info.quantity) ? '₩' : ''}</span>
+                    <span>{!isNaN(info.net * info.quantity) ? info.currencyUnit : ''}</span>
                     <span
-                        className={'total'}>{!isNaN(info.net * info.quantity) ? amountFormat(info.net * info.quantity) : ''}</span>
+                        className={'total'}>{numberFormat((info.net * info.quantity), info.currencyUnit)}</span>
                 </div>
 
             </td>
@@ -364,7 +389,11 @@ const EstimatePaper = ({
                                 (V.A.T) 미포함
                             </th>
                             <th style={{width: '20%', textAlign: 'right', paddingRight: 10}}>
-                                {(totalData?.total).toLocaleString()}
+                                {/*{(totalData?.total).toLocaleString()}*/}
+                                <div style={{display: 'flex', justifyContent: 'space-between', padding: '0px 8px'}}>
+                                    <span>{totalData?.currencyUnit}</span>
+                                    <span>{numberFormat(totalData?.total, totalData?.currencyUnit)}</span>
+                                </div>
                             </th>
                             {/*tax*/}
                         </tr>
@@ -467,7 +496,11 @@ const EstimatePaper = ({
                                         (V.A.T) 미포함
                                     </th>
                                     <th style={{width: '20%', textAlign: 'right', paddingRight: 10}}>
-                                        {(totalData?.total).toLocaleString()}
+                                        {/*{(totalData?.total).toLocaleString()}*/}
+                                        <div style={{display: 'flex', justifyContent: 'space-between', padding: '0px 8px'}}>
+                                            <span>{totalData?.currencyUnit}</span>
+                                            <span>{numberFormat(totalData?.total, totalData?.currencyUnit)}</span>
+                                        </div>
                                     </th>
                                 </tr>
                                 </thead>

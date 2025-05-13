@@ -241,8 +241,8 @@ const TableGrid = ({
             setPinnedBottomRowData([]);
             return;
         }
-
         const totals = commonFunc.sumCalc(selectedRows);
+        console.log(totals)
         setPinnedBottomRowData([totals]);
     };
 

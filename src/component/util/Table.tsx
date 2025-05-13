@@ -69,30 +69,32 @@ const Table = forwardRef(({
 
     const afterRenderer = (td, row, col, prop, value) => {
         if (["unitPrice", 'totalNet', "total", 'net', "totalPurchase", "purchasePrice", 'quantity', 'receivedQuantity', 'unreceivedQuantity'].includes(prop)) {
+
             td.style.textAlign = "right"; // 우측 정렬
             td.style.color = "black"; // 텍스트 굵게
-            if (['totalNet', "total", "totalPurchase", 'net', 'unitPrice', 'purchasePrice'].includes(prop)) {
-                if (value === 0 || isNaN(value)) {
-                    td.textContent = ""; // 🔥 0 또는 NaN이면 빈 문자열 적용
-                } else {
-                    td.textContent = value?.toLocaleString(); // 🔢 숫자는 쉼표 추가
-                }
-            }
 
             if (["total", "totalPurchase", 'totalNet'].includes(prop)) {
-                if (value === 0 || isNaN(value)) {
-                    td.textContent = ""; // 🔥 0 또는 NaN이면 빈 문자열 적용
-                } else {
-                    td.textContent = value?.toLocaleString(); // 🔢 숫자는 쉼표 추가
-                }
-                if (row === 1000) {
-
-                }
-
                 td.style.fontWeight = "bold"; // 텍스트 굵게
             }
 
+            if (['totalNet', "total", "totalPurchase", 'net', 'unitPrice', 'purchasePrice'].includes(prop)) {
 
+                const rowData = hotRef.current.hotInstance.getSourceDataAtRow(row);
+                const isForeignCurrency = ['USD', 'EUR', 'JPY', 'GBP'].includes(rowData?.currencyUnit ?? rowData?.currency);
+
+                const parsedValue = parseFloat(value);
+                if (value === 0 || isNaN(parsedValue)) {
+                    td.textContent = ""; // 🔥 0 또는 NaN이면 빈 문자열 적용
+                } else {
+                    // KRW 화폐까 아니면 소수점 2자리까지
+                    if (isForeignCurrency) {
+                        const truncated = Math.floor(parseFloat(value) * 100) / 100;
+                        td.textContent = truncated.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    } else {
+                        td.textContent = value?.toLocaleString(); // 🔢 숫자는 쉼표 추가
+                    }
+                }
+            }
         }
     };
 
@@ -119,10 +121,11 @@ const Table = forwardRef(({
                 if (prop === 'unitPrice') {
                     const propIndex = change.indexOf('unitPrice'); // 'unitPrice'의 인덱스 찾기
                     const newValueIndex = propIndex + 2; // newValue 위치 (prop + 2)
-
                     changes[index][newValueIndex] = parseFloat(change[newValueIndex]).toFixed(2); // ✅ 소수점 2자리 변환
-
                     if (type === 'rfq_write_column') {
+                        const format = Math.floor(parseFloat(change[newValueIndex]) * 100) / 100
+                        // hotRef.current.hotInstance.setDataAtCell(row, 4, format);
+4
                         hotRef.current.hotInstance.setDataAtCell(row, 7, '회신'); // replyDate 컬럼 업데이트
                         hotRef.current.hotInstance.setDataAtCell(row, 8, moment().format('YYYY-MM-DD')); // replyDate 컬럼 업데이트
                     }
