@@ -97,16 +97,12 @@ function RfqMailSend({getPropertyId}: any) {
         });
 
         // @ts-ignore
-        const data = [...new Set(fileIdList)]
+        const uniqueIds = [...new Set(checkedData.map(item => item.documentNumberFull))];
 
         setPreviewData(groupedData)
 
-        await getData.post('common/getAttachmentFileLists', {
-            attachmentFileItemList: data.map(v => {
-                return {relatedType: 'ESTIMATE_REQUEST', relatedId: v}
-            })
-        }).then(v => {
-            setFileList(v.data.entity.attachmentFiles)
+        await getData.post('common/getAttachmentFileLists',uniqueIds).then(v => {
+           setFileList(v.data)
         })
         setIsModalOpen(true)
     };
