@@ -164,7 +164,7 @@ export function NewPdfForm({data, topInfoData, totalData, type='',bottomInfo='β–
                                     }}>
                                         <Text style={{textAlign: 'left', paddingLeft: 5}}>{model}</Text>
                                     </View>
-                                    {modelIndex === 'maker' ?
+                                    {modelIndex === 'Maker' ?
                                         <>
                                             <View key={i} style={{...styles.cell, width: colWidths[2]}}></View>
                                             <View key={i} style={{...styles.cell, width: colWidths[3]}}></View>
@@ -188,18 +188,36 @@ export function NewPdfForm({data, topInfoData, totalData, type='',bottomInfo='β–
                                             <View key={i} style={{
                                                 ...styles.cell,
                                                 width: colWidths[4],
+                                                flexDirection: 'row',
+                                                justifyContent: 'space-between'
                                             }}>
-                                                <Text style={{textAlign: 'right', paddingRight: 5}}>{amountFormat(net)}</Text>
+                                                {/*<Text style={{textAlign: 'right', paddingRight: 5}}>{net?.toLocaleString()}</Text>*/}
+                                                <Text
+                                                    style={{textAlign: 'right', paddingRight: 8}}>β‚©</Text>
+                                                <Text
+                                                    style={{
+                                                        textAlign: 'right',
+                                                        paddingRight: 8
+                                                    }}>{amountFormat(net)}</Text>
                                             </View>
                                             <View key={i} style={{
                                                 ...styles.cell,
                                                 width: colWidths[5],
                                                 borderRightWidth: 0,
+                                                flexDirection: 'row',
+                                                justifyContent: 'space-between'
                                             }}>
-                                                <Text style={{
-                                                    textAlign: 'right',
-                                                    paddingRight: 5
-                                                }}>{amountFormat(quantity * net)}</Text>
+                                                {/*<Text style={{*/}
+                                                {/*    textAlign: 'right',*/}
+                                                {/*    paddingRight: 5*/}
+                                                {/*}}>{(quantity * net)?.toLocaleString()}</Text>*/}
+                                                <Text
+                                                    style={{textAlign: 'right', paddingRight: 8}}>β‚©</Text>
+                                                <Text
+                                                    style={{
+                                                        textAlign: 'right',
+                                                        paddingRight: 8
+                                                    }}>{amountFormat(quantity * net)}</Text>
                                             </View>
                                         </>
                                     }
@@ -223,13 +241,23 @@ export function NewPdfForm({data, topInfoData, totalData, type='',bottomInfo='β–
                             style={{textAlign: 'right', paddingRight: 5}}>{totalData?.quantity}</Text></View>
                         <View style={{...styles.point, width: colWidths[3]}}><Text
                             style={{textAlign: 'left', paddingLeft: 5}}>{totalData?.unit}</Text></View>
+                        {/*<View style={{*/}
+                        {/*    ...styles.point,*/}
+                        {/*    width: colWidths[4],*/}
+                        {/*    flexDirection: 'row',*/}
+                        {/*    justifyContent: 'space-between'*/}
+                        {/*}}><Text*/}
+                        {/*    style={{textAlign: 'right', paddingRight: 8}}></Text>*/}
+                        {/*    <Text*/}
+                        {/*        style={{*/}
+                        {/*            textAlign: 'right',*/}
+                        {/*            paddingRight: 8*/}
+                        {/*        }}>(V.A.T) λ―Έν¬ν•¨</Text>*/}
+                        {/*</View>*/}
                         <View style={{
                             ...styles.point,
-                            width: colWidths[4],
-                            flexDirection: 'row',
-                            justifyContent: 'space-between'
-                        }}><Text
-                            style={{textAlign: 'right', paddingRight: 8}}>β‚©</Text>
+                            width: colWidths[4]
+                        }}>
                             <Text
                                 style={{
                                     textAlign: 'right',
@@ -248,7 +276,7 @@ export function NewPdfForm({data, topInfoData, totalData, type='',bottomInfo='β–
                                     textAlign: 'right',
                                     paddingRight: 8
                                 }}>
-                                {(totalData?.total).toLocaleString()}
+                                {amountFormat(totalData?.total)}
                             </Text>
                         </View>
                     </View>
@@ -322,7 +350,7 @@ export function NewPdfForm({data, topInfoData, totalData, type='',bottomInfo='β–
                                         }}>
                                             <Text style={{textAlign: 'left', paddingLeft: 5}}>{model}</Text>
                                         </View>
-                                        {modelIndex === 'maker' ?
+                                        {modelIndex === 'Maker' ?
                                             <>
                                                 <View key={i} style={{...styles.cell, width: colWidths[2]}}></View>
                                                 <View key={i} style={{...styles.cell, width: colWidths[3]}}></View>
@@ -346,18 +374,36 @@ export function NewPdfForm({data, topInfoData, totalData, type='',bottomInfo='β–
                                                 <View key={i} style={{
                                                     ...styles.cell,
                                                     width: colWidths[4],
+                                                    flexDirection: 'row',
+                                                    justifyContent: 'space-between'
                                                 }}>
-                                                    <Text style={{textAlign: 'right', paddingRight: 5}}>{amountFormat(net)}</Text>
+                                                    {/*<Text style={{textAlign: 'right', paddingRight: 5}}>{net?.toLocaleString()}</Text>*/}
+                                                    <Text
+                                                        style={{textAlign: 'right', paddingRight: 8}}>β‚©</Text>
+                                                    <Text
+                                                        style={{
+                                                            textAlign: 'right',
+                                                            paddingRight: 8
+                                                        }}>{amountFormat(net)}</Text>
                                                 </View>
                                                 <View key={i} style={{
                                                     ...styles.cell,
                                                     width: colWidths[5],
                                                     borderRightWidth: 0,
+                                                    flexDirection: 'row',
+                                                    justifyContent: 'space-between'
                                                 }}>
-                                                    <Text style={{
-                                                        textAlign: 'right',
-                                                        paddingRight: 5
-                                                    }}>{amountFormat(quantity * net)}</Text>
+                                                    {/*<Text style={{*/}
+                                                    {/*    textAlign: 'right',*/}
+                                                    {/*    paddingRight: 5*/}
+                                                    {/*}}>{(quantity * net)?.toLocaleString()}</Text>*/}
+                                                    <Text
+                                                        style={{textAlign: 'right', paddingRight: 8}}>β‚©</Text>
+                                                    <Text
+                                                        style={{
+                                                            textAlign: 'right',
+                                                            paddingRight: 8
+                                                        }}>{amountFormat(quantity * net)}</Text>
                                                 </View>
                                             </>
                                         }
@@ -383,13 +429,23 @@ export function NewPdfForm({data, topInfoData, totalData, type='',bottomInfo='β–
                                 style={{textAlign: 'right', paddingRight: 5}}>{totalData?.quantity}</Text></View>
                             <View style={{...styles.point, width: colWidths[3]}}><Text
                                 style={{textAlign: 'left', paddingLeft: 5}}>{totalData?.unit}</Text></View>
+                            {/*<View style={{*/}
+                            {/*    ...styles.point,*/}
+                            {/*    width: colWidths[4],*/}
+                            {/*    flexDirection: 'row',*/}
+                            {/*    justifyContent: 'space-between'*/}
+                            {/*}}><Text*/}
+                            {/*    style={{textAlign: 'right', paddingRight: 8}}>β‚©</Text>*/}
+                            {/*    <Text*/}
+                            {/*        style={{*/}
+                            {/*            textAlign: 'right',*/}
+                            {/*            paddingRight: 8*/}
+                            {/*        }}>(V.A.T) λ―Έν¬ν•¨</Text>*/}
+                            {/*</View>*/}
                             <View style={{
                                 ...styles.point,
-                                width: colWidths[4],
-                                flexDirection: 'row',
-                                justifyContent: 'space-between'
-                            }}><Text
-                                style={{textAlign: 'right', paddingRight: 8}}>β‚©</Text>
+                                width: colWidths[4]
+                            }}>
                                 <Text
                                     style={{
                                         textAlign: 'right',
@@ -407,7 +463,7 @@ export function NewPdfForm({data, topInfoData, totalData, type='',bottomInfo='β–
                                     style={{
                                         textAlign: 'right',
                                         paddingRight: 8
-                                    }}>  {(totalData?.total).toLocaleString()}</Text>
+                                    }}>{amountFormat(totalData?.total)}</Text>
                             </View>
                         </View>
 

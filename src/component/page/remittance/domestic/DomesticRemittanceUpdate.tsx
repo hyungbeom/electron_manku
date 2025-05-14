@@ -34,7 +34,7 @@ import Spin from "antd/lib/spin";
 
 const listType = 'list';
 
-export default function DomesticRemittanceUpdate({ updateKey, getCopyPage }: any) {
+export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null);
     const infoRef = useRef<any>(null);
@@ -100,6 +100,7 @@ export default function DomesticRemittanceUpdate({ updateKey, getCopyPage }: any
     const [fileList, setFileList] = useState([]);
 
     useEffect(() => {
+        console.log('수정 이펙트!!!')
         setLoading(true);
         setInfo(getRemittanceInit());
         setSelectOrderList([]);
@@ -108,6 +109,7 @@ export default function DomesticRemittanceUpdate({ updateKey, getCopyPage }: any
         setFileList([]);
         getDataInfo().then(v => {
             const { remittanceDetail, selectOrderList, remittanceList } = v;
+            console.log(remittanceDetail, 'ㅇㅇㅇㅇ:::')
             setInfo({
                 ...getRemittanceInit(),
                 ...remittanceDetail,
@@ -129,7 +131,7 @@ export default function DomesticRemittanceUpdate({ updateKey, getCopyPage }: any
         return await getData.post('remittance/getRemittanceDetail', {
             "remittanceId": updateKey['domestic_remittance_update']
         }).then(v => {
-            const { orderDetailList, remittanceDetail, ...restDetail } = v?.data?.entity;
+            const { sendRemittanceList, orderDetailList, remittanceDetail, ...restDetail } = v?.data?.entity;
 
             const findAdmin = memberList.find(m => m.adminId === restDetail.managerAdminId);
             // Inquiry No. 정리
@@ -229,23 +231,14 @@ export default function DomesticRemittanceUpdate({ updateKey, getCopyPage }: any
 
         const formData: any = new FormData();
         Object.entries(info).forEach(([key, value]) => {
-            if(key === 'sendRemittanceList'){
-                formData.append(key, JSON.stringify(remittanceList));
-            }else{
-                formData.append(key, value ?? '');
-            }
-
+            formData.append(key, value ?? '');
         });
-
-
-        console.log(filterTableList,':::::')
-
-        // formData.append('selectOrderList',JSON.stringify(selectOrderNos));
-        // formData.append('sendRemittanceList',JSON.stringify(remittanceList));
-
+        formData.append('selectOrderList',JSON.stringify(selectOrderNos));
+        formData.append('sendRemittanceList',JSON.stringify(remittanceList));
 
         await updateRemittance({data: formData})
             .then(v => {
+                console.log(v,'v:::')
                 if (v?.data?.code === 1) {
                     window.postMessage({message: 'reload', target: 'domestic_remittance_read'}, window.location.origin);
                     notificationAlert('success', '💾 국내 송금 수정완료',
@@ -254,6 +247,8 @@ export default function DomesticRemittanceUpdate({ updateKey, getCopyPage }: any
                         </>
                         , null, null, 2
                     )
+                    console.log(info, 'info:::')
+                    getPropertyId('domestic_remittance_update', info?.remittanceId)
                 } else {
                     console.warn(v?.data?.message);
                     notificationAlert('error', '⚠️ 작업실패',
@@ -301,6 +296,12 @@ export default function DomesticRemittanceUpdate({ updateKey, getCopyPage }: any
         }
     ];
     const tabChange = (key: string) => {
+        if (tabNumb === 'History' && key === 'Order') {
+            const tableList = tableRef.current?.getSourceData();
+            // table 컴포넌트 내부에서 total 데이터를 concat 하므로 total 행은 삭제
+            const remittanceList = tableList.slice(0, -1);
+            setSendRemittanceList(remittanceList);
+        }
         setTabNumb(key);
     };
 

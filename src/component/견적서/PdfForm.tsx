@@ -3,6 +3,7 @@ import styles from "@/component/util/Common";
 import {Document, Font, Image, Page, Text, View} from '@react-pdf/renderer';
 import React from "react";
 import {commonManage} from "@/utils/commonManage";
+import {amountFormat} from "@/utils/columnList";
 
 Font.register({
     family: 'NotoSansKR',
@@ -17,26 +18,6 @@ Font.register({
 const colWidths = [40, 210, 50, 50, 110, 110];
 
 export function PdfForm({data, topInfoData, totalData, type='',bottomInfo='▶의뢰하신 Model로 기준한 견적입니다.\n▶계좌번호 :  (기업은행)069-118428-04-010/만쿠무역\n▶긴급 납기시 담당자와 협의가능합니다.\n▶견적서에 기재되지 않은 서류 및 성적서는 미 포함 입니다.'}) {
-
-    function numberFormat (number, currency = '') {
-        if (number === null || number === undefined || number === '') {
-            return '';
-        }
-        const num = Number(number);
-        if (isNaN(num)) {
-            return '';
-        }
-        const fixedNum = num.toFixed(3);
-        const [integerPart, decimalPart] = fixedNum.split('.');
-        const trimmedDecimal = decimalPart.slice(0, 2);
-        const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-        // return decimalPart !== '00'
-        //     ? `${formattedInteger}.${decimalPart}`
-        //     : formattedInteger;
-        return currency !== 'KRW'
-            ? `${formattedInteger}.${trimmedDecimal}`
-            : trimmedDecimal !== '00' ? `${formattedInteger}.${trimmedDecimal}` : formattedInteger;
-    }
 
     return <Document>
         <Page size="A4" style={styles.page}>
@@ -204,12 +185,12 @@ export function PdfForm({data, topInfoData, totalData, type='',bottomInfo='▶�
                             }}>
                                 {/*<Text style={{textAlign: 'right', paddingRight: 5}}>{net?.toLocaleString()}</Text>*/}
                                 <Text
-                                    style={{textAlign: 'right', paddingRight: 8}}>{currencyUnit}</Text>
+                                    style={{textAlign: 'right', paddingRight: 8}}>₩</Text>
                                 <Text
                                     style={{
                                         textAlign: 'right',
                                         paddingRight: 8
-                                    }}>{numberFormat(net, currencyUnit)}</Text>
+                                    }}>{amountFormat(net)}</Text>
                             </View>
                             <View key={i} style={{
                                 ...styles.cell,
@@ -223,12 +204,12 @@ export function PdfForm({data, topInfoData, totalData, type='',bottomInfo='▶�
                                 {/*    paddingRight: 5*/}
                                 {/*}}>{(quantity * net)?.toLocaleString()}</Text>*/}
                                 <Text
-                                    style={{textAlign: 'right', paddingRight: 8}}>{currencyUnit}</Text>
+                                    style={{textAlign: 'right', paddingRight: 8}}>₩</Text>
                                 <Text
                                     style={{
                                         textAlign: 'right',
                                         paddingRight: 8
-                                    }}>{numberFormat(quantity * net, currencyUnit)}</Text>
+                                    }}>{amountFormat(quantity * net)}</Text>
                             </View>
                         </View>
                         </>
@@ -278,7 +259,7 @@ export function PdfForm({data, topInfoData, totalData, type='',bottomInfo='▶�
                             flexDirection: 'row',
                             justifyContent: 'space-between'
                         }}><Text
-                            style={{textAlign: 'right', paddingRight: 8}}>{totalData?.currencyUnit}</Text>
+                            style={{textAlign: 'right', paddingRight: 8}}>₩</Text>
                             {/*<Text*/}
                             {/*    style={{*/}
                             {/*        textAlign: 'right',*/}
@@ -290,7 +271,7 @@ export function PdfForm({data, topInfoData, totalData, type='',bottomInfo='▶�
                                 style={{
                                     textAlign: 'right',
                                     paddingRight: 8
-                                }}>{numberFormat(totalData?.total, totalData?.currencyUnit)}</Text>
+                                }}>{amountFormat(totalData?.total)}</Text>
                         </View>
                     </View>
 
@@ -382,12 +363,12 @@ export function PdfForm({data, topInfoData, totalData, type='',bottomInfo='▶�
                                 }}>
                                     {/*<Text style={{textAlign: 'right', paddingRight: 5}}>{net?.toLocaleString()}</Text>*/}
                                     <Text
-                                        style={{textAlign: 'right', paddingRight: 8}}>{currencyUnit}</Text>
+                                        style={{textAlign: 'right', paddingRight: 8}}>₩</Text>
                                     <Text
                                         style={{
                                             textAlign: 'right',
                                             paddingRight: 8
-                                        }}>{numberFormat(net, currencyUnit)}</Text>
+                                        }}>{amountFormat(net)}</Text>
                                 </View>
                                 <View key={i} style={{
                                     ...styles.cell,
@@ -401,12 +382,12 @@ export function PdfForm({data, topInfoData, totalData, type='',bottomInfo='▶�
                                     {/*    paddingRight: 5*/}
                                     {/*}}>{(quantity * net)?.toLocaleString()}</Text>*/}
                                     <Text
-                                        style={{textAlign: 'right', paddingRight: 8}}>{currencyUnit}</Text>
+                                        style={{textAlign: 'right', paddingRight: 8}}>₩</Text>
                                     <Text
                                         style={{
                                             textAlign: 'right',
                                             paddingRight: 8
-                                        }}>{numberFormat(quantity * net, currencyUnit)}</Text>
+                                        }}>{amountFormat(quantity * net)}</Text>
                                 </View>
                             </View>
                             </>
@@ -457,7 +438,7 @@ export function PdfForm({data, topInfoData, totalData, type='',bottomInfo='▶�
                                 flexDirection: 'row',
                                 justifyContent: 'space-between'
                             }}><Text
-                                style={{textAlign: 'right', paddingRight: 8}}>{totalData?.currencyUnit}</Text>
+                                style={{textAlign: 'right', paddingRight: 8}}>₩</Text>
                                 {/*<Text*/}
                                 {/*    style={{*/}
                                 {/*        textAlign: 'right',*/}
@@ -467,7 +448,7 @@ export function PdfForm({data, topInfoData, totalData, type='',bottomInfo='▶�
                                     style={{
                                         textAlign: 'right',
                                         paddingRight: 8
-                                    }}>{numberFormat(totalData?.total, totalData?.currencyUnit)}</Text>
+                                    }}>{amountFormat(totalData?.total)}</Text>
                             </View>
                         </View>
 

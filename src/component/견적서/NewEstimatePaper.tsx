@@ -46,7 +46,7 @@ function transformEstimateData(data: any) {
             quantity: null,
             unit: null,
             net: null,
-            modelIndex: "maker"
+            modelIndex: "Maker"
         });
 
 
@@ -176,7 +176,7 @@ export default function NewEstimatePaper({gridRef, openEstimateModal}) {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `${info?.documentNumberFull}_견적서.pdf`;
+        link.download = `${info?.documentNumberFull}${info?.customerName ? '_' + info?.customerName : ''}_견적서.pdf`;
         link.click();
 
         // 메모리 해제
@@ -290,7 +290,7 @@ export default function NewEstimatePaper({gridRef, openEstimateModal}) {
                          setToggle(true);
                      }}>
                     <span>{!isNaN(info.net * info.quantity) ? '₩' : ''}</span>
-                    <span className={'total'}>{!isNaN(info.net * info.quantity) ? amountFormat(info.net * info.quantity) : ''}</span>
+                    <span className={'total'}>{amountFormat(info.net * info.quantity)}</span>
                 </div>
             </td>
         </>
@@ -441,7 +441,7 @@ export default function NewEstimatePaper({gridRef, openEstimateModal}) {
                                 textAlign: 'left',
                                 paddingLeft: 5
                                 }}><TextAreas value={src.model} numb={idx} objKey={0}/></td>
-                                {src.modelIndex === 'maker' ?
+                                {src.modelIndex === 'Maker' ?
                                 <>
                                     <td colSpan={2}></td>
                                     <td></td>
@@ -506,7 +506,10 @@ export default function NewEstimatePaper({gridRef, openEstimateModal}) {
                             (V.A.T) 미포함
                         </th>
                         <th style={{width: '20%', textAlign: 'right', paddingRight: 10}}>
-                            {(totalData?.total).toLocaleString()}
+                            <div style={{display: 'flex', justifyContent: 'space-between', padding: '0px 8px'}}>
+                                <span>₩</span>
+                                <span>{amountFormat(totalData?.total)}</span>
+                            </div>
                         </th>
                         {/*tax*/}
                     </tr>
@@ -590,7 +593,7 @@ export default function NewEstimatePaper({gridRef, openEstimateModal}) {
                                         textAlign: 'left',
                                         paddingLeft: 5
                                     }}><TextAreas value={src.model} numb={idx} objKey={0}/></td>
-                                    {src.modelIndex === 'maker' ?
+                                    {src.modelIndex === 'Maker' ?
                                         <>
                                             <td colSpan={2}></td>
                                             <td></td>
@@ -654,7 +657,10 @@ export default function NewEstimatePaper({gridRef, openEstimateModal}) {
                             (V.A.T) 미포함
                         </th>
                         <th style={{width: '20%', textAlign: 'right', paddingRight: 10}}>
-                            {(totalData?.total).toLocaleString()}
+                            <div style={{display: 'flex', justifyContent: 'space-between', padding: '0px 8px'}}>
+                                <span>₩</span>
+                                <span>{amountFormat(totalData?.total)}</span>
+                            </div>
                         </th>
                     </tr>
                     </thead>

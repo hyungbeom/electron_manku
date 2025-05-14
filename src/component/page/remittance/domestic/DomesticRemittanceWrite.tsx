@@ -152,11 +152,7 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
                         <>
                             <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                         </>
-                        ,
-                        function () {
-                            getPropertyId('domestic_remittance_update', v?.data?.entity?.remittanceId)
-                        },
-                        {cursor: 'pointer'}
+                        , null, null, 2
                     )
                     clearAll();
                     getPropertyId('domestic_remittance_update', v?.data?.entity?.remittanceId)
@@ -233,6 +229,12 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
         }
     ];
     const tabChange = (key: string) => {
+        if (tabNumb === 'History' && key === 'Order') {
+            const tableList = tableRef.current?.getSourceData();
+            // table 컴포넌트 내부에서 total 데이터를 concat 하므로 total 행은 삭제
+            const remittanceList = tableList.slice(0, -1);
+            setSendRemittanceList(remittanceList);
+        }
         setTabNumb(key);
     };
 
