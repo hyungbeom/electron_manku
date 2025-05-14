@@ -108,7 +108,6 @@ export default function DomesticRemittanceUpdate({ updateKey, getCopyPage }: any
         setFileList([]);
         getDataInfo().then(v => {
             const { remittanceDetail, selectOrderList, remittanceList } = v;
-            console.log(remittanceDetail, 'ㅇㅇㅇㅇ:::')
             setInfo({
                 ...getRemittanceInit(),
                 ...remittanceDetail,
@@ -230,14 +229,23 @@ export default function DomesticRemittanceUpdate({ updateKey, getCopyPage }: any
 
         const formData: any = new FormData();
         Object.entries(info).forEach(([key, value]) => {
-            formData.append(key, value ?? '');
+            if(key === 'sendRemittanceList'){
+                formData.append(key, JSON.stringify(remittanceList));
+            }else{
+                formData.append(key, value ?? '');
+            }
+
         });
-        formData.append('selectOrderList',JSON.stringify(selectOrderNos));
-        formData.append('sendRemittanceList',JSON.stringify(remittanceList));
+
+
+        console.log(filterTableList,':::::')
+
+        // formData.append('selectOrderList',JSON.stringify(selectOrderNos));
+        // formData.append('sendRemittanceList',JSON.stringify(remittanceList));
+
 
         await updateRemittance({data: formData})
             .then(v => {
-                console.log(v,'v:::')
                 if (v?.data?.code === 1) {
                     window.postMessage({message: 'reload', target: 'domestic_remittance_read'}, window.location.origin);
                     notificationAlert('success', '💾 국내 송금 수정완료',
