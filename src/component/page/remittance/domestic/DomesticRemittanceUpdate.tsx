@@ -34,7 +34,7 @@ import Spin from "antd/lib/spin";
 
 const listType = 'list';
 
-export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: any) {
+export default function DomesticRemittanceUpdate({updateKey, getPropertyId}: any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null);
     const infoRef = useRef<any>(null);
@@ -108,7 +108,7 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
         setOrderInfo(getOrderInit());
         setFileList([]);
         getDataInfo().then(v => {
-            const { remittanceDetail, selectOrderList, remittanceList } = v;
+            const {remittanceDetail, selectOrderList, remittanceList} = v;
             console.log(remittanceDetail, 'ㅇㅇㅇㅇ:::')
             setInfo({
                 ...getRemittanceInit(),
@@ -122,16 +122,16 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
             const sendRemittanceList = [...remittanceList, ...commonFunc.repeatObject(remittanceInfo['write']['defaultData'], 100 - remittanceList?.length)];
             setSendRemittanceList(sendRemittanceList);
         })
-        .finally(() => {
-            setLoading(false);
-        });
+            .finally(() => {
+                setLoading(false);
+            });
     }, [updateKey['domestic_remittance_update']])
 
     async function getDataInfo() {
         return await getData.post('remittance/getRemittanceDetail', {
             "remittanceId": updateKey['domestic_remittance_update']
         }).then(v => {
-            const { sendRemittanceList, orderDetailList, remittanceDetail, ...restDetail } = v?.data?.entity;
+            const {sendRemittanceList, orderDetailList, remittanceDetail, ...restDetail} = v?.data?.entity;
 
             const findAdmin = memberList.find(m => m.adminId === restDetail.managerAdminId);
             // Inquiry No. 정리
@@ -147,7 +147,7 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
 
             // 선택 발주서 리스트 작성일자 정리
             const orderList = orderDetailList.map(v => {
-                return { ...v, writtenDate: v.createdDate}
+                return {...v, writtenDate: v.createdDate}
             });
             const total = orderList.reduce((sum, row) => {
                 const quantity = parseFloat(row.quantity);
@@ -174,7 +174,7 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
                     ...restDetail,
                     connectInquiryNo: Array.isArray(connectInquiryNos) ? connectInquiryNos.join(', ') : '',
                     orderDetailIds: Array.isArray(selectOrderList) ? selectOrderList.join(', ') : '',
-                    managerAdminName : findAdmin?.name || '',
+                    managerAdminName: findAdmin?.name || '',
                     // totalAmount: total,
                     partialRemittance: remittance.toLocaleString(),
                     // balance: total - (restDetail.partialRemittance || 0)
@@ -217,7 +217,7 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
 
         const remittanceList = filterTableList.map(v => {
             const tax = v.supplyAmount ? v.supplyAmount * 0.1 : 0;
-            const { total, ...item } = v;
+            const {total, ...item} = v;
             return {
                 ...item,
                 tax,
@@ -233,12 +233,12 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
         Object.entries(info).forEach(([key, value]) => {
             formData.append(key, value ?? '');
         });
-        formData.append('selectOrderList',JSON.stringify(selectOrderNos));
-        formData.append('sendRemittanceList',JSON.stringify(remittanceList));
+        formData.append('selectOrderList', JSON.stringify(selectOrderNos));
+        formData.append('sendRemittanceList', JSON.stringify(remittanceList));
 
         await updateRemittance({data: formData})
             .then(v => {
-                console.log(v,'v:::')
+                console.log(v, 'v:::')
                 if (v?.data?.code === 1) {
                     window.postMessage({message: 'reload', target: 'domestic_remittance_read'}, window.location.origin);
                     notificationAlert('success', '💾 국내 송금 수정완료',
@@ -312,24 +312,23 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
      * @param orderDetail
      */
     async function getOrderDetail(orderDetail) {
-        if(!orderDetail['orderId']) {
-            message.warn('선택한 발주서 정보를 확인해주세요.');
-            return;
-        }
-        if(orderInfo['orderId'] === orderDetail['orderId']) return;
+        console.log(orderDetail?.documentNumberFull, '::detail')
+        // if(!orderDetail['orderId']) {
+        //     message.warn('선택한 발주서 정보를 확인해주세요.');
+        //     return;
+        // }
+        // if(orderInfo['orderId'] === orderDetail['orderId']) return;
 
-        setLoading(true);
-        await getData.post('order/getOrderDetail', {orderId: orderDetail['orderId']})
-            .then(v => {
-                setOrderInfo({
-                    ...v?.data?.entity?.orderDetail,
-                    uploadType: 5
+        // setLoading(true);
+        if (!!orderDetail?.documentNumberFull) {
+            await getData.post('common/getFileList', orderDetail?.documentNumberFull)
+                .then(v => {
+                    setFileList(v?.data?.entity?.fileList)
                 })
-                setFileList(fileManage.getFormatFiles(v?.data?.entity?.attachmentFileList));
-            })
-            .finally(() => {
-                setLoading(false);
-            });
+                .finally(() => {
+                    setLoading(false);
+                });
+        }
     }
 
     /**
@@ -380,7 +379,7 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
                     ? parseFloat(prevPartialRemittance.replace(/,/g, '')) || 0
                     : prevPartialRemittance;
 
-                const balance= total - partialRemittance;
+                const balance = total - partialRemittance;
 
                 return {
                     ...prevInfo,
@@ -398,115 +397,83 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
 
     return <Spin spinning={loading}>
         {/*<div style={{height: 'calc(100vh - 90px)'}}>*/}
-            <PanelSizeUtil groupRef={groupRef} storage={'domestic_remittance_update'}/>
-            <SearchInfoModal info={selectOrderList} infoRef={infoRef} setInfo={setSelectOrderList}
-                             open={isModalOpen}
-                             setIsModalOpen={setIsModalOpen} returnFunc={modalSelected}/>
+        <PanelSizeUtil groupRef={groupRef} storage={'domestic_remittance_update'}/>
+        <SearchInfoModal info={selectOrderList} infoRef={infoRef} setInfo={setSelectOrderList}
+                         open={isModalOpen}
+                         setIsModalOpen={setIsModalOpen} returnFunc={modalSelected}/>
 
-            <div ref={infoRef} style={{
-                display: 'grid',
-                gridTemplateRows: `${mini ? '490px' : '65px'} calc(100vh - ${mini ? 590 : 195}px)`,
-                // overflowY: 'hidden',
-                rowGap: 10,
-            }}>
-                <MainCard title={'국내 송금 수정'} list={[
-                    {name: <div><SaveOutlined style={{paddingRight: 8}}/>저장</div>, func: saveFunc, type: 'primary'},
-                    // {
-                    //     name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>,
-                    //     func: clearAll,
-                    //     type: 'danger'
-                    // }
-                ]} mini={mini} setMini={setMini}>
-                    <div ref={infoRef}>
-                        <TopBoxCard grid={'200px 200px 200px 200px 180px'}>
-                            {/*{inputForm({*/}
-                            {/*    title: 'Inquiry No.',*/}
-                            {/*    id: 'connectInquiryNo',*/}
-                            {/*    onChange: onChange,*/}
-                            {/*    data: info,*/}
-                            {/*    disabled: true,*/}
-                            {/*    suffix: <FileSearchOutlined style={{cursor: 'pointer', color: 'black'}} onClick={*/}
-                            {/*        (e) => {*/}
-                            {/*            e.stopPropagation();*/}
-                            {/*            openModal('connectInquiryNo');*/}
-                            {/*        }*/}
-                            {/*    }/>*/}
-                            {/*})}*/}
-                            {inputForm({
-                                title: 'Inquiry No.',
-                                id: 'connectInquiryNo',
-                                onChange: onChange,
-                                data: info,
-                                disabled: true,
-                                suffix: <span style={{cursor: 'pointer'}} onClick={
-                                    (e) => {
-                                        e.stopPropagation();
-                                        openModal('connectInquiryNo');
-                                    }
-                                }>🔍</span>,
-                            })}
-                            {inputForm({title: '항목번호', id: 'orderDetailIds', onChange: onChange, data: info})}
-                            {inputForm({title: '고객사명', id: 'customerName', onChange: onChange, data: info})}
-                            {inputForm({title: '매입처명', id: 'agencyName', onChange: onChange, data: info})}
-                            {inputForm({
-                                title: '담당자',
-                                id: 'managerAdminName',
-                                onChange: onChange,
-                                data: info
-                            })}
-                        </TopBoxCard>
+        <div ref={infoRef} style={{
+            display: 'grid',
+            gridTemplateRows: `${mini ? '490px' : '65px'} calc(100vh - ${mini ? 590 : 195}px)`,
+            // overflowY: 'hidden',
+            rowGap: 10,
+        }}>
+            <MainCard title={'국내 송금 수정'} list={[
+                {name: <div><SaveOutlined style={{paddingRight: 8}}/>저장</div>, func: saveFunc, type: 'primary'},
+                // {
+                //     name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>,
+                //     func: clearAll,
+                //     type: 'danger'
+                // }
+            ]} mini={mini} setMini={setMini}>
+                <div ref={infoRef}>
+                    <TopBoxCard grid={'200px 200px 200px 200px 180px'}>
+                        {/*{inputForm({*/}
+                        {/*    title: 'Inquiry No.',*/}
+                        {/*    id: 'connectInquiryNo',*/}
+                        {/*    onChange: onChange,*/}
+                        {/*    data: info,*/}
+                        {/*    disabled: true,*/}
+                        {/*    suffix: <FileSearchOutlined style={{cursor: 'pointer', color: 'black'}} onClick={*/}
+                        {/*        (e) => {*/}
+                        {/*            e.stopPropagation();*/}
+                        {/*            openModal('connectInquiryNo');*/}
+                        {/*        }*/}
+                        {/*    }/>*/}
+                        {/*})}*/}
+                        {inputForm({
+                            title: 'Inquiry No.',
+                            id: 'connectInquiryNo',
+                            onChange: onChange,
+                            data: info,
+                            disabled: true,
+                            suffix: <span style={{cursor: 'pointer'}} onClick={
+                                (e) => {
+                                    e.stopPropagation();
+                                    openModal('connectInquiryNo');
+                                }
+                            }>🔍</span>,
+                        })}
+                        {inputForm({title: '항목번호', id: 'orderDetailIds', onChange: onChange, data: info})}
+                        {inputForm({title: '고객사명', id: 'customerName', onChange: onChange, data: info})}
+                        {inputForm({title: '매입처명', id: 'agencyName', onChange: onChange, data: info})}
+                        {inputForm({
+                            title: '담당자',
+                            id: 'managerAdminName',
+                            onChange: onChange,
+                            data: info
+                        })}
+                    </TopBoxCard>
 
-                        <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
-                            <Panel defaultSize={sizes[0]} minSize={5}>
-                                <BoxCard title={'금액 정보'}>
-                                    {/*{inputForm({*/}
-                                    {/*    title: '총액',*/}
-                                    {/*    id: 'totalAmount',*/}
-                                    {/*    onChange: onChange,*/}
-                                    {/*    data: info,*/}
-                                    {/*})}*/}
-                                    <div style={{fontSize: 12, paddingBottom: 10}}>
-                                        <div style={{paddingBottom: 12 / 2, fontWeight: 700}}>총액</div>
-                                        <div style={{display: 'flex'}}>
-                                            <input placeholder={''}
-                                                   id={'totalAmount'}
-                                                   value={info ? info['totalAmount'] : null}
-                                                   onKeyDown={(e) => {
-                                                       if(e.key === 'Enter') {
-                                                           setInfo(prev => {
-                                                               const prevTotalAmount = e.currentTarget.value || 0;
-                                                               const totalAmount = typeof prevTotalAmount === "string"
-                                                                   ? parseFloat(prevTotalAmount.replace(/,/g, '')) || 0
-                                                                   : prevTotalAmount;
-                                                               const prevPartialRemittance = prev.partialRemittance || 0;
-                                                               const partialRemittance = typeof prevPartialRemittance === "string"
-                                                                   ? parseFloat(prevPartialRemittance.replace(/,/g, '')) || 0
-                                                                   : prevPartialRemittance;
-                                                               const balance= totalAmount - partialRemittance;
-                                                               return {
-                                                                   ...prev,
-                                                                   balance: balance.toLocaleString()
-                                                               }
-                                                           })
-                                                           e.currentTarget.blur();
-                                                       }
-                                                   }}
-                                                   onChange={onChange}
-                                                   onFocus={(e) => {
+                    <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
+                        <Panel defaultSize={sizes[0]} minSize={5}>
+                            <BoxCard title={'금액 정보'}>
+                                {/*{inputForm({*/}
+                                {/*    title: '총액',*/}
+                                {/*    id: 'totalAmount',*/}
+                                {/*    onChange: onChange,*/}
+                                {/*    data: info,*/}
+                                {/*})}*/}
+                                <div style={{fontSize: 12, paddingBottom: 10}}>
+                                    <div style={{paddingBottom: 12 / 2, fontWeight: 700}}>총액</div>
+                                    <div style={{display: 'flex'}}>
+                                        <input placeholder={''}
+                                               id={'totalAmount'}
+                                               value={info ? info['totalAmount'] : null}
+                                               onKeyDown={(e) => {
+                                                   if (e.key === 'Enter') {
                                                        setInfo(prev => {
-                                                           const prevTotalAmount = e.target.value || 0;
-                                                           const totalAmount = typeof prevTotalAmount === "string"
-                                                               ? parseFloat(prevTotalAmount.replace(/,/g, '')) || 0
-                                                               : prevTotalAmount;
-                                                           return {
-                                                               ...prev,
-                                                               totalAmount
-                                                           }
-                                                       })
-                                                   }}
-                                                   onBlur={(e) => {
-                                                       setInfo(prev => {
-                                                           const prevTotalAmount = e.target.value || 0;
+                                                           const prevTotalAmount = e.currentTarget.value || 0;
                                                            const totalAmount = typeof prevTotalAmount === "string"
                                                                ? parseFloat(prevTotalAmount.replace(/,/g, '')) || 0
                                                                : prevTotalAmount;
@@ -514,90 +481,123 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
                                                            const partialRemittance = typeof prevPartialRemittance === "string"
                                                                ? parseFloat(prevPartialRemittance.replace(/,/g, '')) || 0
                                                                : prevPartialRemittance;
-                                                           const balance= totalAmount - partialRemittance;
+                                                           const balance = totalAmount - partialRemittance;
                                                            return {
                                                                ...prev,
                                                                balance: balance.toLocaleString()
                                                            }
                                                        })
-                                                   }}
-                                            />
-                                            <span style={{marginLeft: -22, paddingTop: 1.5}}></span>
-                                        </div>
+                                                       e.currentTarget.blur();
+                                                   }
+                                               }}
+                                               onChange={onChange}
+                                               onFocus={(e) => {
+                                                   setInfo(prev => {
+                                                       const prevTotalAmount = e.target.value || 0;
+                                                       const totalAmount = typeof prevTotalAmount === "string"
+                                                           ? parseFloat(prevTotalAmount.replace(/,/g, '')) || 0
+                                                           : prevTotalAmount;
+                                                       return {
+                                                           ...prev,
+                                                           totalAmount
+                                                       }
+                                                   })
+                                               }}
+                                               onBlur={(e) => {
+                                                   setInfo(prev => {
+                                                       const prevTotalAmount = e.target.value || 0;
+                                                       const totalAmount = typeof prevTotalAmount === "string"
+                                                           ? parseFloat(prevTotalAmount.replace(/,/g, '')) || 0
+                                                           : prevTotalAmount;
+                                                       const prevPartialRemittance = prev.partialRemittance || 0;
+                                                       const partialRemittance = typeof prevPartialRemittance === "string"
+                                                           ? parseFloat(prevPartialRemittance.replace(/,/g, '')) || 0
+                                                           : prevPartialRemittance;
+                                                       const balance = totalAmount - partialRemittance;
+                                                       return {
+                                                           ...prev,
+                                                           balance: balance.toLocaleString()
+                                                       }
+                                                   })
+                                               }}
+                                        />
+                                        <span style={{marginLeft: -22, paddingTop: 1.5}}></span>
                                     </div>
-                                    {inputForm({
-                                        title: '부분송금액',
-                                        id: 'partialRemittance',
-                                        disabled: true,
-                                        onChange: onChange,
-                                        data: info,
-                                        // formatter: numbFormatter,
-                                        // parser: numbParser
-                                    })}
-                                    {inputForm({
-                                        title: '합계',
-                                        id: 'balance',
-                                        disabled: true,
-                                        onChange: onChange,
-                                        data: info,
-                                        // formatter: numbFormatter,
-                                        // parser: numbParser
-                                    })}
-                                </BoxCard>
-                            </Panel>
-                            <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[1]} minSize={5}>
-                                <BoxCard title={'확인 정보'}>
-                                    {radioForm({
-                                        title: '부분 송금 진행 여부',
-                                        id: 'partialRemittanceStatus',
-                                        onChange: onChange,
-                                        data: info,
-                                        list: [
-                                            {value: '완료', title: '완료'},
-                                            {value: '진행중', title: '진행중'},
-                                            {value: '', title: '해당없음'}
-                                        ]
-                                    })}
-                                    {textAreaForm({title: '비고란', rows: 10, id: 'remarks', onChange: onChange, data: info})}
-                                </BoxCard>
-                            </Panel>
-                            <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[2]} minSize={5}>
-                                {/*<BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>*/}
-                                {/*    <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}*/}
-                                {/*                     info={orderInfo} type={'remittance'} key={orderInfo?.orderId}/>*/}
-                                {/*</BoxCard>*/}
+                                </div>
+                                {inputForm({
+                                    title: '부분송금액',
+                                    id: 'partialRemittance',
+                                    disabled: true,
+                                    onChange: onChange,
+                                    data: info,
+                                    // formatter: numbFormatter,
+                                    // parser: numbParser
+                                })}
+                                {inputForm({
+                                    title: '합계',
+                                    id: 'balance',
+                                    disabled: true,
+                                    onChange: onChange,
+                                    data: info,
+                                    // formatter: numbFormatter,
+                                    // parser: numbParser
+                                })}
+                            </BoxCard>
+                        </Panel>
+                        <PanelResizeHandle/>
+                        <Panel defaultSize={sizes[1]} minSize={5}>
+                            <BoxCard title={'확인 정보'}>
+                                {radioForm({
+                                    title: '부분 송금 진행 여부',
+                                    id: 'partialRemittanceStatus',
+                                    onChange: onChange,
+                                    data: info,
+                                    list: [
+                                        {value: '완료', title: '완료'},
+                                        {value: '진행중', title: '진행중'},
+                                        {value: '', title: '해당없음'}
+                                    ]
+                                })}
+                                {textAreaForm({title: '비고란', rows: 10, id: 'remarks', onChange: onChange, data: info})}
+                            </BoxCard>
+                        </Panel>
+                        <PanelResizeHandle/>
+                        <Panel defaultSize={sizes[2]} minSize={5}>
+                            {/*<BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>*/}
+                            {/*    <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}*/}
+                            {/*                     info={orderInfo} type={'remittance'} key={orderInfo?.orderId}/>*/}
+                            {/*</BoxCard>*/}
 
-                                <BoxCard title={
-                                    <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                                        <div>드라이브 목록</div>
-                                        {
-                                            orderInfo['folderId'] ?
-                                                <span>
+                            <BoxCard title={
+                                <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                                    <div>드라이브 목록</div>
+                                    {
+                                        orderInfo['folderId'] ?
+                                            <span>
                                                     <FolderOpenOutlined/> {`${orderInfo['documentNumberFull']}`}
                                                 </span>
-                                                : <></>
-                                        }
-                                    </div>
-                                } disabled={!userInfo['microsoftId'] || !orderInfo?.folderId}>
-                                    {/*@ts-ignored*/}
-                                    <div style={{overFlowY: "auto", maxHeight: 300}}>
-                                        <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                         info={orderInfo} type={'remittance'} key={orderInfo?.folderId}/>
-                                    </div>
-                                </BoxCard>
+                                            : <></>
+                                    }
+                                </div>
+                            } disabled={!userInfo['microsoftId'] || !orderInfo?.folderId}>
+                                {/*@ts-ignored*/}
+                                <div style={{overFlowY: "auto", maxHeight: 300}}>
+                                    <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
+                                                     info={orderInfo} type={'remittance'} key={orderInfo?.folderId}/>
+                                </div>
+                            </BoxCard>
 
 
-                            </Panel>
-                            <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[3]} minSize={0}></Panel>
-                        </PanelGroup>
-                    </div>
-                </MainCard>
+                        </Panel>
+                        <PanelResizeHandle/>
+                        <Panel defaultSize={sizes[3]} minSize={0}></Panel>
+                    </PanelGroup>
+                </div>
+            </MainCard>
 
-                <Tabs size={'small'} tabBarStyle={{paddingLeft: 10, paddingRight: 10, marginBottom: 0}} activeKey={tabNumb} items={items} onChange={tabChange}/>
+            <Tabs size={'small'} tabBarStyle={{paddingLeft: 10, paddingRight: 10, marginBottom: 0}} activeKey={tabNumb}
+                  items={items} onChange={tabChange}/>
 
-            </div>
+        </div>
     </Spin>
 }
