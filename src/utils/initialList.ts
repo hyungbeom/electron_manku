@@ -694,7 +694,7 @@ export const modalList = {
     },
     connectInquiryNo: {
         // url: 'order/getOrderListForRemittance',
-        url: 'order/getOrderList',
+        url: 'order/searchTextOrderList',
         title: '발주서 조회',
         // column: subSecTableOrderReadColumns,
         column: tableOrderReadColumns,
