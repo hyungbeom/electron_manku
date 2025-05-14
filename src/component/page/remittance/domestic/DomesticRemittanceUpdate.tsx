@@ -17,7 +17,7 @@ import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {commonFunc, commonManage, fileManage} from "@/utils/commonManage";
 import {saveRemittance, updateRemittance} from "@/utils/api/mainApi";
 import SearchInfoModal from "@/component/SearchAgencyModal";
-import {FolderOpenOutlined, RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
+import {DeleteOutlined, FolderOpenOutlined, RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import Table from "@/component/util/Table";
@@ -31,6 +31,7 @@ import Remittance from "@/component/remittance/Remittance";
 import moment from "moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import Spin from "antd/lib/spin";
+import {Actions} from "flexlayout-react";
 
 const listType = 'list';
 
@@ -421,6 +422,48 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
         });
     }
 
+
+    function deleteFunc() {
+        getData.post('remittance/deleteRemittance',{remittanceId : updateKey['domestic_remittance_update']}).then(v=>{
+            console.log(v,':::::')
+        })
+
+
+        // setLoading(true)
+        // getData.post('estimate/deleteEstimateRequest', {estimateRequestId: updateKey['domestic_remittance_update']}).then(v => {
+        //     const {code, message} = v.data;
+        //     if (code === 1) {
+        //         window.postMessage({message: 'reload', target: 'rfq_read'}, window.location.origin);
+        //
+        //         notificationAlert('success', '🗑️견적의뢰 삭제완료',
+        //             <>
+        //                 <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+        //             </>
+        //             , null, null, 2
+        //         )
+        //         getCopyPage('rfq_read', {})
+        //         const {model} = layoutRef.current.props;
+        //         const targetNode = model.getRoot().getChildren()[0]?.getChildren()
+        //             .find((node: any) => node.getType() === "tab" && node.getComponent() === 'rfq_update');
+        //         if (targetNode) {
+        //             model.doAction(Actions.deleteTab(targetNode.getId())); // ✅ 기존 로직 유지
+        //         }
+        //     } else {
+        //         notificationAlert('error', '⚠️ 작업실패',
+        //             <>
+        //                 <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+        //             </>
+        //             , function () {
+        //                 console.log(v?.data?.message);
+        //                 alert('작업 로그 페이지 참고')
+        //             },
+        //             {cursor: 'pointer'}
+        //         )
+        //     }
+        // }, err => setLoading(false))
+        // setLoading(true)
+    }
+
     return <Spin spinning={loading}>
         {/*<div style={{height: 'calc(100vh - 90px)'}}>*/}
             <PanelSizeUtil groupRef={groupRef} storage={'domestic_remittance_update'}/>
@@ -435,6 +478,7 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
                 rowGap: 10,
             }}>
                 <MainCard title={'국내 송금 수정'} list={[
+                    {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: deleteFunc, type: 'delete'},
                     {name: <div><SaveOutlined style={{paddingRight: 8}}/>저장</div>, func: saveFunc, type: 'primary'},
                     // {
                     //     name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>,

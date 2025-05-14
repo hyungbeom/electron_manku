@@ -122,8 +122,10 @@ export default function DomesticRemittanceRead({getPropertyId, getCopyPage}: any
         const list = gridRef.current.getSelectedRows();
         if (!list?.length) return message.warn('삭제할 송금내역을 선택해주세요.');
 
-        setLoading(true);
-        const filterList = list.map(v => parseInt(v.remittanceId));
+        // setLoading(true);
+        const filterList = list.map(v => parseInt(v.remittanceDetailId));
+        console.log(filterList)
+
         await getData.post('remittance/deleteRemittances', {deleteRemittanceIdList: filterList}).then(v => {
             if (v.data.code === 1) {
                 searchInfo(true);
