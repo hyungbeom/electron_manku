@@ -74,6 +74,25 @@ const TableGrid = ({
         const selectedNode = event.node; // 현재 선택된 노드
         const selectedData = selectedNode.data; // 선택된 데이터
 
+        if (type === 'DRRead') {
+            const groupValue = selectedData.remittanceId;
+            const rowIndex = selectedNode.rowIndex;
+            const previousData = event.api.getDisplayedRowAtIndex(rowIndex - 1)?.data?.remittanceId;
+
+            // 이전 데이터와 그룹 값이 다를 때만 처리
+            if (!previousData || previousData !== groupValue) {
+                const isSelected = selectedNode.isSelected();
+
+                // 동일한 groupValue를 가진 행들만 선택 상태 변경
+                event.api.forEachNode((node) => {
+                    if (node.data?.remittanceId === groupValue) {
+                        node.setSelected(isSelected);
+                    }
+                });
+            }
+            return;
+        }
+
         // documentNumberFull 필드가 없거나 값이 없으면 아무 작업도 하지 않음
         if (!selectedData?.documentNumberFull) {
             return;

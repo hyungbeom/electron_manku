@@ -1962,12 +1962,12 @@ export const remittanceReadColumn = [
         pinned: 'left',
         valueGetter: (params) => {
             const currentRowIndex = params.node.rowIndex;
-            const currentValue = params.data.documentNumbers;
+            const currentValue = params.data.remittanceId;
             const previousRowNode = params.api.getDisplayedRowAtIndex(currentRowIndex - 1);
 
             // 이전 행의 데이터가 없거나 값이 다르면 현재 값을 유지
-            if (!previousRowNode || previousRowNode.data.documentNumbers !== currentValue) {
-                return currentValue;
+            if (!previousRowNode || previousRowNode.data.remittanceId !== currentValue) {
+                return params.data.documentNumbers;
             }
             // 중복되면 null 반환
             return null;
