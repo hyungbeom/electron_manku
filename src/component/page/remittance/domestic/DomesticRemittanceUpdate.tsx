@@ -1,27 +1,16 @@
 import React, {useEffect, useRef, useState} from "react";
 import {domesticRemittanceInitial, ModalInitList} from "@/utils/initialList";
-import {
-    BoxCard,
-    inputForm,
-    inputNumberForm,
-    MainCard,
-    numbFormatter,
-    numbParser,
-    radioForm,
-    textAreaForm,
-    TopBoxCard
-} from "@/utils/commonForm";
+import {BoxCard, datePickerForm, inputForm, MainCard, radioForm, textAreaForm, TopBoxCard} from "@/utils/commonForm";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import _ from "lodash";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {commonFunc, commonManage, fileManage} from "@/utils/commonManage";
-import {saveRemittance, updateRemittance} from "@/utils/api/mainApi";
+import {updateRemittance} from "@/utils/api/mainApi";
 import SearchInfoModal from "@/component/SearchAgencyModal";
-import {DeleteOutlined, FolderOpenOutlined, RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
+import {DeleteOutlined, FolderOpenOutlined, FormOutlined} from "@ant-design/icons";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
-import Table from "@/component/util/Table";
-import {orderInfo, remittanceInfo} from "@/utils/column/ProjectInfo";
+import {remittanceInfo} from "@/utils/column/ProjectInfo";
 import {getData} from "@/manage/function/api";
 import Tabs from "antd/lib/tabs";
 import message from "antd/lib/message";
@@ -31,7 +20,6 @@ import Remittance from "@/component/remittance/Remittance";
 import moment from "moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import Spin from "antd/lib/spin";
-import {Actions} from "flexlayout-react";
 
 const listType = 'list';
 
@@ -43,36 +31,17 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
     const gridRef = useRef(null);
     const tableRef = useRef(null);
 
-    const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
-
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('domestic_remittance_update');
         return savedSizes ? JSON.parse(savedSizes) : [20, 20, 25, 20, 5]; // 기본값 [50, 50, 50]
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
-    const [memberList, setMemberList] = useState([]);
-
-    useEffect(() => {
-        getMemberList();
-    }, []);
-
-    async function getMemberList() {
-        // @ts-ignore
-        return await getData.post('admin/getAdminList', {
-            "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
-            "searchAuthority": null,    // 1: 일반, 0: 관리자
-            "page": 1,
-            "limit": -1
-        }).then(v => {
-            setMemberList(v.data.entity.adminList)
-        })
-    }
-
     const [loading, setLoading] = useState(false);
     const [mini, setMini] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
 
-    const userInfo = useAppSelector((state) => state.user.userInfo);
+    const { userInfo, adminList } = useAppSelector((state) => state.user);
     const adminParams = {
         managerAdminId: userInfo['adminId'],
         managerAdminName: userInfo['name'],
@@ -92,7 +61,7 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
 
     const getOrderInit = () => {
         return {
-            orderId: '',
+            orderId: 0,
             uploadType: 5,
             folderId: ''
         }
@@ -101,109 +70,64 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
     const [fileList, setFileList] = useState([]);
 
     useEffect(() => {
-        console.log('수정 이펙트!!!')
         setLoading(true);
+
         setInfo(getRemittanceInit());
         setSelectOrderList([]);
         setSendRemittanceList([]);
+
         setOrderInfo(getOrderInit());
         setFileList([]);
-        getDataInfo().then(v => {
-            // const { remittanceDetail, selectOrderList, remittanceList } = v;
-            // setInfo({
-            //     ...getRemittanceInit(),
-            //     ...remittanceDetail,
-            //     managerAdminId: remittanceDetail['managerAdminId'] ? remittanceDetail['managerAdminId'] : '',
-            //     managerAdminName: remittanceDetail['managerAdminName'] ? remittanceDetail['managerAdminName'] : '',
-            //     createdBy: remittanceDetail['createdBy'] ? remittanceDetail['createdBy'] : ''
-            // })
-            // // setSelectOrderList(selectOrderList);
-            // modalSelected(selectOrderList);
-            // const sendRemittanceList = [...remittanceList, ...commonFunc.repeatObject(remittanceInfo['write']['defaultData'], 100 - remittanceList?.length)];
-            // setSendRemittanceList(sendRemittanceList);
-        })
+
+        getDataInfo().then(v => {})
         .finally(() => {
             setLoading(false);
         });
     }, [updateKey['domestic_remittance_update']])
 
     async function getDataInfo() {
-        return await getData.post('remittance/getRemittanceDetail', {
+        await getData.post('remittance/getRemittanceDetail', {
             "remittanceId": updateKey['domestic_remittance_update']
         }).then(v => {
-            const { sendRemittanceList, orderDetailList, remittanceDetail, ...restDetail } = v?.data?.entity;
+            const { selectOrderList: garbageList, orderDetailList, remittanceDetail, ...restDetail } = v?.data?.entity;
 
-            const findAdmin = memberList.find(m => m.adminId === restDetail.managerAdminId);
             // Inquiry No. 정리
             const connectInquiryNos = [];
-            for (const item of orderDetailList) {
-                const inquiryNo = item.documentNumberFull;
+            const orderList = orderDetailList.map(v => {
+                const inquiryNo = v.documentNumberFull;
                 if (inquiryNo && !connectInquiryNos.includes(inquiryNo)) {
                     connectInquiryNos.push(inquiryNo);
                 }
-            }
+                return {
+                    ...v,
+                    writtenDate: v.createdDate
+                };
+            });
+
             // 항목 번호 정리
             const selectOrderList = JSON.parse(restDetail?.selectOrderList || '[]');
 
-            // 선택 발주서 리스트 작성일자 정리
-            const orderList = orderDetailList.map(v => {
-                return { ...v, writtenDate: v.createdDate}
-            });
-            const total = orderList.reduce((sum, row) => {
-                const quantity = parseFloat(row.quantity);
-                const unitPrice = parseFloat(row.unitPrice);
+            // 발주서 총액 계산
+            const total = orderList.reduce((sum, row) => sum + ((Number(row.quantity) || 0) * (Number(row.unitPrice) || 0)), 0);
+            // 송금내역 총액 계산
+            const remittance = remittanceDetail.reduce((sum, row) => sum + ((Number(row.supplyAmount) || 0) + (Number(row.tax) || 0)), 0);
 
-                const q = isNaN(quantity) ? 0 : quantity;
-                const p = isNaN(unitPrice) ? 0 : unitPrice;
-
-                return sum + q * p;
-            }, 0);
-
-            const remittance = remittanceDetail.reduce((sum, row) => {
-                const supplyAmount = parseFloat(row.supplyAmount);
-                const tax = parseFloat(row.tax);
-
-                const s = isNaN(supplyAmount) ? 0 : supplyAmount;
-                const t = isNaN(tax) ? 0 : tax;
-
-                return sum + (s + t);
-            }, 0);
-
-
-            const remittanceDetail2 = {
-                ...restDetail,
-                connectInquiryNo: Array.isArray(connectInquiryNos) ? connectInquiryNos.join(', ') : '',
-                orderDetailIds: Array.isArray(selectOrderList) ? selectOrderList.join(', ') : '',
-                managerAdminName : findAdmin?.name || '',
-                // totalAmount: total,
-                partialRemittance: remittance.toLocaleString(),
-                // balance: total - (restDetail.partialRemittance || 0)
-            }
+            // 담당자 찾기
+            const findCreator = adminList.find(m => m.adminId === restDetail.createdId);
+            const findManager = adminList.find(m => m.adminId === restDetail.managerAdminId);
             setInfo({
                 ...getRemittanceInit(),
-                ...remittanceDetail2,
-                managerAdminId: remittanceDetail['managerAdminId'] ? remittanceDetail['managerAdminId'] : '',
-                managerAdminName: remittanceDetail['managerAdminName'] ? remittanceDetail['managerAdminName'] : '',
-                createdBy: remittanceDetail['createdBy'] ? remittanceDetail['createdBy'] : ''
+                ...restDetail,
+                writtenDate: restDetail?.createdDate,
+                createdBy: findCreator?.name || '',
+                managerAdminName : findManager?.name || '',
+                connectInquiryNo: connectInquiryNos.join(', '),
+                orderDetailIds: selectOrderList.join(', '),
+                partialRemittance: remittance.toLocaleString()
             })
-            // setSelectOrderList(selectOrderList);
             modalSelected(orderList);
-            const sendRemittanceList2 = [...remittanceDetail, ...commonFunc.repeatObject(remittanceInfo['write']['defaultData'], 100 - remittanceDetail?.length)];
-            setSendRemittanceList(sendRemittanceList2);
-
-            return {
-                remittanceDetail: {
-                    ...restDetail,
-                    connectInquiryNo: Array.isArray(connectInquiryNos) ? connectInquiryNos.join(', ') : '',
-                    orderDetailIds: Array.isArray(selectOrderList) ? selectOrderList.join(', ') : '',
-                    managerAdminName : findAdmin?.name || '',
-                    // totalAmount: total,
-                    partialRemittance: remittance.toLocaleString(),
-                    // balance: total - (restDetail.partialRemittance || 0)
-                },
-                selectOrderList: orderList,
-                remittanceList: remittanceDetail
-            }
+            const sendRemittanceList = [...remittanceDetail, ...commonFunc.repeatObject(remittanceInfo['write']['defaultData'], 100 - remittanceDetail?.length)];
+            setSendRemittanceList(sendRemittanceList);
         });
     }
 
@@ -216,38 +140,37 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
      * 송금 > 국내송금 수정
      */
     async function saveFunc() {
-        // if (!info['connectInquiryNo']) {
-        //     return message.warn('Inquiry No. 가 누락 되었습니다.')
-        // }
-
-        const selectOrderList = [];
-        gridRef.current.forEachNode(node => selectOrderList.push(node.data));
         if (!selectOrderList?.length) return message.warn('발주서 데이터가 1개 이상이여야 합니다.');
-        const selectOrderNos = selectOrderList.map(item => item.orderDetailId)
-        console.log(selectOrderList, '선택한 발주서 리스트:::')
-
         const tableList = tableRef.current?.getSourceData();
+        console.log(tableList, 'tableList:::')
         if (!tableList?.length) return message.warn('송금 데이터가 1개 이상이여야 합니다.');
-        const filterTableList = commonManage.filterEmptyObjects(tableList, ['supplyAmount'])
-        if (!filterTableList.length) {
-            return message.warn('하위 데이터가 1개 이상이여야 합니다.');
+        const requiredFields = { remittanceDueDate: '송금 지정 일자', supplyAmount: '공급가액', sendStatus: '송금 여부' };
+        const filterTableList = tableList.slice(0, -1).filter(row =>
+            Object.keys(requiredFields).some(field => !!row[field])
+        );
+
+        if (!filterTableList?.length) return message.warn('송금 데이터가 1개 이상이여야 합니다.');
+        console.log(filterTableList, 'filterTableList:::')
+        for (const [field, label] of Object.entries(requiredFields)) {
+            const missing = filterTableList.filter(row => !row[field]);
+            if (missing?.length) {
+                return message.error(`하위 데이터의 ${label} 을/를 입력해야 합니다.`);
+            }
         }
-        const emptyQuantity = filterTableList.filter(v => !v.sendStatus)
-        if (emptyQuantity.length) {
-            return message.error('하위 데이터의 송금 여부를 입력해야 합니다.')
-        }
+
+        const selectOrderNos = selectOrderList.map(item => Number(item.orderDetailId))
 
         const remittanceList = filterTableList.map(v => {
             const tax = v.supplyAmount ? v.supplyAmount * 0.1 : 0;
-            const { total, ...item } = v;
+            const {total, ...item} = v;
             return {
                 ...item,
-                tax,
-                // total: (v.supplyAmount || 0) + tax
+                tax
             }
         })
-        console.log(remittanceList, '부분송금 입력한 리스트:::')
-        console.log(info, 'info::::')
+        console.log(info, 'info:::')
+        console.log(selectOrderList, 'selectOrderList:::')
+        console.log(remittanceList, 'remittanceList:::')
 
         setLoading(true);
 
@@ -261,7 +184,6 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
 
         await updateRemittance({data: formData})
             .then(v => {
-                console.log(v,'v:::')
                 if (v?.data?.code === 1) {
                     window.postMessage({message: 'reload', target: 'domestic_remittance_read'}, window.location.origin);
                     notificationAlert('success', '💾 국내 송금 수정완료',
@@ -270,8 +192,7 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
                         </>
                         , null, null, 2
                     )
-                    console.log(info, 'info:::')
-                    getPropertyId('domestic_remittance_update', info?.remittanceId)
+                    getDataInfo();
                 } else {
                     console.warn(v?.data?.message);
                     notificationAlert('error', '⚠️ 작업실패',
@@ -335,7 +256,7 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
      * @param orderDetail
      */
     async function getOrderDetail(orderDetail) {
-        if(!orderDetail['orderId']) {
+        if(!orderDetail['documentNumberFull']) {
             message.warn('선택한 발주서 정보를 확인해주세요.');
             return;
         }
@@ -373,21 +294,11 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
      */
     function modalSelected(list = []) {
         setSelectOrderList(prevList => {
+            // 발주서 Modal에서 같은 발주서 항목 필터
             const newItems = list.filter(
                 newItem => !prevList.some(existing => existing.orderDetailId === newItem.orderDetailId)
             );
             const updatedList = [...prevList, ...newItems];
-
-            // 총액 계산
-            const total = updatedList.reduce((sum, row) => {
-                const quantity = parseFloat(row.quantity);
-                const unitPrice = parseFloat(row.unitPrice);
-
-                const q = isNaN(quantity) ? 0 : quantity;
-                const p = isNaN(unitPrice) ? 0 : unitPrice;
-
-                return sum + q * p;
-            }, 0);
 
             // Inquiry No. 정리
             const connectInquiryNos = [];
@@ -400,68 +311,25 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
             // 항목 번호 정리
             const orderDetailIds = updatedList.map(row => row.orderDetailId).join(', ');
 
+            // 발주서 총액 계산
+            const total = updatedList.reduce((sum, row) => sum + ((Number(row.quantity) || 0) * (Number(row.unitPrice) || 0)), 0);
+            const totalAmount = total + (total * 0.1 * 10 / 10);
+            let partialRemittance = Number(String(info.partialRemittance || '0').replace(/,/g, ''));
+
             setInfo(prevInfo => {
-                const prevPartialRemittance = prevInfo.partialRemittance || 0;
-                const partialRemittance = typeof prevPartialRemittance === "string"
-                    ? parseFloat(prevPartialRemittance.replace(/,/g, '')) || 0
-                    : prevPartialRemittance;
-
-                const balance= total - partialRemittance;
-
+                const balance= totalAmount - partialRemittance;
                 return {
                     ...prevInfo,
                     customerName: updatedList[0].customerName ? updatedList[0].customerName : prevInfo.customerName,
                     agencyName: updatedList[0].agencyName ? updatedList[0].agencyName : prevInfo.agencyName,
                     connectInquiryNo: connectInquiryNos.join(', '),
                     orderDetailIds,
-                    totalAmount: total.toLocaleString(),
+                    totalAmount: totalAmount.toLocaleString(),
                     balance: balance.toLocaleString()
                 }
             });
             return updatedList;
         });
-    }
-
-
-    function deleteFunc() {
-        getData.post('remittance/deleteRemittance',{remittanceId : updateKey['domestic_remittance_update']}).then(v=>{
-            console.log(v,':::::')
-        })
-
-
-        // setLoading(true)
-        // getData.post('estimate/deleteEstimateRequest', {estimateRequestId: updateKey['domestic_remittance_update']}).then(v => {
-        //     const {code, message} = v.data;
-        //     if (code === 1) {
-        //         window.postMessage({message: 'reload', target: 'rfq_read'}, window.location.origin);
-        //
-        //         notificationAlert('success', '🗑️견적의뢰 삭제완료',
-        //             <>
-        //                 <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
-        //             </>
-        //             , null, null, 2
-        //         )
-        //         getCopyPage('rfq_read', {})
-        //         const {model} = layoutRef.current.props;
-        //         const targetNode = model.getRoot().getChildren()[0]?.getChildren()
-        //             .find((node: any) => node.getType() === "tab" && node.getComponent() === 'rfq_update');
-        //         if (targetNode) {
-        //             model.doAction(Actions.deleteTab(targetNode.getId())); // ✅ 기존 로직 유지
-        //         }
-        //     } else {
-        //         notificationAlert('error', '⚠️ 작업실패',
-        //             <>
-        //                 <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
-        //             </>
-        //             , function () {
-        //                 console.log(v?.data?.message);
-        //                 alert('작업 로그 페이지 참고')
-        //             },
-        //             {cursor: 'pointer'}
-        //         )
-        //     }
-        // }, err => setLoading(false))
-        // setLoading(true)
     }
 
     return <Spin spinning={loading}>
@@ -478,8 +346,8 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
                 rowGap: 10,
             }}>
                 <MainCard title={'국내 송금 수정'} list={[
-                    {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: deleteFunc, type: 'delete'},
-                    {name: <div><SaveOutlined style={{paddingRight: 8}}/>저장</div>, func: saveFunc, type: 'primary'},
+                    {name: <div><FormOutlined style={{paddingRight: 8}}/>수정</div>, func: saveFunc, type: 'primary'},
+                    {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: saveFunc, type: 'delete'},
                     // {
                     //     name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>,
                     //     func: clearAll,
@@ -488,24 +356,41 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
                 ]} mini={mini} setMini={setMini}>
                     <div ref={infoRef}>
                         <TopBoxCard grid={'200px 200px 200px 200px 180px'}>
-                            {/*{inputForm({*/}
-                            {/*    title: 'Inquiry No.',*/}
-                            {/*    id: 'connectInquiryNo',*/}
-                            {/*    onChange: onChange,*/}
-                            {/*    data: info,*/}
-                            {/*    disabled: true,*/}
-                            {/*    suffix: <FileSearchOutlined style={{cursor: 'pointer', color: 'black'}} onClick={*/}
-                            {/*        (e) => {*/}
-                            {/*            e.stopPropagation();*/}
-                            {/*            openModal('connectInquiryNo');*/}
-                            {/*        }*/}
-                            {/*    }/>*/}
-                            {/*})}*/}
+                            {datePickerForm({
+                                title: '작성일',
+                                id: 'writtenDate',
+                                disabled: true,
+                                data: info
+                            })}
+                            {inputForm({title: '작성자', id: 'createdBy', disabled: true, data: info})}
+                            <div>
+                                <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>담당자</div>
+                                <select name="languages" id="managerAdminId" onChange={e => {
+                                    // 담당자 정보가 현재 작성자 정보가 나와야한다고 함
+                                    const admin = adminList.find(v => v.adminId === parseInt(e.target.value))
+                                    const adminInfo = {
+                                        managerAdminId: admin['adminId'],
+                                        managerAdminName: admin['name'],
+                                    }
+                                    setInfo(v => ({...v, ...adminInfo}))
+                                }} style={{
+                                    outline: 'none',
+                                    border: '1px solid lightGray',
+                                    height: 23,
+                                    width: '100%',
+                                    fontSize: 12,
+                                    paddingBottom: 0.5
+                                }} value={info?.managerAdminId ?? ''}>
+                                    { adminList.map(admin => (
+                                        <option key={admin.adminId} value={admin.adminId}>
+                                            {admin.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
                             {inputForm({
-                                title: 'Inquiry No.',
+                                title: '만쿠발주서 No.',
                                 id: 'connectInquiryNo',
-                                onChange: onChange,
-                                data: info,
                                 disabled: true,
                                 suffix: <span style={{cursor: 'pointer'}} onClick={
                                     (e) => {
@@ -514,19 +399,25 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
                                     }
                                 }>🔍</span>,
                             })}
-                            {inputForm({title: '항목번호', id: 'orderDetailIds', onChange: onChange, data: info})}
-                            {inputForm({title: '고객사명', id: 'customerName', onChange: onChange, data: info})}
-                            {inputForm({title: '매입처명', id: 'agencyName', onChange: onChange, data: info})}
-                            {inputForm({
-                                title: '담당자',
-                                id: 'managerAdminName',
-                                onChange: onChange,
-                                data: info
-                            })}
                         </TopBoxCard>
 
                         <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
                             <Panel defaultSize={sizes[0]} minSize={5}>
+                                <BoxCard title={'발주서 정보'}>
+                                    {inputForm({
+                                        title: '발주서 No.',
+                                        id: 'connectInquiryNo',
+                                        onChange: onChange,
+                                        data: info,
+                                        disabled: true,
+                                    })}
+                                    {textAreaForm({title: '발주서 항목번호', rows: 4, id: 'orderDetailIds', onChange: onChange, data: info, disabled: true})}
+                                    {inputForm({title: '고객사명', id: 'customerName', onChange: onChange, data: info})}
+                                    {inputForm({title: '매입처명', id: 'agencyName', onChange: onChange, data: info})}
+                                </BoxCard>
+                            </Panel>
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[1]} minSize={5}>
                                 <BoxCard title={'금액 정보'}>
                                     {/*{inputForm({*/}
                                     {/*    title: '총액',*/}
@@ -615,7 +506,7 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[1]} minSize={5}>
+                            <Panel defaultSize={sizes[2]} minSize={5}>
                                 <BoxCard title={'확인 정보'}>
                                     {radioForm({
                                         title: '부분 송금 진행 여부',
@@ -632,7 +523,7 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[2]} minSize={5}>
+                            <Panel defaultSize={sizes[3]} minSize={5}>
                                 {/*<BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>*/}
                                 {/*    <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}*/}
                                 {/*                     info={orderInfo} type={'remittance'} key={orderInfo?.orderId}/>*/}
@@ -660,7 +551,7 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
 
                             </Panel>
                             <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[3]} minSize={0}></Panel>
+                            <Panel defaultSize={sizes[4]} minSize={0}></Panel>
                         </PanelGroup>
                     </div>
                 </MainCard>

@@ -549,6 +549,8 @@ export const domesticRemittanceInitial = {
     managerAdminName: null,
     customerName: '',
     agencyName: '',
+    connectInquiryNo: '',
+    orderDetailIds: '',
     totalAmount: '',
     partialRemittance: '',
     balance: '',
@@ -700,7 +702,7 @@ export const modalList = {
         // column: subSecTableOrderReadColumns,
         column: tableOrderReadColumns,
         list: 'orderList',
-        placeholder: '문서번호 또는 고객사명을 입력하세요'
+        placeholder: '문서번호 또는 고객사명, 매입처명을 입력하세요'
     },
 }
 

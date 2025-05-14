@@ -105,13 +105,10 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
      * 송금 > 국내송금 등록
      */
     async function saveFunc() {
-        // if (!info['connectInquiryNo']) {
-        //     return message.warn('Inquiry No. 가 누락 되었습니다.')
-        // }
         if (!selectOrderList?.length) return message.warn('발주서 데이터가 1개 이상이여야 합니다.');
         const tableList = tableRef.current?.getSourceData();
+        console.log(tableList, 'tableList:::')
         if (!tableList?.length) return message.warn('송금 데이터가 1개 이상이여야 합니다.');
-
         const requiredFields = { remittanceDueDate: '송금 지정 일자', supplyAmount: '공급가액', sendStatus: '송금 여부' };
         const filterTableList = tableList.slice(0, -1).filter(row =>
             Object.keys(requiredFields).some(field => !!row[field])
@@ -124,9 +121,10 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
         //     Object.keys(requiredFields).some(field => isValidValue(row[field]))
         // );
         if (!filterTableList?.length) return message.warn('송금 데이터가 1개 이상이여야 합니다.');
+        console.log(filterTableList, 'filterTableList:::')
         for (const [field, label] of Object.entries(requiredFields)) {
             const missing = filterTableList.filter(row => !row[field]);
-            if (missing.length) {
+            if (missing?.length) {
                 return message.error(`하위 데이터의 ${label} 을/를 입력해야 합니다.`);
             }
         }
@@ -135,8 +133,9 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
 
         const remittanceList = filterTableList.map(v => {
             const tax = v.supplyAmount ? v.supplyAmount * 0.1 : 0;
+            const {total, ...item} = v;
             return {
-                ...v,
+                ...item,
                 tax
             }
         })
@@ -197,14 +196,15 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
         setOrderInfo(getOrderInit());
         setFileList([]);
 
-        function calcData(sourceData) {
-            const keyOrder = Object.keys(remittanceInfo['write']['defaultData']);
-            return sourceData
-                .map((item) => keyOrder.reduce((acc, key) => ({...acc, [key]: item[key] ?? ""}), {}))
-                .map(remittanceInfo['write']['excelExpert'])
-                .concat(remittanceInfo['write']['totalList']); // `push` 대신 `concat` 사용
-        }
-        setSendRemittanceList(calcData(commonFunc.repeatObject(remittanceInfo['write']['defaultData'], 100)))
+        // function calcData(sourceData) {
+        //     const keyOrder = Object.keys(remittanceInfo['write']['defaultData']);
+        //     return sourceData
+        //         .map((item) => keyOrder.reduce((acc, key) => ({...acc, [key]: item[key] ?? ""}), {}))
+        //         .map(remittanceInfo['write']['excelExpert'])
+        //         .concat(remittanceInfo['write']['totalList']); // `push` 대신 `concat` 사용
+        // }
+        // setSendRemittanceList(calcData(commonFunc.repeatObject(remittanceInfo['write']['defaultData'], 100)))
+        setSendRemittanceList(commonFunc.repeatObject(remittanceInfo['write']['defaultData'], 100))
 
         setLoading(false);
     }
@@ -311,27 +311,17 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
 
             // 발주서 총액 계산
             const total = updatedList.reduce((sum, row) => sum + ((Number(row.quantity) || 0) * (Number(row.unitPrice) || 0)), 0);
-            const partialRemittance = Number(String(info.partialRemittance || '0').replace(/,/g, ''));
-            setInfo(prevInfo => {
-                const balance= total - partialRemittance;
-                return {
-                    ...prevInfo,
-                    customerName: updatedList[0].customerName,
-                    agencyName: updatedList[0].agencyName,
-                    connectInquiryNo: connectInquiryNos.join(', '),
-                    orderDetailIds,
-                    totalAmount: total.toLocaleString(),
-                    balance: balance.toLocaleString(),
-                }
-            });
+            const totalAmount = total + (total * 0.1 * 10 / 10);
+            let partialRemittance = Number(String(info.partialRemittance || '0').replace(/,/g, ''));
 
+            // 송금 리스크가 없으면 첫 데이터 생성
             const requiredFields = { remittanceDueDate: '송금 지정 일자', supplyAmount: '공급가액', sendStatus: '송금 여부' };
             const filterTableList = sendRemittanceList.filter(row =>
                 Object.keys(requiredFields).every(field => !!row[field])
             );
-            // 송금 리스크가 없으면 첫 데이터 생성
             if (!filterTableList?.length) {
-                console.log('첫 송금 데이터 자동 생성!!!')
+                console.log('첫 송금 데이터 자동 생성!!!');
+                partialRemittance = totalAmount;
                 setSendRemittanceList(prev => [
                     {
                         remittanceDetailId: '',
@@ -343,9 +333,23 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
                         sendStatus: '',
                         invoiceStatus: '',
                     },
-                    ...prev
+                    ...prev.slice(1)
                 ])
             }
+
+            setInfo(prevInfo => {
+                const balance = totalAmount - partialRemittance;
+                return {
+                    ...prevInfo,
+                    customerName: updatedList[0].customerName,
+                    agencyName: updatedList[0].agencyName,
+                    connectInquiryNo: connectInquiryNos.join(', '),
+                    orderDetailIds,
+                    totalAmount: totalAmount.toLocaleString(),
+                    partialRemittance: partialRemittance.toLocaleString(),
+                    balance: balance.toLocaleString()
+                }
+            });
             return updatedList;
         });
     }
@@ -440,8 +444,6 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
                                     }
                                 }>🔍</span>,
                             })}
-                            {/*{inputForm({title: '고객사명', id: 'customerName', onChange: onChange, data: info})}*/}
-                            {/*{inputForm({title: '매입처명', id: 'agencyName', onChange: onChange, data: info})}*/}
                         </TopBoxCard>
 
                         <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
@@ -462,13 +464,73 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
                             <PanelResizeHandle/>
                             <Panel defaultSize={sizes[1]} minSize={5}>
                                 <BoxCard title={'금액 정보'}>
-                                    {inputForm({
-                                        title: '총액',
-                                        id: 'totalAmount',
-                                        onChange: onChange,
-                                        data: info,
-                                        // parser: numbParser
-                                    })}
+                                    {/*{inputForm({*/}
+                                    {/*    title: '총액',*/}
+                                    {/*    id: 'totalAmount',*/}
+                                    {/*    onChange: onChange,*/}
+                                    {/*    data: info,*/}
+                                    {/*    // parser: numbParser*/}
+                                    {/*})}*/}
+                                    <div style={{fontSize: 12, paddingBottom: 10}}>
+                                        <div style={{paddingBottom: 12 / 2, fontWeight: 700}}>총액</div>
+                                        <div style={{display: 'flex'}}>
+                                            <input placeholder={''}
+                                                   id={'totalAmount'}
+                                                   value={info ? info['totalAmount'] : null}
+                                                   onKeyDown={(e) => {
+                                                       if(e.key === 'Enter') {
+                                                           setInfo(prev => {
+                                                               const prevTotalAmount = e.currentTarget.value || 0;
+                                                               const totalAmount = typeof prevTotalAmount === "string"
+                                                                   ? parseFloat(prevTotalAmount.replace(/,/g, '')) || 0
+                                                                   : prevTotalAmount;
+                                                               const prevPartialRemittance = prev.partialRemittance || 0;
+                                                               const partialRemittance = typeof prevPartialRemittance === "string"
+                                                                   ? parseFloat(prevPartialRemittance.replace(/,/g, '')) || 0
+                                                                   : prevPartialRemittance;
+                                                               const balance= totalAmount - partialRemittance;
+                                                               return {
+                                                                   ...prev,
+                                                                   balance: balance.toLocaleString()
+                                                               }
+                                                           })
+                                                           e.currentTarget.blur();
+                                                       }
+                                                   }}
+                                                   onChange={onChange}
+                                                   onFocus={(e) => {
+                                                       setInfo(prev => {
+                                                           const prevTotalAmount = e.target.value || 0;
+                                                           const totalAmount = typeof prevTotalAmount === "string"
+                                                               ? parseFloat(prevTotalAmount.replace(/,/g, '')) || 0
+                                                               : prevTotalAmount;
+                                                           return {
+                                                               ...prev,
+                                                               totalAmount
+                                                           }
+                                                       })
+                                                   }}
+                                                   onBlur={(e) => {
+                                                       setInfo(prev => {
+                                                           const prevTotalAmount = e.target.value || 0;
+                                                           const totalAmount = typeof prevTotalAmount === "string"
+                                                               ? parseFloat(prevTotalAmount.replace(/,/g, '')) || 0
+                                                               : prevTotalAmount;
+                                                           const prevPartialRemittance = prev.partialRemittance || 0;
+                                                           const partialRemittance = typeof prevPartialRemittance === "string"
+                                                               ? parseFloat(prevPartialRemittance.replace(/,/g, '')) || 0
+                                                               : prevPartialRemittance;
+                                                           const balance= totalAmount - partialRemittance;
+                                                           return {
+                                                               ...prev,
+                                                               balance: balance.toLocaleString()
+                                                           }
+                                                       })
+                                                   }}
+                                            />
+                                            <span style={{marginLeft: -22, paddingTop: 1.5}}></span>
+                                        </div>
+                                    </div>
                                     {inputForm({
                                         title: '부분송금액',
                                         id: 'partialRemittance',
