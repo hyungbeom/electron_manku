@@ -149,8 +149,12 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
         Object.entries(info).forEach(([key, value]) => {
             formData.append(key, value ?? '');
         });
+        const findMember = adminList.find(v=> v.adminId === info?.managerAdminId)
+
+        formData.append('managerAdminEmail',findMember['email']);
         formData.append('selectOrderList',JSON.stringify(selectOrderNos));
         formData.append('sendRemittanceList',JSON.stringify(remittanceList));
+
 
         await saveRemittance({data: formData})
             .then(v => {

@@ -168,9 +168,6 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
                 tax
             }
         })
-        console.log(info, 'info:::')
-        console.log(selectOrderList, 'selectOrderList:::')
-        console.log(remittanceList, 'remittanceList:::')
 
         setLoading(true);
 
@@ -181,7 +178,9 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
         });
         formData.append('selectOrderList',JSON.stringify(selectOrderNos));
         formData.append('sendRemittanceList',JSON.stringify(remittanceList));
+        const findMember = adminList.find(v=> v.adminId === info?.managerAdminId)
 
+        formData.append('managerAdminEmail',findMember['email']);
         await updateRemittance({data: formData})
             .then(v => {
                 if (v?.data?.code === 1) {
