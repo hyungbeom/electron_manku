@@ -1,21 +1,17 @@
-import React from "react";
+import React, {memo} from "react";
 import {remittanceInfo} from "@/utils/column/ProjectInfo";
 import Table from "@/component/util/Table";
+import _ from "lodash";
 
-export default function Remittance({tableData, tableRef, setInfo}) {
+function Remittance({tableData, tableRef, setInfo}) {
 
     function partialRemittance (sumSupplyAmount) {
-        console.log(sumSupplyAmount)
         const amount = Number(sumSupplyAmount);
         if (isNaN(amount)) {
             return;
         }
         setInfo(prev => {
-            const prevTotalAmount= prev.totalAmount || 0;
-            const totalAmount= typeof prevTotalAmount === "string"
-                ? parseFloat(prevTotalAmount.replace(/,/g, '')) || 0
-                : prevTotalAmount;
-
+            let totalAmount = Number(String(prev.totalAmount || '0').replace(/,/g, ''));
             const balance = totalAmount - amount;
             return {
                 ...prev,
@@ -30,3 +26,7 @@ export default function Remittance({tableData, tableRef, setInfo}) {
                    type={'domestic_remittance_write_column'} customFunc={partialRemittance} />
     );
 }
+
+export default memo(Remittance, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

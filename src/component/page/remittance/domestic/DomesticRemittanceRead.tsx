@@ -23,6 +23,7 @@ import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import Popconfirm from "antd/lib/popconfirm";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
+import {useAppSelector} from "@/utils/common/function/reduxHooks";
 
 export default function DomesticRemittanceRead({getPropertyId, getCopyPage}: any) {
     const notificationAlert = useNotificationAlert();
@@ -38,6 +39,7 @@ export default function DomesticRemittanceRead({getPropertyId, getCopyPage}: any
     const [loading, setLoading] = useState(false);
     const [mini, setMini] = useState(true);
 
+    const { adminList } = useAppSelector((state) => state.user);
     const getRemittanceSearchInit = () => _.cloneDeep(domesticRemittanceSearchInitial);
     const [info, setInfo] = useState(getRemittanceSearchInit());
 
@@ -52,6 +54,20 @@ export default function DomesticRemittanceRead({getPropertyId, getCopyPage}: any
         }
     }, [isSearch]);
 
+    function formatManager(list = []) {
+        if (!list?.length) return;
+
+        const formatList = list.map(item => {
+            const findManager = adminList.find(admin => admin.adminId === item.managerAdminId);
+            return {
+                ...item,
+                managerAdminName: findManager?.name || ''
+            };
+        });
+
+        return formatList;
+    }
+
     /**
      * @description ag-grid 테이블 초기 rowData 요소 '[]' 초기화 설정
      * @param params ag-grid 제공 event 파라미터
@@ -60,7 +76,8 @@ export default function DomesticRemittanceRead({getPropertyId, getCopyPage}: any
         setLoading(true);
         gridRef.current = params.api;
         await getRemittanceList({data: info}).then(v => {
-            params.api.applyTransaction({add: v?.data ?? []});
+            const remittanceList = formatManager(v?.data);
+            params.api.applyTransaction({add: remittanceList});
             setTotalRow(v?.pageInfo?.totalRow ?? 0)
         })
         .finally(() => {
@@ -87,7 +104,8 @@ export default function DomesticRemittanceRead({getPropertyId, getCopyPage}: any
         if (e) {
             setLoading(true);
             await getRemittanceList({data: info}).then(v => {
-                gridManage.resetData(gridRef, v?.data ?? []);
+                const remittanceList = formatManager(v?.data);
+                gridManage.resetData(gridRef, remittanceList);
                 setTotalRow(v?.pageInfo?.totalRow ?? 0)
             })
             .finally(() => {
@@ -331,7 +349,7 @@ export default function DomesticRemittanceRead({getPropertyId, getCopyPage}: any
                getPropertyId={getPropertyId}
                gridRef={gridRef}
                columns={remittanceReadColumn}
-               type={'DRRead'}
+               customType={'DRRead'}
                onGridReady={onGridReady}
                funcButtons={['agPrint']}
             />

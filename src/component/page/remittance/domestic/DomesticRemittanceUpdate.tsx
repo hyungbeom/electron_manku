@@ -20,10 +20,11 @@ import Remittance from "@/component/remittance/Remittance";
 import moment from "moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import Spin from "antd/lib/spin";
+import {Actions} from "flexlayout-react";
 
 const listType = 'list';
 
-export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: any) {
+export default function DomesticRemittanceUpdate({ updateKey, layoutRef }: any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null);
     const infoRef = useRef<any>(null);
@@ -91,24 +92,9 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
         }).then(v => {
             const { selectOrderList: garbageList, orderDetailList, remittanceDetail, ...restDetail } = v?.data?.entity;
 
-            // Inquiry No. 정리
-            const connectInquiryNos = [];
-            const orderList = orderDetailList.map(v => {
-                const inquiryNo = v.documentNumberFull;
-                if (inquiryNo && !connectInquiryNos.includes(inquiryNo)) {
-                    connectInquiryNos.push(inquiryNo);
-                }
-                return {
-                    ...v,
-                    writtenDate: v.createdDate
-                };
-            });
+            // 발주서 날짜 정리
+            const orderList = orderDetailList.map(v => ({ ...v, writtenDate: v.createdDate }));
 
-            // 항목 번호 정리
-            const selectOrderList = JSON.parse(restDetail?.selectOrderList || '[]');
-
-            // 발주서 총액 계산
-            const total = orderList.reduce((sum, row) => sum + ((Number(row.quantity) || 0) * (Number(row.unitPrice) || 0)), 0);
             // 송금내역 총액 계산
             const remittance = remittanceDetail.reduce((sum, row) => sum + ((Number(row.supplyAmount) || 0) + (Number(row.tax) || 0)), 0);
 
@@ -118,11 +104,9 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
             setInfo({
                 ...getRemittanceInit(),
                 ...restDetail,
-                writtenDate: restDetail?.createdDate,
+                writtenDate: moment(restDetail?.createdDate).format('YYYY-MM-DD'),
                 createdBy: findCreator?.name || '',
                 managerAdminName : findManager?.name || '',
-                connectInquiryNo: connectInquiryNos.join(', '),
-                orderDetailIds: selectOrderList.join(', '),
                 partialRemittance: remittance.toLocaleString()
             })
             modalSelected(orderList);
@@ -208,6 +192,50 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
             .finally(() => {
                 setLoading(false);
             });
+    }
+
+    /**
+     * @description 수정 페이지 > 삭제 버튼
+     * 송금 > 국내송금 수정
+     */
+    function deleteFunc() {
+        setLoading(true);
+        getData.post('remittance/deleteRemittance', {remittanceId: updateKey['domestic_remittance_update']}).then(v => {
+            const {code, message} = v.data;
+            if (code === 1) {
+                window.postMessage({message: 'reload', target: 'domestic_remittance_read'}, window.location.origin);
+                notificationAlert('success', '🗑️ 국내송금 삭제완료',
+                    <>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , null, null, 2
+                )
+                const {model} = layoutRef.current.props;
+                const targetNode = model.getRoot().getChildren()[0]?.getChildren()
+                    .find((node: any) => node.getType() === "tab" && node.getComponent() === 'domestic_remittance_update');
+                if (targetNode) {
+                    model.doAction(Actions.deleteTab(targetNode.getId())); // ✅ 기존 로직 유지
+                }
+            } else {
+                console.log(v?.data?.message);
+                notificationAlert('error', '⚠️ 작업실패',
+                    <>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                        alert('작업 로그 페이지 참고')
+                    },
+                    {cursor: 'pointer'}
+                )
+            }
+        })
+        .catch((err) => {
+            notificationAlert('error', '❌ 네트워크 오류 발생', <div>{err.message}</div>);
+            console.error('에러:', err);
+        })
+        .finally(() => {
+            setLoading(false);
+        });
     }
 
     /**
@@ -347,12 +375,7 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
             }}>
                 <MainCard title={'국내 송금 수정'} list={[
                     {name: <div><FormOutlined style={{paddingRight: 8}}/>수정</div>, func: saveFunc, type: 'primary'},
-                    {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: saveFunc, type: 'delete'},
-                    // {
-                    //     name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>,
-                    //     func: clearAll,
-                    //     type: 'danger'
-                    // }
+                    {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: deleteFunc, type: 'delete'}
                 ]} mini={mini} setMini={setMini}>
                     <div ref={infoRef}>
                         <TopBoxCard grid={'110px 70px 70px 120px'}>

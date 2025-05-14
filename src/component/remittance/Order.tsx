@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {memo, useEffect, useRef, useState} from "react";
 import {gridManage} from "@/utils/commonManage";
 import {DeleteOutlined, ExclamationCircleOutlined} from "@ant-design/icons";
 import Popconfirm from "antd/lib/popconfirm";
@@ -6,8 +6,9 @@ import Button from "antd/lib/button";
 import {tableOrderReadColumns} from "@/utils/columnList";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
+import _ from "lodash";
 
-export default function Order({
+function Order({
                                   gridRef = null,
                                   tableData = [],
                                   setTableData = null,
@@ -126,3 +127,7 @@ export default function Order({
         </>
     );
 }
+
+export default memo(Order, (prevProps, nextProps) => {
+    return _.isEqual(prevProps, nextProps);
+});

@@ -25,6 +25,7 @@ const TableGrid = ({
                        tempFunc = function () {
                        },
                        type = 'read',
+                       customType = '',
                        funcButtons = [],
                        onCellEditingStopped = function () {
                            let isEditingCell = false;
@@ -74,7 +75,7 @@ const TableGrid = ({
         const selectedNode = event.node; // 현재 선택된 노드
         const selectedData = selectedNode.data; // 선택된 데이터
 
-        if (type === 'DRRead') {
+        if (customType === 'DRRead') {
             const groupValue = selectedData.remittanceId;
             const rowIndex = selectedNode.rowIndex;
             const previousData = event.api.getDisplayedRowAtIndex(rowIndex - 1)?.data?.remittanceId;
