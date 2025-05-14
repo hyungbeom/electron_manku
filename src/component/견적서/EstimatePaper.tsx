@@ -43,28 +43,7 @@ const EstimatePaper = ({
         setData(copyData);
     }, [count]);
 
-    function numberFormat (number, currency = '') {
-        if (number === null || number === undefined || number === '') {
-            return '';
-        }
-        const num = Number(number);
-        if (isNaN(num)) {
-            return '';
-        }
-        const fixedNum = num.toFixed(3);
-        const [integerPart, decimalPart] = fixedNum.split('.');
-        const trimmedDecimal = decimalPart.slice(0, 2);
-        const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-        // return decimalPart !== '00'
-        //     ? `${formattedInteger}.${decimalPart}`
-        //     : formattedInteger;
-        return currency !== 'KRW'
-            ? `${formattedInteger}.${trimmedDecimal}`
-            : trimmedDecimal !== '00' ? `${formattedInteger}.${trimmedDecimal}` : formattedInteger;
-    }
-
     const totalData = useMemo(() => {
-
         const list = Object.values(data);
         let bowl = {
             quantity: 0,
@@ -132,7 +111,6 @@ const EstimatePaper = ({
             })
         }
 
-
         useEffect(() => {
             if (toggle) {
                 inputRef.current.focus();
@@ -188,8 +166,8 @@ const EstimatePaper = ({
                          onClick={() => {
                              setToggle(true);
                          }}>
-                        <span>{!isNaN(info.net) ? info.currencyUnit : ''}</span>
-                        <span className={'netPrice'}>{numberFormat(info.net, info.currencyUnit)}</span>
+                        <span>{!isNaN(info.net) ? '₩' : ''}</span>
+                        <span className={'netPrice'}>{amountFormat(info.net)}</span>
                     </div>
 
                 }
@@ -205,9 +183,9 @@ const EstimatePaper = ({
                      onClick={() => {
                          setToggle(true);
                      }}>
-                    <span>{!isNaN(info.net * info.quantity) ? info.currencyUnit : ''}</span>
+                    <span>{!isNaN(info.net * info.quantity) ? '₩' : ''}</span>
                     <span
-                        className={'total'}>{numberFormat((info.net * info.quantity), info.currencyUnit)}</span>
+                        className={'total'}>{amountFormat(info.net * info.quantity)}</span>
                 </div>
 
             </td>
@@ -390,10 +368,9 @@ const EstimatePaper = ({
                                 (V.A.T) 미포함
                             </th>
                             <th style={{width: '20%', textAlign: 'right', paddingRight: 10}}>
-                                {/*{(totalData?.total).toLocaleString()}*/}
                                 <div style={{display: 'flex', justifyContent: 'space-between', padding: '0px 8px'}}>
-                                    <span>{totalData?.currencyUnit}</span>
-                                    <span>{numberFormat(totalData?.total, totalData?.currencyUnit)}</span>
+                                    <span>₩</span>
+                                    <span>{amountFormat(totalData?.total)}</span>
                                 </div>
                             </th>
                             {/*tax*/}
@@ -497,10 +474,9 @@ const EstimatePaper = ({
                                         (V.A.T) 미포함
                                     </th>
                                     <th style={{width: '20%', textAlign: 'right', paddingRight: 10}}>
-                                        {/*{(totalData?.total).toLocaleString()}*/}
                                         <div style={{display: 'flex', justifyContent: 'space-between', padding: '0px 8px'}}>
-                                            <span>{totalData?.currencyUnit}</span>
-                                            <span>{numberFormat(totalData?.total, totalData?.currencyUnit)}</span>
+                                            <span>₩</span>
+                                            <span>{amountFormat(totalData?.total)}</span>
                                         </div>
                                     </th>
                                 </tr>
