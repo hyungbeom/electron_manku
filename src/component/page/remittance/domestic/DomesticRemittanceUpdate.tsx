@@ -381,8 +381,10 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
             const total = updatedList.reduce((sum, row) => {
                 const quantity = parseFloat(row.quantity);
                 const unitPrice = parseFloat(row.unitPrice);
+
                 const q = isNaN(quantity) ? 0 : quantity;
                 const p = isNaN(unitPrice) ? 0 : unitPrice;
+
                 return sum + q * p;
             }, 0);
 
