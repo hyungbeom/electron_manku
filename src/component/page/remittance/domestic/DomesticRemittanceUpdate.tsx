@@ -61,7 +61,7 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
 
     const getOrderInit = () => {
         return {
-            orderId: 0,
+            documentNumberFull: '',
             uploadType: 5,
             folderId: ''
         }
@@ -223,7 +223,7 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
                 <div style={{height: 285}}>
                     <Order key={tabNumb} gridRef={gridRef}
                            tableData={selectOrderList} setTableData={setSelectOrderList}
-                           setInfo={setInfo} customFunc={getOrderDetail}/>
+                           setInfo={setInfo} customFunc={getOrderFile}/>
                 </div>
             )
         },
@@ -254,21 +254,22 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
      * 하단의 선택 발주서 리스크 항목 더블클릭시 발주서 상세 조회 > folderId, 파일 리스트 조회
      * @param orderDetail
      */
-    async function getOrderDetail(orderDetail) {
+    async function getOrderFile(orderDetail) {
         if(!orderDetail['documentNumberFull']) {
             message.warn('선택한 발주서 정보를 확인해주세요.');
             return;
         }
-        if(orderInfo['orderId'] === orderDetail['orderId']) return;
+        if(orderInfo['documentNumberFull'] === orderDetail['documentNumberFull']) return;
 
         setLoading(true);
-        await getData.post('order/getOrderDetail', {orderId: orderDetail['orderId']})
+        await getData.post('common/getFileList', orderDetail?.documentNumberFull)
             .then(v => {
                 setOrderInfo({
-                    ...v?.data?.entity?.orderDetail,
-                    uploadType: 5
-                })
-                setFileList(fileManage.getFormatFiles(v?.data?.entity?.attachmentFileList));
+                    documentNumberFull: orderDetail['documentNumberFull'],
+                    uploadType: 5,
+                    folderId: v?.data?.entity?.folderId
+                });
+                setFileList(fileManage.getFormatFiles(v?.data?.entity?.fileList));
             })
             .finally(() => {
                 setLoading(false);
@@ -354,7 +355,7 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
                     // }
                 ]} mini={mini} setMini={setMini}>
                     <div ref={infoRef}>
-                        <TopBoxCard grid={'200px 200px 200px 200px 180px'}>
+                        <TopBoxCard grid={'110px 70px 70px 120px'}>
                             {datePickerForm({
                                 title: '작성일',
                                 id: 'writtenDate',
@@ -433,17 +434,12 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
                                                    onKeyDown={(e) => {
                                                        if(e.key === 'Enter') {
                                                            setInfo(prev => {
-                                                               const prevTotalAmount = e.currentTarget.value || 0;
-                                                               const totalAmount = typeof prevTotalAmount === "string"
-                                                                   ? parseFloat(prevTotalAmount.replace(/,/g, '')) || 0
-                                                                   : prevTotalAmount;
-                                                               const prevPartialRemittance = prev.partialRemittance || 0;
-                                                               const partialRemittance = typeof prevPartialRemittance === "string"
-                                                                   ? parseFloat(prevPartialRemittance.replace(/,/g, '')) || 0
-                                                                   : prevPartialRemittance;
-                                                               const balance= totalAmount - partialRemittance;
+                                                               const totalAmount = Number((e.currentTarget.value || '0').toString().replace(/,/g, ''));
+                                                               const partialRemittance = Number((prev.partialRemittance || '0').toString().replace(/,/g, ''));
+                                                               const balance = totalAmount - partialRemittance;
                                                                return {
                                                                    ...prev,
+                                                                   totalAmount: totalAmount.toLocaleString(),
                                                                    balance: balance.toLocaleString()
                                                                }
                                                            })
@@ -452,30 +448,19 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
                                                    }}
                                                    onChange={onChange}
                                                    onFocus={(e) => {
-                                                       setInfo(prev => {
-                                                           const prevTotalAmount = e.target.value || 0;
-                                                           const totalAmount = typeof prevTotalAmount === "string"
-                                                               ? parseFloat(prevTotalAmount.replace(/,/g, '')) || 0
-                                                               : prevTotalAmount;
-                                                           return {
-                                                               ...prev,
-                                                               totalAmount
-                                                           }
-                                                       })
+                                                       setInfo(prev => ({
+                                                           ...prev,
+                                                           totalAmount: Number((e.target.value || '0').toString().replace(/,/g, ''))
+                                                       }));
                                                    }}
                                                    onBlur={(e) => {
                                                        setInfo(prev => {
-                                                           const prevTotalAmount = e.target.value || 0;
-                                                           const totalAmount = typeof prevTotalAmount === "string"
-                                                               ? parseFloat(prevTotalAmount.replace(/,/g, '')) || 0
-                                                               : prevTotalAmount;
-                                                           const prevPartialRemittance = prev.partialRemittance || 0;
-                                                           const partialRemittance = typeof prevPartialRemittance === "string"
-                                                               ? parseFloat(prevPartialRemittance.replace(/,/g, '')) || 0
-                                                               : prevPartialRemittance;
-                                                           const balance= totalAmount - partialRemittance;
+                                                           const totalAmount = Number((e.target.value || '0').toString().replace(/,/g, ''));
+                                                           const partialRemittance = Number((prev.partialRemittance || '0').toString().replace(/,/g, ''));
+                                                           const balance = totalAmount - partialRemittance;
                                                            return {
                                                                ...prev,
+                                                               totalAmount: totalAmount.toLocaleString(),
                                                                balance: balance.toLocaleString()
                                                            }
                                                        })

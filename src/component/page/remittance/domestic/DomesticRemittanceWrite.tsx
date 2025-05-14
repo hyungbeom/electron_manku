@@ -62,7 +62,7 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
 
     const getOrderInit = () => {
         return {
-            orderId: 0,
+            documentNumberFull: '',
             uploadType: 5,
             folderId: ''
         }
@@ -226,7 +226,7 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
                 <div style={{height: 285}}>
                     <Order key={tabNumb} gridRef={gridRef}
                            tableData={selectOrderList} setTableData={setSelectOrderList}
-                           setInfo={setInfo} customFunc={getOrderDetail}/>
+                           setInfo={setInfo} customFunc={getOrderFile}/>
                 </div>
             )
         },
@@ -257,21 +257,22 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
      * 하단의 선택 발주서 리스크 항목 더블클릭시 발주서 상세 조회 > folderId, 파일 리스트 조회
      * @param orderDetail
      */
-    async function getOrderDetail(orderDetail) {
-        if(!orderDetail['orderId']) {
+    async function getOrderFile(orderDetail) {
+        if(!orderDetail['documentNumberFull']) {
             message.warn('선택한 발주서 정보를 확인해주세요.');
             return;
         }
-        if(orderInfo['orderId'] === orderDetail['orderId']) return;
+        if(orderInfo['documentNumberFull'] === orderDetail['documentNumberFull']) return;
 
         setLoading(true);
-        await getData.post('order/getOrderDetail', {orderId: orderDetail['orderId']})
+        await getData.post('common/getFileList', orderDetail?.documentNumberFull)
             .then(v => {
                 setOrderInfo({
-                    ...v?.data?.entity?.orderDetail,
-                    uploadType: 5
-                })
-                setFileList(fileManage.getFormatFiles(v?.data?.entity?.attachmentFileList));
+                    documentNumberFull: orderDetail['documentNumberFull'],
+                    uploadType: 5,
+                    folderId: v?.data?.entity?.folderId
+                });
+                setFileList(fileManage.getFormatFiles(v?.data?.entity?.fileList));
             })
             .finally(() => {
                 setLoading(false);
@@ -404,7 +405,7 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
                         {/*    })}*/}
                         {/*</TopBoxCard>*/}
 
-                        <TopBoxCard grid={'110px 70px 70px 120px 120px 120px'}>
+                        <TopBoxCard grid={'110px 70px 70px 120px'}>
                             {datePickerForm({
                                 title: '작성일',
                                 id: 'writtenDate',
