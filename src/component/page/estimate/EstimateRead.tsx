@@ -42,7 +42,7 @@ function EstimateRead({getPropertyId, getCopyPage,}: any) {
     const [loading, setLoading] = useState(false);
     const [totalRow, setTotalRow] = useState(0);
 
-    const userInfo = useAppSelector((state) => state.user);
+    const userInfo = useAppSelector((state) => state.user.userInfo);
 
     const onGridReady = async (params) => {
         setLoading(true)

@@ -44,7 +44,7 @@ export default function LayoutComponent({children}) {
 }
 
 export function UserMenu() {
-    const userInfo = useAppSelector((state) => state.user);
+    const userInfo = useAppSelector((state) => state.user.userInfo);
     const items: any = [
         {
             key: '1',

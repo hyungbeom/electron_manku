@@ -14,7 +14,7 @@ import {useEffect, useState} from "react";
 import HistoryPage from "@/component/manage/HistoryPage";
 
 export default function Manage(any) {
-    const userInfo = useAppSelector((state) => state.user);
+    const userInfo = useAppSelector((state) => state.user.userInfo);
 
     console.log(userInfo,'userInfo;')
     const [memberList, setMemberList] = useState([])

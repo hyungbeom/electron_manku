@@ -90,7 +90,7 @@ function ProjectUpdate({
     const router = useRouter();
     const [loading, setLoading] = useState(false);
 
-    const userInfo = useAppSelector((state) => state.user);
+    const userInfo = useAppSelector((state) => state.user.userInfo);
     const adminParams = {
         managerAdminId: userInfo['adminId'],
         createdBy: userInfo['name'],

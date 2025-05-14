@@ -2,23 +2,21 @@ import { createSlice } from "@reduxjs/toolkit";
 
 
 const initialState  = {
-    userInfo : {
-
-    }
+    userInfo : {},
+    adminList: []
 };
 
-
 const userSlice = createSlice({
-    name: "user", initialState,
+    name: "user",
+    initialState,
     reducers: {
         setUserInfo: (state, action) => {
             const {payload} = action;
-            return {...state, ...payload };
+            state.userInfo = payload;
         },
-        getProductInfo: (state, action) => {
-            state.productInfo = action.payload.data.productInfo;
-        },
-
+        setAdminList: (state, action) => {
+            state.adminList = action.payload;
+        }
     }, extraReducers: (builder) => {
         //api service 호출관련
     }
@@ -26,5 +24,5 @@ const userSlice = createSlice({
 
 
 const { actions, reducer: userReducer } = userSlice;
-export const { setUserInfo, getProductInfo } = actions;
+export const { setUserInfo, setAdminList } = actions;
 export default userReducer;

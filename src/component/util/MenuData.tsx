@@ -18,7 +18,6 @@ export const treeData = [
     {
         title: "프로젝트",
         key: "project",
-        disabled: true,
         children: [
             {title: "프로젝트 등록", key: "project_write"},
             {title: "프로젝트 조회", key: "project_read"}

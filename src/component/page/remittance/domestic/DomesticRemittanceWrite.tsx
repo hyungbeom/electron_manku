@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 import {domesticRemittanceInitial, ModalInitList} from "@/utils/initialList";
-import {BoxCard, inputForm, MainCard, radioForm, textAreaForm, TopBoxCard} from "@/utils/commonForm";
+import {BoxCard, datePickerForm, inputForm, MainCard, radioForm, textAreaForm, TopBoxCard} from "@/utils/commonForm";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import _ from "lodash";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
@@ -32,21 +32,21 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
     const infoRef = useRef<any>(null);
     const fileRef = useRef(null);
 
-    const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
-
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('domestic_remittance_write');
-        return savedSizes ? JSON.parse(savedSizes) : [25, 25, 25, 5]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 25, 20, 5]; // 기본값 [50, 50, 50]
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
     const [loading, setLoading] = useState(false);
     const [mini, setMini] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
 
-    const userInfo = useAppSelector((state) => state.user);
+    const { userInfo, adminList } = useAppSelector((state) => state.user);
     const adminParams = {
         managerAdminId: userInfo['adminId'],
         managerAdminName: userInfo['name'],
+        createdId: userInfo['adminId'],
         createdBy: userInfo['name'],
     }
     const getRemittanceInit = () => {
@@ -72,11 +72,14 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
 
     useEffect(() => {
         setLoading(true);
+
         setInfo(getRemittanceInit());
         setSelectOrderList([]);
         setSendRemittanceList([]);
+
         setOrderInfo(getOrderInit());
         setFileList([]);
+
         if (!isEmptyObj(copyPageInfo)) {
             // copyPageInfo 가 없을시
             setSendRemittanceList(commonFunc.repeatObject(remittanceInfo['write']['defaultData'], 100))
@@ -105,34 +108,41 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
         // if (!info['connectInquiryNo']) {
         //     return message.warn('Inquiry No. 가 누락 되었습니다.')
         // }
-
-        const selectOrderList = [];
-        gridRef.current.forEachNode(node => selectOrderList.push(node.data));
         if (!selectOrderList?.length) return message.warn('발주서 데이터가 1개 이상이여야 합니다.');
-        const selectOrderNos = selectOrderList.map(item => item.orderDetailId)
-        console.log(selectOrderList, '선택한 발주서 리스트:::')
-
         const tableList = tableRef.current?.getSourceData();
         if (!tableList?.length) return message.warn('송금 데이터가 1개 이상이여야 합니다.');
-        const filterTableList = commonManage.filterEmptyObjects(tableList, ['supplyAmount'])
-        if (!filterTableList.length) {
-            return message.warn('하위 데이터가 1개 이상이여야 합니다.');
+
+        const requiredFields = { remittanceDueDate: '송금 지정 일자', supplyAmount: '공급가액', sendStatus: '송금 여부' };
+        const filterTableList = tableList.slice(0, -1).filter(row =>
+            Object.keys(requiredFields).some(field => !!row[field])
+        );
+        // const isValidValue = (value: any) =>
+        //     value !== null && value !== undefined &&
+        //     !(typeof value === 'string' && value.trim().startsWith('='));
+        //
+        // const filterTableList = tableList.slice(0, -1).filter(row =>
+        //     Object.keys(requiredFields).some(field => isValidValue(row[field]))
+        // );
+        if (!filterTableList?.length) return message.warn('송금 데이터가 1개 이상이여야 합니다.');
+        for (const [field, label] of Object.entries(requiredFields)) {
+            const missing = filterTableList.filter(row => !row[field]);
+            if (missing.length) {
+                return message.error(`하위 데이터의 ${label} 을/를 입력해야 합니다.`);
+            }
         }
-        const emptyQuantity = filterTableList.filter(v => !v.sendStatus)
-        if (emptyQuantity.length) {
-            return message.error('하위 데이터의 송금 여부를 입력해야 합니다.')
-        }
+
+        const selectOrderNos = selectOrderList.map(item => item.orderDetailId)
 
         const remittanceList = filterTableList.map(v => {
             const tax = v.supplyAmount ? v.supplyAmount * 0.1 : 0;
-            const { remittanceDetailId, total, ...item } = v;
             return {
-                ...item,
+                ...v,
                 tax
             }
         })
-        console.log(remittanceList, '부분송금 입력한 리스트:::')
-        console.log(info, 'info::::')
+        console.log(info, 'info:::')
+        console.log(selectOrderList, 'selectOrderList:::')
+        console.log(remittanceList, 'remittanceList:::')
 
         setLoading(true);
 
@@ -145,7 +155,6 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
 
         await saveRemittance({data: formData})
             .then(v => {
-                console.log(v,'v:::')
                 if (v?.data?.code === 1) {
                     window.postMessage({message: 'reload', target: 'domestic_remittance_read'}, window.location.origin);
                     notificationAlert('success', '💾 국내 송금 등록완료',
@@ -281,25 +290,17 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
      * 발주서 조회 Modal에서 선택한 항목 가져오기
      * @param list
      */
-    function modalSelected(list) {
+    function modalSelected(list= []) {
         setSelectOrderList(prevList => {
+            // 발주서 Modal에서 같은 발주서 항목 필터
             const newItems = list.filter(
                 newItem => !prevList.some(existing => existing.orderDetailId === newItem.orderDetailId)
             );
             const updatedList = [...prevList, ...newItems];
-            const total = updatedList.reduce((sum, row) => {
-                const quantity = parseFloat(row.quantity);
-                const unitPrice = parseFloat(row.unitPrice);
-
-                const q = isNaN(quantity) ? 0 : quantity;
-                const p = isNaN(unitPrice) ? 0 : unitPrice;
-
-                return sum + q * p;
-            }, 0);
 
             // Inquiry No. 정리
             const connectInquiryNos = [];
-            for (const item of updatedList) {
+            for (const item of updatedList || []) {
                 const inquiryNo = item.documentNumberFull;
                 if (inquiryNo && !connectInquiryNos.includes(inquiryNo)) {
                     connectInquiryNos.push(inquiryNo);
@@ -308,15 +309,43 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
             // 항목 번호 정리
             const orderDetailIds = updatedList.map(row => row.orderDetailId).join(', ');
 
-            setInfo(prevInfo => ({
-                ...prevInfo,
-                customerName: updatedList[0].customerName,
-                agencyName: updatedList[0].agencyName,
-                connectInquiryNo: Array.isArray(connectInquiryNos) ? connectInquiryNos.join(', ') : '',
-                orderDetailIds: orderDetailIds,
-                totalAmount: total,
-                balance: total - (prevInfo.partialRemittance || 0),
-            }));
+            // 발주서 총액 계산
+            const total = updatedList.reduce((sum, row) => sum + ((Number(row.quantity) || 0) * (Number(row.unitPrice) || 0)), 0);
+            const partialRemittance = Number(String(info.partialRemittance || '0').replace(/,/g, ''));
+            setInfo(prevInfo => {
+                const balance= total - partialRemittance;
+                return {
+                    ...prevInfo,
+                    customerName: updatedList[0].customerName,
+                    agencyName: updatedList[0].agencyName,
+                    connectInquiryNo: connectInquiryNos.join(', '),
+                    orderDetailIds,
+                    totalAmount: total.toLocaleString(),
+                    balance: balance.toLocaleString(),
+                }
+            });
+
+            const requiredFields = { remittanceDueDate: '송금 지정 일자', supplyAmount: '공급가액', sendStatus: '송금 여부' };
+            const filterTableList = sendRemittanceList.filter(row =>
+                Object.keys(requiredFields).every(field => !!row[field])
+            );
+            // 송금 리스크가 없으면 첫 데이터 생성
+            if (!filterTableList?.length) {
+                console.log('첫 송금 데이터 자동 생성!!!')
+                setSendRemittanceList(prev => [
+                    {
+                        remittanceDetailId: '',
+                        remittanceRequestDate: '',
+                        remittanceDueDate: moment().format('YYYY-MM-DD'),
+                        supplyAmount: total,
+                        tax: '',
+                        total: '',
+                        sendStatus: '',
+                        invoiceStatus: '',
+                    },
+                    ...prev
+                ])
+            }
             return updatedList;
         });
     }
@@ -342,25 +371,67 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
                     }
                 ]} mini={mini} setMini={setMini}>
                     {mini ? <div ref={infoRef}>
-                        <TopBoxCard grid={'200px 200px 200px 200px 180px'}>
-                            {/*{inputForm({*/}
-                            {/*    title: 'Inquiry No.',*/}
-                            {/*    id: 'connectInquiryNo',*/}
-                            {/*    onChange: onChange,*/}
-                            {/*    data: info,*/}
-                            {/*    disabled: true,*/}
-                            {/*    suffix: <FileSearchOutlined style={{cursor: 'pointer', color: 'black'}} onClick={*/}
-                            {/*        (e) => {*/}
-                            {/*            e.stopPropagation();*/}
-                            {/*            openModal('connectInquiryNo');*/}
-                            {/*        }*/}
-                            {/*    }/>*/}
-                            {/*})}*/}
+                        {/*<TopBoxCard grid={'200px 200px 200px 200px 180px'}>*/}
+                        {/*    {inputForm({*/}
+                        {/*        title: 'Inquiry No.',*/}
+                        {/*        id: 'connectInquiryNo',*/}
+                        {/*        onChange: onChange,*/}
+                        {/*        data: info,*/}
+                        {/*        disabled: true,*/}
+                        {/*        suffix: <FileSearchOutlined style={{cursor: 'pointer', color: 'black'}} onClick={*/}
+                        {/*            (e) => {*/}
+                        {/*                e.stopPropagation();*/}
+                        {/*                openModal('connectInquiryNo');*/}
+                        {/*            }*/}
+                        {/*        }/>*/}
+                        {/*    })}*/}
+                        {/*    {inputForm({title: '항목번호', id: 'orderDetailIds', onChange: onChange, data: info})}*/}
+                        {/*    {inputForm({title: '고객사명', id: 'customerName', onChange: onChange, data: info})}*/}
+                        {/*    {inputForm({title: '매입처명', id: 'agencyName', onChange: onChange, data: info})}*/}
+                        {/*    {inputForm({*/}
+                        {/*        title: '담당자',*/}
+                        {/*        id: 'managerAdminName',*/}
+                        {/*        onChange: onChange,*/}
+                        {/*        data: info*/}
+                        {/*    })}*/}
+                        {/*</TopBoxCard>*/}
+
+                        <TopBoxCard grid={'110px 70px 70px 120px 120px 120px'}>
+                            {datePickerForm({
+                                title: '작성일',
+                                id: 'writtenDate',
+                                disabled: true,
+                                data: info
+                            })}
+                            {inputForm({title: '작성자', id: 'createdBy', disabled: true, data: info})}
+                            <div>
+                                <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>담당자</div>
+                                <select name="languages" id="managerAdminId" onChange={e => {
+                                    // 담당자 정보가 현재 작성자 정보가 나와야한다고 함
+                                    const admin = adminList.find(v => v.adminId === parseInt(e.target.value))
+                                    const adminInfo = {
+                                        managerAdminId: admin['adminId'],
+                                        managerAdminName: admin['name'],
+                                    }
+                                    setInfo(v => ({...v, ...adminInfo}))
+                                }} style={{
+                                    outline: 'none',
+                                    border: '1px solid lightGray',
+                                    height: 23,
+                                    width: '100%',
+                                    fontSize: 12,
+                                    paddingBottom: 0.5
+                                }} value={info?.managerAdminId ?? ''}>
+                                    { adminList.map(admin => (
+                                        <option key={admin.adminId} value={admin.adminId}>
+                                            {admin.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
                             {inputForm({
-                                title: 'Inquiry No.',
+                                title: '만쿠발주서 No.',
                                 id: 'connectInquiryNo',
-                                onChange: onChange,
-                                data: info,
                                 disabled: true,
                                 suffix: <span style={{cursor: 'pointer'}} onClick={
                                     (e) => {
@@ -369,19 +440,27 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
                                     }
                                 }>🔍</span>,
                             })}
-                            {inputForm({title: '항목번호', id: 'orderDetailIds', onChange: onChange, data: info})}
-                            {inputForm({title: '고객사명', id: 'customerName', onChange: onChange, data: info})}
-                            {inputForm({title: '매입처명', id: 'agencyName', onChange: onChange, data: info})}
-                            {inputForm({
-                                title: '담당자',
-                                id: 'managerAdminName',
-                                onChange: onChange,
-                                data: info
-                            })}
+                            {/*{inputForm({title: '고객사명', id: 'customerName', onChange: onChange, data: info})}*/}
+                            {/*{inputForm({title: '매입처명', id: 'agencyName', onChange: onChange, data: info})}*/}
                         </TopBoxCard>
 
                         <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
                             <Panel defaultSize={sizes[0]} minSize={5}>
+                                <BoxCard title={'발주서 정보'}>
+                                    {inputForm({
+                                        title: '발주서 No.',
+                                        id: 'connectInquiryNo',
+                                        onChange: onChange,
+                                        data: info,
+                                        disabled: true,
+                                    })}
+                                    {textAreaForm({title: '발주서 항목번호', rows: 4, id: 'orderDetailIds', onChange: onChange, data: info, disabled: true})}
+                                    {inputForm({title: '고객사명', id: 'customerName', onChange: onChange, data: info})}
+                                    {inputForm({title: '매입처명', id: 'agencyName', onChange: onChange, data: info})}
+                                </BoxCard>
+                            </Panel>
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[1]} minSize={5}>
                                 <BoxCard title={'금액 정보'}>
                                     {inputForm({
                                         title: '총액',
@@ -411,7 +490,7 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[1]} minSize={5}>
+                            <Panel defaultSize={sizes[2]} minSize={5}>
                                 <BoxCard title={'확인 정보'}>
                                     {radioForm({
                                         title: '부분 송금 진행 여부',
@@ -428,7 +507,7 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[2]} minSize={5}>
+                            <Panel defaultSize={sizes[3]} minSize={5}>
                                 {/*<BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>*/}
                                 {/*    <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}*/}
                                 {/*                     info={orderInfo} type={'remittance'} key={orderInfo?.orderId}/>*/}
@@ -456,7 +535,7 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
 
                             </Panel>
                             <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[3]} minSize={0}></Panel>
+                            <Panel defaultSize={sizes[4]} minSize={0}></Panel>
                         </PanelGroup>
                     </div> : <></>}
                 </MainCard>

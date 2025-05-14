@@ -76,7 +76,7 @@ function RqfUpdate({
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false, event3: false});
 
-    const userInfo = useAppSelector((state) => state.user);
+    const userInfo = useAppSelector((state) => state.user.userInfo);
     const adminParams = {
         managerAdminId: userInfo['adminId'],
         managerAdminName: userInfo['name'],

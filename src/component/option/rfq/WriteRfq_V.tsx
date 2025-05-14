@@ -10,7 +10,7 @@ import {TwinInputBox} from "@/utils/common/component/Common";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 
 export function WriteRfq_V({info, onChange, setIsModalOpen}){
-    const userInfo = useAppSelector((state) => state.user);
+    const userInfo = useAppSelector((state) => state.user.userInfo);
 
 
     return <div style={{display : 'grid', gridTemplateColumns : '300px 300px 300px 1fr', gridColumnGap : 15}}>

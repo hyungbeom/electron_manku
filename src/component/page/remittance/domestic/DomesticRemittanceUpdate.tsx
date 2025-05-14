@@ -46,7 +46,7 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('domestic_remittance_update');
-        return savedSizes ? JSON.parse(savedSizes) : [25, 25, 25, 5]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 25, 20, 5]; // 기본값 [50, 50, 50]
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
@@ -71,7 +71,7 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
     const [loading, setLoading] = useState(false);
     const [mini, setMini] = useState(true);
 
-    const userInfo = useAppSelector((state) => state.user);
+    const userInfo = useAppSelector((state) => state.user.userInfo);
     const adminParams = {
         managerAdminId: userInfo['adminId'],
         managerAdminName: userInfo['name'],
@@ -108,19 +108,18 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
         setOrderInfo(getOrderInit());
         setFileList([]);
         getDataInfo().then(v => {
-            const { remittanceDetail, selectOrderList, remittanceList } = v;
-            console.log(remittanceDetail, 'ㅇㅇㅇㅇ:::')
-            setInfo({
-                ...getRemittanceInit(),
-                ...remittanceDetail,
-                managerAdminId: remittanceDetail['managerAdminId'] ? remittanceDetail['managerAdminId'] : '',
-                managerAdminName: remittanceDetail['managerAdminName'] ? remittanceDetail['managerAdminName'] : '',
-                createdBy: remittanceDetail['createdBy'] ? remittanceDetail['createdBy'] : ''
-            })
-            // setSelectOrderList(selectOrderList);
-            modalSelected(selectOrderList);
-            const sendRemittanceList = [...remittanceList, ...commonFunc.repeatObject(remittanceInfo['write']['defaultData'], 100 - remittanceList?.length)];
-            setSendRemittanceList(sendRemittanceList);
+            // const { remittanceDetail, selectOrderList, remittanceList } = v;
+            // setInfo({
+            //     ...getRemittanceInit(),
+            //     ...remittanceDetail,
+            //     managerAdminId: remittanceDetail['managerAdminId'] ? remittanceDetail['managerAdminId'] : '',
+            //     managerAdminName: remittanceDetail['managerAdminName'] ? remittanceDetail['managerAdminName'] : '',
+            //     createdBy: remittanceDetail['createdBy'] ? remittanceDetail['createdBy'] : ''
+            // })
+            // // setSelectOrderList(selectOrderList);
+            // modalSelected(selectOrderList);
+            // const sendRemittanceList = [...remittanceList, ...commonFunc.repeatObject(remittanceInfo['write']['defaultData'], 100 - remittanceList?.length)];
+            // setSendRemittanceList(sendRemittanceList);
         })
         .finally(() => {
             setLoading(false);
@@ -168,6 +167,28 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
 
                 return sum + (s + t);
             }, 0);
+
+
+            const remittanceDetail2 = {
+                ...restDetail,
+                connectInquiryNo: Array.isArray(connectInquiryNos) ? connectInquiryNos.join(', ') : '',
+                orderDetailIds: Array.isArray(selectOrderList) ? selectOrderList.join(', ') : '',
+                managerAdminName : findAdmin?.name || '',
+                // totalAmount: total,
+                partialRemittance: remittance.toLocaleString(),
+                // balance: total - (restDetail.partialRemittance || 0)
+            }
+            setInfo({
+                ...getRemittanceInit(),
+                ...remittanceDetail2,
+                managerAdminId: remittanceDetail['managerAdminId'] ? remittanceDetail['managerAdminId'] : '',
+                managerAdminName: remittanceDetail['managerAdminName'] ? remittanceDetail['managerAdminName'] : '',
+                createdBy: remittanceDetail['createdBy'] ? remittanceDetail['createdBy'] : ''
+            })
+            // setSelectOrderList(selectOrderList);
+            modalSelected(orderList);
+            const sendRemittanceList2 = [...remittanceDetail, ...commonFunc.repeatObject(remittanceInfo['write']['defaultData'], 100 - remittanceDetail?.length)];
+            setSendRemittanceList(sendRemittanceList2);
 
             return {
                 remittanceDetail: {
@@ -229,6 +250,7 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
 
         setLoading(true);
 
+        delete info['selectOrderList'];
         const formData: any = new FormData();
         Object.entries(info).forEach(([key, value]) => {
             formData.append(key, value ?? '');
@@ -271,7 +293,7 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
      * @description 수정 페이지 > 하단 탭 관련
      * 송금 > 국내송금 수정
      */
-    const [tabNumb, setTabNumb] = useState('Order');
+    const [tabNumb, setTabNumb] = useState('History');
     const items: TabsProps['items'] = [
         {
             key: 'Order',
@@ -348,31 +370,32 @@ export default function DomesticRemittanceUpdate({ updateKey, getPropertyId }: a
      * 발주서 조회 Modal에서 선택한 항목 가져오기
      * @param list
      */
-    function modalSelected(list) {
+    function modalSelected(list = []) {
         setSelectOrderList(prevList => {
             const newItems = list.filter(
                 newItem => !prevList.some(existing => existing.orderDetailId === newItem.orderDetailId)
             );
             const updatedList = [...prevList, ...newItems];
+
+            // 총액 계산
             const total = updatedList.reduce((sum, row) => {
                 const quantity = parseFloat(row.quantity);
                 const unitPrice = parseFloat(row.unitPrice);
-
                 const q = isNaN(quantity) ? 0 : quantity;
                 const p = isNaN(unitPrice) ? 0 : unitPrice;
-
                 return sum + q * p;
             }, 0);
 
-            const orderDetailIds = updatedList.map(row => row.orderDetailId).join(', ');
-
+            // Inquiry No. 정리
             const connectInquiryNos = [];
-            for (const item of updatedList) {
+            for (const item of updatedList || []) {
                 const inquiryNo = item.documentNumberFull;
                 if (inquiryNo && !connectInquiryNos.includes(inquiryNo)) {
                     connectInquiryNos.push(inquiryNo);
                 }
             }
+            // 항목 번호 정리
+            const orderDetailIds = updatedList.map(row => row.orderDetailId).join(', ');
 
             setInfo(prevInfo => {
                 const prevPartialRemittance = prevInfo.partialRemittance || 0;

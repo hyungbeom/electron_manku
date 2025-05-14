@@ -71,7 +71,7 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
 
-    const userInfo = useAppSelector((state) => state.user);
+    const userInfo = useAppSelector((state) => state.user.userInfo);
     const adminParams = {
         managerAdminId: userInfo['adminId'],
         managerAdminName: userInfo['name'],

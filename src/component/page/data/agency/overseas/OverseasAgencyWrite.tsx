@@ -32,7 +32,7 @@ function OverseasAgencyWrite({copyPageInfo, getPropertyId}: any) {
     const [loading, setLoading] = useState(false);
     const [mini, setMini] = useState(true);
 
-    const userInfo = useAppSelector((state) => state.user);
+    const userInfo = useAppSelector((state) => state.user.userInfo);
     const adminParams = {
         managerAdminId: userInfo['adminId'],
         managerAdminName: userInfo['name'],

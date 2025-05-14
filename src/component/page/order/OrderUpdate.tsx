@@ -82,7 +82,7 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
     const [customerData, setCustomerData] = useState<any>(printEstimateInitial)
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false, event3: false});
 
-    const userInfo = useAppSelector((state) => state.user);
+    const userInfo = useAppSelector((state) => state.user.userInfo);
     const adminParams = {
         managerAdminId: userInfo['adminId'],
         managerAdminName: userInfo['name'],

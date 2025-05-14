@@ -35,7 +35,7 @@ export default function RemittanceDomesticWrite({dataInfo = [], copyPageInfo}: a
     const router = useRouter();
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
 
-    const userInfo = useAppSelector((state) => state.user);
+    const userInfo = useAppSelector((state) => state.user.userInfo);
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('remittanceDomesticWrite');

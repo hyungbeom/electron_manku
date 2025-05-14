@@ -635,8 +635,8 @@ export const remittanceInfo = {
             return v
         },
         totalList: {
-            "requestDate": '',
-            "assignedDate": '',
+            "remittanceRequestDate": '',
+            "remittanceDueDate": '',
             "supplyAmount": '=SUM(C1:C100)',
             "tax": '=SUM(D1:D100)',
             "total": '=SUM(E1:E100)',

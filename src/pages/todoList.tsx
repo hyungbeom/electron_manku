@@ -24,7 +24,7 @@ const items = [
 
 
 export default function todoList() {
-    const userInfo = useAppSelector((state) => state.user);
+    const userInfo = useAppSelector((state) => state.user.userInfo);
     const [current, setCurrent] = useState('mail');
 
     const onClick = (e) => {

@@ -75,7 +75,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
 
-    const userInfo = useAppSelector((state) => state.user);
+    const userInfo = useAppSelector((state) => state.user.userInfo);
     const adminParams = {
         managerAdminId: userInfo['adminId'],
         managerAdminName: userInfo['name'],
@@ -391,7 +391,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                     }
                 ]} mini={mini} setMini={setMini}>
                     {mini ? <div>
-                        <TopBoxCard grid={'100px 70px 70px 130px 130px 130px 200px'}>
+                        <TopBoxCard grid={'110px 70px 70px 120px 120px 120px 300px'}>
                             {datePickerForm({
                                 title: '작성일',
                                 id: 'writtenDate',
@@ -439,7 +439,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                 disabled: isFolderId
                             })}
                             {inputForm({
-                                title: '만쿠발주서 No',
+                                title: '만쿠발주서 No.',
                                 id: 'documentNumberFull',
                                 onChange: onChange,
                                 data: info,

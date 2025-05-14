@@ -126,7 +126,7 @@ function generateFormattedOutputWithDocumentNumbers(data, code) {
 function PreviewMailModal({data, isModalOpen, setIsModalOpen, fileList}) {
 
     console.log(fileList,'fileList::')
-    const userInfo = useAppSelector((state) => state.user);
+    const userInfo = useAppSelector((state) => state.user.userInfo);
     const notificationAlert = useNotificationAlert();
     const [info, setInfo] = useState<any>();
     const [checkList, setCheckList] = useState<any>([]);

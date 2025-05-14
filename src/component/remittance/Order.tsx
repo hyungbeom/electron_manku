@@ -53,13 +53,43 @@ export default function Order({
 
         // 삭제 후 총액 계산
         const total = filterSelectList.reduce((sum, row) => {
-            return sum + (row.quantity || 0) * (row.unitPrice || 0);
+            const quantity = parseFloat(row.quantity);
+            const unitPrice = parseFloat(row.unitPrice);
+            const q = isNaN(quantity) ? 0 : quantity;
+            const p = isNaN(unitPrice) ? 0 : unitPrice;
+            return sum + q * p;
         }, 0);
-        setInfo(prevInfo => ({
-            ...prevInfo,
-            totalAmount: total,
-            balance: total - (prevInfo.partialRemittance || 0),
-        }));
+
+        // Inquiry No. 정리
+        const connectInquiryNos = [];
+        for (const item of filterSelectList || []) {
+            const inquiryNo = item.documentNumberFull;
+            if (inquiryNo && !connectInquiryNos.includes(inquiryNo)) {
+                connectInquiryNos.push(inquiryNo);
+            }
+        }
+        // 항목 번호 정리
+        const orderDetailIds = filterSelectList.map(row => row.orderDetailId).join(', ');
+
+        setInfo(prevInfo => {
+            const prevPartialRemittance = prevInfo.partialRemittance || 0;
+            const partialRemittance = typeof prevPartialRemittance === "string"
+                ? parseFloat(prevPartialRemittance.replace(/,/g, '')) || 0
+                : prevPartialRemittance;
+
+            const balance= total - partialRemittance;
+            console.log(total.toLocaleString())
+            console.log(balance.toLocaleString())
+            return {
+                ...prevInfo,
+                customerName: filterSelectList[0].customerName,
+                agencyName: filterSelectList[0].agencyName,
+                connectInquiryNo: connectInquiryNos.join(', '),
+                orderDetailIds,
+                totalAmount: total.toLocaleString(),
+                balance: balance.toLocaleString(),
+            }
+        });
     }
 
     /**

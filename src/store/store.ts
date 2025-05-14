@@ -21,8 +21,6 @@ const reducer = (state: any, action: PayloadAction<any>) => {
     })(state, action);
 };
 
-
-
 const initialState = {};
 export const makeStore = () =>
     configureStore({

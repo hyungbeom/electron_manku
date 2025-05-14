@@ -5,14 +5,32 @@ import {DownOutlined} from "@ant-design/icons";
 import {Actions, DockLocation, Layout, Model, TabNode} from "flexlayout-react";
 import Tree from "antd/lib/tree/Tree";
 import initialServerRouter from "@/manage/function/initialServerRouter";
-import {setUserInfo} from "@/store/user/userSlice";
+import {setAdminList, setUserInfo} from "@/store/user/userSlice";
 import {introMenulist, treeData} from "@/component/util/MenuData";
-import {useAppSelector} from "@/utils/common/function/reduxHooks";
+import {useAppDispatch, useAppSelector} from "@/utils/common/function/reduxHooks";
 import {useRouter} from "next/router";
 import {tabComponents, tabShortcutMap} from "@/utils/commonForm";
+import {getData} from "@/manage/function/api";
 
 
 export default function Main() {
+
+    const { userInfo, adminList} = useAppSelector((state) => state.user);
+
+    // 만쿠 관리자 리스트 store에 추가
+    const dispatch = useAppDispatch();
+    useEffect(() => {
+        if (!adminList?.length) {
+            getData.post('admin/getAdminList', {
+                "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
+                "searchAuthority": null,    // 1: 일반, 0: 관리자
+                "page": 1,
+                "limit": -1
+            }).then(v => {
+                dispatch(setAdminList(v?.data?.entity?.adminList));
+            })
+        }
+    }, []);
 
     const modelRef = useRef(Model.fromJson({
         global: {},
@@ -28,7 +46,6 @@ export default function Main() {
 
     const layoutRef = useRef<any>(null);
 
-    const userInfo = useAppSelector((state) => state.user);
     const router = useRouter();
     const [tabCounts, setTabCounts] = useState(0);
 
@@ -190,7 +207,7 @@ export default function Main() {
                 }}>
                     <Tree
                         // defaultExpandedKeys={getRootKeys(treeData)}
-                        defaultExpandedKeys={['rfq', 'estimate', 'order', 'remittance', 'data']}
+                        defaultExpandedKeys={['project', 'rfq', 'estimate', 'order', 'remittance', 'data']}
                         showLine
                         switcherIcon={<DownOutlined/>}
                         onSelect={onSelect}

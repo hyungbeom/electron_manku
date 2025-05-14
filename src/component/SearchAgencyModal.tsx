@@ -191,9 +191,8 @@ export default function SearchInfoModal({
      */
     function modalOk() {
         setIsModalOpen(ModalInitList);
-        if(returnFunc) {
+        if (returnFunc) {
             const selectedRows = testRef.current.api.getSelectedRows();
-            console.log(selectedRows)
             returnFunc(selectedRows);
         }
     }

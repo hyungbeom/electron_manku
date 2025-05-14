@@ -15,7 +15,7 @@ import Spin from "antd/lib/spin";
 export default function myaccount() {
     const notificationAlert = useNotificationAlert();
 
-    const userInfo = useAppSelector((state) => state.user);
+    const userInfo = useAppSelector((state) => state.user.userInfo);
 
 
     const [info, setInfo] = useState(userInfo);

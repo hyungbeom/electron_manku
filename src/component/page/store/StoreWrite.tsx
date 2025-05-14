@@ -77,7 +77,7 @@ function StoreWrite({copyPageInfo,notificationAlert = null, getPropertyId}:any) 
 
     const copyInit = _.cloneDeep(storeWriteInitial)
 
-    const userInfo = useAppSelector((state) => state.user);
+    const userInfo = useAppSelector((state) => state.user.userInfo);
 
     const infoInit = {
         ...storeInfo['defaultInfo'],

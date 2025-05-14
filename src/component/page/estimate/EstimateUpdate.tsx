@@ -89,7 +89,7 @@ function EstimateUpdate({
     const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
     const [count, setCount] = useState(0);
 
-    const userInfo = useAppSelector((state) => state.user);
+    const userInfo = useAppSelector((state) => state.user.userInfo);
     const adminParams = {
         managerAdminId: userInfo['adminId'],
         managerAdminName: userInfo['name'],

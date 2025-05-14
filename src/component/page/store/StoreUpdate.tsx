@@ -37,7 +37,7 @@ function StoreUpdate({updateKey, getCopyPage}:any) {
     const gridRef = useRef(null);
 
 
-    const userInfo = useAppSelector((state) => state.user);
+    const userInfo = useAppSelector((state) => state.user.userInfo);
 
 
     const infoInit = {

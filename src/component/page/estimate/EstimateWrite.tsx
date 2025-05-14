@@ -76,7 +76,7 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     const [maker, setMaker] = useState('');
     const [ready, setReady] = useState(memberList.length > 0);
 
-    const userInfo = useAppSelector((state) => state.user);
+    const userInfo = useAppSelector((state) => state.user.userInfo);
     const adminParams = {
         managerAdminId: userInfo['adminId'],
         managerAdminName: userInfo['name'],

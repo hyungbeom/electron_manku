@@ -68,7 +68,7 @@ const Table = forwardRef(({
 
 
     const afterRenderer = (td, row, col, prop, value) => {
-        if (["unitPrice", "total", 'net', 'totalNet', "purchasePrice", "totalPurchase", 'quantity', 'receivedQuantity', 'unreceivedQuantity'].includes(prop)) {
+        if (["unitPrice", "total", 'net', 'totalNet', "purchasePrice", "totalPurchase", 'quantity', 'receivedQuantity', 'unreceivedQuantity','supplyAmount', 'tax'].includes(prop)) {
 
             td.style.textAlign = "right"; // 우측 정렬
             td.style.color = "black"; // 텍스트 굵게
@@ -77,7 +77,7 @@ const Table = forwardRef(({
                 td.style.fontWeight = "bold"; // 텍스트 굵게
             }
 
-            if (['unitPrice', "total", 'net', 'totalNet', 'purchasePrice', "totalPurchase"].includes(prop)) {
+            if (['unitPrice', 'total', 'net', 'totalNet', 'purchasePrice', 'totalPurchase', 'supplyAmount', 'tax'].includes(prop)) {
 
                 const rowData = hotRef.current.hotInstance.getSourceDataAtRow(row);
                 const isForeignCurrency = ['USD', 'EUR', 'JPY', 'GBP'].includes(rowData?.currencyUnit ?? rowData?.currency);
