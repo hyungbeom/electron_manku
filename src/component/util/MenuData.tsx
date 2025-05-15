@@ -7,6 +7,7 @@ import {
     WalletFilled
 } from "@ant-design/icons";
 import React from "react";
+import TaxInvoiceRead from "@/component/page/remittance/TaxInvoiceRead";
 
 export default function MenuData() {
 
@@ -65,18 +66,12 @@ export const treeData = [
         title: "송금",
         key: "remittance",
         children: [
-            // {title: "국내", key: "remittance_domestic",     children: [
-            //         {title: "국내송금 등록", key: "remittance_domestic_write"},
-            //         {title: "국내송금 조회", key: "remittance_domestic_read",        }
-            //     ]},
-            // {title: "해외", key: "remittance_overseas",  children: [
-            //         {title: "해외송금 등록", key: "remittance_overseas_write", disabled : true},
-            //         {title: "해외송금 조회", key: "remittance_overseas_read", disabled: true}
-            //     ]},
             {title: "국내송금 등록", key: "domestic_remittance_write"},
             {title: "국내송금 조회", key: "domestic_remittance_read"},
             {title: "해외송금 등록", key: "overseas_remittance_write", disabled: true},
-            {title: "해외송금 조회", key: "overseas_remittance_read", disabled: true}
+            {title: "해외송금 조회", key: "overseas_remittance_read", disabled: true},
+            {title: "세금계산서_요청 등록", key: "TaxInvoiceWrite"},
+            {title: "세금계산서_요청 조회", key: "TaxInvoiceRead"}
         ],
     }, {
         title: "데이터관리",
@@ -114,6 +109,8 @@ export const treeData = [
                 title: "재고관리", key: "source", children: [
                     {title: "재고관리 등록", key: "source_write"},
                     {title: "재고관리 조회", key: "source_read"},
+                    {title: "재고관리 등록(테스트)", key: "source_write_test"},
+                    {title: "재고관리 조회(테스트)", key: "source_read_test"},
                 ]
             },
 
