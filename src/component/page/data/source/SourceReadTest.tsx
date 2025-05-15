@@ -44,20 +44,23 @@ function SourceReadTest({getPropertyId, getCopyPage}: any) {
     }, [isSearch]);
 
     const onGridReady = async (params) => {
-        setLoading(true);
-        gridRef.current = params.api;
-        getData.post('inventory/getInventoryList', info).then(v => {
-            if (v?.data?.code === 1) {
-                const {pageInfo = {}, inventoryList = []} = v?.data?.entity;
-                params.api.applyTransaction({add: inventoryList});
-                setTotalRow(pageInfo?.totalRow ?? 0)
-            } else {
-                message.warn(v?.data?.message);
-            }
+        getData.post('inventory/getInventoryList', {searchText: "ab"}).then(v => {
+            console.log(v ,'::::::')
         })
-        .finally(() => {
-            setLoading(false);
-        });
+        // setLoading(true);
+        // gridRef.current = params.api;
+        // getData.post('inventory/getInventoryList', info).then(v => {
+        //     if (v?.data?.code === 1) {
+        //         const {pageInfo = {}, inventoryList = []} = v?.data?.entity;
+        //         params.api.applyTransaction({add: inventoryList});
+        //         setTotalRow(pageInfo?.totalRow ?? 0)
+        //     } else {
+        //         message.warn(v?.data?.message);
+        //     }
+        // })
+        // .finally(() => {
+        //     setLoading(false);
+        // });
     };
 
     function handleKeyPress(e) {
