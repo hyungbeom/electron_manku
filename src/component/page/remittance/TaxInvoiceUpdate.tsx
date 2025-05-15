@@ -23,7 +23,7 @@ import Spin from "antd/lib/spin";
 
 const listType = 'list';
 
-export default function TaxInvoiceWrite({copyPageInfo, getPropertyId}: any) {
+export default function TaxInvoiceUpdate({copyPageInfo, getPropertyId}: any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef(null);
     const gridRef = useRef(null);

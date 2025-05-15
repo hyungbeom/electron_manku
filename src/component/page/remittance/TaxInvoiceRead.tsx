@@ -6,7 +6,6 @@ import {BoxCard, inputForm, MainCard, radioForm, rangePickerForm, selectBoxForm}
 import _ from "lodash";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import TableGrid from "@/component/tableGrid";
-// import {remittanceReadColumn} from "@/utils/columnList";
 import Button from "antd/lib/button";
 import {
     DeleteOutlined,
@@ -334,25 +333,25 @@ export default function TaxInvoiceRead({getPropertyId, getCopyPage}: any) {
                 </div> : <></>}
             </MainCard>
             {/*@ts-ignored*/}
-            <TableGrid
-                deleteComp={
-                    <Popconfirm
-                        title="삭제하시겠습니까?"
-                        onConfirm={confirm}
-                        icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
-                        <Button type={'primary'} danger size={'small'} style={{fontSize: 11}}>
-                            <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>
-                        </Button>
-                    </Popconfirm>
-                }
-               totalRow={totalRow}
-               getPropertyId={getPropertyId}
-               gridRef={gridRef}
-               // columns={remittanceReadColumn}
-               customType={'DRRead'}
-               onGridReady={onGridReady}
-               funcButtons={['agPrint']}
-            />
+            {/*<TableGrid*/}
+            {/*    deleteComp={*/}
+            {/*        <Popconfirm*/}
+            {/*            title="삭제하시겠습니까?"*/}
+            {/*            onConfirm={confirm}*/}
+            {/*            icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>*/}
+            {/*            <Button type={'primary'} danger size={'small'} style={{fontSize: 11}}>*/}
+            {/*                <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>*/}
+            {/*            </Button>*/}
+            {/*        </Popconfirm>*/}
+            {/*    }*/}
+            {/*   totalRow={totalRow}*/}
+            {/*   getPropertyId={getPropertyId}*/}
+            {/*   gridRef={gridRef}*/}
+            {/*   columns={remittanceReadColumn}*/}
+            {/*   customType={'DRRead'}*/}
+            {/*   onGridReady={onGridReady}*/}
+            {/*   funcButtons={['agPrint']}*/}
+            {/*/>*/}
         </div>
     </Spin>
 }
