@@ -7,11 +7,8 @@ import {
     WalletFilled
 } from "@ant-design/icons";
 import React from "react";
-import TaxInvoiceRead from "@/component/page/remittance/TaxInvoiceRead";
 
 export default function MenuData() {
-
-
     return <></>
 }
 
@@ -68,10 +65,10 @@ export const treeData = [
         children: [
             {title: "국내송금 등록", key: "domestic_remittance_write"},
             {title: "국내송금 조회", key: "domestic_remittance_read"},
-            {title: "해외송금 등록", key: "overseas_remittance_write", disabled: true},
-            {title: "해외송금 조회", key: "overseas_remittance_read", disabled: true},
-            {title: "세금계산서_요청 등록", key: "TaxInvoiceWrite"},
-            {title: "세금계산서_요청 조회", key: "TaxInvoiceRead"}
+            {title: "해외송금 등록", key: "overseas_remittance_write"},
+            {title: "해외송금 조회", key: "overseas_remittance_read"},
+            {title: "세금계산서 요청 등록", key: "tax_invoice_write"},
+            {title: "세금계산서 요청 조회", key: "tax_invoice_read"}
         ],
     }, {
         title: "데이터관리",
@@ -164,10 +161,14 @@ export const introMenulist = [
         icon: <PoundCircleFilled/>,
         color: 'burlywood',
         title: '송금',
-        children: [{name: '국내송금 등록', key: 'remittance_domestic_write'}, {
-            name: '국내송금 조회',
-            key: 'remittance_domestic_read'
-        }]
+        children: [
+            {name: '국내송금 등록', key: 'domestic_remittance_write'},
+            {name: '국내송금 조회', key: 'domestic_remittance_read'},
+            {name: '해외송금 등록', key: 'overseas_remittance_write'},
+            {name: '해외송금 조회', key: 'overseas_remittance_read'},
+            {name: '세금계산서 요청 등록', key: 'tax_invoice_write'},
+            {name: '세금계산서 요청 조회', key: 'tax_invoice_read'}
+        ]
     },
     {
         icon: <DatabaseFilled/>, color: 'dimgray',

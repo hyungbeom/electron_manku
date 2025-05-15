@@ -42,6 +42,12 @@ import DeliveryUpdate from "@/component/page/delivery/DeliveryUpdate";
 import DomesticRemittanceWrite from "@/component/page/remittance/domestic/DomesticRemittanceWrite";
 import DomesticRemittanceRead from "@/component/page/remittance/domestic/DomesticRemittanceRead";
 import DomesticRemittanceUpdate from "@/component/page/remittance/domestic/DomesticRemittanceUpdate";
+import OverseasRemittanceWrite from "@/component/page/remittance/overseas/OverseasRemittanceWrite";
+import OverseasRemittanceRead from "@/component/page/remittance/overseas/OverseasRemittanceRead";
+import OverseasRemittanceUpdate from "@/component/page/remittance/overseas/OverseasRemittanceUpdate";
+import TaxInvoiceWrite from "@/component/page/remittance/TaxInvoiceWrite";
+import TaxInvoiceRead from "@/component/page/remittance/TaxInvoiceRead";
+import TaxInvoiceUpdate from "@/component/page/remittance/TaxInvoiceUpdate";
 import DomesticAgencyWrite from "@/component/page/data/agency/domestic/DomesticAgencyWrite";
 import DomesticAgencyRead from "@/component/page/data/agency/domestic/DomesticAgencyRead";
 import DomesticAgencyUpdate from "@/component/page/data/agency/domestic/DomesticAgencyUpdate";
@@ -61,13 +67,11 @@ import HcodeRead from "@/component/page/data/hscode/HcodeRead";
 import CompanyAccount from "@/component/CompanyAccount";
 import CompanyAccountUpdate from "@/component/CompanyAccountUpdate";
 import CompanyAccountWrite from "@/component/CompanyAccountWrite";
+import SourceWrite from "@/component/page/data/source/SourceWrite";
 import SourceRead from "@/component/page/data/source/SourceRead";
 import SourceUpdate from "@/component/page/data/source/SourceUpdate";
-import SourceWrite from "@/component/page/data/source/SourceWrite";
-import TaxInvoiceRead from "@/component/page/remittance/TaxInvoiceRead";
-import TaxInvoiceWrite from "@/component/page/remittance/TaxInvoiceWrite";
-import SourceReadTest from "@/component/page/data/source/SourceReadTest";
 import SourceWriteTest from "@/component/page/data/source/SourceWriteTest";
+import SourceReadTest from "@/component/page/data/source/SourceReadTest";
 import SourceUpdateTest from "@/component/page/data/source/SourceUpdateTest";
 
 const {RangePicker} = DatePicker
@@ -748,15 +752,21 @@ export const tabComponents = {
     //     component: <RemittanceDomesticRead/>
     // },
     // remittance_domestic_update: {name: "국내송금 수정", component: <RemittanceDomesticUpdate/>},
-
-    TaxInvoiceWrite: {name: "세금계산서_요청 등록", component: <TaxInvoiceWrite/>},
-    TaxInvoiceRead: {name: "세금계산서_요청 조회", component: <TaxInvoiceRead/>},
     domestic_remittance_write: {name: "국내송금 등록", component: <DomesticRemittanceWrite/>},
     domestic_remittance_read: {
         name: "국내송금 조회",
         component: <DomesticRemittanceRead/>
     },
     domestic_remittance_update: {name: "국내송금 수정", component: <DomesticRemittanceUpdate/>},
+    overseas_remittance_write: {name: "해외송금 등록", component: <OverseasRemittanceWrite/>},
+    overseas_remittance_read: {
+        name: "해외송금 조회",
+        component: <OverseasRemittanceRead/>
+    },
+    overseas_remittance_update: {name: "해외송금 수정", component: <OverseasRemittanceUpdate/>},
+    tax_invoice_write: {name: "세금계산서_요청 등록", component: <TaxInvoiceWrite/>},
+    tax_invoice_read: {name: "세금계산서 요청 조회", component: <TaxInvoiceRead/>},
+    tax_invoice_update: {name: "세금계산서 요청 수정", component: <TaxInvoiceUpdate/>},
 
 
     domestic_agency_write: {name: "국내매입처 등록", component: <DomesticAgencyWrite/>},

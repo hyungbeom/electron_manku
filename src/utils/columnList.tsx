@@ -2819,7 +2819,7 @@ export const tableSourceColumns = [
 ]
 
 // 재고관리 > 조회 테이블 컬럼
-export const tableSourceUpdateColumns = [
+export const tableSourceWriteColumns = [
     {
         headerName: "", // 컬럼 제목
         valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
