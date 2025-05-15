@@ -6,7 +6,7 @@ import {BoxCard, inputForm, MainCard, radioForm, rangePickerForm, selectBoxForm}
 import _ from "lodash";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import TableGrid from "@/component/tableGrid";
-import {remittanceReadColumn} from "@/utils/columnList";
+// import {remittanceReadColumn} from "@/utils/columnList";
 import Button from "antd/lib/button";
 import {
     DeleteOutlined,
@@ -348,7 +348,7 @@ export default function TaxInvoiceRead({getPropertyId, getCopyPage}: any) {
                totalRow={totalRow}
                getPropertyId={getPropertyId}
                gridRef={gridRef}
-               columns={remittanceReadColumn}
+               // columns={remittanceReadColumn}
                customType={'DRRead'}
                onGridReady={onGridReady}
                funcButtons={['agPrint']}
