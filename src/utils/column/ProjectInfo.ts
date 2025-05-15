@@ -589,11 +589,13 @@ export const storeInfo = {
     },
 };
 
-// 송금 관련
-export const remittanceInfo = {
+/**
+ * 국내 송금 등록/수정
+ */
+export const DRInfo = {
     write: {
-        columnWidth: [100, 100, 100, 100, 100, 100, 100],
-        column: ['송금 요청 일자', '송금 지정 일자', '공급가액', '부가세', '합계', '송금 여부', '계산서 발행 여부'],
+        columnWidth: [80, 80, 100, 100, 100, 100, 100],
+        column: ['송금 요청 일자', '송금 지정 일자', '공급가액', '부가세', '합계', '송금 상태', '계산서 발행 여부'],
         columnList: [
             {data: "remittanceRequestDate", type: "date"},
             {data: "remittanceDueDate", type: "date"},
@@ -646,47 +648,112 @@ export const remittanceInfo = {
         type: 'write'
     },
     defaultInfo: {
-        createdBy: '',
-        agencyTel: '',
-        managerAdminName: '',
-        managerAdminId: null,
-        "writtenDate": moment().format('YYYY-MM-DD'),    // 작성일
-        "connectDocumentNumberFull": "", // Inquiry No.
-        "documentNumberFull": "", // Inquiry No.
-        "rfqNo": "", // Inquiry No.
-        "projectTitle": "", // Inquiry No.
-        "agencyCode": "",            // 대리점코드
-        "agencyName": "",
-        "agencyManagerName": "",
-        "agencyManagerEmail": "",
-        "deliveryTerms": "",
-        "agencyManagerPhoneNumber": "",
-        "customerCode": "",             // CUSTOMER 코드
-        "customerName": "",    // 상호명
-        "customerManagerEmail": "",    // 상호명
-        "managerEmail": "",    // 상호명
-        "managerName": "",      // 담당자
-        "phoneNumber": "",  // 연락처
-        "faxNumber": "",                // 팩스번호
-        "validityPeriod": '견적 발행 후 10일간',    // 유효기간
-        "paymentTerms": '발주시 50% / 납품시 50%',                // 결제조건
-        "shippingTerms": '귀사도착도',             // 운송조건
-        "exchangeRate": "",                  // 환율
-        "estimateManager": "",            // 담당자
-        "email": "",             // E-MAIL
-        "managerPhoneNumber": "",   // 연락처
-        "managerFaxNumber": "",       // 팩스번호
-        "maker": "",      // Maker
-        "item": "",      // Item
-        "delivery": null,    // 납기
-        "instructions": "",          // 지시사항
-        "remarks": "",          // 비고란
-        "currencyUnit": "",          // 비고란
-        'count': 0,
-        attnTo: '',
-        uploadType: 3
+        writtenDate: moment().format('YYYY-MM-DD'),   // 작성일
+        createdId: null,                              // 작성자 id
+        createdBy: null,                              // 작성자 이름
+        managerAdminId: null,                         // 담당자 id
+        managerAdminName: null,                       // 담당자 이름
+        remittanceId: '',                             // 송금 pk
+        customerName: '',                             // 고객사
+        agencyName: '',                               // 매입처
+        connectInquiryNo: '',                         // 발주서 no 여러개
+        orderDetailIds: '',                           // 발주서 항목번호 여러개 (orderDetailId)
+        totalAmount: '',                              // 총액
+        partialRemittance: '',                        // 부분송금액
+        balance: '',                                  // 합계
+        partialRemittanceStatus: '',                  // 부분 송금 진행 여부
+        remarks: '',                                  // 비고
     },
 };
+
+/**
+ * 해외 송금 등록/수정
+ */
+export const ORInfo = {
+    write: {
+        columnWidth: [80, 80, 100, 100, 100, 100, 100, 100, 100],
+        column: ['송금 요청 일자', '송금 지정 일자', '공급가액', '부가세', '합계', '송금 상태', '증빙서류 여부', '환율', '수수료'],
+        columnList: [
+            {data: "remittanceRequestDate", type: "date"},
+            {data: "remittanceDueDate", type: "date"},
+            {data: "supplyAmount", type: "numeric"},
+            {data: "tax", type: "numeric", readOnly: true},
+            {data: "total", type: "numeric", readOnly: true},
+            {
+                data: "sendStatus",
+                type: "autocomplete",
+                source: ['요청', '부분완료', '완료', '취소', '반려']
+            },
+            {
+                data: "invoiceStatus",
+                type: "autocomplete",
+                source: ['X', 'O']
+            },
+            {data: "exchangeRate", type: "numeric"},
+            {data: "commissionFee", type: "numeric"},
+        ],
+        defaultData: {
+            "remittanceDetailId": '',
+            "remittanceRequestDate": '',   // 송금 요청 일자
+            "remittanceDueDate": "",       // 송금 지정 일자
+            "supplyAmount": '',            // 공급가액
+            "tax": "",                     // 부가세
+            "total": "",                   // 합계
+            "sendStatus": '',              // 송금 상태
+            "invoiceStatus": '',           // 증빙서류 여부
+            "exchangeRate": '',            // 환율
+            "commissionFee": ''            // 수수료
+        }, mapping: {
+            "remittanceRequestDate": '송금 요청 일자',
+            "remittanceDueDate": '송금 지정 일자',
+            "supplyAmount": '공급가액',
+            "tax": "부가세",
+            "total": '합계',
+            "sendStatus": '송금 상태',
+            "invoiceStatus": '증빙서류 여부',
+            "exchangeRate": '환율',
+            "commissionFee": '수수료'
+        },
+        excelExpert: (v, i) => {
+            v['tax'] = `=C${i + 1}*0.1*10/10`
+            v['total'] = `=C${i + 1}+D${i + 1}`
+            return v
+        },
+        totalList: {
+            "remittanceRequestDate": '',
+            "remittanceDueDate": '',
+            "supplyAmount": '=SUM(C1:C100)',
+            "tax": '=SUM(D1:D100)',
+            "total": '=SUM(E1:E100)',
+            "sendStatus": '',
+            "invoiceStatus": '',
+            "exchangeRate": '',
+            "commissionFee": '=SUM(I1:I100)'
+        },
+        type: 'write'
+    },
+    defaultInfo: {
+        writtenDate: moment().format('YYYY-MM-DD'),   // 작성일
+        createdId: null,                              // 작성자 id
+        createdBy: null,                              // 작성자 이름
+        managerAdminId: null,                         // 담당자 id
+        managerAdminName: null,                       // 담당자 이름
+        remittanceId: '',                             // 송금 pk
+        customerName: '',                             // 고객사
+        agencyName: '',                               // 매입처
+        connectInquiryNo: '',                         // 발주서 no 여러개
+        orderDetailIds: '',                           // 발주서 항목번호 여러개 (orderDetailId)
+        totalAmount: '',                              // 총액
+        partialRemittance: '',                        // 부분송금액
+        balance: '',                                  // 합계
+        partialRemittanceStatus: '',                  // 부분 송금 진행 여부
+        remarks: '',                                  // 비고
+    },
+};
+
+
+
+// ===================================================== 데이터 관리 =====================================================
 
 /**
  * 국내 매입처 등록/수정

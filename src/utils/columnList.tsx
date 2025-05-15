@@ -1944,8 +1944,93 @@ export const tableCodeDomesticAgencyWriteColumns = [
 
 // ================================================ 송금 =================================================
 
-// 송금 조회 테이블 컬럼
-export const remittanceReadColumn = [
+// 국내송금 조회 테이블 컬럼
+export const tableCodeDomesticRemittanceReadColumn = [
+    {
+        headerName: "", // 컬럼 제목
+        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
+        checkboxSelection: true, // 각 행에 체크박스 추가
+        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
+        cellStyle: {textAlign: "center"}, // 스타일 설정
+        maxWidth: 60, // 컬럼 너비
+        pinned: "left", // 왼쪽에 고정
+        filter: false
+    },
+    {
+        headerName: 'Inquiry No.',
+        field: 'documentNumbers',
+        pinned: 'left',
+        valueGetter: (params) => {
+            const currentRowIndex = params.node.rowIndex;
+            const currentValue = params.data.remittanceId;
+            const previousRowNode = params.api.getDisplayedRowAtIndex(currentRowIndex - 1);
+
+            // 이전 행의 데이터가 없거나 값이 다르면 현재 값을 유지
+            if (!previousRowNode || previousRowNode.data.remittanceId !== currentValue) {
+                return params.data.documentNumbers;
+            }
+            // 중복되면 null 반환
+            return null;
+        },
+        cellRenderer: (params) => {
+            // valueGetter에서 null로 설정된 값은 빈칸으로 표시
+            return params.value !== null ? params.value : '';
+        },
+    },
+    {
+        headerName: '항목번호',
+        field: 'orderDetailIds',
+        pinned: 'left'
+    },
+    {
+        headerName: '송금지정일자',
+        field: 'remittanceDueDate',
+        maxWidth: 120,
+    },
+    {
+        headerName: '고객사명',
+        field: 'customerName',
+    },
+    {
+        headerName: '매입처명',
+        field: 'agencyName',
+    },
+    {
+        headerName: '송금 상태',
+        field: 'sendStatus',
+        maxWidth: 80,
+    },
+    {
+        headerName: '계산서 발행 여부',
+        field: 'invoiceStatus',
+        maxWidth: 90,
+    },
+    {
+        headerName: '공급가액',
+        field: 'supplyAmount',
+        valueFormatter: params => parseFloat(params.data.supplyAmount)?.toLocaleString(),
+    },
+    {
+        headerName: '부가세',
+        field: 'net',
+        valueFormatter: params => Math.round(parseFloat(params.data.supplyAmount) * 0.1 * 10 / 10)?.toLocaleString(),
+        cellEditor: 'agNumberCellEditor',
+    },
+    {
+        headerName: '합계',
+        field: 'total',
+        valueFormatter: params => (parseFloat(params.data.supplyAmount) + Math.round(params.data.supplyAmount * 0.1 * 10 / 10))?.toLocaleString(),
+    },
+    {
+        headerName: '담당자',
+        field: 'managerAdminName',
+        maxWidth: 80,
+        pinned: 'right'
+    }
+];
+
+// 해외송금 조회 테이블 컬럼
+export const tableCodeOverseasRemittanceReadColumn = [
     {
         headerName: "", // 컬럼 제목
         headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)

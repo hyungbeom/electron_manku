@@ -79,18 +79,37 @@ export const rfqWriteInitial = {
 }
 
 
-// ==============================================================================
+// ================================== 송금 ============================================
+
+// 송금 > 국내송금 조회 > 검색 초기값 정보
 export const domesticRemittanceSearchInitial = {
-    "searchAgencyName": "",         // 매입처명
-    "searchCustomerName": "",       // 고객사명
-    "searchManagerAdminName": "",   // 담당자
     "searchRequestDate": [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
-    "searchRequestStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),   // 송금요청일자 검색 시작일
-    "searchRequestEndDate": moment().format('YYYY-MM-DD'),     // 송금요청일자 검색 종료일
-    "searchIsInvoice": "",          // 계산서 발행여부 O, X
+    "searchRequestStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),   // 송금지정일자 검색 시작일
+    "searchRequestEndDate": moment().format('YYYY-MM-DD'),                          // 송금지정일자 검색 종료일
+    "searchManagerAdminName": "",          // 담당자
+    "searchDocumentNumber": "",            // InquiryNo
+    "searchCustomerName": "",              // 고객사명
+    "searchAgencyName": "",                // 매입처명
+    "searchIsInvoice": "",                 // 계산서 발행여부 O, X
     "searchPartialRemittanceStatus": "",   // 부분송금 진행여부
-    "searchIsSend": "",             // 송금상태
-    "searchDocumentNumber": "",    // InquiryNo
+    "searchIsSend": "",                    // 송금상태
+    "page": 1,
+    "limit": -1
+}
+//
+
+// 송금 > 해외송금 조회 > 검색 초기값 정보
+export const overseasRemittanceSearchInitial = {
+    "searchRequestDate": [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
+    "searchRequestStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),   // 송금지정일자 검색 시작일
+    "searchRequestEndDate": moment().format('YYYY-MM-DD'),                          // 송금지정일자 검색 종료일
+    "searchManagerAdminName": "",          // 담당자
+    "searchDocumentNumber": "",            // InquiryNo
+    "searchCustomerName": "",              // 고객사명
+    "searchAgencyName": "",                // 매입처명
+    "searchIsInvoice": "",                 // 계산서 발행여부 O, X
+    "searchPartialRemittanceStatus": "",   // 부분송금 진행여부
+    "searchIsSend": "",                    // 송금상태
     "page": 1,
     "limit": -1
 }
@@ -98,7 +117,7 @@ export const domesticRemittanceSearchInitial = {
 
 
 
-// ==============================================================================
+// =============================== 데이터 관리 ========================================
 
 // 매입처 > 국내매입처 조회 > 검색 초기값 정보
 export const DASearchInitial = {
@@ -297,6 +316,9 @@ export const hsCodeInitial = {
     item: "",
     hsCode: ""
 }
+//
+
+
 
 export const subRfqReadInitial = {
     searchDate: [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],

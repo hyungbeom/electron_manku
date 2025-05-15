@@ -76,7 +76,9 @@ export const treeData = [
             {title: "국내송금 등록", key: "domestic_remittance_write"},
             {title: "국내송금 조회", key: "domestic_remittance_read"},
             {title: "해외송금 등록", key: "overseas_remittance_write", disabled: true},
-            {title: "해외송금 조회", key: "overseas_remittance_read", disabled: true}
+            {title: "해외송금 조회", key: "overseas_remittance_read", disabled: true},
+            {title: "세금계산서 발행", key: "overseas_remittance_read", disabled: true},
+            {title: "세금계산서 조회", key: "overseas_remittance_read", disabled: true}
         ],
     }, {
         title: "데이터관리",

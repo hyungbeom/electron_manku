@@ -41,25 +41,13 @@ function Order({
      */
     async function confirm() {
         if (gridRef.current.getSelectedRows().length < 1) {
-            return message.error('삭제할 발주서 정보를 선택해주세요.')
+            return message.error('삭제할 발주서 정보를 선택해주세요.');
         }
-        const deleteList = gridManage.getFieldDeleteList(gridRef, {
-            orderId: 'orderId',
-            orderDetailId: 'orderDetailId'
-        });
+        const deleteList = gridManage.getFieldDeleteList(gridRef, {orderDetailId: 'orderDetailId'});
         const filterSelectList = tableData.filter(selectOrder =>
-            !deleteList.some(deleteItem => deleteItem.orderDetailId === selectOrder.orderDetailId)
+            !deleteList.some(deleteItem => deleteItem.orderDetailId === Number(selectOrder.orderDetailId))
         );
         setTableData(filterSelectList);
-
-        // 삭제 후 총액 계산
-        const total = filterSelectList.reduce((sum, row) => {
-            const quantity = parseFloat(row.quantity);
-            const unitPrice = parseFloat(row.unitPrice);
-            const q = isNaN(quantity) ? 0 : quantity;
-            const p = isNaN(unitPrice) ? 0 : unitPrice;
-            return sum + q * p;
-        }, 0);
 
         // Inquiry No. 정리
         const connectInquiryNos = [];
@@ -72,22 +60,20 @@ function Order({
         // 항목 번호 정리
         const orderDetailIds = filterSelectList.map(row => row.orderDetailId).join(', ');
 
-        setInfo(prevInfo => {
-            const prevPartialRemittance = prevInfo.partialRemittance || 0;
-            const partialRemittance = typeof prevPartialRemittance === "string"
-                ? parseFloat(prevPartialRemittance.replace(/,/g, '')) || 0
-                : prevPartialRemittance;
+        // 발주서 총액 계산
+        const total = filterSelectList.reduce((sum, row) => sum + ((Number(row.quantity) || 0) * (Number(row.unitPrice) || 0)), 0);
+        const totalAmount = total + (total * 0.1 * 10 / 10);
 
-            const balance= total - partialRemittance;
-            console.log(total.toLocaleString())
-            console.log(balance.toLocaleString())
+        setInfo(prevInfo => {
+            const partialRemittance = Number(String(prevInfo.partialRemittance || '0').replace(/,/g, ''));
+            const balance= totalAmount - partialRemittance;
             return {
                 ...prevInfo,
-                customerName: filterSelectList[0].customerName,
-                agencyName: filterSelectList[0].agencyName,
+                customerName: filterSelectList?.[0]?.customerName || '',
+                agencyName: filterSelectList?.[0]?.agencyName || '',
                 connectInquiryNo: connectInquiryNos.join(', '),
                 orderDetailIds,
-                totalAmount: total.toLocaleString(),
+                totalAmount: totalAmount.toLocaleString(),
                 balance: balance.toLocaleString(),
             }
         });
@@ -96,7 +82,7 @@ function Order({
     /**
      * 선택한 발주서 항목 > 더블 클릭 이벤트
      * CustomFunc로 부모에서 처리
-     * (상세 조회 > folderId, fileList 받아옴)
+     * (Inquiry No. 조회 > SharePoint 폴더 체크 > 없으면 폴더 생성 > folderId, fileList 받아옴)
      * @param orderDetail
      */
     function returnFunc(orderDetail) {
@@ -120,7 +106,7 @@ function Order({
                 gridRef={gridRef}
                 columns={tableOrderReadColumns}
                 onGridReady={onGridReady}
-                type={'DRWrite'}
+                customType={'DRWrite'}
                 tempFunc={returnFunc}
                 funcButtons={['agPrint']}
             />

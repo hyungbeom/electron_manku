@@ -48,7 +48,6 @@ const Table = forwardRef(({
     const [tableData, setTableData] = useState([])
 
     useEffect(() => {
-        console.log('handsonTable data 변경!!!!')
         setTableData(calcData(data))
     }, [data, column]);
 

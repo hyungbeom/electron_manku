@@ -25,7 +25,7 @@ import Popconfirm from "antd/lib/popconfirm";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 
-export default function DomesticRemittanceRead({getPropertyId, getCopyPage}: any) {
+export default function OverseasRemittanceRead({getPropertyId, getCopyPage}: any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
     const gridRef = useRef(null);

@@ -1,28 +1,31 @@
 import React, {memo} from "react";
-import {remittanceInfo} from "@/utils/column/ProjectInfo";
+import {DRInfo} from "@/utils/column/ProjectInfo";
 import Table from "@/component/util/Table";
 import _ from "lodash";
 
-function Remittance({tableData, tableRef, setInfo}) {
+function Remittance({
+                        tableRef = null,
+                        tableData = [],
+                        setInfo = null}) {
 
     function partialRemittance (sumSupplyAmount) {
-        const amount = Number(sumSupplyAmount);
-        if (isNaN(amount)) {
+        const partialRemittance = Number(sumSupplyAmount);
+        if (isNaN(partialRemittance)) {
             return;
         }
         setInfo(prev => {
             let totalAmount = Number(String(prev.totalAmount || '0').replace(/,/g, ''));
-            const balance = totalAmount - amount;
+            const balance = totalAmount - partialRemittance;
             return {
                 ...prev,
-                partialRemittance: amount.toLocaleString(),
+                partialRemittance: partialRemittance.toLocaleString(),
                 balance : balance.toLocaleString()
             }
         });
     }
 
     return (
-            <Table data={tableData} column={remittanceInfo['write']} funcButtons={['print']} ref={tableRef}
+            <Table data={tableData} column={DRInfo['write']} funcButtons={['print']} ref={tableRef}
                    type={'domestic_remittance_write_column'} customFunc={partialRemittance} />
     );
 }

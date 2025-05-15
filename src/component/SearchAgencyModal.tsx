@@ -57,13 +57,22 @@ export default function SearchInfoModal({
 
     async function searchFunc(v, text) {
         try {
-            const resultList = await getData.post(modalList[v]?.url, {
+            const result = await getData.post(modalList[v]?.url, {
                 searchType: "",
                 searchText: text, // 대리점코드 or 대리점 상호명
                 page: 1,
                 limit: -1
             });
-            setList(resultList?.data?.entity[modalList[v]?.list]);
+            let resultList = result?.data?.entity?.[modalList[v]?.list] ?? [];
+
+            // // 송금 발주서 조회 Modal 일때 이미 선택한 발주서 항목 제외
+            // if (v === 'connectInquiryNo') {
+            //     resultList = resultList.filter(result =>
+            //         !info.some(info => info.orderDetailId === result.orderDetailId)
+            //     );
+            // }
+
+            setList(resultList);
         } catch (err) {
             console.error(err, '::::');
         }

@@ -68,40 +68,25 @@ const TableGrid = ({
      * @param event
      */
     const handleRowSelected = (event) => {
-        if (type === 'write' || type === 'DRWrite') {
+        if (type === 'write' && !customType) {
             return false; // 'write' 타입일 경우 아무 작업도 하지 않음
         }
 
         const selectedNode = event.node; // 현재 선택된 노드
         const selectedData = selectedNode.data; // 선택된 데이터
 
-        if (customType === 'DRRead') {
-            const groupValue = selectedData.remittanceId;
-            const rowIndex = selectedNode.rowIndex;
-            const previousData = event.api.getDisplayedRowAtIndex(rowIndex - 1)?.data?.remittanceId;
-
-            // 이전 데이터와 그룹 값이 다를 때만 처리
-            if (!previousData || previousData !== groupValue) {
-                const isSelected = selectedNode.isSelected();
-
-                // 동일한 groupValue를 가진 행들만 선택 상태 변경
-                event.api.forEachNode((node) => {
-                    if (node.data?.remittanceId === groupValue) {
-                        node.setSelected(isSelected);
-                    }
-                });
-            }
+        const includeKeys = ['DRWrite'];
+        // documentNumberFull 필드가 없거나 custom이 아니면 패스
+        if (!selectedData?.documentNumberFull && !customType || includeKeys.includes(customType)) {
             return;
         }
 
-        // documentNumberFull 필드가 없거나 값이 없으면 아무 작업도 하지 않음
-        if (!selectedData?.documentNumberFull) {
-            return;
-        }
+        let groupValueKey = 'documentNumberFull';
+        if (customType === 'DRRead') groupValueKey = 'remittanceId';
 
-        const groupValue = selectedData.documentNumberFull; // 현재 행의 `documentNumberFull` 값
+        const groupValue = selectedData?.[groupValueKey];
         const rowIndex = selectedNode.rowIndex;
-        const previousData = event.api.getDisplayedRowAtIndex(rowIndex - 1)?.data?.documentNumberFull;
+        const previousData = event.api.getDisplayedRowAtIndex(rowIndex - 1)?.data?.[groupValueKey];
 
         // 이전 데이터와 그룹 값이 다를 때만 처리
         if (!previousData || previousData !== groupValue) {
@@ -109,7 +94,7 @@ const TableGrid = ({
 
             // 동일한 groupValue를 가진 행들만 선택 상태 변경
             event.api.forEachNode((node) => {
-                if (node.data?.documentNumberFull === groupValue) {
+                if (node.data?.[groupValueKey] === groupValue) {
                     node.setSelected(isSelected);
                 }
             });
@@ -119,6 +104,13 @@ const TableGrid = ({
 
     const handleDoubleClicked = (e) => {
         if (type === 'read') {
+
+            // 송금 등록/수정시 하단에 선택한 발주서 항목 더블클릭
+            if (customType === 'DRWrite') {
+                tempFunc(e.data);
+                return;
+            }
+
             if (e.data.projectId) { // 프로젝트 수정
                 getPropertyId('project_update', e.data.projectId)
             }
@@ -129,6 +121,7 @@ const TableGrid = ({
                 getPropertyId('estimate_update', e.data.estimateId)
             }
             if (e.data.orderId) { // 발주서 수정
+                console.log('$$$$$$')
                 getPropertyId('order_update', e.data.orderId)
             }
             if (e.data.orderStatusId) { // 입고 수정
@@ -162,10 +155,6 @@ const TableGrid = ({
             if (e.data.officialDocumentId) {
                 getPropertyId('code_diploma_update', e.data.officialDocumentId)
             }
-        }
-        // 송금 등록/수정시 하단에 선택한 발주서 항목 더블클릭
-        if (type === 'DRWrite') {
-            tempFunc(e.data);
         }
         if (type === 'sourceUpdate') {
             setInfo(e.data);
@@ -257,12 +246,11 @@ const TableGrid = ({
     const handleSelectionChanged = () => {
         const selectedRows = gridRef.current.getSelectedRows(); // 체크된 행 가져오기
 
-        if (!selectedRows.length || !containsIncludeKey(selectedRows) || type.includes('DR')) {
+        if ((!selectedRows.length || !containsIncludeKey(selectedRows)) || customType) {
             setPinnedBottomRowData([]);
             return;
         }
         const totals = commonFunc.sumCalc(selectedRows);
-        console.log(totals)
         setPinnedBottomRowData([totals]);
     };
 
