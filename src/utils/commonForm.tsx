@@ -64,6 +64,11 @@ import CompanyAccountWrite from "@/component/CompanyAccountWrite";
 import SourceRead from "@/component/page/data/source/SourceRead";
 import SourceUpdate from "@/component/page/data/source/SourceUpdate";
 import SourceWrite from "@/component/page/data/source/SourceWrite";
+import TaxInvoiceRead from "@/component/page/remittance/TaxInvoiceRead";
+import TaxInvoiceWrite from "@/component/page/remittance/TaxInvoiceWrite";
+import SourceReadTest from "@/component/page/data/source/SourceReadTest";
+import SourceWriteTest from "@/component/page/data/source/SourceWriteTest";
+import SourceUpdateTest from "@/component/page/data/source/SourceUpdateTest";
 
 const {RangePicker} = DatePicker
 const {Option} = Select
@@ -744,6 +749,8 @@ export const tabComponents = {
     // },
     // remittance_domestic_update: {name: "국내송금 수정", component: <RemittanceDomesticUpdate/>},
 
+    TaxInvoiceWrite: {name: "세금계산서_요청 등록", component: <TaxInvoiceWrite/>},
+    TaxInvoiceRead: {name: "세금계산서_요청 조회", component: <TaxInvoiceRead/>},
     domestic_remittance_write: {name: "국내송금 등록", component: <DomesticRemittanceWrite/>},
     domestic_remittance_read: {
         name: "국내송금 조회",
@@ -826,6 +833,20 @@ export const tabComponents = {
         name: "재고관리 등록",
         component: <SourceWrite/>
     },
+
+    source_read_test: {
+        name: "재고관리 조회(테스트)",
+        component: <SourceReadTest/>
+    },
+    source_update_test: {
+        name: "재고관리 수정(테스트)",
+        component: <SourceUpdateTest/>
+    },
+    source_write_test: {
+        name: "재고관리 등록(테스트)",
+        component: <SourceWriteTest/>
+    },
+
 };
 
 
