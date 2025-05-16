@@ -48,16 +48,16 @@ function SourceRead({getPropertyId, getCopyPage}: any) {
         gridRef.current = params.api;
         getData.post('inventory/getInventoryList', info).then(v => {
             if (v?.data?.code === 1) {
-                const {pageInfo = {}, inventoryList = []} = v?.data?.entity;
+                const inventoryList = v?.data?.entity;
                 params.api.applyTransaction({add: inventoryList});
-                setTotalRow(pageInfo?.totalRow ?? 0)
+                setTotalRow(inventoryList?.length ?? 0)
             } else {
                 message.warn(v?.data?.message);
             }
         })
-        .finally(() => {
-            setLoading(false);
-        });
+            .finally(() => {
+                setLoading(false);
+            });
     };
 
     function handleKeyPress(e) {
@@ -80,16 +80,16 @@ function SourceRead({getPropertyId, getCopyPage}: any) {
             setLoading(true);
             getData.post('inventory/getInventoryList', info).then(v => {
                 if (v?.data?.code === 1) {
-                    const {pageInfo = {}, inventoryList = []} = v?.data?.entity;
+                    const inventoryList = v?.data?.entity;
                     gridManage.resetData(gridRef, inventoryList);
-                    setTotalRow(pageInfo?.totalRow ?? 0)
+                    setTotalRow(inventoryList?.length ?? 0)
                 } else {
                     message.warn(v?.data?.message);
                 }
             })
-            .finally(() => {
-                setLoading(false);
-            });
+                .finally(() => {
+                    setLoading(false);
+                });
         }
     }
 
@@ -146,13 +146,13 @@ function SourceRead({getPropertyId, getCopyPage}: any) {
                 )
             }
         })
-        .catch((err) => {
-            notificationAlert('error', '❌ 네트워크 오류 발생', <div>{err.message}</div>);
-            console.error('에러:', err);
-        })
-        .finally(() => {
-            setLoading(false);
-        });
+            .catch((err) => {
+                notificationAlert('error', '❌ 네트워크 오류 발생', <div>{err.message}</div>);
+                console.error('에러:', err);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
     }
 
     return <Spin spinning={loading} tip={'재고관리 조회중...'}>
@@ -168,28 +168,16 @@ function SourceRead({getPropertyId, getCopyPage}: any) {
                       ]}
                       mini={mini} setMini={setMini}>
                 {mini ?
-                    <TopBoxCard title={''} grid={"200px 200px 200px 1fr"}>
-                        {inputForm({
-                            title: 'Maker',
-                            id: 'searchMaker',
-                            handleKeyPress: handleKeyPress,
-                            onChange: onChange,
-                            data: info
-                        })}
-                        {inputForm({
-                            title: 'Model',
-                            id: 'searchModel',
-                            handleKeyPress: handleKeyPress,
-                            onChange: onChange,
-                            data: info
-                        })}
-                        {inputForm({
-                            title: '위치',
-                            id: 'searchLocation',
-                            handleKeyPress: handleKeyPress,
-                            onChange: onChange,
-                            data: info
-                        })}
+                    <TopBoxCard title={''} grid={'300px 1fr'}>
+                        <div style={{marginLeft: 10}}>
+                            {inputForm({
+                                title: '검색어',
+                                id: 'searchText',
+                                handleKeyPress: handleKeyPress,
+                                onChange: onChange,
+                                data: info
+                            })}
+                        </div>
                         <Space style={{marginTop: 14}} size={8}>
                             <Button type="primary" size="small" style={{fontSize: 11}} onClick={searchInfo}>
                                 <SearchOutlined/>조회

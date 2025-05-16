@@ -39,8 +39,8 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
     const [loading, setLoading] = useState(false);
-    const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
+    const [mini, setMini] = useState(true);
 
     const { userInfo, adminList } = useAppSelector((state) => state.user);
     const adminParams = {

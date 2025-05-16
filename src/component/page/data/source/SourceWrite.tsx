@@ -1,9 +1,7 @@
 import React, {memo, useEffect, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import {RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
-import message from "antd/lib/message";
-import {sourceSearchInitial,} from "@/utils/initialList";
-import {commonManage, gridManage} from "@/utils/commonManage";
+import {commonFunc, commonManage} from "@/utils/commonManage";
 import {
     BoxCard,
     datePickerForm,
@@ -21,12 +19,15 @@ import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 import _ from "lodash";
 import Spin from "antd/lib/spin";
 import TableGrid from "@/component/tableGrid";
-import {tableSourceColumns} from "@/utils/columnList";
+import {tableSourceUpdateColumns} from "@/utils/columnList";
 import {sourceInfo} from "@/utils/column/ProjectInfo";
+import {ModalInitList} from "@/utils/initialList";
+import SearchInfoModal from "@/component/SearchAgencyModal";
 
 function SourceWrite({copyPageInfo, getPropertyId}: any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null);
+    const infoRef = useRef<any>(null);
     const gridRef = useRef(null);
 
     const getSavedSizes = () => {
@@ -36,6 +37,7 @@ function SourceWrite({copyPageInfo, getPropertyId}: any) {
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
     const [loading, setLoading] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
     const [mini, setMini] = useState(true);
 
     const getSourceInit = () => _.cloneDeep(sourceInfo['defaultInfo']);
@@ -43,57 +45,31 @@ function SourceWrite({copyPageInfo, getPropertyId}: any) {
     const getSourceValidateInit = () => _.cloneDeep(sourceInfo['write']['validate']);
     const [validate, setValidate] = useState(getSourceValidateInit());
 
+    const [tableData, setTableData] = useState([]);
     const [totalRow, setTotalRow] = useState(0);
 
     useEffect(() => {
         setLoading(true);
+
         setValidate(getSourceValidateInit());
         setInfo(getSourceInit());
-        if (isEmptyObj(copyPageInfo)) {
+        setTableData([]);
+
+        if (!isEmptyObj(copyPageInfo)) {
+            // copyPageInfo 가 없을시
+            setTableData(commonFunc.repeatObject(sourceInfo['write']['defaultData'], 1000));
+        } else {
             setInfo({
                 ...getSourceInit(),
                 ..._.cloneDeep(copyPageInfo)
             });
+            // setTableData(copyPageInfo);
         }
         setLoading(false);
     }, [copyPageInfo?._meta?.updateKey]);
 
-    const onGridReady = async (params) => {
-        setLoading(true);
-        gridRef.current = params.api;
-        getData.post('inventory/getInventoryList', sourceSearchInitial).then(v => {
-            if (v?.data?.code === 1) {
-                const {pageInfo = {}, inventoryList = []} = v?.data?.entity;
-                params.api.applyTransaction({add: inventoryList});
-                setTotalRow(pageInfo?.totalRow ?? 0)
-            } else {
-                message.warn(v?.data?.message);
-            }
-        })
-        .finally(() => {
-            setLoading(false);
-        });
-    };
+    function onGridReady () {
 
-    /**
-     * @description 등록 페이지 > 하단의 재고 조회
-     * 데이터 관리 > 재고관리
-     * 재고관리 조회 페이지 조회랑 같은 API
-     */
-    const fetchData = async () => {
-        setLoading(true);
-        getData.post('inventory/getInventoryList', sourceSearchInitial).then(v => {
-            if (v?.data?.code === 1) {
-                const {pageInfo = {}, inventoryList = []} = v?.data?.entity;
-                gridManage.resetData(gridRef, inventoryList);
-                setTotalRow(pageInfo?.totalRow ?? 0);
-            } else {
-                message.warn(v?.data?.message);
-            }
-        })
-        .finally(() => {
-            setLoading(false);
-        });
     }
 
     function onChange(e) {
@@ -114,7 +90,6 @@ function SourceWrite({copyPageInfo, getPropertyId}: any) {
         setLoading(true);
         await getData.post('inventory/addInventory', info).then(v => {
             if (v.data.code === 1) {
-                fetchData();
                 window.postMessage({message: 'reload', target: 'source_read'}, window.location.origin);
                 notificationAlert('success', '💾 재고 등록완료',
                     <>
@@ -158,15 +133,27 @@ function SourceWrite({copyPageInfo, getPropertyId}: any) {
     function clearAll() {
         setValidate(getSourceValidateInit());
         setInfo(getSourceInit());
-        fetchData();
+        setTableData([]);
+    }
+
+    /**
+     * @description 등록 페이지 > Inquiry No. 검색 버튼 > 발주서 조회 Modal
+     * 송금 > 국내송금 등록
+     * 발주서 조회 Modal
+     * @param e
+     */
+    function openModal(e) {
+        commonManage.openModal(e, setIsModalOpen)
     }
 
     return <Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'source_write'}/>
+        <SearchInfoModal open={isModalOpen} setIsModalOpen={setIsModalOpen}
+                         info={info} setInfo={setInfo} infoRef={infoRef}/>
         <div style={{
             display: 'grid',
-            gridTemplateRows: `${mini ? '370px' : '65px'} calc(100vh - ${mini ? 505 : 195}px)`,
-            columnGap: 5
+            gridTemplateRows: `${mini ? '370px' : '65px'} calc(100vh - ${mini ? 465 : 195}px)`,
+            rowGap: 10,
         }}>
             <MainCard title={'재고관리 등록'}
                       list={[
@@ -179,7 +166,7 @@ function SourceWrite({copyPageInfo, getPropertyId}: any) {
                                 style={{gap: 0.5, paddingTop: 3}}>
                         <Panel defaultSize={sizes[0]} minSize={5}>
                             <BoxCard title={'기본 정보'}>
-                                {datePickerForm({title: '입고일자', id: 'receiptDate', onChange: onChange, data: info})}
+                                {datePickerForm({title: '등록일', id: 'receiptDate', onChange: onChange, data: info})}
                                 {inputForm({
                                     title: '문서번호',
                                     id: 'documentNumber',
@@ -187,9 +174,20 @@ function SourceWrite({copyPageInfo, getPropertyId}: any) {
                                     data: info
                                 })}
                                 {inputForm({
+                                    title: '만쿠발주서 No.',
+                                    id: 'connectInquiryNo',
+                                    disabled: true,
+                                    suffix: <span style={{cursor: 'pointer'}} onClick={
+                                        (e) => {
+                                            e.stopPropagation();
+                                            openModal('connectInquiryNo');
+                                        }
+                                    }>🔍</span>,
+                                })}
+                                {inputForm({
                                     title: 'Maker',
                                     id: 'maker',
-                                    onChange: onChange,
+                                    disabled: true,
                                     data: info,
                                     validate: validate['maker'],
                                     key: validate['maker']
@@ -197,7 +195,7 @@ function SourceWrite({copyPageInfo, getPropertyId}: any) {
                                 {inputForm({
                                     title: 'Model',
                                     id: 'model',
-                                    onChange: onChange,
+                                    disabled: true,
                                     data: info,
                                     validate: validate['model'],
                                     key: validate['model']
@@ -206,9 +204,9 @@ function SourceWrite({copyPageInfo, getPropertyId}: any) {
                         </Panel>
                         <PanelResizeHandle/>
                         <Panel defaultSize={sizes[1]} minSize={5}>
-                            <BoxCard title={'재고 정보'} tooltip={tooltipInfo('customer')}>
+                            <BoxCard title={'재고 정보'} tooltip={tooltipInfo('etc')}>
                                 {inputNumberForm({
-                                    title: '수입단가',
+                                    title: '매입 총액',
                                     id: 'importUnitPrice',
                                     min: 0,
                                     step: 0.01,
@@ -266,11 +264,11 @@ function SourceWrite({copyPageInfo, getPropertyId}: any) {
             <TableGrid
                 totalRow={totalRow}
                 gridRef={gridRef}
-                columns={tableSourceColumns}
+                columns={tableSourceUpdateColumns}
                 onGridReady={onGridReady}
                 getPropertyId={getPropertyId}
-                type={'sourceWrite'}
-                // setInfo={setInfo}
+                customType={'SourceWrite'}
+                setInfo={setInfo}
                 funcButtons={['agPrint']}
             />
         </div>

@@ -50,33 +50,11 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
-    const [memberList, setMemberList] = useState([]);
-
-    useEffect(() => {
-        getMemberList();
-    }, []);
-
-    async function getMemberList() {
-        // @ts-ignore
-        return await getData.post('admin/getAdminList', {
-            "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
-            "searchAuthority": null,    // 1: 일반, 0: 관리자
-            "page": 1,
-            "limit": -1
-        }).then(v => {
-            setMemberList(v.data.entity.adminList)
-        })
-    }
-
-    const router = useRouter();
     const [loading, setLoading] = useState(false);
-    const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
-    const [count, setCount] = useState(0);
-    const [maker, setMaker] = useState('');
-    const [ready, setReady] = useState(memberList.length > 0);
+    const [mini, setMini] = useState(true);
 
-    const userInfo = useAppSelector((state) => state.user.userInfo);
+    const { userInfo, adminList } = useAppSelector((state) => state.user);
     const adminParams = {
         managerAdminId: userInfo['adminId'],
         managerAdminName: userInfo['name'],
@@ -94,18 +72,23 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     const [validate, setValidate] = useState(getEstimateValidateInit());
 
     const [fileList, setFileList] = useState([]);
-    const [tableData, setTableData] = useState([]);
-
     const [isFolderId, setIsFolderId] = useState(false);
     const [driveKey, setDriveKey] = useState(0);
 
+    const [tableData, setTableData] = useState([]);
+
     useEffect(() => {
         setLoading(true);
+
         setValidate(getEstimateValidateInit());
         setInfo(getEstimateInit());
+
         setFileList([]);
+        setIsFolderId(false);
         setDriveKey(prev => prev + 1);
+
         setTableData([]);
+
         if (!isEmptyObj(copyPageInfo)) {
             // copyPageInfo 가 없을시
             setTableData(commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000))
@@ -114,12 +97,12 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
             // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting
             setInfo({
                 ...getEstimateInit(),
-                ...copyPageInfo['info'],
+                ...copyPageInfo?.['info'],
                 writtenDate: moment().format('YYYY-MM-DD'),
             });
-            if(copyPageInfo['info']['connectDocumentNumberFull'] && copyPageInfo['info']['folderId']) setIsFolderId(true);
-            setFileList(copyPageInfo['attachmentFileList']);
-            setTableData(copyPageInfo[listType]);
+            if(copyPageInfo?.['info']?.['connectDocumentNumberFull'] && copyPageInfo?.['info']?.['folderId']) setIsFolderId(true);
+            setFileList(copyPageInfo?.['attachmentFileList'] ?? []);
+            setTableData(copyPageInfo?.[listType] ?? []);
 
         }
         setLoading(false);
@@ -209,8 +192,6 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         commonManage.resetValidate(id, value, setValidate);
     }
 
-    const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
     useEventListener('keydown', (e: any) => {
         if (e.ctrlKey && e.key === "s") {
             e.preventDefault();
@@ -227,23 +208,16 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
      * 견적서 > 견적서 등록
      */
     async function saveFunc() {
-
-        setCount(v => v + 1)
-        await delay(800); // 0.3초 대기 후 실행
-
         // 유효성 체크 추가
         if(!commonManage.checkValidate(info, estimateInfo['write']['validationList'], setValidate)) return;
 
-        const findMember = memberList.find(v => v.adminId === parseInt(info['managerAdminId']));
+        const findMember = adminList.find(v => v.adminId === parseInt(info['managerAdminId']));
         info['managerAdminName'] = findMember['name'];
         info['name'] = findMember['name'];
         info['contactNumber'] = findMember['contactNumber'];
         info['email'] = findMember['email'];
         info['customerManagerName'] = info['managerName'];
         info['customerManagerPhone'] = info['phoneNumber'];
-
-        const maker = infoRef.current.querySelector('#maker');
-        setMaker(maker.value)
 
         const tableList = tableRef.current?.getSourceData();
         const filterTableList = commonManage.filterEmptyObjects(tableList, ['model', 'item', 'maker'])
@@ -341,8 +315,10 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
      */
     function clearAll() {
         setLoading(true);
+
         setValidate(getEstimateValidateInit())
         setInfo(getEstimateInit());
+
         setFileList([]);
         setIsFolderId(false);
 
@@ -354,6 +330,7 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                 .concat(estimateInfo['write']['totalList']); // `push` 대신 `concat` 사용
         }
         setTableData(calcData(commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000)))
+
         setLoading(false);
     }
 
@@ -403,7 +380,7 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                         onChange: onChange,
                                         data: info,
                                         validate: validate['managerAdminId'],
-                                        list: memberList?.map((item) => ({
+                                        list: adminList?.map((item) => ({
                                             ...item,
                                             value: item.adminId,
                                             label: item.name,

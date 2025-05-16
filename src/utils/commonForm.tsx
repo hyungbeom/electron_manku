@@ -70,9 +70,6 @@ import CompanyAccountWrite from "@/component/CompanyAccountWrite";
 import SourceWrite from "@/component/page/data/source/SourceWrite";
 import SourceRead from "@/component/page/data/source/SourceRead";
 import SourceUpdate from "@/component/page/data/source/SourceUpdate";
-import SourceWriteTest from "@/component/page/data/source/SourceWriteTest";
-import SourceReadTest from "@/component/page/data/source/SourceReadTest";
-import SourceUpdateTest from "@/component/page/data/source/SourceUpdateTest";
 
 const {RangePicker} = DatePicker
 const {Option} = Select
@@ -843,20 +840,6 @@ export const tabComponents = {
         name: "재고관리 등록",
         component: <SourceWrite/>
     },
-
-    source_read_test: {
-        name: "재고관리 조회(테스트)",
-        component: <SourceReadTest/>
-    },
-    source_update_test: {
-        name: "재고관리 수정(테스트)",
-        component: <SourceUpdateTest/>
-    },
-    source_write_test: {
-        name: "재고관리 등록(테스트)",
-        component: <SourceWriteTest/>
-    },
-
 };
 
 
