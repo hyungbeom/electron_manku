@@ -72,6 +72,8 @@ export default function DomesticRemittanceUpdate({ updateKey, layoutRef }: any) 
     const [orderInfo, setOrderInfo] = useState(getOrderInit());
     const [fileList, setFileList] = useState([]);
 
+
+
     useEffect(() => {
         setLoading(true);
 

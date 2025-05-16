@@ -86,6 +86,10 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
     };
 
     useEffect(() => {
+        getData.post('inventory/getInventoryHistory',{maker : "삼미전자", model : 'WP-9050D45, 5W(7W Max), 8Ω'})
+    }, []);
+
+    useEffect(() => {
         if (!isGrid) return;
         setValidate(getSourceValidateInit());
         setInfo(getSourceInit());
