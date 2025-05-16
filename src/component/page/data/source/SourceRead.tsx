@@ -118,41 +118,48 @@ function SourceRead({getPropertyId, getCopyPage}: any) {
     async function deleteList() {
         const list = gridRef.current.getSelectedRows();
         if (!list?.length) return message.warn('삭제할 재고를 선택해주세요.');
-
-        setLoading(true);
-        await getData.post('inventory/deleteListInventories', {deleteInventoryList: list}).then(v => {
-            if (v?.data?.code === 1) {
-                searchInfo(true);
-                notificationAlert('success', '🗑 재고 삭제완료',
-                    <>
-                        <div>Model
-                            : {list[0].model} {list.length > 1 ? ('외' + " " + (list.length - 1) + '개') : ''} 의 재고이(가)
-                            삭제되었습니다.
-                        </div>
-                        <div>삭제일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
-                    </>
-                    , null, null, 2
-                )
-            } else {
-                console.warn(v?.data?.message);
-                notificationAlert('error', '⚠️ 작업실패',
-                    <>
-                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
-                    </>
-                    , function () {
-                        alert('작업 로그 페이지 참고')
-                    },
-                    {cursor: 'pointer'}
-                )
-            }
+       const result =  list.map(v=> v.inventoryId)
+        await getData.post('inventory/deleteInventory', result).then(v => {
+            console.log(v,':::')
         })
-            .catch((err) => {
-                notificationAlert('error', '❌ 네트워크 오류 발생', <div>{err.message}</div>);
-                console.error('에러:', err);
-            })
-            .finally(() => {
-                setLoading(false);
-            });
+
+        // await getData.post('inventory/deleteListInventories', {deleteInventoryList: list}).then(v => {
+        //
+        // })
+        // setLoading(true);
+        // await getData.post('inventory/deleteListInventories', {deleteInventoryList: list}).then(v => {
+        //     if (v?.data?.code === 1) {
+        //         searchInfo(true);
+        //         notificationAlert('success', '🗑 재고 삭제완료',
+        //             <>
+        //                 <div>Model
+        //                     : {list[0].model} {list.length > 1 ? ('외' + " " + (list.length - 1) + '개') : ''} 의 재고이(가)
+        //                     삭제되었습니다.
+        //                 </div>
+        //                 <div>삭제일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+        //             </>
+        //             , null, null, 2
+        //         )
+        //     } else {
+        //         console.warn(v?.data?.message);
+        //         notificationAlert('error', '⚠️ 작업실패',
+        //             <>
+        //                 <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+        //             </>
+        //             , function () {
+        //                 alert('작업 로그 페이지 참고')
+        //             },
+        //             {cursor: 'pointer'}
+        //         )
+        //     }
+        // })
+        //     .catch((err) => {
+        //         notificationAlert('error', '❌ 네트워크 오류 발생', <div>{err.message}</div>);
+        //         console.error('에러:', err);
+        //     })
+        //     .finally(() => {
+        //         setLoading(false);
+        //     });
     }
 
     return <Spin spinning={loading} tip={'재고관리 조회중...'}>
