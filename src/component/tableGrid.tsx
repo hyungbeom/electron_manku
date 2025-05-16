@@ -121,7 +121,6 @@ const TableGrid = ({
                 getPropertyId('estimate_update', e.data.estimateId)
             }
             if (e.data.orderId) { // 발주서 수정
-                console.log('$$$$$$')
                 getPropertyId('order_update', e.data.orderId)
             }
             if (e.data.orderStatusId) { // 입고 수정
@@ -149,15 +148,19 @@ const TableGrid = ({
             if (e.data.companyAccountId) { // 회사 계정 수정
                 getPropertyId('company_account_update', e.data.companyAccountId)
             }
-            if (e.data.remainingQuantity) { // 재고 수정
-                getPropertyId('source_update', e.data)
+            if (e.data.inventoryId) { // 재고 수정
+                switch (customType) {
+                    case 'SourceWrite':
+                        break;
+                    case 'SourceUpdate': setInfo(e.data);
+                        break;
+                    default:  getPropertyId('source_update', e.data);
+                        break;
+                }
             }
             if (e.data.officialDocumentId) {
                 getPropertyId('code_diploma_update', e.data.officialDocumentId)
             }
-        }
-        if (type === 'sourceUpdate') {
-            setInfo(e.data);
         }
         if (type === 'hsCode') {
             setInfo(e.data);

@@ -283,11 +283,12 @@ export const companyAccountWriteInitial = {
 
 // 재고관리 조회 > 검색 초기값 정보
 export const sourceSearchInitial = {
-    searchMaker: '',
-    searchModel: '',
-    searchLocation: '',
+    // searchMaker: '',
+    // searchModel: '',
+    // searchLocation: '',
     page: 1,
-    limit: -1
+    limit: -1,
+    searchText: ''
 }
 
 // 재고관리 등록/수정 > 입력 초기값 정보

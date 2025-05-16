@@ -2791,26 +2791,26 @@ export const tableSourceColumns = [
         pinned: "left", // 왼쪽에 고정
         filter: false
     }, {
-        pinned: 'left',
         headerName: 'Maker',
         field: 'maker',
-        maxWidth: 250
+        pinned: "left",
     },
     {
         headerName: 'Model',
         field: 'model',
+        pinned: "left",
     },
     {
-        headerName: '잔량',
-        field: 'remainingQuantity',
+        headerName: '입고',
+        field: 'totalReceivedQuantity',
     },
     {
         headerName: '출고',
-        field: 'shippedQuantity',
+        field: 'outBound',
     },
     {
-        headerName: '합계',
-        field: 'totalQuantity',
+        headerName: '잔량',
+        field: 'stock',
     },
     {
         headerName: '위치',
@@ -2819,7 +2819,7 @@ export const tableSourceColumns = [
 ]
 
 // 재고관리 > 조회 테이블 컬럼
-export const tableSourceWriteColumns = [
+export const tableSourceUpdateColumns = [
     {
         headerName: "", // 컬럼 제목
         valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
@@ -2843,28 +2843,26 @@ export const tableSourceWriteColumns = [
         maxWidth: 120
     },
     {
-        pinned: 'left',
         headerName: 'Maker',
         field: 'maker',
-        maxWidth: 200
+        pinned: 'left',
     },
     {
-        pinned: 'left',
         headerName: 'Model',
         field: 'model',
-        maxWidth: 200
+        pinned: 'left',
     },
     {
-        headerName: '잔량',
-        field: 'remainingQuantity',
+        headerName: '입고',
+        field: 'totalReceivedQuantity',
     },
     {
         headerName: '출고',
-        field: 'shippedQuantity',
+        field: 'outBound',
     },
     {
-        headerName: '합계',
-        field: 'totalQuantity',
+        headerName: '잔량',
+        field: 'stock',
     },
     {
         headerName: '위치',

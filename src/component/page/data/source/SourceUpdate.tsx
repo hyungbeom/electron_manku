@@ -2,7 +2,7 @@ import React, {memo, useEffect, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import {CopyOutlined, DeleteOutlined, ExclamationCircleOutlined, FormOutlined} from "@ant-design/icons";
 import message from "antd/lib/message";
-import {commonManage, gridManage} from "@/utils/commonManage";
+import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
 import {
     BoxCard,
     datePickerForm,
@@ -20,18 +20,15 @@ import _ from "lodash";
 import TableGrid from "@/component/tableGrid";
 import Popconfirm from "antd/lib/popconfirm";
 import Button from "antd/lib/button";
-import {tableSourceColumns, tableSourceUpdateColumns} from "@/utils/columnList";
+import {tableSourceUpdateColumns} from "@/utils/columnList";
 import {Actions} from "flexlayout-react";
 import Spin from "antd/lib/spin";
-import {sourceInfo} from "@/utils/column/ProjectInfo";
+import {estimateInfo, sourceInfo} from "@/utils/column/ProjectInfo";
 
 function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null);
     const gridRef = useRef(null);
-
-    const [loading, setLoading] = useState(false);
-    const [mini, setMini] = useState(true);
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('source_update');
@@ -39,44 +36,28 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
+    const [loading, setLoading] = useState(false);
+    const [mini, setMini] = useState(true);
+
     const getSourceInit = () => _.cloneDeep(sourceInfo['defaultInfo']);
     const [info, setInfo] = useState(getSourceInit());
     const getSourceValidateInit = () => _.cloneDeep(sourceInfo['write']['validate']);
     const [validate, setValidate] = useState(getSourceValidateInit());
 
-    const [totalRow, setTotalRow] = useState(0);
     const [inventoryList, setInventoryList] = useState([]);
+    const [totalRow, setTotalRow] = useState(0);
 
     const [isGrid, setIsGrid] = useState(false);
-
-    /**
-     * @description 재고 리스트 정리
-     * 데이터 관리 > 재고관리
-     * 재고관리 조회 리스트와 상세 리스트의 키값이 달라서 정리
-     * 출고/합계 없음, 잔량 키값 다름 (API 수정시 바뀔 수 있음)
-     * @param list
-     */
-    const processData = (list) => {
-        let sum = 0;
-        const newList = [...list]
-            .sort((a, b) => new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime())
-            .map(item => {
-                sum += Number(item.receivedQuantity ?? 0);
-                return {...item, remainingQuantity: item.receivedQuantity, shippedQuantity: 0, totalQuantity: sum}
-            })
-        return newList.sort((a, b) => new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime());
-    }
 
     const fetchData = async () => {
         setLoading(true);
         const v = await getData.post('inventory/getInventoryDetail', updateKey['source_update']);
         if (v?.data?.code === 1) {
-            const {inventoryItemList = []} = v?.data?.entity;
-            const processList = processData(inventoryItemList);
-            setInfo(processList?.[0] || {});
-            setInventoryList(processList ?? []);
-            gridManage.resetData(gridRef, processList ?? []);
+            const inventoryItemList = v?.data?.entity ?? [];
+            gridManage.resetData(gridRef, inventoryItemList ?? []);
             setTotalRow(inventoryItemList?.length ?? 0);
+            setInfo(inventoryItemList?.[0] || {});
+            setInventoryList(inventoryItemList);
         } else {
             message.warn(v?.data?.message);
         }
@@ -109,11 +90,10 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
             setLoading(true);
             await getData.post('inventory/getInventoryDetail', updateKey['source_update']).then(v => {
                 if (v?.data?.code === 1) {
-                    const {inventoryItemList = []} = v?.data?.entity;
-                    const processList = processData(inventoryItemList);
-                    setInventoryList(processList);
-                    gridManage.resetData(gridRef, processList ?? []);
+                    const inventoryItemList = v?.data?.entity ?? [];
+                    gridManage.resetData(gridRef, inventoryItemList ?? []);
                     setTotalRow(inventoryItemList?.length ?? 0);
+                    setInventoryList(inventoryItemList);
                 } else {
                     message.warn(v?.data?.message);
                 }
@@ -158,13 +138,13 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
                 )
             }
         })
-        .catch((err) => {
-            notificationAlert('error', '❌ 네트워크 오류 발생', <div>{err.message}</div>);
-            console.error('에러:', err);
-        })
-        .finally(() => {
-            setLoading(false);
-        });
+            .catch((err) => {
+                notificationAlert('error', '❌ 네트워크 오류 발생', <div>{err.message}</div>);
+                console.error('에러:', err);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
     }
 
     /**
@@ -221,11 +201,32 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
     }
 
     /**
-     * @description 수정 페이지 > 복제
+     * @description 수정 페이지 > 견적서 등록
      * 데이터 관리 > 재고관리
      */
     function copyPage() {
-        getCopyPage('source_write', {...info, _meta: {updateKey: Date.now()}});
+        const copyInfo = {
+            info: {
+                "agencyCode": "STO",            // 대리점코드
+                "maker": "프로지스트",      // Maker
+                "item": "개발",      // Item
+            },
+        }
+        const totalList = [
+            {
+                "estimateDetailId": '',
+                "model": "ERP",
+                "quantity": '',
+                "unit": "ea",
+                "currencyUnit": 'USD',
+                "net": '',
+                "unitPrice": '10000',
+                "marginRate": '',
+            }
+        ]
+        copyInfo['estimateDetailList'] = [...totalList, ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000 - totalList.length)];
+
+        getCopyPage('estimate_write', {...copyInfo, _meta: {updateKey: Date.now()}});
     }
 
     /**
@@ -290,127 +291,127 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
     }
 
     return <Spin spinning={loading}>
-            <PanelSizeUtil groupRef={groupRef} storage={'source_update'}/>
-            <div style={{
-                display: 'grid',
-                gridTemplateRows: `${mini ? '370px' : '65px'} calc(100vh - ${mini ? 505 : 195}px)`,
-                columnGap: 5
-            }}>
-                <MainCard title={'재고관리 수정'}
-                          list={[
-                              {name: <div><FormOutlined style={{paddingRight: 8}}/>수정</div>, func: saveFunc, type: 'primary'},
-                              {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: deleteFunc, type: 'delete'},
-                              {name: <div><CopyOutlined style={{paddingRight: 8}}/>복제</div>, func: copyPage, type: 'default'},
-                          ]}
-                          mini={mini} setMini={setMini}>
-                    {mini ?
-                        <PanelGroup ref={groupRef} className={'ground'} direction="horizontal"
-                                    style={{gap: 0.5, paddingTop: 3}}>
-                            <Panel defaultSize={sizes[0]} minSize={5}>
-                                <BoxCard title={'기본 정보'}>
-                                    {datePickerForm({title: '입고일자', id: 'receiptDate', onChange: onChange, data: info})}
-                                    {inputForm({
-                                        title: '문서번호',
-                                        id: 'documentNumber',
-                                        onChange: onChange,
-                                        data: info
-                                    })}
-                                    {inputForm({
-                                        title: 'Maker',
-                                        id: 'maker',
-                                        disabled: true,
-                                        data: info,
-                                        validate: validate['maker'],
-                                        key: validate['maker']
-                                    })}
-                                    {inputForm({
-                                        title: 'Model',
-                                        id: 'model',
-                                        disabled: true,
-                                        data: info,
-                                        validate: validate['model'],
-                                        key: validate['model']
-                                    })}
-                                </BoxCard>
-                            </Panel>
-                            <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[1]} minSize={5}>
-                                <BoxCard title={'재고 정보'} tooltip={tooltipInfo('customer')}>
-                                    {inputNumberForm({
-                                        title: '수입단가',
-                                        id: 'importUnitPrice',
-                                        min: 0,
-                                        step: 0.01,
-                                        onChange: onChange,
-                                        data: info
-                                    })}
-                                    {inputForm({
-                                        title: '화폐단위',
-                                        id: 'currencyUnit',
-                                        onChange: onChange,
-                                        data: info
-                                    })}
-                                    {inputNumberForm({
-                                        title: '입고수량',
-                                        id: 'receivedQuantity',
-                                        min: 0,
-                                        step: 0.01,
-                                        onChange: onChange,
-                                        data: info,
-                                        validate: validate['receivedQuantity'],
-                                        key: validate['receivedQuantity']
-                                    })}
-                                    {inputForm({
-                                        title: '단위',
-                                        id: 'unit',
-                                        onChange: onChange,
-                                        data: info
-                                    })}
-                                </BoxCard>
-                            </Panel>
-                            <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[2]} minSize={5}>
-                                <BoxCard title={'기타 정보'} tooltip={tooltipInfo('etc')}>
-                                    {inputForm({
-                                        title: '위치',
-                                        id: 'location',
-                                        onChange: onChange,
-                                        data: info
-                                    })}
-                                    {textAreaForm({
-                                        title: '비고',
-                                        rows: 7,
-                                        id: 'remarks',
-                                        onChange: onChange,
-                                        data: info
-                                    })}
-                                </BoxCard>
-                            </Panel>
-                            <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[3]} minSize={0}></Panel>
-                        </PanelGroup>
-                        : <></>}
-                </MainCard>
-                {/*@ts-ignored*/}
-                <TableGrid
-                    deleteComp={
-                        <Popconfirm
-                            title="삭제하시겠습니까?"
-                            onConfirm={deleteList}
-                            icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
-                            <Button type={'primary'} danger size={'small'} style={{fontSize: 11, marginLeft: 5}}>삭제</Button>
-                        </Popconfirm>
-                    }
-                    totalRow={totalRow}
-                    gridRef={gridRef}
-                    columns={tableSourceUpdateColumns}
-                    onGridReady={onGridReady}
-                    getPropertyId={getPropertyId}
-                    type={'sourceUpdate'}
-                    setInfo={setInfo}
-                    funcButtons={['agPrint']}
-                />
-            </div>
+        <PanelSizeUtil groupRef={groupRef} storage={'source_update'}/>
+        <div style={{
+            display: 'grid',
+            gridTemplateRows: `${mini ? '370px' : '65px'} calc(100vh - ${mini ? 505 : 195}px)`,
+            columnGap: 5
+        }}>
+            <MainCard title={'재고관리 수정'}
+                      list={[
+                          {name: <div><CopyOutlined style={{paddingRight: 8}}/>견적서 등록</div>, func: copyPage, type: 'default'},
+                          {name: <div><FormOutlined style={{paddingRight: 8}}/>수정</div>, func: saveFunc, type: 'primary'},
+                          {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: deleteFunc, type: 'delete'},
+                      ]}
+                      mini={mini} setMini={setMini}>
+                {mini ?
+                    <PanelGroup ref={groupRef} className={'ground'} direction="horizontal"
+                                style={{gap: 0.5, paddingTop: 3}}>
+                        <Panel defaultSize={sizes[0]} minSize={5}>
+                            <BoxCard title={'기본 정보'}>
+                                {datePickerForm({title: '입고일자', id: 'receiptDate', onChange: onChange, data: info})}
+                                {inputForm({
+                                    title: '문서번호',
+                                    id: 'documentNumber',
+                                    onChange: onChange,
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: 'Maker',
+                                    id: 'maker',
+                                    disabled: true,
+                                    data: info,
+                                    validate: validate['maker'],
+                                    key: validate['maker']
+                                })}
+                                {inputForm({
+                                    title: 'Model',
+                                    id: 'model',
+                                    disabled: true,
+                                    data: info,
+                                    validate: validate['model'],
+                                    key: validate['model']
+                                })}
+                            </BoxCard>
+                        </Panel>
+                        <PanelResizeHandle/>
+                        <Panel defaultSize={sizes[1]} minSize={5}>
+                            <BoxCard title={'재고 정보'} tooltip={tooltipInfo('customer')}>
+                                {inputNumberForm({
+                                    title: '매입 총액',
+                                    id: 'importUnitPrice',
+                                    min: 0,
+                                    step: 0.01,
+                                    onChange: onChange,
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: '화폐단위',
+                                    id: 'currencyUnit',
+                                    onChange: onChange,
+                                    data: info
+                                })}
+                                {inputNumberForm({
+                                    title: '입고수량',
+                                    id: 'receivedQuantity',
+                                    min: 0,
+                                    step: 0.01,
+                                    onChange: onChange,
+                                    data: info,
+                                    validate: validate['receivedQuantity'],
+                                    key: validate['receivedQuantity']
+                                })}
+                                {inputForm({
+                                    title: '단위',
+                                    id: 'unit',
+                                    onChange: onChange,
+                                    data: info
+                                })}
+                            </BoxCard>
+                        </Panel>
+                        <PanelResizeHandle/>
+                        <Panel defaultSize={sizes[2]} minSize={5}>
+                            <BoxCard title={'기타 정보'} tooltip={tooltipInfo('etc')}>
+                                {inputForm({
+                                    title: '위치',
+                                    id: 'location',
+                                    onChange: onChange,
+                                    data: info
+                                })}
+                                {textAreaForm({
+                                    title: '비고',
+                                    rows: 7,
+                                    id: 'remarks',
+                                    onChange: onChange,
+                                    data: info
+                                })}
+                            </BoxCard>
+                        </Panel>
+                        <PanelResizeHandle/>
+                        <Panel defaultSize={sizes[3]} minSize={0}></Panel>
+                    </PanelGroup>
+                    : <></>}
+            </MainCard>
+            {/*@ts-ignored*/}
+            <TableGrid
+                deleteComp={
+                    <Popconfirm
+                        title="삭제하시겠습니까?"
+                        onConfirm={deleteList}
+                        icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
+                        <Button type={'primary'} danger size={'small'} style={{fontSize: 11, marginLeft: 5}}>삭제</Button>
+                    </Popconfirm>
+                }
+                totalRow={totalRow}
+                gridRef={gridRef}
+                columns={tableSourceUpdateColumns}
+                onGridReady={onGridReady}
+                getPropertyId={getPropertyId}
+                type={'sourceUpdate'}
+                setInfo={setInfo}
+                funcButtons={['agPrint']}
+            />
+        </div>
     </Spin>
 }
 
