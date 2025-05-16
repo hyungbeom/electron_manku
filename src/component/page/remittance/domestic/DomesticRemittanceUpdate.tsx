@@ -34,7 +34,7 @@ export default function DomesticRemittanceUpdate({ updateKey, layoutRef }: any) 
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('domestic_remittance_update');
-        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 25, 20, 5]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [20, 25, 20, 20, 5]; // 기본값 [50, 50, 50]
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
@@ -377,7 +377,7 @@ export default function DomesticRemittanceUpdate({ updateKey, layoutRef }: any) 
 
             <div ref={infoRef} style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '490px' : '65px'} calc(100vh - ${mini ? 590 : 195}px)`,
+                gridTemplateRows: `${mini ? '495px' : '65px'} calc(100vh - ${mini ? 590 : 195}px)`,
                 // overflowY: 'hidden',
                 rowGap: 10,
             }}>
@@ -500,11 +500,6 @@ export default function DomesticRemittanceUpdate({ updateKey, layoutRef }: any) 
                                         onChange: onChange,
                                         data: info,
                                     })}
-                                </BoxCard>
-                            </Panel>
-                            <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[2]} minSize={5}>
-                                <BoxCard title={'확인 정보'}>
                                     {radioForm({
                                         title: '부분 송금 진행 여부',
                                         id: 'partialRemittanceStatus',
@@ -516,7 +511,12 @@ export default function DomesticRemittanceUpdate({ updateKey, layoutRef }: any) 
                                             {value: '', title: '해당없음'}
                                         ]
                                     })}
-                                    {textAreaForm({title: '비고란', rows: 10, id: 'remarks', onChange: onChange, data: info})}
+                                </BoxCard>
+                            </Panel>
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[2]} minSize={5}>
+                                <BoxCard title={'확인 정보'}>
+                                    {textAreaForm({title: '비고란', rows: 13, id: 'remarks', onChange: onChange, data: info})}
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>

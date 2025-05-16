@@ -116,8 +116,8 @@ function SourceWrite({copyPageInfo, getPropertyId}: any) {
                     </>
                     , null, null, 2
                 )
-                clearAll();
-                getPropertyId('source_update', v?.data?.entity?.inventoryId);
+                // clearAll();
+                // getPropertyId('source_update', v?.data?.entity?.inventoryId);
             } else {
                 console.warn(v?.data?.message);
                 notificationAlert('error', '⚠️ 작업실패',
@@ -192,6 +192,7 @@ function SourceWrite({copyPageInfo, getPropertyId}: any) {
             ...prev,
             ...orderInfo
         }));
+        void searchSource(orderInfo);
     }
 
     /**
@@ -200,14 +201,17 @@ function SourceWrite({copyPageInfo, getPropertyId}: any) {
      * 발주서 Modal로 항목 가져올때
      * Maker, Model Input에서 Enter
      */
-    async function searchSource () {
-        if (!info?.['maker'] || !info?.['model']) return;
-        console.log('!!!!')
+    async function searchSource (orderInfo?: any) {
         try {
-            const res = await getData.post('inventory/getInventoryHistory', {maker : info?.['maker'], model : info?.['model']});
+            const res = await getData.post('inventory/getInventoryHistory', orderInfo ?? info);
             if (res?.data?.code !== 1) {
                 console.error(res?.data?.message);
                 message.error('해당 조건에 맞는 재고가 존재하지 않습니다.');
+                setInfo(prev => ({
+                    ...prev,
+                    inventoryId: '',
+                    inventoryDetailId: ''
+                }));
                 return;
             }
             const inventoryItemList = res?.data?.entity ?? [];
@@ -224,11 +228,13 @@ function SourceWrite({copyPageInfo, getPropertyId}: any) {
 
             setInfo(prev => ({
                 ...prev,
-                inventoryId: sourceHistoryList?.[0]?.inventoryId ?? ''
+                inventoryId: sourceHistoryList?.[0]?.inventoryId ?? '',
+                maker: '',
+                model: ''
             }))
-            gridManage.resetData(gridRef, sourceHistoryList);
             setTableData(sourceHistoryList);
             setTotalRow(sourceHistoryList.length);
+            gridManage.resetData(gridRef, sourceHistoryList);
 
         } catch (err) {
             console.error(err);
