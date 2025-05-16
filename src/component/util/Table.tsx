@@ -210,14 +210,11 @@ const Table = forwardRef(({
             if (colName === '송금 요청 일자') {
                 hotRef.current.hotInstance.setDataAtCell(coords.row, coords.col, moment().format('YYYY-MM-DD'));
             }
-            if (colName === '송금 지정 일자') {
-                hotRef.current.hotInstance.setDataAtCell(coords.row, coords.col, moment().format('YYYY-MM-DD'));
-            }
-            if (colName === '송금 여부') {
+            if (colName === '송금 상태') {
                 hotRef.current.hotInstance.setDataAtCell(coords.row, coords.col, "요청");
             }
             if (colName === '계산서 발행 여부') {
-                hotRef.current.hotInstance.setDataAtCell(coords.row, coords.col, "X");
+                hotRef.current.hotInstance.setDataAtCell(coords.row, coords.col, "O");
             }
         }
     }

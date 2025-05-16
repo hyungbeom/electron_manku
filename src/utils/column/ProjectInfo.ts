@@ -596,10 +596,10 @@ export const storeInfo = {
 export const DRInfo = {
     write: {
         columnWidth: [80, 80, 100, 100, 100, 100, 100],
-        column: ['송금 요청 일자', '송금 지정 일자', '공급가액', '부가세', '합계', '송금 상태', '계산서 발행 여부'],
+        column: ['송금 지정 일자', '송금 요청 일자', '공급가액', '부가세', '합계', '송금 상태', '계산서 발행 여부'],
         columnList: [
-            {data: "remittanceRequestDate", type: "date"},
             {data: "remittanceDueDate", type: "date"},
+            {data: "remittanceRequestDate", type: "date"},
             {data: "supplyAmount", type: "numeric"},
             {data: "tax", type: "numeric", readOnly: true},
             {data: "total", type: "numeric", readOnly: true},
@@ -616,16 +616,16 @@ export const DRInfo = {
         ],
         defaultData: {
             "remittanceDetailId": '',
-            "remittanceRequestDate": '',   // 송금 요청 일자
             "remittanceDueDate": "",       // 송금 지정 일자
+            "remittanceRequestDate": '',   // 송금 요청 일자
             "supplyAmount": '',            // 공급가액
             "tax": "",                     // 부가세
             "total": "",                   // 합계
             "sendStatus": '',              // 송금 상태
             "invoiceStatus": '',           // 계산서 발행 여부
         }, mapping: {
-            "remittanceRequestDate": '송금 요청 일자',
             "remittanceDueDate": '송금 지정 일자',
+            "remittanceRequestDate": '송금 요청 일자',
             "supplyAmount": '공급가액',
             "tax": "부가세",
             "total": '합계',
