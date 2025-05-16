@@ -727,6 +727,13 @@ export const modalList = {
         list: 'orderList',
         placeholder: '문서번호 또는 고객사명, 매입처명을 입력하세요'
     },
+    connectInquiryNoForSource: {
+        url: 'order/searchTextOrderList',
+        title: '발주서 조회',
+        column: tableOrderReadColumns,
+        list: 'orderList',
+        placeholder: '문서번호 또는 고객사명, 매입처명을 입력하세요'
+    },
 }
 
 

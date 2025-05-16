@@ -109,7 +109,7 @@ export default function OverseasRemittanceWrite({copyPageInfo, getPropertyId}: a
         if (!selectOrderList?.length) return message.warn('발주서 데이터가 1개 이상이여야 합니다.');
         const tableList = tableRef.current?.getSourceData();
         if (!tableList?.length) return message.warn('송금 데이터가 1개 이상이여야 합니다.');
-        const requiredFields = { remittanceDueDate: '송금 지정 일자', supplyAmount: '공급가액', sendStatus: '송금 여부' };
+        const requiredFields = { remittanceRequestDate: '송금 요청 일자', supplyAmount: '공급가액', sendStatus: '송금 여부' };
         const filterTableList = tableList.slice(0, -1).filter(row =>
             Object.keys(requiredFields).some(field => !!row[field])
         );
@@ -319,7 +319,7 @@ export default function OverseasRemittanceWrite({copyPageInfo, getPropertyId}: a
             let partialRemittance = Number(String(info.partialRemittance || '0').replace(/,/g, ''));
 
             // 송금 리스크가 없으면 첫 데이터 생성
-            const requiredFields = { remittanceDueDate: '송금 지정 일자', supplyAmount: '공급가액', sendStatus: '송금 여부' };
+            const requiredFields = { remittanceRequestDate: '송금 요청 일자', supplyAmount: '공급가액', sendStatus: '송금 여부' };
             const filterTableList = sendRemittanceList.filter(row =>
                 Object.keys(requiredFields).every(field => !!row[field])
             );
@@ -329,7 +329,7 @@ export default function OverseasRemittanceWrite({copyPageInfo, getPropertyId}: a
                     {
                         remittanceDetailId: '',
                         remittanceRequestDate: moment().format('YYYY-MM-DD'),
-                        remittanceDueDate: moment().format('YYYY-MM-DD'),
+                        remittanceDueDate: '',
                         supplyAmount: total,
                         tax: '',
                         total: '',

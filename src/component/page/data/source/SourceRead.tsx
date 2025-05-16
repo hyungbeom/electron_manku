@@ -119,8 +119,9 @@ function SourceRead({getPropertyId, getCopyPage}: any) {
         const list = gridRef.current.getSelectedRows();
         if (!list?.length) return message.warn('삭제할 재고를 선택해주세요.');
 
+        const deleteList =  list.map(v=> v.inventoryId)
         setLoading(true);
-        await getData.post('inventory/deleteListInventories', {deleteInventoryList: list}).then(v => {
+        await getData.post('inventory/deleteInventory', deleteList).then(v => {
             if (v?.data?.code === 1) {
                 searchInfo(true);
                 notificationAlert('success', '🗑 재고 삭제완료',
@@ -146,13 +147,13 @@ function SourceRead({getPropertyId, getCopyPage}: any) {
                 )
             }
         })
-            .catch((err) => {
-                notificationAlert('error', '❌ 네트워크 오류 발생', <div>{err.message}</div>);
-                console.error('에러:', err);
-            })
-            .finally(() => {
-                setLoading(false);
-            });
+        .catch((err) => {
+            notificationAlert('error', '❌ 네트워크 오류 발생', <div>{err.message}</div>);
+            console.error('에러:', err);
+        })
+        .finally(() => {
+            setLoading(false);
+        });
     }
 
     return <Spin spinning={loading} tip={'재고관리 조회중...'}>
