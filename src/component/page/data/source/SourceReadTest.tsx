@@ -44,7 +44,7 @@ function SourceReadTest({getPropertyId, getCopyPage}: any) {
     }, [isSearch]);
 
     const onGridReady = async (params) => {
-        getData.post('inventory/getInventoryList', {searchText: "ab"}).then(v => {
+        getData.post('inventory/getInventoryList', '').then(v => {
             console.log(v ,'::::::')
         })
         // setLoading(true);
