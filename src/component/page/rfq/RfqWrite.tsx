@@ -306,17 +306,17 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                     , onChange: onChange, data: info
                                 })}
                                 {inputForm({
-                                    title: 'RFQ No.',
+                                    title: 'Project No.',
                                     id: 'rfqNo',
                                     onChange: onChange,
                                     data: info
                                 })}
-                                {inputForm({
-                                    title: 'PROJECT NAME',
-                                    id: 'projectTitle',
-                                    onChange: onChange,
-                                    data: info
-                                })}
+                                {/*{inputForm({*/}
+                                {/*    title: 'PROJECT NAME',*/}
+                                {/*    id: 'projectTitle',*/}
+                                {/*    onChange: onChange,*/}
+                                {/*    data: info*/}
+                                {/*})}*/}
                             </TopBoxCard>
                             <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
                                 <Panel defaultSize={sizes[0]} minSize={5}>

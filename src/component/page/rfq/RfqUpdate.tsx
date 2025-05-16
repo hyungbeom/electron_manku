@@ -426,14 +426,8 @@ function RqfUpdate({
                                 , onChange: onChange, data: info
                             })}
                             {inputForm({
-                                title: 'RFQ No.',
+                                title: 'Project No.',
                                 id: 'rfqNo',
-                                onChange: onChange,
-                                data: info
-                            })}
-                            {inputForm({
-                                title: 'PROJECT NAME',
-                                id: 'projectTitle',
                                 onChange: onChange,
                                 data: info
                             })}
