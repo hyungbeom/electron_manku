@@ -775,6 +775,12 @@ export const tableEstimateReadColumns = [
         },
 
     },
+    {
+        headerName: 'Project No.',
+        field: 'rfqNo',
+        maxWidth: 100, // 컬럼 너비
+        pinned: 'left'
+    },
     // {
     //     headerName: '매입처',
     //     field: 'agencyName',
@@ -1026,6 +1032,13 @@ export const rfqReadColumns = [
         },
     },
     {
+        headerName: 'Project No.',
+        field: 'rfqNo',
+        maxWidth: 100, // 컬럼 너비
+        pinned: 'left'
+    },
+
+    {
         headerName: '매입처명',
         field: 'agencyName',
         minWidth: 100,
@@ -1221,6 +1234,12 @@ export const tableOrderReadColumns = [
             // valueGetter에서 null로 설정된 값은 빈칸으로 표시
             return params.value !== null ? params.value : '';
         },
+    },
+    {
+        headerName: 'Project No.',
+        field: 'rfqNo',
+        maxWidth: 100, // 컬럼 너비
+        pinned: 'left'
     },
     {
         headerName: '고객사명',

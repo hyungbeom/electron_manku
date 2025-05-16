@@ -386,6 +386,7 @@ export const orderInfo = {
             "unreceivedQuantity": '',
             "hsCode": '',
             "managerId": '',
+            "rfqNo": '',
             managerAdminName: '',
             orderDetailId: '',
             estimateDetailId: '',

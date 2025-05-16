@@ -301,8 +301,17 @@ function OrderRead({getPropertyId, getCopyPage}: any) {
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>
-                                <Panel defaultSize={sizes[3]} minSize={0}>
+                                <Panel defaultSize={sizes[3]} minSize={5}>
+                                    <BoxCard title={''}>
+                                        {inputForm({
+                                            title: 'Project No.', id: 'searchRfqNo',
+                                            onChange: onChange,
+                                            handleKeyPress: handleKeyPress,
+                                            data: info
+                                        })}
+                                    </BoxCard>
                                 </Panel>
+
                             </PanelGroup>
                         </div>
                         : <></>}
