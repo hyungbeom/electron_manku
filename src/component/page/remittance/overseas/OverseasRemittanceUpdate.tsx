@@ -132,7 +132,7 @@ export default function OverseasRemittanceUpdate({ updateKey, layoutRef }: any) 
         if (!selectOrderList?.length) return message.warn('발주서 데이터가 1개 이상이여야 합니다.');
         const tableList = tableRef.current?.getSourceData();
         if (!tableList?.length) return message.warn('송금 데이터가 1개 이상이여야 합니다.');
-        const requiredFields = { remittanceDueDate: '송금 지정 일자', supplyAmount: '공급가액', sendStatus: '송금 여부' };
+        const requiredFields = { remittanceRequestDate: '송금 요청 일자', supplyAmount: '공급가액', sendStatus: '송금 여부' };
         const filterTableList = tableList.slice(0, -1).filter(row =>
             Object.keys(requiredFields).some(field => !!row[field])
         );

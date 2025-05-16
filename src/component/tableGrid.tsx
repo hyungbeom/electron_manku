@@ -75,7 +75,7 @@ const TableGrid = ({
         const selectedNode = event.node; // 현재 선택된 노드
         const selectedData = selectedNode.data; // 선택된 데이터
 
-        const includeKeys = ['DRWrite'];
+        const includeKeys = ['DRWrite', 'SourceWrite'];
         // documentNumberFull 필드가 없거나 custom이 아니면 패스
         if (!selectedData?.documentNumberFull && !customType || includeKeys.includes(customType)) {
             return;
@@ -152,7 +152,7 @@ const TableGrid = ({
                 switch (customType) {
                     case 'SourceWrite':
                         break;
-                    case 'SourceUpdate': setInfo(e.data);
+                    case 'SourceUpdate': tempFunc(e.data);
                         break;
                     default:  getPropertyId('source_update', e.data);
                         break;

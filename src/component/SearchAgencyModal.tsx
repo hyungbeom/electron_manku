@@ -13,13 +13,13 @@ import {commonManage} from "@/utils/commonManage";
 
 
 export default function SearchInfoModal({
-                                            info,
-                                            infoRef,
-                                            setInfo,
                                             open,
                                             setIsModalOpen,
-                                            type = '',
+                                            infoRef,
+                                            info,
+                                            setInfo,
                                             gridRef = null,
+                                            type = '',
                                             compProps,
                                             returnFunc = null
                                         }: any) {
@@ -38,24 +38,24 @@ export default function SearchInfoModal({
     useEffect(() => {
         if (open) {
             const firstTrueKey = Object.keys(open).find(key => open[key]);
-            const dom = infoRef.current.querySelector(`#${firstTrueKey}`);
+            console.log(firstTrueKey)
+            const dom = infoRef?.current?.querySelector(`#${firstTrueKey}`) ?? '';
             switch (firstTrueKey) {
-                case 'customerName' :
                 case 'agencyCode' :
+                case 'customerName' :
                 case 'maker' :
                 case 'connectInquiryNo' :
+                case 'connectInquiryNoForSource' :
                     searchFunc(firstTrueKey, dom.value);
                     setCode(dom.value);
                     break;
             }
             setOpenCheck(firstTrueKey);
         }
-    }, [open, info])
-
-    useEffect(() => {
-    }, [info])
+    }, [open])
 
     async function searchFunc(v, text) {
+        if (!v) return;
         try {
             const result = await getData.post(modalList[v]?.url, {
                 searchType: "",
@@ -184,19 +184,25 @@ export default function SearchInfoModal({
 
 
     /**
-     * @description 송금 등록 페이지 > 발주서 조회 모달
-     * 항목 클릭 이벤트 (체크박스 선택)
+     * @description 조회 Modal > 테이블 클릭
+     * 항목 클릭 이벤트 (onCellClicked 에서 호출)
+     * 각 modal 마다 조건 걸어서 사용
      * @param params
      */
-    function onRowClicked(params){
+    function onRowClicked(params) {
+        const modalName = Object.keys(open).find(key => open[key]);
+
+        if (modalName === 'connectInquiryNoForSource') {
+            params.api.deselectAll();
+        }
         const isSelected = params.node.isSelected(); // 현재 선택 상태 확인
         params.node.setSelected(!isSelected); // 선택 상태 변경 (토글)
     }
 
     /**
-     * @description 송금 등록 페이지 > 발주서 조회 모달
-     * 선택 항목 처리
-     * 기본값 모달 닫기
+     * @description 조회 Modal > Ok 버튼
+     * 기본값 Modal 닫기
+     * Modal 에 returnFunc 가 있으면 선택 항목 처리 (list)
      */
     function modalOk() {
         setIsModalOpen(ModalInitList);
@@ -233,6 +239,7 @@ export default function SearchInfoModal({
                  id={'right'}>삭제
             </div>
         </div> : <></>}
+
         <Modal
             // @ts-ignored
             id={openCheck}
@@ -262,19 +269,6 @@ export default function SearchInfoModal({
                              onCellClicked={async (e) => {
                                  switch (openCheck) {
                                      case 'customerName' :
-                                         // commonManage.setInfo(infoRef, {
-                                         //     phoneNumber: e.data.directTel,
-                                         //     customerName: e.data.customerName,
-                                         //     customerManagerEmail: e.data.email,
-                                         //     customerManagerName: e.data.managerName,
-                                         //     customerManagerFaxNumber: e.data.faxNumber,
-                                         //     faxNumber: e.data.faxNumber,
-                                         //     managerName: e.data.managerName,
-                                         //     customerManagerPhone: e.data.directTel,
-                                         //     customerManagerPhoneNumber: e.data.directTel,
-                                         //     customerCode: e.data.customerCode,
-                                         //     paymentTerms: e.data.paymentMethod ? e.data.paymentMethod : '발주시 50% / 납품시 50%',
-                                         // })
                                          setInfo(v => {
                                              return {
                                                  ...v,
@@ -293,11 +287,6 @@ export default function SearchInfoModal({
                                          })
                                          break;
                                      case 'maker' :
-                                         // commonManage.setInfo(infoRef, {
-                                         //     maker: e.data.makerName,
-                                         //     item: e.data.item,
-                                         //     instructions: e.data.instructions,
-                                         // })
                                          setInfo(v => {
                                              return {
                                                  ...v,
@@ -316,22 +305,14 @@ export default function SearchInfoModal({
                                              }
                                          })
                                          break;
-                                     // 송금 등록/수정시 발주서 조회
-                                     case 'connectInquiryNo' :
-                                         // setInfo(prev => {
-                                         //     const exists = prev.some(item => item.orderDetailId === e.data.orderDetailId);
-                                         //     return exists ? prev : [...prev, e.data];
-                                         // });
+                                     // 송금 등록/수정시 발주서 조회 후 클릭시
+                                     case 'connectInquiryNo':
                                          onRowClicked(e);
                                          return;
-                                         // setInfo(v => {
-                                         //     return {
-                                         //         ...v, ...e.data,
-                                         //         maker: e.data.makerName,
-                                         //         connectInquiryNo: e.data.documentNumberFull,
-                                         //     }
-                                         // })
-                                         break;
+                                     // 재고 등록시 발주서 조회 후 클릭시
+                                     case 'connectInquiryNoForSource':
+                                         onRowClicked(e);
+                                         return;
                                      default :
                                          await checkInquiryNo({
                                              data: {
@@ -339,16 +320,6 @@ export default function SearchInfoModal({
                                                  type: type
                                              }
                                          }).then(data => {
-                                             // agencyTel
-                                             // commonManage.setInfo(infoRef, {
-                                             //     agencyManagerId: commonManage.checkValue(e.data.agencyId),
-                                             //     agencyCode: commonManage.checkValue(e.data.agencyCode),
-                                             //     agencyName: commonManage.checkValue(e.data.agencyName),
-                                             //     agencyTel: commonManage.checkValue(e.data.phoneNumber),
-                                             //     agencyManagerName: commonManage.checkValue(e?.data?.managerName),
-                                             //     agencyManagerEmail: commonManage.checkValue(e.data.email),
-                                             //     agencyManagerPhoneNumber: commonManage.checkValue(e.data.phoneNumber)
-                                             // })
                                              setInfo(v => {
                                                  return {
                                                      ...v,
@@ -361,11 +332,6 @@ export default function SearchInfoModal({
                                                      agencyManagerPhoneNumber: commonManage.checkValue(e.data.phoneNumber)
                                                  }
                                              })
-                                             // const dom = infoRef.current.querySelector('#agencyCode');
-                                             // dom.style.borderColor = ''
-                                             // commonManage.changeCurr(e.data.agencyCode)
-                                             // gridManage.updateAllFields(gridRef, 'currency', commonManage.changeCurr(e.data.agencyCode))
-
                                          })
                                          break;
                                  }

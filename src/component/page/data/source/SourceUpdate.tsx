@@ -54,10 +54,26 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
         const v = await getData.post('inventory/getInventoryDetail', updateKey['source_update']);
         if (v?.data?.code === 1) {
             const inventoryItemList = v?.data?.entity ?? [];
-            gridManage.resetData(gridRef, inventoryItemList ?? []);
-            setTotalRow(inventoryItemList?.length ?? 0);
-            setInfo(inventoryItemList?.[0] || {});
-            setInventoryList(inventoryItemList);
+            // gridManage.resetData(gridRef, inventoryItemList ?? []);
+            // setTotalRow(inventoryItemList?.length ?? 0);
+            // setInfo(inventoryItemList?.[0] || {});
+            // setInventoryList(inventoryItemList);
+
+            let sum = 0;
+            const sourceHistoryList = [...inventoryItemList]
+                .sort((a, b) => new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime())
+                .map(item => {
+                    const isOutBound = String(item?.documentNumber || '').toUpperCase().startsWith('STO');
+                    const quantity = Number(String(isOutBound ? item.outBound : item.totalReceivedQuantity).replace(/,/g, '')) || 0;
+                    const formula = isOutBound ? -quantity : quantity;
+                    sum += formula;
+                    return {...item, stock: sum}
+                }).sort((a, b) => new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime());
+
+            if (sourceHistoryList?.length) {
+                gridManage.resetData(gridRef, sourceHistoryList);
+                setTotalRow(sourceHistoryList?.length ?? 0);
+            }
         } else {
             message.warn(v?.data?.message);
         }
@@ -98,6 +114,7 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
                     gridManage.resetData(gridRef, inventoryItemList ?? []);
                     setTotalRow(inventoryItemList?.length ?? 0);
                     setInventoryList(inventoryItemList);
+
                 } else {
                     message.warn(v?.data?.message);
                 }
@@ -142,13 +159,13 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
                 )
             }
         })
-            .catch((err) => {
-                notificationAlert('error', '❌ 네트워크 오류 발생', <div>{err.message}</div>);
-                console.error('에러:', err);
-            })
-            .finally(() => {
-                setLoading(false);
-            });
+        .catch((err) => {
+            notificationAlert('error', '❌ 네트워크 오류 발생', <div>{err.message}</div>);
+            console.error('에러:', err);
+        })
+        .finally(() => {
+            setLoading(false);
+        });
     }
 
     /**
@@ -211,21 +228,21 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
     function copyPage() {
         const copyInfo = {
             info: {
-                "agencyCode": "STO",            // 대리점코드
-                "maker": "프로지스트",      // Maker
-                "item": "개발",      // Item
+                agencyCode: "STO",            // 대리점코드
+                maker: info?.['maker'],      // Maker
+                item: info?.['item'],      // Item
             },
         }
         const totalList = [
             {
-                "estimateDetailId": '',
-                "model": "ERP",
-                "quantity": '',
-                "unit": "ea",
-                "currencyUnit": 'USD',
-                "net": '',
-                "unitPrice": '10000',
-                "marginRate": '',
+                estimateDetailId: '',
+                model: info?.['model'],
+                quantity: info?.['totalReceivedQuantity'],
+                unit: info?.['unit'],
+                currencyUnit: info?.['currencyUnit'],
+                unitPrice: info?.['unitPrice'],
+                net: '',
+                marginRate: '',
             }
         ]
         copyInfo['estimateDetailList'] = [...totalList, ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000 - totalList.length)];
@@ -242,8 +259,8 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
         if (!list?.length) return message.warn('삭제할 재고를 선택해주세요.');
 
         setLoading(true);
-        const filterList = list.map(v => v.inventoryId);
-        await getData.post('inventory/deleteInventories', {inventoryIdList: filterList}).then(v => {
+        const filterList = list.map(v=> v.inventoryDetailId)
+        await getData.post('inventory/deleteDetailInventories', filterList).then(v => {
             if (v?.data?.code === 1) {
                 // 전체 삭제 여부 (삭제 id 리스트에 조회한 초기 리스트의 id가 전부 포함됬는지)
                 const isAllDeleted = inventoryList.every(item => filterList.includes(item.inventoryId));
@@ -292,6 +309,22 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
         .finally(() => {
             setLoading(false);
         });
+    }
+
+    /**
+     * @description 조회 테이블 > 더블 클릭
+     * 데이터 관리 > 재고관리 > 재고관리 수정
+     * 조회 테이블에서 재고 History 항목 더블 클릭시 수정 가능하게 set
+     * @param inventoryDetail
+     */
+    function tableDoubleClickSetInfo (inventoryDetail) {
+        console.log('~~~~')
+        const clickInfo = {
+            ...inventoryDetail,
+            totalNet: Number(inventoryDetail?.['totalReceivedQuantity'])
+        }
+        console.log(clickInfo)
+        setInfo(clickInfo);
     }
 
     return <Spin spinning={loading}>
@@ -343,7 +376,7 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
                             <BoxCard title={'재고 정보'} tooltip={tooltipInfo('customer')}>
                                 {inputNumberForm({
                                     title: '매입 총액',
-                                    id: 'importUnitPrice',
+                                    id: 'totalNet',
                                     min: 0,
                                     step: 0.01,
                                     onChange: onChange,
@@ -357,7 +390,7 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
                                 })}
                                 {inputNumberForm({
                                     title: '입고수량',
-                                    id: 'receivedQuantity',
+                                    id: 'totalReceivedQuantity',
                                     min: 0,
                                     step: 0.01,
                                     onChange: onChange,
@@ -411,8 +444,8 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
                 columns={tableSourceUpdateColumns}
                 onGridReady={onGridReady}
                 getPropertyId={getPropertyId}
-                type={'sourceUpdate'}
-                setInfo={setInfo}
+                customType={'SourceUpdate'}
+                tempFunc={tableDoubleClickSetInfo}
                 funcButtons={['agPrint']}
             />
         </div>

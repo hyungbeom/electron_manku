@@ -1211,20 +1211,26 @@ export const sourceInfo = {
         validate: {
             maker: true,
             model: true,
-            receivedQuantity: true
+            receivedQuantity: true,
+            unit: true
         },
         validationList: [
             {key: 'maker', message: 'Maker를 입력해주세요.'},
             {key: 'model', message: 'Model을 입력해주세요.'},
-            {key: 'receivedQuantity', message: '입고수량을 입력해주세요.'}
+            {key: 'receivedQuantity', message: '입고수량을 입력해주세요.'},
+            {key: 'unit', message: '단위를 입력해주세요.'}
         ]
     },
     defaultInfo: {
+        "inventoryId" : '',                             // 재고
+        "inventoryDetailId": '',                        // 재고 내역
         "receiptDate": moment().format('YYYY-MM-DD'),   // 입고 날짜
         "documentNumber": "",                           // 문서 번호
         "maker": "",                                    // Maker
         "model": "",                                    // Model
-        "importUnitPrice": "",                          // 수입 단가
+        "item": "",                                     // item
+        "importUnitPrice": '',                          // 매입 단가
+        "total": "",                                    // 매입 총액
         "currencyUnit": "",                             // 화폐 단위
         "receivedQuantity": "",                         // 입고 수량
         "unit": "",                                     // 단위
