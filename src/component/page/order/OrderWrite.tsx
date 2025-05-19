@@ -174,6 +174,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                     customerManagerPhoneNumber: estimateDetail?.phoneNumber,
                                     customerManagerEmail: estimateDetail?.customerManagerEmail,
                                     customerManagerFaxNumber: estimateDetail?.faxNumber,
+                                    sendTerms: moment().add( parseInt(estimateDetail?.delivery), 'weeks').format('YYYY-MM-DD'),
                                     // validityPeriod: '견적 발행 후 10일간',
                                     // paymentTerms: '발주시 50% / 납품시 50%',
                                     // shippingTerms: '귀사도착도',
@@ -567,15 +568,21 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                                     key={info.paymentTerms}
                                         />
                                     </div>
-                                    {inputForm({title: '납기', id: 'delivery', onChange: onChange, data: info})}
-                                    {inputForm({title: 'Maker', id: 'maker', onChange: onChange, data: info})}
-                                    {inputForm({title: 'Item', id: 'item', onChange: onChange, data: info})}
                                     {datePickerForm({
-                                        title: '예상 입고일',
+                                        title: '납품 예정일',
+                                        id: 'sendTerms',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
+                                    {datePickerForm({
+                                        title: '입고 예정일',
                                         id: 'deliveryTerms',
                                         onChange: onChange,
                                         data: info
                                     })}
+                                    {inputForm({title: 'Maker', id: 'maker', onChange: onChange, data: info})}
+                                    {inputForm({title: 'Item', id: 'item', onChange: onChange, data: info})}
+
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>

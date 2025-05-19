@@ -58,10 +58,11 @@ export default function DomesticRemittanceUpdate({ updateKey, layoutRef }: any) 
         }
     }
 
+
     const [info, setInfo] = useState(getRemittanceInit());
     const [selectOrderList, setSelectOrderList] = useState([]);
     const [sendRemittanceList, setSendRemittanceList] = useState([]);
-
+    console.log(info,'::asd::')
     const getOrderInit = () => {
         return {
             documentNumberFull: '',
