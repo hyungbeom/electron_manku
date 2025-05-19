@@ -1191,8 +1191,6 @@ export const rfqReadColumns = [
         minWidth: 180,
         maxWidth: 120,
     }
-
-
 ];
 
 

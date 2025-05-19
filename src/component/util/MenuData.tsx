@@ -55,10 +55,9 @@ export const treeData = [
     }, {
         title: "배송",
         key: "delivery",
-        disabled: true,
         children: [
-            {title: "배송 등록", key: "delivery_write", disabled: true},
-            {title: "배송 조회", key: "delivery_read", disabled: true}
+            {title: "배송 등록", key: "delivery_write"},
+            {title: "배송 조회", key: "delivery_read"}
         ],
     }, {
         title: "송금",
