@@ -1237,7 +1237,7 @@ export const ExpectedOrderReadColumns = [
         maxWidth: 100
     }, {
         headerName: '납품 예정일',
-        field: 'expectedDeliveryDate',
+        field: 'sendTerms',
         maxWidth: 100
     },  {
         headerName: 'Project No.',

@@ -588,7 +588,7 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
                                     {/*{inputForm({title: '납기', id: 'delivery', onChange: onChange, data: info})}*/}
                                     {datePickerForm({
                                         title: '납품 예정일',
-                                        id: 'deliveryTerms',
+                                        id: 'sendTerms',
                                         onChange: onChange,
                                         data: info
                                     })}
