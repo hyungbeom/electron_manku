@@ -104,85 +104,26 @@ export default function TaxInvoiceWrite({copyPageInfo, getPropertyId}: any) {
      * 송금 > 국내송금 등록
      */
     async function saveFunc() {
-        if (!selectOrderList?.length) return message.warn('발주서 데이터가 1개 이상이여야 합니다.');
-        const tableList = tableRef.current?.getSourceData();
-        console.log(tableList, 'tableList:::')
-        if (!tableList?.length) return message.warn('송금 데이터가 1개 이상이여야 합니다.');
-        const requiredFields = { remittanceDueDate: '송금 지정 일자', supplyAmount: '공급가액', sendStatus: '송금 여부' };
-        const filterTableList = tableList.slice(0, -1).filter(row =>
-            Object.keys(requiredFields).some(field => !!row[field])
-        );
-        // const isValidValue = (value: any) =>
-        //     value !== null && value !== undefined &&
-        //     !(typeof value === 'string' && value.trim().startsWith('='));
-        //
-        // const filterTableList = tableList.slice(0, -1).filter(row =>
-        //     Object.keys(requiredFields).some(field => isValidValue(row[field]))
-        // );
-        if (!filterTableList?.length) return message.warn('송금 데이터가 1개 이상이여야 합니다.');
-        console.log(filterTableList, 'filterTableList:::')
-        for (const [field, label] of Object.entries(requiredFields)) {
-            const missing = filterTableList.filter(row => !row[field]);
-            if (missing?.length) {
-                return message.error(`하위 데이터의 ${label} 을/를 입력해야 합니다.`);
-            }
+
+        const sendParam = {
+            invoiceRequestDate: '2025-05-18',
+            invoiceDueDate: '2025-05-18',
+            managerAdminId: 23,
+            selectOrderList: [100, 200, 300],
+            yourPoNo: '발주서번호',
+            customerName: '고객사',
+            customerManagerName: '고객사담당자',
+            supplyAmount: 700000,
+            company: '사업소',
+            invoiceStatus: 'O',
+            remarks: '비고란'
         }
 
-        const selectOrderNos = selectOrderList.map(item => item.orderDetailId)
-
-        const remittanceList = filterTableList.map(v => {
-            const tax = v.supplyAmount ? v.supplyAmount * 0.1 : 0;
-            const {total, ...item} = v;
-            return {
-                ...item,
-                tax
-            }
+        getData.post('invoice/addInvoice', sendParam).then(v=>{
+            console.log(v,':::')
         })
-        console.log(info, 'info:::')
-        console.log(selectOrderList, 'selectOrderList:::')
-        console.log(remittanceList, 'remittanceList:::')
 
-        setLoading(true);
-
-        const formData: any = new FormData();
-        Object.entries(info).forEach(([key, value]) => {
-            formData.append(key, value ?? '');
-        });
-        const findMember = adminList.find(v=> v.adminId === info?.managerAdminId)
-
-        formData.append('managerAdminEmail',findMember['email']);
-        formData.append('selectOrderList',JSON.stringify(selectOrderNos));
-        formData.append('sendRemittanceList',JSON.stringify(remittanceList));
-
-
-        await saveRemittance({data: formData})
-            .then(v => {
-                if (v?.data?.code === 1) {
-                    window.postMessage({message: 'reload', target: 'domestic_remittance_read'}, window.location.origin);
-                    notificationAlert('success', '💾 국내 송금 등록완료',
-                        <>
-                            <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
-                        </>
-                        , null, null, 2
-                    )
-                    clearAll();
-                    getPropertyId('domestic_remittance_update', v?.data?.entity?.remittanceId)
-                } else {
-                    console.warn(v?.data?.message);
-                    notificationAlert('error', '⚠️ 작업실패',
-                        <>
-                            <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
-                        </>
-                        , function () {
-                            alert('작업 로그 페이지 참고')
-                        },
-                        {cursor: 'pointer'}
-                    )
-                }
-            })
-            .finally(() => {
-                setLoading(false);
-            });
+        // console.log(tableList,'::::::')
     }
 
     /**
@@ -379,30 +320,6 @@ export default function TaxInvoiceWrite({copyPageInfo, getPropertyId}: any) {
                     }
                 ]} mini={mini} setMini={setMini}>
                     {mini ? <div ref={infoRef}>
-                        {/*<TopBoxCard grid={'200px 200px 200px 200px 180px'}>*/}
-                        {/*    {inputForm({*/}
-                        {/*        title: 'Inquiry No.',*/}
-                        {/*        id: 'connectInquiryNo',*/}
-                        {/*        onChange: onChange,*/}
-                        {/*        data: info,*/}
-                        {/*        disabled: true,*/}
-                        {/*        suffix: <FileSearchOutlined style={{cursor: 'pointer', color: 'black'}} onClick={*/}
-                        {/*            (e) => {*/}
-                        {/*                e.stopPropagation();*/}
-                        {/*                openModal('connectInquiryNo');*/}
-                        {/*            }*/}
-                        {/*        }/>*/}
-                        {/*    })}*/}
-                        {/*    {inputForm({title: '항목번호', id: 'orderDetailIds', onChange: onChange, data: info})}*/}
-                        {/*    {inputForm({title: '고객사명', id: 'customerName', onChange: onChange, data: info})}*/}
-                        {/*    {inputForm({title: '매입처명', id: 'agencyName', onChange: onChange, data: info})}*/}
-                        {/*    {inputForm({*/}
-                        {/*        title: '담당자',*/}
-                        {/*        id: 'managerAdminName',*/}
-                        {/*        onChange: onChange,*/}
-                        {/*        data: info*/}
-                        {/*    })}*/}
-                        {/*</TopBoxCard>*/}
 
                         <TopBoxCard grid={'110px 70px 70px 120px'}>
                             {datePickerForm({
@@ -606,7 +523,9 @@ export default function TaxInvoiceWrite({copyPageInfo, getPropertyId}: any) {
                     </div> : <></>}
                 </MainCard>
 
-                <Tabs size={'small'} tabBarStyle={{paddingLeft: 10, paddingRight: 10, marginBottom: 0}} activeKey={tabNumb} items={items} onChange={tabChange}/>
+                <Order key={tabNumb} gridRef={gridRef}
+                       tableData={selectOrderList} setTableData={setSelectOrderList}
+                       setInfo={setInfo} customFunc={getOrderFile}/>
 
             </div>
     </Spin>

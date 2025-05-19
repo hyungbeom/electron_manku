@@ -72,16 +72,16 @@ export default function TaxInvoiceRead({getPropertyId, getCopyPage}: any) {
      * @param params ag-grid 제공 event 파라미터
      */
     const onGridReady = async (params) => {
-        setLoading(true);
-        gridRef.current = params.api;
-        await getRemittanceList({data: info}).then(v => {
-            const remittanceList = formatManager(v?.data);
-            params.api.applyTransaction({add: remittanceList});
-            setTotalRow(v?.pageInfo?.totalRow ?? 0)
-        })
-        .finally(() => {
-            setLoading(false);
-        });
+        // setLoading(true);
+        // gridRef.current = params.api;
+        // await getRemittanceList({data: info}).then(v => {
+        //     const remittanceList = formatManager(v?.data);
+        //     params.api.applyTransaction({add: remittanceList});
+        //     setTotalRow(v?.pageInfo?.totalRow ?? 0)
+        // })
+        // .finally(() => {
+        //     setLoading(false);
+        // });
     };
 
     function onChange(e) {
@@ -100,17 +100,7 @@ export default function TaxInvoiceRead({getPropertyId, getCopyPage}: any) {
      * @param e
      */
     async function searchInfo(e) {
-        if (e) {
-            setLoading(true);
-            await getRemittanceList({data: info}).then(v => {
-                const remittanceList = formatManager(v?.data);
-                gridManage.resetData(gridRef, remittanceList);
-                setTotalRow(v?.pageInfo?.totalRow ?? 0)
-            })
-            .finally(() => {
-                setLoading(false);
-            });
-        }
+
     }
 
     /**

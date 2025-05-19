@@ -847,10 +847,8 @@ export const tabComponents = {
  * @description (단축키)탭 활성화를 위한 default data
  */
 export const tabShortcutMap = {
-    '1': 'rfq_write',
-    '2': 'rfq_read',
-    '3': 'estimate_write',
-    '4': 'estimate_read',
-    '5': 'order_write',
-    '6': 'order_read',
+    '1': 'rfq_read',
+    '2': 'estimate_read',
+    '3': 'order_read',
+    '4': 'project_read'
 };
