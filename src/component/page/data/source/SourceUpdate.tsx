@@ -3,15 +3,7 @@ import {getData} from "@/manage/function/api";
 import {CopyOutlined, DeleteOutlined, ExclamationCircleOutlined, FormOutlined} from "@ant-design/icons";
 import message from "antd/lib/message";
 import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
-import {
-    BoxCard,
-    datePickerForm,
-    inputForm,
-    inputNumberForm,
-    MainCard,
-    textAreaForm,
-    tooltipInfo
-} from "@/utils/commonForm";
+import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, tooltipInfo} from "@/utils/commonForm";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
@@ -44,59 +36,62 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
     const getSourceValidateInit = () => _.cloneDeep(sourceInfo['write']['validate']);
     const [validate, setValidate] = useState(getSourceValidateInit());
 
-    const [inventoryList, setInventoryList] = useState([]);
+    const [tableData, setTableData] = useState([]);
     const [totalRow, setTotalRow] = useState(0);
 
-    const [isGrid, setIsGrid] = useState(false);
+    const [isLoad, setIsLoad] = useState(false);
 
-    const fetchData = async () => {
+    useEffect(() => {
+        if (!isLoad) return;
+
+        setValidate(getSourceValidateInit());
+        setInfo(getSourceInit());
+
+        setTableData([]);
+        setTotalRow(0);
+
+        void getDataInfo();
+    }, [updateKey['source_update'], isLoad])
+
+    const onGridReady = async (params) => {
+        gridRef.current = params.api;
+        setIsLoad(true);
+    };
+
+    async function getDataInfo(type?: any) {
         setLoading(true);
-        const v = await getData.post('inventory/getInventoryDetail', updateKey['source_update']);
-        if (v?.data?.code === 1) {
-            const inventoryItemList = v?.data?.entity ?? [];
-            // gridManage.resetData(gridRef, inventoryItemList ?? []);
-            // setTotalRow(inventoryItemList?.length ?? 0);
-            // setInfo(inventoryItemList?.[0] || {});
-            // setInventoryList(inventoryItemList);
+        try {
+            const res= await getData.post('inventory/getInventoryDetail', { inventoryId: updateKey['source_update'] })
+            if (res?.data?.code !== 1) return;
 
+            const inventoryItemList = res?.data?.entity ?? [];
+            // History 리스트에서 잔량 계산
             let sum = 0;
             const sourceHistoryList = [...inventoryItemList]
                 .sort((a, b) => new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime())
                 .map(item => {
                     const isOutBound = String(item?.documentNumber || '').toUpperCase().startsWith('STO');
-                    const quantity = Number(String(isOutBound ? item.outBound : item.totalReceivedQuantity).replace(/,/g, '')) || 0;
+                    const quantity = Number(String(isOutBound ? item.outBound : item.receivedQuantity).replace(/,/g, '')) || 0;
                     const formula = isOutBound ? -quantity : quantity;
                     sum += formula;
                     return {...item, stock: sum}
                 }).sort((a, b) => new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime());
 
-            if (sourceHistoryList?.length) {
-                gridManage.resetData(gridRef, sourceHistoryList);
-                setTotalRow(sourceHistoryList?.length ?? 0);
-            }
-        } else {
-            message.warn(v?.data?.message);
+            const total = (Number(String(sourceHistoryList?.[0]?.receivedQuantity).replace(/,/g, '')) || 0) * (Number(String(sourceHistoryList?.[0]?.importUnitPrice ).replace(/,/g, '')) || 0);
+            setInfo(
+                type !== 'reset'
+                ? {...sourceHistoryList[0], total: total? total.toLocaleString() : ''}
+                : getSourceInit()
+            );
+            setTableData(sourceHistoryList);
+            setTotalRow(sourceHistoryList.length);
+            gridManage.resetData(gridRef, sourceHistoryList);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     }
-
-    const onGridReady = async (params) => {
-        gridRef.current = params.api;
-        setIsGrid(true);
-    };
-
-    useEffect(() => {
-        getData.post('inventory/getInventoryHistory',{maker : "삼미전자", model : 'WP-9050D45, 5W(7W Max), 8Ω'})
-    }, []);
-
-    useEffect(() => {
-        if (!isGrid) return;
-        setValidate(getSourceValidateInit());
-        setInfo(getSourceInit());
-        setTotalRow(0);
-        setInventoryList([]);
-        fetchData();
-    }, [updateKey['source_update'], isGrid])
 
     function onChange(e) {
         commonManage.onChange(e, setInfo);
@@ -105,38 +100,60 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
         commonManage.resetValidate(id, value, setValidate);
     }
 
-    async function searchInfo(e) {
-        if (e) {
-            setLoading(true);
-            await getData.post('inventory/getInventoryDetail', updateKey['source_update']).then(v => {
-                if (v?.data?.code === 1) {
-                    const inventoryItemList = v?.data?.entity ?? [];
-                    gridManage.resetData(gridRef, inventoryItemList ?? []);
-                    setTotalRow(inventoryItemList?.length ?? 0);
-                    setInventoryList(inventoryItemList);
-
-                } else {
-                    message.warn(v?.data?.message);
-                }
-            })
-            .finally(() => {
-                setLoading(false);
-            });
+    /**
+     * @description 수정 페이지 > 견적서 등록
+     * 데이터 관리 > 재고관리 > 재고관리 수정
+     * 재고 정보 가지고 견적서 STO 생성하러 이동
+     */
+    function copyPageForEstimate() {
+        if (!info?.['inventoryId'] || !info?.['inventoryDetailId']) {
+            return message.warn('견적서로 등록할 재고 내역을 선택해주세요.');
         }
+        const copyInfo = {
+            info: {
+                agencyCode: "STO",
+                maker: info?.['maker'],
+                item: info?.['item'],
+            },
+        }
+        const unitPrice = info?.['currencyUnit'] === 'KRW' ? String(info?.['importUnitPrice'])?.split?.('.')?.[0] ?? '' : info?.['importUnitPrice'];
+        const totalList = [
+            {
+                estimateDetailId: '',
+                model: info?.['model'],
+                quantity: info?.['receivedQuantity'],
+                unit: info?.['unit'],
+                currencyUnit: info?.['currencyUnit'],
+                unitPrice: unitPrice,
+                net: '',
+                marginRate: '',
+            }
+        ]
+        copyInfo['estimateDetailList'] = [...totalList, ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000 - totalList.length)];
+
+        getCopyPage('estimate_write', {...copyInfo, _meta: {updateKey: Date.now()}});
     }
 
     /**
      * @description 수정 페이지 > 수정 버튼
-     * 데이터 관리 > 재고관리
+     * 데이터 관리 > 재고관리 > 재고관리 수정
      */
     async function saveFunc() {
-        console.log(info, 'info:::');
+        if (!info?.['inventoryId'] || !info?.['inventoryDetailId']) {
+            return message.warn('수정할 재고 내역을 선택해주세요.');
+        }
         if (!commonManage.checkValidate(info, sourceInfo['write']['validationList'], setValidate)) return;
 
+        const copyInfo = {
+            ...info,
+            importUnitPrice: Number(String(info?.importUnitPrice).replace(/,/g, '')),
+            total: Number(String(info?.total).replace(/,/g, '')),
+            receivedQuantity: Number(String(info?.receivedQuantity).replace(/,/g, ''))
+        }
         setLoading(true);
-        await getData.post('inventory/updateInventory', info).then(v => {
+        await getData.post('inventory/addInventory', copyInfo).then(v => {
             if (v?.data?.code === 1) {
-                searchInfo(true);
+                getDataInfo('reset');
                 window.postMessage({message: 'reload', target: 'source_read'}, window.location.origin);
                 notificationAlert('success', '💾 재고 수정완료',
                     <>
@@ -170,35 +187,28 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
 
     /**
      * @description 수정 페이지 > 삭제 버튼
-     * 데이터 관리 > 재고관리
+     * 데이터 관리 > 재고관리 > 재고관리 수정
      */
     function deleteFunc() {
         setLoading(true);
-        getData.post('inventory/deleteInventory', {inventoryId: info['inventoryId']}).then(v => {
+        getData.post('inventory/deleteInventory', [ info['inventoryId'] ]).then(v => {
             if (v?.data?.code === 1) {
-                // 삭제한 데이터가 마지막 데이터인지 여부
-                const isLastData = inventoryList.length === 1 && inventoryList[0].inventoryId === info.inventoryId;
-                if(!isLastData) {
-                    setInfo(getSourceInit());
-                    searchInfo(true);
-                    notificationAlert('success', '🗑️ 재고 삭제완료',
-                        <>
-                            <div>Maker : {info['maker']}</div>
-                            <div>Model : {info['model']}</div>
-                            <div>삭제일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
-                        </>
-                        , null, null, 2
-                    )
-                } else {
-                    window.postMessage({message: 'reload', target: 'source_read'}, window.location.origin);
-                    getCopyPage('source_read', {})
-                    const {model} = layoutRef.current.props;
-                    const targetNode = model.getRoot().getChildren()[0]?.getChildren()
-                        .find((node: any) => node.getType() === "tab" && node.getComponent() === 'source_update');
-                    if (targetNode) {
-                        model.doAction(Actions.deleteTab(targetNode.getId())); // ✅ 기존 로직 유지
-                    }
+                window.postMessage({message: 'reload', target: 'source_read'}, window.location.origin);
+                notificationAlert('success', '🗑️ 재고 삭제완료',
+                    <>
+                        <div>Maker : {info['maker']}</div>
+                        <div>Model : {info['model']}</div>
+                        <div>삭제일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , null, null, 2
+                )
+                const {model} = layoutRef.current.props;
+                const targetNode = model.getRoot().getChildren()[0]?.getChildren()
+                    .find((node: any) => node.getType() === "tab" && node.getComponent() === 'source_update');
+                if (targetNode) {
+                    model.doAction(Actions.deleteTab(targetNode.getId())); // ✅ 기존 로직 유지
                 }
+                getCopyPage('source_read', {})
             } else {
                 console.warn(v?.data?.message);
                 notificationAlert('error', '⚠️ 작업실패',
@@ -222,32 +232,14 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
     }
 
     /**
-     * @description 수정 페이지 > 견적서 등록
-     * 데이터 관리 > 재고관리
+     * @description 수정 페이지 > 복제 버튼
+     * 데이터 관리 > 재고관리 > 재고관리 수정
      */
     function copyPage() {
         const copyInfo = {
-            info: {
-                agencyCode: "STO",            // 대리점코드
-                maker: info?.['maker'],      // Maker
-                item: info?.['item'],      // Item
-            },
+            info: _.cloneDeep(info)
         }
-        const totalList = [
-            {
-                estimateDetailId: '',
-                model: info?.['model'],
-                quantity: info?.['totalReceivedQuantity'],
-                unit: info?.['unit'],
-                currencyUnit: info?.['currencyUnit'],
-                unitPrice: info?.['unitPrice'],
-                net: '',
-                marginRate: '',
-            }
-        ]
-        copyInfo['estimateDetailList'] = [...totalList, ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000 - totalList.length)];
-
-        getCopyPage('estimate_write', {...copyInfo, _meta: {updateKey: Date.now()}});
+        getCopyPage('source_write', {...copyInfo, _meta: {updateKey: Date.now()}});
     }
 
     /**
@@ -256,38 +248,38 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
      */
     async function deleteList() {
         const list = gridRef.current.getSelectedRows()
-        if (!list?.length) return message.warn('삭제할 재고를 선택해주세요.');
+        if (!list?.length) return message.warn('삭제할 재고 내역을 선택해주세요.');
 
         setLoading(true);
-        const filterList = list.map(v=> v.inventoryDetailId)
+        const filterList = list
+            .filter(v => !String(v.documentNumber || '').toUpperCase().startsWith('STO'))
+            .map(v => v.inventoryDetailId);
         await getData.post('inventory/deleteDetailInventories', filterList).then(v => {
             if (v?.data?.code === 1) {
-                // 전체 삭제 여부 (삭제 id 리스트에 조회한 초기 리스트의 id가 전부 포함됬는지)
-                const isAllDeleted = inventoryList.every(item => filterList.includes(item.inventoryId));
+                // 전체 삭제 여부 (조회한 초기 리스트에 삭제 id 리스트가 전부 포함됬는지)
+                const isAllDeleted = tableData
+                    .filter(v => !String(v.documentNumber || '').toUpperCase().startsWith('STO'))
+                    .every(item => filterList.includes(item.inventoryDetailId));
                 if (!isAllDeleted) {
-                    // 삭제된 리스트에 현재 수정중인 id가 있는지 확인 (삭제됬으면 폼 초기화)
-                    if (filterList.includes(info.inventoryId)) setInfo(getSourceInit());
-
-                    searchInfo(true);
-                    notificationAlert('success', '🗑 재고 삭제완료',
+                    getDataInfo('reset');
+                    notificationAlert('success', '🗑 재고 내역 삭제완료',
                         <>
-                            <div>Model
-                                : {list[0].model} {list.length > 1 ? ('외' + " " + (list.length - 1) + '개') : ''} 의 재고이(가)
-                                삭제되었습니다.
-                            </div>
+                            <div>Maker : {info['maker']}</div>
+                            <div>Model : {info['model']}</div>
+                            <div>의 재고 내역이(가) 삭제되었습니다.</div>
                             <div>삭제일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                         </>
                         , null, null, 2
                     )
-                } else {
+                } else { // History 전체 삭제면 탭 닫기
                     window.postMessage({message: 'reload', target: 'source_read'}, window.location.origin);
-                    getCopyPage('source_read', {})
                     const {model} = layoutRef.current.props;
                     const targetNode = model.getRoot().getChildren()[0]?.getChildren()
                         .find((node: any) => node.getType() === "tab" && node.getComponent() === 'source_update');
                     if (targetNode) {
                         model.doAction(Actions.deleteTab(targetNode.getId())); // ✅ 기존 로직 유지
                     }
+                    getCopyPage('source_read', {})
                 }
             } else {
                 console.warn(v?.data?.message);
@@ -314,16 +306,15 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
     /**
      * @description 조회 테이블 > 더블 클릭
      * 데이터 관리 > 재고관리 > 재고관리 수정
-     * 조회 테이블에서 재고 History 항목 더블 클릭시 수정 가능하게 set
+     * 테이블에서 재고 History 항목 더블 클릭시 수정 가능하게 set
      * @param inventoryDetail
      */
-    function tableDoubleClickSetInfo (inventoryDetail) {
-        console.log('~~~~')
+    function tableDoubleClickSetInfo (inventoryDetail?: any) {
+        const total = (Number(String(inventoryDetail?.receivedQuantity).replace(/,/g, '')) || 0) * (Number(String(inventoryDetail?.importUnitPrice ).replace(/,/g, '')) || 0);
         const clickInfo = {
             ...inventoryDetail,
-            totalNet: Number(inventoryDetail?.['totalReceivedQuantity'])
+            total: total ? total.toLocaleString() : ''
         }
-        console.log(clickInfo)
         setInfo(clickInfo);
     }
 
@@ -336,9 +327,10 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
         }}>
             <MainCard title={'재고관리 수정'}
                       list={[
-                          {name: <div><CopyOutlined style={{paddingRight: 8}}/>견적서 등록</div>, func: copyPage, type: 'default'},
+                          {name: <div><CopyOutlined style={{paddingRight: 8}}/>견적서 등록</div>, func: copyPageForEstimate, type: 'default'},
                           {name: <div><FormOutlined style={{paddingRight: 8}}/>수정</div>, func: saveFunc, type: 'primary'},
                           {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: deleteFunc, type: 'delete'},
+                          {name: <div><CopyOutlined style={{paddingRight: 8}}/>복제</div>, func: copyPage, type: 'default'},
                       ]}
                       mini={mini} setMini={setMini}>
                 {mini ?
@@ -346,7 +338,7 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
                                 style={{gap: 0.5, paddingTop: 3}}>
                         <Panel defaultSize={sizes[0]} minSize={5}>
                             <BoxCard title={'기본 정보'}>
-                                {datePickerForm({title: '입고일자', id: 'receiptDate', onChange: onChange, data: info})}
+                                {datePickerForm({title: '입고일자', id: 'receiptDate', onChange: onChange, data: info, disabled: true})}
                                 {inputForm({
                                     title: '문서번호',
                                     id: 'documentNumber',
@@ -357,30 +349,25 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
                                     title: 'Maker',
                                     id: 'maker',
                                     disabled: true,
-                                    data: info,
-                                    validate: validate['maker'],
-                                    key: validate['maker']
+                                    data: info
                                 })}
                                 {inputForm({
                                     title: 'Model',
                                     id: 'model',
                                     disabled: true,
-                                    data: info,
-                                    validate: validate['model'],
-                                    key: validate['model']
+                                    data: info
                                 })}
                             </BoxCard>
                         </Panel>
                         <PanelResizeHandle/>
                         <Panel defaultSize={sizes[1]} minSize={5}>
                             <BoxCard title={'재고 정보'} tooltip={tooltipInfo('customer')}>
-                                {inputNumberForm({
+                                {inputForm({
                                     title: '매입 총액',
-                                    id: 'totalNet',
-                                    min: 0,
-                                    step: 0.01,
+                                    id: 'total',
                                     onChange: onChange,
-                                    data: info
+                                    data: info,
+                                    disabled: true
                                 })}
                                 {inputForm({
                                     title: '화폐단위',
@@ -388,21 +375,33 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
                                     onChange: onChange,
                                     data: info
                                 })}
-                                {inputNumberForm({
-                                    title: '입고수량',
-                                    id: 'totalReceivedQuantity',
-                                    min: 0,
-                                    step: 0.01,
-                                    onChange: onChange,
-                                    data: info,
-                                    validate: validate['receivedQuantity'],
-                                    key: validate['receivedQuantity']
-                                })}
+                                <div style={{fontSize: 12, paddingBottom: 10}} key={validate['receivedQuantity']}>
+                                    <div style={{paddingBottom: 12 / 2, fontWeight: 700}}>입고수량</div>
+                                    <div style={{display: 'flex'}}>
+                                        <input placeholder={''}
+                                               id={'receivedQuantity'}
+                                               value={info ? info['receivedQuantity'] : null}
+                                               onKeyDown={(e) => { if(e.key === 'Enter') e.currentTarget.blur(); }}
+                                               onChange={onChange}
+                                               onFocus={(e) => { setInfo(prev => {
+                                                   const receivedQuantity = Number((e.target.value || '0').toString().replace(/,/g, ''));
+                                                   return {...prev, receivedQuantity: receivedQuantity ? receivedQuantity : ''}
+                                               })}}
+                                               onBlur={(e) => { setInfo(prev => {
+                                                   const receivedQuantity = Number((e.target.value || '0').toString().replace(/,/g, ''));
+                                                   return {...prev, receivedQuantity: receivedQuantity ? receivedQuantity.toLocaleString() : ''}
+                                               })}}
+                                               style={{fontSize: 12, border: `1px solid ${validate['receivedQuantity'] ? 'lightGray' : 'red'}`}}
+                                        />
+                                        <span style={{marginLeft: -22, paddingTop: 1.5}}></span>
+                                    </div>
+                                </div>
                                 {inputForm({
                                     title: '단위',
                                     id: 'unit',
                                     onChange: onChange,
-                                    data: info
+                                    data: info,
+                                    disabled: true
                                 })}
                             </BoxCard>
                         </Panel>
@@ -436,7 +435,9 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
                         title="삭제하시겠습니까?"
                         onConfirm={deleteList}
                         icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
-                        <Button type={'primary'} danger size={'small'} style={{fontSize: 11, marginLeft: 5}}>삭제</Button>
+                        <Button type={'primary'} danger size={'small'} style={{fontSize: 11}}>
+                            <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>
+                        </Button>
                     </Popconfirm>
                 }
                 totalRow={totalRow}

@@ -1,16 +1,8 @@
 import React, {memo, useEffect, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import {RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
-import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
-import {
-    BoxCard,
-    datePickerForm,
-    inputForm,
-    inputNumberForm,
-    MainCard,
-    textAreaForm,
-    tooltipInfo
-} from "@/utils/commonForm";
+import {commonManage, gridManage} from "@/utils/commonManage";
+import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, tooltipInfo} from "@/utils/commonForm";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
@@ -24,7 +16,6 @@ import {sourceInfo} from "@/utils/column/ProjectInfo";
 import {ModalInitList} from "@/utils/initialList";
 import SearchInfoModal from "@/component/SearchAgencyModal";
 import message from "antd/lib/message";
-import {loadWebpackHook} from "next/dist/server/config-utils";
 
 function SourceWrite({copyPageInfo, getPropertyId}: any) {
     const notificationAlert = useNotificationAlert();
@@ -59,23 +50,36 @@ function SourceWrite({copyPageInfo, getPropertyId}: any) {
 
         if (!isEmptyObj(copyPageInfo)) {
             // copyPageInfo 가 없을시
-            // setTableData(commonFunc.repeatObject(sourceInfo['write']['defaultData'], 1000));
         } else {
+            // copyPageInfo 가 있을시(==>보통 수정페이지에서 복제시)
+            // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting
+            const total = (Number(String(copyPageInfo?.['info']?.receivedQuantity).replace(/,/g, '')) || 0) * (Number(String(copyPageInfo['info']?.importUnitPrice ).replace(/,/g, '')) || 0);
+            const copyInfo = {
+                documentNumber: copyPageInfo?.['info']?.documentNumber || '',
+                maker: copyPageInfo?.['info']?.maker || '',
+                model: copyPageInfo?.['info']?.model || '',
+                item: copyPageInfo?.['info']?.item || '',
+                importUnitPrice: copyPageInfo?.['info']?.importUnitPrice || '',
+                total: total? total.toLocaleString() : '',
+                currencyUnit: copyPageInfo?.['info']?.currencyUnit || '',
+                receivedQuantity: copyPageInfo?.['info']?.receivedQuantity || '',
+                unit: copyPageInfo?.['info']?.unit || '',
+                location: copyPageInfo?.['info']?.location || '',
+                remarks: copyPageInfo?.['info']?.remarks || '',
+            }
             setInfo({
                 ...getSourceInit(),
-                ..._.cloneDeep(copyPageInfo)
+                ...copyInfo
             });
-            // setTableData(copyPageInfo);
+            void searchSource(copyInfo);
         }
         setLoading(false);
     }, [copyPageInfo?._meta?.updateKey]);
 
     const onGridReady = async (params) => {
         gridRef.current = params.api;
-        // gridManage.resetData(gridRef, []);
         params.api.applyTransaction({add: []});
         setTotalRow(0);
-        // setIsGrid(true);
     };
 
     function onChange(e) {
@@ -90,19 +94,18 @@ function SourceWrite({copyPageInfo, getPropertyId}: any) {
      * 데이터관리 > 재고관리 > 재고관리 등록
      */
     async function saveFunc() {
-        console.log(info, 'info:::');
         if (!commonManage.checkValidate(info, sourceInfo['write']['validationList'], setValidate)) return;
 
-        console.log(tableData)
         if (tableData?.length > 0) {
             if (info.unit !== tableData?.[0].unit) {
-                return message.warn('기존 재고와 단위가 일치하지 않습니다.');
+                return message.warn(<>기존 재고와 단위가 일치하지 않습니다.<br /> (기존 재고 단위 : "{tableData?.[0].unit}")</>)
             }
         }
         const copyInfo = {
             ...info,
-            importUnitPrice: Number(info?.importUnitPrice),
-            receivedQuantity: Number(info?.receivedQuantity)
+            importUnitPrice: Number(String(info?.importUnitPrice).replace(/,/g, '')),
+            total: Number(String(info?.total).replace(/,/g, '')),
+            receivedQuantity: Number(String(info?.receivedQuantity).replace(/,/g, ''))
         }
         setLoading(true);
         await getData.post('inventory/addInventory', copyInfo).then(v => {
@@ -116,8 +119,8 @@ function SourceWrite({copyPageInfo, getPropertyId}: any) {
                     </>
                     , null, null, 2
                 )
-                // clearAll();
-                // getPropertyId('source_update', v?.data?.entity?.inventoryId);
+                clearAll();
+                getPropertyId('source_update', v?.data?.entity?.inventoryId);
             } else {
                 console.warn(v?.data?.message);
                 notificationAlert('error', '⚠️ 작업실패',
@@ -150,9 +153,9 @@ function SourceWrite({copyPageInfo, getPropertyId}: any) {
         setValidate(getSourceValidateInit());
         setInfo(getSourceInit());
 
-        gridManage.resetData(gridRef, []);
         setTableData([]);
         setTotalRow(0);
+        gridManage.resetData(gridRef, []);
 
         setLoading(false);
     }
@@ -175,6 +178,7 @@ function SourceWrite({copyPageInfo, getPropertyId}: any) {
      * @param list
      */
     function modalSelected(orderDetailList) {
+        if (!orderDetailList?.length) return;
         // 매입 총액 계산
         const total = (Number(String(orderDetailList[0]?.quantity).replace(/,/g, '')) || 0) * (Number(String(orderDetailList[0]?.unitPrice ).replace(/,/g, '')) || 0);
         const orderInfo = {
@@ -182,10 +186,10 @@ function SourceWrite({copyPageInfo, getPropertyId}: any) {
             maker: orderDetailList[0]?.maker ?? '',
             model: orderDetailList[0]?.model ?? '',
             item: orderDetailList[0]?.item ?? '',
-            unitPrice: orderDetailList[0]?.unitPrice || '',
-            total: total || '',
+            importUnitPrice: orderDetailList[0]?.unitPrice || '',
+            total: total ? total.toLocaleString() : '',
             currencyUnit: orderDetailList[0]?.currency ?? '',
-            totalReceivedQuantity: orderDetailList[0]?.quantity || '',
+            receivedQuantity: orderDetailList[0]?.quantity ? Number(String(orderDetailList[0]?.quantity).replace(/,/g, '')).toLocaleString() : '',
             unit: orderDetailList[0]?.unit ?? '',
         }
         setInfo(prev => ({
@@ -198,14 +202,14 @@ function SourceWrite({copyPageInfo, getPropertyId}: any) {
     /**
      * @description 등록 페이지 > 메이커,모델로 내역 조회
      * 데이터 관리 > 재고관리 > 재고관리 등록
-     * 발주서 Modal로 항목 가져올때
-     * Maker, Model Input에서 Enter
+     * 발주서 Modal 로 항목 가져올때
+     * Maker, Model Input 에서 Enter
      */
     async function searchSource (orderInfo?: any) {
+        setLoading(true);
         try {
             const res = await getData.post('inventory/getInventoryHistory', orderInfo ?? info);
             if (res?.data?.code !== 1) {
-                console.error(res?.data?.message);
                 message.error('해당 조건에 맞는 재고가 존재하지 않습니다.');
                 setInfo(prev => ({
                     ...prev,
@@ -215,12 +219,13 @@ function SourceWrite({copyPageInfo, getPropertyId}: any) {
                 return;
             }
             const inventoryItemList = res?.data?.entity ?? [];
+            // History 리스트에서 잔량 계산
             let sum = 0;
             const sourceHistoryList = [...inventoryItemList]
                 .sort((a, b) => new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime())
                 .map(item => {
                     const isOutBound = String(item?.documentNumber || '').toUpperCase().startsWith('STO');
-                    const quantity = Number(String(isOutBound ? item.outBound : item.totalReceivedQuantity).replace(/,/g, '')) || 0;
+                    const quantity = Number(String(isOutBound ? item.outBound : item.receivedQuantity).replace(/,/g, '')) || 0;
                     const formula = isOutBound ? -quantity : quantity;
                     sum += formula;
                     return {...item, stock: sum}
@@ -229,15 +234,13 @@ function SourceWrite({copyPageInfo, getPropertyId}: any) {
             setInfo(prev => ({
                 ...prev,
                 inventoryId: sourceHistoryList?.[0]?.inventoryId ?? '',
-                maker: '',
-                model: ''
             }))
             setTableData(sourceHistoryList);
             setTotalRow(sourceHistoryList.length);
             gridManage.resetData(gridRef, sourceHistoryList);
-
         } catch (err) {
-            console.error(err);
+            notificationAlert('error', '❌ 네트워크 오류 발생', <div>{err.message}</div>);
+            console.error('에러:', err);
         } finally {
             setLoading(false);
         }
@@ -286,7 +289,8 @@ function SourceWrite({copyPageInfo, getPropertyId}: any) {
                                             if (e.key === 'Enter') void searchSource();
                                         },
                                         validate: validate['maker'],
-                                        key: validate['maker']
+                                        key: validate['maker'],
+                                        disabled: info?.inventoryId
                                     })}
                                     {inputForm({
                                         title: 'Model',
@@ -297,40 +301,68 @@ function SourceWrite({copyPageInfo, getPropertyId}: any) {
                                             if (e.key === 'Enter') void searchSource();
                                         },
                                         validate: validate['model'],
-                                        key: validate['model']
+                                        key: validate['model'],
+                                        disabled: info?.inventoryId
                                     })}
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
                             <Panel defaultSize={sizes[1]} minSize={5}>
                                 <BoxCard title={'재고 정보'} tooltip={tooltipInfo('etc')}>
-                                    {inputForm({
-                                        title: '매입 총액',
-                                        id: 'total',
-                                        onChange: onChange,
-                                        data: info
-                                    })}
+                                    <div style={{fontSize: 12, paddingBottom: 10}}>
+                                        <div style={{paddingBottom: 12 / 2, fontWeight: 700}}>매입 총액</div>
+                                        <div style={{display: 'flex'}}>
+                                            <input placeholder={''}
+                                                   id={'total'}
+                                                   value={info ? info['total'] : null}
+                                                   onKeyDown={(e) => { if(e.key === 'Enter') e.currentTarget.blur(); }}
+                                                   onChange={onChange}
+                                                   onFocus={(e) => { setInfo(prev => {
+                                                       const total = Number((e.target.value || '0').toString().replace(/,/g, ''));
+                                                       return {...prev, total: total ? total : ''}
+                                                   })}}
+                                                   onBlur={(e) => { setInfo(prev => {
+                                                       const total = Number((e.target.value || '0').toString().replace(/,/g, ''));
+                                                       return {...prev, total: total ? total.toLocaleString() : ''}
+                                                   })}}
+                                            />
+                                            <span style={{marginLeft: -22, paddingTop: 1.5}}></span>
+                                        </div>
+                                    </div>
                                     {inputForm({
                                         title: '화폐단위',
                                         id: 'currencyUnit',
                                         onChange: onChange,
                                         data: info
                                     })}
-                                    {inputNumberForm({
-                                        title: '입고수량',
-                                        id: 'receivedQuantity',
-                                        min: 0,
-                                        step: 0.01,
-                                        onChange: onChange,
-                                        data: info,
-                                        // validate: validate['receivedQuantity'],
-                                        // key: validate['receivedQuantity']
-                                    })}
+                                    <div style={{fontSize: 12, paddingBottom: 10}} key={validate['receivedQuantity']}>
+                                        <div style={{paddingBottom: 12 / 2, fontWeight: 700}}>입고수량</div>
+                                        <div style={{display: 'flex'}}>
+                                            <input placeholder={''}
+                                                   id={'receivedQuantity'}
+                                                   value={info ? info['receivedQuantity'] : null}
+                                                   onKeyDown={(e) => { if(e.key === 'Enter') e.currentTarget.blur(); }}
+                                                   onChange={onChange}
+                                                   onFocus={(e) => { setInfo(prev => {
+                                                       const receivedQuantity = Number((e.target.value || '0').toString().replace(/,/g, ''));
+                                                       return {...prev, receivedQuantity: receivedQuantity ? receivedQuantity : ''}
+                                                   })}}
+                                                   onBlur={(e) => { setInfo(prev => {
+                                                       const receivedQuantity = Number((e.target.value || '0').toString().replace(/,/g, ''));
+                                                       return {...prev, receivedQuantity: receivedQuantity ? receivedQuantity.toLocaleString() : ''}
+                                                   })}}
+                                                   style={{fontSize: 12, border: `1px solid ${validate['receivedQuantity'] ? 'lightGray' : 'red'}`}}
+                                            />
+                                            <span style={{marginLeft: -22, paddingTop: 1.5}}></span>
+                                        </div>
+                                    </div>
                                     {inputForm({
                                         title: '단위',
                                         id: 'unit',
                                         onChange: onChange,
-                                        data: info
+                                        data: info,
+                                        validate: validate['unit'],
+                                        key: validate['unit']
                                     })}
                                 </BoxCard>
                             </Panel>

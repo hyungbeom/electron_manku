@@ -303,7 +303,6 @@ function RfqRead({getPropertyId, getCopyPage}: any) {
                         <Button type={'primary'} danger size={'small'} style={{fontSize: 11}}>
                             <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>
                         </Button>
-
                     </Popconfirm>}
                                totalRow={totalRow}
                                getPropertyId={getPropertyId}

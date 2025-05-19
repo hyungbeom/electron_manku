@@ -100,6 +100,7 @@ export const domesticRemittanceSearchInitial = {
 
 // 송금 > 해외송금 조회 > 검색 초기값 정보
 export const overseasRemittanceSearchInitial = {
+    "searchRegion": 'foreign',             // 해외송금 Flag
     "searchRequestDate": [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
     "searchRequestStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),   // 송금지정일자 검색 시작일
     "searchRequestEndDate": moment().format('YYYY-MM-DD'),                          // 송금지정일자 검색 종료일
@@ -107,9 +108,21 @@ export const overseasRemittanceSearchInitial = {
     "searchDocumentNumber": "",            // InquiryNo
     "searchCustomerName": "",              // 고객사명
     "searchAgencyName": "",                // 매입처명
-    "searchIsInvoice": "",                 // 계산서 발행여부 O, X
+    "searchIsInvoice": "",                 // 증빙서류 여부 O, X
     "searchPartialRemittanceStatus": "",   // 부분송금 진행여부
     "searchIsSend": "",                    // 송금상태
+    "page": 1,
+    "limit": -1
+}
+//
+
+// 송금 > 세금계산서 발행 조회 > 검색 초기값 정보
+export const taxInvoiceSearchInitial = {
+    "documentNumberFull": "",                          // Inquiry No.
+    "customerName": "",                                // 고객사명
+    "customerManagerName": "",                         // 담당자명
+    "invoiceDueDate": moment().format('YYYY-MM-DD'),   // 발행지정일자
+    "invoiceStatus": "",                               // 계산서 발행여부 O, X
     "page": 1,
     "limit": -1
 }

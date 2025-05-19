@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import {domesticRemittanceInitial, ModalInitList} from "@/utils/initialList";
+import {ModalInitList} from "@/utils/initialList";
 import {BoxCard, datePickerForm, inputForm, MainCard, radioForm, textAreaForm, TopBoxCard} from "@/utils/commonForm";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import _ from "lodash";
@@ -72,8 +72,6 @@ export default function DomesticRemittanceUpdate({ updateKey, layoutRef }: any) 
     const [orderInfo, setOrderInfo] = useState(getOrderInit());
     const [fileList, setFileList] = useState([]);
 
-
-
     useEffect(() => {
         setLoading(true);
 
@@ -134,7 +132,7 @@ export default function DomesticRemittanceUpdate({ updateKey, layoutRef }: any) 
         if (!selectOrderList?.length) return message.warn('발주서 데이터가 1개 이상이여야 합니다.');
         const tableList = tableRef.current?.getSourceData();
         if (!tableList?.length) return message.warn('송금 데이터가 1개 이상이여야 합니다.');
-        const requiredFields = { remittanceRequestDate: '송금 요청 일자', supplyAmount: '공급가액', sendStatus: '송금 여부' };
+        const requiredFields = { remittanceRequestDate: '송금 요청 일자', supplyAmount: '공급가액', sendStatus: '송금 상태' };
         const filterTableList = tableList.slice(0, -1).filter(row =>
             Object.keys(requiredFields).some(field => !!row[field])
         );

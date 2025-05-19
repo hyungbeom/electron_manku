@@ -75,8 +75,8 @@ const TableGrid = ({
         const selectedNode = event.node; // 현재 선택된 노드
         const selectedData = selectedNode.data; // 선택된 데이터
 
-        const includeKeys = ['DRWrite', 'SourceWrite'];
-        // documentNumberFull 필드가 없거나 custom이 아니면 패스
+        const includeKeys = ['DRWrite', 'SourceWrite', 'SourceUpdate'];
+        // documentNumberFull 필드가 없고 커스텀타입이 없거나 커스텀 제외 목록이 아니면 패스
         if (!selectedData?.documentNumberFull && !customType || includeKeys.includes(customType)) {
             return;
         }
@@ -129,8 +129,13 @@ const TableGrid = ({
             if (e.data.deliveryId) { // 배송 수정
                 getPropertyId('delivery_update', e.data.deliveryId)
             }
-            if (e.data.remittanceId) { // 국내 송금 수정
-                getPropertyId('domestic_remittance_update', e.data.remittanceId)
+            if (e.data.remittanceId) { // 송금 수정
+                switch (customType) {
+                    case 'DRRead': getPropertyId('domestic_remittance_update', e.data.remittanceId)
+                        break;
+                    case 'ORRead': getPropertyId('overseas_remittance_update', e.data.remittanceId)
+                        break;
+                }
             }
             if (e.data.agencyId) { // 국내 매입처 수정
                 getPropertyId('domestic_agency_update', e.data.agencyId)
@@ -154,7 +159,8 @@ const TableGrid = ({
                         break;
                     case 'SourceUpdate': tempFunc(e.data);
                         break;
-                    default:  getPropertyId('source_update', e.data);
+                    default:
+                        getPropertyId('source_update', e.data.inventoryId);
                         break;
                 }
             }

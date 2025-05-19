@@ -672,10 +672,10 @@ export const DRInfo = {
 export const ORInfo = {
     write: {
         columnWidth: [80, 80, 100, 100, 100, 100, 100, 100, 100],
-        column: ['송금 요청 일자', '송금 지정 일자', '공급가액', '부가세', '합계', '송금 상태', '증빙서류 여부', '환율', '수수료'],
+        column: ['송금 지정 일자', '송금 요청 일자', '공급가액', '부가세', '합계', '송금 상태', '증빙서류 여부', '환율', '수수료'],
         columnList: [
-            {data: "remittanceRequestDate", type: "date"},
             {data: "remittanceDueDate", type: "date"},
+            {data: "remittanceRequestDate", type: "date"},
             {data: "supplyAmount", type: "numeric"},
             {data: "tax", type: "numeric", readOnly: true},
             {data: "total", type: "numeric", readOnly: true},
@@ -689,30 +689,30 @@ export const ORInfo = {
                 type: "autocomplete",
                 source: ['X', 'O']
             },
-            {data: "exchangeRate", type: "numeric"},
-            {data: "commissionFee", type: "numeric"},
+            {data: "exchange", type: "numeric"},
+            {data: "fee", type: "numeric"},
         ],
         defaultData: {
             "remittanceDetailId": '',
-            "remittanceRequestDate": '',   // 송금 요청 일자
             "remittanceDueDate": "",       // 송금 지정 일자
+            "remittanceRequestDate": '',   // 송금 요청 일자
             "supplyAmount": '',            // 공급가액
             "tax": "",                     // 부가세
             "total": "",                   // 합계
             "sendStatus": '',              // 송금 상태
             "invoiceStatus": '',           // 증빙서류 여부
-            "exchangeRate": '',            // 환율
-            "commissionFee": ''            // 수수료
+            "exchange": '',                // 환율
+            "fee": ''                      // 수수료
         }, mapping: {
-            "remittanceRequestDate": '송금 요청 일자',
             "remittanceDueDate": '송금 지정 일자',
+            "remittanceRequestDate": '송금 요청 일자',
             "supplyAmount": '공급가액',
             "tax": "부가세",
             "total": '합계',
             "sendStatus": '송금 상태',
             "invoiceStatus": '증빙서류 여부',
-            "exchangeRate": '환율',
-            "commissionFee": '수수료'
+            "exchange": '환율',
+            "fee": '수수료'
         },
         excelExpert: (v, i) => {
             v['tax'] = `=C${i + 1}*0.1*10/10`
@@ -720,8 +720,8 @@ export const ORInfo = {
             return v
         },
         totalList: {
-            "remittanceRequestDate": '',
             "remittanceDueDate": '',
+            "remittanceRequestDate": '',
             "supplyAmount": '=SUM(C1:C100)',
             "tax": '=SUM(D1:D100)',
             "total": '=SUM(E1:E100)',
@@ -733,6 +733,7 @@ export const ORInfo = {
         type: 'write'
     },
     defaultInfo: {
+        region: 'foreign',                            // 해외송금 여부
         writtenDate: moment().format('YYYY-MM-DD'),   // 작성일
         createdId: null,                              // 작성자 id
         createdBy: null,                              // 작성자 이름
