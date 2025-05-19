@@ -323,7 +323,6 @@ function OrderRead({getPropertyId, getCopyPage}: any) {
                             title="삭제하시겠습니까?"
                             onConfirm={deleteList}
                             icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
-
                             <Button type={'primary'} danger size={'small'} style={{fontSize: 11}}>
                                 <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>
                             </Button>

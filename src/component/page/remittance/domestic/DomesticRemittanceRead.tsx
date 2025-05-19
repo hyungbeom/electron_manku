@@ -56,15 +56,10 @@ export default function DomesticRemittanceRead({getPropertyId, getCopyPage}: any
 
     function formatManager(list = []) {
         if (!list?.length) return;
-
         const formatList = list.map(item => {
             const findManager = adminList.find(admin => admin.adminId === item.managerAdminId);
-            return {
-                ...item,
-                managerAdminName: findManager?.name || ''
-            };
+            return { ...item, managerAdminName: findManager?.name || '' };
         });
-
         return formatList;
     }
 

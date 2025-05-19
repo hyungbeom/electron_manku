@@ -87,9 +87,9 @@ function SourceRead({getPropertyId, getCopyPage}: any) {
                     message.warn(v?.data?.message);
                 }
             })
-                .finally(() => {
-                    setLoading(false);
-                });
+            .finally(() => {
+                setLoading(false);
+            });
         }
     }
 

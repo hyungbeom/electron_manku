@@ -1,12 +1,13 @@
 import React, {memo} from "react";
-import {DRInfo} from "@/utils/column/ProjectInfo";
+import {DRInfo, ORInfo} from "@/utils/column/ProjectInfo";
 import Table from "@/component/util/Table";
 import _ from "lodash";
 
 function Remittance({
                         tableRef = null,
                         tableData = [],
-                        setInfo = null}) {
+                        setInfo = null,
+                        type = '' }) {
 
     function partialRemittance (sumSupplyAmount) {
         const partialRemittance = Number(sumSupplyAmount);
@@ -25,8 +26,11 @@ function Remittance({
     }
 
     return (
-            <Table data={tableData} column={DRInfo['write']} funcButtons={['print']} ref={tableRef}
-                   type={'domestic_remittance_write_column'} customFunc={partialRemittance} />
+        type == ''
+            ? <Table data={tableData} column={DRInfo['write']} funcButtons={['print']} ref={tableRef}
+                    type={'domestic_remittance_write_column'} customFunc={partialRemittance} />
+            : <Table data={tableData} column={ORInfo['write']} funcButtons={['print']} ref={tableRef}
+                     type={'overseas_remittance_write_column'} customFunc={partialRemittance} />
     );
 }
 

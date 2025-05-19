@@ -1,12 +1,12 @@
 import React, {useEffect, useRef, useState} from "react";
-import {domesticRemittanceSearchInitial} from "@/utils/initialList";
+import {overseasRemittanceSearchInitial} from "@/utils/initialList";
 import {getData} from "@/manage/function/api";
 import moment from "moment";
 import {BoxCard, inputForm, MainCard, radioForm, rangePickerForm, selectBoxForm} from "@/utils/commonForm";
 import _ from "lodash";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import TableGrid from "@/component/tableGrid";
-import {tableCodeDomesticRemittanceReadColumn} from "@/utils/columnList";
+import {tableCodeOverseasRemittanceReadColumn} from "@/utils/columnList";
 import Button from "antd/lib/button";
 import {
     DeleteOutlined,
@@ -31,7 +31,7 @@ export default function OverseasRemittanceRead({getPropertyId, getCopyPage}: any
     const gridRef = useRef(null);
 
     const getSavedSizes = () => {
-        const savedSizes = localStorage.getItem('domestic_remittance_read');
+        const savedSizes = localStorage.getItem('overseas_remittance_read');
         return savedSizes ? JSON.parse(savedSizes) : [25, 25, 25, 5]; // 기본값 [50, 50, 50]
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
@@ -40,7 +40,7 @@ export default function OverseasRemittanceRead({getPropertyId, getCopyPage}: any
     const [mini, setMini] = useState(true);
 
     const { adminList } = useAppSelector((state) => state.user);
-    const getRemittanceSearchInit = () => _.cloneDeep(domesticRemittanceSearchInitial);
+    const getRemittanceSearchInit = () => _.cloneDeep(overseasRemittanceSearchInitial);
     const [info, setInfo] = useState(getRemittanceSearchInit());
 
     const [totalRow, setTotalRow] = useState(0);
@@ -56,15 +56,10 @@ export default function OverseasRemittanceRead({getPropertyId, getCopyPage}: any
 
     function formatManager(list = []) {
         if (!list?.length) return;
-
         const formatList = list.map(item => {
             const findManager = adminList.find(admin => admin.adminId === item.managerAdminId);
-            return {
-                ...item,
-                managerAdminName: findManager?.name || ''
-            };
+            return { ...item, managerAdminName: findManager?.name || '' };
         });
-
         return formatList;
     }
 
@@ -129,7 +124,7 @@ export default function OverseasRemittanceRead({getPropertyId, getCopyPage}: any
      * 송금 > 국내송금 조회
      */
     async function moveRouter() {
-        getCopyPage('domestic_remittance_write', {})
+        getCopyPage('overseas_remittance_write', {})
     }
 
     /**
@@ -146,7 +141,7 @@ export default function OverseasRemittanceRead({getPropertyId, getCopyPage}: any
         await getData.post('remittance/deleteRemittances', {deleteRemittanceIdList: filterList}).then(v => {
             if (v.data.code === 1) {
                 searchInfo(true);
-                notificationAlert('success', '🗑️ 국내송금 삭제완료',
+                notificationAlert('success', '🗑️ 해외송금 삭제완료',
                     <>
                         <div>선택한 송금내역이 삭제되었습니다.</div>
                         <div>삭제일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
@@ -175,15 +170,15 @@ export default function OverseasRemittanceRead({getPropertyId, getCopyPage}: any
         });
     }
 
-    return <Spin spinning={loading} tip={'국내 송금 조회중...'}>
-        <ReceiveComponent componentName={'domestic_remittance_read'} searchInfo={searchInfo}/>
-        <PanelSizeUtil groupRef={groupRef} storage={'domestic_remittance_read'}/>
+    return <Spin spinning={loading} tip={'해외 송금 조회중...'}>
+        <ReceiveComponent componentName={'overseas_remittance_read'} searchInfo={searchInfo}/>
+        <PanelSizeUtil groupRef={groupRef} storage={'overseas_remittance_read'}/>
         <div style={{
             display: 'grid',
             gridTemplateRows: `${mini ? '270px' : '65px'} calc(100vh - ${mini ? 400 : 195}px)`,
             columnGap: 5
         }}>
-            <MainCard title={'국내송금 조회'} list={[
+            <MainCard title={'해외송금 조회'} list={[
                 {name: <div><SearchOutlined style={{paddingRight: 8}}/>조회</div>, func: searchInfo, type: 'primary'},
                 {
                     name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>,
@@ -284,7 +279,7 @@ export default function OverseasRemittanceRead({getPropertyId, getCopyPage}: any
                         <Panel defaultSize={sizes[2]} minSize={5}>
                             <BoxCard title={''}>
                                 {radioForm({
-                                    title: '계산서 발행여부',
+                                    title: '증빙서류 여부',
                                     id: 'searchIsInvoice',
                                     onChange: onChange,
                                     data: info,
@@ -343,8 +338,8 @@ export default function OverseasRemittanceRead({getPropertyId, getCopyPage}: any
                totalRow={totalRow}
                getPropertyId={getPropertyId}
                gridRef={gridRef}
-               columns={tableCodeDomesticRemittanceReadColumn}
-               customType={'DRRead'}
+               columns={tableCodeOverseasRemittanceReadColumn}
+               customType={'ORRead'}
                onGridReady={onGridReady}
                funcButtons={['agPrint']}
             />

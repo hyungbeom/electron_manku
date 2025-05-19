@@ -2248,6 +2248,7 @@ export const tableCodeDomesticRemittanceReadColumn = [
         pinned: 'right'
     }
 ];
+//
 
 // 해외송금 조회 테이블 컬럼
 export const tableCodeOverseasRemittanceReadColumn = [
@@ -2306,7 +2307,7 @@ export const tableCodeOverseasRemittanceReadColumn = [
         maxWidth: 80,
     },
     {
-        headerName: '계산서 발행 여부',
+        headerName: '증빙서류 여부',
         field: 'invoiceStatus',
         maxWidth: 90,
     },
@@ -2334,6 +2335,91 @@ export const tableCodeOverseasRemittanceReadColumn = [
     }
 ];
 //
+
+// 세금계산서 발행 조회 테이블 컬럼
+export const tableTaxInvoiceReadColumn = [
+    {
+        headerName: "", // 컬럼 제목
+        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
+        checkboxSelection: true, // 각 행에 체크박스 추가
+        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
+        cellStyle: {textAlign: "center"}, // 스타일 설정
+        maxWidth: 60, // 컬럼 너비
+        pinned: "left", // 왼쪽에 고정
+        filter: false
+    },
+    {
+        headerName: 'Inquiry No.',
+        field: 'documentNumberFull',
+        pinned: 'left',
+        // valueGetter: (params) => {
+        //     const currentRowIndex = params.node.rowIndex;
+        //     const currentValue = params.data.remittanceId;
+        //     const previousRowNode = params.api.getDisplayedRowAtIndex(currentRowIndex - 1);
+        //
+        //     // 이전 행의 데이터가 없거나 값이 다르면 현재 값을 유지
+        //     if (!previousRowNode || previousRowNode.data.remittanceId !== currentValue) {
+        //         return params.data.documentNumbers;
+        //     }
+        //     // 중복되면 null 반환
+        //     return null;
+        // },
+        // cellRenderer: (params) => {
+        //     // valueGetter에서 null로 설정된 값은 빈칸으로 표시
+        //     return params.value !== null ? params.value : '';
+        // },
+    },
+    {
+        headerName: '항목번호',
+        field: 'selectOrderList',
+        pinned: 'left',
+        valueGetter: (params) => {
+            try {
+                return JSON.parse(params.data.selectOrderList).join(', ');
+            } catch (e) {
+                return '';
+            }
+        }
+    },
+    {
+        headerName: '발행지정일자',
+        field: 'invoiceDueDate',
+        maxWidth: 120,
+    },
+    {
+        headerName: '프로젝트 No.',
+        field: '',
+    },
+    {
+        headerName: '고객사명',
+        field: 'customerName',
+    },
+    {
+        headerName: '계산서 발행 여부',
+        field: 'invoiceStatus',
+        maxWidth: 90,
+    },
+    {
+        headerName: '공급가액',
+        field: 'supplyAmount',
+        valueFormatter: params => parseFloat(params.data.supplyAmount)?.toLocaleString(),
+    },
+    {
+        headerName: '부가세',
+        field: 'net',
+        valueFormatter: params => Math.round(parseFloat(params.data.supplyAmount) * 0.1 * 10 / 10)?.toLocaleString(),
+        cellEditor: 'agNumberCellEditor',
+    },
+    {
+        headerName: '합계',
+        field: 'total',
+        valueFormatter: params => (parseFloat(params.data.supplyAmount) + Math.round(params.data.supplyAmount * 0.1 * 10 / 10))?.toLocaleString(),
+    },
+    {
+        headerName: '비고',
+        field: 'remarks',
+    }
+];
 
 
 // ============================================== 데이터 관리 ===============================================
@@ -3043,7 +3129,11 @@ export const tableSourceUpdateColumns = [
         headerName: "", // 컬럼 제목
         valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
         headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
-        checkboxSelection: true, // 각 행에 체크박스 추가
+        // checkboxSelection: true, // 각 행에 체크박스 추가
+        checkboxSelection: (params) => {
+            const docNum = String(params.data?.documentNumber || '').toUpperCase();
+            return !docNum.startsWith('STO');
+        },
         cellStyle: {textAlign: "center"}, // 스타일 설정
         maxWidth: 60, // 컬럼 너비
         pinned: "left", // 왼쪽에 고정
@@ -3087,6 +3177,10 @@ export const tableSourceUpdateColumns = [
         headerName: '위치',
         field: 'location',
     },
+    {
+        headerName: '비고',
+        field: 'remarks',
+    }
 ]
 
 export const subTableCodeReadColumns = [

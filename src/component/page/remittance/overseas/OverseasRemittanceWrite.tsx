@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import {domesticRemittanceInitial, ModalInitList} from "@/utils/initialList";
+import {ModalInitList} from "@/utils/initialList";
 import {BoxCard, datePickerForm, inputForm, MainCard, radioForm, textAreaForm, TopBoxCard} from "@/utils/commonForm";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import _ from "lodash";
@@ -11,7 +11,7 @@ import {FolderOpenOutlined, RadiusSettingOutlined, SaveOutlined} from "@ant-desi
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
-import {DRInfo} from "@/utils/column/ProjectInfo";
+import {ORInfo} from "@/utils/column/ProjectInfo";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import moment from "moment";
 import Tabs from "antd/lib/tabs";
@@ -33,14 +33,14 @@ export default function OverseasRemittanceWrite({copyPageInfo, getPropertyId}: a
     const fileRef = useRef(null);
 
     const getSavedSizes = () => {
-        const savedSizes = localStorage.getItem('domestic_remittance_write');
+        const savedSizes = localStorage.getItem('overseas_remittance_write');
         return savedSizes ? JSON.parse(savedSizes) : [20, 20, 25, 20, 5]; // 기본값 [50, 50, 50]
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
     const [loading, setLoading] = useState(false);
-    const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
+    const [mini, setMini] = useState(true);
 
     const { userInfo, adminList } = useAppSelector((state) => state.user);
     const adminParams = {
@@ -51,7 +51,7 @@ export default function OverseasRemittanceWrite({copyPageInfo, getPropertyId}: a
         managerAdminEmail: userInfo['email']
     }
     const getRemittanceInit = () => {
-        const copyInit = _.cloneDeep(DRInfo['defaultInfo'])
+        const copyInit = _.cloneDeep(ORInfo['defaultInfo'])
         return {
             ...copyInit,
             ...adminParams,
@@ -83,10 +83,10 @@ export default function OverseasRemittanceWrite({copyPageInfo, getPropertyId}: a
 
         if (!isEmptyObj(copyPageInfo)) {
             // copyPageInfo 가 없을시
-            setSendRemittanceList(commonFunc.repeatObject(DRInfo['write']['defaultData'], 100))
+            setSendRemittanceList(commonFunc.repeatObject(ORInfo['write']['defaultData'], 100))
         } else {
-            // // copyPageInfo 가 있을시(==>보통 수정페이지에서 복제시)
-            // // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting
+            // copyPageInfo 가 있을시(==>보통 수정페이지에서 복제시)
+            // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting
             // setInfo({
             //     ...getRemittanceInit(),
             //     ...copyPageInfo,
@@ -103,23 +103,17 @@ export default function OverseasRemittanceWrite({copyPageInfo, getPropertyId}: a
 
     /**
      * @description 등록 페이지 > 저장 버튼
-     * 송금 > 국내송금 등록
+     * 송금 > 해외송금 등록
      */
     async function saveFunc() {
         if (!selectOrderList?.length) return message.warn('발주서 데이터가 1개 이상이여야 합니다.');
         const tableList = tableRef.current?.getSourceData();
         if (!tableList?.length) return message.warn('송금 데이터가 1개 이상이여야 합니다.');
-        const requiredFields = { remittanceRequestDate: '송금 요청 일자', supplyAmount: '공급가액', sendStatus: '송금 여부' };
+        const requiredFields = { remittanceRequestDate: '송금 요청 일자', supplyAmount: '공급가액', sendStatus: '송금 상태' };
         const filterTableList = tableList.slice(0, -1).filter(row =>
             Object.keys(requiredFields).some(field => !!row[field])
         );
-        // const isValidValue = (value: any) =>
-        //     value !== null && value !== undefined &&
-        //     !(typeof value === 'string' && value.trim().startsWith('='));
-        //
-        // const filterTableList = tableList.slice(0, -1).filter(row =>
-        //     Object.keys(requiredFields).some(field => isValidValue(row[field]))
-        // );
+
         if (!filterTableList?.length) return message.warn('송금 데이터가 1개 이상이여야 합니다.');
         for (const [field, label] of Object.entries(requiredFields)) {
             const missing = filterTableList.filter(row => !row[field]);
@@ -154,15 +148,15 @@ export default function OverseasRemittanceWrite({copyPageInfo, getPropertyId}: a
         await saveRemittance({data: formData})
             .then(v => {
                 if (v?.data?.code === 1) {
-                    window.postMessage({message: 'reload', target: 'domestic_remittance_read'}, window.location.origin);
-                    notificationAlert('success', '💾 국내 송금 등록완료',
+                    window.postMessage({message: 'reload', target: 'overseas_remittance_read'}, window.location.origin);
+                    notificationAlert('success', '💾 해외 송금 등록완료',
                         <>
                             <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                         </>
                         , null, null, 2
                     )
                     clearAll();
-                    getPropertyId('domestic_remittance_update', v?.data?.entity?.remittanceId)
+                    getPropertyId('overseas_remittance_update', v?.data?.entity?.remittanceId)
                 } else {
                     console.warn(v?.data?.message);
                     notificationAlert('error', '⚠️ 작업실패',
@@ -183,7 +177,7 @@ export default function OverseasRemittanceWrite({copyPageInfo, getPropertyId}: a
 
     /**
      * @description 등록 페이지 > 초기화 버튼
-     * 송금 > 국내송금 등록
+     * 송금 > 해외송금 등록
      */
     function clearAll() {
         setLoading(true);
@@ -196,14 +190,14 @@ export default function OverseasRemittanceWrite({copyPageInfo, getPropertyId}: a
         setFileList([]);
 
         // function calcData(sourceData) {
-        //     const keyOrder = Object.keys(DRInfo['write']['defaultData']);
+        //     const keyOrder = Object.keys(ORInfo['write']['defaultData']);
         //     return sourceData
         //         .map((item) => keyOrder.reduce((acc, key) => ({...acc, [key]: item[key] ?? ""}), {}))
-        //         .map(DRInfo['write']['excelExpert'])
-        //         .concat(DRInfo['write']['totalList']); // `push` 대신 `concat` 사용
+        //         .map(ORInfo['write']['excelExpert'])
+        //         .concat(ORInfo['write']['totalList']); // `push` 대신 `concat` 사용
         // }
-        // setSendRemittanceList(calcData(commonFunc.repeatObject(DRInfo['write']['defaultData'], 100)))
-        setSendRemittanceList(commonFunc.repeatObject(DRInfo['write']['defaultData'], 100))
+        // setSendRemittanceList(calcData(commonFunc.repeatObject(ORInfo['write']['defaultData'], 100)))
+        setSendRemittanceList(commonFunc.repeatObject(ORInfo['write']['defaultData'], 100))
 
         setTabNumb('Order');
 
@@ -212,7 +206,7 @@ export default function OverseasRemittanceWrite({copyPageInfo, getPropertyId}: a
 
     /**
      * @description 등록 페이지 > 하단 탭 관련
-     * 송금 > 국내송금 등록
+     * 송금 > 해외송금 등록
      */
     const [tabNumb, setTabNumb] = useState('Order');
     const items: TabsProps['items'] = [
@@ -233,7 +227,7 @@ export default function OverseasRemittanceWrite({copyPageInfo, getPropertyId}: a
             children: (
                 <div style={{height: 330}}>
                     <Remittance key={tabNumb} tableRef={tableRef} tableData={sendRemittanceList}
-                                setInfo={setInfo}/>
+                                setInfo={setInfo} type={'foreign'}/>
                 </div>
             )
         }
@@ -250,7 +244,7 @@ export default function OverseasRemittanceWrite({copyPageInfo, getPropertyId}: a
 
     /**
      * @description 등록 페이지 > 조회 테이블 발주서 항목 더블클릭
-     * 송금 > 국내송금 등록
+     * 송금 > 해외송금 등록
      * 하단의 선택 발주서 리스크 항목 더블클릭시 발주서 상세 조회 > folderId, 파일 리스트 조회
      * @param orderDetail
      */
@@ -278,7 +272,7 @@ export default function OverseasRemittanceWrite({copyPageInfo, getPropertyId}: a
 
     /**
      * @description 등록 페이지 > Inquiry No. 검색 버튼 > 발주서 조회 Modal
-     * 송금 > 국내송금 등록
+     * 송금 > 해외송금 등록
      * 발주서 조회 Modal
      * @param e
      */
@@ -319,7 +313,7 @@ export default function OverseasRemittanceWrite({copyPageInfo, getPropertyId}: a
             let partialRemittance = Number(String(info.partialRemittance || '0').replace(/,/g, ''));
 
             // 송금 리스크가 없으면 첫 데이터 생성
-            const requiredFields = { remittanceRequestDate: '송금 요청 일자', supplyAmount: '공급가액', sendStatus: '송금 여부' };
+            const requiredFields = { remittanceRequestDate: '송금 요청 일자', supplyAmount: '공급가액', sendStatus: '송금 상태' };
             const filterTableList = sendRemittanceList.filter(row =>
                 Object.keys(requiredFields).every(field => !!row[field])
             );
@@ -360,7 +354,7 @@ export default function OverseasRemittanceWrite({copyPageInfo, getPropertyId}: a
     }
 
     return <Spin spinning={loading}>
-        <PanelSizeUtil groupRef={groupRef} storage={'domestic_remittance_write'}/>
+        <PanelSizeUtil groupRef={groupRef} storage={'overseas_remittance_write'}/>
         <SearchInfoModal info={selectOrderList} infoRef={infoRef} setInfo={setSelectOrderList}
                              open={isModalOpen}
                              setIsModalOpen={setIsModalOpen} returnFunc={modalSelected}/>
@@ -371,7 +365,7 @@ export default function OverseasRemittanceWrite({copyPageInfo, getPropertyId}: a
                 // overflowY: 'hidden',
                 rowGap: 10,
             }}>
-                <MainCard title={'국내 송금 등록'} list={[
+                <MainCard title={'해외 송금 등록'} list={[
                     {name: <div><SaveOutlined style={{paddingRight: 8}}/>저장</div>, func: saveFunc, type: 'primary'},
                     {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'}
                 ]} mini={mini} setMini={setMini}>
@@ -462,7 +456,6 @@ export default function OverseasRemittanceWrite({copyPageInfo, getPropertyId}: a
                                                        })
                                                    }}
                                                    onBlur={(e) => {
-                                                       console.log('!!!!')
                                                        setInfo(prev => {
                                                            const totalAmount = Number((e.target.value || '0').toString().replace(/,/g, ''));
                                                            const partialRemittance = Number((prev.partialRemittance || '0').toString().replace(/,/g, ''));
@@ -492,11 +485,6 @@ export default function OverseasRemittanceWrite({copyPageInfo, getPropertyId}: a
                                         onChange: onChange,
                                         data: info,
                                     })}
-                                </BoxCard>
-                            </Panel>
-                            <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[2]} minSize={5}>
-                                <BoxCard title={'확인 정보'}>
                                     {radioForm({
                                         title: '부분 송금 진행 여부',
                                         id: 'partialRemittanceStatus',
@@ -508,7 +496,12 @@ export default function OverseasRemittanceWrite({copyPageInfo, getPropertyId}: a
                                             {value: '', title: '해당없음'}
                                         ]
                                     })}
-                                    {textAreaForm({title: '비고란', rows: 10, id: 'remarks', onChange: onChange, data: info})}
+                                </BoxCard>
+                            </Panel>
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[2]} minSize={5}>
+                                <BoxCard title={'확인 정보'}>
+                                    {textAreaForm({title: '비고란', rows: 13, id: 'remarks', onChange: onChange, data: info})}
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>

@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import {domesticRemittanceInitial, ModalInitList} from "@/utils/initialList";
+import {ModalInitList} from "@/utils/initialList";
 import {BoxCard, datePickerForm, inputForm, MainCard, radioForm, textAreaForm, TopBoxCard} from "@/utils/commonForm";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import _ from "lodash";
@@ -10,7 +10,6 @@ import SearchInfoModal from "@/component/SearchAgencyModal";
 import {DeleteOutlined, FolderOpenOutlined, FormOutlined} from "@ant-design/icons";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
-import {DRInfo} from "@/utils/column/ProjectInfo";
 import {getData} from "@/manage/function/api";
 import Tabs from "antd/lib/tabs";
 import message from "antd/lib/message";
@@ -21,6 +20,7 @@ import moment from "moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import Spin from "antd/lib/spin";
 import {Actions} from "flexlayout-react";
+import {ORInfo} from "@/utils/column/ProjectInfo";
 
 const listType = 'list';
 
@@ -33,7 +33,7 @@ export default function OverseasRemittanceUpdate({ updateKey, layoutRef }: any) 
     const tableRef = useRef(null);
 
     const getSavedSizes = () => {
-        const savedSizes = localStorage.getItem('domestic_remittance_update');
+        const savedSizes = localStorage.getItem('overseas_remittance_update');
         return savedSizes ? JSON.parse(savedSizes) : [20, 20, 25, 20, 5]; // 기본값 [50, 50, 50]
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
@@ -51,7 +51,7 @@ export default function OverseasRemittanceUpdate({ updateKey, layoutRef }: any) 
         managerAdminEmail: userInfo['email']
     }
     const getRemittanceInit = () => {
-        const copyInit = _.cloneDeep(DRInfo['defaultInfo'])
+        const copyInit = _.cloneDeep(ORInfo['defaultInfo'])
         return {
             ...copyInit,
             ...adminParams,
@@ -88,11 +88,11 @@ export default function OverseasRemittanceUpdate({ updateKey, layoutRef }: any) 
         .finally(() => {
             setLoading(false);
         });
-    }, [updateKey['domestic_remittance_update']])
+    }, [updateKey['overseas_remittance_update']])
 
     async function getDataInfo() {
         await getData.post('remittance/getRemittanceDetail', {
-            "remittanceId": updateKey['domestic_remittance_update']
+            "remittanceId": updateKey['overseas_remittance_update']
         }).then(v => {
             const { selectOrderList: garbageList, orderDetailList, remittanceDetail, ...restDetail } = v?.data?.entity;
 
@@ -100,8 +100,8 @@ export default function OverseasRemittanceUpdate({ updateKey, layoutRef }: any) 
             const findCreator = adminList.find(m => m.adminId === restDetail.createdId);
             const findManager = adminList.find(m => m.adminId === restDetail.managerAdminId);
 
-            // 송금내역 총액 계산
-            const remittance = remittanceDetail.reduce((sum, row) => sum + ((Number(row.supplyAmount) || 0) + (Number(row.tax) || 0)), 0);
+            // 부분송금액 (송금내역 총액) 계산
+            const partialRemittance = remittanceDetail.reduce((sum, row) => sum + ((Number(row.supplyAmount) || 0) + (Number(row.tax) || 0)), 0);
 
             // 발주서 날짜 정리
             const orderList = orderDetailList.map(v => ({ ...v, writtenDate: v.createdDate }));
@@ -112,10 +112,10 @@ export default function OverseasRemittanceUpdate({ updateKey, layoutRef }: any) 
                 writtenDate: moment(restDetail?.createdDate).format('YYYY-MM-DD'),
                 createdBy: findCreator?.name || '',
                 managerAdminName : findManager?.name || '',
-                partialRemittance: remittance.toLocaleString()
+                partialRemittance: partialRemittance.toLocaleString()
             })
             modalSelected(orderList);
-            const sendRemittanceList = [...remittanceDetail, ...commonFunc.repeatObject(DRInfo['write']['defaultData'], 100 - remittanceDetail?.length)];
+            const sendRemittanceList = [...remittanceDetail, ...commonFunc.repeatObject(ORInfo['write']['defaultData'], 100 - remittanceDetail?.length)];
             setSendRemittanceList(sendRemittanceList);
         });
     }
@@ -126,13 +126,13 @@ export default function OverseasRemittanceUpdate({ updateKey, layoutRef }: any) 
 
     /**
      * @description 수정 페이지 > 수정 버튼
-     * 송금 > 국내송금 수정
+     * 송금 > 해외송금 수정
      */
     async function saveFunc() {
         if (!selectOrderList?.length) return message.warn('발주서 데이터가 1개 이상이여야 합니다.');
         const tableList = tableRef.current?.getSourceData();
         if (!tableList?.length) return message.warn('송금 데이터가 1개 이상이여야 합니다.');
-        const requiredFields = { remittanceRequestDate: '송금 요청 일자', supplyAmount: '공급가액', sendStatus: '송금 여부' };
+        const requiredFields = { remittanceRequestDate: '송금 요청 일자', supplyAmount: '공급가액', sendStatus: '송금 상태' };
         const filterTableList = tableList.slice(0, -1).filter(row =>
             Object.keys(requiredFields).some(field => !!row[field])
         );
@@ -172,8 +172,8 @@ export default function OverseasRemittanceUpdate({ updateKey, layoutRef }: any) 
         await updateRemittance({data: formData})
             .then(v => {
                 if (v?.data?.code === 1) {
-                    window.postMessage({message: 'reload', target: 'domestic_remittance_read'}, window.location.origin);
-                    notificationAlert('success', '💾 국내 송금 수정완료',
+                    window.postMessage({message: 'reload', target: 'overseas_remittance_read'}, window.location.origin);
+                    notificationAlert('success', '💾 해외 송금 수정완료',
                         <>
                             <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                         </>
@@ -200,15 +200,15 @@ export default function OverseasRemittanceUpdate({ updateKey, layoutRef }: any) 
 
     /**
      * @description 수정 페이지 > 삭제 버튼
-     * 송금 > 국내송금 수정
+     * 송금 > 해외송금 수정
      */
     function deleteFunc() {
         setLoading(true);
-        getData.post('remittance/deleteRemittance', {remittanceId: updateKey['domestic_remittance_update']}).then(v => {
+        getData.post('remittance/deleteRemittance', {remittanceId: updateKey['overseas_remittance_update']}).then(v => {
             const {code, message} = v.data;
             if (code === 1) {
-                window.postMessage({message: 'reload', target: 'domestic_remittance_read'}, window.location.origin);
-                notificationAlert('success', '🗑️ 국내송금 삭제완료',
+                window.postMessage({message: 'reload', target: 'overseas_remittance_read'}, window.location.origin);
+                notificationAlert('success', '🗑️ 해외송금 삭제완료',
                     <>
                         <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
@@ -216,7 +216,7 @@ export default function OverseasRemittanceUpdate({ updateKey, layoutRef }: any) 
                 )
                 const {model} = layoutRef.current.props;
                 const targetNode = model.getRoot().getChildren()[0]?.getChildren()
-                    .find((node: any) => node.getType() === "tab" && node.getComponent() === 'domestic_remittance_update');
+                    .find((node: any) => node.getType() === "tab" && node.getComponent() === 'overseas_remittance_update');
                 if (targetNode) {
                     model.doAction(Actions.deleteTab(targetNode.getId())); // ✅ 기존 로직 유지
                 }
@@ -244,7 +244,7 @@ export default function OverseasRemittanceUpdate({ updateKey, layoutRef }: any) 
 
     /**
      * @description 수정 페이지 > 하단 탭 관련
-     * 송금 > 국내송금 수정
+     * 송금 > 해외송금 수정
      */
     const [tabNumb, setTabNumb] = useState('History');
     const items: TabsProps['items'] = [
@@ -265,7 +265,7 @@ export default function OverseasRemittanceUpdate({ updateKey, layoutRef }: any) 
             children: (
                 <div style={{height: 330}}>
                     <Remittance key={tabNumb} tableRef={tableRef} tableData={sendRemittanceList}
-                                setInfo={setInfo}/>
+                                setInfo={setInfo} type={'foreign'}/>
                 </div>
             )
         }
@@ -282,7 +282,7 @@ export default function OverseasRemittanceUpdate({ updateKey, layoutRef }: any) 
 
     /**
      * @description 수정 페이지 > 조회 테이블 발주서 항목 더블클릭
-     * 송금 > 국내송금 수정
+     * 송금 > 해외송금 수정
      * 하단의 선택 발주서 리스크 항목 더블클릭시 발주서 상세 조회 > folderId, 파일 리스트 조회
      * @param orderDetail
      */
@@ -310,7 +310,7 @@ export default function OverseasRemittanceUpdate({ updateKey, layoutRef }: any) 
 
     /**
      * @description 수정 페이지 > Inquiry No. 검색 버튼 > 발주서 조회 Modal
-     * 송금 > 국내송금 수정
+     * 송금 > 해외송금 수정
      * 발주서 조회 Modal
      * @param e
      */
@@ -353,6 +353,10 @@ export default function OverseasRemittanceUpdate({ updateKey, layoutRef }: any) 
             // 잔액 계산
             const balance= totalAmount - partialRemittance;
 
+            console.log(totalAmount, '총액 :::')
+            console.log(partialRemittance, '부분송금액 :::')
+            console.log(balance, '합계 :::')
+
             setInfo(prevInfo => {
                 return {
                     ...prevInfo,
@@ -370,7 +374,7 @@ export default function OverseasRemittanceUpdate({ updateKey, layoutRef }: any) 
 
     return <Spin spinning={loading}>
         {/*<div style={{height: 'calc(100vh - 90px)'}}>*/}
-            <PanelSizeUtil groupRef={groupRef} storage={'domestic_remittance_update'}/>
+            <PanelSizeUtil groupRef={groupRef} storage={'overseas_remittance_update'}/>
             <SearchInfoModal info={selectOrderList} infoRef={infoRef} setInfo={setSelectOrderList}
                              open={isModalOpen}
                              setIsModalOpen={setIsModalOpen} returnFunc={modalSelected}/>
@@ -381,7 +385,7 @@ export default function OverseasRemittanceUpdate({ updateKey, layoutRef }: any) 
                 // overflowY: 'hidden',
                 rowGap: 10,
             }}>
-                <MainCard title={'국내 송금 수정'} list={[
+                <MainCard title={'해외 송금 수정'} list={[
                     {name: <div><FormOutlined style={{paddingRight: 8}}/>수정</div>, func: saveFunc, type: 'primary'},
                     {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: deleteFunc, type: 'delete'}
                 ]} mini={mini} setMini={setMini}>
@@ -500,11 +504,6 @@ export default function OverseasRemittanceUpdate({ updateKey, layoutRef }: any) 
                                         onChange: onChange,
                                         data: info,
                                     })}
-                                </BoxCard>
-                            </Panel>
-                            <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[2]} minSize={5}>
-                                <BoxCard title={'확인 정보'}>
                                     {radioForm({
                                         title: '부분 송금 진행 여부',
                                         id: 'partialRemittanceStatus',
@@ -516,7 +515,12 @@ export default function OverseasRemittanceUpdate({ updateKey, layoutRef }: any) 
                                             {value: '', title: '해당없음'}
                                         ]
                                     })}
-                                    {textAreaForm({title: '비고란', rows: 10, id: 'remarks', onChange: onChange, data: info})}
+                                </BoxCard>
+                            </Panel>
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[2]} minSize={5}>
+                                <BoxCard title={'확인 정보'}>
+                                    {textAreaForm({title: '비고란', rows: 13, id: 'remarks', onChange: onChange, data: info})}
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
@@ -539,7 +543,6 @@ export default function OverseasRemittanceUpdate({ updateKey, layoutRef }: any) 
                                                          info={orderInfo} type={'remittance'} key={orderInfo?.folderId}/>
                                     </div>
                                 </BoxCard>
-
 
                             </Panel>
                             <PanelResizeHandle/>

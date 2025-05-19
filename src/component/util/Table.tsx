@@ -68,7 +68,7 @@ const Table = forwardRef(({
 
 
     const afterRenderer = (td, row, col, prop, value) => {
-        if (["unitPrice", "total", 'net', 'totalNet', "purchasePrice", "totalPurchase", 'quantity', 'receivedQuantity', 'unreceivedQuantity','supplyAmount', 'tax'].includes(prop)) {
+        if (["unitPrice", "total", 'net', 'totalNet', "purchasePrice", "totalPurchase", 'quantity', 'receivedQuantity', 'unreceivedQuantity','supplyAmount', 'tax', 'exchange', 'fee'].includes(prop)) {
 
             td.style.textAlign = "right"; // 우측 정렬
             td.style.color = "black"; // 텍스트 굵게
@@ -77,7 +77,7 @@ const Table = forwardRef(({
                 td.style.fontWeight = "bold"; // 텍스트 굵게
             }
 
-            if (['unitPrice', 'total', 'net', 'totalNet', 'purchasePrice', 'totalPurchase', 'supplyAmount', 'tax'].includes(prop)) {
+            if (['unitPrice', 'total', 'net', 'totalNet', 'purchasePrice', 'totalPurchase', 'supplyAmount', 'tax', 'exchange', 'fee'].includes(prop)) {
 
                 const rowData = hotRef.current.hotInstance.getSourceDataAtRow(row);
                 const isForeignCurrency = ['USD', 'EUR', 'JPY', 'GBP'].includes(rowData?.currencyUnit ?? rowData?.currency);
@@ -87,15 +87,15 @@ const Table = forwardRef(({
                     td.textContent = ""; // 🔥 0 또는 NaN이면 빈 문자열 적용
                 } else {
                     // 견적서, 발주서 - 매출 단가, 매출 총액은 KRW 고정으로 소수점 처리 안함
-                    if (['net', 'totalNet'].includes(prop)) {
-                        td.textContent = value?.toLocaleString(); // 🔢 숫자는 쉼표 추가
+                    if (['net', 'totalNet', 'exchange', 'fee'].includes(prop)) {
+                        td.textContent = parsedValue?.toLocaleString(); // 🔢 숫자는 쉼표 추가
                     } else {
                         // KRW 화폐까 아니면 소수점 2자리까지
                         if (isForeignCurrency) {
                             const truncated = Math.floor(parseFloat(value) * 100) / 100;
                             td.textContent = truncated.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                         } else {
-                            td.textContent = value?.toLocaleString(); // 🔢 숫자는 쉼표 추가
+                            td.textContent = parsedValue?.toLocaleString(); // 🔢 숫자는 쉼표 추가
                         }
                     }
                 }
@@ -150,7 +150,7 @@ const Table = forwardRef(({
                 }
             });
             // 송금 등록시 '공급가액' 총합 받아서 customFunc로 넘김
-            if (type === 'domestic_remittance_write_column') {
+            if (type === 'domestic_remittance_write_column' || type === 'overseas_remittance_write_column') {
                 const lastRow = hotRef.current.hotInstance.countRows() - 1;
                 const sum = hotRef.current.hotInstance.getDataAtCell(lastRow, 4) // 공급가액 셀
                 customFunc(sum);
@@ -214,6 +214,9 @@ const Table = forwardRef(({
                 hotRef.current.hotInstance.setDataAtCell(coords.row, coords.col, "요청");
             }
             if (colName === '계산서 발행 여부') {
+                hotRef.current.hotInstance.setDataAtCell(coords.row, coords.col, "O");
+            }
+            if (colName === '증빙서류 여부') {
                 hotRef.current.hotInstance.setDataAtCell(coords.row, coords.col, "O");
             }
         }
