@@ -83,6 +83,7 @@ export const rfqWriteInitial = {
 
 // 송금 > 국내송금 조회 > 검색 초기값 정보
 export const domesticRemittanceSearchInitial = {
+    "searchRegion": 'domestic',            // 국내송금 flag
     "searchRequestDate": [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
     "searchRequestStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),   // 송금지정일자 검색 시작일
     "searchRequestEndDate": moment().format('YYYY-MM-DD'),                          // 송금지정일자 검색 종료일
