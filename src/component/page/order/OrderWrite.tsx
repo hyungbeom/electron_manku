@@ -163,6 +163,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                             }).then(src => {
                                 const manager = estimateDetail?.managerAdminId;
                                 const findManager = memberList.find(v => v.adminId === manager)
+                                console.log(estimateDetail,'estimateDetail')
                                 setInfo({
                                     ...getOrderInit(),
                                     ...estimateDetail,
@@ -447,7 +448,12 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                 key: validate['documentNumberFull']
                             })}
                             {inputForm({title: '고객사발주서 No.', id: 'yourPoNo', onChange: onChange, data: info})}
-                            {inputForm({title: '프로젝트 제목', id: 'projectTitle', onChange: onChange, data: info})}
+                            {inputForm({
+                                title: 'Project No.',
+                                id: 'rfqNo',
+                                onChange: onChange,
+                                data: info
+                            })}
                         </TopBoxCard>
                         <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
                             <Panel defaultSize={sizes[0]} minSize={5}>

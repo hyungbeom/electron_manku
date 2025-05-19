@@ -513,8 +513,13 @@ function EstimateUpdate({
                                     disabled: true,
                                     data: info
                                 })}
-                                {inputForm({title: 'RFQ No.', id: 'rfqNo', onChange: onChange, data: info})}
-                                {inputForm({title: '프로젝트 제목', id: 'projectTitle', onChange: onChange, data: info})}
+                                {inputForm({
+                                    title: 'Project No.',
+                                    id: 'rfqNo',
+                                    onChange: onChange,
+                                    data: info
+                                })}
+
                             </TopBoxCard>
 
                             <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>

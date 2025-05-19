@@ -459,7 +459,12 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
                             {inputForm({title: '만쿠견적서 No.', id: 'ourPoNo', disabled: true, data:info})}
                             {inputForm({title: '만쿠발주서 No.', id: 'documentNumberFull', disabled: true, data:info})}
                             {inputForm({title: '고객사발주서 No.', id: 'yourPoNo', onChange: onChange, data: info})}
-                            {inputForm({title: '프로젝트 제목', id: 'projectTitle', onChange: onChange, data: info})}
+                            {inputForm({
+                                title: 'Project No.',
+                                id: 'rfqNo',
+                                onChange: onChange,
+                                data: info
+                            })}
                         </TopBoxCard>
                         <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
                             <Panel defaultSize={sizes[0]} minSize={5}>

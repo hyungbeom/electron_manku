@@ -57,7 +57,7 @@ function EstimateRead({getPropertyId, getCopyPage,}: any) {
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('estimate_read');
-        return savedSizes ? JSON.parse(savedSizes) : [25, 25, 25, 5]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [25, 25, 25, 25]; // 기본값 [50, 50, 50]
     };
 
 
@@ -286,6 +286,17 @@ function EstimateRead({getPropertyId, getCopyPage,}: any) {
                                         })}
                                         {inputForm({
                                             title: 'Model', id: 'searchModel',
+                                            onChange: onChange,
+                                            handleKeyPress: handleKeyPress,
+                                            data: info
+                                        })}
+                                    </BoxCard>
+                                </Panel>
+                                <PanelResizeHandle/>
+                                <Panel defaultSize={sizes[2]} minSize={5}>
+                                    <BoxCard title={''}>
+                                        {inputForm({
+                                            title: 'Project No.', id: 'searchRfqNo',
                                             onChange: onChange,
                                             handleKeyPress: handleKeyPress,
                                             data: info

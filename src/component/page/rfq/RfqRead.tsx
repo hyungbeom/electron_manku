@@ -58,7 +58,7 @@ function RfqRead({getPropertyId, getCopyPage}: any) {
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('rfq_read');
-        return savedSizes ? JSON.parse(savedSizes) : [25, 25, 25, 5]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [25, 25, 25, 25]; // 기본값 [50, 50, 50]
     };
 
 
@@ -82,8 +82,8 @@ function RfqRead({getPropertyId, getCopyPage}: any) {
 
 
     useEffect(() => {
-        getData.post('common/getFileId').then(v=>{
-            console.log(v,':::::')
+        getData.post('common/getFileId').then(v => {
+            console.log(v, ':::::')
         })
     }, []);
 
@@ -224,7 +224,11 @@ function RfqRead({getPropertyId, getCopyPage}: any) {
                                         </div>
                                         <div style={{paddingBottom: 9}}>
                                             {selectBoxForm({
-                                                title: '회신 여부', id: 'searchContent', onChange: onChange, data: info, list: [
+                                                title: '회신 여부',
+                                                id: 'searchContent',
+                                                onChange: onChange,
+                                                data: info,
+                                                list: [
                                                     {value: '', label: '전체'},
                                                     {value: '회신', label: '회신'},
                                                     {value: '미회신', label: '미회신'}
@@ -286,10 +290,19 @@ function RfqRead({getPropertyId, getCopyPage}: any) {
                                         })}
                                     </BoxCard>
                                 </Panel>
-
                                 <PanelResizeHandle/>
-                                <Panel defaultSize={sizes[3]} minSize={0}>
+                                <Panel defaultSize={sizes[3]} minSize={5}>
+                                    <BoxCard>
+                                        {inputForm({
+                                            title: 'Project No.', id: 'searchRfqNo',
+                                            onChange: onChange,
+                                            handleKeyPress: handleKeyPress,
+                                            data: info
+                                        })}
+                                    </BoxCard>
                                 </Panel>
+
+
                             </PanelGroup>
                         </div> : <></>}
                     </MainCard>
