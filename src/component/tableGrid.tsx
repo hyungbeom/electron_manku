@@ -111,6 +111,7 @@ const TableGrid = ({
                 return;
             }
 
+            console.log(e.data ,'e.data')
             if (e.data.projectId) { // 프로젝트 수정
                 getPropertyId('project_update', e.data.projectId)
             }

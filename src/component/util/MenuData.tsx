@@ -41,7 +41,8 @@ export const treeData = [
         key: "order",
         children: [
             {title: "발주서 등록", key: "order_write",},
-            {title: "발주서 조회", key: "order_read"}
+            {title: "발주서 조회", key: "order_read"},
+            {title: "입고예정 조회", key: "expected_delivery_read"}
         ],
     }, {
         title: "입고",
@@ -141,7 +142,7 @@ export const introMenulist = [
         icon: <WalletFilled/>,
         color: 'darkolivegreen',
         title: '발주서',
-        children: [{name: '발주서 등록', key: 'order_write'}, {name: '발주서 조회', key: 'order_read'}]
+        children: [{name: '발주서 등록', key: 'order_write'}, {name: '발주서 조회', key: 'order_read'},{name: '입고예정 조회', key: 'expected_delivery_read'}]
     },
     {
         icon: <DropboxSquareFilled/>,

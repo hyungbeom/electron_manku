@@ -481,7 +481,7 @@ export const subRfqWriteColumn = [
         editable: true,
         cellEditor: 'agSelectCellEditor',
         cellEditorParams: {
-            values: ['KRW','USD', 'EUR', 'JPY', 'GBP','직접입력'],
+            values: ['KRW', 'USD', 'EUR', 'JPY', 'GBP', '직접입력'],
         }
     },
     {
@@ -866,7 +866,7 @@ export const tableEstimateReadColumns = [
             return (quantitys * copyQuantity).toLocaleString()
         },
         cellStyle: {textAlign: 'right'}
-    },    {
+    }, {
         headerName: '납기',
         field: 'delivery',
         minWidth: 70,
@@ -929,7 +929,7 @@ export const tableEstimateWriteColumns = [
         cellEditorParams: {
             values: ['ea', 'Set', 'Pack', 'Can', 'Box', 'MOQ', 'Meter', 'Feet', 'Inch', 'Roll', 'g', 'kg', 'oz', '직접입력'],
         },
-        filter : null,
+        filter: null,
 
         editable: true,
     },
@@ -937,7 +937,7 @@ export const tableEstimateWriteColumns = [
         headerName: '매출 단가',
         field: 'unitPrice',
         editable: true,
-        filter : null,
+        filter: null,
 
         valueFormatter: params => !isNaN(params?.value) ? params?.value?.toLocaleString() : 0,
         cellStyle: {textAlign: 'right'}
@@ -948,7 +948,7 @@ export const tableEstimateWriteColumns = [
         field: 'amount',
         width: 120,
         // editable: true,
-        filter : null,
+        filter: null,
 
         valueFormatter: (params) => {
             if (params.node.rowPinned) {
@@ -962,7 +962,7 @@ export const tableEstimateWriteColumns = [
         headerName: '마진율',
         field: 'marginRate',
         maxWidth: 80,
-        filter : null,
+        filter: null,
 
         editable: true,
     },
@@ -971,7 +971,7 @@ export const tableEstimateWriteColumns = [
         field: 'currency',
         editable: true,
         cellEditor: 'agSelectCellEditor',
-        filter : null,
+        filter: null,
         cellEditorParams: {
             values: ['KRW', 'EUR', 'JPY', 'USD', 'GBP',],
         }
@@ -1195,6 +1195,210 @@ export const rfqReadColumns = [
 
 ];
 
+
+export const ExpectedOrderReadColumns = [
+    {
+        headerName: "", // 컬럼 제목
+        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
+        checkboxSelection: true, // 각 행에 체크박스 추가
+        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
+        cellStyle: {textAlign: "center"}, // 스타일 설정
+        maxWidth: 60, // 컬럼 너비
+        pinned: "left", // 왼쪽에 고정
+        filter: false
+    },
+    {
+        headerName: '작성일자',
+        field: 'writtenDate',
+        maxWidth: 80,
+        pinned: 'left'
+    }, {
+        headerName: 'Inquiry No.',
+        field: 'documentNumberFull',
+        maxWidth: 100,
+        pinned: 'left',
+        valueGetter: (params) => {
+            const currentRowIndex = params.node.rowIndex;
+            const currentValue = params.data.documentNumberFull;
+            const previousRowNode = params.api.getDisplayedRowAtIndex(currentRowIndex - 1);
+
+            // 이전 행의 데이터가 없거나 값이 다르면 현재 값을 유지
+            if (!previousRowNode || previousRowNode.data.documentNumberFull !== currentValue) {
+                return currentValue;
+            }
+            // 중복되면 null 반환
+            return null;
+        },
+        cellRenderer: (params) => {
+            // valueGetter에서 null로 설정된 값은 빈칸으로 표시
+            return params.value !== null ? params.value : '';
+        },
+    }, {
+        headerName: '입고 예정일',
+        field: 'deliveryTerms',
+        maxWidth: 100
+    }, {
+        headerName: '납품 예정일',
+        field: 'expectedDeliveryDate',
+        maxWidth: 100
+    },  {
+        headerName: 'Project No.',
+        field: 'rfqNo',
+        minWidth: 100,
+    },
+    {
+        headerName: '매입처명',
+        field: 'agencyName',
+        maxWidth: 100
+    },
+    {
+        headerName: '고객사명',
+        field: 'customerName',
+        minWidth: 100,
+    },
+    {
+        headerName: '견적서담당자',
+        field: 'estimateManager',
+        minWidth: 100,
+    },
+    {
+        headerName: 'Maker',
+        field: 'maker',
+        align: 'center',
+        minWidth: 200,
+    },
+    {
+        headerName: 'Item',
+        field: 'item',
+        align: 'center',
+        minWidth: 200,
+
+    },
+    {
+        headerName: 'Model',
+        field: 'model',
+        minWidth: 200,
+        cellStyle: {
+            "white-space": "pre-wrap", // ✅ 줄바꿈 유지
+            "overflow": "hidden",     // ✅ 넘치는 부분 숨김
+        },
+        onCellClicked: handleCellClick, // ✅ 셀 클릭 시 처리
+        onCellMouseOut: handleCellMouseOut, // ✅ 셀 밖으로 이동 시 처리
+    },
+    {
+        headerName: '단위',
+        field: 'unit',
+        align: 'center',
+        minWidth: 70,
+        cellEditor: 'agSelectCellEditor',
+        cellEditorParams: {
+            values: ['ea', 'Set', 'Pack', 'Can', 'Box', 'MOQ', 'Meter', 'Feet', 'Inch', 'Roll', 'g', 'kg', 'oz', '직접입력'],
+        }
+    },
+    {
+        headerName: 'CURR',
+        field: 'currency',
+        align: 'center',
+        minWidth: 50,
+        cellEditor: 'agSelectCellEditor',
+        cellEditorParams: {
+            values: ['KRW', 'EUR', 'JPY', 'USD', 'GBP',],
+        }
+    },
+    {
+        headerName: '매입 단가',
+        field: 'unitPrice',
+        align: 'center',
+        minWidth: 40,
+        valueFormatter: numberFormat,
+        cellStyle: {textAlign: 'right'}
+    },
+    {
+        headerName: '수량',
+        field: 'quantity',
+        key: 'quantity',
+        align: 'center',
+        minWidth: 70,
+        valueFormatter: numberFormat,
+        cellStyle: {textAlign: 'right'}
+    },
+    {
+        headerName: '입고',
+        field: 'receivedQuantity',
+        key: 'receivedQuantity',
+        align: 'center',
+        minWidth: 70,
+        valueFormatter: (params) => {
+            if (params.node.rowPinned) {
+                // 고정 행 (푸터)에서는 원래 값을 그대로 반환
+                return params.value !== undefined ? params.value.toLocaleString() : '0';
+            }
+            const {quantity, receivedQuantity} = params.data;
+            return params.value !== undefined ? params.value.toLocaleString() : '0';
+            // return !isNaN(quantity - receivedQuantity) ? (quantity - receivedQuantity).toLocaleString('en-US') : null
+
+        },
+        cellStyle: {textAlign: 'right'}
+    },
+    {
+        headerName: '미 입고',
+        field: 'unreceivedQuantity',
+        key: 'unreceivedQuantity',
+        align: 'center',
+        minWidth: 70,
+        valueFormatter: (params) => {
+            if (params.node.rowPinned) {
+                // 고정 행 (푸터)에서는 원래 값을 그대로 반환
+                return params.value !== undefined ? params.value.toLocaleString() : '0';
+            }
+            const {quantity, receivedQuantity} = params.data;
+            const quantitys = !isNaN(quantity) ? quantity : 0
+            const copyQuantity = !isNaN(receivedQuantity) ? receivedQuantity : 0
+            // console.log(quantity, receivedQuantity,'quantity, receivedQuantity:')
+            return quantitys - copyQuantity
+        },
+        cellStyle: {textAlign: 'right'}
+        // valueFormatter: (params) => {
+        //     if (params.node.rowPinned) {
+        //         // 고정 행 (푸터)에서는 원래 값을 그대로 반환
+        //         return params.value !== undefined ? params.value.toLocaleString() : '0';
+        //     }
+        //     const {quantity, receivedQuantity} = params.data;
+        //     return !isNaN(quantity - receivedQuantity) ? quantity - receivedQuantity : null
+        // }
+    },
+    {
+        headerName: '매출 단가',
+        field: 'net',
+        key: 'net',
+        align: 'center',
+        minWidth: 50,
+        valueFormatter: numberFormat,
+        cellStyle: {textAlign: 'right'}
+    },
+    {
+        headerName: '매출 총액',
+        field: 'totalPrice',
+        key: 'totalPrice',
+        align: 'center',
+        minWidth: 60,
+        valueFormatter: (params) => {
+            if (params.node.rowPinned) {
+                return params.value !== undefined ? params.value.toLocaleString() : '0';
+            }
+            const {quantity, net} = params.data;
+            return (!quantity || !net) ? null : Math.floor(quantity * net).toLocaleString();
+        },
+        cellStyle: {textAlign: 'right'}
+    },
+    {
+        headerName: '비고란',
+        field: 'remarks',
+        key: 'remarks',
+        align: 'center',
+        minWidth: 100,
+    },
+];
 
 export const tableOrderReadColumns = [
     {
@@ -1960,7 +2164,6 @@ export const tableCodeDomesticAgencyWriteColumns = [
 ]
 
 
-
 // ================================================ 송금 =================================================
 
 // 국내송금 조회 테이블 컬럼
@@ -2133,7 +2336,6 @@ export const tableCodeOverseasRemittanceReadColumn = [
     }
 ];
 //
-
 
 
 // ============================================== 데이터 관리 ===============================================

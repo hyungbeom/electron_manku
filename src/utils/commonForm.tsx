@@ -70,6 +70,7 @@ import CompanyAccountWrite from "@/component/CompanyAccountWrite";
 import SourceWrite from "@/component/page/data/source/SourceWrite";
 import SourceRead from "@/component/page/data/source/SourceRead";
 import SourceUpdate from "@/component/page/data/source/SourceUpdate";
+import ExpectedDeliveryRead from "@/component/page/order/ExpectedDeliveryRead";
 
 const {RangePicker} = DatePicker
 const {Option} = Select
@@ -730,6 +731,7 @@ export const tabComponents = {
     order_write: {name: "발주서 등록", component: <OrderWrite/>},
     order_read: {name: "발주서 조회", component: <OrderRead/>},
     order_update: {name: "발주서 수정", component: <OrderUpdate/>},
+    expected_delivery_read: {name: "입고예정 조회", component: <ExpectedDeliveryRead/>},
 
     store_write: {name: "입고 등록", component: <StoreWrite/>},
     store_read: {name: "입고 조회", component: <StoreRead/>},
