@@ -24,7 +24,7 @@ import {Actions} from "flexlayout-react";
 
 const listType = 'list';
 
-export default function DomesticRemittanceUpdate({ updateKey, layoutRef }: any) {
+export default function DomesticRemittanceUpdate({ updateKey, layoutRef, getCopyPage }: any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null);
     const infoRef = useRef<any>(null);
@@ -100,8 +100,8 @@ export default function DomesticRemittanceUpdate({ updateKey, layoutRef }: any) 
             const findCreator = adminList.find(m => m.adminId === restDetail.createdId);
             const findManager = adminList.find(m => m.adminId === restDetail.managerAdminId);
 
-            // 송금내역 총액 계산
-            const remittance = remittanceDetail.reduce((sum, row) => sum + ((Number(row.supplyAmount) || 0) + (Number(row.tax) || 0)), 0);
+            // 부분송금액 (송금내역 총액) 계산
+            const partialRemittance = remittanceDetail.reduce((sum, row) => sum + ((Number(row.supplyAmount) || 0) + (Number(row.tax) || 0)), 0);
 
             // 발주서 날짜 정리
             const orderList = orderDetailList.map(v => ({ ...v, writtenDate: v.createdDate }));
@@ -112,9 +112,9 @@ export default function DomesticRemittanceUpdate({ updateKey, layoutRef }: any) 
                 writtenDate: moment(restDetail?.createdDate).format('YYYY-MM-DD'),
                 createdBy: findCreator?.name || '',
                 managerAdminName : findManager?.name || '',
-                partialRemittance: remittance.toLocaleString()
+                partialRemittance: partialRemittance.toLocaleString()
             })
-            modalSelected(orderList);
+            modalSelected(orderList, partialRemittance);
             const sendRemittanceList = [...remittanceDetail, ...commonFunc.repeatObject(DRInfo['write']['defaultData'], 100 - remittanceDetail?.length)];
             setSendRemittanceList(sendRemittanceList);
         });
@@ -220,6 +220,7 @@ export default function DomesticRemittanceUpdate({ updateKey, layoutRef }: any) 
                 if (targetNode) {
                     model.doAction(Actions.deleteTab(targetNode.getId())); // ✅ 기존 로직 유지
                 }
+                getCopyPage('domestic_remittance_read', {});
             } else {
                 console.log(v?.data?.message);
                 notificationAlert('error', '⚠️ 작업실패',
@@ -321,10 +322,11 @@ export default function DomesticRemittanceUpdate({ updateKey, layoutRef }: any) 
     /**
      * @description 수정 페이지 > 발주서 조회 Modal
      * Return Function
-     * 발주서 조회 Modal에서 선택한 항목 가져오기
+     * 발주서 조회 Modal 에서 선택한 항목 가져오기
      * @param list
+     * @param remittance 첫 조회시 넘겨준 부분송금액
      */
-    function modalSelected(list = []) {
+    function modalSelected(list = [], remittance = '') {
         if (!list?.length) return;
 
         setSelectOrderList(prevList => {
@@ -348,7 +350,7 @@ export default function DomesticRemittanceUpdate({ updateKey, layoutRef }: any) 
             // 발주서 총액 계산
             const total = updatedList.reduce((sum, row) => sum + ((Number(row.quantity) || 0) * (Number(row.unitPrice) || 0)), 0);
             const totalAmount = total + (total * 0.1 * 10 / 10);
-            let partialRemittance = Number(String(info.partialRemittance || '0').replace(/,/g, ''));
+            let partialRemittance = Number(String(remittance || info.partialRemittance).replace(/,/g, ''));
 
             // 잔액 계산
             const balance= totalAmount - partialRemittance;
