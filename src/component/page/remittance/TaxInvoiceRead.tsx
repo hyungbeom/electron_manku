@@ -24,6 +24,7 @@ import TableGrid from "@/component/tableGrid";
 import Popconfirm from "antd/lib/popconfirm";
 import Button from "antd/lib/button";
 import {tableTaxInvoiceReadColumn} from "@/utils/columnList";
+import {catchError} from "rxjs";
 
 export default function TaxInvoiceRead({getPropertyId, getCopyPage}: any) {
     const notificationAlert = useNotificationAlert();
@@ -39,13 +40,12 @@ export default function TaxInvoiceRead({getPropertyId, getCopyPage}: any) {
     const [loading, setLoading] = useState(false);
     const [mini, setMini] = useState(true);
 
-    const { adminList } = useAppSelector((state) => state.user);
+    const [isSearch, setIsSearch] = useState(false);
+
     const getTaxInvoiceSearchInit = () => _.cloneDeep(taxInvoiceSearchInitial);
     const [info, setInfo] = useState(getTaxInvoiceSearchInit());
 
     const [totalRow, setTotalRow] = useState(0);
-
-    const [isSearch, setIsSearch] = useState(false);
 
     useEffect(() => {
         if (isSearch) {
@@ -54,36 +54,25 @@ export default function TaxInvoiceRead({getPropertyId, getCopyPage}: any) {
         }
     }, [isSearch]);
 
-    function formatManager(list = []) {
-        if (!list?.length) return;
-
-        const formatList = list.map(item => {
-            const findManager = adminList.find(admin => admin.adminId === item.managerAdminId);
-            return {
-                ...item,
-                managerAdminName: findManager?.name || ''
-            };
-        });
-
-        return formatList;
-    }
-
     /**
      * @description ag-grid 테이블 초기 rowData 요소 '[]' 초기화 설정
      * @param params ag-grid 제공 event 파라미터
      */
     const onGridReady = async (params) => {
-        // setLoading(true);
         gridRef.current = params.api;
-        info['invoiceDueDate'] = '2025-05-18';
-        const res = await getData.post('invoice/getInvoiceListInfo', info);
-        console.log(res)
-        const { invoiceList = [] } = res?.data?.entity ?? {};
+        setLoading(true);
+        try {
+            const res = await getData.post('invoice/getInvoiceListInfo', info);
+            console.log(res)
+            const { invoiceList = [] } = res?.data?.entity ?? {};
             params.api.applyTransaction({add: invoiceList});
             setTotalRow(invoiceList?.length);
-        // .finally(() => {
-        //     setLoading(false);
-        // });
+        } catch (err) {
+            notificationAlert('error', '❌ 네트워크 오류 발생', <div>{err.message}</div>);
+            console.error('에러:', err);
+        } finally {
+            setLoading(false);
+        }
     };
 
     function onChange(e) {
@@ -104,17 +93,18 @@ export default function TaxInvoiceRead({getPropertyId, getCopyPage}: any) {
     async function searchInfo(e) {
         if (e) {
             setLoading(true);
-            // try {
-            //     const res = await getData.post('invoice/getInvoiceListInfo', info);
-            // }
-            await getRemittanceList({data: info}).then(v => {
-                // const remittanceList = formatManager(v?.data);
-                // gridManage.resetData(gridRef, remittanceList);
-                // setTotalRow(v?.pageInfo?.totalRow ?? 0)
-            })
-            .finally(() => {
+            try {
+                const res = await getData.post('invoice/getInvoiceListInfo', info);
+                console.log(res)
+                const { invoiceList = [] } = res?.data?.entity ?? {};
+                gridManage.resetData(gridRef, invoiceList);
+                setTotalRow(invoiceList?.length);
+            } catch (err) {
+                notificationAlert('error', '❌ 네트워크 오류 발생', <div>{err.message}</div>);
+                console.error('에러:', err);
+            } finally {
                 setLoading(false);
-            });
+            }
         }
     }
 
@@ -144,17 +134,16 @@ export default function TaxInvoiceRead({getPropertyId, getCopyPage}: any) {
         const list = gridRef.current.getSelectedRows();
         if (!list?.length) return message.warn('삭제할 세금계산서 요청 내역을 선택해주세요.');
 
-        // setLoading(true);
-        const filterList = list.map(v => parseInt(v.remittanceDetailId));
-        console.log(filterList)
+        setLoading(true);
 
-        await getData.post('remittance/deleteRemittances', {deleteRemittanceIdList: filterList}).then(v => {
+        const filterList = list.map(v => parseInt(v.invoiceId));
+        await getData.post('invoice/deleteInvoice', filterList).then(v => {
             if (v.data.code === 1) {
                 searchInfo(true);
                 notificationAlert('success', '🗑️ 세금계산서 요청 삭제완료',
                     <>
                         <div>Inquiry No. :
-                            : {list[0].documentNumbers} {list.length > 1 ? ('외' + " " + (list.length - 1) + '개') : ''} 송금내역 이(가)
+                            : {list[0].documentNumbers} {list.length > 1 ? ('외' + " " + (list.length - 1) + '개') : ''} 세금계산서 요청 이(가)
                             삭제되었습니다.
                         </div>
                         <div>삭제일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>

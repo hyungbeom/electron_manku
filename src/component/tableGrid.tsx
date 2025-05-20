@@ -75,7 +75,7 @@ const TableGrid = ({
         const selectedNode = event.node; // 현재 선택된 노드
         const selectedData = selectedNode.data; // 선택된 데이터
 
-        const includeKeys = ['DRWrite', 'ORWrite', 'SourceWrite', 'SourceUpdate'];
+        const includeKeys = ['Remittance', 'Tax', 'SourceWrite', 'SourceUpdate'];
         // documentNumberFull 필드가 없고 커스텀타입이 없거나 커스텀 제외 목록이 아니면 패스
         if (!selectedData?.documentNumberFull && !customType || includeKeys.includes(customType)) {
             return;
@@ -105,8 +105,8 @@ const TableGrid = ({
     const handleDoubleClicked = (e) => {
         if (type === 'read') {
 
-            // 송금 등록/수정시 하단에 선택한 발주서 항목 더블클릭
-            if (customType === 'DRWrite') {
+            // 송금, 세금계산서 등록/수정시 하단에 선택한 발주서 항목 더블클릭
+            if (customType === 'Remittance' || customType === 'Tax') {
                 tempFunc(e.data);
                 return;
             }
@@ -137,6 +137,9 @@ const TableGrid = ({
                     case 'ORRead': getPropertyId('overseas_remittance_update', e.data.remittanceId)
                         break;
                 }
+            }
+            if (e.data.invoiceId) { // 세금계산서 발행 수정
+                getPropertyId('tax_invoice_update', e.data.invoiceId)
             }
             if (e.data.agencyId) { // 국내 매입처 수정
                 getPropertyId('domestic_agency_update', e.data.agencyId)

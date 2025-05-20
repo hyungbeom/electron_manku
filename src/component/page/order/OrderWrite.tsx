@@ -408,7 +408,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                     }
                 ]} mini={mini} setMini={setMini}>
                     {mini ? <div>
-                        <TopBoxCard grid={'110px 70px 70px 120px 120px 120px 300px'}>
+                        <TopBoxCard grid={'110px 70px 70px 120px 120px 120px 120px'}>
                             {datePickerForm({
                                 title: '작성일',
                                 id: 'writtenDate',

@@ -2388,7 +2388,7 @@ export const tableTaxInvoiceReadColumn = [
     },
     {
         headerName: '프로젝트 No.',
-        field: '',
+        field: 'rfqNo',
     },
     {
         headerName: '고객사명',

@@ -529,10 +529,10 @@ export default function DomesticRemittanceUpdate({ updateKey, layoutRef, getCopy
                                         <div>드라이브 목록</div>
                                         {
                                             orderInfo['folderId'] ?
-                                                <span>
-                                                    <FolderOpenOutlined/> {`${orderInfo['documentNumberFull']}`}
+                                                <span style={{fontSize: 10, display: 'inline-flex', alignItems: 'center'}}>
+                                                    <FolderOpenOutlined style={{paddingRight: 4}}/>{`${orderInfo['documentNumberFull']}`}
                                                 </span>
-                                                : <></>
+                                            : <></>
                                         }
                                     </div>
                                 } disabled={!userInfo['microsoftId'] || !orderInfo?.folderId}>

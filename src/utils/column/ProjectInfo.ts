@@ -754,6 +754,36 @@ export const ORInfo = {
         remarks: '',                                  // 비고
     },
 };
+//
+
+/**
+ * 세금계산서 발행 등록/수정
+ */
+export const TIInfo = {
+    write: {
+        type: 'write'
+    },
+    defaultInfo: {
+        writtenDate: moment().format('YYYY-MM-DD'),          // 작성일
+        createdId: null,                                     // 작성자 id
+        createdBy: null,                                     // 작성자 이름
+        managerAdminId: null,                                // 담당자 id
+        managerAdminName: null,                              // 담당자 이름
+        invoiceId: '',                                       // 해외송금 여부
+        invoiceDueDate: '',                                  // 발행지정일자
+        invoiceRequestDate: moment().format('YYYY-MM-DD'),   // 발행요청일자
+        rfqNo: '',                                           // 프로젝트 No.
+        yourPoNo: '',                                        // 고객사 발주서 No.
+        customerName: '',                                    // 고객사명
+        sendEmail: '',                                       // 발행 이메일 주소
+        customerManagerName: '',                             // 고객사 담당자명
+        supplyAmount: '',                                    // 공급가액
+        company: '',                                         // 사업소
+        invoiceStatus: 'X',                                  // 계산서 발행 여부
+        remarks: '',                                         // 비고
+    },
+};
+//
 
 
 

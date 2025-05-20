@@ -42,6 +42,12 @@ export const DriveUploadComp = forwardRef(function DriveUploadComp({
     const isLoad = useRef(false);
     const [loading, setLoading] = useState(false);
 
+    // drive 업로드 불가 처리
+    const excludedTypes = ['tax'];
+    const isExcluded = () => {
+        return excludedTypes.includes(type);
+    }
+
     useEffect(() => {
         const handleDragEnter = (event) => {
             event.preventDefault();
@@ -427,6 +433,8 @@ export const DriveUploadComp = forwardRef(function DriveUploadComp({
         setIsDragging(false);
         setDragCounter(0);
 
+        if (isExcluded()) return false;
+
         // 파일 읽기
         const droppedFiles = Array.from(event.dataTransfer.files);
         if (droppedFiles.length > 1) {
@@ -598,10 +606,12 @@ export const DriveUploadComp = forwardRef(function DriveUploadComp({
                 <Upload
                     fileList={fileList} // 상태 기반의 파일 리스트
                     beforeUpload={async (file) => {
+                        if (isExcluded()) return Upload.LIST_IGNORE;
                         await fileChange({file, fileList});
                         // return Upload.LIST_IGNORE;
                     }}
                     onRemove={async (file) => {
+                        if (isExcluded()) return false;
                         return await fileRemove(file);
                     }}
                     // onChange={fileChange} // 파일 리스트 업데이트
