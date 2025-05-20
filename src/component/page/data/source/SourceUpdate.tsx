@@ -3,7 +3,7 @@ import {getData} from "@/manage/function/api";
 import {CopyOutlined, DeleteOutlined, ExclamationCircleOutlined, FormOutlined} from "@ant-design/icons";
 import message from "antd/lib/message";
 import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
-import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, tooltipInfo} from "@/utils/commonForm";
+import {BoxCard, datePickerForm, inputForm, MainCard, SelectForm, textAreaForm, tooltipInfo} from "@/utils/commonForm";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
@@ -39,10 +39,10 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
     const [tableData, setTableData] = useState([]);
     const [totalRow, setTotalRow] = useState(0);
 
-    const isGridLoad = useRef(false);
+    const [isGridLoad, setIsGridLoad] = useState(false);
 
     useEffect(() => {
-        if (!isGridLoad.current) return;
+        if (!isGridLoad) return;
 
         setValidate(getSourceValidateInit());
         setInfo(getSourceInit());
@@ -51,13 +51,13 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
         setTotalRow(0);
 
         void getDataInfo();
-    }, [updateKey['source_update']])
+    }, [updateKey['source_update'], isGridLoad])
 
     const onGridReady = async (params) => {
         gridRef.current = params.api;
         params.api.applyTransaction({add: []});
         setTotalRow(0);
-        isGridLoad.current = true;
+        setIsGridLoad(true);
     };
 
     async function getDataInfo(type?: any) {
@@ -371,12 +371,22 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
                                     data: info,
                                     disabled: true
                                 })}
-                                {inputForm({
-                                    title: '화폐단위',
-                                    id: 'currencyUnit',
-                                    onChange: onChange,
-                                    data: info
-                                })}
+                                {/*{inputForm({*/}
+                                {/*    title: '화폐단위',*/}
+                                {/*    id: 'currencyUnit',*/}
+                                {/*    onChange: onChange,*/}
+                                {/*    data: info*/}
+                                {/*})}*/}
+                                <div style={{paddingBottom: 10}}>
+                                    <SelectForm id={'currencyUnit'}
+                                                list={
+                                                    ['KRW', 'USD', 'EUR', 'JPY', 'GBP']
+                                                }
+                                                title={'화폐단위'}
+                                                onChange={onChange}
+                                                data={info}
+                                    />
+                                </div>
                                 <div style={{fontSize: 12, paddingBottom: 10}} key={validate['receivedQuantity']}>
                                     <div style={{paddingBottom: 12 / 2, fontWeight: 700}}>입고수량</div>
                                     <div style={{display: 'flex'}}>

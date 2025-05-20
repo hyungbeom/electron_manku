@@ -2,7 +2,7 @@ import React, {memo, useEffect, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import {RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
 import {commonManage, gridManage} from "@/utils/commonManage";
-import {BoxCard, datePickerForm, inputForm, MainCard, textAreaForm, tooltipInfo} from "@/utils/commonForm";
+import {BoxCard, datePickerForm, inputForm, MainCard, SelectForm, textAreaForm, tooltipInfo} from "@/utils/commonForm";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
@@ -329,12 +329,22 @@ function SourceWrite({copyPageInfo, getPropertyId}: any) {
                                             <span style={{marginLeft: -22, paddingTop: 1.5}}></span>
                                         </div>
                                     </div>
-                                    {inputForm({
-                                        title: '화폐단위',
-                                        id: 'currencyUnit',
-                                        onChange: onChange,
-                                        data: info
-                                    })}
+                                    {/*{inputForm({*/}
+                                    {/*    title: '화폐단위',*/}
+                                    {/*    id: 'currencyUnit',*/}
+                                    {/*    onChange: onChange,*/}
+                                    {/*    data: info*/}
+                                    {/*})}*/}
+                                    <div style={{paddingBottom: 10}}>
+                                        <SelectForm id={'currencyUnit'}
+                                                    list={
+                                                        ['KRW', 'USD', 'EUR', 'JPY', 'GBP']
+                                                    }
+                                                    title={'화폐단위'}
+                                                    onChange={onChange}
+                                                    data={info}
+                                        />
+                                    </div>
                                     <div style={{fontSize: 12, paddingBottom: 10}} key={validate['receivedQuantity']}>
                                         <div style={{paddingBottom: 12 / 2, fontWeight: 700}}>입고수량</div>
                                         <div style={{display: 'flex'}}>
@@ -356,14 +366,27 @@ function SourceWrite({copyPageInfo, getPropertyId}: any) {
                                             <span style={{marginLeft: -22, paddingTop: 1.5}}></span>
                                         </div>
                                     </div>
-                                    {inputForm({
-                                        title: '단위',
-                                        id: 'unit',
-                                        onChange: onChange,
-                                        data: info,
-                                        validate: validate['unit'],
-                                        key: validate['unit']
-                                    })}
+                                    {/*{inputForm({*/}
+                                    {/*    title: '단위',*/}
+                                    {/*    id: 'unit',*/}
+                                    {/*    onChange: onChange,*/}
+                                    {/*    data: info,*/}
+                                    {/*    validate: validate['unit'],*/}
+                                    {/*    key: validate['unit']*/}
+                                    {/*})}*/}
+                                    <div style={{paddingTop: 2}}>
+                                        <SelectForm id={'unit'}
+                                                    list={
+                                                        ['ea', 'Set', 'Pack', 'Can', 'Box', 'MOQ', 'Meter', 'Feet', 'Inch', 'Roll', 'g', 'kg', 'oz', '직접입력']
+                                                    }
+                                                    title={'단위'}
+                                                    onChange={onChange}
+                                                    data={info}
+                                                    validate={validate['unit']}
+                                                    key={validate['unit']}
+                                                    direction={'up'}
+                                        />
+                                    </div>
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
