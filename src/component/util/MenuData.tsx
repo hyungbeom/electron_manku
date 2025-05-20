@@ -47,10 +47,9 @@ export const treeData = [
     }, {
         title: "입고",
         key: "store",
-        disabled: true,
         children: [
-            {title: "입고 등록", key: "store_write", disabled: true},
-            {title: "입고 조회", key: "store_read", disabled: true}
+            {title: "입고 등록", key: "store_write"},
+            {title: "입고 조회", key: "store_read"}
         ],
     }, {
         title: "배송",
