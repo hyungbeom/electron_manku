@@ -169,7 +169,13 @@ export default function TaxInvoiceWrite({copyPageInfo, getPropertyId}: any) {
     function clearAll() {
         setLoading(true);
 
-        setInfo(getTaxInvoiceInit());
+        setInfo({
+            ...getTaxInvoiceInit(),
+            connectInquiryNo: '',
+            orderDetailIds: '',
+            tax: '',
+            totalAmount: ''
+        });
         setSelectOrderList([]);
 
         setOrderInfo(getOrderInit());

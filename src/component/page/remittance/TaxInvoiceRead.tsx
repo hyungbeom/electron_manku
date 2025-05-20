@@ -268,6 +268,7 @@ export default function TaxInvoiceRead({getPropertyId, getCopyPage}: any) {
                getPropertyId={getPropertyId}
                gridRef={gridRef}
                columns={tableTaxInvoiceReadColumn}
+               customType={'TaxRead'}
                onGridReady={onGridReady}
                funcButtons={['agPrint']}
             />

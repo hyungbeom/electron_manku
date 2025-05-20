@@ -18,7 +18,7 @@ import {TIInfo} from "@/utils/column/ProjectInfo";
 import TableGrid from "@/component/tableGrid";
 import Popconfirm from "antd/lib/popconfirm";
 import Button from "antd/lib/button";
-import {tableOrderReadColumns} from "@/utils/columnList";
+import {tableOrderReadColumns, tableSelectOrderReadColumns} from "@/utils/columnList";
 import {Actions} from "flexlayout-react";
 
 const listType = 'list';
@@ -85,12 +85,24 @@ export default function TaxInvoiceUpdate({ updateKey, layoutRef, getCopyPage }: 
         });
     }, [updateKey['tax_invoice_update']]);
 
+    useEffect(() => {
+        if(!isGridLoad.current) return;
+        gridManage.resetData(gridRef, selectOrderList);
+        setTotalRow(selectOrderList?.length ?? 0);
+    }, [selectOrderList]);
+
     async function getDataInfo() {
         try {
             const res = await getData.post('invoice/getInvoiceInfo', updateKey['tax_invoice_update']);
             if (res?.data?.code !== 1) {
-
+                return;
             }
+            const { invoiceDetailInfo: selectOrderList, invoiceinfo: invoiceInfo = {} } = res?.data?.entity ?? {};
+            setInfo({
+                ...getTaxInvoiceInit(),
+                ...invoiceInfo
+            });
+            modalSelected(selectOrderList, invoiceInfo?.['rfqNo']);
         } catch (err) {
             notificationAlert('error', '❌ 네트워크 오류 발생', <div>{err.message}</div>);
             console.error('에러:', err);
@@ -119,7 +131,7 @@ export default function TaxInvoiceUpdate({ updateKey, layoutRef, getCopyPage }: 
     async function saveFunc() {
         if (!selectOrderList?.length) return message.warn('발주서 데이터가 1개 이상이여야 합니다.');
 
-        const selectOrderNos = selectOrderList.map(item => item.orderDetailId)
+        const selectOrderNos = selectOrderList.map(item => Number(item.orderDetailId));
         const copyInfo = {
             ...info,
             supplyAmount: Number(String(info?.supplyAmount).replace(/,/g, '')),
@@ -128,7 +140,7 @@ export default function TaxInvoiceUpdate({ updateKey, layoutRef, getCopyPage }: 
         console.log(copyInfo, 'info :::')
         setLoading(true);
         try {
-            const res = await getData.post('invoice/addInvoice', copyInfo);
+            const res = await getData.post('invoice/updateInvoice', copyInfo);
             if (res?.data?.code !== 1) {
                 console.warn(res?.data?.message);
                 notificationAlert('error', '⚠️ 작업실패',
@@ -245,7 +257,7 @@ export default function TaxInvoiceUpdate({ updateKey, layoutRef, getCopyPage }: 
      * 발주서 조회 Modal에서 선택한 항목 가져오기
      * @param list
      */
-    function modalSelected(list= []) {
+    function modalSelected(list= [], rfqNo = '') {
         if (!list?.length) return;
 
         setSelectOrderList(prevList => {
@@ -274,7 +286,7 @@ export default function TaxInvoiceUpdate({ updateKey, layoutRef, getCopyPage }: 
             setInfo(prevInfo => {
                 return {
                     ...prevInfo,
-                    rfqNo: updatedList?.[0]?.rfqNo || '',
+                    rfqNo: rfqNo ? rfqNo : updatedList?.[0]?.rfqNo || '',
                     connectInquiryNo: connectInquiryNos.join(', '),
                     orderDetailIds,
                     yourPoNo: updatedList?.[0]?.yourPoNo || '',
@@ -558,7 +570,7 @@ export default function TaxInvoiceUpdate({ updateKey, layoutRef, getCopyPage }: 
                     }
                     totalRow={totalRow}
                     gridRef={gridRef}
-                    columns={tableOrderReadColumns}
+                    columns={tableSelectOrderReadColumns}
                     customType={'Tax'}
                     onGridReady={onGridReady}
                     funcButtons={['agPrint']}

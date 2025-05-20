@@ -75,7 +75,7 @@ const TableGrid = ({
         const selectedNode = event.node; // 현재 선택된 노드
         const selectedData = selectedNode.data; // 선택된 데이터
 
-        const includeKeys = ['Remittance', 'Tax', 'SourceWrite', 'SourceUpdate'];
+        const includeKeys = ['Remittance', 'TaxRead', 'Tax', 'TaxUpdate', 'SourceWrite', 'SourceUpdate'];
         // documentNumberFull 필드가 없고 커스텀타입이 없거나 커스텀 제외 목록이 아니면 패스
         if (!selectedData?.documentNumberFull && !customType || includeKeys.includes(customType)) {
             return;

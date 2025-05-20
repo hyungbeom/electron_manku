@@ -416,7 +416,7 @@ export const inputNumberForm = ({
     </div>
 }
 
-export const SelectForm = ({ id, list, title, onChange, data }) => {
+export const SelectForm = ({ id, list, title, onChange, data, validate = true, direction = 'down' }) => {
     const inputRef = useRef<HTMLInputElement>(null);
     const ref = useRef<HTMLDivElement>(null);
     const listRef = useRef<HTMLDivElement>(null);
@@ -480,9 +480,19 @@ export const SelectForm = ({ id, list, title, onChange, data }) => {
                 onChange={(e) => onChange({ target: { id: id, value: e.target.value } })}
                 placeholder="선택 또는 입력"
                 autoComplete="off"
-                style={{ height: 23 }}
+                style={{ height: 23, border: `1px solid ${validate ? 'lightGray' : 'red'}` }}
             />
-            <div className="dropdown-list" ref={listRef}>
+            <div className="dropdown-list" ref={listRef}
+                 style={{
+                     position: 'absolute',
+                     top: direction === 'up' ? 'auto' : '100%',
+                     bottom: direction === 'up' ? 'calc(100% - 24px)' : 'auto',
+                     maxHeight: 140,
+                     overflowY: 'auto',
+                     backgroundColor: 'white',
+                     zIndex: 1000,
+                     border: '1px solid lightgray',
+                 }}>
                 {list.map((v) => (
                     <div
                         key={v}

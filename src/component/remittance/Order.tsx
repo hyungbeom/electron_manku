@@ -3,7 +3,7 @@ import {gridManage} from "@/utils/commonManage";
 import {DeleteOutlined, ExclamationCircleOutlined} from "@ant-design/icons";
 import Popconfirm from "antd/lib/popconfirm";
 import Button from "antd/lib/button";
-import {tableOrderReadColumns} from "@/utils/columnList";
+import {tableOrderReadColumns, tableSelectOrderReadColumns} from "@/utils/columnList";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
 import _ from "lodash";
@@ -15,11 +15,11 @@ function Order({
                                   setInfo = null,
                                   customFunc = null}) {
 
-    const isLoad = useRef(null);
     const [totalRow, setTotalRow] = useState(0);
+    const isGridLoad = useRef(null);
 
     useEffect(() => {
-        if(!isLoad.current) return;
+        if(!isGridLoad.current) return;
         gridManage.resetData(gridRef, tableData);
         setTotalRow(tableData?.length ?? 0);
     }, [tableData]);
@@ -31,8 +31,7 @@ function Order({
     const onGridReady = async (params) => {
         gridRef.current = params.api;
         params.api.applyTransaction({add: tableData});
-
-        isLoad.current = true;
+        isGridLoad.current = true;
     };
 
     /**
@@ -104,7 +103,7 @@ function Order({
                 }
                 totalRow={totalRow}
                 gridRef={gridRef}
-                columns={tableOrderReadColumns}
+                columns={tableSelectOrderReadColumns}
                 onGridReady={onGridReady}
                 customType={'Remittance'}
                 tempFunc={returnFunc}
