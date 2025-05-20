@@ -160,10 +160,29 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                             await getData.post('estimate/generateDocumentNumberFull', {
                                 type: 'ORDER',
                                 documentNumberFull: info?.ourPoNo?.toUpperCase()
-                            }).then(src => {
+                            }).then(async src => {
                                 const manager = estimateDetail?.managerAdminId;
                                 const findManager = memberList.find(v => v.adminId === manager)
-                                console.log(estimateDetail,'estimateDetail')
+
+                                let result = 'null';
+                                if(estimateDetail?.connectDocumentNumberFull) {
+
+                                    const source = await getData.post('estimate/getEstimateRequestDetail', {
+                                        estimateRequestId: '',
+                                        documentNumberFull: estimateDetail?.connectDocumentNumberFull?.toUpperCase()
+                                    })
+
+
+                                    const list = source.data.entity.estimateRequestDetail?.estimateRequestDetailList || [];
+                                    // 숫자인 deliveryDate만 필터링
+                                    const validDates = list
+                                        .map(item => Number(item.deliveryDate))
+                                        .filter(date => !isNaN(date) && date > 0);
+
+                                     result = String(validDates.length > 0 ? Math.max(...validDates) : 1);
+
+                                }
+
                                 setInfo({
                                     ...getOrderInit(),
                                     ...estimateDetail,
@@ -174,13 +193,9 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                     customerManagerPhoneNumber: estimateDetail?.phoneNumber,
                                     customerManagerEmail: estimateDetail?.customerManagerEmail,
                                     customerManagerFaxNumber: estimateDetail?.faxNumber,
-                                    sendTerms: moment().add( parseInt(estimateDetail?.delivery), 'weeks').format('YYYY-MM-DD'),
-                                    // validityPeriod: '견적 발행 후 10일간',
-                                    // paymentTerms: '발주시 50% / 납품시 50%',
-                                    // shippingTerms: '귀사도착도',
+                                    sendTerms: !isNaN(estimateDetail?.delivery) ? moment().add(parseInt(estimateDetail?.delivery), 'weeks').format('YYYY-MM-DD') : null,
+                                    deliveryTerms: !isNaN(Number(result)) ? moment().add(result, 'weeks').format('YYYY-MM-DD') : null,
                                     delivery: estimateDetail?.deliveryDate ? estimateDetail.deliveryDate : '',
-
-                                    // 담당자 정보가 현재 작성자 정보가 나와야한다고 함
                                     managerAdminId: adminParams['managerAdminId'],
                                     managerAdminName: adminParams['managerAdminName'],
                                     createdBy: adminParams['createdBy'],
@@ -191,7 +206,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                     managerEmail: adminParams['managerEmail']
                                 })
                                 // folderId 가져오면 연결 inquiry 수정 못하게 막기
-                                if(estimateDetail.folderId) setIsFolderId(true);
+                                if (estimateDetail.folderId) setIsFolderId(true);
                                 // setFileList(fileManage.getFormatFiles(src?.data?.entity.attachmentFileList));
                                 setFileList(fileManage.getFormatFiles(attachmentFileList));
                                 if (estimateDetail?.estimateDetailList?.length) {
@@ -201,14 +216,14 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                     setTableData([...copyList, ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000 - estimateDetail?.estimateDetailList.length)])
                                 }
                             })
-                            .finally(() => {
-                                setLoading(false);
-                            });
+                                .finally(() => {
+                                    setLoading(false);
+                                });
                         }
                     })
-                    .finally(() => {
-                        setLoading(false);
-                    });
+                        .finally(() => {
+                            setLoading(false);
+                        });
                     break;
                 // await findOrderDocumentInfo(e, setInfo, setTableData, memberList)
             }
@@ -536,7 +551,10 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                         // }
                                         // setInfo(v => ({...v, ...managerInfo}))
                                         const member = memberList.find(v => v.adminId === parseInt(adminParams?.managerAdminId));
-                                        setInfo(v => ({...v, managerId: info?.agencyCode?.toUpperCase().startsWith('K') ? member?.name : member?.englishName}))
+                                        setInfo(v => ({
+                                            ...v,
+                                            managerId: info?.agencyCode?.toUpperCase().startsWith('K') ? member?.name : member?.englishName
+                                        }))
                                     }}
                                 /></span></div>}>
                                     {inputForm({title: '작성자', id: 'managerId', onChange: onChange, data: info})}
@@ -606,7 +624,8 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                             <PanelResizeHandle/>
                             <Panel defaultSize={sizes[5]} minSize={5}>
                                 <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
-                                    <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef} ref={uploadRef}
+                                    <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
+                                                     ref={uploadRef}
                                                      info={info} key={driveKey}/>
                                 </BoxCard>
                             </Panel>

@@ -387,6 +387,8 @@ export const orderInfo = {
             "hsCode": '',
             "managerId": '',
             "rfqNo": '',
+            "sendTerms": '',
+            "deliveryTerms": '',
             managerAdminName: '',
             orderDetailId: '',
             estimateDetailId: '',
