@@ -485,7 +485,7 @@ function EstimateUpdate({
                     {name: <div><CopyOutlined style={{paddingRight: 8}}/>복제</div>, func: copyPage, type: ''}
                 ]} mini={mini} setMini={setMini}>
                     {mini ? <div>
-                            <TopBoxCard grid={'110px 70px 70px 120px 120px 300px'}>
+                            <TopBoxCard grid={'110px 70px 70px 120px 120px'}>
                                 {datePickerForm({
                                     title: '작성일',
                                     id: 'writtenDate',

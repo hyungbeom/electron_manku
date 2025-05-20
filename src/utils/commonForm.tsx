@@ -561,6 +561,7 @@ export const textAreaForm = ({
                   className="custom-textarea"
                   onChange={change}
                   placeholder={placeHolder}
+                  maxLength = {maxLength}
         />
     </div>
 }
@@ -763,7 +764,7 @@ export const tabComponents = {
         component: <OverseasRemittanceRead/>
     },
     overseas_remittance_update: {name: "해외송금 수정", component: <OverseasRemittanceUpdate/>},
-    tax_invoice_write: {name: "세금계산서_요청 등록", component: <TaxInvoiceWrite/>},
+    tax_invoice_write: {name: "세금계산서 요청 등록", component: <TaxInvoiceWrite/>},
     tax_invoice_read: {name: "세금계산서 요청 조회", component: <TaxInvoiceRead/>},
     tax_invoice_update: {name: "세금계산서 요청 수정", component: <TaxInvoiceUpdate/>},
 

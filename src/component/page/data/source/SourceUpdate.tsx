@@ -39,10 +39,10 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
     const [tableData, setTableData] = useState([]);
     const [totalRow, setTotalRow] = useState(0);
 
-    const [isLoad, setIsLoad] = useState(false);
+    const isGridLoad = useRef(false);
 
     useEffect(() => {
-        if (!isLoad) return;
+        if (!isGridLoad.current) return;
 
         setValidate(getSourceValidateInit());
         setInfo(getSourceInit());
@@ -51,11 +51,13 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
         setTotalRow(0);
 
         void getDataInfo();
-    }, [updateKey['source_update'], isLoad])
+    }, [updateKey['source_update']])
 
     const onGridReady = async (params) => {
         gridRef.current = params.api;
-        setIsLoad(true);
+        params.api.applyTransaction({add: []});
+        setTotalRow(0);
+        isGridLoad.current = true;
     };
 
     async function getDataInfo(type?: any) {

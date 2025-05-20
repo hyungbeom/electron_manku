@@ -106,7 +106,7 @@ function Order({
                 gridRef={gridRef}
                 columns={tableOrderReadColumns}
                 onGridReady={onGridReady}
-                customType={'DRWrite'}
+                customType={'Remittance'}
                 tempFunc={returnFunc}
                 funcButtons={['agPrint']}
             />
